@@ -17,7 +17,7 @@ This repository is only about the website itself and will public document the to
 
 * May 3, 2014
 	* Added a new `individual page for a spotter ID` with a Google map of the departure & arrival airport, route of what its supposed fly and the position of the aircraft of when it was captured into the database. [See Example](http://www.barriespotter.com/flightid/4655)
-	* Fixed the styling for the mobile.
+	* Fixed the ‘styling for the mobile portrait’ view mode.
 * May 2, 2014
 	* Launched an `experimental simple API`. I decided to host the documentation of the API on [GitHub](https://github.com/barriespotter/API).
 * May 1, 2014
