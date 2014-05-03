@@ -1,5 +1,7 @@
 # Website
 
+This repository is only about the website itself and will public document the to do lists and a few other things.
+
 ## Todo
 
 * Create a `individual page for a spotter ID` (include a map to plot the departure airport, arrival airport, route planned and the geo coordinates of the aircraft as it was recorded).
