@@ -19,6 +19,7 @@ This repository is only about the website itself and will public document the to
 * May 7, 2014
 	* Revamped the statistic section to make it easier to read as well as added a new statistic ‘Route (Waypoint)’. [See Statistic](http://www.barriespotter.com/statistic)
 	* Added a new real-time notification system throughout the site, which lets users know of new database entries as they browse the site.
+	* Added aircraft pictures back again. The picture that shows up only takes into account the Airline and Aircraft type, but its close enough.
 * May 6, 2014
 	* Significantly improved the speed of certain pages on the site.
 	* The front page also has a map of todays flights.
