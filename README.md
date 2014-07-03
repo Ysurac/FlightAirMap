@@ -6,6 +6,8 @@ This repository is only about the website itself and will public document the to
 
 * Improve the `Print Styles`
 * Improve the `Search interface`
+* Add the ability to see a statistic of `most common aircraft` to most individual pages, especially the airline page.
+* Fix the `styling of the blue sub menu`, especially in the global statistic section.
 
 ## Changelog
 
