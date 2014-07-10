@@ -4,6 +4,8 @@ This repository is only about the website itself and will publicly document the 
 
 ## Changelog
 
+* July 10, 2014
+	* Added a new `search export data format` for GeoRSS. As well as a new information page/Data License for the whole project. [See Data Export Info](http://www.barriespotter.com/about/export)
 * July 9, 2014
 	* Added new statistic for `Most Common Airline by Country` and `Most Common Departure & Arrival Airport by Country` for all profile pages. Additionally, new search export formats for YAML, PHP (Serialized Array) as well as geo/mapping exports in GPX, WKT (Well-Known Text) is now available. Oh, and there where a few bugs here and there that got squashed.
 * July 8, 2014
@@ -19,4 +21,4 @@ This repository is only about the website itself and will publicly document the 
 * June 2, 2014
 	* Added `additional statistics` such as most common aircraft, airline, departure & arrival airports to the Aircraft, Airline and Airport profiles. [See Sample](http://barriespotter.com/airline/statistics/aircraft/DLH)
 * May 26, 2014
-	* Launched the new design. [GitHub](http://www.barriespotter.com)
+	* Launched the new design. [See it](http://www.barriespotter.com)
