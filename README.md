@@ -4,6 +4,8 @@ This repository is only about the website itself and will publicly document the 
 
 ## Changelog
 
+* July 9, 2014
+	* Added new statistic for `Most Common Airline by Country` and `Most Common Departure & Arrival Airport by Country` for all profile pages. Additionally, new search export formats for YAML, PHP (Serialized Array) as well as geo/mapping exports in GPX, WKT (Well-Known Text) is now available. Oh, and there where a few bugs here and there that got squashed.
 * July 8, 2014
 	* Added statistic for `Most Common Aircraft Manufacturer` to all the profile  pages, such as Aircraft, Airline, Country, Manufacturer, Date etc.
 * July 7, 2014
