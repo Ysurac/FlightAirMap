@@ -6,6 +6,7 @@ This repository is only about the website itself and will publicly document the 
 * July 12, 2014
 	* Added a new search parameter to allow for searching of flights between certain altitudes
 	* Added new special profiles for aircraft, airline, airport and country to handle missing data. The data is known as Not Available (NA) and allows you to see statistics for all the missing data.
+	* Flight Profile pages or Registration profile pages inc which aircrafts have a special highlight associated with them are now showing that at the very top. [See Example](http://www.barriespotter.com/registration/D-ABYI) 
 	* Numerous back-end improvements.
 
 * July 11, 2014
