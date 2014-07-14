@@ -3,6 +3,10 @@
 This repository is only about the website itself and will publicly document the latest changes being pushed live.
 
 ## Changelog
+* July 12, 2014
+	* Added a new search parameter to allow for searching of flights between certain altitudes
+	* Added new special profiles for aircraft, airline, airport and country to handle missing data. The data is known as Not Available (NA) and allows you to see statistics for all the missing data.
+	* Numerous back-end improvements.
 
 * July 11, 2014
 	* Removed all images of aircrafts without a registration.
