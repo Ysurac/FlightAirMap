@@ -1,0 +1,1217 @@
+body{
+  background-color:#fff;
+  font-family: 'Roboto', sans-serif;
+  font-size:14px;
+  font-weight:300;
+  padding-top:70px;
+}
+a{
+  color:#808080;
+  text-decoration:none;
+}
+a:hover{
+  text-decoration:none;
+}
+h1, h2, h3, h4, h5, h6{
+	margin-top:0px;
+	margin-bottom:10px;
+	border-bottom:1px solid #ddd;
+	padding-bottom:10px;
+	font-weight:100;
+	text-transform: uppercase;
+}
+h1{
+	font-size:1.5em;
+}
+h2{
+	font-size:1.4em;
+}
+h3{
+	font-size:1.3em;
+}
+h3 span.count{
+	font-size:14px;
+	font-weight:normal;
+}
+h4{
+	font-size:1.2em;
+}
+p{
+	line-height:1.7em;
+}
+label{
+	font-weight:normal;
+}
+table{
+ width:100%; 
+}
+table thead{
+ background-color:#e9e9e9;
+}
+table thead a:hover{
+	color:#000;
+}
+table thead .small{
+	color:#808080;
+}
+table thead .active{
+	color:#000;
+	font-weight:400;
+}
+table th{
+	text-align: center;
+	padding:5px;
+	white-space: nowrap;
+	 font-weight:300;
+	 text-transform: capitalize;
+	 color:#808080;
+}
+table tr{
+	 border-bottom: 1px solid #F0F0F0;
+}
+table tr:last-child{
+	border-bottom:0px;
+}
+table tr td{
+  text-align: center;
+  padding:8px;
+  font-size:0.9em;
+  font-weight:300;
+  width:10%;
+}
+table tr td.logo{
+	height:80px;
+	vertical-align:middle;
+}
+table tr td.logo img{
+	width:80%;
+}
+table tr td.ident{
+	width:10%;
+}
+#header-fixed { 
+    position: fixed; 
+    top: 0px;
+    display:none;
+    background-color:white;
+}
+.container>.navbar-header, 
+.container-fluid>.navbar-header, 
+.container>.navbar-collapse, 
+.container-fluid>.navbar-collapse{
+    margin-left:0px;
+    margin-right:0px;
+}
+.navbar .container{
+	padding-top:0px;
+	padding-bottom:0px;
+}
+.navbar .navbar-brand{
+	padding:0px;
+	padding-top:10px;
+}
+.navbar .nav a{
+	color:#fff;
+	font-weight:100;
+	text-transform: uppercase;
+	font-size:1.0em;
+	padding-left:1.5em;
+	padding-right:1.5em;
+}
+.navbar .nav a:hover{
+	background-color:#eee;
+	color:#000;
+	text-decoration: none;
+}
+.navbar .nav .dropdown.open a{
+	color:#000;
+}
+.navbar .nav .dropdown-menu a{
+	color:#000;
+	font-size:1.0em;
+}
+.navbar .nav .dropdown-menu a:hover{
+	background-color: transparent;
+	text-decoration: underline;
+}
+.navbar .nav hr{
+	margin-top:0.5em;
+	margin-bottom:0.5em;
+}
+.navbar .social{
+	float:right;
+	margin-right:1.5em;
+	margin-top:1.0em;
+}
+.navbar .social a{
+	font-size:1.3em;
+	display:inline-block;
+	margin-left:0.5em;
+	color:#fff;
+}
+.navbar .social a:hover{
+	opacity:0.75;
+}
+.navbar form{
+	border-bottom:0px;
+	margin-top:10px;
+	margin-bottom:0px;
+	padding:0px;
+	float:right;
+	display:inline-block;
+	width:180px;
+	background-color:#fff;
+	border:1px solid #ddd;
+	-webkit-border-radius: 50px;
+	-moz-border-radius: 50px;
+	border-radius: 50px;
+}
+.navbar form input[type="text"]{
+	width:80%;
+	padding-left:10px;
+	border:0px;
+	outline:none;
+	color:#aaa;
+	font-style:italic;
+	font-size: 0.9em;
+	-webkit-border-radius: 50px;
+	-moz-border-radius: 50px;
+	border-radius: 50px;
+}
+.navbar form button{
+	color:#aaa;
+	background-color:#fff;
+	border:0px;
+	float:right;
+	padding:5px;
+	padding-right:10px;
+	-webkit-border-radius: 50px;
+	-moz-border-radius: 50px;
+	border-radius: 50px;
+}
+.container{
+  padding-top:10px;
+  padding-bottom: 15px;
+  padding-left:0px;
+  padding-right:0px;
+}
+.navbar{
+	margin-bottom:0px;
+	border:0px;
+	background-color: #1a3151;
+}
+footer{
+	text-align: center;
+	padding-top:1.0em !important;
+	padding-bottom:3.0em !important;
+	font-size:0.9em;
+	border-top:1px solid #ddd;
+	margin-top:2.0em;
+}
+footer span{
+	margin-left:0.5em;
+	margin-right:0.5em;
+}
+footer a:hover{
+	text-decoration: underline;
+}
+.sidebar{
+	margin-top:1.0em;
+}
+.sidebar h3{
+	font-weight:300;
+	text-transform: uppercase;
+	margin-top:0px;
+}
+.sidebar ul{
+	margin:0px;
+	padding:0px;
+}
+.sidebar ul li{
+	margin:0px;
+	padding:0px;
+	list-style-type: none;
+	list-style: none;
+	border-bottom:1px solid #eee;
+	padding-bottom:10px;
+	margin-bottom:10px;
+	padding-left:10px;
+}
+.sidebar a.active{
+	color:#092555;
+}
+.col-sm-9{
+	margin-top:1.0em;
+}
+.pagination{
+	text-align: center;
+	width:100%;
+}
+.pagination a{
+	display:inline-block;
+	margin-right:15px;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	display: inline-block;
+	margin-bottom: 0;
+	font-weight: 300;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	white-space: nowrap;
+	padding: 6px 12px;
+	line-height: 1.42857143;
+	border-radius: 4px;
+}
+.pagination a:hover{
+	color:#fff;
+	background-color:#1a3151;
+}
+.column{
+	margin-bottom:15px;
+}
+.info{
+	clear:both;
+	overflow:hidden;
+	margin-bottom:0.5em;
+}
+.info .description{
+	text-transform:inherit;
+	font-weight:normal;
+	margin-right:10px;
+	font-size:inherit;
+}
+.info div{
+	display: inline-block;
+	margin-bottom:2.0em;
+	font-weight:400;
+	margin-right:2.0em;
+}
+.info img.logo{
+	float:left;
+	margin-right:25px;
+	max-width:100px;
+	max-height:50px;
+}
+.info span{
+	color:#595959;
+	font-weight:100;
+	text-transform: uppercase;
+	padding:0px;
+	margin-right:5px;
+	text-align: left;
+	font-size:0.8em;
+}
+.clear{
+	clear:both;
+	overflow:hidden;
+}
+.chart{
+	margin-bottom:20px;
+}
+#map{
+	width:100%;
+	height:350px;
+	margin-bottom:0px;
+}
+.top-header{
+	padding:0px;
+	margin-top:-20px;
+	margin-bottom:1.0em;
+}
+.top-header img{
+	width:100%;
+}
+#notification-permission{
+	display:none;
+}
+span.mobile{
+	display:none;
+}
+form{
+  margin-bottom:20px;
+  padding:10px;
+  padding-bottom:30px;
+}
+form fieldset{
+	margin-bottom:20px;
+}
+form label{
+  display:inline-block;
+  width:200px;
+  margin-bottom:10px;
+  vertical-align: top;
+}
+form input[type="text"],
+form textarea,
+form select{
+	width:350px;
+	padding:5px;
+	border:1px solid #ddd;
+}
+form .radio label{
+	display:inline-block;
+	width:inherit;
+}
+form .time{
+	margin-bottom:20px;
+}
+form #recaptcha_widget_div{
+	display: inline-block;
+}
+form #recaptcha_widget_div table tr:nth-child(even){
+	background-color:transparent;
+}
+a.full-width{
+	width:100%;
+}
+.search-containers .search-box{
+	display: inline-block;
+	margin-right:30px;
+}
+.search-containers .search-box:last-child{
+	margin-right:0px;
+}
+.search-containers form{
+	border-bottom:0px;
+	margin-top:0px;
+	margin-right:0px;
+	padding:0px;
+	margin-bottom:0px;
+	border:1px solid #ddd;
+}
+.search-containers button{
+	color:#aaa;
+	background-color:#fff;
+	border:0px;
+}
+.search-containers button i{
+	font-size:1.2em;
+}
+.search-containers .bootstrap-select{
+	margin-bottom:0px !important;
+	border-right:1px solid #ddd;
+	width:315px !important;
+}
+.notifications .alert{
+	background-color:#eee;
+	border:0px;
+	box-shadow: 1px 0px 2px #888888;
+}
+.notifications .alert .close{
+	display:inline-block;
+	margin-left:5px;
+}
+.alphabet-legend{
+	margin-bottom: 3.0em;
+}
+.alphabet-legend a{
+	display:inline-block;
+	margin-left:0.2em;
+	margin-right:0.2em;
+}
+.alphabet-header{
+	font-weight:bold;
+}
+.alphabet{
+	margin-bottom:3.0em;
+}
+.alphabet .alphabet-item{
+	display:inline-block;
+	vertical-align: top;
+	margin-bottom:2.0em;
+	width:30%;
+	margin-right:2.0em;
+}
+.alphabet .alphabet-airline.alphabet-item{
+	display:inline-block;
+	vertical-align: top;
+	margin-bottom:3.0em;
+	width:20%;
+}
+.alphabet .alphabet-item img{
+	max-width:100px;
+	max-height:60px;
+}
+.alphabet .alphabet-item a:hover img{
+	opacity:0.75;
+}
+.overview-statistic{
+	margin-bottom:3.0em;
+}
+.overview-statistic .more{
+	text-align: right;
+	margin-top:0.5em;
+	font-weight:500;
+	border-top:1px solid #ddd;
+	padding-top:0.5em;
+}
+
+
+/* SUB MENU */
+.sub-menu-statistic{
+		margin-bottom:15px;
+}
+.sub-menu-statistic,
+.sub-menu-statistic a{
+	display: block;
+	width:100%;
+	background-color:#314f77;
+	color:#fff;
+}
+.sub-menu-statistic a i{
+	float:right;
+}
+.sub-menu{
+	background-color:#314f77;
+	margin-bottom:2.0em;
+}
+.sub-menu ul{
+	margin:0px;
+	padding:0px;
+}
+.sub-menu ul li{
+	display:inline-block;
+	list-style: none;
+	list-style-type: none;
+}
+.sub-menu ul li ul li{
+	display:block;
+}
+.sub-menu ul li a{
+	color:#fff;
+	width:100%;
+	font-weight:100;
+	text-transform: uppercase;
+	font-size:1.0em;
+	padding-left:1.5em;
+	padding-right:1.5em;
+}
+.sub-menu ul li a:hover,
+.sub-menu ul li a.active{
+	background-color:#1a3151;
+}
+.sub-menu .nav .dropdown.open a {
+    background-color:#1a3151;
+}
+.sub-menu .nav .dropdown.open li a{
+	background-color:transparent;
+} 
+.sub-menu .nav .dropdown-menu a {
+    color: #000;
+    font-size: 1.0em;
+    display:block;
+    margin-top:0.3em;
+}
+.sub-menu .nav .dropdown-menu a:hover,
+.sub-menu .nav .dropdown-menu a.active {
+    background-color: transparent;
+    text-decoration: underline;
+}
+.sub-menu .nav hr{
+	margin-top:0.5em;
+	margin-bottom:0.5em;
+}
+.sub-menu ul.dropdown-menu li span{
+	padding-left:1.5em;
+	padding-right:1.5em;
+}
+
+.select-item form{
+	padding:0px;
+}
+.select-item form label{
+	width:inherit;
+	margin-right:10px;
+	vertical-align: middle;
+	margin-bottom:0px;
+}
+.select-item form input[type="text"].custom{
+	width:100px;
+	cursor: pointer;
+}
+.select-item form button[type="submit"]{
+	background-color:#fff;
+	border:0px;
+	font-size:1.2em;
+	color:#00aded;
+}
+.select-item form .bootstrap-select{
+	margin-top:5px;
+}
+
+
+/* RE-CAPTCHA */
+.recaptchatable .recaptcha_r1_c1, .recaptchatable .recaptcha_r3_c1, .recaptchatable .recaptcha_r3_c2, .recaptchatable .recaptcha_r7_c1, .recaptchatable .recaptcha_r8_c1, .recaptchatable .recaptcha_r3_c3, .recaptchatable .recaptcha_r2_c1, .recaptchatable .recaptcha_r2_c2, .recaptchatable .recaptcha_r4_c1, .recaptchatable .recaptcha_r4_c2, .recaptchatable .recaptcha_r4_c4, .recaptchatable .recaptcha_image_cell {
+	background: none !important;
+}
+.recaptchatable .recaptcha_r2_c2{
+	display:none !important;
+}
+#recaptcha_response_field{
+	padding:7px !important;
+	border:1px solid #ddd !important;
+	outline:0 !important;
+}
+#recaptcha_privacy{
+	display:none !important;
+}
+
+
+
+/* jQuery UI Datepicker */
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+.ui-timepicker-div dl { text-align: left; }
+.ui-timepicker-div dl dt { float: left; clear:left; padding: 0 0 0 5px; }
+.ui-timepicker-div dl dd { margin: 0 10px 10px 45%; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+.ui-timepicker-rtl{ direction: rtl; }
+.ui-timepicker-rtl dl { text-align: right; padding: 0 5px 0 0; }
+.ui-timepicker-rtl dl dt{ float: right; clear: right; }
+.ui-timepicker-rtl dl dd { margin: 0 45% 10px 10px; }
+
+
+
+/* INDEX */
+body.page-index #slideshow{
+	position: relative;
+}
+body.page-index #slideshow .slidejs-container{
+	height:500px;
+	overflow:hidden !important;
+}
+body.page-index #slideshow .slidesjs-previous{
+	display:none;
+	position: absolute;
+	top:50%;
+	left:8px;
+	z-index:10;
+	text-indent: -9999px;
+	cursor: pointer;
+	width: 32px;
+	height: 32px;
+	background-image: url('images/slideshow-button.png'); 
+	background-position: 0% 0%; 
+	background-repeat: no-repeat no-repeat;
+}
+body.page-index #slideshow .slidesjs-previous:hover{
+	background-position: 0% 100%; 
+}
+
+body.page-index #slideshow .slidesjs-next{
+	display:none;
+	position: absolute;
+	top:50%;
+	right:8px;
+	z-index:10;
+	text-indent: -9999px;
+	cursor: pointer;
+	width: 32px;
+	height: 32px;
+	background-image: url('images/slideshow-button.png'); 
+	background-position: 100% 0%; 
+	background-repeat: no-repeat no-repeat;
+}
+body.page-index #slideshow .slidesjs-next:hover{
+	background-position: 100% 100%; 
+}
+body.page-index #slideshow .slidesjs-container,
+body.page-index #slideshow .slide{
+    height:500px !important;
+}
+body.page-index #slideshow .slide img{
+	width:100%;
+	z-index: 9;
+	position: relative;
+	display:block;
+	margin-top:-145px;
+}
+body.page-index #slideshow .slide .details{
+	position: absolute;
+	width:100%;
+	left:0px;
+	bottom:0px;
+	background:transparent url('images/slide-details-bg.png') 0 0;
+	padding:10px;
+	z-index:10;
+	height:20%;
+	line-height:1.8em;
+}
+body.page-index #slideshow .slide a{
+	color:#fff;
+	font-size:1.2em;
+}
+body.page-index .stats{
+    text-align:center;
+    padding-bottom:4.0em;
+    padding-top:4.0em;
+    margin-bottom:4.0em;
+}
+body.page-index .stats div{
+    display:inline-block;
+    font-size:1.2em;
+    width:150px;
+    font-weight:100;
+    background-color:#1a3151;
+    color:#fff;
+    padding:30px;
+    margin-right:1.5em;
+    text-align:center;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+}
+body.page-index .stats div span{
+    font-size:2.5em;
+    font-weight:300;
+    text-transform:uppercase;
+    clear:both;
+}
+body.page-index .stats div.flights span{
+	margin-left:-16px;
+}
+body.page-index .stats h2{
+    font-weight:300;
+    margin-bottom:1.0em;
+    border-bottom:0px;
+}
+body.page-index .hours{
+    text-align:center;
+    padding-bottom:0px;
+    margin-bottom:6.0em;
+}
+body.page-index .hours h2{
+    font-weight:300;
+    margin-bottom:0px;
+    border-bottom:0px;
+}
+body.page-index .latest h2{
+    font-weight:300;
+    margin-bottom:1.0em;
+}
+body.page-index .latest .quote{
+	margin-top:2.0em;
+	padding-top:2.0em;
+	border-top:1px solid #eee;
+}
+body.page-index .latest .quote .fa{
+    color:#ddd;
+    font-size:3.0em;
+    float:left;
+		margin-right: 0.3em;
+}
+ 
+
+
+
+/* ABOUT */
+body.page-about .container
+body.page-about .container ul li{
+	margin-bottom:5px;
+}
+body.page-about .container ul.social{
+	margin:0px;
+	padding:0px;
+}
+body.page-about .container ul.social li{
+	list-style: none;
+	list-style-type: none;
+	margin-bottom:10px;
+}
+
+
+
+/* ABOUT/TV */
+body.page-about-tv .tv-launch{
+	text-align: center;
+	background-color:#B5CBE8;
+	border:1px solid #1a3151;
+	padding:8px;
+	margin:0 auto;
+	display:block;
+	width:50%;
+	margin-bottom:3.0em;
+}
+body.page-about-tv .tv-launch a{
+	color:#fff;
+	font-size:1.3em;
+}
+body.page-about-tv .tv-launch a:hover{
+	color:#1a3151;
+}
+body.page-about-tv .tv-image{
+	text-align: center;
+	margin-bottom:3.0em;
+	margin-top:2.0em;
+}
+body.page-about-tv .tv-image img{
+	width:50%;
+}
+
+
+/* ABOUT/EXPORT */
+body.page-about-export .main-content .fa{
+	float:right;
+	font-size:15.0em;
+	margin-left:0.1em;
+	margin-bottom:0.1em;
+	color:#314f77;
+}
+body.page-about-export .main-content ul{
+	padding:0px;
+}
+body.page-about-export .main-content ul li{
+	margin-bottom:1.5em;
+	list-style: none;
+	list-style-type:none;
+}
+body.page-about-export .main-content ul li ul{
+	padding-left:2.0em;
+	margin-top:0.5em;
+}
+body.page-about-export .main-content ul li ul li{
+	list-style-type: circle;
+}
+body.page-about-export .export-image{
+	text-align: center;
+	margin-bottom:3.0em;
+	margin-top:2.0em;
+}
+body.page-about-export .export-image img{
+	width:70%;
+}
+
+
+/* SEARCH */
+body.page-search .sub-menu li.short-url{
+	float:right;
+	color:#fff;
+	padding: 5px 15px;
+}
+body.page-search .sub-menu .short-url input{
+	color:#000;
+	font-size:0.9em;
+	padding:3px;
+	outline:none;
+}
+body.page-search fieldset legend{
+	font-weight:300;
+	text-transform: uppercase;
+    font-size:1.2em;
+}
+body.page-search .advanced-button{
+    margin-bottom:10px;
+    margin-top:-20px;
+}
+
+
+/* FLIGHT ID */
+body.page-flightid-overview .image{
+	padding-left:0px;
+	padding-right:0px;
+	margin-top:2.0em;
+}
+body.page-flightid-overview .image img{
+	width:100%;
+}
+body.page-flightid-overview .note{
+	font-style:italic;
+	font-size:0.9em;
+	margin-top:5px;
+	font-weight:100;
+}
+body.page-flightid-overview .details{
+	margin-top:2.0em;
+}
+body.page-flightid-overview .details .detail img{
+	max-width:120px;
+	max-height:60px;
+}
+body.page-flightid-overview .details .detail{
+	margin-bottom:0.5em;
+	padding-bottom:0.5em;
+}
+body.page-flightid-overview .details .detail-highlight{
+	font-style: italic;
+}
+body.page-flightid-overview .details .detail .title{
+	display:block;
+	font-weight:500;
+}
+body.page-flightid-overview .details .detail span{
+	margin-right:20px;
+}
+body.page-flightid-overview .details .detail .date{
+	display:block;
+}
+body.page-flightid-overview .slideshow{
+	position: relative;
+	height:385px;
+}
+body.page-flightid-overview .slideshow .slidesjs-previous{
+	display:none;
+	position: absolute;
+	top:50%;
+	left:8px;
+	z-index:10;
+	text-indent: -9999px;
+	cursor: pointer;
+	width: 32px;
+	height: 32px;
+	background-image: url('images/slideshow-button.png'); 
+	background-position: 0% 0%; 
+	background-repeat: no-repeat no-repeat;
+}
+body.page-flightid-overview .slideshow .slidesjs-previous:hover{
+	background-position: 0% 100%; 
+}
+body.page-flightid-overview .slideshow .slidesjs-next{
+	display:none;
+	position: absolute;
+	top:50%;
+	right:8px;
+	z-index:10;
+	text-indent: -9999px;
+	cursor: pointer;
+	width: 32px;
+	height: 32px;
+	background-image: url('images/slideshow-button.png'); 
+	background-position: 100% 0%; 
+	background-repeat: no-repeat no-repeat;
+}
+body.page-flightid-overview .slideshow .slidesjs-next:hover{
+	background-position: 100% 100%; 
+}
+body.page-flightid-overview .last-flights{
+	margin-bottom:2.0em;
+}
+
+
+
+
+/* HIGHLIGHTS */
+body.page-highlights table tr td{
+	padding-bottom:2.0em;
+}
+body.page-highlights table tr.special{
+	border-bottom:0px;
+}
+body.page-highlights table tr.special td{
+	text-align: left;
+	padding-bottom:0px;
+	padding-top:2.0em;
+}
+body.page-highlights table tr.special td h4{
+	border-bottom:0px;
+	margin-bottom:0px;
+	text-transform: inherit;
+}
+
+
+
+/* SEARCH */
+body.page-search .datepicker{
+	cursor: pointer;
+}
+
+
+/* Tablet (Landscape) */
+@media only screen and (min-width: 992px) and (max-width: 1199px){
+	
+	/* GLOBAL */
+	.search-containers .bootstrap-select{
+		width:235px !important;
+	}
+
+	
+	/* INDEX */
+	body.page-index .entry{
+		width:120px;
+		margin-right:40px;
+		display:inline-block;
+	}
+		
+}
+
+
+/* Tablet (Portrait) */
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+
+	/* GLOBAL */
+	.nav>li>a{
+		padding: 10px 10px;
+	}
+	.navbar-nav{
+		margin-top:8px;
+	}
+	.search-containers .bootstrap-select{
+		width:165px !important;
+	}
+	.navbar .navbar-brand{
+		margin-left:0px !important;
+	}
+	.navbar .social{
+		display:none;
+	}
+	.navbar form{
+		width:120px;
+	}
+	.navbar form input[type="text"]{
+		width:75%;
+	}
+	
+	
+	/* INDEX */
+	body.page-index #slideshow .slidejs-container{
+		height:400px;
+	}
+	body.page-index #slideshow .slidesjs-container,
+	body.page-index #slideshow .slide{
+	    height:400px !important;
+	}
+	body.page-index #slideshow .slide img{
+		margin-top:-100px;
+	}
+	body.page-index .entry{
+		width:300px;
+		margin-right:60px;
+		display:inline-block;
+		text-align: center;
+	}
+	
+	/* FLIGHT ID */
+	body.page-flightid-overview .slideshow{
+		height:300px;
+	}
+	
+}
+
+
+/* Mobile (Portrait/Landscape) */
+@media only screen and (max-width: 767px) {
+
+    /* GLOBAL */
+    body{
+	    padding-top:0px;
+    }
+	.container.main-content{
+	    padding-left:0px;
+	    padding-right:0px;
+	    padding-top:60px;
+	}
+	.top-header{
+		display:none;
+	}
+	span.nomobile{
+		display:none;
+	}
+	span.mobile{
+		display:inline-block;
+	}
+	input[type="text"],
+	input[type="submit"],
+    select,
+    textarea{
+	    width:100% !important;
+	    margin-bottom:5px;
+    }
+    .select-item input[type="text"]{
+	    width:90% !important;
+    }
+    .select-item button{
+	    padding-left:5px;
+    }
+    .dropdown-menu{
+	    background-color:#fff !important;
+    }
+    .dropdown-menu>li>a{
+	    color:#fff;
+	    padding-left:10px;
+    }
+    .dropdown-menu>li>a:hover{
+	    color:#fff;
+    }
+    .navbar-collapse{
+			padding-left:25px;
+		}
+	.navbar-brand{
+    	padding-left:5px;
+    	margin-bottom:0px;
+    	margin-left:10px;
+    }
+    .navbar-nav{
+			float:none;
+			margin-top:inherit;
+		}
+		.navbar .social{
+			display:none;
+		}
+		.navbar form{
+			display: none;
+		}
+		.navbar .fa{
+			color:#fff;
+		}
+		.navbar-toggle{
+			margin-right: 10px;
+			padding: 9px 5px;
+		}
+		.navbar-toggle .icon-bar{
+			border-bottom:1px solid #fff;
+		}
+		.column{
+			padding:10px;
+		}
+    .info div{
+		margin-right:0px;
+		padding-right:0px;
+		display: block;
+		margin-bottom:5px;
+		border-right:0px;
+		font-size: 0.9em;
+	}
+	body.page-airline img.logo{
+		float:none;
+	}
+	.info div span{
+		display:inline-block;
+		width:40%;
+		text-transform: none;
+		font-weight:normal;
+	}
+	.search-explore,
+	.search-explore a{
+		display:block;
+		width:100%;
+	}
+	.search-explore a{
+		text-transform: uppercase;
+	}
+	.search-explore a i{
+		float:right;
+	}
+	.search-containers{
+		display:none;
+	}
+	footer{
+		padding-top:0px !important;
+	}
+	.sub-menu{
+		display:none;
+	}
+	.sub-menu ul li{
+		width:100%;
+	}
+	.table-responsive{
+	    margin-left:-15px;
+      width:110%;
+	}
+	.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12{
+			padding-left:0px;
+			padding-right:0px;
+		}
+		body.page-flightid .col-sm-4{
+			padding-left:15px;
+			padding-right:15px;
+		}
+		.sidebar{
+			display:none;
+		}
+		.search-containers .bootstrap-select{
+			width:250px !important;
+		}
+		.search-containers .bootstrap-select ul li a{
+			color:#000;
+		}
+		.search-containers .search-box{
+			margin-right:0px;
+			margin-bottom:0.5em;
+		}
+		.alphabet .alphabet-item{
+			width:40% !important;
+		}
+		.table-responsive{
+			border-bottom:0px;
+		}
+
+		
+	/* FLIGHT ID */
+	body.page-flightid-overview .slideshow{
+		height:210px;
+	}
+		
+	/* INDEX */
+	body.page-index #slideshow .slidesjs-container,
+    body.page-index #slideshow .slide{
+        height:180px !important;
+        overflow:hidden !important;
+    }
+	body.page-index #slideshow .slide img{
+    	margin-top:-20px;
+    }
+    body.page-index #slideshow .slide .details{
+			height:25%;
+		}
+    body.page-index .stats div{
+        margin-bottom:1.0em;
+    }
+    body.page-index .latest .news .news-item img{
+        float:none;
+        margin-right:0px;
+        display:block;
+        width:100%;
+    }
+    body.page-index .latest .news .news-item .body{
+        padding-left:0px;
+    }
+  
+	/* ABOUT/TV */
+	body.page-about-tv .tv-launch{
+		width:80%;
+	}
+	body.page-about-tv .tv-image img{
+		width:80%;
+	}
+	
+	/* ABOUT/EXPORT */
+	body.page-about-export .main-content .fa{
+		display:none;
+	}
+	body.page-about-export .export-launch{
+		width:80%;
+	}
+	body.page-about-export .export-image img{
+		width:80%;
+	}
+	
+	/* Search */
+	body.page-search .sub-menu li.short-url{
+		display:none;
+	}
+
+}
+
+
+/* Mobile (Landscape) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+
+	/* INDEX */
+	body.page-index #slideshow .slidesjs-container,
+    body.page-index #slideshow .slide{
+        height:250px !important;
+        overflow:hidden !important;
+    }
+	body.page-index #slideshow .slide img{
+    	margin-top:-75px;
+    }
+    
+  /* FLIGHT ID */
+	body.page-flightid-overview .slideshow{
+		height:275px;
+	}
+
+
+
+}

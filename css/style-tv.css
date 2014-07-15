@@ -1,0 +1,69 @@
+a{
+	color:#aaa;
+}
+table#table-tv{
+	width:100%;
+	color:#aaa;
+	border-top:30px solid #1a3151;
+}
+/*
+table#table-tv thead{
+	background-color:#1a3151;
+	color:#fff;
+}
+table#table-tv thead th{
+	text-align: center;
+	padding:10px;
+	font-weight:100;
+	text-transform: uppercase;
+	font-size:2.0em;
+}
+*/
+table#table-tv tr{
+	border-bottom:1px solid #ddd;
+}
+table#table-tv tr td{
+	text-align: center;
+	padding:15px;
+}
+table#table-tv tr td.aircraft_image{
+	width:15%;
+	padding-right:5.0em;
+}
+table#table-tv tr td.aircraft_image img{
+	width:100%;
+}
+table#table-tv tr td.logo{
+	width:14%;
+	padding-left:5.0em;
+}
+table#table-tv tr td.logo img{
+	width:100%;
+}
+table#table-tv tr td.logo-no-image{
+	font-size:3.0em;
+}
+table#table-tv tr td.info .flight{
+	font-size:2.8em;
+	margin-bottom:0.5em;
+	margin-top:0.5em;
+}
+table#table-tv tr td span{
+	display:inline-block;
+	margin-right:1.0em;
+}
+table#table-tv tr td.info .other1{
+	font-size:2.0em;
+	color:#9E9E9E;
+	margin-bottom:0.5em;
+}
+table#table-tv tr td.info .other2{
+	font-size:2.0em;
+	color:#9E9E9E;
+	margin-bottom:0.5em;
+}
+table#table-tv tr td.info .other3{
+	font-size:2.0em;
+	color:#9E9E9E;
+	margin-bottom:0.5em;
+}

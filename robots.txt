@@ -1,0 +1,3 @@
+User-agent: * 
+Crawl-Delay: 20
+Disallow: /dev

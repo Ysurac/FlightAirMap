@@ -1,0 +1,13 @@
+@media print {
+   
+   .top-header,
+   body.page-search form{
+	   display:none;
+   }
+   
+   table td
+		{
+		  width:20%;
+		}
+   
+}
