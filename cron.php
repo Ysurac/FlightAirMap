@@ -5,8 +5,8 @@ require('require/class.Spotter.php');
 $options = array(
 	'trace' => true,
 	'exceptions' => 0,
-	'login' => 'mtrunz',
-	'password' => '60c3cc748cb83742310186e3f5ed0e942eb8dcc9',
+	'login' => '',
+	'password' => '',
 );
 $client = new SoapClient('http://flightxml.flightaware.com/soap/FlightXML2/wsdl', $options);
 
