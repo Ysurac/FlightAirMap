@@ -101,7 +101,7 @@ if ($facebook_meta_image != "")
           <ul class="dropdown-menu">
           	<li><a href="<?php print $globalURL; ?>/about">About</a></li>
           	<li><a href="<?php print $globalURL; ?>/about/export">Export Data</a></li>
-          	<li><a href="https://github.com/barriespotter/Website/issues" target="_blank">Report any Issues</a></li>
+          	<li><a href="https://github.com/barriespotter/Web_App/issues" target="_blank">Report any Issues</a></li>
           	<li><a href="https://www.facebook.com/barriespotter" target="_blank">Contact</a></li>
           	<li><hr /></li>
 			<li><a href="<?php print $globalURL; ?>/about/tv">Barrie Spotter TV</a></li>
