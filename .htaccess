@@ -68,6 +68,19 @@ RewriteCond %{HTTPS} =off
 RewriteRule ^tv(/?)$ tv.php [L,NC]
 
 
+########### LIVE ###########
+
+RewriteCond %{HTTPS} !=off
+RewriteRule ^live/geojson(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^live/geojson(/?)$ live-geojson.php [L,NC]
+
+RewriteCond %{HTTPS} !=off
+RewriteRule ^live(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^live(/?)$ live.php [L,NC]
+
+
 ########### SEARCH ###########
 
 RewriteCond %{HTTPS} !=off

@@ -43,7 +43,7 @@ label{
 	font-weight:normal;
 }
 table{
- width:100%; 
+ width:100%;
 }
 table thead{
  background-color:#e9e9e9;
@@ -89,15 +89,15 @@ table tr td.logo img{
 table tr td.ident{
 	width:10%;
 }
-#header-fixed { 
-    position: fixed; 
+#header-fixed {
+    position: fixed;
     top: 0px;
     display:none;
     background-color:white;
 }
-.container>.navbar-header, 
-.container-fluid>.navbar-header, 
-.container>.navbar-collapse, 
+.container>.navbar-header,
+.container-fluid>.navbar-header,
+.container>.navbar-collapse,
 .container-fluid>.navbar-collapse{
     margin-left:0px;
     margin-right:0px;
@@ -496,7 +496,7 @@ a.full-width{
 }
 .sub-menu .nav .dropdown.open li a{
 	background-color:transparent;
-} 
+}
 .sub-menu .nav .dropdown-menu a {
     color: #000;
     font-size: 1.0em;
@@ -592,12 +592,12 @@ body.page-index #slideshow .slidesjs-previous{
 	cursor: pointer;
 	width: 32px;
 	height: 32px;
-	background-image: url('images/slideshow-button.png'); 
-	background-position: 0% 0%; 
+	background-image: url('images/slideshow-button.png');
+	background-position: 0% 0%;
 	background-repeat: no-repeat no-repeat;
 }
 body.page-index #slideshow .slidesjs-previous:hover{
-	background-position: 0% 100%; 
+	background-position: 0% 100%;
 }
 
 body.page-index #slideshow .slidesjs-next{
@@ -610,12 +610,12 @@ body.page-index #slideshow .slidesjs-next{
 	cursor: pointer;
 	width: 32px;
 	height: 32px;
-	background-image: url('images/slideshow-button.png'); 
-	background-position: 100% 0%; 
+	background-image: url('images/slideshow-button.png');
+	background-position: 100% 0%;
 	background-repeat: no-repeat no-repeat;
 }
 body.page-index #slideshow .slidesjs-next:hover{
-	background-position: 100% 100%; 
+	background-position: 100% 100%;
 }
 body.page-index #slideshow .slidesjs-container,
 body.page-index #slideshow .slide{
@@ -702,7 +702,7 @@ body.page-index .latest .quote .fa{
     float:left;
 		margin-right: 0.3em;
 }
- 
+
 
 
 
@@ -860,12 +860,12 @@ body.page-flightid-overview .slideshow .slidesjs-previous{
 	cursor: pointer;
 	width: 32px;
 	height: 32px;
-	background-image: url('images/slideshow-button.png'); 
-	background-position: 0% 0%; 
+	background-image: url('images/slideshow-button.png');
+	background-position: 0% 0%;
 	background-repeat: no-repeat no-repeat;
 }
 body.page-flightid-overview .slideshow .slidesjs-previous:hover{
-	background-position: 0% 100%; 
+	background-position: 0% 100%;
 }
 body.page-flightid-overview .slideshow .slidesjs-next{
 	display:none;
@@ -877,18 +877,16 @@ body.page-flightid-overview .slideshow .slidesjs-next{
 	cursor: pointer;
 	width: 32px;
 	height: 32px;
-	background-image: url('images/slideshow-button.png'); 
-	background-position: 100% 0%; 
+	background-image: url('images/slideshow-button.png');
+	background-position: 100% 0%;
 	background-repeat: no-repeat no-repeat;
 }
 body.page-flightid-overview .slideshow .slidesjs-next:hover{
-	background-position: 100% 100%; 
+	background-position: 100% 100%;
 }
 body.page-flightid-overview .last-flights{
 	margin-bottom:2.0em;
 }
-
-
 
 
 /* HIGHLIGHTS */
@@ -910,6 +908,98 @@ body.page-highlights table tr.special td h4{
 }
 
 
+/* LIVE */
+body.page-live #map{
+  height:600px;
+  width:100%;
+}
+body.page-live .leaflet-popup-content-wrapper{
+  width:200px;
+}
+body.page-live .leaflet-popup-content-wrapper img{
+  -webkit-border-top-left-radius: 12px;
+  -webkit-border-top-right-radius: 12px;
+  -moz-border-radius-topleft: 12px;
+  -moz-border-radius-topright: 12px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  width:100%;
+}
+body.page-live .leaflet-popup-content-wrapper .leaflet-popup-content{
+  width: 100%;
+  margin:0px;
+}
+body.page-live .leaflet-popup-content-wrapper .details{
+  padding:10px;
+  padding-top:5px;
+}
+body.page-live .leaflet-popup-content-wrapper .callsign-details{
+  background-color:#1a3151;
+  color:#fff;
+  padding:10px;
+}
+body.page-live .leaflet-popup-content-wrapper .callsign-details .callsign a{
+  font-size:1.5em;
+  color:#fff;
+}
+body.page-live .leaflet-popup-content-wrapper .callsign-details .callsign a:hover{
+    text-decoration:underline;
+}
+body.page-live .leaflet-popup-content-wrapper .details .airports .airport{
+  display:inline-block;
+  width:44%;
+  vertical-align:top;
+  text-align:center;
+  padding:5px;
+  margin-bottom:5px;
+}
+body.page-live .leaflet-popup-content-wrapper .details .airports .fa{
+  display:inline-block;
+  margin-top:10px;
+  font-size:1.5em;
+}
+body.page-live .leaflet-popup-content-wrapper .details .airports .airport .code a{
+  font-size:1.4em;
+  font-weight:bold;
+  color:#1a3151;
+}
+body.page-live .leaflet-popup-content-wrapper .details .airports .airport .code a:hover{
+  text-decoration:underline;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details div{
+  border-bottom:1px solid #eee;
+  margin-bottom:5px;
+  padding-bottom:5px;
+  font-size:1.0em;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details span{
+  display:block;
+  text-transform:uppercase;
+  color:#aaa;
+  font-size:0.9em;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details .beside{
+  width:100%;
+  border-bottom:0px;
+  text-align:center !important;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details .beside div{
+  width:33%;
+  display:inline-block;
+  border-bottom:0px;
+  border-right:1px solid #eee;
+  padding-left:5px;
+  padding-right:5px;
+  vertical-align:top;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details .beside div:first-child{
+  padding-left:0px;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details .beside div:last-child{
+  border-right:0px;
+  padding-right:0px;
+}
+
 
 /* SEARCH */
 body.page-search .datepicker{
@@ -919,20 +1009,20 @@ body.page-search .datepicker{
 
 /* Tablet (Landscape) */
 @media only screen and (min-width: 992px) and (max-width: 1199px){
-	
+
 	/* GLOBAL */
 	.search-containers .bootstrap-select{
 		width:235px !important;
 	}
 
-	
+
 	/* INDEX */
 	body.page-index .entry{
 		width:120px;
 		margin-right:40px;
 		display:inline-block;
 	}
-		
+
 }
 
 
@@ -961,8 +1051,8 @@ body.page-search .datepicker{
 	.navbar form input[type="text"]{
 		width:75%;
 	}
-	
-	
+
+
 	/* INDEX */
 	body.page-index #slideshow .slidejs-container{
 		height:400px;
@@ -980,12 +1070,12 @@ body.page-search .datepicker{
 		display:inline-block;
 		text-align: center;
 	}
-	
+
 	/* FLIGHT ID */
 	body.page-flightid-overview .slideshow{
 		height:300px;
 	}
-	
+
 }
 
 
@@ -1136,12 +1226,12 @@ body.page-search .datepicker{
 			border-bottom:0px;
 		}
 
-		
+
 	/* FLIGHT ID */
 	body.page-flightid-overview .slideshow{
 		height:210px;
 	}
-		
+
 	/* INDEX */
 	body.page-index #slideshow .slidesjs-container,
     body.page-index #slideshow .slide{
@@ -1166,7 +1256,7 @@ body.page-search .datepicker{
     body.page-index .latest .news .news-item .body{
         padding-left:0px;
     }
-  
+
 	/* ABOUT/TV */
 	body.page-about-tv .tv-launch{
 		width:80%;
@@ -1174,7 +1264,7 @@ body.page-search .datepicker{
 	body.page-about-tv .tv-image img{
 		width:80%;
 	}
-	
+
 	/* ABOUT/EXPORT */
 	body.page-about-export .main-content .fa{
 		display:none;
@@ -1185,7 +1275,7 @@ body.page-search .datepicker{
 	body.page-about-export .export-image img{
 		width:80%;
 	}
-	
+
 	/* Search */
 	body.page-search .sub-menu li.short-url{
 		display:none;
@@ -1206,7 +1296,7 @@ body.page-search .datepicker{
 	body.page-index #slideshow .slide img{
     	margin-top:-75px;
     }
-    
+
   /* FLIGHT ID */
 	body.page-flightid-overview .slideshow{
 		height:275px;

@@ -36,6 +36,16 @@ $current_page = $file_path['filename'];
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css?<?php print time(); ?>" />
 <?php
+if (strtolower($current_page) == "live")
+{
+?>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="<?php print $globalURL; ?>/js/Marker.Rotate.js?<?php print time(); ?>"></script>
+<?php
+}
+?>
+<?php
 if ($facebook_meta_image != "")
 {
 ?>
@@ -67,7 +77,7 @@ if ($facebook_meta_image != "")
 <body class="page-<?php print strtolower($current_page); ?>">
 <div class="navbar navbar-fixed-top" role="navigation">
   <div class="container">
-  		
+
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
         <span class="sr-only">Toggle navigation</span>
@@ -112,7 +122,7 @@ if ($facebook_meta_image != "")
   			<input type="text" name="q" value="<?php if ($_GET['q'] != ""){ print $_GET['q']; } else { print 'search'; } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>
   		</form>
   		<div class="social">
-  			<a href="http://www.facebook.com/barriespotter" target="_blank" title="Like us on Facebook"><i class="fa fa-facebook"></i></a> 
+  			<a href="http://www.facebook.com/barriespotter" target="_blank" title="Like us on Facebook"><i class="fa fa-facebook"></i></a>
   			<a href="http://www.twitter.com/barriespotter" target="_blank" title="Follow us on Twitter"><i class="fa fa-twitter"></i></a>
   			<a href="https://github.com/barriespotter" target="_blank" title="Hack us on Github"><i class="fa fa-github"></i></a>
   		</div>
@@ -130,4 +140,3 @@ if ($top_header != "")
 ?>
 
 <section class="container main-content clear">
-

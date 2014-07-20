@@ -1,12 +1,13 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+require('require/class.SpotterLive.php');
 
 $options = array(
 	'trace' => true,
 	'exceptions' => 0,
-	'login' => '',
-	'password' => '',
+	'login' => 'mtrunz',
+	'password' => '60c3cc748cb83742310186e3f5ed0e942eb8dcc9',
 );
 $client = new SoapClient('http://flightxml.flightaware.com/soap/FlightXML2/wsdl', $options);
 
@@ -18,6 +19,9 @@ print_r($result);
 print '</pre>';
 
 $dataFound = false;
+
+//deletes the spotter LIVE data
+SpotterLive::deleteLiveSpotterData();
 
 if (isset($result->SearchBirdseyeInFlightResult))
 {
@@ -38,20 +42,23 @@ if (isset($result->SearchBirdseyeInFlightResult))
 				$groundspeed = $aircraft->groundspeed;
 
 				$dataFound = true;
-			
+
 				//gets the callsign from the last hour
 				$last_hour_ident = Spotter::getIdentFromLastHour($ident);
-				
+
 				//if there was no aircraft with the same callsign within the last hour and go post it into the archive
 				if($last_hour_ident == "")
 				{
 					if ($departure_airport == "") { $departure_airport = "NA"; }
 					if ($arrival_airport == "") { $arrival_airport = "NA"; }
-			
-				
+
+
 					//adds the spotter data for the archive
-					Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);			
+					Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
 				}
+
+				//adds the spotter LIVE data
+				SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
 
 			}
 		} else {
@@ -66,22 +73,26 @@ if (isset($result->SearchBirdseyeInFlightResult))
 			$altitude = $result->SearchBirdseyeInFlightResult->aircraft->altitude;
 			$heading = $result->SearchBirdseyeInFlightResult->aircraft->heading;
 			$groundspeed = $result->SearchBirdseyeInFlightResult->aircraft->groundspeed;
-			
+
 			$dataFound = true;
-			
+
 			//gets the callsign from the last hour
 			$last_hour_ident = Spotter::getIdentFromLastHour($ident);
-			
+
 			//if there was no aircraft with the same callsign within the last hour and go post it into the archive
 			if($last_hour_ident == "")
 			{
 				if ($departure_airport == "") { $departure_airport = "NA"; }
 				if ($arrival_airport == "") { $arrival_airport = "NA"; }
-		
-			
+
+
 				//adds the spotter data for the archive
-				Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);			
+				Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
 			}
+
+			//adds the spotter LIVE data
+			SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+
 		}
 }
 
