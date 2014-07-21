@@ -36,17 +36,6 @@ $current_page = $file_path['filename'];
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css?<?php print time(); ?>" />
 <?php
-if (strtolower($current_page) == "live")
-{
-?>
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-<script src="<?php print $globalURL; ?>/js/Marker.Rotate.js?<?php print time(); ?>"></script>
-<script src="<?php print $globalURL; ?>/js/map.js?<?php print time(); ?>"></script>
-<?php
-}
-?>
-<?php
 if (strtolower($current_page) == "about")
 {
 ?>

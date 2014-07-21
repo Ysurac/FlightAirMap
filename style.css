@@ -908,6 +908,99 @@ body.page-highlights table tr.special td h4{
 }
 
 
+/* LIVE */
+body.page-live #map{
+  height:600px;
+  width:100%;
+}
+body.page-live .leaflet-popup-content-wrapper{
+  width:200px;
+}
+body.page-live .leaflet-popup-content-wrapper img{
+  -webkit-border-top-left-radius: 12px;
+  -webkit-border-top-right-radius: 12px;
+  -moz-border-radius-topleft: 12px;
+  -moz-border-radius-topright: 12px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  width:100%;
+}
+body.page-live .leaflet-popup-content-wrapper .leaflet-popup-content{
+  width: 100%;
+  margin:0px;
+}
+body.page-live .leaflet-popup-content-wrapper .details{
+  padding:10px;
+  padding-top:5px;
+}
+body.page-live .leaflet-popup-content-wrapper .callsign-details{
+  background-color:#1a3151;
+  color:#fff;
+  padding:10px;
+}
+body.page-live .leaflet-popup-content-wrapper .callsign-details .callsign a{
+  font-size:1.5em;
+  color:#fff;
+}
+body.page-live .leaflet-popup-content-wrapper .callsign-details .callsign a:hover{
+    text-decoration:underline;
+}
+body.page-live .leaflet-popup-content-wrapper .details .airports .airport{
+  display:inline-block;
+  width:44%;
+  vertical-align:top;
+  text-align:center;
+  padding:5px;
+  margin-bottom:5px;
+}
+body.page-live .leaflet-popup-content-wrapper .details .airports .fa{
+  display:inline-block;
+  margin-top:10px;
+  font-size:1.5em;
+}
+body.page-live .leaflet-popup-content-wrapper .details .airports .airport .code a{
+  font-size:1.4em;
+  font-weight:bold;
+  color:#1a3151;
+}
+body.page-live .leaflet-popup-content-wrapper .details .airports .airport .code a:hover{
+  text-decoration:underline;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details div{
+  border-bottom:1px solid #eee;
+  margin-bottom:5px;
+  padding-bottom:5px;
+  font-size:1.0em;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details span{
+  display:block;
+  text-transform:uppercase;
+  color:#aaa;
+  font-size:0.9em;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details .beside{
+  width:100%;
+  border-bottom:0px;
+  text-align:center !important;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details .beside div{
+  width:33%;
+  display:inline-block;
+  border-bottom:0px;
+  border-right:1px solid #eee;
+  padding-left:5px;
+  padding-right:5px;
+  vertical-align:top;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details .beside div:first-child{
+  padding-left:0px;
+}
+body.page-live .leaflet-popup-content-wrapper .details .little-details .beside div:last-child{
+  border-right:0px;
+  padding-right:0px;
+}
+
+
 /* SEARCH */
 body.page-search .datepicker{
 	cursor: pointer;
