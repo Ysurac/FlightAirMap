@@ -3,6 +3,12 @@ html, body, #map {
   margin: 0px;
   padding: 0px
 }
+a{
+  text-decoration:none;
+}
+a:hover{
+  text-decoration:underline;
+}
 
 .geocode{
   position:absolute;
@@ -27,57 +33,64 @@ html, body, #map {
 }
 
 body.page-live .leaflet-popup-content-wrapper{
-  width:200px;
+  width:400px;
 }
-body.page-live .leaflet-popup-content-wrapper img{
+body.page-live .leaflet-popup-content-wrapper .left{
+  display:inline-block;
+  width:50%;
+  vertical-align:top;
+}
+body.page-live .leaflet-popup-content-wrapper .left img{
   -webkit-border-top-left-radius: 12px;
-  -webkit-border-top-right-radius: 12px;
   -moz-border-radius-topleft: 12px;
-  -moz-border-radius-topright: 12px;
   border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
   width:100%;
 }
 body.page-live .leaflet-popup-content-wrapper .leaflet-popup-content{
-  width: 100%;
+  width: 100% !important;
   margin:0px;
 }
-body.page-live .leaflet-popup-content-wrapper .details{
-  padding:10px;
-  padding-top:5px;
+body.page-live .leaflet-popup-content-wrapper .right{
+  display:inline-block;
+  width:50%;
+  vertical-align:top;
 }
-body.page-live .leaflet-popup-content-wrapper .callsign-details{
+body.page-live .leaflet-popup-content-wrapper .right .callsign-details{
   background-color:#1a3151;
   color:#fff;
   padding:10px;
+  -webkit-border-top-right-radius: 12px;
+  -moz-border-radius-topright: 12px;
+  border-top-right-radius: 12px;
 }
-body.page-live .leaflet-popup-content-wrapper .callsign-details .callsign a{
+body.page-live .leaflet-popup-content-wrapper .right .callsign-details .callsign a{
   font-size:1.5em;
   color:#fff;
 }
-body.page-live .leaflet-popup-content-wrapper .callsign-details .callsign a:hover{
-    text-decoration:underline;
-}
-body.page-live .leaflet-popup-content-wrapper .details .airports .airport{
+body.page-live .leaflet-popup-content-wrapper .right .airports .airport{
   display:inline-block;
-  width:44%;
+  width:40%;
   vertical-align:top;
   text-align:center;
   padding:5px;
   margin-bottom:5px;
 }
-body.page-live .leaflet-popup-content-wrapper .details .airports .fa{
+body.page-live .leaflet-popup-content-wrapper .right .airports .fa{
   display:inline-block;
   margin-top:10px;
   font-size:1.5em;
 }
-body.page-live .leaflet-popup-content-wrapper .details .airports .airport .code a{
+body.page-live .leaflet-popup-content-wrapper .right .airports .airport .code a{
   font-size:1.4em;
   font-weight:bold;
   color:#1a3151;
 }
-body.page-live .leaflet-popup-content-wrapper .details .airports .airport .code a:hover{
+body.page-live .leaflet-popup-content-wrapper .right .airports .airport .code a:hover{
   text-decoration:underline;
+}
+body.page-live .leaflet-popup-content-wrapper .details{
+  padding:10px;
+  padding-top:5px;
 }
 body.page-live .leaflet-popup-content-wrapper .details .little-details div{
   border-bottom:1px solid #eee;
@@ -97,7 +110,7 @@ body.page-live .leaflet-popup-content-wrapper .details .little-details .beside{
   text-align:center !important;
 }
 body.page-live .leaflet-popup-content-wrapper .details .little-details .beside div{
-  width:33%;
+  width:30%;
   display:inline-block;
   border-bottom:0px;
   border-right:1px solid #eee;

@@ -50,8 +50,8 @@ $( document ).ready(function() {
                 title: feature.properties.callsign,
                 alt: feature.properties.callsign,
                 icon: L.icon({
-                  iconUrl: '/images/map-icon.png',
-                  iconRetinaUrl: '/images/map-icon@2x.png',
+                  iconUrl: '/images/map-icon-shadow.png',
+                  iconRetinaUrl: '/images/map-icon-shadow@2x.png',
                   iconSize: [40, 40],
                   iconAnchor: [20, 40]
                 })
@@ -61,23 +61,28 @@ $( document ).ready(function() {
               var output = '';
               if (feature.properties.type == "aircraft"){
 
-                output += '<div class="image"><a href="/ident/'+feature.properties.callsign+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" /></a></div>';
-                output += '<div class="callsign-details">';
-                  output += '<div class="callsign"><a href="/ident/'+feature.properties.callsign+'" target="_blank">'+feature.properties.callsign+'</a></div>';
-                  output += '<div class="airline">'+feature.properties.airline_name+'</div>';
+                output += '<div class="top">';
+                  output += '<div class="left"><a href="/ident/'+feature.properties.callsign+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" /></a></div>';
+                  output += '<div class="right">';
+                    output += '<div class="callsign-details">';
+                      output += '<div class="callsign"><a href="/ident/'+feature.properties.callsign+'" target="_blank">'+feature.properties.callsign+'</a></div>';
+                      output += '<div class="airline">'+feature.properties.airline_name+'</div>';
+                    output += '</div>';
+                    output += '<div class="airports">';
+                      output += '<div class="airport">';
+                        output += '<span class="code"><a href="/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span><br />'+feature.properties.departure_airport;
+                      output += '</div>';
+                      output += '<i class="fa fa-long-arrow-right"></i>';
+                      output += '<div class="airport">';
+                        output += '<span class="code"><a href="/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span><br />'+feature.properties.arrival_airport;
+                      output += '</div>';
+                    output += '</div>';
+                  output += '</div>';
                 output += '</div>';
 
                 output += '<div class="details">';
 
-                  output += '<div class="airports">';
-                    output += '<div class="airport">';
-                      output += '<span class="code"><a href="/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span><br />'+feature.properties.departure_airport;
-                    output += '</div>';
-                    output += '<i class="fa fa-long-arrow-right"></i>';
-                    output += '<div class="airport">';
-                      output += '<span class="code"><a href="/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span><br />'+feature.properties.arrival_airport;
-                    output += '</div>';
-                  output += '</div>';
+
 
                   output += '<div class="little-details">';
                     output += '<div>';
