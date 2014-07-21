@@ -1,7 +1,8 @@
+var map;
 $( document ).ready(function() {
 
   //create the map
-  var map = L.map('map').setView([44.413333,-79.68], 9);
+  map = L.map('map').setView([44.413333,-79.68], 10);
 
   //initialize the layer group for the aircrft markers
   var layer_data = L.layerGroup();
@@ -28,7 +29,7 @@ $( document ).ready(function() {
     ],{
     color: '#000',
     fillColor: '#000',
-    fillOpacity: 0.2,
+    fillOpacity: 0.1,
     stroke: false
     }).addTo(map);
 
@@ -126,3 +127,27 @@ $( document ).ready(function() {
   //then load it again every 30 seconds
   setInterval(function(){getLiveData()},30000);
 });
+
+//figures out the user's location
+function getUserLocation(){
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+      alert("Geolocation is not supported by this browser.");
+  }
+}
+
+//plots the users location on the map
+function showPosition(position) {
+    L.marker([position.coords.latitude, position.coords.longitude], {
+        title: "Your location",
+        alt: "Your location",
+        icon: L.icon({
+          iconUrl: '/images/map-user.png',
+          iconRetinaUrl: '/images/map-user@2x.png',
+          iconSize: [40, 40],
+          iconAnchor: [20, 40]
+        })
+    }).addTo(map);
+    map.panTo([position.coords.latitude, position.coords.longitude]);
+}

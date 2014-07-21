@@ -38,5 +38,7 @@ require('require/class.Spotter.php');
 
   <div id="map"></div>
 
+  <a class="geocode" href="#" onclick="getUserLocation(); return false;"><img src="/images/map-legend-geocode.png" alt="Plot your current Location" title="Plot your current Location" /></a>
+
 </body>
 </html>
