@@ -57,6 +57,9 @@ a:hover{
 .compass{
   top:128px;
 }
+.mobile{
+    display: none !important;
+}
 
 .leaflet-container{
   font-size:14px;
@@ -114,9 +117,7 @@ body.page-live .leaflet-popup-content-wrapper .right .airports .airport .code a{
   font-size:1.4em;
   font-weight:bold;
   color:#1a3151;
-}
-body.page-live .leaflet-popup-content-wrapper .right .airports .airport .code a:hover{
-  text-decoration:underline;
+    display:block;
 }
 body.page-live .leaflet-popup-content-wrapper .details{
   padding:10px;
@@ -148,4 +149,46 @@ body.page-live .leaflet-popup-content-wrapper .details div:first-child{
 body.page-live .leaflet-popup-content-wrapper .details div:last-child{
   border-right:0px;
   padding-right:0px;
+}
+
+
+/* Mobile (Portrait/Landscape) */
+@media only screen and (max-width: 767px) {
+ 
+    .mobile{
+        display: block !important;
+    }
+    .nomobile{
+        display: none !important;
+    }
+    body.page-live .leaflet-popup-content-wrapper{
+      width:250px;
+    }
+    body.page-live .leaflet-popup-content-wrapper .right .callsign-details{
+        height:48px;
+        padding-top:25px;
+    }
+    body.page-live .leaflet-popup-content-wrapper .details .airports{
+        width:100%;
+    }
+    body.page-live .leaflet-popup-content-wrapper .details .airports .airport{
+      display:inline-block;
+      width:36%;
+      vertical-align:top;
+      text-align:center;
+      padding:5px;
+      margin-bottom:5px;
+      border-bottom:none;
+    }
+    body.page-live .leaflet-popup-content-wrapper .details .airports .fa{
+      display:inline-block;
+      margin-top:10px;
+      font-size:1.5em;
+    }
+    body.page-live .leaflet-popup-content-wrapper .details .airports .airport .code a{
+      font-size:1.4em;
+      font-weight:bold;
+      color:#1a3151;
+    }
+    
 }
