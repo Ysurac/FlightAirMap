@@ -38,7 +38,10 @@ require('require/class.Spotter.php');
 
   <div id="map"></div>
 
-  <a class="geocode" href="#" onclick="getUserLocation(); return false;"><img src="/images/map-legend-geocode.png" alt="Plot your current Location" title="Plot your current Location" /></a>
+  <a class="button zoom-in" href="#" onclick="zoomInMap(); return false;"><i class="fa fa-plus"></i></a>
+  <a class="button zoom-out" href="#" onclick="zoomOutMap(); return false;"><i class="fa fa-minus"></i></a>
+  <a class="button geocode" href="#" onclick="getUserLocation(); return false;"><i class="fa fa-map-marker"></i></a>
+  <a class="button compass" href="#" onclick="getCompassDirection(); return false;"><i class="fa fa-compass"></i></a>
 
 </body>
 </html>

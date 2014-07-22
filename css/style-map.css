@@ -3,6 +3,11 @@ html, body, #map {
   margin: 0px;
   padding: 0px
 }
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+}
 a{
   text-decoration:none;
 }
@@ -10,26 +15,51 @@ a:hover{
   text-decoration:underline;
 }
 
-.geocode{
+.button{
   position:absolute;
-  top:80px;
-  left:12px;
+  left:14px;
   background-color:#fff;
   width: 26px;
-	height: 26px;
+  height: 26px;
   text-align:center;
   border-top-left-radius: 4px;
-	border-top-right-radius: 4px;
+  border-top-right-radius: 4px;
   border-bottom-left-radius: 4px;
-	border-bottom-right-radius: 4px;
+  border-bottom-right-radius: 4px;
   box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+  border:2px solid #fff;
 }
-.geocode:hover{
+.button:hover{
   background-color: #f4f4f4;
 }
-.geocode img{
-  width:20px;
+.button.active{
+  border:2px solid #991F00;
+}
+.button .fa{
+  font-size:1.2em;
   margin-top:3px;
+  color:#1a3151;
+}
+.zoom-in .fa,
+.zoom-out .fa{
+  font-size:1.0em;
+  margin-top:6px;
+}
+.zoom-in{
+  top:20px;
+}
+.zoom-out{
+  top:53px;
+}
+.geocode{
+  top:95px;
+}
+.compass{
+  top:128px;
+}
+
+.leaflet-container{
+  font-size:14px;
 }
 
 body.page-live .leaflet-popup-content-wrapper{
@@ -96,13 +126,11 @@ body.page-live .leaflet-popup-content-wrapper .details .little-details div{
   border-bottom:1px solid #eee;
   margin-bottom:5px;
   padding-bottom:5px;
-  font-size:1.0em;
 }
 body.page-live .leaflet-popup-content-wrapper .details .little-details span{
   display:block;
   text-transform:uppercase;
   color:#aaa;
-  font-size:0.9em;
 }
 body.page-live .leaflet-popup-content-wrapper .details .little-details .beside{
   width:100%;
@@ -114,8 +142,6 @@ body.page-live .leaflet-popup-content-wrapper .details .little-details .beside d
   display:inline-block;
   border-bottom:0px;
   border-right:1px solid #eee;
-  padding-left:5px;
-  padding-right:5px;
   vertical-align:top;
 }
 body.page-live .leaflet-popup-content-wrapper .details .little-details .beside div:first-child{

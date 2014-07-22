@@ -1,8 +1,9 @@
 var map;
+var user = new L.FeatureGroup();
 $( document ).ready(function() {
 
   //create the map
-  map = L.map('map').setView([44.413333,-79.68], 10);
+  map = L.map('map', { zoomControl:false }).setView([44.413333,-79.68], 9);
 
   //initialize the layer group for the aircrft markers
   var layer_data = L.layerGroup();
@@ -130,21 +131,49 @@ $( document ).ready(function() {
   getLiveData();
 
   //then load it again every 30 seconds
-  setInterval(function(){getLiveData()},30000);
+  setInterval(function(){getLiveData()},60000);
 });
+
+
+//zooms in the map
+function zoomInMap(){
+  var zoom = map.getZoom();
+  map.setZoom(zoom + 1);
+}
+
+//zooms in the map
+function zoomOutMap(){
+  var zoom = map.getZoom();
+  map.setZoom(zoom - 1);
+}
 
 //figures out the user's location
 function getUserLocation(){
-  if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
+  //if the geocode is currently active then disable it, otherwise enable it
+  if (!$(".geocode").hasClass("active"))
+  {
+    //add the active class
+    $(".geocode").addClass("active");
+    //check to see if geolocation is possible in the browser
+    if (navigator.geolocation) {
+        //gets the current position and calls a function to make use of it
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        //if the geolocation is not supported by the browser let the user know
+        alert("Geolocation is not supported by this browser.");
+        //remove the active class
+        $(".geocode").removeClass("active");
+    }
   } else {
-      alert("Geolocation is not supported by this browser.");
+    //remove the user location marker
+    removeUserPosition();
   }
 }
 
 //plots the users location on the map
 function showPosition(position) {
-    L.marker([position.coords.latitude, position.coords.longitude], {
+    //creates a leaflet marker based on the coordinates we got from the browser and add it to the map
+    var markerUser = L.marker([position.coords.latitude, position.coords.longitude], {
         title: "Your location",
         alt: "Your location",
         icon: L.icon({
@@ -153,6 +182,66 @@ function showPosition(position) {
           iconSize: [40, 40],
           iconAnchor: [20, 40]
         })
-    }).addTo(map);
+    });
+    user.addLayer(markerUser);
+    map.addLayer(user);
+    //pan the map to the users location
     map.panTo([position.coords.latitude, position.coords.longitude]);
+}
+
+//removes the user postion off the map
+function removeUserPosition(){
+  //remove the marker off the map
+  map.removeLayer(user);
+  //remove the active class
+  $(".geocode").removeClass("active");
+}
+
+//determines the users heading based on the iphone
+function getCompassDirection(){
+
+  //if the compass is currently active then disable it, otherwise enable it
+  if (!$(".compass").hasClass("active"))
+  {
+    //add the active class
+    $(".compass").addClass("active");
+    //check to see if the device orietntation event is possible on the browser
+    if (window.DeviceOrientationEvent) {
+      //first lets get the user location to mak it more user friendly
+      getUserLocation();
+      //add event listener for device orientation and call the function to actually get the values
+      window.addEventListener('deviceorientation', capture_orientation, false);
+    } else {
+      //if the browser is not capable for device orientation let the user know
+      alert("Compass is not supported by this browser.");
+      //remove the active class
+      $(".compass").removeClass("active");
+    }
+  } else {
+    //remove the event listener to disable the device orientation
+    window.removeEventListener('deviceorientation', capture_orientation, false);
+    //reset the orientation to be again north to south
+    $("#map").css({ WebkitTransform: 'rotate(360deg)'});
+    $("#map").css({'-moz-transform': 'rotate(360deg)'});
+    $("#map").css({'-ms-transform': 'rotate(360deg)'});
+    //remove the active class
+    $(".compass").removeClass("active");
+    //remove the user location marker
+    removeUserPosition();
+  }
+
+}
+
+//gets the users heading information
+function capture_orientation (event) {
+ //store the values of each of the recorded elements in a variable
+ //to learn more about the below variables see this blog: http://dev.opera.com/articles/w3c-device-orientation-api/
+ var alpha = event.alpha;
+ var beta = event.beta;
+ var gamma = event.gamma;
+
+  //we use the "alpha" variable for the rotation effect
+  $("#map").css({ WebkitTransform: 'rotate(' + alpha + 'deg)'});
+  $("#map").css({'-moz-transform': 'rotate(' + alpha + 'deg)'});
+  $("#map").css({'-ms-transform': 'rotate(' + alpha + 'deg)'});
 }
