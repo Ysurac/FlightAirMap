@@ -123,15 +123,22 @@ body.page-live .leaflet-popup-content-wrapper .details{
   padding-top:5px;
 }
 body.page-live .leaflet-popup-content-wrapper .details div{
-  border-bottom:1px solid #eee;
   margin-bottom:5px;
   padding-bottom:5px;
+  width:45%;
+  display:inline-block;
+  vertical-align:top;
+  margin-right:5%;
+  border-bottom:1px solid #eee;
+}
+body.page-live .leaflet-popup-content-wrapper .details div:nth-child(2){
+  margin-right:0px;
+}
+body.page-live .leaflet-popup-content-wrapper .details div.bottom{
+  border-bottom:0px;
 }
 body.page-live .leaflet-popup-content-wrapper .details span{
-  display:inline-block;
-  margin-right:20px;
-  width:80px;
-  text-align:right;
+  display:block;
   text-transform:uppercase;
   color:#aaa;
 }

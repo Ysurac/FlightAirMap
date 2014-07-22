@@ -86,6 +86,13 @@ $( document ).ready(function() {
                       output += '<span>Aircraft</span>';
                       output += feature.properties.aircraft_name;
                     output += '</div>';
+                    if (feature.properties.altitude != "" || feature.properties.altitude != 0)
+                    {
+                      output += '<div>';
+                        output += '<span>Altitude</span>';
+                        output += feature.properties.altitude+'00 feet (FL'+feature.properties.altitude+')';
+                      output += '</div>';
+                    }
                     if (feature.properties.registration != "")
                     {
                       output += '<div>';
@@ -94,14 +101,14 @@ $( document ).ready(function() {
                       output += '</div>';
                     }
                     output += '<div>';
-                      output += '<span>Altitude</span>';
-                      output += 'FL'+feature.properties.altitude;
-                    output += '</div>';
-                    output += '<div>';
                       output += '<span>Speed</span>';
                       output += feature.properties.ground_speed+' knots';
                     output += '</div>';
-                    output += '<div>';
+                    output += '<div class="bottom">';
+                      output += '<span>Coordinates</span>';
+                      output += feature.properties.latitude+", "+feature.properties.longitude;
+                    output += '</div>';
+                    output += '<div class="bottom">';
                       output += '<span>Heading</span>';
                       output += feature.properties.heading;
                     output += '</div>';
