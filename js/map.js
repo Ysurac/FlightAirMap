@@ -82,10 +82,6 @@ $( document ).ready(function() {
                 output += '</div>';
 
                 output += '<div class="details">';
-
-
-
-                  output += '<div class="little-details">';
                     output += '<div>';
                       output += '<span>Aircraft</span>';
                       output += feature.properties.aircraft_name;
@@ -97,21 +93,19 @@ $( document ).ready(function() {
                         output += feature.properties.registration;
                       output += '</div>';
                     }
-                      output += '<div class="beside">';
-                      output += '<div>';
-                        output += '<span>Altitude</span>';
-                        output += 'FL'+feature.properties.altitude;
-                      output += '</div>';
-                      output += '<div>';
-                        output += '<span>Speed</span>';
-                        output += feature.properties.ground_speed+' knots';
-                      output += '</div>';
-                      output += '<div>';
-                        output += '<span>Heading</span>';
-                        output += feature.properties.heading;
-                      output += '</div>';
+                    output += '<div>';
+                      output += '<span>Altitude</span>';
+                      output += 'FL'+feature.properties.altitude;
                     output += '</div>';
-                  output += '</div>';
+                    output += '<div>';
+                      output += '<span>Speed</span>';
+                      output += feature.properties.ground_speed+' knots';
+                    output += '</div>';
+                    output += '<div>';
+                      output += '<span>Heading</span>';
+                      output += feature.properties.heading;
+                    output += '</div>';
+                output += '</div>';
 
                 output += '</div>';
 
@@ -209,6 +203,12 @@ function getCompassDirection(){
     if (window.DeviceOrientationEvent) {
       //first lets get the user location to mak it more user friendly
       getUserLocation();
+      //disable dragging the map
+      map.dragging.disable();
+      //disable double click zoom
+      map.doubleClickZoom.disable();
+      //disable touch zoom
+      map.touchZoom.disable();
       //add event listener for device orientation and call the function to actually get the values
       window.addEventListener('deviceorientation', capture_orientation, false);
     } else {
@@ -228,6 +228,12 @@ function getCompassDirection(){
     $(".compass").removeClass("active");
     //remove the user location marker
     removeUserPosition();
+    //enable dragging the map
+    map.dragging.enable();
+    //enable double click zoom
+    map.doubleClickZoom.enable();
+    //enable touch zoom
+    map.touchZoom.enable();
   }
 
 }
