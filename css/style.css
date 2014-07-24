@@ -768,6 +768,8 @@ body.page-about-map .image-right-mobile{
 body.page-about-map .image-right-mobile img{
     width:100%;
 }
+body.page-about-map .main-content strong{
+    font-weight:500;
 
 
 /* ABOUT/EXPORT */
