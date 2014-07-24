@@ -119,7 +119,7 @@ $( document ).ready(function() {
                     {
                       output += '<div>';
                         output += '<span>Registration</span>';
-                        output += feature.properties.registration;
+                        output += '<a href="/registration/'+feature.properties.registration+'" target="_blank">'+feature.properties.registration+'</a>';
                       output += '</div>';
                     }
                     output += '<div>';
@@ -270,13 +270,27 @@ function getCompassDirection(){
 //gets the users heading information
 function capture_orientation (event) {
  //store the values of each of the recorded elements in a variable
- //to learn more about the below variables see this blog: http://dev.opera.com/articles/w3c-device-orientation-api/
- var alpha = event.alpha;
- var beta = event.beta;
- var gamma = event.gamma;
-
+   var alpha;
+   var css;
+    //Check for iOS property
+    if(event.webkitCompassHeading) {
+      alpha = event.webkitCompassHeading;
+      //Rotation is reversed for iOS
+      css = 'rotate(-' + alpha + 'deg)';
+    }
+    //non iOS
+    else {
+      alpha = event.alpha;
+      webkitAlpha = alpha;
+      if(!window.chrome) {
+        //Assume Android stock and apply offset
+        webkitAlpha = alpha-270;
+        css = 'rotate(' + alpha + 'deg)';
+      }
+    }    
+  
   //we use the "alpha" variable for the rotation effect
-  $("#live-map").css({ WebkitTransform: 'rotate(' + alpha + 'deg)'});
-  $("#live-map").css({'-moz-transform': 'rotate(' + alpha + 'deg)'});
-  $("#live-map").css({'-ms-transform': 'rotate(' + alpha + 'deg)'});
+  $("#live-map").css({ WebkitTransform: css});
+  $("#live-map").css({'-moz-transform': css});
+  $("#live-map").css({'-ms-transform': css});
 }
