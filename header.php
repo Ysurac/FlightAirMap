@@ -120,12 +120,14 @@ if ($facebook_meta_image != "")
         <li class="dropdown">
           <a href="<?php print $globalURL; ?>/about" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
           <ul class="dropdown-menu">
-          	<li><a href="<?php print $globalURL; ?>/about">About</a></li>
-          	<li><a href="<?php print $globalURL; ?>/about/export">Export Data</a></li>
+          	<li><a href="<?php print $globalURL; ?>/about">The Project</a></li>
+          	<li><a href="<?php print $globalURL; ?>/about/export">Exporting Data</a></li>
+            <li><hr /></li>
+            <li><a href="<?php print $globalURL; ?>/about/map">Live Map</a></li>
+			<li><a href="<?php print $globalURL; ?>/about/tv">Barrie Spotter TV</a></li>
+            <li><hr /></li>
           	<li><a href="https://github.com/barriespotter/Web_App/issues" target="_blank">Report any Issues</a></li>
           	<li><a href="https://www.facebook.com/barriespotter" target="_blank">Contact</a></li>
-          	<li><hr /></li>
-			<li><a href="<?php print $globalURL; ?>/about/tv">Barrie Spotter TV</a></li>
           </ul>
         </li>
       </ul>
