@@ -751,6 +751,25 @@ body.page-about-tv .tv-image img{
 }
 
 
+/* ABOUT/MAP */
+body.page-about-map .image-right-desktop{
+    float:right;
+    width:450px;
+}
+body.page-about-map .image-right-desktop img{
+    width:100%;
+}
+body.page-about-map .image-right-mobile{
+    float:right;
+    width:200px;
+    margin-right:2.0em;
+    margin-left:3.0em;
+}
+body.page-about-map .image-right-mobile img{
+    width:100%;
+}
+
+
 /* ABOUT/EXPORT */
 body.page-about-export .main-content .fa{
 	float:right;
@@ -1182,6 +1201,28 @@ body.page-search .datepicker{
 	body.page-about-export .export-image img{
 		width:80%;
 	}
+    
+    /* ABOUT/MAP */
+    body.page-about-map .image-right-desktop{
+        float:none;
+        width:100%;
+        text-align: center;
+         margin-bottom:1.0em;
+    }
+    body.page-about-map .image-right-desktop img{
+        width:80%;
+    }
+    body.page-about-map .image-right-mobile{
+        float:none;
+        width:100%;
+        text-align: center;
+        margin-left:0px;
+        margin-right:0px;
+        margin-bottom:1.5em;
+    }
+    body.page-about-map .image-right-mobile img{
+        width:40%;
+    }
 
 	/* Search */
 	body.page-search .sub-menu li.short-url{

@@ -38,6 +38,11 @@ RewriteCond %{HTTPS} =off
 RewriteRule ^about/tv(/?)$ about-tv.php [L,NC]
 
 RewriteCond %{HTTPS} !=off
+RewriteRule ^about/map(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^about/map(/?)$ about-map.php [L,NC]
+
+RewriteCond %{HTTPS} !=off
 RewriteRule ^about/export(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
 RewriteRule ^about/export(/?)$ about-export.php [L,NC]
