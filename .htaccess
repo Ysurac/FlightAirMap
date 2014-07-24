@@ -75,11 +75,6 @@ RewriteRule ^live/geojson(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
 RewriteRule ^live/geojson(/?)$ live-geojson.php [L,NC]
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^live(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
-RewriteRule ^live(/?)$ live.php [L,NC]
-
 
 ########### SEARCH ###########
 

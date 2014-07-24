@@ -45,6 +45,18 @@ if (strtolower($current_page) == "about")
 }
 ?>
 <?php
+if (strtolower($current_page) == "index")
+{
+?>
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print time(); ?>" />
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="<?php print $globalURL; ?>/js/Marker.Rotate.js?<?php print time(); ?>"></script>
+<script src="<?php print $globalURL; ?>/js/map.js?<?php print time(); ?>"></script>
+<?php
+}
+?>
+<?php
 if ($facebook_meta_image != "")
 {
 ?>

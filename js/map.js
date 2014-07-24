@@ -3,7 +3,7 @@ var user = new L.FeatureGroup();
 $( document ).ready(function() {
 
   //create the map
-  map = L.map('map', { zoomControl:false }).setView([44.413333,-79.68], 9);
+  map = L.map('live-map', { zoomControl:false }).setView([44.413333,-79.68], 9);
 
   //initialize the layer group for the aircrft markers
   var layer_data = L.layerGroup();
@@ -113,11 +113,11 @@ $( document ).ready(function() {
                       output += '<span>Speed</span>';
                       output += feature.properties.ground_speed+' knots';
                     output += '</div>';
-                    output += '<div class="bottom">';
+                    output += '<div>';
                       output += '<span>Coordinates</span>';
                       output += feature.properties.latitude+", "+feature.properties.longitude;
                     output += '</div>';
-                    output += '<div class="bottom">';
+                    output += '<div>';
                       output += '<span>Heading</span>';
                       output += feature.properties.heading;
                     output += '</div>';
@@ -237,9 +237,9 @@ function getCompassDirection(){
     //remove the event listener to disable the device orientation
     window.removeEventListener('deviceorientation', capture_orientation, false);
     //reset the orientation to be again north to south
-    $("#map").css({ WebkitTransform: 'rotate(360deg)'});
-    $("#map").css({'-moz-transform': 'rotate(360deg)'});
-    $("#map").css({'-ms-transform': 'rotate(360deg)'});
+    $("#live-map").css({ WebkitTransform: 'rotate(360deg)'});
+    $("#live-map").css({'-moz-transform': 'rotate(360deg)'});
+    $("#live-map").css({'-ms-transform': 'rotate(360deg)'});
     //remove the active class
     $(".compass").removeClass("active");
     //remove the user location marker
@@ -263,7 +263,7 @@ function capture_orientation (event) {
  var gamma = event.gamma;
 
   //we use the "alpha" variable for the rotation effect
-  $("#map").css({ WebkitTransform: 'rotate(' + alpha + 'deg)'});
-  $("#map").css({'-moz-transform': 'rotate(' + alpha + 'deg)'});
-  $("#map").css({'-ms-transform': 'rotate(' + alpha + 'deg)'});
+  $("#live-map").css({ WebkitTransform: 'rotate(' + alpha + 'deg)'});
+  $("#live-map").css({'-moz-transform': 'rotate(' + alpha + 'deg)'});
+  $("#live-map").css({'-ms-transform': 'rotate(' + alpha + 'deg)'});
 }

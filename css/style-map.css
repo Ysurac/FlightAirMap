@@ -1,20 +1,14 @@
-html, body, #map {
-  height: 100%;
-  margin: 0px;
-  padding: 0px
+html, body, #live-map, .container.main-content {
+  height: 100% !important;
+  width:100% !important;
+  margin: 0px !important;
+  padding: 0px !important;
 }
 body {
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
   font-weight: 300;
 }
-a{
-  text-decoration:none;
-}
-a:hover{
-  text-decoration:underline;
-}
-
 .button{
   position:absolute;
   left:14px;
@@ -46,16 +40,16 @@ a:hover{
   margin-top:6px;
 }
 .zoom-in{
-  top:20px;
+  top:65px;
 }
 .zoom-out{
-  top:53px;
-}
-.geocode{
   top:95px;
 }
+.geocode{
+  top:140px;
+}
 .compass{
-  top:128px;
+  top:170px;
 }
 .mobile{
     display: none !important;
@@ -65,30 +59,33 @@ a:hover{
   font-size:14px;
 }
 
-body.page-live .leaflet-popup-content-wrapper{
+body.page-index .leaflet-popup-content-wrapper{
   width:400px;
 }
-body.page-live .leaflet-popup-content-wrapper .left{
+body.page-index .leaflet-popup-content-wrapper a:hover{
+    text-decoration: underline;
+}
+body.page-index .leaflet-popup-content-wrapper .left{
   display:inline-block;
   width:50%;
   vertical-align:top;
 }
-body.page-live .leaflet-popup-content-wrapper .left img{
+body.page-index .leaflet-popup-content-wrapper .left img{
   -webkit-border-top-left-radius: 12px;
   -moz-border-radius-topleft: 12px;
   border-top-left-radius: 12px;
   width:100%;
 }
-body.page-live .leaflet-popup-content-wrapper .leaflet-popup-content{
+body.page-index .leaflet-popup-content-wrapper .leaflet-popup-content{
   width: 100% !important;
   margin:0px;
 }
-body.page-live .leaflet-popup-content-wrapper .right{
+body.page-index .leaflet-popup-content-wrapper .right{
   display:inline-block;
   width:50%;
   vertical-align:top;
 }
-body.page-live .leaflet-popup-content-wrapper .right .callsign-details{
+body.page-index .leaflet-popup-content-wrapper .right .callsign-details{
   background-color:#1a3151;
   color:#fff;
   padding:10px;
@@ -96,11 +93,11 @@ body.page-live .leaflet-popup-content-wrapper .right .callsign-details{
   -moz-border-radius-topright: 12px;
   border-top-right-radius: 12px;
 }
-body.page-live .leaflet-popup-content-wrapper .right .callsign-details .callsign a{
+body.page-index .leaflet-popup-content-wrapper .right .callsign-details .callsign a{
   font-size:1.5em;
   color:#fff;
 }
-body.page-live .leaflet-popup-content-wrapper .right .airports .airport{
+body.page-index .leaflet-popup-content-wrapper .right .airports .airport{
   display:inline-block;
   width:40%;
   vertical-align:top;
@@ -108,22 +105,22 @@ body.page-live .leaflet-popup-content-wrapper .right .airports .airport{
   padding:5px;
   margin-bottom:5px;
 }
-body.page-live .leaflet-popup-content-wrapper .right .airports .fa{
+body.page-index .leaflet-popup-content-wrapper .right .airports .fa{
   display:inline-block;
   margin-top:10px;
   font-size:1.5em;
 }
-body.page-live .leaflet-popup-content-wrapper .right .airports .airport .code a{
+body.page-index .leaflet-popup-content-wrapper .right .airports .airport .code a{
   font-size:1.4em;
   font-weight:bold;
   color:#1a3151;
     display:block;
 }
-body.page-live .leaflet-popup-content-wrapper .details{
+body.page-index .leaflet-popup-content-wrapper .details{
   padding:10px;
   padding-top:5px;
 }
-body.page-live .leaflet-popup-content-wrapper .details div{
+body.page-index .leaflet-popup-content-wrapper .details div{
   margin-bottom:5px;
   padding-bottom:5px;
   width:45%;
@@ -132,21 +129,19 @@ body.page-live .leaflet-popup-content-wrapper .details div{
   margin-right:5%;
   border-bottom:1px solid #eee;
 }
-body.page-live .leaflet-popup-content-wrapper .details div:nth-child(2){
-  margin-right:0px;
-}
-body.page-live .leaflet-popup-content-wrapper .details div.bottom{
+body.page-index .leaflet-popup-content-wrapper .details div:nth-child(5),
+body.page-index .leaflet-popup-content-wrapper .details div:nth-child(6){
   border-bottom:0px;
 }
-body.page-live .leaflet-popup-content-wrapper .details span{
+body.page-index .leaflet-popup-content-wrapper .details span{
   display:block;
   text-transform:uppercase;
   color:#aaa;
 }
-body.page-live .leaflet-popup-content-wrapper .details div:first-child{
+body.page-index .leaflet-popup-content-wrapper .details div:first-child{
   padding-left:0px;
 }
-body.page-live .leaflet-popup-content-wrapper .details div:last-child{
+body.page-index .leaflet-popup-content-wrapper .details div:last-child{
   border-right:0px;
   padding-right:0px;
 }
@@ -161,17 +156,20 @@ body.page-live .leaflet-popup-content-wrapper .details div:last-child{
     .nomobile{
         display: none !important;
     }
-    body.page-live .leaflet-popup-content-wrapper{
+    .leaflet-control-attribution{
+        display:none;
+    }
+    body.page-index .leaflet-popup-content-wrapper{
       width:250px;
     }
-    body.page-live .leaflet-popup-content-wrapper .right .callsign-details{
+    body.page-index .leaflet-popup-content-wrapper .right .callsign-details{
         height:48px;
         padding-top:25px;
     }
-    body.page-live .leaflet-popup-content-wrapper .details .airports{
+    body.page-index .leaflet-popup-content-wrapper .details .airports{
         width:100%;
     }
-    body.page-live .leaflet-popup-content-wrapper .details .airports .airport{
+    body.page-index .leaflet-popup-content-wrapper .details .airports .airport{
       display:inline-block;
       width:36%;
       vertical-align:top;
@@ -180,12 +178,12 @@ body.page-live .leaflet-popup-content-wrapper .details div:last-child{
       margin-bottom:5px;
       border-bottom:none;
     }
-    body.page-live .leaflet-popup-content-wrapper .details .airports .fa{
+    body.page-index .leaflet-popup-content-wrapper .details .airports .fa{
       display:inline-block;
       margin-top:10px;
       font-size:1.5em;
     }
-    body.page-live .leaflet-popup-content-wrapper .details .airports .airport .code a{
+    body.page-index .leaflet-popup-content-wrapper .details .airports .airport .code a{
       font-size:1.4em;
       font-weight:bold;
       color:#1a3151;
