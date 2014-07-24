@@ -1,9 +1,22 @@
 var map;
 var user = new L.FeatureGroup();
 $( document ).ready(function() {
+    
+  //setting the zoom functionality for either mobile or desktop
+  if( navigator.userAgent.match(/Android/i)
+     || navigator.userAgent.match(/webOS/i)
+     || navigator.userAgent.match(/iPhone/i)
+     || navigator.userAgent.match(/iPod/i)
+     || navigator.userAgent.match(/BlackBerry/i)
+     || navigator.userAgent.match(/Windows Phone/i))
+  {
+    var zoom = 8;
+  } else {
+    var zoom = 9;
+  }
 
   //create the map
-  map = L.map('live-map', { zoomControl:false }).setView([44.413333,-79.68], 9);
+  map = L.map('live-map', { zoomControl:false }).setView([44.413333,-79.68], zoom);
 
   //initialize the layer group for the aircrft markers
   var layer_data = L.layerGroup();
