@@ -43,7 +43,7 @@ label{
 	font-weight:normal;
 }
 table{
- width:100%; 
+ width:100%;
 }
 table thead{
  background-color:#e9e9e9;
@@ -89,15 +89,15 @@ table tr td.logo img{
 table tr td.ident{
 	width:10%;
 }
-#header-fixed { 
-    position: fixed; 
+#header-fixed {
+    position: fixed;
     top: 0px;
     display:none;
     background-color:white;
 }
-.container>.navbar-header, 
-.container-fluid>.navbar-header, 
-.container>.navbar-collapse, 
+.container>.navbar-header,
+.container-fluid>.navbar-header,
+.container>.navbar-collapse,
 .container-fluid>.navbar-collapse{
     margin-left:0px;
     margin-right:0px;
@@ -496,7 +496,7 @@ a.full-width{
 }
 .sub-menu .nav .dropdown.open li a{
 	background-color:transparent;
-} 
+}
 .sub-menu .nav .dropdown-menu a {
     color: #000;
     font-size: 1.0em;
@@ -592,12 +592,12 @@ body.page-index #slideshow .slidesjs-previous{
 	cursor: pointer;
 	width: 32px;
 	height: 32px;
-	background-image: url('images/slideshow-button.png'); 
-	background-position: 0% 0%; 
+	background-image: url('images/slideshow-button.png');
+	background-position: 0% 0%;
 	background-repeat: no-repeat no-repeat;
 }
 body.page-index #slideshow .slidesjs-previous:hover{
-	background-position: 0% 100%; 
+	background-position: 0% 100%;
 }
 
 body.page-index #slideshow .slidesjs-next{
@@ -610,12 +610,12 @@ body.page-index #slideshow .slidesjs-next{
 	cursor: pointer;
 	width: 32px;
 	height: 32px;
-	background-image: url('images/slideshow-button.png'); 
-	background-position: 100% 0%; 
+	background-image: url('images/slideshow-button.png');
+	background-position: 100% 0%;
 	background-repeat: no-repeat no-repeat;
 }
 body.page-index #slideshow .slidesjs-next:hover{
-	background-position: 100% 100%; 
+	background-position: 100% 100%;
 }
 body.page-index #slideshow .slidesjs-container,
 body.page-index #slideshow .slide{
@@ -702,7 +702,7 @@ body.page-index .latest .quote .fa{
     float:left;
 		margin-right: 0.3em;
 }
- 
+
 
 
 
@@ -748,6 +748,28 @@ body.page-about-tv .tv-image{
 }
 body.page-about-tv .tv-image img{
 	width:50%;
+}
+
+
+/* ABOUT/MAP */
+body.page-about-map .image-right-desktop{
+    float:right;
+    width:450px;
+}
+body.page-about-map .image-right-desktop img{
+    width:100%;
+}
+body.page-about-map .image-right-mobile{
+    float:right;
+    width:200px;
+    margin-right:2.0em;
+    margin-left:3.0em;
+}
+body.page-about-map .image-right-mobile img{
+    width:100%;
+}
+body.page-about-map .main-content strong{
+    font-weight:500;
 }
 
 
@@ -860,12 +882,12 @@ body.page-flightid-overview .slideshow .slidesjs-previous{
 	cursor: pointer;
 	width: 32px;
 	height: 32px;
-	background-image: url('images/slideshow-button.png'); 
-	background-position: 0% 0%; 
+	background-image: url('images/slideshow-button.png');
+	background-position: 0% 0%;
 	background-repeat: no-repeat no-repeat;
 }
 body.page-flightid-overview .slideshow .slidesjs-previous:hover{
-	background-position: 0% 100%; 
+	background-position: 0% 100%;
 }
 body.page-flightid-overview .slideshow .slidesjs-next{
 	display:none;
@@ -877,18 +899,16 @@ body.page-flightid-overview .slideshow .slidesjs-next{
 	cursor: pointer;
 	width: 32px;
 	height: 32px;
-	background-image: url('images/slideshow-button.png'); 
-	background-position: 100% 0%; 
+	background-image: url('images/slideshow-button.png');
+	background-position: 100% 0%;
 	background-repeat: no-repeat no-repeat;
 }
 body.page-flightid-overview .slideshow .slidesjs-next:hover{
-	background-position: 100% 100%; 
+	background-position: 100% 100%;
 }
 body.page-flightid-overview .last-flights{
 	margin-bottom:2.0em;
 }
-
-
 
 
 /* HIGHLIGHTS */
@@ -910,7 +930,6 @@ body.page-highlights table tr.special td h4{
 }
 
 
-
 /* SEARCH */
 body.page-search .datepicker{
 	cursor: pointer;
@@ -919,20 +938,20 @@ body.page-search .datepicker{
 
 /* Tablet (Landscape) */
 @media only screen and (min-width: 992px) and (max-width: 1199px){
-	
+
 	/* GLOBAL */
 	.search-containers .bootstrap-select{
 		width:235px !important;
 	}
 
-	
+
 	/* INDEX */
 	body.page-index .entry{
 		width:120px;
 		margin-right:40px;
 		display:inline-block;
 	}
-		
+
 }
 
 
@@ -961,8 +980,8 @@ body.page-search .datepicker{
 	.navbar form input[type="text"]{
 		width:75%;
 	}
-	
-	
+
+
 	/* INDEX */
 	body.page-index #slideshow .slidejs-container{
 		height:400px;
@@ -980,12 +999,12 @@ body.page-search .datepicker{
 		display:inline-block;
 		text-align: center;
 	}
-	
+
 	/* FLIGHT ID */
 	body.page-flightid-overview .slideshow{
 		height:300px;
 	}
-	
+
 }
 
 
@@ -1136,12 +1155,12 @@ body.page-search .datepicker{
 			border-bottom:0px;
 		}
 
-		
+
 	/* FLIGHT ID */
 	body.page-flightid-overview .slideshow{
 		height:210px;
 	}
-		
+
 	/* INDEX */
 	body.page-index #slideshow .slidesjs-container,
     body.page-index #slideshow .slide{
@@ -1166,7 +1185,7 @@ body.page-search .datepicker{
     body.page-index .latest .news .news-item .body{
         padding-left:0px;
     }
-  
+
 	/* ABOUT/TV */
 	body.page-about-tv .tv-launch{
 		width:80%;
@@ -1174,7 +1193,7 @@ body.page-search .datepicker{
 	body.page-about-tv .tv-image img{
 		width:80%;
 	}
-	
+
 	/* ABOUT/EXPORT */
 	body.page-about-export .main-content .fa{
 		display:none;
@@ -1185,7 +1204,29 @@ body.page-search .datepicker{
 	body.page-about-export .export-image img{
 		width:80%;
 	}
-	
+    
+    /* ABOUT/MAP */
+    body.page-about-map .image-right-desktop{
+        float:none;
+        width:100%;
+        text-align: center;
+         margin-bottom:1.0em;
+    }
+    body.page-about-map .image-right-desktop img{
+        width:80%;
+    }
+    body.page-about-map .image-right-mobile{
+        float:none;
+        width:100%;
+        text-align: center;
+        margin-left:0px;
+        margin-right:0px;
+        margin-bottom:1.5em;
+    }
+    body.page-about-map .image-right-mobile img{
+        width:40%;
+    }
+
 	/* Search */
 	body.page-search .sub-menu li.short-url{
 		display:none;
@@ -1206,7 +1247,7 @@ body.page-search .datepicker{
 	body.page-index #slideshow .slide img{
     	margin-top:-75px;
     }
-    
+
   /* FLIGHT ID */
 	body.page-flightid-overview .slideshow{
 		height:275px;
