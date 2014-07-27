@@ -53,11 +53,15 @@ if (!empty($spotter_array))
 	    	    }
     	    print '</h1>';
      print '</div>';
-     
-     if ($spotter_array[0]['highlight'] != "")
-		{
-			print '<div class="alert alert-warning">'.$spotter_array[0]['highlight'].'</div>';
-		}
+    
+        if ($spotter_array[0]['registration'] != "")
+        {
+            $highlight = Spotter::getHighlightByRegistration($spotter_array[0]['registration']);
+            if ($highlight != "")
+            {
+             print '<div class="alert alert-warning">'.$highlight.'</div>';
+            }
+        }
         	
 		 include('flightid-sub-menu.php');
 		 

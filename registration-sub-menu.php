@@ -1,3 +1,14 @@
+<?php
+if ($spotter_array[0]['registration'] != "")
+{
+    $highlight = Spotter::getHighlightByRegistration($spotter_array[0]['registration']);
+    if ($highlight != "")
+    {
+     print '<div class="alert alert-warning">This aircraft has a Highlight: '.$highlight.'</div>';
+    }
+}
+?>
+
 <span class="sub-menu-statistic column mobile">
 	<a href="#" onclick="showSubMenu(); return false;">Statistics <i class="fa fa-plus"></i></a>
 </span>
