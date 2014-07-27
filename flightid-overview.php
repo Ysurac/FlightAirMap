@@ -221,7 +221,7 @@ if (!empty($spotter_array))
     	print '<div class="last-flights">';
 	    	
 	    	print '<h3>Last 5 Flights of this Aircraft ('.$spotter_array[0]['registration'].')</h3>';
-	    	
+	    	$hide_th_links = true;
 	    	$spotter_array = Spotter::getSpotterDataByRegistration($spotter_array[0]['registration'],"0,5", "");
 	    	
 	    	include('table-output.php'); 
