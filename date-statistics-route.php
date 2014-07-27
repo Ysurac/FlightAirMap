@@ -31,7 +31,6 @@ if (!empty($spotter_array))
   	
       $route_array = Spotter::countAllRoutesByDate($_GET['date']);
 
-		<?php
 	  if (!empty($route_array))
     {
        print '<div class="table-responsive">';

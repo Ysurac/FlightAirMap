@@ -1,5 +1,5 @@
 <?php
-$globalURL = "http://www.barriespotter.com/";
+include("settings.php");
 
 class Connection{
 
@@ -8,20 +8,16 @@ class Connection{
 	*
 	* @return Boolean of the database connection
 	*
-	*/	
-		
+	*/
+
 	public static function createDBConnection()
 	{
-		// DATABASE CONNECTION
-		$dbhost = 'localhost';
-		$dbuser = ''; //database username
-		$dbpass = ''; //database password
-		$dbname = ''; //database name
-		
+		global $dbhost, $dbuser, $dbpass, $dbname
+
 		if($conn = mysql_connect($dbhost, $dbuser, $dbpass))
 		{
 			mysql_select_db($dbname);
-			
+
 			return true;
 		} else {
 			return false;

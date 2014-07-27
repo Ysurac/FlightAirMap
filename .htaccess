@@ -38,6 +38,11 @@ RewriteCond %{HTTPS} =off
 RewriteRule ^about/tv(/?)$ about-tv.php [L,NC]
 
 RewriteCond %{HTTPS} !=off
+RewriteRule ^about/map(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^about/map(/?)$ about-map.php [L,NC]
+
+RewriteCond %{HTTPS} !=off
 RewriteRule ^about/export(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
 RewriteRule ^about/export(/?)$ about-export.php [L,NC]
@@ -66,6 +71,14 @@ RewriteCond %{HTTPS} !=off
 RewriteRule ^tv(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
 RewriteRule ^tv(/?)$ tv.php [L,NC]
+
+
+########### LIVE ###########
+
+RewriteCond %{HTTPS} !=off
+RewriteRule ^live/geojson(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^live/geojson(/?)$ live-geojson.php [L,NC]
 
 
 ########### SEARCH ###########
