@@ -137,7 +137,7 @@ if ($facebook_meta_image != "")
   		<div class="social">
   			<a href="http://www.facebook.com/barriespotter" target="_blank" title="Like us on Facebook"><i class="fa fa-facebook"></i></a>
   			<a href="http://www.twitter.com/barriespotter" target="_blank" title="Follow us on Twitter"><i class="fa fa-twitter"></i></a>
-  			<a href="https://github.com/barriespotter" target="_blank" title="Hack us on Github"><i class="fa fa-github"></i></a>
+  			<a href="http://barriespotter.github.io" target="_blank" title="Fork us on Github"><i class="fa fa-github"></i></a>
   		</div>
     </div><!--/.nav-collapse -->
   </div>
