@@ -20,11 +20,6 @@ if (!empty($spotter_array))
 		print '<div><span class="label">Manufacturer</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $aircraft_array[0]['aircraft_manufacturer'])).'">'.$aircraft_array[0]['aircraft_manufacturer'].'</a></div>';
 	print '</div>';
 	
-	if ($spotter_array[0]['highlight'] != "")
-	{
-		print '<div class="alert alert-warning">'.$spotter_array[0]['highlight'].'</div>';
-	}
-	
 	include('registration-sub-menu.php');
   
   print '<div class="column">';

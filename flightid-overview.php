@@ -53,11 +53,15 @@ if (!empty($spotter_array))
 	    	    }
     	    print '</h1>';
      print '</div>';
-     
-     if ($spotter_array[0]['highlight'] != "")
-		{
-			print '<div class="alert alert-warning">'.$spotter_array[0]['highlight'].'</div>';
-		}
+    
+        if ($spotter_array[0]['registration'] != "")
+        {
+            $highlight = Spotter::getHighlightByRegistration($spotter_array[0]['registration']);
+            if ($highlight != "")
+            {
+             print '<div class="alert alert-warning">'.$highlight.'</div>';
+            }
+        }
         	
 		 include('flightid-sub-menu.php');
 		 
@@ -181,7 +185,9 @@ if (!empty($spotter_array))
 		
 			    foreach($google_json->responseData->results AS $result)
 			    {
-			      $google_image_url = (string) $result->url;
+			       $google_image_url = (string) $result->url;
+                   $planespotter_url_array = explode("_", $google_image_url);
+                   $planespotter_id = str_replace(".jpg", "", $planespotter_url_array[2]);
 			      
 			      //make sure we only get images from planespotters.net
 			      if (strpos($google_image_url,'planespotters.net') !== false && strpos($google_image_url,'static') === false) {
@@ -189,7 +195,7 @@ if (!empty($spotter_array))
 			      	//lets replace thumbnail with original to get the large version of the picture
 			      	$google_image_url = str_replace("thumbnail", "original", $google_image_url);
 			      	
-			      	print '<img src="'.$google_image_url.'" alt="Image courtesy of Planespotters.net" title="Image courtesy of Planespotters.net" />';
+			      	print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$google_image_url.'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" /></a>';
 			      	
 			      	$imageFound = true;
 						}
@@ -217,7 +223,7 @@ if (!empty($spotter_array))
     	print '<div class="last-flights">';
 	    	
 	    	print '<h3>Last 5 Flights of this Aircraft ('.$spotter_array[0]['registration'].')</h3>';
-	    	
+	    	$hide_th_links = true;
 	    	$spotter_array = Spotter::getSpotterDataByRegistration($spotter_array[0]['registration'],"0,5", "");
 	    	
 	    	include('table-output.php'); 

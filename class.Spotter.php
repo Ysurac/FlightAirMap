@@ -6480,7 +6480,7 @@ class Spotter{
 		
 		
 	
-        /*
+
 		//aircraft
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE spotter_output.aircraft_name = ''";
 		$result = mysql_query($query);
@@ -6501,7 +6501,6 @@ class Spotter{
 			$query2  = "UPDATE spotter_output SET spotter_output.aircraft_name = '".$aircraft_name[0]['type']."', spotter_output.aircraft_manufacturer = '".$aircraft_name[0]['manufacturer']."', spotter_output.image = '".$google_image_url['original']."', spotter_output.image_thumbnail = '".$google_image_url['thumbnail']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
 			$result2 = mysql_query($query2);
 		}
-        */
 
 	
 		
@@ -6529,7 +6528,7 @@ class Spotter{
 		
 	
 		
-
+/*
 		//airport
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.departure_airport_icao FROM spotter_output WHERE spotter_output.departure_airport_name = ''";
 		$result = mysql_query($query);
@@ -6561,7 +6560,7 @@ class Spotter{
 			$query2  = "UPDATE spotter_output SET spotter_output.arrival_airport_name = '".$airport_name[0]['name']."', spotter_output.arrival_airport_city = '".$airport_name[0]['city']."', spotter_output.arrival_airport_country = '".$airport_name[0]['country']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
 			$result2 = mysql_query($query2);
 		}
-		
+*/		
 	
 				
 		
