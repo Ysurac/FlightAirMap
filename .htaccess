@@ -72,6 +72,11 @@ RewriteRule ^tv(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
 RewriteRule ^tv(/?)$ tv.php [L,NC]
 
+RewriteCond %{HTTPS} !=off
+RewriteRule ^redirect/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^redirect/([^/]+)(/?)$ redirect.php?flightaware_id=$1 [L,NC]
+
 
 ########### LIVE ###########
 

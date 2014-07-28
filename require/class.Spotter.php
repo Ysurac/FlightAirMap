@@ -6130,6 +6130,34 @@ class Spotter{
 
 		return $hour_array;
 	}
+    
+    
+    /**
+	* Gets the Barrie Spotter ID based on the FlightAware ID
+	*
+	* @return Integer the Barrie Spotter ID
+	*
+	*/
+	public static function getBarrieSpotterIDBasedOnFlightAwareID($flightaware_id)
+	{
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+        
+        $flightaware_id = mysql_real_escape_string($flightaware_id);
+
+		$query  = "SELECT spotter_output.spotter_id
+								FROM spotter_output 
+								WHERE spotter_output.flightaware_id = '".$flightaware_id."'";
+        
+		$result = mysql_query($query);
+
+        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		{
+			return $row['spotter_id'];
+		}
+	}
   
  
 	/**

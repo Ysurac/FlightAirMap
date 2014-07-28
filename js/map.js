@@ -76,10 +76,10 @@ $( document ).ready(function() {
               if (feature.properties.type == "aircraft"){
 
                 output += '<div class="top">';
-                  output += '<div class="left"><a href="/ident/'+feature.properties.callsign+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" /></a></div>';
+                  output += '<div class="left"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" /></a></div>';
                   output += '<div class="right">';
                     output += '<div class="callsign-details">';
-                      output += '<div class="callsign"><a href="/ident/'+feature.properties.callsign+'" target="_blank">'+feature.properties.callsign+'</a></div>';
+                      output += '<div class="callsign"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank">'+feature.properties.callsign+'</a></div>';
                       output += '<div class="airline">'+feature.properties.airline_name+'</div>';
                     output += '</div>';
                     output += '<div class="nomobile airports">';
