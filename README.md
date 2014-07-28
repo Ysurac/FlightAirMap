@@ -22,4 +22,4 @@ The follwing is a list of PHP extensions that must be installed on your server i
 
 ## Data Sources
 
-At the current moment only [http://www.flightaware.com](Flight Aware) is supported as the data source for this web app. More data sources will be avialable soon.
+At the current moment only [FlightAware](http://www.flightaware.com) is supported as the data source for this web app. More data sources will be avialable soon.
