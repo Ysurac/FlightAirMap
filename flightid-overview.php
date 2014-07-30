@@ -162,47 +162,12 @@ if (!empty($spotter_array))
 		
 			print '<div class="col-sm-7 col-sm-offset-1 image">';
 			
-			print '<div class="slideshow">';
+			print '<div class="image">';
 		    	
 	
-				if ($spotter_array[0]['registration'] != "")
+				if ($spotter_array[0]['image'] != "")
 				{	 	
-					 	$google_url = 'https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q='.$spotter_array[0]['registration'].'%20site:planespotters.net';
-				
-					
-					$google_url = str_replace(" ", "%20", $google_url);
-		
-					$ch = curl_init();
-					curl_setopt($ch, CURLOPT_HEADER, 0);
-					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-					curl_setopt($ch, CURLOPT_URL, $google_url);
-					$google_data = curl_exec($ch);
-					curl_close($ch);
-					
-			    $google_json = json_decode($google_data);
-			    $imageFound = false;
-		
-			    foreach($google_json->responseData->results AS $result)
-			    {
-			       $google_image_url = (string) $result->url;
-                   $planespotter_url_array = explode("_", $google_image_url);
-                   $planespotter_id = str_replace(".jpg", "", $planespotter_url_array[2]);
-			      
-			      //make sure we only get images from planespotters.net
-			      if (strpos($google_image_url,'planespotters.net') !== false && strpos($google_image_url,'static') === false) {
-			      
-			      	//lets replace thumbnail with original to get the large version of the picture
-			      	$google_image_url = str_replace("thumbnail", "original", $google_image_url);
-			      	
-			      	print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$google_image_url.'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" /></a>';
-			      	
-			      	$imageFound = true;
-						}
-					}
-						
-					if ($imageFound == false){
-						print '<img src="'.$globalURL.'/images/placeholder.png" alt="No image found!" title="No image found!" />';
-					}
+					print '<img src="'.$spotter_array[0]['image'].'" alt="Image are courtesy of Planespotters.net" title="Image are courtesy of Planespotters.net" />';
 					
 				} else {
 					print '<img src="'.$globalURL.'/images/placeholder.png" alt="No image found!" title="No image found!" />';

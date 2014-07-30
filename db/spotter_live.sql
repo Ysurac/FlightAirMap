@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 28, 2014 at 09:20 AM
+-- Generation Time: Jul 29, 2014 at 08:21 PM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -53,10 +53,8 @@ CREATE TABLE IF NOT EXISTS `spotter_live` (
   `altitude` int(11) NOT NULL,
   `heading` int(11) NOT NULL,
   `ground_speed` int(11) NOT NULL,
-  `image` varchar(999) NOT NULL,
-  `image_thumbnail` varchar(999) NOT NULL,
   PRIMARY KEY (`spotter_live_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15314 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=18961 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

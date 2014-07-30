@@ -50,7 +50,12 @@ class SpotterLive{
       $heading_direction = Spotter::parseDirection($row['heading']);
       $temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
       $temp_array['ground_speed'] = $row['ground_speed'];
-      $temp_array['image_thumbnail'] = $row['image_thumbnail'];
+      $temp_array['image_thumbnail'] = "";
+      if($row['registration'] != "")
+      {
+          $image_array = Spotter::getSpotterImage($row['registration']);
+          $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+      }
 
 			$dateArray = Spotter::parseDateString($row['date']);
 			if ($dateArray['seconds'] < 10)
@@ -323,10 +328,15 @@ class SpotterLive{
 
 		//getting the aircraft image
 		if ($registration != "")
-		{
-			$image_url = Spotter::findAircraftImage($registration);
+        {
+            $image_array = Spotter::getSpotterImage($registration);
+            
+            if ($image_array[0]['registration'] == "")
+            {
+                Spotter::addSpotterImage($registration);
+            }  
 		}
-
+        
 		$flightaware_id = mysql_real_escape_string($flightaware_id);
 	    $ident = mysql_real_escape_string($ident);
 	    $aircraft_icao = mysql_real_escape_string($aircraft_icao);
@@ -339,7 +349,7 @@ class SpotterLive{
 	    $heading = mysql_real_escape_string($heading);
 	    $groundspeed = mysql_real_escape_string($groundspeed);
 
-		$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, image, image_thumbnail, date) VALUES ('$flightaware_id','$ident','$registration','".$airline_array[0]['name']."', '".$airline_array[0]['icao']."', '".$airline_array[0]['country']."', '".$airline_array[0]['type']."', '$aircraft_icao', '".$aircraft_array[0]['type']."', '".$aircraft_array[0]['manufacturer']."', '$departure_airport_icao', '".$departure_airport_array[0]['name']."', '".$departure_airport_array[0]['city']."', '".$departure_airport_array[0]['country']."', '$arrival_airport_icao', '".$arrival_airport_array[0]['name']."', '".$arrival_airport_array[0]['city']."', '".$arrival_airport_array[0]['country']."', '$latitude', '$longitude', '$waypoints', '$altitude', '$heading', '$groundspeed', '".$image_url['original']."', '".$image_url['thumbnail']."', '$date')";
+		$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date) VALUES ('$flightaware_id','$ident','$registration','".$airline_array[0]['name']."', '".$airline_array[0]['icao']."', '".$airline_array[0]['country']."', '".$airline_array[0]['type']."', '$aircraft_icao', '".$aircraft_array[0]['type']."', '".$aircraft_array[0]['manufacturer']."', '$departure_airport_icao', '".$departure_airport_array[0]['name']."', '".$departure_airport_array[0]['city']."', '".$departure_airport_array[0]['country']."', '$arrival_airport_icao', '".$arrival_airport_array[0]['name']."', '".$arrival_airport_array[0]['city']."', '".$arrival_airport_array[0]['country']."', '$latitude', '$longitude', '$waypoints', '$altitude', '$heading', '$groundspeed', '$date')";
 
 		print $query."<br /><br />";
 

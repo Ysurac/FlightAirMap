@@ -573,139 +573,6 @@ a.full-width{
 .ui-timepicker-rtl dl dd { margin: 0 45% 10px 10px; }
 
 
-
-/* INDEX */
-body.page-index #slideshow{
-	position: relative;
-}
-body.page-index #slideshow .slidejs-container{
-	height:500px;
-	overflow:hidden !important;
-}
-body.page-index #slideshow .slidesjs-previous{
-	display:none;
-	position: absolute;
-	top:50%;
-	left:8px;
-	z-index:10;
-	text-indent: -9999px;
-	cursor: pointer;
-	width: 32px;
-	height: 32px;
-	background-image: url('images/slideshow-button.png');
-	background-position: 0% 0%;
-	background-repeat: no-repeat no-repeat;
-}
-body.page-index #slideshow .slidesjs-previous:hover{
-	background-position: 0% 100%;
-}
-
-body.page-index #slideshow .slidesjs-next{
-	display:none;
-	position: absolute;
-	top:50%;
-	right:8px;
-	z-index:10;
-	text-indent: -9999px;
-	cursor: pointer;
-	width: 32px;
-	height: 32px;
-	background-image: url('images/slideshow-button.png');
-	background-position: 100% 0%;
-	background-repeat: no-repeat no-repeat;
-}
-body.page-index #slideshow .slidesjs-next:hover{
-	background-position: 100% 100%;
-}
-body.page-index #slideshow .slidesjs-container,
-body.page-index #slideshow .slide{
-    height:500px !important;
-}
-body.page-index #slideshow .slide img{
-	width:100%;
-	z-index: 9;
-	position: relative;
-	display:block;
-	margin-top:-145px;
-}
-body.page-index #slideshow .slide .details{
-	position: absolute;
-	width:100%;
-	left:0px;
-	bottom:0px;
-	background:transparent url('images/slide-details-bg.png') 0 0;
-	padding:10px;
-	z-index:10;
-	height:20%;
-	line-height:1.8em;
-}
-body.page-index #slideshow .slide a{
-	color:#fff;
-	font-size:1.2em;
-}
-body.page-index .stats{
-    text-align:center;
-    padding-bottom:4.0em;
-    padding-top:4.0em;
-    margin-bottom:4.0em;
-}
-body.page-index .stats div{
-    display:inline-block;
-    font-size:1.2em;
-    width:150px;
-    font-weight:100;
-    background-color:#1a3151;
-    color:#fff;
-    padding:30px;
-    margin-right:1.5em;
-    text-align:center;
-    -webkit-border-radius: 100%;
-    -moz-border-radius: 100%;
-    border-radius: 100%;
-}
-body.page-index .stats div span{
-    font-size:2.5em;
-    font-weight:300;
-    text-transform:uppercase;
-    clear:both;
-}
-body.page-index .stats div.flights span{
-	margin-left:-16px;
-}
-body.page-index .stats h2{
-    font-weight:300;
-    margin-bottom:1.0em;
-    border-bottom:0px;
-}
-body.page-index .hours{
-    text-align:center;
-    padding-bottom:0px;
-    margin-bottom:6.0em;
-}
-body.page-index .hours h2{
-    font-weight:300;
-    margin-bottom:0px;
-    border-bottom:0px;
-}
-body.page-index .latest h2{
-    font-weight:300;
-    margin-bottom:1.0em;
-}
-body.page-index .latest .quote{
-	margin-top:2.0em;
-	padding-top:2.0em;
-	border-top:1px solid #eee;
-}
-body.page-index .latest .quote .fa{
-    color:#ddd;
-    font-size:3.0em;
-    float:left;
-		margin-right: 0.3em;
-}
-
-
-
-
 /* ABOUT */
 body.page-about .container
 body.page-about .container ul li{
@@ -868,43 +735,9 @@ body.page-flightid-overview .details .detail span{
 body.page-flightid-overview .details .detail .date{
 	display:block;
 }
-body.page-flightid-overview .slideshow{
+body.page-flightid-overview .image{
 	position: relative;
-	height:385px;
-}
-body.page-flightid-overview .slideshow .slidesjs-previous{
-	display:none;
-	position: absolute;
-	top:50%;
-	left:8px;
-	z-index:10;
-	text-indent: -9999px;
-	cursor: pointer;
-	width: 32px;
-	height: 32px;
-	background-image: url('images/slideshow-button.png');
-	background-position: 0% 0%;
-	background-repeat: no-repeat no-repeat;
-}
-body.page-flightid-overview .slideshow .slidesjs-previous:hover{
-	background-position: 0% 100%;
-}
-body.page-flightid-overview .slideshow .slidesjs-next{
-	display:none;
-	position: absolute;
-	top:50%;
-	right:8px;
-	z-index:10;
-	text-indent: -9999px;
-	cursor: pointer;
-	width: 32px;
-	height: 32px;
-	background-image: url('images/slideshow-button.png');
-	background-position: 100% 0%;
-	background-repeat: no-repeat no-repeat;
-}
-body.page-flightid-overview .slideshow .slidesjs-next:hover{
-	background-position: 100% 100%;
+    width:550px;
 }
 body.page-flightid-overview .last-flights{
 	margin-bottom:2.0em;
@@ -944,14 +777,6 @@ body.page-search .datepicker{
 		width:235px !important;
 	}
 
-
-	/* INDEX */
-	body.page-index .entry{
-		width:120px;
-		margin-right:40px;
-		display:inline-block;
-	}
-
 }
 
 
@@ -981,27 +806,8 @@ body.page-search .datepicker{
 		width:75%;
 	}
 
-
-	/* INDEX */
-	body.page-index #slideshow .slidejs-container{
-		height:400px;
-	}
-	body.page-index #slideshow .slidesjs-container,
-	body.page-index #slideshow .slide{
-	    height:400px !important;
-	}
-	body.page-index #slideshow .slide img{
-		margin-top:-100px;
-	}
-	body.page-index .entry{
-		width:300px;
-		margin-right:60px;
-		display:inline-block;
-		text-align: center;
-	}
-
 	/* FLIGHT ID */
-	body.page-flightid-overview .slideshow{
+	body.page-flightid-overview .image{
 		height:300px;
 	}
 
@@ -1157,34 +963,9 @@ body.page-search .datepicker{
 
 
 	/* FLIGHT ID */
-	body.page-flightid-overview .slideshow{
+	body.page-flightid-overview .image{
 		height:210px;
 	}
-
-	/* INDEX */
-	body.page-index #slideshow .slidesjs-container,
-    body.page-index #slideshow .slide{
-        height:180px !important;
-        overflow:hidden !important;
-    }
-	body.page-index #slideshow .slide img{
-    	margin-top:-20px;
-    }
-    body.page-index #slideshow .slide .details{
-			height:25%;
-		}
-    body.page-index .stats div{
-        margin-bottom:1.0em;
-    }
-    body.page-index .latest .news .news-item img{
-        float:none;
-        margin-right:0px;
-        display:block;
-        width:100%;
-    }
-    body.page-index .latest .news .news-item .body{
-        padding-left:0px;
-    }
 
 	/* ABOUT/TV */
 	body.page-about-tv .tv-launch{
@@ -1238,18 +1019,8 @@ body.page-search .datepicker{
 /* Mobile (Landscape) */
 @media only screen and (min-width: 480px) and (max-width: 767px) {
 
-	/* INDEX */
-	body.page-index #slideshow .slidesjs-container,
-    body.page-index #slideshow .slide{
-        height:250px !important;
-        overflow:hidden !important;
-    }
-	body.page-index #slideshow .slide img{
-    	margin-top:-75px;
-    }
-
-  /* FLIGHT ID */
-	body.page-flightid-overview .slideshow{
+    /* FLIGHT ID */
+	body.page-flightid-overview .image{
 		height:275px;
 	}
 

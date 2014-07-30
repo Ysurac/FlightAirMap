@@ -67,7 +67,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
  <?php
   if (!empty($_GET)){  
-	  $spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_GET['aircraft'],strtolower(str_replace("-", " ", $_GET['manufacturer'])),$_GET['highlights'],$_GET['photo'],$_GET['airline'],$_GET['airline_country'],$_GET['airline_type'],$_GET['airport'],$_GET['airport_country'],$_GET['callsign'],$_GET['departure_airport_route'],$_GET['arrival_airport_route'],$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$_GET['sort'],'');
+	  $spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_GET['aircraft'],strtolower(str_replace("-", " ", $_GET['manufacturer'])),$_GET['highlights'],$_GET['airline'],$_GET['airline_country'],$_GET['airline_type'],$_GET['airport'],$_GET['airport_country'],$_GET['callsign'],$_GET['departure_airport_route'],$_GET['arrival_airport_route'],$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$_GET['sort'],'');
 	  
 	 print '<span class="sub-menu-statistic column mobile">';
 	 	print '<a href="#" onclick="showSubMenu(); return false;">Export <i class="fa fa-plus"></i></a>';
@@ -114,7 +114,6 @@ $limit_previous_2 = $limit_end - $absolute_difference;
     		  	if ($_GET['manufacturer'] != ""){ print 'manufacturer: <span>'.$_GET['manufacturer'].'</span> '; }
     		  	if ($_GET['registration'] != ""){ print 'registration: <span>'.$_GET['registration'].'</span> '; }
     		  	if ($_GET['highlights'] == "true"){ print 'highlights: <span>'.$_GET['highlights'].'</span> '; }
-    		  	if ($_GET['photo'] == "true"){ print 'photo: <span>'.$_GET['photo'].'</span> '; }
 				if ($_GET['airline'] != ""){ print 'airline: <span>'.$_GET['airline'].'</span> '; }
 				if ($_GET['airline_country'] != ""){ print 'airline country: <span>'.$_GET['airline_country'].'</span> '; }
 				if ($_GET['airline_type'] != ""){ print 'airline type: <span>'.$_GET['airline_type'].'</span> '; }
@@ -222,9 +221,6 @@ $limit_previous_2 = $limit_end - $absolute_difference;
     			</div>
     			<div class="checkbox">
     				<div><input type="checkbox" name="highlights" value="true" id="highlights" <?php if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <label for="highlights">Include only aircrafts with special highlights (unique liveries, destinations etc.)</label></div>
-    			</div>
-    			<div class="checkbox">
-    				<div><input type="checkbox" name="photo" value="true" id="photo" <?php if ($_GET['photo'] == "true"){ print 'checked="checked"'; } ?>> <label for="photo">Include only aircrafts who have a photo</label></div>
     			</div>
         </fieldset>
         <fieldset>

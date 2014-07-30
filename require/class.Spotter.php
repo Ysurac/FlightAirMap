@@ -50,8 +50,14 @@ class Spotter{
       $heading_direction = Spotter::parseDirection($row['heading']);
       $temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
       $temp_array['ground_speed'] = $row['ground_speed'];
-      $temp_array['image'] = $row['image'];
-      $temp_array['image_thumbnail'] = $row['image_thumbnail'];
+      $temp_array['image'] = "";
+      $temp_array['image_thumbnail'] = "";
+      if($row['registration'] != "")
+      {
+          $image_array = Spotter::getSpotterImage($row['registration']);
+          $temp_array['image'] = $image_array[0]['image'];
+          $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+      }
       $temp_array['highlight'] = $row['highlight'];
 			
 			$dateArray = Spotter::parseDateString($row['date']);
@@ -135,7 +141,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $photo = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '')
+	public static function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '')
 	{
 		date_default_timezone_set('UTC');
 		
@@ -217,16 +223,6 @@ class Spotter{
 				return false;
 			} else {
 				$additional_query .= " AND (spotter_output.highlight <> '')";
-			}
-		}
-		
-		if ($photo == "true")
-		{
-			if (!is_string($photo))
-			{
-				return false;
-			} else {
-				$additional_query .= " AND (spotter_output.image_thumbnail <> '')";
 			}
 		}
 		
@@ -1931,8 +1927,14 @@ class Spotter{
 
 		//getting the aircraft image
 		if ($registration != "")
-		{
-			$image_url = Spotter::findAircraftImage($registration);
+        {
+            $image_array = Spotter::getSpotterImage($registration);
+            
+            if ($image_array[0]['registration'] == "")
+            {
+                Spotter::addSpotterImage($registration);
+            }
+            
 		}
     
 		$flightaware_id = mysql_real_escape_string($flightaware_id);
@@ -1947,7 +1949,7 @@ class Spotter{
 	    $heading = mysql_real_escape_string($heading);
 	    $groundspeed = mysql_real_escape_string($groundspeed);
 	
-		$query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, image, image_thumbnail, date) VALUES ('$flightaware_id','$ident','$registration','".$airline_array[0]['name']."', '".$airline_array[0]['icao']."', '".$airline_array[0]['country']."', '".$airline_array[0]['type']."', '$aircraft_icao', '".$aircraft_array[0]['type']."', '".$aircraft_array[0]['manufacturer']."', '$departure_airport_icao', '".$departure_airport_array[0]['name']."', '".$departure_airport_array[0]['city']."', '".$departure_airport_array[0]['country']."', '$arrival_airport_icao', '".$arrival_airport_array[0]['name']."', '".$arrival_airport_array[0]['city']."', '".$arrival_airport_array[0]['country']."', '$latitude', '$longitude', '$waypoints', '$altitude', '$heading', '$groundspeed', '".$image_url['original']."', '".$image_url['thumbnail']."', '$date')";
+		$query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date) VALUES ('$flightaware_id','$ident','$registration','".$airline_array[0]['name']."', '".$airline_array[0]['icao']."', '".$airline_array[0]['country']."', '".$airline_array[0]['type']."', '$aircraft_icao', '".$aircraft_array[0]['type']."', '".$aircraft_array[0]['manufacturer']."', '$departure_airport_icao', '".$departure_airport_array[0]['name']."', '".$departure_airport_array[0]['city']."', '".$departure_airport_array[0]['country']."', '$arrival_airport_icao', '".$arrival_airport_array[0]['name']."', '".$arrival_airport_array[0]['city']."', '".$arrival_airport_array[0]['country']."', '$latitude', '$longitude', '$waypoints', '$altitude', '$heading', '$groundspeed',  '$date')";
 		
 		print $query."<br /><br />";
 
@@ -2704,7 +2706,7 @@ class Spotter{
 		
 		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.image_thumbnail  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration  
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND spotter_output.aircraft_icao = '".$aircraft_icao."'  
                     GROUP BY spotter_output.registration 
@@ -2720,7 +2722,12 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-			$temp_array['image_thumbnail'] = $row['image_thumbnail'];
+			$temp_array['image_thumbnail'] = "";
+            if($row['registration'] != "")
+              {
+                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+              }
             $temp_array['registration_count'] = $row['registration_count'];
           
             $aircraft_array[] = $temp_array;
@@ -2786,7 +2793,7 @@ class Spotter{
 		
 		$airline_icao = mysql_real_escape_string($airline_icao);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.image_thumbnail  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration   
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND spotter_output.airline_icao = '".$airline_icao."' 
                     GROUP BY spotter_output.registration 
@@ -2802,7 +2809,12 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-			$temp_array['image_thumbnail'] = $row['image_thumbnail'];
+			$temp_array['image_thumbnail'] = "";
+            if($row['registration'] != "")
+              {
+                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+              }
             $temp_array['registration_count'] = $row['registration_count'];
           
             $aircraft_array[] = $temp_array;
@@ -2905,7 +2917,7 @@ class Spotter{
 		
 		$airport_icao = mysql_real_escape_string($airport_icao);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.image_thumbnail  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration  
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = '".$airport_icao."' OR spotter_output.arrival_airport_icao = '".$airport_icao."')   
                     GROUP BY spotter_output.registration 
@@ -2921,7 +2933,12 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-			$temp_array['image_thumbnail'] = $row['image_thumbnail'];
+			$temp_array['image_thumbnail'] = "";
+            if($row['registration'] != "")
+              {
+                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+              }
             $temp_array['registration_count'] = $row['registration_count'];
           
             $aircraft_array[] = $temp_array;
@@ -3024,7 +3041,7 @@ class Spotter{
 		
 		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.image_thumbnail  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration   
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND spotter_output.aircraft_manufacturer = '".$aircraft_manufacturer."'   
                     GROUP BY spotter_output.registration 
@@ -3040,7 +3057,12 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-			$temp_array['image_thumbnail'] = $row['image_thumbnail'];
+			$temp_array['image_thumbnail'] = "";
+            if($row['registration'] != "")
+              {
+                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+              }
             $temp_array['registration_count'] = $row['registration_count'];
           
             $aircraft_array[] = $temp_array;
@@ -3105,7 +3127,7 @@ class Spotter{
 		
 		$date = mysql_real_escape_string($date);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.image_thumbnail  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration   
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."'   
                     GROUP BY spotter_output.registration 
@@ -3121,7 +3143,12 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-			$temp_array['image_thumbnail'] = $row['image_thumbnail'];
+			$temp_array['image_thumbnail'] = "";
+            if($row['registration'] != "")
+              {
+                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+              }
             $temp_array['registration_count'] = $row['registration_count'];
           
             $aircraft_array[] = $temp_array;
@@ -3224,7 +3251,7 @@ class Spotter{
 		
 		$ident = mysql_real_escape_string($ident);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.image_thumbnail  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration  
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND spotter_output.ident = '".$ident."'   
                     GROUP BY spotter_output.registration 
@@ -3240,7 +3267,12 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-			$temp_array['image_thumbnail'] = $row['image_thumbnail'];
+			$temp_array['image_thumbnail'] = "";
+            if($row['registration'] != "")
+              {
+                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+              }
             $temp_array['registration_count'] = $row['registration_count'];
           
             $aircraft_array[] = $temp_array;
@@ -3345,7 +3377,7 @@ class Spotter{
 		$depature_airport_icao = mysql_real_escape_string($depature_airport_icao);
 		$arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.image_thumbnail  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration   
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = '".$depature_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."')   
                     GROUP BY spotter_output.registration 
@@ -3361,7 +3393,12 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-			$temp_array['image_thumbnail'] = $row['image_thumbnail'];
+			$temp_array['image_thumbnail'] = "";
+            if($row['registration'] != "")
+              {
+                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+              }
             $temp_array['registration_count'] = $row['registration_count'];
           
             $aircraft_array[] = $temp_array;
@@ -3466,7 +3503,7 @@ class Spotter{
 		
 		$country = mysql_real_escape_string($country);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.image_thumbnail  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration 
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND (((spotter_output.departure_airport_country = '".$country."') OR (spotter_output.arrival_airport_country = '".$country."')) OR spotter_output.airline_country = '".$country."')    
                     GROUP BY spotter_output.registration 
@@ -3482,7 +3519,12 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-			$temp_array['image_thumbnail'] = $row['image_thumbnail'];
+			$temp_array['image_thumbnail'] = "";
+            if($row['registration'] != "")
+              {
+                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+              }
             $temp_array['registration_count'] = $row['registration_count'];
           
             $aircraft_array[] = $temp_array;
@@ -3582,7 +3624,7 @@ class Spotter{
 			return false;
 		}
 
-		$query  = "SELECT DISTINCT spotter_output.registration, COUNT(spotter_output.registration) AS aircraft_registration_count, spotter_output.image_thumbnail, spotter_output.aircraft_icao, .spotter_output.aircraft_name   
+		$query  = "SELECT DISTINCT spotter_output.registration, COUNT(spotter_output.registration) AS aircraft_registration_count, spotter_output.aircraft_icao, .spotter_output.aircraft_name   
                     FROM spotter_output 
                     WHERE spotter_output.registration <> '' 
                     GROUP BY spotter_output.registration
@@ -3600,7 +3642,12 @@ class Spotter{
       $temp_array['aircraft_registration_count'] = $row['aircraft_registration_count'];
       $temp_array['aircraft_icao'] = $row['aircraft_icao'];
       $temp_array['aircraft_name'] = $row['aircraft_name'];
-      $temp_array['image_thumbnail'] = $row['image_thumbnail'];
+      $temp_array['image_thumbnail'] = "";
+        if($row['registration'] != "")
+          {
+              $image_array = Spotter::getSpotterImage($row['registration']);
+              $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+          }
           
        $aircraft_array[] = $temp_array;
 		}
@@ -6133,6 +6180,76 @@ class Spotter{
     
     
     /**
+	* Adds the images based on the aircraft registration
+	*
+	* @return String either success or error
+	*
+	*/
+	public static function addSpotterImage($registration)
+	{
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+        
+        $registration = mysql_real_escape_string($registration);
+        
+        //getting the aircraft image
+		$image_url = Spotter::findAircraftImage($registration);
+
+		$query  = "INSERT INTO spotter_image (registration, image, image_thumbnail) VALUES ('$registration', '".$image_url['original']."', '".$image_url['thumbnail']."')";
+
+		$result = mysql_query($query);
+		
+		if ($result == 1)
+		{
+			return "success";
+		} else {
+			return "error";
+		}
+
+	}
+    
+    
+    /**
+	* Gets the images based on the aircraft registration
+	*
+	* @return Array the images list
+	*
+	*/
+	public static function getSpotterImage($registration)
+	{
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+        
+        $registration = mysql_real_escape_string($registration);
+
+		$query  = "SELECT spotter_image.*
+								FROM spotter_image 
+								WHERE spotter_image.registration = '".$registration."'";
+
+		$result = mysql_query($query);
+        
+        $images_array = array();
+		$temp_array = array();
+
+        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		{
+			$temp_array['spotter_image_id'] = $row['spotter_image_id'];
+            $temp_array['registration'] = $row['registration'];
+            $temp_array['image'] = $row['image'];
+            $temp_array['image_thumbnail'] = $row['image_thumbnail'];
+          
+            $images_array[] = $temp_array;
+		}
+        
+        return $images_array;
+	}
+    
+    
+     /**
 	* Gets the Barrie Spotter ID based on the FlightAware ID
 	*
 	* @return Integer the Barrie Spotter ID
@@ -6651,6 +6768,39 @@ class Spotter{
 		}
 
 		
+	}
+    
+    
+    
+    
+    //temporary update scripts
+	public static function transferAircraftImages()
+	{
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+		
+		$query  = "SELECT spotter_output.registration, spotter_output.image, spotter_output.image_thumbnail FROM spotter_output WHERE spotter_output.registration <> '' AND spotter_output.image_thumbnail <> ''";
+		$result = mysql_query($query);
+		
+		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		{
+			$registration = $row['registration'];
+            $image = $row['image'];
+            $image_thumbnail = $row['image_thumbnail'];
+            
+            
+            $image_array = Spotter::getSpotterImage($registration);
+            
+            if ($image_array[0]['registration'] == "")
+            {
+                $query2  = "INSERT INTO spotter_image (registration, image, image_thumbnail) VALUES ('".$registration."','".$image."','".$image_thumbnail."')";
+			     $result2 = mysql_query($query2);
+            }
+  
+		}
+
 	}
 	
 	
