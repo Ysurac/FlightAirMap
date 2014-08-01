@@ -737,7 +737,8 @@ body.page-flightid-overview .details .detail .date{
 }
 body.page-flightid-overview .image{
 	position: relative;
-    width:550px;
+    width:650px;
+    float:right;
 }
 body.page-flightid-overview .last-flights{
 	margin-bottom:2.0em;
@@ -776,6 +777,11 @@ body.page-search .datepicker{
 	.search-containers .bootstrap-select{
 		width:235px !important;
 	}
+    
+    /* FLIGHT ID */
+	body.page-flightid-overview .image{
+        width:500px;
+    }
 
 }
 
@@ -808,8 +814,8 @@ body.page-search .datepicker{
 
 	/* FLIGHT ID */
 	body.page-flightid-overview .image{
-		height:300px;
-	}
+        width:425px;
+    }
 
 }
 
@@ -963,9 +969,10 @@ body.page-search .datepicker{
 
 
 	/* FLIGHT ID */
+	/* FLIGHT ID */
 	body.page-flightid-overview .image{
-		height:210px;
-	}
+        width:100%;
+    }
 
 	/* ABOUT/TV */
 	body.page-about-tv .tv-launch{
@@ -1018,11 +1025,6 @@ body.page-search .datepicker{
 
 /* Mobile (Landscape) */
 @media only screen and (min-width: 480px) and (max-width: 767px) {
-
-    /* FLIGHT ID */
-	body.page-flightid-overview .image{
-		height:275px;
-	}
 
 
 
