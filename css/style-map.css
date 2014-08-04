@@ -51,6 +51,12 @@ body {
 .compass{
   top:170px;
 }
+.weatherradar{
+  top:220px;
+}
+.weathersatellite{
+  top:250px;
+}
 .mobile{
     display: none !important;
 }

@@ -149,7 +149,34 @@ class SpotterLive{
 			return false;
 		}
 
-		$query  = $global_query;
+		$query  = $global_query." WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_live.date";
+
+		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+
+		return $spotter_array;
+	}
+    
+    
+    /**
+	* Gets all the spotter information based on a particular callsign
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getAllLiveSpotterDataByIdent($ident)
+	{
+		global $global_query;
+
+		date_default_timezone_set('UTC');
+
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+        
+        $ident = mysql_real_escape_string($ident);
+
+		$query  = $global_query." WHERE spotter_live.ident = '".$ident."'";
 
 		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
 
@@ -171,7 +198,8 @@ class SpotterLive{
 			return false;
 		}
 
-		$query  = "DELETE FROM spotter_live";
+		$query  = "DELETE FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) >= spotter_live.date";
+        
 		$result = mysql_query($query);
 
 		if ($result == 1)

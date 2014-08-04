@@ -1,5 +1,9 @@
 var map;
 var user = new L.FeatureGroup();
+var weatherradar;
+var weatherradarrefresh;
+var weathersatellite;
+var weathersatelliterefresh;
 $( document ).ready(function() {
     
   //setting the zoom functionality for either mobile or desktop
@@ -73,6 +77,8 @@ $( document ).ready(function() {
             },
             onEachFeature: function (feature, layer) {
               var output = '';
+                
+              //individual aircraft
               if (feature.properties.type == "aircraft"){
 
                 output += '<div class="top">';
@@ -142,8 +148,22 @@ $( document ).ready(function() {
 
                 layer_data.addLayer(layer);
                }
+                
+                //aircraft history position as a line
+                if (feature.properties.type == "history"){
+                    var style = {
+                        "color": "#1a3151",
+                        "weight": 3,
+                        "opacity": 0.3
+                    };
+                    layer.setStyle(style);
+                    layer_data.addLayer(layer);
+                }
 
              }
+              
+            
+              
           });
           layer_data.addTo(map);
         }
@@ -157,6 +177,79 @@ $( document ).ready(function() {
   setInterval(function(){getLiveData()},60000);
 });
 
+//adds a new weather radar layer on to the map
+function showWeatherRadar(){
+  //if the weatherradar is currently active then disable it, otherwise enable it
+  if (!$(".weatherradar").hasClass("active"))
+  {
+    //loads the function to load the weather radar
+    loadWeatherRadar();
+    //automatically refresh radar every 2 minutes
+    weatherradarrefresh = setInterval(function(){loadWeatherRadar()}, 120000);
+    //add the active class
+    $(".weatherradar").addClass("active");
+  } else {
+      //remove the weather radar layer
+      map.removeLayer(weatherradar);
+      //remove the active class
+      $(".weatherradar").removeClass("active");
+      //remove the auto refresh
+      clearInterval(weatherradarrefresh);
+  }       
+}
+
+//actually loads the weather radar
+function loadWeatherRadar()
+{
+    if (weatherradar)
+    {
+      //remove the weather radar layer
+      map.removeLayer(weatherradar);  
+    }
+    
+    weatherradar = L.tileLayer('http://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png?' + parseInt(Math.random()*9999), {
+        format: 'image/png',
+        transparent: true,
+        opacity: '0.5'
+    }).addTo(map);
+}
+
+//adds a new weather satellite layer on to the map
+function showWeatherSatellite(){
+  //if the weatherradar is currently active then disable it, otherwise enable it
+  if (!$(".weathersatellite").hasClass("active"))
+  {
+    //loads the function to load the weather satellite
+    loadWeatherSatellite();
+    //automatically refresh satellite every 2 minutes
+    weathersatelliterefresh = setInterval(function(){loadWeatherSatellite()}, 120000);
+    //add the active class
+    $(".weathersatellite").addClass("active");
+  } else {
+      //removes the weather satellite layer
+      map.removeLayer(weathersatellite);
+      //remove the active class
+      $(".weathersatellite").removeClass("active");
+      //remove the auto refresh
+      clearInterval(weathersatelliterefresh);
+  }       
+}
+
+//actually loads the weather satellite
+function loadWeatherSatellite()
+{
+    if (weathersatellite)
+    {
+      //remove the weather satellite layer
+      map.removeLayer(weathersatellite);  
+    }
+    
+    weathersatellite = L.tileLayer('http://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/goes-east-vis-1km-900913/{z}/{x}/{y}.png?' + parseInt(Math.random()*9999), {
+        format: 'image/png',
+        transparent: true,
+        opacity: '0.65'
+    }).addTo(map);
+}
 
 //zooms in the map
 function zoomInMap(){

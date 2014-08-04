@@ -30,6 +30,7 @@ $output .= '{';
 				}
 
 				//waypoint plotting
+                /*
 				$output .= '{';
 					$output .= '"type": "Feature",';
 						$output .= '"properties": {';
@@ -69,6 +70,7 @@ $output .= '{';
 								$output .= ']';
 							$output .= '}';
 				$output .= '},';
+                */
 
 				//location of aircraft
 				$output .= '{';
@@ -100,6 +102,32 @@ $output .= '{';
 								$output .= ']';
 							$output .= '}';
 				$output .= '},';
+                
+                
+                //previous location history of aircraft
+                $output .= '{';
+					$output .= '"type": "Feature",';
+                        $output .= '"properties": {';
+							$output .= '"callsign": "'.$spotter_item['ident'].'",';
+							$output .= '"type": "history"';
+						$output .= '},';
+						$output .= '"geometry": {';
+							$output .= '"type": "LineString",';
+								$output .= '"coordinates": [';
+                                    $spotter_history_array = SpotterLive::getAllLiveSpotterDataByIdent($spotter_item['ident']);
+									foreach ($spotter_history_array as $spotter_history)
+									{
+										$output .= '[';
+													$output .=  $spotter_history['longitude'].', ';
+													$output .=  $spotter_history['latitude'];
+										$output .= '],';
+
+									}
+									$output = substr($output, 0, -1);
+								$output .= ']';
+							$output .= '}';
+				$output .= '},';
+                
 			}
 		}
 		$output  = substr($output, 0, -1);
