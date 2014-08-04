@@ -815,6 +815,22 @@ body.page-search .datepicker{
 }
 
 
+/* Widescreen */
+@media only screen and (min-width: 1199px){
+
+	/* HIGHLIGHTS */
+    body.page-highlights-display .dispay-view div:nth-child(4n){
+        margin-right:1.0em;
+    }
+    body.page-highlights-display .dispay-view div:nth-child(5n){
+        margin-right:0px;   
+    }
+    body.page-highlights-display .dispay-view div img{
+        width:220px;
+    }
+
+}
+
 /* Tablet (Landscape) */
 @media only screen and (min-width: 992px) and (max-width: 1199px){
 
