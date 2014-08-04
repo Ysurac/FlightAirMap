@@ -18,19 +18,29 @@ RewriteCond %{HTTPS} =off
 RewriteRule ^latest(/?)$ latest.php [L,NC]
 
 RewriteCond %{HTTPS} !=off
-RewriteRule ^highlights/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteRule ^highlights/table/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
-RewriteRule ^highlights/([^/]+)/([^/]+)(/?)$ highlights.php?limit=$1&sort=$2 [L,NC]
+RewriteRule ^highlights/table/([^/]+)/([^/]+)(/?)$ highlights-table.php?limit=$1&sort=$2 [L,NC]
+
+RewriteCond %{HTTPS} !=off
+RewriteRule ^highlights/table/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^highlights/table/([^/]+)(/?)$ highlights-table.php?limit=$1 [L,NC]
+
+RewriteCond %{HTTPS} !=off
+RewriteRule ^highlights/table(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^highlights/table(/?)$ highlights-table.php [L,NC]
 
 RewriteCond %{HTTPS} !=off
 RewriteRule ^highlights/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
-RewriteRule ^highlights/([^/]+)(/?)$ highlights.php?limit=$1 [L,NC]
+RewriteRule ^highlights/([^/]+)(/?)$ highlights-display.php?limit=$1 [L,NC]
 
 RewriteCond %{HTTPS} !=off
 RewriteRule ^highlights(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
-RewriteRule ^highlights(/?)$ highlights.php [L,NC]
+RewriteRule ^highlights(/?)$ highlights-display.php [L,NC]
 
 RewriteCond %{HTTPS} !=off
 RewriteRule ^about/tv(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]

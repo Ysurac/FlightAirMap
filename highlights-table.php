@@ -2,7 +2,7 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-$title = "Special Highlights";
+$title = "Special Highlights - Table View";
 require('header.php');
 
 //calculuation for the pagination
@@ -21,16 +21,20 @@ $limit_next = $limit_end + $absolute_difference;
 $limit_previous_1 = $limit_start - $absolute_difference;
 $limit_previous_2 = $limit_end - $absolute_difference;
 
-$page_url = $globalURL.'/highlights';
+$page_url = $globalURL.'/highlights/table';
 
 ?>
  
   <?php
   
   	print '<div class="info column">';
-  		print '<h1>Special Highlights</h1>';
+        print '<div class="view-type">';
+            print '<a href="'.$globalURL.'/highlights" alt="Display View" title="Display View"><i class="fa fa-th"></i></a>';
+            print '<a href="'.$globalURL.'/highlights/table" class="active" alt="Table View" title="Table View"><i class="fa fa-table"></i></a>';
+        print '</div>';
+  		print '<h1>Special Highlights - Table View</h1>';
   	print '</div>';
-  	
+
   	print '<div class="table column">';	
 	  	print '<p>The table below shows the detailed information of all custom selected flights who have special aspects to it, such as unique liveries, destinations etc.</p>';
 	  

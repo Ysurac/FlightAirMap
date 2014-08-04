@@ -588,7 +588,13 @@ body.page-about .container ul.social li{
 	margin-bottom:10px;
 }
 
-
+/* Bootstrap Popover */
+.popover-title{
+    color:#808080;
+}
+.popover-content{
+    color:#808080;
+}
 
 /* ABOUT/TV */
 body.page-about-tv .tv-launch{
@@ -746,18 +752,57 @@ body.page-flightid-overview .last-flights{
 
 
 /* HIGHLIGHTS */
-body.page-highlights table tr td{
+body.page-highlights-display .view-type{
+     float:right;
+}
+body.page-highlights-display .view-type a{
+    display:inline-block;
+    margin-left:0.5em;
+    font-size:1.3em;
+}
+body.page-highlights-display .view-type a.active{
+    color:#428bca;   
+}
+body.page-highlights-display .dispay-view div{
+	display:inline-block;
+    margin-right:1.0em;
+    margin-bottom:1.0em;
+}
+body.page-highlights-display .dispay-view div:nth-child(4n){
+    margin-right:0px;   
+}
+body.page-highlights-display .dispay-view div img{
+    width:230px;
+}
+body.page-highlights-display .dispay-view div img:hover{
+    opacity:0.7;
+}
+
+
+/* HIGHLIGHTS - TABLE */
+body.page-highlights-table .view-type{
+     float:right;
+}
+body.page-highlights-table .view-type a{
+    display:inline-block;
+    margin-left:0.5em;
+    font-size:1.3em;
+}
+body.page-highlights-table .view-type a.active{
+    color:#428bca;   
+}
+body.page-highlights-table table tr td{
 	padding-bottom:2.0em;
 }
-body.page-highlights table tr.special{
+body.page-highlights-table table tr.special{
 	border-bottom:0px;
 }
-body.page-highlights table tr.special td{
+body.page-highlights-table table tr.special td{
 	text-align: left;
 	padding-bottom:0px;
 	padding-top:2.0em;
 }
-body.page-highlights table tr.special td h4{
+body.page-highlights-table table tr.special td h4{
 	border-bottom:0px;
 	margin-bottom:0px;
 	text-transform: inherit;
@@ -815,6 +860,17 @@ body.page-search .datepicker{
 	/* FLIGHT ID */
 	body.page-flightid-overview .image{
         width:425px;
+    }
+    
+    /* HIGHLIGHTS */
+    body.page-highlights-display .dispay-view div:nth-child(4n){
+        margin-right:1.0em;
+    }
+    body.page-highlights-display .dispay-view div:nth-child(3n){
+        margin-right:0px;   
+    }
+    body.page-highlights-display .dispay-view div img{
+        width:240px;
     }
 
 }
@@ -1019,6 +1075,17 @@ body.page-search .datepicker{
 	body.page-search .sub-menu li.short-url{
 		display:none;
 	}
+    
+    /* HIGHLIGHTS */
+    body.page-highlights-display .dispay-view div:nth-child(4n){
+        margin-right:1.0em;
+    }
+    body.page-highlights-display .dispay-view div:nth-child(2n){
+        margin-right:0px;   
+    }
+    body.page-highlights-display .dispay-view div img{
+        width:140px;
+    }
 
 }
 
@@ -1026,6 +1093,16 @@ body.page-search .datepicker{
 /* Mobile (Landscape) */
 @media only screen and (min-width: 480px) and (max-width: 767px) {
 
+    /* HIGHLIGHTS */
+    body.page-highlights-display .dispay-view div:nth-child(4n){
+        margin-right:1.0em;
+    }
+    body.page-highlights-display .dispay-view div:nth-child(3n){
+        margin-right:0px;   
+    }
+    body.page-highlights-display .dispay-view div img{
+        width:170px;
+    }
 
 
 }
