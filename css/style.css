@@ -815,6 +815,38 @@ body.page-search .datepicker{
 }
 
 
+/* STATISTIC */
+body.page-statistics .global-stats{
+    margin-top:3.0em;
+}
+body.page-statistics .global-stats div{
+    display:inline-block;
+    width:180px;
+    text-align: center;
+    font-size:2.0em;
+    margin-left:2.5em;
+    margin-right:2.5em;
+    margin-bottom:3.0em;
+}
+body.page-statistics .global-stats .type{
+    display:block;
+    text-transform: uppercase;
+    border-bottom:1px solid #ddd;
+    color:#1a3151;
+    padding-bottom:0.2em;
+    margin-bottom:0.2em;
+    font-size:0.7em;
+}
+body.page-statistics .specific-stats .col-lg-6{
+    margin-bottom:5.0em;
+    display:inline-block;
+    width:48%;
+}
+body.page-statistics .specific-stats .col-lg-6 .more{
+    text-align: right;
+}
+
+
 /* Widescreen */
 @media only screen and (min-width: 1199px){
 
@@ -887,6 +919,14 @@ body.page-search .datepicker{
     }
     body.page-highlights-display .dispay-view div img{
         width:240px;
+    }
+    
+    /* STATISTIC */
+    body.page-statistics .global-stats div{
+        width:150px;
+        font-size:2.0em;
+        margin-left:1.5em;
+        margin-right:1.5em;
     }
 
 }
@@ -1041,7 +1081,6 @@ body.page-search .datepicker{
 
 
 	/* FLIGHT ID */
-	/* FLIGHT ID */
 	body.page-flightid-overview .image{
         width:100%;
     }
@@ -1101,6 +1140,21 @@ body.page-search .datepicker{
     }
     body.page-highlights-display .dispay-view div img{
         width:140px;
+    }
+    
+    /* STATISTIC */
+    body.page-statistics .global-stats div{
+        width:100%;
+        font-size:2.0em;
+        margin-left:0px;
+        margin-right:0px;
+        margin-bottom:1.0em;
+    }
+    body.page-statistics .global-stats .type{
+        border-bottom:0px;   
+    }
+    body.page-statistics .specific-stats .col-lg-6{
+        width:100%;
     }
 
 }

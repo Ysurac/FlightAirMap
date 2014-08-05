@@ -844,7 +844,7 @@ RewriteRule ^flightid/([^/]+)(/?)$ flightid-overview.php?id=$1 [L,NC]
 RewriteCond %{HTTPS} !=off
 RewriteRule ^statistics(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
-RewriteRule ^statistics(/?)$ statistics-aircraft.php [L,NC]
+RewriteRule ^statistics(/?)$ statistics.php [L,NC]
 
 RewriteCond %{HTTPS} !=off
 RewriteRule ^statistics/aircraft(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
