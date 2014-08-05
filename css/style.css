@@ -820,12 +820,8 @@ body.page-statistics .global-stats{
     margin-top:3.0em;
 }
 body.page-statistics .global-stats div{
-    display:inline-block;
-    width:180px;
     text-align: center;
     font-size:2.0em;
-    margin-left:2.5em;
-    margin-right:2.5em;
     margin-bottom:3.0em;
 }
 body.page-statistics .global-stats .type{
@@ -837,12 +833,10 @@ body.page-statistics .global-stats .type{
     margin-bottom:0.2em;
     font-size:0.7em;
 }
-body.page-statistics .specific-stats .col-lg-6{
+body.page-statistics .specific-stats .col-md-6{
     margin-bottom:5.0em;
-    display:inline-block;
-    width:48%;
 }
-body.page-statistics .specific-stats .col-lg-6 .more{
+body.page-statistics .specific-stats .col-md-6 .more{
     text-align: right;
 }
 
@@ -923,10 +917,7 @@ body.page-statistics .specific-stats .col-lg-6 .more{
     
     /* STATISTIC */
     body.page-statistics .global-stats div{
-        width:150px;
         font-size:2.0em;
-        margin-left:1.5em;
-        margin-right:1.5em;
     }
 
 }
@@ -1152,9 +1143,6 @@ body.page-statistics .specific-stats .col-lg-6 .more{
     }
     body.page-statistics .global-stats .type{
         border-bottom:0px;   
-    }
-    body.page-statistics .specific-stats .col-lg-6{
-        width:100%;
     }
 
 }
