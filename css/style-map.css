@@ -64,15 +64,6 @@ body {
 .leaflet-container{
   font-size:14px;
 }
-.leaflet-label{
-    display:inline-block;
-    background-color:#ddd;
-    padding:5px;
-    border:1px solid #aaa;
-    opacity:0.75 !important;
-    font-size:0.8em;
-    width:80px;
-}
 .leaflet-marker-pane .tooltip{
     width:95px;  
     font-size:0.8em;
