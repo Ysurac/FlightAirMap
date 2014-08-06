@@ -437,6 +437,237 @@ class Spotter{
 
 		return $spotter_array;
 	}
+    
+    
+    
+    /**
+	* Gets all the spotter information sorted by the newest aircraft type
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getNewestSpotterDataSortedByAircraftType($limit = '', $sort = '')
+	{
+		global $global_query;
+		
+		date_default_timezone_set('UTC');
+		
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			
+			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
+			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+			}
+		}
+		
+		if ($sort != "")
+		{
+			$search_orderby_array = Spotter::getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY spotter_output.date DESC ";
+		}
+
+		$query  = $global_query." WHERE spotter_output.aircraft_name <> '' GROUP BY spotter_output.aircraft_icao ".$orderby_query;
+
+		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+
+		return $spotter_array;
+	}
+    
+    
+    /**
+	* Gets all the spotter information sorted by the newest aircraft registration
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getNewestSpotterDataSortedByAircraftRegistration($limit = '', $sort = '')
+	{
+		global $global_query;
+		
+		date_default_timezone_set('UTC');
+		
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			
+			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
+			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+			}
+		}
+		
+		if ($sort != "")
+		{
+			$search_orderby_array = Spotter::getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY spotter_output.date DESC ";
+		}
+
+		$query  = $global_query." WHERE spotter_output.registration <> '' GROUP BY spotter_output.registration ".$orderby_query;
+
+		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+
+		return $spotter_array;
+	}
+    
+    
+    /**
+	* Gets all the spotter information sorted by the newest airline
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getNewestSpotterDataSortedByAirline($limit = '', $sort = '')
+	{
+		global $global_query;
+		
+		date_default_timezone_set('UTC');
+		
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			
+			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
+			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+			}
+		}
+		
+		if ($sort != "")
+		{
+			$search_orderby_array = Spotter::getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY spotter_output.date DESC ";
+		}
+
+		$query  = $global_query." WHERE spotter_output.airline_name <> '' GROUP BY spotter_output.airline_icao ".$orderby_query;
+
+		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+
+		return $spotter_array;
+	}
+    
+    
+    /**
+	* Gets all the spotter information sorted by the newest departure airport
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getNewestSpotterDataSortedByDepartureAirport($limit = '', $sort = '')
+	{
+		global $global_query;
+		
+		date_default_timezone_set('UTC');
+		
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			
+			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
+			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+			}
+		}
+		
+		if ($sort != "")
+		{
+			$search_orderby_array = Spotter::getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY spotter_output.date DESC ";
+		}
+
+		$query  = $global_query." WHERE spotter_output.departure_airport_name <> '' GROUP BY spotter_output.departure_airport_icao ".$orderby_query;
+
+		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+
+		return $spotter_array;
+	}
+    
+    
+    /**
+	* Gets all the spotter information sorted by the newest arrival airport
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getNewestSpotterDataSortedByArrivalAirport($limit = '', $sort = '')
+	{
+		global $global_query;
+		
+		date_default_timezone_set('UTC');
+		
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			
+			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
+			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+			}
+		}
+		
+		if ($sort != "")
+		{
+			$search_orderby_array = Spotter::getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY spotter_output.date DESC ";
+		}
+
+		$query  = $global_query." WHERE spotter_output.arrival_airport_name <> '' GROUP BY spotter_output.arrival_airport_icao ".$orderby_query;
+
+		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+
+		return $spotter_array;
+	}
 	
 	
 	

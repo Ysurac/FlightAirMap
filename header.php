@@ -109,8 +109,8 @@ if ($facebook_meta_image != "")
 			<li><a href="<?php print $globalURL; ?>/airport">Airports</a></li>
 			<li><hr /></li>
             <li><a href="<?php print $globalURL; ?>/latest">Latest Activity</a></li>
-             <li><a href="<?php print $globalURL; ?>/date/<?php print date("Y-m-d"); ?>">Today's Activity</a></li>
-            <li><a href="<?php print $globalURL; ?>/date/<?php print date("Y-m-d", strtotime('-1 day')); ?>">Yesterday's Activity</a></li>
+            <li><a href="<?php print $globalURL; ?>/date/<?php print date("Y-m-d"); ?>">Today's Activity</a></li>
+            <li><a href="<?php print $globalURL; ?>/newest">Newest by Category</a></li>
             <li><hr /></li>
             <li><a href="<?php print $globalURL; ?>/highlights">Special Highlights</a></li>
           </ul>

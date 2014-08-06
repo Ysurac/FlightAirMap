@@ -18,6 +18,26 @@ RewriteCond %{HTTPS} =off
 RewriteRule ^latest(/?)$ latest.php [L,NC]
 
 RewriteCond %{HTTPS} !=off
+RewriteRule ^newest/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^newest/([^/]+)/([^/]+)/([^/]+)(/?)$ newest.php?category=$1&limit=$2&sort=$3 [L,NC]
+
+RewriteCond %{HTTPS} !=off
+RewriteRule ^newest/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^newest/([^/]+)/([^/]+)(/?)$ newest.php?category=$1&limit=$2 [L,NC]
+
+RewriteCond %{HTTPS} !=off
+RewriteRule ^newest/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^newest/([^/]+)(/?)$ newest.php?category=$1 [L,NC]
+
+RewriteCond %{HTTPS} !=off
+RewriteRule ^newest(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^newest(/?)$ newest.php [L,NC]
+
+RewriteCond %{HTTPS} !=off
 RewriteRule ^highlights/table/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
 RewriteRule ^highlights/table/([^/]+)/([^/]+)(/?)$ highlights-table.php?limit=$1&sort=$2 [L,NC]
