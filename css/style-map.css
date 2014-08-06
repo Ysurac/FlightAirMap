@@ -64,6 +64,20 @@ body {
 .leaflet-container{
   font-size:14px;
 }
+.leaflet-label{
+    display:inline-block;
+    background-color:#ddd;
+    padding:5px;
+    border:1px solid #aaa;
+    opacity:0.75 !important;
+    font-size:0.8em;
+    width:80px;
+}
+.leaflet-marker-pane .tooltip{
+    width:95px;  
+    font-size:0.8em;
+    opacity:0.7 !important;
+}
 
 body.page-index .leaflet-popup-content-wrapper{
   width:400px;
@@ -188,6 +202,12 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
       font-size:1.4em;
       font-weight:bold;
       color:#1a3151;
+    }
+    
+    .leaflet-marker-pane .tooltip{ 
+        font-size:0.7em;
+        width:50px;
+        
     }
     
 }

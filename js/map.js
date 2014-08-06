@@ -60,12 +60,17 @@ $( document ).ready(function() {
       dataType: "json",
       url: "live/geojson?"+Math.random(),
       success: function(data) {
-
+          
           var live_data = L.geoJson(data, {
             pointToLayer: function (feature, latLng) {
+                
+              var markerLabel = "";
+              if (feature.properties.callsign != ""){ markerLabel += feature.properties.callsign+'<br />'; }
+              if (feature.properties.departure_airport_code != "" || feature.properties.arrival_airport_code != ""){ markerLabel += '<span class="nomobile">'+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+'</span>'; }
+                
               return new L.Marker(latLng, {
                 iconAngle: feature.properties.heading,
-                title: feature.properties.callsign,
+                title: markerLabel,
                 alt: feature.properties.callsign,
                 icon: L.icon({
                   iconUrl: '/images/map-icon-shadow.png',
@@ -73,6 +78,7 @@ $( document ).ready(function() {
                   iconSize: [40, 40],
                   iconAnchor: [20, 40]
                 })
+                  //on marker click show the modal window with the iframe
               })
             },
             onEachFeature: function (feature, layer) {
@@ -166,6 +172,8 @@ $( document ).ready(function() {
               
           });
           layer_data.addTo(map);
+          //re-create the bootstrap tooltips on the marker 
+          showBootstrapTooltip();
         }
     }).error(function() {});
   }
@@ -175,7 +183,18 @@ $( document ).ready(function() {
 
   //then load it again every 30 seconds
   setInterval(function(){getLiveData()},60000);
+
+  //adds the bootstrap hover to the map buttons
+  $('.button').tooltip({ placement: 'right' });
+    
+  
 });
+
+//adds the bootstrap tooltip to the map icons
+function showBootstrapTooltip(){
+    $(".leaflet-marker-icon").tooltip('destroy');
+    $('.leaflet-marker-icon').tooltip({ html: true });
+}
 
 //adds a new weather radar layer on to the map
 function showWeatherRadar(){
