@@ -6769,9 +6769,17 @@ class Spotter{
 		//determine which characters are being used and convert the registration code appropiately
 		if (strlen($registration_prefix) == 1)
 		{
-			$registration = preg_replace("/^(.{1})/", "$1-", $registration);
+			if (0 === strpos($registration, 'N')) {
+                $registration = preg_replace("/^(.{1})/", "$1", $registration);
+            } else {
+                $registration = preg_replace("/^(.{1})/", "$1-", $registration);
+            }
 		} else if(strlen($registration_prefix) == 2){
-			$registration = preg_replace("/^(.{2})/", "$1-", $registration);
+            if (0 === strpos($registration, 'N')) {
+                $registration = preg_replace("/^(.{2})/", "$1", $registration);
+            } else {
+                $registration = preg_replace("/^(.{2})/", "$1-", $registration);
+            }
 		}
 
 		return $registration;	
