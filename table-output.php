@@ -220,11 +220,11 @@ if (strtolower($current_page) == "search")
     	if ($spotter_item['image_thumbnail'] != "")
     	 {
     	 	print '<td class="aircraft_thumbnail">';
-    	 		print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" alt="Click to see more information about this flight" title="Click to see more information about this flight" width="100px" /></a>';
+    	 		print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')<br />Airline: '.$spotter_item['airline_name'].'" data-html="true" width="100px" /></a>';
     	 	print '</td>';
     	 } else {
       	 print '<td class="aircraft_thumbnail">';
-      	 	print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" alt="Click to see more information about this flight" title="Click to see more information about this flight" width="100px" /></a>';
+      	 	print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')<br />Airline: '.$spotter_item['airline_name'].'" data-html="true" width="100px" /></a>';
       	 print '</td>';
     	 }
     	if (@getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
