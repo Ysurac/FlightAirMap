@@ -2937,7 +2937,7 @@ class Spotter{
 		
 		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND spotter_output.aircraft_icao = '".$aircraft_icao."'  
                     GROUP BY spotter_output.registration 
@@ -2953,6 +2953,7 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
+            $temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
@@ -3024,7 +3025,7 @@ class Spotter{
 		
 		$airline_icao = mysql_real_escape_string($airline_icao);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration   
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND spotter_output.airline_icao = '".$airline_icao."' 
                     GROUP BY spotter_output.registration 
@@ -3040,6 +3041,7 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
+            $temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
@@ -3148,7 +3150,7 @@ class Spotter{
 		
 		$airport_icao = mysql_real_escape_string($airport_icao);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = '".$airport_icao."' OR spotter_output.arrival_airport_icao = '".$airport_icao."')   
                     GROUP BY spotter_output.registration 
@@ -3164,6 +3166,7 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
+            $temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
@@ -3272,7 +3275,7 @@ class Spotter{
 		
 		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration   
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND spotter_output.aircraft_manufacturer = '".$aircraft_manufacturer."'   
                     GROUP BY spotter_output.registration 
@@ -3288,6 +3291,7 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
+            $temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
@@ -3358,7 +3362,7 @@ class Spotter{
 		
 		$date = mysql_real_escape_string($date);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration   
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name    
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."'   
                     GROUP BY spotter_output.registration 
@@ -3374,6 +3378,7 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
+            $temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
@@ -3482,7 +3487,7 @@ class Spotter{
 		
 		$ident = mysql_real_escape_string($ident);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration  
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND spotter_output.ident = '".$ident."'   
                     GROUP BY spotter_output.registration 
@@ -3498,6 +3503,7 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
+            $temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
@@ -3608,7 +3614,7 @@ class Spotter{
 		$depature_airport_icao = mysql_real_escape_string($depature_airport_icao);
 		$arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration   
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = '".$depature_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."')   
                     GROUP BY spotter_output.registration 
@@ -3624,6 +3630,7 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
+            $temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
@@ -3734,7 +3741,7 @@ class Spotter{
 		
 		$country = mysql_real_escape_string($country);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration 
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name 
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND (((spotter_output.departure_airport_country = '".$country."') OR (spotter_output.arrival_airport_country = '".$country."')) OR spotter_output.airline_country = '".$country."')    
                     GROUP BY spotter_output.registration 
@@ -3750,6 +3757,7 @@ class Spotter{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
+            $temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
@@ -3855,7 +3863,7 @@ class Spotter{
 			return false;
 		}
 
-		$query  = "SELECT DISTINCT spotter_output.registration, COUNT(spotter_output.registration) AS aircraft_registration_count, spotter_output.aircraft_icao, .spotter_output.aircraft_name   
+		$query  = "SELECT DISTINCT spotter_output.registration, COUNT(spotter_output.registration) AS aircraft_registration_count, spotter_output.aircraft_icao,  spotter_output.aircraft_name, spotter_output.airline_name    
                     FROM spotter_output 
                     WHERE spotter_output.registration <> '' 
                     GROUP BY spotter_output.registration
@@ -3873,6 +3881,7 @@ class Spotter{
       $temp_array['aircraft_registration_count'] = $row['aircraft_registration_count'];
       $temp_array['aircraft_icao'] = $row['aircraft_icao'];
       $temp_array['aircraft_name'] = $row['aircraft_name'];
+      $temp_array['airline_name'] = $row['airline_name'];
       $temp_array['image_thumbnail'] = "";
         if($row['registration'] != "")
           {

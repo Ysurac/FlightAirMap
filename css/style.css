@@ -86,6 +86,12 @@ table tr td.logo{
 table tr td.logo img{
 	width:80%;
 }
+table tr td.logo img:hover{
+    opacity:0.75;
+}
+table tr td.aircraft_thumbnail img:hover{
+    opacity:0.75;
+}
 table tr td.ident{
 	width:10%;
 }

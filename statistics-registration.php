@@ -68,11 +68,11 @@ require('header.php');
                   	if ($registration_item['image_thumbnail'] != "")
 						    	 {
 						    	 	print '<td class="aircraft_thumbnail">';
-						    	 		print '<a href="'.$globalURL.'/registration/'.$registration_item['registration'].'"><img src="'.$registration_item['image_thumbnail'].'" alt="Click to see more information about this aircraft" title="Click to see more information about this aircraft" width="100px" /></a>';
+						    	 		print '<a href="'.$globalURL.'/registration/'.$registration_item['registration'].'"><img src="'.$registration_item['image_thumbnail'].'" data-toggle="popover" title="'.$registration_item['registration'].' - '.$registration_item['aircraft_icao'].' - '.$registration_item['airline_name'].'" alt="'.$registration_item['registration'].' - '.$registration_item['aircraft_type'].' - '.$registration_item['airline_name'].'" data-content="Registration: '.$registration_item['registration'].'<br />Aircraft: '.$registration_item['aircraft_name'].' ('.$registration_item['aircraft_icao'].')<br />Airline: '.$registration_item['airline_name'].'" data-html="true" width="100px" /></a>';
 						    	 	print '</td>';
 						    	 } else {
 						      	 print '<td class="aircraft_thumbnail">';
-						      	 	print '<a href="'.$globalURL.'/registration/'.$registration_item['registration'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" alt="Click to see more information about this aircraft" title="Click to see more information about this aircraft" width="100px" /></a>';
+						      	 	print '<a href="'.$globalURL.'/registration/'.$registration_item['registration'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$registration_item['registration'].' - '.$registration_item['aircraft_icao'].' - '.$registration_item['airline_name'].'" alt="'.$registration_item['registration'].' - '.$registration_item['aircraft_type'].' - '.$registration_item['airline_name'].'" data-content="Registration: '.$registration_item['registration'].'<br />Aircraft: '.$registration_item['aircraft_name'].' ('.$registration_item['aircraft_icao'].')<br />Airline: '.$registration_item['airline_name'].'" data-html="true" width="100px" /></a>';
 						      	 print '</td>';
 						    	 }
                     print '<td>';
