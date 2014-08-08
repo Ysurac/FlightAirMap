@@ -3,8 +3,7 @@
 </span>
 <div class="sub-menu sub-menu-container">
 	<ul class="nav nav-pills">
-		<li><a href="<?php print $globalURL; ?>/ident/<?php print $_GET['ident']; ?>" <?php if (strtolower($current_page) == "ident-overview"){ print 'class="active"'; } ?>>Overview</a></li>
-		<li><a href="<?php print $globalURL; ?>/ident/detailed/<?php print $_GET['ident']; ?>" <?php if (strtolower($current_page) == "ident-detailed"){ print 'class="active"'; } ?>>Detailed</a></li>
+		<li><a href="<?php print $globalURL; ?>/ident/<?php print $_GET['ident']; ?>" <?php if (strtolower($current_page) == "ident-detailed"){ print 'class="active"'; } ?>>Detailed</a></li>
 		<li class="dropdown">
 		    <a class="dropdown-toggle <?php if(strtolower($current_page) == "ident-statistics-aircraft" || strtolower($current_page) == "ident-statistics-registration" || strtolower($current_page) == "ident-statistics-manufacturer"){ print 'active'; } ?>" data-toggle="dropdown" href="#">
 		      Aircraft <span class="caret"></span>

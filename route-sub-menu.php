@@ -3,8 +3,7 @@
 </span>
 <div class="sub-menu sub-menu-container">
 	<ul class="nav nav-pills">
-		<li><a href="<?php print $globalURL; ?>/route/<?php print $_GET['departure_airport']; ?>/<?php print $_GET['arrival_airport']; ?>" <?php if (strtolower($current_page) == "route-overview"){ print 'class="active"'; } ?>>Overview</a></li>
-		<li><a href="<?php print $globalURL; ?>/route/detailed/<?php print $_GET['departure_airport']; ?>/<?php print $_GET['arrival_airport']; ?>" <?php if (strtolower($current_page) == "route-detailed"){ print 'class="active"'; } ?>>Detailed</a></li>
+		<li><a href="<?php print $globalURL; ?>/route/<?php print $_GET['departure_airport']; ?>/<?php print $_GET['arrival_airport']; ?>" <?php if (strtolower($current_page) == "route-detailed"){ print 'class="active"'; } ?>>Detailed</a></li>
 		<li class="dropdown">
 		    <a class="dropdown-toggle <?php if(strtolower($current_page) == "route-statistics-aircraft" || strtolower($current_page) == "route-statistics-registration" || strtolower($current_page) == "route-statistics-manufacturer"){ print 'active'; } ?>" data-toggle="dropdown" href="#">
 		      Aircraft <span class="caret"></span>
@@ -25,5 +24,6 @@
 		    </ul>
 		</li>
 		<li><a href="<?php print $globalURL; ?>/route/statistics/time/<?php print $_GET['departure_airport']; ?>/<?php print $_GET['arrival_airport']; ?>" <?php if (strtolower($current_page) == "route-statistics-time"){ print 'class="active"'; } ?>>Time</a></li>
+        <li><a href="http://flightaware.com/live/findflight/<?php print $spotter_array[0]['departure_airport_icao']; ?>/<?php print $spotter_array[0]['arrival_airport_icao']; ?>/" target="_blank">Upcoming Schedule&raquo;</a></li>
 	</ul>
 </div>
