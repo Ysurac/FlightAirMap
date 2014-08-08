@@ -167,7 +167,9 @@ if (!empty($spotter_array))
 	
 				if ($spotter_array[0]['image'] != "")
 				{	 	
-					print '<img src="'.$spotter_array[0]['image'].'" alt="Image are courtesy of Planespotters.net" title="Image are courtesy of Planespotters.net" />';
+                    $planespotter_url_array = explode("_", $spotter_array[0]['image']);
+                    $planespotter_id = str_replace(".jpg", "", $planespotter_url_array[2]);
+                    print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$spotter_array[0]['image'].'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" /></a>';
 					
 				} else {
 					print '<img src="'.$globalURL.'/images/placeholder.png" alt="No image found!" title="No image found!" />';
