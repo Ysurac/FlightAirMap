@@ -24,7 +24,7 @@ if (!isset($_GET['country'])){
 	
 	$country = ucwords(str_replace("-", " ", $_GET['country']));
 	
-	$page_url = $globalURL.'/country/detailed/'.$_GET['country'];
+	$page_url = $globalURL.'/country/'.$_GET['country'];
 	
 	$spotter_array = Spotter::getSpotterDataByCountry($country, $limit_start.",".$absolute_difference, $_GET['sort']);
 	

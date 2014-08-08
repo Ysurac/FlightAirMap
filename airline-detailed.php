@@ -22,7 +22,7 @@ if (!isset($_GET['airline'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/airline/detailed/'.$_GET['airline'];
+	$page_url = $globalURL.'/airline/'.$_GET['airline'];
 	
 	$spotter_array = Spotter::getSpotterDataByAirline($_GET['airline'],$limit_start.",".$absolute_difference, $_GET['sort']);
 	

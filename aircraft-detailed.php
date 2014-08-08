@@ -21,7 +21,7 @@ if (!isset($_GET['aircraft_type'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/aircraft/detailed/'.$_GET['aircraft_type'];
+	$page_url = $globalURL.'/aircraft/'.$_GET['aircraft_type'];
 	
 	$spotter_array = Spotter::getSpotterDataByAircraft($_GET['aircraft_type'],$limit_start.",".$absolute_difference, $_GET['sort']);
 	

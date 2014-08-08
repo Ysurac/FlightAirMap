@@ -22,7 +22,7 @@ if (!isset($_GET['registration'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/registration/detailed/'.$_GET['registration'];
+	$page_url = $globalURL.'/registration/'.$_GET['registration'];
 	
 	$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], $limit_start.",".$absolute_difference, $_GET['sort']);
 	$aircraft_array = Spotter::getAircraftInfoByRegistration($_GET['registration']);

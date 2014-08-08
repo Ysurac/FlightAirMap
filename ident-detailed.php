@@ -22,7 +22,7 @@ if (!isset($_GET['ident'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/ident/detailed/'.$_GET['ident'];
+	$page_url = $globalURL.'/ident/'.$_GET['ident'];
 	
 	$spotter_array = Spotter::getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference, $_GET['sort']);
 	

@@ -23,7 +23,7 @@ if (!isset($_GET['date'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/date/detailed/'.$_GET['date'];
+	$page_url = $globalURL.'/date/'.$_GET['date'];
 	
 	$spotter_array = Spotter::getSpotterDataByDate($_GET['date'],$limit_start.",".$absolute_difference, $_GET['sort']);
 	

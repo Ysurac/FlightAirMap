@@ -22,7 +22,7 @@ if (!isset($_GET['airport'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/airport/detailed/'.$_GET['airport'];
+	$page_url = $globalURL.'/airport/'.$_GET['airport'];
 	
 	$spotter_array = Spotter::getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, $_GET['sort']);
 	$airport_array = Spotter::getAllAirportInfo($_GET['airport']);
