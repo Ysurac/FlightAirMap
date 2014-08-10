@@ -6831,26 +6831,7 @@ class Spotter{
 		{
 			return false;
 		}
-		
-		
-/*
-		//aircraft image
-		$query  = "SELECT spotter_output.spotter_id, spotter_output.registration FROM spotter_output WHERE spotter_output.image = '' AND spotter_output.registration = '' ORDER BY spotter_output.spotter_id DESC LIMIT 0,10";
-		$result = mysql_query($query);
-        
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-		{
-			$google_image_url = Spotter::findAircraftImage($row['registration']);
-			
-			if ($google_image_url['original'] == "")
-			{
-				$google_image_url['original'] = "-";
-			}
-			
-			$query2  = "UPDATE spotter_output SET spotter_output.image = '".$google_image_url['original']."', spotter_output.image_thumbnail = '".$google_image_url['thumbnail']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
-			$result2 = mysql_query($query2);
-		}
-		*/
+
 		
 		
 		/*
@@ -6873,7 +6854,7 @@ class Spotter{
 		
 		
 	
-        /*
+       /* 
 		//aircraft
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE spotter_output.aircraft_name = ''";
 		$result = mysql_query($query);
@@ -6889,38 +6870,17 @@ class Spotter{
 				{
 					$google_image_url['original'] = "-";
 				}
+                
+                $query2  = "INSERT INTO spotter_image (registration, image_thumbnail, image) VALUES ('".$row['registration']."', '".$google_image_url['thumbnail']."', '".$google_image_url['original']."')";
+                $result2 = mysql_query($query2);
 			}
 			
-			$query2  = "UPDATE spotter_output SET spotter_output.aircraft_name = '".$aircraft_name[0]['type']."', spotter_output.aircraft_manufacturer = '".$aircraft_name[0]['manufacturer']."', spotter_output.image = '".$google_image_url['original']."', spotter_output.image_thumbnail = '".$google_image_url['thumbnail']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
+			$query2  = "UPDATE spotter_output SET spotter_output.aircraft_name = '".$aircraft_name[0]['type']."', spotter_output.aircraft_manufacturer = '".$aircraft_name[0]['manufacturer']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
 			$result2 = mysql_query($query2);
-		}
-        */
+    
 
-	
-		
-		/*
-		//aircraft registration
-		$query  = "SELECT spotter_output.spotter_id, spotter_output.registration, spotter_output.aircraft_name FROM spotter_output WHERE spotter_output.registration <> ''";
-		$result = mysql_query($query);
-        
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-		{
-			$registration = Spotter::convertAircraftRegistration($row['registration']);
-			
-			$google_image_url = Spotter::findAircraftImage($registration." ".$row['aircraft_name']);
-			
-			if ($google_image_url['original'] == "")
-			{
-				$google_image_url['original'] = "-";
-			}
-
-			
-			$query2  = "UPDATE spotter_output SET spotter_output.registration = '".$registration."', spotter_output.image = '".$google_image_url['original']."', spotter_output.image_thumbnail = '".$google_image_url['thumbnail']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
-			$result2 = mysql_query($query2);
 		}
-		*/
-		
-	
+	*/
 		
 
 		//airport
@@ -6954,7 +6914,7 @@ class Spotter{
 			$query2  = "UPDATE spotter_output SET spotter_output.arrival_airport_name = '".$airport_name[0]['name']."', spotter_output.arrival_airport_city = '".$airport_name[0]['city']."', spotter_output.arrival_airport_country = '".$airport_name[0]['country']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
 			$result2 = mysql_query($query2);
 		}
-		
+
 	
 				
 		

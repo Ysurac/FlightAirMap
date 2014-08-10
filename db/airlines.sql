@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 28, 2014 at 09:20 AM
+-- Generation Time: Aug 10, 2014 at 02:42 PM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `airlines` (
   `type` varchar(999) NOT NULL,
   PRIMARY KEY (`airlines_id`),
   KEY `airlines_id` (`airlines_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6003 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6004 ;
 
 --
 -- Dumping data for table `airlines`
@@ -2224,7 +2224,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (2173, 2174, 'Elmagal Aviation Services', 'N', '', 'MGG', 'ELMAGAL', 'Sudan', 'N', 'passenger'),
 (2174, 2175, 'Elrom Aviation and Investments', 'N', '', 'ELR', '', 'Israel', 'N', 'passenger'),
 (2175, 2176, 'Embassy Airlines', 'N', '', 'EAM', 'EMBASSY AIR', 'Nigeria', 'N', 'passenger'),
-(2176, 2177, 'Embassy Freight Company', 'N', '', 'EFT', 'EMBASSY FREIGHT', 'United States', 'N', 'passenger'),
+(2176, 2177, 'ExecuFlight', 'N', '', 'EFT', 'ZIPLINE', 'United States', 'Y', 'passenger'),
 (2177, 2178, 'Empresa Brasileira De Aeronautica', 'N', '', 'EMB', 'EMBRAER', 'Brazil', 'N', 'passenger'),
 (2178, 2179, 'Embry-Riddle Aeronautical University', 'N', '', 'XSL', 'SATSLAB', 'United States', 'N', 'passenger'),
 (2179, 2180, 'Emerald Airways', 'N', '', 'JEM', 'GEMSTONE', 'United Kingdom', 'N', 'passenger'),
@@ -2239,9 +2239,9 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (2188, 2189, 'Empresa (Aero Uruguay)', 'N', '', 'AUO', ' S.A.', 'UNIFORM OSCAR', 'N', 'passenger'),
 (2189, 2190, 'Empresa Aero-Servicios Parrague', 'N', '', 'PRG', 'ASPAR', 'Chile', 'N', 'passenger'),
 (2190, 2191, 'Empresa Aerocaribbean', 'N', '', 'CRN', 'AEROCARIBBEAN', 'Cuba', 'N', 'passenger'),
-(2191, 2192, 'Empresa Aviacion Interamericana', 'N', '', 'VNA', 'EBBA', 'Uruguay', 'N', 'passenger');
+(2191, 2192, 'Empresa Aviacion Interamericana', 'N', '', 'VNA', 'EBBA', 'Uruguay', 'N', 'passenger'),
+(2192, 2193, 'Empresa Ecuatoriana De Aviacion', 'N', 'EU', 'EEA', 'ECUATORIANA', 'Ecuador', 'Y', 'passenger');
 INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `icao`, `callsign`, `country`, `active`, `type`) VALUES
-(2192, 2193, 'Empresa Ecuatoriana De Aviacion', 'N', 'EU', 'EEA', 'ECUATORIANA', 'Ecuador', 'Y', 'passenger'),
 (2193, 2194, 'Empresa Nacional De Servicios Aereos', 'N', '', 'CNI', 'SERAER', 'Cuba', 'N', 'passenger'),
 (2194, 2195, 'Empresa Venezolana', 'N', '', 'VNE', 'VENEZOLANA', 'Venezuela', 'N', 'passenger'),
 (2195, 2196, 'Empresa de Aviacion Aerogaviota', 'N', '', 'GTV', 'GAVIOTA', 'Cuba', 'N', 'passenger'),
@@ -2771,9 +2771,9 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (2719, 2721, 'Helicentre Coventry', 'N', '', 'COV', 'HELICENTRE', 'United Kingdom', 'N', 'passenger'),
 (2720, 2722, 'Helicol', 'N', '', 'HEL', 'HELICOL', 'Colombia', 'N', 'passenger'),
 (2721, 2723, 'Helicopter', 'N', '', 'HCP', 'HELI CZECH', 'Czech Republic', 'N', 'passenger'),
-(2722, 2724, 'Helicopter & Aviation Services', 'N', '', 'JKY', 'JOCKEY', 'United Kingdom', 'N', 'passenger');
+(2722, 2724, 'Helicopter & Aviation Services', 'N', '', 'JKY', 'JOCKEY', 'United Kingdom', 'N', 'passenger'),
+(2723, 2725, 'Helicopter Training & Hire', 'N', '', 'MVK', 'MAVRIK', 'United Kingdom', 'N', 'passenger');
 INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `icao`, `callsign`, `country`, `active`, `type`) VALUES
-(2723, 2725, 'Helicopter Training & Hire', 'N', '', 'MVK', 'MAVRIK', 'United Kingdom', 'N', 'passenger'),
 (2724, 2726, 'Helicopteros Aero Personal', 'N', '', 'HAP', 'HELIPERSONAL', 'Mexico', 'N', 'passenger'),
 (2725, 2727, 'Helicopteros Agroforestal', 'N', '', 'HAA', 'AGROFORESTAL', 'Chile', 'N', 'passenger'),
 (2726, 2728, 'Helicopteros Internacionales', 'N', '', 'HNT', 'HELICOP INTER', 'Mexico', 'N', 'passenger'),
@@ -3314,9 +3314,9 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (3261, 3264, 'Lignes Nationales Aeriennes - Linacongo', 'N', '', 'GCB', 'LINACONGO', 'Republic of the Congo', 'N', 'passenger'),
 (3262, 3265, 'Lincoln Air National Guard', 'N', '', 'GDQ', '', 'United States', 'N', 'passenger'),
 (3263, 3266, 'Lincoln Airlines', 'N', '', 'LRT', '', 'Australia', 'N', 'passenger'),
-(3264, 3267, 'Lindsay Aviation', 'N', '', 'LSY', 'LINDSAY AIR', 'United States', 'N', 'passenger');
+(3264, 3267, 'Lindsay Aviation', 'N', '', 'LSY', 'LINDSAY AIR', 'United States', 'N', 'passenger'),
+(3265, 3268, 'Linea Aerea Costa Norte', 'N', '', 'NOT', 'COSTA NORTE', 'Chile', 'N', 'passenger');
 INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `icao`, `callsign`, `country`, `active`, `type`) VALUES
-(3265, 3268, 'Linea Aerea Costa Norte', 'N', '', 'NOT', 'COSTA NORTE', 'Chile', 'N', 'passenger'),
 (3266, 3269, 'Linea Aerea Mexicana de Carga', 'N', '', 'LMC', 'LINEAS DECARGA', 'Mexico', 'N', 'passenger'),
 (3267, 3270, 'Linea Aerea SAPSA', 'N', 'L7', 'LNP', 'SAPSA', 'Chile', 'N', 'passenger'),
 (3268, 3271, 'Linea Aerea de Fumig Aguas Negras', 'N', '', 'NEG', 'AGUAS NEGRAS', 'Chile', 'N', 'passenger'),
@@ -3847,9 +3847,9 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (3793, 3798, 'Orange Air Services', 'N', '', 'ORD', 'ORANGE SERVICES', 'Sierra Leone', 'N', 'passenger'),
 (3794, 3799, 'Orange Air Sierra Leone', 'N', '', 'ORJ', 'ORANGE SIERRA', 'Sierra Leone', 'N', 'passenger'),
 (3795, 3800, 'Orange Aviation', 'N', '', 'ORE', 'ORANGE AVIATION', 'Israel', 'N', 'passenger'),
-(3796, 3801, 'Orbit Express Airlines', 'N', '', 'ORX', 'OREX', 'Turkey', 'N', 'passenger');
+(3796, 3801, 'Orbit Express Airlines', 'N', '', 'ORX', 'OREX', 'Turkey', 'N', 'passenger'),
+(3797, 3802, 'Orca Air', 'N', '', 'ORK', 'ORCA TAXI', 'Egypt', 'N', 'passenger');
 INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `icao`, `callsign`, `country`, `active`, `type`) VALUES
-(3797, 3802, 'Orca Air', 'N', '', 'ORK', 'ORCA TAXI', 'Egypt', 'N', 'passenger'),
 (3798, 3803, 'Orebro Aviation', 'N', '', 'BUE', 'BLUELIGHT', 'Sweden', 'N', 'passenger'),
 (3799, 3804, 'Orel State Air Enterprise', 'N', '', 'ORM', 'ORPRISE', 'Russia', 'N', 'passenger'),
 (3800, 3805, 'Orenburg Airlines', 'N', 'R2', 'ORB', 'ORENBURG', 'Russia', 'Y', 'passenger'),
@@ -4111,6 +4111,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (4056, 4062, 'Pro Air Service', 'N', '', 'PSZ', 'POP-AIR', 'United States', 'N', 'passenger'),
 (4057, 4063, 'Probiz Guinee', 'N', '', 'GIY', 'PROBIZ', 'Guinea', 'N', 'passenger'),
 (4058, 4064, 'Professional Express Courier Service', 'N', '', 'PAD', 'AIR PROFESSIONAL', 'United States', 'N', 'passenger'),
+(6003, 0, 'Comlux Aviation', '', '', 'MLM', 'LUXMALTA', 'Switzerland', 'Y', 'passenger'),
 (4060, 4066, 'Proflight Commuter Services', 'N', 'P0', '', '', 'Zambia', 'Y', 'passenger'),
 (4061, 4067, 'Promotora Industria Totolapa', 'N', '', 'PTT', 'TOTOLAPA', 'Mexico', 'N', 'passenger'),
 (4062, 4068, 'Propair', 'N', '', 'PRO', 'PROPAIR', 'Canada', 'N', 'passenger'),

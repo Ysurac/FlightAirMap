@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 28, 2014 at 09:19 AM
+-- Generation Time: Aug 10, 2014 at 02:42 PM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `aircraft` (
   `manufacturer` varchar(999) NOT NULL,
   PRIMARY KEY (`aircraft_id`),
   KEY `aircraft_id` (`aircraft_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=333 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=343 ;
 
 --
 -- Dumping data for table `aircraft`
@@ -369,7 +369,17 @@ INSERT INTO `aircraft` (`aircraft_id`, `icao`, `type`, `manufacturer`) VALUES
 (329, 'C150', 'Cessna 150 Commuter', 'Cessna'),
 (330, 'HA4T', 'Hawker Beechcraft 4000', 'Hawker'),
 (331, 'TEX2', 'Raytheon Texan 2', 'Raytheon'),
-(332, 'C530', 'Cessna (Unknown)', 'Cessna');
+(332, 'C530', 'Cessna (Unknown)', 'Cessna'),
+(333, 'C337', 'Cessna Super Skymaster', 'Cessna'),
+(334, 'C425', 'Cessna Conquest 1', 'Cessna'),
+(335, 'EXP', 'MD Helicopters MD900 Explorer', 'McDonnell Douglas'),
+(336, 'G280', 'Gulfstream G280', 'Gulfstream'),
+(337, 'GLAS', 'STODDARD-HAMILTON Glasair', 'Stoddard-Hamilton'),
+(338, 'GLF3', 'Gulfstream Aerospace Gulfstream 3', 'Gulfstream'),
+(339, 'LJ55', 'Learjet 55', 'Learjet'),
+(340, 'MO20', 'Mooney M-20', 'Mooney'),
+(341, 'PAY3', 'Piper Cheyenne 3', 'Piper'),
+(342, 'XL2', 'Liberty XL-2', 'Liberty');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

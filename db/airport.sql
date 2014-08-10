@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 28, 2014 at 09:20 AM
+-- Generation Time: Aug 10, 2014 at 02:42 PM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `airport` (
   `dst` varchar(999) NOT NULL,
   PRIMARY KEY (`airport_id`),
   KEY `airport_id` (`airport_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7858 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7879 ;
 
 --
 -- Dumping data for table `airport`
@@ -7921,7 +7921,28 @@ INSERT INTO `airport` (`airport_id`, `airports_id`, `name`, `city`, `country`, `
 (7854, 0, 'Tillsonburg Airport', 'Tillsonburg', 'Canada', '', 'CYTB', '42.9263888888889', '-80.7469444444445', 893, -5, ''),
 (7855, 0, 'Red Wing Regional Airport', 'Red Wing', 'United States', '', 'KRGK', '44.589361111', '-92.484972222', 778, -6, ''),
 (7856, 0, 'Huron County Memorial Airport', 'Bad Axe', 'United States', '', 'KBAX', '43.780222222', '-82.985416667', 763, -5, ''),
-(7857, 0, 'Sanford Seacoast Regional Airport', 'Sanford', 'United States', 'SFM', 'KSFM', '43.393805556', '-70.708', 244, -5, '');
+(7857, 0, 'Sanford Seacoast Regional Airport', 'Sanford', 'United States', 'SFM', 'KSFM', '43.393805556', '-70.708', 244, -5, ''),
+(7858, 0, 'Welland / Niagara Central Airport', 'Welland', 'Canada', '', 'CNQ3', '42.98', '-79.3247222222222', 585, -5, ''),
+(7859, 0, 'Arctic Bay Airport', 'Arctic Bay', 'Canada', 'YAB', 'CYAB', '73.0063888888889', '-85.0472222222222', 72, -5, ''),
+(7860, 0, 'Madawaska Valley Airpark Airport', 'Barrys Bay', 'Canada', '', 'CNZ4', '45.5', '-77.65', 1000, -5, ''),
+(7861, 0, 'La Tuque Airport', 'La Tuque', 'Canada', 'YLQ', 'CYLQ', '47.4097222222222', '-72.7888888888889', 548, -5, ''),
+(7862, 0, 'Finger Lakes Regional Airport', 'Seneca Falls', 'United States', '', '0G7', '42.883555556', '-76.781166667', 491, -5, ''),
+(7863, 0, 'Toledo Executive Airport', 'Toledo', 'United States', 'TDZ', 'KTDZ', '41.564944444', '-83.482222222', 623, -5, ''),
+(7864, 0, 'Charlevoix Airport', 'Saint-Irenee', 'Canada', 'YML', 'CYML', '47.5975', '-70.2238888888889', 977, -5, ''),
+(7865, 0, 'Plevna/Tomvale Airport', 'Plevna', 'Canada', '', 'CNA9', '44.9161111111111', '-76.9358333333333', 890, -5, ''),
+(7866, 0, 'Aurora Municipal Airport', 'Sugar Grove', 'United States', 'AUZ', 'KARR', '41.771916667', '-88.475666667', 712, -6, ''),
+(7867, 0, 'Caniapiscau Airport', 'Caniapiscau', 'Canada', '', 'CCP6', '54.8377777777778', '-69.8927777777778', 1672, -5, ''),
+(7868, 0, 'Martin State Airport', 'Baltimore', 'United States', 'MTN', 'KMTN', '39.325666667', '-76.413777778', 22, -5, ''),
+(7869, 0, 'Guelph Airport', 'Guelph', 'Canada', '', 'CNC4', '43.5638888888889', '-80.1961111111111', 1100, -5, ''),
+(7870, 0, 'Moraine Air Park Airport', 'Dayton', 'United States', '', 'I73', '39.682109722', '-84.239991667', 720, -5, ''),
+(7871, 0, 'Ontonagon County / Schuster Field Airport', 'Ontonagon', 'United States', '', 'KOGM', '46.845472222', '-89.367083333', 665, -5, ''),
+(7872, 0, 'Pocono Mountains Municipal Airport', 'Mount Pocono', 'United States', 'MPO', 'KMPO', '41.137694444', '-75.380055556', 1915, -5, ''),
+(7873, 0, 'Decorah Municipal Airport', 'Decorah', 'United States', 'DEH', 'KDEH', '43.2755', '-91.739388889', 1158, -5, ''),
+(7874, 0, 'Dillant-Hopkins Airport', 'Swanzey', 'United States', '', 'KEEN', '42.898388889', '-72.270777778', 488, -5, ''),
+(7875, 0, 'Minute Man Air Field Airport', 'Stow', 'United States', '', '6B6', '42.460640389', '-71.517831472', 268, -5, ''),
+(7876, 0, 'Jack Barstow Airport', 'Midland', 'United States', '', 'KIKW', '43.662916667', '-84.261305556', 635, -5, ''),
+(7877, 0, 'Pace NOLF Heliport', 'Wallace', 'United States', '', 'KNVI', '30.699653056', '-87.1956475', 180, -5, ''),
+(7878, 0, 'Bethel Regional Airport', 'Bethel', 'United States', '', '0B1', '44.425166667', '-70.809916667', 674, -5, '');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
