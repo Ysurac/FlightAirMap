@@ -1,38 +1,25 @@
 <?php
 require('../require/class.Connection.php');
 require('../require/class.Spotter.php');
-
-//calculuation for the pagination
-if ($_GET['CUSTOM_SLIDER'] == "")
-{
-    $limit_start = 0;
-    $limit_end = 25;
-    $absolute_difference = 25;
-} else {
-    if ($_GET['CUSTOM_SLIDER'] > 100){
-        $_GET['CUSTOM_SLIDER'] = 100;
-    }
-    $limit_start = 0;
-    $limit_end = $_GET['CUSTOM_SLIDER'];
-    $absolute_difference = $_GET['CUSTOM_SLIDER'];
-}
-$absolute_difference = abs($limit_start - $limit_end);
-$limit_next = $limit_end + $absolute_difference;
-$limit_previous_1 = $limit_start - $absolute_difference;
-$limit_previous_2 = $limit_end - $absolute_difference;
+require('../require/class.SpotterLive.php');
 
 header('Content-Type: text/javascript');
 
 /* CUSTOM PARAMETERS:
-SEARCHBOX = Airline ICAO Code
-SEARCHBOX_2 = Aircraft Type ICAO Code
-SEARCHBOX_3 = Airport ICAO Code
-RADIOLIST = order by: either date | distance
+RADIOLIST - Time in history. 1m | 15m | 30m | 1h | 3h | 6h | 24h | 7d | 30d
 */
 
-$spotter_array = Spotter::getLatestSpotterForLayar($_GET['lat'],$_GET['lon'],$_GET['radius'],$_GET['SEARCHBOX'],$_GET['SEARCHBOX_2'],$_GET['SEARCHBOX_3'],$_GET['RADIOLIST'],$limit_start.",".$absolute_difference);
+//convert radius (getting it in meters...need to convert to km)
+$_GET['radius'] = $_GET['radius'] / 1000;
 
-$layarid = "barriespottede7a";
+if ($_GET['RADIOLIST'] == "1m" || $_GET['RADIOLIST'] == "15m")
+{
+    $spotter_array = SpotterLive::getLatestSpotterForLayar($_GET['lat'],$_GET['lon'],$_GET['radius'],$_GET['RADIOLIST']);
+} else {
+    $spotter_array = Spotter::getLatestSpotterForLayar($_GET['lat'],$_GET['lon'],$_GET['radius'],$_GET['RADIOLIST']);   
+}
+
+$layarid = "barriespottei0eg";
 
 
 if (!empty($spotter_array))
@@ -64,7 +51,7 @@ if (!empty($spotter_array))
 } else {
     $output .= '{';
     $output .= '"layer": "'.$layarid.'",';
-     $output .= '"errorString": "No aircrafts found. Please increase the search range to try again.", ';
+     $output .= '"errorString": "No aircrafts found nearby. Please increase the search range or change time history to try again.", ';
      $output .= '"errorCode": 20';
     $output .= '}';
 }

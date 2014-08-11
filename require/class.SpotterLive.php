@@ -3,134 +3,6 @@ $global_query = "SELECT spotter_live.* FROM spotter_live";
 
 class SpotterLive{
 
-	/**
-	* Executes the SQL statements to get the spotter information
-	*
-	* @param String $query the SQL query
-	* @param String $limit the limit query
-	* @return Array the spotter information
-	*
-	*/
-	public static function getDataFromDB($query, $limitQuery = '')
-	{
-		if (!is_string($query))
-		{
-			return false;
-		}
-
-		if ($limitQuery != "")
-		{
-			if (!is_string($limitQuery))
-			{
-				return false;
-			}
-		}
-
-		$result = mysql_query($query.$limitQuery);
-		$num_rows = mysql_num_rows($result);
-
-		$spotter_array = array();
-		$temp_array = array();
-
-
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-		{
-			$temp_array['spotter_live_id'] = $row['spotter_live_id'];
-      $temp_array['flightaware_id'] = $row['flightaware_id'];
-      $temp_array['ident'] = $row['ident'];
-      $temp_array['registration'] = $row['registration'];
-      $temp_array['aircraft_type'] = $row['aircraft_icao'];
-      $temp_array['departure_airport'] = $row['departure_airport_icao'];
-      $temp_array['arrival_airport'] = $row['arrival_airport_icao'];
-      $temp_array['latitude'] = $row['latitude'];
-      $temp_array['longitude'] = $row['longitude'];
-      $temp_array['waypoints'] = $row['waypoints'];
-      $temp_array['altitude'] = $row['altitude'];
-      $temp_array['heading'] = $row['heading'];
-      $heading_direction = Spotter::parseDirection($row['heading']);
-      $temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
-      $temp_array['ground_speed'] = $row['ground_speed'];
-      $temp_array['image_thumbnail'] = "";
-      if($row['registration'] != "")
-      {
-          $image_array = Spotter::getSpotterImage($row['registration']);
-          $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
-      }
-
-			$dateArray = Spotter::parseDateString($row['date']);
-			if ($dateArray['seconds'] < 10)
-			{
-				$temp_array['date'] = "a few seconds ago";
-			} elseif ($dateArray['seconds'] >= 5 && $dateArray['seconds'] < 30)
-			{
-				$temp_array['date'] = "half a minute ago";
-			} elseif ($dateArray['seconds'] >= 30 && $dateArray['seconds'] < 60)
-			{
-				$temp_array['date'] = "about a minute ago";
-			} elseif ($dateArray['minutes'] < 5)
-			{
-				$temp_array['date'] = "a few minutes ago";
-			} elseif ($dateArray['minutes'] >= 5 && $dateArray['minutes'] < 60)
-			{
-				$temp_array['date'] = "about ".$dateArray['minutes']." minutes ago";
-			} elseif ($dateArray['hours'] < 2)
-			{
-				$temp_array['date'] = "about an hour ago";
-			} elseif ($dateArray['hours'] >= 2 && $dateArray['hours'] < 24)
-			{
-				$temp_array['date'] = "about ".$dateArray['hours']." hours ago";
-			} else {
-				$temp_array['date'] = date("M j Y, g:i a",strtotime($row['date']." UTC"));
-			}
-			$temp_array['date_minutes_past'] = $dateArray['minutes'];
-			$temp_array['date_iso_8601'] = date("c",strtotime($row['date']." UTC"));
-			$temp_array['date_rfc_2822'] = date("r",strtotime($row['date']." UTC"));
-			$temp_array['date_unix'] = strtotime($row['date']." UTC");
-
-			$aircraft_array = Spotter::getAllAircraftInfo($row['aircraft_icao']);
-			$temp_array['aircraft_name'] = $aircraft_array[0]['type'];
-			$temp_array['aircraft_manufacturer'] = $aircraft_array[0]['manufacturer'];
-
-			$airline_array = array();
-			if (is_numeric(substr($row['ident'], -1, 1)))
-			{
-				$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 3));
-			}
-			$temp_array['airline_icao'] = $airline_array[0]['icao'];
-			$temp_array['airline_iata'] = $airline_array[0]['iata'];
-			$temp_array['airline_name'] = $airline_array[0]['name'];
-			$temp_array['airline_country'] = $airline_array[0]['country'];
-			$temp_array['airline_callsign'] = $airline_array[0]['callsign'];
-			$temp_array['airline_type'] = $airline_array[0]['type'];
-
-			$departure_airport_array = Spotter::getAllAirportInfo($row['departure_airport_icao']);
-			$temp_array['departure_airport_name'] = $departure_airport_array[0]['name'];
-			$temp_array['departure_airport_city'] = $departure_airport_array[0]['city'];
-			$temp_array['departure_airport_country'] = $departure_airport_array[0]['country'];
-			$temp_array['departure_airport_iata'] = $departure_airport_array[0]['iata'];
-			$temp_array['departure_airport_icao'] = $departure_airport_array[0]['icao'];
-			$temp_array['departure_airport_latitude'] = $departure_airport_array[0]['latitude'];
-			$temp_array['departure_airport_longitude'] = $departure_airport_array[0]['longitude'];
-			$temp_array['departure_airport_altitude'] = $departure_airport_array[0]['altitude'];
-
-			$arrival_airport_array = Spotter::getAllAirportInfo($row['arrival_airport_icao']);
-			$temp_array['arrival_airport_name'] = $arrival_airport_array[0]['name'];
-			$temp_array['arrival_airport_city'] = $arrival_airport_array[0]['city'];
-			$temp_array['arrival_airport_country'] = $arrival_airport_array[0]['country'];
-			$temp_array['arrival_airport_iata'] = $arrival_airport_array[0]['iata'];
-			$temp_array['arrival_airport_icao'] = $arrival_airport_array[0]['icao'];
-			$temp_array['arrival_airport_latitude'] = $arrival_airport_array[0]['latitude'];
-			$temp_array['arrival_airport_longitude'] = $arrival_airport_array[0]['longitude'];
-			$temp_array['arrival_airport_altitude'] = $arrival_airport_array[0]['altitude'];
-
-			$temp_array['query_number_rows'] = $num_rows;
-
-			$spotter_array[] = $temp_array;
-		}
-
-		return $spotter_array;
-	}
-
 
 	/**
 	* Gets all the spotter information based on the latest data entry
@@ -150,6 +22,76 @@ class SpotterLive{
 		}
 
 		$query  = $global_query." WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_live.date";
+
+		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+
+		return $spotter_array;
+	}
+    
+    
+    /**
+	* Gets all the spotter information based on a user's latitude and longitude
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getLatestSpotterForLayar($lat, $lng, $radius, $interval)
+	{
+		date_default_timezone_set('UTC');
+		
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+        
+        if ($lat != "")
+		{
+			if (!is_numeric($lat))
+			{
+				return false;
+			}
+		}
+        
+        if ($lng != "")
+		{
+			if (!is_numeric($lng))
+			{
+				return false;
+			}
+		}
+		
+		if ($radius != "")
+		{
+			if (!is_numeric($radius))
+			{
+				return false;
+			}
+		}
+        
+        if ($interval != "")
+		{
+			if (!is_string($interval))
+			{
+				$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_live.date ';
+                return false;
+			} else {
+                if ($interval == "1m")
+                {
+                    $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_live.date ';
+                } else if ($interval == "15m"){
+                    $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 MINUTE) <= spotter_live.date ';
+                } 
+            }
+		} else {
+         $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_output.date ';   
+        }
+
+		$query  = "SELECT spotter_live.*, ( 6371 * acos( cos( radians($lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians($lng) ) + sin( radians($lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM spotter_live 
+                   WHERE spotter_live.latitude <> '' 
+				   AND spotter_live.longitude <> '' 
+                   ".$additional_query."
+                   HAVING distance < $radius  
+				   ORDER BY distance";
 
 		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
 
@@ -182,8 +124,8 @@ class SpotterLive{
 
 		return $spotter_array;
 	}
-
-
+    
+    
 	/**
 	* Deletes all info in the table
 	*
