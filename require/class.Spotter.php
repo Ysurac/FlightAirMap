@@ -672,12 +672,12 @@ class Spotter{
 	
 	
 	/**
-	* Gets all the spotter information based on the latest data entry
+	* Gets all the spotter information based on a user's latitude and longitude
 	*
 	* @return Array the spotter information
 	*
 	*/
-	public static function getLatestSpotterGeoData($interval = '')
+	public static function getLatestSpotterForLayar($lat, $lng ,$radius, $airline_icao, $aircraft_icao, $airport_icao, $orderby, $limit)
 	{
 		global $global_query;
 		
@@ -687,15 +687,77 @@ class Spotter{
 		{
 			return false;
 		}
-		
-		if ($interval != "")
+        
+        if ($lat != "")
 		{
-			$interval = mysql_real_escape_string($interval);
-			$interval = strtoupper($interval);
-		} else {
-			$interval = "24 HOUR";
+			if (!is_numeric($lat))
+			{
+				return false;
+			}
 		}
-
+        
+        if ($lng != "")
+		{
+			if (!is_numeric($lng))
+			{
+				return false;
+			}
+		}
+		
+		if ($radius != "")
+		{
+			if (!is_numeric($radius))
+			{
+				return false;
+			}
+		}
+        
+        if ($airline_icao != "")
+		{
+			if (!is_string($airline_icao))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND (spotter_output.airline_icao = '".$airline_icao."')";
+			}
+		}
+        
+        if ($aircraft_icao != "")
+		{
+			if (!is_string($aircraft_icao))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND (spotter_output.aircraft_icao = '".$aircraft_icao."')";
+			}
+		}
+        
+        if ($airport_icao != "")
+		{
+			if (!is_string($airport_icao))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND ((spotter_output.departure_airport_icao = '".$airport."') OR (spotter_output.arrival_airport_icao = '".$airport_icao."'))";
+			}
+		}
+        
+        if ($orderby != "")
+		{
+			if (!is_string($orderby))
+			{
+				return false;
+			} else {
+                if ($orderby == "date")
+                {
+                    $orderby_query = "ORDER BY spotter_output.date DESC";
+                } elseif ($orderby == "distance"){
+                    $orderby_query = "ORDER BY distance";  
+                }
+            }
+		} else {
+            $orderby_query = "ORDER BY spotter_output.date DESC";
+        }
 
 		if ($limit != "")
 		{
@@ -710,11 +772,12 @@ class Spotter{
 			}
 		}
 
-		$query  = $global_query." WHERE spotter_output.latitude <> '' 
-															AND spotter_output.longitude <> '' 
-															AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL ".$interval.") 
-															AND spotter_output.date < UTC_TIMESTAMP() 
-															ORDER BY spotter_output.date DESC ";
+		$query  = "SELECT spotter_output.*, ( 6371 * acos( cos( radians($lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians($lng) ) + sin( radians($lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM spotter_output 
+                   WHERE spotter_output.latitude <> '' 
+				   AND spotter_output.longitude <> '' 
+                   ".$additional_query."
+                   HAVING distance < $radius  
+				   ".$orderby_query;
 
 		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
 
