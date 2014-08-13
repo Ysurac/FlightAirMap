@@ -75,13 +75,17 @@ $output .= '{';
 	    {
 				date_default_timezone_set('America/Toronto');
 				$output .= '{';    	
-		      $output .= '"callsign": "'.$spotter_item['ident'].'",';
-		      $output .= '"registration": "'.$spotter_item['registration'].'",';
-		      $output .= '"aircraft_name": "'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')",';
-		      $output .= '"airline_name": "'.$spotter_item['airline_name'].'",';
-		      $output .= '"departure_airport": "'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')",';
-		      $output .= '"arrival_airport": "'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')",';
-		      $output .= '"date_flew_nearby": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'"';
+		            $output .= '"ident": "'.$spotter_item['ident'].'",';
+                    $output .= '"registration": "'.$spotter_item['registration'].'",';
+                    $output .= '"aircraft_icao": "'.$spotter_item['aircraft_type'].'",';
+                    $output .= '"aircraft_name": "'.$spotter_item['aircraft_name'].'",';
+                    $output .= '"airline_name": "'.$spotter_item['airline_name'].'",';
+                    $output .= '"departure_airport_icao": "'.$spotter_item['departure_airport'].'",';
+                    $output .= '"departure_airport": "'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].'",';
+                    $output .= '"arrival_airport_icao": "'.$spotter_item['arrival_airport'].'",';
+                    $output .= '"arrival_airport": "'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].'",';
+                    $output .= '"photo": "'.$spotter_item['image_thumbnail'].'",';
+                    $output .= '"date": "'.date("D M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'"';
 				$output .= '},';
 	    }
 	   }

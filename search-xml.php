@@ -77,11 +77,15 @@ $output .= '<?xml version="1.0" encoding="UTF-8" ?>';
 				$output .= '<aircraft>';    	
 		      $output .= '<callsign>'.$spotter_item['ident'].'</callsign>';
 		      $output .= '<registration>'.$spotter_item['registration'].'</registration>';
-		      $output .= '<aircraft_name>'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</aircraft_name>';
-		      $output .= '<airline_name>'.$spotter_item['airline_name'].'</airline_name>';
-		      $output .= '<departure_airport>'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')</departure_airport>';
-		      $output .= '<arrival_airport>'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</arrival_airport>';
-		      $output .= '<date_flew_nearby>'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'</date_flew_nearby>';
+              $output .= '<aircraft_icao>'.$spotter_item['aircraft_type'].'</aircraft_icao>';
+		      $output .= '<aircraft_name>'.$spotter_item['aircraft_name'].'</aircraft_name>';
+		      $output .= '<airline>'.$spotter_item['airline_name'].'</airline>';
+              $output .= '<departure_airport_icao>'.$spotter_item['departure_airport'].'</departure_airport_icao>';
+		      $output .= '<departure_airport>'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].'</departure_airport>';
+              $output .= '<arrival_airport_icao>'.$spotter_item['arrival_airport'].'</arrival_airport_icao>';
+		      $output .= '<arrival_airport>'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].'</arrival_airport>';
+              $output .= '<photo>'.$spotter_item['image_thumbnail'].'</photo>';
+		      $output .= '<date>'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'</date>';
 				$output .= '</aircraft>';
 	    }
 	   }

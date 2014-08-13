@@ -73,10 +73,14 @@ if (!empty($spotter_array))
 	array_push($flights, array(
 							"callsign" => $spotter_item['ident'], 
 							"registration" => $spotter_item['registration'], 
-							"aircraft" => $spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')', 
+							"aircraft_icao" => $spotter_item['aircraft_type'], 
+                            "aircraft" => $spotter_item['aircraft_name'], 
 							"airline" => $spotter_item['airline_name'], 
-							"departure_airport" => $spotter_item['departure_airport_city'].' '.$spotter_item['departure_airport_name'].' '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')', 
-							"arrival_airport" => $spotter_item['arrival_airport_city'].' '.$spotter_item['arrival_airport_name'].' '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')', 
+                            "departure_airport_icao" => $spotter_item['departure_airport'], 
+							"departure_airport" => $spotter_item['departure_airport_city'].' '.$spotter_item['departure_airport_name'], 
+                            "arrival_airport_icao" => $spotter_item['arrival_airport'],
+							"arrival_airport" => $spotter_item['arrival_airport_city'].' '.$spotter_item['arrival_airport_name'], 
+                            "photo" => $spotter_item['image_thumbnail'],
 							"date" => date("c", strtotime($spotter_item['date_iso_8601']))
 						)
 			); 	

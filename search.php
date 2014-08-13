@@ -91,7 +91,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 				      print '<li><a href="'.$globalURL.'/search/geojson?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">GeoJSON</a></li>';
 				      print '<li><a href="'.$globalURL.'/search/georss?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">GeoRSS</a></li>';
 				      print '<li><a href="'.$globalURL.'/search/gpx?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">GPX</a></li>';
-				      print '<li><a href="'.$globalURL.'/search/wkt?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">WKT (route data only)</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/wkt?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">WKT</a></li>';
 				      print '<li><hr /></li>';
 				      print '<li><a href="'.$globalURL.'/about/export" target="_blank" class="export-info">Export Info/Licence&raquo;</a></li>';
 				    print '</ul>';

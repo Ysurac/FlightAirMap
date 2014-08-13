@@ -63,19 +63,23 @@ header("Content-type: text/csv");
 
 $spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_GET['aircraft'],strtolower(str_replace("-", " ", $_GET['manufacturer'])),$_GET['highlights'],$_GET['airline'],$_GET['airline_country'],$_GET['airline_type'],$_GET['airport'],$_GET['airport_country'],$_GET['callsign'],$_GET['departure_airport_route'],$_GET['arrival_airport_route'],$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$_GET['sort'],'');
       
-$output .= "callsign,registration,aircraft,airline,departure_airport,arrival_airport,date\n";
+$output .= "callsign,registration,aircraft_icao,aircraft_name,airline,departure_airport_icao,departure_airport,arrival_airport_icao,arrival_airport,photo,date\n";
 
 if (!empty($spotter_array))
 {
   foreach($spotter_array as $spotter_item)
   {
-		date_default_timezone_set('America/Toronto');   	
+    date_default_timezone_set('America/Toronto');   	
     $output .= $spotter_item['ident'].',';
     $output .= $spotter_item['registration'].',';
-    $output .= $spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].'),';
+    $output .= $spotter_item['aircraft_type'].',';
+    $output .= $spotter_item['aircraft_name'].',';
     $output .= $spotter_item['airline_name'].',';
-    $output .= $spotter_item['departure_airport_city'].' '.$spotter_item['departure_airport_name'].' '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].'),';
-    $output .= $spotter_item['arrival_airport_city'].' '.$spotter_item['arrival_airport_name'].' '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].'),';
+    $output .= $spotter_item['departure_airport'].',';
+    $output .= $spotter_item['departure_airport_city'].' '.$spotter_item['departure_airport_name'].',';
+    $output .= $spotter_item['arrival_airport'].',';
+    $output .= $spotter_item['arrival_airport_city'].' '.$spotter_item['arrival_airport_name'].',';
+    $output .= $spotter_item['image_thumbnail'].',';
     $output .= date("c", strtotime($spotter_item['date_iso_8601']));
     $output .= "\n";
   }
