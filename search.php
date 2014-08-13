@@ -96,6 +96,18 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 				      print '<li><a href="'.$globalURL.'/about/export" target="_blank" class="export-info">Export Info/Licence&raquo;</a></li>';
 				    print '</ul>';
 				print '</li>';
+                //remove 3D=true parameter
+                $no3D = str_replace("&3D=true", "", $_SERVER[QUERY_STRING]);
+                if (!isset($_GET['3D'])){
+                    print '<li><a href="'.$globalURL.'/search?'.$no3D.'" class="active"><i class="fa fa-table"></i> Table</a></li>';
+                } else {
+                    print '<li><a href="'.$globalURL.'/search?'.$no3D.'"><i class="fa fa-table"></i> Table</a></li>';
+                }
+                if (isset($_GET['3D'])){
+                    print '<li><a href="'.$globalURL.'/search?'.$no3D.'&3D=true" class="active"><i class="fa fa-globe"></i> 3D Map</a></li>';
+                } else {
+                    print '<li><a href="'.$globalURL.'/search?'.$no3D.'&3D=true"><i class="fa fa-globe"></i> 3D Map</a></li>';
+                }
 				print '<li class="short-url">';
 				//print 'http://'.$_SERVER[HTTP_HOST].''.$_SERVER[REQUEST_URI];
 					$bitly = Spotter::getBitlyURL(urlencode('http://'.$_SERVER[HTTP_HOST].''.$_SERVER[REQUEST_URI]));
@@ -133,6 +145,57 @@ $limit_previous_2 = $limit_end - $absolute_difference;
     		    print '</h1>';
     		  print '</div>';
     	  
+          
+          if ($_GET['3D'] == "true")
+          {
+            ?>  
+              <script type="text/javascript" src="https://www.google.com/jsapi"> </script>
+              <script type="text/javascript">
+                  var ge;
+                  google.load("earth", "1", {"other_params":"sensor=false"});
+
+                  function init() {
+                     google.earth.createInstance('map3d', initCB, failureCB);
+                  }
+
+                  function initCB(instance) {
+                     ge = instance;
+                     ge.getWindow().setVisibility(true);
+
+                     //set default coordinates
+                      var lookAt = ge.createLookAt('');
+                      lookAt.setLatitude(44.413333);
+                      lookAt.setLongitude(-79.68);
+                      lookAt.setRange(400000.0);
+                      ge.getView().setAbstractView(lookAt);
+
+                      //show navigation control
+                      ge.getNavigationControl().setVisibility(ge.VISIBILITY_SHOW);
+
+                      //show bottom status bar
+                      ge.getOptions().setStatusBarVisibility(true);
+                      
+                      //enable the atmosphere
+                      ge.getOptions().setAtmosphereVisibility(true);
+
+                     //load the kml file
+                     var href = '<?php print $globalURL; ?>/search/kml?<?php print $_SERVER['QUERY_STRING']; ?>';
+                     google.earth.fetchKml(ge, href, function(kmlObject) {
+                           if (kmlObject)
+                              ge.getFeatures().appendChild(kmlObject);
+                           if (kmlObject.getAbstractView() !== null)
+                              ge.getView().setAbstractView(kmlObject.getAbstractView());
+                     });
+                  }
+
+                  function failureCB(errorCode) {
+                  }
+
+                  google.setOnLoadCallback(init);
+               </script>
+              <div id="map3d"></div>
+            <?php
+          } else {
     	  	include('table-output.php'); 
     			
     			$_SERVER['QUERY_STRING'] = preg_replace('/&?limit=[^&]*/', '', $_SERVER['QUERY_STRING']);
@@ -145,7 +208,8 @@ $limit_previous_2 = $limit_end - $absolute_difference;
         	{
         		print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_end.','.$limit_next.'">Next Page&raquo;</a>';
         	}
-        print '</div>';
+            print '</div>';
+          }
     
     print '</div>';
 			

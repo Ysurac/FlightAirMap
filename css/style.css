@@ -706,6 +706,10 @@ body.page-search .advanced-button{
     margin-bottom:10px;
     margin-top:-20px;
 }
+body.page-search #map3d{
+    height: 800px;
+    width: 100%;
+}
 
 
 /* FLIGHT ID */
