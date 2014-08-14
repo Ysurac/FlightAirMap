@@ -37,8 +37,8 @@ if($_GET['limit'] == "")
   $limit_end = 25;
   $absolute_difference = 25;
   } else {
-	if ($_GET['number_results'] > 100){
-		$_GET['number_results'] = 100;
+	if ($_GET['number_results'] > 1000){
+		$_GET['number_results'] = 1000;
 	}
 	$limit_start = 0;
 	$limit_end = $_GET['number_results'];

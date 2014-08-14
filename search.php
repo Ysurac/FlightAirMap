@@ -46,8 +46,8 @@ if($_GET['limit'] == "")
   $limit_end = 25;
   $absolute_difference = 25;
   } else {
-	if ($_GET['number_results'] > 100){
-		$_GET['number_results'] = 100;
+	if ($_GET['number_results'] > 1000){
+		$_GET['number_results'] = 1000;
 	}
 	$limit_start = 0;
 	$limit_end = $_GET['number_results'];
@@ -177,12 +177,14 @@ $limit_previous_2 = $limit_end - $absolute_difference;
                       
                       //enable the atmosphere
                       ge.getOptions().setAtmosphereVisibility(true);
+                      
 
                      //load the kml file
                      var href = '<?php print $globalURL; ?>/search/kml?<?php print $_SERVER['QUERY_STRING']; ?>';
                      google.earth.fetchKml(ge, href, function(kmlObject) {
                            if (kmlObject)
                               ge.getFeatures().appendChild(kmlObject);
+                         
                            if (kmlObject.getAbstractView() !== null)
                               ge.getView().setAbstractView(kmlObject.getAbstractView());
                      });
@@ -468,7 +470,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
     		  	<label>Number of Results</label> 
     		    <select name="number_results">
     		    <?php
-    		      $number_results_array = Array(25, 50, 75, 100);
+    		      $number_results_array = Array(25, 50, 100, 150, 200, 250, 300, 400, 500,  600, 700, 800, 900, 1000);
     		      foreach($number_results_array as $number)
     		      {
     		        if($_GET['number_results'] == $number)

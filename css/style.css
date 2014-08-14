@@ -707,8 +707,38 @@ body.page-search .advanced-button{
     margin-top:-20px;
 }
 body.page-search #map3d{
-    height: 800px;
+    height: 600px;
     width: 100%;
+}
+body.page-search #map3d h3{
+    padding:10px;
+    margin-bottom:0px;
+    font-weight:400;
+    color:#1a3151;
+}
+body.page-search #map3d .ge-balloon{
+    padding:10px;   
+}
+body.page-search #map3d .ge-balloon .ge-image{
+    width:180px;
+    float:right;
+}
+body.page-search #map3d .ge-balloon .ge-image:hover{
+    opacity:0.75;   
+}
+body.page-search #map3d .ge-balloon .ge-row{
+    margin-bottom:0.5em;
+}
+body.page-search #map3d .ge-balloon .ge-row a{
+    color:#404040;
+}
+body.page-search #map3d .ge-balloon .ge-row a:hover{
+    text-decoration: underline;
+}
+body.page-search #map3d .ge-balloon .ge-row span{
+    display:block;
+    text-transform: uppercase;
+    color:#9E9E9E;
 }
 
 
