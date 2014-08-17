@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 10, 2014 at 02:42 PM
+-- Generation Time: Aug 17, 2014 at 12:23 PM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `airport` (
   `dst` varchar(999) NOT NULL,
   PRIMARY KEY (`airport_id`),
   KEY `airport_id` (`airport_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7879 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7887 ;
 
 --
 -- Dumping data for table `airport`
@@ -7942,7 +7942,15 @@ INSERT INTO `airport` (`airport_id`, `airports_id`, `name`, `city`, `country`, `
 (7875, 0, 'Minute Man Air Field Airport', 'Stow', 'United States', '', '6B6', '42.460640389', '-71.517831472', 268, -5, ''),
 (7876, 0, 'Jack Barstow Airport', 'Midland', 'United States', '', 'KIKW', '43.662916667', '-84.261305556', 635, -5, ''),
 (7877, 0, 'Pace NOLF Heliport', 'Wallace', 'United States', '', 'KNVI', '30.699653056', '-87.1956475', 180, -5, ''),
-(7878, 0, 'Bethel Regional Airport', 'Bethel', 'United States', '', '0B1', '44.425166667', '-70.809916667', 674, -5, '');
+(7878, 0, 'Bethel Regional Airport', 'Bethel', 'United States', '', '0B1', '44.425166667', '-70.809916667', 674, -5, ''),
+(7879, 0, 'Russell Municipal Airport', 'Russell', 'United States', 'RSL', 'KRSL', '38.871363583', '-98.811603722', 1863, -6, ''),
+(7880, 0, 'Hartness State Airport', 'Springfield', 'United States', 'VSF', 'KVSF', '43.343722222', '-72.517277778', 578, -5, ''),
+(7881, 0, 'Coral Harbour Airport', 'Coral Harbour', 'Canada', 'YZS', 'CYZS', '64.1933333333333', '-83.3594444444444', 204, -5, ''),
+(7882, 0, 'East Hampton Airport', 'Wainscott', 'United States', 'HTO', 'KHTO', '40.959416667', '-72.251666667', 55, -5, ''),
+(7883, 0, 'Montreal/Mascouche Airport', 'Mascouche', 'Canada', '', 'CSK3', '45.7186111111111', '-73.5980555555555', 74, -5, ''),
+(7884, 0, 'Sargeant Private Airfield Airport', 'Ayr', 'Canada', '', 'CAY5', '43.3058333333333', '-80.4991666666667', 970, -5, ''),
+(7885, 0, 'Hettinger Municipal Airport', 'Hettinger', 'United States', '', 'KHEI', '46.014888889', '-102.656', 2706, -6, ''),
+(7886, 0, 'Sandpoint Airport', 'Sandpoint', 'United States', '', 'KSZT', '48.299527778', '-116.560138889', 2131, -5, '');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
