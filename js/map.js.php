@@ -1,9 +1,11 @@
+<?php require_once('../require/settings.php'); ?>
+
 var map;
 var user = new L.FeatureGroup();
 var weatherradar;
 var weatherradarrefresh;
 var weathersatellite;
-var weathersatelliterefresh;
+var weathersatelliterefresh; 
 $( document ).ready(function() {
     
   //setting the zoom functionality for either mobile or desktop
@@ -20,7 +22,7 @@ $( document ).ready(function() {
   }
 
   //create the map
-  map = L.map('live-map', { zoomControl:false }).setView([44.413333,-79.68], zoom);
+  map = L.map('live-map', { zoomControl:false }).setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], zoom);
 
   //initialize the layer group for the aircrft markers
   var layer_data = L.layerGroup();
@@ -40,10 +42,10 @@ $( document ).ready(function() {
     [90, 180],
     [-90, 180],
     [-90, -180]], // outer ring
-    [[44.067853669357596, -80.22216796875],
-    [44.067853669357596, -79.06036376953125],
-    [44.734052347483086, -79.06036376953125],
-    [44.734052347483086, -80.22216796875]] // actual cutout polygon
+    [[<?php print $globalLatitudeMin; ?>, <?php print $globalLongitudeMax; ?>],
+    [<?php print $globalLatitudeMin; ?>, <?php print $globalLongitudeMin; ?>],
+    [<?php print $globalLatitudeMax; ?>, <?php print $globalLongitudeMin; ?>],
+    [<?php print $globalLatitudeMax; ?>, <?php print $globalLongitudeMax; ?>]] // actual cutout polygon
     ],{
     color: '#000',
     fillColor: '#000',

@@ -6726,11 +6726,13 @@ class Spotter{
 	*/
 	public static function getAircraftRegistration($flightaware_id)
 	{
-		$options = array(
+		global $globalFlightAwareUsername, $globalFlightAwarePassword;
+        
+        $options = array(
 			'trace' => true,
 			'exceptions' => 0,
-			'login' => 'mtrunz',
-			'password' => '60c3cc748cb83742310186e3f5ed0e942eb8dcc9',
+			'login' => $globalFlightAwareUsername,
+			'password' => $globalFlightAwarePassword,
 		);
 		$client = new SoapClient('http://flightxml.flightaware.com/soap/FlightXML2/wsdl', $options);
 		
@@ -6819,7 +6821,9 @@ class Spotter{
 	*/
 	public static function getBitlyURL($url)
 	{
-		$google_url = 'https://api-ssl.bitly.com/v3/shorten?access_token=853eafba6f6be174595e414ce37b2579f32a416a&longUrl='.$url;
+		global $globalBitlyAccessToken;
+        
+        $google_url = 'https://api-ssl.bitly.com/v3/shorten?access_token='.$globalBitlyAccessToken.'&longUrl='.$url;
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -6845,9 +6849,112 @@ class Spotter{
 		return $orderby;
 		
 	}
+    
+    
+    public static function importFromFlightAware()
+    {
+       global $globalFlightAwareUsername, $globalFlightAwarePassword, $globalLatitudeMax, $globalLatitudeMin, $globalLongitudeMax, $globalLongitudeMin;
+        
+        if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+        
+        $options = array(
+            'trace' => true,
+            'exceptions' => 0,
+            'login' => $globalFlightAwareUsername,
+            'password' => $globalFlightAwarePassword,
+        );
+        $client = new SoapClient('http://flightxml.flightaware.com/soap/FlightXML2/wsdl', $options);
 
-	
-	
+        $params = array('query' => '{range lat '.$globalLatitudeMin.' '.$globalLatitudeMax.'} {range lon '.$globalLongitudeMax.' '.$globalLongitudeMin.'} {true inAir}', 'howMany' => '15', 'offset' => '0');
+        
+        $result = $client->SearchBirdseyeInFlight($params);
+
+        $dataFound = false;
+        
+        if (isset($result->SearchBirdseyeInFlightResult))
+        {
+            if (is_array($result->SearchBirdseyeInFlightResult->aircraft))
+            {
+                    foreach($result->SearchBirdseyeInFlightResult->aircraft as $aircraft)
+                    {
+                        if (!strstr($aircraft->origin, 'L ') && !strstr($aircraft->destination, 'L '))
+                        {
+                            $flightaware_id = $aircraft->faFlightID;
+                            $ident = $aircraft->ident;
+                            $aircraft_type = $aircraft->type;
+                            $departure_airport = $aircraft->origin;
+                            $arrival_airport = $aircraft->destination;
+                            $latitude = $aircraft->latitude;
+                            $longitude = $aircraft->longitude;
+                            $waypoints = $aircraft->waypoints;
+                            $altitude = $aircraft->altitude;
+                            $heading = $aircraft->heading;
+                            $groundspeed = $aircraft->groundspeed;
+
+                            $dataFound = true;
+
+                            //gets the callsign from the last hour
+                            $last_hour_ident = Spotter::getIdentFromLastHour($ident);
+
+                            //change the departure/arrival airport to NA if its not available
+                            if ($departure_airport == "" || $departure_airport == "---") { $departure_airport = "NA"; }
+                            if ($arrival_airport == "" || $arrival_airport == "---") { $arrival_airport = "NA"; }
+
+                            //if there was no aircraft with the same callsign within the last hour and go post it into the archive
+                            if($last_hour_ident == "")
+                            {
+                                //adds the spotter data for the archive
+                                Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                            }
+
+                            //adds the spotter LIVE data
+                            SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                        }
+
+                    }
+                } else {
+                    if (!strstr($result->SearchBirdseyeInFlightResult->aircraft->origin, 'L ') && !strstr($result->SearchBirdseyeInFlightResult->aircraft->destination, 'L '))
+                    {
+                        $flightaware_id = $result->SearchBirdseyeInFlightResult->aircraft->faFlightID;
+                        $ident = $result->SearchBirdseyeInFlightResult->aircraft->ident;
+                        $aircraft_type = $result->SearchBirdseyeInFlightResult->aircraft->type;
+                        $departure_airport = $result->SearchBirdseyeInFlightResult->aircraft->origin;
+                        $arrival_airport = $result->SearchBirdseyeInFlightResult->aircraft->destination;
+                        $latitude = $result->SearchBirdseyeInFlightResult->aircraft->latitude;
+                        $longitude = $result->SearchBirdseyeInFlightResult->aircraft->longitude;
+                        $waypoints = $result->SearchBirdseyeInFlightResult->aircraft->waypoints;
+                        $altitude = $result->SearchBirdseyeInFlightResult->aircraft->altitude;
+                        $heading = $result->SearchBirdseyeInFlightResult->aircraft->heading;
+                        $groundspeed = $result->SearchBirdseyeInFlightResult->aircraft->groundspeed;
+
+                        $dataFound = true;
+
+                        //gets the callsign from the last hour
+                        $last_hour_ident = Spotter::getIdentFromLastHour($ident);
+
+                        //change the departure/arrival airport to NA if its not available
+                        if ($departure_airport == "" || $departure_airport == "---") { $departure_airport = "NA"; }
+                        if ($arrival_airport == "" || $arrival_airport == "---") { $arrival_airport = "NA"; }
+
+                        //if there was no aircraft with the same callsign within the last hour and go post it into the archive
+                        if($last_hour_ident == "")
+                        {
+                            //adds the spotter data for the archive
+                            Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                        }
+
+                        //adds the spotter LIVE data
+                        SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                    }
+
+                }
+        } 
+    }
+
+
 	//temporary update scripts
 	public static function updateFieldsFromOtherTables()
 	{
@@ -6942,100 +7049,7 @@ class Spotter{
 	
 				
 		
-	}
-	
-	
-	
-	//temporary update scripts
-	public static function updateRegistrations()
-	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
-		//aircraft registration TEMP
-		$query  = "SELECT aircraft_registration_cron.barriespotter_id FROM aircraft_registration_cron";
-		$result = mysql_query($query);
-		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-		{
-			$barriespotter_id = $row['barriespotter_id'];
-		}
-		
-		
-		//aircraft registration TEMP
-		$query  = "SELECT spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration, spotter_output.airline_name, spotter_output.aircraft_icao FROM spotter_output WHERE spotter_output.spotter_id < '".$barriespotter_id."' AND spotter_output.registration = '' AND spotter_output.flightaware_id <> '' ORDER BY spotter_output.spotter_id DESC LIMIT 0,25";
-		
-
-		$result = mysql_query($query);
-        
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-		{
-		
-			$registration = Spotter::getAircraftRegistration($row['flightaware_id']);
-			
-			print $registration."<br />";
-			
-			if ($registration != "")
-			{
-				$google_image_url = Spotter::findAircraftImage($registration);
-				
-				if ($google_image_url['original'] == "")
-				{
-					$google_image_url['original'] = "-";
-				}
-			}
-
-			$query2  = "UPDATE spotter_output SET spotter_output.registration = '".$registration."', spotter_output.image = '".$google_image_url['original']."', spotter_output.image_thumbnail = '".$google_image_url['thumbnail']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
-			$result2 = mysql_query($query2);
-			
-
-			//keep track of the barrie spotter id
-			$query2  = "DELETE FROM aircraft_registration_cron";
-			$result2 = mysql_query($query2);
-			
-			$query2  = "INSERT INTO aircraft_registration_cron (barriespotter_id) VALUES ('".$row['spotter_id']."')";
-			$result2 = mysql_query($query2);
-		}
-
-		
-	}
-    
-    
-    
-    
-    //temporary update scripts
-	public static function transferAircraftImages()
-	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
-		$query  = "SELECT spotter_output.registration, spotter_output.image, spotter_output.image_thumbnail FROM spotter_output WHERE spotter_output.registration <> '' AND spotter_output.image_thumbnail <> ''";
-		$result = mysql_query($query);
-		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-		{
-			$registration = $row['registration'];
-            $image = $row['image'];
-            $image_thumbnail = $row['image_thumbnail'];
-            
-            
-            $image_array = Spotter::getSpotterImage($registration);
-            
-            if ($image_array[0]['registration'] == "")
-            {
-                $query2  = "INSERT INTO spotter_image (registration, image, image_thumbnail) VALUES ('".$registration."','".$image."','".$image_thumbnail."')";
-			     $result2 = mysql_query($query2);
-            }
-  
-		}
-
-	}
-	
-	
+	}	
 }
 
 

@@ -28,7 +28,7 @@ require('header.php');
     <script>
     $( document ).ready(function() {
   		//create the map
-      var map = L.map('map').setView([44.413333,-79.68], 8);
+      var map = L.map('map').setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], 8);
 
       //initialize the layer group for the aircrft markers
       var layer_data = L.layerGroup();
@@ -48,10 +48,10 @@ require('header.php');
         [90, 180],
         [-90, 180],
         [-90, -180]], // outer ring
-        [[44.067853669357596, -80.22216796875],
-        [44.067853669357596, -79.06036376953125],
-        [44.734052347483086, -79.06036376953125],
-        [44.734052347483086, -80.22216796875]] // actual cutout polygon
+        [[<?php print $globalLatitudeMin; ?>, <?php print $globalLongitudeMax; ?>],
+        [<?php print $globalLatitudeMin; ?>, <?php print $globalLongitudeMin; ?>],
+        [<?php print $globalLatitudeMax; ?>, <?php print $globalLongitudeMin; ?>],
+        [<?php print $globalLatitudeMax; ?>, <?php print $globalLongitudeMax; ?>]] // actual cutout polygon
         ],{
         color: '#000',
         fillColor: '#000',

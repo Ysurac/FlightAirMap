@@ -10,9 +10,9 @@ $current_page = $file_path['filename'];
 <meta http-equiv="X-UA-Compatible" content="IE=10" />
 <meta name="twitter:site" content="@barriespotter" />
 <meta name="google-site-verification" content="nToRHEjzFuGDMKUbOlVzgIWSkymvy5u4m96fMRxgNFs" />
-<title><?php print $title; ?> | Barrie Spotter</title>
+<title><?php print $title; ?> | <?php print $globalName; ?></title>
 <meta name="keywords" content="<?php print $title; ?> barrie ontario canada spotter live flight tracking tracker map aircraft airline airport history database" />
-<meta name="description" content="<?php print $title; ?> | Barrie Spotter is an open source project documenting most of the aircrafts that have flown near the Barrie area." />
+<meta name="description" content="<?php print $title; ?> | <?php print $globalName; ?> is an open source project documenting most of the aircrafts that have flown near the Barrie area." />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="<?php print $globalURL; ?>/images/touch-icon.png">
@@ -52,7 +52,7 @@ if (strtolower($current_page) == "index")
 <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js?<?php print time(); ?>"></script>
-<script src="<?php print $globalURL; ?>/js/map.js?<?php print time(); ?>"></script>
+<script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script>
 <?php
 }
 ?>
@@ -68,9 +68,9 @@ if ($facebook_meta_image != "")
 <?php
 }
 ?>
-<meta property="og:title" content="<?php print $title; ?> | Barrie Spotter"/>
+<meta property="og:title" content="<?php print $title; ?> | <?php print $globalName; ?>"/>
 <meta property="og:url" content="<?php print $globalURL.$_SERVER['REQUEST_URI']; ?>"/>
-<meta property="og:site_name" content="Barrie Spotter"/>
+<meta property="og:site_name" content="<?php print $globalName; ?>"/>
 <?php if ($globalURL == "http://www.barriespotter.com"){ ?>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -97,7 +97,7 @@ if ($facebook_meta_image != "")
         <span class="icon-bar"></span>
       </button>
       <a href="<?php print $globalURL; ?>/search" class="navbar-toggle navbar-toggle-search"><i class="fa fa-search"></i></a>
-      <a class="navbar-brand" href="<?php print $globalURL; ?>"><img src="<?php print $globalURL; ?>/images/logo.png" height="30px" /></a>
+      <a class="navbar-brand" href="<?php print $globalURL; ?>"><img src="<?php print $globalURL; ?>/images/logo.png" height="30px" alt="<?php print $globalName; ?>" title="<?php print $globalName; ?>" /></a>
     </div>
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
@@ -123,7 +123,7 @@ if ($facebook_meta_image != "")
           	<li><a href="<?php print $globalURL; ?>/about">The Project</a></li>
           	<li><a href="<?php print $globalURL; ?>/about/export">Exporting Data</a></li>
             <li><hr /></li>
-            <li><a href="<?php print $globalURL; ?>/about/map">Live Map</a></li>
+            <li><a href="<?php print $globalURL; ?>/about/layar">Augmented Reality</a></li>
 			<li><a href="<?php print $globalURL; ?>/about/tv">Barrie Spotter TV</a></li>
             <li><hr /></li>
           	<li><a href="https://github.com/barriespotter/Web_App/issues" target="_blank">Report any Issues</a></li>

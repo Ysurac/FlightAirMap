@@ -108,11 +108,14 @@ $limit_previous_2 = $limit_end - $absolute_difference;
                 } else {
                     print '<li><a href="'.$globalURL.'/search?'.$no3D.'&3D=true"><i class="fa fa-globe"></i> 3D Map</a></li>';
                 }
-				print '<li class="short-url">';
-				//print 'http://'.$_SERVER[HTTP_HOST].''.$_SERVER[REQUEST_URI];
-					$bitly = Spotter::getBitlyURL(urlencode('http://'.$_SERVER[HTTP_HOST].''.$_SERVER[REQUEST_URI]));
-					print 'Short URL: <input type="text" name="short_url" value="'.$bitly.'" readonly="readonly" />';
-				print '</li>';
+                //checks to see if the Bit.ly API settings are set
+                if ($globalBitlyAccessToken != "")
+                {
+                    print '<li class="short-url">';
+                        $bitly = Spotter::getBitlyURL(urlencode('http://'.$_SERVER[HTTP_HOST].''.$_SERVER[REQUEST_URI]));
+                        print 'Short URL: <input type="text" name="short_url" value="'.$bitly.'" readonly="readonly" />';
+                    print '</li>';
+                }
 				print '</ul>';
 		print '</div>';
 	  
