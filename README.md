@@ -29,7 +29,7 @@ Centos instructions:
 * Create a mysql database.
 * supply require/settings.php with your database credentials.
 
-## DataBase
+## FlightAware Api Key 
 * get yourself a flightAware api key http://flightaware.com/commercial/flightxml/
 * supply require/settings.php with this key
 
