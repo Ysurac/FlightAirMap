@@ -1,5 +1,5 @@
 <?php
-require_once('settings.php');
+require_once("settings.php");
 
 class Connection{
 
@@ -8,16 +8,16 @@ class Connection{
 	*
 	* @return Boolean of the database connection
 	*
-	*/	
-		
+	*/
+
 	public static function createDBConnection()
 	{
 		global $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname;
-        
-        if($conn = mysql_connect($globalDBhost, $globalDBuser, $globalDBpass))
+
+		if($conn = ($GLOBALS["___mysqli_ston"] = mysqli_connect($globalDBhost,  $globalDBuser,  $globalDBpass)))
 		{
-			mysql_select_db($globalDBname);
-			
+			((bool)mysqli_query($GLOBALS["___mysqli_ston"], "USE $globalDBname"));
+
 			return true;
 		} else {
 			return false;

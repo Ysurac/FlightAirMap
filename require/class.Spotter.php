@@ -26,16 +26,25 @@ class Spotter{
 			}
 		}
 
-		$result = mysql_query($query.$limitQuery);
-		$num_rows = mysql_num_rows($result);
+		if ( ($result = mysqli_query($GLOBALS["___mysqli_ston"], $query.$limitQuery))===false )
+		{
+			printf("Invalid query: %s\nWhole query: %s\n", mysqli_error($GLOBALS["___mysqli_ston"]), $query);
+			exit();
+		}
+		$num_rows = mysqli_num_rows($result);
 
 		$spotter_array = array();
 		$temp_array = array();
 		
 
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
+			$temp_array = array();
+			if (isset($row['spotter_live_id'])) {
+			    $temp_array['spotter_id'] = $row['spotter_live_id'];
+			} else {
 			$temp_array['spotter_id'] = $row['spotter_id'];
+			}
       $temp_array['flightaware_id'] = $row['flightaware_id'];
       $temp_array['ident'] = $row['ident'];
       $temp_array['registration'] = $row['registration'];
@@ -55,10 +64,14 @@ class Spotter{
       if($row['registration'] != "")
       {
           $image_array = Spotter::getSpotterImage($row['registration']);
+				if (count($image_array) > 0) {
           $temp_array['image'] = $image_array[0]['image'];
           $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
       }
-      $temp_array['highlight'] = $row['highlight'];
+			}
+  
+			//  $temp_array['highlight'] = $row['highlight'];
+			$temp_array['highlight'] = '';
 			
 			$dateArray = Spotter::parseDateString($row['date']);
 			if ($dateArray['seconds'] < 10)
@@ -91,22 +104,33 @@ class Spotter{
 			$temp_array['date_unix'] = strtotime($row['date']." UTC");
 			
 			$aircraft_array = Spotter::getAllAircraftInfo($row['aircraft_icao']);
+			if (count($aircraft_array) > 0) {
 			$temp_array['aircraft_name'] = $aircraft_array[0]['type'];
 			$temp_array['aircraft_manufacturer'] = $aircraft_array[0]['manufacturer'];
-			
-			$airline_array = array();
-			if (is_numeric(substr($row['ident'], -1, 1)))
-			{
-				$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 3));
 			}
+			$airline_array = array();
+			if (!is_numeric(substr($row['ident'], 0, 3))) {
+				if (is_numeric(substr(substr($row['ident'], 0, 3), -1, 1))) {
+					$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 2));
+				} elseif (is_numeric(substr(substr($row['ident'], 0, 4), -1, 1))) {
+				$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 3));
+				} else {
+					$airline_array = Spotter::getAllAirlineInfo('NA');
+			}
+			} else {
+				$airline_array = Spotter::getAllAirlineInfo('NA');
+			}
+			if (count($airline_array) > 0) {
 			$temp_array['airline_icao'] = $airline_array[0]['icao'];
 			$temp_array['airline_iata'] = $airline_array[0]['iata'];
 			$temp_array['airline_name'] = $airline_array[0]['name'];
 			$temp_array['airline_country'] = $airline_array[0]['country'];
 			$temp_array['airline_callsign'] = $airline_array[0]['callsign'];
 			$temp_array['airline_type'] = $airline_array[0]['type'];
-			
+			}
+			if ($row['departure_airport_icao'] != '') {
 			$departure_airport_array = Spotter::getAllAirportInfo($row['departure_airport_icao']);
+				if (isset($departure_airport_array[0]['name'])) {
 			$temp_array['departure_airport_name'] = $departure_airport_array[0]['name'];
 			$temp_array['departure_airport_city'] = $departure_airport_array[0]['city'];
 			$temp_array['departure_airport_country'] = $departure_airport_array[0]['country'];
@@ -115,8 +139,13 @@ class Spotter{
 			$temp_array['departure_airport_latitude'] = $departure_airport_array[0]['latitude'];
 			$temp_array['departure_airport_longitude'] = $departure_airport_array[0]['longitude'];
 			$temp_array['departure_airport_altitude'] = $departure_airport_array[0]['altitude'];
+				} else $departure_airport_array = Spotter::getAllAirportInfo('NA');
 			
+			} else $departure_airport_array = Spotter::getAllAirportInfo('NA');
+			
+			if ($row['arrival_airport_icao'] != '') {
 			$arrival_airport_array = Spotter::getAllAirportInfo($row['arrival_airport_icao']);
+				if (count($arrival_airport_array) > 0) {
 			$temp_array['arrival_airport_name'] = $arrival_airport_array[0]['name'];
 			$temp_array['arrival_airport_city'] = $arrival_airport_array[0]['city'];
 			$temp_array['arrival_airport_country'] = $arrival_airport_array[0]['country'];
@@ -125,6 +154,8 @@ class Spotter{
 			$temp_array['arrival_airport_latitude'] = $arrival_airport_array[0]['latitude'];
 			$temp_array['arrival_airport_longitude'] = $arrival_airport_array[0]['longitude'];
 			$temp_array['arrival_airport_altitude'] = $arrival_airport_array[0]['altitude'];
+				} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
+			} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
       
 			$temp_array['query_number_rows'] = $num_rows;
 			
@@ -181,8 +212,6 @@ class Spotter{
 		        		$additional_query .= "(spotter_output.highlight like '%".$q_item."%')";
 	        		$additional_query .= ")";
 	      		}
-        		
-        	
 			}
 		}
 		
@@ -317,21 +346,18 @@ class Spotter{
 		{
 			$altitude_array = explode(",", $altitude);
 			
-			$altitude_array[0] = mysql_real_escape_string($altitude_array[0]);
-			$altitude_array[1] = mysql_real_escape_string($altitude_array[1]);
+			$altitude_array[0] = filter_var($altitude_array[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$altitude_array[1] = filter_var($altitude_array[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			
 
 			if ($altitude_array[1] != "")
 			{                
                 $altitude_array[0] = substr($altitude_array[0], 0, -2);
                 $altitude_array[1] = substr($altitude_array[1], 0, -2);
-              
 				$additional_query .= " AND altitude >= '".$altitude_array[0]."' AND altitude <= '".$altitude_array[1]."' ";
 			} else {
                 $altitude_array[0] = substr($altitude_array[0], 0, -2);
-              
 				$additional_query .= " AND altitude <= '".$altitude_array[0]."' ";
-              
 			}
 		}
 		
@@ -339,14 +365,13 @@ class Spotter{
 		{
 			$date_array = explode(",", $date_posted);
 			
-			$date_array[0] = mysql_real_escape_string($date_array[0]);
-			$date_array[1] = mysql_real_escape_string($date_array[1]);
+			$date_array[0] = filter_var($date_array[0],FILTER_SANITIZE_STRING);
+			$date_array[1] = filter_var($date_array[1],FILTER_SANITIZE_STRING);
 
 			if ($date_array[1] != "")
 			{                
                 $date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
                 $date_array[1] = date("Y-m-d H:i:s", strtotime($date_array[1]));
-              
 				$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) >= '".$date_array[0]."' AND TIMESTAMP(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) <= '".$date_array[1]."' ";
 			} else {
                 $date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
@@ -360,8 +385,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -414,8 +439,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -538,8 +563,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -584,8 +609,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -630,8 +655,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -676,8 +701,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -722,8 +747,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -747,7 +772,6 @@ class Spotter{
 	}
 	
 
-    
 	/**
 	* Gets all the spotter information based on the spotter id
 	*
@@ -771,13 +795,13 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.spotter_id = '".$id."')";
+				$additional_query = " AND (spotter_output.spotter_id = '".$id."')";
 			}
 		}
 
 		$query  = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ";
 
-		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+		$spotter_array = Spotter::getDataFromDB($query);
 
 		return $spotter_array;
 	}
@@ -816,8 +840,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -865,7 +889,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.aircraft_icao = '".$aircraft_type."')";
+				$additional_query = " AND (spotter_output.aircraft_icao = '".$aircraft_type."')";
 			}
 		}
 		
@@ -873,8 +897,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -921,7 +945,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.registration = '".$registration."')";
+				$additional_query = " AND (spotter_output.registration = '".$registration."')";
 			}
 		}
 		
@@ -929,8 +953,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -979,7 +1003,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.airline_icao = '".$airline."')";
+				$additional_query = " AND (spotter_output.airline_icao = '".$airline."')";
 			}
 		}
 		
@@ -987,8 +1011,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -1043,8 +1067,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -1088,15 +1112,15 @@ class Spotter{
 		
 		if ($date != "")
 		{
-			$additional_query .= " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."' ";
+			$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."' ";
 		}
 		
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -1153,8 +1177,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -1209,8 +1233,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -1244,7 +1268,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByRoute($depature_airport_icao = '', $arrival_airport_icao = '', $limit = '', $sort = '')
+	public static function getSpotterDataByRoute($departure_airport_icao = '', $arrival_airport_icao = '', $limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -1253,14 +1277,14 @@ class Spotter{
 			return false;
 		}
 		
-		if ($depature_airport_icao != "")
+		if ($departure_airport_icao != "")
 		{
-			if (!is_string($depature_airport_icao))
+			if (!is_string($departure_airport_icao))
 			{
 				return false;
 			} else {
-				$depature_airport_icao = mysql_real_escape_string($depature_airport_icao);
-				$additional_query .= " AND (spotter_output.departure_airport_icao = '".$depature_airport_icao."')";
+				$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
+				$additional_query .= " AND (spotter_output.departure_airport_icao = '".$departure_airport_icao."')";
 			}
 		}
 		
@@ -1270,7 +1294,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
+				$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 				$additional_query .= " AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."')";
 			}
 		}
@@ -1279,8 +1303,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -1298,7 +1322,7 @@ class Spotter{
 
 		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
           
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 
 		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
 
@@ -1328,8 +1352,8 @@ class Spotter{
 		{
 			$limit_array = explode(",", $limit);
 			
-			$limit_array[0] = mysql_real_escape_string($limit_array[0]);
-			$limit_array[1] = mysql_real_escape_string($limit_array[1]);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
@@ -1371,17 +1395,16 @@ class Spotter{
 			return false;
 		}
 
-		$registration = mysql_real_escape_string($registration);
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = $global_query." WHERE spotter_output.highlight <> '' AND spotter_output.registration = '".$registration."'";
-        $result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$highlight = $row['highlight'];
 		}
-
-		return $highlight;
+		if (isset($highlight)) return $highlight;
 	}
 
 
@@ -1393,22 +1416,72 @@ class Spotter{
 	* @return Array airport information
 	*
 	*/
-	public static function getAllAirportInfo($airport)
+	public static function getAllAirportInfo($airport = '')
 	{
 		if(!Connection::createDBConnection())
 		{
 			return false;
 		}
 		
-		$airport = mysql_real_escape_string($airport);
+		$airport = filter_var($airport,FILTER_SANITIZE_STRING);
 
+		if ($airport == '') {
+			$query  = "SELECT airport.* FROM airport";
+		} else {
 		$query  = "SELECT airport.* FROM airport WHERE airport.icao = '".$airport."'";
-		$result = mysql_query($query);
+		}
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$airport_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
+		{
+			$temp_array['name'] = $row['name'];
+			$temp_array['city'] = $row['city'];
+			$temp_array['country'] = $row['country'];
+			$temp_array['iata'] = $row['iata'];
+			$temp_array['icao'] = $row['icao'];
+			$temp_array['latitude'] = $row['latitude'];
+			$temp_array['longitude'] = $row['longitude'];
+			$temp_array['altitude'] = $row['altitude'];
+
+			$airport_array[] = $temp_array;
+		}
+
+		return $airport_array;
+	}
+	
+	/**
+	* Gets the airport info based on the country
+	*
+	* @param Array $countries Airports countries
+	* @return Array airport information
+	*
+	*/
+	public static function getAllAirportInfobyCountry($countries)
+	{
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+		
+		$lst_countries = '';
+		foreach ($countries as $country) {
+			$country = filter_var($country,FILTER_SANITIZE_STRING);
+			if ($lst_countries == '') {
+				$lst_countries = "'".$country."'";
+			} else {
+				$lst_countries .= ",'".$country."'";
+			}
+		}
+		$query  = "SELECT airport.* FROM airport WHERE airport.country IN (".$lst_countries.")";
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+    
+		$airport_array = array();
+		$temp_array = array();
+		
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['name'] = $row['name'];
 			$temp_array['city'] = $row['city'];
@@ -1426,9 +1499,8 @@ class Spotter{
 	}
 	
 	
-	
 	/**
-	* Gets the airline info based on the icao code
+	* Gets the airline info based on the icao code or iata code
 	*
 	* @param String $airline_icao the iata code of the airport
 	* @return Array airport information
@@ -1441,15 +1513,19 @@ class Spotter{
 			return false;
 		}
 		
-		$airline_icao = mysql_real_escape_string($airline_icao);
+		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
-		$query  = "SELECT airlines.* FROM airlines WHERE airlines.icao = '".$airline_icao."'";
-		$result = mysql_query($query);
+		if (strlen($airline_icao) == 2) {
+		    $query  = "SELECT airlines.* FROM airlines WHERE airlines.iata = '".$airline_icao."' AND airlines.active = 'Y'";
+		} else {
+		    $query  = "SELECT airlines.* FROM airlines WHERE airlines.icao = '".$airline_icao."' AND airlines.active = 'Y'";
+		}
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$airline_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['name'] = $row['name'];
 			$temp_array['iata'] = $row['iata'];
@@ -1460,7 +1536,6 @@ class Spotter{
 
 			$airline_array[] = $temp_array;
 		}
-
 		return $airline_array;
 	}
 	
@@ -1480,16 +1555,17 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_type = mysql_real_escape_string($aircraft_type);
+		$aircraft_type = filter_var($aircraft_type,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT aircraft.* FROM aircraft WHERE aircraft.icao = '".$aircraft_type."'";
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$aircraft_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
+			$temp_array = array();
 			$temp_array['icao'] = $row['icao'];
 			$temp_array['type'] = $row['type'];
 			$temp_array['manufacturer'] = $row['manufacturer'];
@@ -1500,6 +1576,55 @@ class Spotter{
 		return $aircraft_array;
 	}
 	
+	/**
+	* Gets the aircraft info based on the aircraft ident
+	*
+	* @param String $aircraft_ident the aircraft ident (hex)
+	* @return String aircraft type
+	*
+	*/
+	public static function getAllAircraftType($aircraft_modes)
+	{
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+		
+		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
+
+		$query  = "SELECT aircraft_modes.ICAOTypeCode FROM aircraft_modes WHERE aircraft_modes.ModeS = '".$aircraft_modes."' LIMIT 1";
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+    
+		$row = mysqli_fetch_row($result);
+		if (count($row) > 0) {
+			return $row[0];
+		} else return '';
+	}
+
+	/**
+	* Gets the aircraft route based on the aircraft callsign
+	*
+	* @param String $callsign the aircraft callsign
+	* @return Array aircraft type
+	*
+	*/
+	public static function getRouteInfo($callsign)
+	{
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+		
+		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
+                if ($callsign == '') return array();
+		$query  = "SELECT * FROM routes WHERE CallSign = '".$callsign."' LIMIT 1";
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+    
+		$row = mysqli_fetch_array($result);
+		if (count($row) > 0) {
+			return $row;
+		} else return array();
+	}
 	
 	/**
 	* Gets the aircraft info based on the aircraft registration
@@ -1515,15 +1640,15 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_type = mysql_real_escape_string($aircraft_type);
+		$aircraft_type = filter_var($aircraft_type,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer FROM spotter_output WHERE spotter_output.registration = '".$registration."'";
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$aircraft_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -1550,12 +1675,12 @@ class Spotter{
 		}
 
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.ident, spotter_output.airline_name, spotter_output.aircraft_name, spotter_output.aircraft_icao, spotter_output.image FROM spotter_output";
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$flight_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['spotter_id'] = $row['spotter_id'];
 			$temp_array['ident'] = $row['ident'];
@@ -1587,12 +1712,12 @@ class Spotter{
 								FROM spotter_output
 								WHERE spotter_output.aircraft_manufacturer <> '' 
 								ORDER BY spotter_output.aircraft_manufacturer ASC";
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$manufacturer_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 
@@ -1621,12 +1746,12 @@ class Spotter{
 								WHERE spotter_output.aircraft_icao <> '' 
 								ORDER BY spotter_output.aircraft_name ASC";						
 								
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$aircraft_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -1656,12 +1781,12 @@ class Spotter{
 								WHERE spotter_output.registration <> '' 
 								ORDER BY spotter_output.registration ASC";						
 								
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$aircraft_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['registration'] = $row['registration'];
 
@@ -1691,12 +1816,12 @@ class Spotter{
 								WHERE spotter_output.airline_icao <> '' 
 								ORDER BY spotter_output.airline_name ASC";							
 								
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$airline_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_icao'] = $row['airline_icao'];
 			$temp_array['airline_name'] = $row['airline_name'];
@@ -1726,12 +1851,12 @@ class Spotter{
 								WHERE spotter_output.airline_country <> '' 
 								ORDER BY spotter_output.airline_country ASC";						
 								
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$airline_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_country'] = $row['airline_country'];
 
@@ -1763,11 +1888,11 @@ class Spotter{
 								WHERE spotter_output.departure_airport_icao <> '' 
 								ORDER BY spotter_output.departure_airport_city ASC";		
 					
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
    
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_icao'] = $row['airport_icao'];
 			$temp_array['airport_name'] = $row['airport_name'];
@@ -1782,19 +1907,19 @@ class Spotter{
 								WHERE spotter_output.arrival_airport_icao <> '' 
 								ORDER BY spotter_output.arrival_airport_city ASC";
 					
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-		{
-			if ($airport_array[$row['airport_city'].",".$row['airport_name']]['airport_icao'] != $row['airport_icao'])
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 			{
+		//	if ($airport_array[$row['airport_city'].",".$row['airport_name']]['airport_icao'] != $row['airport_icao'])
+		//	{
 				$temp_array['airport_icao'] = $row['airport_icao'];
 				$temp_array['airport_name'] = $row['airport_name'];
 				$temp_array['airport_city'] = $row['airport_city'];
 				$temp_array['airport_country'] = $row['airport_country'];
 				
 				$airport_array[$row['airport_city'].",".$row['airport_name']] = $temp_array;
-			}
+		//	}
 		}
 
 		return $airport_array;
@@ -1821,11 +1946,11 @@ class Spotter{
 								WHERE spotter_output.departure_airport_country <> '' 
 								ORDER BY spotter_output.departure_airport_country ASC";
 					
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
    
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_country'] = $row['airport_country'];
 
@@ -1837,9 +1962,9 @@ class Spotter{
 								WHERE spotter_output.arrival_airport_country <> '' 
 								ORDER BY spotter_output.arrival_airport_country ASC";
 					
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			if ($airport_array[$row['airport_country']]['airport_country'] != $row['airport_country'])
 			{
@@ -1875,11 +2000,11 @@ class Spotter{
 								WHERE spotter_output.departure_airport_country <> '' 
 								ORDER BY spotter_output.departure_airport_country ASC";
 					
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
    
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['country'] = $row['airport_country'];
 
@@ -1891,9 +2016,9 @@ class Spotter{
 								WHERE spotter_output.arrival_airport_country <> '' 
 								ORDER BY spotter_output.arrival_airport_country ASC";
 					
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			if ($country_array[$row['airport_country']]['country'] != $row['airport_country'])
 			{
@@ -1908,9 +2033,9 @@ class Spotter{
 								WHERE spotter_output.airline_country <> '' 
 								ORDER BY spotter_output.airline_country ASC";
 					
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			if ($country_array[$row['airline_country']]['country'] != $row['airline_country'])
 			{
@@ -1944,12 +2069,12 @@ class Spotter{
 								WHERE spotter_output.ident <> '' 
 								ORDER BY spotter_output.ident ASC";							
 								
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$ident_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['ident'] = $row['ident'];
 
@@ -1979,12 +2104,12 @@ class Spotter{
 								WHERE spotter_output.date <> '' 
 								ORDER BY spotter_output.date ASC";							
 								
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$date_array = array();
 		$temp_array = array();
 		
-		while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['date'] = $row['date'];
 
@@ -2016,12 +2141,12 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['route'] = $row['route'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -2056,15 +2181,20 @@ class Spotter{
 		}
 		
 		//getting the registration
+		
 		if ($flightaware_id != "")
 		{
 			if (!is_string($flightaware_id))
 			{
 				return false;
 			} else {
-				$registration = Spotter::getAircraftRegistration($flightaware_id);
+				$myhex = explode('-',$flightaware_id);
+				if (count($myhex) > 0) {
+					$registration = Spotter::getAircraftRegistrationBymodeS($myhex[0]);
+				}
 			}
 		}
+    	
     	
     	//getting the airline information
 		if ($ident != "")
@@ -2073,10 +2203,18 @@ class Spotter{
 			{
 				return false;
 			} else {
-				if (is_numeric(substr($ident, -1, 1)))
+				if (!is_numeric(substr($ident, 0, 3)))
 				{
+					if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
+						$airline_array = Spotter::getAllAirlineInfo(substr($ident, 0, 2));
+					} elseif (is_numeric(substr(substr($ident, 0, 4), -1, 1))) {
 					$airline_array = Spotter::getAllAirlineInfo(substr($ident, 0, 3));
-					
+					} else {
+					    $airline_array = Spotter::getAllAirlineInfo("NA");
+					}
+					if (count($airline_array) == 0) {
+						$airline_array = Spotter::getAllAirlineInfo("NA");
+					}
 					if ($airline_array[0]['icao'] == ""){
 						$airline_array = Spotter::getAllAirlineInfo("NA");
 					}
@@ -2099,6 +2237,19 @@ class Spotter{
 					$aircraft_array = Spotter::getAllAircraftInfo("NA");
 				} else {
 					$aircraft_array = Spotter::getAllAircraftInfo($aircraft_icao);
+				}
+			}
+		} else {
+			if ($flightaware_id != "") {
+				$myhex = explode('-',$flightaware_id);
+				if (count($myhex) > 0) {
+					$aircraft_icao = Spotter::getAllAircraftType($myhex[0]);
+					if ($aircraft_icao == "" || $aircraft_icao == "XXXX")
+					{
+						$aircraft_array = Spotter::getAllAircraftInfo("NA");
+					} else {
+						$aircraft_array = Spotter::getAllAircraftInfo($aircraft_icao);
+					}
 				}
 			}
 		}
@@ -2185,30 +2336,29 @@ class Spotter{
         {
             $image_array = Spotter::getSpotterImage($registration);
             
-            if ($image_array[0]['registration'] == "")
+			if (!isset($image_array[0]['registration']))
             {
                 Spotter::addSpotterImage($registration);
             }
-            
 		}
     
-		$flightaware_id = mysql_real_escape_string($flightaware_id);
-	    $ident = mysql_real_escape_string($ident);
-	    $aircraft_icao = mysql_real_escape_string($aircraft_icao);
-	    $departure_airport_icao = mysql_real_escape_string($departure_airport_icao);
-	    $arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
-	    $latitude = mysql_real_escape_string($latitude);
-	    $longitude = mysql_real_escape_string($longitude);
-	    $waypoints = mysql_real_escape_string($waypoints);
-	    $altitude = mysql_real_escape_string($altitude);
-	    $heading = mysql_real_escape_string($heading);
-	    $groundspeed = mysql_real_escape_string($groundspeed);
+		$flightaware_id = filter_var($flightaware_id,FILTER_SANITIZE_STRING);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
+		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
+		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
+		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		$waypoints = filter_var($waypoints,FILTER_SANITIZE_STRING);
+		$altitude = filter_var($altitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		$heading = filter_var($heading,FILTER_SANITIZE_NUMBER_INT);
+		$groundspeed = filter_var($groundspeed,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
 		$query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date) VALUES ('$flightaware_id','$ident','$registration','".$airline_array[0]['name']."', '".$airline_array[0]['icao']."', '".$airline_array[0]['country']."', '".$airline_array[0]['type']."', '$aircraft_icao', '".$aircraft_array[0]['type']."', '".$aircraft_array[0]['manufacturer']."', '$departure_airport_icao', '".$departure_airport_array[0]['name']."', '".$departure_airport_array[0]['city']."', '".$departure_airport_array[0]['country']."', '$arrival_airport_icao', '".$arrival_airport_array[0]['name']."', '".$arrival_airport_array[0]['city']."', '".$arrival_airport_array[0]['country']."', '$latitude', '$longitude', '$waypoints', '$altitude', '$heading', '$groundspeed',  '$date')";
 		
-		print $query."<br /><br />";
+		//print $query."<br /><br />";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 		
 		if ($result == 1)
 		{
@@ -2238,9 +2388,9 @@ class Spotter{
 								AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) 
 								AND spotter_output.date < UTC_TIMESTAMP()";
       
-		$result = mysql_query($query);
-        
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+    		$ident_result='';
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$ident_result = $row['ident'];
 		}
@@ -2268,9 +2418,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-			    
 		    	$q_array = explode(" ", $q);
-		    	
 		    	foreach ($q_array as $q_item){
 		    		$additional_query .= " AND (";
 						$additional_query .= "(spotter_output.aircraft_icao like '%".$q_item."%') OR ";
@@ -2283,8 +2431,6 @@ class Spotter{
 		        		$additional_query .= "(spotter_output.ident like '%".$q_item."%')";
 	        		$additional_query .= ")";
 	      		}
-        		
-        	
 			}
 		}
 
@@ -2319,12 +2465,12 @@ class Spotter{
 					ORDER BY airline_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_name'] = $row['airline_name'];
             $temp_array['airline_icao'] = $row['airline_icao'];
@@ -2336,8 +2482,6 @@ class Spotter{
 
 		return $airline_array;
 	}
-	
-	
 	
 	
 	/**
@@ -2353,7 +2497,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
@@ -2361,12 +2505,12 @@ class Spotter{
                     GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_name'] = $row['airline_name'];
             $temp_array['airline_icao'] = $row['airline_icao'];
@@ -2393,7 +2537,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
       
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
 		 			FROM spotter_output
@@ -2402,12 +2546,12 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_country_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_country_count'] = $row['airline_country_count'];
             $temp_array['airline_country'] = $row['airline_country'];
@@ -2435,7 +2579,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airport_icao = mysql_real_escape_string($airport_icao);
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
@@ -2443,12 +2587,12 @@ class Spotter{
                     GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_name'] = $row['airline_name'];
             $temp_array['airline_icao'] = $row['airline_icao'];
@@ -2475,7 +2619,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airport_icao = mysql_real_escape_string($airport_icao);
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
       
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
 		 			FROM spotter_output
@@ -2484,12 +2628,12 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_country_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_country_count'] = $row['airline_country_count'];
             $temp_array['airline_country'] = $row['airline_country'];
@@ -2498,7 +2642,6 @@ class Spotter{
 		}
 
 		return $airline_country_array;
-
 	}
 	
 	
@@ -2515,7 +2658,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
+		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
@@ -2523,12 +2666,12 @@ class Spotter{
                     GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_name'] = $row['airline_name'];
             $temp_array['airline_icao'] = $row['airline_icao'];
@@ -2557,7 +2700,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
+		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
       
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
 		 			FROM spotter_output
@@ -2566,12 +2709,12 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_country_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_country_count'] = $row['airline_country_count'];
             $temp_array['airline_country'] = $row['airline_country'];
@@ -2598,7 +2741,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
@@ -2606,12 +2749,12 @@ class Spotter{
            GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_name'] = $row['airline_name'];
             $temp_array['airline_icao'] = $row['airline_icao'];
@@ -2638,7 +2781,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
       
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
 		 			FROM spotter_output
@@ -2647,12 +2790,12 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_country_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_country_count'] = $row['airline_country_count'];
             $temp_array['airline_country'] = $row['airline_country'];
@@ -2678,7 +2821,7 @@ class Spotter{
 			return false;
 		}
 		
-		$ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
@@ -2686,12 +2829,12 @@ class Spotter{
            GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_name'] = $row['airline_name'];
             $temp_array['airline_icao'] = $row['airline_icao'];
@@ -2713,28 +2856,28 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public static function countAllAirlinesByRoute($depature_airport_icao, $arrival_airport_icao)
+	public static function countAllAirlinesByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		if(!Connection::createDBConnection())
 		{
 			return false;
 		}
 		
-		$depature_airport_icao = mysql_real_escape_string($depature_airport_icao);
-		$arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
+		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
+		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
-					WHERE (spotter_output.departure_airport_icao = '".$depature_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."') 
+					WHERE (spotter_output.departure_airport_icao = '".$departure_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."') 
            GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_name'] = $row['airline_name'];
             $temp_array['airline_icao'] = $row['airline_icao'];
@@ -2755,29 +2898,29 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public static function countAllAirlineCountriesByRoute($depature_airport_icao, $arrival_airport_icao)
+	public static function countAllAirlineCountriesByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		if(!Connection::createDBConnection())
 		{
 			return false;
 		}
 		
-		$depature_airport_icao = mysql_real_escape_string($depature_airport_icao);
-		$arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
+		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
+		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
       
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
 		 			FROM spotter_output
-					WHERE spotter_output.airline_country <> '' AND (spotter_output.departure_airport_icao = '".$depature_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."') 
+					WHERE spotter_output.airline_country <> '' AND (spotter_output.departure_airport_icao = '".$departure_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."') 
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_country_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_country_count'] = $row['airline_country_count'];
             $temp_array['airline_country'] = $row['airline_country'];
@@ -2803,7 +2946,7 @@ class Spotter{
 			return false;
 		}
 		
-		$country = mysql_real_escape_string($country);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
@@ -2811,12 +2954,12 @@ class Spotter{
            GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_name'] = $row['airline_name'];
             $temp_array['airline_icao'] = $row['airline_icao'];
@@ -2843,7 +2986,7 @@ class Spotter{
 			return false;
 		}
 		
-		$country = mysql_real_escape_string($country);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
       
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
 		 			FROM spotter_output
@@ -2852,12 +2995,12 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_country_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_country_count'] = $row['airline_country_count'];
             $temp_array['airline_country'] = $row['airline_country'];
@@ -2891,12 +3034,12 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airline_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airline_country_count'] = $row['airline_country_count'];
             $temp_array['airline_country'] = $row['airline_country'];
@@ -2928,12 +3071,12 @@ class Spotter{
 					ORDER BY aircraft_icao_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -2959,7 +3102,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
                     FROM spotter_output
@@ -2967,12 +3110,12 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3008,7 +3151,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airline_icao = mysql_real_escape_string($airline_icao);
+		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
@@ -3016,12 +3159,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3047,7 +3190,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airline_icao = mysql_real_escape_string($airline_icao);
+		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
                     FROM spotter_output
@@ -3055,12 +3198,12 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3095,7 +3238,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airline_icao = mysql_real_escape_string($airline_icao);
+		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output
@@ -3103,12 +3246,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
     $aircraft_array = array();
 		$temp_array = array();
         
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+    while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
@@ -3133,7 +3276,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airport_icao = mysql_real_escape_string($airport_icao);
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
@@ -3141,12 +3284,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3172,7 +3315,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airport_icao = mysql_real_escape_string($airport_icao);
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
                     FROM spotter_output
@@ -3180,12 +3323,12 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3219,7 +3362,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airport_icao = mysql_real_escape_string($airport_icao);
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output
@@ -3227,12 +3370,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
     $aircraft_array = array();
 		$temp_array = array();
         
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+    while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
@@ -3258,7 +3401,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
+		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
@@ -3266,12 +3409,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3297,7 +3440,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
+		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
                     FROM spotter_output
@@ -3305,12 +3448,12 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3345,7 +3488,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
@@ -3353,12 +3496,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3384,20 +3527,21 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name    
                     FROM spotter_output
-                    WHERE spotter_output.registration <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."'   
+                    WHERE spotter_output.
+                    registration <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."'   
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3431,7 +3575,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output
@@ -3439,12 +3583,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
     $aircraft_array = array();
 		$temp_array = array();
         
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+    while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
@@ -3470,7 +3614,7 @@ class Spotter{
 			return false;
 		}
 		
-		$ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
@@ -3478,12 +3622,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3509,7 +3653,7 @@ class Spotter{
 			return false;
 		}
 		
-		$ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
                     FROM spotter_output
@@ -3517,12 +3661,12 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3556,7 +3700,7 @@ class Spotter{
 			return false;
 		}
 		
-		$ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output
@@ -3564,12 +3708,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
     $aircraft_array = array();
 		$temp_array = array();
         
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+    while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
@@ -3587,29 +3731,29 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftTypesByRoute($depature_airport_icao, $arrival_airport_icao)
+	public static function countAllAircraftTypesByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		if(!Connection::createDBConnection())
 		{
 			return false;
 		}
 		
-		$depature_airport_icao = mysql_real_escape_string($depature_airport_icao);
-		$arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
+		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
+		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 		
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
-                    WHERE (spotter_output.departure_airport_icao = '".$depature_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."')
+                    WHERE (spotter_output.departure_airport_icao = '".$departure_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."')
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3628,28 +3772,28 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftRegistrationByRoute($depature_airport_icao, $arrival_airport_icao)
+	public static function countAllAircraftRegistrationByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		if(!Connection::createDBConnection())
 		{
 			return false;
 		}
 		
-		$depature_airport_icao = mysql_real_escape_string($depature_airport_icao);
-		$arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
+		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
+		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
                     FROM spotter_output
-                    WHERE spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = '".$depature_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."')   
+                    WHERE spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = '".$departure_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."')   
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3676,28 +3820,28 @@ class Spotter{
 	* @return Array the aircraft manufacturer list
 	*
 	*/
-	public static function countAllAircraftManufacturerByRoute($depature_airport_icao, $arrival_airport_icao)
+	public static function countAllAircraftManufacturerByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		if(!Connection::createDBConnection())
 		{
 			return false;
 		}
 		
-		$depature_airport_icao = mysql_real_escape_string($depature_airport_icao);
-		$arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
+		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
+		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output
-                    WHERE spotter_output.aircraft_manufacturer <> '' AND (spotter_output.departure_airport_icao = '".$depature_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."') 
+                    WHERE spotter_output.aircraft_manufacturer <> '' AND (spotter_output.departure_airport_icao = '".$departure_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."') 
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
     $aircraft_array = array();
 		$temp_array = array();
         
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+    while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
@@ -3724,7 +3868,7 @@ class Spotter{
 			return false;
 		}
 		
-		$country = mysql_real_escape_string($country);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
@@ -3732,12 +3876,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3763,7 +3907,7 @@ class Spotter{
 			return false;
 		}
 		
-		$country = mysql_real_escape_string($country);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name 
                     FROM spotter_output
@@ -3771,12 +3915,12 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -3810,7 +3954,7 @@ class Spotter{
 			return false;
 		}
 		
-		$country = mysql_real_escape_string($country);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output
@@ -3818,12 +3962,12 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
     $aircraft_array = array();
 		$temp_array = array();
         
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+    while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
@@ -3856,12 +4000,12 @@ class Spotter{
 					ORDER BY aircraft_manufacturer_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $manufacturer_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
             $temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
@@ -3894,12 +4038,12 @@ class Spotter{
 					ORDER BY aircraft_registration_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $aircraft_array = array();
 		$temp_array = array();
         
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+    while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['registration'] = $row['registration'];
       $temp_array['aircraft_registration_count'] = $row['aircraft_registration_count'];
@@ -3942,12 +4086,12 @@ class Spotter{
 					ORDER BY airport_departure_icao_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
             $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
@@ -3976,7 +4120,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airline_icao = mysql_real_escape_string($airline_icao);
+		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
@@ -3984,12 +4128,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
             $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
@@ -4018,7 +4162,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airline_icao = mysql_real_escape_string($airline_icao);
+		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
@@ -4026,12 +4170,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
             $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
@@ -4057,7 +4201,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
@@ -4065,12 +4209,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
             $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
@@ -4098,7 +4242,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
@@ -4106,12 +4250,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
             $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
@@ -4136,7 +4280,7 @@ class Spotter{
 			return false;
 		}
 		
-		$registration = mysql_real_escape_string($registration);
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
@@ -4144,12 +4288,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
             $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
@@ -4177,7 +4321,7 @@ class Spotter{
 			return false;
 		}
 		
-		$registration = mysql_real_escape_string($registration);
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
@@ -4185,12 +4329,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
             $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
@@ -4215,7 +4359,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
@@ -4223,12 +4367,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
             $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
@@ -4256,7 +4400,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airport_icao = mysql_real_escape_string($airport_icao);
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
@@ -4264,12 +4408,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
             $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
@@ -4295,7 +4439,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
+		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
@@ -4303,12 +4447,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
             $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
@@ -4336,7 +4480,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
+		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
@@ -4344,12 +4488,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
             $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
@@ -4374,7 +4518,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
@@ -4382,12 +4526,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
             $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
@@ -4416,7 +4560,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
@@ -4424,12 +4568,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
             $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
@@ -4455,7 +4599,7 @@ class Spotter{
 			return false;
 		}
 		
-		$ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
@@ -4463,12 +4607,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
             $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
@@ -4497,7 +4641,7 @@ class Spotter{
 			return false;
 		}
 		
-		$ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
@@ -4505,12 +4649,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
             $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
@@ -4536,7 +4680,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
@@ -4544,12 +4688,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
             $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
@@ -4577,7 +4721,7 @@ class Spotter{
 			return false;
 		}
 		
-		$country = mysql_real_escape_string($country);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
@@ -4585,12 +4729,12 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
             $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
@@ -4622,12 +4766,12 @@ class Spotter{
 					ORDER BY airport_arrival_icao_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
             $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
@@ -4656,7 +4800,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airline_icao = mysql_real_escape_string($airline_icao);
+		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
@@ -4664,12 +4808,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
             $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
@@ -4697,7 +4841,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airline_icao = mysql_real_escape_string($airline_icao);
+		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
@@ -4705,12 +4849,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
             $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
@@ -4735,7 +4879,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($airline_icao,FILTEr_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
@@ -4743,12 +4887,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
             $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
@@ -4777,7 +4921,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
@@ -4785,12 +4929,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
             $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
@@ -4815,7 +4959,7 @@ class Spotter{
 			return false;
 		}
 		
-		$registration = mysql_real_escape_string($registration);
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
@@ -4823,12 +4967,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
             $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
@@ -4856,7 +5000,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
@@ -4864,12 +5008,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
             $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
@@ -4895,7 +5039,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airport_icao = mysql_real_escape_string($airport_icao);
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
@@ -4903,12 +5047,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
             $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
@@ -4936,7 +5080,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airport_icao = mysql_real_escape_string($airport_icao);
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
@@ -4944,12 +5088,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
             $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
@@ -4974,7 +5118,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
+		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
@@ -4982,12 +5126,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
             $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
@@ -5016,7 +5160,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
+		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
@@ -5024,12 +5168,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
             $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
@@ -5055,7 +5199,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
@@ -5063,12 +5207,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
             $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
@@ -5097,7 +5241,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
@@ -5105,12 +5249,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
             $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
@@ -5136,7 +5280,7 @@ class Spotter{
 			return false;
 		}
 		
-		$ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
@@ -5144,12 +5288,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
             $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
@@ -5177,7 +5321,7 @@ class Spotter{
 			return false;
 		}
 		
-		$ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
@@ -5185,12 +5329,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
             $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
@@ -5216,7 +5360,7 @@ class Spotter{
 			return false;
 		}
 		
-		$country = mysql_real_escape_string($country);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
@@ -5224,12 +5368,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
             $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
@@ -5257,7 +5401,7 @@ class Spotter{
 			return false;
 		}
 		
-		$country = mysql_real_escape_string($country);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
@@ -5265,12 +5409,12 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
             $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
@@ -5303,12 +5447,12 @@ class Spotter{
 					ORDER BY airport_departure_country_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
             $temp_array['airport_departure_country'] = $row['departure_airport_country'];
@@ -5340,12 +5484,12 @@ class Spotter{
 					ORDER BY airport_arrival_country_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $airport_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
             $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
@@ -5381,12 +5525,12 @@ class Spotter{
                     ORDER BY route_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -5420,7 +5564,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
@@ -5428,12 +5572,12 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -5465,7 +5609,7 @@ class Spotter{
 			return false;
 		}
 		
-		$registration = mysql_real_escape_string($registration);
+		$registration = filter_var($registration, FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
@@ -5473,12 +5617,12 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -5511,7 +5655,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airline_icao = mysql_real_escape_string($airline_icao);
+		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
@@ -5519,12 +5663,12 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -5557,7 +5701,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airport_icao = mysql_real_escape_string($airport_icao);
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
@@ -5565,12 +5709,12 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -5603,7 +5747,7 @@ class Spotter{
 			return false;
 		}
 		
-		$country = mysql_real_escape_string($country);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
@@ -5611,12 +5755,12 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -5648,7 +5792,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
@@ -5656,12 +5800,12 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -5693,7 +5837,7 @@ class Spotter{
 			return false;
 		}
 		
-		$ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
@@ -5701,12 +5845,12 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -5738,7 +5882,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
+		$aircraft_manufacturer = filter_var($aircraft_manufactuer,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
@@ -5746,12 +5890,12 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -5792,12 +5936,12 @@ class Spotter{
                     ORDER BY route_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $routes_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['spotter_id'] = $row['spotter_id'];
 			$temp_array['route_count'] = $row['route_count'];
@@ -5839,12 +5983,12 @@ class Spotter{
 					ORDER BY callsign_icao_count DESC
 					LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $callsign_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['callsign_icao'] = $row['ident'];
 			$temp_array['airline_name'] = $row['airline_name'];
@@ -5879,12 +6023,12 @@ class Spotter{
 								ORDER BY date_count DESC
 								LIMIT 0,10";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $date_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['date_name'] = $row['date_name'];
             $temp_array['date_count'] = $row['date_count'];
@@ -5916,12 +6060,12 @@ class Spotter{
 								GROUP BY date_name 
 								ORDER BY spotter_output.date ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $date_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['date_name'] = $row['date_name'];
             $temp_array['date_count'] = $row['date_count'];
@@ -5962,12 +6106,12 @@ class Spotter{
 								".$orderby_sql."
 								LIMIT 0,100";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -5992,7 +6136,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airline_icao = mysql_real_escape_string($airline_icao);
+		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
@@ -6000,12 +6144,12 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -6032,7 +6176,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_icao = mysql_real_escape_string($aircraft_icao);
+		$aircraft_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
@@ -6040,12 +6184,12 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -6070,7 +6214,7 @@ class Spotter{
 			return false;
 		}
 		
-		$registration = mysql_real_escape_string($registration);
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
@@ -6078,12 +6222,12 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -6108,7 +6252,7 @@ class Spotter{
 			return false;
 		}
 		
-		$airport_icao = mysql_real_escape_string($airport_icao);
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
@@ -6116,12 +6260,12 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -6147,7 +6291,7 @@ class Spotter{
 			return false;
 		}
 		
-		$aircraft_manufacturer = mysql_real_escape_string($aircraft_manufacturer);
+		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
@@ -6155,12 +6299,12 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -6186,7 +6330,7 @@ class Spotter{
 			return false;
 		}
 		
-		$date = mysql_real_escape_string($date);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
@@ -6194,12 +6338,12 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -6225,7 +6369,7 @@ class Spotter{
 			return false;
 		}
 		
-		$ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
@@ -6233,12 +6377,12 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -6257,28 +6401,28 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursByRoute($depature_airport_icao, $arrival_airport_icao)
+	public static function countAllHoursByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		if(!Connection::createDBConnection())
 		{
 			return false;
 		}
 		
-		$depature_airport_icao = mysql_real_escape_string($depature_airport_icao);
-		$arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
+		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
+		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE (spotter_output.departure_airport_icao = '".$depature_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."')
+								WHERE (spotter_output.departure_airport_icao = '".$departure_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."')
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -6303,7 +6447,7 @@ class Spotter{
 			return false;
 		}
 		
-		$country = mysql_real_escape_string($country);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
@@ -6311,12 +6455,12 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -6347,9 +6491,9 @@ class Spotter{
                     FROM spotter_output
                     WHERE spotter_output.ident <> ''";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
            return $row['aircraft_count'];
 		}
@@ -6372,9 +6516,9 @@ class Spotter{
 		$query  = "SELECT COUNT(DISTINCT spotter_output.spotter_id) AS flight_count  
                     FROM spotter_output";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
            return $row['flight_count'];
 		}
@@ -6398,9 +6542,9 @@ class Spotter{
 		$query  = "SELECT COUNT(DISTINCT spotter_output.airline_name) AS airline_count 
 							FROM spotter_output";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
            return $row['airline_count'];
 		}
@@ -6426,12 +6570,12 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
       
         $hour_array = array();
 		$temp_array = array();
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
             $temp_array['hour_count'] = $row['hour_count'];
@@ -6456,14 +6600,14 @@ class Spotter{
 			return false;
 		}
         
-        $registration = mysql_real_escape_string($registration);
+        $registration = filter_var($registration,FILTER_SANITIZE_STRING);
         
         //getting the aircraft image
 		$image_url = Spotter::findAircraftImage($registration);
 
 		$query  = "INSERT INTO spotter_image (registration, image, image_thumbnail) VALUES ('$registration', '".$image_url['original']."', '".$image_url['thumbnail']."')";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 		
 		if ($result == 1)
 		{
@@ -6488,18 +6632,18 @@ class Spotter{
 			return false;
 		}
         
-        $registration = mysql_real_escape_string($registration);
+        $registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT spotter_image.*
 								FROM spotter_image 
 								WHERE spotter_image.registration = '".$registration."'";
 
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
         
         $images_array = array();
 		$temp_array = array();
 
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$temp_array['spotter_image_id'] = $row['spotter_image_id'];
             $temp_array['registration'] = $row['registration'];
@@ -6526,15 +6670,15 @@ class Spotter{
 			return false;
 		}
         
-        $flightaware_id = mysql_real_escape_string($flightaware_id);
+        $flightaware_id = filter_var($flightaware_id,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT spotter_output.spotter_id
 								FROM spotter_output 
 								WHERE spotter_output.flightaware_id = '".$flightaware_id."'";
         
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			return $row['spotter_id'];
 		}
@@ -6564,16 +6708,18 @@ class Spotter{
 		$diff = abs(strtotime($current_date) - strtotime($date));
 
 		$time_array['years'] = floor($diff / (365*60*60*24)); 
+		$years = $time_array['years'];
 		
 		$time_array['months'] = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+		$months = $time_array['months'];
 		
 		$time_array['days'] = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
-
+		$days = $time_array['days'];
 		$time_array['hours'] = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 - $days*60*60*24)/ (60*60));
-		
+		$hours = $time_array['hours'];
 		$time_array['minutes'] = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 - $days*60*60*24 - $hours*60*60)/ 60);
-		
-		$time_array['seconds'] = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 - $days*60*60*24 - $hours*60*60 - $minuts*60));  
+		$minutes = $time_array['minutes'];
+		$time_array['seconds'] = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 - $days*60*60*24 - $hours*60*60 - $minutes*60));  
 		
 		return $time_array;	
 	}	
@@ -6724,6 +6870,7 @@ class Spotter{
 	* @return String the aircraft registration
 	*
 	*/
+	
 	public static function getAircraftRegistration($flightaware_id)
 	{
 		global $globalFlightAwareUsername, $globalFlightAwarePassword;
@@ -6749,7 +6896,24 @@ class Spotter{
 		return $registration;	
 	}
 	
+	public static function getAircraftRegistrationBymodeS($aircraft_modes)
+	{
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+		
+		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
 	
+		$query  = "SELECT aircraft_modes.Registration FROM aircraft_modes WHERE aircraft_modes.ModeS = '".$aircraft_modes."' LIMIT 1";
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+    
+		$row = mysqli_fetch_row($result);
+		if (count($row) > 0) {
+		    return $row[0];
+		} else return '';
+	
+	}
 	/**
 	* converts the registration code using the country prefix
 	*
@@ -6764,7 +6928,7 @@ class Spotter{
 			return false;
 		}
 		
-		$registration = mysql_real_escape_string($registration);
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		
 		$registration_1 = substr($registration, 0, 1);
 		$registration_2 = substr($registration, 0, 2);
@@ -6772,9 +6936,9 @@ class Spotter{
 		//first get the prefix based on two characters
 		$query  = "SELECT aircraft_registration.registration_prefix FROM aircraft_registration WHERE registration_prefix = '".$registration_2."'";
       
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
         
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			$registration_prefix = $row['registration_prefix'];
 		}
@@ -6784,9 +6948,9 @@ class Spotter{
 		{
 			$query  = "SELECT aircraft_registration.registration_prefix FROM aircraft_registration WHERE registration_prefix = '".$registration_1."'";
 	      
-			$result = mysql_query($query);
+			$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 	        
-	        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+	        while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 			{
 				$registration_prefix = $row['registration_prefix'];
 			}	
@@ -6984,7 +7148,6 @@ class Spotter{
 		
 		
 		
-	
        /* 
 		//aircraft
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE spotter_output.aircraft_name = ''";
@@ -7016,9 +7179,9 @@ class Spotter{
 
 		//airport
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.departure_airport_icao FROM spotter_output WHERE spotter_output.departure_airport_name = ''";
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
         
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+    while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			if ($row['departure_airport_icao'] != "")
 			{
@@ -7028,12 +7191,12 @@ class Spotter{
 			}
 			
 			$query2  = "UPDATE spotter_output SET spotter_output.departure_airport_name = '".$airport_name[0]['name']."', spotter_output.departure_airport_city = '".$airport_name[0]['city']."', spotter_output.departure_airport_country = '".$airport_name[0]['country']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
-			$result2 = mysql_query($query2);
+			$result2 = mysqli_query($GLOBALS["___mysqli_ston"], $query2);
 		}
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.arrival_airport_icao FROM spotter_output WHERE spotter_output.arrival_airport_name = ''";
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
         
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+    while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
 		{
 			if ($row['arrival_airport_icao'] != "")
 			{
@@ -7043,13 +7206,14 @@ class Spotter{
 			}
 			
 			$query2  = "UPDATE spotter_output SET spotter_output.arrival_airport_name = '".$airport_name[0]['name']."', spotter_output.arrival_airport_city = '".$airport_name[0]['city']."', spotter_output.arrival_airport_country = '".$airport_name[0]['country']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
-			$result2 = mysql_query($query2);
+			$result2 = mysqli_query($GLOBALS["___mysqli_ston"], $query2);
 		}
 
 	
 				
 		
 	}	
+	
 }
 
 
