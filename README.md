@@ -20,6 +20,18 @@ The follwing is a list of PHP extensions that must be installed on your server i
 * cURL [http://php.net/curl](http://php.net/curl) which is used to access remote sites.
 * MySQL [http://php.net/mysql](http://php.net/mysql) is required for database access.
 
-## Data Sources
+Centos instructions:
+* yum install php-curl
+* yum install php-mysql
+* # service httpd restart
 
+## DataBase
+* Create a mysql database.
+* supply require/settings.php with your database credentials.
+
+## FlightAware Api Key 
+* get yourself a flightAware api key http://flightaware.com/commercial/flightxml/
+* supply require/settings.php with this key
+
+## Data Sources
 At the current moment only [FlightAware](http://www.flightaware.com) is supported as the data source for this web app. More data sources will be avialable soon.
