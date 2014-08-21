@@ -38,6 +38,7 @@ h4{
 }
 p{
 	line-height:1.7em;
+    margin-bottom:2.0em;
 }
 label{
 	font-weight:normal;
@@ -331,8 +332,11 @@ footer a:hover{
 #notification-permission{
 	display:none;
 }
-span.mobile{
-	display:none;
+span.mobile,
+span.tablet,
+a.mobile,
+a.tablet{
+	display:none !important;
 }
 form{
   margin-bottom:20px;
@@ -546,6 +550,35 @@ a.full-width{
 	margin-top:5px;
 }
 
+/* PAGE HEADER */
+.page-header{
+    border-bottom:0px; 
+    padding-top:3.0em;
+    margin-bottom:4.0em;
+    height:320px;
+    overflow:hidden;
+    box-shadow: 0 4px 7px -2px gray;
+}
+.page-header .big-image{
+    float:right;
+    width:225px;
+    margin-right:10.0em;
+}
+.page-header .content{
+    margin-left:7.0em; 
+    margin-top:2.0em;
+    float:left;
+}
+.page-header .content h1{
+    border-bottom:0px; 
+    font-size:2.0em;
+    text-shadow: 1px 1px #aaa;
+}
+.page-header .content p{
+    width:500px;   
+    font-size:1.5em;
+}
+
 
 /* RE-CAPTCHA */
 .recaptchatable .recaptcha_r1_c1, .recaptchatable .recaptcha_r3_c1, .recaptchatable .recaptcha_r3_c2, .recaptchatable .recaptcha_r7_c1, .recaptchatable .recaptcha_r8_c1, .recaptchatable .recaptcha_r3_c3, .recaptchatable .recaptcha_r2_c1, .recaptchatable .recaptcha_r2_c2, .recaptchatable .recaptcha_r4_c1, .recaptchatable .recaptcha_r4_c2, .recaptchatable .recaptcha_r4_c4, .recaptchatable .recaptcha_image_cell {
@@ -627,6 +660,27 @@ body.page-about-tv .tv-image{
 }
 body.page-about-tv .tv-image img{
 	width:50%;
+}
+
+
+/* ABOUT/LAYAR */
+body.page-about-layar .layar-launch{
+	text-align: center;
+	background-color:#B5CBE8;
+	border:1px solid #1a3151;
+	padding:8px;
+	margin:0 auto;
+	display:block;
+	width:50%;
+	margin-bottom:3.0em;
+    margin-top:3.0em;
+}
+body.page-about-layar .layar-launch a{
+	color:#fff;
+	font-size:1.3em;
+}
+body.page-about-layar .layar-launch a:hover{
+	color:#1a3151;
 }
 
 
@@ -904,6 +958,14 @@ body.page-statistics .specific-stats .col-md-6 .more{
 	.search-containers .bootstrap-select{
 		width:235px !important;
 	}
+    span.notablet,
+    a.notablet{
+		display:none !important;
+	}
+	span.tablet,
+    a.tablet{
+		display:inline-block !important;
+	}
     
     /* FLIGHT ID */
 	body.page-flightid-overview .image{
@@ -937,6 +999,14 @@ body.page-statistics .specific-stats .col-md-6 .more{
 	}
 	.navbar form input[type="text"]{
 		width:75%;
+	}
+    span.notablet,
+    a.notablet{
+		display:none !important;
+	}
+	span.tablet,
+    a.tablet{
+		display:inline-block !important;
 	}
 
 	/* FLIGHT ID */
@@ -978,11 +1048,13 @@ body.page-statistics .specific-stats .col-md-6 .more{
 	.top-header{
 		display:none;
 	}
-	span.nomobile{
-		display:none;
+	span.nomobile,
+    a.nomobile{
+		display:none !important;
 	}
-	span.mobile{
-		display:inline-block;
+	span.mobile,
+    a.mobile{
+		display:inline-block !important;
 	}
 	input[type="text"],
 	input[type="submit"],
@@ -1109,6 +1181,27 @@ body.page-statistics .specific-stats .col-md-6 .more{
 		.table-responsive{
 			border-bottom:0px;
 		}
+    
+    /* PAGE HEADER */
+    .page-header{
+        text-align: center;
+        height:auto;
+        float:none;
+        padding-bottom:0px;
+    }
+    .page-header .big-image{
+        float:none;
+        width:70%;
+        margin-right:0px;
+    }
+    .page-header .content{
+        margin-left:0px; 
+        margin-top:0px;
+        float:none;
+    }
+    .page-header .content p{
+        width:100%;   
+    }
 
 
 	/* FLIGHT ID */
@@ -1121,6 +1214,14 @@ body.page-statistics .specific-stats .col-md-6 .more{
 		width:80%;
 	}
 	body.page-about-tv .tv-image img{
+		width:80%;
+	}
+    
+    /* ABOUT/LAYAR */
+	body.page-about-layar .layar-launch{
+		width:80%;
+	}
+	body.page-about-layar .layar-image img{
 		width:80%;
 	}
 

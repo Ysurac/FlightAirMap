@@ -98,15 +98,16 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 				print '</li>';
                 //remove 3D=true parameter
                 $no3D = str_replace("&3D=true", "", $_SERVER[QUERY_STRING]);
+                $kmlURL = str_replace("http://", "kml://", $globalURL);
                 if (!isset($_GET['3D'])){
                     print '<li><a href="'.$globalURL.'/search?'.$no3D.'" class="active"><i class="fa fa-table"></i> Table</a></li>';
                 } else {
-                    print '<li><a href="'.$globalURL.'/search?'.$no3D.'"><i class="fa fa-table"></i> Table</a></li>';
+                    print '<li><span class="notablet"><a href="'.$globalURL.'/search?'.$no3D.'"><i class="fa fa-table"></i> Table</a></span></li>';
                 }
                 if (isset($_GET['3D'])){
                     print '<li><a href="'.$globalURL.'/search?'.$no3D.'&3D=true" class="active"><i class="fa fa-globe"></i> 3D Map</a></li>';
                 } else {
-                    print '<li><a href="'.$globalURL.'/search?'.$no3D.'&3D=true"><i class="fa fa-globe"></i> 3D Map</a></li>';
+                    print '<li ><a href="'.$globalURL.'/search?'.$no3D.'&3D=true" class="notablet nomobile"><i class="fa fa-globe"></i> 3D Map</a><a href="'.$kmlURL.'/search/kml?'.htmlentities($_SERVER[QUERY_STRING]).'" class="tablet mobile"><i class="fa fa-globe"></i> 3D Map</a></li>';
                 }
                 //checks to see if the Bit.ly API settings are set
                 if ($globalBitlyAccessToken != "")
