@@ -108,10 +108,10 @@ $page_url = $globalURL.'/newest/'.$category;
             print '<p>The table below shows the detailed information sorted by the newest recorded airline. Each airline is grouped and is shown only once, the first time it flew nearby.</p>';
         } else if ($category == "departure_airport")
         {
-            print '<p>The table below shows the detailed information sorted by the newest recorded departure airport. Each airport is grouped and is shown only once, the first time an aircrft flew nearby from the airport.</p>';
+            print '<p>The table below shows the detailed information sorted by the newest recorded departure airport. Each departure airport is grouped and is shown only once, the first time an aircraft flew nearby from the airport.</p>';
         } else if ($category == "arrival_airport")
         {
-            print '<p>The table below shows the detailed information sorted by the newest recorded arrival airport. Each airport is grouped and is shown only once, the first time an aircrft flew nearby to the airport.</p>';
+            print '<p>The table below shows the detailed information sorted by the newest recorded arrival airport. Each arrival airport is grouped and is shown only once, the first time an aircraft flew nearby to the airport.</p>';
         }
 
     if ($category == "aircraft")
