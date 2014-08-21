@@ -181,7 +181,7 @@ class SpotterLive{
 				return false;
 			} else {
 				$myhex = explode('-',$flightaware_id);
-				$registration = Spotter::getAircraftRegistration($myhex[0]);
+				$registration = Spotter::getAircraftRegistrationBymodeS($myhex[0]);
 			}
 		}
 		
