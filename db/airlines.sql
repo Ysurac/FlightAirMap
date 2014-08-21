@@ -1,4 +1,4 @@
--- phpMyAdmin SQL Dump
+-- phpMyAdmin SQL Dump  
 -- version 4.1.8
 -- http://www.phpmyadmin.net
 --
@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS `airlines` (
   PRIMARY KEY (`airlines_id`),
   KEY `airlines_id` (`airlines_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6004 ;
+
+TRUNCATE TABLE `airlines`;
 
 --
 -- Dumping data for table `airlines`
@@ -261,7 +263,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (213, 213, 'Air Bandama', 'N', '', 'BDM', 'BANDAMA', 'Ivory Coast', 'N', 'passenger'),
 (214, 214, 'Air Berlin', 'N', 'AB', 'BER', 'AIR BERLIN', 'Germany', 'Y', 'passenger'),
 (215, 215, 'Air Brousse', 'N', '', 'ABT', 'AIR BROUSSE', 'Canada', 'N', 'passenger'),
-(216, 216, 'Air Contractors', 'N', 'AG', 'ABR', 'CONTRACT', 'Ireland', 'N', 'passenger'),
+(216, 216, 'Air Contractors', 'N', 'AG', 'ABR', 'CONTRACT', 'Ireland', 'Y', 'passenger'),
 (217, 217, 'Air Illinois', 'N', '', 'AIL', 'AIR ILLINOIS', 'United States', 'N', 'passenger'),
 (218, 218, 'Air India Limited', 'N', 'AI', 'AIC', 'AIRINDIA', 'India', 'Y', 'passenger'),
 (219, 219, 'Air Inter Gabon', 'N', '', 'AIG', ' ', 'Gabon', 'N', 'passenger'),
@@ -537,7 +539,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (489, 489, 'Avanti Air', 'N', '', 'ATV', 'AVANTI AIR', 'Germany', 'N', 'passenger'),
 (490, 490, 'Aero Trades (Western) Ltd.', 'N', '', 'ATW', 'AERO TRADES', 'Canada', 'N', 'passenger'),
 (491, 491, 'Austrian Airlines', 'N', 'OS', 'AUA', 'AUSTRIAN', 'Austria', 'Y', 'passenger'),
-(492, 492, 'Air Southwest', 'N', '', 'WOW', 'SWALLOW', 'United Kingdom', 'Y', 'passenger'),
+(492, 492, 'WOW air', 'N', 'WW', 'WOW', 'WOW AIR', 'ICELAND', 'Y', 'passenger'),
 (493, 493, 'Augsburg Airways', 'N', 'IQ', 'AUB', 'AUGSBURG-AIR', 'Germany', 'Y', 'passenger'),
 (494, 494, 'Air Corporate', 'N', '', 'CPV', 'AIRCORPORATE', 'Italy', 'N', 'passenger'),
 (495, 495, 'Aviastar-Tu', 'N', '', 'TUP', 'TUPOLEVAIR', 'Russia', 'N', 'passenger'),
@@ -1093,7 +1095,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1044, 1044, 'Aerobusinessservice', 'N', '', 'LSM', '', 'Russia', 'N', 'passenger'),
 (1045, 1045, 'Alsair', 'N', '', 'LSR', 'ALSAIR', 'France', 'N', 'passenger'),
 (1046, 1046, 'Aerotaxis Latinoamericanos', 'N', '', 'LTI', 'LATINO', 'Mexico', 'N', 'passenger'),
-(1047, 1047, 'Alninati Aeronautics', 'N', '', 'LUC', 'STEF', 'Switzerland', 'N', 'passenger'),
+(1047, 1047, 'Albinati Aeronautics', 'N', '', 'LUC', 'STEF', 'Switzerland', 'Y', 'passenger'),
 (1048, 1048, 'Atlantis European Airways', 'N', 'TD', 'LUR', '', 'Armenia', 'Y', 'passenger'),
 (1049, 1049, 'Aliven', 'N', '', 'LVN', 'ALIVEN', 'Italy', 'N', 'passenger'),
 (1050, 1050, 'Aviavilsa', 'N', '', 'LVR', 'AVIAVILSA', 'Lithuania', 'N', 'passenger'),
@@ -1577,7 +1579,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1527, 1528, 'Barnes Olsen Aeroleasing', 'N', '', 'CLN', 'SEELINE', 'United Kingdom', 'N', 'passenger'),
 (1528, 1529, 'Baltimore Air Transport', 'N', '', 'CPJ', 'CORPJET', 'United States', 'N', 'passenger'),
 (1529, 1530, 'Boston-Maine Airways', 'N', 'E9', 'CXS', 'CLIPPER CONNECTION', 'United States', 'N', 'passenger'),
-(1530, 1531, 'Brussels Airlines', 'SN Brussels Airlines', 'SN', 'DAT', 'BEE-LINE', 'Belgium', 'Y', 'passenger'),
+(1530, 1531, 'Brussels Airlines', 'SN Brussels Airlines', 'SN', 'BEL', 'BEE-LINE', 'Belgium', 'Y', 'passenger'),
 (1531, 1532, 'Baltimore Airways', 'N', '', 'EAH', 'EASTERN', 'United States', 'N', 'passenger'),
 (1532, 1533, 'Bond Aviation', 'N', '', 'EBA', 'BOND AVIATION', 'Italy', 'N', 'passenger'),
 (1533, 1534, 'Brazilian Army Aviation', 'N', '', 'EXB', 'BRAZILIAN ARMY', 'Brazil', 'N', 'passenger'),
@@ -1702,7 +1704,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1652, 1653, 'Cargo Three', 'N', '', 'CTW', 'THIRD CARGO', 'Panama', 'N', 'cargo'),
 (1653, 1654, 'Cargoitalia', 'N', '2G', 'CRG', 'WHITE PELICAN', 'Italy', 'N', 'cargo'),
 (1654, 1655, 'Cargojet Airways', 'N', 'W8', 'CJT', 'CARGOJET', 'Canada', 'N', 'cargo'),
-(1655, 1656, 'Cargolux', 'N', 'CV', 'CLX', 'CARGOLUX', 'Luxembourg', 'N', 'cargo'),
+(1655, 1656, 'Cargolux', 'N', 'CV', 'CLX', 'CARGOLUX', 'Luxembourg', 'Y', 'cargo'),
 (1656, 1657, 'Cargoman', 'N', '', 'CGM', 'HOTEL CHARLIE', 'Oman', 'N', 'cargo'),
 (1657, 1658, 'Carib Aviation', 'N', '', 'DEL', 'RED TAIL', 'Antigua and Barbuda', 'N', 'passenger'),
 (1658, 1659, 'Carib Express', 'N', '', 'BCB', 'WAVEBIRD', 'Barbados', 'N', 'passenger'),
@@ -2002,7 +2004,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1951, 1952, 'DAS Air Cargo', 'N', 'WD', 'DSR', 'DAIRAIR', 'Uganda', 'N', 'cargo'),
 (1952, 1953, 'DAS Airlines', 'N', '', 'RKC', 'DAS CONGO', 'Democratic Republic of the Congo', 'N', 'passenger'),
 (1953, 1954, 'DAT Danish Air Transport', 'N', 'DX', 'DTR', 'DANISH', 'Denmark', 'Y', 'passenger'),
-(1954, 1955, 'DAT Enterprise Limited', 'N', '', 'ENT', 'DATENT', 'United Kingdom', 'N', 'passenger'),
+(1954, 1955, 'Enter Air', 'N', 'E4', 'ENT', 'ENTERAIR', 'Poland', 'Y', 'passenger'),
 (1955, 1956, 'DERA Boscombe Down', 'N', '', 'BDN', 'GAUNTLET', 'United Kingdom', 'N', 'passenger'),
 (1956, 1957, 'DESNA', 'N', '', 'DSN', 'DESNA', 'Ukraine', 'N', 'passenger'),
 (1957, 1958, 'DETA Air', 'N', '', 'DET', 'SAMAL', 'Kazakhstan', 'N', 'passenger'),
@@ -2296,7 +2298,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (2244, 2245, 'Eurolot', 'N', 'K2', 'ELO', 'EUROLOT', 'Poland', 'Y', 'passenger'),
 (2245, 2246, 'Euromanx Airways', 'N', '3W', 'EMX', 'EUROMANX', 'Austria', 'N', 'passenger'),
 (2246, 2247, 'Europe Air Lines', 'N', '', 'GED', 'LANGUEDOC', 'France', 'N', 'passenger'),
-(2247, 2248, 'Europe Airpost', 'N', '', 'FPO', 'FRENCH POST', 'France', 'N', 'passenger'),
+(2247, 2248, 'Europe Airpost', 'N', '', 'FPO', 'FRENCH POST', 'France', 'Y', 'passenger'),
 (2248, 2249, 'European 2000 Airlines', 'N', '', 'EUT', 'FIESTA', 'Malta', 'N', 'passenger'),
 (2249, 2250, 'European Aeronautical Group UK', 'N', '', 'EAG', '', 'United Kingdom', 'N', 'passenger'),
 (2250, 2251, 'European Air Express', 'N', 'EA', 'EAL', 'STAR WING', 'Germany', 'Y', 'passenger'),
@@ -2345,7 +2347,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (2293, 2294, 'Express Tours', 'N', '', 'XTO', 'EXPRESS TOURS', 'Canada', 'N', 'passenger'),
 (2294, 2295, 'ExpressJet', 'N', 'XE', 'BTA', 'JET LINK', 'United States', 'Y', 'passenger'),
 (2295, 2296, 'Exxavia Limited', 'N', '', 'JTM', 'SKYMAN', 'Ireland', 'N', 'passenger'),
-(2296, 2297, 'easyJet', 'EasyJet Airline', 'U2', 'EZY', 'EASY', 'United Kingdom', 'Y', 'passenger'),
+(2296, 2297, 'EasyJet', 'EasyJet Airline', 'U2', 'EZY', 'EASY', 'United Kingdom', 'Y', 'passenger'),
 (2297, 2298, 'NetJets', 'N', '', 'EJA', '', 'United States', 'N', 'passenger'),
 (2298, 2299, 'F.S. Air Service', 'N', '', 'EYE', 'SOCKEYE', 'United States', 'N', 'passenger'),
 (2299, 2300, 'FAI Airservice', 'N', '', 'IFA', 'RED ANGLE', 'Germany', 'N', 'passenger'),
@@ -3570,7 +3572,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (3516, 3521, 'Missions Gouvernemtales Francaises', 'N', '', 'MRN', 'MARIANNE', 'France', 'N', 'passenger'),
 (3517, 3522, 'Mississippi State University', 'N', '', 'BDG', 'BULLDOG', 'United States', 'N', 'passenger'),
 (3518, 3523, 'Mississippi Valley Airways', 'N', '', 'MVA', 'VALAIR', 'United States', 'N', 'passenger'),
-(3519, 3524, 'Mistral Air', 'N', '', 'MSA', 'AIRMERCI', 'Italy', 'N', 'passenger'),
+(3519, 3524, 'Mistral Air', 'N', '7M', 'MSA', 'MISTRAL', 'Italy', 'Y', 'passenger'),
 (3520, 3525, 'Mobil Oil', 'N', '', 'MBO', 'MOBIL', 'Canada', 'N', 'passenger'),
 (3521, 3526, 'Mocambique Expresso', 'N', '', 'MXE', 'MOZAMBIQUE EXPRESS', 'Mozambique', 'N', 'passenger'),
 (3522, 3527, 'Mofaz Air', 'N', '', 'MFZ', 'MOFAZ AIR', 'Malaysia', 'N', 'passenger'),
@@ -3618,7 +3620,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (3564, 3569, 'Myanma Airways', 'N', 'UB', 'UBA', 'UNIONAIR', 'Myanmar', 'Y', 'passenger'),
 (3565, 3570, 'Myanmar Airways International', 'N', '8M', 'MMM', 'assignment postponed', 'Myanmar', 'Y', 'passenger'),
 (3566, 3571, 'Myflug', 'N', '', 'MYA', 'MYFLUG', 'Iceland', 'Y', 'passenger'),
-(3567, 3572, 'Mytravel Airways', 'N', '', 'VKG', 'VIKING', 'Denmark', 'N', 'passenger'),
+(3567, 3572, 'Thomas Cook Airlines Scandinavia', 'N', 'DK', 'VKG', 'VIKING', 'Denmark', 'Y', 'passenger'),
 (3568, 3573, 'NEL Cargo', 'N', '', 'NLG', 'NELCARGO', 'Ivory Coast', 'N', 'cargo'),
 (3569, 3574, 'NHT Lineas Aereas', 'N', '', 'NHG', 'HELGA', 'Brazil', 'N', 'passenger'),
 (3570, 3575, 'NZ Warbirds Association', 'N', '', 'WAR', 'WARBIRDS', 'New Zealand', 'N', 'passenger'),
@@ -4290,7 +4292,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (4235, 4241, 'Royal Air Force', 'N', 'RR', 'RFR', 'RAFAIR', 'United Kingdom', 'N', 'passenger'),
 (4236, 4242, 'Royal Air Force of Oman', 'N', 'RS', 'MJN', 'MAJAN', 'Oman', 'N', 'passenger'),
 (4237, 4243, 'Royal Air Force', 'N', '', 'ACW', 'AIR CADET', 'United Kingdom', 'N', 'passenger'),
-(4238, 4244, 'Royal Air Force', 'N', '', 'RRR', 'ASCOT', 'United Kingdom', 'N', 'passenger'),
+(4238, 4244, 'Royal Air Force', 'N', '', 'RRR', 'ASCOT', 'United Kingdom', 'Y', 'passenger'),
 (4239, 4245, 'Royal Air Force', 'N', '', 'RRF', 'KITTY', 'United Kingdom', 'N', 'passenger'),
 (4240, 4246, 'Royal Air Force', 'N', '', 'SHF', 'VORTEX', 'United Kingdom', 'N', 'passenger'),
 (4241, 4247, 'Royal Air Freight', 'N', '', 'RAX', 'AIR ROYAL', 'United States', 'N', 'passenger'),
@@ -4332,7 +4334,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (4277, 4283, 'Rusline', 'N', '', 'RLU', 'RUSLINE AIR', 'Russia', 'Y', 'passenger'),
 (4278, 4284, 'Russian Aircraft Corporation-MiG', 'N', '', 'MIG', 'MIG AVIA', 'Russia', 'N', 'passenger'),
 (4279, 4285, 'Russian Federation Air Force', 'N', '', 'RFF', 'RUSSIAN AIRFORCE', 'Russia', 'N', 'passenger'),
-(4280, 4286, 'Russian Sky Airlines', 'N', 'P7', 'ESL', 'RADUGA', 'Russia', 'N', 'passenger'),
+(4280, 4286, 'Russian Sky Airlines', 'N', '', 'ESL', 'RADUGA', 'Russia', 'N', 'passenger'),
 (4281, 4287, 'Rusuertol', 'N', '', 'RUZ', 'ROSTUERTOL', 'Russia', 'N', 'passenger'),
 (4282, 4288, 'Rutas Aereas', 'N', '', 'RUC', 'RUTACA', 'Venezuela', 'N', 'passenger'),
 (4283, 4289, 'Rutland Aviation', 'N', '', 'RND', 'RUTLAND', 'United Kingdom', 'N', 'passenger'),
@@ -4456,7 +4458,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (4400, 4408, 'Skygate', 'N', '', 'SGT', 'SKYGATE', 'Netherlands', 'N', 'passenger'),
 (4401, 4409, 'Samgau', 'N', '', 'SGU', 'RAUSHAN', 'Kazakhstan', 'N', 'passenger'),
 (4402, 4410, 'Saga Airlines', 'N', '', 'SGX', '', 'Turkey', 'N', 'passenger'),
-(4403, 4411, 'Skagway Air Service', 'N', 'N5', 'SGY', 'SKAGWAY AIR', 'United States', 'Y', 'passenger'),
+(4403, 4411, 'Skagway Air Service', 'N', 'N5', 'SGY', 'SKAGWAY AIR', 'United States', 'N', 'passenger'),
 (4404, 4412, 'Shabair', 'N', '', 'SHB', 'SHABAIR', 'Democratic Republic of the Congo', 'N', 'passenger'),
 (4405, 4413, 'Sky Harbor Air Service', 'N', '', 'SHC', 'SKY HARBOR CHEYENNE', 'United States', 'N', 'passenger'),
 (4406, 4414, 'Sahara Airlines', 'N', '', 'SHD', '', 'Algeria', 'Y', 'passenger'),
@@ -5473,7 +5475,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5415, 5432, 'Westland Helicopters', 'N', '', 'WHE', 'WESTLAND', 'United Kingdom', 'N', 'passenger'),
 (5416, 5433, 'Westpoint Air', 'N', '', 'WTP', 'WESTPOINT', 'Canada', 'N', 'passenger'),
 (5417, 5434, 'Westward Airways', 'N', 'CN', 'WWD', 'WESTWARD', 'United States', 'N', 'passenger'),
-(5418, 5435, 'White', 'N', '', 'WHT', 'YOUNG SKY', 'Portugal', 'N', 'passenger'),
+(5418, 5435, 'White Airways', 'N', 'WI', 'WHT', 'WHITE JET', 'Portugal', 'Y', 'passenger'),
 (5419, 5436, 'White Eagle Aviation', 'N', '', 'WEA', 'WHITE EAGLE', 'Poland', 'N', 'passenger'),
 (5420, 5437, 'White River Air Services', 'N', '', 'WRA', '', 'Canada', 'N', 'passenger'),
 (5421, 5438, 'Whyalla Airlines', 'N', '', 'WWL', '', 'Australia', 'N', 'passenger'),
@@ -5515,7 +5517,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5457, 5474, 'Wuhan Airlines', 'N', '', 'CWU', 'WUHAN AIR', 'China', 'N', 'passenger'),
 (5458, 5475, 'Wycombe Air Centre', 'N', '', 'WYC', 'WYCOMBE', 'United Kingdom', 'N', 'passenger'),
 (5459, 5476, 'Wyoming Airlines', 'N', '', 'WYG', 'WYOMING', 'United States', 'N', 'passenger'),
-(5460, 5479, 'XL Airways France', 'N', 'SE', 'SEU', 'STARWAY', 'France', 'Y', 'passenger'),
+(5460, 5479, 'XL Airways France', 'N', 'SE', 'XLF', 'STARWAY', 'France', 'Y', 'passenger'),
 (5461, 5480, 'XP Internation', 'N', '', 'XPS', 'XP PARCEL', 'Netherlands', 'N', 'passenger'),
 (5462, 5481, 'Xabre Aerolineas', 'N', '', 'XAB', 'AERO XABRE', 'Mexico', 'N', 'passenger'),
 (5463, 5482, 'Xclusive Jet Charter Limited', 'N', '', 'XJC', 'EXCLUSIVE JET', 'United Kingdom', 'N', 'passenger'),
@@ -5577,7 +5579,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5519, 6222, 'Air Kazakhstan', '', '9Y', 'KZK', 'Kazakh', 'Kazakhstan', 'Y', 'passenger'),
 (5520, 6557, 'Jet Aviation Flight Services', '', '', 'JAS', 'JET SETTER', 'United States', 'Y', 'passenger'),
 (5521, 6578, 'Annsett New Zealand (NZA)', '', 'ZQ', 'N', '', 'New Zealand', 'N', 'passenger'),
-(5522, 6855, 'EasyJet (DS)', '', 'DS', 'N', '', 'Switzerland', 'Y', 'passenger'),
+(5522, 6855, 'EasyJet (DS)', '', 'DS', 'EZS', 'TOPSWISS', 'Switzerland', 'Y', 'passenger'),
 (5523, 6856, 'Rheintalflug', '', '', 'RTL', 'Rheintal', 'Austria', 'N', 'passenger'),
 (5524, 6860, 'Dan-Air London', '', '', 'DAN', '', 'United Kingdom', 'N', 'passenger'),
 (5525, 6862, 'Fred. Olsen', '', '', 'FOF', '', 'Norway', 'N', 'passenger'),
@@ -5630,7 +5632,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5572, 10069, 'City-Air Germany', '', '', 'CIP', '', 'Germany', 'N', 'passenger'),
 (5573, 10094, 'Voronezhskie Airlanes', '', 'DN', 'N', '', 'Russia', 'N', 'passenger'),
 (5574, 10114, 'Line Blue', '', 'L8', 'LBL', 'Bluebird', 'Germany', 'Y', 'passenger'),
-(5575, 10117, 'FlyLAL Charters', '', '', 'LLC', '', 'Lithuania', 'Y', 'passenger'),
+(5575, 10117, 'Small Planet Airlines', '', 'S5', 'LLC', 'SMALL PLANET', 'Lithuania', 'Y', 'passenger'),
 (5576, 10118, 'Blue Sky America', '', 'BU', 'BKY', '', 'United States', 'N', 'passenger'),
 (5577, 10119, 'Texas Spirit', '', 'XS', 'TXP', '', 'United States', 'N', 'passenger'),
 (5578, 10121, 'Illinois Airways', '', 'IL', 'ILW', '', 'United States', 'N', 'passenger'),
@@ -5948,7 +5950,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5890, 17628, 'Orbit International Airlines', '', '', 'OAI', 'OA', 'United States', 'Y', 'passenger'),
 (5891, 17629, 'Orbit Regional Airlines', '', '', 'OAR', 'OA', 'United States', 'Y', 'passenger'),
 (5892, 17630, 'Orbit Atlantic Airways', '', '', 'OAN', '', 'United States', 'Y', 'passenger'),
-(5893, 17658, 'Volotea', '', '', 'VOO', 'Volotea', 'Spain', 'Y', 'passenger'),
+(5893, 17658, 'Volotea', '', 'V7', 'VOE', 'Volotea', 'Spain', 'Y', 'passenger'),
 (5894, 17666, 'Go Fly (United Kingdom)', '', '', 'GOE', 'Go Flight', 'United Kingdom', 'N', 'passenger'),
 (5895, 17675, 'Peach Aviation', '', 'MM', 'N', 'Air Peach', 'Japan', 'Y', 'passenger'),
 (5896, 17694, 'Helitt Líneas Aéreas', '', '', 'HTH', '', 'Spain', 'Y', 'passenger'),
@@ -6006,6 +6008,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5948, 18637, 'AirOne Atlantic', 'AirOneAtlantic', '00', 'AO1', '', 'Slovakia', 'N', 'passenger'),
 (5949, 18643, 'HQ- Business Express', '', 'HQ', 'N', 'BizEx', 'United States', 'N', 'passenger'),
 (5950, 18668, 'Nesma Airlines', '', '', 'NMA', 'Nesma Airlines', 'Egypt', 'Y', 'passenger');
+
 INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `icao`, `callsign`, `country`, `active`, `type`) VALUES
 (5951, 18672, 'East Horizon', '', '', 'EHN', 'EAST HORIZON', 'Afghanistan', 'Y', 'passenger'),
 (5952, 18673, 'Royal Southern Airlines.', 'Royal Southern', 'R1', 'RS1', 'RSA', 'Colombia', 'N', 'passenger'),
@@ -6055,7 +6058,18 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (6000, 0, 'SkyLink Express', '', '', 'SLQ', 'SKYLINK', 'Canada', 'Y', 'Cargo'),
 (5997, 0, 'Sky Regional Airlines', '', 'RS', 'SKV', 'MAPLE', 'Canada', 'Y', 'passenger'),
 (5998, 0, 'Cargolux Italia', '', 'C8', 'ICV', 'CARGO MED', 'Italy', 'Y', 'cargo'),
-(5999, 0, 'World Class Aviation', '', '', 'SBE', '', 'United States', 'Y', 'Passenger');
+(5999, 0, 'World Class Aviation', '', '', 'SBE', '', 'United States', 'Y', 'Passenger'),
+(7000, 0, 'SunExpress Deutschland', '', 'XG','SXD','SUNRISE','Germany','Y','Passenger'),
+(7001, 0, 'NetJets Europe', '', '','NJE','FRACTION','Portugal','Y','Passenger'),
+(7002, 0, 'Small Planet Airlines Polska', '', 'P7','LLP','SKYPOL','Polska','Y','Passenger'),
+(7003, 0, 'Europ Star Aircraft', '', '','ESQ','','Austria','Y','Passenger'),
+(7004, 0, 'E-Aviation - EFD Eisele Flugdienst GmbH', '', '','EFD','EVER FLIGHT','Germany','Y','Passenger'),
+(7005, 0, 'Livingston Compagnia Aerea', '', 'JN','NLV','SEAGULL','Italy','Y','Passenger'),
+(7006, 0, 'Armée de l\\''air française', '', '','CTM','','France','Y','Passenger'),
+(7007, 0, 'Syphax Airlines', '', 'FS','SYA','SYPHAXAIR','Tunisia','Y','Passenger'),
+(7008, 0, 'Alitalia CityLiner', '', 'CT','CYL','CITYLINER','Italia','Y','Passenger'),
+(7009, 0, 'GainJet Aviation', '', '','GNJ','GAINJET','Greece','Y','Passenger');
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
