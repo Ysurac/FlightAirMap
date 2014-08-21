@@ -12,8 +12,13 @@ require('header.php');
 <a class="button zoom-out" href="#" onclick="zoomOutMap(); return false;" title="Zoom out"><i class="fa fa-minus"></i></a>
 <a class="button geocode" href="#" onclick="getUserLocation(); return false;" title="Plot your Location"><i class="fa fa-map-marker"></i></a>
 <a class="button compass" href="#" onclick="getCompassDirection(); return false;" title="Compass Mode"><i class="fa fa-compass"></i></a>
+<!--
 <a class="button weatherradar" href="#" onclick="showWeatherRadar(); return false;" title="Weather Radar"><i class="fa fa-bullseye"></i></a>
 <a class="button weathersatellite" href="#" onclick="showWeatherSatellite(); return false;" title="Weather Satellite"><i class="fa fa-globe"></i></a>
+-->
+<a class="button weatherprecipitation" href="#" onclick="showWeatherPrecipitation(); return false;" title="Weather Precipitation"><i class="fa fa-cloud-download"></i></a>
+<a class="button weatherrain" href="#" onclick="showWeatherRain(); return false;" title="Weather Rain"><i class="fa fa-soundcloud"></i></a>
+<a class="button weatherclouds" href="#" onclick="showWeatherClouds(); return false;" title="Weather Clouds"><i class="fa fa-cloud"></i></a>
 
 <?php
 require('footer.php');

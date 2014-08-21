@@ -57,6 +57,16 @@ body {
 .weathersatellite{
   top:250px;
 }
+.weatherprecipitation{
+  top:280px;
+}
+.weatherrain{
+  top:310px;
+}
+.weatherclouds{
+  top:340px;
+}
+
 .mobile{
     display: none !important;
 }

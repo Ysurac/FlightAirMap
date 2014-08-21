@@ -2,6 +2,10 @@
 
 var map;
 var user = new L.FeatureGroup();
+var weatherprecipitation;
+var weatherrain;
+var weatherclouds;
+
 var weatherradar;
 var weatherradarrefresh;
 var weathersatellite;
@@ -55,13 +59,15 @@ $( document ).ready(function() {
 
   function getLiveData()
   {
-    map.removeLayer(layer_data);
-    layer_data = L.layerGroup();
+//    map.removeLayer(layer_data);
+//    layer_data = L.layerGroup();
 
     $.ajax({
       dataType: "json",
       url: "live/geojson?"+Math.random(),
       success: function(data) {
+	    map.removeLayer(layer_data);
+	    layer_data = L.layerGroup();
           
           var live_data = L.geoJson(data, {
             pointToLayer: function (feature, latLng) {
@@ -126,7 +132,7 @@ $( document ).ready(function() {
                     {
                       output += '<div>';
                         output += '<span>Altitude</span>';
-                        output += feature.properties.altitude+'00 feet (FL'+feature.properties.altitude+')';
+                        output += feature.properties.altitude+'00 feet - '+Math.round(feature.properties.altitude*30.48)+' m (FL'+feature.properties.altitude+')';
                       output += '</div>';
                     }
                     if (feature.properties.registration != "")
@@ -138,7 +144,7 @@ $( document ).ready(function() {
                     }
                     output += '<div>';
                       output += '<span>Speed</span>';
-                      output += feature.properties.ground_speed+' knots';
+                      output += feature.properties.ground_speed+' knots - '+Math.round(feature.properties.ground_speed*1.852)+' km/h';
                     output += '</div>';
                     output += '<div>';
                       output += '<span>Coordinates</span>';
@@ -177,14 +183,17 @@ $( document ).ready(function() {
           //re-create the bootstrap tooltips on the marker 
           showBootstrapTooltip();
         }
-    }).error(function() {});
+    }).error(function() {
+              map.removeLayer(layer_data);
+
+    });
   }
 
   //load the function on startup
   getLiveData();
 
   //then load it again every 30 seconds
-  setInterval(function(){getLiveData()},60000);
+  setInterval(function(){getLiveData()},30000);
 
   //adds the bootstrap hover to the map buttons
   $('.button').tooltip({ placement: 'right' });
@@ -196,6 +205,67 @@ $( document ).ready(function() {
 function showBootstrapTooltip(){
     $(".leaflet-marker-icon").tooltip('destroy');
     $('.leaflet-marker-icon').tooltip({ html: true });
+}
+
+//adds a new weather radar layer on to the map
+function showWeatherPrecipitation(){
+  //if the weatherradar is currently active then disable it, otherwise enable it
+  if (!$(".weatherprecipitation").hasClass("active"))
+  {
+    //loads the function to load the weather radar
+    loadWeatherPrecipitation();
+    //automatically refresh radar every 2 minutes
+    weatherprecipirationrefresh = setInterval(function(){loadWeatherPrecipitation()}, 120000);
+    //add the active class
+    $(".weatherprecipitation").addClass("active");
+  } else {
+      //remove the weather radar layer
+      map.removeLayer(weatherprecipitation);
+      //remove the active class
+      $(".weatherprecipitation").removeClass("active");
+      //remove the auto refresh
+      clearInterval(weatherprecipitationrefresh);
+  }       
+}
+//adds a new weather radar layer on to the map
+function showWeatherRain(){
+  //if the weatherradar is currently active then disable it, otherwise enable it
+  if (!$(".weatherrain").hasClass("active"))
+  {
+    //loads the function to load the weather radar
+    loadWeatherRain();
+    //automatically refresh radar every 2 minutes
+    weatherrainrefresh = setInterval(function(){loadWeatherRain()}, 120000);
+    //add the active class
+    $(".weatherrain").addClass("active");
+  } else {
+      //remove the weather radar layer
+      map.removeLayer(weatherrain);
+      //remove the active class
+      $(".weatherrain").removeClass("active");
+      //remove the auto refresh
+      clearInterval(weatherrainrefresh);
+  }       
+}
+//adds a new weather radar layer on to the map
+function showWeatherClouds(){
+  //if the weatherradar is currently active then disable it, otherwise enable it
+  if (!$(".weatherclouds").hasClass("active"))
+  {
+    //loads the function to load the weather radar
+    loadWeatherClouds();
+    //automatically refresh radar every 2 minutes
+    weathercloudsrefresh = setInterval(function(){loadWeatherClouds()}, 120000);
+    //add the active class
+    $(".weatherclouds").addClass("active");
+  } else {
+      //remove the weather radar layer
+      map.removeLayer(weatherclouds);
+      //remove the active class
+      $(".weatherclouds").removeClass("active");
+      //remove the auto refresh
+      clearInterval(weathercloudsrefresh);
+  }       
 }
 
 //adds a new weather radar layer on to the map
@@ -219,6 +289,54 @@ function showWeatherRadar(){
   }       
 }
 
+//actually loads the weather radar
+function loadWeatherPrecipitation()
+{
+    if (weatherprecipitation)
+    {
+      //remove the weather radar layer
+      map.removeLayer(weatherprecipitation);  
+    }
+    
+    weatherprecipitation = L.tileLayer('http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png', {
+	attribution: 'Map data © OpenWeatherMap',
+        maxZoom: 18,
+        transparent: true,
+        opacity: '0.7'
+    }).addTo(map);
+}
+//actually loads the weather radar
+function loadWeatherRain()
+{
+    if (weatherrain)
+    {
+      //remove the weather radar layer
+      map.removeLayer(weatherrain);
+    }
+    
+    weatherrain = L.tileLayer('http://{s}.tile.openweathermap.org/map/rain/{z}/{x}/{y}.png', {
+	attribution: 'Map data © OpenWeatherMap',
+        maxZoom: 18,
+        transparent: true,
+        opacity: '0.7'
+    }).addTo(map);
+}
+//actually loads the weather radar
+function loadWeatherClouds()
+{
+    if (weatherclouds)
+    {
+      //remove the weather radar layer
+      map.removeLayer(weatherclouds);
+    }
+    
+    weatherclouds = L.tileLayer('http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png', {
+	attribution: 'Map data © OpenWeatherMap',
+        maxZoom: 18,
+        transparent: true,
+        opacity: '0.6'
+    }).addTo(map);
+}
 //actually loads the weather radar
 function loadWeatherRadar()
 {
