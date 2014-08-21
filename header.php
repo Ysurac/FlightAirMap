@@ -123,7 +123,6 @@ if ($facebook_meta_image != "")
           	<li><a href="<?php print $globalURL; ?>/about">The Project</a></li>
           	<li><a href="<?php print $globalURL; ?>/about/export">Exporting Data</a></li>
             <li><hr /></li>
-            <li><a href="<?php print $globalURL; ?>/about/layar">Augmented Reality</a></li>
 			<li><a href="<?php print $globalURL; ?>/about/tv">Barrie Spotter TV</a></li>
             <li><hr /></li>
           	<li><a href="https://github.com/barriespotter/Web_App/issues" target="_blank">Report any Issues</a></li>
