@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 10, 2014 at 02:42 PM
+-- Generation Time: Aug 24, 2014 at 12:14 PM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `aircraft` (
   `manufacturer` varchar(999) NOT NULL,
   PRIMARY KEY (`aircraft_id`),
   KEY `aircraft_id` (`aircraft_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=343 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=345 ;
 
 --
 -- Dumping data for table `aircraft`
@@ -379,7 +379,9 @@ INSERT INTO `aircraft` (`aircraft_id`, `icao`, `type`, `manufacturer`) VALUES
 (339, 'LJ55', 'Learjet 55', 'Learjet'),
 (340, 'MO20', 'Mooney M-20', 'Mooney'),
 (341, 'PAY3', 'Piper Cheyenne 3', 'Piper'),
-(342, 'XL2', 'Liberty XL-2', 'Liberty');
+(342, 'XL2', 'Liberty XL-2', 'Liberty'),
+(343, 'AC95', 'Gulfstream Aerospace Jetprop Commander', 'Gulfstream Aerospace'),
+(344, 'RV8', 'VANS RV-8', 'VANs');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 17, 2014 at 12:23 PM
+-- Generation Time: Aug 24, 2014 at 12:26 PM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `airport` (
   `dst` varchar(999) NOT NULL,
   PRIMARY KEY (`airport_id`),
   KEY `airport_id` (`airport_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7887 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7895 ;
 
 --
 -- Dumping data for table `airport`
@@ -7950,7 +7950,15 @@ INSERT INTO `airport` (`airport_id`, `airports_id`, `name`, `city`, `country`, `
 (7883, 0, 'Montreal/Mascouche Airport', 'Mascouche', 'Canada', '', 'CSK3', '45.7186111111111', '-73.5980555555555', 74, -5, ''),
 (7884, 0, 'Sargeant Private Airfield Airport', 'Ayr', 'Canada', '', 'CAY5', '43.3058333333333', '-80.4991666666667', 970, -5, ''),
 (7885, 0, 'Hettinger Municipal Airport', 'Hettinger', 'United States', '', 'KHEI', '46.014888889', '-102.656', 2706, -6, ''),
-(7886, 0, 'Sandpoint Airport', 'Sandpoint', 'United States', '', 'KSZT', '48.299527778', '-116.560138889', 2131, -5, '');
+(7886, 0, 'Sandpoint Airport', 'Sandpoint', 'United States', '', 'KSZT', '48.299527778', '-116.560138889', 2131, -5, ''),
+(7887, 0, 'Rogers Municipal Airport', 'Rogers', 'United States', 'ROG', 'KROG', '36.372416667', '-94.106972222', 1359, -6, ''),
+(7888, 0, 'Montreal/Les Cèdres Airport', 'Les Cedres', 'Canada', 'SS3', 'CSS3', '45.3475', '-74.0766666666667', 160, -5, ''),
+(7889, 0, 'Mont-Tremblant/St-Jovite Airport', 'Saint-Jovite', 'Canada', '', 'CSZ3', '46.1541666666667', '-74.5836111111111', 790, -5, ''),
+(7890, 0, 'Purdue University Airport', 'Lafayette', 'United States', 'LAF', 'KLAF', '40.412305556', '-86.936888889', 605, -5, ''),
+(7891, 0, 'Shelburne/Fisher Field Airport', 'Shelburne', 'Canada', '', 'CNN3', '44.0283333333333', '-80.2061111111111', 1675, -5, ''),
+(7892, 0, 'Bar River Airport', 'Bar River', 'Canada', '', 'CPF2', '46.420277778', '-84.092222222', 591, -5, ''),
+(7893, 0, 'Debert Airport', 'Debert', 'Canada', '', 'CCQ3', '45.4191666666667', '-63.4613888888889', 190, -4, ''),
+(7894, 0, 'Cortland County Airport', 'Cortland', 'United States', '', 'N03', '42.592645278', '-76.2148825', 1198, -5, '');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
