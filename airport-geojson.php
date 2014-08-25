@@ -1,6 +1,6 @@
 <?php
-require('../require/class.Connection.php');
-require('../require/class.Spotter.php');
+require('require/class.Connection.php');
+require('require/class.Spotter.php');
 
 if (isset($_GET['download']))
 {
