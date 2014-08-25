@@ -6,6 +6,8 @@ var weatherprecipitation;
 var weatherrain;
 var weatherclouds;
 
+var geojsonLayer;
+
 var weatherradar;
 var weatherradarrefresh;
 var weathersatellite;
@@ -56,6 +58,44 @@ $( document ).ready(function() {
     fillOpacity: 0.1,
     stroke: false
     }).addTo(map);
+
+
+	// Show airports on map
+	
+	var airportIcon = L.icon({
+	    iconUrl: 'images/runway.png',
+	    iconSize: [32, 37],
+	    iconAnchor: [16, 37],
+	    popupAnchor: [0, -28]
+	});
+	
+	function onEachFeature (feature, layer) {
+		var output = '';
+			output += feature.properties.name+' Airport, ';
+			output += feature.properties.city+' / '+feature.properties.country;
+		layer.bindPopup(output);
+	};
+	
+	function update_geojsonLayer() {
+	    var bbox = map.getBounds().toBBoxString();
+	    geojsonLayer = new L.GeoJSON.AJAX("/airport-geojson.php?coord="+bbox,{
+	    onEachFeature: onEachFeature,
+		pointToLayer: function (feature, latlng) {
+		    return L.marker(latlng, {icon:airportIcon});
+		}
+	    }).addTo(map);
+	};
+
+	map.on('moveend', function() {
+	    map.removeLayer(geojsonLayer);
+	    console.log("zoom: " + map.getZoom()); 
+	    if (map.getZoom() > 7) {
+		update_geojsonLayer();
+	    }
+	});
+
+	
+	update_geojsonLayer();
 
   function getLiveData()
   {

@@ -832,7 +832,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.ident = '".$ident."')";
+				$additional_query = " AND (spotter_output.ident = '".$ident."')";
 			}
 		}
 		
@@ -1476,6 +1476,51 @@ class Spotter{
 			}
 		}
 		$query  = "SELECT airport.* FROM airport WHERE airport.country IN (".$lst_countries.")";
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+    
+		$airport_array = array();
+		$temp_array = array();
+		
+		while($row = mysqli_fetch_array($result,  MYSQLI_ASSOC))
+		{
+			$temp_array['name'] = $row['name'];
+			$temp_array['city'] = $row['city'];
+			$temp_array['country'] = $row['country'];
+			$temp_array['iata'] = $row['iata'];
+			$temp_array['icao'] = $row['icao'];
+			$temp_array['latitude'] = $row['latitude'];
+			$temp_array['longitude'] = $row['longitude'];
+			$temp_array['altitude'] = $row['altitude'];
+
+			$airport_array[] = $temp_array;
+		}
+
+		return $airport_array;
+	}
+	
+	/**
+	* Gets airports info based on the coord
+	*
+	* @param Array $coord Airports countries
+	* @return Array airport information
+	*
+	*/
+	public static function getAllAirportInfobyCoord($coord)
+	{
+		if(!Connection::createDBConnection())
+		{
+			return false;
+		}
+		
+		$lst_countries = '';
+		if (is_array($coord)) {
+			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		}
+		$query  = "SELECT airport.* FROM airport WHERE airport.latitude BETWEEN ".$minlat." AND ".$maxlat." AND airport.longitude BETWEEN ".$minlong." AND ".$maxlong;
+//		echo $query;
 		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
     
 		$airport_array = array();
