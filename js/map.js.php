@@ -88,7 +88,6 @@ $( document ).ready(function() {
 
 	map.on('moveend', function() {
 	    map.removeLayer(geojsonLayer);
-	    console.log("zoom: " + map.getZoom()); 
 	    if (map.getZoom() > 7) {
 		update_geojsonLayer();
 	    }
