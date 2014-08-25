@@ -31,7 +31,7 @@ $current_page = $file_path['filename'];
 <script src="<?php print $globalURL; ?>/js/jquery.slides.min.js?<?php print time(); ?>"></script>
 <script src="<?php print $globalURL; ?>/js/jquery-ui-timepicker-addon.js?<?php print time(); ?>"></script>
 <script src="<?php print $globalURL; ?>/js/script.js?<?php print time(); ?>"></script>
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css?<?php print time(); ?>" />
@@ -51,12 +51,14 @@ if (strtolower($current_page) == "index")
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print time(); ?>" />
 <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="/js/leaflet.ajax.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js?<?php print time(); ?>"></script>
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script>
 <?php
 }
 ?>
 <?php
+/*
 if ($facebook_meta_image != "")
 {
 ?>
@@ -67,11 +69,13 @@ if ($facebook_meta_image != "")
 <meta property="og:image" content="<?php print $globalURL; ?>/images/touch-icon.png"/>
 <?php
 }
+*/
 ?>
 <meta property="og:title" content="<?php print $title; ?> | <?php print $globalName; ?>"/>
 <meta property="og:url" content="<?php print $globalURL.$_SERVER['REQUEST_URI']; ?>"/>
 <meta property="og:site_name" content="<?php print $globalName; ?>"/>
-<?php if ($globalURL == "http://www.barriespotter.com"){ ?>
+<?php
+if ($globalURL == "http://www.barriespotter.com"){ ?>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -97,7 +101,7 @@ if ($facebook_meta_image != "")
         <span class="icon-bar"></span>
       </button>
       <a href="<?php print $globalURL; ?>/search" class="navbar-toggle navbar-toggle-search"><i class="fa fa-search"></i></a>
-      <a class="navbar-brand" href="<?php print $globalURL; ?>"><img src="<?php print $globalURL; ?>/images/logo.png" height="30px" alt="<?php print $globalName; ?>" title="<?php print $globalName; ?>" /></a>
+      <a class="navbar-brand" href="<?php print $globalURL; ?>"><img src="<?php print $globalURL.$logoURL; ?>" height="30px" /></a>
     </div>
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
@@ -131,23 +135,27 @@ if ($facebook_meta_image != "")
         </li>
       </ul>
       <form action="<?php print $globalURL; ?>/search" method="get">
-  			<input type="text" name="q" value="<?php if ($_GET['q'] != ""){ print $_GET['q']; } else { print 'search'; } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>
+  			<input type="text" name="q" value="<?php if (isset($GET['q'])) { if ($_GET['q'] != ""){ print $_GET['q']; } else { print 'search'; } } else { print 'search'; } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>
   		</form>
   		<div class="social">
+  		<!--
   			<a href="http://www.facebook.com/barriespotter" target="_blank" title="Like us on Facebook"><i class="fa fa-facebook"></i></a>
   			<a href="http://www.twitter.com/barriespotter" target="_blank" title="Follow us on Twitter"><i class="fa fa-twitter"></i></a>
   			<a href="http://barriespotter.github.io" target="_blank" title="Fork us on Github"><i class="fa fa-github"></i></a>
+  			-->
   		</div>
     </div><!--/.nav-collapse -->
   </div>
 </div>
 
 <?php
-if ($top_header != "")
-{
+if (isset($top_header)) {
+    if ($top_header != "")
+    {
 	print '<div class="top-header container clear" role="main">';
 		print '<img src="'.$globalURL.'/images/'.$top_header.'" alt="'.$title.'" title="'.$title.'" />';
 	print '</div>';
+    }
 }
 ?>
 

@@ -5,6 +5,9 @@ $globalName = "";
 // GLOBAL URL
 $globalURL = "";
 
+// Logo URL
+$logoURL = "/images/logo.png";
+
 //COVERAGE AREA (its based on a box model. i.e. top-left | top-right | bottom-right | bottom-left)
 $globalLatitudeMax = ''; //the maximum latitude (north)
 $globalLatitudeMin = ''; //the minimum latitude (south)
