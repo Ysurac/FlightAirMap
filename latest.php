@@ -6,7 +6,7 @@ $title = "Latest Activity";
 require('header.php');
 
 //calculuation for the pagination
-if($_GET['limit'] == "")
+if(!isset($_GET['limit']))
 {
   $limit_start = 0;
   $limit_end = 25;
@@ -34,7 +34,11 @@ $page_url = $globalURL.'/latest';
   	print '<div class="table column">';	
 	  	print '<p>The table below shows the detailed information of all recent flights.</p>';
 	  
+		  if (isset($_GET['sort'])) {
 		  $spotter_array = Spotter::getLatestSpotterData($limit_start.",".$absolute_difference, $_GET['sort']);
+		  } else {
+		    $spotter_array = Spotter::getLatestSpotterData($limit_start.",".$absolute_difference);
+		  }
 		
 		  if (!empty($spotter_array))
 		  {	

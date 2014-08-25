@@ -2,7 +2,7 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-if ($_POST['aircraft_type'] != "")
+if (isset($_POST['aircraft_type']))
 {
 	header('Location: '.$globalURL.'/aircraft/'.$_POST['aircraft_type']);
 } else {

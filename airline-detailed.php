@@ -24,12 +24,18 @@ if (!isset($_GET['airline'])){
 	
 	$page_url = $globalURL.'/airline/'.$_GET['airline'];
 	
+	if (isset($_GET['sort'])) {
 	$spotter_array = Spotter::getSpotterDataByAirline($_GET['airline'],$limit_start.",".$absolute_difference, $_GET['sort']);
+	} else {
+		$spotter_array = Spotter::getSpotterDataByAirline($_GET['airline'],$limit_start.",".$absolute_difference, '');
+	}
 	
 	
 	if (!empty($spotter_array))
 	{
+		if (isset($spotter_array[0]['airline_name']) && isset($spotter_array[0]['airline_icao'])) {
 	  $title = 'Detailed View for '.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')';
+		} else $title = '';
 		require('header.php');
 	  
 	  date_default_timezone_set('America/Toronto');
@@ -76,7 +82,9 @@ if (!isset($_GET['airline'])){
 	
 	  print '<div class="table column">';
 		  
+		  if (isset($spotter_array[0]['airline_name'])) {
 		  print '<p>The table below shows the detailed information of all flights from <strong>'.$spotter_array[0]['airline_name'].'</strong>.</p>';
+		  }
 		  
 		  include('table-output.php');  
 		  

@@ -11,30 +11,34 @@ $page_url = "http://".$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI];
 //$title = "Search";
 require('header.php');
 
-//for the date manipulation into the query
-if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
+if (isset($_GET['start_date'])) {
+	//for the date manipulation into the query
+	if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
 	$start_date = $_GET['start_date'].":00";
 	$end_date = $_GET['end_date'].":00";
   $sql_date = $start_date.",".$end_date;
-} else if($_GET['start_date'] != ""){
+	} else if($_GET['start_date'] != ""){
 	$start_date = $_GET['start_date'].":00";
   $sql_date = $start_date;
-} else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
+	} else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
 	$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date'].":00";
   $sql_date = $end_date;
+	}
 }
 
-//for altitude manipulation
-if($_GET['highest_altitude'] != "" && $_GET['lowest_altitude'] != ""){
+if (isset($_GET['highest_altitude'])) {
+	//for altitude manipulation
+	if($_GET['highest_altitude'] != "" && $_GET['lowest_altitude'] != ""){
 	$end_altitude = $_GET['highest_altitude'];
 	$start_altitude = $_GET['lowest_altitude'];
   $sql_altitude = $start_altitude.",".$end_altitude;
-} else if($_GET['highest_altitude'] != ""){
+	} else if($_GET['highest_altitude'] != ""){
 	$end_altitude = $_GET['highest_altitude'];
 	$sql_altitude = $end_altitude;
-} else if($_GET['highest_altitude'] == "" && $_GET['lowest_altitude'] != ""){
+	} else if($_GET['highest_altitude'] == "" && $_GET['lowest_altitude'] != ""){
 	$start_altitude = $_GET['lowest_altitude'].",60000";
 	$sql_altitude = $start_altitude;
+	}
 }
 
 //calculuation for the pagination

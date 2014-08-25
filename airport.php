@@ -2,10 +2,10 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-if ($_POST['airport'] != "")
+if (isset($_POST['airport']))
 {
 	header('Location: '.$globalURL.'/airport/'.$_POST['airport']);
-} else if ($_GET['airport'] != ""){
+} else if (isset($_GET['airport'])){
 
 	//calculuation for the pagination
 	if($_GET['limit'] == "")

@@ -12,19 +12,20 @@ $spotter_array = Spotter::getSpotterDataByID($_GET['id']);
 
 if (!empty($spotter_array))
 {
-    if($spotter_array[0]['ident'] != "")
+    $title = '';
+    if(isset($spotter_array[0]['ident']))
     {
     	$title .= $spotter_array[0]['ident'];
     }
-    if($spotter_array[0]['airline_name'] != "")
+    if(isset($spotter_array[0]['airline_name']))
     {
     	$title .= ' - '.$spotter_array[0]['airline_name'];
     }
-    if($spotter_array[0]['aircraft_name'] != "")
+    if(isset($spotter_array[0]['aircraft_name']))
     {
     	$title .= ' - '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
     }
-    if($spotter_array[0]['registration'] != "")
+    if(isset($spotter_array[0]['registration']))
     {
     	$title .= ' - '.$spotter_array[0]['registration'];
     }
@@ -33,19 +34,19 @@ if (!empty($spotter_array))
     
     	print '<div class="info column">';
     	    print '<h1>';
-	    	    if($spotter_array[0]['ident'] != "")
+	    	    if(isset($spotter_array[0]['ident']))
 	    	    {
 	    	    	print $spotter_array[0]['ident'];
 	    	    }
-	    	    if($spotter_array[0]['airline_name'] != "")
+	    	    if(isset($spotter_array[0]['airline_name']))
 	    	    {
 	    	    	print ' - '.$spotter_array[0]['airline_name'];
 	    	    }
-	    	    if($spotter_array[0]['aircraft_name'] != "")
+	    	    if(isset($spotter_array[0]['aircraft_name']))
 	    	    {
 	    	    	print ' - '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
 	    	    }
-	    	    if($spotter_array[0]['registration'] != "")
+	    	    if(isset($spotter_array[0]['registration']))
 	    	    {
 	    	    	print ' - '.$spotter_array[0]['registration'];
 	    	    }
@@ -98,7 +99,7 @@ if (!empty($spotter_array))
 	  		print '<div class="detail">';
 	  			print '<div class="title">Aircraft</div>';
 	  			print '<div>';
-	  				if ($spotter_item['aircraft_name'] != "")
+	  				if (isset($spotter_item['aircraft_name']))
 		  			{
 		    			print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
 		  			} else {

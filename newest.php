@@ -11,7 +11,7 @@ $title = "Newest";
 require('header.php');
 
 //calculuation for the pagination
-if($_GET['limit'] == "")
+if(!isset($_GET['limit']))
 {
   $limit_start = 0;
   $limit_end = 25;
@@ -21,12 +21,18 @@ if($_GET['limit'] == "")
 	$limit_start = $limit_explode[0];
 	$limit_end = $limit_explode[1];
 }
+
+// FIXME : Dirty Hack
+if (!isset($_GET['sort'])) {
+    $_GET['sort'] = '';
+}
+
 $absolute_difference = abs($limit_start - $limit_end);
 $limit_next = $limit_end + $absolute_difference;
 $limit_previous_1 = $limit_start - $absolute_difference;
 $limit_previous_2 = $limit_end - $absolute_difference;
 
-if ($_GET['category'] == "")
+if (!isset($_GET['category']))
 {
     $category = "aircraft";
 } else {
