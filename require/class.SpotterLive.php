@@ -340,12 +340,19 @@ class SpotterLive{
 			}
 		}
 		//print $query."<br /><br />";
+/*
 		$select_db = ((bool)mysqli_query($GLOBALS["___mysqli_ston"], "USE airradar"));
 		if (!$select_db) {
 			print ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
 		}
 		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
+*/
 
+		$Connection = new Connection();
+		$sth = $Connection->db->prepare($query);
+		$sth->execute();
+                
+                /*
 		if ($result == 1)
 		{
 			return "success";
@@ -353,6 +360,7 @@ class SpotterLive{
 			print ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
 			return "error";
 		}
+		*/
 
 	}
 

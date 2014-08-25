@@ -2,6 +2,12 @@
 require_once("settings.php");
 
 class Connection{
+	public static $db;
+	
+	public function __construct() {
+	    $this->createDBConnection();
+	}
+
 
 	/**
 	* Creates the database connection
@@ -14,14 +20,9 @@ class Connection{
 	{
 		global $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname;
 
-		if($conn = ($GLOBALS["___mysqli_ston"] = mysqli_connect($globalDBhost,  $globalDBuser,  $globalDBpass)))
-		{
-			((bool)mysqli_query($GLOBALS["___mysqli_ston"], "USE $globalDBname"));
-
-			return true;
-		} else {
-			return false;
-		}
+		self::$db = new PDO("mysql:host=$globalDBhost;dbname=$globalDBname", $globalDBuser,  $globalDBpass);
+		self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		return true;
 	}
 
 }
