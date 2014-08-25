@@ -3,7 +3,6 @@ $global_query = "SELECT spotter_live.* FROM spotter_live";
 
 class SpotterLive{
 
-
 	/**
 	* Gets all the spotter information based on the latest data entry
 	*
@@ -20,61 +19,59 @@ class SpotterLive{
 		{
 			return false;
 		}
-
-		$query  = $global_query." WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_live.date";
-
-		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+		
+                $query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate";
+		$spotter_array = Spotter::getDataFromDB($query);
 
 		return $spotter_array;
 	}
     
-    
-    /**
-	* Gets all the spotter information based on a user's latitude and longitude
-	*
-	* @return Array the spotter information
-	*
-	*/
-	public static function getLatestSpotterForLayar($lat, $lng, $radius, $interval)
-	{
-		date_default_timezone_set('UTC');
-		
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
+   /**
+        * Gets all the spotter information based on a user's latitude and longitude
+        *
+        * @return Array the spotter information
+        *
+        */
+        public static function getLatestSpotterForLayar($lat, $lng, $radius, $interval)
+        {
+                date_default_timezone_set('UTC');
+
+                if(!Connection::createDBConnection())
+                {
+                        return false;
+                }
         
         if ($lat != "")
-		{
-			if (!is_numeric($lat))
-			{
-				return false;
-			}
-		}
+                {
+                        if (!is_numeric($lat))
+                        {
+                                return false;
+                        }
+                }
         
         if ($lng != "")
-		{
-			if (!is_numeric($lng))
-			{
-				return false;
-			}
-		}
-		
-		if ($radius != "")
-		{
-			if (!is_numeric($radius))
-			{
-				return false;
-			}
-		}
+                {
+                        if (!is_numeric($lng))
+                        {
+                                return false;
+                        }
+                }
+
+                if ($radius != "")
+                {
+                        if (!is_numeric($radius))
+                        {
+                                return false;
+                        }
+                }
         
         if ($interval != "")
-		{
-			if (!is_string($interval))
-			{
-				$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_live.date ';
+                {
+                        if (!is_string($interval))
+                        {
+                                $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_live.date ';
                 return false;
-			} else {
+                        } else {
                 if ($interval == "1m")
                 {
                     $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_live.date ';
@@ -82,22 +79,22 @@ class SpotterLive{
                     $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 MINUTE) <= spotter_live.date ';
                 } 
             }
-		} else {
+                } else {
          $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_output.date ';   
         }
 
-		$query  = "SELECT spotter_live.*, ( 6371 * acos( cos( radians($lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians($lng) ) + sin( radians($lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM spotter_live 
+                $query  = "SELECT spotter_live.*, ( 6371 * acos( cos( radians($lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians($lng) ) + sin( radians($lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM spotter_live 
                    WHERE spotter_live.latitude <> '' 
-				   AND spotter_live.longitude <> '' 
+                                   AND spotter_live.longitude <> '' 
                    ".$additional_query."
                    HAVING distance < $radius  
-				   ORDER BY distance";
+                                   ORDER BY distance";
 
-		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+                $spotter_array = Spotter::getDataFromDB($query, $limit_query);
 
-		return $spotter_array;
-	}
-    
+                return $spotter_array;
+        }
+
     
     /**
 	* Gets all the spotter information based on a particular callsign
@@ -116,16 +113,16 @@ class SpotterLive{
 			return false;
 		}
         
-        $ident = mysql_real_escape_string($ident);
+		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
 
 		$query  = $global_query." WHERE spotter_live.ident = '".$ident."'";
 
-		$spotter_array = Spotter::getDataFromDB($query, $limit_query);
+		$spotter_array = Spotter::getDataFromDB($query);
 
 		return $spotter_array;
 	}
-    
-    
+
+
 	/**
 	* Deletes all info in the table
 	*
@@ -142,7 +139,7 @@ class SpotterLive{
 
 		$query  = "DELETE FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) >= spotter_live.date";
         
-		$result = mysql_query($query);
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 
 		if ($result == 1)
 		{
@@ -174,34 +171,47 @@ class SpotterLive{
 		{
 			return false;
 		}
-
+		$registration = '';
 		//getting the registration
+		
 		if ($flightaware_id != "")
 		{
 			if (!is_string($flightaware_id))
 			{
 				return false;
 			} else {
-				$registration = Spotter::getAircraftRegistration($flightaware_id);
+				$myhex = explode('-',$flightaware_id);
+				$registration = Spotter::getAircraftRegistrationBymodeS($myhex[0]);
 			}
 		}
+		
 
-    	//getting the airline information
+		//getting the airline information
 		if ($ident != "")
 		{
 			if (!is_string($ident))
 			{
 				return false;
 			} else {
-				if (is_numeric(substr($ident, -1, 1)))
+				//if (!is_numeric(substr($ident, -1, 1)))
+				if (!is_numeric(substr($ident, 0, 3)))
 				{
-					$airline_array = Spotter::getAllAirlineInfo(substr($ident, 0, 3));
-
-					if ($airline_array[0]['icao'] == ""){
+					if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
+						$airline_array = Spotter::getAllAirlineInfo(substr($ident, 0, 2));
+					} elseif (is_numeric(substr(substr($ident, 0, 4), -1, 1))) {
+						$airline_array = Spotter::getAllAirlineInfo(substr($ident, 0, 3));
+					} else {
 						$airline_array = Spotter::getAllAirlineInfo("NA");
+					}
+					//print_r($airline_array);
+					if (count($airline_array) == 0) {
+					    $airline_array = Spotter::getAllAirlineInfo("NA");
+					} elseif ($airline_array[0]['icao'] == ""){
+					    $airline_array = Spotter::getAllAirlineInfo("NA");
 					}
 
 				} else {
+					echo "\n arg numeric : ".substr($ident, -1, 1)." - ".substr($ident, 0, 3)."\n";
 					$airline_array = Spotter::getAllAirlineInfo("NA");
 				}
 			}
@@ -221,8 +231,7 @@ class SpotterLive{
 					$aircraft_array = Spotter::getAllAircraftInfo($aircraft_icao);
 				}
 			}
-		}
-
+		} 
 		//getting the departure airport information
 		if ($departure_airport_icao != "")
 		{
@@ -293,42 +302,55 @@ class SpotterLive{
 				return false;
 			}
 		}
+		date_default_timezone_set('UTC');
 
 		$date = date("Y-m-d H:i:s", time());
 
 		//getting the aircraft image
 		if ($registration != "")
-        {
-            $image_array = Spotter::getSpotterImage($registration);
-            
-            if ($image_array[0]['registration'] == "")
-            {
-                Spotter::addSpotterImage($registration);
-            }  
+		{
+			$image_array = Spotter::getSpotterImage($registration);
+			if (!isset($image_array[0]['registration']))
+			{
+				Spotter::addSpotterImage($registration);
+			}
 		}
+		//}
+
         
-		$flightaware_id = mysql_real_escape_string($flightaware_id);
-	    $ident = mysql_real_escape_string($ident);
-	    $aircraft_icao = mysql_real_escape_string($aircraft_icao);
-	    $departure_airport_icao = mysql_real_escape_string($departure_airport_icao);
-	    $arrival_airport_icao = mysql_real_escape_string($arrival_airport_icao);
-	    $latitude = mysql_real_escape_string($latitude);
-	    $longitude = mysql_real_escape_string($longitude);
-	    $waypoints = mysql_real_escape_string($waypoints);
-	    $altitude = mysql_real_escape_string($altitude);
-	    $heading = mysql_real_escape_string($heading);
-	    $groundspeed = mysql_real_escape_string($groundspeed);
+		$flightaware_id = filter_var($flightaware_id,FILTER_SANITIZE_STRING);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
+		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
+		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
+		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		$waypoints = filter_var($waypoints,FILTER_SANITIZE_STRING);
+		$altitude = filter_var($altitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		$heading = filter_var($heading,FILTER_SANITIZE_NUMBER_INT);
+		$groundspeed = filter_var($groundspeed,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 
-		$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date) VALUES ('$flightaware_id','$ident','$registration','".$airline_array[0]['name']."', '".$airline_array[0]['icao']."', '".$airline_array[0]['country']."', '".$airline_array[0]['type']."', '$aircraft_icao', '".$aircraft_array[0]['type']."', '".$aircraft_array[0]['manufacturer']."', '$departure_airport_icao', '".$departure_airport_array[0]['name']."', '".$departure_airport_array[0]['city']."', '".$departure_airport_array[0]['country']."', '$arrival_airport_icao', '".$arrival_airport_array[0]['name']."', '".$arrival_airport_array[0]['city']."', '".$arrival_airport_array[0]['country']."', '$latitude', '$longitude', '$waypoints', '$altitude', '$heading', '$groundspeed', '$date')";
-
-		print $query."<br /><br />";
-
-		$result = mysql_query($query);
+		if (count($airline_array) == 0) {
+			$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date) VALUES ('$flightaware_id','$ident','$registration','', '', '', '', '$aircraft_icao', '".$aircraft_array[0]['type']."', '".$aircraft_array[0]['manufacturer']."', '$departure_airport_icao', '', '', '', '$arrival_airport_icao', '', '', '', '$latitude', '$longitude', '$waypoints', '$altitude', '$heading', '$groundspeed', '$date')";
+		} else {
+			if (count($aircraft_array) == 0) {
+				$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date) VALUES ('$flightaware_id','$ident','$registration','".$airline_array[0]['name']."', '".$airline_array[0]['icao']."', '".$airline_array[0]['country']."', '".$airline_array[0]['type']."', '$aircraft_icao', '', '', '$departure_airport_icao', '', '', '', '$arrival_airport_icao', '', '', '', '$latitude', '$longitude', '$waypoints', '$altitude', '$heading', '$groundspeed', '$date')";
+			} else {
+				$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date) VALUES ('$flightaware_id','$ident','$registration','".$airline_array[0]['name']."', '".$airline_array[0]['icao']."', '".$airline_array[0]['country']."', '".$airline_array[0]['type']."', '$aircraft_icao', '".$aircraft_array[0]['type']."', '".$aircraft_array[0]['manufacturer']."', '$departure_airport_icao', '', '', '', '$arrival_airport_icao', '', '', '', '$latitude', '$longitude', '$waypoints', '$altitude', '$heading', '$groundspeed', '$date')";
+			}
+		}
+		//print $query."<br /><br />";
+		$select_db = ((bool)mysqli_query($GLOBALS["___mysqli_ston"], "USE airradar"));
+		if (!$select_db) {
+			print ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
+		}
+		$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 
 		if ($result == 1)
 		{
 			return "success";
 		} else {
+			print ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
 			return "error";
 		}
 
