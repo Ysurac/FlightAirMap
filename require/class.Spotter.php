@@ -3870,24 +3870,24 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute();
       
-        $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
         
-    while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['registration'] = $row['registration'];
-      $temp_array['aircraft_registration_count'] = $row['aircraft_registration_count'];
-      $temp_array['aircraft_icao'] = $row['aircraft_icao'];
-      $temp_array['aircraft_name'] = $row['aircraft_name'];
-      $temp_array['airline_name'] = $row['airline_name'];
-      $temp_array['image_thumbnail'] = "";
-        if($row['registration'] != "")
-          {
-              $image_array = Spotter::getSpotterImage($row['registration']);
-              $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
-          }
+			$temp_array['aircraft_registration_count'] = $row['aircraft_registration_count'];
+			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
+			$temp_array['aircraft_name'] = $row['aircraft_name'];
+			$temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['image_thumbnail'] = "";
+			if($row['registration'] != "")
+			{
+				$image_array = Spotter::getSpotterImage($row['registration']);
+				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+			}
           
-       $aircraft_array[] = $temp_array;
+			$aircraft_array[] = $temp_array;
 		}
 
 		return $aircraft_array;
@@ -3915,18 +3915,18 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute();
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
-            $temp_array['airport_departure_name'] = $row['departure_airport_name'];
-            $temp_array['airport_departure_city'] = $row['departure_airport_city'];
-            $temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -3942,11 +3942,6 @@ class Spotter{
 	*/
 	public static function countAllDepartureAirportsByAirline($airline_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
@@ -3959,18 +3954,18 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
-            $temp_array['airport_departure_name'] = $row['departure_airport_name'];
-            $temp_array['airport_departure_city'] = $row['departure_airport_city'];
-            $temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -3986,11 +3981,6 @@ class Spotter{
 	*/
 	public static function countAllDepartureAirportCountriesByAirline($airline_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
@@ -4000,18 +3990,18 @@ class Spotter{
 					ORDER BY airport_departure_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute(array(':airline_icao' => $airline_icao));
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':airline_icao' => $airline_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
-            $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
+			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4027,11 +4017,6 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 	*/
 	public static function countAllDepartureAirportsByAircraft($aircraft_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
@@ -4044,18 +4029,18 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
-            $temp_array['airport_departure_name'] = $row['departure_airport_name'];
-            $temp_array['airport_departure_city'] = $row['departure_airport_city'];
-            $temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4070,11 +4055,6 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 	*/
 	public static function countAllDepartureAirportCountriesByAircraft($aircraft_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
@@ -4087,15 +4067,15 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
-            $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
+			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4110,11 +4090,6 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 	*/
 	public static function countAllDepartureAirportsByRegistration($registration)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
@@ -4127,18 +4102,18 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
-            $temp_array['airport_departure_name'] = $row['departure_airport_name'];
-            $temp_array['airport_departure_city'] = $row['departure_airport_city'];
-            $temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4153,11 +4128,6 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 	*/
 	public static function countAllDepartureAirportCountriesByRegistration($registration)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
@@ -4170,15 +4140,15 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
-            $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
+			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4193,11 +4163,6 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 	*/
 	public static function countAllDepartureAirportsByAirport($airport_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
@@ -4210,18 +4175,18 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
-            $temp_array['airport_departure_name'] = $row['departure_airport_name'];
-            $temp_array['airport_departure_city'] = $row['departure_airport_city'];
-            $temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4236,11 +4201,6 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 	*/
 	public static function countAllDepartureAirportCountriesByAirport($airport_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
@@ -4253,15 +4213,15 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
-            $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
+			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4277,11 +4237,6 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 	*/
 	public static function countAllDepartureAirportsByManufacturer($aircraft_manufacturer)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
@@ -4294,18 +4249,18 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
-            $temp_array['airport_departure_name'] = $row['departure_airport_name'];
-            $temp_array['airport_departure_city'] = $row['departure_airport_city'];
-            $temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4320,11 +4275,6 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 	*/
 	public static function countAllDepartureAirportCountriesByManufacturer($aircraft_manufacturer)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
@@ -4337,15 +4287,15 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
-            $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
+			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4360,35 +4310,30 @@ $sth->execute(array(':airline_icao' => $airline_icao));
 	*/
 	public static function countAllDepartureAirportsByDate($date)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."'
+                    WHERE spotter_output.departure_airport_name <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':date' => $date));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
-            $temp_array['airport_departure_name'] = $row['departure_airport_name'];
-            $temp_array['airport_departure_city'] = $row['departure_airport_city'];
-            $temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4404,32 +4349,27 @@ $sth->execute();
 	*/
 	public static function countAllDepartureAirportCountriesByDate($date)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."' 
+                    WHERE spotter_output.departure_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':date' => $date));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
-            $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
+			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4445,35 +4385,30 @@ $sth->execute();
 	*/
 	public static function countAllDepartureAirportsByIdent($ident)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.ident = '".$ident."' 
+                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.ident = :ident 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':ident' => $ident));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
-            $temp_array['airport_departure_name'] = $row['departure_airport_name'];
-            $temp_array['airport_departure_city'] = $row['departure_airport_city'];
-            $temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4489,32 +4424,27 @@ $sth->execute();
 	*/
 	public static function countAllDepartureAirportCountriesByIdent($ident)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND spotter_output.ident = '".$ident."' 
+                    WHERE spotter_output.departure_airport_country <> '' AND spotter_output.ident = :ident 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':ident' => $ident));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
-            $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
+			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4530,35 +4460,30 @@ $sth->execute();
 	*/
 	public static function countAllDepartureAirportsByCountry($country)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE ((spotter_output.departure_airport_country = '".$country."') OR (spotter_output.arrival_airport_country = '".$country."')) OR spotter_output.airline_country = '".$country."'
+                    WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':country' => $country));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
-            $temp_array['airport_departure_name'] = $row['departure_airport_name'];
-            $temp_array['airport_departure_city'] = $row['departure_airport_city'];
-            $temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4573,32 +4498,27 @@ $sth->execute();
 	*/
 	public static function countAllDepartureAirportCountriesByCountry($country)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND ((spotter_output.departure_airport_country = '".$country."') OR (spotter_output.arrival_airport_country = '".$country."')) OR spotter_output.airline_country = '".$country."' 
+                    WHERE spotter_output.departure_airport_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':country' => $country));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
-            $temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
+			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4613,11 +4533,6 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirports()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
                     WHERE spotter_output.arrival_airport_name <> '' 
@@ -4626,21 +4541,21 @@ $sth->execute();
 					LIMIT 0,10";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
-            $temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
-             $temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
-            $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4656,35 +4571,30 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportsByAirline($airline_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.airline_icao = '".$airline_icao."' 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.airline_icao = :airline_icao 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':airline_icao' => $airline_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
-            $temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
-             $temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
-            $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4699,32 +4609,27 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportCountriesByAirline($airline_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.airline_icao = '".$airline_icao."' 
+                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.airline_icao = :airline_icao 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':airline_icao' => $airline_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
-            $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
+			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4739,35 +4644,30 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportsByAircraft($aircraft_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
-		$aircraft_icao = filter_var($airline_icao,FILTEr_SANITIZE_STRING);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.aircraft_icao = '".$aircraft_icao."' 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.aircraft_icao = :aircraft_icao 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
-            $temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
-             $temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
-            $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4783,32 +4683,27 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportCountriesByAircraft($aircraft_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.aircraft_icao = '".$aircraft_icao."'
+                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.aircraft_icao = :aircraft_icao
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
-            $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
+			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4823,35 +4718,30 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportsByRegistration($registration)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.registration = '".$registration."' 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.registration = :registration 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':registration' => $registration));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
-            $temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
-             $temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
-            $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4866,32 +4756,27 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportCountriesByRegistration($registration)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.registration = '".$registration."' 
+                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.registration = :registration 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':registration' => $registration));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
-            $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
+			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4907,35 +4792,30 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportsByAirport($airport_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.departure_airport_icao = '".$airport_icao."' 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.departure_airport_icao = :airport_icao 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':airport_icao' => $airport_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
-            $temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
-             $temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
-            $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4950,32 +4830,27 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportCountriesByAirport($airport_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.departure_airport_icao = '".$airport_icao."' 
+                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.departure_airport_icao = :airport_icao 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':airport_icao' => $airport_icao));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
-            $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
+			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -4990,35 +4865,30 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportsByManufacturer($aircraft_manufacturer)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.aircraft_manufacturer = '".$aircraft_manufacturer."' 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
-            $temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
-             $temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
-            $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -5034,32 +4904,27 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportCountriesByManufacturer($aircraft_manufacturer)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.aircraft_manufacturer = '".$aircraft_manufacturer."' 
+                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
-            $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
+			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -5075,35 +4940,30 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportsByDate($date)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."'  
+                    WHERE spotter_output.arrival_airport_name <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date  
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':date' => $date));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
-            $temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
-             $temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
-            $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -5119,32 +4979,27 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportCountriesByDate($date)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."' 
+                    WHERE spotter_output.arrival_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':date' => $date));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
-            $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
+			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -5160,35 +5015,30 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportsByIdent($ident)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.ident = '".$ident."'  
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.ident = :ident  
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':ident' => $ident));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
-            $temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
-             $temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
-            $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -5203,32 +5053,27 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportCountriesByIdent($ident)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.ident = '".$ident."' 
+                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.ident = :ident 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':ident' => $ident));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
-            $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
+			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -5244,35 +5089,30 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportsByCountry($country)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE ((spotter_output.departure_airport_country = '".$country."') OR (spotter_output.arrival_airport_country = '".$country."')) OR spotter_output.airline_country = '".$country."'  
+                    WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country  
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':country' => $country));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
-            $temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
-             $temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
-            $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -5287,32 +5127,27 @@ $sth->execute();
 	*/
 	public static function countAllArrivalAirportCountriesByCountry($country)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND ((spotter_output.departure_airport_country = '".$country."') OR (spotter_output.arrival_airport_country = '".$country."')) OR spotter_output.airline_country = '".$country."' 
+                    WHERE spotter_output.arrival_airport_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':country' => $country));
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
-            $temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
+			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -5328,11 +5163,6 @@ $sth->execute();
 	*/
 	public static function countAllDepartureCountries()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
                     WHERE spotter_output.departure_airport_country <> '' 
@@ -5341,18 +5171,18 @@ $sth->execute();
 					LIMIT 0,10";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
-            $temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -5367,11 +5197,6 @@ $sth->execute();
 	*/
 	public static function countAllArrivalCountries()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
                     WHERE spotter_output.arrival_airport_country <> '' 
@@ -5380,18 +5205,18 @@ $sth->execute();
 					LIMIT 0,10";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
       
-        $airport_array = array();
+		$airport_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
-            $temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
           
-            $airport_array[] = $temp_array;
+			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
@@ -5409,11 +5234,6 @@ $sth->execute();
 	*/
 	public static function countAllRoutes()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
@@ -5423,25 +5243,25 @@ $sth->execute();
 					LIMIT 0,10";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
       
-        $routes_array = array();
+		$routes_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_name'] = $row['airport_departure_name'];
-            $temp_array['airport_departure_city'] = $row['airport_departure_city'];
-            $temp_array['airport_departure_country'] = $row['airport_departure_country'];
-            $temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
-            $temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
-            $temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
           
-            $routes_array[] = $temp_array;
+			$routes_array[] = $temp_array;
 		}
 
 		return $routes_array;
@@ -5458,39 +5278,34 @@ $sth->execute();
 	*/
 	public static function countAllRoutesByAircraft($aircraft_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.aircraft_icao = '".$aircraft_icao."' 
+                    WHERE spotter_output.ident <> '' AND spotter_output.aircraft_icao = :aircraft_icao 
                     GROUP BY route
                     ORDER BY route_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
-        $routes_array = array();
+		$routes_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_name'] = $row['airport_departure_name'];
-            $temp_array['airport_departure_city'] = $row['airport_departure_city'];
-            $temp_array['airport_departure_country'] = $row['airport_departure_country'];
-            $temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
-            $temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
-            $temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
           
-            $routes_array[] = $temp_array;
+			$routes_array[] = $temp_array;
 		}
 
 		return $routes_array;
@@ -5505,39 +5320,34 @@ $sth->execute();
 	*/
 	public static function countAllRoutesByRegistration($registration)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$registration = filter_var($registration, FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.registration = '".$registration."' 
+                    WHERE spotter_output.ident <> '' AND spotter_output.registration = :registration 
                     GROUP BY route
                     ORDER BY route_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':registration' => $registration));
       
-        $routes_array = array();
+		$routes_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_name'] = $row['airport_departure_name'];
-            $temp_array['airport_departure_city'] = $row['airport_departure_city'];
-            $temp_array['airport_departure_country'] = $row['airport_departure_country'];
-            $temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
-            $temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
-            $temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
           
-            $routes_array[] = $temp_array;
+			$routes_array[] = $temp_array;
 		}
 
 		return $routes_array;
@@ -5553,39 +5363,34 @@ $sth->execute();
 	*/
 	public static function countAllRoutesByAirline($airline_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.airline_icao = '".$airline_icao."' 
+                    WHERE spotter_output.ident <> '' AND spotter_output.airline_icao = :airline_icao 
                     GROUP BY route
                     ORDER BY route_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':airline_icao' => $airline_icao));
       
-        $routes_array = array();
+		$routes_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_name'] = $row['airport_departure_name'];
-            $temp_array['airport_departure_city'] = $row['airport_departure_city'];
-            $temp_array['airport_departure_country'] = $row['airport_departure_country'];
-            $temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
-            $temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
-            $temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
           
-            $routes_array[] = $temp_array;
+			$routes_array[] = $temp_array;
 		}
 
 		return $routes_array;
@@ -5601,39 +5406,34 @@ $sth->execute();
 	*/
 	public static function countAllRoutesByAirport($airport_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND (spotter_output.departure_airport_icao = '".$airport_icao."' OR spotter_output.arrival_airport_icao = '".$airport_icao."')
+                    WHERE spotter_output.ident <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)
                     GROUP BY route
                     ORDER BY route_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':airport_icao' => $airport_icao));
       
-        $routes_array = array();
+		$routes_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_name'] = $row['airport_departure_name'];
-            $temp_array['airport_departure_city'] = $row['airport_departure_city'];
-            $temp_array['airport_departure_country'] = $row['airport_departure_country'];
-            $temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
-            $temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
-            $temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
           
-            $routes_array[] = $temp_array;
+			$routes_array[] = $temp_array;
 		}
 
 		return $routes_array;
@@ -5649,39 +5449,34 @@ $sth->execute();
 	*/
 	public static function countAllRoutesByCountry($country)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND ((spotter_output.departure_airport_country = '".$country."') OR (spotter_output.arrival_airport_country = '".$country."')) OR spotter_output.airline_country = '".$country."' 
+                    WHERE spotter_output.ident <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
                     GROUP BY route
                     ORDER BY route_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':country' => $country));
       
-        $routes_array = array();
+		$routes_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_name'] = $row['airport_departure_name'];
-            $temp_array['airport_departure_city'] = $row['airport_departure_city'];
-            $temp_array['airport_departure_country'] = $row['airport_departure_country'];
-            $temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
-            $temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
-            $temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
           
-            $routes_array[] = $temp_array;
+			$routes_array[] = $temp_array;
 		}
 
 		return $routes_array;
@@ -5696,39 +5491,34 @@ $sth->execute();
 	*/
 	public static function countAllRoutesByDate($date)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."'  
+                    WHERE spotter_output.ident <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date  
                     GROUP BY route
                     ORDER BY route_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':date' => $date));
       
-        $routes_array = array();
+		$routes_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_name'] = $row['airport_departure_name'];
-            $temp_array['airport_departure_city'] = $row['airport_departure_city'];
-            $temp_array['airport_departure_country'] = $row['airport_departure_country'];
-            $temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
-            $temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
-            $temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
           
-            $routes_array[] = $temp_array;
+			$routes_array[] = $temp_array;
 		}
 
 		return $routes_array;
@@ -5743,39 +5533,34 @@ $sth->execute();
 	*/
 	public static function countAllRoutesByIdent($ident)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.ident = '".$ident."'   
+                    WHERE spotter_output.ident <> '' AND spotter_output.ident = :ident   
                     GROUP BY route
                     ORDER BY route_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':ident' => $ident));
       
-        $routes_array = array();
+		$routes_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_name'] = $row['airport_departure_name'];
-            $temp_array['airport_departure_city'] = $row['airport_departure_city'];
-            $temp_array['airport_departure_country'] = $row['airport_departure_country'];
-            $temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
-            $temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
-            $temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
           
-            $routes_array[] = $temp_array;
+			$routes_array[] = $temp_array;
 		}
 
 		return $routes_array;
@@ -5790,39 +5575,34 @@ $sth->execute();
 	*/
 	public static function countAllRoutesByManufacturer($aircraft_manufacturer)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_manufacturer = filter_var($aircraft_manufactuer,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.aircraft_manufacturer = '".$aircraft_manufacturer."'   
+                    WHERE spotter_output.ident <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer   
                     GROUP BY route
                     ORDER BY route_count DESC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
-        $routes_array = array();
+		$routes_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_name'] = $row['airport_departure_name'];
-            $temp_array['airport_departure_city'] = $row['airport_departure_city'];
-            $temp_array['airport_departure_country'] = $row['airport_departure_country'];
-            $temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
-            $temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
-            $temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
           
-            $routes_array[] = $temp_array;
+			$routes_array[] = $temp_array;
 		}
 
 		return $routes_array;
@@ -5838,12 +5618,6 @@ $sth->execute();
 	*/
 	public static function countAllRoutesWithWaypoints()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-
-		
 		$query  = "SELECT DISTINCT spotter_output.waypoints AS route, count(spotter_output.waypoints) AS route_count, spotter_output.spotter_id, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
                     WHERE spotter_output.ident <> '' AND spotter_output.waypoints <> '' 
@@ -5852,26 +5626,26 @@ $sth->execute();
 					LIMIT 0,10";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
       
-        $routes_array = array();
+		$routes_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['spotter_id'] = $row['spotter_id'];
 			$temp_array['route_count'] = $row['route_count'];
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
-            $temp_array['airport_departure_name'] = $row['airport_departure_name'];
-            $temp_array['airport_departure_city'] = $row['airport_departure_city'];
-            $temp_array['airport_departure_country'] = $row['airport_departure_country'];
-            $temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
-            $temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
-            $temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
-            $temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
           
-            $routes_array[] = $temp_array;
+			$routes_array[] = $temp_array;
 		}
 
 		return $routes_array;
@@ -5888,11 +5662,6 @@ $sth->execute();
 	*/
 	public static function countAllCallsigns()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-
 		$query  = "SELECT DISTINCT spotter_output.ident, COUNT(spotter_output.ident) AS callsign_icao_count, spotter_output.airline_name, spotter_output.airline_icao  
                     FROM spotter_output
                     WHERE spotter_output.airline_name <> '' 
@@ -5901,20 +5670,20 @@ $sth->execute();
 					LIMIT 0,10";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
       
-        $callsign_array = array();
+		$callsign_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['callsign_icao'] = $row['ident'];
 			$temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['airline_icao'] = $row['airline_icao'];
-            $temp_array['callsign_icao_count'] = $row['callsign_icao_count'];
+			$temp_array['callsign_icao_count'] = $row['callsign_icao_count'];
           
-            $callsign_array[] = $temp_array;
+			$callsign_array[] = $temp_array;
 		}
 
 		return $callsign_array;
@@ -5931,11 +5700,6 @@ $sth->execute();
 	*/
 	public static function countAllDates()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-
 		$query  = "SELECT DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS date_name, count(*) as date_count
 								FROM spotter_output 
 								GROUP BY date_name 
@@ -5943,18 +5707,18 @@ $sth->execute();
 								LIMIT 0,10";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
       
-        $date_array = array();
+		$date_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['date_name'] = $row['date_name'];
-            $temp_array['date_count'] = $row['date_count'];
-          
-            $date_array[] = $temp_array;
+			$temp_array['date_count'] = $row['date_count'];
+
+			$date_array[] = $temp_array;
 		}
 
 		return $date_array;
@@ -5970,11 +5734,6 @@ $sth->execute();
 	*/
 	public static function countAllDatesLast7Days()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-
 		$query  = "SELECT DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS date_name, count(*) as date_count
 								FROM spotter_output 
 								WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY)
@@ -5982,18 +5741,18 @@ $sth->execute();
 								ORDER BY spotter_output.date ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
       
-        $date_array = array();
+		$date_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['date_name'] = $row['date_name'];
-            $temp_array['date_count'] = $row['date_count'];
+			$temp_array['date_count'] = $row['date_count'];
           
-            $date_array[] = $temp_array;
+			$date_array[] = $temp_array;
 		}
 
 		return $date_array;
@@ -6009,11 +5768,6 @@ $sth->execute();
 	*/
 	public static function countAllHours($orderby)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		if ($orderby == "hour")
 		{
 			$orderby_sql = "ORDER BY hour_name ASC";
@@ -6030,18 +5784,18 @@ $sth->execute();
 								LIMIT 0,100";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['hour_count'] = $row['hour_count'];
           
-            $hour_array[] = $temp_array;
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6056,32 +5810,27 @@ $sth->execute();
 	*/
 	public static function countAllHoursByAirline($airline_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE spotter_output.airline_icao = '".$airline_icao."'
+								WHERE spotter_output.airline_icao = :airline_icao
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':airline_icao' => $airline_icao));
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['hour_count'] = $row['hour_count'];
           
-            $hour_array[] = $temp_array;
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6098,32 +5847,27 @@ $sth->execute();
 	*/
 	public static function countAllHoursByAircraft($aircraft_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
-		$aircraft_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
+		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE spotter_output.aircraft_icao = '".$aircraft_icao."'
+								WHERE spotter_output.aircraft_icao = :aircraft_icao
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['hour_count'] = $row['hour_count'];
           
-            $hour_array[] = $temp_array;
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6138,32 +5882,27 @@ $sth->execute();
 	*/
 	public static function countAllHoursByRegistration($registration)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE spotter_output.registration = '".$registration."'
+								WHERE spotter_output.registration = :registration
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':registration' => $registration));
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['hour_count'] = $row['hour_count'];
           
-            $hour_array[] = $temp_array;
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6178,32 +5917,27 @@ $sth->execute();
 	*/
 	public static function countAllHoursByAirport($airport_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE (spotter_output.departure_airport_icao = '".$airport_icao."' OR spotter_output.arrival_airport_icao = '".$airport_icao."')
+								WHERE (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':airport_icao' => $airport_icao));
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['hour_count'] = $row['hour_count'];
           
-            $hour_array[] = $temp_array;
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6219,32 +5953,27 @@ $sth->execute();
 	*/
 	public static function countAllHoursByManufacturer($aircraft_manufacturer)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE spotter_output.aircraft_manufacturer = '".$aircraft_manufacturer."'
+								WHERE spotter_output.aircraft_manufacturer = :aircraft_manufacturer
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['hour_count'] = $row['hour_count'];
           
-            $hour_array[] = $temp_array;
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6260,32 +5989,27 @@ $sth->execute();
 	*/
 	public static function countAllHoursByDate($date)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '".$date."'
+								WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':date' => $date));
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['hour_count'] = $row['hour_count'];
           
-            $hour_array[] = $temp_array;
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6301,32 +6025,27 @@ $sth->execute();
 	*/
 	public static function countAllHoursByIdent($ident)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE spotter_output.ident = '".$ident."' 
+								WHERE spotter_output.ident = :ident 
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':ident' => $ident));
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['hour_count'] = $row['hour_count'];
           
-            $hour_array[] = $temp_array;
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6342,33 +6061,28 @@ $sth->execute();
 	*/
 	public static function countAllHoursByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE (spotter_output.departure_airport_icao = '".$departure_airport_icao."') AND (spotter_output.arrival_airport_icao = '".$arrival_airport_icao."')
+								WHERE (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao));
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['hour_count'] = $row['hour_count'];
           
-            $hour_array[] = $temp_array;
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6383,32 +6097,27 @@ $sth->execute();
 	*/
 	public static function countAllHoursByCountry($country)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE ((spotter_output.departure_airport_country = '".$country."') OR (spotter_output.arrival_airport_country = '".$country."')) OR spotter_output.airline_country = '".$country."'
+								WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':country' => $country));
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['hour_count'] = $row['hour_count'];
           
-            $hour_array[] = $temp_array;
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6481,11 +6190,6 @@ $sth->execute();
 	*/
 	public static function countAllHoursFromToday()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-
 		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = CURDATE()
@@ -6493,18 +6197,17 @@ $sth->execute();
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
       
-        $hour_array = array();
+		$hour_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['hour_name'] = $row['hour_name'];
-            $temp_array['hour_count'] = $row['hour_count'];
-          
-            $hour_array[] = $temp_array;
+			$temp_array['hour_count'] = $row['hour_count'];
+			$hour_array[] = $temp_array;
 		}
 
 		return $hour_array;
@@ -6519,29 +6222,21 @@ $sth->execute();
 	*/
 	public static function addSpotterImage($registration)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
         
-        $registration = filter_var($registration,FILTER_SANITIZE_STRING);
-        
-        //getting the aircraft image
+		//getting the aircraft image
 		$image_url = Spotter::findAircraftImage($registration);
 
-		$query  = "INSERT INTO spotter_image (registration, image, image_thumbnail) VALUES ('$registration', '".$image_url['original']."', '".$image_url['thumbnail']."')";
+		$query  = "INSERT INTO spotter_image (registration, image, image_thumbnail) VALUES (:registration,:image,:image_thumbnail)";
 
-		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
-		
-		if ($result == 1)
-		{
-			return "success";
-		} else {
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute(array(':registration' => $registration,':image' => $image_url['original'],':image_thumbnail' => $image_url['thumbnail']));
+		} catch(PDOException $e) {
 			return "error";
 		}
-
+		return "success";
 	}
     
     
@@ -6557,11 +6252,11 @@ $sth->execute();
 
 		$query  = "SELECT spotter_image.*
 								FROM spotter_image 
-								WHERE spotter_image.registration = '".$registration."'";
+								WHERE spotter_image.registration = :registration";
 
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute();
+		$sth->execute(array(':registration' => $registration));
         
         $images_array = array();
 		$temp_array = array();
@@ -6588,22 +6283,17 @@ $sth->execute();
 	*/
 	public static function getBarrieSpotterIDBasedOnFlightAwareID($flightaware_id)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-        
-        $flightaware_id = filter_var($flightaware_id,FILTER_SANITIZE_STRING);
+		$flightaware_id = filter_var($flightaware_id,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT spotter_output.spotter_id
 								FROM spotter_output 
 								WHERE spotter_output.flightaware_id = '".$flightaware_id."'";
         
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
 
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			return $row['spotter_id'];
 		}
@@ -6823,19 +6513,14 @@ $sth->execute();
 	
 	public static function getAircraftRegistrationBymodeS($aircraft_modes)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
 	
-		$query  = "SELECT aircraft_modes.Registration FROM aircraft_modes WHERE aircraft_modes.ModeS = '".$aircraft_modes."' LIMIT 1";
+		$query  = "SELECT aircraft_modes.Registration FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes LIMIT 1";
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
     
-		$row = mysqli_fetch_row($result);
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
 		    return $row[0];
 		} else return '';
@@ -6850,24 +6535,19 @@ $sth->execute();
 	*/
 	public static function convertAircraftRegistration($registration)
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		
 		$registration_1 = substr($registration, 0, 1);
 		$registration_2 = substr($registration, 0, 2);
 
 		//first get the prefix based on two characters
-		$query  = "SELECT aircraft_registration.registration_prefix FROM aircraft_registration WHERE registration_prefix = '".$registration_2."'";
+		$query  = "SELECT aircraft_registration.registration_prefix FROM aircraft_registration WHERE registration_prefix = :registration_2";
       
 		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':registration_2' => $registration_2));
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$registration_prefix = $row['registration_prefix'];
 		}
@@ -6875,16 +6555,15 @@ $sth->execute();
 		//if we didn't find a two chracter prefix lets just search the one with one character
 		if ($registration_prefix == "")
 		{
-			$query  = "SELECT aircraft_registration.registration_prefix FROM aircraft_registration WHERE registration_prefix = '".$registration_1."'";
+			$query  = "SELECT aircraft_registration.registration_prefix FROM aircraft_registration WHERE registration_prefix = :registration_1";
 	      
-			$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute(array(':registration_1' => $registration_1));
 	        
-	        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+			while($row = $sth->fetch(PDO::FETCH_ASSOC))
 			{
 				$registration_prefix = $row['registration_prefix'];
-			}	
+			}
 		}
 
 		//determine which characters are being used and convert the registration code appropiately
@@ -6918,7 +6597,7 @@ $sth->execute();
 	{
 		global $globalBitlyAccessToken;
         
-        $google_url = 'https://api-ssl.bitly.com/v3/shorten?access_token='.$globalBitlyAccessToken.'&longUrl='.$url;
+		$google_url = 'https://api-ssl.bitly.com/v3/shorten?access_token='.$globalBitlyAccessToken.'&longUrl='.$url;
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -7053,11 +6732,6 @@ $sth->execute();
 	//temporary update scripts
 	public static function updateFieldsFromOtherTables()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-
 		
 		
 		/*
@@ -7107,7 +6781,7 @@ $sth->execute();
 		}
 	*/
 		
-
+/*
 		//airport
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.departure_airport_icao FROM spotter_output WHERE spotter_output.departure_airport_name = ''";
 		$Connection = new Connection();
@@ -7145,7 +6819,7 @@ $sth->execute();
 		}
 
 	
-				
+*/				
 		
 	}	
 	
