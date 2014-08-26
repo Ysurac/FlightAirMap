@@ -6,7 +6,7 @@ $orderby = Spotter::getOrderBy();
 
 $title = "Search";
 
-$page_url = "http://".$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI];
+$page_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 
 //$title = "Search";
 require('header.php');
@@ -14,49 +14,49 @@ require('header.php');
 if (isset($_GET['start_date'])) {
 	//for the date manipulation into the query
 	if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
-	$start_date = $_GET['start_date'].":00";
-	$end_date = $_GET['end_date'].":00";
-  $sql_date = $start_date.",".$end_date;
+		$start_date = $_GET['start_date'].":00";
+		$end_date = $_GET['end_date'].":00";
+		$sql_date = $start_date.",".$end_date;
 	} else if($_GET['start_date'] != ""){
-	$start_date = $_GET['start_date'].":00";
-  $sql_date = $start_date;
+		$start_date = $_GET['start_date'].":00";
+		$sql_date = $start_date;
 	} else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
-	$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date'].":00";
-  $sql_date = $end_date;
+		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date'].":00";
+		$sql_date = $end_date;
 	}
-}
+} else $sql_date = '';
 
 if (isset($_GET['highest_altitude'])) {
 	//for altitude manipulation
 	if($_GET['highest_altitude'] != "" && $_GET['lowest_altitude'] != ""){
-	$end_altitude = $_GET['highest_altitude'];
-	$start_altitude = $_GET['lowest_altitude'];
-  $sql_altitude = $start_altitude.",".$end_altitude;
+		$end_altitude = $_GET['highest_altitude'];
+		$start_altitude = $_GET['lowest_altitude'];
+		$sql_altitude = $start_altitude.",".$end_altitude;
 	} else if($_GET['highest_altitude'] != ""){
-	$end_altitude = $_GET['highest_altitude'];
-	$sql_altitude = $end_altitude;
+		$end_altitude = $_GET['highest_altitude'];
+		$sql_altitude = $end_altitude;
 	} else if($_GET['highest_altitude'] == "" && $_GET['lowest_altitude'] != ""){
-	$start_altitude = $_GET['lowest_altitude'].",60000";
-	$sql_altitude = $start_altitude;
+		$start_altitude = $_GET['lowest_altitude'].",60000";
+		$sql_altitude = $start_altitude;
 	}
 }
 
 //calculuation for the pagination
-if($_GET['limit'] == "")
+if(!isset($_GET['limit']))
 {
-  if ($_GET['number_results'] == "")
-  {
-  $limit_start = 0;
-  $limit_end = 25;
-  $absolute_difference = 25;
-  } else {
-	if ($_GET['number_results'] > 1000){
-		$_GET['number_results'] = 1000;
+	if (!isset($_GET['number_results']))
+	{
+		$limit_start = 0;
+		$limit_end = 25;
+		$absolute_difference = 25;
+	} else {
+		if ($_GET['number_results'] > 1000){
+			$_GET['number_results'] = 1000;
+		}
+		$limit_start = 0;
+		$limit_end = $_GET['number_results'];
+		$absolute_difference = $_GET['number_results'];
 	}
-	$limit_start = 0;
-	$limit_end = $_GET['number_results'];
-	$absolute_difference = $_GET['number_results'];
-  }
 }  else {
 	$limit_explode = explode(",", $_GET['limit']);
 	$limit_start = $limit_explode[0];
@@ -71,7 +71,22 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
  <?php
   if (!empty($_GET)){  
-	  $spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_GET['aircraft'],strtolower(str_replace("-", " ", $_GET['manufacturer'])),$_GET['highlights'],$_GET['airline'],$_GET['airline_country'],$_GET['airline_type'],$_GET['airport'],$_GET['airport_country'],$_GET['callsign'],$_GET['departure_airport_route'],$_GET['arrival_airport_route'],$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$_GET['sort'],'');
+	$q = filter_input(INPUT_GET, 'q',FILTER_SANITIZE_STRING);
+	$registration = filter_input(INPUT_GET, 'registration',FILTER_SANITIZE_STRING);
+	$aircraft = filter_input(INPUT_GET, 'aircraft',FILTER_SANITIZE_STRING);
+	$manufacturer = filter_input(INPUT_GET, 'manufacturer',FILTER_SANITIZE_STRING);
+	$highlights = filter_input(INPUT_GET, 'highlights',FILTER_SANITIZE_STRING);
+	$airline = filter_input(INPUT_GET, 'airline',FILTER_SANITIZE_STRING);
+	$airline_country = filter_input(INPUT_GET, 'airline_country',FILTER_SANITIZE_STRING);
+	$airline_type = filter_input(INPUT_GET, 'airline_type',FILTER_SANITIZE_STRING);
+	$airport = filter_input(INPUT_GET, 'airport',FILTER_SANITIZE_STRING);
+	$airport_country = filter_input(INPUT_GET, 'airport_country',FILTER_SANITIZE_STRING);
+	$callsign = filter_input(INPUT_GET, 'callsign',FILTER_SANITIZE_STRING);
+	$departure_airport_route = filter_input(INPUT_GET, 'departure_airport_route',FILTER_SANITIZE_STRING);
+	$arrival_airport_route = filter_input(INPUT_GET, 'arrival_airport_route',FILTER_SANITIZE_STRING);
+	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+	if (!isset($sql_date)) $sql_date = '';
+	$spotter_array = Spotter::searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
 	  
 	 print '<span class="sub-menu-statistic column mobile">';
 	 	print '<a href="#" onclick="showSubMenu(); return false;">Export <i class="fa fa-plus"></i></a>';
@@ -81,27 +96,27 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 	 			print '<li class="dropdown">';
 		    	print '<a class="dropdown-toggle" data-toggle="dropdown" href="#" ><i class="fa fa-download"></i> Export <span class="caret"></span></a>';
 				    print '<ul class="dropdown-menu">';
-				      print '<li><a href="'.$globalURL.'/search/csv?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">CSV</a></li>';
-				      print '<li><a href="'.$globalURL.'/search/rss?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">RSS</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/csv?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">CSV</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/rss?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">RSS</a></li>';
 				      print '<li><hr /></li>';
 				      print '<li><span>For Advanced Users</strong></li>';
-				      print '<li><a href="'.$globalURL.'/search/json?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">JSON</a></li>';
-				      print '<li><a href="'.$globalURL.'/search/xml?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">XML</a></li>';
-				      print '<li><a href="'.$globalURL.'/search/yaml?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">YAML</a></li>';
-				      print '<li><a href="'.$globalURL.'/search/php?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">PHP (serialized array)</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/json?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">JSON</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/xml?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">XML</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/yaml?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">YAML</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/php?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">PHP (serialized array)</a></li>';
 				      print '<li><hr /></li>';
 				      print '<li><span>For Geo/Map Users</span></li>';
-				      print '<li><a href="'.$globalURL.'/search/kml?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">KML (for Google Earth)</a></li>';
-				      print '<li><a href="'.$globalURL.'/search/geojson?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">GeoJSON</a></li>';
-				      print '<li><a href="'.$globalURL.'/search/georss?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">GeoRSS</a></li>';
-				      print '<li><a href="'.$globalURL.'/search/gpx?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">GPX</a></li>';
-				      print '<li><a href="'.$globalURL.'/search/wkt?'.htmlentities($_SERVER[QUERY_STRING]).'" target="_blank">WKT</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/kml?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">KML (for Google Earth)</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/geojson?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">GeoJSON</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/georss?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">GeoRSS</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/gpx?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">GPX</a></li>';
+				      print '<li><a href="'.$globalURL.'/search/wkt?'.htmlentities($_SERVER['QUERY_STRING']).'" target="_blank">WKT</a></li>';
 				      print '<li><hr /></li>';
 				      print '<li><a href="'.$globalURL.'/about/export" target="_blank" class="export-info">Export Info/Licence&raquo;</a></li>';
 				    print '</ul>';
 				print '</li>';
                 //remove 3D=true parameter
-                $no3D = str_replace("&3D=true", "", $_SERVER[QUERY_STRING]);
+                $no3D = str_replace("&3D=true", "", $_SERVER['QUERY_STRING']);
                 $kmlURL = str_replace("http://", "kml://", $globalURL);
                 if (!isset($_GET['3D'])){
                     print '<li><a href="'.$globalURL.'/search?'.$no3D.'" class="active"><i class="fa fa-table"></i> Table</a></li>';
@@ -111,7 +126,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
                 if (isset($_GET['3D'])){
                     print '<li><a href="'.$globalURL.'/search?'.$no3D.'&3D=true" class="active"><i class="fa fa-globe"></i> 3D Map</a></li>';
                 } else {
-                    print '<li ><a href="'.$globalURL.'/search?'.$no3D.'&3D=true" class="notablet nomobile"><i class="fa fa-globe"></i> 3D Map</a><a href="'.$kmlURL.'/search/kml?'.htmlentities($_SERVER[QUERY_STRING]).'" class="tablet mobile"><i class="fa fa-globe"></i> 3D Map</a></li>';
+                    print '<li ><a href="'.$globalURL.'/search?'.$no3D.'&3D=true" class="notablet nomobile"><i class="fa fa-globe"></i> 3D Map</a><a href="'.$kmlURL.'/search/kml?'.htmlentities($_SERVER['QUERY_STRING']).'" class="tablet mobile"><i class="fa fa-globe"></i> 3D Map</a></li>';
                 }
                 //checks to see if the Bit.ly API settings are set
                 if ($globalBitlyAccessToken != "")
@@ -133,28 +148,29 @@ $limit_previous_2 = $limit_end - $absolute_difference;
     		  	if ($_GET['aircraft'] != ""){ print 'aircraft: <span>'.$_GET['aircraft'].'</span> '; }
     		  	if ($_GET['manufacturer'] != ""){ print 'manufacturer: <span>'.$_GET['manufacturer'].'</span> '; }
     		  	if ($_GET['registration'] != ""){ print 'registration: <span>'.$_GET['registration'].'</span> '; }
-    		  	if ($_GET['highlights'] == "true"){ print 'highlights: <span>'.$_GET['highlights'].'</span> '; }
-				if ($_GET['airline'] != ""){ print 'airline: <span>'.$_GET['airline'].'</span> '; }
-				if ($_GET['airline_country'] != ""){ print 'airline country: <span>'.$_GET['airline_country'].'</span> '; }
-				if ($_GET['airline_type'] != ""){ print 'airline type: <span>'.$_GET['airline_type'].'</span> '; }
-				if ($_GET['airport'] != ""){ print 'airport: <span>'.$_GET['airport'].'</span> '; }
-				if ($_GET['airport_country'] != ""){ print 'airport country: <span>'.$_GET['airport_country'].'</span> '; }
-				if ($_GET['callsign'] != ""){ print 'callsign: <span>'.$_GET['callsign'].'</span> '; }
-				if ($_GET['departure_airport_route'] != "" && $_GET['arrival_airport_route'] == ""){ print 'route out of: <span>'.$_GET['departure_airport_route'].'</span> '; }
-				if ($_GET['departure_airport_route'] == "" && $_GET['arrival_airport_route'] != ""){ print 'route into: <span>'.$_GET['arrival_airport_route'].'</span> '; }
-				if ($_GET['departure_airport_route'] != "" && $_GET['arrival_airport_route'] != ""){ print 'route between: <span>'.$_GET['departure_airport_route'].'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
-				if ($_GET['start_date'] != "" && $_GET['end_date'] == ""){ print 'date starting at: <span>'.$_GET['start_date'].'</span> '; }
-				if ($_GET['start_date'] == "" && $_GET['end_date'] != ""){ print 'date ending at: <span>'.$_GET['end_date'].'</span> '; }
-				if ($_GET['start_date'] != "" && $_GET['end_date'] != ""){ print 'date between: <span>'.$_GET['start_date'].'</span> and <span>'.$_GET['end_date'].'</span> '; }
-				if ($_GET['lowest_altitude'] != "" && $_GET['highest_altitude'] == ""){ print 'altitude starting at: <span>'.number_format($_GET['lowest_altitude']).' feet</span> '; }
-				if ($_GET['lowest_altitude'] == "" && $_GET['highest_altitude'] != ""){ print 'altitude ending at: <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
-				if ($_GET['lowest_altitude'] != "" && $_GET['highest_altitude'] != ""){ print 'altitude between: <span>'.number_format($_GET['lowest_altitude']).' feet</span> and <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
-				if ($_GET['number_results'] != ""){ print 'limit per page: <span>'.$_GET['number_results'].'</span> '; }
+    		  	if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'highlights: <span>'.$_GET['highlights'].'</span> '; }
+			if ($_GET['airline'] != ""){ print 'airline: <span>'.$_GET['airline'].'</span> '; }
+			if ($_GET['airline_country'] != ""){ print 'airline country: <span>'.$_GET['airline_country'].'</span> '; }
+			if ($_GET['airline_type'] != ""){ print 'airline type: <span>'.$_GET['airline_type'].'</span> '; }
+			if ($_GET['airport'] != ""){ print 'airport: <span>'.$_GET['airport'].'</span> '; }
+			if ($_GET['airport_country'] != ""){ print 'airport country: <span>'.$_GET['airport_country'].'</span> '; }
+			if ($_GET['callsign'] != ""){ print 'callsign: <span>'.$_GET['callsign'].'</span> '; }
+			if ($_GET['departure_airport_route'] != "" && $_GET['arrival_airport_route'] == ""){ print 'route out of: <span>'.$_GET['departure_airport_route'].'</span> '; }
+			if ($_GET['departure_airport_route'] == "" && $_GET['arrival_airport_route'] != ""){ print 'route into: <span>'.$_GET['arrival_airport_route'].'</span> '; }
+			if ($_GET['departure_airport_route'] != "" && $_GET['arrival_airport_route'] != ""){ print 'route between: <span>'.$_GET['departure_airport_route'].'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
+			if ($_GET['start_date'] != "" && $_GET['end_date'] == ""){ print 'date starting at: <span>'.$_GET['start_date'].'</span> '; }
+			if ($_GET['start_date'] == "" && $_GET['end_date'] != ""){ print 'date ending at: <span>'.$_GET['end_date'].'</span> '; }
+			if ($_GET['start_date'] != "" && $_GET['end_date'] != ""){ print 'date between: <span>'.$_GET['start_date'].'</span> and <span>'.$_GET['end_date'].'</span> '; }
+			if ($_GET['lowest_altitude'] != "" && $_GET['highest_altitude'] == ""){ print 'altitude starting at: <span>'.number_format($_GET['lowest_altitude']).' feet</span> '; }
+			if ($_GET['lowest_altitude'] == "" && $_GET['highest_altitude'] != ""){ print 'altitude ending at: <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
+			if ($_GET['lowest_altitude'] != "" && $_GET['highest_altitude'] != ""){ print 'altitude between: <span>'.number_format($_GET['lowest_altitude']).' feet</span> and <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
+			if ($_GET['number_results'] != ""){ print 'limit per page: <span>'.$_GET['number_results'].'</span> '; }
     		    print '</h1>';
     		  print '</div>';
     	  
           
-          if ($_GET['3D'] == "true")
+        //  if ($_GET['3D'] == "true")
+          if (isset($_GET['3D']))
           {
             ?>  
               <script type="text/javascript" src="https://www.google.com/jsapi"> </script>
@@ -247,7 +263,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
     <fieldset>
     	<div>
 	    	<label>Keyword</label> 
-		    <input type="text" id="q" name="q" value="<?php print $_GET['q']; ?>" size="10" />
+		    <input type="text" id="q" name="q" value="<?php if (isset($_GET['q'])) print $_GET['q']; ?>" size="10" />
 		  </div>
     </fieldset>
     <div class="advanced-form">
@@ -291,10 +307,10 @@ $limit_previous_2 = $limit_end - $absolute_difference;
     		  </div>
     		   <div>
     		  	<label>Registration</label> 
-    		  	<input type="text" name="registration" value="<?php print $_GET['registration']; ?>" size="8" />
+    		  	<input type="text" name="registration" value="<?php if (isset($_GET['registration'])) print $_GET['registration']; ?>" size="8" />
     			</div>
     			<div class="checkbox">
-    				<div><input type="checkbox" name="highlights" value="true" id="highlights" <?php if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <label for="highlights">Include only aircrafts with special highlights (unique liveries, destinations etc.)</label></div>
+    				<div><input type="checkbox" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <label for="highlights">Include only aircrafts with special highlights (unique liveries, destinations etc.)</label></div>
     			</div>
         </fieldset>
         <fieldset>
@@ -337,12 +353,12 @@ $limit_previous_2 = $limit_end - $absolute_difference;
     		  </div>
     		  <div>
     		  	<label>Callsign</label> 
-    		  	<input type="text" name="callsign" value="<?php print $_GET['callsign']; ?>" size="8" />
+    		  	<input type="text" name="callsign" value="<?php if (isset($_GET['callsign'])) print $_GET['callsign']; ?>" size="8" />
     			</div>
     			<div class="radio">
     				<div><input type="radio" name="airline_type" value="both" id="airline_type_both" <?php if (!isset($_GET['airline_type']) || $_GET['airline_type'] == "both"){ print 'checked="checked"'; } ?>> <label for="airline_type_both">Passenger &amp; Cargo airlines</label></div>
-    				<div><input type="radio" name="airline_type" value="passenger" id="airline_type_passenger" <?php if ($_GET['airline_type'] == "passenger"){ print 'checked="checked"'; } ?>> <label for="airline_type_passenger">Only Passenger airlines</label></div>
-    				<div><input type="radio" name="airline_type" value="cargo" id="airline_type_cargo" <?php if ( $_GET['airline_type'] == "cargo"){ print 'checked="checked"'; } ?>> <label for="airline_type_cargo">Only Cargo airlines</label></div>
+    				<div><input type="radio" name="airline_type" value="passenger" id="airline_type_passenger" <?php if (isset($_GET['airline_type'])) if ($_GET['airline_type'] == "passenger"){ print 'checked="checked"'; } ?>> <label for="airline_type_passenger">Only Passenger airlines</label></div>
+    				<div><input type="radio" name="airline_type" value="cargo" id="airline_type_cargo" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "cargo"){ print 'checked="checked"'; } ?>> <label for="airline_type_cargo">Only Cargo airlines</label></div>
     			</div>
         </fieldset>
         <fieldset>
@@ -425,11 +441,11 @@ $limit_previous_2 = $limit_end - $absolute_difference;
         	<legend>Date</legend>
     			<div>
     				<label>Start Date</label> 
-    				<input type="text" id="start_date" name="start_date" value="<?php print $_GET['start_date']; ?>" size="10" readonly="readonly" class="datepicker" />
+    				<input type="text" id="start_date" name="start_date" value="<?php if (isset($_GET['start_date'])) print $_GET['start_date']; ?>" size="10" readonly="readonly" class="datepicker" />
     			</div>
     			<div>
     				<label>End Date</label> 
-    				<input type="text" id="end_date" name="end_date" value="<?php print $_GET['end_date']; ?>" size="10" readonly="readonly" class="datepicker" />
+    				<input type="text" id="end_date" name="end_date" value="<?php if (isset($_GET['end_date'])) print $_GET['end_date']; ?>" size="10" readonly="readonly" class="datepicker" />
     			</div>
     		</fieldset>
 		</div>
