@@ -1,6 +1,8 @@
-# Barrie Spotter - Web App
+# "Fork" of Barrie Spotter - Web App
 
 Barrie Spotter is an open source project documenting most of the aircrafts. Browse through the data based on a particular aircraft, airline or airport to search through the database. See extensive statistics such as most common aircraft type, airline, departure & arrival airport and busiest time of the day, or just explore flights.
+
+This is a "fork" of Barrie Spotter [https://github.com/barriespotter/Web_App](https://github.com/barriespotter/Web_App) with PDO and ADS-B support.
 
 ## System Requirements
 
@@ -25,7 +27,7 @@ The follwing is a list of PHP extensions that must be installed on your server i
 * Create a mysql database.
 * Populate the database with db/*.sql
 * supply require/settings.php with your database credentials.
-* If you use ADS-B as datasource, supply db/update_db.sh with you database credentials and run it. (You should go to http://www.virtualradarserver.co.uk/ and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me)
+* If you use ADS-B as datasource, supply db/update_db.sh with your database credentials and run it. (You should go to http://www.virtualradarserver.co.uk/ and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me)
 
 ## Data Sources
 You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (BaseStation) format.
