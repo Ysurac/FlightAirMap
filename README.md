@@ -8,6 +8,7 @@ To install the web app which Barrie Spotter runs, you need to have meet the foll
 
 * PHP version 5.2.3 or greater (5.3 or greater is recommended)
 * MySQL version 5.0 or greater
+* SQLite 3 (if you use ADS-B as datasource)
 * An HTTP Server such as:
 	* Apache 1.3+
 	* Apache 2.0+
@@ -24,7 +25,7 @@ The follwing is a list of PHP extensions that must be installed on your server i
 * Create a mysql database.
 * Populate the database with db/*.sql
 * supply require/settings.php with your database credentials.
-* run db/update_db.sh. (You should go to http://www.virtualradarserver.co.uk/ and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me)
+* If you use ADS-B as datasource, supply db/update_db.sh with you database credentials and run it. (You should go to http://www.virtualradarserver.co.uk/ and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me)
 
 ## Data Sources
 You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (BaseStation) format.
@@ -32,7 +33,8 @@ You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (Bas
 ### FlightAware Api Key 
 * get yourself a flightAware api key http://flightaware.com/commercial/flightxml/
 * supply require/settings.php with this key
+* run cron.php
 
 ### ADS-B
 * You can use dump1090 [https://github.com/MalcolmRobb/dump1090](https://github.com/MalcolmRobb/dump1090) with a RTL dongle
-* supply cron-sbs.php with host and port
+* run cron-sbs.php
