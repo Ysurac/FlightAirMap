@@ -18,6 +18,7 @@ $globalCenterLatitude = ''; //the latitude center of your coverage area
 $globalCenterLongitude = '';//the longitude center of your coverage area
 
 // DATABASE CONNECTION LOGIN
+$globalDBdriver = 'mysql'; // PDO driver used. Tested with mysql, maybe pgsql or others work...
 $globalDBhost = 'localhost'; //database connection url
 $globalDBuser = ''; //database username
 $globalDBpass = ''; //database password

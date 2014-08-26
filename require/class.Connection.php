@@ -18,9 +18,9 @@ class Connection{
 
 	public static function createDBConnection()
 	{
-		global $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname;
+		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname;
 
-		self::$db = new PDO("mysql:host=$globalDBhost;dbname=$globalDBname", $globalDBuser,  $globalDBpass);
+		self::$db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname", $globalDBuser,  $globalDBpass);
 		self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		return true;
 	}

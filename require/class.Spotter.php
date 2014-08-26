@@ -3638,24 +3638,24 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao));
       
-        $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-            $temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
-            if($row['registration'] != "")
-              {
-                  $image_array = Spotter::getSpotterImage($row['registration']);
-                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
-              }
-            $temp_array['registration_count'] = $row['registration_count'];
+			if($row['registration'] != "")
+			{
+				$image_array = Spotter::getSpotterImage($row['registration']);
+				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+			}
+			$temp_array['registration_count'] = $row['registration_count'];
           
-            $aircraft_array[] = $temp_array;
+			$aircraft_array[] = $temp_array;
 		}
 
 		return $aircraft_array;
@@ -3683,15 +3683,15 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao));
       
-    $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
         
-    while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
           
-      $aircraft_array[] = $temp_array;
+			$aircraft_array[] = $temp_array;
 		}
 
 		return $aircraft_array;
@@ -3720,16 +3720,16 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
-        $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
-            $temp_array['aircraft_icao_count'] = $row['aircraft_icao_count'];
+			$temp_array['aircraft_icao_count'] = $row['aircraft_icao_count'];
           
-            $aircraft_array[] = $temp_array;
+			$aircraft_array[] = $temp_array;
 		}
 
 		return $aircraft_array;
@@ -3756,24 +3756,24 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
-        $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-            $temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
-            if($row['registration'] != "")
-              {
-                  $image_array = Spotter::getSpotterImage($row['registration']);
-                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
-              }
-            $temp_array['registration_count'] = $row['registration_count'];
+			if($row['registration'] != "")
+			{
+				$image_array = Spotter::getSpotterImage($row['registration']);
+				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+			}
+			$temp_array['registration_count'] = $row['registration_count'];
           
-            $aircraft_array[] = $temp_array;
+			$aircraft_array[] = $temp_array;
 		}
 
 		return $aircraft_array;
@@ -3800,15 +3800,15 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
-    $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
         
-    while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
           
-      $aircraft_array[] = $temp_array;
+			$aircraft_array[] = $temp_array;
 		}
 
 		return $aircraft_array;
@@ -3835,15 +3835,15 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute();
       
-        $manufacturer_array = array();
+		$manufacturer_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
-            $temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
+			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
           
-            $manufacturer_array[] = $temp_array;
+			$manufacturer_array[] = $temp_array;
 		}
 
 		return $manufacturer_array;
