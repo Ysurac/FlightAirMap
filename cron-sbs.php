@@ -3,9 +3,6 @@ require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterLive.php');
 
-$dump1090_host = "127.0.0.1";
-$dump1090_port = "30003";
-$dump1090_timeout = 15;
 $debug = true;
 
 date_default_timezone_set('UTC');
@@ -34,12 +31,12 @@ $current_packets = 0;
 
 // let's try and connect
 echo "Connecting to dump1090 ... ";
-while (!@socket_connect($sock, $dump1090_host, $dump1090_port))
+while (!@socket_connect($sock, $globalSBS1Host, $globalSBS1Port))
 {
       $err = socket_last_error($sock);
       if ($err == 115 || $err == 114)
       {
-        if ((time() - $time) >= $dump1090_timeout)
+        if ((time() - $time) >= $globalSBS1TimeOut)
         {
           socket_close($sock);
           die("Connection timed out.\n");

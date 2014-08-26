@@ -29,6 +29,12 @@ $globalFlightAware = FALSE; //set to TRUE to use FlightAware as data import
 $globalFlightAwareUsername = ''; //FlightAware Username
 $globalFlightAwarePassword = ''; //FlightAware Password/API key
 
+//ADS-B, SBS1 FORMAT
+$globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
+$globalSBS1Host = '127.0.0.1';
+$globalSBS1Port = '30003';
+$globalSBS1TimeOut = '15';
+
 //BIT.LY API INFO (used in the search page for a shorter URL)
 $globalBitlyAccessToken = ''; //the access token from the bit.ly API
 ?>
