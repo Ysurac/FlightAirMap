@@ -25,7 +25,7 @@ require('require/class.Spotter.php');
 
 
 <?php
-if ($_GET['q'] != "")
+if (isset($_GET['q']))
 {
 	$spotter_array = Spotter::searchSpotterData($_GET['q'],"","","","","","","","","","","","","","0,10","","");
 } else {
@@ -40,7 +40,7 @@ print '<div class="table-responsive">';
 		  {
 		  	date_default_timezone_set('America/Toronto');
 		  	print '<tr>';
-		    	if ($_GET['image'] == "true")
+		    	if (isset($_GET['image']) && $_GET['image'] == "true")
 		    	{
 			    	if ($spotter_item['image'] != "")
 			    	 {
