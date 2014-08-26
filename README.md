@@ -24,7 +24,7 @@ The follwing is a list of PHP extensions that must be installed on your server i
 * Create a mysql database.
 * Populate the database with db/*.sql
 * supply require/settings.php with your database credentials.
-* run it db/update_db.sh. (You should go to http://virtualradarserver.co.uk and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me)
+* run db/update_db.sh. (You should go to http://www.virtualradarserver.co.uk/ and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me)
 
 ## Data Sources
 You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (BaseStation) format.
