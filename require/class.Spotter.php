@@ -290,6 +290,10 @@ class Spotter{
 				{
 					$additional_query .= " AND (spotter_output.airline_type = 'cargo')";
 				}
+				if ($airline_type == "military")
+				{
+					$additional_query .= " AND (spotter_output.airline_type = 'military')";
+				}
 			}
 		}
 		
@@ -1348,6 +1352,39 @@ class Spotter{
 
 	
 	/**
+	* Gets the airport icao from the iata
+	*
+	* @param String $airport_iata the iata code of the airport
+	* @return String airport iata
+	*
+	*/
+	public static function getAirportIcao($airport_iata = '')
+	{
+		
+		$airport_iata = filter_var($airport,FILTER_SANITIZE_STRING);
+
+		$query_values = array();
+
+		$query  = "SELECT airport.* FROM airport WHERE airport.iata = :airport LIMIT 1";
+		$query_values = array(':airport' => $airport_iata);
+		
+		$Connection = new Connection();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute($query_values);
+    
+		$airport_array = array();
+		$temp_array = array();
+		
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['icao'] = $row['icao'];
+			$airport_array[] = $temp_array;
+		}
+
+		return $airport_array['icao'];
+	}
+	
+	/**
 	* Gets the airport info based on the icao
 	*
 	* @param String $airport_iata the icao code of the airport
@@ -1563,9 +1600,9 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
 
-		$row = $sth->feth(PDO::ASSOC);
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
-			return $row[0];
+			return $row['ICAOTypeCode'];
 		} else return '';
 	}
 
@@ -1585,7 +1622,7 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':callsign' => $callsign));
 
-		$row = $sth->fetch(PDO::ASSOC);
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
 			return $row;
 		} else return array();
@@ -1639,7 +1676,7 @@ class Spotter{
 		$flight_array = array();
 		$temp_array = array();
 		
-		while($row = $sth->fetch(PDO::ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['spotter_id'] = $row['spotter_id'];
 			$temp_array['ident'] = $row['ident'];
@@ -2308,7 +2345,7 @@ class Spotter{
                 $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date) 
                 VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date)";
 
-                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_aiport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country'],':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date);
+                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country'],':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date);
 
 
 		try {
@@ -6522,7 +6559,7 @@ class Spotter{
     
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
-		    return $row[0];
+		    return $row['Registration'];
 		} else return '';
 	
 	}
