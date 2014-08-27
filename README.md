@@ -39,4 +39,4 @@ You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (Bas
 
 ### ADS-B
 * You can use dump1090 [https://github.com/MalcolmRobb/dump1090](https://github.com/MalcolmRobb/dump1090) with a RTL dongle
-* run cron-sbs.php
+* run cron-sbs.php (The name is not really good, this should be run one time like a daemon, use a init script or screen)

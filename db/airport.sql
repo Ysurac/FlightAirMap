@@ -2200,7 +2200,6 @@ INSERT INTO `airport` (`airport_id`, `airports_id`, `name`, `city`, `country`, `
 (2146, 2196, 'Thumrait', 'Thumrait', 'Oman', 'TTH', 'OOTH', '17.666', '54.024612', 1570, 4, 'U'),
 (2147, 2197, 'Bhagatanwala', 'Bhagtanwala', 'Pakistan', '', 'OPBG', '32.056108', '72.9484', 600, 5, 'N'),
 (2148, 6866, 'Spray View Airport', 'Spray View', 'Zimbabwe', '', 'FVSV', '-17.917', '25.817', 3210, 0, 'U'),
-(2149, 6865, 'Lyon Part-Dieu Railway', 'Lyon', 'France', 'XYD', '\\N', '46', '5', 821, 1, 'U'),
 (2150, 2202, 'Faisalabad Intl', 'Faisalabad', 'Pakistan', 'LYP', 'OPFA', '31.365014', '72.994842', 591, 5, 'N'),
 (2151, 2203, 'Gwadar', 'Gwadar', 'Pakistan', 'GWD', 'OPGD', '25.233308', '62.329494', 36, 5, 'N'),
 (2152, 2204, 'Gilgit', 'Gilgit', 'Pakistan', 'GIL', 'OPGT', '35.918786', '74.333644', 4796, 5, 'N'),
