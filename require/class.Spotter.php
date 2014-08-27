@@ -2351,9 +2351,9 @@ class Spotter{
 		try {
 		        $Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
-			$sth->execute();
+			$sth->execute($query_values);
 		} catch (PDOException $e) {
-		    return "error";
+		    return "error : ".$e->getMessage();
 		}
 		
 		return "success";
