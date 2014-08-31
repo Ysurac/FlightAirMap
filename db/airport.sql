@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 24, 2014 at 12:26 PM
+-- Generation Time: Aug 31, 2014 at 12:00 PM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `airport` (
   `dst` varchar(999) NOT NULL,
   PRIMARY KEY (`airport_id`),
   KEY `airport_id` (`airport_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7895 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7904 ;
 
 --
 -- Dumping data for table `airport`
@@ -7958,7 +7958,16 @@ INSERT INTO `airport` (`airport_id`, `airports_id`, `name`, `city`, `country`, `
 (7891, 0, 'Shelburne/Fisher Field Airport', 'Shelburne', 'Canada', '', 'CNN3', '44.0283333333333', '-80.2061111111111', 1675, -5, ''),
 (7892, 0, 'Bar River Airport', 'Bar River', 'Canada', '', 'CPF2', '46.420277778', '-84.092222222', 591, -5, ''),
 (7893, 0, 'Debert Airport', 'Debert', 'Canada', '', 'CCQ3', '45.4191666666667', '-63.4613888888889', 190, -4, ''),
-(7894, 0, 'Cortland County Airport', 'Cortland', 'United States', '', 'N03', '42.592645278', '-76.2148825', 1198, -5, '');
+(7894, 0, 'Cortland County Airport', 'Cortland', 'United States', '', 'N03', '42.592645278', '-76.2148825', 1198, -5, ''),
+(7895, 0, 'Cattaraugus County-Olean Airport', 'Olean', 'United States', 'OLE', 'KOLE', '42.241222222', '-78.371361111', 2135, -5, ''),
+(7896, 0, 'Alpine Airport', 'Alpine', 'United States', '', '46U', '43.184643611', '-111.042434444', 5634, -7, ''),
+(7897, 0, 'Oakland/Troy Airport', 'Troy', 'United States', '', 'KVLL', '42.542944444', '-83.177888889', 727, -5, ''),
+(7898, 0, 'Joliette Airport', 'Joliette', 'Canada', '', 'CSG3', '46.0447222222222', '-73.5016666666667', 225, -5, ''),
+(7899, 0, 'John F Kennedy Memorial Airport', 'Ashland', 'United States', 'ASX', 'KASX', '46.548527778', '-90.918972222', 827, -6, ''),
+(7900, 0, 'Skagit Regional Airport', 'Burlington/Mount Vernon', 'United States', 'MVW', 'KBVS', '48.470527778', '-122.421694444', 145, -8, ''),
+(7901, 0, 'Maxville Airport', 'Maxville', 'Canada', '', 'CMX2', '45.2975', '-74.85', 320, -5, ''),
+(7902, 0, 'Geneseo Airport', 'Geneseo', 'United States', '', 'D52', '42.798673611', '-77.842503333', 560, -5, ''),
+(7903, 0, 'Grayling AAF Airport', 'Grayling', 'United States', '', 'KGOV', '44.680333333', '-84.728861111', 1158, -5, '');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

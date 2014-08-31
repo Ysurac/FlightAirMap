@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 10, 2014 at 02:42 PM
+-- Generation Time: Aug 31, 2014 at 11:48 AM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -4089,7 +4089,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (4034, 4040, 'President Airlines', 'null', 'TO', 'PSD', '', 'Cambodia', 'N', 'passenger'),
 (4035, 4041, 'Presidential Aviation', 'N', '', 'PRD', 'PRESIDENTIAL', 'United States', 'N', 'passenger'),
 (4036, 4042, 'Priester Aviation', 'N', '', 'PWA', 'PRIESTER', 'United States', 'N', 'passenger'),
-(4037, 4043, 'Primair', 'N', '', 'PMM', 'PRIMAVIA', 'Russia', 'N', 'passenger'),
+(4037, 4043, 'Paradigm Air Operators', 'N', '', 'PMM', '', 'United States', 'Y', 'passenger'),
 (4038, 4044, 'Primaris Airlines', 'N', 'FE', 'WCP', 'WHITECAP', 'United States', 'N', 'passenger'),
 (4039, 4045, 'Primas Courier', 'N', '', 'PMC', 'PRIMAC', 'United States', 'N', 'passenger'),
 (4040, 4046, 'Primavia Limited', 'N', '', 'CRY', 'CARRIERS', 'United Kingdom', 'N', 'passenger'),
