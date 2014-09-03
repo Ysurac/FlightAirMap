@@ -66,11 +66,8 @@ $absolute_difference = abs($limit_start - $limit_end);
 $limit_next = $limit_end + $absolute_difference;
 $limit_previous_1 = $limit_start - $absolute_difference;
 $limit_previous_2 = $limit_end - $absolute_difference;
-?>
 
-
- <?php
-  if (!empty($_GET)){  
+if (!empty($_GET)){  
 	$q = filter_input(INPUT_GET, 'q',FILTER_SANITIZE_STRING);
 	$registration = filter_input(INPUT_GET, 'registration',FILTER_SANITIZE_STRING);
 	$aircraft = filter_input(INPUT_GET, 'aircraft',FILTER_SANITIZE_STRING);
@@ -356,9 +353,10 @@ $limit_previous_2 = $limit_end - $absolute_difference;
     		  	<input type="text" name="callsign" value="<?php if (isset($_GET['callsign'])) print $_GET['callsign']; ?>" size="8" />
     			</div>
     			<div class="radio">
-    				<div><input type="radio" name="airline_type" value="both" id="airline_type_both" <?php if (!isset($_GET['airline_type']) || $_GET['airline_type'] == "both"){ print 'checked="checked"'; } ?>> <label for="airline_type_both">Passenger &amp; Cargo airlines</label></div>
+    				<div><input type="radio" name="airline_type" value="all" id="airline_type_all" <?php if (!isset($_GET['airline_type']) || $_GET['airline_type'] == "all"){ print 'checked="checked"'; } ?>> <label for="airline_type_all">All airlines types</label></div>
     				<div><input type="radio" name="airline_type" value="passenger" id="airline_type_passenger" <?php if (isset($_GET['airline_type'])) if ($_GET['airline_type'] == "passenger"){ print 'checked="checked"'; } ?>> <label for="airline_type_passenger">Only Passenger airlines</label></div>
     				<div><input type="radio" name="airline_type" value="cargo" id="airline_type_cargo" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "cargo"){ print 'checked="checked"'; } ?>> <label for="airline_type_cargo">Only Cargo airlines</label></div>
+    				<div><input type="radio" name="airline_type" value="military" id="airline_type_military" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "military"){ print 'checked="checked"'; } ?>> <label for="airline_type_military">Only Military airlines</label></div>
     			</div>
         </fieldset>
         <fieldset>
