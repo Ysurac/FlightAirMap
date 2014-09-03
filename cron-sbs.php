@@ -2,13 +2,12 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterLive.php');
+require('require/class.Scheduler.php');
 
 $debug = true;
 
 date_default_timezone_set('UTC');
-$of_interest = false;
 $_ = $_SERVER['_'];
-$monitored_squawks = array();
 // signal handler - playing nice with sockets and dump1090
 pcntl_signal(SIGINT,  function($signo) {
     global $sock, $db;
@@ -68,27 +67,48 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
     $line = explode(',', $buffer);
     if(is_array($line) && isset($line[4])) {
   	    if ($line[4] != '' && $line[4] != '00000' && $line[4] != '000000') {
-        	echo "{$line[8]} {$line[7]} - ICAO:{$line[4]}  CALLSIGN:{$line[10]}   ALT:{$line[11]}   VEL:{$line[12]}   HDG:{$line[13]}   LAT:{$line[14]}   LON:{$line[15]}   VR:{$line[16]}   SQUAWK:{$line[17]}\n";
+//        	echo "{$line[8]} {$line[7]} - MODES:{$line[4]}  CALLSIGN:{$line[10]}   ALT:{$line[11]}   VEL:{$line[12]}   HDG:{$line[13]}   LAT:{$line[14]}   LON:{$line[15]}   VR:{$line[16]}   SQUAWK:{$line[17]}\n";
 		//print_r($line);
 		$hex = trim($line[4]);
 	        $id = trim($line[4]);
 
 		if (!isset($all_flights[$id]['hex'])) {
 		    $all_flights[$id] = array('hex' => $hex,'datetime' => $line[8].' '.$line[7],'aircraft_icao' => Spotter::getAllAircraftType($hex));
-		    $all_flights[$id] = array_merge($all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => ''));
+		    $all_flights[$id] = array_merge($all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => ''));
 		    $all_flights[$id] = array_merge($all_flights[$id],array('lastupdate' => time()));
+		    if ($debug) echo "New aircraft !!! \n";
 		}
  
-		if ($all_flights[$id]['ident'] == '' && $line[10] != '') {
+		if ($line[10] != '' && ($all_flights[$id]['ident'] != trim($line[10]))) {
 			$all_flights[$id] = array_merge($all_flights[$id],array('ident' => trim($line[10])));
-			$route = Spotter::getRouteInfo($line[10]);
+			$route = Spotter::getRouteInfo(trim($line[10]));
 			if (count($route) > 0) {
 			    if ($route['FromAirport_ICAO'] != $route['ToAirport_ICAO']) {
 				$all_flights[$id] = array_merge($all_flights[$id],array('departure_airport' => $route['FromAirport_ICAO'],'arrival_airport' => $route['ToAirport_ICAO']));
 			    }
 			}
+			// Get schedule here, so it's done only one time
+			$schedule = Schedule::getSchedule(trim($line[10]));
+			if (count($schedule) > 0) {
+				$all_flights[$id] = array_merge($all_flights[$id],array('departure_airport_time' => $schedule['DepartureTime']));
+				$all_flights[$id] = array_merge($all_flights[$id],array('arrival_airport_time' => $schedule['ArrivalTime']));
+				// FIXME : Check if route schedule = route from DB
+				if ($schedule['DepartureAirportIATA'] != '') {
+					if ($all_flights[$id]['departure_airport'] != Spotter::getAirportIcao($schedule['DepartureAirportIATA'])) {
+						$airport_icao = Spotter::getAirportIcao($schedule['DepartureAirportIATA']);
+						if ($airport_icao != '') $all_flights[$id]['departure_airport'] = $airport_icao;
+						if ($debug) echo "Change departure airport !!!! \n";
+					}
+				}
+				if ($schedule['ArrivalAirportIATA'] != '') {
+					if ($all_flights[$id]['arrival_airport'] != Spotter::getAirportIcao($schedule['ArrivalAirportIATA'])) {
+						$airport_icao = Spotter::getAirportIcao($schedule['ArrivalAirportIATA']);
+						if ($airport_icao != '') $all_flights[$id]['arrival_airport'] = $airport_icao;
+						if ($debug) echo "Change arrival airport !!!! \n";
+					}
+				}
+			}
 		}
-	//        $aircraft_type = '';
 	        
 		if ($line[14] != '') {
 			$all_flights[$id] = array_merge($all_flights[$id],array('latitude' => $line[14]));
@@ -130,21 +150,25 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 
 		//if there was no aircraft with the same callsign within the last hour and go post it into the archive
 
-		//    echo $all_flights[$id]['ident'];
-		//    print_r($all_flights[$id]);
 		    if($last_hour_ident == "")
 		    {
+			if ($debug) echo "\nAdd in output\n";
 			if ($all_flights[$id]['departure_airport'] == "") { $all_flights[$id]['departure_airport'] = "NA"; }
 			if ($all_flights[$id]['arrival_airport'] == "") { $all_flights[$id]['arrival_airport'] = "NA"; }
-    		    //adds the spotter data for the archive
-			Spotter::addSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed']);
+			//adds the spotter data for the archive
+			$result = Spotter::addSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed'],'', $all_flights[$id]['departure_airport_time'], $all_flights[$id]['arrival_airport_time']);
+			if ($debug) echo $result;
 		    }
 
 			SpotterLive::deleteLiveSpotterData();
-		    //adds the spotter LIVE data
+		        //adds the spotter LIVE data
 			//SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
-			echo "\nAjout dans Live !! \n";
-			SpotterLive::addLiveSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed']);
+			//echo "\nAjout dans Live !! \n";
+			//echo "{$line[8]} {$line[7]} - MODES:{$line[4]}  CALLSIGN:{$line[10]}   ALT:{$line[11]}   VEL:{$line[12]}   HDG:{$line[13]}   LAT:{$line[14]}   LON:{$line[15]}   VR:{$line[16]}   SQUAWK:{$line[17]}\n";
+			if ($debug) echo 'hex : '.$all_flights[$id]['hex'].' - ident : '.$all_flights[$id]['ident'].' - ICAO : '.$all_flights[$id]['aircraft_icao'].' - Departure Airport : '.$all_flights[$id]['departure_airport'].' - Arrival Airport : '.$all_flights[$id]['arrival_airport'].' - Latitude : '.$all_flights[$id]['latitude'].' - Longitude : '.$all_flights[$id]['longitude'].' - waypoints : '.$waypoints.' - Altitude : '.$all_flights[$id]['altitude'].' - Heading : '.$all_flights[$id]['heading'].' - Speed : '.$all_flights[$id]['speed'].' - Departure Airport Time : '.$all_flights[$id]['departure_airport_time'].' - Arrival Airport time : '.$all_flights[$id]['arrival_airport_time']."\n";
+
+			$result = SpotterLive::addLiveSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed'], $all_flights[$id]['departure_airport_time'], $all_flights[$id]['arrival_airport_time']);
+			if ($debug) echo $result."\n";
 		}
     	    }
     }

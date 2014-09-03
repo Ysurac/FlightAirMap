@@ -137,6 +137,12 @@ body.page-index .leaflet-popup-content-wrapper .right .airports .airport .code a
   color:#1a3151;
     display:block;
 }
+body.page-index .leaflet-popup-content-wrapper .right .airports .airport .time{
+  display:inline-block;
+  font-size:0.8em;
+  font-style:italic;
+  color:#92a2b7;
+}
 body.page-index .leaflet-popup-content-wrapper .details{
   padding:10px;
   padding-top:5px;

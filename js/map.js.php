@@ -144,10 +144,16 @@ $( document ).ready(function() {
                     output += '<div class="nomobile airports">';
                       output += '<div class="airport">';
                         output += '<span class="code"><a href="/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
+                	if (typeof feature.properties.departure_airport_time != 'undefined') {
+                	    output += '<br /><span class="time">'+feature.properties.departure_airport_time+'</span>';
+                	}
                       output += '</div>';
                       output += '<i class="fa fa-long-arrow-right"></i>';
                       output += '<div class="airport">';
                         output += '<span class="code"><a href="/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
+                	if (typeof feature.properties.arrival_airport_time != 'undefined') {
+                	    output += '<br /><span class="time">'+feature.properties.arrival_airport_time+'</span>';
+                	}
                       output += '</div>';
                     output += '</div>';
                   output += '</div>';

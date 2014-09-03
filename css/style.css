@@ -457,7 +457,11 @@ a.full-width{
 	padding-top:0.5em;
 }
 
-
+body span.airport_time{
+	text-align: center;
+	font-size: 0.5em;
+	font-style: italic;
+}
 /* SUB MENU */
 .sub-menu-statistic{
 		margin-bottom:15px;

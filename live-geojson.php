@@ -95,7 +95,15 @@ $output = '{';
 							$output .= '"departure_airport_code": "'.$spotter_item['departure_airport'].'",';
 						if (isset($spotter_item['departure_airport_city'])) {
 							$output .= '"departure_airport": "'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_country'].'",';
+						
 						}
+						if (isset($spotter_item['departure_airport_time'])) {
+							$output .= '"departure_airport_time": "'.$spotter_item['departure_airport_time'].'",';
+						}
+						if (isset($spotter_item['arrival_airport_time'])) {
+							$output .= '"arrival_airport_time": "'.$spotter_item['arrival_airport_time'].'",';
+						}
+						
 							$output .= '"arrival_airport_code": "'.$spotter_item['arrival_airport'].'",';
 						if (isset($spotter_item['arrival_airport_city'])) {
 							$output .= '"arrival_airport": "'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].'",';

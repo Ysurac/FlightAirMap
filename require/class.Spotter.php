@@ -134,19 +134,22 @@ class Spotter{
 			$temp_array['airline_type'] = $airline_array[0]['type'];
 			}
 			if ($row['departure_airport_icao'] != '') {
-			$departure_airport_array = Spotter::getAllAirportInfo($row['departure_airport_icao']);
+				$departure_airport_array = Spotter::getAllAirportInfo($row['departure_airport_icao']);
 				if (isset($departure_airport_array[0]['name'])) {
-			$temp_array['departure_airport_name'] = $departure_airport_array[0]['name'];
-			$temp_array['departure_airport_city'] = $departure_airport_array[0]['city'];
-			$temp_array['departure_airport_country'] = $departure_airport_array[0]['country'];
-			$temp_array['departure_airport_iata'] = $departure_airport_array[0]['iata'];
-			$temp_array['departure_airport_icao'] = $departure_airport_array[0]['icao'];
-			$temp_array['departure_airport_latitude'] = $departure_airport_array[0]['latitude'];
-			$temp_array['departure_airport_longitude'] = $departure_airport_array[0]['longitude'];
-			$temp_array['departure_airport_altitude'] = $departure_airport_array[0]['altitude'];
+					$temp_array['departure_airport_name'] = $departure_airport_array[0]['name'];
+					$temp_array['departure_airport_city'] = $departure_airport_array[0]['city'];
+					$temp_array['departure_airport_country'] = $departure_airport_array[0]['country'];
+					$temp_array['departure_airport_iata'] = $departure_airport_array[0]['iata'];
+					$temp_array['departure_airport_icao'] = $departure_airport_array[0]['icao'];
+					$temp_array['departure_airport_latitude'] = $departure_airport_array[0]['latitude'];
+					$temp_array['departure_airport_longitude'] = $departure_airport_array[0]['longitude'];
+					$temp_array['departure_airport_altitude'] = $departure_airport_array[0]['altitude'];
 				} else $departure_airport_array = Spotter::getAllAirportInfo('NA');
 			
 			} else $departure_airport_array = Spotter::getAllAirportInfo('NA');
+			if (isset($row['departure_airport_time'])) {
+				$temp_array['departure_airport_time'] = $row['departure_airport_time'];
+			}
 			
 			if ($row['arrival_airport_icao'] != '') {
 			$arrival_airport_array = Spotter::getAllAirportInfo($row['arrival_airport_icao']);
@@ -161,6 +164,9 @@ class Spotter{
 			$temp_array['arrival_airport_altitude'] = $arrival_airport_array[0]['altitude'];
 				} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
 			} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
+			if (isset($row['arrival_airport_time'])) {
+				$temp_array['arrival_airport_time'] = $row['arrival_airport_time'];
+			}
       
 			$temp_array['query_number_rows'] = $num_rows;
 			
@@ -1067,7 +1073,7 @@ class Spotter{
 		if ($date != "")
 		{
 			$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date ";
-			$query_values = array(':date',$date);
+			$query_values = array(':date' => $date);
 		}
 		
 		if ($limit != "")
@@ -1342,7 +1348,7 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
 
-		while($row = $sth->feth(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$highlight = $row['highlight'];
 		}
@@ -1361,7 +1367,7 @@ class Spotter{
 	public static function getAirportIcao($airport_iata = '')
 	{
 		
-		$airport_iata = filter_var($airport,FILTER_SANITIZE_STRING);
+		$airport_iata = filter_var($airport_iata,FILTER_SANITIZE_STRING);
 
 		$query_values = array();
 
@@ -1375,13 +1381,10 @@ class Spotter{
 		$airport_array = array();
 		$temp_array = array();
 		
-		while($row = $sth->fetch(PDO::FETCH_ASSOC))
-		{
-			$temp_array['icao'] = $row['icao'];
-			$airport_array[] = $temp_array;
-		}
-
-		return $airport_array['icao'];
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if (count($row) > 0) {
+			return $row['icao'];
+		} else return '';
 	}
 	
 	/**
@@ -2145,7 +2148,7 @@ class Spotter{
 	* @return String success or false
 	*
 	*/	
-	public static function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '')
+	public static function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '')
 	{
 		global $globalURL;
 		
@@ -2342,10 +2345,10 @@ class Spotter{
                 if (count($arrival_airport_array) == 0) {
                         $arrival_airport_array = Spotter::getAllAirportInfo('NA');
                 }
-                $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date) 
-                VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date)";
+                $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time) 
+                VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time)";
 
-                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country'],':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date);
+                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country'],':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date,':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time);
 
 
 		try {
@@ -6488,30 +6491,30 @@ class Spotter{
 		$google_data = curl_exec($ch);
 		curl_close($ch);
 		
-    $google_json = json_decode($google_data);
-    $imageFound = false;
-    
-    foreach($google_json->responseData->results AS $result)
-    {
-      if ($imageFound == false)
-      {
-	      $google_image_url = (string) $result->url;
+		$google_json = json_decode($google_data);
+		$imageFound = false;
+                $image_url = '';
+		foreach($google_json->responseData->results AS $result)
+		{
+			if ($imageFound == false)
+			{
+				$google_image_url = (string) $result->url;
 	      
-	      //make sure we only get images from planespotters.net
-	      if (strpos($google_image_url,'planespotters.net') !== false && strpos($google_image_url,'static') === false) {
-	      
-	      	//lets replace thumbnail with original to get the large version of the picture
-	      	$image_url['original'] = str_replace("thumbnail", "original", $google_image_url);
+				//make sure we only get images from planespotters.net
+				if (strpos($google_image_url,'planespotters.net') !== false && strpos($google_image_url,'static') === false) 
+				{
+					//lets replace thumbnail with original to get the large version of the picture
+					$image_url['original'] = str_replace("thumbnail", "original", $google_image_url);
 	      	
-	      	//lets replace original with thumbnail to get the thumbnail version of the picture
-	      	$image_url['thumbnail'] = str_replace("original", "thumbnail", $image_url['original']);
+					//lets replace original with thumbnail to get the thumbnail version of the picture
+					$image_url['thumbnail'] = str_replace("original", "thumbnail", $image_url['original']);
 	      	
-	      	$imageFound = true;
-	      }
-      }
-    }
+					$imageFound = true;
+				}
+			}
+		}
 		
-		return $image_url;	
+		return $image_url;
 	}
 	
 	
