@@ -37,4 +37,8 @@ $globalSBS1TimeOut = '15';
 
 //BIT.LY API INFO (used in the search page for a shorter URL)
 $globalBitlyAccessToken = ''; //the access token from the bit.ly API
+
+//BRITISH AIRWAYS API INFO
+$globalBritishAirwaysKey = '';
+
 ?>
