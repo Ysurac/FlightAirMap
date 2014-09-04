@@ -2333,7 +2333,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (2279, 2280, 'Executive Flight', 'N', '', 'EXE', 'EXEC', 'United States', 'N', 'passenger'),
 (2280, 2281, 'Executive Flight Operations Ontario Government', 'N', '', 'TRI', 'TRILLIUM', 'Canada', 'N', 'passenger'),
 (2281, 2282, 'Executive Jet Charter', 'N', '', 'EXJ', '', 'United Kingdom', 'N', 'passenger'),
-(2282, 2283, 'Executive Jet Management', 'N', '', 'EJM', 'JET SPEED', 'United States', 'N', 'passenger'),
+(2282, 2283, 'Executive Jet Management', 'N', '', 'EJM', 'JET SPEED', 'United States', 'Y', 'passenger'),
 (2283, 2284, 'Executive Turbine Aviation', 'N', '', 'TEA', 'TRAVELMAX', 'South Africa', 'N', 'passenger'),
 (2284, 2285, 'Eximflight', 'N', '', 'EXF', 'EXIMFLIGHT', 'Mexico', 'N', 'passenger'),
 (2285, 2286, 'Exin', 'N', '', 'EXN', 'EXIN', 'Poland', 'N', 'passenger'),
@@ -4489,7 +4489,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (4431, 4439, 'Seco International', 'N', '', 'SIJ', '', 'Japan', 'N', 'passenger'),
 (4432, 4440, 'Servicios Aeronauticos Integrales', 'N', '', 'SIL', 'SERVICIOS INTEGRALES', 'Mexico', 'N', 'passenger'),
 (4433, 4441, 'Star Air', 'N', '', 'SIM', '', 'Sierra Leone', 'N', 'passenger'),
-(4434, 4442, 'Sirio', 'N', '', 'SIO', 'SIRIO', 'Italy', 'N', 'passenger'),
+(4434, 4442, 'Sirio', 'N', '', 'SIO', 'SIRIO', 'Italy', 'Y', 'passenger'),
 (4435, 4443, 'Salair', 'N', '', 'SIR', 'SALAIR', 'United States', 'N', 'passenger'),
 (4436, 4444, 'Saber Airlines', 'N', '', 'SIS', '', 'Egypt', 'N', 'passenger'),
 (4437, 4445, 'SITA', 'N', 'XS', 'SIT', '', 'Belgium', 'N', 'passenger'),
@@ -4831,7 +4831,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (4773, 4781, 'Skynet Asia Airways', 'N', '6J', 'SNJ', 'NEWSKY', 'Japan', 'Y', 'passenger'),
 (4774, 4782, 'Southeast Airlines (Sun Jet International)', 'N', '', 'SNK', 'SUN KING', 'United States', 'N', 'passenger'),
 (4775, 4783, 'Soonair Lines', 'N', '', 'SNL', 'SOONAIR', 'United States', 'N', 'passenger'),
-(4776, 4784, 'Servizi Aerei', 'N', '', 'SNM', 'SERVIZI AEREI', 'Italy', 'N', 'passenger'),
+(4776, 4784, 'Servizi Aerei', 'N', '', 'SNM', 'SERVIZI AEREI', 'Italy', 'Y', 'passenger'),
 (4777, 4785, 'Sun Pacific International', 'N', '', 'SNP', 'SUN PACIFIC', 'United States', 'N', 'passenger'),
 (4778, 4786, 'Sun Quest Executive Air Charter', 'N', '', 'SNQ', 'EXECU-QUEST', 'United States', 'N', 'passenger'),
 (4779, 4787, 'Societe Centrafricaine De Transport Aerien', 'N', '', 'SNS', '', 'Central African Republic', 'N', 'passenger'),
@@ -6091,7 +6091,9 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (7029, 0, 'K5-Aviation', '', '','KAY','KAYAK','Germany','Y','Passenger'),
 (7030, 0, 'Empire Aviation Group', '', '','MJE','EMJET','United Arab Emirates','Y','Passenger'),
 (7031, 0, 'Avcon Jet', '', '','AOJ','ASTERIX','Austria','Y','Passenger'),
-(7032, 0, 'Aeronautica Militare Italiana', '', '','IAM','ITALIAN AIRFORCE','Italy','Y','military');
+(7032, 0, 'Aeronautica Militare Italiana', '', '','IAM','ITALIAN AIRFORCE','Italy','Y','military'),
+(7033, 0, 'Westair Aviation', '', '','EFF','EMERALD','Italy','Y','Passenger'),
+(7034, 0, 'Al Jaber Aviation', '', '','LJB','AL JABER','United Arab Emirates','Y','Passenger');
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
