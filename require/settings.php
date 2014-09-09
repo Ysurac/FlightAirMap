@@ -29,6 +29,9 @@ $globalFlightAware = FALSE; //set to TRUE to use FlightAware as data import
 $globalFlightAwareUsername = ''; //FlightAware Username
 $globalFlightAwarePassword = ''; //FlightAware Password/API key
 
+// TIMEZONE
+$globalTimezone = 'Europe/Paris';
+
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
 $globalSBS1Host = '127.0.0.1';
