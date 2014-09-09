@@ -74,7 +74,7 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 
 		if (!isset($all_flights[$id]['hex'])) {
 		    $all_flights[$id] = array('hex' => $hex,'datetime' => $line[8].' '.$line[7],'aircraft_icao' => Spotter::getAllAircraftType($hex));
-		    $all_flights[$id] = array_merge($all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => ''));
+		    $all_flights[$id] = array_merge($all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => ''));
 		    $all_flights[$id] = array_merge($all_flights[$id],array('lastupdate' => time()));
 		    if ($debug) echo "New aircraft !!! \n";
 		}
@@ -97,14 +97,14 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 					if ($all_flights[$id]['departure_airport'] != Spotter::getAirportIcao($schedule['DepartureAirportIATA'])) {
 						$airport_icao = Spotter::getAirportIcao($schedule['DepartureAirportIATA']);
 						if ($airport_icao != '') $all_flights[$id]['departure_airport'] = $airport_icao;
-						if ($debug) echo "Change departure airport !!!! \n";
+						if ($debug) echo "Change departure airport !!!! for ".$line[10]."\n";
 					}
 				}
 				if ($schedule['ArrivalAirportIATA'] != '') {
 					if ($all_flights[$id]['arrival_airport'] != Spotter::getAirportIcao($schedule['ArrivalAirportIATA'])) {
 						$airport_icao = Spotter::getAirportIcao($schedule['ArrivalAirportIATA']);
 						if ($airport_icao != '') $all_flights[$id]['arrival_airport'] = $airport_icao;
-						if ($debug) echo "Change arrival airport !!!! \n";
+						if ($debug) echo "Change arrival airport !!!! for ".$line[10]."\n";
 					}
 				}
 			}
@@ -129,6 +129,10 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 		if ($line[12] != '') {
 			$all_flights[$id] = array_merge($all_flights[$id],array('speed' => $line[12]));
 			$dataFound = true;
+		}
+		if ($line[17] != '') {
+			$all_flights[$id] = array_merge($all_flights[$id],array('squawk' => $line[17]));
+			//$dataFound = true;
 		}
 
 		$waypoints = '';
@@ -167,7 +171,7 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 			//echo "{$line[8]} {$line[7]} - MODES:{$line[4]}  CALLSIGN:{$line[10]}   ALT:{$line[11]}   VEL:{$line[12]}   HDG:{$line[13]}   LAT:{$line[14]}   LON:{$line[15]}   VR:{$line[16]}   SQUAWK:{$line[17]}\n";
 			if ($debug) echo 'hex : '.$all_flights[$id]['hex'].' - ident : '.$all_flights[$id]['ident'].' - ICAO : '.$all_flights[$id]['aircraft_icao'].' - Departure Airport : '.$all_flights[$id]['departure_airport'].' - Arrival Airport : '.$all_flights[$id]['arrival_airport'].' - Latitude : '.$all_flights[$id]['latitude'].' - Longitude : '.$all_flights[$id]['longitude'].' - waypoints : '.$waypoints.' - Altitude : '.$all_flights[$id]['altitude'].' - Heading : '.$all_flights[$id]['heading'].' - Speed : '.$all_flights[$id]['speed'].' - Departure Airport Time : '.$all_flights[$id]['departure_airport_time'].' - Arrival Airport time : '.$all_flights[$id]['arrival_airport_time']."\n";
 
-			$result = SpotterLive::addLiveSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed'], $all_flights[$id]['departure_airport_time'], $all_flights[$id]['arrival_airport_time']);
+			$result = SpotterLive::addLiveSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed'], $all_flights[$id]['departure_airport_time'], $all_flights[$id]['arrival_airport_time'], $all_flights[$id]['squawk']);
 			if ($debug) echo $result."\n";
 		}
     	    }

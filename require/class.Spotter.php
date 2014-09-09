@@ -167,6 +167,12 @@ class Spotter{
 			if (isset($row['arrival_airport_time'])) {
 				$temp_array['arrival_airport_time'] = $row['arrival_airport_time'];
 			}
+			if (isset($row['squawk'])) {
+				$temp_array['squawk'] = $row['squawk'];
+				if ($row['squawk'] != '') {
+					$temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],'FR');
+				}
+			}
       
 			$temp_array['query_number_rows'] = $num_rows;
 			
@@ -1355,8 +1361,38 @@ class Spotter{
 		if (isset($highlight)) return $highlight;
 	}
 
-
 	
+	/**
+	* Gets the squawk usage from squawk code
+	*
+	* @param String $squawk squawk code
+	* @param String $country country
+	* @return String usage
+	*
+	*/
+	public static function getSquawkUsage($squawk = '',$country = 'FR')
+	{
+		
+		$squawk = filter_var($squawk,FILTER_SANITIZE_STRING);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
+
+		$query_values = array();
+
+		$query  = "SELECT squawk.* FROM squawk WHERE squawk.code = :squawk AND squawk.country = :country LIMIT 1";
+		$query_values = array(':squawk' => $squawk, ':country' => $country);
+		
+		$Connection = new Connection();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute($query_values);
+    
+		$temp_array = array();
+		
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if (count($row) > 0) {
+			return $row['usage'];
+		} else return '';
+	}
+
 	/**
 	* Gets the airport icao from the iata
 	*

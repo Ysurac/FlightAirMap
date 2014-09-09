@@ -115,6 +115,13 @@ $output = '{';
 							$output .= '"altitude": "'.$spotter_item['altitude'].'",';
 							$output .= '"heading": "'.$spotter_item['heading'].'",';
 							$output .= '"image": "'.$image.'",';
+						if (isset($spotter_item['squawk'])) {
+							$output .= '"squawk": "'.$spotter_item['squawk'].'",';
+						}
+						if (isset($spotter_item['squawk_usage'])) {
+							$output .= '"squawk_usage": "'.$spotter_item['squawk_usage'].'",';
+						}
+							// FIXME : type when not aircraft ?
 							$output .= '"type": "aircraft"';
 						$output .= '},';
 						$output .= '"geometry": {';
