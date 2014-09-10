@@ -6516,42 +6516,24 @@ class Spotter{
 	*/
 	public static function findAircraftImage($airline_aircraft_type)
 	{
-		$google_url = 'https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q='.$airline_aircraft_type.'%20site:planespotters.net';
-		
-		$google_url = str_replace(" ", "%20", $google_url);
+		$airline_aircraft_type = filter_var($airline_aircraft_type,FILTER_SANITIZE_STRING);
+		if ($airline_aircraft_type == '') return '';
+		$url= 'http://www.planespotters.net/Aviation_Photos/search.php?tag='.$airline_aircraft_type.'&output=rss';
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_URL, $google_url);
-		$google_data = curl_exec($ch);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		$data = curl_exec($ch);
 		curl_close($ch);
-		
-		$google_json = json_decode($google_data);
-		$imageFound = false;
-                $image_url = '';
-                if (count($google_json->responseData->results) > 0) {
-			foreach($google_json->responseData->results as $result)
-			{
-				if ($imageFound == false)
-				{
-					$google_image_url = (string) $result->url;
-	      
-					//make sure we only get images from planespotters.net
-					if (strpos($google_image_url,'planespotters.net') !== false && strpos($google_image_url,'static') === false) 
-					{
-						//lets replace thumbnail with original to get the large version of the picture
-						$image_url['original'] = str_replace("thumbnail", "original", $google_image_url);
-	      	
-						//lets replace original with thumbnail to get the thumbnail version of the picture
-						$image_url['thumbnail'] = str_replace("original", "thumbnail", $image_url['original']);
-	      	
-						$imageFound = true;
-					}
-				}
-			}
-		}
-		
+		  
+		$xml = new SimpleXmlElement($data);
+		if (!isset($xml->channel->item)) return '';
+		$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
+		$image_url['thumbnail'] = $thumbnail_url;
+		$image_url['original'] = str_replace('thumbnail','original',$thumbnail_url);
+		$image_url['copyright'] = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->copyright);
+
 		return $image_url;
 	}
 	
