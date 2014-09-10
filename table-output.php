@@ -225,7 +225,8 @@ if (strtolower($current_page) == "search")
 print '<tbody>';
 foreach($spotter_array as $spotter_item)
 {
-	if (isset($globalTimezone) {
+	if (isset($globalTimezone))
+	{
 		date_default_timezone_set($globalTimezone);
 	} else date_default_timezone_set('UTC');
 	if ($showSpecial == true)
