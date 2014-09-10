@@ -6530,22 +6530,24 @@ class Spotter{
 		$google_json = json_decode($google_data);
 		$imageFound = false;
                 $image_url = '';
-		foreach($google_json->responseData->results AS $result)
-		{
-			if ($imageFound == false)
+                if (count($google_json->responseData->results) > 0) {
+			foreach($google_json->responseData->results as $result)
 			{
-				$google_image_url = (string) $result->url;
-	      
-				//make sure we only get images from planespotters.net
-				if (strpos($google_image_url,'planespotters.net') !== false && strpos($google_image_url,'static') === false) 
+				if ($imageFound == false)
 				{
-					//lets replace thumbnail with original to get the large version of the picture
-					$image_url['original'] = str_replace("thumbnail", "original", $google_image_url);
+					$google_image_url = (string) $result->url;
+	      
+					//make sure we only get images from planespotters.net
+					if (strpos($google_image_url,'planespotters.net') !== false && strpos($google_image_url,'static') === false) 
+					{
+						//lets replace thumbnail with original to get the large version of the picture
+						$image_url['original'] = str_replace("thumbnail", "original", $google_image_url);
 	      	
-					//lets replace original with thumbnail to get the thumbnail version of the picture
-					$image_url['thumbnail'] = str_replace("original", "thumbnail", $image_url['original']);
+						//lets replace original with thumbnail to get the thumbnail version of the picture
+						$image_url['thumbnail'] = str_replace("original", "thumbnail", $image_url['original']);
 	      	
-					$imageFound = true;
+						$imageFound = true;
+					}
 				}
 			}
 		}
