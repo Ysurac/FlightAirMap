@@ -114,6 +114,12 @@ body.page-index .leaflet-popup-content-wrapper .right .callsign-details{
   -moz-border-radius-topright: 12px;
   border-top-right-radius: 12px;
 }
+body.page-index .leaflet-popup-content-wrapper .bottom{
+  background-color:#1a3151;
+  color:#fff;
+  padding:10px;
+  border-radius: 0 0 12px 12px;
+}
 body.page-index .leaflet-popup-content-wrapper .right .callsign-details .callsign a{
   font-size:1.5em;
   color:#fff;
