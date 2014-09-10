@@ -222,7 +222,7 @@ if (strtolower($current_page) == "search")
 	}
 }
 
-print '<tbody>';
+print '<tbody>'."\n";
 foreach($spotter_array as $spotter_item)
 {
 	if (isset($globalTimezone))
@@ -231,116 +231,116 @@ foreach($spotter_array as $spotter_item)
 	} else date_default_timezone_set('UTC');
 	if ($showSpecial == true)
 	{
-		print '<tr class="special">';
-		print '<td colspan="7"><h4>'.$spotter_item['registration'].' - '.$spotter_item['highlight'].'</h4></td>';
-		print '</tr>';
+		print '<tr class="special">'."\n";
+		print '<td colspan="7"><h4>'.$spotter_item['registration'].' - '.$spotter_item['highlight'].'</h4></td>'."\n";
+		print '</tr>'."\n";
 	}
-	print '<tr>';
+	print '<tr>'."\n";
 	if ($spotter_item['image_thumbnail'] != "")
 	{
-		print '<td class="aircraft_thumbnail">';
+		print '<td class="aircraft_thumbnail">'."\n";
 		//print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" alt="Click to see more information about this flight" title="Click to see more information about this flight" width="100px" /></a>';
 		if (!isset($spotter_item['airline_name']) && isset($spotter_item['aircraft_name'])) {
-			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')<br />Airline: Not available" data-html="true" width="100px" /></a>';
+			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')<br />Airline: Not available" data-html="true" width="100px" /></a>'."\n";
 		} elseif (!isset($spotter_item['aircraft_name']) && isset($spotter_item['airline_name'])) {
-			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: ('.$spotter_item['aircraft_type'].')<br />Airline: '.$spotter_item['airline_name'].'" data-html="true" width="100px" /></a>';
+			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: ('.$spotter_item['aircraft_type'].')<br />Airline: '.$spotter_item['airline_name'].'" data-html="true" width="100px" /></a>'."\n";
 		} elseif (!isset($spotter_item['aircraft_name']) && !isset($spotter_item['airline_name'])) {
-			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: ('.$spotter_item['aircraft_type'].')<br />Airline: Not available" data-html="true" width="100px" /></a>';
+			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: ('.$spotter_item['aircraft_type'].')<br />Airline: Not available" data-html="true" width="100px" /></a>'."\n";
 		} else {
-			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')<br />Airline: '.$spotter_item['airline_name'].'" data-html="true" width="100px" /></a>';
+			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')<br />Airline: '.$spotter_item['airline_name'].'" data-html="true" width="100px" /></a>'."\n";
 		}
-		print '</td>';
+		print '</td>'."\n";
 	} else {
-		print '<td class="aircraft_thumbnail">';
+		print '<td class="aircraft_thumbnail">'."\n";
    //   	 	print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" alt="Click to see more information about this flight" title="Click to see more information about this flight" width="100px" /></a>';
 	//}
 		if (!isset($spotter_item['airline_name']) && !isset($spotter_item['aircraft_name'])) {
-			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: Not available ('.$spotter_item['aircraft_type'].')<br />Airline: Not available" data-html="true" width="100px" /></a>';
+			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: Not available ('.$spotter_item['aircraft_type'].')<br />Airline: Not available" data-html="true" width="100px" /></a>'."\n";
 		} elseif (!isset($spotter_item['aircraft_name'])) {
-			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: Not available ('.$spotter_item['aircraft_type'].')<br />Airline: '.$spotter_item['airline_name'].'" data-html="true" width="100px" /></a>';
+			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: Not available ('.$spotter_item['aircraft_type'].')<br />Airline: '.$spotter_item['airline_name'].'" data-html="true" width="100px" /></a>'."\n";
 		} elseif (!isset($spotter_item['airline_name'])) {
-			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')<br />Airline: Not available" data-html="true" width="100px" /></a>';
+			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - Not available" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')<br />Airline: Not available" data-html="true" width="100px" /></a>'."\n";
 		} else {
-			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')<br />Airline: '.$spotter_item['airline_name'].'" data-html="true" width="100px" /></a>';
+			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" alt="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_type'].' - '.$spotter_item['airline_name'].'" data-content="Registration: '.$spotter_item['registration'].'<br />Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')<br />Airline: '.$spotter_item['airline_name'].'" data-html="true" width="100px" /></a>'."\n";
 		}
-		print '</td>';
+		print '</td>'."\n";
 	}
-	if (@getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
+	if (@getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
 	{
-		print '<td class="logo">';
-		print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png" alt="Click to see airline information" title="Click to see airline information" /></a>';
-		print '</td>';
+		print '<td class="logo">'."\n";
+		print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png" alt="Click to see airline information" title="Click to see airline information" /></a>'."\n";
+		print '</td>'."\n";
 	} else {
-		print '<td class="logo-no-image">';
+		print '<td class="logo-no-image">'."\n";
 		if (isset($spotter_item['airline_icao']))
 		{
-			print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'">'.$spotter_item['airline_name'].'</a>';
+			print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'">'.$spotter_item['airline_name'].'</a>'."\n";
 		} else {
-			print '<a href="'.$globalURL.'/airline/NA">Not Available</a>';
+			print '<a href="'.$globalURL.'/airline/NA">Not Available</a>'."\n";
 		}
-		print '</td>';
+		print '</td>'."\n";
 	}
-	print '<td class="ident">';
+	print '<td class="ident">'."\n";
 	if ($spotter_item['ident'] != "")
 	{
-		print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'.$spotter_item['ident'].'</a>';
+		print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'.$spotter_item['ident'].'</a>'."\n";
 	} else {
-		print 'N/A';
+		print 'N/A'."\n";
 	}
-	print '</td>';
-	print '<td class="type">';
+	print '</td>'."\n";
+	print '<td class="type">'."\n";
 	if (!isset($spotter_item['aircraft_name'])) {
-		print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">Not available</a></span>';
+		print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">Not available</a></span>'."\n";
 	} else {
-		print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_name'].'</a></span>';
+		print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_name'].'</a></span>'."\n";
 	}
-	print '<span class="mobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a></span>';
-	print '</td>';
-	print '<td class="departure_airport">';
+	print '<span class="mobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a></span>'."\n";
+	print '</td>'."\n";
+	print '<td class="departure_airport">'."\n";
 	if (!isset($spotter_item['departure_airport']) || !isset($spotter_item['departure_airport_city'])) {
-		print '<span class="nomobile">Not available</span>';
-		print '<span class="mobile">Not available</span>';
+		print '<span class="nomobile">Not available</span>'."\n";
+		print '<span class="mobile">Not available</span>'."\n";
 	} else {
-		print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')</a></span>';
-		print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport'].'</a></span>';
+		print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')</a></span>'."\n";
+		print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport'].'</a></span>'."\n";
 	}
 	if (isset($spotter_item['departure_airport_time'])) {
-		print '<br /><span class="airport_time">'.$spotter_item['departure_airport_time'].'</span>';
+		print '<br /><span class="airport_time">'.$spotter_item['departure_airport_time'].'</span>'."\n";
 	}
-	print '</td>';
-	print '<td class="arrival_airport">';
+	print '</td>'."\n";
+	print '<td class="arrival_airport">'."\n";
 	if (!isset($spotter_item['arrival_airport']) || !isset($spotter_item['arrival_airport_city'])) {
-		print '<span class="nomobile">Not available</span>';
-		print '<span class="mobile">Not available</span>';
+		print '<span class="nomobile">Not available</span>'."\n";
+		print '<span class="mobile">Not available</span>'."\n";
 	} else {
-		print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a></span>';
-		print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport'].'</a></span>';
+		print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a></span>'."\n";
+		print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport'].'</a></span>'."\n";
 	}
 	if (isset($spotter_item['arrival_airport_time'])) {
-		print '<br /><span class="airport_time">'.$spotter_item['arrival_airport_time'].'</span>';
+		print '<br /><span class="airport_time">'.$spotter_item['arrival_airport_time'].'</span>'."\n";
 	}
-	print '</td>';
+	print '</td>'."\n";
 	if (strtolower($current_page) == "date")
 	{
-		print '<td class="time">';
-		print '<span class="nomobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("g:i a T", strtotime($spotter_item['date_iso_8601'])).'</a></span>';
-		print '<span class="mobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("g:i a T", strtotime($spotter_item['date_iso_8601'])).'</a></span>';
-		print '</td>';
+		print '<td class="time">'."\n";
+		print '<span class="nomobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("g:i a T", strtotime($spotter_item['date_iso_8601'])).'</a></span>'."\n";
+		print '<span class="mobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("g:i a T", strtotime($spotter_item['date_iso_8601'])).'</a></span>'."\n";
+		print '</td>'."\n";
 	} else if (strtolower($current_page) == "index")
 	{
-		print '<td class="time">';
-		print '<span class="nomobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.$spotter_item['date'].'</a></span>';
-		print '<span class="mobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.$spotter_item['date'].'</a></span>';
-		print '</td>';
+		print '<td class="time">'."\n";
+		print '<span class="nomobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.$spotter_item['date'].'</a></span>'."\n";
+		print '<span class="mobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.$spotter_item['date'].'</a></span>'."\n";
+		print '</td>'."\n";
 	} else {
-		print '<td class="date">';
-		print '<span class="nomobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("M j, Y, g:i a", strtotime($spotter_item['date_iso_8601'])).'</a></span>';
-		print '<span class="mobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("j/n/Y g:i a", strtotime($spotter_item['date_iso_8601'])).'</a></span>';
-		print '</td>';
+		print '<td class="date">'."\n";
+		print '<span class="nomobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("M j, Y, g:i a", strtotime($spotter_item['date_iso_8601'])).'</a></span>'."\n";
+		print '<span class="mobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("j/n/Y g:i a", strtotime($spotter_item['date_iso_8601'])).'</a></span>'."\n";
+		print '</td>'."\n";
 	}
-	print '</tr>';
+	print '</tr>'."\n";
 }
-print '<tbody>';
-print '</table>';
-print '</div>';
+print '<tbody>'."\n";
+print '</table>'."\n";
+print '</div>'."\n";
 ?>
