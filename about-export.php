@@ -8,7 +8,7 @@ require('header.php');
 
 <div class="info column">
 
-    <h1>Exporting Barrie Spotter Data</h1> 
+    <h1>Exporting <?php print $globalName; ?> Data</h1> 
     
     <p>On the <a href="<?php print $globalURL; ?>/search">search page</a> there is a option to 'export' the search results in over 10 different formats. Most of these formats are industry standards, while a few have lesser adaption but could still have certain use cases.</p>
     <h3>Supported Formats</h3>
@@ -45,7 +45,7 @@ require('header.php');
     
     <h3>Data License</h3>
     
-    <p>The data published by Barrie Spotter is made available under the Open Database License: <a href="http://opendatacommons.org/licenses/odbl/1.0/" target="_blank">http://opendatacommons.org/licenses/odbl/1.0/</a>. Any rights in individual contents of the database are licensed under the Database Contents License: <a href="http://opendatacommons.org/licenses/dbcl/1.0/" target="_blank">http://opendatacommons.org/licenses/dbcl/1.0/</a> - See more at: <a href="http://opendatacommons.org/licenses/odbl/#sthash.3wkOS6zA.dpuf" target="_blank">http://opendatacommons.org/licenses/odbl/#sthash.3wkOS6zA.dpuf</a></p>
+    <p>The data published by <?php print $globalName; ?> is made available under the Open Database License: <a href="http://opendatacommons.org/licenses/odbl/1.0/" target="_blank">http://opendatacommons.org/licenses/odbl/1.0/</a>. Any rights in individual contents of the database are licensed under the Database Contents License: <a href="http://opendatacommons.org/licenses/dbcl/1.0/" target="_blank">http://opendatacommons.org/licenses/dbcl/1.0/</a> - See more at: <a href="http://opendatacommons.org/licenses/odbl/#sthash.3wkOS6zA.dpuf" target="_blank">http://opendatacommons.org/licenses/odbl/#sthash.3wkOS6zA.dpuf</a></p>
     
 		
 </div>

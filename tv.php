@@ -6,7 +6,7 @@ require('require/class.Spotter.php');
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Barrie Spotter TV</title>
+<title>Spotter TV</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="<?php print $globalURL; ?>/images/touch-icon.png">
@@ -53,7 +53,7 @@ print '<div class="table-responsive">';
 			      	 print '</td>';
 			    	 }
 		    	 }
-		    	if (@getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
+		    	if (@getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
 		  		{
 		    		print '<td class="logo">';
 		    			print '<img src="'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png" />';
@@ -132,7 +132,7 @@ $( document ).ready(function() {
 function getNewDataTV()
 {
    
-   $.getJSON( "http://www.barriespotter.com/dev/getLatestData-tv.php?other_i="+other_i+"&image=<?php print $_GET['image']; ?>&q=<?php print $_GET['q']; ?>", function( data ) {
+   $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&image=<?php print $_GET['image']; ?>&q=<?php print $_GET['q']; ?>", function( data ) {
    
    	$.each(data.flights, function(i, item) {
 	   	if (item.html != "")

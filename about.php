@@ -8,9 +8,10 @@ require('header.php');
 ?>
 
 <div class="info column">
-    <h1>About Barrie Spotter</h1>
+    <h1>About <?php print $globalName; ?></h1>
 
-    <p>This is an open source project displaying <u>most</u> (mostly <a href="http://en.wikipedia.org/wiki/Instrument_flight_rules" target="_blank">IFR</a>) flights that have flown near the <a href="http://en.wikipedia.org/wiki/Barrie" target="_blank">Barrie, Ontario, Canada</a> area. The data is provided by <a href="http://flightaware.com/" target="_blank">FlightAware</a>. This project was created by me (<a href="http://www.mariotrunz.com" target="_blank">Mario Trunz</a>) as part of my passion of aviation and web design.</p>
+    <p>This is an open source project displaying <u>most</u> (mostly <a href="http://en.wikipedia.org/wiki/Instrument_flight_rules" target="_blank">IFR</a>) flights that have flown near this site area.
+    <?php if ($globalFlightAware) { ?> The data is provided by <a href="http://flightaware.com/" target="_blank">FlightAware</a>.<?php } ?> This project was created by (<a href="http://www.mariotrunz.com" target="_blank">Mario Trunz</a>) as part of his passion of aviation and web design and forked by Ycarus from <a href="http://www.zugaina.com" target="_blank">Zugaina</a>.</p>
     <a name="history"></a>
 		<h3>History</h3>
 
@@ -23,7 +24,7 @@ require('header.php');
     <a name="coverage"></a>
     <h3>Coverage</h3>
 
-    <p>I have set up a geofence of roughly 40-50km around Barrie, from the edge of Southern Georgian Bay to southern part of Innisfil and from around Collingwood eastward to just east of Lake Simcoe. The coverage area was designed for planes that are visible within the Barrie area. All airplanes flying above 30,000 feet are visible throughout the entire area from Barrie, as long as the weather cooperates off course. The map below points out the coverage area:</p>
+    <p>The map below points out the coverage area:</p>
 
     <script>
     $( document ).ready(function() {
@@ -67,18 +68,21 @@ require('header.php');
     <a name="source"></a>
     <h3>Source &amp; Credits</h3>
 
-     <p>The data from FlightAware is coming from multiple sources. Not every aircraft is tracked on FlightAware, especially not older aircrafts as well as government aircrafts, however most modern airliners will work. You can learn more about how it works on <a href="http://flightaware.com/adsb/" target="_blank">FlightAware's ADS-B</a> page. Also, not every aircraft is shown to have flown exactly at that minute as seen on this site (aka real-time). There is a 5 minute delay on some of the sources.</p>
-
-    <p>However, none of this project would have been possible without the help and contributions of these organizations and people:</p>
+    <?php
+	if ($globalFlightAware) { 
+    ?>
+    <p>The data from FlightAware is coming from multiple sources. Not every aircraft is tracked on FlightAware, especially not older aircrafts as well as government aircrafts, however most modern airliners will work. You can learn more about how it works on <a href="http://flightaware.com/adsb/" target="_blank">FlightAware's ADS-B</a> page. Also, not every aircraft is shown to have flown exactly at that minute as seen on this site (aka real-time). There is a 5 minute delay on some of the sources.</p>
+    <?php } ?>
+    <p>None of this project would have been possible without the help and contributions of these organizations and people:</p>
 
     <ul>
-    	<li><a href="http://flightaware.com" target="_blank">FlightAware</a> - I use their API to access the data which allows me to get additional information. Data sources come from live ADS-B, FAA and other government agencies.</li>
+    	<li><a href="http://flightaware.com" target="_blank">FlightAware</a> - With their API to access the data which allows me to get additional information. Data sources come from live ADS-B, FAA and other government agencies.</li>
     	<li><a href="http://sonicgoose.com" target="_blank">Sonic Goose (Rob Jones)</a> - Contributes ADS-B data within the Greater Toronto Area and South-central Ontario to numerous flight tracking sites, including FlightAware. A very big thank you to him! :)</li>
     </ul>
 
     <h3>Data License</h3>
 
-    <p>The data published by Barrie Spotter is made available under the Open Database License: <a href="http://opendatacommons.org/licenses/odbl/1.0/" target="_blank">http://opendatacommons.org/licenses/odbl/1.0/</a>. Any rights in individual contents of the database are licensed under the Database Contents License: <a href="http://opendatacommons.org/licenses/dbcl/1.0/" target="_blank">http://opendatacommons.org/licenses/dbcl/1.0/</a> - See more at: <a href="http://opendatacommons.org/licenses/odbl/#sthash.3wkOS6zA.dpuf" target="_blank">http://opendatacommons.org/licenses/odbl/#sthash.3wkOS6zA.dpuf</a></p>
+    <p>The data published by <?php print $globalName; ?> is made available under the Open Database License: <a href="http://opendatacommons.org/licenses/odbl/1.0/" target="_blank">http://opendatacommons.org/licenses/odbl/1.0/</a>. Any rights in individual contents of the database are licensed under the Database Contents License: <a href="http://opendatacommons.org/licenses/dbcl/1.0/" target="_blank">http://opendatacommons.org/licenses/dbcl/1.0/</a> - See more at: <a href="http://opendatacommons.org/licenses/odbl/#sthash.3wkOS6zA.dpuf" target="_blank">http://opendatacommons.org/licenses/odbl/#sthash.3wkOS6zA.dpuf</a></p>
     
     <h3>Image Credits</h3>
     <p>Airport icon from <a href="http://mapicons.nicolasmollet.com/">http://mapicons.nicolasmollet.com/</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 3.0 BY-SA</a>.</p>

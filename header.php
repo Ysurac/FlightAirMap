@@ -127,10 +127,15 @@ if ($globalURL == "http://www.barriespotter.com"){ ?>
           	<li><a href="<?php print $globalURL; ?>/about">The Project</a></li>
           	<li><a href="<?php print $globalURL; ?>/about/export">Exporting Data</a></li>
             <li><hr /></li>
-			<li><a href="<?php print $globalURL; ?>/about/tv">Barrie Spotter TV</a></li>
+			<li><a href="<?php print $globalURL; ?>/about/tv">Spotter TV</a></li>
             <li><hr /></li>
+            
+            <?php if ($globalURL == "http://barriespotter.com") { ?>
           	<li><a href="https://github.com/barriespotter/Web_App/issues" target="_blank">Report any Issues</a></li>
           	<li><a href="https://www.facebook.com/barriespotter" target="_blank">Contact</a></li>
+            <?php } else { ?>
+        	<li><a href="https://github.com/Ysurac/Web_App/issues" target="_blank">Report any Issues</a></li>
+            <?php } ?>
           </ul>
         </li>
       </ul>
