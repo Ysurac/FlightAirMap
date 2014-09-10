@@ -35,6 +35,7 @@ require('header.php');
                       function drawChart1() {
                         var data = google.visualization.arrayToDataTable([
                             ["Aircraft", "# of Times"], ';
+                            $aircraft_data = '';
                           foreach($aircraft_array as $aircraft_item)
                                     {
                                             $aircraft_data .= '[ "'.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')",'.$aircraft_item['aircraft_icao_count'].'],';
@@ -74,6 +75,7 @@ require('header.php');
                       function drawChart2() {
                         var data = google.visualization.arrayToDataTable([
                             ["Airline", "# of Times"], ';
+                            $airline_data = '';
                           foreach($airline_array as $airline_item)
                                     {
                                             $airline_data .= '[ "'.$airline_item['airline_name'].' ('.$airline_item['airline_icao'].')",'.$airline_item['airline_count'].'],';
@@ -119,6 +121,7 @@ require('header.php');
 
                 var data = google.visualization.arrayToDataTable([ 
                     ["Airport", "# of Times"],';
+                    $airport_data = '';
                   foreach($airport_airport_array as $airport_item)
                         {
                             $name = $airport_item['airport_departure_city'].', '.$airport_item['airport_departure_country'].' ('.$airport_item['airport_departure_icao'].')';
@@ -164,6 +167,7 @@ require('header.php');
 
                 var data = google.visualization.arrayToDataTable([ 
                     ["Airport", "# of Times"],';
+                    $airport_data2 = '';
                   foreach($airport_airport_array2 as $airport_item2)
                         {
                             $name2 = $airport_item2['airport_arrival_city'].', '.$airport_item2['airport_arrival_country'].' ('.$airport_item2['airport_arrival_icao'].')';
@@ -207,6 +211,7 @@ require('header.php');
                       function drawChart5() {
                         var data = google.visualization.arrayToDataTable([
                             ["Date", "# of Flights"], ';
+                            $date_data = '';
                           foreach($date_array as $date_item)
                                     {
                                         $date_data .= '[ "'.date("F j, Y", strtotime($date_item['date_name'])).'",'.$date_item['date_count'].'],';
@@ -249,6 +254,7 @@ require('header.php');
                       function drawChart6() {
                         var data = google.visualization.arrayToDataTable([
                             ["Hour", "# of Flights"], ';
+                            $hour_data = '';
                           foreach($hour_array as $hour_item)
                                     {
                                         $hour_data .= '[ "'.date("ga", strtotime($hour_item['hour_name'].":00")).'",'.$hour_item['hour_count'].'],';
