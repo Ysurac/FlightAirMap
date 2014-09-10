@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
@@ -57,8 +58,8 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
     $dataFound = false;
     // Delete old infos
     foreach ($all_flights as $key => $flight) {
-        if (isset($flight['datetime'])) {
-            if (strtotime($flight['datetime']) < (time()-3600)) {
+        if (isset($flight['lastupdate'])) {
+            if ($flight['lastupdate'] < (time()-3600)) {
                 unset($all_flights[$key]);
             }
         }
