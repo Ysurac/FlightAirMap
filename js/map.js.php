@@ -78,7 +78,7 @@ $( document ).ready(function() {
 	
 	function update_geojsonLayer() {
 	    var bbox = map.getBounds().toBBoxString();
-	    geojsonLayer = new L.GeoJSON.AJAX("/airport-geojson.php?coord="+bbox,{
+	    geojsonLayer = new L.GeoJSON.AJAX("airport-geojson.php?coord="+bbox,{
 	    onEachFeature: onEachFeature,
 		pointToLayer: function (feature, latlng) {
 		    return L.marker(latlng, {icon:airportIcon});
@@ -120,8 +120,8 @@ $( document ).ready(function() {
                 title: markerLabel,
                 alt: feature.properties.callsign,
                 icon: L.icon({
-                  iconUrl: '/images/map-icon-shadow.png',
-                  iconRetinaUrl: '/images/map-icon-shadow@2x.png',
+                  iconUrl: 'images/map-icon-shadow.png',
+                  iconRetinaUrl: 'images/map-icon-shadow@2x.png',
                   iconSize: [40, 40],
                   iconAnchor: [20, 40]
                 })
@@ -200,7 +200,15 @@ $( document ).ready(function() {
                       output += feature.properties.heading;
                     output += '</div>';
                 output += '</div>';
-
+                if (typeof feature.properties.squawk != 'undefined') {
+                    output += '<div class="bottom">';
+                	output += 'Squawk : ';
+			output += feature.properties.squawk;
+            		if (typeof feature.properties.squawk_usage != 'undefined') {
+            			output += ' - '+feature.properties.squawk_usage;
+            		}
+		    output += '</div>';
+                }
                 output += '</div>';
 
                 layer.bindPopup(output);
