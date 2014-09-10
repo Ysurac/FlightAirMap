@@ -307,10 +307,10 @@ class SpotterLive{
 		$groundspeed = filter_var($groundspeed,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$squawk = filter_var($squawk,FILTER_SANITIZE_NUMBER_INT);
 
-		if (count($airline_array) == 0) {
+		if (!isset($airline_array) || count($airline_array) == 0) {
 			$airline_array = Spotter::getAllAirlineInfo('NA');
 		}
-		if (count($aircraft_array) == 0) {
+		if (!isset($aircraft_array) || count($aircraft_array) == 0) {
 			$aircraft_array = Spotter::getAllAircraftInfo('NA');
             	}
 		$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk) 
