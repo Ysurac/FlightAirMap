@@ -6528,13 +6528,15 @@ class Spotter{
 		curl_close($ch);
 		  
 		$xml = new SimpleXmlElement($data);
-		if (!isset($xml->channel->item)) return '';
-		$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
-		$image_url['thumbnail'] = $thumbnail_url;
-		$image_url['original'] = str_replace('thumbnail','original',$thumbnail_url);
-		$image_url['copyright'] = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->copyright);
+		if ($xml = simplexml_load_string($data)) {
+			if (!isset($xml->channel->item)) return '';
+			$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
+			$image_url['thumbnail'] = $thumbnail_url;
+			$image_url['original'] = str_replace('thumbnail','original',$thumbnail_url);
+			$image_url['copyright'] = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->copyright);
 
-		return $image_url;
+			return $image_url;
+		} else return '';
 	}
 	
 	

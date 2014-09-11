@@ -306,7 +306,7 @@ class Schedule {
 		$data = Schedule::getData($url,'post',$post);
 		if ($data != '') {
 			$table = Schedule::table2array($data);
-			print_r($table);
+			//print_r($table);
 			if (count($table) > 0) {
 				$flight = $table;
 				preg_match('/([A-Z]{3})/',$flight[3][0],$DepartureAirportIataMatch);
@@ -315,6 +315,9 @@ class Schedule {
 				$ArrivalAirportIata = $ArrivalAirportIataMatch[0];
 				$departureTime = str_replace(' lunes','',str_replace('&nbsp;','',$flight[3][2]));
 				$arrivalTime = str_replace(' lunes','',str_replace('&nbsp;','',$flight[5][1]));
+				if ($arrivalTime == 'Hora estimada de llegada') {
+					$arrivalTime = str_replace(' lunes','',str_replace('&nbsp;','',$flight[5][2]));
+				}
 				return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime);
 			}
 
@@ -565,7 +568,7 @@ class Schedule {
 //print_r(Schedule::getSchedule('BAW548'));
 //print_r(Schedule::getSchedule('TUI216'));
 //print_r(Schedule::getSchedule('VLG1898'));
-//print_r(Schedule::getSchedule('IBE3493'));
+//print_r(Schedule::getSchedule('IBE3143'));
 //print_r(Schedule::getSchedule('DLH1316'));
 //print_r(Schedule::getSchedule('UAL19'));
 //print_r(Schedule::getSchedule('ACA834'));
