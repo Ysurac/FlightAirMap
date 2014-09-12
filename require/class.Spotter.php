@@ -2191,7 +2191,7 @@ class Spotter{
 		date_default_timezone_set('UTC');
 		
 		//getting the registration
-		
+		$registration = '';
 		if ($flightaware_id != "")
 		{
 			if (!is_string($flightaware_id))
@@ -6527,7 +6527,6 @@ class Spotter{
 		$data = curl_exec($ch);
 		curl_close($ch);
 		  
-		$xml = new SimpleXmlElement($data);
 		if ($xml = simplexml_load_string($data)) {
 			if (!isset($xml->channel->item)) return '';
 			$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
