@@ -27,4 +27,7 @@ $globalFlightAwarePassword = ''; //FlightAware Password/API key
 
 //BIT.LY API INFO (used in the search page for a shorter URL)
 $globalBitlyAccessToken = ''; //the access token from the bit.ly API
+
+//ignore the flights during imports that have the following airports (departure/arrival) associated with them
+$globalAirportIgnore = array();
 ?>
