@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 31, 2014 at 11:48 AM
+-- Generation Time: Sep 12, 2014 at 11:21 AM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -94,8 +94,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (46, 46, 'Aerovias Bueno', 'N', '', 'ABU', 'AEROBUENO', 'Colombia', 'N', 'passenger'),
 (47, 47, 'Aerocenter', 'N', '', 'ACR', ' Escuela de Formacion de Pioltos Privados de Avion', 'AEROCENTER', 'N', 'passenger'),
 (48, 48, 'Antrak Air', 'N', '04', 'ABV', 'ANTRAK', 'Ghana', 'N', 'passenger'),
-(49, 49, 'Airborne Express', 'N', 'GB', 'ABX', 'ABEX', 'United States', 'N', 'passenger'),
-(50, 50, 'ABX Air', 'N', 'GB', 'ABX', 'ABEX', 'United States', 'N', 'passenger'),
+(50, 50, 'ABX Air', 'N', 'GB', 'ABX', 'ABEX', 'United States', 'Y', 'passenger'),
 (51, 51, 'ATA Brasil', 'N', '', 'ABZ', 'ATA-BRAZIL', 'Brazil', 'N', 'passenger'),
 (52, 52, 'Avcard Services', 'N', '', 'ACC', '', 'United Kingdom', 'N', 'passenger'),
 (53, 53, 'Academy Airlines', 'N', '', 'ACD', 'ACADEMY', 'United States', 'N', 'passenger'),
@@ -603,9 +602,9 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (555, 555, 'Airwork', 'N', '', 'AWK', 'AIRWORK', 'New Zealand', 'N', 'passenger'),
 (556, 556, 'Australian Wetleasing', 'N', '', 'AWL', 'AUSSIEWORLD', 'Australia', 'N', 'passenger'),
 (557, 557, 'Air Niamey', 'N', '', 'AWN', 'AIR NIAMEY', 'Niger', 'N', 'passenger'),
-(558, 558, 'Awood Air Ltd.', 'N', '', 'AWO', 'AWOOD AIR', 'Canada', 'N', 'passenger');
+(558, 558, 'Awood Air Ltd.', 'N', '', 'AWO', 'AWOOD AIR', 'Canada', 'N', 'passenger'),
+(559, 559, 'Arctic Wings And Rotors Ltd.', 'N', '', 'AWR', 'ARCTIC WINGS', 'Canada', 'N', 'passenger');
 INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `icao`, `callsign`, `country`, `active`, `type`) VALUES
-(559, 559, 'Arctic Wings And Rotors Ltd.', 'N', '', 'AWR', 'ARCTIC WINGS', 'Canada', 'N', 'passenger'),
 (560, 560, 'Auo Airclub AIST-M', 'N', '', 'ISM', 'STORK', 'Russia', 'N', 'passenger'),
 (561, 561, 'Arab Wings', 'N', '', 'AWS', 'ARAB WINGS', 'Jordan', 'N', 'passenger'),
 (562, 562, 'Air West', 'N', '', 'AWT', 'AIR WEST', 'Canada', 'N', 'passenger'),
@@ -1170,9 +1169,9 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1121, 1122, 'Air Inter Ivoire', 'N', '', 'NTV', 'INTER-IVOIRE', 'Ivory Coast', 'N', 'passenger'),
 (1122, 1123, 'Aeroservicios De Nuevo Leon', 'N', '', 'NUL', 'SERVICIOS NUEVOLEON', 'Mexico', 'N', 'passenger'),
 (1123, 1124, 'Avial NV Aviation Company', 'N', '', 'NVI', 'NEW AVIAL', 'Russia', 'N', 'passenger'),
-(1124, 1125, 'Airwing', 'N', '', 'NWG', 'NORWING', 'Norway', 'N', 'passenger');
+(1124, 1125, 'Airwing', 'N', '', 'NWG', 'NORWING', 'Norway', 'N', 'passenger'),
+(1125, 1126, 'Air Next', 'N', '', 'NXA', 'BLUE-DOLPHIN', 'Japan', 'N', 'passenger');
 INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `icao`, `callsign`, `country`, `active`, `type`) VALUES
-(1125, 1126, 'Air Next', 'N', '', 'NXA', 'BLUE-DOLPHIN', 'Japan', 'N', 'passenger'),
 (1126, 1127, 'Arkhangelsk 2 Aviation Division', 'N', '', 'OAO', 'DVINA', 'Russia', 'N', 'passenger'),
 (1127, 1128, 'Aerogisa', 'N', '', 'OGI', 'AEROGISA', 'Mexico', 'N', 'passenger'),
 (1128, 1129, 'Aerolineas Olve', 'N', '', 'OLV', 'OLVE', 'Mexico', 'N', 'passenger'),
@@ -1709,9 +1708,9 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1659, 1660, 'Caribair', 'N', '', 'CBC', 'CARIBAIR', 'Dominican Republic', 'N', 'passenger'),
 (1660, 1661, 'Caribbean Air Cargo', 'N', '', 'DCC', 'CARICARGO', 'Barbados', 'N', 'cargo'),
 (1661, 1662, 'Caribbean Air Transport', 'N', '', 'CLT', 'CARIBBEAN', 'Netherlands', 'N', 'passenger'),
-(1662, 1663, 'Caribbean Airlines', 'N', 'BW', 'BWA', 'CARIBBEAN AIRLINES', 'Trinidad and Tobago', 'Y', 'passenger');
+(1662, 1663, 'Caribbean Airlines', 'N', 'BW', 'BWA', 'CARIBBEAN AIRLINES', 'Trinidad and Tobago', 'Y', 'passenger'),
+(1663, 1664, 'Caribbean Airways', 'N', '', 'IQQ', 'CARIBJET', 'Barbados', 'N', 'passenger');
 INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `icao`, `callsign`, `country`, `active`, `type`) VALUES
-(1663, 1664, 'Caribbean Airways', 'N', '', 'IQQ', 'CARIBJET', 'Barbados', 'N', 'passenger'),
 (1664, 1665, 'Caribbean Express', 'N', '', 'TLC', 'CARIB-X', 'United States', 'N', 'passenger'),
 (1665, 1666, 'Caribbean Star Airlines', 'N', '8B', 'GFI', 'CARIB STAR', 'Antigua and Barbuda', 'N', 'passenger'),
 (1666, 1667, 'Caribintair', 'N', '', 'CRT', 'CARIBINTAIR', 'Haiti', 'N', 'passenger'),
