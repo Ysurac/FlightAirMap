@@ -1,4 +1,7 @@
 <?php
+//INSTALLED OR NOT ?
+$globalInstalled = FALSE;
+
 //GLOBAL SITE NAME
 $globalName = "";
 
