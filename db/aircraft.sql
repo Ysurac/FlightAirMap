@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 24, 2014 at 12:14 PM
+-- Generation Time: Sep 12, 2014 at 11:14 AM
 -- Server version: 5.5.36-cll
 -- PHP Version: 5.4.23
 
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `aircraft` (
   `manufacturer` varchar(999) NOT NULL,
   PRIMARY KEY (`aircraft_id`),
   KEY `aircraft_id` (`aircraft_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=345 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=352 ;
 
 --
 -- Dumping data for table `aircraft`
@@ -381,7 +381,14 @@ INSERT INTO `aircraft` (`aircraft_id`, `icao`, `type`, `manufacturer`) VALUES
 (341, 'PAY3', 'Piper Cheyenne 3', 'Piper'),
 (342, 'XL2', 'Liberty XL-2', 'Liberty'),
 (343, 'AC95', 'Gulfstream Aerospace Jetprop Commander', 'Gulfstream Aerospace'),
-(344, 'RV8', 'VANS RV-8', 'VANs');
+(344, 'RV8', 'VANS RV-8', 'VANs'),
+(345, 'AC11', 'Rockwell Commander 114', 'Rockwell'),
+(346, 'CL2T', 'Bombardier 415 Superscooper', 'Bombardier'),
+(347, 'LJ25', 'Learjet 25', 'Learjet'),
+(348, 'VELO', 'VELOCITY Velocity', 'Velocity Aircraft'),
+(349, 'LA25', 'LAKE Turbo Seafury', 'Lake Aircraft'),
+(350, 'LJ70', 'Bombardier Learjet 70', 'Bombardier'),
+(351, 'C195', 'Cessna LC-126', 'Cessna');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

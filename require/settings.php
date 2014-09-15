@@ -47,4 +47,6 @@ $globalBitlyAccessToken = ''; //the access token from the bit.ly API
 //BRITISH AIRWAYS API INFO
 $globalBritishAirwaysKey = '';
 
+//ignore the flights during imports that have the following airports (departure/arrival) associated with them
+$globalAirportIgnore = array();
 ?>
