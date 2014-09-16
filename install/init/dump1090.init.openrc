@@ -1,0 +1,26 @@
+#!/sbin/runscript
+
+extra_started_commands="reload"
+
+depend() {
+        need net
+}
+
+start() {
+        ebegin "Starting Dump1090"
+        start-stop-daemon --background --start --make-pidfile --pidfile /var/run/dump1090.pid --exec /usr/bin/dump1090 -- --modeac --aggressive --enable-agc --quiet --net
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping Dump1090"
+        start-stop-daemon --stop --pidfile /var/run/dump1090.pid --name dump1090
+        eend $?
+}
+
+reload() {
+        ebegin "Reloading Dump1090"
+        start-stop-daemon --signal HUP --pidfile /var/run/dump1090.pid
+        eend $?
+}
+
