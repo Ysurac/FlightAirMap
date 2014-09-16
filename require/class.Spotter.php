@@ -170,7 +170,7 @@ class Spotter{
 			if (isset($row['squawk'])) {
 				$temp_array['squawk'] = $row['squawk'];
 				if ($row['squawk'] != '') {
-					$temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],'FR');
+					$temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],'UK');
 				}
 			}
       
@@ -2192,6 +2192,7 @@ class Spotter{
 		
 		//getting the registration
 		$registration = '';
+		
 		if ($flightaware_id != "")
 		{
 			if (!is_string($flightaware_id))
@@ -2342,18 +2343,18 @@ class Spotter{
 		}
 
 		//getting the aircraft image
-		if ($registration != "")
-        {
-            $image_array = Spotter::getSpotterImage($registration);
-            
+		if ($registration != "" || $registration != 'NA')
+		{
+			$image_array = Spotter::getSpotterImage($registration);
 			if (!isset($image_array[0]['registration']))
-            {
-                Spotter::addSpotterImage($registration);
-            }
+			{
+				Spotter::addSpotterImage($registration);
+			}
 		}
     
 		$flightaware_id = filter_var($flightaware_id,FILTER_SANITIZE_STRING);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
@@ -2364,21 +2365,20 @@ class Spotter{
 		$heading = filter_var($heading,FILTER_SANITIZE_NUMBER_INT);
 		$groundspeed = filter_var($groundspeed,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
-//		$query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date)
-//		 VALUES ('$flightaware_id','$ident','$registration','".$airline_array[0]['name']."', '".$airline_array[0]['icao']."', '".$airline_array[0]['country']."', '".$airline_array[0]['type']."', '$aircraft_icao', '".$aircraft_array[0]['type']."', '".$aircraft_array[0]['manufacturer']."', '$departure_airport_icao', '".$departure_airport_array[0]['name']."', '".$departure_airport_array[0]['city']."', '".$departure_airport_array[0]['country']."', '$arrival_airport_icao', '".$arrival_airport_array[0]['name']."', '".$arrival_airport_array[0]['city']."', '".$arrival_airport_array[0]['country']."', '$latitude', '$longitude', '$waypoints', '$altitude', '$heading', '$groundspeed',  '$date')";
-		
-		//print $query."<br /><br />";
-
-		if (count($airline_array) == 0) {
+		if (count($airline_array) == 0) 
+		{
                         $airline_array = Spotter::getAllAirlineInfo('NA');
                 }
-                if (count($aircraft_array) == 0) {
+                if (count($aircraft_array) == 0) 
+                {
                         $aircraft_array = Spotter::getAllAircraftInfo('NA');
                 }
-                if (count($departure_airport_array) == 0) {
+                if (count($departure_airport_array) == 0) 
+                {
                         $departure_airport_array = Spotter::getAllAirportInfo('NA');
                 }
-                if (count($arrival_airport_array) == 0) {
+                if (count($arrival_airport_array) == 0) 
+                {
                         $arrival_airport_array = Spotter::getAllAirportInfo('NA');
                 }
                 $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time) 
@@ -6517,7 +6517,7 @@ class Spotter{
 	public static function findAircraftImage($airline_aircraft_type)
 	{
 		$airline_aircraft_type = filter_var($airline_aircraft_type,FILTER_SANITIZE_STRING);
-		if ($airline_aircraft_type == '') return '';
+		if ($airline_aircraft_type == '') return array('thumbnail' => '','original' => '', 'copyright' => '');
 		$url= 'http://www.planespotters.net/Aviation_Photos/search.php?tag='.$airline_aircraft_type.'&output=rss';
 		
 		$ch = curl_init();
@@ -6535,7 +6535,7 @@ class Spotter{
 			$image_url['copyright'] = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->copyright);
 
 			return $image_url;
-		} else return '';
+		} else return array('thumbnail' => '','original' => '', 'copyright' => '');
 	}
 	
 	
@@ -6657,6 +6657,8 @@ class Spotter{
 	public static function getBitlyURL($url)
 	{
 		global $globalBitlyAccessToken;
+		
+		if ($globalBitlyAccessToken == '') return $url;
         
 		$google_url = 'https://api-ssl.bitly.com/v3/shorten?access_token='.$globalBitlyAccessToken.'&longUrl='.$url;
 		
@@ -6673,7 +6675,7 @@ class Spotter{
 			$bitly_url = $bitly_data->data->url;
 		}
 
-		return $bitly_url;	
+		return $bitly_url;
 	}
 
 
@@ -6727,38 +6729,38 @@ class Spotter{
                             }
                             if ($ignoreImport == false)
                             {
-                                $flightaware_id = $aircraft->faFlightID;
-                                $ident = $aircraft->ident;
-                                $aircraft_type = $aircraft->type;
-                                $departure_airport = $aircraft->origin;
-                                $arrival_airport = $aircraft->destination;
-                                $latitude = $aircraft->latitude;
-                                $longitude = $aircraft->longitude;
-                                $waypoints = $aircraft->waypoints;
-                                $altitude = $aircraft->altitude;
-                                $heading = $aircraft->heading;
-                                $groundspeed = $aircraft->groundspeed;
+                            $flightaware_id = $aircraft->faFlightID;
+                            $ident = $aircraft->ident;
+                            $aircraft_type = $aircraft->type;
+                            $departure_airport = $aircraft->origin;
+                            $arrival_airport = $aircraft->destination;
+                            $latitude = $aircraft->latitude;
+                            $longitude = $aircraft->longitude;
+                            $waypoints = $aircraft->waypoints;
+                            $altitude = $aircraft->altitude;
+                            $heading = $aircraft->heading;
+                            $groundspeed = $aircraft->groundspeed;
 
-                                $dataFound = true;
+                            $dataFound = true;
 
-                                //gets the callsign from the last hour
-                                $last_hour_ident = Spotter::getIdentFromLastHour($ident);
+                            //gets the callsign from the last hour
+                            $last_hour_ident = Spotter::getIdentFromLastHour($ident);
 
-                                //change the departure/arrival airport to NA if its not available
+                            //change the departure/arrival airport to NA if its not available
                                 if ($departure_airport == "" || $departure_airport == "---" || $departure_airport == "ZZZ" || $departure_airport == "ZZZZ") { $departure_airport = "NA"; }
                                 if ($arrival_airport == "" || $arrival_airport == "---" || $arrival_airport == "ZZZ" || $arrival_airport == "ZZZZ") { $arrival_airport = "NA"; }
 
 
-                                //if there was no aircraft with the same callsign within the last hour and go post it into the archive
-                                if($last_hour_ident == "")
-                                {
-                                    //adds the spotter data for the archive
-                                    Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
-                                }
-
-                                //adds the spotter LIVE data
-                                SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                            //if there was no aircraft with the same callsign within the last hour and go post it into the archive
+                            if($last_hour_ident == "")
+                            {
+                                //adds the spotter data for the archive
+                                Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
                             }
+
+                            //adds the spotter LIVE data
+                            SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                        }
                         }
                         $ignoreImport = false;
                     }
@@ -6776,37 +6778,37 @@ class Spotter{
                             }
                             if ($ignoreImport == false)
                             {
-                                $flightaware_id = $result->SearchBirdseyeInFlightResult->aircraft->faFlightID;
-                                $ident = $result->SearchBirdseyeInFlightResult->aircraft->ident;
-                                $aircraft_type = $result->SearchBirdseyeInFlightResult->aircraft->type;
-                                $departure_airport = $result->SearchBirdseyeInFlightResult->aircraft->origin;
-                                $arrival_airport = $result->SearchBirdseyeInFlightResult->aircraft->destination;
-                                $latitude = $result->SearchBirdseyeInFlightResult->aircraft->latitude;
-                                $longitude = $result->SearchBirdseyeInFlightResult->aircraft->longitude;
-                                $waypoints = $result->SearchBirdseyeInFlightResult->aircraft->waypoints;
-                                $altitude = $result->SearchBirdseyeInFlightResult->aircraft->altitude;
-                                $heading = $result->SearchBirdseyeInFlightResult->aircraft->heading;
-                                $groundspeed = $result->SearchBirdseyeInFlightResult->aircraft->groundspeed;
+                        $flightaware_id = $result->SearchBirdseyeInFlightResult->aircraft->faFlightID;
+                        $ident = $result->SearchBirdseyeInFlightResult->aircraft->ident;
+                        $aircraft_type = $result->SearchBirdseyeInFlightResult->aircraft->type;
+                        $departure_airport = $result->SearchBirdseyeInFlightResult->aircraft->origin;
+                        $arrival_airport = $result->SearchBirdseyeInFlightResult->aircraft->destination;
+                        $latitude = $result->SearchBirdseyeInFlightResult->aircraft->latitude;
+                        $longitude = $result->SearchBirdseyeInFlightResult->aircraft->longitude;
+                        $waypoints = $result->SearchBirdseyeInFlightResult->aircraft->waypoints;
+                        $altitude = $result->SearchBirdseyeInFlightResult->aircraft->altitude;
+                        $heading = $result->SearchBirdseyeInFlightResult->aircraft->heading;
+                        $groundspeed = $result->SearchBirdseyeInFlightResult->aircraft->groundspeed;
 
-                                $dataFound = true;
+                        $dataFound = true;
 
-                                //gets the callsign from the last hour
-                                $last_hour_ident = Spotter::getIdentFromLastHour($ident);
+                        //gets the callsign from the last hour
+                        $last_hour_ident = Spotter::getIdentFromLastHour($ident);
 
-                                //change the departure/arrival airport to NA if its not available
+                        //change the departure/arrival airport to NA if its not available
                                 if ($departure_airport == "" || $departure_airport == "---" || $departure_airport == "ZZZ" || $departure_airport == "ZZZZ") { $departure_airport = "NA"; }
                                 if ($arrival_airport == "" || $arrival_airport == "---" || $arrival_airport == "ZZZ" || $arrival_airport == "ZZZZ") { $arrival_airport = "NA"; }
 
-                                //if there was no aircraft with the same callsign within the last hour and go post it into the archive
-                                if($last_hour_ident == "")
-                                {
-                                    //adds the spotter data for the archive
-                                    Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
-                                }
+                        //if there was no aircraft with the same callsign within the last hour and go post it into the archive
+                        if($last_hour_ident == "")
+                        {
+                            //adds the spotter data for the archive
+                            Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                        }
 
-                                //adds the spotter LIVE data
-                                SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
-                            }
+                        //adds the spotter LIVE data
+                        SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                    }
                             $ignoreImport = false;
                         }
                     }

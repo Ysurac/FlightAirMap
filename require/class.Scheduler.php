@@ -391,6 +391,7 @@ class Schedule {
 		$data = Schedule::getData($url);
 		$dom = new DomDocument();
 		$dom->loadXML($data);
+		if ($dom->getElementsByTagName('DepartureStationInfo')->length == 0) return array();
 		$departure = $dom->getElementsByTagName('DepartureStationInfo')->item(0);
 		if (isset($departure->getElementsByTagName('Airport')->item(0)->firstChild->nodeValue)) {
 			$DepartureAirportIata = $departure->getElementsByTagName('Airport')->item(0)->firstChild->nodeValue;
