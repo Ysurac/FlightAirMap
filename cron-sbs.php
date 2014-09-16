@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+// This is not a cron job... Use it like a daemon
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterLive.php');
@@ -161,8 +162,17 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 			if ($all_flights[$id]['departure_airport'] == "") { $all_flights[$id]['departure_airport'] = "NA"; }
 			if ($all_flights[$id]['arrival_airport'] == "") { $all_flights[$id]['arrival_airport'] = "NA"; }
 			//adds the spotter data for the archive
-			$result = Spotter::addSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed'],'', $all_flights[$id]['departure_airport_time'], $all_flights[$id]['arrival_airport_time']);
-			if ($debug) echo $result;
+			$ignoreImport = false;
+			foreach($globalAirportIgnore as $airportIgnore) {
+				if (($all_flights[$id]['departure_airport'] != $airportIgnore) && ($all_flights[$id]['arrival_airport'] != $airportIgnore)) {
+				    $ignoreImport = true;
+				}
+			}
+			if (!$ignoreImport) {
+			    $result = Spotter::addSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed'],'', $all_flights[$id]['departure_airport_time'], $all_flights[$id]['arrival_airport_time']);
+			}
+			$ignoreImport = false;
+			if ($debug) echo $result."\n";
 		    }
 
 			SpotterLive::deleteLiveSpotterData();
@@ -172,7 +182,17 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 			//echo "{$line[8]} {$line[7]} - MODES:{$line[4]}  CALLSIGN:{$line[10]}   ALT:{$line[11]}   VEL:{$line[12]}   HDG:{$line[13]}   LAT:{$line[14]}   LON:{$line[15]}   VR:{$line[16]}   SQUAWK:{$line[17]}\n";
 			if ($debug) echo 'hex : '.$all_flights[$id]['hex'].' - ident : '.$all_flights[$id]['ident'].' - ICAO : '.$all_flights[$id]['aircraft_icao'].' - Departure Airport : '.$all_flights[$id]['departure_airport'].' - Arrival Airport : '.$all_flights[$id]['arrival_airport'].' - Latitude : '.$all_flights[$id]['latitude'].' - Longitude : '.$all_flights[$id]['longitude'].' - waypoints : '.$waypoints.' - Altitude : '.$all_flights[$id]['altitude'].' - Heading : '.$all_flights[$id]['heading'].' - Speed : '.$all_flights[$id]['speed'].' - Departure Airport Time : '.$all_flights[$id]['departure_airport_time'].' - Arrival Airport time : '.$all_flights[$id]['arrival_airport_time']."\n";
 
-			$result = SpotterLive::addLiveSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed'], $all_flights[$id]['departure_airport_time'], $all_flights[$id]['arrival_airport_time'], $all_flights[$id]['squawk']);
+			$ignoreImport = false;
+			if ($all_flights[$id]['departure_airport'] == "") { $all_flights[$id]['departure_airport'] = "NA"; }
+			if ($all_flights[$id]['arrival_airport'] == "") { $all_flights[$id]['arrival_airport'] = "NA"; }
+
+			foreach($globalAirportIgnore as $airportIgnore) {
+				if (($all_flights[$id]['departure_airport'] != $airportIgnore) && ($all_flights[$id]['arrival_airport'] != $airportIgnore)) {
+                        	    $ignoreImport = true;
+                        	}
+			}
+			if (!$ignoreImport) $result = SpotterLive::addLiveSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed'], $all_flights[$id]['departure_airport_time'], $all_flights[$id]['arrival_airport_time'], $all_flights[$id]['squawk']);
+			$ignoreImport = false;
 			if ($debug) echo $result."\n";
 		}
     	    }
