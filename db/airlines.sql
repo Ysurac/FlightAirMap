@@ -6050,7 +6050,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5989, 19276, 'Canaryfly', '', '', 'CNF', '', 'Spain', 'Y', 'passenger'),
 (5990, 19280, 'Sunrise Airways', '', '', 'KSZ', '', 'Haiti', 'Y', 'passenger'),
 (5991, 19287, 'National Air Cargo', '', 'N8', 'NCR', '', 'United States', 'Y', 'cargo'),
-(5992, 19290, 'Eastern Atlantic Virtual Airlines', '', '13', 'EAV', 'EAVA', 'United States', 'Y', 'passenger'),
+(5992, 19290, 'Elitavia', '', '', 'EAV', '', 'Slovenia', 'Y', 'passenger'),
 (5993, 19305, 'Citilink Indonesia', '', 'QG', 'N', 'SUPERGREEN', 'Indonesia', 'Y', 'passenger'),
 (5994, 19317, 'Gulisano airways', '', 'GU', 'GU1', '', 'Italy', 'N', 'passenger'),
 (5995, 19337, 'Transair', '', '', 'TTZ', '', 'Canada', 'Y', 'passenger'),
