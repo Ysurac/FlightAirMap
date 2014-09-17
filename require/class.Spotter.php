@@ -68,8 +68,8 @@ class Spotter{
       $temp_array['image_thumbnail'] = "";
       if($row['registration'] != "")
       {
-          $image_array = Spotter::getSpotterImage($row['registration']);
-				if (count($image_array) > 0) {
+	$image_array = Spotter::getSpotterImage($row['registration']);
+	if (count($image_array) > 0) {
           $temp_array['image'] = $image_array[0]['image'];
           $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
       }
@@ -6514,11 +6514,18 @@ class Spotter{
 	* @return String the aircraft url
 	*
 	*/
-	public static function findAircraftImage($airline_aircraft_type)
+	public static function findAircraftImage($aircraft_registration)
 	{
 		$airline_aircraft_type = filter_var($airline_aircraft_type,FILTER_SANITIZE_STRING);
 		if ($airline_aircraft_type == '') return array('thumbnail' => '','original' => '', 'copyright' => '');
-		$url= 'http://www.planespotters.net/Aviation_Photos/search.php?tag='.$airline_aircraft_type.'&output=rss';
+		// If aircraft registration is only number, also check with aircraft model
+		if (preg_match('/^[[:digit]]+$/',$aircraft_registration)) {
+			$aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
+			$url= 'http://www.planespotters.net/Aviation_Photos/search.php?tag='.$aircraft_registration.'&actype=s_'.$aircraft_info['name'].'&output=rss';
+		} else {
+			//$url= 'http://www.planespotters.net/Aviation_Photos/search.php?tag='.$airline_aircraft_type.'&output=rss';
+			$url= 'http://www.planespotters.net/Aviation_Photos/search.php?reg='.$aircraft_registration.'&output=rss';
+		}
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
