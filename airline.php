@@ -13,8 +13,33 @@ if (isset($_POST['airline']))
 	print '<div class="column">';
 		
 		print '<h1>Airlines</h1>';
+
+		if (isset($_POST['airline_type'])) {
+			$airline_type = filter_input(INPUT_POST,'airline_type',FILTER_SANITIZE_STRING);
+			$airline_names = Spotter::getAllAirlineNames($airline_type);
+		} else {
+			$airline_names = Spotter::getAllAirlineNames();
+			$airline_type = 'all';
+		}
 		
-		$airline_names = Spotter::getAllAirlineNames();
+		print '<div class="select-item"><form action="'.$globalURL.'/airline" method="post"><select name="airline_type" class="selectpicker" data-live-search="true">';
+		print '<option value="all"';
+		if ($airline_type == 'all') print 'selected="selected" ';
+		print '>All</option><option value="passenger"';
+		if ($airline_type == 'passenger') print 'selected="selected" ';
+		print '>Passenger</option><option value="cargo"';
+		if ($airline_type == 'cargo') print 'selected="selected" ';
+		print '>Cargo</option><option value="military"';
+		if ($airline_type == 'military') print 'selected="selected" ';
+		print '>Military</option></select>';
+		print '<button type="submit"><i class="fa fa-angle-double-right"></i></button></form></div>';
+		
+		if (isset($_POST['airline_type'])) {
+			$airline_type = filter_input(INPUT_POST,'airline_type',FILTER_SANITIZE_STRING);
+			$airline_names = Spotter::getAllAirlineNames($airline_type);
+		} else {
+			$airline_names = Spotter::getAllAirlineNames();
+		}
 		$previous = null;
 		print '<div class="alphabet-legend">';
 			foreach($airline_names as $value) {
@@ -45,7 +70,7 @@ if (isset($_POST['airline']))
 			
 			    print '<div class="alphabet-airline alphabet-item">';
 			    	print '<a href="'.$globalURL.'/airline/'.$value['airline_icao'].'">';
-							if (@getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.png'))
+							if (@getimagesize('images/airlines/'.$value['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.png'))
 							{
 								print '<img src="'.$globalURL.'/images/airlines/'.$value['airline_icao'].'.png" alt="Click to see airline activity" title="Click to see airline activity" /> ';
 							} else {
