@@ -1393,7 +1393,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1342, 1343, 'Bahrain Air BSC (Closed)', 'N', '', 'BAB', 'AWAL', 'Bahrain', 'N', 'passenger'),
 (1343, 1344, 'BAC Leasing Limited', 'N', '', 'BAC', ' ', 'United Kingdom', 'N', 'passenger'),
 (1344, 1345, 'BAE Systems', 'N', '', 'BAE', 'FELIX', 'United Kingdom', 'N', 'passenger'),
-(1345, 1346, 'Belgian Air Force', 'N', '', 'BAF', 'BELGIAN AIRFORCE', 'Belgium', 'N', 'military'),
+(1345, 1346, 'Belgian Air Force', 'N', '', 'BAF', 'BELGIAN AIRFORCE', 'Belgium', 'Y', 'military'),
 (1346, 1347, 'Baker Aviation', 'N', '8Q', 'BAJ', 'BAKER AVIATION', 'United States', 'N', 'passenger'),
 (1347, 1348, 'Blackhawk Airways', 'N', '', 'BAK', 'BLACKHAWK', 'United States', 'N', 'passenger'),
 (1348, 1349, 'Britannia Airways', 'N', '', 'BAL', 'BRITANNIA', 'United Kingdom', 'N', 'passenger'),
@@ -3012,10 +3012,10 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (2958, 2960, 'Ivoire Airways', 'N', '', 'IVW', 'IVOIRAIRWAYS', 'Ivory Coast', 'N', 'passenger'),
 (2959, 2961, 'Ivoire Jet Express', 'N', '', 'IJE', 'IVOIRE JET', 'Ivory Coast', 'N', 'passenger'),
 (2960, 2962, 'Iwamoto Crane Co Ltd', 'N', '', 'OIC', '', 'Japan', 'N', 'passenger'),
-(2961, 2963, 'Ixair', 'N', '', 'IXR', 'X-BIRD', 'France', 'N', 'passenger'),
+(2961, 2963, 'Ixair', 'N', '', 'IXR', 'X-BIRD', 'France', 'Y', 'passenger'),
 (2962, 2964, 'Izair', 'N', 'H9', 'IZM', 'IZMIR', 'Turkey', 'N', 'passenger'),
 (2963, 2965, 'Izhavia', 'N', '', 'IZA', 'IZHAVIA', 'Russia', 'N', 'passenger'),
-(2964, 2966, 'J C Bamford (Excavators)', 'N', '', 'JCB', 'JAYSEEBEE', 'United Kingdom', 'N', 'passenger'),
+(2964, 2966, 'J C Bamford (Excavators)', 'N', '', 'JCB', 'JAYSEEBEE', 'United Kingdom', 'Y', 'passenger'),
 (2965, 2967, 'J P Hunt Air Carriers', 'N', '', 'RFX', 'REFLEX', 'United States', 'N', 'passenger'),
 (2966, 2968, 'J-Air', 'N', '', 'JLJ', 'J AIR', 'Japan', 'N', 'passenger'),
 (2967, 2969, 'JAL Express', 'N', 'JC', 'JEX', 'JANEX', 'Japan', 'Y', 'passenger'),
@@ -5184,7 +5184,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5126, 5136, 'Transportes Aereos Nacionales De Selva Tans', 'N', '', 'ELV', 'AEREOS SELVA', 'Peru', 'N', 'passenger'),
 (5127, 5137, 'TAG Farnborough Airport', 'N', '', 'FBO', '', 'United Kingdom', 'N', 'passenger'),
 (5128, 5138, 'Transaviaservice', 'N', '', 'FNV', 'TRANSAVIASERVICE', 'Georgia', 'N', 'passenger'),
-(5129, 5139, 'TAG Aviation', 'N', '', 'FPG', 'TAG AVIATION', 'Switzerland', 'N', 'passenger'),
+(5129, 5139, 'TAG Aviation', 'N', '', 'FPG', 'TAG AVIATION', 'Switzerland', 'Y', 'passenger'),
 (5130, 5140, 'The 955 Preservation Group', 'N', '', 'GFN', 'GRIFFON', 'United Kingdom', 'N', 'passenger'),
 (5131, 5141, 'Trans-Air-Link', 'N', '', 'GJB', 'SKY TRUCK', 'United States', 'N', 'passenger'),
 (5132, 5142, 'Tradewind Aviation', 'N', '', 'GPD', 'GOODSPEED', 'United States', 'N', 'passenger'),
@@ -6097,7 +6097,8 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (7036, 0, 'VistaJet Ltd', '', '','VJT','','Malta','Y','Passenger'),
 (7037, 0, 'AmJet Executive', '', '','AMJ','AMJET EXEC','Greece','Y','Passenger'),
 (7038, 0, 'Fly Georgia', '', '9Y','FGE','GEORGIAN WING','Georgia','Y','Passenger'),
-(7039, 0, 'FairJets Luftverkehrs AG', '', '','FJE','','Germany','Y','Passenger');
+(7039, 0, 'FairJets Luftverkehrs AG', '', '','FJE','','Germany','Y','Passenger'),
+(7040, 0, 'SmartLynx Airlines', '', '6Y','ART','SMART LYNX','Latvia','Y','Passenger');
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
