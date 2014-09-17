@@ -6516,8 +6516,8 @@ class Spotter{
 	*/
 	public static function findAircraftImage($aircraft_registration)
 	{
-		$airline_aircraft_type = filter_var($airline_aircraft_type,FILTER_SANITIZE_STRING);
-		if ($airline_aircraft_type == '') return array('thumbnail' => '','original' => '', 'copyright' => '');
+		$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
+		if ($aircraft_registration == '') return array('thumbnail' => '','original' => '', 'copyright' => '');
 		// If aircraft registration is only number, also check with aircraft model
 		if (preg_match('/^[[:digit]]+$/',$aircraft_registration)) {
 			$aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
