@@ -23,7 +23,7 @@ if (isset($_GET['start_date'])) {
 	} else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
 		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date'].":00";
 		$sql_date = $end_date;
-	}
+	} else $sql_date = '';
 } else $sql_date = '';
 
 if (isset($_GET['highest_altitude'])) {
@@ -38,8 +38,8 @@ if (isset($_GET['highest_altitude'])) {
 	} else if($_GET['highest_altitude'] == "" && $_GET['lowest_altitude'] != ""){
 		$start_altitude = $_GET['lowest_altitude'].",60000";
 		$sql_altitude = $start_altitude;
-	}
-}
+	} else $sql_altitude = '';
+} else $sql_altitude = '';
 
 //calculuation for the pagination
 if(!isset($_GET['limit']))

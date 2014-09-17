@@ -48,31 +48,31 @@ $page_url = $globalURL.'/newest/'.$category;
     print '<div class="select-item">';
         print '<form action="'.$globalURL.'/newest" method="post">';
             print '<select name="category" class="selectpicker" data-live-search="true">';
-              if ($_GET['category'] == "aircraft")
+              if (isset($_GET['category']) && $_GET['category'] == "aircraft")
               {
                   print '<option value="aircraft" selected="selected">Aircraft Type</option>';
               } else {
                   print '<option value="aircraft">Aircraft Type</option>';
               }
-              if ($_GET['category'] == "registration")
+              if (isset($_GET['category']) && $_GET['category'] == "registration")
               {
                   print '<option value="registration" selected="selected">Aircraft Registration</option>';
               } else {
                   print '<option value="registration">Aircraft Registration</option>';
               }
-              if ($_GET['category'] == "airline")
+              if (isset($_GET['category']) && $_GET['category'] == "airline")
               {
                   print '<option value="airline" selected="selected">Airline</option>';
               } else {
                   print '<option value="airline">Airline</option>';
               }
-              if ($_GET['category'] == "departure_airport")
+              if (isset($_GET['category']) && $_GET['category'] == "departure_airport")
               {
                   print '<option value="departure_airport" selected="selected">Departure Airport</option>';
               } else {
                   print '<option value="departure_airport">Departure Airport</option>';
               }
-              if ($_GET['category'] == "arrival_airport")
+              if (isset($_GET['category']) && $_GET['category'] == "arrival_airport")
               {
                   print '<option value="arrival_airport" selected="selected">Arrival Airport</option>';
               } else {
