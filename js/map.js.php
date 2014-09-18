@@ -42,6 +42,10 @@ $( document ).ready(function() {
     id: 'examples.map-i86knfo3'
   }).addTo(map);
 
+<?php
+    if ($globalLatitudeMin != '' && $globalLatitudeMax != '' && $globalLongitudeMin != '' && $globalLongitudeMax != '') 
+    {
+    ?>
   //create the bounding box to show the coverage area
   var polygon = L.polygon(
     [ [[90, -180],
@@ -58,7 +62,9 @@ $( document ).ready(function() {
     fillOpacity: 0.1,
     stroke: false
     }).addTo(map);
-
+<?php
+    }
+?>
 
 	// Show airports on map
 	

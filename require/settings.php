@@ -41,6 +41,9 @@ $globalSBS1Host = '127.0.0.1';
 $globalSBS1Port = '30003';
 $globalSBS1TimeOut = '15';
 
+// To display Squawk usage we need Squawk country for now
+$globalSquawkCountry = 'UK';
+
 //BIT.LY API INFO (used in the search page for a shorter URL)
 $globalBitlyAccessToken = ''; //the access token from the bit.ly API
 
@@ -49,4 +52,5 @@ $globalBritishAirwaysKey = '';
 
 //ignore the flights during imports that have the following airports (departure/arrival) associated with them
 $globalAirportIgnore = array();
+
 ?>

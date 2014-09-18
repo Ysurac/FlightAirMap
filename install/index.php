@@ -139,6 +139,11 @@
         	    <label for="longitudecenter">The longitude center</label>
         	    <input type="text" name="longitudecenter" id="longitudecenter" value="<?php print $globalCenterLongitude; ?>" />
         	</p>
+        	<p>
+        	    <label for="squawk_country">Country for squawk usage</label>
+        	    <input type="text" name="squawk_country" id="squawk_country" value="<?php print $globalSquawkCountry; ?>" />
+        	    UK, FR or let it blank for now
+        	</p>
             </fieldset>
 	    <fieldset>
 		<legend>Data source</legend>
@@ -237,6 +242,9 @@
 	$longitudemax = filter_input(INPUT_POST,'longitudemax',FILTER_SANITIZE_STRING);
 	$longitudemin = filter_input(INPUT_POST,'longitudemin',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalLatitudeMax' => $latitudemax,'globalLatitudeMin' => $latitudemin,'globalLongitudeMax' => $longitudemax,'globalLongitudeMin' => $longitudemin));
+
+	$squawk_country = filter_input(INPUT_POST,'squawk_country',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalSquawkCountry' => $squawk_country));
 
 	$latitudecenter = filter_input(INPUT_POST,'latitudecenter',FILTER_SANITIZE_STRING);
 	$longitudecenter = filter_input(INPUT_POST,'longitudecenter',FILTER_SANITIZE_STRING);

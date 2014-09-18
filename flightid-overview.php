@@ -75,7 +75,7 @@ if (!empty($spotter_array))
 	  		{
 	    			print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png" /></a>';
 	  		} else {
-	  				if ($spotter_item['airline_name'] != "")
+	  				if (isset($spotter_item['airline_name']) && $spotter_item['airline_name'] != "")
 	  				{
 	  					print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'">'.$spotter_item['airline_name'].'</a>';
 	  				} else {
@@ -169,7 +169,7 @@ if (!empty($spotter_array))
 				if ($spotter_array[0]['image'] != "")
 				{	 	
                     $planespotter_url_array = explode("_", $spotter_array[0]['image']);
-                    $planespotter_id = str_replace(".jpg", "", $planespotter_url_array[2]);
+                    $planespotter_id = str_replace(".jpg", "", $planespotter_url_array[1]);
                     print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$spotter_array[0]['image'].'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" /></a>';
 					
 				} else {
