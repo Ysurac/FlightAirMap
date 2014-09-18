@@ -169,8 +169,8 @@ class Spotter{
 			}
 			if (isset($row['squawk'])) {
 				$temp_array['squawk'] = $row['squawk'];
-				if ($row['squawk'] != '') {
-					$temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],'UK');
+				if ($row['squawk'] != '' && $globalSquawkCountry != '') {
+					$temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$globalSquawkCountry);
 				}
 			}
       
@@ -1835,16 +1835,28 @@ class Spotter{
 	* @return Array list of airline names
 	*
 	*/
-	public static function getAllAirlineNames()
+	public static function getAllAirlineNames($airline_type = '')
 	{
-		$query  = "SELECT DISTINCT spotter_output.airline_icao AS airline_icao, spotter_output.airline_name AS airline_name
+		$airline_type = filter_var($airline_type,FILTER_SANITIZE_STRING);
+		if ($airline_type == '' || $airline_type == 'all') {
+			$query  = "SELECT DISTINCT spotter_output.airline_icao AS airline_icao, spotter_output.airline_name AS airline_name, spotter_output.airline_type AS airline_type
 								FROM spotter_output
 								WHERE spotter_output.airline_icao <> '' 
-								ORDER BY spotter_output.airline_name ASC";							
-								
+								ORDER BY spotter_output.airline_name ASC";
+		} else {
+			$query  = "SELECT DISTINCT spotter_output.airline_icao AS airline_icao, spotter_output.airline_name AS airline_name, spotter_output.airline_type AS airline_type
+								FROM spotter_output
+								WHERE spotter_output.airline_icao <> '' 
+								AND spotter_output.airline_type = :airline_type 
+								ORDER BY spotter_output.airline_name ASC";
+		}
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute();
+		if ($airline_type != '' || $airline_type == 'all') {
+			$sth->execute(array(':airline_type' => $airline_type));
+		} else {
+			$sth->execute();
+		}
     
 		$airline_array = array();
 		$temp_array = array();
@@ -1853,10 +1865,10 @@ class Spotter{
 		{
 			$temp_array['airline_icao'] = $row['airline_icao'];
 			$temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['airline_type'] = $row['airline_type'];
 
 			$airline_array[] = $temp_array;
 		}
-
 		return $airline_array;
 	}
 	
@@ -2219,9 +2231,9 @@ class Spotter{
 					if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
 						$airline_array = Spotter::getAllAirlineInfo(substr($ident, 0, 2));
 					} elseif (is_numeric(substr(substr($ident, 0, 4), -1, 1))) {
-					$airline_array = Spotter::getAllAirlineInfo(substr($ident, 0, 3));
+						$airline_array = Spotter::getAllAirlineInfo(substr($ident, 0, 3));
 					} else {
-					    $airline_array = Spotter::getAllAirlineInfo("NA");
+						$airline_array = Spotter::getAllAirlineInfo("NA");
 					}
 					if (count($airline_array) == 0) {
 						$airline_array = Spotter::getAllAirlineInfo("NA");
