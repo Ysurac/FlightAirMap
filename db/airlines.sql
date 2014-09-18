@@ -1286,7 +1286,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1235, 1236, 'Aerotucan', 'N', '', 'RTU', 'AEROTUCAN', 'Mexico', 'N', 'passenger'),
 (1236, 1237, 'Air Anastasia', 'N', '', 'RUD', 'ANASTASIA', 'Ukraine', 'N', 'passenger'),
 (1237, 1238, 'Air Rum', 'N', '', 'RUM', 'AIR RUM', 'Sierra Leone', 'N', 'passenger'),
-(1238, 1239, 'ACT Havayollari', 'N', '', 'RUN', 'CARGO TURK', 'Turkey', 'N', 'passenger'),
+(1238, 1239, 'ACT Havayollari', 'N', '', 'RUN', 'CARGO TURK', 'Turkey', 'Y', 'passenger'),
 (1239, 1240, 'Air VIP', 'N', '', 'RVP', 'AEROVIP', 'Portugal', 'N', 'passenger'),
 (1240, 1241, 'Aircompany Veteran', 'N', '', 'RVT', 'AIR-VET', 'Armenia', 'N', 'passenger'),
 (1241, 1242, 'Alliance Express Rwanda', 'N', '', 'RWB', '', 'Rwanda', 'N', 'passenger'),
@@ -1698,7 +1698,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1647, 1648, 'Carga Express Internacional', 'N', '', 'EST', 'CARGAINTER', 'Mexico', 'N', 'passenger'),
 (1648, 1649, 'Cargo 360', 'N', 'GG', 'GGC', 'LONG-HAUL', 'United States', 'N', 'cargo'),
 (1649, 1650, 'Cargo Express', 'N', '', 'MCX', 'MAURICARGO', 'Mauritania', 'N', 'cargo'),
-(1650, 1651, 'Cargo Ivoire', 'N', '', 'CRV', 'CARGOIV', 'Ivory Coast', 'N', 'cargo'),
+(1650, 1651, 'Cargo Ivoire', 'N', '', 'CRV', 'CARGOIV', 'Ivory Coast', 'Y', 'cargo'),
 (1651, 1652, 'Cargo Link (Caribbean)', 'N', '', 'CLM', 'CARGO LINK', 'Barbados', 'N', 'cargo'),
 (1652, 1653, 'Cargo Three', 'N', '', 'CTW', 'THIRD CARGO', 'Panama', 'N', 'cargo'),
 (1653, 1654, 'Cargoitalia', 'N', '2G', 'CRG', 'WHITE PELICAN', 'Italy', 'N', 'cargo'),
@@ -1770,7 +1770,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1718, 1719, 'Chabahar Airlines', 'N', '', 'IRU', 'CHABAHAR', 'Iran', 'N', 'passenger'),
 (1719, 1720, 'Chalair Aviation', 'N', '', 'CLG', 'CHALLAIR', 'France', 'N', 'passenger'),
 (1720, 1721, 'Chalk''s Ocean Airways', 'N', 'OP', 'CHK', 'CHALKS', 'United States', 'N', 'passenger'),
-(1721, 1722, 'Challenge Air Transport', 'N', '', 'CLS', 'AIRISTO', 'Germany', 'N', 'passenger'),
+(1721, 1722, 'Challenge Air Transport', 'N', '', 'CLS', 'AIRISTO', 'Germany', 'Y', 'passenger'),
 (1722, 1723, 'Challenge Aviation', 'N', '', 'CHS', 'CHALLENGE AVIATION', 'Australia', 'N', 'passenger'),
 (1723, 1724, 'Challenge International Airlines', 'N', '', 'OFF', 'CHALLENGE AIR', 'United States', 'N', 'passenger'),
 (1724, 1725, 'AC Challenge Aero', 'N', '', 'CHG', 'SKY CHALLENGER', 'Ukraine', 'N', 'passenger'),
@@ -4854,7 +4854,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (4797, 4805, 'Saratov Aviation Division', 'N', '6W', 'SOV', 'SARATOV AIR', 'Russia', 'Y', 'passenger'),
 (4798, 4806, 'Sowind Air', 'N', '', 'SOW', 'SOWIND', 'Canada', 'N', 'passenger'),
 (4799, 4807, 'Solid Air', 'N', '', 'SOX', 'SOLIDAIR', 'Netherland', 'N', 'passenger'),
-(4800, 4808, 'Sat Airlines', 'N', 'HZ', 'SOZ', 'SATCO', 'Kazakhstan', 'Y', 'passenger'),
+(4800, 4808, 'Sat Airlines', 'N', 'HZ', 'SOZ', 'SATCO', 'Kazakhstan', 'N', 'passenger'),
 (4801, 4809, 'Sierra Pacific Airlines', 'N', '', 'SPA', 'SIERRA PACIFIC', 'United States', 'N', 'passenger'),
 (4802, 4810, 'Springbok Classic Air', 'N', '', 'SPB', 'SPRING CLASSIC', 'South Africa', 'N', 'passenger'),
 (4803, 4811, 'Skyworld Airlines', 'N', '', 'SPC', 'PORT', 'United States', 'N', 'passenger'),
@@ -5179,7 +5179,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5121, 5131, 'Telnic Limited', 'N', '', 'DOT', 'DOT TEL', 'United Kingdom', 'N', 'passenger'),
 (5122, 5132, 'Triton Airlines', 'N', '', 'DRC', 'TRITON AIR', 'Canada', 'N', 'passenger'),
 (5123, 5133, 'TAAG Angola Airlines', 'N', 'DT', 'DTA', 'DTA', 'Angola', 'Y', 'passenger'),
-(5124, 5134, 'Tassili Airlines', 'N', 'SF', 'DTH', 'TASSILI AIR', 'Algeria', 'N', 'passenger'),
+(5124, 5134, 'Tassili Airlines', 'N', 'SF', 'DTH', 'TASSILI AIR', 'Algeria', 'Y', 'passenger'),
 (5125, 5135, 'Transporte Ejecutivo Aereo', 'N', '', 'EAR', 'EJECUTIVO-AEREO', 'Mexico', 'N', 'passenger'),
 (5126, 5136, 'Transportes Aereos Nacionales De Selva Tans', 'N', '', 'ELV', 'AEREOS SELVA', 'Peru', 'N', 'passenger'),
 (5127, 5137, 'TAG Farnborough Airport', 'N', '', 'FBO', '', 'United Kingdom', 'N', 'passenger'),
@@ -6098,7 +6098,11 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (7037, 0, 'AmJet Executive', '', '','AMJ','AMJET EXEC','Greece','Y','Passenger'),
 (7038, 0, 'Fly Georgia', '', '9Y','FGE','GEORGIAN WING','Georgia','Y','Passenger'),
 (7039, 0, 'FairJets Luftverkehrs AG', '', '','FJE','','Germany','Y','Passenger'),
-(7040, 0, 'SmartLynx Airlines', '', '6Y','ART','SMART LYNX','Latvia','Y','Passenger');
+(7040, 0, 'SmartLynx Airlines', '', '6Y','ART','SMART LYNX','Latvia','Y','Passenger'),
+(7041, 0, 'Jet Airlines', '', '','SOZ','SATCO','Kazakhstan','Y','Passenger'),
+(7042, 0, 'Air Serbia', '', 'JU','ASL','AIRSERBIA','Serbia','Y','Passenger'),
+(7043, 0, 'TAG Aviation Asia', '', '','TBJ','TAG JET','Hong Kong','Y','Passenger'),
+(7044, 0, 'Veteran Avia', '', '','VTF','VETFLIGHT','Armenia','Y','Cargo');
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
