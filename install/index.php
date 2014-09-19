@@ -67,8 +67,8 @@
         	<p>
         	    <label for="dbtype">Database type</label>
         	    <select name="dbtype" id="dbtype">
-        		<option value="mysql">MySQL</option>
-        		<option value="pgsql">PostgreSQL (not tested)</option>
+        		<option value="mysql" <?php if ($globalDBdriver == 'mysql') { ?>selected="selected" <?php } ?>>MySQL</option>
+        		<option value="pgsql" <?php if ($globalDBdriver == 'pgsql') { ?>selected="selected" <?php } ?>>PostgreSQL (not tested)</option>
         	    </select>
         	</p>
         	<p>
@@ -81,7 +81,7 @@
         	</p>
         	<p>
         	    <label for="dbhost">Database hostname</label>
-        	    <input type="text" name="dbhost" id="dbhost" value="localhost" />
+        	    <input type="text" name="dbhost" id="dbhost" value="<?php print $globalDBhost; ?>" />
         	</p>
         	<p>
         	    <label for="dbname">Database name</label>
@@ -113,6 +113,22 @@
 		    ex : UTC, Europe/Paris,...
 		</p>
             </fieldset>
+            <fieldset>
+        	<legend>Map provider</legend>
+        	<p>
+        	    <label for="mapprovider">map Provider</label>
+        	    <select name="mapprovider" id="mapprovider">
+        		<option value="OpenStreetMap" <?php if ($globalMapProvider == 'OpenStreetMap') { ?>selected="selected" <?php } ?>>OpenStreetMap</option>
+        		<option value="Mapbox" <?php if ($globalMapProvider == 'Mapbox') { ?>selected="selected" <?php } ?>>Mapbox</option>
+        		<option value="MapQuest-OSM" <?php if ($globalMapProvider == 'MapQuest-OSM') { ?>selected="selected" <?php } ?>>MapQuest-OSM</option>
+        		<option value="MapQuest-Aerial" <?php if ($globalMapProvider == 'MapQuest-OSM') { ?>selected="selected" <?php } ?>>MapQuest-Aerial</option>
+        	    </select>
+        	</p>
+        	<p>
+        	    <label for="mapboxid">Mapbox id</label>
+        	    <input type="text" name="mapboxid" id="mapboxid" value="<?php print $globalMapboxId; ?>" />
+        	</p>
+	    </fieldset>
             <fieldset>
         	<legend>Coverage area</legend>
         	<p>
@@ -236,6 +252,10 @@
 	$siteurl = filter_input(INPUT_POST,'siteurl',FILTER_SANITIZE_STRING);
 	$timezone = filter_input(INPUT_POST,'timezone',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalName' => $sitename,'globalURL' => $siteurl, 'globalTimezone' => $timezone));
+	
+	$mapprovider = filter_input(INPUT_POST,'mapprovider',FILTER_SANITIZE_STRING);
+	$mapboxid = filter_input(INPUT_POST,'mapboxid',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid));
 	
 	$latitudemax = filter_input(INPUT_POST,'latitudemax',FILTER_SANITIZE_STRING);
 	$latitudemin = filter_input(INPUT_POST,'latitudemin',FILTER_SANITIZE_STRING);

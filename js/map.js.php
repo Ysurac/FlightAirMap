@@ -34,13 +34,46 @@ $( document ).ready(function() {
   var layer_data = L.layerGroup();
 
   //a few title layers
+<?php
+    if ($globalMapProvider == 'Mapbox') {
+?>
   L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
       '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    id: 'examples.map-i86knfo3'
+    id: '<?php print $globalMapboxId; ?>'
   }).addTo(map);
+<?php
+    } elseif ($globalMapProvider == 'OpenStreetMap') {
+?>
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
+      'Imagery © <a href="http://mapbox.com">Mapbox</a>'
+  }).addTo(map);
+<?php
+    } elseif ($globalMapProvider == 'MapQuest-OSM') {
+?>
+  L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
+      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>'
+  }).addTo(map);
+<?php
+    } elseif ($globalMapProvider == 'MapQuest-Aerial') {
+?>
+  L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
+      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>, Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency"'
+  }).addTo(map);
+<?php
+    }
+?>
 
 <?php
     if ($globalLatitudeMin != '' && $globalLatitudeMax != '' && $globalLongitudeMin != '' && $globalLongitudeMax != '') 

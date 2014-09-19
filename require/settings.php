@@ -11,6 +11,10 @@ $globalURL = "";
 // Logo URL
 $logoURL = "/images/logo.png";
 
+// MAP PROVIDER
+$globalMapProvider = 'MapQuest-OSM'; // Can be Mapbox, OpenStreetMap, MapQuest-OSM or MapQuest-Aerial
+$globalMapboxId = 'examples.map-i86nkdio'; // Mapbox id
+
 //COVERAGE AREA (its based on a box model. i.e. top-left | top-right | bottom-right | bottom-left)
 $globalLatitudeMax = ''; //the maximum latitude (north)
 $globalLatitudeMin = ''; //the minimum latitude (south)

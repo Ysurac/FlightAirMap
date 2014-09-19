@@ -13,6 +13,7 @@ class Spotter{
 	*/
 	public static function getDataFromDB($query, $params = array(), $limitQuery = '')
 	{	
+		global $globalSquawkCountry;
 		if (!is_string($query))
 		{
 			return false;
