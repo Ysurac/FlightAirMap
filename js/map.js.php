@@ -50,8 +50,7 @@ $( document ).ready(function() {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
-      'Imagery © <a href="http://mapbox.com">Mapbox</a>'
+      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>'
   }).addTo(map);
 <?php
     } elseif ($globalMapProvider == 'MapQuest-OSM') {
