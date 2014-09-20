@@ -8,13 +8,11 @@ $current_page = $file_path['filename'];
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=10" />
-<meta name="twitter:site" content="@barriespotter" />
-<meta name="google-site-verification" content="nToRHEjzFuGDMKUbOlVzgIWSkymvy5u4m96fMRxgNFs" />
 <title><?php print $title; ?> | <?php print $globalName; ?></title>
 <meta name="keywords" content="<?php print $title; ?> barrie ontario canada spotter live flight tracking tracker map aircraft airline airport history database" />
 <meta name="description" content="<?php print $title; ?> | <?php print $globalName; ?> is an open source project documenting most of the aircrafts that have flown near the Barrie area." />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 <link rel="apple-touch-icon" href="<?php print $globalURL; ?>/images/touch-icon.png">
 <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 <!--[if lt IE 9]>
@@ -143,11 +141,11 @@ if ($globalURL == "http://www.barriespotter.com"){ ?>
   			<input type="text" name="q" value="<?php if (isset($GET['q'])) { if ($_GET['q'] != ""){ print $_GET['q']; } else { print 'search'; } } else { print 'search'; } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>
   		</form>
   		<div class="social">
-  		<!--
+            <?php if ($globalURL == "http://barriespotter.com") { ?>
   			<a href="http://www.facebook.com/barriespotter" target="_blank" title="Like us on Facebook"><i class="fa fa-facebook"></i></a>
   			<a href="http://www.twitter.com/barriespotter" target="_blank" title="Follow us on Twitter"><i class="fa fa-twitter"></i></a>
   			<a href="http://barriespotter.github.io" target="_blank" title="Fork us on Github"><i class="fa fa-github"></i></a>
-  			-->
+  		<?php } ?>
   		</div>
     </div><!--/.nav-collapse -->
   </div>
