@@ -67,8 +67,8 @@
         	<p>
         	    <label for="dbtype">Database type</label>
         	    <select name="dbtype" id="dbtype">
-        		<option value="mysql" <?php if ($globalDBdriver == 'mysql') { ?>selected="selected" <?php } ?>>MySQL</option>
-        		<option value="pgsql" <?php if ($globalDBdriver == 'pgsql') { ?>selected="selected" <?php } ?>>PostgreSQL (not tested)</option>
+        		<option value="mysql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'mysql') { ?>selected="selected" <?php } ?>>MySQL</option>
+        		<option value="pgsql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'pgsql') { ?>selected="selected" <?php } ?>>PostgreSQL (not tested)</option>
         	    </select>
         	</p>
         	<p>
@@ -81,35 +81,35 @@
         	</p>
         	<p>
         	    <label for="dbhost">Database hostname</label>
-        	    <input type="text" name="dbhost" id="dbhost" value="<?php print $globalDBhost; ?>" />
+        	    <input type="text" name="dbhost" id="dbhost" value="<?php if (isset($globalDBhost)) print $globalDBhost; ?>" />
         	</p>
         	<p>
         	    <label for="dbname">Database name</label>
-        	    <input type="text" name="dbname" id="dbname" value="<?php print $globalDBname; ?>" />
+        	    <input type="text" name="dbname" id="dbname" value="<?php if (isset($globalDBname)) print $globalDBname; ?>" />
         	</p>
         	<p>
         	    <label for="dbuser">Database user</label>
-        	    <input type="text" name="dbuser" id="dbuser" value="<?php print $globalDBuser; ?>" />
+        	    <input type="text" name="dbuser" id="dbuser" value="<?php if (isset($globalDBuser)) print $globalDBuser; ?>" />
         	</p>
         	<p>
         	    <label for="dbuserpass">Database user password</label>
-        	    <input type="password" name="dbuserpass" id="dbuserpass" value="<?php print $globalDBpass; ?>" />
+        	    <input type="password" name="dbuserpass" id="dbuserpass" value="<?php if (isset($globalDBpass)) print $globalDBpass; ?>" />
         	</p>
             </fieldset>
             <fieldset>
         	<legend>Site configuration</legend>
         	<p>
         	    <label for="sitename">Site name</label>
-        	    <input type="text" name="sitename" id="sitename" value="<?php print $globalName; ?>" />
+        	    <input type="text" name="sitename" id="sitename" value="<?php if (isset($globalName)) print $globalName; ?>" />
         	</p>
         	<p>
         	    <label for="siteurl">Site URL</label>
-        	    <input type="text" name="siteurl" id="siteurl" value="<?php print $globalURL; ?>" />
+        	    <input type="text" name="siteurl" id="siteurl" value="<?php if (isset($globalURL)) print $globalURL; ?>" />
         	    Can be null.
         	</p>
 		<p>
 		    <label for="timezone">Timezone</label>
-		    <input type="text" name="timezone" id=timezone" value="<?php print $globalTimezone; ?>" />
+		    <input type="text" name="timezone" id="timezone" value="<?php if (isset($globalTimezone)) print $globalTimezone; ?>" />
 		    ex : UTC, Europe/Paris,...
 		</p>
             </fieldset>
@@ -118,46 +118,46 @@
         	<p>
         	    <label for="mapprovider">map Provider</label>
         	    <select name="mapprovider" id="mapprovider">
-        		<option value="OpenStreetMap" <?php if ($globalMapProvider == 'OpenStreetMap') { ?>selected="selected" <?php } ?>>OpenStreetMap</option>
-        		<option value="Mapbox" <?php if ($globalMapProvider == 'Mapbox') { ?>selected="selected" <?php } ?>>Mapbox</option>
-        		<option value="MapQuest-OSM" <?php if ($globalMapProvider == 'MapQuest-OSM') { ?>selected="selected" <?php } ?>>MapQuest-OSM</option>
-        		<option value="MapQuest-Aerial" <?php if ($globalMapProvider == 'MapQuest-OSM') { ?>selected="selected" <?php } ?>>MapQuest-Aerial</option>
+        		<option value="OpenStreetMap" <?php if (isset($globalMapProvider) && $globalMapProvider == 'OpenStreetMap') { ?>selected="selected" <?php } ?>>OpenStreetMap</option>
+        		<option value="Mapbox" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Mapbox') { ?>selected="selected" <?php } ?>>Mapbox</option>
+        		<option value="MapQuest-OSM" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-OSM') { ?>selected="selected" <?php } ?>>MapQuest-OSM</option>
+        		<option value="MapQuest-Aerial" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-Aerial') { ?>selected="selected" <?php } ?>>MapQuest-Aerial</option>
         	    </select>
         	</p>
         	<p>
         	    <label for="mapboxid">Mapbox id</label>
-        	    <input type="text" name="mapboxid" id="mapboxid" value="<?php print $globalMapboxId; ?>" />
+        	    <input type="text" name="mapboxid" id="mapboxid" value="<?php if (isset($globalMapboxId)) print $globalMapboxId; ?>" />
         	</p>
 	    </fieldset>
             <fieldset>
         	<legend>Coverage area</legend>
         	<p>
         	    <label for="latitudemax">The maximum latitude (north)</label>
-        	    <input type="text" name="latitudemax" id="latitudemax" value="<?php print $globalLatitudeMax; ?>" />
+        	    <input type="text" name="latitudemax" id="latitudemax" value="<?php if (isset($globalLatitudeMax)) print $globalLatitudeMax; ?>" />
         	</p>
         	<p>
         	    <label for="latitudemin">The minimum latitude (south)</label>
-        	    <input type="text" name="latitudemin" id="latitudemin" value="<?php print $globalLatitudeMin; ?>" />
+        	    <input type="text" name="latitudemin" id="latitudemin" value="<?php if (isset($globalLatitudeMin)) print $globalLatitudeMin; ?>" />
         	</p>
         	<p>
         	    <label for="longitudemax">The maximum longitude (west)</label>
-        	    <input type="text" name="longitudemax" id="longitudemax" value="<?php print $globalLongitudeMax; ?>" />
+        	    <input type="text" name="longitudemax" id="longitudemax" value="<?php if (isset($globalLongitudeMax)) print $globalLongitudeMax; ?>" />
         	</p>
         	<p>
         	    <label for="longitudemin">The minimum longitude (east)</label>
-        	    <input type="text" name="longitudemin" id="longitudemin" value="<?php print $globalLongitudeMin; ?>" />
+        	    <input type="text" name="longitudemin" id="longitudemin" value="<?php if (isset($globalLongitudeMin)) print $globalLongitudeMin; ?>" />
         	</p>
         	<p>
         	    <label for="latitudecenter">The latitude center</label>
-        	    <input type="text" name="latitudecenter" id="latitudecenter" value="<?php print $globalCenterLatitude; ?>" />
+        	    <input type="text" name="latitudecenter" id="latitudecenter" value="<?php if (isset($globalCenterLatitude)) print $globalCenterLatitude; ?>" />
         	</p>
         	<p>
         	    <label for="longitudecenter">The longitude center</label>
-        	    <input type="text" name="longitudecenter" id="longitudecenter" value="<?php print $globalCenterLongitude; ?>" />
+        	    <input type="text" name="longitudecenter" id="longitudecenter" value="<?php if (isset($globalCenterLongitude)) print $globalCenterLongitude; ?>" />
         	</p>
         	<p>
         	    <label for="squawk_country">Country for squawk usage</label>
-        	    <input type="text" name="squawk_country" id="squawk_country" value="<?php print $globalSquawkCountry; ?>" />
+        	    <input type="text" name="squawk_country" id="squawk_country" value="<?php if (isset($globalSquawkCountry)) print $globalSquawkCountry; ?>" />
         	    UK, FR or let it blank for now
         	</p>
             </fieldset>
@@ -165,41 +165,41 @@
 		<legend>Data source</legend>
 		<p>
 		    <label>Choose data source</label>
-		    <input type="radio" name="datasource" id="flightaware" value="flightaware" <?php if ($globalFlightAware) { ?>checked="checked" <?php } ?>/>
+		    <input type="radio" name="datasource" id="flightaware" value="flightaware" <?php if (isset($globalFlightAware) && $globalFlightAware) { ?>checked="checked" <?php } ?>/>
 		    <label for="flightaware">FlightAware</label>
-		    <input type="radio" name="datasource" id="sbs" value="sbs" <?php if ($globalSBS1) { ?>checked="checked" <?php } ?> />
+		    <input type="radio" name="datasource" id="sbs" value="sbs" <?php if (isset($globalSBS1) && $globalSBS1) { ?>checked="checked" <?php } ?> />
 		    <label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format)</label>
 		</p>
 		<p>
 		    <label for="flightawareusername">FlightAware username</label>
-		    <input type="text" name="flightawareusername" id="flightawareusername" value="<?php print $globalFlightAwareUsername; ?>" />
+		    <input type="text" name="flightawareusername" id="flightawareusername" value="<?php if (isset($globalFlightAwareUsername)) print $globalFlightAwareUsername; ?>" />
 		</p>
 		<p>
 		    <label for="flightawarepassword">FlightAware password/API key</label>
-		    <input type="text" name="flightawarepassword" id="flightawarepassword" value="<?php print $globalFlightAwarePassword; ?>" />
+		    <input type="text" name="flightawarepassword" id="flightawarepassword" value="<?php if (isset($globalFlightAwarePassword)) print $globalFlightAwarePassword; ?>" />
 		</p>
 		<p>
 		    <label for="sbshost">SBS-1 host</label>
-		    <input type="text" name="sbshost" id="sbshost" value="<?php print $globalSBS1Host; ?>" />
+		    <input type="text" name="sbshost" id="sbshost" value="<?php if (isset($globalSBS1Host)) print $globalSBS1Host; ?>" />
 		</p>
 		<p>
 		    <label for="sbsport">SBS-1 port</label>
-		    <input type="text" name="sbsport" id="sbsport" value="<?php print $globalSBS1Port; ?>" />
+		    <input type="text" name="sbsport" id="sbsport" value="<?php if (isset($globalSBS1Port)) print $globalSBS1Port; ?>" />
 		</p>
 		<p>
 		    <label for="sbstimeout">SBS-1 timeout</label>
-		    <input type="text" name="sbstimeout" id="sbstimeout" value="<?php print $globalSBS1TimeOut; ?>" />
+		    <input type="text" name="sbstimeout" id="sbstimeout" value="<?php if (isset($globalSBS1TimeOut)) print $globalSBS1TimeOut; ?>" />
 		</p>
 	    </fieldset>
 	    <fieldset>
 		<legend>Optional configuration</legend>
 		<p>
 		    <label for="bitly">Bit.ly access token api (used in search page)</label>
-		    <input type="text" name="bitly" id="bitly" value="<?php print $globalBitlyAccessToken; ?>" />
+		    <input type="text" name="bitly" id="bitly" value="<?php if (isset($globalBitlyAccessToken)) print $globalBitlyAccessToken; ?>" />
 		</p>
 		<p>
 		    <label for="britishairways">British Airways API Key</label>
-		    <input type="text" name="britishairways" id="britishairways" value="<?php print $globalBritishAirwaysKey; ?>" />
+		    <input type="text" name="britishairways" id="britishairways" value="<?php if (isset($globalBritishAirwaysKey)) print $globalBritishAirwaysKey; ?>" />
 		</p>
 	    </fieldset>
             <input type="submit" name="submit" value="Create database & write setup" />
