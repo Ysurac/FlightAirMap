@@ -1527,7 +1527,7 @@ class Spotter{
 			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		}
-		$query  = "SELECT airport.* FROM airport WHERE airport.latitude BETWEEN ".$minlat." AND ".$maxlat." AND airport.longitude BETWEEN ".$minlong." AND ".$maxlong;
+		$query  = "SELECT airport.* FROM airport WHERE airport.latitude BETWEEN ".$minlat." AND ".$maxlat." AND airport.longitude BETWEEN ".$minlong." AND ".$maxlong." AND airport.type != 'closed'";
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
 		$sth->execute();
@@ -1537,6 +1537,7 @@ class Spotter{
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
+			/*
 			$temp_array['name'] = $row['name'];
 			$temp_array['city'] = $row['city'];
 			$temp_array['country'] = $row['country'];
@@ -1545,6 +1546,10 @@ class Spotter{
 			$temp_array['latitude'] = $row['latitude'];
 			$temp_array['longitude'] = $row['longitude'];
 			$temp_array['altitude'] = $row['altitude'];
+			$temp_array['type'] = $row['type'];
+			$temp_array['home_link'] = $row['type'];
+			*/
+			$temp_array = $row;
 
 			$airport_array[] = $temp_array;
 		}
