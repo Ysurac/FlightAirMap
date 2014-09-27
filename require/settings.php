@@ -11,6 +11,9 @@ $globalURL = "";
 // Logo URL
 $logoURL = "/images/logo.png";
 
+// LANGUAGE
+$globalLanguage = 'EN'; // Used only for wikipedia links for now
+
 // MAP PROVIDER
 $globalMapProvider = 'MapQuest-OSM'; // Can be Mapbox, OpenStreetMap, MapQuest-OSM or MapQuest-Aerial
 $globalMapboxId = 'examples.map-i86nkdio'; // Mapbox id

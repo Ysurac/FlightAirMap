@@ -313,11 +313,11 @@ class Schedule {
 				preg_match('/([A-Z]{3})/',$flight[5][0],$ArrivalAirportIataMatch);
 				$DepartureAirportIata = $DepartureAirportIataMatch[0];
 				$ArrivalAirportIata = $ArrivalAirportIataMatch[0];
-				$departureTime = str_replace(' lunes','',str_replace('&nbsp;','',$flight[3][2]));
-				$arrivalTime = str_replace(' lunes','',str_replace('&nbsp;','',$flight[5][1]));
+				$departureTime = substr(trim(str_replace(' lunes','',str_replace('&nbsp;','',$flight[3][2]))),0,5);
+				$arrivalTime = trim(str_replace(' lunes','',str_replace('&nbsp;','',$flight[5][1])));
 				if ($arrivalTime == 'Hora estimada de llegada') {
-					$arrivalTime = str_replace(' lunes','',str_replace('&nbsp;','',$flight[5][2]));
-				}
+					$arrivalTime = substr(trim(str_replace(' lunes','',str_replace('&nbsp;','',$flight[5][2]))),0,5);
+				} else $arrivalTime = substr($arrivalTime,0,5);
 				return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime);
 			}
 

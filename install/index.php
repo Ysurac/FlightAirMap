@@ -112,6 +112,11 @@
 		    <input type="text" name="timezone" id="timezone" value="<?php if (isset($globalTimezone)) print $globalTimezone; ?>" />
 		    ex : UTC, Europe/Paris,...
 		</p>
+		<p>
+		    <label for="language">Language</label>
+		    <input type="text" name="language" id="language" value="<?php if (isset($globalLanguage)) print $globalLanguage; ?>" />
+		    Used only when link to wikipedia for now. Can be EN,DE,FR,...
+		</p>
             </fieldset>
             <fieldset>
         	<legend>Map provider</legend>
@@ -251,7 +256,8 @@
 	$sitename = filter_input(INPUT_POST,'sitename',FILTER_SANITIZE_STRING);
 	$siteurl = filter_input(INPUT_POST,'siteurl',FILTER_SANITIZE_STRING);
 	$timezone = filter_input(INPUT_POST,'timezone',FILTER_SANITIZE_STRING);
-	$settings = array_merge($settings,array('globalName' => $sitename,'globalURL' => $siteurl, 'globalTimezone' => $timezone));
+	$language = filter_input(INPUT_POST,'language',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalName' => $sitename,'globalURL' => $siteurl, 'globalTimezone' => $timezone,'globalLanguage' => $language));
 	
 	$mapprovider = filter_input(INPUT_POST,'mapprovider',FILTER_SANITIZE_STRING);
 	$mapboxid = filter_input(INPUT_POST,'mapboxid',FILTER_SANITIZE_STRING);

@@ -30,7 +30,23 @@ if (!empty($spotter_array))
 			$output .= '"city": "'.$spotter_item['city'].'",';
 			$output .= '"country": "'.$spotter_item['country'].'",';
 			$output .= '"altitude": "'.$spotter_item['altitude'].'",';
-			$output .= '"popupContent": "'.$spotter_item['name'].' : '.$spotter_item['city'].', '.$spotter_item['country'].'"';
+			$output .= '"popupContent": "'.$spotter_item['name'].' : '.$spotter_item['city'].', '.$spotter_item['country'].'",';
+			if ($spotter_item['type'] == 'large_airport') {
+				$output .= '"icon": "images/airport.png",';
+			} elseif ($spotter_item['type'] == 'heliport') {
+				$output .= '"icon": "images/heliport.png",';
+			} elseif ($spotter_item['type'] == 'military') {
+				$output .= '"icon": "images/military.png",';
+			} elseif ($spotter_item['type'] == 'medium_airport') {
+				$output .= '"icon": "images/medium_airport.png",';
+			} else {
+				$output .= '"icon": "images/small_airport.png",';
+			}
+			$output .= '"type": "'.$spotter_item['type'].'",';
+			$output .= '"icao": "'.$spotter_item['icao'].'",';
+			$output .= '"iata": "'.$spotter_item['iata'].'",';
+			$output .= '"homepage": "'.$spotter_item['home_link'].'",';
+			$output .= '"image_thumb": "'.$spotter_item['image_thumb'].'"';
 //			$output .= '"photo": "'.$spotter_item['image_thumbnail'].'",';
 		    $output .= '},';
 		    $output .= '"geometry": {';

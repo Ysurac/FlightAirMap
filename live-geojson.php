@@ -84,6 +84,7 @@ $output = '{';
 							$output .= '"registration": "'.$spotter_item['registration'].'",';
 						if (isset($spotter_item['aircraft_name'])) {
 							$output .= '"aircraft_name": "'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')",';
+							$output .= '"aircraft_wiki": "http://'.strtolower($globalLanguage).'.wikipedia.org/wiki/'.urlencode(str_replace(' ','_',$spotter_item['aircraft_name'])).'",';
 						} else {
 							$output .= '"aircraft_name": "NA ('.$spotter_item['aircraft_type'].')",';
 						}

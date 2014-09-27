@@ -109,8 +109,90 @@ $( document ).ready(function() {
 	
 	function onEachFeature (feature, layer) {
 		var output = '';
-			output += feature.properties.name+' Airport, ';
-			output += feature.properties.city+' / '+feature.properties.country;
+//            	output += '<div class="top">';
+//		    output += feature.properties.name+', ';
+//		    output += feature.properties.city+' / '+feature.properties.country;
+//		output += '</div>';
+
+                output += '<div class="top">';
+                  output += '<div class="left">';
+                  if (typeof feature.properties.image_thumb != 'undefined' && feature.properties.image_thumb != '') {
+                  output += '<img src="'+feature.properties.image_thumb+'" /></a>';
+                  }
+                  output += '</div>';
+                  output += '<div class="right">';
+                    output += '<div class="callsign-details">';
+                      output += '<div class="callsign">'+feature.properties.name+'</div>';
+                     // output += '<div class="airline">'+feature.properties.airline_name+'</div>';
+                    output += '</div>';
+                    output += '<div class="nomobile airports">';
+            	     output += '<div class="airport">';
+                        output += '<span class="code"><a href="/airport/'+feature.properties.icao+'" target="_blank">'+feature.properties.icao+'</a></span>';
+                      output += '</div>';
+                     // output += '<i class="fa fa-long-arrow-right"></i>';
+                    //  output += '<div class="airport">';
+                      //  output += '<span class="code"><a href="/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
+                     // output += '</div>';
+                    output += '</div>';
+                  output += '</div>';
+                output += '</div>';
+
+                output += '<div class="details">';
+//                    output += '<div class="mobile airports">';
+  //                    output += '<div class="airport">';
+    //                    output += '<span class="code">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
+      //                output += '</div>';
+        //              output += '<i class="fa fa-long-arrow-right"></i>';
+          //            output += '<div class="airport">';
+        //                output += '<span class="code">rt/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
+         //             output += '</div>';
+          //          output += '</div>';
+                    output += '<div>';
+                      output += '<span>City</span>';
+                        output += feature.properties.city;
+                    output += '</div>';
+                    if (feature.properties.altitude != "" || feature.properties.altitude != 0)
+                    {
+                      output += '<div>';
+                        output += '<span>Altitude</span>';
+                        output += Math.round(feature.properties.altitude*3,2809)+' feet - '+feature.properties.altitude+' m';
+                      output += '</div>';
+                    }
+                      output += '<div>';
+                        output += '<span>Country</span>';
+                        output += feature.properties.country;
+                      output += '</div>';
+                      if (feature.properties.homepage != "") {
+                    output += '<div>';
+                      output += '<span>Links</span>';
+                      output += '<a href="'+feature.properties.homepage+'">Homepage</a>';
+                    output += '</div>';
+                    }
+     //               output += '<div>';
+       //               output += '<span>Coordinates</span>';
+         //             output += feature.properties.latitude+", "+feature.properties.longitude;
+           //         output += '</div>';
+             //       output += '<div>';
+               //       output += '<span>Heading</span>';
+                 //     output += feature.properties.heading;
+                //    output += '</div>';
+                output += '</div>';
+                if (typeof feature.properties.squawk != 'undefined') {
+                    output += '<div class="bottom">';
+                	output += 'Squawk : ';
+			output += feature.properties.squawk;
+            		if (typeof feature.properties.squawk_usage != 'undefined') {
+            			output += ' - '+feature.properties.squawk_usage;
+            		}
+		    output += '</div>';
+                }
+                output += '</div>';
+
+
+
+
+
+
 		layer.bindPopup(output);
 	};
 	
@@ -119,7 +201,14 @@ $( document ).ready(function() {
 	    geojsonLayer = new L.GeoJSON.AJAX("airport-geojson.php?coord="+bbox,{
 	    onEachFeature: onEachFeature,
 		pointToLayer: function (feature, latlng) {
-		    return L.marker(latlng, {icon:airportIcon});
+		    //return L.marker(latlng, {icon:airportIcon});
+		    return L.marker(latlng, {icon: L.icon({
+			iconUrl: feature.properties.icon,
+			iconSize: [32, 37],
+			iconAnchor: [16, 37],
+			popupAnchor: [0, -28]
+			})
+                    });
 		}
 	    }).addTo(map);
 	};
@@ -209,7 +298,14 @@ $( document ).ready(function() {
                     output += '</div>';
                     output += '<div>';
                       output += '<span>Aircraft</span>';
-                      output += feature.properties.aircraft_name;
+                      if (feature.properties.aircraft_wiki != 'undefined') {
+                        output += '<a href="'+feature.properties.aircraft_wiki+'">';
+                        output += feature.properties.aircraft_name;
+                        output += '</a>';
+                      
+                      } else {
+                        output += feature.properties.aircraft_name;
+                      }
                     output += '</div>';
                     if (feature.properties.altitude != "" || feature.properties.altitude != 0)
                     {
