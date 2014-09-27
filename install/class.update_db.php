@@ -446,5 +446,5 @@ class update_db {
 		update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'/basestation_latest/basestation.sqb');
 	}
 }
-echo update_db::update_airports();
+//echo update_db::update_airports();
 ?>
