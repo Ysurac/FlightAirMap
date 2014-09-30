@@ -4,7 +4,7 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterLive.php');
-require('require/class.Scheduler.php');
+require_once('require/class.Scheduler.php');
 
 $debug = true;
 
@@ -89,9 +89,13 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 				$all_flights[$id] = array_merge($all_flights[$id],array('departure_airport' => $route['FromAirport_ICAO'],'arrival_airport' => $route['ToAirport_ICAO']));
 			    }
 			}
+			
+			$pids[$id] = pcntl_fork();
+			if (!$pids[$id]) {
 			// Get schedule here, so it's done only one time
-			$schedule = Schedule::getSchedule(trim($line[10]));
+			$schedule = Schedule::fetchSchedule(trim($line[10]));
 			if (count($schedule) > 0) {
+				if ($debug) echo "I have schedule info for ".trim($line[10]);
 				$all_flights[$id] = array_merge($all_flights[$id],array('departure_airport_time' => $schedule['DepartureTime']));
 				$all_flights[$id] = array_merge($all_flights[$id],array('arrival_airport_time' => $schedule['ArrivalTime']));
 				// FIXME : Check if route schedule = route from DB
@@ -109,6 +113,10 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 						if ($debug) echo "Change arrival airport !!!! for ".$line[10]."\n";
 					}
 				}
+				Schedule::addSchedule($all_flights[$id]['ident'],$all_flights[$id]['departure_airport'],$all_flights[$id]['departure_airport_time'],$all_flights[$id]['arrival_airport'],$all_flights[$id]['arrival_airport_time']);
+			}
+			    sleep(90);
+			    exit();
 			}
 		}
 	        
@@ -173,9 +181,9 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 			}
 			$ignoreImport = false;
 			if ($debug) echo $result."\n";
+			SpotterLive::deleteLiveSpotterData();
 		    }
 
-			SpotterLive::deleteLiveSpotterData();
 		        //adds the spotter LIVE data
 			//SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
 			//echo "\nAjout dans Live !! \n";

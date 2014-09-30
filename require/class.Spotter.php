@@ -1,4 +1,5 @@
 <?php
+require_once('class.Scheduler.php');
 $global_query = "SELECT spotter_output.* FROM spotter_output";
 
 class Spotter{
@@ -14,6 +15,8 @@ class Spotter{
 	public static function getDataFromDB($query, $params = array(), $limitQuery = '')
 	{	
 		global $globalSquawkCountry;
+		date_default_timezone_set('UTC');
+		
 		if (!is_string($query))
 		{
 			return false;
@@ -37,7 +40,7 @@ class Spotter{
 		}
 		
 	//	$num_rows = count($sth->fetchAll());
-		$num_rows = '';
+		$num_rows = 0;
 
 		$spotter_array = array();
 		$temp_array = array();
@@ -45,6 +48,7 @@ class Spotter{
 
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
+			$num_rows++;
 			$temp_array = array();
 			if (isset($row['spotter_live_id'])) {
 			    $temp_array['spotter_id'] = $row['spotter_live_id'];
@@ -134,6 +138,15 @@ class Spotter{
 			$temp_array['airline_callsign'] = $airline_array[0]['callsign'];
 			$temp_array['airline_type'] = $airline_array[0]['type'];
 			}
+			
+			$schedule_array = Schedule::getSchedule($temp_array['ident']);
+			if (count($schedule_array) > 0) {
+				if ($schedule_array['departure_airport_icao'] != '') $row['departure_airport_icao'] = $schedule_array['departure_airport_icao'];
+				if ($schedule_array['arrival_airport_icao'] != '') $row['arrivale_airport_icao'] = $schedule_array['arrival_airport_icao'];
+				$temp_array['departure_airport_time'] = $schedule_array['departure_airport_time'];
+				$temp_array['arrival_airport_time'] = $schedule_array['arrival_airport_time'];
+			}
+			
 			if ($row['departure_airport_icao'] != '') {
 				$departure_airport_array = Spotter::getAllAirportInfo($row['departure_airport_icao']);
 				if (isset($departure_airport_array[0]['name'])) {
@@ -148,9 +161,11 @@ class Spotter{
 				} else $departure_airport_array = Spotter::getAllAirportInfo('NA');
 			
 			} else $departure_airport_array = Spotter::getAllAirportInfo('NA');
+			/*
 			if (isset($row['departure_airport_time'])) {
 				$temp_array['departure_airport_time'] = $row['departure_airport_time'];
 			}
+			*/
 			
 			if ($row['arrival_airport_icao'] != '') {
 			$arrival_airport_array = Spotter::getAllAirportInfo($row['arrival_airport_icao']);
@@ -165,9 +180,11 @@ class Spotter{
 			$temp_array['arrival_airport_altitude'] = $arrival_airport_array[0]['altitude'];
 				} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
 			} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
+			/*
 			if (isset($row['arrival_airport_time'])) {
 				$temp_array['arrival_airport_time'] = $row['arrival_airport_time'];
 			}
+			*/
 			if (isset($row['squawk'])) {
 				$temp_array['squawk'] = $row['squawk'];
 				if ($row['squawk'] != '' && $globalSquawkCountry != '') {
@@ -179,7 +196,7 @@ class Spotter{
 			
 			$spotter_array[] = $temp_array;
 		}
-
+		$spotter_array[0]['query_number_rows'] = $num_rows;
 		return $spotter_array;
 	}	
 	
@@ -2427,13 +2444,13 @@ class Spotter{
 	public static function getIdentFromLastHour($ident)
 	{
 		$query  = "SELECT spotter_output.ident FROM spotter_output 
-								WHERE spotter_output.ident = '$ident' 
+								WHERE spotter_output.ident = :ident 
 								AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) 
 								AND spotter_output.date < UTC_TIMESTAMP()";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute();
+		$sth->execute(array(':ident' => $ident));
     		$ident_result='';
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
@@ -6535,8 +6552,10 @@ class Spotter{
 	public static function findAircraftImage($aircraft_registration)
 	{
 		$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
+		$aircraft_registration = trim($aircraft_registration);
 		if ($aircraft_registration == '') return array('thumbnail' => '','original' => '', 'copyright' => '');
 		// If aircraft registration is only number, also check with aircraft model
+  
 		if (preg_match('/^[[:digit]]+$/',$aircraft_registration)) {
 			$aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
 			$url= 'http://www.planespotters.net/Aviation_Photos/search.php?tag='.$aircraft_registration.'&actype=s_'.$aircraft_info['name'].'&output=rss';
@@ -6546,21 +6565,53 @@ class Spotter{
 		}
 		
 		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,100); 
+		curl_setopt($ch, CURLOPT_TIMEOUT, 100); 
 		curl_setopt($ch, CURLOPT_URL, $url);
 		$data = curl_exec($ch);
 		curl_close($ch);
-		  
 		if ($xml = simplexml_load_string($data)) {
-			if (!isset($xml->channel->item)) return '';
-			$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
-			$image_url['thumbnail'] = $thumbnail_url;
-			$image_url['original'] = str_replace('thumbnail','original',$thumbnail_url);
-			$image_url['copyright'] = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->copyright);
+			if (isset($xml->channel->item)) {
+				$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
+				$image_url['thumbnail'] = $thumbnail_url;
+				$image_url['original'] = str_replace('thumbnail','original',$thumbnail_url);
+				$image_url['copyright'] = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->copyright);
+				return $image_url;
+			}
+		} 
 
-			return $image_url;
-		} else return array('thumbnail' => '','original' => '', 'copyright' => '');
+		if (preg_match('/^[[:digit]]+$/',$aircraft_registration)) {
+			$aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
+			$url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration.','.$aircraft_info['name'];
+		} else {
+			$url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration;
+		}
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,100); 
+		curl_setopt($ch, CURLOPT_TIMEOUT, 100); 
+		curl_setopt($ch, CURLOPT_URL, $url);
+		$data = curl_exec($ch);
+		curl_close($ch);
+		
+		if ($xml = simplexml_load_string($data)) {
+			if (isset($xml->channel->item)) {
+				$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
+				$image_url['thumbnail'] = $thumbnail_url;
+				$original_url = trim((string)$xml->channel->item->enclosure->attributes()->url);
+				//$image_url['original'] = str_replace('_s','_b',$thumbnail_url);
+				$image_url['original'] = $original_url;
+				$image_url['copyright'] = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->credit);
+				return $image_url;
+			}
+		} 
+		
+		return array('thumbnail' => '','original' => '', 'copyright' => '');
 	}
 	
 	

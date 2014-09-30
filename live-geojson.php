@@ -22,13 +22,13 @@ $output = '{';
 			//print_r($spotter_array);
 			foreach($spotter_array as $spotter_item)
 			{
-				date_default_timezone_set('America/Toronto');
+				date_default_timezone_set('UTC');
 
 				if ($spotter_item['image_thumbnail'] != "")
 				{
 					$image = $spotter_item['image_thumbnail'];
 				} else {
-					$image = "/images/placeholder_thumb.png";
+					$image = "images/placeholder_thumb.png";
 				}
 
 				//waypoint plotting

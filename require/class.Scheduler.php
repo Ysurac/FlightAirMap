@@ -1,11 +1,73 @@
 <?php
 require_once('libs/simple_html_dom.php');
 require_once('settings.php');
+require_once('class.Connection.php');
 // FIXME : timezones ?!
 
 class Schedule {
 	protected $cookies = array();
 	
+	/**
+	* Add schedule data to database
+	* @param String $ident aircraft ident
+	* @param String $departure_airport_icao departure airport icao
+	* @param String $departure_airport_time departure airport time
+	* @param String $arrival_airport_icao arrival airport icao
+	* @param String $arrival_airport_time arrival airport time
+	*/
+	
+	public static function addSchedule($ident,$departure_airport_icao,$departure_airport_time,$arrival_airport_icao,$arrival_airport_time) {
+	
+	        $query = "SELECT COUNT(*) FROM schedule WHERE `ident` = :ident";
+	        $query_values = array(':ident' => $ident);
+		 try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		if ($sth->fetchColumn() > 0) {
+			$query = 'UPDATE schedule SET `departure_airport_icao` = :departure_airport_icao, `departure_airport_time` = :departure_airport_time, `arrival_airport_icao` = :arrival_airport_icao, `arrival_airport_time` = :arrival_airport_time WHERE `ident` = :ident';
+			$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time);
+			 try {
+				$Connection = new Connection();
+				$sth = Connection::$db->prepare($query);
+				$sth->execute($query_values);
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+		} else {
+			$query = 'INSERT INTO  schedule (`ident`,`departure_airport_icao`, `departure_airport_time`, `arrival_airport_icao`, `arrival_airport_time`)  VALUES (:ident,:departure_airport_icao,:departure_airport_time,:arrival_airport_icao,:arrival_airport_time)';
+			$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time);
+			 try {
+				$Connection = new Connection();
+				$sth = Connection::$db->prepare($query);
+				$sth->execute($query_values);
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+		}
+        
+	}
+
+	public static function getSchedule($ident) {
+	
+	        $query = "SELECT * FROM schedule WHERE `ident` = :ident LIMIT 1";
+	        $query_values = array(':ident' => $ident);
+		 try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if (count($row) > 0) {
+			return $row;
+		} else return array();
+	}
+
 	/**
 	* Get data from form result
 	* @param String $url form URL
@@ -326,6 +388,39 @@ class Schedule {
 	}
 
 	/**
+	* Get flight info from Star Alliance
+	* @param String $callsign The callsign
+	* @param String $date date we want flight number info
+	* @return Flight departure and arrival airports and time
+	*/
+	private static function getStarAlliance($callsign, $date = 'NOW',$carrier = '') {
+		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
+		$check_date = new Datetime($date);
+		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
+		$url = "http://www.staralliance.com/flifoQueryAction.do?myAirline=&airlineCode=".$carrier."&flightNo=".$numvol."&day=".$check_date->format('d')."&month=".$check_date->format('m')."&year=".$check_date->format('Y')."&departuredate=".$check_date->format('d-M-Y');
+		$data = Schedule::getData($url);
+		if ($data != '') {
+			$table = Schedule::table2array($data);
+			if (count($table) > 0) {
+				$flight = $table;
+				//print_r($table);
+				if (isset($flight[25]) && isset($flight[29])) {
+					preg_match('/([A-Z]{3})/',$flight[25][1],$DepartureAirportIataMatch);
+					preg_match('/([A-Z]{3})/',$flight[25][3],$ArrivalAirportIataMatch);
+					$DepartureAirportIata = $DepartureAirportIataMatch[0];
+					$ArrivalAirportIata = $ArrivalAirportIataMatch[0];
+					$departureTime = substr(trim(str_replace('Scheduled: ','',$flight[29][0])),0,5);
+					$arrivalTime = substr(trim(str_replace('Scheduled: ','',$flight[29][1])),0,5);
+					return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime);
+				} else return array();
+			}
+			
+
+		}
+		return array();
+	}
+
+	/**
 	* Get flight info from Alitalia
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
@@ -462,7 +557,7 @@ class Schedule {
 
 
 	
-	public static function getSchedule($ident,$date = 'NOW') {
+	public static function fetchSchedule($ident,$date = 'NOW') {
 		
 		$airline_icao = '';
 		if (!is_numeric(substr($ident, 0, 3)))
@@ -475,6 +570,137 @@ class Schedule {
 		} else echo "Alors la j'ai ça : ".$ident;
 		if ($airline_icao != '') {
 			switch ($airline_icao) {
+				// Adria Airways
+				case "ADR":
+				case "JP":
+					return Schedule::getStarAlliance($ident,$date,'JP');
+					break;
+				// Aegean Airlines
+				case "AEE":
+				case "A3":
+					return Schedule::getStarAlliance($ident,$date,'A3');
+					break;
+				// Air Canada
+				case "ACA":
+				case "AC":
+					return Schedule::getStarAlliance($ident,$date,'AC');
+					break;
+				// Air China
+				case "CCA":
+				case "CA":
+					return Schedule::getStarAlliance($ident,$date,'CA');
+					break;
+				// Air India
+				case "AIC":
+				case "AI":
+					return Schedule::getStarAlliance($ident,$date,'AI');
+					break;
+				// Air New Zealand
+				case "ANZ":
+				case "NZ":
+					return Schedule::getStarAlliance($ident,$date,'NZ');
+					break;
+				// All Nippon Airways
+				case "ANA":
+				case "NH":
+					return Schedule::getStarAlliance($ident,$date,'NH');
+					break;
+				// Asiana Airlines
+				case "AAR":
+				case "OZ":
+					return Schedule::getStarAlliance($ident,$date,'OZ');
+					break;
+				// Austrian
+				case "AUA":
+				case "OS":
+					return Schedule::getStarAlliance($ident,$date,'OS');
+					break;
+				// Avianca
+				case "AVA":
+				case "AV":
+					return Schedule::getStarAlliance($ident,$date,'AV');
+					break;
+				// Brussels Airlines
+				case "BEL":
+				case "SN":
+					return Schedule::getStarAlliance($ident,$date,'SN');
+					break;
+				// Copa Airlines
+				case "CMP":
+				case "CM":
+					return Schedule::getStarAlliance($ident,$date,'CM');
+					break;
+				// Croatia Airlines
+				case "CTN":
+				case "OU":
+					return Schedule::getStarAlliance($ident,$date,'OU');
+					break;
+				// Egyptair
+				case "MSR":
+				case "MS":
+					return Schedule::getStarAlliance($ident,$date,'MS');
+					break;
+				// Ethiopian Airlines
+				case "ETH":
+				case "ET":
+					return Schedule::getStarAlliance($ident,$date,'ET');
+					break;
+				// Eva Air
+				case "EVA":
+				case "BR":
+					return Schedule::getStarAlliance($ident,$date,'BR');
+					break;
+				// LOT Polish Airlines
+				case "LOT":
+				case "LO":
+					return Schedule::getStarAlliance($ident,$date,'LO');
+					break;
+				// Scandinavian Airlines
+				case "SAS":
+				case "SK":
+					return Schedule::getStarAlliance($ident,$date,'SK');
+					break;
+				// Shenzhen Airlines
+				case "CSZ":
+				case "ZH":
+					return Schedule::getStarAlliance($ident,$date,'ZH');
+					break;
+				// Singapore Airlines
+				case "SIA":
+				case "SQ":
+					return Schedule::getStarAlliance($ident,$date,'SQ');
+					break;
+				// South African Airways
+				case "SAA":
+				case "SA":
+					return Schedule::getStarAlliance($ident,$date,'SA');
+					break;
+				// SWISS
+				case "SWR":
+				case "LX":
+					return Schedule::getStarAlliance($ident,$date,'LX');
+					break;
+				// TAP Portugal
+				case "TAP":
+				case "TP":
+					return Schedule::getStarAlliance($ident,$date,'TP');
+					break;
+				// Thai Airways International
+				case "THA":
+				case "TG":
+					return Schedule::getStarAlliance($ident,$date,'TG');
+					break;
+				// Turkish Airlines
+				case "THY":
+				case "TK":
+					return Schedule::getStarAlliance($ident,$date,'TK');
+					break;
+				// United
+				case "UAL":
+				case "UA":
+					return Schedule::getStarAlliance($ident,$date,'UA');
+					break;
+
 				// Air France
 				case "AF":
 				case "AFR":
@@ -497,11 +723,13 @@ class Schedule {
 				case "RYR":
 					return Schedule::getRyanair($ident);
 					break;
+				/*
 				// Swiss
 				case "LX":
 				case "SWR":
 					return Schedule::getSwiss($ident);
 					break;
+				*/
 				// British Airways
 				case "BA":
 				case "SHT":
@@ -529,8 +757,13 @@ class Schedule {
 					return Schedule::getAirCanada($ident);
 					break;
 				// Lufthansa
-				case "DLH":
+/*				case "DLH":
 					return Schedule::getLufthansa($ident);
+					break;
+					*/
+				case "DLH":
+				case "LH":
+					return Schedule::getStarAlliance($ident,$date,'LH');
 					break;
 				// Iberia
 				case "IBE":
@@ -581,5 +814,8 @@ class Schedule {
 //print_r(Schedule::getSchedule('BER2295'));
 //print_r(Schedule::getSchedule('AAL207'));
 //print_r(Schedule::getSchedule('QTR104'));
+//print_r(Schedule::getSchedule('DLH1317'));
+//print_r(Schedule::getSchedule('LOT7603'));
+//print_r(Schedule::getSchedule('KLM2411'));
 
 ?>

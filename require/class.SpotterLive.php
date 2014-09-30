@@ -11,14 +11,33 @@ class SpotterLive{
 	*/
 	public static function getLiveSpotterData()
 	{
-		global $global_query;
-
 		date_default_timezone_set('UTC');
 
                 $query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate";
 		$spotter_array = Spotter::getDataFromDB($query);
 
 		return $spotter_array;
+	}
+
+	/**
+	* Gets all the spotter information based on the latest data entry and coord
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getLiveSpotterDatabyCoord($coord)
+	{
+		date_default_timezone_set('UTC');
+		if (is_array($coord)) {
+                        $minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+                        $minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+                        $maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+                        $maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+                } else return array();
+                $query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 120 SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
+                $spotter_array = Spotter::getDataFromDB($query);
+
+                return $spotter_array;	
 	}
     
    /**
@@ -73,14 +92,14 @@ class SpotterLive{
          $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_output.date ';   
         }
 
-                $query  = "SELECT spotter_live.*, ( 6371 * acos( cos( radians($lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians($lng) ) + sin( radians($lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM spotter_live 
+                $query  = "SELECT spotter_live.*, ( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(:lng) ) + sin( radians(:lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM spotter_live 
                    WHERE spotter_live.latitude <> '' 
                                    AND spotter_live.longitude <> '' 
                    ".$additional_query."
                    HAVING distance < :radius  
                                    ORDER BY distance";
 
-                $spotter_array = Spotter::getDataFromDB($query, array(':radius' => $radius),$limit_query);
+                $spotter_array = Spotter::getDataFromDB($query, array(':lat' => $lat, ':lng' => $lng,':radius' => $radius),$limit_query);
 
                 return $spotter_array;
         }
