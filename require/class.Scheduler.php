@@ -769,6 +769,7 @@ class Schedule {
 					break;
 				// Tunisair
 				case "TUI":
+				case "TAR":
 				case "TU":
 					return Schedule::getTunisair($ident);
 					break;
@@ -848,5 +849,6 @@ class Schedule {
 //print_r(Schedule::getSchedule('DLH1317'));
 //print_r(Schedule::getSchedule('LOT7603'));
 //print_r(Schedule::getSchedule('KLM2411'));
+//print_r(Schedule::fetchSchedule('TAR850'));
 
 ?>
