@@ -546,25 +546,44 @@ class Schedule {
 		//AB = airberlin, HG/NLY = NIKI, 4T/BHP = Belair 
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		$check_date = new Datetime($date);
-		$url= "http://www.airberlin.com/fr-FR/site/aims.php";
+		$url= "http://www.airberlin.com/en-US/site/aims.php";
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$post = array('type' => 'departure','searchFlightNo' => '1','requestsent' => 'true', 'flightno' => $numvol,'date' => $check_date->format('Y-m-d'),'carrier' => 'AB');
 		$data = Schedule::getData($url,'post',$post);
+		//echo $data;
+		$DepartureAirportIata = '';
+		$ArrivalAirportIata = '';
 		if ($data != '') {
 			$table = Schedule::table2array($data);
 			$flight = $table;
 //			print_r($table);
 			$departureTime = $flight[5][4];
+			$departureAirport = $flight[5][2];
 		}
 		$post = array('type' => 'arrival','searchFlightNo' => '1','requestsent' => 'true', 'flightno' => $numvol,'date' => $check_date->format('Y-m-d'),'carrier' => 'AB');
 		$data = Schedule::getData($url,'post',$post);
 		if ($data != '') {
 			$table = Schedule::table2array($data);
 			$flight = $table;
-//			print_r($table);
 			$arrivalTime = $flight[5][4];
+			$arrivalAirport = $flight[5][3];
 		}
-		return array('DepartureAirportIATA' => '','DepartureTime' => $departureTime,'ArrivalAirportIATA' => '','ArrivalTime' => $arrivalTime);
+		$url = 'http://www.airberlin.com/en-US/site/json/suggestAirport.php?searchfor=departures&searchflightid=0&departures%5B%5D=&suggestsource%5B0%5D=activeairports&withcountries=0&withoutroutings=0&promotion%5Bid%5D=&promotion%5Btype%5D=&routesource%5B0%5D=airberlin&routesource%5B1%5D=partner';
+		$json = Schedule::getData($url);
+		if ($json == '') return array();
+		$parsed_json = json_decode($json);
+		$airports = $parsed_json->{'suggestList'};
+		if (count($airports) > 0) {
+			foreach ($airports as $airinfo) {
+				if ($airinfo->{'name'} == $departureAirport) {
+					$DepartureAirportIata = $airinfo->{'code'};
+				}
+				if ($airinfo->{'name'} == $arrivalAirport) {
+					$ArrivalAirportIata = $airinfo->{'code'};
+				}
+			}
+		}
+		return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime);
 	}
 
 
@@ -823,7 +842,7 @@ class Schedule {
 //print_r(Schedule::getSchedule('EIN451'));
 //print_r(Schedule::getSchedule('MSR799'));
 //print_r(Schedule::getSchedule('HVN16'));
-//print_r(Schedule::getSchedule('BER2295'));
+//print_r(Schedule::fetchSchedule('BER8792'));
 //print_r(Schedule::getSchedule('AAL207'));
 //print_r(Schedule::getSchedule('QTR104'));
 //print_r(Schedule::getSchedule('DLH1317'));

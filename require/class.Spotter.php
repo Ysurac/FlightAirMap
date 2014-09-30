@@ -6334,6 +6334,7 @@ class Spotter{
 	public static function addSpotterImage($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
+		$registration = trim($registration);
         
 		//getting the aircraft image
 		$image_url = Spotter::findAircraftImage($registration);
@@ -6360,6 +6361,7 @@ class Spotter{
 	public static function getSpotterImage($registration)
 	{
     		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
+		$registration = trim($registration);
 
 		$query  = "SELECT spotter_image.*
 								FROM spotter_image 
