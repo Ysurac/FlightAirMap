@@ -17,7 +17,8 @@ class Schedule {
 	*/
 	
 	public static function addSchedule($ident,$departure_airport_icao,$departure_airport_time,$arrival_airport_icao,$arrival_airport_time) {
-	
+		date_default_timezone_set('UTC');
+		$date = date("Y-m-d H:i:s",time());
 	        $query = "SELECT COUNT(*) FROM schedule WHERE `ident` = :ident";
 	        $query_values = array(':ident' => $ident);
 		 try {
@@ -28,18 +29,29 @@ class Schedule {
 			return "error : ".$e->getMessage();
 		}
 		if ($sth->fetchColumn() > 0) {
-			$query = 'UPDATE schedule SET `departure_airport_icao` = :departure_airport_icao, `departure_airport_time` = :departure_airport_time, `arrival_airport_icao` = :arrival_airport_icao, `arrival_airport_time` = :arrival_airport_time WHERE `ident` = :ident';
+			$query = "SELECT COUNT(*) FROM schedule WHERE `ident` = :ident AND `departure_airport_icao` = :departure_airport_icao AND `departure_airport_time` = :departure_airport_time AND `arrival_airport_icao` = :arrival_airport_icao AND `arrival_airport_time` = :arrival_airport_time";
 			$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time);
-			 try {
+			try {
 				$Connection = new Connection();
 				$sth = Connection::$db->prepare($query);
 				$sth->execute($query_values);
 			} catch(PDOException $e) {
 				return "error : ".$e->getMessage();
 			}
+			if ($sth->fetchColumn() == 0) {
+				$query = 'UPDATE schedule SET `departure_airport_icao` = :departure_airport_icao, `departure_airport_time` = :departure_airport_time, `arrival_airport_icao` = :arrival_airport_icao, `arrival_airport_time` = :arrival_airport_time, `date_modified` = :date WHERE `ident` = :ident';
+				$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time, ':date' => $date);
+				 try {
+					$Connection = new Connection();
+					$sth = Connection::$db->prepare($query);
+					$sth->execute($query_values);
+				} catch(PDOException $e) {
+					return "error : ".$e->getMessage();
+				}
+			}
 		} else {
-			$query = 'INSERT INTO  schedule (`ident`,`departure_airport_icao`, `departure_airport_time`, `arrival_airport_icao`, `arrival_airport_time`)  VALUES (:ident,:departure_airport_icao,:departure_airport_time,:arrival_airport_icao,:arrival_airport_time)';
-			$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time);
+			$query = 'INSERT INTO  schedule (`ident`,`departure_airport_icao`, `departure_airport_time`, `arrival_airport_icao`, `arrival_airport_time`,`date_added`)  VALUES (:ident,:departure_airport_icao,:departure_airport_time,:arrival_airport_icao,:arrival_airport_time,:date)';
+			$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time, ':date' => $date);
 			 try {
 				$Connection = new Connection();
 				$sth = Connection::$db->prepare($query);
