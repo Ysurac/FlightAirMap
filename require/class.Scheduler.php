@@ -19,6 +19,7 @@ class Schedule {
 	public static function addSchedule($ident,$departure_airport_icao,$departure_airport_time,$arrival_airport_icao,$arrival_airport_time) {
 		date_default_timezone_set('UTC');
 		$date = date("Y-m-d H:i:s",time());
+	        if ($departure_airport_time == '' && $arrival_airport_time == '') exit;
 	        $query = "SELECT COUNT(*) FROM schedule WHERE `ident` = :ident";
 	        $query_values = array(':ident' => $ident);
 		 try {
