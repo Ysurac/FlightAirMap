@@ -11,7 +11,12 @@ if (isset($_GET['download'])) {
 }
 header('Content-Type: text/javascript');
 
-$spotter_array = SpotterLive::getLiveSpotterData();
+if (isset($_GET['coord'])) {
+	$coord = explode(',',$_GET['coord']);
+	$spotter_array = SpotterLive::getLiveSpotterDatabyCoord($coord);
+} else {
+	$spotter_array = SpotterLive::getLiveSpotterData();
+}
 
 $output = '{';
 	$output .= '"type": "FeatureCollection",';
