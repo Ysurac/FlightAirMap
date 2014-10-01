@@ -48,6 +48,16 @@ class Schedule {
 				} catch(PDOException $e) {
 					return "error : ".$e->getMessage();
 				}
+			} else {
+				$query = 'UPDATE schedule SET `date_lastseen` = :date WHERE `ident` = :ident';
+				$query_values = array(':ident' => $ident,':date' => $date);
+				 try {
+					$Connection = new Connection();
+					$sth = Connection::$db->prepare($query);
+					$sth->execute($query_values);
+				} catch(PDOException $e) {
+					return "error : ".$e->getMessage();
+				}
 			}
 		} else {
 			$query = 'INSERT INTO  schedule (`ident`,`departure_airport_icao`, `departure_airport_time`, `arrival_airport_icao`, `arrival_airport_time`,`date_added`)  VALUES (:ident,:departure_airport_icao,:departure_airport_time,:arrival_airport_icao,:arrival_airport_time,:date)';
@@ -849,6 +859,7 @@ class Schedule {
 //print_r(Schedule::getSchedule('DLH1317'));
 //print_r(Schedule::getSchedule('LOT7603'));
 //print_r(Schedule::getSchedule('KLM2411'));
-//print_r(Schedule::fetchSchedule('TAR850'));
+//print_r(Schedule::fetchSchedule('TAR629'));
+//print_r(Schedule::fetchSchedule('VLG8993'));
 
 ?>

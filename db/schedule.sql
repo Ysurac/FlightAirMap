@@ -8,6 +8,7 @@ CREATE TABLE `schedule` (
   `arrival_airport_time` varchar(999) NOT NULL,
   `date_added` datetime,
   `date_modified` datetime,
+  `date_lastseen` datetime,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
