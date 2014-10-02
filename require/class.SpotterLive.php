@@ -20,6 +20,27 @@ class SpotterLive{
 	}
 
 	/**
+	* Gets number of latest data entry
+	*
+	* @return String number of entry
+	*
+	*/
+	public static function getLiveSpotterCount()
+	{
+
+                $query  = "SELECT COUNT(*) as nb FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 200 SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate";
+    		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error";
+		}
+		$result = $sth->fetch(PDO::FETCH_ASSOC);
+		return $result['nb'];
+	}
+
+	/**
 	* Gets all the spotter information based on the latest data entry and coord
 	*
 	* @return Array the spotter information
@@ -34,13 +55,12 @@ class SpotterLive{
                         $maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
                         $maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
                 } else return array();
-                $query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 120 SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
+                $query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 200 SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
                 $spotter_array = Spotter::getDataFromDB($query);
+                return $spotter_array;
+        }
 
-                return $spotter_array;	
-	}
-    
-   /**
+	/**
         * Gets all the spotter information based on a user's latitude and longitude
         *
         * @return Array the spotter information

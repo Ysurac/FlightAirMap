@@ -18,6 +18,8 @@ if (isset($_GET['coord'])) {
 	$spotter_array = SpotterLive::getLiveSpotterData();
 }
 
+$flightcnt = SpotterLive::getLiveSpotterCount();
+
 $output = '{';
 	$output .= '"type": "FeatureCollection",';
 		$output .= '"features": [';
@@ -84,7 +86,9 @@ $output = '{';
 				$output .= '{';
 					$output .= '"type": "Feature",';
 						$output .= '"properties": {';
-                            $output .= '"flightaware_id": "'.$spotter_item['flightaware_id'].'",';
+							$output .= '"flightaware_id": "'.$spotter_item['flightaware_id'].'",';
+							$output .= '"flight_cnt": "'.$flightcnt.'",';
+							//$output .= '"flight_cnt": "'.$spotter_item['nb'].'",';
 							$output .= '"callsign": "'.$spotter_item['ident'].'",';
 							$output .= '"registration": "'.$spotter_item['registration'].'",';
 						if (isset($spotter_item['aircraft_name'])) {

@@ -204,7 +204,7 @@ $( document ).ready(function() {
 		    //return L.marker(latlng, {icon:airportIcon});
 		    return L.marker(latlng, {icon: L.icon({
 			iconUrl: feature.properties.icon,
-			iconSize: [32, 37],
+			iconSize: [16, 18],
 			iconAnchor: [16, 37],
 			popupAnchor: [0, -28]
 			})
@@ -222,15 +222,30 @@ $( document ).ready(function() {
 
 	
 	update_geojsonLayer();
+	
+	var info = L.control();
+	info.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+		this.update();
+		return this._div;
+	};
+	info.update = function (props) {
+		if (typeof props != 'undefined') {
+			this._div.innerHTML = '<h4>Aircraft detected</h4>' +  '<b>' + props.flight_cnt + '</b>';
+		}
+	};
+	info.addTo(map);
 
   function getLiveData()
   {
+	var bbox = map.getBounds().toBBoxString();
 //    map.removeLayer(layer_data);
 //    layer_data = L.layerGroup();
 
     $.ajax({
       dataType: "json",
-      url: "live/geojson?"+Math.random(),
+//      url: "live/geojson?"+Math.random(),
+      url: "live/geojson?"+Math.random()+"&coord="+bbox,
       success: function(data) {
 	    map.removeLayer(layer_data);
 	    layer_data = L.layerGroup();
@@ -260,7 +275,7 @@ $( document ).ready(function() {
                 
               //individual aircraft
               if (feature.properties.type == "aircraft"){
-
+		info.update(feature.properties);
                 output += '<div class="top">';
                   output += '<div class="left"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" /></a></div>';
                   output += '<div class="right">';
