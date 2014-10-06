@@ -18,7 +18,9 @@ if (isset($_GET['coord'])) {
 	$spotter_array = SpotterLive::getLiveSpotterData();
 }
 
-$flightcnt = SpotterLive::getLiveSpotterCount();
+if (!empty($spotter_array)) {
+	$flightcnt = SpotterLive::getLiveSpotterCount();
+} else $flightcnt = 0;
 
 $output = '{';
 	$output .= '"type": "FeatureCollection",';

@@ -24,7 +24,14 @@ class settings {
 			    $pattern = '/\$'.$settingname." = '".'(.*)'."'/";
 			    $replace = '\$'.$settingname." = '".$value."'";
 			}
-			$content = preg_replace($pattern,$replace,$content);
+			$rep_cnt = 0;
+			$content = preg_replace($pattern,$replace,$content,1,$rep_cnt);
+			
+			// If setting is not in settings.php (for update)
+			if ($rep_cnt == 0) {
+				$content = preg_replace('/\?>/',$replace."\n?>");
+			}
+
 		}
 		fwrite($fh,$content);
 		fclose($fh);

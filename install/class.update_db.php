@@ -60,19 +60,20 @@ class update_db {
                 }
 
     		update_db::connect_sqlite($database_file);
-		$query = 'select Route.RouteID, Route.callsign, operator.Icao AS operator_icao, FromAir.Icao AS FromAirportIcao, ToAir.Icao AS ToAirportIcao from Route inner join operator ON Route.operatorId = operator.operatorId LEFT JOIN Airport AS FromAir ON route.FromAirportId = FromAir.AirportId LEFT JOIN Airport AS ToAir ON ToAir.AirportID = route.ToAirportID';
+		//$query = 'select Route.RouteID, Route.callsign, operator.Icao AS operator_icao, FromAir.Icao AS FromAirportIcao, ToAir.Icao AS ToAirportIcao from Route inner join operator ON Route.operatorId = operator.operatorId LEFT JOIN Airport AS FromAir ON route.FromAirportId = FromAir.AirportId LEFT JOIN Airport AS ToAir ON ToAir.AirportID = route.ToAirportID';
+		$query = "select Route.RouteID, Route.callsign, operator.Icao AS operator_icao, FromAir.Icao AS FromAirportIcao, ToAir.Icao AS ToAirportIcao, rstp.allstop AS AllStop from Route inner join operator ON Route.operatorId = operator.operatorId LEFT JOIN Airport AS FromAir ON route.FromAirportId = FromAir.AirportId LEFT JOIN Airport AS ToAir ON ToAir.AirportID = route.ToAirportID LEFT JOIN (select RouteId,GROUP_CONCAT(icao,' ') as allstop from routestop left join Airport as air ON routestop.AirportId = air.AirportID group by RouteID) AS rstp ON Route.RouteID = rstp.RouteID";
 		try {
                         $sth = update_db::$db_sqlite->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
-		$query_dest = 'INSERT INTO routes (`RouteID`,`CallSign`,`Operator_ICAO`,`FromAirport_ICAO`,`ToAirport_ICAO`) VALUES (:RouteID, :CallSign, :Operator_ICAO, :FromAirport_ICAO, :ToAirport_ICAO)';
+		$query_dest = 'INSERT INTO routes (`RouteID`,`CallSign`,`Operator_ICAO`,`FromAirport_ICAO`,`ToAirport_ICAO`,`RouteStop`) VALUES (:RouteID, :CallSign, :Operator_ICAO, :FromAirport_ICAO, :ToAirport_ICAO, :routestop)';
 		$Connection = new Connection();
 		$sth_dest = Connection::$db->prepare($query_dest);
 		Connection::$db->beginTransaction();
                 while ($values = $sth->fetch(PDO::FETCH_ASSOC)) {
-			$query_dest_values = array(':RouteID' => $values['RouteId'],':CallSign' => $values['Callsign'],':Operator_ICAO' => $values['operator_icao'],':FromAirport_ICAO' => $values['FromAirportIcao'],':ToAirport_ICAO' => $values['ToAirportIcao']);
+			$query_dest_values = array(':RouteID' => $values['RouteId'],':CallSign' => $values['Callsign'],':Operator_ICAO' => $values['operator_icao'],':FromAirport_ICAO' => $values['FromAirportIcao'],':ToAirport_ICAO' => $values['ToAirportIcao'],':routestop' => $values['AllStop']);
 			try {
 				$sth_dest->execute($query_dest_values);
 			} catch(PDOException $e) {
@@ -117,6 +118,9 @@ class update_db {
                 return "success";
 	}
 
+	/*
+	* This function is used to create a list of airports. Sources : Wikipedia, ourairports.com ans partow.net
+	*/
 	public static function update_airports() {
 		global $tmp_dir;
 
@@ -432,8 +436,67 @@ class update_db {
 
                 return "success";
 	}
+	
+	public static function translation() {
+		require_once('../require/class.Spotter.php');
+		global $tmp_dir;
+		//$out_file = $tmp_dir.'translation.zip';
+		//update_db::download('http://www.acarsd.org/download/translation.php',$out_file);
+		//if (!file_exists($out_file) || !is_readable($out_file)) return FALSE;
+		
+		$query = 'TRUNCATE TABLE translation';
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
 
-
+		
+		//update_db::unzip($out_file);
+		$header = NULL;
+		$delimiter = ';';
+		$Connection = new Connection();
+		if (($handle = fopen($tmp_dir.'translation.csv', 'r')) !== FALSE)
+		{
+			$i = 0;
+			Connection::$db->beginTransaction();
+			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				$i++;
+				if($i > 12) {
+					$data = $row;
+					$operator = $data[2];
+					if ($operator != '' && is_numeric(substr(substr($operator, 0, 3), -1, 1))) {
+                                                $airline_array = Spotter::getAllAirlineInfo(substr($operator, 0, 2));
+                                                echo substr($operator, 0, 2)."\n";;
+                                                if (count($airline_array) > 0) {
+							//print_r($airline_array);
+							$operator = $airline_array[0]['icao'].substr($operator,2);
+                                                }
+                                        }
+					
+					$operator_correct = $data[3];
+					if ($operator_correct != '' && is_numeric(substr(substr($operator_correct, 0, 3), -1, 1))) {
+                                                $airline_array = Spotter::getAllAirlineInfo(substr($operator_correct, 0, 2));
+                                                if (count($airline_array) > 0) {
+                                            		$operator_correct = $airline_array[0]['icao'].substr($operator_correct,2);
+                                            	}
+                                        }
+					$query = 'INSERT INTO `translation` (`Reg`,`Reg_correct`,`Operator`,`Operator_correct`) VALUES (:Reg, :Reg_correct, :Operator, :Operator_correct)';
+					try {
+						$sth = Connection::$db->prepare($query);
+						$sth->execute(array(':Reg' => $data[0],':Reg_correct' => $data[1],':Operator' => $operator,':Operator_correct' => $operator_correct));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				}
+			}
+			fclose($handle);
+			Connection::$db->commit();
+		}
+        }
 	
 	public static function update_all() {
 		global $tmp_dir;
@@ -444,7 +507,13 @@ class update_db {
 		update_db::download('http://pp-sqb.mantma.co.uk/basestation_latest.zip',$tmp_dir.'basestation_latest.zip');
 		update_db::unzip($tmp_dir.'basestation_latest.zip');
 		update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'/basestation_latest/basestation.sqb');
+
+		update_db::download('http://www.acarsd.org/download/translation.php',$tmp_dir.'translation.zip');
+		update_db::unzip($tmp_dir.'translation.zip');
+		update_db::translation();
+
 	}
 }
 //echo update_db::update_airports();
+//echo update_db::translation();
 ?>

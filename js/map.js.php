@@ -218,6 +218,7 @@ $( document ).ready(function() {
 	    if (map.getZoom() > 7) {
 		update_geojsonLayer();
 	    }
+	    getLiveData();
 	});
 
 	
@@ -231,7 +232,7 @@ $( document ).ready(function() {
 	};
 	info.update = function (props) {
 		if (typeof props != 'undefined') {
-			this._div.innerHTML = '<h4>Aircraft detected</h4>' +  '<b>' + props.flight_cnt + '</b>';
+			this._div.innerHTML = '<h4>Aircrafts detected</h4>' +  '<b>' + props.flight_cnt + '</b>';
 		}
 	};
 	info.addTo(map);
@@ -298,7 +299,11 @@ $( document ).ready(function() {
                 	}
                       output += '</div>';
                     output += '</div>';
+                    if (typeof feature.properties.route_stop != 'undefined') {
+                	output += 'Route stop : '+feature.properties.route_stop;
+                    }
                   output += '</div>';
+
                 output += '</div>';
 
                 output += '<div class="details">';

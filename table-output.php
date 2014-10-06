@@ -196,6 +196,7 @@ if (strtolower($current_page) == "search")
 		} else {
 			print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc"><span class="nomobile">Flying to</span><span class="mobile">To</span></a> <i class="fa fa-sort small"></i></th>';
 		}
+		print '<th class="routestop"><span class="nomobile">Route stop</span><span class="mobile">Stop</span></a></th>';
 		if (strtolower($current_page) == "date")
 		{
 			if ($_GET['sort'] == "date_asc")
@@ -280,6 +281,7 @@ foreach($spotter_array as $spotter_item)
 		}
 		print '</td>'."\n";
 	}
+	// Aircraft ident
 	print '<td class="ident">'."\n";
 	if ($spotter_item['ident'] != "")
 	{
@@ -288,6 +290,7 @@ foreach($spotter_array as $spotter_item)
 		print 'N/A'."\n";
 	}
 	print '</td>'."\n";
+	// Aircraft type
 	print '<td class="type">'."\n";
 	if (!isset($spotter_item['aircraft_name'])) {
 		print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">Not available</a></span>'."\n";
@@ -296,6 +299,7 @@ foreach($spotter_array as $spotter_item)
 	}
 	print '<span class="mobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a></span>'."\n";
 	print '</td>'."\n";
+	// Departure Airport
 	print '<td class="departure_airport">'."\n";
 	if (!isset($spotter_item['departure_airport']) || !isset($spotter_item['departure_airport_city'])) {
 		print '<span class="nomobile">Not available</span>'."\n";
@@ -308,6 +312,7 @@ foreach($spotter_array as $spotter_item)
 		print '<br /><span class="airport_time">'.$spotter_item['departure_airport_time'].'</span>'."\n";
 	}
 	print '</td>'."\n";
+	// Arrival Airport
 	print '<td class="arrival_airport">'."\n";
 	if (!isset($spotter_item['arrival_airport']) || !isset($spotter_item['arrival_airport_city'])) {
 		print '<span class="nomobile">Not available</span>'."\n";
@@ -320,6 +325,19 @@ foreach($spotter_array as $spotter_item)
 		print '<br /><span class="airport_time">'.$spotter_item['arrival_airport_time'].'</span>'."\n";
 	}
 	print '</td>'."\n";
+	// Route stop
+	print '<td class="route_stop">'."\n";
+	if (!isset($spotter_item['route_stop']) || $spotter_item['route_stop'] == '') {
+		print '<span class="nomobile">-</span>'."\n";
+		print '<span class="mobile">-</span>'."\n";
+	} else {
+		foreach ($spotter_item['route_stop_details'] as $rst) {
+			print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$rst['airport_icao'].'">'.$rst['airport_city'].', '.$rst['airport_country'].' ('.$rst['airport_icao'].')</a></span>'."\n";
+			print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$rst['airport_icao'].'">'.$rst['airport_icao'].'</a></span><br />'."\n";
+		}
+	}
+	print '</td>'."\n";
+	// Date
 	if (strtolower($current_page) == "date")
 	{
 		print '<td class="time">'."\n";
@@ -334,7 +352,7 @@ foreach($spotter_array as $spotter_item)
 		print '</td>'."\n";
 	} else {
 		print '<td class="date">'."\n";
-		print '<span class="nomobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("M j, Y, g:i a", strtotime($spotter_item['date_iso_8601'])).'</a></span>'."\n";
+		print '<span class="nomobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("r", $spotter_item['date_unix']).'</a></span>'."\n";
 		print '<span class="mobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("j/n/Y g:i a", strtotime($spotter_item['date_iso_8601'])).'</a></span>'."\n";
 		print '</td>'."\n";
 	}
