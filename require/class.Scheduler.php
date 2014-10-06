@@ -91,6 +91,21 @@ class Schedule {
 		} else return array();
 	}
 
+	public static function checkSchedule($ident) {
+	
+	        $query = "SELECT COUNT(*) as nb FROM schedule WHERE `ident` = :ident AND `date_added` > DATE_SUB(CURDATE(), INTERVAL 8 DAY) - 8 LIMIT 1";
+	        $query_values = array(':ident' => $ident);
+		 try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		return $row['nb'];
+	}
+
 	/**
 	* Get data from form result
 	* @param String $url form URL
