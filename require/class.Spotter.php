@@ -1555,7 +1555,7 @@ class Spotter{
 	/**
 	* Gets airports info based on the coord
 	*
-	* @param Array $coord Airports countries
+	* @param Array $coord Airports longitude min,latitude min, longitude max, latitude max
 	* @return Array airport information
 	*
 	*/
@@ -1578,24 +1578,46 @@ class Spotter{
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			/*
-			$temp_array['name'] = $row['name'];
-			$temp_array['city'] = $row['city'];
-			$temp_array['country'] = $row['country'];
-			$temp_array['iata'] = $row['iata'];
-			$temp_array['icao'] = $row['icao'];
-			$temp_array['latitude'] = $row['latitude'];
-			$temp_array['longitude'] = $row['longitude'];
-			$temp_array['altitude'] = $row['altitude'];
-			$temp_array['type'] = $row['type'];
-			$temp_array['home_link'] = $row['type'];
-			*/
 			$temp_array = $row;
 
 			$airport_array[] = $temp_array;
 		}
 
 		return $airport_array;
+	}
+
+	/**
+	* Gets waypoints info based on the coord
+	*
+	* @param Array $coord waypoints coord
+	* @return Array airport information
+	*
+	*/
+	public static function getAllWaypointsInfobyCoord($coord)
+	{
+		$lst_countries = '';
+		if (is_array($coord)) {
+			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		}
+		$query  = "SELECT waypoints.* FROM waypoints WHERE waypoints.latitude BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude BETWEEN ".$minlong." AND ".$maxlong;
+		$Connection = new Connection();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
+    
+		$waypoints_array = array();
+		$temp_array = array();
+		
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array = $row;
+
+			$waypoints_array[] = $temp_array;
+		}
+
+		return $waypoints_array;
 	}
 	
 	
@@ -1702,14 +1724,14 @@ class Spotter{
 	public static function getOperator($operator)
 	{
 		$operator = filter_var($operator,FILTER_SANITIZE_STRING);
-
-		$query  = "SELECT operator_correct FROM translation WHERE operator = :operator LIMIT 1";
+		echo "Operator 2: ".$operator."\n";
+		$query  = "SELECT translation.operator_correct FROM translation WHERE translation.operator = :operator LIMIT 1";
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':operator' => $operator));
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
-		if (count($row) > 0) {
+		if (isset($row['operator_correct'])) {
 			return $row['operator_correct'];
 		} else return $operator;
 	}
@@ -6637,7 +6659,7 @@ class Spotter{
 			$aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
 			$url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration.','.$aircraft_info['name'];
 		} else {
-			$url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration;
+			$url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration.',aircraft';
 		}
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');

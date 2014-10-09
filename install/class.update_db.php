@@ -1,4 +1,5 @@
 <?php
+require_once('libs/simple_html_dom.php');
 require('../require/settings.php');
 require_once('../require/class.Connection.php');
 
@@ -470,7 +471,7 @@ class update_db {
 					$operator = $data[2];
 					if ($operator != '' && is_numeric(substr(substr($operator, 0, 3), -1, 1))) {
                                                 $airline_array = Spotter::getAllAirlineInfo(substr($operator, 0, 2));
-                                                echo substr($operator, 0, 2)."\n";;
+                                                //echo substr($operator, 0, 2)."\n";;
                                                 if (count($airline_array) > 0) {
 							//print_r($airline_array);
 							$operator = $airline_array[0]['icao'].substr($operator,2);
@@ -498,6 +499,89 @@ class update_db {
 		}
         }
 	
+	/**
+        * Convert a HTML table to an array
+        * @param String $data HTML page
+        * @return Array array of the tables in HTML page
+        */
+        private static function table2array($data) {
+                $html = str_get_html($data);
+                $tabledata=array();
+                foreach($html->find('tr') as $element)
+                {
+                        $td = array();
+                        foreach( $element->find('th') as $row)
+                        {
+                                $td [] = trim($row->plaintext);
+                        }
+                        $td=array_filter($td);
+                        $tabledata[] = $td;
+
+                        $td = array();
+                        $tdi = array();
+                        foreach( $element->find('td') as $row)
+                        {
+                                $td [] = trim($row->plaintext);
+                                $tdi [] = trim($row->innertext);
+                        }
+                        $td=array_filter($td);
+                        $tdi=array_filter($tdi);
+                    //    $tabledata[]=array_merge($td,$tdi);
+                        $tabledata[]=$td;
+                }
+                return(array_filter($tabledata));
+        }
+
+       /**
+        * Get data from form result
+        * @param String $url form URL
+        * @return String the result
+        */
+        private static function getData($url) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
+                return curl_exec($ch);
+        }
+
+	public static function waypoints() {
+		$data = update_db::getData('http://www.fallingrain.com/world/FR/waypoints.html');
+		$table = update_db::table2array($data);
+//		print_r($table);
+		$query = 'TRUNCATE TABLE waypoints';
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+		$query_dest = 'INSERT INTO waypoints (`ident`,`latitude`,`longitude`,`control`,`usage`) VALUES (:ident, :latitude, :longitude, :control, :usage)';
+		$Connection = new Connection();
+		$sth_dest = Connection::$db->prepare($query_dest);
+		Connection::$db->beginTransaction();
+                foreach ($table as $row) {
+            		if ($row[0] != 'Ident') {
+				$ident = $row[0];
+				$latitude = $row[2];
+				$longitude = $row[3];
+				$control = $row[4];
+				if (isset($row[5])) $usage = $row[5]; else $usage = '';
+				$query_dest_values = array(':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':control' => $control,':usage' => $usage);
+				try {
+					$sth_dest->execute($query_dest_values);
+				} catch(PDOException $e) {
+					return "error : ".$e->getMessage();
+				}
+			}
+                }
+		Connection::$db->commit();
+
+	}
+	
 	public static function update_all() {
 		global $tmp_dir;
 		update_db::download('http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz',$tmp_dir.'StandingData.sqb.gz');
@@ -516,4 +600,5 @@ class update_db {
 }
 //echo update_db::update_airports();
 //echo update_db::translation();
+echo update_db::waypoints();
 ?>
