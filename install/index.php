@@ -6,7 +6,7 @@
     require('header.php');
     require('../require/settings.php');
 //print_r( get_loaded_extensions());
-    if ($globalInstalled && !isset($_POST['populate'])) exit;
+    if ($globalInstalled && !isset($_POST['populate']) && !isset($_POST['waypoints'])) exit;
 
     $writable = false;
     if (!is_writable('../require/settings.php')) {
@@ -22,7 +22,7 @@
 	$error[] = "SimpleXML is not loaded.";
     }
     if (!extension_loaded('dom')) {
-	$error[] = "Dom is not loaded. Need for aircraft schedule";
+	$error[] = "Dom is not loaded. Needed for aircraft schedule";
     }
     if (!extension_loaded('PDO')) {
 	$error[] = "PDO is not loaded.";
@@ -57,7 +57,7 @@
     <?php
     }
     
-    if (!isset($_POST['dbtype']) && $writable && !isset($_POST['populate']) && (count($error) == 0)) {
+    if (!isset($_POST['dbtype']) && $writable && !isset($_POST['populate']) && !isset($_POST['waypoints']) && (count($error) == 0)) {
   
 ?>
     <div class="info column">
@@ -210,6 +210,8 @@
             <input type="submit" name="submit" value="Create database & write setup" />
           </form>
 <?php
+	}
+
     }
     $settings = array();
     $error = '';
@@ -333,12 +335,28 @@
     <div class="info column">
 	<p>All is now installed ! Thanks</p>
 	<p>You need to put cron.php in your crontab to run it every minutes.</p>
+	<p>
+	    <form method="post">
+		<label for="waypoints">You can populate waypoints with data for your country if you want to see them on map</label>
+		<input type="submit" id="waypoints" name="waypoints" value="populate waypoints database" />
+	    </form>
+	</p>
     </div>
 <?php
 	    }
 	    
 	}
 
+    }
+    if (isset($_POST['waypoints'])) {
+//        require_once('class.update_db.php');
+        include_once('class.update_db.php');
+        update_db::waypoints();
+?>
+    <div class="info column">
+	<p>waypoints database populated.</p>
+    </div>
+<?php
     }
     if (isset($_POST['populate'])) {
 //        require_once('class.update_db.php');
@@ -348,6 +366,12 @@
     <div class="info column">
 	<p>All is now installed ! Thanks</p>
 	<p>You need to run cron-sbs.php as a daemon. You can use init script in the install/init directory.</p>
+	<p>
+	    <form method="post">
+		<label for="waypoints">You can populate waypoints with data for your country if you want to see them on map</label>
+		<input type="submit" id="waypoints" name="waypoints" value="populate waypoints database" />
+	    </form>
+	</p>
     </div>
 <?php
     }

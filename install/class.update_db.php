@@ -600,5 +600,5 @@ class update_db {
 }
 //echo update_db::update_airports();
 //echo update_db::translation();
-echo update_db::waypoints();
+//echo update_db::waypoints();
 ?>
