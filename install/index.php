@@ -351,7 +351,7 @@
     if (isset($_POST['waypoints'])) {
 //        require_once('class.update_db.php');
         include_once('class.update_db.php');
-        update_db::waypoints();
+        update_db::update_waypoints();
 ?>
     <div class="info column">
 	<p>waypoints database populated.</p>

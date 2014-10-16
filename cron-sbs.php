@@ -180,7 +180,9 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
 				}
 			}
 			if (!$ignoreImport) {
-			    $result = Spotter::addSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed'],'', $all_flights[$id]['departure_airport_time'], $all_flights[$id]['arrival_airport_time'],$all_flights[$id]['squawk'],$all_flights[$id]['route_stop']);
+				$highlight = '';
+				if ($all_flights[$id]['squawk'] == '7500' || $all_flights[$id]['squawk'] == '7600' || $all_flights[$id]['squawk'] == '7700') $highlight = 'true';
+				$result = Spotter::addSpotterData($all_flights[$id]['hex'].'-'.$all_flights[$id]['ident'], $all_flights[$id]['ident'], $all_flights[$id]['aircraft_icao'], $all_flights[$id]['departure_airport'], $all_flights[$id]['arrival_airport'], $all_flights[$id]['latitude'], $all_flights[$id]['longitude'], $waypoints, $all_flights[$id]['altitude'], $all_flights[$id]['heading'], $all_flights[$id]['speed'],'', $all_flights[$id]['departure_airport_time'], $all_flights[$id]['arrival_airport_time'],$all_flights[$id]['squawk'],$all_flights[$id]['route_stop'],$highlight);
 			}
 			$ignoreImport = false;
 			if ($debug) echo $result."\n";

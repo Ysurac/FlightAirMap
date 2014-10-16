@@ -545,7 +545,7 @@ class update_db {
                 curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
                 return curl_exec($ch);
         }
-
+/*
 	public static function waypoints() {
 		$data = update_db::getData('http://www.fallingrain.com/world/FR/waypoints.html');
 		$table = update_db::table2array($data);
@@ -581,7 +581,70 @@ class update_db {
 		Connection::$db->commit();
 
 	}
+*/
+	public static function waypoints($filename) {
+		require_once('../require/class.Spotter.php');
+		global $tmp_dir;
+		//$out_file = $tmp_dir.'translation.zip';
+		//update_db::download('http://www.acarsd.org/download/translation.php',$out_file);
+		//if (!file_exists($out_file) || !is_readable($out_file)) return FALSE;
+		
+		$query = 'TRUNCATE TABLE waypoints';
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+		
+		//update_db::unzip($out_file);
+		$header = NULL;
+		$delimiter = ' ';
+		$Connection = new Connection();
+		if (($handle = fopen($filename, 'r')) !== FALSE)
+		{
+			$i = 0;
+			Connection::$db->beginTransaction();
+			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				$i++;
+				if($i > 3 && count($row) > 2) {
+					$data = array_values(array_filter($row));
+					if (count($data) > 10) {
+						$value = $data[9];
+						for ($i =10;$i < count($data);$i++) {
+							$value .= ' '.$data[$i];
+						}
+						$data[9] = $value;
+					}
+					//print_r($data);
+					$query = 'INSERT INTO `waypoints` (`name_begin`,`latitude_begin`,`longitude_begin`,`name_end`,`latitude_end`,`longitude_end`,`high`,`base`,`top`,`segment_name`) VALUES (:name_begin, :latitude_begin, :longitude_begin, :name_end, :latitude_end, :longitude_end, :high, :base, :top, :segment_name)';
+					try {
+						$sth = Connection::$db->prepare($query);
+						$sth->execute(array(':name_begin' => $data[0],':latitude_begin' => $data[1],':longitude_begin' => $data[2],':name_end' => $data[3], ':latitude_end' => $data[4], ':longitude_end' => $data[5], ':high' => $data[6], ':base' => $data[7], ':top' => $data[8], ':segment_name' => $data[9]));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				
+				}
+			}
+			fclose($handle);
+			Connection::$db->commit();
+		}
+        }
+
 	
+	public static function update_waypoints() {
+		global $tmp_dir;
+//		update_db::download('http://dev.x-plane.com/update/data/AptNav201310XP1000.zip',$tmp_dir.'AptNav.zip');
+//		update_db::unzip($tmp_dir.'AptNav.zip');
+		update_db::download('https://gitorious.org/fg/fgdata/raw/e81f8a15424a175a7b715f8f7eb8f4147b802a27:Navaids/awy.dat.gz',$tmp_dir.'awy.dat.gz');
+		update_db::gunzip($tmp_dir.'awy.dat.gz');
+		update_db::waypoints($tmp_dir.'awy.dat');
+	}
+
 	public static function update_all() {
 		global $tmp_dir;
 		update_db::download('http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz',$tmp_dir.'StandingData.sqb.gz');
@@ -600,5 +663,5 @@ class update_db {
 }
 //echo update_db::update_airports();
 //echo update_db::translation();
-//echo update_db::waypoints();
+//echo update_db::update_waypoints();
 ?>

@@ -9,6 +9,7 @@ var weatherclouds;
 var geojsonLayer;
 
 var weatherradar;
+var waypoints;
 var weatherradarrefresh;
 var weathersatellite;
 var weathersatelliterefresh; 
@@ -99,14 +100,6 @@ $( document ).ready(function() {
 ?>
 
 	// Show airports on map
-	
-	var airportIcon = L.icon({
-	    iconUrl: 'images/runway.png',
-	    iconSize: [32, 37],
-	    iconAnchor: [16, 37],
-	    popupAnchor: [0, -28]
-	});
-	
 	function airportPopup (feature, layer) {
 		var output = '';
 		output += '<div class="top">';
@@ -162,15 +155,7 @@ $( document ).ready(function() {
 		layer.bindPopup(output);
 	};
 
-	function waypointsPopup (feature, layer) {
-		var output = '';
-		output += '<div class="top">';
-		    output += '&nbsp;Ident : '+feature.properties.ident+'<br /> ';
-		    output += '&nbsp;Control : '+feature.properties.control+'<br />&nbsp;Usage : '+feature.properties.usage;
-		output += '</div>';
-		layer.bindPopup(output);
-	};
-	
+
 	function update_airportsLayer() {
 	    var bbox = map.getBounds().toBBoxString();
 	    airportsLayer = new L.GeoJSON.AJAX("airport-geojson.php?coord="+bbox,{
@@ -178,25 +163,8 @@ $( document ).ready(function() {
 		pointToLayer: function (feature, latlng) {
 		    return L.marker(latlng, {icon: L.icon({
 			iconUrl: feature.properties.icon,
-			iconSize: [16, 18],
-			iconAnchor: [16, 37],
-			popupAnchor: [0, -28]
-			})
-                    });
-		}
-	    }).addTo(map);
-	};
-
-	function update_waypointsLayer() {
-	    var bbox = map.getBounds().toBBoxString();
-	    waypointsLayer = new L.GeoJSON.AJAX("waypoints-geojson.php?coord="+bbox,{
-	    onEachFeature: waypointsPopup,
-		pointToLayer: function (feature, latlng) {
-		    return L.marker(latlng, {icon: L.icon({
-			iconUrl: feature.properties.icon,
-			iconSize: [12, 13],
-			iconAnchor: [16, 37],
-			popupAnchor: [0, -28]
+			iconSize: [16, 18]
+			//popupAnchor: [0, -28]
 			})
                     });
 		}
@@ -204,17 +172,26 @@ $( document ).ready(function() {
 	};
 
 	map.on('moveend', function() {
-	    map.removeLayer(airportsLayer);
-	    map.removeLayer(waypointsLayer);
 	    if (map.getZoom() > 7) {
 		update_airportsLayer();
-		update_waypointsLayer();
+		map.removeLayer(airportsLayer);
+		if ($(".waypoints").hasClass("active"))
+		{
+		    update_waypointsLayer();
+		    map.removeLayer(waypointsLayer);
+		}
+	    } else {
+		map.removeLayer(airportsLayer);
+		if ($(".waypoints").hasClass("active"))
+		{
+		    map.removeLayer(waypointsLayer);
+		}
 	    }
 	    getLiveData();
 	});
 
 	
-	update_waypointsLayer();
+	//update_waypointsLayer();
 	update_airportsLayer();
 	
 	var info = L.control();
@@ -725,4 +702,64 @@ function capture_orientation (event) {
   $("#live-map").css({ WebkitTransform: css});
   $("#live-map").css({'-moz-transform': css});
   $("#live-map").css({'-ms-transform': css});
+}
+
+function waypointsPopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	    if (typeof feature.properties.segment_name != 'undefined') {
+		output += '&nbsp;Segment name : '+feature.properties.segment_name+'<br /> ';
+		output += '&nbsp;From : '+feature.properties.name_begin+' To : '+feature.properties.name_end+'<br /> ';
+	    }
+	    if (typeof feature.properties.ident != 'undefined') {
+		output += '&nbsp;Ident : '+feature.properties.ident+'<br /> ';
+	    }
+	    if (typeof feature.properties.alt != 'undefined') {
+		output += '&nbsp;Altitude : '+feature.properties.alt*100+' feet<br /> ';
+	    }
+	    if (typeof feature.properties.base != 'undefined') {
+		output += '&nbsp;Base Altitude: '+feature.properties.base*100+' feet<br /> ';
+		output += '&nbsp;Top Altitude: '+feature.properties.top*100+' feet<br /> ';
+	    }
+//	    output += '&nbsp;Control : '+feature.properties.control+'<br />&nbsp;Usage : '+feature.properties.usage;
+	output += '</div>';
+	layer.bindPopup(output);
+};
+
+var lineStyle = {
+	"color": "#ff7800",
+	"weight": 1,
+	"opacity": 0.65
+};
+
+function update_waypointsLayer() {
+    var bbox = map.getBounds().toBBoxString();
+    waypointsLayer = new L.GeoJSON.AJAX("waypoints-geojson.php?coord="+bbox,{
+    onEachFeature: waypointsPopup,
+	pointToLayer: function (feature, latlng) {
+	    return L.marker(latlng, {icon: L.icon({
+		iconUrl: feature.properties.icon,
+		iconSize: [12, 13],
+		iconAnchor: [2, 13]
+		//popupAnchor: [0, -28]
+		})
+            });
+	},
+	style: lineStyle
+    }).addTo(map);
+};
+
+function showWaypoints() {
+    if (!$(".waypoints").hasClass("active"))
+    {
+	//loads the function to load the waypoints
+	update_waypointsLayer();
+	//add the active class
+	$(".waypoints").addClass("active");
+    } else {
+	//remove the waypoints layer
+	map.removeLayer(waypointsLayer);
+	//remove the active class
+	$(".waypoints").removeClass("active");
+     }
 }
