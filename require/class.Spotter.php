@@ -221,6 +221,7 @@ class Spotter{
 			$spotter_array[] = $temp_array;
 		}
 		$spotter_array[0]['query_number_rows'] = $num_rows;
+		if ($num_rows == 0) return array();
 		return $spotter_array;
 	}	
 	
@@ -1602,7 +1603,13 @@ class Spotter{
 			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		}
-		$query  = "SELECT waypoints.* FROM waypoints WHERE waypoints.latitude BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude BETWEEN ".$minlong." AND ".$maxlong;
+		//$query  = "SELECT waypoints.* FROM waypoints WHERE waypoints.latitude_begin BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude_begin BETWEEN ".$minlong." AND ".$maxlong;
+		$query  = "SELECT waypoints.* FROM waypoints WHERE (waypoints.latitude_begin BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude_begin BETWEEN ".$minlong." AND ".$maxlong.") OR (waypoints.latitude_end BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude_end BETWEEN ".$minlong." AND ".$maxlong.")";
+		//$query  = "SELECT waypoints.* FROM waypoints";
+		//$query  = "SELECT waypoints.* FROM waypoints INNER JOIN (SELECT waypoints.* FROM waypoints WHERE waypoints.latitude_begin BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude_begin BETWEEN ".$minlong." AND ".$maxlong.") w ON w.name_end = waypoints.name_begin OR w.name_begin = waypoints.name_begin OR w.name_begin = waypoints.name_end OR w.name_end = waypoints.name_end";
+		//$query = "SELECT * FROM waypoints LEFT JOIN waypoints w ON waypoints.name_end = w.name_begin WHERE waypoints.latitude_begin BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude_begin BETWEEN ".$minlong." AND ".$maxlong;
+		//$query = "SELECT z.name_begin as name_begin, z.name_end as name_end, z.latitude_begin as latitude_begin, z.longitude_begin as longitude_begin, z.latitude_end as latitude_end, z.longitude_end as longitude_end, z.segment_name as segment_name, w.name_end as name_end_seg2, w.latitude_end as latitude_end_seg2, w.longitude_end as longitude_end_seg2, w.segment_name as segment_name_seg2 FROM waypoints z INNER JOIN waypoints w ON z.name_end = w.name_begin WHERE z.latitude_begin BETWEEN ".$minlat." AND ".$maxlat." AND z.longitude_begin BETWEEN ".$minlong." AND ".$maxlong;
+		//echo $query;
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
 		$sth->execute();
@@ -2287,7 +2294,7 @@ class Spotter{
 	* @return String success or false
 	*
 	*/	
-	public static function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '')
+	public static function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '')
 	{
 		global $globalURL;
 		
@@ -2486,10 +2493,11 @@ class Spotter{
                 {
                         $arrival_airport_array = Spotter::getAllAirportInfo('NA');
                 }
-                $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop) 
-                VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time, :squawk, :route_stop)";
+                if ($registration == '') $registration = 'NA';
+                $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop,highlight) 
+                VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time, :squawk, :route_stop, :highlight)";
 
-                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country'],':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date,':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk, ':route_stop' => $route_stop);
+                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country'],':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date,':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk, ':route_stop' => $route_stop, ':highlight' => $highlight);
 
 
 		try {
@@ -6657,7 +6665,7 @@ class Spotter{
 
 		if (preg_match('/^[[:digit]]+$/',$aircraft_registration)) {
 			$aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
-			$url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration.','.$aircraft_info['name'];
+			$url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration.','.$aircraft_info['name'].',aircraft';
 		} else {
 			$url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration.',aircraft';
 		}
