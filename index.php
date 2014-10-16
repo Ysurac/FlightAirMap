@@ -19,6 +19,7 @@ require('header.php');
 <a class="button weatherprecipitation" href="#" onclick="showWeatherPrecipitation(); return false;" title="Weather Precipitation"><i class="fa fa-cloud-download"></i></a>
 <a class="button weatherrain" href="#" onclick="showWeatherRain(); return false;" title="Weather Rain"><i class="fa fa-soundcloud"></i></a>
 <a class="button weatherclouds" href="#" onclick="showWeatherClouds(); return false;" title="Weather Clouds"><i class="fa fa-cloud"></i></a>
+<a class="button waypoints" href="#" onclick="showWaypoints(); return false;" title="Waypoints"><i class="fa fa-exchange"></i></a>
 
 <?php
 require('footer.php');
