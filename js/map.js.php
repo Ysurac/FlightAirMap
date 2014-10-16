@@ -9,7 +9,7 @@ var weatherclouds;
 var geojsonLayer;
 
 var weatherradar;
-var waypoints;
+waypoints = '';
 var weatherradarrefresh;
 var weathersatellite;
 var weathersatelliterefresh; 
@@ -177,8 +177,9 @@ $( document ).ready(function() {
 		map.removeLayer(airportsLayer);
 		if ($(".waypoints").hasClass("active"))
 		{
-		    update_waypointsLayer();
 		    map.removeLayer(waypointsLayer);
+		    update_waypointsLayer();
+		    //map.removeLayer(waypointsLayer);
 		}
 	    } else {
 		map.removeLayer(airportsLayer);
