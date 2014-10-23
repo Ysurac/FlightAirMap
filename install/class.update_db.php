@@ -19,9 +19,9 @@ class update_db {
 		curl_close($ch);
 	}
 
-	public static function gunzip($in_file) {
+	public static function gunzip($in_file,$out_file_name = '') {
 		$buffer_size = 4096; // read 4kb at a time
-		$out_file_name = str_replace('.gz', '', $in_file); 
+		if ($out_file == '') $out_file_name = str_replace('.gz', '', $in_file); 
 		$file = gzopen($in_file,'rb');
 		$out_file = fopen($out_file_name, 'wb'); 
 		while(!gzeof($file)) {
@@ -634,7 +634,13 @@ class update_db {
 			Connection::$db->commit();
 		}
         }
-
+	
+	public static function update_airspace() {
+		global $tmp_dir;
+		include_once('class.create_db');
+		update_db::gunzip('../db/airspace.sql.gz',$temp_dir.'airspace.sql');
+		create_db::import_file($temp_dir.'airspace.sql');
+	}
 	
 	public static function update_waypoints() {
 		global $tmp_dir;

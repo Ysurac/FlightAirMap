@@ -173,8 +173,13 @@ $( document ).ready(function() {
 
 	map.on('moveend', function() {
 	    if (map.getZoom() > 7) {
-		update_airportsLayer();
 		map.removeLayer(airportsLayer);
+		update_airportsLayer();
+		if ($(".airspace").hasClass("active"))
+		{
+		    map.removeLayer(airspaceLayer);
+		    update_airspaceLayer();
+		}
 		if ($(".waypoints").hasClass("active"))
 		{
 		    map.removeLayer(waypointsLayer);
@@ -183,6 +188,10 @@ $( document ).ready(function() {
 		}
 	    } else {
 		map.removeLayer(airportsLayer);
+		if ($(".airspace").hasClass("active"))
+		{
+		    map.removeLayer(airspaceLayer);
+		}
 		if ($(".waypoints").hasClass("active"))
 		{
 		    map.removeLayer(waypointsLayer);
@@ -376,6 +385,11 @@ $( document ).ready(function() {
   //adds the bootstrap hover to the map buttons
   $('.button').tooltip({ placement: 'right' });
     
+
+//update_airspaceLayer();
+
+
+
   
 });
 
@@ -716,11 +730,15 @@ function waypointsPopup (feature, layer) {
 		output += '&nbsp;Ident : '+feature.properties.ident+'<br /> ';
 	    }
 	    if (typeof feature.properties.alt != 'undefined') {
-		output += '&nbsp;Altitude : '+feature.properties.alt*100+' feet<br /> ';
+		output += '&nbsp;Altitude : '+feature.properties.alt*100+' feet - ';
+		output += Math.round(feature.properties.alt*30,48)+' m (FL'+feature.properties.alt+')<br />';
+
 	    }
 	    if (typeof feature.properties.base != 'undefined') {
-		output += '&nbsp;Base Altitude: '+feature.properties.base*100+' feet<br /> ';
-		output += '&nbsp;Top Altitude: '+feature.properties.top*100+' feet<br /> ';
+		output += '&nbsp;Base Altitude: '+feature.properties.base*100+' feet - ';
+		output += Math.round(feature.properties.base*30,48)+' m (FL'+feature.properties.base+')<br />';
+		output += '&nbsp;Top Altitude: '+feature.properties.top*100+' feet - ';
+		output += Math.round(feature.properties.top*30,48)+' m (FL'+feature.properties.top+')<br />';
 	    }
 //	    output += '&nbsp;Control : '+feature.properties.control+'<br />&nbsp;Usage : '+feature.properties.usage;
 	output += '</div>';
@@ -762,5 +780,95 @@ function showWaypoints() {
 	map.removeLayer(waypointsLayer);
 	//remove the active class
 	$(".waypoints").removeClass("active");
+     }
+}
+
+
+function airspacePopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	    if (typeof feature.properties.title != 'undefined') {
+		output += '&nbsp;Title : '+feature.properties.title+'<br /> ';
+	    }
+	    if (typeof feature.properties.type != 'undefined') {
+		output += '&nbsp;Type : '+feature.properties.type+'<br /> ';
+	    }
+	    if (typeof feature.properties.tops != 'undefined') {
+		output += '&nbsp;Tops : '+feature.properties.tops+'<br /> ';
+	    }
+	    if (typeof feature.properties.base != 'undefined') {
+		output += '&nbsp;Base : '+feature.properties.base+'<br /> ';
+	    }
+	output += '</div>';
+	layer.bindPopup(output);
+};
+
+function update_airspaceLayer() {
+    var bbox = map.getBounds().toBBoxString();
+    airspaceLayer = new L.GeoJSON.AJAX("airspace-geojson.php?coord="+bbox,{
+    onEachFeature: airspacePopup,
+	pointToLayer: function (feature, latlng) {
+	    return L.marker(latlng, {icon: L.icon({
+	//	iconUrl: feature.properties.icon,
+		iconSize: [12, 13],
+		iconAnchor: [2, 13]
+//		//popupAnchor: [0, -28]
+		})
+            });
+	},
+	style: function(feature) {
+	    if (feature.properties.type == 'RESTRICTED' || feature.properties.type == 'CLASS D') {
+		return {
+		    "color": '#ff5100',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'GSEC' || feature.properties.type == 'CLASS C') {
+		return {
+		    "color": '#fff000',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'PROHIBITED') {
+		return {
+		    "color": '#ff0000',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'DANGER') {
+		return {
+		    "color": '#781212',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'OTHER' || feature.properties.type == 'CLASS A') {
+		return {
+		    "color": '#ffffff',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else {
+		return {
+		    "color": '#afffff',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    }
+	}
+    }).addTo(map);
+};
+
+function showAirspace() {
+    if (!$(".airspace").hasClass("active"))
+    {
+	//loads the function to load the waypoints
+	update_airspaceLayer();
+	//add the active class
+	$(".airspace").addClass("active");
+    } else {
+	//remove the waypoints layer
+	map.removeLayer(airspaceLayer);
+	//remove the active class
+	$(".airspace").removeClass("active");
      }
 }

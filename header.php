@@ -29,7 +29,7 @@ $current_page = $file_path['filename'];
 <script src="<?php print $globalURL; ?>/js/jquery.slides.min.js?<?php print time(); ?>"></script>
 <script src="<?php print $globalURL; ?>/js/jquery-ui-timepicker-addon.js?<?php print time(); ?>"></script>
 <script src="<?php print $globalURL; ?>/js/script.js?<?php print time(); ?>"></script>
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css?<?php print time(); ?>" />

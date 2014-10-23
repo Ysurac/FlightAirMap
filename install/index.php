@@ -6,7 +6,7 @@
     require('header.php');
     require('../require/settings.php');
 //print_r( get_loaded_extensions());
-    if ($globalInstalled && !isset($_POST['populate']) && !isset($_POST['waypoints'])) exit;
+    if ($globalInstalled && !isset($_POST['populate']) && !isset($_POST['waypoints']) && !isset($_POST['airspace'])) exit;
 
     $writable = false;
     if (!is_writable('../require/settings.php')) {
@@ -57,7 +57,7 @@
     <?php
     }
     
-    if (!isset($_POST['dbtype']) && $writable && !isset($_POST['populate']) && !isset($_POST['waypoints']) && (count($error) == 0)) {
+    if (!isset($_POST['dbtype']) && $writable && !isset($_POST['populate']) && !isset($_POST['waypoints']) && !isset($_POST['airspace']) && (count($error) == 0)) {
   
 ?>
     <div class="info column">
@@ -212,7 +212,7 @@
 <?php
 	}
 
-    }
+    
     $settings = array();
     $error = '';
     if (isset($_POST['dbtype'])) {
@@ -355,6 +355,21 @@
 ?>
     <div class="info column">
 	<p>waypoints database populated.</p>
+	<p>
+	    <form method="post">
+		<label for="airspace">You can populate airspace if you want to see them on map (need at least MySQL 5.6 or MariaDB 5.3+)</label>
+		<input type="submit" id="airspace" name="airspace" value="populate airspace database" />
+	    </form>
+	</p>
+    </div>
+<?php
+    }
+    if (isset($_POST['airspace'])) {
+        include_once('class.update_db.php');
+        update_db::update_airspace();
+?>
+    <div class="info column">
+	<p>airspace database populated.</p>
     </div>
 <?php
     }

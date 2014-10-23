@@ -3,13 +3,14 @@
 Barrie Spotter is an open source project documenting most of the aircrafts. Browse through the data based on a particular aircraft, airline or airport to search through the database. See extensive statistics such as most common aircraft type, airline, departure & arrival airport and busiest time of the day, or just explore flights.
 
 This is a "fork" of Barrie Spotter [https://github.com/barriespotter/Web_App](https://github.com/barriespotter/Web_App) with PDO and ADS-B support.
+Waypoints, routes, airspaces and schedule are supported.
 
 ## System Requirements
 
 To install the web app which Barrie Spotter runs, you need to have meet the following requirements:
 
 * PHP version 5.2.3 or greater (5.3 or greater is recommended)
-* MySQL version 5.0 or greater
+* MySQL version 5.0 or greater (5.6 if you want to see airspace)
 * SQLite 3 (if you use ADS-B as datasource)
 * An HTTP Server such as:
 	* Apache 1.3+
