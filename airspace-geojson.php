@@ -9,15 +9,17 @@ if (isset($_GET['download']))
 }
 header('Content-Type: text/javascript');
 
+$Connection = new Connection();
+
+if (!Connection::tableExists('airspace')) {
+    die;
+}
+
 if (isset($_GET['coord'])) 
 {
-
 	$coords = explode(',',$_GET['coord']);
-	//print_r($coords);
-	//$query = "SELECT *, AsWKB(SHAPE) AS wkb FROM airspace WHERE st_within(SHAPE, envelope(linestring(point(:minlon,:minlat), point(:maxlon,:maxlat))))";
 	$query = "SELECT *, AsWKB(SHAPE) AS wkb FROM airspace WHERE ST_Intersects(SHAPE, envelope(linestring(point(:minlon,:minlat), point(:maxlon,:maxlat))))";
 	try {
-		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':minlon' => $coords[0],':minlat' => $coords[1],':maxlon' => $coords[2],':maxlat' => $coords[3]));
 	} catch(PDOException $e) {
@@ -27,16 +29,12 @@ if (isset($_GET['coord']))
 
 	$query = "SELECT *, AsWKB(SHAPE) AS wkb FROM airspace";
 	try {
-		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
 		$sth->execute();
 	} catch(PDOException $e) {
 		return "error";
 	}
 }
-//} else {
-//	$spotter_array = Spotter::getAllAirportInfobyCountry(array('France','Switzerland'));
-//}
 
 function wkb_to_json($wkb) {
 	$geom = geoPHP::load($wkb,'wkb');

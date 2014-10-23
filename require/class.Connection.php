@@ -25,5 +25,17 @@ class Connection{
 		return true;
 	}
 
+	public static function tableExists($table)
+	{
+		$query = 'SHOW TABLE LIKE '.$table;
+		try {
+			$Connection = new Connection();
+			$results = Connection::$db->query($query);
+		} catch(PDOException $e) {
+			return "Error";
+		}
+		if($results->rowCount()>0) return true; else return false;
+	}
+
 }
 ?>
