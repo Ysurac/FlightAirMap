@@ -115,6 +115,7 @@ if ($globalURL == "http://www.barriespotter.com"){ ?>
             <li><a href="<?php print $globalURL; ?>/newest">Newest by Category</a></li>
             <li><hr /></li>
             <li><a href="<?php print $globalURL; ?>/highlights">Special Highlights</a></li>
+            <li><a href="<?php print $globalURL; ?>/upcoming">Upcoming Flights</a></li>
           </ul>
         </li>
       	<li><a href="<?php print $globalURL; ?>/search">Search</a></li>

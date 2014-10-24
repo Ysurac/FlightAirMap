@@ -353,6 +353,7 @@ form label{
   vertical-align: top;
 }
 form input[type="text"],
+form input[type="password"],
 form textarea,
 form select{
 	width:350px;
@@ -938,6 +939,13 @@ body.page-statistics .specific-stats .col-md-6 .more{
     text-align: right;
 }
 
+/* UPCOMING */
+body.page-upcoming table tr.currentHour .time{
+    font-weight:bold;
+}
+body.page-upcoming table tr td.logo img{
+    width:60%;
+}
 
 /* Widescreen */
 @media only screen and (min-width: 1199px){

@@ -6402,6 +6402,43 @@ class Spotter{
 		return $hour_array;
 	}
     
+	/**
+	* Gets all the spotter information based on calculated upcoming flights
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getUpcomingFlights($limit = '', $sort = '')
+	{
+		global $global_query;
+		date_default_timezone_set('UTC');
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+			}
+		}
+		if ($sort != "")
+		{
+			$search_orderby_array = Spotter::getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) ASC";
+		}
+		$currentHour = date("G");
+		$next3Hours = date("G", strtotime("+3 hour"));
+		$currentDayofWeek = date("l");
+		$query = "SELECT spotter_output.*, count(spotter_output.ident) as ident_count
+		    FROM spotter_output
+		    WHERE DAYNAME(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '$currentDayofWeek' AND HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) >= '$currentHour' AND HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) <= '$next3Hours'
+		    GROUP BY spotter_output.ident HAVING ident_count > 15 $orderby_query";
+		$spotter_array = Spotter::getDataFromDB($query.$limit_query);
+		return $spotter_array;
+	}
     
     /**
 	* Adds the images based on the aircraft registration
