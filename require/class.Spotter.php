@@ -6427,15 +6427,15 @@ class Spotter{
 			$search_orderby_array = Spotter::getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
-			$orderby_query = " ORDER BY HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) ASC";
+			$orderby_query = " ORDER BY HOUR(spotter_output.date) ASC";
 		}
 		$currentHour = date("G");
 		$next3Hours = date("G", strtotime("+3 hour"));
 		$currentDayofWeek = date("l");
 		$query = "SELECT spotter_output.*, count(spotter_output.ident) as ident_count
 		    FROM spotter_output
-		    WHERE DAYNAME(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = '$currentDayofWeek' AND HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) >= '$currentHour' AND HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) <= '$next3Hours'
-		    GROUP BY spotter_output.ident HAVING ident_count > 15 $orderby_query";
+		    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours'
+		    GROUP BY spotter_output.ident HAVING ident_count > 10 $orderby_query";
 		$spotter_array = Spotter::getDataFromDB($query.$limit_query);
 		return $spotter_array;
 	}
