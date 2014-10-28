@@ -6431,6 +6431,11 @@ class Spotter{
 		}
 		$currentHour = date("G");
 		$next3Hours = date("G", strtotime("+3 hour"));
+		//if the next 3 hours is already equal to/past midnight, we limit it to stay there, otherwise the query will fail
+		if ($currentHour >= 21 && $next3Hours >= 00)
+		{
+			$next3Hours = 24;
+		}
 		$currentDayofWeek = date("l");
 		$query = "SELECT spotter_output.*, count(spotter_output.ident) as ident_count
 		    FROM spotter_output
