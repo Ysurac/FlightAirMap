@@ -125,7 +125,7 @@ class SpotterLive{
         }
 
     
-    /**
+        /**
 	* Gets all the spotter information based on a particular callsign
 	*
 	* @return Array the spotter information
@@ -142,6 +142,27 @@ class SpotterLive{
 		$query  = $global_query." WHERE spotter_live.ident = :ident";
 
 		$spotter_array = Spotter::getDataFromDB($query,array(':ident' => $ident));
+
+		return $spotter_array;
+	}
+
+        /**
+	* Gets all the spotter information based on a particular id
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getAllLiveSpotterDataById($id)
+	{
+		global $global_query;
+
+		date_default_timezone_set('UTC');
+
+		$id = filter_var($id, FILTER_SANITIZE_STRING);
+
+		$query  = $global_query." WHERE spotter_live.flightaware_id = :id";
+
+		$spotter_array = Spotter::getDataFromDB($query,array(':id' => $id));
 
 		return $spotter_array;
 	}
@@ -353,6 +374,7 @@ class SpotterLive{
 		if (!isset($aircraft_array) || count($aircraft_array) == 0) {
 			$aircraft_array = Spotter::getAllAircraftInfo('NA');
             	}
+            	if ($registration == '') $registration = 'NA';
 		$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop) 
 		VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,'', '', '', :arrival_airport_icao, '', '', '', :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date,:departure_airport_time,:arrival_airport_time,:squawk,:route_stop)";
 

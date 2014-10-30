@@ -156,7 +156,8 @@ $output = '{';
 						$output .= '"geometry": {';
 							$output .= '"type": "LineString",';
 								$output .= '"coordinates": [';
-                                    $spotter_history_array = SpotterLive::getAllLiveSpotterDataByIdent($spotter_item['ident']);
+                                    //$spotter_history_array = SpotterLive::getAllLiveSpotterDataByIdent($spotter_item['ident']);
+                                    $spotter_history_array = SpotterLive::getAllLiveSpotterDataById($spotter_item['flightaware_id']);
 									foreach ($spotter_history_array as $spotter_history)
 									{
 										$output .= '[';
