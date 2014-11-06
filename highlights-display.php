@@ -50,10 +50,11 @@ $page_url = $globalURL.'/highlights';
               print '<div class="dispay-view">';
                 foreach($spotter_array as $spotter_item)
                 {
-                    if ($spotter_item['image'] != "")
+                    if (isset($spotter_item['image']) && $spotter_item['image'] != "")
                      {
                         print '<div>';
-                            print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image'].'" alt="'.$spotter_item['highlight'].'" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_name'].' ('.$spotter_item['airline_name'].')" data-toggle="popover" data-content="'.$spotter_item['highlight'].'" /></a>';
+                            //print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image'].'" alt="'.$spotter_item['highlight'].'" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_name'].' ('.$spotter_item['airline_name'].')" data-toggle="popover" data-content="'.$spotter_item['highlight'].'" /></a>';
+                            print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" alt="'.$spotter_item['highlight'].'" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_name'].' ('.$spotter_item['airline_name'].')" data-toggle="popover" data-content="'.$spotter_item['highlight'].'" /></a>';
                         print '</div>';
                      } else {
                      print '<div>';

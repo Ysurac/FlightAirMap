@@ -141,27 +141,27 @@ if (!empty($_GET)){
 	  	 print '<div class="column">';
     	  	 print '<div class="info">';
     	  	    print '<h1>Search Results for ';
-    		  	if ($_GET['q'] != ""){ print 'keyword: <span>'.$_GET['q'].'</span> '; }
-    		  	if ($_GET['aircraft'] != ""){ print 'aircraft: <span>'.$_GET['aircraft'].'</span> '; }
-    		  	if ($_GET['manufacturer'] != ""){ print 'manufacturer: <span>'.$_GET['manufacturer'].'</span> '; }
-    		  	if ($_GET['registration'] != ""){ print 'registration: <span>'.$_GET['registration'].'</span> '; }
+    		  	if (isset($_GET['q']) && $_GET['q'] != ""){ print 'keyword: <span>'.$_GET['q'].'</span> '; }
+    		  	if (isset($_GET['aircraft']) && $_GET['aircraft'] != ""){ print 'aircraft: <span>'.$_GET['aircraft'].'</span> '; }
+    		  	if (isset($_GET['manufacturer']) && $_GET['manufacturer'] != ""){ print 'manufacturer: <span>'.$_GET['manufacturer'].'</span> '; }
+    		  	if (isset($_GET['registration']) && $_GET['registration'] != ""){ print 'registration: <span>'.$_GET['registration'].'</span> '; }
     		  	if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'highlights: <span>'.$_GET['highlights'].'</span> '; }
-			if ($_GET['airline'] != ""){ print 'airline: <span>'.$_GET['airline'].'</span> '; }
-			if ($_GET['airline_country'] != ""){ print 'airline country: <span>'.$_GET['airline_country'].'</span> '; }
-			if ($_GET['airline_type'] != ""){ print 'airline type: <span>'.$_GET['airline_type'].'</span> '; }
-			if ($_GET['airport'] != ""){ print 'airport: <span>'.$_GET['airport'].'</span> '; }
-			if ($_GET['airport_country'] != ""){ print 'airport country: <span>'.$_GET['airport_country'].'</span> '; }
-			if ($_GET['callsign'] != ""){ print 'callsign: <span>'.$_GET['callsign'].'</span> '; }
-			if ($_GET['departure_airport_route'] != "" && $_GET['arrival_airport_route'] == ""){ print 'route out of: <span>'.$_GET['departure_airport_route'].'</span> '; }
-			if ($_GET['departure_airport_route'] == "" && $_GET['arrival_airport_route'] != ""){ print 'route into: <span>'.$_GET['arrival_airport_route'].'</span> '; }
-			if ($_GET['departure_airport_route'] != "" && $_GET['arrival_airport_route'] != ""){ print 'route between: <span>'.$_GET['departure_airport_route'].'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
-			if ($_GET['start_date'] != "" && $_GET['end_date'] == ""){ print 'date starting at: <span>'.$_GET['start_date'].'</span> '; }
-			if ($_GET['start_date'] == "" && $_GET['end_date'] != ""){ print 'date ending at: <span>'.$_GET['end_date'].'</span> '; }
-			if ($_GET['start_date'] != "" && $_GET['end_date'] != ""){ print 'date between: <span>'.$_GET['start_date'].'</span> and <span>'.$_GET['end_date'].'</span> '; }
-			if ($_GET['lowest_altitude'] != "" && $_GET['highest_altitude'] == ""){ print 'altitude starting at: <span>'.number_format($_GET['lowest_altitude']).' feet</span> '; }
-			if ($_GET['lowest_altitude'] == "" && $_GET['highest_altitude'] != ""){ print 'altitude ending at: <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
-			if ($_GET['lowest_altitude'] != "" && $_GET['highest_altitude'] != ""){ print 'altitude between: <span>'.number_format($_GET['lowest_altitude']).' feet</span> and <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
-			if ($_GET['number_results'] != ""){ print 'limit per page: <span>'.$_GET['number_results'].'</span> '; }
+			if (isset($_GET['airline']) && $_GET['airline'] != ""){ print 'airline: <span>'.$_GET['airline'].'</span> '; }
+			if (isset($_GET['airline_country']) && $_GET['airline_country'] != ""){ print 'airline country: <span>'.$_GET['airline_country'].'</span> '; }
+			if (isset($_GET['airline_type']) && $_GET['airline_type'] != ""){ print 'airline type: <span>'.$_GET['airline_type'].'</span> '; }
+			if (isset($_GET['airport']) && $_GET['airport'] != ""){ print 'airport: <span>'.$_GET['airport'].'</span> '; }
+			if (isset($_GET['airport_country']) && $_GET['airport_country'] != ""){ print 'airport country: <span>'.$_GET['airport_country'].'</span> '; }
+			if (isset($_GET['callsign']) && $_GET['callsign'] != ""){ print 'callsign: <span>'.$_GET['callsign'].'</span> '; }
+			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && $_GET['arrival_airport_route'] == ""){ print 'route out of: <span>'.$_GET['departure_airport_route'].'</span> '; }
+			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] == "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print 'route into: <span>'.$_GET['arrival_airport_route'].'</span> '; }
+			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print 'route between: <span>'.$_GET['departure_airport_route'].'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
+			if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] == ""){ print 'date starting at: <span>'.$_GET['start_date'].'</span> '; }
+			if (isset($_GET['start_date']) && $_GET['start_date'] == "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print 'date ending at: <span>'.$_GET['end_date'].'</span> '; }
+			if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print 'date between: <span>'.$_GET['start_date'].'</span> and <span>'.$_GET['end_date'].'</span> '; }
+			if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] != "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] == ""){ print 'altitude starting at: <span>'.number_format($_GET['lowest_altitude']).' feet</span> '; }
+			if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] == "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] != ""){ print 'altitude ending at: <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
+			if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] != "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] != ""){ print 'altitude between: <span>'.number_format($_GET['lowest_altitude']).' feet</span> and <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
+			if (isset($_GET['number_results']) && $_GET['number_results'] != ""){ print 'limit per page: <span>'.$_GET['number_results'].'</span> '; }
     		    print '</h1>';
     		  print '</div>';
     	  

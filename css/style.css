@@ -96,6 +96,12 @@ table tr td.aircraft_thumbnail img:hover{
 table tr td.ident{
 	width:10%;
 }
+table tr td.more{
+	width:1%;
+}
+table tr td.more .dropdown-menu li a{
+	text-align:left;
+}
 #header-fixed {
     position: fixed;
     top: 0px;
@@ -802,53 +808,101 @@ body.page-search #map3d .ge-balloon .ge-row span{
 
 
 /* FLIGHT ID */
+
+body.page-flightid-overview .airline-logo{
+    max-width:120px;
+    max-height:60px;
+    margin-right:0.5em;
+}
+body.page-flightid-overview .sub-menu{
+    margin-bottom:0px;
+}
 body.page-flightid-overview .image{
-	padding-left:0px;
-	padding-right:0px;
-	margin-top:2.0em;
+    margin-bottom:2.5em;
 }
 body.page-flightid-overview .image img{
-	width:100%;
+    width:100%;
 }
-body.page-flightid-overview .note{
-	font-style:italic;
-	font-size:0.9em;
-	margin-top:5px;
-	font-weight:100;
+body.page-flightid-overview .image .note{
+    padding-top:0.5em;
 }
 body.page-flightid-overview .details{
-	margin-top:2.0em;
-}
-body.page-flightid-overview .details .detail img{
-	max-width:120px;
-	max-height:60px;
+    margin-top:1.0em;
+    margin-bottom:2.0em;
 }
 body.page-flightid-overview .details .detail{
-	margin-bottom:0.5em;
-	padding-bottom:0.5em;
+    margin-bottom:1.0em;
+    padding-bottom:0.5em;
+    color:#989898;
+    display:inline-block;
+    margin-right:1.0em;
+    width:275px;
+    font-size:1.1em;
+    vertical-align: top;
 }
-body.page-flightid-overview .details .detail-highlight{
-	font-style: italic;
+body.page-flightid-overview .details .detail::before{
+    font-family: FontAwesome;
+    float:left;
+    position: relative;
+    margin-right:10px;
+    font-size:1.3em;
+    color:#314f77;
+    height:50px;
+}
+body.page-flightid-overview .details .detail.callsign::before{
+    content: "\f0cb"; 
+}
+body.page-flightid-overview .details .detail.airline::before{
+    content: "\f0c9"; 
+}
+body.page-flightid-overview .details .detail.aircraft::before{
+    content: "\f072"; 
+}
+body.page-flightid-overview .details .detail.registration::before{
+    content: "\f022"; 
+}
+body.page-flightid-overview .details .detail.registration::before{
+    content: "\f022"; 
+}
+body.page-flightid-overview .details .detail.departure::before{
+    content: "\f0d8"; 
+}
+body.page-flightid-overview .details .detail.arrival::before{
+    content: "\f0d7"; 
+}
+body.page-flightid-overview .details .detail.speed::before{
+    content: "\f0e4"; 
+}
+body.page-flightid-overview .details .detail.heading::before{
+    content: "\f14e"; 
+}
+body.page-flightid-overview .details .detail.altitude::before{
+    content: "\f07d"; 
+}
+body.page-flightid-overview .details .detail.coordinates::before{
+    content: "\f041"; 
+}
+body.page-flightid-overview .details .detail.date::before{
+    content: "\f073"; 
 }
 body.page-flightid-overview .details .detail .title{
-	display:block;
-	font-weight:500;
+    display:block;
+    color:#000;
 }
 body.page-flightid-overview .details .detail span{
-	margin-right:20px;
+    margin-right:20px;
 }
 body.page-flightid-overview .details .detail .date{
-	display:block;
-}
-body.page-flightid-overview .image{
-	position: relative;
-    width:650px;
-    float:right;
+    display:block;
 }
 body.page-flightid-overview .last-flights{
-	margin-bottom:2.0em;
+    margin-bottom:2.0em;
+    padding-top:1.0em;
 }
-
+body.page-flightid-overview .share{
+    text-align:center;
+    padding-top:2.0em;
+}
 
 /* HIGHLIGHTS */
 body.page-highlights-display .view-type{
@@ -1193,6 +1247,9 @@ body.page-upcoming table tr td.logo img{
 		.table-responsive{
 			border-bottom:0px;
 		}
+		table tr td.more .dropdown-menu li a{
+			color:inherit;
+		}
     
     /* PAGE HEADER */
     .page-header{
@@ -1296,6 +1353,16 @@ body.page-upcoming table tr td.logo img{
     }
     body.page-statistics .global-stats .type{
         border-bottom:0px;   
+    }
+
+    /* FLIGHT ID */
+    body.page-flightid-overview .details .detail{
+        width:100%;
+    }
+    
+    body.page-flightid-overview .airline-logo{
+	display:block;
+	margin-bottom:0.2em;
     }
 
 }

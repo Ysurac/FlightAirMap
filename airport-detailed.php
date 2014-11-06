@@ -7,11 +7,11 @@ if (!isset($_GET['airport'])){
 } else {
 
 	//calculuation for the pagination
-	if($_GET['limit'] == "")
+	if(!isset($_GET['limit']))
 	{
-	  $limit_start = 0;
-	  $limit_end = 25;
-	  $absolute_difference = 25;
+		$limit_start = 0;
+		$limit_end = 25;
+		$absolute_difference = 25;
 	}  else {
 		$limit_explode = explode(",", $_GET['limit']);
 		$limit_start = $limit_explode[0];
@@ -24,7 +24,11 @@ if (!isset($_GET['airport'])){
 	
 	$page_url = $globalURL.'/airport/'.$_GET['airport'];
 	
-	$spotter_array = Spotter::getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, $_GET['sort']);
+	if (isset($_GET['sort'])) {
+		$spotter_array = Spotter::getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, $_GET['sort']);
+	} else {
+		$spotter_array = Spotter::getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, '');
+	}
 	$airport_array = Spotter::getAllAirportInfo($_GET['airport']);
 	
 	if (!empty($airport_array))

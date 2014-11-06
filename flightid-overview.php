@@ -34,6 +34,15 @@ if (!empty($spotter_array))
     
     	print '<div class="info column">';
     	    print '<h1>';
+		if (@getimagesize($globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png'))
+		{
+			print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png" class="airline-logo" /></a>';
+		} else {
+			if ($spotter_array[0]['airline_name'] != "")
+			{
+				print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a>';
+			}
+		}
 	    	    if(isset($spotter_array[0]['ident']))
 	    	    {
 	    	    	print $spotter_array[0]['ident'];
@@ -66,7 +75,19 @@ if (!empty($spotter_array))
 		 
 		 print '<div class="clear column">';
 		
-			print '<div class="col-sm-4 details">';
+		    print '<div class="image">';
+		    if ($spotter_array[0]['image'] != "")
+		    {	 	
+			$planespotter_url_array = explode("_", $spotter_array[0]['image']);
+			$planespotter_id = str_replace(".jpg", "", $planespotter_url_array[1]);
+			print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$spotter_array[0]['image'].'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" width="100%" /></a>';
+			if ($spotter_array[0]['image_source'] == 'planespotters') print '<div class="note">Disclaimer: The images are courtesy of Planespotters.net and their respective uploaders. This system may not always 100% accuratly show the actual aircraft.</div>';
+		    } else {
+			print '<img src="'.$globalURL.'/images/placeholder.png" alt="No image found!" title="No image found!" />';
+		    }
+		    print '</div>';
+		
+/*			print '<div class="col-sm-4 details">';
 		 
 		 	foreach($spotter_array as $spotter_item)
 		  {
@@ -179,9 +200,148 @@ if (!empty($spotter_array))
 			 print '</div>';
 			 print '<div class="note">Disclaimer: The images are courtesy of Planespotters.net and may not always be 100% accurate of the actual aircraft that has flown over.</div>';
 		 print '</div>';
-		 
 	 print '</div>';
-        	
+*/
+
+	    foreach($spotter_array as $spotter_item)
+	    {
+                
+                print '<div class="details">';
+                    
+                print '<h3>Flight Information</h3>';
+
+                print '<div class="detail callsign">';
+                    print '<div class="title">Ident/Callsign</div>';
+                    print '<div>';
+                    if ($spotter_item['ident'] != "")
+                    {
+                        print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'.$spotter_item['ident'].'</a>';
+                    } else {
+                        print 'N/A';
+                    }
+                    print '</div>';
+                print '</div>';
+                
+                print '<div class="detail airline">';
+                    print '<div class="title">Airline</div>';
+                    print '<div>';
+                    if ($spotter_item['airline_name'] != "")
+                    {
+                        print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'">'.$spotter_item['airline_name'].'</a>';
+                    } else {
+                        print 'N/A';
+                    }
+                    print '</div>';
+                print '</div>';
+
+                print '<div class="detail aircraft">';
+                    print '<div class="title">Aircraft</div>';
+                    print '<div>';
+                        if ($spotter_item['aircraft_name'] != "")
+                        {
+                            print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
+                        } else {
+                            if ($spotter_item['aircraft_type'] != "")
+                            {
+                                print $spotter_item['aircraft_type'];
+                            } else {
+                                print 'N/A';
+                            }
+                        }
+                    print '</div>';
+                print '</div>';
+
+                print '<div class="detail registration">';
+                    print '<div class="title">Registration</div>';
+                    print '<div>';
+                        if ($spotter_item['registration'] != "")
+                        {
+                            print '<a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'">'.$spotter_item['registration'].'</a>';
+                        } else {
+                                print 'N/A';
+                        }
+                    print '</div>';
+                print '</div>';
+
+                print '<div class="detail departure">';
+                    print '<div class="title">Departure Airport</div>';
+                    print '<div>';
+                        if ($spotter_item['departure_airport_name'] != "")
+                        {
+                            print '<a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')</a>';
+                        } else {
+                            print $spotter_item['departure_airport'];
+                        }
+                    print '</div>';
+                print '</div>';
+
+                print '<div class="detail arrival">';
+                    print '<div class="title">Arrival Airport</div>';
+                    print '<div>';
+                        if ($spotter_item['arrival_airport_name'] != "")
+                        {
+                            print '<a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a>';
+                            } else {
+                                print $spotter_item['arrival_airport'];
+                            }
+                    print '</div>';
+                print '</div>';
+
+			print '</div>';
+
+			print '<div class="details">';
+
+                print '<h3>Additional information as it flew nearby</h3>';
+
+                print '<div class="detail speed">';
+                    print '<div class="title">Ground Speed (knots)</div>';
+                    print '<div>';
+                        print $spotter_item['ground_speed'];
+                    print '</div>';
+                print '</div>';	
+
+                print '<div class="detail heading">';
+                    print '<div class="title">Heading (degrees)</div>';
+                    print '<div>';
+                        print $spotter_item['heading'].' ('.$spotter_item['heading_name'].')';
+                    print '</div>';
+                print '</div>';
+
+                print '<div class="detail altitude">';
+                    print '<div class="title">Altitude (feet)</div>';
+                    print '<div>';
+                        print number_format($spotter_item['altitude'].'00');
+                    print '</div>';
+                print '</div>';
+                
+                 print '<div class="detail coordinates">';
+                    print '<div class="title">Coordinates</div>';
+                    print '<div>';
+                        //print '<a href="https://www.google.com/maps/place/'.$spotter_item['latitude'].','.$spotter_item['longitude'].'/@'.$spotter_item['latitude'].','.$spotter_item['longitude'].',10z" target="_blank">Lat: '.$spotter_item['latitude'].' Lng: '.$spotter_item['longitude'].'</a>';
+                        print 'Lat: '.$spotter_item['latitude'].' Lng: '.$spotter_item['longitude'];
+                    print '</div>';
+                print '</div>';
+                
+                print '<div class="detail date">';
+                    print '<div class="title">Date ('.$globalTimezone.')</div>';
+                    print '<div>';
+                        date_default_timezone_set($globalTimezone);
+                        print '<a href="'.$globalURL.'/date/'.date("Y-m-d", strtotime($spotter_item['date_iso_8601'])).'">'.date("M j, Y g:i a", strtotime($spotter_item['date_iso_8601'])).'</a>';
+                    print '</div>';
+                print '</div>';	
+                
+                print '<div class="detail date">';
+                    print '<div class="title">Date (UTC)</div>';
+                    print '<div>';
+                        date_default_timezone_set('UTC');
+                        print date("M j, Y G:i", strtotime($spotter_item['date_iso_8601']));
+                    print '</div>';
+                print '</div>';	
+
+ 			print '</div>';
+
+		  }
+
      	print '</div>';
      	
      	

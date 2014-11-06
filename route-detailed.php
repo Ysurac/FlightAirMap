@@ -6,26 +6,29 @@ if (!isset($_GET['departure_airport']) || !isset($_GET['arrival_airport'])){
 	header('Location: '.$globalURL.'');
 } else {
 
-		//calculuation for the pagination
-		if($_GET['limit'] == "")
-		{
-		  $limit_start = 0;
-		  $limit_end = 25;
-		  $absolute_difference = 25;
-		}  else {
-			$limit_explode = explode(",", $_GET['limit']);
-			$limit_start = $limit_explode[0];
-			$limit_end = $limit_explode[1];
-		}
-		$absolute_difference = abs($limit_start - $limit_end);
-		$limit_next = $limit_end + $absolute_difference;
-		$limit_previous_1 = $limit_start - $absolute_difference;
-		$limit_previous_2 = $limit_end - $absolute_difference;
-		
-		$page_url = $globalURL.'/route/'.$_GET['departure_airport'].'/'.$_GET['arrival_airport'];
+	//calculuation for the pagination
+	if(!isset($_GET['limit']))
+	{
+		$limit_start = 0;
+		$limit_end = 25;
+		$absolute_difference = 25;
+	}  else {
+		$limit_explode = explode(",", $_GET['limit']);
+		$limit_start = $limit_explode[0];
+		$limit_end = $limit_explode[1];
+	}
+	$absolute_difference = abs($limit_start - $limit_end);
+	$limit_next = $limit_end + $absolute_difference;
+	$limit_previous_1 = $limit_start - $absolute_difference;
+	$limit_previous_2 = $limit_end - $absolute_difference;
 	
+	$page_url = $globalURL.'/route/'.$_GET['departure_airport'].'/'.$_GET['arrival_airport'];
 	
-	  $spotter_array = Spotter::getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], $limit_start.",".$absolute_difference, $_GET['sort']);
+	if (isset($_GET['sort'])) {
+		$spotter_array = Spotter::getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], $limit_start.",".$absolute_difference, $_GET['sort']);
+	} else {
+		$spotter_array = Spotter::getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], $limit_start.",".$absolute_difference, '');
+	}
 	  
 	  if (!empty($spotter_array))
 	  {

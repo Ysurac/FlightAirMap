@@ -7,7 +7,7 @@ if (!isset($_GET['aircraft_manufacturer'])){
 } else {
 	
 	//calculuation for the pagination
-	if($_GET['limit'] == "")
+	if(!isset($_GET['limit']))
 	{
 	  $limit_start = 0;
 	  $limit_end = 25;
@@ -26,7 +26,11 @@ if (!isset($_GET['aircraft_manufacturer'])){
 	
 	$page_url = $globalURL.'/manufacturer/'.$_GET['aircraft_manufacturer'];
 	
-	$spotter_array = Spotter::getSpotterDataByManufacturer($manufacturer,$limit_start.",".$absolute_difference, $_GET['sort']);
+	if (isset($_GET['sort'])) {
+		$spotter_array = Spotter::getSpotterDataByManufacturer($manufacturer,$limit_start.",".$absolute_difference, $_GET['sort']);
+	} else {
+		$spotter_array = Spotter::getSpotterDataByManufacturer($manufacturer,$limit_start.",".$absolute_difference, '');
+	}
 	
 	
 	if (!empty($spotter_array))

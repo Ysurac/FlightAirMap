@@ -88,12 +88,16 @@ class Spotter{
       $temp_array['ground_speed'] = $row['ground_speed'];
       $temp_array['image'] = "";
       $temp_array['image_thumbnail'] = "";
+      $temp_array['image_source'] = "";
+      $temp_array['image_copyright'] = "";
       if($row['registration'] != "")
       {
 	$image_array = Spotter::getSpotterImage($row['registration']);
 	if (count($image_array) > 0) {
           $temp_array['image'] = $image_array[0]['image'];
           $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+          $temp_array['image_source'] = $image_array[0]['image_source'];
+          $temp_array['image_copyright'] = $image_array[0]['image_copyright'];
       }
 			}
   
@@ -1061,7 +1065,7 @@ class Spotter{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
-
+		$additional_query = '';
 		$query_values = array();
 		
 		if ($airport != "")
@@ -1168,7 +1172,7 @@ class Spotter{
 		date_default_timezone_set('UTC');
 		
 		$query_values = array();
-		
+		$additional_query = '';
 		if ($country != "")
 		{
 			if (!is_string($country))
@@ -1223,6 +1227,7 @@ class Spotter{
 		date_default_timezone_set('UTC');
 		
 		$query_values = array();
+		$additional_query = '';
 		
 		if ($aircraft_manufacturer != "")
 		{
@@ -1279,7 +1284,7 @@ class Spotter{
 		global $global_query;
 		
 		$query_values = array();
-		
+		$additional_query = '';
 		if ($departure_airport_icao != "")
 		{
 			if (!is_string($departure_airport_icao))
@@ -1774,7 +1779,7 @@ class Spotter{
 	*/
 	public static function getAircraftInfoByRegistration($registration)
 	{
-		$aircraft_type = filter_var($aircraft_type,FILTER_SANITIZE_STRING);
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer FROM spotter_output WHERE spotter_output.registration = :registration";
 		$Connection = new Connection();
@@ -6458,15 +6463,15 @@ class Spotter{
         
 		//getting the aircraft image
 		$image_url = Spotter::findAircraftImage($registration);
-
-		$query  = "INSERT INTO spotter_image (registration, image, image_thumbnail) VALUES (:registration,:image,:image_thumbnail)";
-
-		try {
-			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
-			$sth->execute(array(':registration' => $registration,':image' => $image_url['original'],':image_thumbnail' => $image_url['thumbnail']));
-		} catch(PDOException $e) {
-			return "error";
+		if ($image_url['original'] != '') {
+			$query  = "INSERT INTO spotter_image (registration, image, image_thumbnail, image_copyright, image_source) VALUES (:registration,:image,:image_thumbnail,:copyright,:source)";
+			try {
+				$Connection = new Connection();
+				$sth = Connection::$db->prepare($query);
+				$sth->execute(array(':registration' => $registration,':image' => $image_url['original'],':image_thumbnail' => $image_url['thumbnail'], ':copyright' => $image_url['copyright'],':source' => $image_url['source']));
+			} catch(PDOException $e) {
+				return "error";
+			}
 		}
 		return "success";
 	}
@@ -6500,6 +6505,8 @@ class Spotter{
             $temp_array['registration'] = $row['registration'];
             $temp_array['image'] = $row['image'];
             $temp_array['image_thumbnail'] = $row['image_thumbnail'];
+            $temp_array['image_source'] = $row['image_source'];
+            $temp_array['image_copyright'] = $row['image_copyright'];
           
             $images_array[] = $temp_array;
 		}
@@ -6675,7 +6682,7 @@ class Spotter{
 	{
 		$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
 		$aircraft_registration = trim($aircraft_registration);
-		if ($aircraft_registration == '') return array('thumbnail' => '','original' => '', 'copyright' => '');
+		if ($aircraft_registration == '') return array('thumbnail' => '','original' => '', 'copyright' => '', 'source' => '');
 		// If aircraft registration is only number, also check with aircraft model
   
 		if (preg_match('/^[[:digit]]+$/',$aircraft_registration)) {
@@ -6701,6 +6708,7 @@ class Spotter{
 				$image_url['thumbnail'] = $thumbnail_url;
 				$image_url['original'] = str_replace('thumbnail','original',$thumbnail_url);
 				$image_url['copyright'] = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->copyright);
+				$image_url['source'] = 'planespotters';
 				return $image_url;
 			}
 		} 
@@ -6729,11 +6737,12 @@ class Spotter{
 				//$image_url['original'] = str_replace('_s','_b',$thumbnail_url);
 				$image_url['original'] = $original_url;
 				$image_url['copyright'] = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->credit);
+				$image_url['source'] = 'flickr';
 				return $image_url;
 			}
 		} 
 		
-		return array('thumbnail' => '','original' => '', 'copyright' => '');
+		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '');
 	}
 	
 	

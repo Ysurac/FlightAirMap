@@ -153,14 +153,86 @@ if ($globalURL == "http://www.barriespotter.com"){ ?>
 </div>
 
 <?php
-if (isset($top_header)) {
-    if ($top_header != "")
-    {
+if (isset($top_header) && $top_header != "") 
+{
 	print '<div class="top-header container clear" role="main">';
 		print '<img src="'.$globalURL.'/images/'.$top_header.'" alt="'.$title.'" title="'.$title.'" />';
 	print '</div>';
-    }
 }
+if ((strpos(strtolower($current_page),'airport-') !== false) || (strpos(strtolower($current_page),'route-') !== false))
+{
+    ?>
+    <div class="top-header clear" role="main">
+        <div id="map"></div>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+        <script>
+        var map;
+        var zoom = 13;
+//create the map
+<?php
+    if (strpos(strtolower($current_page),'airport-') !== false) {
+?>
+  map = L.map('map', { zoomControl:true }).setView([<?php print $airport_array[0]['latitude']; ?>,<?php print $airport_array[0]['longitude']; ?>], zoom);
+<?php
+    } elseif (strpos(strtolower($current_page),'route-') !== false) {
+?>
+  map = L.map('map', { zoomControl:true }).setView([<?php print $spotter_array[0]['departure_airport_latitude']; ?>,<?php print $spotter_array[0]['arrival_airport_longitude']; ?>]);
+    var line = L.polyline([[<?php print $spotter_array[0]['departure_airport_latitude']; ?>, <?php print $spotter_array[0]['departure_airport_longitude']; ?>],[<?php print $spotter_array[0]['arrival_airport_latitude']; ?>, <?php print $spotter_array[0]['arrival_airport_longitude']; ?>]]).addTo(map);
+    map.fitBounds([[<?php print $spotter_array[0]['departure_airport_latitude']; ?>, <?php print $spotter_array[0]['departure_airport_longitude']; ?>],[<?php print $spotter_array[0]['arrival_airport_latitude']; ?>, <?php print $spotter_array[0]['arrival_airport_longitude']; ?>]]);
+    var departure_airport = L.marker([<?php print $spotter_array[0]['departure_airport_latitude']; ?>, <?php print $spotter_array[0]['departure_airport_longitude']; ?>], {icon: L.icon({iconUrl: '/images/departure_airport.png',iconSize: [16,18],iconAnchor: [8,16]})}).addTo(map);
+    var arrival_airport = L.marker([<?php print $spotter_array[0]['arrival_airport_latitude']; ?>, <?php print $spotter_array[0]['arrival_airport_longitude']; ?>], {icon: L.icon({iconUrl: '/images/arrival_airport.png',iconSize: [16,18],iconAnchor: [8,16]})}).addTo(map);
+<?php
+    }
+?>
+  //initialize the layer group for the aircrft markers
+  var layer_data = L.layerGroup();
+
+  //a few title layers
+<?php
+    if ($globalMapProvider == 'Mapbox') {
+?>
+  L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+      'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    id: '<?php print $globalMapboxId; ?>'
+  }).addTo(map);
+<?php
+    } elseif ($globalMapProvider == 'OpenStreetMap') {
+?>
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>'
+  }).addTo(map);
+<?php
+    } elseif ($globalMapProvider == 'MapQuest-OSM') {
+?>
+  L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
+      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>'
+  }).addTo(map);
+<?php
+    } elseif ($globalMapProvider == 'MapQuest-Aerial') {
+?>
+  L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
+      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>, Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency"'
+  }).addTo(map);
+<?php
+    }
+?>
+        </script>
+    </div>
+    <?php
+}
+
 ?>
 
 <section class="container main-content clear">
