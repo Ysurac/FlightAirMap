@@ -65,6 +65,7 @@ if (strtolower($current_page) == "search")
 	} else {
 		print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc"><span class="nomobile">Flying to</span><span class="mobile">To</span></a> <i class="fa fa-sort small"></i></th>';
 	}
+	print '<th class="routestop"><span class="nomobile">Route stop</span><span class="mobile">Stop</span></a></th>';
 	if ($_GET['sort'] == "date_asc")
 	{
 		print '<th class="time"><a href="'.$page_url.'&sort=date_desc" class="active">Date</a> <i class="fa fa-caret-up"></i></th>';
