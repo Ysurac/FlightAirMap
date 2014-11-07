@@ -35,7 +35,7 @@ if (!isset($_GET['date'])){
 	
 	if (!empty($spotter_array))
 	{
-	    date_default_timezone_set('America/Toronto');
+	    date_default_timezone_set($globalTimezone);
 	    
 	    $title = 'Detailed View for flights from '.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']));
 			require('header.php');

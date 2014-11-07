@@ -2,6 +2,7 @@
 //gets the page file and stores it in a variable
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
 $current_page = $file_path['filename'];
+date_default_timezone_set($globalTimezone);
 ?>
 <!DOCTYPE html>
 <html>
