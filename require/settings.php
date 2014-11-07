@@ -9,7 +9,7 @@ $globalName = "";
 $globalURL = "";
 
 // Logo URL
-$logoURL = "/images/logo.png";
+$logoURL = "/images/logo2.png";
 
 // LANGUAGE
 $globalLanguage = 'EN'; // Used only for wikipedia links for now
@@ -19,13 +19,13 @@ $globalMapProvider = 'MapQuest-OSM'; // Can be Mapbox, OpenStreetMap, MapQuest-O
 $globalMapboxId = 'examples.map-i86nkdio'; // Mapbox id
 
 //COVERAGE AREA (its based on a box model. i.e. top-left | top-right | bottom-right | bottom-left)
-$globalLatitudeMax = ''; //the maximum latitude (north)
-$globalLatitudeMin = ''; //the minimum latitude (south)
-$globalLongitudeMax = ''; //the maximum longitude (west)
-$globalLongitudeMin = ''; //the minimum longitude (east)
+$globalLatitudeMax = '46.92'; //the maximum latitude (north)
+$globalLatitudeMin = '42.14'; //the minimum latitude (south)
+$globalLongitudeMax = '6.2'; //the maximum longitude (west)
+$globalLongitudeMin = '1.0'; //the minimum longitude (east)
 
-$globalCenterLatitude = ''; //the latitude center of your coverage area
-$globalCenterLongitude = '';//the longitude center of your coverage area
+$globalCenterLatitude = '46.38'; //the latitude center of your coverage area
+$globalCenterLongitude = '5.29';//the longitude center of your coverage area
 
 // DATABASE CONNECTION LOGIN
 $globalDBdriver = 'mysql'; // PDO driver used. Tested with mysql, maybe pgsql or others work...
