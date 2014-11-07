@@ -439,7 +439,7 @@ foreach($spotter_array as $spotter_item)
 		{
 			print '<li><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'">Aircraft History</a></li>';
 		}
-		if ($spotter_item['aircraft_manufacturer'] != "")
+		if (isset($spotter_item['aircraft_manufacturer']) && $spotter_item['aircraft_manufacturer'] != "")
 		{
 			print '<li><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_item['aircraft_manufacturer'])).'">Manufacturer Profile</a></li>';
 		}

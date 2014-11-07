@@ -11,8 +11,6 @@ require('header.php');
             <h1>Barrie Spotter Statistics</h1>
     </div>
 
-    <p>There are an average of 380 flights every day recorded on Barrie Spotter. Below are some of the other key site statistics or select a particular statistic category from the menu below.</p>
-
     <?php include('statistics-sub-menu.php'); ?>
 
     <div class="row global-stats">

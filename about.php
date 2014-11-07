@@ -21,48 +21,6 @@ require('header.php');
 
     <p>I continue to make this database as useful as possible and evolve it over time. If you find any issues, data discrepancy or just want to give your feedback &amp; suggestions <a href="<?php print $globalURL; ?>/contact">contact me</a>. I'll be very happy to assist anybody with any questions about the data or how to find it.</p>
 
-    <a name="coverage"></a>
-    <h3>Coverage</h3>
-
-    <p>The map below points out the coverage area:</p>
-
-    <script>
-    $( document ).ready(function() {
-  		//create the map
-      var map = L.map('map').setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], 8);
-
-      //initialize the layer group for the aircrft markers
-      var layer_data = L.layerGroup();
-
-      //a few title layers
-      L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-          '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-          'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        id: 'examples.map-i86knfo3'
-      }).addTo(map);
-
-      //create the bounding box to show the coverage area
-      var polygon = L.polygon(
-        [ [[90, -180],
-        [90, 180],
-        [-90, 180],
-        [-90, -180]], // outer ring
-        [[<?php print $globalLatitudeMin; ?>, <?php print $globalLongitudeMax; ?>],
-        [<?php print $globalLatitudeMin; ?>, <?php print $globalLongitudeMin; ?>],
-        [<?php print $globalLatitudeMax; ?>, <?php print $globalLongitudeMin; ?>],
-        [<?php print $globalLatitudeMax; ?>, <?php print $globalLongitudeMax; ?>]] // actual cutout polygon
-        ],{
-        color: '#000',
-        fillColor: '#000',
-        fillOpacity: 0.2,
-        weight: 1
-      }).addTo(map);
-    });
-    </script>
-    <div id="map"></div>
-
     <br /><br />
 
     <a name="source"></a>
@@ -79,13 +37,16 @@ require('header.php');
     	<li><a href="http://flightaware.com" target="_blank">FlightAware</a> - With their API to access the data which allows me to get additional information. Data sources come from live ADS-B, FAA and other government agencies.</li>
     	<li><a href="http://sonicgoose.com" target="_blank">Sonic Goose (Rob Jones)</a> - Contributes ADS-B data within the Greater Toronto Area and South-central Ontario to numerous flight tracking sites, including FlightAware. A very big thank you to him! :)</li>
     </ul>
+    
+    <p>Airspaces come from <a href="http://soaringweb.org/TP">Worlwide Soaring Turnpoint Exchange</a></p>
 
     <h3>Data License</h3>
 
     <p>The data published by <?php print $globalName; ?> is made available under the Open Database License: <a href="http://opendatacommons.org/licenses/odbl/1.0/" target="_blank">http://opendatacommons.org/licenses/odbl/1.0/</a>. Any rights in individual contents of the database are licensed under the Database Contents License: <a href="http://opendatacommons.org/licenses/dbcl/1.0/" target="_blank">http://opendatacommons.org/licenses/dbcl/1.0/</a> - See more at: <a href="http://opendatacommons.org/licenses/odbl/#sthash.3wkOS6zA.dpuf" target="_blank">http://opendatacommons.org/licenses/odbl/#sthash.3wkOS6zA.dpuf</a></p>
     
     <h3>Image Credits</h3>
-    <p>Airport icon from <a href="http://mapicons.nicolasmollet.com/">http://mapicons.nicolasmollet.com/</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 3.0 BY-SA</a>.</p>
+    <p>Airports icons from <a href="http://mapicons.nicolasmollet.com/">http://mapicons.nicolasmollet.com/</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 3.0 BY-SA</a>.</p>
+    <p>Waypoints icons from <a href="http://www.fatcow.com/free-icons/">http://www.fatcow.com/free-icons/</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 3.0 BY-SA</a>.</p>
 </div>
 
 <?php

@@ -355,6 +355,10 @@ if (!empty($spotter_array))
 	    	
 	    	include('table-output.php'); 
 
+		print '<div class="more">';
+		print '<a href="'.$globalURL.'/registration/'.$spotter_array[0]['registration'].'" class="btn btn-default btn" role="button">See all Flights&raquo;</a>';
+		print '</div>';
+
     	print '</div>';
     	
     }
