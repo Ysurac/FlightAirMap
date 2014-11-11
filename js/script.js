@@ -6,8 +6,8 @@ $( document ).ready(function() {
 	var currentDate = date.getDate();
 	var currentYear = date.getFullYear();
 
-  $( "#start_date" ).datetimepicker({ dateFormat: 'yy-mm-dd', changeMonth: true, changeYear: true, minDate: new Date(2014, 04 - 1, 12), maxDate: new Date(currentYear, currentMonth, currentDate) });
-  $( "#end_date" ).datetimepicker({ dateFormat: 'yy-mm-dd', changeMonth: true, changeYear: true, minDate: new Date(2014, 04 - 1, 12), maxDate: new Date(currentYear, currentMonth, currentDate) });
+  $( "#start_date" ).datetimepicker({ dateFormat: 'yy-mm-dd', changeMonth: true, changeYear: true, minDate: new Date(2014, 04 - 1, 12), maxDate: new Date(currentYear, currentMonth, currentDate, 23, 59) });
+  $( "#end_date" ).datetimepicker({ dateFormat: 'yy-mm-dd', changeMonth: true, changeYear: true, minDate: new Date(2014, 04 - 1, 12), maxDate: new Date(currentYear, currentMonth, currentDate, 23, 59) });
   $( "#date" ).datepicker({ dateFormat: 'yy-mm-dd', changeMonth: true, changeYear: true, minDate: new Date(2014, 04 - 1, 12), maxDate: new Date(currentYear, currentMonth, currentDate) });
   
   //custom select boxes

@@ -27,7 +27,6 @@ date_default_timezone_set($globalTimezone);
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="<?php print $globalURL; ?>/js/bootstrap-select.min.js?<?php print time(); ?>"></script>
-<script src="<?php print $globalURL; ?>/js/jquery.slides.min.js?<?php print time(); ?>"></script>
 <script src="<?php print $globalURL; ?>/js/jquery-ui-timepicker-addon.js?<?php print time(); ?>"></script>
 <script src="<?php print $globalURL; ?>/js/script.js?<?php print time(); ?>"></script>
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
@@ -124,7 +123,7 @@ if ($globalURL == "http://www.barriespotter.com"){ ?>
         <li class="dropdown">
           <a href="<?php print $globalURL; ?>/about" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
           <ul class="dropdown-menu">
-          	<li><a href="<?php print $globalURL; ?>/about">The Project</a></li>
+          	<li><a href="<?php print $globalURL; ?>/about">About The Project</a></li>
           	<li><a href="<?php print $globalURL; ?>/about/export">Exporting Data</a></li>
             <li><hr /></li>
 			<li><a href="<?php print $globalURL; ?>/about/tv">Spotter TV</a></li>
@@ -134,7 +133,7 @@ if ($globalURL == "http://www.barriespotter.com"){ ?>
           	<li><a href="https://github.com/barriespotter/Web_App/issues" target="_blank">Report any Issues</a></li>
           	<li><a href="https://www.facebook.com/barriespotter" target="_blank">Contact</a></li>
             <?php } else { ?>
-        	<li><a href="https://github.com/Ysurac/Web_App/issues" target="_blank">Report any Issues</a></li>
+        	<li><a href="https://github.com/Ysurac/AirRadar/issues" target="_blank">Report any Issues</a></li>
             <?php } ?>
           </ul>
         </li>

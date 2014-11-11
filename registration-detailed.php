@@ -7,7 +7,7 @@ if (!isset($_GET['registration'])){
 } else {
 
 	//calculuation for the pagination
-	if($_GET['limit'] == "")
+	if(!isset($_GET['limit']))
 	{
 	  $limit_start = 0;
 	  $limit_end = 25;
@@ -24,7 +24,11 @@ if (!isset($_GET['registration'])){
 	
 	$page_url = $globalURL.'/registration/'.$_GET['registration'];
 	
-	$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], $limit_start.",".$absolute_difference, $_GET['sort']);
+	if (isset($_GET['sort'])) {
+		$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], $limit_start.",".$absolute_difference, $_GET['sort']);
+	} else {
+		$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], $limit_start.",".$absolute_difference, '');
+	}
 	$aircraft_array = Spotter::getAircraftInfoByRegistration($_GET['registration']);
 	
 	if (!empty($spotter_array))

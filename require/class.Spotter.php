@@ -253,6 +253,7 @@ class Spotter{
 		    	
 				foreach ($q_array as $q_item){
 					$additional_query .= " AND (";
+					$additional_query .= "(spotter_output.spotter_id like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.aircraft_icao like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.aircraft_name like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.aircraft_manufacturer like '%".$q_item."%') OR ";

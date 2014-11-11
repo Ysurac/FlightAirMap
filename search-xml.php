@@ -59,7 +59,7 @@ if ($_GET['download'] == "true")
 	header('Content-disposition: attachment; filename="barriespotter.xml"');
 }
 
-header('Content-Type: text/xml');
+header('Content-Type: application/xml');
 
 $spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_GET['aircraft'],strtolower(str_replace("-", " ", $_GET['manufacturer'])),$_GET['highlights'],$_GET['airline'],$_GET['airline_country'],$_GET['airline_type'],$_GET['airport'],$_GET['airport_country'],$_GET['callsign'],$_GET['departure_airport_route'],$_GET['arrival_airport_route'],$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$_GET['sort'],'');
       
@@ -74,19 +74,42 @@ $output .= '<?xml version="1.0" encoding="UTF-8" ?>';
 	    foreach($spotter_array as $spotter_item)
 	    {
 	    	date_default_timezone_set('America/Toronto');
-				$output .= '<aircraft>';    	
-		      $output .= '<callsign>'.$spotter_item['ident'].'</callsign>';
+            $output .= '<aircraft>';
+              $output .= '<id>'.$spotter_item['spotter_id'].'</id>';
+		      $output .= '<ident>'.$spotter_item['ident'].'</ident>';
 		      $output .= '<registration>'.$spotter_item['registration'].'</registration>';
               $output .= '<aircraft_icao>'.$spotter_item['aircraft_type'].'</aircraft_icao>';
 		      $output .= '<aircraft_name>'.$spotter_item['aircraft_name'].'</aircraft_name>';
-		      $output .= '<airline>'.$spotter_item['airline_name'].'</airline>';
-              $output .= '<departure_airport_icao>'.$spotter_item['departure_airport'].'</departure_airport_icao>';
-		      $output .= '<departure_airport>'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].'</departure_airport>';
-              $output .= '<arrival_airport_icao>'.$spotter_item['arrival_airport'].'</arrival_airport_icao>';
-		      $output .= '<arrival_airport>'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].'</arrival_airport>';
-              $output .= '<photo>'.$spotter_item['image_thumbnail'].'</photo>';
-		      $output .= '<date>'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'</date>';
-				$output .= '</aircraft>';
+              $output .= '<aircraft_manufacturer>'.$spotter_item['aircraft_manufacturer'].'</aircraft_manufacturer>';
+              $output .= '<airline_name>'.$spotter_item['airline_name'].'</airline_name>';
+		      $output .= '<airline_icao>'.$spotter_item['airline_icao'].'</airline_icao>';
+              $output .= '<airline_iata>'.$spotter_item['airline_iata'].'</airline_iata>';
+              $output .= '<airline_country>'.$spotter_item['airline_country'].'</airline_country>';
+              $output .= '<airline_callsign>'.$spotter_item['airline_callsign'].'</airline_callsign>';
+              $output .= '<airline_type>'.$spotter_item['airline_type'].'</airline_type>';
+              $output .= '<departure_airport_city>'.$spotter_item['departure_airport_city'].'</departure_airport_city>';
+		      $output .= '<departure_airport_country>'.$spotter_item['departure_airport_country'].'</departure_airport_country>';  
+              $output .= '<departure_airport_iata>'.$spotter_item['departure_airport_iata'].'</departure_airport_iata>';
+              $output .= '<departure_airport_icao>'.$spotter_item['departure_airport_icao'].'</departure_airport_icao>';
+              $output .= '<departure_airport_latitude>'.$spotter_item['departure_airport_latitude'].'</departure_airport_latitude>';
+              $output .= '<departure_airport_longitude>'.$spotter_item['departure_airport_longitude'].'</departure_airport_longitude>';
+              $output .= '<departure_airport_altitude>'.$spotter_item['departure_airport_altitude'].'</departure_airport_altitude>';
+              $output .= '<arrival_airport_city>'.$spotter_item['arrival_airport_city'].'</arrival_airport_city>';
+		      $output .= '<arrival_airport_country>'.$spotter_item['arrival_airport_country'].'</arrival_airport_country>';  
+              $output .= '<arrival_airport_iata>'.$spotter_item['arrival_airport_iata'].'</arrival_airport_iata>';
+              $output .= '<arrival_airport_icao>'.$spotter_item['arrival_airport_icao'].'</arrival_airport_icao>';
+              $output .= '<arrival_airport_latitude>'.$spotter_item['arrival_airport_latitude'].'</arrival_airport_latitude>';
+              $output .= '<arrival_airport_longitude>'.$spotter_item['arrival_airport_longitude'].'</arrival_airport_longitude>';
+              $output .= '<arrival_airport_altitude>'.$spotter_item['arrival_airport_altitude'].'</arrival_airport_altitude>';
+              $output .= '<latitude>'.$spotter_item['latitude'].'</latitude>';
+              $output .= '<longitude>'.$spotter_item['longitude'].'</longitude>';
+              $output .= '<altitude>'.$spotter_item['altitude'].'</altitude>';
+              $output .= '<ground_speed>'.$spotter_item['ground_speed'].'</ground_speed>';
+              $output .= '<heading>'.$spotter_item['heading'].'</heading>';
+              $output .= '<heading_name>'.$spotter_item['heading_name'].'</heading_name>';
+              $output .= '<waypoints>'.$spotter_item['waypoints'].'</waypoints>';
+		      $output .= '<date>'.date("c", strtotime($spotter_item['date_iso_8601'])).'</date>';
+            $output .= '</aircraft>';
 	    }
 	   }
 		 $output .= '</aircrafts>';
