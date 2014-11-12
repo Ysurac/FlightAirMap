@@ -1,9 +1,7 @@
-# AirRadar : a fork of Barrie Spotter - Web App
+# FlightAirMap
 
-Barrie Spotter is an open source project documenting most of the aircrafts. Browse through the data based on a particular aircraft, airline or airport to search through the database. See extensive statistics such as most common aircraft type, airline, departure & arrival airport and busiest time of the day, or just explore flights.
-
-This is a "fork" of Barrie Spotter [https://github.com/barriespotter/Web_App](https://github.com/barriespotter/Web_App) with PDO and ADS-B support.
-Waypoints, routes, airspaces and schedule are supported.
+FlightAirMap is a fork of Barrie Spotter [https://github.com/barriespotter/Web_App](https://github.com/barriespotter/Web_App) with map, airspaces, PDO and ADS-B support.
+Browse through the data based on a particular aircraft, airline or airport to search through the database. See extensive statistics such as most common aircraft type, airline, departure & arrival airport and busiest time of the day, or just explore flights.
 
 ## System Requirements
 
