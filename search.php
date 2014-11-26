@@ -256,17 +256,17 @@ if (!empty($_GET)){
 
 
 <div class="column">
-  <form action="<?php print $globalURL; ?>/search" method="get">
+  <form action="<?php print $globalURL; ?>/search" method="get" role="form">
     <fieldset>
-    	<div>
+    	<div class="form-group">
 	    	<label>Keyword</label> 
-		    <input type="text" id="q" name="q" value="<?php if (isset($_GET['q'])) print $_GET['q']; ?>" size="10" />
+		    <input type="text" id="q" name="q" value="<?php if (isset($_GET['q'])) print $_GET['q']; ?>" size="10" placeholder="Keywords" />
 		  </div>
     </fieldset>
     <div class="advanced-form">
         <fieldset>
         	<legend>Aircraft</legend>
-        	<div>
+        	<div class="form-group">
     	    	<label>Manufacturer</label> 
     		    <select name="manufacturer" class="selectpicker" data-live-search="true">
     		      <option></option>
@@ -284,7 +284,7 @@ if (!empty($_GET)){
     		      ?>
     		    </select>
     		  </div>
-    	    <div>
+		<div class="form-group">
     	    	<label>Type</label> 
     		    <select name="aircraft" class="selectpicker" data-live-search="true">
     		      <option></option>
@@ -302,17 +302,17 @@ if (!empty($_GET)){
     		      ?>
     		    </select>
     		  </div>
-    		   <div>
+    		   <div class="form-group">
     		  	<label>Registration</label> 
     		  	<input type="text" name="registration" value="<?php if (isset($_GET['registration'])) print $_GET['registration']; ?>" size="8" />
     			</div>
-    			<div class="checkbox">
+    			<div class="form-group checkbox">
     				<div><input type="checkbox" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <label for="highlights">Include only aircrafts with special highlights (unique liveries, destinations etc.)</label></div>
     			</div>
         </fieldset>
         <fieldset>
         	<legend>Airline</legend>
-    		  <div>
+    		  <div class="form-group">
     		  	<label>Name</label> 
     		    <select name="airline" class="selectpicker" data-live-search="true">
     		      <option></option>
@@ -330,7 +330,7 @@ if (!empty($_GET)){
     		      ?>
     		    </select>
     		  </div>
-    		  <div>
+    		  <div class="form-group">
     		  	<label>Country</label> 
     		    <select name="airline_country" class="selectpicker" data-live-search="true">
     		      <option></option>
@@ -348,11 +348,11 @@ if (!empty($_GET)){
     		      ?>
     		    </select>
     		  </div>
-    		  <div>
+    		  <div class="form-group">
     		  	<label>Callsign</label> 
     		  	<input type="text" name="callsign" value="<?php if (isset($_GET['callsign'])) print $_GET['callsign']; ?>" size="8" />
     			</div>
-    			<div class="radio">
+    			<div class="form-group radio">
     				<div><input type="radio" name="airline_type" value="all" id="airline_type_all" <?php if (!isset($_GET['airline_type']) || $_GET['airline_type'] == "all"){ print 'checked="checked"'; } ?>> <label for="airline_type_all">All airlines types</label></div>
     				<div><input type="radio" name="airline_type" value="passenger" id="airline_type_passenger" <?php if (isset($_GET['airline_type'])) if ($_GET['airline_type'] == "passenger"){ print 'checked="checked"'; } ?>> <label for="airline_type_passenger">Only Passenger airlines</label></div>
     				<div><input type="radio" name="airline_type" value="cargo" id="airline_type_cargo" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "cargo"){ print 'checked="checked"'; } ?>> <label for="airline_type_cargo">Only Cargo airlines</label></div>
@@ -361,7 +361,7 @@ if (!empty($_GET)){
         </fieldset>
         <fieldset>
         	<legend>Airport</legend>
-    		  <div>
+    		  <div class="form-group">
     		  	<label>Name</label> 
     		    <select name="airport" class="selectpicker" data-live-search="true">
     		      <option></option>
@@ -379,7 +379,7 @@ if (!empty($_GET)){
     		      }
     		      ?></select>
     		  </div>
-    		  <div>
+    		  <div class="form-group">
     		  	<label>Country</label> 
     		    <select name="airport_country" class="selectpicker" data-live-search="true">
     		      <option></option>
@@ -401,7 +401,7 @@ if (!empty($_GET)){
         
          <fieldset>
         	<legend>Route</legend>
-    		  <div>
+    		  <div class="form-group">
     		  	<label>Departure Airport</label> 
     		    <select name="departure_airport_route" class="selectpicker" data-live-search="true">
     		      <option></option>
@@ -417,7 +417,7 @@ if (!empty($_GET)){
     		      }
     		      ?></select>
     		  </div>
-    		  <div>
+    		  <div class="form-group">
     		  	<label>Arrival Airport</label> 
     		    <select name="arrival_airport_route" class="selectpicker" data-live-search="true">
     		      <option></option>
@@ -437,20 +437,20 @@ if (!empty($_GET)){
     
     		<fieldset>
         	<legend>Date</legend>
-    			<div>
+    			<div class="form-group">
     				<label>Start Date</label> 
-    				<input type="text" id="start_date" name="start_date" value="<?php if (isset($_GET['start_date'])) print $_GET['start_date']; ?>" size="10" readonly="readonly" class="datepicker" />
+    				<input type="text" id="start_date" name="start_date" value="<?php if (isset($_GET['start_date'])) print $_GET['start_date']; ?>" size="10" readonly="readonly" class="datepicker" placeholder="Start Date/Time" />
     			</div>
-    			<div>
+    			<div class="form-group">
     				<label>End Date</label> 
-    				<input type="text" id="end_date" name="end_date" value="<?php if (isset($_GET['end_date'])) print $_GET['end_date']; ?>" size="10" readonly="readonly" class="datepicker" />
+    				<input type="text" id="end_date" name="end_date" value="<?php if (isset($_GET['end_date'])) print $_GET['end_date']; ?>" size="10" readonly="readonly" class="datepicker" placeholder="End Date/Time" />
     			</div>
     		</fieldset>
 		</div>
 		
 		<fieldset>
         	<legend>Altitude</legend>
-    			<div>
+    			<div class="form-group">
     				<label>Lowest Altitude</label> 
     				<select name="lowest_altitude" class="selectpicker" data-live-search="true">
 	    		      <option></option>
@@ -467,7 +467,7 @@ if (!empty($_GET)){
 	    		      }
 	    		      ?></select>
     			</div>
-    			<div>
+    			<div class="form-group">
     				<label>Highest Altitude</label> 
     				<select name="highest_altitude" class="selectpicker" data-live-search="true">
 	    		      <option></option>
@@ -488,7 +488,7 @@ if (!empty($_GET)){
 		
 		 <fieldset>
         	<legend>Limit per Page</legend>
-    		  <div>
+    		  <div class="form-group">
     		  	<label>Number of Results</label> 
     		    <select name="number_results">
     		    <?php
