@@ -55,7 +55,7 @@ require('header.php');
       if (!empty($hour_array))
       {
         print '<div class="table-responsive">';
-            print '<table class="common-hour">';
+            print '<table class="common-hour table-striped">';
               print '<thead>';
                 print '<th></th>';
                 print '<th>Hour</th>';

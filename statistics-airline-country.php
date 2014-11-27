@@ -52,7 +52,7 @@ require('header.php');
       if (!empty($airline_array))
       {
         print '<div class="table-responsive">';
-            print '<table class="common-country">';
+            print '<table class="common-country table-striped">';
               print '<thead>';
               	print '<th></th>';
                 print '<th>Country</th>';

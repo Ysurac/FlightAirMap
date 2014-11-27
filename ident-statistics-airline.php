@@ -2,53 +2,29 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-$country = ucwords(str_replace("-", " ", $_GET['country']));
-
-$spotter_array = Spotter::getSpotterDataByCountry($country, "0,1", $_GET['sort']);
-
+$spotter_array = Spotter::getSpotterDataByIdent($_GET['ident'],"0,1", $_GET['sort']);
 
 if (!empty($spotter_array))
 {
-  $title = 'Most Common Airlines of '.$country;
+    $title = 'Most Common Airlines of '.$spotter_array[0]['ident'];
 	require('header.php');
-  
-  date_default_timezone_set('America/Toronto');
-  
-  print '<div class="select-item">';
-	print '<form action="'.$globalURL.'/country" method="post">';
-		print '<select name="country" class="selectpicker" data-live-search="true">';
-      print '<option></option>';
-      $all_countries = Spotter::getAllCountries();
-      foreach($all_countries as $all_country)
-      {
-        if($country == $all_country['country'])
-        {
-          print '<option value="'.strtolower(str_replace(" ", "-", $all_country['country'])).'" selected="selected">'.$all_country['country'].'</option>';
-        } else {
-          print '<option value="'.strtolower(str_replace(" ", "-", $all_country['country'])).'">'.$all_country['country'].'</option>';
-        }
-      }
-    print '</select>';
-	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
-	print '</form>';
-  print '</div>';
-  
-  if ($_GET['country'] != "NA")
-  {
-	print '<div class="info column">';
-		print '<h1>Airports &amp; Airlines from '.$country.'</h1>';
+    
+    date_default_timezone_set('America/Toronto');
+    
+    print '<div class="info column">';
+  		print '<h1>'.$spotter_array[0]['ident'].'</h1>';
+  		print '<div><span class="label">Ident</span>'.$spotter_array[0]['ident'].'</div>';
+  		print '<div><span class="label">Airline</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
+  		print '<div><span class="label">Flight History</span><a href="http://flightaware.com/live/flight/'.$spotter_array[0]['ident'].'" target="_blank">View the Flight History of this callsign</a></div>';       
 	print '</div>';
-  } else {
-	  print '<div class="alert alert-warning">This special country profile shows all flights that do <u>not</u> have a country of a airline or departure/arrival airport associated with them.</div>';
-  }
-	
-	include('country-sub-menu.php');
+
+	include('ident-sub-menu.php');
   
   print '<div class="column">';
   	print '<h2>Most Common Airlines</h2>';
-  	print '<p>The statistic below shows the most common airlines of flights from airports &amp; airlines of <strong>'.$country.'</strong>.</p>';
+  	print '<p>The statistic below shows the most common airlines of flights using the ident/callsign <strong>'.$spotter_array[0]['ident'].'</strong>.</p>';
 
-	  $airline_array = Spotter::countAllAirlinesByCountry($country);
+	  $airline_array = Spotter::countAllAirlinesByIdent($_GET['ident']);
 	  
 	  if (!empty($airline_array))
     {
@@ -60,6 +36,7 @@ if (!empty($spotter_array))
               print '<th>Airline</th>';
               print '<th>Country</th>';
               print '<th># of times</th>';
+              print '<th></th>';
             print '</thead>';
             print '<tbody>';
             $i = 1;
@@ -86,6 +63,7 @@ if (!empty($spotter_array))
                   print '<td>';
                     print $airline_item['airline_count'];
                   print '</td>';
+                  print '<td><a href="'.$globalURL.'/search?airline='.$airline_item['airline_icao'].'&callsign='.$_GET['ident'].'">Search flights</a></td>';
                 print '</tr>';
                 $i++;
               }
@@ -98,12 +76,12 @@ if (!empty($spotter_array))
   
 } else {
 
-	$title = "Country";
+	$title = "Ident";
 	require('header.php');
 	
 	print '<h1>Error</h1>';
 
-  print '<p>Sorry, the country does not exist in this database. :(</p>';  
+  print '<p>Sorry, this ident/callsign is not in the database. :(</p>'; 
 }
 
 

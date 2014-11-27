@@ -51,7 +51,7 @@ require('header.php');
       if (!empty($route_array))
       {
          print '<div class="table-responsive">';
-             print '<table class="common-routes">';
+             print '<table class="common-routes table-striped">';
               print '<thead>';
                 print '<th></th>';
                 print '<th>Departure Airport</th>';

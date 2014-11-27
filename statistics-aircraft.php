@@ -51,7 +51,7 @@ require('header.php');
 	  if (!empty($aircraft_array))
 	  {
 	    print '<div class="table-responsive">';
-		    print '<table class="common-type">';
+		    print '<table class="common-type table-striped">';
 		      print '<thead>';
 		      	print '<th></th>';
 		        print '<th>Aircraft Type</th>';

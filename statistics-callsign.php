@@ -51,7 +51,7 @@ require('header.php');
       if (!empty($callsign_array))
       {
          print '<div class="table-responsive">';
-             print '<table class="common-callsigns">';
+             print '<table class="common-callsigns table-striped">';
               print '<thead>';
                 print '<th></th>';
                 print '<th>Callsign</th>';

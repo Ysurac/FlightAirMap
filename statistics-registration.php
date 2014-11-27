@@ -51,7 +51,7 @@ require('header.php');
       if (!empty($registration_array))
       {
         print '<div class="table-responsive">';
-            print '<table class="common-registration">';
+            print '<table class="common-registration table-striped">';
               print '<thead>';
               	print '<th></th>';
               	print '<th></th>';

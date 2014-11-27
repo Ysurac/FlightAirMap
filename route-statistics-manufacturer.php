@@ -33,7 +33,7 @@ require('require/class.Spotter.php');
 	  if (!empty($manufacturers_array))
 	  {
 	    print '<div class="table-responsive">';
-		    print '<table class="common-manufacturer">';
+		    print '<table class="common-manufacturer table-striped">';
 		      print '<thead>';
 		        print '<th></th>';
 		        print '<th>Aircraft Manufacturer</th>';

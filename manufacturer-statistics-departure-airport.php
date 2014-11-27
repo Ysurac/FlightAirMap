@@ -86,7 +86,7 @@ if (!empty($spotter_array))
 
     	<?php
        print '<div class="table-responsive">';
-           print '<table class="common-airport">';
+           print '<table class="common-airport table-striped">';
             print '<thead>';
               print '<th></th>';
               print '<th>Airport</th>';

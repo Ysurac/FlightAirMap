@@ -51,7 +51,7 @@ require('header.php');
       if (!empty($airline_array))
       {
         print '<div class="table-responsive">';
-            print '<table class="common-airline">';
+            print '<table class="common-airline table-striped">';
               print '<thead>';
               	print '<th></th>';
               	print '<th></th>';

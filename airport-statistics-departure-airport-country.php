@@ -91,7 +91,7 @@ if (!empty($airport_array))
       if (!empty($airport_country_array))
       {
         print '<div class="table-responsive">';
-            print '<table class="common-country">';
+            print '<table class="common-country table-striped">';
               print '<thead>';
               	print '<th></th>';
                 print '<th>Country</th>';

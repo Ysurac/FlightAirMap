@@ -62,7 +62,7 @@ if (!empty($spotter_array))
 	  if (!empty($aircraft_array))
 	  {
 	    print '<div class="table-responsive">';
-		    print '<table class="common-type">';
+		    print '<table class="common-type table-striped">';
 		      print '<thead>';
 		        print '<th></th>';
 		        print '<th></th>';

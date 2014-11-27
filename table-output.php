@@ -1,6 +1,6 @@
 <?php
 print '<div class="table-responsive">';
-print '<table>';
+print '<table class="table-striped">';
 
 // FIXME : Dirty Hacks
 if (!isset($_GET['sort'])) 

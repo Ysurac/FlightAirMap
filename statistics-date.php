@@ -57,7 +57,7 @@ require('header.php');
       if (!empty($date_array))
       {
         print '<div class="table-responsive">';
-            print '<table class="common-date">';
+            print '<table class="common-date table-striped">';
               print '<thead>';
                 print '<th></th>';
                 print '<th>Date</th>';
