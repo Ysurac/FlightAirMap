@@ -66,15 +66,15 @@ require('header.php');
                   print '<tr>';
                   	print '<td><strong>'.$i.'</strong></td>';
                   	if ($registration_item['image_thumbnail'] != "")
-						    	 {
-						    	 	print '<td class="aircraft_thumbnail">';
-						    	 		print '<a href="'.$globalURL.'/registration/'.$registration_item['registration'].'"><img src="'.$registration_item['image_thumbnail'].'" data-toggle="popover" title="'.$registration_item['registration'].' - '.$registration_item['aircraft_icao'].' - '.$registration_item['airline_name'].'" alt="'.$registration_item['registration'].' - '.$registration_item['airline_name'].'" data-content="Registration: '.$registration_item['registration'].'<br />Aircraft: '.$registration_item['aircraft_name'].' ('.$registration_item['aircraft_icao'].')<br />Airline: '.$registration_item['airline_name'].'" data-html="true" width="100px" /></a>';
-						    	 	print '</td>';
-						    	 } else {
-						      	 print '<td class="aircraft_thumbnail">';
-						      	 	print '<a href="'.$globalURL.'/registration/'.$registration_item['registration'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" data-toggle="popover" title="'.$registration_item['registration'].' - '.$registration_item['aircraft_icao'].' - '.$registration_item['airline_name'].'" alt="'.$registration_item['registration'].' - '.$registration_item['airline_name'].'" data-content="Registration: '.$registration_item['registration'].'<br />Aircraft: '.$registration_item['aircraft_name'].' ('.$registration_item['aircraft_icao'].')<br />Airline: '.$registration_item['airline_name'].'" data-html="true" width="100px" /></a>';
-						      	 print '</td>';
-						    	 }
+			{
+				print '<td class="aircraft_thumbnail">';
+				print '<a href="'.$globalURL.'/registration/'.$registration_item['registration'].'"><img src="'.$registration_item['image_thumbnail'].'" class="img-rounded" data-toggle="popover" title="'.$registration_item['registration'].' - '.$registration_item['aircraft_icao'].' - '.$registration_item['airline_name'].'" alt="'.$registration_item['registration'].' - '.$registration_item['airline_name'].'" data-content="Registration: '.$registration_item['registration'].'<br />Aircraft: '.$registration_item['aircraft_name'].' ('.$registration_item['aircraft_icao'].')<br />Airline: '.$registration_item['airline_name'].'" data-html="true" width="100px" /></a>';
+			 	print '</td>';
+			} else {
+				print '<td class="aircraft_thumbnail">';
+				print '<a href="'.$globalURL.'/registration/'.$registration_item['registration'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" class="img-rounded" data-toggle="popover" title="'.$registration_item['registration'].' - '.$registration_item['aircraft_icao'].' - '.$registration_item['airline_name'].'" alt="'.$registration_item['registration'].' - '.$registration_item['airline_name'].'" data-content="Registration: '.$registration_item['registration'].'<br />Aircraft: '.$registration_item['aircraft_name'].' ('.$registration_item['aircraft_icao'].')<br />Airline: '.$registration_item['airline_name'].'" data-html="true" width="100px" /></a>';
+				print '</td>';
+			}
                     print '<td>';
                       print '<a href="'.$globalURL.'/registration/'.$registration_item['registration'].'">'.$registration_item['registration'].'</a>';
                     print '</td>';
