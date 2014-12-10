@@ -7026,98 +7026,57 @@ class Spotter{
     }
 
 
-	//temporary update scripts
+	// Update flights data when new data in DB
 	public static function updateFieldsFromOtherTables()
 	{
+		// routes
+		print "Routes...\n";
+		$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != ''";
+		$Connection = new Connection();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$departure_airport_array = Spotter::getAllAirportInfo($row['FromAirport_ICAO']);
+			$arrival_airport_array = Spotter::getAllAirportInfo($row['ToAirport_ICAO']);
+			if (count($departure_airport_array) > 0 && count($arrival_airport_array) > 0) {
+				$update_query="UPDATE spotter_output SET departure_airport_icao = :fromicao, arrival_airport_icao = :toicao, departure_airport_name = :departure_airport_name, departure_airport_city = :departure_airport_city, departure_airport_country = :departure_airport_country, arrival_airport_name = :arrival_airport_name, arrival_airport_city = :arrival_airport_city, arrival_airport_country = :arrival_airport_country WHERE spotter_id = :spotter_id";
+				$sthu = Connection::$db->prepare($update_query);
+				$sthu->execute(array(':fromicao' => $row['FromAirport_ICAO'],':toicao' => $row['ToAirport_ICAO'],':spotter_id' => $row['spotter_id'],':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country']));
+			}
+		}
 		
-		
-		/*
+		print "Airlines...\n";
 		//airlines
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE spotter_output.airline_name = ''";
-		$result = mysql_query($query);
-        
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			if (is_numeric(substr($row['ident'], -1, 1)))
 			{
 				$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 3));
-				
-				$query2  = "UPDATE spotter_output SET spotter_output.airline_name = '".$airline_array[0]['name']."', spotter_output.airline_icao = '".$airline_array[0]['icao']."', spotter_output.airline_country = '".$airline_array[0]['country']."', spotter_output.airline_type = '".$airline_array[0]['type']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
-				$result2 = mysql_query($query2);
+				$update_query  = "UPDATE spotter_output SET spotter_output.airline_name = :airline_name, spotter_output.airline_icao = :airline_icao, spotter_output.airline_country = :airline_country, spotter_output.airline_type = :airline_type WHERE spotter_output.spotter_id = :spotter_id";
+				$sthu = Connection::$db->prepare($update_query);
+				$sthu->execute(array(':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'], ':airline_country' => $airline_array[0]['country'], ':airline_type' => $airline_array[0]['type'], ':spotter_id' => $row['spotter_id']));
 			}
 		}
-		*/
-		
-		
-		
-       /* 
+
+		print "Aircraft...\n";
 		//aircraft
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE spotter_output.aircraft_name = ''";
-		$result = mysql_query($query);
-        
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$aircraft_name = Spotter::getAllAircraftInfo($row['aircraft_icao']);
-			
 			if ($row['registration'] != ""){
-				$google_image_url = Spotter::findAircraftImage($row['registration'].' '.$aircraft_name[0]['type']);
-			
-				if ($google_image_url['original'] == "")
-				{
-					$google_image_url['original'] = "-";
-				}
-                
-                $query2  = "INSERT INTO spotter_image (registration, image_thumbnail, image) VALUES ('".$row['registration']."', '".$google_image_url['thumbnail']."', '".$google_image_url['original']."')";
-                $result2 = mysql_query($query2);
+				Spotter::addSpotterImage($row['registration']);
 			}
-			
-			$query2  = "UPDATE spotter_output SET spotter_output.aircraft_name = '".$aircraft_name[0]['type']."', spotter_output.aircraft_manufacturer = '".$aircraft_name[0]['manufacturer']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
-			$result2 = mysql_query($query2);
-    
-
+			$update_query  = "UPDATE spotter_output SET spotter_output.aircraft_name = :aircraft_name, spotter_output.aircraft_manufacturer = :aircraft_manufacturer WHERE spotter_output.spotter_id = :spotter_id";
+			$sthu = Connection::$db->prepare($update_query);
+			$sthu->execute(array(':aircraft_name' => $aircraft_name[0]['type'], ':aircraft_manufacturer' => $aircraft_name[0]['manufacturer'], ':spotter_id' => $row['spotter_id']));
 		}
-	*/
-		
-/*
-		//airport
-		$query  = "SELECT spotter_output.spotter_id, spotter_output.departure_airport_icao FROM spotter_output WHERE spotter_output.departure_airport_name = ''";
-		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
-        
-    while($row = $sth->fetch(PDO::FETCH_ASSOC))
-		{
-			if ($row['departure_airport_icao'] != "")
-			{
-				$airport_name = Spotter::getAllAirportInfo($row['departure_airport_icao']);
-			} else {
-				$airport_name = Spotter::getAllAirportInfo("NA");
-			}
-			
-			$query2  = "UPDATE spotter_output SET spotter_output.departure_airport_name = '".$airport_name[0]['name']."', spotter_output.departure_airport_city = '".$airport_name[0]['city']."', spotter_output.departure_airport_country = '".$airport_name[0]['country']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
-			$result2 = mysqli_query($GLOBALS["___mysqli_ston"], $query2);
-		}
-		$query  = "SELECT spotter_output.spotter_id, spotter_output.arrival_airport_icao FROM spotter_output WHERE spotter_output.arrival_airport_name = ''";
-		$Connection = new Connection();
-$sth = Connection::$db->prepare($query);
-$sth->execute();
-        
-    while($row = $sth->fetch(PDO::FETCH_ASSOC))
-		{
-			if ($row['arrival_airport_icao'] != "")
-			{
-				$airport_name = Spotter::getAllAirportInfo($row['arrival_airport_icao']);
-			} else {
-				$airport_name = Spotter::getAllAirportInfo("NA");
-			}
-			
-			$query2  = "UPDATE spotter_output SET spotter_output.arrival_airport_name = '".$airport_name[0]['name']."', spotter_output.arrival_airport_city = '".$airport_name[0]['city']."', spotter_output.arrival_airport_country = '".$airport_name[0]['country']."' WHERE spotter_output.spotter_id = '".$row['spotter_id']."'";
-			$result2 = mysqli_query($GLOBALS["___mysqli_ston"], $query2);
-		}
-
-	
-*/				
-		
 	}	
 	
 }

@@ -21,7 +21,7 @@ class update_db {
 
 	public static function gunzip($in_file,$out_file_name = '') {
 		$buffer_size = 4096; // read 4kb at a time
-		if ($out_file == '') $out_file_name = str_replace('.gz', '', $in_file); 
+		if ($out_file_name == '') $out_file_name = str_replace('.gz', '', $in_file); 
 		$file = gzopen($in_file,'rb');
 		$out_file = fopen($out_file_name, 'wb'); 
 		while(!gzeof($file)) {
@@ -462,7 +462,8 @@ class update_db {
 		if (($handle = fopen($tmp_dir.'translation.csv', 'r')) !== FALSE)
 		{
 			$i = 0;
-			Connection::$db->beginTransaction();
+			//Connection::$db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
+			//Connection::$db->beginTransaction();
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				$i++;
@@ -495,7 +496,7 @@ class update_db {
 				}
 			}
 			fclose($handle);
-			Connection::$db->commit();
+			//Connection::$db->commit();
 		}
         }
 	
