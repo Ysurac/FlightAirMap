@@ -242,8 +242,10 @@
     		$result = create_db::create_database($dbroot,$dbrootpass,$dbuser,$dbuserpass,$dbname,$dbtype,$dbhost);
     		if ($result != true) $error .= $result;
     	    }
-    	    $error .= create_db::import_all_db('../db/');
-    	    $settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBuser' => $dbuser,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
+    	    if ($error == '') {
+    		$error .= create_db::import_all_db('../db/');
+    		$settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBuser' => $dbuser,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
+    	    }
         }
 	if ($error != '') {
 	?>

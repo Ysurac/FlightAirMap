@@ -4,7 +4,6 @@ require_once('../require/class.Connection.php');
 
 class create_db {
 	public static function import_file($filename) {
-		echo "we import !!";
 		$filename = filter_var($filename,FILTER_SANITIZE_STRING);
 		$Connection = new Connection();
                 Connection::$db->beginTransaction();
@@ -46,10 +45,14 @@ class create_db {
 		$db = filter_var($db,FILTER_SANITIZE_STRING);
 		$db_type = filter_var($db_type,FILTER_SANITIZE_STRING);
 		$host = filter_var($host,FILTER_SANITIZE_STRING);
+		// Dirty hack
+		if ($host != 'localhost' || $host != '127.0.0.1') {
+		    $grantright = $_SERVER['SERVER_ADDR'];
+		} else $grantright = $host;
 		try {
 			$dbh = new PDO($db_type.':host='.$host,$root,$root_pass);
 			$dbh->exec("CREATE DATABASE IF NOT EXISTS `".$db."`;
-				GRANT ALL ON `".$db."`.* TO '".$user."'@'localhost' IDENTIFIED BY '".$password."';
+				GRANT ALL ON `".$db."`.* TO '".$user."'@'".$grantright."' IDENTIFIED BY '".$password."';
 				FLUSH PRIVILEGES;");
 	//		or return($dbh->errorInfo());
 		} catch(PDOException $e) {
