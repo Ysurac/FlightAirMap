@@ -50,6 +50,7 @@ class SBS {
     }
 
     static function add($line) {
+	global $globalAirportIgnore;
 	date_default_timezone_set('UTC');
 	// signal handler - playing nice with sockets and dump1090
 	// pcntl_signal_dispatch();
@@ -86,7 +87,7 @@ class SBS {
 		    if (!$pids[$id]) {
 		        $sid = posix_setsid();
 		        SBS::get_Schedule($id,trim($line[10]));
-		        die();
+		        exit(0);
 		    }
 		}
 	        
@@ -171,6 +172,8 @@ class SBS {
 		    $ignoreImport = false;
 		    if (self::$debug) echo $result."\n";
 		}
+		pcntl_signal(SIGCHLD, SIG_IGN);
+
     	    }
 	}
     }
