@@ -1737,7 +1737,6 @@ class Spotter{
 	public static function getOperator($operator)
 	{
 		$operator = filter_var($operator,FILTER_SANITIZE_STRING);
-		echo "Operator 2: ".$operator."\n";
 		$query  = "SELECT translation.operator_correct FROM translation WHERE translation.operator = :operator LIMIT 1";
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
