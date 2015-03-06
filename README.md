@@ -13,7 +13,8 @@ To install the web app which Barrie Spotter runs, you need to have meet the foll
 * An HTTP Server such as:
 	* Apache 1.3+
 	* Apache 2.0+
-	
+(Nginx not supported for now)
+
 ## Required Extensions
 
 The follwing is a list of PHP extensions that must be installed on your server in order for this web app to run properly:
@@ -27,6 +28,7 @@ The follwing is a list of PHP extensions that must be installed on your server i
 
 ## Install ##
 ### Web install ###
+(This is the recommanded way to install)
 Use install/index.php
 
 ### Console install ###
@@ -36,7 +38,8 @@ Use install/index.php
 * If you use ADS-B as datasource, supply install/update_db.sh with your database credentials and run it. (You should go to http://www.virtualradarserver.co.uk/ and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me)
 
 ## Data Sources
-You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (BaseStation) format.
+You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (BaseStation) format AND/OR ACARS from acarsdec.
+(FlightAware is no more tested, I don't have a paid API account)
 
 ### FlightAware Api Key 
 * get yourself a flightAware api key http://flightaware.com/commercial/flightxml/
@@ -46,3 +49,7 @@ You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (Bas
 ### ADS-B
 * You can use dump1090 [https://github.com/MalcolmRobb/dump1090](https://github.com/MalcolmRobb/dump1090) with a RTL dongle
 * run cron-sbs.php (The name is not really good, this should be run one time like a daemon, use a init script or screen)
+
+### ACARS
+* You have to use acarsdec [http://sourceforge.net/projects/acarsdec/](http://sourceforge.net/projects/acarsdec/) : acarsdec -N 127.0.0.1:9999 -r 0 131.525 131.550 131.725
+* run cron-acars.php (also a daemon)

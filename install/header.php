@@ -37,9 +37,46 @@ if ($facebook_meta_image != "")
 <meta property="og:title" content="<?php print $title; ?> | <?php print $globalName; ?>"/>
 <meta property="og:url" content="<?php print $globalURL.$_SERVER['REQUEST_URI']; ?>"/>
 <meta property="og:site_name" content="<?php print $globalName; ?>"/>
+
+<?php
+    if (!isset($_SESSION['install'])) {
+?>
+<script language="JavaScript" type="text/javascript">
+    function datasource_js() {
+        document.getElementById("flightaware_data").style.display = document.getElementById("flightaware").checked ? "inline" : "none" ;
+        document.getElementById("sbs_data").style.display = document.getElementById("sbs").checked ? "inline" : "none" ;
+        document.getElementById("acars_data").style.display = document.getElementById("acars").checked ? "inline" : "none" ;
+    }
+    function map_provider_js() {
+        if (document.getElementById("mapprovider").value == "Mapbox") {
+	    document.getElementById("mapbox_data").style.display = "inline";
+	} else {
+	    document.getElementById("mapbox_data").style.display = "none";
+	}
+    }   
+    function create_database_js() {
+        document.getElementById("createdb_data").style.display = document.getElementById("createdb").checked ? "inline" : "none" ;
+    }
+
+</script>
+<?php
+    }
+?>
+
 </head>
 
-<body class="page-<?php print strtolower($current_page); ?>">
+<?php
+    if (!isset($_SESSION['install'])) {
+?>
+
+<body class="page-<?php print strtolower($current_page); ?>" onload="datasource_js(); map_provider_js(); create_database_js()">
+<?php
+    } else {
+?>
+    <body class="page-<?php print strtolower($current_page); ?>">
+<?php
+    }
+?>
 <div class="navbar navbar-fixed-top" role="navigation">
   <div class="container">
 

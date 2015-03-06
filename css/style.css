@@ -96,11 +96,24 @@ table tr td.aircraft_thumbnail img:hover{
 table tr td.ident{
 	width:10%;
 }
+table tr td.message{
+	text-align: left;
+	word-wrap: break-word;
+	max-width: 50em;
+	font-size: 0.8em;
+}
 table tr td.more{
 	width:1%;
 }
 table tr td.more .dropdown-menu li a{
 	text-align:left;
+}
+table tr td.more .dropdown-menu li hr{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+ul{
+    margin-bottom:1.5em;
 }
 #header-fixed {
     position: fixed;
@@ -898,6 +911,10 @@ body.page-flightid-overview .details .detail .date{
 body.page-flightid-overview .last-flights{
     margin-bottom:2.0em;
     padding-top:1.0em;
+}
+body.page-flightid-overview .last-flights .more{
+    text-align: center;
+    margin-top:1.0em;
 }
 body.page-flightid-overview .share{
     text-align:center;

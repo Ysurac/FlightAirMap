@@ -19,9 +19,14 @@ class Connection{
 	public static function createDBConnection()
 	{
 		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname;
-
-		self::$db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname", $globalDBuser,  $globalDBpass);
-		self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		try {
+			self::$db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname", $globalDBuser,  $globalDBpass);
+			self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+			exit;
+			return false;
+		}
 		return true;
 	}
 
@@ -32,7 +37,8 @@ class Connection{
 			$Connection = new Connection();
 			$results = Connection::$db->query($query);
 		} catch(PDOException $e) {
-			return "Error";
+			return $e->getMessage();
+			return false;
 		}
 		if($results->rowCount()>0) return true; else return false;
 	}

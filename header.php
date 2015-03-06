@@ -113,6 +113,14 @@ if ($globalURL == "http://www.barriespotter.com"){ ?>
             <li><a href="<?php print $globalURL; ?>/latest">Latest Activity</a></li>
             <li><a href="<?php print $globalURL; ?>/date/<?php print date("Y-m-d"); ?>">Today's Activity</a></li>
             <li><a href="<?php print $globalURL; ?>/newest">Newest by Category</a></li>
+            <?php
+        	if ($globalACARS) {
+    	    ?>
+            <li><hr /></li>
+            <li><a href="<?php print $globalURL; ?>/acars">ACARS messages</a></li>
+            <?php
+        	}
+    	    ?>
             <li><hr /></li>
             <li><a href="<?php print $globalURL; ?>/highlights">Special Highlights</a></li>
             <li><a href="<?php print $globalURL; ?>/upcoming">Upcoming Flights</a></li>

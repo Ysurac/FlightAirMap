@@ -1,5 +1,6 @@
 <?php
 require_once('class.Scheduler.php');
+require_once('class.ACARS.php');
 $global_query = "SELECT spotter_output.* FROM spotter_output";
 
 class Spotter{
@@ -55,15 +56,15 @@ class Spotter{
 			} else {
 			    $temp_array['spotter_id'] = $row['spotter_id'];
 			}
-      $temp_array['flightaware_id'] = $row['flightaware_id'];
-      $temp_array['ident'] = $row['ident'];
-      $temp_array['registration'] = $row['registration'];
-      $temp_array['aircraft_type'] = $row['aircraft_icao'];
-      $temp_array['departure_airport'] = $row['departure_airport_icao'];
-      $temp_array['arrival_airport'] = $row['arrival_airport_icao'];
-      $temp_array['latitude'] = $row['latitude'];
-      $temp_array['longitude'] = $row['longitude'];
-      $temp_array['waypoints'] = $row['waypoints'];
+		      $temp_array['flightaware_id'] = $row['flightaware_id'];
+		      $temp_array['ident'] = $row['ident'];
+		      $temp_array['registration'] = $row['registration'];
+		      $temp_array['aircraft_type'] = $row['aircraft_icao'];
+		      $temp_array['departure_airport'] = $row['departure_airport_icao'];
+		      $temp_array['arrival_airport'] = $row['arrival_airport_icao'];
+		      $temp_array['latitude'] = $row['latitude'];
+		      $temp_array['longitude'] = $row['longitude'];
+		      $temp_array['waypoints'] = $row['waypoints'];
 	if (isset($row['route_stop'])) {
 		$temp_array['route_stop'] = $row['route_stop'];
 		if ($row['route_stop'] != '') {
@@ -152,12 +153,21 @@ class Spotter{
 				$airline_array = Spotter::getAllAirlineInfo('NA');
 			}
 			if (count($airline_array) > 0) {
-			$temp_array['airline_icao'] = $airline_array[0]['icao'];
-			$temp_array['airline_iata'] = $airline_array[0]['iata'];
-			$temp_array['airline_name'] = $airline_array[0]['name'];
-			$temp_array['airline_country'] = $airline_array[0]['country'];
-			$temp_array['airline_callsign'] = $airline_array[0]['callsign'];
-			$temp_array['airline_type'] = $airline_array[0]['type'];
+				$temp_array['airline_icao'] = $airline_array[0]['icao'];
+				$temp_array['airline_iata'] = $airline_array[0]['iata'];
+				$temp_array['airline_name'] = $airline_array[0]['name'];
+				$temp_array['airline_country'] = $airline_array[0]['country'];
+				$temp_array['airline_callsign'] = $airline_array[0]['callsign'];
+				$temp_array['airline_type'] = $airline_array[0]['type'];
+			}
+			
+			if (isset($temp_array['airline_iata'])) {
+				$acars_array = ACARS::getLiveAcarsData($temp_array['airline_iata'].substr($temp_array['ident'],3));
+				//$acars_array = ACARS::getLiveAcarsData('BA40YL');
+				if (count($acars_array) > 0) {
+					$temp_array['acars'] = $acars_array;
+					//print_r($acars_array);
+				}
 			}
 			
 			$schedule_array = Schedule::getSchedule($temp_array['ident']);
@@ -1737,7 +1747,6 @@ class Spotter{
 	public static function getOperator($operator)
 	{
 		$operator = filter_var($operator,FILTER_SANITIZE_STRING);
-		echo "Operator 2: ".$operator."\n";
 		$query  = "SELECT translation.operator_correct FROM translation WHERE translation.operator = :operator LIMIT 1";
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
@@ -2300,7 +2309,7 @@ class Spotter{
 	* @return String success or false
 	*
 	*/	
-	public static function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '')
+	public static function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '')
 	{
 		global $globalURL;
 		
@@ -2482,6 +2491,7 @@ class Spotter{
 		$groundspeed = filter_var($groundspeed,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$squawk = filter_var($squawk,FILTER_SANITIZE_NUMBER_INT);
 		$route_stop = filter_var($route_stop,FILTER_SANITIZE_STRING);
+		$ModeS = filter_var($ModeS,FILTER_SANITIZE_STRING);
 	
 		if (count($airline_array) == 0) 
 		{
@@ -2500,10 +2510,10 @@ class Spotter{
                         $arrival_airport_array = Spotter::getAllAirportInfo('NA');
                 }
                 if ($registration == '') $registration = 'NA';
-                $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop,highlight) 
-                VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time, :squawk, :route_stop, :highlight)";
+                $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop,highlight,ModeS) 
+                VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time, :squawk, :route_stop, :highlight, :ModeS)";
 
-                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country'],':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date,':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk, ':route_stop' => $route_stop, ':highlight' => $highlight);
+                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country'],':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date,':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk, ':route_stop' => $route_stop, ':highlight' => $highlight, ':ModeS' => $ModeS);
 
 
 		try {
@@ -6779,6 +6789,15 @@ class Spotter{
 		
 		return $registration;	
 	}
+
+
+	/**
+	* Gets the aircraft registration from ModeS
+	*
+	* @param String $aircraft_modes the flight ModeS in hex
+	* @return String the aircraft registration
+	*
+	*/
 	
 	public static function getAircraftRegistrationBymodeS($aircraft_modes)
 	{
@@ -6795,6 +6814,7 @@ class Spotter{
 		} else return '';
 	
 	}
+
 	/**
 	* converts the registration code using the country prefix
 	*
@@ -6805,7 +6825,7 @@ class Spotter{
 	public static function convertAircraftRegistration($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
-		
+		$registration_prefix = '';
 		$registration_1 = substr($registration, 0, 1);
 		$registration_2 = substr($registration, 0, 2);
 
@@ -6852,6 +6872,54 @@ class Spotter{
 		}
 
 		return $registration;	
+	}
+
+	/**
+	* Country from the registration code
+	*
+	* @param String $registration the aircraft registration
+	* @return String the country
+	*
+	*/
+	public static function countryFromAircraftRegistration($registration)
+	{
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
+		
+		$registration_prefix = '';
+		
+		$registration_1 = substr($registration, 0, 1);
+		$registration_2 = substr($registration, 0, 2);
+
+		$country = '';
+		//first get the prefix based on two characters
+		$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_2 LIMIT 1";
+      
+		$Connection = new Connection();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':registration_2' => $registration_2));
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$registration_prefix = $row['registration_prefix'];
+			$country = $row['country'];
+		}
+
+		//if we didn't find a two chracter prefix lets just search the one with one character
+		if ($registration_prefix == "")
+		{
+			$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_1 LIMIT 1";
+	      
+			$sth = Connection::$db->prepare($query);
+			$sth->execute(array(':registration_1' => $registration_1));
+	        
+			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+			{
+				$registration_prefix = $row['registration_prefix'];
+				$country = $row['country'];
+			}
+		}
+
+		return $country;
 	}
 	
 	

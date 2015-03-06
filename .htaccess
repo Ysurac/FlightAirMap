@@ -18,6 +18,11 @@ RewriteCond %{HTTPS} =off
 RewriteRule ^latest(/?)$ latest.php [L,NC]
 
 RewriteCond %{HTTPS} !=off
+RewriteRule ^acars(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^acars(/?)$ acars.php [L,NC]
+
+RewriteCond %{HTTPS} !=off
 RewriteRule ^newest/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
 RewriteRule ^newest/([^/]+)/([^/]+)/([^/]+)(/?)$ newest.php?category=$1&limit=$2&sort=$3 [L,NC]

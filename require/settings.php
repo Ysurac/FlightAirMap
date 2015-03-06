@@ -48,6 +48,11 @@ $globalSBS1Host = '127.0.0.1';
 $globalSBS1Port = '30003';
 $globalSBS1TimeOut = '15';
 
+//ACARS Listen in UDP
+$globalACARS = TRUE;
+$globalACARSHost = '0.0.0.0'; // Local IP to listen
+$globalACARSPort = '9999';
+
 // To display Squawk usage we need Squawk country for now
 $globalSquawkCountry = 'UK';
 

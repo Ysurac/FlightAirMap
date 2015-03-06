@@ -8,13 +8,13 @@ if (isset($_GET['download']))
 }
 header('Content-Type: text/javascript');
 
-//if (isset($_GET['coord'])) 
-//{
+if (isset($_GET['coord'])) 
+{
 	$coords = explode(',',$_GET['coord']);
 	$spotter_array = Spotter::getAllWaypointsInfobyCoord($coords);
-//} else {
-//	$spotter_array = Spotter::getAllAirportInfobyCountry(array('France','Switzerland'));
-//}
+} else {
+	die;
+}
       
 $output = '{"type": "FeatureCollection","features": [';
             

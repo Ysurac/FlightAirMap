@@ -6,7 +6,7 @@ class create_db {
 	public static function import_file($filename) {
 		$filename = filter_var($filename,FILTER_SANITIZE_STRING);
 		$Connection = new Connection();
-                Connection::$db->beginTransaction();
+                //Connection::$db->beginTransaction();
                  $templine = '';
                  $lines = file($filename);
                  foreach ($lines as $line)
@@ -19,12 +19,12 @@ class create_db {
                 			$sth = Connection::$db->prepare($templine);
 					$sth->execute();
                     		} catch(PDOException $e) {
-					return "error : ".$e->getMessage()."\n";
+					return "error (import ".$filename.") : ".$e->getMessage()."\n";
                     		}
                 		$templine = '';
                 	}
 		}
-                Connection::$db->commit();
+                //Connection::$db->commit();
                 return '';
 	}
 
@@ -32,7 +32,7 @@ class create_db {
 		$error = '';
 		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $filename)
 		{
-		    if (preg_match('/\.sql/',$filename)) $error .= create_db::import_file($filename);
+		    if (preg_match('/\.sql$/',$filename)) $error .= create_db::import_file($filename);
 		}
 		return $error;
 	}
@@ -61,6 +61,7 @@ class create_db {
 
 		return true;
 	}
+	
 }
 
 ?>
