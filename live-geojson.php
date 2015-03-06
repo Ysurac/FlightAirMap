@@ -133,6 +133,9 @@ $output = '{';
 						if (isset($spotter_item['squawk_usage'])) {
 							$output .= '"squawk_usage": "'.$spotter_item['squawk_usage'].'",';
 						}
+						if (isset($spotter_item['acars'])) {
+							$output .= '"acars": "'.$spotter_item['acars']['label'].' - '.$spotter_item['acars']['message'].'",';
+						}
 							// FIXME : type when not aircraft ?
 							$output .= '"type": "aircraft"';
 						$output .= '},';
