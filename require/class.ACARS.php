@@ -263,7 +263,7 @@ C4,N24.3,37956,0.8
     */
     public static function addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message) {
 	date_default_timezone_set('UTC');
-	if ($label != 'Q0' && $label != '_d' && $message != '') {
+	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
 	    if (self::$debug) echo "Add Live ACARS data...";
     	    $query = "INSERT INTO acars_live (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message)";
     	    $query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message);
