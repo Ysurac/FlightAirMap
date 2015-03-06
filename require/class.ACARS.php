@@ -353,7 +353,7 @@ C4,N24.3,37956,0.8
 	if (self::$debug) echo "Test if we add ModeS data...";
 	if ($icao == '') $icao = ACARS::ident2icao($ident);
 	if (self::$debug) echo '- '.$icao.' - ';
-    	
+	if ($ident == '') exit;
     	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE `ident` =  :ident LIMIT 1";
     	$query_values = array(':ident' => $icao);
     	try {
