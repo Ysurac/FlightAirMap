@@ -43,7 +43,8 @@ class update_schema {
 	private static function update_from_1() {
     		$Connection = new Connection();
     		// Add new column to routes table
-    		$query = "ALTER TABLE `routes` ADD `FromAirport_Time` VARCHAR(10),`ToAirport_Time` VARCHAR(10),`Source` VARCHAR(255),`date_added` DATETIME DEFAULT CURRENT TIMESTAMP,`date_modified` DATETIME,`date_lastseen` DATETIME";
+    		//$query = "ALTER TABLE `routes` ADD `FromAirport_Time` VARCHAR(10),`ToAirport_Time` VARCHAR(10),`Source` VARCHAR(255),`date_added` DATETIME DEFAULT CURRENT TIMESTAMP,`date_modified` DATETIME,`date_lastseen` DATETIME";
+		$query = "ALTER TABLE `routes` ADD `FromAirport_Time` VARCHAR(10) NULL , ADD `ToAirport_Time` VARCHAR(10) NULL , ADD `Source` VARCHAR(255) NULL , ADD `date_added` DATETIME NULL DEFAULT CURRENT_TIMESTAMP , ADD `date_modified` DATETIME NULL , ADD `date_lastseen` DATETIME NULL"
         	try {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();
@@ -61,7 +62,7 @@ class update_schema {
 		    return "error (delete schedule table) : ".$e->getMessage()."\n";
     		}
     		// Add source column
-    		$query = "ALTER TABLE `aircraft_modes` ADD `Source` VARCHAR(255)";
+    		$query = "ALTER TABLE `aircraft_modes` ADD `Source` VARCHAR(255) NULL";
     		try {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();
@@ -77,7 +78,7 @@ class update_schema {
 		    return "error (Delete unused column of aircraft_modes) : ".$e->getMessage()."\n";
     		}
 		// Add ModeS column
-		$query = "ALTER TABLE `spotter_output`  ADD `ModeS` VARCHAR(255)";
+		$query = "ALTER TABLE `spotter_output`  ADD `ModeS` VARCHAR(255) NULL";
     		try {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();
