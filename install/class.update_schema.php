@@ -44,7 +44,7 @@ class update_schema {
     		$Connection = new Connection();
     		// Add new column to routes table
     		//$query = "ALTER TABLE `routes` ADD `FromAirport_Time` VARCHAR(10),`ToAirport_Time` VARCHAR(10),`Source` VARCHAR(255),`date_added` DATETIME DEFAULT CURRENT TIMESTAMP,`date_modified` DATETIME,`date_lastseen` DATETIME";
-		$query = "ALTER TABLE `routes` ADD `FromAirport_Time` VARCHAR(10) NULL , ADD `ToAirport_Time` VARCHAR(10) NULL , ADD `Source` VARCHAR(255) NULL , ADD `date_added` DATETIME NULL DEFAULT CURRENT_TIMESTAMP , ADD `date_modified` DATETIME NULL , ADD `date_lastseen` DATETIME NULL"
+		$query = "ALTER TABLE `routes` ADD `FromAirport_Time` VARCHAR(10) NULL , ADD `ToAirport_Time` VARCHAR(10) NULL , ADD `Source` VARCHAR(255) NULL , ADD `date_added` DATETIME NULL DEFAULT CURRENT_TIMESTAMP , ADD `date_modified` DATETIME NULL , ADD `date_lastseen` DATETIME NULL";
         	try {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();
