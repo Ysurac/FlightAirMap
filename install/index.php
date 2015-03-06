@@ -333,8 +333,15 @@ if (isset($_POST['dbtype'])) {
 		if (isset($_POST['waypoints'])) $_SESSION['waypoints'] = 1;
 		$_SESSION['install'] = 'database_import';
 		//require('../footer.php');
-		if (isset($_POST['createdb'])) $_SESSION['done'] = array('Create database','Write configuration');
-		else $_SESSION['done'] = array('Write configuration');
+		print '<div class="info column"><ul>';
+		
+		if (isset($_POST['createdb'])) {
+			$_SESSION['done'] = array('Create database','Write configuration');
+			print '<li>Create database....SUCCESS</li>';
+		} else $_SESSION['done'] = array('Write configuration');
+		print '<li>Create and import tables....<img src="../images/loading.gif" /></li></ul></div>';
+		flush();
+		sleep(10);
 		print "<script>window.location = 'index.php?".rand()."';</script>";
 //		header("Location: index.php?".rand());
 	}
@@ -372,8 +379,10 @@ if (isset($_POST['dbtype'])) {
 		}
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Update schema'));
 		$_SESSION['install'] = 'finish';
+		
 	}
 	require('../footer.php');
+	sleep(5);
 	print "<script>window.location = 'index.php?".rand()."';</script>";
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'waypoints') {
 	unset($_SESSION['install']);
