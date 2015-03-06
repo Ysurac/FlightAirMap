@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS `spotter_live` (
   `heading` int(11) NOT NULL,
   `ground_speed` int(11) NOT NULL,
   `squawk` int(11),
+  `ModeS` varchar(255)
   PRIMARY KEY (`spotter_live_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 

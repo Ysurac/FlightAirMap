@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `spotter_output` (
   `ground_speed` int(11) NOT NULL,
   `highlight` longtext NOT NULL,
   `squawk` int(11),
+  `ModeS` varchar(255) NOT NULL
   PRIMARY KEY (`spotter_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 

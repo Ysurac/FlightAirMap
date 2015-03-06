@@ -76,6 +76,21 @@ class update_schema {
     		} catch(PDOException $e) {
 		    return "error (Delete unused column of aircraft_modes) : ".$e->getMessage()."\n";
     		}
+		// Add ModeS column
+		$query = "ALTER TABLE `spotter_output`  ADD `ModeS` VARCHAR(255)";
+    		try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (Add ModeS column in spotter_output) : ".$e->getMessage()."\n";
+    		}
+		$query = "ALTER TABLE `spotter_live`  ADD `ModeS` VARCHAR(255)";
+    		try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (Add ModeS column in spotter_live) : ".$e->getMessage()."\n";
+    		}
     		$error = '';
 		$error .= create_db::import_file('../db/acars_live.sql');
 		$error .= create_db::import_file('../db/config.sql');
