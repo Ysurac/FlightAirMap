@@ -13,6 +13,7 @@ To install the web app which Barrie Spotter runs, you need to have meet the foll
 * An HTTP Server such as:
 	* Apache 1.3+
 	* Apache 2.0+
+
 (Nginx not supported for now)
 
 ## Required Extensions
@@ -29,6 +30,7 @@ The follwing is a list of PHP extensions that must be installed on your server i
 ## Install ##
 ### Web install ###
 (This is the recommanded way to install)
+
 Use install/index.php
 
 ### Console install ###
