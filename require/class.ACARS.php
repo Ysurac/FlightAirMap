@@ -324,6 +324,7 @@ C4,N24.3,37956,0.8
     	        else $data = array_merge($data,array('image_thumbnail' => ''));
     	    }
     	    $icao = '';
+    	    if ($row['ident'] == '') $row['ident'] = 'N/A';
     	    $identicao = Spotter::getAllAirlineInfo(substr($row['ident'],0,2));
     	    if (isset($identicao[0])) {
         	if (substr($row['ident'],0,2) == 'AF') {
