@@ -3,13 +3,13 @@
 $globalInstalled = FALSE;
 
 //GLOBAL SITE NAME
-$globalName = "";
+$globalName = '';
 
 // GLOBAL URL
-$globalURL = "";
+$globalURL = '';
 
 // Logo URL
-$logoURL = "/images/logo2.png";
+$logoURL = '/images/logo2.png';
 
 // LANGUAGE
 $globalLanguage = 'EN'; // Used only for wikipedia links for now
