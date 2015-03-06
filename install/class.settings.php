@@ -29,7 +29,7 @@ class settings {
 			
 			// If setting is not in settings.php (for update)
 			if ($rep_cnt == 0) {
-				$content = preg_replace('/\?>/',$replace."\n?>",$content);
+				$content = preg_replace('/\?>/',$replace.";\n?>",$content,1,$rep_cnt);
 			}
 
 		}
