@@ -135,6 +135,14 @@ body.page-index .leaflet-popup-content-wrapper .right .callsign-details{
   -moz-border-radius-topright: 12px;
   border-top-right-radius: 12px;
 }
+body.page-index .leaflet-popup-content-wrapper .acars{
+  padding:4px;
+}
+body.page-index .leaflet-popup-content-wrapper .acars span{
+    display:block;
+    text-transform: uppercase;
+    color:#aaa;
+}
 body.page-index .leaflet-popup-content-wrapper .bottom{
   background-color:#1a3151;
   color:#fff;

@@ -142,15 +142,6 @@ $( document ).ready(function() {
 			output += '</div>';
 		    }
 		output += '</div>';
-		if (typeof feature.properties.squawk != 'undefined') {
-		    output += '<div class="bottom">';
-			output += 'Squawk : ';
-			output += feature.properties.squawk;
-			if (typeof feature.properties.squawk_usage != 'undefined') {
-				output += ' - '+feature.properties.squawk_usage;
-			}
-		    output += '</div>';
-		}
 		output += '</div>';
 		layer.bindPopup(output);
 	};
@@ -334,6 +325,11 @@ $( document ).ready(function() {
                       output += feature.properties.heading;
                     output += '</div>';
                 output += '</div>';
+                if (typeof feature.properties.acars != 'undefined') {
+            	    output += '<div class="acars"><span>Latest ACARS message</span>';
+            	    output += feature.properties.acars;
+            	    output += '</div>';
+                }
                 if (typeof feature.properties.squawk != 'undefined') {
                     output += '<div class="bottom">';
                 	output += 'Squawk : ';
