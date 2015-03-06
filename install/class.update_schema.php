@@ -103,7 +103,7 @@ class update_schema {
     	    if (self::tableExists('aircraft')) {
     		if (!self::tableExists('config')) {
     		    $version = '1';
-    		    if ($update) self::update_from_1();
+    		    if ($update) return self::update_from_1();
     		    else return $version;
 		} else {
     		    $Connection = new Connection();
