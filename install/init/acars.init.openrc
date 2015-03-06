@@ -1,0 +1,22 @@
+#!/sbin/runscript
+
+extra_started_commands="reload"
+
+start() {
+        ebegin "Starting Cron-ACARS"
+        start-stop-daemon --background --start --make-pidfile --pidfile /var/run/flightairmap-acars.pid --exec /var/www/airradar/Web_App/cron-acars.php
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping Cron-ACARS"
+        start-stop-daemon --stop --pidfile /var/run/flightairmap-acars.pid --name cron-acars.php
+        eend $?
+}
+
+reload() {
+        ebegin "Reloading Cron-ACARS"
+        start-stop-daemon --signal HUP --pidfile /var/run/flightairmap-acars.pid
+        eend $?
+}
+

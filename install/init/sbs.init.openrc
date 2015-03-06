@@ -8,19 +8,19 @@ depend() {
 
 start() {
         ebegin "Starting Cron-SBS"
-        start-stop-daemon --background --start --make-pidfile --pidfile /var/run/airradar.pid --exec /var/www/airradar/Web_App/cron-sbs.php
+        start-stop-daemon --background --start --make-pidfile --pidfile /var/run/flightairmap-sbs.pid --exec /var/www/airradar/Web_App/cron-sbs.php
         eend $?
 }
 
 stop() {
         ebegin "Stopping Cron-SBS"
-        start-stop-daemon --stop --pidfile /var/run/airradar.pid --name cron-sbs.php
+        start-stop-daemon --stop --pidfile /var/run/flightairmap-sbs.pid --name cron-sbs.php
         eend $?
 }
 
 reload() {
         ebegin "Reloading Cron-SBS"
-        start-stop-daemon --signal HUP --pidfile /var/run/airradar.pid
+        start-stop-daemon --signal HUP --pidfile /var/run/flightairmap-sbs.pid
         eend $?
 }
 

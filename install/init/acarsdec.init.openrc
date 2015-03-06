@@ -1,0 +1,26 @@
+#!/sbin/runscript
+
+extra_started_commands="reload"
+
+depend() {
+        need net
+}
+
+start() {
+        ebegin "Starting acarsdec"
+        start-stop-daemon --background --start --make-pidfile --pidfile /var/run/acarsdec.pid --exec /usr/bin/acarsdec -- -N 127.0.0.1:9999 -r 0 131.525 131.550 131.725 131.825
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping acarsdec"
+        start-stop-daemon --stop --pidfile /var/run/acarsdec.pid --name acarsdec
+        eend $?
+}
+
+reload() {
+        ebegin "Reloading acarsdec"
+        start-stop-daemon --signal HUP --pidfile /var/run/acarsdec.pid
+        eend $?
+}
+
