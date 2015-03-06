@@ -65,6 +65,7 @@ class ACARS {
 	$airicao = '';
 	if (self::$debug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
 	
+	if ($registration != '' && $ident != '') {
 	$found = false;
 	/*
 Messages not yet parsed :
@@ -244,7 +245,7 @@ C4,N24.3,37956,0.8
         	$found = true;
     	    }
 	}
-
+        }
 	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message);
 	ACARS::addModeSData($ident,$registration,$icao,$airicao);
 	//TODO: Update registration in live and in output with a script
@@ -322,7 +323,7 @@ C4,N24.3,37956,0.8
     	        $image_array = Spotter::getSpotterImage($row['registration']);
     	        if (count($image_array) > 0) $data = array_merge($data,array('image_thumbnail' => $image_array[0]['image_thumbnail']));
     	        else $data = array_merge($data,array('image_thumbnail' => ''));
-    	    }
+    	    } else $data = array_merge($data,array('image_thumbnail' => ''));
     	    $icao = '';
     	    if ($row['ident'] == '') $row['ident'] = 'N/A';
     	    $identicao = Spotter::getAllAirlineInfo(substr($row['ident'],0,2));
@@ -354,7 +355,7 @@ C4,N24.3,37956,0.8
 	if (self::$debug) echo "Test if we add ModeS data...";
 	if ($icao == '') $icao = ACARS::ident2icao($ident);
 	if (self::$debug) echo '- '.$icao.' - ';
-	if ($ident == '') exit;
+	if ($ident == '' || $registration == '') exit;
     	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE `ident` =  :ident LIMIT 1";
     	$query_values = array(':ident' => $icao);
     	try {
