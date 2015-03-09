@@ -69,6 +69,7 @@ class ACARS {
 */
 	$icao = '';
 	$airicao = '';
+	$decode = '';
 	if (self::$debug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
 	
 	if ($registration != '' && $ident != '') {
@@ -166,13 +167,15 @@ C4,N24.3,37956,0.8
 		    WXR/META/LFLL/LFLC/LFPG
 	    */
 
-	    $n = sscanf($message, "VER/%*3d/%4s/%*c\nSCH/%6[0-9A-Z ]/%4c/%4c/%5s/%4d\n%*3c/%4d/%4c/", $icao,$aident,$dair, $darr, $ddate, $dhour,$ahour, $aair);
+	    $n = sscanf($message, "VER/%*3d/%4s/%*c\nSCH/%6[0-9A-Z ]/%4c/%4c/%5s/%4d\n%*3c/%4d/%4c/%[0-9A-Z ]/", $airicao,$aident,$dair, $darr, $ddate, $dhour,$ahour, $aair, $apiste);
     	    if ($n > 7) {
-    		if (self::$debug) echo 'airicao : '. $airicao.' - ident : '.$icao.' - departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour.' - arrival airport : '.$aair."\n";
+    		if (self::$debug) echo 'airicao : '. $airicao.' - ident : '.$aident.' - departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour.' - arrival airport : '.$aair.' - arrival piste : '.$apiste."\n";
         	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
         	if ($ahour != '') $ahour = substr(sprintf('%04d',$ahour),0,2).':'.substr(sprintf('%04d',$ahour),2);
         	$icao = trim($icao);
-        	Schedule::addSchedule($icao,$dair,$dhour,$darr,$ahour,'ACARS');
+
+        	$decode = 'Departure airport : '.$dair.' ('.$ddate.' at '.$dhour.') - Arrival Airport : '.$aair.' ('.$adate.' at '.$ahour.') way '.$apiste;
+        	Schedule::addSchedule($aident,$dair,$dhour,$darr,$ahour,'ACARS');
         	$found = true;
     	    }
 	}
@@ -186,6 +189,7 @@ C4,N24.3,37956,0.8
     	        $latitude = $las / 1000.0;
         	$longitude = $lns / 1000.0;
     	        if (self::$debug) echo 'latitude : '.$latitude.' - longitude : '.$longitude."\n";
+    	        $decode = 'Latitude : '.$latitude.' - Longitude : '.$longitude."\n";
         	$found = true;
     	    }
 	}
@@ -254,6 +258,7 @@ C4,N24.3,37956,0.8
 	    echo ACARS::addModeSData($ident,$registration,$icao,$airicao);
         }
 	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message);
+	if (self::$debug && $decode != '') echo "Human readable data : ".$decode."\n";
 //	ACARS::addModeSData($ident,$registration,$icao,$airicao);
 	//TODO: Update registration in live and in output with a script
     }
