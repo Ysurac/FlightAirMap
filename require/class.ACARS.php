@@ -55,7 +55,7 @@ class ACARS {
 //  (null) 4 09/03/2015 08:11:14 0 -41 2         ! SQ   02XA LYSLFL L104544N00505BV136975/ARINC
   //(null) 1 09/03/2015 08:10:08 0 -36 R .F-GPMD T _d 8 S65A AF6202
 //    $line = sscapreg_split('/\(null\) \d 
-	$n = sscanf($data,'(null) %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] .%6s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %s$',$registration,$label,$block_id,$msg_no,$ident,$message);
+	$n = sscanf($data,'(null) %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] .%6s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 /*
     
 	$line = explode(' ',$data,13);
@@ -384,13 +384,8 @@ C4,N24.3,37956,0.8
     	    }
     	    if ($ModeS != '') {
     		$country = Spotter::countryFromAircraftRegistration($registration);
-    	        if ($ICAOTypeCode != '') {
-		    $queryc = "SELECT COUNT(*) FROM aircraft_modes WHERE `ModeS` = :modes AND `Source` = 'ACARS' AND `ICAOTypeCode` = :ICAOTypeCode";
-    		    $queryc_values = array(':modes' => $ModeS, ':ICAOTypeCode' => $ICAOTypeCode);
-    		} else {
-		    $queryc = "SELECT COUNT(*) FROM aircraft_modes WHERE `ModeS` = :modes AND `Source` = 'ACARS'";
-    		    $queryc_values = array(':modes' => $ModeS);
-    		}
+		$queryc = "SELECT * FROM aircraft_modes WHERE `ModeS` = :modes LIMIT 1";
+    		$queryc_values = array(':modes' => $ModeS);
     		try {
     		    $Connection = new Connection();
     		    $sthc = Connection::$db->prepare($queryc);
@@ -398,10 +393,12 @@ C4,N24.3,37956,0.8
     		} catch(PDOException $e) {
         	    return "error : ".$e->getMessage();
     		}
-    		if ($sthc->fetchColumn() == 0) {
+    		$row = $sthc->fetch(PDO::FETCH_ASSOC);
+    		
+    		if (count($row > 0)) {
     		    if (self::$debug) echo "\nAdd !!!\n";
     		    $queryi = "INSERT INTO aircraft_modes (`ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`Source`) VALUES (:ModeS,:ModeSCountry,:Registration, :ICAOTypeCode,'ACARS')";
-    		    $queryi_values = array(':ModeS' => $ModeS,'ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
+    		    $queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
     		    try {
         		$Connection = new Connection();
         		$sthi = Connection::$db->prepare($queryi);
@@ -409,17 +406,19 @@ C4,N24.3,37956,0.8
     		    } catch(PDOException $e) {
             		return "error : ".$e->getMessage();
     		    }
+    		} else {
+    		    if (self::$debug) echo "\nUpdate !!!\n";
     		    if ($ICAOTypeCode != '') {
-    			$queryd = "DELETE FROM aircraft_modes WHERE `ModeS` = :ModeS AND (`ICAOTypeCode` != :ICAOTypeCode OR `Source` != 'ACARS')";
-    			$queryd_values = array(':ModeS' => $ModeS, ':ICAOTypeCode' => $ICAOTypeCode);
+    			$queryi = "UPDATE aircraft_modes SET `ModeSCountry` = :ModeSCountry,`Registration` = :Registration,`ICAOTypeCode` = :ICAOTypeCode,`Source` = 'ACARS' WHERE `ModeS` = :ModeS";
+    			$queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
     		    } else {
-    			$queryd = "DELETE FROM aircraft_modes WHERE `ModeS` = :ModeS AND `Source` != 'ACARS'";
-    			$queryd_values = array(':ModeS' => $ModeS);
+    			$queryi = "UPDATE aircraft_modes SET `ModeSCountry` = :ModeSCountry,`Registration` = :Registration,`Source` = 'ACARS' WHERE `ModeS` = :ModeS";
+    			$queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration);
     		    }
     		    try {
         		$Connection = new Connection();
-        		$sthd = Connection::$db->prepare($queryd);
-            		$sthd->execute($queryd_values);
+        		$sthi = Connection::$db->prepare($queryi);
+            		$sthi->execute($queryi_values);
     		    } catch(PDOException $e) {
             		return "error : ".$e->getMessage();
     		    }
