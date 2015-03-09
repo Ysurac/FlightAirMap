@@ -339,7 +339,7 @@ if (isset($_POST['dbtype'])) {
 			$_SESSION['done'] = array('Create database','Write configuration');
 			print '<li>Create database....SUCCESS</li>';
 		} else $_SESSION['done'] = array('Write configuration');
-		print '<li>Create and import tables....<img src="../images/loading.gif" /></li></ul></div>';
+		print '<li>Write configuration....<img src="../images/loading.gif" /></li></ul></div>';
 		flush();
 		sleep(10);
 		print "<script>window.location = 'index.php?".rand()."';</script>";

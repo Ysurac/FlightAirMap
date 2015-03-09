@@ -6887,6 +6887,22 @@ class Spotter{
 		
 		$registration_prefix = '';
 		
+		$registration_test = explode('-',$registration);
+		$country = '';
+		if ($registration_test[0] != $registration) {
+			$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_1 LIMIT 1";
+	      
+			$sth = Connection::$db->prepare($query);
+			$sth->execute(array(':registration_1' => $registration_test[0]));
+	        
+			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+			{
+				$registration_prefix = $row['registration_prefix'];
+				$country = $row['country'];
+			}
+		}
+		
+/*
 		$registration_1 = substr($registration, 0, 1);
 		$registration_2 = substr($registration, 0, 2);
 
@@ -6918,7 +6934,7 @@ class Spotter{
 				$country = $row['country'];
 			}
 		}
-
+  */
 		return $country;
 	}
 	

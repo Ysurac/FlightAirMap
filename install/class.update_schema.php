@@ -115,7 +115,8 @@ class update_schema {
 			return "error : ".$e->getMessage()."\n";
     		    }
     		    $result = $sth->fetch(PDO::FETCH_ASSOC);
-    		    return $result['value'];
+    		    if ($update) return '';
+    		    else return $result['value'];
 		}
 		
 	    } else return $version;

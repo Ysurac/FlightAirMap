@@ -52,15 +52,21 @@ class ACARS {
     *
     */
     static function add($data) {
-	$line = explode(' ',$data);
-
+//  (null) 4 09/03/2015 08:11:14 0 -41 2         ! SQ   02XA LYSLFL L104544N00505BV136975/ARINC
+  //(null) 1 09/03/2015 08:10:08 0 -36 R .F-GPMD T _d 8 S65A AF6202
+//    $line = sscapreg_split('/\(null\) \d 
+	$n = sscanf($data,'(null) %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] .%6s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %s$',$registration,$label,$block_id,$msg_no,$ident,$message);
+/*
+    
+	$line = explode(' ',$data,13);
 	$registration = substr($line[7],1);
 	$ident = $line[12];
 	$label = $line[9];
 	$block_id = $line[10];
 	$msg_no = $line[11];
-	$message = implode(' ',array_slice($line,13));
-
+	//$message = implode(' ',array_slice($line,13));
+	$message = $line[13];
+*/
 	$icao = '';
 	$airicao = '';
 	if (self::$debug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
@@ -245,9 +251,10 @@ C4,N24.3,37956,0.8
         	$found = true;
     	    }
 	}
+	    echo ACARS::addModeSData($ident,$registration,$icao,$airicao);
         }
 	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message);
-	ACARS::addModeSData($ident,$registration,$icao,$airicao);
+//	ACARS::addModeSData($ident,$registration,$icao,$airicao);
 	//TODO: Update registration in live and in output with a script
     }
     
@@ -355,7 +362,10 @@ C4,N24.3,37956,0.8
 	if (self::$debug) echo "Test if we add ModeS data...";
 	if ($icao == '') $icao = ACARS::ident2icao($ident);
 	if (self::$debug) echo '- '.$icao.' - ';
-	if ($ident == '' || $registration == '') exit;
+	if ($ident == '' || $registration == '') {
+	    echo "Ident or registration null, exit\n";
+	    return '';
+	}
     	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE `ident` =  :ident LIMIT 1";
     	$query_values = array(':ident' => $icao);
     	try {
