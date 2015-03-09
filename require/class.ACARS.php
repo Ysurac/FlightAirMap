@@ -174,7 +174,7 @@ C4,N24.3,37956,0.8
         	if ($ahour != '') $ahour = substr(sprintf('%04d',$ahour),0,2).':'.substr(sprintf('%04d',$ahour),2);
         	$icao = trim($icao);
 
-        	$decode = 'Departure airport : '.$dair.' ('.$ddate.' at '.$dhour.') - Arrival Airport : '.$aair.' ('.$adate.' at '.$ahour.') way '.$apiste;
+        	$decode = 'Departure airport : '.$dair.' ('.$ddate.' at '.$dhour.') - Arrival Airport : '.$aair.' (at '.$ahour.') way '.$apiste;
         	Schedule::addSchedule($aident,$dair,$dhour,$darr,$ahour,'ACARS');
         	$found = true;
     	    }
