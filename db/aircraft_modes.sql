@@ -14,7 +14,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `aircraft_modes` (
-  `AircraftID` int(11) NOT NULL,
+  `AircraftID` int(11) NOT NULL AUTO_INCREMENT,
   `FirstCreated` datetime,
   `LastModified` datetime,
   `ModeS` varchar(6) NOT NULL,

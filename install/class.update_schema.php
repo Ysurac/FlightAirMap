@@ -92,6 +92,14 @@ class update_schema {
     		} catch(PDOException $e) {
 		    return "error (Add ModeS column in spotter_live) : ".$e->getMessage()."\n";
     		}
+    		// Add auto_increment for aircraft_modes
+    		$query = "ALTER TABLE `aircraft_modes` CHANGE `AircraftID` `AircraftID` INT(11) NOT NULL AUTO_INCREMENT"
+    		try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (Add Auto increment in aircraft_modes) : ".$e->getMessage()."\n";
+    		}
     		$error = '';
 		$error .= create_db::import_file('../db/acars_live.sql');
 		$error .= create_db::import_file('../db/config.sql');
