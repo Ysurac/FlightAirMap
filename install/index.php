@@ -344,6 +344,8 @@ if (isset($_POST['dbtype'])) {
 		sleep(10);
 		print "<script>window.location = 'index.php?".rand()."';</script>";
 //		header("Location: index.php?".rand());
+		require('../footer.php');
+
 	}
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
 	unset($_SESSION['install']);
@@ -381,9 +383,9 @@ if (isset($_POST['dbtype'])) {
 		$_SESSION['install'] = 'finish';
 		
 	}
-	require('../footer.php');
-	sleep(5);
+	sleep(2);
 	print "<script>window.location = 'index.php?".rand()."';</script>";
+	require('../footer.php');
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'waypoints') {
 	unset($_SESSION['install']);
 	print '<div class="info column"><ul>';
@@ -391,7 +393,6 @@ if (isset($_POST['dbtype'])) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
 	print '<li>Populate waypoints database....<img src="../images/loading.gif" /></li></ul></div>';
-	require('../footer.php');
 	flush();
 
 	include_once('class.update_db.php');
@@ -402,6 +403,7 @@ if (isset($_POST['dbtype'])) {
 //	ob_end_clean();
 //	header("Location: index.php?".rand());
 	print "<script>window.location = 'index.php?".rand()."';</script>";
+	require('../footer.php');
 
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'airspace') {
 	unset($_SESSION['install']);
@@ -410,7 +412,6 @@ if (isset($_POST['dbtype'])) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
 	print '<li>Populate airspace database....<img src="../images/loading.gif" /></li></ul></div>';
-	require('../footer.php');
 	flush();
 
 	include_once('class.update_db.php');
@@ -421,6 +422,7 @@ if (isset($_POST['dbtype'])) {
 //	ob_end_clean();
 //	header("Location: index.php?".rand());
 	print "<script>window.location = 'index.php?".rand()."';</script>";
+	require('../footer.php');
 
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'populate') {
 	unset($_SESSION['install']);
@@ -434,8 +436,7 @@ if (isset($_POST['dbtype'])) {
 	foreach ($_SESSION['done'] as $done) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
-	print '<li>Populate database with externals data....<img src="../images/loading.gif" /></li></ul></div>';
-	require('../footer.php');
+	print '<li>Populate database with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i></li></ul></div>';
 	flush();
 
 	include_once('class.update_db.php');
@@ -450,6 +451,7 @@ if (isset($_POST['dbtype'])) {
 //	ob_end_clean();
 //	header("Location: index.php?".rand());
 	print "<script>window.location = 'index.php?".rand()."';</script>";
+	require('../footer.php');
 
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'finish') {
 	unset($_SESSION['install']);
