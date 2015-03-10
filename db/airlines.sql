@@ -3081,7 +3081,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (3027, 3029, 'JetBlue Airways', 'N', 'B6', 'JBU', 'JETBLUE', 'United States', 'Y', 'passenger'),
 (3028, 3030, 'JetConnect', 'N', '', 'QNZ', 'QANTAS JETCONNECT', 'New Zealand', 'N', 'passenger'),
 (3029, 3031, 'JetMagic', 'N', '', 'JMG', 'JET MAGIC', 'Ireland', 'N', 'passenger'),
-(3030, 3032, 'Jetairfly', 'N', 'JF', 'JAF', 'BEAUTY', 'Belgium', 'Y', 'passenger'),
+(3030, 3032, 'Jetairfly', 'N', 'TB', 'JAF', 'BEAUTY', 'Belgium', 'Y', 'passenger'),
 (3031, 3033, 'Jetall Holdings', 'N', '', 'JTL', 'FIREFLY', 'Canada', 'N', 'passenger'),
 (3032, 3034, 'Jetalliance', 'N', '', 'JAG', 'JETALLIANCE', 'Austria', 'N', 'passenger'),
 (3033, 3035, 'Jetclub', 'N', '0J', 'JCS', 'JETCLUB', 'Switzerland', 'N', 'passenger'),
@@ -5812,7 +5812,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5753, 15970, 'Zuliana de Aviacion', 'Zuliana', 'OD', 'ULA', '', 'Venezuela', 'N', 'passenger'),
 (5754, 15975, 'Black Stallion Airways', '', 'BZ', 'BSA', 'Stallion', 'United States', 'Y', 'passenger'),
 (5755, 15984, 'German International Air Lines', 'Germanair', 'GM', 'GER', '', 'Germany', 'Y', 'passenger'),
-(5756, 15985, 'TrasBrasil', '', 'TB', 'TBZ', '', 'Brazil', 'Y', 'passenger'),
+(5756, 15985, 'TrasBrasil', '', 'TB', 'TBZ', '', 'Brazil', 'N', 'passenger'),
 (5757, 15989, 'TransBrasil Airlines', '', 'TH', 'THS', '', 'Brazil', 'Y', 'passenger'),
 (5758, 15999, 'China SSS', 'Chunqiu Airlines', '9C', 'N', '', 'China', 'Y', 'passenger'),
 (5759, 16025, 'Nihon.jet', '', 'NJ', 'N', '', 'Japan', 'N', 'passenger'),
@@ -6107,7 +6107,8 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (7046, 0, 'SmartLynx Airlines Estonia', '', '','MYX','TALLIN CAT','Estonia','Y','Passenger'),
 (7047, 0, 'Beijing Capital Airlines', '', '','CBJ','CAPITAL JET','China','Y','Passenger'),
 (7048, 0, 'HOP!', '', 'A5','HOP','AIR HOP','France','Y','Passenger'),
-(7049, 0, 'Blue Air', '', '0B','BMS','BLUE MESSENGER','Romania','Y','Passenger');
+(7049, 0, 'Blue Air', '', '0B','BMS','BLUE MESSENGER','Romania','Y','Passenger'),
+(7050, 0, 'Ata Airlines', '', '','TBZ','ATALAR AIR','Iran','Y','Passenger');
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -337,7 +337,7 @@ if (isset($_POST['dbtype'])) {
 		
 		if (isset($_POST['createdb'])) {
 			$_SESSION['done'] = array('Create database','Write configuration');
-			print '<li>Create database....SUCCESS</li>';
+			print '<li>Create database....<strong>SUCCESS</strong></li>';
 		} else $_SESSION['done'] = array('Write configuration');
 		print '<li>Write configuration....<img src="../images/loading.gif" /></li></ul></div>';
 		flush();
@@ -350,7 +350,7 @@ if (isset($_POST['dbtype'])) {
 	if (update_schema::check_version(false) == '0') {
 		print '<div class="info column"><ul>';
 		foreach ($_SESSION['done'] as $done) {
-		    print '<li>'.$done.'....SUCCESS</li>';
+		    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 		}
 		print '<li>Create and import tables....<img src="../images/loading.gif" /></li></ul></div>';
 		flush();
