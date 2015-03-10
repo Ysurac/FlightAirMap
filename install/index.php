@@ -1,5 +1,6 @@
 <?php
 @session_start();
+ob_implicit_flush();
 require_once('class.create_db.php');
 require_once('class.update_schema.php');
 require_once('class.settings.php');
@@ -340,11 +341,13 @@ if (isset($_POST['dbtype'])) {
 			print '<li>Create database....<strong>SUCCESS</strong></li>';
 		} else $_SESSION['done'] = array('Write configuration');
 		print '<li>Write configuration....<img src="../images/loading.gif" /></li></ul></div>';
+		ob_flush();
 		flush();
 		sleep(10);
 		print "<script>window.location = 'index.php?".rand()."';</script>";
 //		header("Location: index.php?".rand());
 		require('../footer.php');
+		ob_end_flush();
 
 	}
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
@@ -355,6 +358,7 @@ if (isset($_POST['dbtype'])) {
 		    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 		}
 		print '<li>Create and import tables....<img src="../images/loading.gif" /></li></ul></div>';
+		ob_flush();
 		flush();
 		$error .= create_db::import_all_db('../db/');
 		if ($error != '') {
@@ -372,6 +376,7 @@ if (isset($_POST['dbtype'])) {
 		    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 		}
 		print '<li>Update schema....<img src="../images/loading.gif" /></li></ul></div>';
+		ob_flush();
 		flush();
 		$error .= update_schema::check_version(true);
 		if ($error != '') {
@@ -386,6 +391,7 @@ if (isset($_POST['dbtype'])) {
 	sleep(2);
 	print "<script>window.location = 'index.php?".rand()."';</script>";
 	require('../footer.php');
+	ob_end_flush();
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'waypoints') {
 	unset($_SESSION['install']);
 	print '<div class="info column"><ul>';
@@ -393,6 +399,7 @@ if (isset($_POST['dbtype'])) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
 	print '<li>Populate waypoints database....<img src="../images/loading.gif" /></li></ul></div>';
+	ob_flush();
 	flush();
 
 	include_once('class.update_db.php');
@@ -404,7 +411,7 @@ if (isset($_POST['dbtype'])) {
 //	header("Location: index.php?".rand());
 	print "<script>window.location = 'index.php?".rand()."';</script>";
 	require('../footer.php');
-
+	ob_end_flush();
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'airspace') {
 	unset($_SESSION['install']);
 	print '<div class="info column"><ul>';
@@ -412,6 +419,7 @@ if (isset($_POST['dbtype'])) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
 	print '<li>Populate airspace database....<img src="../images/loading.gif" /></li></ul></div>';
+	ob_flush();
 	flush();
 
 	include_once('class.update_db.php');
@@ -423,7 +431,7 @@ if (isset($_POST['dbtype'])) {
 //	header("Location: index.php?".rand());
 	print "<script>window.location = 'index.php?".rand()."';</script>";
 	require('../footer.php');
-
+	ob_end_flush();
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'populate') {
 	unset($_SESSION['install']);
 	if (!is_writable('tmp')) {
@@ -437,6 +445,7 @@ if (isset($_POST['dbtype'])) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
 	print '<li>Populate database with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i></li></ul></div>';
+	ob_flush();
 	flush();
 
 	include_once('class.update_db.php');
@@ -452,7 +461,7 @@ if (isset($_POST['dbtype'])) {
 //	header("Location: index.php?".rand());
 	print "<script>window.location = 'index.php?".rand()."';</script>";
 	require('../footer.php');
-
+	ob_end_flush();
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'finish') {
 	unset($_SESSION['install']);
 	print '<div class="info column"><ul>';
@@ -477,4 +486,5 @@ if (isset($_POST['dbtype'])) {
 //	header("Location: index.php");
 }
 require('../footer.php');
+ob_end_flush();
 ?>
