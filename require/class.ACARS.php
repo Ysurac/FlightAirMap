@@ -120,6 +120,12 @@ C2,002,06.0,000000,SE1N05,VN1005,AF2055,000,052,052
 C3,N24.3,37957,0.799,111,1.03,1111,1010,0,0101,1111,1.03,-
 C4,N24.3,37956,0.8
 
+Reg. : F-GRHG - Ident : AF6040 - Label : 80 - Message : /RSYGXAF.VER/071/A319/M
+SCH/AF6040/LFPO/LFML/09MAR/1715
+FTX
+DESOLE NOUS NE COMPREN
+ONS PAS LE MESSAGE ...
+
 
 */
 	
@@ -172,17 +178,20 @@ C4,N24.3,37956,0.8
     		if (self::$debug) echo 'airicao : '. $airicao.' - ident : '.$aident.' - departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour.' - arrival airport : '.$aair.' - arrival piste : '.$apiste."\n";
         	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
         	if ($ahour != '') $ahour = substr(sprintf('%04d',$ahour),0,2).':'.substr(sprintf('%04d',$ahour),2);
-        	$icao = trim($icao);
+        	$icao = trim($aident);
 
-        	$decode = 'Departure airport : '.$dair.' ('.$ddate.' at '.$dhour.') - Arrival Airport : '.$aair.' (at '.$ahour.') way '.$apiste;
-        	Schedule::addSchedule($aident,$dair,$dhour,$darr,$ahour,'ACARS');
+        	//$decode = 'Departure airport : '.$dair.' ('.$ddate.' at '.$dhour.') - Arrival Airport : '.$aair.' (at '.$ahour.') way '.$apiste;
+        	$decode = array('Departure airport' => $dair, 'Departure date' => $ddate, 'Departure hour' => $dhour, 'Arrival airport' => $aair, 'Arrival hour' => $ahour, 'Arrival way' => $apiste);
+        	Schedule::addSchedule($icao,$dair,$dhour,$darr,$ahour,'ACARS');
         	$found = true;
     	    }
 	}
 	
 	if (!$found) {
     	    // example message : "221111,34985,0817,  65,N 50.056 E 13.850"
-    	    $n = sscanf($message, "%*6c,%*5c,%*4c,%*4c,%c%3c.%3c %c%3c.%3c,", $lac, $las, $lass, $lnc, $lns, $lnss);
+    	    //Reg. : CS-TFY - Ident : CR0321 - Label : 16 - Message : 140600,34008,1440,  66,N 46.768 E  4.793
+
+    	    $n = sscanf($message, "%*6c,%*5c,%*4c,%*4c,%c%3d.%3d %c%3d.%3d,", $lac, $las, $lass, $lnc, $lns, $lnss);
     	    if ($n == 10 && ($lac == 'N' || $lac == 'S') && ($lnc == 'E' || $lnc == 'W')) {
         	$las = $las.'.'.$lass;
         	$lns = $lns.'.'.$lns;
@@ -241,6 +250,22 @@ C4,N24.3,37956,0.8
         	$found = true;
     	    }
 	}
+	if (!$found) {
+	    /* example message :
+	     Reg. : PH-BXO - Ident : KL079K - Label : H1 - Message : #DFB(POS-KLM79K  -4319N00252E/143435 F390
+RMK/FUEL   2.6 M0.79)
+	    */
+	    $n = sscanf($message, "#DFB(POS-%6c -%4d%c%5d%c/%*d F%d\nRMK/FUEL %f M%f", $aident, $lac, $las, $lnc, $lns, $alt, $fuel, $speed);
+    	    if ($n == 9) {
+        	//if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+        	$icao = $aident;
+        	$latitude = $las / 1000.0;
+        	$longitude = $lns / 10000.0;
+
+		$decode = array('Latitute' => $latitude,'Longitude' => $longitude,'Altitude' => $alt*1000,'Fuel' => $fuel,'speed' => $speed);
+        	$found = true;
+    	    }
+	}
 
 	if (!$found && $label == '80') {
 	    /* example message : 
@@ -256,15 +281,24 @@ C4,N24.3,37956,0.8
     	    }
 	}
 	    echo ACARS::addModeSData($ident,$registration,$icao,$airicao);
+
+    	    $image_array = Spotter::getSpotterImage($registration);
+    	    if (!isset($image_array[0]['registration'])) {
+    		Spotter::addSpotterImage($registration);
+    	    }
         }
-	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message);
-	if (self::$debug && $decode != '') echo "Human readable data : ".$decode."\n";
+        if ($decode != '') $decode_json = json_encode($decode);
+        else $decode_json = '';
+	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	if ($label == '10' || $label == '80') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	
+	if (self::$debug && $decode != '') echo "Human readable data : ".implode(' - ',$decode)."\n";
 //	ACARS::addModeSData($ident,$registration,$icao,$airicao);
 	//TODO: Update registration in live and in output with a script
     }
     
     /**
-    * Add ACARS data in DB
+    * Add Live ACARS data in DB
     *
     * @param String $ident ident
     * @param String $registration Registration of the aircraft
@@ -273,12 +307,39 @@ C4,N24.3,37956,0.8
     * @param String $msg_no Number of the ACARS message
     * @param String $message ACARS message
     */
-    public static function addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message) {
+    public static function addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode = '') {
 	date_default_timezone_set('UTC');
 	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
 	    if (self::$debug) echo "Add Live ACARS data...";
-    	    $query = "INSERT INTO acars_live (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message)";
-    	    $query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message);
+    	    $query = "INSERT INTO acars_live (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
+    	    $query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
+    	    try {
+        	$Connection = new Connection();
+        	$sth = Connection::$db->prepare($query);
+            	$sth->execute($query_values);
+    	    } catch(PDOException $e) {
+                return "error : ".$e->getMessage();
+    	    }
+	    if (self::$debug) echo "Done\n";
+	}
+    }
+
+    /**
+    * Add Archive ACARS data in DB
+    *
+    * @param String $ident ident
+    * @param String $registration Registration of the aircraft
+    * @param String $label Label of the ACARS message
+    * @param String $block_id Block id of the ACARS message
+    * @param String $msg_no Number of the ACARS message
+    * @param String $message ACARS message
+    */
+    public static function addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode = '') {
+	date_default_timezone_set('UTC');
+	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
+	    if (self::$debug) echo "Add Live ACARS data...";
+    	    $query = "INSERT INTO acars_archive (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
+    	    $query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
     	    try {
         	$Connection = new Connection();
         	$sth = Connection::$db->prepare($query);
@@ -337,7 +398,8 @@ C4,N24.3,37956,0.8
     	        else $data = array_merge($data,array('image_thumbnail' => ''));
     	    } else $data = array_merge($data,array('image_thumbnail' => ''));
     	    $icao = '';
-    	    if ($row['ident'] == '') $row['ident'] = 'N/A';
+    	    if ($row['registration'] == '') $row['registration'] = 'NA';
+    	    if ($row['ident'] == '') $row['ident'] = 'NA';
     	    $identicao = Spotter::getAllAirlineInfo(substr($row['ident'],0,2));
     	    if (isset($identicao[0])) {
         	if (substr($row['ident'],0,2) == 'AF') {

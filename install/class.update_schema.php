@@ -93,7 +93,7 @@ class update_schema {
 		    return "error (Add ModeS column in spotter_live) : ".$e->getMessage()."\n";
     		}
     		// Add auto_increment for aircraft_modes
-    		$query = "ALTER TABLE `aircraft_modes` CHANGE `AircraftID` `AircraftID` INT(11) NOT NULL AUTO_INCREMENT"
+    		$query = "ALTER TABLE `aircraft_modes` CHANGE `AircraftID` `AircraftID` INT(11) NOT NULL AUTO_INCREMENT";
     		try {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();
@@ -105,6 +105,30 @@ class update_schema {
 		$error .= create_db::import_file('../db/config.sql');
 		return $error;
         }
+
+	private static function update_from_2() {
+    		$Connection = new Connection();
+    		// Add new column decode to acars_live table
+		$query = "ALTER TABLE `acars_live` ADD `decode` TEXT";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add new columns to routes table) : ".$e->getMessage()."\n";
+    		}
+    		$error = '';
+    		// Create table acars_archive
+		$error .= create_db::import_file('../db/acars_archive.sql');
+		// Update schema_version to 3
+		$query = "UPDATE `config` SET `schema_version` = '3'";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add new columns to routes table) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
     	
     	public static function check_version($update = false) {
     	    $version = 0;
@@ -123,7 +147,10 @@ class update_schema {
 			return "error : ".$e->getMessage()."\n";
     		    }
     		    $result = $sth->fetch(PDO::FETCH_ASSOC);
-    		    if ($update) return '';
+    		    if ($update) {
+    			if ($result['value'] == '2') self::update_from_2();
+    			else return '';
+    		    }
     		    else return $result['value'];
 		}
 		
