@@ -389,10 +389,26 @@ RMK/FUEL   2.6 M0.79)
     *
     * @return Array Return ACARS data in array
     */
-    public static function getLatestAcarsData() {
+    public static function getLatestAcarsData($limit = '') {
 	date_default_timezone_set('UTC');
+	
+	$limit_query = '';
+	if ($limit != "")
+	{
+	    $limit_array = explode(",", $limit);
+	    
+	    $limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+	    $limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+	    
+	    if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+	    {
+		$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+	    }
+	}
+	
     	//$query = "SELECT *, name as airline_name FROM acars_live a, spotter_image i, airlines l WHERE i.registration = a.registration AND l.icao = a.airline_icao AND l.icao != '' ORDER BY acars_live_id DESC LIMIT 25";
-    	$query = "SELECT * FROM acars_live ORDER BY acars_live_id DESC LIMIT 25";
+    	
+    	$query = "SELECT * FROM acars_live ORDER BY acars_live_id DESC".$limit_query;
     	$query_values = array();
     	try {
     	    $Connection = new Connection();
@@ -401,6 +417,7 @@ RMK/FUEL   2.6 M0.79)
     	} catch(PDOException $e) {
             return "error : ".$e->getMessage();
     	}
+    	$i = 0;
     	while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     	    $data = array();
     	    if ($row['registration'] != '') {
@@ -423,8 +440,12 @@ RMK/FUEL   2.6 M0.79)
     	    
     	    $data = array_merge($data,array('registration' => $row['registration'],'message' => $row['message'], 'date' => $row['date'], 'ident' => $icao, 'decode' => $row['decode']));
     	    $result[] = $data;
+    	    $i++;
     	}
-    	if (isset($result)) return $result;
+    	if (isset($result)) {
+		$result[0]['query_number_rows'] = $i;
+		return $result;
+    	}
     	else return array();
     }
 
@@ -433,10 +454,26 @@ RMK/FUEL   2.6 M0.79)
     *
     * @return Array Return ACARS data in array
     */
-    public static function getArchiveAcarsData() {
+    public static function getArchiveAcarsData($limit = '') {
 	date_default_timezone_set('UTC');
+
+	$limit_query = '';
+	if ($limit != "")
+	{
+	    $limit_array = explode(",", $limit);
+	    
+	    $limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+	    $limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+	    
+	    if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+	    {
+		$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+	    }
+	}
+
+
     	//$query = "SELECT *, name as airline_name FROM acars_live a, spotter_image i, airlines l WHERE i.registration = a.registration AND l.icao = a.airline_icao AND l.icao != '' ORDER BY acars_live_id DESC LIMIT 25";
-    	$query = "SELECT * FROM acars_archive ORDER BY acars_archive_id DESC LIMIT 25";
+    	$query = "SELECT * FROM acars_archive ORDER BY acars_archive_id DESC".$limit_query;
     	$query_values = array();
     	try {
     	    $Connection = new Connection();
@@ -445,6 +482,7 @@ RMK/FUEL   2.6 M0.79)
     	} catch(PDOException $e) {
             return "error : ".$e->getMessage();
     	}
+    	$i=0;
     	while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     	    $data = array();
     	    if ($row['registration'] != '') {
@@ -467,8 +505,13 @@ RMK/FUEL   2.6 M0.79)
     	    
     	    $data = array_merge($data,array('registration' => $row['registration'],'message' => $row['message'], 'date' => $row['date'], 'ident' => $icao, 'decode' => $row['decode']));
     	    $result[] = $data;
+    	    $i++;
     	}
-    	if (isset($result)) return $result;
+    	if (isset($result)) {
+		$result[0]['query_number_rows'] = $i;
+		return $result;
+    	}
+
     	else return array();
     }
 

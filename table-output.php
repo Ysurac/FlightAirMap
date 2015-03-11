@@ -125,7 +125,7 @@ if (strtolower($current_page) == "search")
 		print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_asc">Expected Time</a> <i class="fa fa-sort small"></i></th>';
 	}
 	print '</thead>';
-} else if (strtolower($current_page) == "acars"){
+} else if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive"){
 	print '<thead>';
 	print '<th class="aircraft_thumbnail"></th>';
 	print '<th class="logo">Airline</th>';
@@ -303,7 +303,7 @@ foreach($spotter_array as $spotter_item)
 	} else {
 		print '<tr>';
 	}
-	if (strtolower($current_page) == "acars") {
+	if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive") {
 		if ($spotter_item['image_thumbnail'] != "")
 		{
 			print '<td class="aircraft_thumbnail">'."\n";
@@ -319,7 +319,7 @@ foreach($spotter_array as $spotter_item)
 			print '</td>'."\n";
 		}
 	}
-	if(strtolower($current_page) != "upcoming" && strtolower($current_page) != "acars"){
+	if(strtolower($current_page) != "upcoming" && strtolower($current_page) != "acars-latest" && strtolower($current_page) != "acars-archive"){
 		if (!isset($spotter_item['squawk'])) {
 		    $spotter_item['squawk'] = '-';
 		}
@@ -378,7 +378,7 @@ foreach($spotter_array as $spotter_item)
 	}
 	print '</td>'."\n";
 	// Aircraft type
-	if(strtolower($current_page) != "upcoming" && strtolower($current_page) != "acars"){
+	if(strtolower($current_page) != "upcoming" && strtolower($current_page) != "acars-latest" && strtolower($current_page) != "acars-archive"){
 		print '<td class="type">'."\n";
 		if (!isset($spotter_item['aircraft_name'])) {
 			print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">Not available</a></span>'."\n";
@@ -388,7 +388,7 @@ foreach($spotter_array as $spotter_item)
 		print '<span class="mobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a></span>'."\n";
 		print '</td>'."\n";
 	}
-	if (strtolower($current_page) != "acars") {
+	if (strtolower($current_page) != "acars-latest" && strtolower($current_page) != "acars-archive") {
 	// Departure Airport
 	print '<td class="departure_airport">'."\n";
 	if (!isset($spotter_item['departure_airport']) || !isset($spotter_item['departure_airport_city'])) {
@@ -430,10 +430,22 @@ foreach($spotter_array as $spotter_item)
 		print '</td>'."\n";
 	}
 	}
-	if (strtolower($current_page) == "acars") {
-		print '<td class="message">'."\n";
-		print str_replace(array("\r\n", "\n", "\r"),'<br />',$spotter_item['message']);
-		print '</td>'."\n";
+	if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive") {
+		if (isset($spotter_item['decode']) && $spotter_item['decode'] != '') {
+			print '<td class="message">'."\n";
+			print str_replace(array("\r\n", "\n", "\r"),'<br />',$spotter_item['message']);
+			print '<p>';
+			$decode_array = json_decode($spotter_item['decode']);
+			foreach ($decode_array as $key => $value) {
+				print '<b>'.$key.'</b> : '.$value.' ';
+			}
+			print '</p>';
+			print '</td>'."\n";
+		} else {
+			print '<td class="message">'."\n";
+			print str_replace(array("\r\n", "\n", "\r"),'<br />',$spotter_item['message']);
+			print '</td>'."\n";
+		}
 	}
 	// Date
 	if (strtolower($current_page) == "date")
@@ -454,7 +466,7 @@ foreach($spotter_array as $spotter_item)
 		//print '<span>'.date("ga", strtotime($spotter_item['date_iso_8601'])).'</span>';
 		print '<span>'.date("g:i a", strtotime($spotter_item['date_iso_8601'])).'</span>';
 		print '</td>';
-	} elseif (strtolower($current_page) == "acars")
+	} elseif (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive")
 	{
 		print '<td class="date">'."\n";
 		print '<span class="nomobile">'.date("r", strtotime($spotter_item['date'])).'</span>'."\n";
