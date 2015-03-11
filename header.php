@@ -117,7 +117,8 @@ if ($globalURL == "http://www.barriespotter.com"){ ?>
         	if ($globalACARS) {
     	    ?>
             <li><hr /></li>
-            <li><a href="<?php print $globalURL; ?>/acars">ACARS messages</a></li>
+            <li><a href="<?php print $globalURL; ?>/acars-latest">Latest ACARS messages</a></li>
+            <li><a href="<?php print $globalURL; ?>/acars-archive">Archive ACARS messages</a></li>
             <?php
         	}
     	    ?>

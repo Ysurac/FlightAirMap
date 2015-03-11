@@ -5,7 +5,7 @@ require('require/class.ACARS.php');
 $title = "Latest ACARS messages";
 require('header.php');
 
-$page_url = $globalURL.'/acars';
+$page_url = $globalURL.'/acars-latest';
 
 print '<div class="info column">';
 print '<h1>Latest ACARS messages</h1>';

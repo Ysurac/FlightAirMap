@@ -139,6 +139,7 @@ ONS PAS LE MESSAGE ...
         	$longitude = $ln / 10000.0;
         	// Temp not always available
         	if (self::$debug) echo 'latitude : '.$latitude.' - longitude : '.$longitude.' - airport depart : '.$dair.' - airport arrival : '.$darr.' - température : '.$temp."°C\n";
+        	$decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr, 'Temperature' => $temp);
         	$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$found = true;
@@ -244,6 +245,16 @@ ONS PAS LE MESSAGE ...
 	    // example message : 'Reg. : F-GHQJ - Ident : AF6241 - Label : H1 - Message : #DFBA01/CCF-GHQJ,FEB27,205556,LFMN,LFPO,0241/C106,17404,5000,42,0010,0,0100,42,X/CEN270,36012,257,778,6106,299,B5B7G8/EC731134,42387,01439,41194,12/EE731212,44932,11870,43555,12/N10875,0875,0910,6330,1205,-----'
     	    $n = sscanf($message, "#DFBA%*02d/%*[A-Z-],%*[0-9A-Z],%*d,%4c,%4c", $dair, $darr);
     	    if ($n == 6) {
+        	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+		$icao = ACARS::ident2icao($ident);
+        	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
+        	$found = true;
+    	    }
+	}
+	if (!$found && $label == 'H1') {
+	    // example message : 'Reg. : F-GUGP - Ident : AF1842 - Label : H1 - Message : #DFBA01/A31801,1,1/CCF-GUGP,MAR11,093856,LFPG,LSGG,1842/C106,55832,5000,37,0010,0,0100,37,X/CEN282,31018,277,750,5515,255,C11036/EC577870,02282,07070,01987,73,14/EE577871,02282,06947,01987,73/N10790,0790,0903,5'
+    	    $n = sscanf($message, "#DFBA%*02d/%*[0-9A-Z,]/%*[A-Z-],%*[0-9A-Z],%*d,%4c,%4c", $dair, $darr);
+    	    if ($n == 7) {
         	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
@@ -410,7 +421,51 @@ RMK/FUEL   2.6 M0.79)
         	$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
     	    } else $icao = $row['ident'];
     	    
-    	    $data = array_merge($data,array('registration' => $row['registration'],'message' => $row['message'], 'date' => $row['date'], 'ident' => $icao));
+    	    $data = array_merge($data,array('registration' => $row['registration'],'message' => $row['message'], 'date' => $row['date'], 'ident' => $icao, 'decode' => $row['decode']));
+    	    $result[] = $data;
+    	}
+    	if (isset($result)) return $result;
+    	else return array();
+    }
+
+    /**
+    * Get Archive ACARS data from DB
+    *
+    * @return Array Return ACARS data in array
+    */
+    public static function getArchiveAcarsData() {
+	date_default_timezone_set('UTC');
+    	//$query = "SELECT *, name as airline_name FROM acars_live a, spotter_image i, airlines l WHERE i.registration = a.registration AND l.icao = a.airline_icao AND l.icao != '' ORDER BY acars_live_id DESC LIMIT 25";
+    	$query = "SELECT * FROM acars_archive ORDER BY acars_archive_id DESC LIMIT 25";
+    	$query_values = array();
+    	try {
+    	    $Connection = new Connection();
+    	    $sth = Connection::$db->prepare($query);
+            $sth->execute($query_values);
+    	} catch(PDOException $e) {
+            return "error : ".$e->getMessage();
+    	}
+    	while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+    	    $data = array();
+    	    if ($row['registration'] != '') {
+    	        $image_array = Spotter::getSpotterImage($row['registration']);
+    	        if (count($image_array) > 0) $data = array_merge($data,array('image_thumbnail' => $image_array[0]['image_thumbnail']));
+    	        else $data = array_merge($data,array('image_thumbnail' => ''));
+    	    } else $data = array_merge($data,array('image_thumbnail' => ''));
+    	    $icao = '';
+    	    if ($row['registration'] == '') $row['registration'] = 'NA';
+    	    if ($row['ident'] == '') $row['ident'] = 'NA';
+    	    $identicao = Spotter::getAllAirlineInfo(substr($row['ident'],0,2));
+    	    if (isset($identicao[0])) {
+        	if (substr($row['ident'],0,2) == 'AF') {
+		    if (filter_var(substr($row['ident'],2),FILTER_VALIDATE_INT,array("flags"=>FILTER_FLAG_ALLOW_OCTAL))) $icao = $row['ident'];
+		    else $icao = 'AFR'.ltrim(substr($row['ident'],2),'0');
+		} else $icao = $identicao[0]['icao'].ltrim(substr($row['ident'],2),'0');
+        	
+        	$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
+    	    } else $icao = $row['ident'];
+    	    
+    	    $data = array_merge($data,array('registration' => $row['registration'],'message' => $row['message'], 'date' => $row['date'], 'ident' => $icao, 'decode' => $row['decode']));
     	    $result[] = $data;
     	}
     	if (isset($result)) return $result;
@@ -428,9 +483,9 @@ RMK/FUEL   2.6 M0.79)
     public static function addModeSData($ident,$registration,$icao = '',$ICAOTypeCode = '') {
 	if (self::$debug) echo "Test if we add ModeS data...";
 	if ($icao == '') $icao = ACARS::ident2icao($ident);
-	if (self::$debug) echo '- '.$icao.' - ';
+	if (self::$debug) echo '- Ident : '.$icao.' - ';
 	if ($ident == '' || $registration == '') {
-	    echo "Ident or registration null, exit\n";
+	    if (self::$debug) echo "Ident or registration null, exit\n";
 	    return '';
 	}
     	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE `ident` =  :ident LIMIT 1";
@@ -458,12 +513,13 @@ RMK/FUEL   2.6 M0.79)
     		    $sthc = Connection::$db->prepare($queryc);
         	    $sthc->execute($queryc_values);
     		} catch(PDOException $e) {
+    		    if (self::$debug) echo $e->getMessage();
         	    return "error : ".$e->getMessage();
     		}
     		$row = $sthc->fetch(PDO::FETCH_ASSOC);
     		
     		if (count($row > 0)) {
-    		    if (self::$debug) echo "\nAdd !!!\n";
+    		    if (self::$debug) echo " Add to ModeS table - ";
     		    $queryi = "INSERT INTO aircraft_modes (`ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`Source`) VALUES (:ModeS,:ModeSCountry,:Registration, :ICAOTypeCode,'ACARS')";
     		    $queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
     		    try {
@@ -471,10 +527,11 @@ RMK/FUEL   2.6 M0.79)
         		$sthi = Connection::$db->prepare($queryi);
             		$sthi->execute($queryi_values);
     		    } catch(PDOException $e) {
+    			if (self::$debug) echo $e->getMessage();
             		return "error : ".$e->getMessage();
     		    }
     		} else {
-    		    if (self::$debug) echo "\nUpdate !!!\n";
+    		    if (self::$debug) echo " Update ModeS table - ";
     		    if ($ICAOTypeCode != '') {
     			$queryi = "UPDATE aircraft_modes SET `ModeSCountry` = :ModeSCountry,`Registration` = :Registration,`ICAOTypeCode` = :ICAOTypeCode,`Source` = 'ACARS' WHERE `ModeS` = :ModeS";
     			$queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
@@ -487,6 +544,7 @@ RMK/FUEL   2.6 M0.79)
         		$sthi = Connection::$db->prepare($queryi);
             		$sthi->execute($queryi_values);
     		    } catch(PDOException $e) {
+    			if (self::$debug) echo $e->getMessage();
             		return "error : ".$e->getMessage();
     		    }
     		    
@@ -494,6 +552,8 @@ RMK/FUEL   2.6 M0.79)
     		    
     		}
     	    }
+    	} else {
+    		if (self::$debug) echo " Can't find ModeS in spotter_output - ";
     	}
     	if (self::$debug) echo "Done\n";
     }
