@@ -538,10 +538,12 @@ RMK/FUEL   2.6 M0.79)
     	    $sth = Connection::$db->prepare($query);
             $sth->execute($query_values);
     	} catch(PDOException $e) {
+    	    if (self::$debug) echo $e->getMessage();
             return "error : ".$e->getMessage();
     	}
     	$result = $sth->fetch(PDO::FETCH_ASSOC);
-    	if (isset($result['ModeS'])) {
+    	//print_r($result);
+    	if (isset($result['flightaware_id'])) {
     	    $ModeS = $result['ModeS'];
     	    if ($ModeS == '') {
     		$id = explode('-',$result['flightaware_id']);
@@ -561,7 +563,7 @@ RMK/FUEL   2.6 M0.79)
     		}
     		$row = $sthc->fetch(PDO::FETCH_ASSOC);
     		
-    		if (count($row > 0)) {
+    		if (count($row) ==  0) {
     		    if (self::$debug) echo " Add to ModeS table - ";
     		    $queryi = "INSERT INTO aircraft_modes (`ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`Source`) VALUES (:ModeS,:ModeSCountry,:Registration, :ICAOTypeCode,'ACARS')";
     		    $queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
