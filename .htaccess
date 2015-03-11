@@ -18,6 +18,16 @@ RewriteCond %{HTTPS} =off
 RewriteRule ^latest(/?)$ latest.php [L,NC]
 
 RewriteCond %{HTTPS} !=off
+RewriteRule ^acars-latest/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^acars-latest/([^/]+)/([^/]+)(/?)$ acars-latest.php?limit=$2 [L,NC]
+
+RewriteCond %{HTTPS} !=off
+RewriteRule ^acars-archive/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
+RewriteCond %{HTTPS} =off
+RewriteRule ^acars-archive/([^/]+)/([^/]+)(/?)$ acars-archive.php?limit=$2 [L,NC]
+
+RewriteCond %{HTTPS} !=off
 RewriteRule ^acars-latest(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
 RewriteCond %{HTTPS} =off
 RewriteRule ^acars-latest(/?)$ acars-latest.php [L,NC]

@@ -531,7 +531,7 @@ RMK/FUEL   2.6 M0.79)
 	    if (self::$debug) echo "Ident or registration null, exit\n";
 	    return '';
 	}
-    	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE `ident` =  :ident LIMIT 1";
+    	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE `ident` =  :ident ORDER BY spotter_id DESC LIMIT 1";
     	$query_values = array(':ident' => $icao);
     	try {
     	    $Connection = new Connection();
