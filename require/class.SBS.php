@@ -86,12 +86,13 @@ class SBS {
 		    	    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('departure_airport' => $route['FromAirport_ICAO'],'arrival_airport' => $route['ToAirport_ICAO'],'route_stop' => $route['RouteStop']));
 		        }
 		    }
-		
-		    $pids[$id] = pcntl_fork();
-		    if (!$pids[$id]) {
-		        $sid = posix_setsid();
-		        SBS::get_Schedule($id,trim($line[10]));
-		        exit(0);
+		    if (function_exists('pcntl_fork')) {
+			$pids[$id] = pcntl_fork();
+			if (!$pids[$id]) {
+		    	    $sid = posix_setsid();
+		    	    SBS::get_Schedule($id,trim($line[10]));
+		    	    exit(0);
+			}
 		    }
 		}
 	        
@@ -179,7 +180,7 @@ class SBS {
 		    $ignoreImport = false;
 		    if (self::$debug) echo $result."\n";
 		}
-		pcntl_signal(SIGCHLD, SIG_IGN);
+		if (function_exists('pcntl_fork')) pcntl_signal(SIGCHLD, SIG_IGN);
 
     	    }
 	}
