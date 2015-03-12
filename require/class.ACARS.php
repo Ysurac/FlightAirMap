@@ -70,10 +70,10 @@ class ACARS {
 	$icao = '';
 	$airicao = '';
 	$decode = '';
+	$found = false;
 	if (self::$debug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
 	
 	if ($registration != '' && $ident != '') {
-	$found = false;
 	/*
 Messages not yet parsed :
 =========================
