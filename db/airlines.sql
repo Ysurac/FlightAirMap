@@ -5881,7 +5881,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (5822, 16717, 'REDjet', '', 'Z7', 'N', '', 'Barbados', 'Y', 'passenger'),
 (5823, 16719, 'Hellenic Airways', '', '1H', 'HEY', 'Hellenic', 'Greece', 'N', 'passenger'),
 (5824, 16720, 'Red Jet Andes', '', 'PT', 'N', '', 'Peru', 'Y', 'passenger'),
-(5825, 16721, 'Red Jet Canada', '', 'QY', 'N', '', 'Canada', 'Y', 'passenger'),
+(5825, 16721, 'Red Jet Canada', '', 'QY', 'N', '', 'Canada', 'N', 'passenger'),
 (5826, 16724, 'Red Jet Mexico', '', '4X', 'N', '', 'Mexico', 'Y', 'passenger'),
 (5827, 16725, 'Marusya Airways', 'Marusya Air', 'Y8', 'MRS', 'snowball', 'Russia', 'Y', 'passenger'),
 (5828, 16726, 'Era Alaska', '', '7H', 'ERR', 'ERAH', 'United States', 'Y', 'passenger'),
