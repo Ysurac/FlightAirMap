@@ -78,12 +78,6 @@ class ACARS {
 Messages not yet parsed :
 =========================
 
-Reg. : PH-BGT - Ident : KL1413 - Label : H1 - Message : #DFB(POS-KLM1413 -4758N00637E/091901 F350
-RMK/FUEL   3.9 M0.78)
-Reg. : PH-BXH - Ident : KL051Y - Label : H1 - Message : #DFB(POS-KLM51Y  -4760N00639E/092607 F330
-RMK/FUEL   3.8 M0.77)
-Reg. : PH-BGG - Ident : KL053M - Label : H1 - Message : #DFB(POS-KLM53M  -4754N00641E/153143 F280
-RMK/FUEL   3.9 M0.79)
 Reg. : G-EUXE - Ident : BA31CE - Label : H1 - Message : #CFBFLR/FR15022612180028424806FUEL QUANTITY           R ULTRACOMP 52QT/IDFUEL
 Reg. : OO-DWA - Ident : SN01LY - Label : 13 - Message : EBBR,LFLL,26FEB15,1626,164626
 Reg. : OO-SSF - Ident : SN088L - Label : 28 - Message : EBBR,LFSB,LFST,ELLX,
@@ -175,15 +169,16 @@ ONS PAS LE MESSAGE ...
 		    WXR/META/LFLL/LFLC/LFPG
 	    */
 
-	    $n = sscanf($message, "VER/%*3d/%4s/%*c\nSCH/%6[0-9A-Z ]/%4c/%4c/%5s/%4d\n%*3c/%4d/%4c/%[0-9A-Z ]/", $airicao,$aident,$dair, $darr, $ddate, $dhour,$ahour, $aair, $apiste);
-    	    if ($n > 7) {
+	    $n = sscanf($message, "%*[0-9A-Z]/%*3d/%4s/%*c\nSCH/%6[0-9A-Z ]/%4c/%4c/%5s/%4d\n%*3c/%4d/%4c/%[0-9A-Z ]/", $airicao,$aident,$dair, $darr, $ddate, $dhour,$ahour, $aair, $apiste);
+    	    if ($n > 8) {
     		if (self::$debug) echo 'airicao : '. $airicao.' - ident : '.$aident.' - departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour.' - arrival airport : '.$aair.' - arrival piste : '.$apiste."\n";
         	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
         	if ($ahour != '') $ahour = substr(sprintf('%04d',$ahour),0,2).':'.substr(sprintf('%04d',$ahour),2);
         	$icao = trim($aident);
 
         	//$decode = 'Departure airport : '.$dair.' ('.$ddate.' at '.$dhour.') - Arrival Airport : '.$aair.' (at '.$ahour.') way '.$apiste;
-        	$decode = array('Departure airport' => $dair, 'Departure date' => $ddate, 'Departure hour' => $dhour, 'Arrival airport' => $aair, 'Arrival hour' => $ahour, 'Arrival way' => $apiste);
+        	if ($dhour == '') $decode = array('Departure airport' => $dair, 'Departure date' => $ddate, 'Departure hour' => $dhour, 'Arrival airport' => $darr);
+        	else $decode = array('Departure airport' => $dair, 'Departure date' => $ddate, 'Departure hour' => $dhour, 'Arrival airport' => $darr, 'Arrival hour' => $ahour, 'Arrival way' => $apiste);
         	Schedule::addSchedule($icao,$dair,$dhour,$darr,$ahour,'ACARS');
         	$found = true;
     	    }
@@ -272,14 +267,14 @@ ONS PAS LE MESSAGE ...
 	     Reg. : PH-BXO - Ident : KL079K - Label : H1 - Message : #DFB(POS-KLM79K  -4319N00252E/143435 F390
 RMK/FUEL   2.6 M0.79)
 	    */
-	    $n = sscanf($message, "#DFB(POS-%6c -%4d%c%5d%c/%*d F%d\nRMK/FUEL %f M%f", $aident, $lac, $las, $lnc, $lns, $alt, $fuel, $speed);
+	    $n = sscanf($message, "#DFB(POS-%s -%4d%c%5d%c/%*d F%d\nRMK/FUEL %f M%f", $aident, $lac, $las, $lnc, $lns, $alt, $fuel, $speed);
     	    if ($n == 9) {
         	//if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-        	$icao = $aident;
-        	$latitude = $las / 1000.0;
-        	$longitude = $lns / 10000.0;
+        	$icao = trim($aident);
+        	$latitude = $lac / 100.0;
+        	$longitude = $lnc / 100.0;
 
-		$decode = array('Latitute' => $latitude,'Longitude' => $longitude,'Altitude' => $alt*1000,'Fuel' => $fuel,'speed' => $speed);
+		$decode = array('Latitute' => $latitude,'Longitude' => $longitude,'Altitude' => $alt*100,'Fuel' => $fuel,'speed' => $speed);
         	$found = true;
     	    }
 	}
@@ -339,7 +334,7 @@ RMK/FUEL   2.6 M0.79)
         if ($decode != '') $decode_json = json_encode($decode);
         else $decode_json = '';
 	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
-	if (!$found && ($label == '10' || $label == '80')) ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	if ($label == '10' || $label == '80' || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	
 	if (self::$debug && $decode != '') echo "Human readable data : ".implode(' - ',$decode)."\n";
 //	ACARS::addModeSData($ident,$registration,$icao,$airicao);
