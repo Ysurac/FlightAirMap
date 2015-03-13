@@ -127,6 +127,9 @@ $output = '{';
 							$output .= '"altitude": "'.$spotter_item['altitude'].'",';
 							$output .= '"heading": "'.$spotter_item['heading'].'",';
 							$output .= '"image": "'.$image.'",';
+						if (isset($spotter_item['image_copyright'])) {
+							$output .= '"image_copyright": "'.$spotter_item['image_copyright'].'",';
+						}
 						if (isset($spotter_item['squawk'])) {
 							$output .= '"squawk": "'.$spotter_item['squawk'].'",';
 						}
