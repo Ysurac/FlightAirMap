@@ -11,10 +11,8 @@ To install the web app which Barrie Spotter runs, you need to have meet the foll
 * MySQL version 5.0 or greater (5.6 if you want to see airspace)
 * SQLite 3 (if you use ADS-B as datasource)
 * An HTTP Server such as:
-	* Apache 1.3+
 	* Apache 2.0+
-
-(Nginx not supported for now)
+	* Nginx (include install/flightairmap-nginx-conf.include in server part of the config)
 
 ## Required Extensions
 
@@ -28,7 +26,7 @@ The follwing is a list of PHP extensions that must be installed on your server i
 * SimpleXML [http://php.net/simplexml](http://php.net/simplexml)
 
 ## Install ##
-### Web install ###
+### Web install/Update ###
 (This is the recommanded way to install)
 
 Use install/index.php

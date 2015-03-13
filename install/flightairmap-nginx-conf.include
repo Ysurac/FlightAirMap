@@ -1,0 +1,228 @@
+location /latest {
+    rewrite ^/latest/([^/]+)/([^/]+)(/?)$ /latest.php?limit=$1&sort=$2 last;
+    rewrite ^/latest/([^/]+)(/?)$ /latest.php?limit=$1 last;
+    rewrite ^/latest(/?)$ /latest.php last;
+}
+location /acars-latest {
+    rewrite ^/acars-latest/([^/]+)(/?)$ /acars-latest.php?limit=$1 last;
+    rewrite ^/acars-latest(/?)$ /acars-latest.php last;
+}
+location /acars-archive {
+    rewrite ^/acars-archive/([^/]+)(/?)$ /acars-archive.php?limit=$1 last;
+    rewrite ^/acars-archive(/?)$ /acars-archive.php last;
+}
+location /newest {
+    rewrite ^/newest/([^/]+)/([^/]+)/([^/]+)(/?)$ /newest.php?category=$1&limit=$2&sort=$3 last;
+    rewrite ^/newest/([^/]+)/([^/]+)(/?)$ /newest.php?category=$1&limit=$2 last;
+    rewrite ^/newest/([^/]+)(/?)$ /newest.php?category=$1 last;
+    rewrite ^/newest(/?)$ /newest.php last;
+}
+location /highlights {
+    rewrite ^/highlights/table/([^/]+)/([^/]+)(/?)$ /highlights-table.php?limit=$1&sort=$2 last;
+    rewrite ^/highlights/table/([^/]+)(/?)$ /highlights-table.php?limit=$1 last;
+    rewrite ^/highlights/table(/?)$ /highlights-table.php last;
+    rewrite ^/highlights/([^/]+)(/?)$ /highlights-display.php?limit=$1 last;
+    rewrite ^/highlights(/?)$ /highlights-display.php last;
+}
+location /about {
+    rewrite ^/about/tv(/?)$ /about-tv.php last;
+    rewrite ^/about/map(/?)$ /about-map.php last;
+    rewrite ^/about/export(/?)$ /about-export.php last;
+    rewrite ^/about(/?)$ /about.php last;
+}
+location /sitemap {
+    rewrite ^/sitemap/([^/]+)(/?)$ /sitemap.php?type=$1 last;
+    rewrite ^/sitemap(/?)$ /sitemap.php last;
+}
+location /tv {
+    rewrite ^/tv/([^/]+)(/?)$ /tv.php?q=$1 last;
+    rewrite ^/tv(/?)$ /tv.php last;
+}
+location /redirect {
+    rewrite ^/redirect/([^/]+)(/?)$ /redirect.php?flightaware_id=$1 last;
+}
+location /live {
+    rewrite ^/live/geojson(/?)$ /live-geojson.php last;
+}
+location /search {
+    rewrite ^/search/csv(/?)$ /search-csv.php last;
+    rewrite ^/search/json(/?)$ /search-json.php last;
+    rewrite ^/search/xml(/?)$ /search-xml.php last;
+    rewrite ^/search/rss(/?)$ /search-rss.php last;
+    rewrite ^/search/kml(/?)$ /search-kml.php last;
+    rewrite ^/search/geojson(/?)$ /search-geojson.php last;
+    rewrite ^/search/yaml(/?)$ /search-yaml.php last;
+    rewrite ^/search/php(/?)$ /search-php.php last;
+    rewrite ^/search/wkt(/?)$ /search-wkt.php last;
+    rewrite ^/search/gpx(/?)$ /search-gpx.php last;
+    rewrite ^/search/georss(/?)$ /search-georss.php last;
+    rewrite ^/search(/?)$ /search.php last;
+}
+location /airport {
+    rewrite ^/airport/statistics/aircraft/([^/]+)(/?)$ /airport-statistics-aircraft.php?airport=$1 last;
+    rewrite ^/airport/statistics/registration/([^/]+)(/?)$ /airport-statistics-registration.php?airport=$1 last;
+    rewrite ^/airport/statistics/manufacturer/([^/]+)(/?)$ /airport-statistics-manufacturer.php?airport=$1 last;
+    rewrite ^/airport/statistics/airline/([^/]+)(/?)$ /airport-statistics-airline.php?airport=$1 last;
+    rewrite ^/airport/statistics/airline-country/([^/]+)(/?)$ /airport-statistics-airline-country.php?airport=$1 last;
+    rewrite ^/airport/statistics/departure-airport/([^/]+)(/?)$ /airport-statistics-departure-airport.php?airport=$1 last;
+    rewrite ^/airport/statistics/departure-airport-country/([^/]+)(/?)$ /airport-statistics-departure-airport-country.php?airport=$1 last;
+    rewrite ^/airport/statistics/arrival-airport/([^/]+)(/?)$ /airport-statistics-arrival-airport.php?airport=$1 last;
+    rewrite ^/airport/statistics/arrival-airport-country/([^/]+)(/?)$ /airport-statistics-arrival-airport-country.php?airport=$1 last;
+    rewrite ^/airport/statistics/time/([^/]+)(/?)$ /airport-statistics-time.php?airport=$1 last;
+    rewrite ^/airport/statistics/route/([^/]+)(/?)$ /airport-statistics-route.php?airport=$1 last;
+    rewrite ^/airport/detailed/([^/]+)/([^/]+)/([^/]+)(/?)$ /airport-detailed.php?airport=$1&limit=$2&sort=$3 last;
+    rewrite ^/airport/detailed/([^/]+)/([^/]+)(/?)$ /airport-detailed.php?airport=$1&limit=$2 last;
+    rewrite ^/airport/([^/]+)(/?)$ /airport-detailed.php?airport=$1 last;
+    rewrite ^/airport(/?)$ /airport.php last;
+}
+location /country {
+    rewrite ^/country/statistics/aircraft/([^/]+)(/?)$ /country-statistics-aircraft.php?country=$1 last;
+    rewrite ^/country/statistics/registration/([^/]+)(/?)$ /country-statistics-registration.php?country=$1 last;
+    rewrite ^/country/statistics/manufacturer/([^/]+)(/?)$ /country-statistics-manufacturer.php?country=$1 last;
+    rewrite ^/country/statistics/airline/([^/]+)(/?)$ /country-statistics-airline.php?country=$1 last;
+    rewrite ^/country/statistics/airline-country/([^/]+)(/?)$ /country-statistics-airline-country.php?country=$1 last;
+    rewrite ^/country/statistics/departure-airport/([^/]+)(/?)$ /country-statistics-departure-airport.php?country=$1 last;
+    rewrite ^/country/statistics/departure-airport-country/([^/]+)(/?)$ /country-statistics-departure-airport-country.php?country=$1 last;
+    rewrite ^/country/statistics/arrival-airport/([^/]+)(/?)$ /country-statistics-arrival-airport.php?country=$1 last;
+    rewrite ^/country/statistics/arrival-airport-country/([^/]+)(/?)$ /country-statistics-arrival-airport-country.php?country=$1 last;
+    rewrite ^/country/statistics/time/([^/]+)(/?)$ /country-statistics-time.php?country=$1 last;
+    rewrite ^/country/statistics/route/([^/]+)(/?)$ /country-statistics-route.php?country=$1 last;
+    rewrite ^/country/([^/]+)/([^/]+)/([^/]+)(/?)$ /country-detailed.php?country=$1&limit=$2&sort=$3 last;
+    rewrite ^/country/([^/]+)/([^/]+)(/?)$ /country-detailed.php?country=$1&limit=$2 last;
+    rewrite ^/country/([^/]+)(/?)$ /country-detailed.php?country=$1 last;
+    rewrite ^/country(/?)$ /country.php last;
+}
+location /registration {
+    rewrite ^/registration/statistics/departure-airport/([^/]+)(/?)$ /registration-statistics-departure-airport.php?registration=$1 last;
+    rewrite ^/registration/statistics/departure-airport-country/([^/]+)(/?)$ /registration-statistics-departure-airport-country.php?registration=$1 last;
+    rewrite ^/registration/statistics/arrival-airport-country/([^/]+)(/?)$ /registration-statistics-arrival-airport-country.php?registration=$1 last;
+    rewrite ^/registration/statistics/arrival-airport/([^/]+)(/?)$ /registration-statistics-arrival-airport.php?registration=$1 last;
+    rewrite ^/registration/statistics/time/([^/]+)(/?)$ /registration-statistics-time.php?registration=$1 last;
+    rewrite ^/registration/statistics/route/([^/]+)(/?)$ /registration-statistics-route.php?registration=$1 last;
+    rewrite ^/registration/([^/]+)/([^/]+)/([^/]+)(/?)$ /registration-detailed.php?registration=$1&limit=$2&sort=$3 last;
+    rewrite ^/registration/([^/]+)/([^/]+)(/?)$ /registration-detailed.php?registration=$1&limit=$2 last;
+    rewrite ^/registration/([^/]+)(/?)$ /registration-detailed.php?registration=$1 last;
+    rewrite ^/registration(/?)$ /registration.php last;
+}
+location /manufacturer {
+    rewrite ^/manufacturer/statistics/aircraft/([^/]+)(/?)$ /manufacturer-statistics-aircraft.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer/statistics/registration/([^/]+)(/?)$ /manufacturer-statistics-registration.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer/statistics/airline/([^/]+)(/?)$ /manufacturer-statistics-airline.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer/statistics/airline-country/([^/]+)(/?)$ /manufacturer-statistics-airline-country.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer/statistics/departure-airport/([^/]+)(/?)$ /manufacturer-statistics-departure-airport.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer/statistics/departure-airport-country/([^/]+)(/?)$ /manufacturer-statistics-departure-airport-country.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer/statistics/arrival-airport/([^/]+)(/?)$ /manufacturer-statistics-arrival-airport.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer/statistics/arrival-airport-country/([^/]+)(/?)$ /manufacturer-statistics-arrival-airport-country.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer/statistics/time/([^/]+)(/?)$ /manufacturer-statistics-time.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer/statistics/route/([^/]+)(/?)$ /manufacturer-statistics-route.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer/([^/]+)/([^/]+)/([^/]+)(/?)$ /manufacturer-detailed.php?aircraft_manufacturer=$1&limit=$2&sort=$3 last;
+    rewrite ^/manufacturer/([^/]+)/([^/]+)(/?)$ /manufacturer-detailed.php?aircraft_manufacturer=$1&limit=$2 last;
+    rewrite ^/manufacturer/([^/]+)(/?)$ /manufacturer-detailed.php?aircraft_manufacturer=$1 last;
+    rewrite ^/manufacturer(/?)$ /manufacturer.php last;
+}
+location /airline {
+    rewrite ^/airline/statistics/aircraft/([^/]+)(/?)$ /airline-statistics-aircraft.php?airline=$1 last;
+    rewrite ^/airline/statistics/registration/([^/]+)(/?)$ /airline-statistics-registration.php?airline=$1 last;
+    rewrite ^/airline/statistics/manufacturer/([^/]+)(/?)$ /airline-statistics-manufacturer.php?airline=$1 last;
+    rewrite ^/airline/statistics/departure-airport/([^/]+)(/?)$ /airline-statistics-departure-airport.php?airline=$1 last;
+    rewrite ^/airline/statistics/departure-airport-country/([^/]+)(/?)$ /airline-statistics-departure-airport-country.php?airline=$1 last;
+    rewrite ^/airline/statistics/arrival-airport/([^/]+)(/?)$ /airline-statistics-arrival-airport.php?airline=$1 last;
+    rewrite ^/airline/statistics/arrival-airport-country/([^/]+)(/?)$ /airline-statistics-arrival-airport-country.php?airline=$1 last;
+    rewrite ^/airline/statistics/time/([^/]+)(/?)$ /airline-statistics-time.php?airline=$1 last;
+    rewrite ^/airline/statistics/route/([^/]+)(/?)$ /airline-statistics-route.php?airline=$1 last;
+    rewrite ^/airline/([^/]+)/([^/]+)/([^/]+)(/?)$ /airline-detailed.php?airline=$1&limit=$2&sort=$3 last;
+    rewrite ^/airline/([^/]+)/([^/]+)(/?)$ /airline-detailed.php?airline=$1&limit=$2 last;
+    rewrite ^/airline/([^/]+)(/?)$ /airline-detailed.php?airline=$1&limit=$2 last;
+    rewrite ^/airline(/?)$ /airline.php last;
+}
+
+location /route {
+    rewrite ^/route/statistics/aircraft/([^/]+)/([^/]+)(/?)$ /route-statistics-aircraft.php?departure_airport=$1&arrival_airport=$2 last;
+    rewrite ^/route/statistics/registration/([^/]+)/([^/]+)(/?)$ /route-statistics-registration.php?departure_airport=$1&arrival_airport=$2 last;
+    rewrite ^/route/statistics/manufacturer/([^/]+)/([^/]+)(/?)$ /route-statistics-manufacturer.php?departure_airport=$1&arrival_airport=$2 last;
+    rewrite ^/route/statistics/airline/([^/]+)/([^/]+)(/?)$ /route-statistics-airline.php?departure_airport=$1&arrival_airport=$2 last;
+    rewrite ^/route/statistics/airline-country/([^/]+)/([^/]+)(/?)$ /route-statistics-airline-country.php?departure_airport=$1&arrival_airport=$2 last;
+    rewrite ^/route/statistics/time/([^/]+)/([^/]+)(/?)$ /route-statistics-time.php?departure_airport=$1&arrival_airport=$2 last;
+    rewrite ^/route/([^/]+)/([^/]+)/([^/]+)/([^/]+)(/?)$ /route-detailed.php?departure_airport=$1&arrival_airport=$2&limit=$3&sort=$4 last;
+    rewrite ^/route/([^/]+)/([^/]+)/([^/]+)(/?)$ /route-detailed.php?departure_airport=$1&arrival_airport=$2&limit=$3 last;
+    rewrite ^/route/([^/]+)/([^/]+)(/?)$ /route-detailed.php?departure_airport=$1&arrival_airport=$2 last;
+    rewrite ^/route(/?)$ /route.php last;
+}
+
+location /ident {
+    rewrite ^/ident/statistics/aircraft/([^/]+)(/?)$ /ident-statistics-aircraft.php?ident=$1 last;
+    rewrite ^/ident/statistics/registration/([^/]+)(/?)$ /ident-statistics-registration.php?ident=$1 last;
+    rewrite ^/ident/statistics/manufacturer/([^/]+)(/?)$ /ident-statistics-manufacturer.php?ident=$1 last;
+    rewrite ^/ident/statistics/departure-airport/([^/]+)(/?)$ /ident-statistics-departure-airport.php?ident=$1 last;
+    rewrite ^/ident/statistics/departure-airport-country/([^/]+)(/?)$ /ident-statistics-departure-airport-country.php?ident=$1 last;
+    rewrite ^/ident/statistics/arrival-airport/([^/]+)(/?)$ /ident-statistics-arrival-airport.php?ident=$1 last;
+    rewrite ^/ident/statistics/arrival-airport-country/([^/]+)(/?)$ /ident-statistics-arrival-airport-country.php?ident=$1 last;
+    rewrite ^/ident/statistics/time/([^/]+)(/?)$ /ident-statistics-time.php?ident=$1 last;
+    rewrite ^/ident/statistics/route/([^/]+)(/?)$ /ident-statistics-route.php?ident=$1 last;
+    rewrite ^/ident/([^/]+)/([^/]+)/([^/]+)(/?)$ /ident-detailed.php?ident=$1&limit=$2&sort=$3 last;
+    rewrite ^/ident/([^/]+)/([^/]+)(/?)$ /ident-detailed.php?ident=$1&limit=$2 last;
+    rewrite ^/ident/([^/]+)(/?)$ /ident-detailed.php?ident=$1 last;
+    rewrite ^/ident(/?)$ /ident.php last;
+}
+
+location /aircraft {
+    rewrite ^/aircraft/statistics/airline/([^/]+)(/?)$ /aircraft-statistics-airline.php?aircraft_type=$1 last;
+    rewrite ^/aircraft/statistics/airline-country/([^/]+)(/?)$ /aircraft-statistics-airline-country.php?aircraft_type=$1 last;
+    rewrite ^/aircraft/statistics/registration/([^/]+)(/?)$ /aircraft-statistics-registration.php?aircraft_type=$1 last;
+    rewrite ^/aircraft/statistics/departure-airport/([^/]+)(/?)$ /aircraft-statistics-departure-airport.php?aircraft_type=$1 last;
+    rewrite ^/aircraft/statistics/departure-airport-country/([^/]+)(/?)$ /aircraft-statistics-departure-airport-country.php?aircraft_type=$1 last;
+    rewrite ^/aircraft/statistics/arrival-airport/([^/]+)(/?)$ /aircraft-statistics-arrival-airport.php?aircraft_type=$1 last;
+    rewrite ^/aircraft/statistics/arrival-airport-country/([^/]+)(/?)$ /aircraft-statistics-arrival-airport-country.php?aircraft_type=$1 last;
+    rewrite ^/aircraft/statistics/time/([^/]+)(/?)$ /aircraft-statistics-time.php?aircraft_type=$1 last;
+    rewrite ^/aircraft/statistics/route/([^/]+)(/?)$ /aircraft-statistics-route.php?aircraft_type=$1 last;
+    rewrite ^/aircraft/([^/]+)/([^/]+)/([^/]+)(/?)$ /aircraft-detailed.php?aircraft_type=$1&limit=$2&sort=$3 last;
+    rewrite ^/aircraft/([^/]+)/([^/]+)(/?)$ /aircraft-detailed.php?aircraft_type=$1&limit=$2 last;
+    rewrite ^/aircraft/([^/]+)(/?)$ /aircraft-detailed.php?aircraft_type=$1 last;
+    rewrite ^/aircraft(/?)$ /aircraft.php last;
+}
+
+location /date {
+    rewrite ^/date/statistics/aircraft/([^/]+)(/?)$ /date-statistics-aircraft.php?date=$1 last;
+    rewrite ^/date/statistics/registration/([^/]+)(/?)$ /date-statistics-registration.php?date=$1 last;
+    rewrite ^/date/statistics/manufacturer/([^/]+)(/?)$ /date-statistics-manufacturer.php?date=$1 last;
+    rewrite ^/date/statistics/airline/([^/]+)(/?)$ /date-statistics-airline.php?date=$1 last;
+    rewrite ^/date/statistics/airline-country/([^/]+)(/?)$ /date-statistics-airline-country.php?date=$1 last;
+    rewrite ^/date/statistics/departure-airport/([^/]+)(/?)$ /date-statistics-departure-airport.php?date=$1 last;
+    rewrite ^/date/statistics/departure-airport-country/([^/]+)(/?)$ /date-statistics-departure-airport-country.php?date=$1 last;
+    rewrite ^/date/statistics/arrival-airport/([^/]+)(/?)$ /date-statistics-arrival-airport.php?date=$1 last;
+    rewrite ^/date/statistics/arrival-airport-country/([^/]+)(/?)$ /date-statistics-arrival-airport-country.php?date=$1 last;
+    rewrite ^/date/statistics/time/([^/]+)(/?)$ /date-statistics-time.php?date=$1 last;
+    rewrite ^/date/statistics/route/([^/]+)(/?)$ /date-statistics-route.php?date=$1 last;
+    rewrite ^/date/([^/]+)/([^/]+)/([^/]+)(/?)$ /date-detailed.php?date=$1&limit=$2&sort=$3 last;
+    rewrite ^/date/([^/]+)/([^/]+)(/?)$ /date-detailed.php?date=$1&limit=$2 last;
+    rewrite ^/date/([^/]+)(/?)$ /date-detailed.php?date=$1 last;
+    rewrite ^/date(/?)$ /date.php last;
+}
+
+location /flightid {
+    rewrite ^/flightid/([^/]+)(/?)$ /flightid-overview.php?id=$1 last;
+}
+
+location /statistics {
+    rewrite ^/statistics(/?)$ /statistics.php last;
+    rewrite ^/statistics/aircraft(/?)$ /statistics-aircraft.php last;
+    rewrite ^/statistics/registration(/?)$ /statistics-registration.php last;
+    rewrite ^/statistics/manufacturer(/?)$ /statistics-manufacturer.php last;
+    rewrite ^/statistics/airline(/?)$ /statistics-airline.php last;
+    rewrite ^/statistics/airline-country(/?)$ /statistics-airline-country.php last;
+    rewrite ^/statistics/airport-departure(/?)$ /statistics-airport-departure.php last;
+    rewrite ^/statistics/airport-departure-country(/?)$ /statistics-airport-departure-country.php last;
+    rewrite ^/statistics/airport-arrival(/?)$ /statistics-airport-arrival.php last;
+    rewrite ^/statistics/airport-arrival-country(/?)$ /statistics-airport-arrival-country.php last;
+    rewrite ^/statistics/route-airport(/?)$ /statistics-route-airport.php last;
+    rewrite ^/statistics/route-waypoint(/?)$ /statistics-route-waypoint.php last;
+    rewrite ^/statistics/callsign(/?)$ /statistics-callsign.php last;
+    rewrite ^/statistics/date(/?)$ /statistics-date.php last;
+    rewrite ^/statistics/time(/?)$ /statistics-time.php last;
+}
+
+location /upcoming {
+    rewrite ^/upcoming/([^/]+)/([^/]+)(/?)$ /upcoming.php?limit=$1&sort=$2 last;
+    rewrite ^/upcoming/([^/]+)(/?)$ /upcoming.php?limit=$1 last;
+    rewrite ^/upcoming(/?)$ /upcoming.php last;
+}
