@@ -177,7 +177,7 @@ ONS PAS LE MESSAGE ...
         	$icao = trim($aident);
 
         	//$decode = 'Departure airport : '.$dair.' ('.$ddate.' at '.$dhour.') - Arrival Airport : '.$aair.' (at '.$ahour.') way '.$apiste;
-        	if ($dhour == '') $decode = array('Departure airport' => $dair, 'Departure date' => $ddate, 'Departure hour' => $dhour, 'Arrival airport' => $darr);
+        	if ($ahour == '') $decode = array('Departure airport' => $dair, 'Departure date' => $ddate, 'Departure hour' => $dhour, 'Arrival airport' => $darr);
         	else $decode = array('Departure airport' => $dair, 'Departure date' => $ddate, 'Departure hour' => $dhour, 'Arrival airport' => $darr, 'Arrival hour' => $ahour, 'Arrival way' => $apiste);
         	Schedule::addSchedule($icao,$dair,$dhour,$darr,$ahour,'ACARS');
         	$found = true;
@@ -455,9 +455,9 @@ RMK/FUEL   2.6 M0.79)
     	    $data = array();
     	    if ($row['registration'] != '') {
     	        $image_array = Spotter::getSpotterImage($row['registration']);
-    	        if (count($image_array) > 0) $data = array_merge($data,array('image_thumbnail' => $image_array[0]['image_thumbnail']));
-    	        else $data = array_merge($data,array('image_thumbnail' => ''));
-    	    } else $data = array_merge($data,array('image_thumbnail' => ''));
+    	        if (count($image_array) > 0) $data = array_merge($data,array('image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright']));
+    	        else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => ''));
+    	    } else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => ''));
     	    $icao = '';
     	    if ($row['registration'] == '') $row['registration'] = 'NA';
     	    if ($row['ident'] == '') $row['ident'] = 'NA';
@@ -520,9 +520,9 @@ RMK/FUEL   2.6 M0.79)
     	    $data = array();
     	    if ($row['registration'] != '') {
     	        $image_array = Spotter::getSpotterImage($row['registration']);
-    	        if (count($image_array) > 0) $data = array_merge($data,array('image_thumbnail' => $image_array[0]['image_thumbnail']));
-    	        else $data = array_merge($data,array('image_thumbnail' => ''));
-    	    } else $data = array_merge($data,array('image_thumbnail' => ''));
+    	        if (count($image_array) > 0) $data = array_merge($data,array('image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright']));
+    	        else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => ''));
+    	    } else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => ''));
     	    $icao = '';
     	    if ($row['registration'] == '') $row['registration'] = 'NA';
     	    if ($row['ident'] == '') $row['ident'] = 'NA';
