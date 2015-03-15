@@ -100,7 +100,7 @@ table tr td.message{
 	text-align: left;
 	word-wrap: break-word;
 	max-width: 50em;
-	font-size: 0.8em;
+	font-size: x-small;
 }
 table tr td.more{
 	width:1%;
@@ -111,6 +111,9 @@ table tr td.more .dropdown-menu li a{
 table tr td.more .dropdown-menu li hr{
     margin-top: 5px;
     margin-bottom: 5px;
+}
+.thumbnail-copyright{
+	font-size: xx-small;
 }
 ul{
     margin-bottom:1.5em;
