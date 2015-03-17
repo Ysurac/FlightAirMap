@@ -1,6 +1,7 @@
 <?php
 require_once('class.Connection.php');
 require_once('class.Spotter.php');
+require_once('class.Image.php');
 require_once('class.Scheduler.php');
 
 class ACARS {
@@ -454,10 +455,10 @@ RMK/FUEL   2.6 M0.79)
     	while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     	    $data = array();
     	    if ($row['registration'] != '') {
-    	        $image_array = Spotter::getSpotterImage($row['registration']);
-    	        if (count($image_array) > 0) $data = array_merge($data,array('image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright']));
-    	        else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => ''));
-    	    } else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => ''));
+    	        $image_array = Image::getSpotterImage($row['registration']);
+    	        if (count($image_array) > 0) $data = array_merge($data,array('image' => $image_array[0]['image'],'image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright'],'image_source' => $image_array[0]['image_source'],'image_source_website' => $image_array[0]['image_source_website']));
+    	        else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
+    	    } else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
     	    $icao = '';
     	    if ($row['registration'] == '') $row['registration'] = 'NA';
     	    if ($row['ident'] == '') $row['ident'] = 'NA';
@@ -519,7 +520,7 @@ RMK/FUEL   2.6 M0.79)
     	while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     	    $data = array();
     	    if ($row['registration'] != '') {
-    	        $image_array = Spotter::getSpotterImage($row['registration']);
+    	        $image_array = Image::getSpotterImage($row['registration']);
     	        if (count($image_array) > 0) $data = array_merge($data,array('image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright']));
     	        else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => ''));
     	    } else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => ''));

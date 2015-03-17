@@ -125,7 +125,37 @@ class update_schema {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();
     		} catch(PDOException $e) {
-		    return "error (add new columns to routes table) : ".$e->getMessage()."\n";
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
+	private static function update_from_3() {
+    		$Connection = new Connection();
+    		// Add default CURRENT_TIMESTAMP to aircraft_modes column FirstCreated
+		$query = "ALTER TABLE `aircraft_modes` CHANGE `FirstCreated` `FirstCreated` DATETIME NULL DEFAULT CURRENT_TIMESTAMP";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add new columns to aircraft_modes) : ".$e->getMessage()."\n";
+    		}
+    		// Add image_source_website column to spotter_image
+		$query = "ALTER TABLE `spotter_image` ADD `image_source_website` VARCHAR(999) NULL";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add new columns to spotter_image) : ".$e->getMessage()."\n";
+    		}
+    		$error = '';
+		// Update schema_version to 3
+		$query = "UPDATE `config` SET `schema_version` = '4'";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
     		}
 		return $error;
 	}
@@ -148,7 +178,11 @@ class update_schema {
     		    }
     		    $result = $sth->fetch(PDO::FETCH_ASSOC);
     		    if ($update) {
-    			if ($result['value'] == '2') self::update_from_2();
+    			if ($result['value'] == '2') {
+    			    $error = self::update_from_2();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '3') self::update_from_3();
     			else return '';
     		    }
     		    else return $result['value'];

@@ -77,12 +77,22 @@ if (!empty($spotter_array))
 		
 		    print '<div class="image">';
 		    if ($spotter_array[0]['image'] != "")
-		    {	 	
-			$planespotter_url_array = explode("_", $spotter_array[0]['image']);
-			$planespotter_id = str_replace(".jpg", "", $planespotter_url_array[1]);
-			print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$spotter_array[0]['image'].'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" width="100%" /></a>';
-			if ($spotter_array[0]['image_source'] == 'planespotters') print '<div class="note">Disclaimer: The images are courtesy of Planespotters.net and their respective uploaders. This system may not always 100% accuratly show the actual aircraft.</div>';
-			else print '<div class="note">Disclaimer: The image come from '.$spotter_array[0]['image_source'].' and is copyrighted by '.$spotter_array[0]['image_copyright'].'. This system may not always 100% accuratly show the actual aircraft.</div>';
+		    {	 
+			if ($spotter_array[0]['image_source'] == 'planespotters') {
+			    $planespotter_url_array = explode("_", $spotter_array[0]['image']);
+			    $planespotter_id = str_replace(".jpg", "", $planespotter_url_array[1]);
+			    //print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$spotter_array[0]['image'].'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" width="100%" /></a>';
+			    print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$spotter_array[0]['image_thumbnail'].'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" width="100%" /></a>';
+			    print '<div class="note">Disclaimer: The images are courtesy of Planespotters.net and their respective uploaders. This system may not always 100% accuratly show the actual aircraft.</div>';
+			    print '<div class="note">Planespotters.net didn\'t allow us to show full size pics here. This pic is copyright '.$spotter_array[0]['image_copyright'].'</div>';
+			} else {
+			    if (isset($spotter_array[0]['image_source_website']) && $spotter_array[0]['image_source_website'] != '') {
+				print '<a href="'.$spotter_array[0]['image_source_website'].'"><img src="'.$spotter_array[0]['image'].'" width="100%" /></a>';
+			    } else {
+				print '<img src="'.$spotter_array[0]['image'].'" width="100%" />';
+			    }
+			    print '<div class="note">Disclaimer: The image come from '.$spotter_array[0]['image_source'].' and is copyright '.$spotter_array[0]['image_copyright'].'. This system may not always 100% accuratly show the actual aircraft.</div>';
+			}
 		    } else {
 			print '<img src="'.$globalURL.'/images/placeholder.png" alt="No image found!" title="No image found!" />';
 		    }

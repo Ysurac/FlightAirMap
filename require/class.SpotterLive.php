@@ -343,10 +343,10 @@ class SpotterLive {
 		//getting the aircraft image
 		if ($registration != "")
 		{
-			$image_array = Spotter::getSpotterImage($registration);
+			$image_array = Image::getSpotterImage($registration);
 			if (!isset($image_array[0]['registration']))
 			{
-				Spotter::addSpotterImage($registration);
+				Image::addSpotterImage($registration);
 			}
 		}
 		//}

@@ -1,6 +1,7 @@
 <?php
 require_once('class.Scheduler.php');
 require_once('class.ACARS.php');
+require_once('class.Image.php');
 $global_query = "SELECT spotter_output.* FROM spotter_output";
 
 class Spotter{
@@ -14,7 +15,7 @@ class Spotter{
 	*
 	*/
 	public static function getDataFromDB($query, $params = array(), $limitQuery = '')
-	{	
+	{
 		global $globalSquawkCountry;
 		date_default_timezone_set('UTC');
 		
@@ -52,54 +53,60 @@ class Spotter{
 			$num_rows++;
 			$temp_array = array();
 			if (isset($row['spotter_live_id'])) {
-			    $temp_array['spotter_id'] = $row['spotter_live_id'];
+				$temp_array['spotter_id'] = $row['spotter_live_id'];
 			} else {
-			    $temp_array['spotter_id'] = $row['spotter_id'];
+				$temp_array['spotter_id'] = $row['spotter_id'];
 			}
-		      $temp_array['flightaware_id'] = $row['flightaware_id'];
-		      $temp_array['ident'] = $row['ident'];
-		      $temp_array['registration'] = $row['registration'];
-		      $temp_array['aircraft_type'] = $row['aircraft_icao'];
-		      $temp_array['departure_airport'] = $row['departure_airport_icao'];
-		      $temp_array['arrival_airport'] = $row['arrival_airport_icao'];
-		      $temp_array['latitude'] = $row['latitude'];
-		      $temp_array['longitude'] = $row['longitude'];
-		      $temp_array['waypoints'] = $row['waypoints'];
-	if (isset($row['route_stop'])) {
-		$temp_array['route_stop'] = $row['route_stop'];
-		if ($row['route_stop'] != '') {
-			$allroute = explode(' ',$row['route_stop']);
+			$temp_array['flightaware_id'] = $row['flightaware_id'];
+			$temp_array['ident'] = $row['ident'];
+			$temp_array['registration'] = $row['registration'];
+			$temp_array['aircraft_type'] = $row['aircraft_icao'];
+			$temp_array['departure_airport'] = $row['departure_airport_icao'];
+			$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
+			$temp_array['latitude'] = $row['latitude'];
+			$temp_array['longitude'] = $row['longitude'];
+			$temp_array['waypoints'] = $row['waypoints'];
+			if (isset($row['route_stop'])) {
+				$temp_array['route_stop'] = $row['route_stop'];
+				if ($row['route_stop'] != '') {
+					$allroute = explode(' ',$row['route_stop']);
 			
-			foreach ($allroute as $route) {
-				$route_airport_array = Spotter::getAllAirportInfo($route);
-				if (isset($route_airport_array[0]['name'])) {
-					$route_stop_details['airport_name'] = $route_airport_array[0]['name'];
-					$route_stop_details['airport_city'] = $route_airport_array[0]['city'];
-					$route_stop_details['airport_country'] = $route_airport_array[0]['country'];
-					$route_stop_details['airport_icao'] = $route_airport_array[0]['icao'];
-					$temp_array['route_stop_details'][] = $route_stop_details;
+					foreach ($allroute as $route) {
+						$route_airport_array = Spotter::getAllAirportInfo($route);
+						if (isset($route_airport_array[0]['name'])) {
+							$route_stop_details['airport_name'] = $route_airport_array[0]['name'];
+							$route_stop_details['airport_city'] = $route_airport_array[0]['city'];
+							$route_stop_details['airport_country'] = $route_airport_array[0]['country'];
+							$route_stop_details['airport_icao'] = $route_airport_array[0]['icao'];
+							$temp_array['route_stop_details'][] = $route_stop_details;
+						}
+					}
 				}
 			}
-		}
-	}
-      $temp_array['altitude'] = $row['altitude'];
-      $temp_array['heading'] = $row['heading'];
-      $heading_direction = Spotter::parseDirection($row['heading']);
-      $temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
-      $temp_array['ground_speed'] = $row['ground_speed'];
-      $temp_array['image'] = "";
-      $temp_array['image_thumbnail'] = "";
-      $temp_array['image_source'] = "";
-      $temp_array['image_copyright'] = "";
-      if($row['registration'] != "")
-      {
-	$image_array = Spotter::getSpotterImage($row['registration']);
-	if (count($image_array) > 0) {
-          $temp_array['image'] = $image_array[0]['image'];
-          $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
-          $temp_array['image_source'] = $image_array[0]['image_source'];
-          $temp_array['image_copyright'] = $image_array[0]['image_copyright'];
-      }
+			$temp_array['altitude'] = $row['altitude'];
+			$temp_array['heading'] = $row['heading'];
+			$heading_direction = Spotter::parseDirection($row['heading']);
+			$temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
+			$temp_array['ground_speed'] = $row['ground_speed'];
+			$temp_array['image'] = "";
+			$temp_array['image_thumbnail'] = "";
+			$temp_array['image_source'] = "";
+			$temp_array['image_copyright'] = "";
+			if($row['registration'] != "")
+			{
+				$image_array = Image::getSpotterImage($row['registration']);
+				if (count($image_array) > 0) {
+					$temp_array['image'] = $image_array[0]['image'];
+					$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+					$temp_array['image_source'] = $image_array[0]['image_source'];
+					$temp_array['image_source_website'] = $image_array[0]['image_source_website'];
+					if ($temp_array['image_source_website'] == '' && $temp_array['image_source'] == 'planespotters') {
+						$planespotter_url_array = explode("_", $temp_array['image']);
+						$planespotter_id = str_replace(".jpg", "", $planespotter_url_array[1]);
+						$temp_array['image_source_website'] = 'http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id;
+					 }
+					$temp_array['image_copyright'] = $image_array[0]['image_copyright'];
+				}
 			}
   
 			//  $temp_array['highlight'] = $row['highlight'];
@@ -171,6 +178,7 @@ class Spotter{
 			}
 			
 			$schedule_array = Schedule::getSchedule($temp_array['ident']);
+			//print_r($schedule_array);
 			if (count($schedule_array) > 0) {
 				if ($schedule_array['departure_airport_icao'] != '') {
 					$row['departure_airport_icao'] = $schedule_array['departure_airport_icao'];
@@ -234,8 +242,8 @@ class Spotter{
 			
 			$spotter_array[] = $temp_array;
 		}
-		$spotter_array[0]['query_number_rows'] = $num_rows;
 		if ($num_rows == 0) return array();
+		$spotter_array[0]['query_number_rows'] = $num_rows;
 		return $spotter_array;
 	}	
 	
@@ -2470,10 +2478,11 @@ class Spotter{
 		//getting the aircraft image
 		if ($registration != "" || $registration != 'NA')
 		{
-			$image_array = Spotter::getSpotterImage($registration);
+			$image_array = Image::getSpotterImage($registration);
 			if (!isset($image_array[0]['registration']))
 			{
-				Spotter::addSpotterImage($registration);
+				//echo "Add image !!!! \n";
+				Image::addSpotterImage($registration);
 			}
 		}
     
@@ -3225,7 +3234,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $image_array = Image::getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3307,7 +3316,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $image_array = Image::getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3423,7 +3432,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $image_array = Image::getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3539,7 +3548,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $image_array = Image::getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3621,7 +3630,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $image_array = Image::getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3737,7 +3746,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Spotter::getSpotterImage($row['registration']);
+                  $image_array = Image::getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3855,7 +3864,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
 			if($row['registration'] != "")
 			{
-				$image_array = Spotter::getSpotterImage($row['registration']);
+				$image_array = Image::getSpotterImage($row['registration']);
 				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
 			}
 			$temp_array['registration_count'] = $row['registration_count'];
@@ -3973,7 +3982,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
 			if($row['registration'] != "")
 			{
-				$image_array = Spotter::getSpotterImage($row['registration']);
+				$image_array = Image::getSpotterImage($row['registration']);
 				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
 			}
 			$temp_array['registration_count'] = $row['registration_count'];
@@ -4088,7 +4097,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
 			if($row['registration'] != "")
 			{
-				$image_array = Spotter::getSpotterImage($row['registration']);
+				$image_array = Image::getSpotterImage($row['registration']);
 				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
 			}
           
@@ -6467,13 +6476,15 @@ class Spotter{
 	* @return String either success or error
 	*
 	*/
-	public static function addSpotterImage($registration)
+/*
+public static function addSpotterImage($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		$registration = trim($registration);
-        
 		//getting the aircraft image
 		$image_url = Spotter::findAircraftImage($registration);
+		//echo "Image :\n";
+		//print_r($image_url);
 		if ($image_url['original'] != '') {
 			$query  = "INSERT INTO spotter_image (registration, image, image_thumbnail, image_copyright, image_source) VALUES (:registration,:image,:image_thumbnail,:copyright,:source)";
 			try {
@@ -6481,12 +6492,13 @@ class Spotter{
 				$sth = Connection::$db->prepare($query);
 				$sth->execute(array(':registration' => $registration,':image' => $image_url['original'],':image_thumbnail' => $image_url['thumbnail'], ':copyright' => $image_url['copyright'],':source' => $image_url['source']));
 			} catch(PDOException $e) {
+				echo $e->message;
 				return "error";
 			}
 		}
 		return "success";
 	}
-    
+    */
     
     /**
 	* Gets the images based on the aircraft registration
@@ -6494,6 +6506,7 @@ class Spotter{
 	* @return Array the images list
 	*
 	*/
+	/*
 	public static function getSpotterImage($registration)
 	{
     		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
@@ -6524,7 +6537,7 @@ class Spotter{
         
         return $images_array;
 	}
-    
+    */
     
      /**
 	* Gets the Barrie Spotter ID based on the FlightAware ID
@@ -6689,6 +6702,7 @@ class Spotter{
 	* @return String the aircraft url
 	*
 	*/
+	/*
 	public static function findAircraftImage($aircraft_registration)
 	{
 		$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
@@ -6755,6 +6769,7 @@ class Spotter{
 		
 		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '');
 	}
+	*/
 	
 	
 	/**
@@ -7154,7 +7169,7 @@ class Spotter{
 		{
 			$aircraft_name = Spotter::getAllAircraftInfo($row['aircraft_icao']);
 			if ($row['registration'] != ""){
-				Spotter::addSpotterImage($row['registration']);
+				Image::addSpotterImage($row['registration']);
 			}
 			$update_query  = "UPDATE spotter_output SET spotter_output.aircraft_name = :aircraft_name, spotter_output.aircraft_manufacturer = :aircraft_manufacturer WHERE spotter_output.spotter_id = :spotter_id";
 			$sthu = Connection::$db->prepare($update_query);

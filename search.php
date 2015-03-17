@@ -274,7 +274,7 @@ if (!empty($_GET)){
     		      $manufacturers = Spotter::getAllManufacturers();
     		      foreach($manufacturers as $manufacturer)
     		      {
-    		        if($_GET['manufacturer'] == strtolower(str_replace(" ", "-", $manufacturer['aircraft_manufacturer'])))
+    		        if(isset($_GET['manufacturer']) && $_GET['manufacturer'] == strtolower(str_replace(" ", "-", $manufacturer['aircraft_manufacturer'])))
     		        {
     		          print '<option value="'.strtolower(str_replace(" ", "-", $manufacturer['aircraft_manufacturer'])).'" selected="selected">'.$manufacturer['aircraft_manufacturer'].'</option>';
     		        } else {
@@ -292,7 +292,7 @@ if (!empty($_GET)){
     		      $aircraft_types = Spotter::getAllAircraftTypes();
     		      foreach($aircraft_types as $aircraft_type)
     		      {
-    		        if($_GET['aircraft'] == $aircraft_type['aircraft_icao'])
+    		        if(isset($_GET['aircraft']) && $_GET['aircraft'] == $aircraft_type['aircraft_icao'])
     		        {
     		          print '<option value="'.$aircraft_type['aircraft_icao'].'" selected="selected">'.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
     		        } else {
@@ -320,7 +320,7 @@ if (!empty($_GET)){
     		      $airline_names = Spotter::getAllAirlineNames();
     		      foreach($airline_names as $airline_name)
     		      {
-    		        if($_GET['airline'] == $airline_name['airline_icao'])
+    		        if(isset($_GET['airline']) && $_GET['airline'] == $airline_name['airline_icao'])
     		        {
     		          print '<option value="'.$airline_name['airline_icao'].'" selected="selected">'.$airline_name['airline_name'].' ('.$airline_name['airline_icao'].')</option>';
     		        } else {
@@ -338,7 +338,7 @@ if (!empty($_GET)){
     		      $airline_countries = Spotter::getAllAirlineCountries();
     		      foreach($airline_countries as $airline_country)
     		      {
-    		        if($_GET['airline_country'] == $airline_country['airline_country'])
+    		        if(isset($_GET['airline_country']) && $_GET['airline_country'] == $airline_country['airline_country'])
     		        {
     		          print '<option value="'.$airline_country['airline_country'].'" selected="selected">'.$airline_country['airline_country'].'</option>';
     		        } else {
@@ -370,7 +370,7 @@ if (!empty($_GET)){
     		      ksort($airport_names);
     		      foreach($airport_names as $airport_name)
     		      {
-    		        if($_GET['airport'] == $airport_name['airport_icao'])
+    		        if(isset($_GET['airport']) && $_GET['airport'] == $airport_name['airport_icao'])
     		        {
     		          print '<option value="'.$airport_name['airport_icao'].'" selected="selected">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
     		        } else {
@@ -387,7 +387,7 @@ if (!empty($_GET)){
     		      $airport_countries = Spotter::getAllAirportCountries();
     		      foreach($airport_countries as $airport_country)
     		      {
-    		        if($_GET['airport_country'] == $airport_country['airport_country'])
+    		        if(isset($_GET['airport_country']) && $_GET['airport_country'] == $airport_country['airport_country'])
     		        {
     		          print '<option value="'.$airport_country['airport_country'].'" selected="selected">'.$airport_country['airport_country'].'</option>';
     		        } else {
@@ -408,7 +408,7 @@ if (!empty($_GET)){
     		      <?php
     		      foreach($airport_names as $airport_name)
     		      {
-    		        if($_GET['departure_airport_route'] == $airport_name['airport_icao'])
+    		        if(isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] == $airport_name['airport_icao'])
     		        {
     		          print '<option value="'.$airport_name['airport_icao'].'" selected="selected">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
     		        } else {
@@ -424,7 +424,7 @@ if (!empty($_GET)){
     		      <?php
     		      foreach($airport_names as $airport_name)
     		      {
-    		        if($_GET['arrival_airport_route'] == $airport_name['airport_icao'])
+    		        if(isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] == $airport_name['airport_icao'])
     		        {
     		          print '<option value="'.$airport_name['airport_icao'].'" selected="selected">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
     		        } else {
@@ -458,7 +458,7 @@ if (!empty($_GET)){
 	    		      $altitude_array = Array(1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000);
 	    		      foreach($altitude_array as $altitude)
 	    		      {
-	    		        if($_GET['lowest_altitude'] == $altitude)
+	    		        if(isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] == $altitude)
 	    		        {
 	    		          print '<option value="'.$altitude.'" selected="selected">'.number_format($altitude).' feet</option>';
 	    		        } else {
@@ -475,7 +475,7 @@ if (!empty($_GET)){
 	    		      $altitude_array = Array(1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000);
 	    		      foreach($altitude_array as $altitude)
 	    		      {
-	    		        if($_GET['highest_altitude'] == $altitude)
+	    		        if(isset($_GET['highest_altitude']) && $_GET['highest_altitude'] == $altitude)
 	    		        {
 	    		          print '<option value="'.$altitude.'" selected="selected">'.number_format($altitude).' feet</option>';
 	    		        } else {
@@ -495,7 +495,7 @@ if (!empty($_GET)){
     		      $number_results_array = Array(25, 50, 100, 150, 200, 250, 300, 400, 500,  600, 700, 800, 900, 1000);
     		      foreach($number_results_array as $number)
     		      {
-    		        if($_GET['number_results'] == $number)
+    		        if(isset($_GET['number_results']) && $_GET['number_results'] == $number)
     		        {
     		          print '<option value="'.$number.'" selected="selected">'.$number.'</option>';
     		        } else {
