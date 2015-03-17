@@ -55,8 +55,6 @@ class Image {
 	$registration = trim($registration);
 	//getting the aircraft image
 	$image_url = Image::findAircraftImage($registration);
-	//echo "Image :\n";
-	//print_r($image_url);
 	if ($image_url['original'] != '') {
 	    $query  = "INSERT INTO spotter_image (registration, image, image_thumbnail, image_copyright, image_source,image_source_website) VALUES (:registration,:image,:image_thumbnail,:copyright,:source,:source_website)";
 	    try {
@@ -81,8 +79,11 @@ class Image {
     */
     public static function findAircraftImage($aircraft_registration)
     {
+	global $globalAircraftImageSources;
 	$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
-	$aircraft_registration = trim($aircraft_registration);
+	if (strpos($aircraft_registration,'/') !== false) return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
+
+	$aircraft_registration = urlencode(trim($aircraft_registration));
 	$aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
         if (isset($aircraft_info[0]['aircraft_name'])) $aircraft_name = $aircraft_info[0]['aircraft_name'];
         else $aircraft_name = '';
@@ -106,6 +107,7 @@ class Image {
     * Gets the aircraft image from Planespotters
     *
     * @param String $aircraft_registration the registration of the aircraft
+    * @param String $aircraft_name type of the aircraft
     * @return Array the aircraft thumbnail, orignal url and copyright
     *
     */
@@ -145,6 +147,7 @@ class Image {
     * Gets the aircraft image from Deviantart
     *
     * @param String $aircraft_registration the registration of the aircraft
+    * @param String $aircraft_name type of the aircraft
     * @return Array the aircraft thumbnail, orignal url and copyright
     *
     */
@@ -153,7 +156,6 @@ class Image {
 	if (preg_match('/^[[:digit]]+$/',$aircraft_registration) && $aircraft_name != '') {
 	    $url= 'http://backend.deviantart.com/rss.xml?type=deviation&q='.$aircraft_registration.'%20'.urlencode($aircraft_name);
 	} else {
-	    //$url= 'http://www.planespotters.net/Aviation_Photos/search.php?tag='.$airline_aircraft_type.'&output=rss';
 	    $url= 'http://backend.deviantart.com/rss.xml?type=deviation&q=aircraft%20'.$aircraft_registration;
 	}
 	
@@ -166,10 +168,8 @@ class Image {
 	curl_setopt($ch, CURLOPT_URL, $url);
 	$data = curl_exec($ch);
 	curl_close($ch);
-	//echo $data;
 	if ($xml = simplexml_load_string($data)) {
 	    if (isset($xml->channel->item->link)) {
-		//print_r($xml->channel->item);
 		$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
 		$image_url['thumbnail'] = $thumbnail_url;
 		$original_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->content->attributes()->url);
@@ -187,20 +187,15 @@ class Image {
     * Gets the aircraft image from Flickr
     *
     * @param String $aircraft_registration the registration of the aircraft
+    * @param String $aircraft_name type of the aircraft
     * @return Array the aircraft thumbnail, orignal url and copyright
     *
     */
     public static function fromFlickr($aircraft_registration,$aircraft_name='') {
 
-//	if (preg_match('/^[[:digit]]+$/',$aircraft_registration)) {
-//	    $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration.','.$aircraft_info['name'].',aircraft';
 	    if ($aircraft_name != '') $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$aircraft_registration.','.urlencode($aircraft_name);
 	    else $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$aircraft_registration.',aircraft';
 	    
-//	} else {
-//	    $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration.',aircraft';
-//	}
-//	echo $url;
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
 	curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -213,11 +208,7 @@ class Image {
 	
 	if ($xml = simplexml_load_string($data)) {
 	    if (isset($xml->channel->item)) {
-//		print_r($xml->channel->item);
-//		$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
-//		$image_url['thumbnail'] = $thumbnail_url;
 		$original_url = trim((string)$xml->channel->item->enclosure->attributes()->url);
-		//$image_url['original'] = str_replace('_s','_b',$thumbnail_url);
 		$image_url['thumbnail'] = $original_url;
 		$image_url['original'] = $original_url;
 		$image_url['copyright'] = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->credit);
@@ -234,6 +225,7 @@ class Image {
     * Gets the aircraft image from Bing
     *
     * @param String $aircraft_registration the registration of the aircraft
+    * @param String $aircraft_name type of the aircraft
     * @return Array the aircraft thumbnail, orignal url and copyright
     *
     */
@@ -241,7 +233,7 @@ class Image {
 	global $globalImageBingKey;
 	if (!isset($globalImageBingKey) || $globalImageBingKey == '') return false;
 	if ($aircraft_name != '') $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27'.$aircraft_registration.'%20'.urlencode($aircraft_name).'%20-site:planespotters.com%20-site:flickr%27';
-	else $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27'.$aircraft_registration.'%20aircraft%20-site:planespotters.com%20-site:flickr%27';
+	else $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27%2B'.$aircraft_registration.'%20%2Baircraft%20-site:planespotters.com%20-site:flickr%27';
 
 	$headers = array("Authorization: Basic " . base64_encode("ignored:".$globalImageBingKey));
 
@@ -274,12 +266,13 @@ class Image {
     * Gets the aircraft image from WikiMedia
     *
     * @param String $aircraft_registration the registration of the aircraft
+    * @param String $aircraft_name type of the aircraft
     * @return Array the aircraft thumbnail, orignal url and copyright
     *
     */
     public static function fromWikimedia($aircraft_registration,$aircraft_name='') {
-	if ($aircraft_name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch='.$aircraft_registration.'%20'.urlencode($aircraft_name);
-	else $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch='.$aircraft_registration.'%20aircraft';
+	if ($aircraft_name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$aircraft_registration.'"%20'.urlencode($aircraft_name);
+	else $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$aircraft_registration.'"%20aircraft';
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
@@ -294,6 +287,7 @@ class Image {
 	$result = json_decode($data);
 	if (isset($result->query->search[0]->title)) {
 	    $fileo = $result->query->search[0]->title;
+	    if (substr($fileo,-3) == 'pdf') return false;
 	    $file = urlencode($fileo);
 	    $url2 = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&continue&iilimit=500&prop=imageinfo&iiprop=user|url|size|mime|sha1|timestamp&iiurlwidth=200%27&titles='.$file;
 
@@ -337,11 +331,10 @@ class Image {
 		curl_close($ch);
 
 		$result2 = json_decode($data2);
-		//print_r($result2);
 		if (isset($result2->query->pages)) {
 		    foreach ($result2->query->pages as $page) {
 			if (isset($page->imageinfo[0]->extmetadata->Artist)) {
-			    $image_url['copyright'] = strip_tags($page->imageinfo[0]->extmetadata->Artist->value);
+			    $image_url['copyright'] = preg_replace('/ from(.*)/','',strip_tags($page->imageinfo[0]->extmetadata->Artist->value));
 			    if (isset($page->imageinfo[0]->extmetadata->License->value)) {
 			        $image_url['copyright'] = $image_url['copyright'].' (under '.$page->imageinfo[0]->extmetadata->License->value.')';
 			    }
@@ -359,6 +352,9 @@ class Image {
 
 }
 
-//print_r(Image::findAircraftImage('G-EZTL'));
+//print_r(Image::findAircraftImage('472/CC'));
+//print_r(Image::findAircraftImage('F-GRHG'));
+//print_r(Image::fromBing('CN-RGF'));
+//print_r(Image::fromBing('472/CC'));
 
 ?>
