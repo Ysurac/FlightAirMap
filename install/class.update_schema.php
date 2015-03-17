@@ -103,6 +103,16 @@ class update_schema {
     		$error = '';
 		$error .= create_db::import_file('../db/acars_live.sql');
 		$error .= create_db::import_file('../db/config.sql');
+		// Update schema_version to 2
+		$query = "UPDATE `config` SET `value` = '2' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+
 		return $error;
         }
 
@@ -120,7 +130,7 @@ class update_schema {
     		// Create table acars_archive
 		$error .= create_db::import_file('../db/acars_archive.sql');
 		// Update schema_version to 3
-		$query = "UPDATE `config` SET `schema_version` = '3'";
+		$query = "UPDATE `config` SET `value` = '3' WHERE `name` = 'schema_version'";
         	try {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();
@@ -149,8 +159,8 @@ class update_schema {
 		    return "error (add new columns to spotter_image) : ".$e->getMessage()."\n";
     		}
     		$error = '';
-		// Update schema_version to 3
-		$query = "UPDATE `config` SET `schema_version` = '4'";
+		// Update schema_version to 4
+		$query = "UPDATE `config` SET `value` = '4' WHERE `name` = 'schema_version'";
         	try {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();
