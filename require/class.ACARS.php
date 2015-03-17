@@ -327,9 +327,9 @@ RMK/FUEL   2.6 M0.79)
 	}
 	    echo ACARS::addModeSData($ident,$registration,$icao,$airicao);
 
-    	    $image_array = Spotter::getSpotterImage($registration);
+    	    $image_array = Image::getSpotterImage($registration);
     	    if (!isset($image_array[0]['registration'])) {
-    		Spotter::addSpotterImage($registration);
+    		Image::addSpotterImage($registration);
     	    }
         }
         if ($decode != '') $decode_json = json_encode($decode);
