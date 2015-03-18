@@ -42,7 +42,9 @@ if (!isset($_GET['ident'])){
 	      print '<div class="info column">';
 	      	print '<h1>'.$spotter_array[0]['ident'].'</h1>';
 	      	print '<div><span class="label">Ident</span>'.$spotter_array[0]['ident'].'</div>';
-	      	print '<div><span class="label">Airline</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
+	      	if (isset($spotter_array[0]['airline_icao')) {
+	      		print '<div><span class="label">Airline</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
+	      	}
 	      	print '<div><span class="label">Flight History</span><a href="http://flightaware.com/live/flight/'.$spotter_array[0]['ident'].'" target="_blank">View the Flight History of this callsign</a></div>';       
 				print '</div>';
 	
