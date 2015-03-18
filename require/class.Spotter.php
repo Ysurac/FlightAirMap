@@ -7127,8 +7127,9 @@ public static function addSpotterImage($registration)
 	// Update flights data when new data in DB
 	public static function updateFieldsFromOtherTables()
 	{
+		global $globalDebug;
 		// routes
-		print "Routes...\n";
+		if ($globalDebug) print "Routes...\n";
 		$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != ''";
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
@@ -7144,7 +7145,7 @@ public static function addSpotterImage($registration)
 			}
 		}
 		
-		print "Airlines...\n";
+		if ($globalDebug) print "Airlines...\n";
 		//airlines
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE spotter_output.airline_name = ''";
 		$sth = Connection::$db->prepare($query);
@@ -7160,7 +7161,7 @@ public static function addSpotterImage($registration)
 			}
 		}
 
-		print "Aircraft...\n";
+		if ($globalDebug) print "Aircraft...\n";
 		//aircraft
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE spotter_output.aircraft_name = ''";
 		$sth = Connection::$db->prepare($query);

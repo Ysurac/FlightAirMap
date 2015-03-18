@@ -11,6 +11,9 @@ $globalURL = '';
 // Logo URL
 $logoURL = '/images/logo2.png';
 
+// Activate debug
+$globalDebug = TRUE;
+
 // LANGUAGE
 $globalLanguage = 'EN'; // Used only for wikipedia links for now
 
@@ -33,6 +36,8 @@ $globalDBhost = 'localhost'; //database connection url
 $globalDBuser = ''; //database username
 $globalDBpass = ''; //database password
 $globalDBname = ''; //database name
+$globalTransaction = FALSE; //Activate database transaction support
+
 
 //FLIGHTAWARE API INFO
 $globalFlightAware = FALSE; //set to TRUE to use FlightAware as data import

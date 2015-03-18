@@ -4,6 +4,8 @@ require('../require/settings.php');
 require_once('../require/class.Connection.php');
 
 $tmp_dir = 'tmp/';
+//$globalDebug = true;
+//$globalTransaction = true;
 class update_db {
 	public static $db_sqlite;
 
@@ -51,7 +53,9 @@ class update_db {
 	}
 	
 	public static function retrieve_route_sqlite_to_dest($database_file) {
+		global $globalDebug, $globalTransaction;
 		//$query = 'TRUNCATE TABLE routes';
+		if ($globalDebug) echo " - Delete previous routes from DB -";
 		$query = "DELETE FROM routes WHERE `Source` = '' OR `Source` = :source";
 		try {
 			$Connection = new Connection();
@@ -61,6 +65,7 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 
+    		if ($globalDebug) echo " - Add routes to DB -";
     		update_db::connect_sqlite($database_file);
 		//$query = 'select Route.RouteID, Route.callsign, operator.Icao AS operator_icao, FromAir.Icao AS FromAirportIcao, ToAir.Icao AS ToAirportIcao from Route inner join operator ON Route.operatorId = operator.operatorId LEFT JOIN Airport AS FromAir ON route.FromAirportId = FromAir.AirportId LEFT JOIN Airport AS ToAir ON ToAir.AirportID = route.ToAirportID';
 		$query = "select Route.RouteID, Route.callsign, operator.Icao AS operator_icao, FromAir.Icao AS FromAirportIcao, ToAir.Icao AS ToAirportIcao, rstp.allstop AS AllStop from Route inner join operator ON Route.operatorId = operator.operatorId LEFT JOIN Airport AS FromAir ON route.FromAirportId = FromAir.AirportId LEFT JOIN Airport AS ToAir ON ToAir.AirportID = route.ToAirportID LEFT JOIN (select RouteId,GROUP_CONCAT(icao,' ') as allstop from routestop left join Airport as air ON routestop.AirportId = air.AirportID group by RouteID) AS rstp ON Route.RouteID = rstp.RouteID";
@@ -70,24 +75,27 @@ class update_db {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
-		$query_dest = 'INSERT INTO routes (`RouteID`,`CallSign`,`Operator_ICAO`,`FromAirport_ICAO`,`ToAirport_ICAO`,`RouteStop`,`Source`) VALUES (:RouteID, :CallSign, :Operator_ICAO, :FromAirport_ICAO, :ToAirport_ICAO, :routestop, :source)';
+		//$query_dest = 'INSERT INTO routes (`RouteID`,`CallSign`,`Operator_ICAO`,`FromAirport_ICAO`,`ToAirport_ICAO`,`RouteStop`,`Source`) VALUES (:RouteID, :CallSign, :Operator_ICAO, :FromAirport_ICAO, :ToAirport_ICAO, :routestop, :source)';
+		$query_dest = 'INSERT INTO routes (`CallSign`,`Operator_ICAO`,`FromAirport_ICAO`,`ToAirport_ICAO`,`RouteStop`,`Source`) VALUES (:CallSign, :Operator_ICAO, :FromAirport_ICAO, :ToAirport_ICAO, :routestop, :source)';
 		$Connection = new Connection();
 		$sth_dest = Connection::$db->prepare($query_dest);
-		//Connection::$db->beginTransaction();
-                while ($values = $sth->fetch(PDO::FETCH_ASSOC)) {
-			$query_dest_values = array(':RouteID' => $values['RouteId'],':CallSign' => $values['Callsign'],':Operator_ICAO' => $values['operator_icao'],':FromAirport_ICAO' => $values['FromAirportIcao'],':ToAirport_ICAO' => $values['ToAirportIcao'],':routestop' => $values['AllStop'],':source' => $database_file);
-			try {
+		try {
+			if ($globalTransaction) Connection::$db->beginTransaction();
+            		while ($values = $sth->fetch(PDO::FETCH_ASSOC)) {
+				//$query_dest_values = array(':RouteID' => $values['RouteId'],':CallSign' => $values['Callsign'],':Operator_ICAO' => $values['operator_icao'],':FromAirport_ICAO' => $values['FromAirportIcao'],':ToAirport_ICAO' => $values['ToAirportIcao'],':routestop' => $values['AllStop'],':source' => $database_file);
+				$query_dest_values = array(':CallSign' => $values['Callsign'],':Operator_ICAO' => $values['operator_icao'],':FromAirport_ICAO' => $values['FromAirportIcao'],':ToAirport_ICAO' => $values['ToAirportIcao'],':routestop' => $values['AllStop'],':source' => $database_file);
 				$sth_dest->execute($query_dest_values);
-			} catch(PDOException $e) {
-				return "error : ".$e->getMessage();
-			}
-                }
-		//Connection::$db->commit();
+            		}
+			if ($globalTransaction) Connection::$db->commit();
+		} catch(PDOException $e) {
+			if ($globalTransaction) Connection::$db->rollBack(); 
+			return "error : ".$e->getMessage();
+		}
 		
-		//FIXME: Delete data if already here from other source
-                return "success";
+                return true;
 	}
 	public static function retrieve_modes_sqlite_to_dest($database_file) {
+		global $globalTransaction;
 		//$query = 'TRUNCATE TABLE aircraft_modes';
 		$query = "DELETE FROM aircraft_modes WHERE `Source` = '' OR `Source` = :source";
 		try {
@@ -111,25 +119,25 @@ class update_db {
 		
 		$Connection = new Connection();
 		$sth_dest = Connection::$db->prepare($query_dest);
-//		Connection::$db->beginTransaction();
-                while ($values = $sth->fetch(PDO::FETCH_ASSOC)) {
+		try {
+			if ($globalTransaction) Connection::$db->beginTransaction();
+            		while ($values = $sth->fetch(PDO::FETCH_ASSOC)) {
 			//$query_dest_values = array(':AircraftID' => $values['AircraftID'],':FirstCreated' => $values['FirstCreated'],':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':SerialNo' => $values['SerialNo'], ':OperatorFlagCode' => $values['OperatorFlagCode'], ':Manufacturer' => $values['Manufacturer'], ':Type' => $values['Type'], ':FirstRegDate' => $values['FirstRegDate'], ':CurrentRegDate' => $values['CurrentRegDate'], ':Country' => $values['Country'], ':PreviousID' => $values['PreviousID'], ':DeRegDate' => $values['DeRegDate'], ':Status' => $values['Status'], ':PopularName' => $values['PopularName'],':GenericName' => $values['GenericName'],':AircraftClass' => $values['AircraftClass'], ':Engines' => $values['Engines'], ':OwnershipStatus' => $values['OwnershipStatus'],':RegisteredOwners' => $values['RegisteredOwners'],':MTOW' => $values['MTOW'], ':TotalHours' => $values['TotalHours'],':YearBuilt' => $values['YearBuilt'], ':CofACategory' => $values['CofACategory'], ':CofAExpiry' => $values['CofAExpiry'], ':UserNotes' => $values['UserNotes'], ':Interested' => $values['Interested'], ':UserTag' => $values['UserTag'], ':InfoUrl' => $values['InfoURL'], ':PictureUrl1' => $values['PictureURL1'], ':PictureUrl2' => $values['PictureURL2'], ':PictureUrl3' => $values['PictureURL3'], ':UserBool1' => $values['UserBool1'], ':UserBool2' => $values['UserBool2'], ':UserBool3' => $values['UserBool3'], ':UserBool4' => $values['UserBool4'], ':UserBool5' => $values['UserBool5'], ':UserString1' => $values['UserString1'], ':UserString2' => $values['UserString2'], ':UserString3' => $values['UserString3'], ':UserString4' => $values['UserString4'], ':UserString5' => $values['UserString5'], ':UserInt1' => $values['UserInt1'], ':UserInt2' => $values['UserInt2'], ':UserInt3' => $values['UserInt3'], ':UserInt4' => $values['UserInt4'], ':UserInt5' => $values['UserInt5']);
-			$query_dest_values = array(':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':source' => $database_file);
-			try {
+				$query_dest_values = array(':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':source' => $database_file);
 				$sth_dest->execute($query_dest_values);
-			} catch(PDOException $e) {
-				return "error : ".$e->getMessage();
-			}
-                }
-//		Connection::$db->commit();
-                return "success";
+            		}
+			if ($globalTransaction) Connection::$db->commit();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+                return true;
 	}
 
 	/*
 	* This function is used to create a list of airports. Sources : Wikipedia, ourairports.com ans partow.net
 	*/
 	public static function update_airports() {
-		global $tmp_dir;
+		global $tmp_dir, $globalTransaction;
 
 		require_once('libs/sparqllib.php');
 		$db = sparql_connect('http://dbpedia.org/sparql');
@@ -251,7 +259,7 @@ class update_db {
 		    VALUES (:airport_id, :name, :city, :country, :iata, :icao, :latitude, :longitude, :altitude, :type, :home_link, :wikipedia_link, :image_thumb, :image)";
 		$Connection = new Connection();
 		$sth_dest = Connection::$db->prepare($query_dest);
-		//Connection::$db->beginTransaction();
+		if ($globalTransaction) Connection::$db->beginTransaction();
   
 		$i = 0;
 		while($row = sparql_fetch_array($result))
@@ -294,7 +302,7 @@ class update_db {
 			
 			$row['city'] = urldecode(str_replace('_',' ',str_replace('http://dbpedia.org/resource/','',$row['city'])));
 			$query_dest_values = array(':airport_id' => $i, ':name' => $row['name'],':iata' => $row['iata'],':icao' => $row['icao'],':latitude' => $row['latitude'],':longitude' => $row['longitude'],':altitude' => $row['altitude'],':type' => $row['type'],':city' => $row['city'],':country' => $row['country'],':home_link' => $row['homepage'],':wikipedia_link' => $row['wikipedia_page'],':image' => $row['image'],':image_thumb' => $row['image_thumb']);
-			print_r($query_dest_values);
+			//print_r($query_dest_values);
 			
 			try {
 				$sth_dest->execute($query_dest_values);
@@ -305,7 +313,7 @@ class update_db {
 
 			$i++;
 		}
-		//Connection::$db->commit();
+		if ($globalTransaction) Connection::$db->commit();
 		echo "Delete duplicate rows...\n";
 		$query = 'ALTER IGNORE TABLE airport ADD UNIQUE INDEX icaoidx (icao)';
 		try {
@@ -317,7 +325,7 @@ class update_db {
                 }
 
 
-		echo "Insert Not available Airport...\n";
+		if ($globalDebug) echo "Insert Not available Airport...\n";
 		$query = "INSERT INTO airport (`airport_id`,`name`,`city`,`country`,`iata`,`icao`,`latitude`,`longitude`,`altitude`,`type`,`home_link`,`wikipedia_link`,`image`,`image_thumb`)
 		    VALUES (:airport_id, :name, :city, :country, :iata, :icao, :latitude, :longitude, :altitude, :type, :home_link, :wikipedia_link, :image, :image_thumb)";
 		$query_values = array(':airport_id' => $i, ':name' => 'Not available',':iata' => 'NA',':icao' => 'NA',':latitude' => '0',':longitude' => '0',':altitude' => '0',':type' => 'NA',':city' => 'N/A',':country' => 'N/A',':home_link' => '',':wikipedia_link' => '',':image' => '',':image_thumb' => '');
@@ -446,7 +454,7 @@ class update_db {
 	
 	public static function translation() {
 		require_once('../require/class.Spotter.php');
-		global $tmp_dir;
+		global $tmp_dir, $globalTransaction;
 		//$out_file = $tmp_dir.'translation.zip';
 		//update_db::download('http://www.acarsd.org/download/translation.php',$out_file);
 		//if (!file_exists($out_file) || !is_readable($out_file)) return FALSE;
@@ -504,6 +512,7 @@ class update_db {
 			fclose($handle);
 			//Connection::$db->commit();
 		}
+		return true;
         }
 	
 	/**
@@ -659,20 +668,42 @@ class update_db {
 	}
 
 	public static function update_all() {
-		global $tmp_dir;
-
+		global $tmp_dir, $globalDebug;
+		
+		if ($globalDebug) echo "Routes : Download...";
 		update_db::download('http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz',$tmp_dir.'StandingData.sqb.gz');
+		if ($globalDebug) echo "Gunzip...";
 		update_db::gunzip($tmp_dir.'StandingData.sqb.gz');
-		update_db::retrieve_route_sqlite_to_dest($tmp_dir.'StandingData.sqb');
-
+		if ($globalDebug) echo "Add to DB...";
+		$error = update_db::retrieve_route_sqlite_to_dest($tmp_dir.'StandingData.sqb');
+		if ($error != true) {
+			echo $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		
+		
+		if ($globalDebug) echo "Modes : Download...";
 		update_db::download('http://pp-sqb.mantma.co.uk/basestation_latest.zip',$tmp_dir.'basestation_latest.zip');
+		if ($globalDebug) echo "Unzip...";
 		update_db::unzip($tmp_dir.'basestation_latest.zip');
-		update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'/basestation_latest/basestation.sqb');
+		if ($globalDebug) echo "Add to DB...";
+		$error = update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'/basestation_latest/basestation.sqb');
+		if ($error != true) {
+			echo $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
 
+		if ($globalDebug) echo "Translation : Download...";
 		update_db::download('http://www.acarsd.org/download/translation.php',$tmp_dir.'translation.zip');
+		if ($globalDebug) echo "Unzip...";
 		update_db::unzip($tmp_dir.'translation.zip');
-		update_db::translation();
-    
+		if ($globalDebug) echo "Add to DB...";
+		$error = update_db::translation();
+		if ($error != true) {
+			echo $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+
 	}
 }
 //echo update_db::update_airports();
