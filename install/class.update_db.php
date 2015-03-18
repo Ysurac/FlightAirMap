@@ -130,6 +130,16 @@ class update_db {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+
+		$query = "DELETE FROM aircraft_modes WHERE `Source` = :source AND `ModeS` IN (SELECT `ModeS` FROM aircraft_modes WHERE `Source` = 'ACARS')";
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute(array(':source' => $database_file));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
                 return true;
 	}
 
