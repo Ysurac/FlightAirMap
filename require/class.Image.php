@@ -338,7 +338,7 @@ class Image {
 			    if (isset($page->imageinfo[0]->extmetadata->License->value)) {
 			        $image_url['copyright'] = $image_url['copyright'].' (under '.$page->imageinfo[0]->extmetadata->License->value.')';
 			    }
-			    $image_url['copyright'] = str_replace('\n','',$image_url['copyright']);
+			    $image_url['copyright'] = trim(str_replace('\n','',$image_url['copyright']));
 			    return $image_url;
 			}
 		    }
