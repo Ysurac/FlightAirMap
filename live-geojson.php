@@ -130,6 +130,9 @@ $output = '{';
 						if (isset($spotter_item['image_copyright'])) {
 							$output .= '"image_copyright": "'.$spotter_item['image_copyright'].'",';
 						}
+						if (isset($spotter_item['image_source_website'])) {
+							$output .= '"image_source_website": "'.$spotter_item['image_source_website'].'",';
+						}
 						if (isset($spotter_item['squawk'])) {
 							$output .= '"squawk": "'.$spotter_item['squawk'].'",';
 						}
@@ -137,7 +140,7 @@ $output = '{';
 							$output .= '"squawk_usage": "'.$spotter_item['squawk_usage'].'",';
 						}
 						if (isset($spotter_item['acars'])) {
-							$output .= '"acars": "'.$spotter_item['acars']['label'].' - '.$spotter_item['acars']['message'].'",';
+							$output .= '"acars": "'.$spotter_item['acars']['label'].' - '.str_replace( "\n", '<br />',$spotter_item['acars']['message']).'",';
 						}
 							// FIXME : type when not aircraft ?
 							$output .= '"type": "aircraft"';
