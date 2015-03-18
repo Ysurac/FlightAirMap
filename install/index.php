@@ -324,7 +324,13 @@ if (isset($_POST['dbtype'])) {
 	$britishairways = filter_input(INPUT_POST,'britishairways',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalBritishAirwaysKey' => $britishairways));
 
+	// Create in settings.php keys not yet configurable if not already here
+	if (!isset($globalImageBingKey)) $settings = array_merge($settings,array('globalImageBingKey' => ''));
+	if (!isset($globalDebug)) $settings = array_merge($settings,array('globalDebug' => 'TRUE'));
+	if (!isset($globalTransaction)) $settings = array_merge($settings,array('globalTransaction' => 'FALSE'));
+
 	$settings = array_merge($settings,array('globalInstalled' => 'TRUE'));
+
 	if ($error == '') settings::modify_settings($settings);
 	if ($error != '') {
 		print '<div class="info column">'.$error.'</div>';
