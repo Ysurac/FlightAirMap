@@ -5,8 +5,6 @@ require_once('class.Image.php');
 require_once('class.Scheduler.php');
 
 class ACARS {
-    static $debug = true;
-
     /**
     * Change IATA to ICAO value for ident
     * 
@@ -53,6 +51,7 @@ class ACARS {
     *
     */
     static function add($data) {
+	global $globalDebug;
 //  (null) 4 09/03/2015 08:11:14 0 -41 2         ! SQ   02XA LYSLFL L104544N00505BV136975/ARINC
   //(null) 1 09/03/2015 08:10:08 0 -36 R .F-GPMD T _d 8 S65A AF6202
 //    $line = sscapreg_split('/\(null\) \d 
@@ -72,7 +71,7 @@ class ACARS {
 	$airicao = '';
 	$decode = '';
 	$found = false;
-	if (self::$debug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
+	if ($globalDebug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
 	
 	if ($registration != '' && $ident != '') {
 	/*
@@ -133,7 +132,7 @@ ONS PAS LE MESSAGE ...
         	$latitude = $la / 1000.0;
         	$longitude = $ln / 10000.0;
         	// Temp not always available
-        	if (self::$debug) echo 'latitude : '.$latitude.' - longitude : '.$longitude.' - airport depart : '.$dair.' - airport arrival : '.$darr.' - température : '.$temp."°C\n";
+        	if ($globalDebug) echo 'latitude : '.$latitude.' - longitude : '.$longitude.' - airport depart : '.$dair.' - airport arrival : '.$darr.' - température : '.$temp."°C\n";
         	$decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr, 'Temperature' => $temp);
         	$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
@@ -149,7 +148,7 @@ ONS PAS LE MESSAGE ...
 
 	    $n = sscanf($message, "%4c,%4c,%*7s,%*d", $dair, $darr);
     	    if ($n == 4) {
-        	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
@@ -172,7 +171,7 @@ ONS PAS LE MESSAGE ...
 
 	    $n = sscanf($message, "%*[0-9A-Z]/%*3d/%4s/%*c\nSCH/%6[0-9A-Z ]/%4c/%4c/%5s/%4d\n%*3c/%4d/%4c/%[0-9A-Z ]/", $airicao,$aident,$dair, $darr, $ddate, $dhour,$ahour, $aair, $apiste);
     	    if ($n > 8) {
-    		if (self::$debug) echo 'airicao : '. $airicao.' - ident : '.$aident.' - departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour.' - arrival airport : '.$aair.' - arrival piste : '.$apiste."\n";
+    		if ($globalDebug) echo 'airicao : '. $airicao.' - ident : '.$aident.' - departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour.' - arrival airport : '.$aair.' - arrival piste : '.$apiste."\n";
         	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
         	if ($ahour != '') $ahour = substr(sprintf('%04d',$ahour),0,2).':'.substr(sprintf('%04d',$ahour),2);
         	$icao = trim($aident);
@@ -195,7 +194,7 @@ ONS PAS LE MESSAGE ...
         	$lns = $lns.'.'.$lns;
     	        $latitude = $las / 1000.0;
         	$longitude = $lns / 1000.0;
-    	        if (self::$debug) echo 'latitude : '.$latitude.' - longitude : '.$longitude."\n";
+    	        if ($globalDebug) echo 'latitude : '.$latitude.' - longitude : '.$longitude."\n";
         	$decode = array('Latitude' => $latitude, 'Longitude' => $longitude);
         	$found = true;
     	    }
@@ -211,7 +210,7 @@ ONS PAS LE MESSAGE ...
 	    */
     	    $n = sscanf($message, "%*[0-9A-Z ]/%*s %4c/%4c .", $dair, $darr);
     	    if ($n == 4) {
-        	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
@@ -222,7 +221,7 @@ ONS PAS LE MESSAGE ...
 	    // example message : "Reg. : TS-ION - Ident : TU0634 - Label : 1L - Message : 000442152001337,DTTJ,LFPO,1609"
     	    $n = sscanf($message, "%*[0-9],%4c,%4c,", $dair, $darr);
     	    if ($n == 4) {
-        	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
@@ -233,7 +232,7 @@ ONS PAS LE MESSAGE ...
 	    // example message : "Reg. : OO-TAH - Ident : 3V042J - Label : 5U - Message : 002AF   EBLG EBBR                     N4621.5E  524.2195"
     	    $n = sscanf($message, "002AF %4c %4c ", $dair, $darr);
     	    if ($n == 2) {
-        	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
@@ -245,7 +244,7 @@ ONS PAS LE MESSAGE ...
 	    // example message : 'Reg. : F-GHQJ - Ident : AF6241 - Label : H1 - Message : #DFBA01/CCF-GHQJ,FEB27,205556,LFMN,LFPO,0241/C106,17404,5000,42,0010,0,0100,42,X/CEN270,36012,257,778,6106,299,B5B7G8/EC731134,42387,01439,41194,12/EE731212,44932,11870,43555,12/N10875,0875,0910,6330,1205,-----'
     	    $n = sscanf($message, "#DFBA%*02d/%*[A-Z-],%*[0-9A-Z],%*d,%4c,%4c", $dair, $darr);
     	    if ($n == 6) {
-        	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
@@ -256,7 +255,7 @@ ONS PAS LE MESSAGE ...
 	    // example message : 'Reg. : F-GUGP - Ident : AF1842 - Label : H1 - Message : #DFBA01/A31801,1,1/CCF-GUGP,MAR11,093856,LFPG,LSGG,1842/C106,55832,5000,37,0010,0,0100,37,X/CEN282,31018,277,750,5515,255,C11036/EC577870,02282,07070,01987,73,14/EE577871,02282,06947,01987,73/N10790,0790,0903,5'
     	    $n = sscanf($message, "#DFBA%*02d/%*[0-9A-Z,]/%*[A-Z-],%*[0-9A-Z],%*d,%4c,%4c", $dair, $darr);
     	    if ($n == 7) {
-        	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
@@ -287,7 +286,7 @@ RMK/FUEL   2.6 M0.79)
 	    */
     	    $n = sscanf($message, "%*[0-9A-Z] NLINFO %*d/%*d %4c/%4c .", $dair, $darr);
     	    if ($n == 5) {
-        	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
@@ -304,7 +303,7 @@ RMK/FUEL   2.6 M0.79)
 	    */
     	    $n = sscanf($message, "%*[0-9A-Z],,\n%*[0-9A-Z],%*[0-9A-Z],%4s,%4s,.%*6s,\n%*4[A-Z],\n%[0-9A-Z],", $dair, $darr, $aident);
     	    if ($n == 8) {
-        	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
         	$icao = trim($aident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $daar);
@@ -318,7 +317,7 @@ RMK/FUEL   2.6 M0.79)
 	    */
 	    $n = sscanf($message, "%*d/%*d %4s/%4s .%*6s", $dair, $darr);
     	    if ($n == 5) {
-        	if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $daar);
@@ -337,7 +336,7 @@ RMK/FUEL   2.6 M0.79)
 	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	if ($label == '10' || $label == '80' || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	
-	if (self::$debug && $decode != '') echo "Human readable data : ".implode(' - ',$decode)."\n";
+	if ($globalDebug && $decode != '') echo "Human readable data : ".implode(' - ',$decode)."\n";
 //	ACARS::addModeSData($ident,$registration,$icao,$airicao);
 	//TODO: Update registration in live and in output with a script
     }
@@ -353,9 +352,10 @@ RMK/FUEL   2.6 M0.79)
     * @param String $message ACARS message
     */
     public static function addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode = '') {
+	global $globalDebug;
 	date_default_timezone_set('UTC');
 	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
-	    if (self::$debug) echo "Add Live ACARS data...";
+	    if ($globalDebug) echo "Add Live ACARS data...";
     	    $query = "INSERT INTO acars_live (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
     	    $query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
     	    try {
@@ -365,7 +365,7 @@ RMK/FUEL   2.6 M0.79)
     	    } catch(PDOException $e) {
                 return "error : ".$e->getMessage();
     	    }
-	    if (self::$debug) echo "Done\n";
+	    if ($globalDebug) echo "Done\n";
 	}
     }
 
@@ -380,9 +380,10 @@ RMK/FUEL   2.6 M0.79)
     * @param String $message ACARS message
     */
     public static function addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode = '') {
+	global $globalDebug;
 	date_default_timezone_set('UTC');
 	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
-	    if (self::$debug) echo "Add Live ACARS data...";
+	    if ($globalDebug) echo "Add Live ACARS data...";
     	    $query = "INSERT INTO acars_archive (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
     	    $query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
     	    try {
@@ -392,7 +393,7 @@ RMK/FUEL   2.6 M0.79)
     	    } catch(PDOException $e) {
                 return "error : ".$e->getMessage();
     	    }
-	    if (self::$debug) echo "Done\n";
+	    if ($globalDebug) echo "Done\n";
 	}
     }
 
@@ -472,6 +473,19 @@ RMK/FUEL   2.6 M0.79)
         	$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
     	    } else $icao = $row['ident'];
     	    
+    	    $decode = json_decode($row['decode'],true);
+    	    $found = false;
+    	    if ($decode != '' && array_key_exists('Departure airport',$decode)) {
+		$airport_info = Spotter::getAllAirportInfo($decode['Departure airport']);
+		$decode['Departure airport'] = $airport_info[0]['name'].' at '.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')';
+		$found = true;
+    	    }
+    	    if ($decode != '' && array_key_exists('Arrival airport',$decode)) {
+		$airport_info = Spotter::getAllAirportInfo($decode['Arrival airport']);
+		$decode['Arrival airport'] = $airport_info[0]['name'].' at '.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')';
+		$found = true;
+    	    }
+    	    if ($found) $row['decode'] = json_encode($decode);
     	    $data = array_merge($data,array('registration' => $row['registration'],'message' => $row['message'], 'date' => $row['date'], 'ident' => $icao, 'decode' => $row['decode']));
     	    $result[] = $data;
     	    $i++;
@@ -558,11 +572,12 @@ RMK/FUEL   2.6 M0.79)
     * @param String $ICAOTypeCode
     */
     public static function addModeSData($ident,$registration,$icao = '',$ICAOTypeCode = '') {
-	if (self::$debug) echo "Test if we add ModeS data...";
+	global $globalDebug;
+	if ($globalDebug) echo "Test if we add ModeS data...";
 	if ($icao == '') $icao = ACARS::ident2icao($ident);
-	if (self::$debug) echo '- Ident : '.$icao.' - ';
+	if ($globalDebug) echo '- Ident : '.$icao.' - ';
 	if ($ident == '' || $registration == '') {
-	    if (self::$debug) echo "Ident or registration null, exit\n";
+	    if ($globalDebug) echo "Ident or registration null, exit\n";
 	    return '';
 	}
     	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE `ident` =  :ident ORDER BY spotter_id DESC LIMIT 1";
@@ -572,7 +587,7 @@ RMK/FUEL   2.6 M0.79)
     	    $sth = Connection::$db->prepare($query);
             $sth->execute($query_values);
     	} catch(PDOException $e) {
-    	    if (self::$debug) echo $e->getMessage();
+    	    if ($globalDebug) echo $e->getMessage();
             return "error : ".$e->getMessage();
     	}
     	$result = $sth->fetch(PDO::FETCH_ASSOC);
@@ -592,13 +607,13 @@ RMK/FUEL   2.6 M0.79)
     		    $sthc = Connection::$db->prepare($queryc);
         	    $sthc->execute($queryc_values);
     		} catch(PDOException $e) {
-    		    if (self::$debug) echo $e->getMessage();
+    		    if ($globalDebug) echo $e->getMessage();
         	    return "error : ".$e->getMessage();
     		}
     		$row = $sthc->fetch(PDO::FETCH_ASSOC);
     		
     		if (count($row) ==  0) {
-    		    if (self::$debug) echo " Add to ModeS table - ";
+    		    if ($globalDebug) echo " Add to ModeS table - ";
     		    $queryi = "INSERT INTO aircraft_modes (`ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`Source`) VALUES (:ModeS,:ModeSCountry,:Registration, :ICAOTypeCode,'ACARS')";
     		    $queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
     		    try {
@@ -606,11 +621,11 @@ RMK/FUEL   2.6 M0.79)
         		$sthi = Connection::$db->prepare($queryi);
             		$sthi->execute($queryi_values);
     		    } catch(PDOException $e) {
-    			if (self::$debug) echo $e->getMessage();
+    			if ($globalDebug) echo $e->getMessage();
             		return "error : ".$e->getMessage();
     		    }
     		} else {
-    		    if (self::$debug) echo " Update ModeS table - ";
+    		    if ($globalDebug) echo " Update ModeS table - ";
     		    if ($ICAOTypeCode != '') {
     			$queryi = "UPDATE aircraft_modes SET `ModeSCountry` = :ModeSCountry,`Registration` = :Registration,`ICAOTypeCode` = :ICAOTypeCode,`Source` = 'ACARS' WHERE `ModeS` = :ModeS";
     			$queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
@@ -623,7 +638,7 @@ RMK/FUEL   2.6 M0.79)
         		$sthi = Connection::$db->prepare($queryi);
             		$sthi->execute($queryi_values);
     		    } catch(PDOException $e) {
-    			if (self::$debug) echo $e->getMessage();
+    			if ($globalDebug) echo $e->getMessage();
             		return "error : ".$e->getMessage();
     		    }
     		    
@@ -632,9 +647,9 @@ RMK/FUEL   2.6 M0.79)
     		}
     	    }
     	} else {
-    		if (self::$debug) echo " Can't find ModeS in spotter_output - ";
+    		if ($globalDebug) echo " Can't find ModeS in spotter_output - ";
     	}
-    	if (self::$debug) echo "Done\n";
+    	if ($globalDebug) echo "Done\n";
     }
 }
 ?>

@@ -465,9 +465,9 @@ foreach($spotter_array as $spotter_item)
 	}
 	if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive") {
 		if (isset($spotter_item['decode']) && $spotter_item['decode'] != '') {
-			print '<td class="message">'."\n";
+			print '<td class="message"><p>'."\n";
 			print str_replace(array("\r\n", "\n", "\r"),'<br />',$spotter_item['message']);
-			print '<p>';
+			print '</p><p>';
 			$decode_array = json_decode($spotter_item['decode']);
 			foreach ($decode_array as $key => $value) {
 				print '<b>'.$key.'</b> : '.$value.' ';
