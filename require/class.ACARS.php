@@ -521,9 +521,9 @@ RMK/FUEL   2.6 M0.79)
     	    $data = array();
     	    if ($row['registration'] != '') {
     	        $image_array = Image::getSpotterImage($row['registration']);
-    	        if (count($image_array) > 0) $data = array_merge($data,array('image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright']));
-    	        else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => ''));
-    	    } else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => ''));
+    	        if (count($image_array) > 0) $data = array_merge($data,array('image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright'],'image_source' => $image_array[0]['image_source'],'image_source_website' => $image_array[0]['image_source_website']));
+    	        else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
+    	    } else $data = array_merge($data,array('image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
     	    $icao = '';
     	    if ($row['registration'] == '') $row['registration'] = 'NA';
     	    if ($row['ident'] == '') $row['ident'] = 'NA';
