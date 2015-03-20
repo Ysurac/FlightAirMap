@@ -128,7 +128,7 @@ $output = '{';
 							$output .= '"heading": "'.$spotter_item['heading'].'",';
 							$output .= '"image": "'.$image.'",';
 						if (isset($spotter_item['image_copyright']) && $spotter_item['image_copyright'] != '') {
-							$output .= '"image_copyright": "'.str_replace('"',"'",trim(str_replace('\n','',$spotter_item['image_copyright']))).'",';
+							$output .= '"image_copyright": "'.str_replace('"',"'",trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$spotter_item['image_copyright']))).'",';
 						}
 						if (isset($spotter_item['image_source_website'])) {
 							$output .= '"image_source_website": "'.urlencode($spotter_item['image_source_website']).'",';
