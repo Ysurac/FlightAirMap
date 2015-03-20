@@ -10,8 +10,8 @@ date_default_timezone_set($globalTimezone);
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=10" />
 <title><?php print $title; ?> | <?php print $globalName; ?></title>
-<meta name="keywords" content="<?php print $title; ?> barrie ontario canada spotter live flight tracking tracker map aircraft airline airport history database" />
-<meta name="description" content="<?php print $title; ?> | <?php print $globalName; ?> is an open source project documenting most of the aircrafts that have flown near the Barrie area." />
+<meta name="keywords" content="<?php print $title; ?> spotter live flight tracking tracker map aircraft airline airport history database ads-b acars" />
+<meta name="description" content="<?php print $title; ?> | <?php print $globalName; ?> is an open source project documenting most of the aircrafts that have flown." />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 <link rel="apple-touch-icon" href="<?php print $globalURL; ?>/images/touch-icon.png">
@@ -20,16 +20,16 @@ date_default_timezone_set($globalTimezone);
   <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
   <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<link rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.4-dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui.min.css">
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-ui.min.js"></script>
+<script src="<?php print $globalURL; ?>/js/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+<!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
 <script src="<?php print $globalURL; ?>/js/bootstrap-select.min.js?<?php print time(); ?>"></script>
 <script src="<?php print $globalURL; ?>/js/jquery-ui-timepicker-addon.js?<?php print time(); ?>"></script>
 <script src="<?php print $globalURL; ?>/js/script.js?<?php print time(); ?>"></script>
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/font-awesome-4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css?<?php print time(); ?>" />
@@ -37,8 +37,8 @@ date_default_timezone_set($globalTimezone);
 if (strtolower($current_page) == "about")
 {
 ?>
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
+<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <?php
 }
 ?>
@@ -47,8 +47,8 @@ if (strtolower($current_page) == "index")
 {
 ?>
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print time(); ?>" />
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
+<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js?<?php print time(); ?>"></script>
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script>
@@ -72,19 +72,6 @@ if ($facebook_meta_image != "")
 <meta property="og:title" content="<?php print $title; ?> | <?php print $globalName; ?>"/>
 <meta property="og:url" content="<?php print $globalURL.$_SERVER['REQUEST_URI']; ?>"/>
 <meta property="og:site_name" content="<?php print $globalName; ?>"/>
-<?php
-if ($globalURL == "http://www.barriespotter.com"){ ?>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-51151807-1', 'barriespotter.com');
-  ga('send', 'pageview');
-
-</script>
-<?php } ?>
 </head>
 
 <body class="page-<?php print strtolower($current_page); ?>">
@@ -168,23 +155,24 @@ if (isset($top_header) && $top_header != "")
 		print '<img src="'.$globalURL.'/images/'.$top_header.'" alt="'.$title.'" title="'.$title.'" />';
 	print '</div>';
 }
-if ((strpos(strtolower($current_page),'airport-') !== false) || (strpos(strtolower($current_page),'route-') !== false))
+if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower($current_page),'statistics-') === false) || (strpos(strtolower($current_page),'route-') !== false && strpos(strtolower($current_page),'statistics-') === false))
 {
     ?>
     <div class="top-header clear" role="main">
         <div id="map"></div>
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
+	<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
+
         <script>
         var map;
         var zoom = 13;
 //create the map
 <?php
-    if (strpos(strtolower($current_page),'airport-') !== false) {
+    if (strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower($current_page),'statistics-') === false) {
 ?>
   map = L.map('map', { zoomControl:true }).setView([<?php print $airport_array[0]['latitude']; ?>,<?php print $airport_array[0]['longitude']; ?>], zoom);
 <?php
-    } elseif (strpos(strtolower($current_page),'route-') !== false) {
+    } elseif (strpos(strtolower($current_page),'route-') !== false && strpos(strtolower($current_page),'statistics-') === false) {
 ?>
   map = L.map('map', { zoomControl:true }).setView([<?php print $spotter_array[0]['departure_airport_latitude']; ?>,<?php print $spotter_array[0]['arrival_airport_longitude']; ?>]);
     var line = L.polyline([[<?php print $spotter_array[0]['departure_airport_latitude']; ?>, <?php print $spotter_array[0]['departure_airport_longitude']; ?>],[<?php print $spotter_array[0]['arrival_airport_latitude']; ?>, <?php print $spotter_array[0]['arrival_airport_longitude']; ?>]]).addTo(map);

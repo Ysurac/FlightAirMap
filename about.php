@@ -34,11 +34,13 @@ require('header.php');
     <p>None of this project would have been possible without the help and contributions of these organizations and people:</p>
 
     <ul>
+    	<li><a href="https://github.com/barriespotter/Web_App">Barrie Spotter</a> for original code, design, idea,...</li>
     	<li><a href="http://flightaware.com" target="_blank">FlightAware</a> - With their API to access the data which allows me to get additional information. Data sources come from live ADS-B, FAA and other government agencies.</li>
-    	<li><a href="http://sonicgoose.com" target="_blank">Sonic Goose (Rob Jones)</a> - Contributes ADS-B data within the Greater Toronto Area and South-central Ontario to numerous flight tracking sites, including FlightAware. A very big thank you to him! :)</li>
+	<li>Airspaces come from <a href="http://soaringweb.org/TP">Worlwide Soaring Turnpoint Exchange</a></li>
+	<li>Font Awesome by Dave Gandy <a href="http://fontawesome.io/">fontawesome.io</a></li>
+	<li>Leaflet <a href="http://leafletjs.com/">leafletjs.com</a></li>
+	<li>Boostrap <a href="http://getbootstrap.com/">getbootstrap.com</a></li>
     </ul>
-    
-    <p>Airspaces come from <a href="http://soaringweb.org/TP">Worlwide Soaring Turnpoint Exchange</a></p>
 
     <h3>Data License</h3>
 
@@ -47,6 +49,7 @@ require('header.php');
     <h3>Image Credits</h3>
     <p>Airports icons from <a href="http://mapicons.nicolasmollet.com/">http://mapicons.nicolasmollet.com/</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 3.0 BY-SA</a>.</p>
     <p>Waypoints icons from <a href="http://www.fatcow.com/free-icons/">http://www.fatcow.com/free-icons/</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 3.0 BY-SA</a>.</p>
+
 </div>
 
 <?php

@@ -7,7 +7,7 @@ require('header.php');
 ?>
 
 <?php include('statistics-sub-menu.php'); ?>
-
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
  <div class="info">
 	  	<h1>Most common Aircraft</h1>
 	  </div>
@@ -24,6 +24,7 @@ require('header.php');
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
             	["Aircraft", "# of Times"], ';
+            	$aircraft_data = '';
               foreach($aircraft_array as $aircraft_item)
     					{
 	    						$aircraft_data .= '[ "'.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')",'.$aircraft_item['aircraft_icao_count'].'],';

@@ -158,7 +158,17 @@ class SpotterLive {
 		date_default_timezone_set('UTC');
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
 		$query  = $global_query." WHERE spotter_live.flightaware_id = :id";
-		$spotter_array = Spotter::getDataFromDB($query,array(':id' => $id));
+//		$spotter_array = Spotter::getDataFromDB($query,array(':id' => $id));
+
+    		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute(array(':id' => $id));
+		} catch(PDOException $e) {
+			return "error";
+		}
+		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+
 		return $spotter_array;
 	}
 

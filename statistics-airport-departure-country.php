@@ -4,20 +4,20 @@ require('require/class.Spotter.php');
 
 $title = "Statistic - Most common Departure Airport by Country";
 require('header.php');
+include('statistics-sub-menu.php'); 
 ?>
 
-<?php include('statistics-sub-menu.php'); ?>
-
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
 	  	<h1>Most common Departure Airport by Country</h1>
 	  </div>
     
     	<p>Below are the <strong>Top 10</strong> most common countries of all the departure airports.</p>
     
-    	<?php
-    	 $airport_country_array = Spotter::countAllDepartureCountries();
-    	?>
-    
+<?php
+	$airport_country_array = Spotter::countAllDepartureCountries();
+?>
+
     	<script>
     	google.load("visualization", "1", {packages:["geochart"]});
     	google.setOnLoadCallback(drawCharts);
@@ -28,14 +28,17 @@ require('header.php');
         
         var data = google.visualization.arrayToDataTable([ 
         	["Country", "# of Times"],
-          <?php
-          foreach($airport_country_array as $airport_item)
-    			{
-    				$country_data .= '[ "'.$airport_item['airport_departure_country'].'",'.$airport_item['airport_departure_country_count'].'],';
-    			}
-    			$country_data = substr($country_data, 0, -1);
-    			print $country_data;
-    			?>
+<?php
+
+$country_data = '';
+foreach($airport_country_array as $airport_item)
+{
+	$country_data .= '[ "'.$airport_item['airport_departure_country'].'",'.$airport_item['airport_departure_country_count'].'],';
+}
+$country_data = substr($country_data, 0, -1);
+print $country_data;
+
+?>
         ]);
     
         var options = {
@@ -52,35 +55,33 @@ require('header.php');
       
     	<div id="chartCountry" class="chart" width="100%"></div>
     	
-    	<?php
-        print '<div class="table-responsive">';
-            print '<table class="common-country table-striped">';
-              print '<thead>';
-                print '<th></th>';
-                print '<th>Country</th>';
-                print '<th># of times</th>';
-              print '</thead>';
-              print '<tbody>';
-              $i = 1;
-                foreach($airport_country_array as $airport_item)
-                {
-                  print '<tr>';
-                  	print '<td><strong>'.$i.'</strong></td>';
-                    print '<td>';
-                      print '<a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $airport_item['airport_departure_country'])).'">'.$airport_item['airport_departure_country'].'</a>';
-                    print '</td>';
-                    print '<td>';
-                      print $airport_item['airport_departure_country_count'];
-                    print '</td>';
-                  print '</tr>';
-                  $i++;
-                }
-               print '<tbody>';
-            print '</table>';
-        print '</div>';
-    
-      ?>
-
 <?php
+
+print '<div class="table-responsive">';
+print '<table class="common-country table-striped">';
+print '<thead>';
+print '<th></th>';
+print '<th>Country</th>';
+print '<th># of times</th>';
+print '</thead>';
+print '<tbody>';
+$i = 1;
+foreach($airport_country_array as $airport_item)
+{
+	print '<tr>';
+	print '<td><strong>'.$i.'</strong></td>';
+	print '<td>';
+	print '<a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $airport_item['airport_departure_country'])).'">'.$airport_item['airport_departure_country'].'</a>';
+	print '</td>';
+	print '<td>';
+	print $airport_item['airport_departure_country_count'];
+	print '</td>';
+	print '</tr>';
+	$i++;
+}
+print '<tbody>';
+print '</table>';
+print '</div>';
+
 require('footer.php');
 ?>

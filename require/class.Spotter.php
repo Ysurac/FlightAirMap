@@ -144,15 +144,15 @@ class Spotter{
 			
 			$aircraft_array = Spotter::getAllAircraftInfo($row['aircraft_icao']);
 			if (count($aircraft_array) > 0) {
-			$temp_array['aircraft_name'] = $aircraft_array[0]['type'];
-			$temp_array['aircraft_manufacturer'] = $aircraft_array[0]['manufacturer'];
+				$temp_array['aircraft_name'] = $aircraft_array[0]['type'];
+				$temp_array['aircraft_manufacturer'] = $aircraft_array[0]['manufacturer'];
 			}
 			$airline_array = array();
 			if (!is_numeric(substr($row['ident'], 0, 3))) {
 				if (is_numeric(substr(substr($row['ident'], 0, 3), -1, 1))) {
 					$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 2));
 				} elseif (is_numeric(substr(substr($row['ident'], 0, 4), -1, 1))) {
-				$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 3));
+					$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 3));
 				} else {
 					$airline_array = Spotter::getAllAirlineInfo('NA');
 			}
@@ -4098,7 +4098,7 @@ class Spotter{
 			if($row['registration'] != "")
 			{
 				$image_array = Image::getSpotterImage($row['registration']);
-				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+				if (isset($image_array[0]['image_thumbnail'])) $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
 			}
           
 			$aircraft_array[] = $temp_array;

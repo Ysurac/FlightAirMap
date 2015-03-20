@@ -127,11 +127,11 @@ $output = '{';
 							$output .= '"altitude": "'.$spotter_item['altitude'].'",';
 							$output .= '"heading": "'.$spotter_item['heading'].'",';
 							$output .= '"image": "'.$image.'",';
-						if (isset($spotter_item['image_copyright'])) {
-							$output .= '"image_copyright": "'.trim(str_replace('\n','',$spotter_item['image_copyright'])).'",';
+						if (isset($spotter_item['image_copyright']) && $spotter_item['image_copyright'] != '') {
+							$output .= '"image_copyright": "'.urlencode(trim(str_replace('\n','',$spotter_item['image_copyright']))).'",';
 						}
 						if (isset($spotter_item['image_source_website'])) {
-							$output .= '"image_source_website": "'.$spotter_item['image_source_website'].'",';
+							$output .= '"image_source_website": "'.urlencode($spotter_item['image_source_website']).'",';
 						}
 						if (isset($spotter_item['squawk'])) {
 							$output .= '"squawk": "'.$spotter_item['squawk'].'",';

@@ -278,6 +278,19 @@ RMK/FUEL   2.6 M0.79)
         	$found = true;
     	    }
 	}
+	if (!$found) {
+	    /* example message :
+	    Reg. : F-HBSA - Ident : XK505F - Label : 16 - Message : LAT N 46.184/LON E  5.019
+	    */
+	    $n = sscanf($message, "LAT %c %f/LON %c %f", $lac, $las, $lnc, $lns);
+    	    if ($n == 4) {
+        	$latitude = $las;
+        	$longitude = $lns;
+
+		$decode = array('Latitute' => $latitude,'Longitude' => $longitude);
+        	$found = true;
+    	    }
+	}
 
 	if (!$found && $label == '80') {
 	    /* example message : 
@@ -425,6 +438,7 @@ RMK/FUEL   2.6 M0.79)
     * @return Array Return ACARS data in array
     */
     public static function getLatestAcarsData($limit = '') {
+	global $globalURL;
 	date_default_timezone_set('UTC');
 	
 	$limit_query = '';
@@ -477,12 +491,12 @@ RMK/FUEL   2.6 M0.79)
     	    $found = false;
     	    if ($decode != '' && array_key_exists('Departure airport',$decode)) {
 		$airport_info = Spotter::getAllAirportInfo($decode['Departure airport']);
-		$decode['Departure airport'] = $airport_info[0]['name'].' at '.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')';
+		$decode['Departure airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
 		$found = true;
     	    }
     	    if ($decode != '' && array_key_exists('Arrival airport',$decode)) {
 		$airport_info = Spotter::getAllAirportInfo($decode['Arrival airport']);
-		$decode['Arrival airport'] = $airport_info[0]['name'].' at '.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')';
+		$decode['Arrival airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
 		$found = true;
     	    }
     	    if ($found) $row['decode'] = json_encode($decode);
@@ -503,6 +517,7 @@ RMK/FUEL   2.6 M0.79)
     * @return Array Return ACARS data in array
     */
     public static function getArchiveAcarsData($limit = '') {
+	global $globalURL;
 	date_default_timezone_set('UTC');
 
 	$limit_query = '';
@@ -550,7 +565,21 @@ RMK/FUEL   2.6 M0.79)
         	
         	$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
     	    } else $icao = $row['ident'];
-    	    
+
+    	    $decode = json_decode($row['decode'],true);
+    	    $found = false;
+    	    if ($decode != '' && array_key_exists('Departure airport',$decode)) {
+		$airport_info = Spotter::getAllAirportInfo($decode['Departure airport']);
+		$decode['Departure airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
+		$found = true;
+    	    }
+    	    if ($decode != '' && array_key_exists('Arrival airport',$decode)) {
+		$airport_info = Spotter::getAllAirportInfo($decode['Arrival airport']);
+		$decode['Arrival airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
+		$found = true;
+    	    }
+    	    if ($found) $row['decode'] = json_encode($decode);
+
     	    $data = array_merge($data,array('registration' => $row['registration'],'message' => $row['message'], 'date' => $row['date'], 'ident' => $icao, 'decode' => $row['decode']));
     	    $result[] = $data;
     	    $i++;
