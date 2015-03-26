@@ -504,13 +504,17 @@ RMK/FUEL   2.6 M0.79)
     	    $found = false;
     	    if ($decode != '' && array_key_exists('Departure airport',$decode)) {
 		$airport_info = Spotter::getAllAirportInfo($decode['Departure airport']);
-		$decode['Departure airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
-		$found = true;
+		if (isset($airport_info[0]['icao'])) {
+			$decode['Departure airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
+			$found = true;
+		}
     	    }
     	    if ($decode != '' && array_key_exists('Arrival airport',$decode)) {
 		$airport_info = Spotter::getAllAirportInfo($decode['Arrival airport']);
-		$decode['Arrival airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
-		$found = true;
+		if (isset($airport_info[0]['icao'])) {
+			$decode['Arrival airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
+			$found = true;
+		}
     	    }
     	    if ($found) $row['decode'] = json_encode($decode);
     	    $data = array_merge($data,array('registration' => $row['registration'],'message' => $row['message'], 'date' => $row['date'], 'ident' => $icao, 'decode' => $row['decode']));
