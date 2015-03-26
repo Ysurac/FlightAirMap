@@ -142,10 +142,15 @@ class Spotter{
 			$temp_array['date_rfc_2822'] = date("r",strtotime($row['date']." UTC"));
 			$temp_array['date_unix'] = strtotime($row['date']." UTC");
 			
-			$aircraft_array = Spotter::getAllAircraftInfo($row['aircraft_icao']);
-			if (count($aircraft_array) > 0) {
-				$temp_array['aircraft_name'] = $aircraft_array[0]['type'];
-				$temp_array['aircraft_manufacturer'] = $aircraft_array[0]['manufacturer'];
+			if (isset($row['aircraft_name']) && $row['aircraft_name'] != '') {
+				$temp_array['aircraft_name'] = $row['aircraft_name'];
+				$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
+			} else {
+				$aircraft_array = Spotter::getAllAircraftInfo($row['aircraft_icao']);
+				if (count($aircraft_array) > 0) {
+					$temp_array['aircraft_name'] = $aircraft_array[0]['type'];
+					$temp_array['aircraft_manufacturer'] = $aircraft_array[0]['manufacturer'];
+				}
 			}
 			$airline_array = array();
 			if (!is_numeric(substr($row['ident'], 0, 3))) {
@@ -3734,30 +3739,29 @@ class Spotter{
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
       
-        $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
         
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-            $temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
-            if($row['registration'] != "")
-              {
-                  $image_array = Image::getSpotterImage($row['registration']);
-                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
-              }
-            $temp_array['registration_count'] = $row['registration_count'];
-          
-            $aircraft_array[] = $temp_array;
+			if($row['registration'] != "")
+			{
+				$image_array = Image::getSpotterImage($row['registration']);
+				if (isset($image_array[0]['image_thumbnail'])) $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+				else $temp_array['image_thumbnail'] = '';
+			}
+			$temp_array['registration_count'] = $row['registration_count'];
+			$aircraft_array[] = $temp_array;
 		}
-
 		return $aircraft_array;
 	}
-	
-	
+
+
 	/**
 	* Gets all aircraft manufacturer that have flown over by ident/callsign
 	*

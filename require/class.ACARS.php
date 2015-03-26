@@ -337,6 +337,19 @@ RMK/FUEL   2.6 M0.79)
         	$found = true;
     	    }
 	}
+	if (!$found) {
+	    /* example message : 
+		LFLLLFRS1315U2687X
+	    */
+	    $n = sscanf($message,'%4s%4s%*4d',$dair,$darr);
+    	    if ($n == 3) {
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+		$icao = ACARS::ident2icao($ident);
+        	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
+        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $daar);
+        	$found = true;
+    	    }
+	}
 	    echo ACARS::addModeSData($ident,$registration,$icao,$airicao);
 
     	    $image_array = Image::getSpotterImage($registration);
@@ -395,7 +408,7 @@ RMK/FUEL   2.6 M0.79)
     public static function addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode = '') {
 	global $globalDebug;
 	date_default_timezone_set('UTC');
-	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
+	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '' && preg_match('/^MET0/',$message) == FALSE && preg_match('/^ARR0/',$message) == FALSE && preg_match('/^ETA/',$message) == FALSE && preg_match('/^WXR/',$message) == FALSE && preg_match('/^FTX01.FIC/',$message) == FALSE) {
 	    if ($globalDebug) echo "Add Live ACARS data...";
     	    $query = "INSERT INTO acars_archive (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
     	    $query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
@@ -672,8 +685,25 @@ RMK/FUEL   2.6 M0.79)
     		    }
     		    
     		    // FIXME : Update Registration in Live Data & image?
-    		    
     		}
+    		if ($globalDebug) echo " Update Spotter_live table - ";
+    		if ($ICAOTypeCode != '') {
+    		    $queryi = "UPDATE spotter_live SET `registration` = :Registration,`aircraft_icao` = :ICAOTypeCode WHERE `ident` = :ident";
+    		    $queryi_values = array(':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode, ':ident' => $icao);
+    		} else {
+    		    $queryi = "UPDATE spotter_live SET `registration` = :Registration WHERE `ident` = :ident";
+    		    $queryi_values = array(':Registration' => $registration,':ident' => $icao);
+    		}
+    		try {
+        	    $Connection = new Connection();
+        	    $sthi = Connection::$db->prepare($queryi);
+            	    $sthi->execute($queryi_values);
+    		} catch(PDOException $e) {
+    		    if ($globalDebug) echo $e->getMessage();
+            	    return "error : ".$e->getMessage();
+    		}
+    		
+    		
     	    }
     	} else {
     		if ($globalDebug) echo " Can't find ModeS in spotter_output - ";
