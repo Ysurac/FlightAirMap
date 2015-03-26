@@ -341,7 +341,7 @@ RMK/FUEL   2.6 M0.79)
 	    /* example message : 
 		LFLLLFRS1315U2687X
 	    */
-	    $n = sscanf($message,'%4s%4s%*4d',$dair,$darr);
+	    $n = sscanf($message,'%4[A-Z]%4[A-Z]%*4d',$dair,$darr);
     	    if ($n == 3) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
