@@ -2,7 +2,9 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-$spotter_array = Spotter::getSpotterDataByIdent($_GET['ident'],"0,1", $_GET['sort']);
+$sort = '';
+if (isset($_GET['sort'])) $sort = $_GET['sort'];
+$spotter_array = Spotter::getSpotterDataByIdent($_GET['ident'],"0,1", $sort);
 
 if (!empty($spotter_array))
 {
