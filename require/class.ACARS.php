@@ -129,11 +129,12 @@ ONS PAS LE MESSAGE ...
 
 	    $n = sscanf($message, "FST01%4c%4c%c%06d%c%07d%*11[0-9a-zA-Z ]-%02dC", $dair, $darr, $lac, $la, $lnc, $ln, $temp);
     	    if ($n > 5 && ($lac == 'N' || $lac == 'S') && ($lnc == 'E' || $lnc == 'W')) {
-        	$latitude = $la / 1000.0;
+        	$latitude = $la / 10000.0;
         	$longitude = $ln / 10000.0;
         	// Temp not always available
         	if ($globalDebug) echo 'latitude : '.$latitude.' - longitude : '.$longitude.' - airport depart : '.$dair.' - airport arrival : '.$darr.' - température : '.$temp."°C\n";
-        	$decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr, 'Temperature' => $temp);
+        	if ($temp == '') $decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr);
+        	else $decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr, 'Temperature' => $temp);
         	$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$found = true;
