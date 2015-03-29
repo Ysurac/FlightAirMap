@@ -361,11 +361,9 @@ RMK/FUEL   2.6 M0.79)
         if ($decode != '') $decode_json = json_encode($decode);
         else $decode_json = '';
 	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
-	if ($label == '10' || $label == '80' || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	if ($label == '10' || $label == '80' || $label == '81' || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	
 	if ($globalDebug && $decode != '') echo "Human readable data : ".implode(' - ',$decode)."\n";
-//	ACARS::addModeSData($ident,$registration,$icao,$airicao);
-	//TODO: Update registration in live and in output with a script
     }
     
     /**
@@ -605,9 +603,7 @@ RMK/FUEL   2.6 M0.79)
     	if (isset($result)) {
 		$result[0]['query_number_rows'] = $i;
 		return $result;
-    	}
-
-    	else return array();
+    	} else return array();
     }
 
     /**
@@ -688,8 +684,6 @@ RMK/FUEL   2.6 M0.79)
     			if ($globalDebug) echo $e->getMessage();
             		return "error : ".$e->getMessage();
     		    }
-    		    
-    		    // FIXME : Update Registration in Live Data & image?
     		}
     		if ($globalDebug) echo " Update Spotter_live table - ";
     		if ($ICAOTypeCode != '') {
