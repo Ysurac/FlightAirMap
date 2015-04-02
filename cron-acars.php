@@ -3,6 +3,14 @@
 // This is not a cron job... Use it like a daemon
 require_once('require/class.ACARS.php');
 
+// Check if schema is at latest version
+require_once('require/class.Connection.php');
+$schema = new Connection();
+if ($schema::latest() === false) {
+    echo "You MUST update to latest schema. Run install/index.php";
+    exit();
+}
+
 $debug = true;
 
 $ACARS=new ACARS();

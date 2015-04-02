@@ -69,7 +69,7 @@ class ACARS {
 */
 	$icao = '';
 	$airicao = '';
-	$decode = '';
+	$decode = array();
 	$found = false;
 	if ($globalDebug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
 	
@@ -126,19 +126,47 @@ ONS PAS LE MESSAGE ...
 	if (!$found) {
 	    // example message : "FST01EGLLLIRFN047599E0033586390  55  25- 4C 74254      487  2059194"
 	    //FIX : Reg. : G-DOCF - Ident : BA2599 - Label : 15 - Message : FST01LIPXEGKKN478304E006124636000500057M057C060334309304372OA13431246
+	    //								    FST01MMMXEGKKN376904W079449733007380380 019061 XA1237 =>  wind direction and velocity (019/061)
 
-	    $n = sscanf($message, "FST01%4c%4c%c%06d%c%07d%*11[0-9a-zA-Z ]-%02dC", $dair, $darr, $lac, $la, $lnc, $ln, $temp);
+	    //$n = sscanf($message, "FST01%4c%4c%c%06d%c%07d%*11[0-9a-zA-Z ]-%02dC", $dair, $darr, $lac, $la, $lnc, $ln, $temp);
+	    $n = sscanf($message, "FST01%4c%4c%c%06d%c%07d%03d%*8[0-9a-zA-Z ]-%02dC", $dair, $darr, $lac, $la, $lnc, $ln, $alt, $temp);
     	    if ($n > 5 && ($lac == 'N' || $lac == 'S') && ($lnc == 'E' || $lnc == 'W')) {
         	$latitude = $la / 10000.0;
         	$longitude = $ln / 10000.0;
+        	if ($lac == 'S') $latitude = '-'.$latitude;
+        	if ($lnc == 'W') $longitude = '-'.$longitude;
         	// Temp not always available
         	if ($globalDebug) echo 'latitude : '.$latitude.' - longitude : '.$longitude.' - airport depart : '.$dair.' - airport arrival : '.$darr.' - température : '.$temp."°C\n";
-        	if ($temp == '') $decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr);
-        	else $decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr, 'Temperature' => $temp);
+        	if ($temp == '') $decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr,'Altitude' => $alt);
+        	else $decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr, 'Altitude' => 'FL'.$alt,'Temperature' => $temp.'°C');
         	$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$found = true;
     	    }
+	}
+	if (!$found && ($label == '10')) {
+	    $n = sscanf($message, "ARR01 %4[A-Z]%4d %4[A-Z]%4d", $dair, $dhour, $darr,$ahour);
+    	    if ($n == 4) {
+        	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
+        	if ($ahour != '') $ahour = substr(sprintf('%04d',$ahour),0,2).':'.substr(sprintf('%04d',$ahour),2);
+    		if ($globalDebug) echo 'departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour.' - arrival airport : '.$aair.' - arrival piste : '.$apiste."\n";
+		$icao = ACARS::ident2icao($ident);
+        	Schedule::addSchedule($icao,$dair,$dhour,$darr,$ahour,'ACARS');
+        	$decode = array('Departure airport' => $dair, 'Departure date' => $ddate, 'Departure hour' => $dhour, 'Arrival airport' => $darr);
+        	$found = true;
+    	    } elseif ($n == 2) {
+        	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
+        	if ($globalDebug) echo 'airport arrival : '.$dair.' - arrival hour : '.$dhour."\n";
+		$icao = ACARS::ident2icao($ident);
+        	$decode = array('Arrival airport' => $dair, 'Arrival hour' => $dhour);
+        	$found = true;
+    	    } elseif ($n == 1) {
+        	if ($globalDebug) echo 'airport arrival : '.$darr."\n";
+		$icao = ACARS::ident2icao($ident);
+        	$decode = array('Arrival airport' => $darr);
+        	$found = true;
+    	    }
+    	    
 	}
 	if (!$found && ($label == '13' || $label == '12')) {
 	    // example message : "Reg. : OO-DWA - Ident : SN01LY - Label : 13 - Message : EBBR,LFLL,26FEB15,1626,164626"
@@ -195,6 +223,8 @@ ONS PAS LE MESSAGE ...
         	$lns = $lns.'.'.$lns;
     	        $latitude = $las / 1000.0;
         	$longitude = $lns / 1000.0;
+        	if ($lac == 'S') $latitude = '-'.$latitude;
+        	if ($lnc == 'W') $longitude = '-'.$longitude;
     	        if ($globalDebug) echo 'latitude : '.$latitude.' - longitude : '.$longitude."\n";
         	$decode = array('Latitude' => $latitude, 'Longitude' => $longitude);
         	$found = true;
@@ -268,14 +298,16 @@ ONS PAS LE MESSAGE ...
 	     Reg. : PH-BXO - Ident : KL079K - Label : H1 - Message : #DFB(POS-KLM79K  -4319N00252E/143435 F390
 RMK/FUEL   2.6 M0.79)
 	    */
-	    $n = sscanf($message, "#DFB(POS-%s -%4d%c%5d%c/%*d F%d\nRMK/FUEL %f M%f", $aident, $lac, $las, $lnc, $lns, $alt, $fuel, $speed);
+	    $n = sscanf($message, "#DFB(POS-%s -%4d%c%5d%c/%*d F%d\nRMK/FUEL %f M%f", $aident, $las, $lac, $lns, $lnc, $alt, $fuel, $speed);
     	    if ($n == 9) {
         	//if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
         	$icao = trim($aident);
-        	$latitude = $lac / 100.0;
-        	$longitude = $lnc / 100.0;
+        	$latitude = $las / 100.0;
+        	$longitude = $lns / 100.0;
+        	if ($lac == 'S') $latitude = '-'.$latitude;
+        	if ($lnc == 'W') $longitude = '-'.$longitude;
 
-		$decode = array('Latitute' => $latitude,'Longitude' => $longitude,'Altitude' => $alt*100,'Fuel' => $fuel,'speed' => $speed);
+		$decode = array('Latitute' => $latitude,'Longitude' => $longitude,'Altitude' => 'FL'.$alt,'Fuel' => $fuel,'speed' => $speed);
         	$found = true;
     	    }
 	}
@@ -287,6 +319,8 @@ RMK/FUEL   2.6 M0.79)
     	    if ($n == 4) {
         	$latitude = $las;
         	$longitude = $lns;
+        	if ($lac == 'S') $latitude = '-'.$latitude;
+        	if ($lnc == 'W') $longitude = '-'.$longitude;
 
 		$decode = array('Latitute' => $latitude,'Longitude' => $longitude);
         	$found = true;
@@ -351,19 +385,215 @@ RMK/FUEL   2.6 M0.79)
         	$found = true;
     	    }
 	}
-	    echo ACARS::addModeSData($ident,$registration,$icao,$airicao);
-
+	if (!$found) {
+	    /* example message : 
+		3J01 DSPTCH 7503/01 LFTH/LFPO .F-HMLF
+	    */
+	    $n = sscanf($message,'3J01 DSPTCH %*d/%*d %4s/%4s .%*6s',$dair,$darr);
+    	    if ($n == 3) {
+        	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
+		$icao = ACARS::ident2icao($ident);
+        	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
+        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $daar);
+        	$found = true;
+    	    }
+	}
+	if (!$found) {
+	    $n = sscanf($message,'MET01%4c',$airport);
+	    if ($n == 1) {
+	        if ($globalDebug) echo 'airport name : '.$airport;
+        	$decode = array('Airport/Waypoint name' => $airport);
+	        $found = true;
+	    }
+	}
+	
+	if ($label == 'H1') {
+	    if (preg_match('/^#CFBFLR/',$message) || preg_match('/^#CFBWRN/',$message)) {
+		$decode = array_merge(array('Message nature' => 'Equipment failure'),$decode);
+	    } elseif (preg_match('/^#DFB\*TKO/',$message) || preg_match('/^#DFBTKO/',$message)) {
+		$decode = array_merge(array('Message nature' => 'Take off performance data'),$decode);
+	    } elseif (preg_match('/^#DFB\*CRZ/',$message) || preg_match('/^#DFBCRZ/',$message)) {
+		$decode = array_merge(array('Message nature' => 'Cruise performance data'),$decode);
+	    } elseif (preg_match('/^#DFB\*WOB/',$message) || preg_match('/^#DFBWOB/',$message)) {
+		$decode = array_merge(array('Message nature' => 'Weather observation'),$decode);
+	    } elseif (preg_match(':^#DFB/PIREP:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Pilot Report'),$decode);
+	    } elseif (preg_match('/^#DFBEDA/',$message) || preg_match('/^#DFBENG/',$message)) {
+		$decode = array_merge(array('Message nature' => 'Engine Data'),$decode);
+	    } elseif (preg_match(':^#M1AAEP:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Position/Weather Report'),$decode);
+	    } elseif (preg_match(':^#M2APWD:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Flight plan predicted wind data'),$decode);
+	    } elseif (preg_match(':^#M1BREQPWI:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Predicted wind info request'),$decode);
+	    } elseif (preg_match(':^#CF:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Central Fault Display'),$decode);
+	    } elseif (preg_match(':^#DF:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Digital Flight Data Acquisition Unit'),$decode);
+	    } elseif (preg_match(':^#EC:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Engine Display System'),$decode);
+	    } elseif (preg_match(':^#EI:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Engine Report'),$decode);
+	    } elseif (preg_match(':^#H1:',$message)) {
+		$decode = array_merge(array('Message nature' => 'HF Data Radio - Left'),$decode);
+	    } elseif (preg_match(':^#H2:',$message)) {
+		$decode = array_merge(array('Message nature' => 'HF Data Radio - Right'),$decode);
+	    } elseif (preg_match(':^#HD:',$message)) {
+		$decode = array_merge(array('Message nature' => 'HF Data Radio - Selected'),$decode);
+	    } elseif (preg_match(':^#M1:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Flight Management Computer - Left'),$decode);
+	    } elseif (preg_match(':^#M2:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Flight Management Computer - Right'),$decode);
+	    } elseif (preg_match(':^#M3:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Flight Management Computer - Center'),$decode);
+	    } elseif (preg_match(':^#MD:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Flight Management Computer - Selected'),$decode);
+	    } elseif (preg_match(':^#PS:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Keyboard/Display Unit'),$decode);
+	    } elseif (preg_match(':^#S1:',$message)) {
+		$decode = array_merge(array('Message nature' => 'SDU - Left'),$decode);
+	    } elseif (preg_match(':^#S2:',$message)) {
+		$decode = array_merge(array('Message nature' => 'SDU - Right'),$decode);
+	    } elseif (preg_match(':^#SD:',$message)) {
+		$decode = array_merge(array('Message nature' => 'SDU - Selected'),$decode);
+	    } elseif (preg_match(':^#T[0-8]:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Cabin Terminal Messages'),$decode);
+	    } elseif (preg_match(':^#WO:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Weather Observation Report'),$decode);
+	    } elseif (preg_match(':^#A1:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Oceanic Clearance'),$decode);
+	    } elseif (preg_match(':^#A3:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Departure Clearance Response'),$decode);
+	    } elseif (preg_match(':^#A4:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Flight Systems Message'),$decode);
+	    } elseif (preg_match(':^#A6:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Request ADS Reports'),$decode);
+	    } elseif (preg_match(':^#A8:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Deliver Departure Slot'),$decode);
+	    } elseif (preg_match(':^#A9:',$message)) {
+		$decode = array_merge(array('Message nature' => 'ATIS report'),$decode);
+	    } elseif (preg_match(':^#A0:',$message)) {
+		$decode = array_merge(array('Message nature' => 'ATIS Facility Notification (AFN)'),$decode);
+	    } elseif (preg_match(':^#AA:',$message)) {
+		$decode = array_merge(array('Message nature' => 'ATCComm'),$decode);
+	    } elseif (preg_match(':^#AB:',$message)) {
+		$decode = array_merge(array('Message nature' => 'TWIP Report'),$decode);
+	    } elseif (preg_match(':^#AC:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Pushback Clearance'),$decode);
+	    } elseif (preg_match(':^#AD:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Expected Taxi Clearance'),$decode);
+	    } elseif (preg_match(':^#AF:',$message)) {
+		$decode = array_merge(array('Message nature' => 'CPC Command/Response'),$decode);
+	    } elseif (preg_match(':^#B1:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Request Oceanic Clearance'),$decode);
+	    } elseif (preg_match(':^#B2:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Oceanic Clearance Readback'),$decode);
+	    } elseif (preg_match(':^#B3:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Request Departure Clearance'),$decode);
+	    } elseif (preg_match(':^#B4:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Departure Clearance Readback'),$decode);
+	    } elseif (preg_match(':^#B6:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Provide ADS Report'),$decode);
+	    } elseif (preg_match(':^#B8:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Request Departure Slot'),$decode);
+	    } elseif (preg_match(':^#B9:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Request ATIS Report'),$decode);
+	    } elseif (preg_match(':^#B0:',$message)) {
+		$decode = array_merge(array('Message nature' => 'ATS Facility Notification'),$decode);
+	    } elseif (preg_match(':^#BA:',$message)) {
+		$decode = array_merge(array('Message nature' => 'ATCComm'),$decode);
+	    } elseif (preg_match(':^#BB:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Request TWIP Report'),$decode);
+	    } elseif (preg_match(':^#BC:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Pushback Clearance Request'),$decode);
+	    } elseif (preg_match(':^#BD:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Expected Taxi Clearance Request'),$decode);
+	    } elseif (preg_match(':^#BE:',$message)) {
+		$decode = array_merge(array('Message nature' => 'CPC Aircraft Log-On/Off Request'),$decode);
+	    } elseif (preg_match(':^#BF:',$message)) {
+		$decode = array_merge(array('Message nature' => 'CPC WILCO/UNABLE Response'),$decode);
+	    } elseif (preg_match(':^#H3:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Icing Report'),$decode);
+	    }
+	}
+	if ($label == '10') {
+	    if (preg_match(':^DTO01:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Delayed Takeoff Report'),$decode);
+	    } elseif (preg_match(':^AIS01:',$message)) {
+		$decode = array_merge(array('Message nature' => 'AIS Request'),$decode);
+	    } elseif (preg_match(':^FTX01:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Free Text Downlink'),$decode);
+	    } elseif (preg_match(':^FPL01:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Flight Plan Request'),$decode);
+	    } elseif (preg_match(':^WAB01:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Weight & Balance Request'),$decode);
+	    } elseif (preg_match(':^MET01:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Weather Data Request'),$decode);
+	    } elseif (preg_match(':^WAB02:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Weight and Balance Acknowledgement'),$decode);
+	    }
+	}
+	if ($label == '15') {
+	    if (preg_match(':^FST01:',$message)) {
+		$decode = array_merge(array('Message nature' => 'Flight Status Report'),$decode);
+	    }
+	}
+	if (!$found && $label == 'SA') {
+	    $n = sscanf($message, "%d%c%c%6[0-9]", $version,$state,$type,$at);
+	    if ($n == 4) {
+		$vsta = array('Version' => $version);
+		if ($state == 'E') {
+		    $vsta = array_merge($vsta,array('Link state' => 'Established'));
+		} elseif ($state == 'L') {
+		    $vsta = array_merge($vsta,array('Link state' => 'Lost'));
+		} else {
+		    $vsta = array_merge($vsta,array('Link state' => 'Unknown'));
+		}
+		if ($type == 'V') {
+		    $vsta = array_merge($vsta,array('Link type' => 'VHF ACARS'));
+		} elseif ($type == 'S') {
+		    $vsta = array_merge($vsta,array('Link type' => 'Generic SATCOM'));
+		} elseif ($type == 'H') {
+		    $vsta = array_merge($vsta,array('Link type' => 'HF'));
+		} elseif ($type == 'G') {
+		    $vsta = array_merge($vsta,array('Link type' => 'GlobalStar SATCOM'));
+		} elseif ($type == 'C') {
+		    $vsta = array_merge($vsta,array('Link type' => 'ICO SATCOM'));
+		} elseif ($type == '2') {
+		    $vsta = array_merge($vsta,array('Link type' => 'VDL Mode 2'));
+		} elseif ($type == 'X') {
+		    $vsta = array_merge($vsta,array('Link type' => 'Inmarsat Aero'));
+		} elseif ($type == 'I') {
+		    $vsta = array_merge($vsta,array('Link type' => 'Irridium SATCOM'));
+		} else {
+		    $vsta = array_merge($vsta,array('Link type' => 'Unknown'));
+		}
+		$vsta = array_merge($vsta,array('Event occured at' => implode(':',str_split($at,2))));
+		$decode = array_merge($vsta,$decode);
+	    }
+	}
+	
+	$title = ACARS::getTitlefromLabel($label);
+	if ($title != '') $decode = array_merge(array('Message title' => $title),$decode);
+	
+	    // Business jets always use GS0001
+	    if ($ident != 'GS0001') $info = ACARS::addModeSData($ident,$registration,$icao,$airicao);
+	    if ($globalDebug && $info != '') echo $info;
+	    
     	    $image_array = Image::getSpotterImage($registration);
     	    if (!isset($image_array[0]['registration'])) {
     		Image::addSpotterImage($registration);
     	    }
         }
-        if ($decode != '') $decode_json = json_encode($decode);
+        if (count($decode) > 0) $decode_json = json_encode($decode);
         else $decode_json = '';
 	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
-	if ($label == '10' || $label == '80' || $label == '81' || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	if ((is_numeric($label) && (($label > 9 && $label < 50) || ($label > 79 && $label < 90))) || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	//if ($label == '10' || $label == '80' || $label == '81' || $label == '82' || $label == '83' || $label == '84' || $label == '85' || $label == '86' || $label == '87' || $label == '88'|| $label == '89' || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	
-	if ($globalDebug && $decode != '') echo "Human readable data : ".implode(' - ',$decode)."\n";
+	if ($globalDebug && count($decode) > 0) {
+	     echo "Human readable data : ".implode(' - ',$decode)."\n";
+	}
     }
     
     /**
@@ -423,13 +653,33 @@ RMK/FUEL   2.6 M0.79)
     }
 
     /**
+    * Get Message title from label from DB
+    *
+    * @param String $ident
+    * @return Array Return ACARS data in array
+    */
+    public static function getTitlefromLabel($label) {
+    	$query = "SELECT * FROM acars_label WHERE `label` = :label";
+    	$query_values = array(':label' => $label);
+    	try {
+    	    $Connection = new Connection();
+    	    $sth = Connection::$db->prepare($query);
+            $sth->execute($query_values);
+    	} catch(PDOException $e) {
+            return "error : ".$e->getMessage();
+    	}
+    	$row = $sth->fetchAll(PDO::FETCH_ASSOC);
+    	if (count($row) > 0) return $row[0]['title'];
+    	else return '';
+    }
+
+    /**
     * Get Live ACARS data from DB
     *
     * @param String $ident
     * @return Array Return ACARS data in array
     */
     public static function getLiveAcarsData($ident) {
-	date_default_timezone_set('UTC');
     	$query = "SELECT * FROM acars_live WHERE `ident` = :ident ORDER BY acars_live_id DESC";
     	$query_values = array(':ident' => $ident);
     	try {
@@ -515,6 +765,13 @@ RMK/FUEL   2.6 M0.79)
 			$found = true;
 		}
     	    }
+    	    if ($decode != '' && array_key_exists('Airport/Waypoint name',$decode)) {
+		$airport_info = Spotter::getAllAirportInfo($decode['Airport/Waypoint name']);
+		if (isset($airport_info[0]['icao'])) {
+			$decode['Airport/Waypoint name'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
+			$found = true;
+		}
+    	    }
     	    if ($found) $row['decode'] = json_encode($decode);
     	    $data = array_merge($data,array('registration' => $row['registration'],'message' => $row['message'], 'date' => $row['date'], 'ident' => $icao, 'decode' => $row['decode']));
     	    $result[] = $data;
@@ -593,6 +850,13 @@ RMK/FUEL   2.6 M0.79)
 		$airport_info = Spotter::getAllAirportInfo($decode['Arrival airport']);
 		$decode['Arrival airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
 		$found = true;
+    	    }
+    	    if ($decode != '' && array_key_exists('Airport/Waypoint name',$decode)) {
+		$airport_info = Spotter::getAllAirportInfo($decode['Airport/Waypoint name']);
+		if (isset($airport_info[0]['icao'])) {
+			$decode['Airport/Waypoint name'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
+			$found = true;
+		}
     	    }
     	    if ($found) $row['decode'] = json_encode($decode);
 

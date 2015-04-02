@@ -467,7 +467,7 @@ foreach($spotter_array as $spotter_item)
 		if (isset($spotter_item['decode']) && $spotter_item['decode'] != '') {
 			print '<td class="message"><p>'."\n";
 			print str_replace(array("\r\n", "\n", "\r"),'<br />',$spotter_item['message']);
-			print '</p><p>';
+			print '</p><p class="decode">';
 			$decode_array = json_decode($spotter_item['decode']);
 			foreach ($decode_array as $key => $value) {
 				print '<b>'.$key.'</b> : '.$value.' ';

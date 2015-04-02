@@ -3,6 +3,7 @@ require_once("settings.php");
 
 class Connection{
 	public static $db;
+	public static $latest_schema = 5;
 	
 	public function __construct() {
 	    $this->createDBConnection();
@@ -41,6 +42,32 @@ class Connection{
 			return false;
 		}
 		if($results->rowCount()>0) return true; else return false;
+	}
+
+	public static function check_schema_version() {
+		$version = 0;
+		if (self::tableExists('aircraft')) {
+			if (!self::tableExists('config')) {
+	    			$version = '1';
+	    			return $version;
+			} else {
+				$Connection = new Connection();
+				$query = "SELECT value FROM `config` WHERE `name` = 'schema_version' LIMIT 1";
+				try {
+					$sth = Connection::$db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error : ".$e->getMessage()."\n";
+				}
+				$result = $sth->fetch(PDO::FETCH_ASSOC);
+				return $result['value'];
+			}
+		} else return $version;
+	}
+	
+	public static function latest() {
+	    if (self::check_schema_version() == self::$latest_schema) return true;
+	    else return false;
 	}
 
 }

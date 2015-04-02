@@ -112,8 +112,6 @@ class update_schema {
 		    return "error (update schema_version) : ".$e->getMessage()."\n";
     		}
 		return $error;
-
-		return $error;
         }
 
 	private static function update_from_2() {
@@ -169,6 +167,25 @@ class update_schema {
     		}
 		return $error;
 	}
+	
+	private static function update_from_4() {
+    		$Connection = new Connection();
+	
+    		$error = '';
+    		// Create table acars_label
+		$error .= create_db::import_file('../db/acars_label.sql');
+		if ($error == '') {
+		    // Update schema_version to 5
+		    $query = "UPDATE `config` SET `value` = '5' WHERE `name` = 'schema_version'";
+        	    try {
+            		$sth = Connection::$db->prepare($query);
+			$sth->execute();
+    		    } catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+    		    }
+    		}
+		return $error;
+	}
     	
     	public static function check_version($update = false) {
     	    $version = 0;
@@ -192,14 +209,22 @@ class update_schema {
     			    $error = self::update_from_2();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
-    			} elseif ($result['value'] == '3') self::update_from_3();
-    			else return '';
+    			} elseif ($result['value'] == '3') {
+    			    self::update_from_3();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '4') {
+    			    self::update_from_4();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} else return '';
     		    }
     		    else return $result['value'];
 		}
 		
 	    } else return $version;
     	}
+    	
 }
 //echo update_schema::check_version();
 ?>
