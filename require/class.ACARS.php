@@ -588,8 +588,8 @@ RMK/FUEL   2.6 M0.79)
         if (count($decode) > 0) $decode_json = json_encode($decode);
         else $decode_json = '';
 	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
-	if ((is_numeric($label) && (($label > 9 && $label < 50) || ($label > 79 && $label < 90))) || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
-	//if ($label == '10' || $label == '80' || $label == '81' || $label == '82' || $label == '83' || $label == '84' || $label == '85' || $label == '86' || $label == '87' || $label == '88'|| $label == '89' || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	//if ((is_numeric($label) && (($label > 9 && $label < 50) || ($label > 79 && $label < 90))) || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	if ($label == '10' || $label == '80' || $label == '81' || $label == '82' || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	
 	if ($globalDebug && count($decode) > 0) {
 	     echo "Human readable data : ".implode(' - ',$decode)."\n";
