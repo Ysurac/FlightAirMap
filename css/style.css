@@ -102,6 +102,9 @@ table tr td.message{
 	max-width: 50em;
 	font-size: x-small;
 }
+table tr td p.decode{
+	font-size: small;
+}
 table tr td.more{
 	width:1%;
 }
