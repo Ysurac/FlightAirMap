@@ -128,7 +128,7 @@ class SBS {
   		}
 
 		if ($line[13] != '') {
-		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('heading' => $line[13]));
+		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('heading' => round($line[13])));
 		    $dataFound = true;
   		}
 
