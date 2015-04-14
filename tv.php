@@ -38,7 +38,9 @@ print '<div class="table-responsive">';
 
 		  foreach($spotter_array as $spotter_item)
 		  {
-		  	date_default_timezone_set('UTC');
+		  	if (isset($globalTimezone)) {
+		  	    date_default_timezone_set($globalTimezone);
+		  	} else date_default_timezone_set('UTC');
 		  	print '<tr>';
 		    	if (isset($_GET['image']) && $_GET['image'] == "true")
 		    	{
@@ -86,7 +88,7 @@ print '<div class="table-responsive">';
 			    				print '<span><i class="fa fa-plane"></i> '.$spotter_item['aircraft_type'].'</span>';
 			  				}
 			  			}
-			  			print '<span><i class="fa fa-calendar"></i> '.date("M j, Y g:i a", strtotime($spotter_item['date_iso_8601'])).'</span>';
+			  			print '<span><i class="fa fa-calendar"></i> '.date("r", strtotime($spotter_item['date_iso_8601'])).'</span>';
 		  			print '</div>';
 		  			print '<div class="other2">';
 		  				print '<span><i class="fa fa-arrow-up"></i> '.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'];
