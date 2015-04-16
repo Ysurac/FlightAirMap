@@ -219,16 +219,16 @@ class Spotter{
 			*/
 			
 			if ($row['arrival_airport_icao'] != '') {
-			$arrival_airport_array = Spotter::getAllAirportInfo($row['arrival_airport_icao']);
+				$arrival_airport_array = Spotter::getAllAirportInfo($row['arrival_airport_icao']);
 				if (count($arrival_airport_array) > 0) {
-			$temp_array['arrival_airport_name'] = $arrival_airport_array[0]['name'];
-			$temp_array['arrival_airport_city'] = $arrival_airport_array[0]['city'];
-			$temp_array['arrival_airport_country'] = $arrival_airport_array[0]['country'];
-			$temp_array['arrival_airport_iata'] = $arrival_airport_array[0]['iata'];
-			$temp_array['arrival_airport_icao'] = $arrival_airport_array[0]['icao'];
-			$temp_array['arrival_airport_latitude'] = $arrival_airport_array[0]['latitude'];
-			$temp_array['arrival_airport_longitude'] = $arrival_airport_array[0]['longitude'];
-			$temp_array['arrival_airport_altitude'] = $arrival_airport_array[0]['altitude'];
+					$temp_array['arrival_airport_name'] = $arrival_airport_array[0]['name'];
+					$temp_array['arrival_airport_city'] = $arrival_airport_array[0]['city'];
+					$temp_array['arrival_airport_country'] = $arrival_airport_array[0]['country'];
+					$temp_array['arrival_airport_iata'] = $arrival_airport_array[0]['iata'];
+					$temp_array['arrival_airport_icao'] = $arrival_airport_array[0]['icao'];
+					$temp_array['arrival_airport_latitude'] = $arrival_airport_array[0]['latitude'];
+					$temp_array['arrival_airport_longitude'] = $arrival_airport_array[0]['longitude'];
+					$temp_array['arrival_airport_altitude'] = $arrival_airport_array[0]['altitude'];
 				} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
 			} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
 			/*
@@ -1141,16 +1141,19 @@ class Spotter{
 	*/
 	public static function getSpotterDataByDate($date = '', $limit = '', $sort = '')
 	{
-		global $global_query;
-		
-		date_default_timezone_set('UTC');
+		global $global_query, $globalTimezone;
 		
 		$query_values = array();
 		
 		if ($date != "")
 		{
-			$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date ";
-			$query_values = array(':date' => $date);
+			if ($globalTimezone != '') {
+				date_default_timezone_set($globalTimezone);
+				$datetime = new DateTime($date);
+				$offset = $datetime->format('P');
+			} else $offset = '+00:00';
+			$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date ";
+			$query_values = array(':date' => $datetime->format('Y-m-d'), ':offset' => $offset);
 		}
 		
 		if ($limit != "")
@@ -2881,17 +2884,25 @@ class Spotter{
 	*/
 	public static function countAllAirlinesByDate($date)
 	{
+		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
+
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
 
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
-					WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date 
+					WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
            GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
         $airline_array = array();
 		$temp_array = array();
@@ -2918,18 +2929,24 @@ class Spotter{
 	*/
 	public static function countAllAirlineCountriesByDate($date)
 	{
+		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
-      
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
 		 			FROM spotter_output
-					WHERE spotter_output.airline_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date 
+					WHERE spotter_output.airline_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
         $airline_country_array = array();
 		$temp_array = array();
@@ -3574,17 +3591,23 @@ class Spotter{
 	*/
 	public static function countAllAircraftTypesByDate($date)
 	{
+		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
-
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
-                    WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date
+                    WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
         $aircraft_array = array();
 		$temp_array = array();
@@ -3610,18 +3633,25 @@ class Spotter{
 	*/
 	public static function countAllAircraftRegistrationByDate($date)
 	{
+		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name    
                     FROM spotter_output
                     WHERE spotter_output.
-                    registration <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date   
+                    registration <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date   
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
         $aircraft_array = array();
 		$temp_array = array();
@@ -3656,16 +3686,22 @@ class Spotter{
 	public static function countAllAircraftManufacturerByDate($date)
 	{
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output
-                    WHERE spotter_output.aircraft_manufacturer <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date 
+                    WHERE spotter_output.aircraft_manufacturer <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
     $aircraft_array = array();
 		$temp_array = array();
@@ -4528,17 +4564,25 @@ class Spotter{
 	*/
 	public static function countAllDepartureAirportsByDate($date)
 	{
+		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
+
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date
+                    WHERE spotter_output.departure_airport_name <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$airport_array = array();
 		$temp_array = array();
@@ -4567,17 +4611,23 @@ class Spotter{
 	*/
 	public static function countAllDepartureAirportCountriesByDate($date)
 	{
+		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
 					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date 
+                    WHERE spotter_output.departure_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$airport_array = array();
 		$temp_array = array();
@@ -5158,17 +5208,23 @@ class Spotter{
 	*/
 	public static function countAllArrivalAirportsByDate($date)
 	{
+		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date  
+                    WHERE spotter_output.arrival_airport_name <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date  
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$airport_array = array();
 		$temp_array = array();
@@ -5197,17 +5253,23 @@ class Spotter{
 	*/
 	public static function countAllArrivalAirportCountriesByDate($date)
 	{
+		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
-					
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date 
+                    WHERE spotter_output.arrival_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$airport_array = array();
 		$temp_array = array();
@@ -5709,17 +5771,23 @@ class Spotter{
 	*/
 	public static function countAllRoutesByDate($date)
 	{
+		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date  
+                    WHERE spotter_output.ident <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date  
                     GROUP BY route
                     ORDER BY route_count DESC";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$routes_array = array();
 		$temp_array = array();
@@ -6207,17 +6275,23 @@ class Spotter{
 	*/
 	public static function countAllHoursByDate($date)
 	{
+		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime($date);
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) AS hour_name, count(*) as hour_count
+		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', '-04:00')) = :date
+								WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':date' => $date));
+		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$hour_array = array();
 		$temp_array = array();
