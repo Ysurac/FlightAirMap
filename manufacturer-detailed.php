@@ -38,7 +38,7 @@ if (!isset($_GET['aircraft_manufacturer'])){
 	  $title = 'Detailed View for '.$manufacturer;
 		require('header.php');
 	  
-	  date_default_timezone_set('America/Toronto');
+	  
 	  
 	  print '<div class="select-item">';
 		print '<form action="'.$globalURL.'/manufacturer" method="post">';

@@ -73,7 +73,7 @@ $output .= '{';
 	  {	  
 	    foreach($spotter_array as $spotter_item)
 	    {
-				date_default_timezone_set('America/Toronto');
+				
 				
 				//waypoint plotting
 				$output .= '{';  

@@ -184,7 +184,7 @@ if (!empty($spotter_array))
 	  		print '<div class="detail">';
 	  			print '<div class="title">Date</div>';
 	  			print '<div>';
-                    date_default_timezone_set('America/Toronto');
+                    
 	  				print '<a href="'.$globalURL.'/date/'.date("Y-m-d", strtotime($spotter_item['date_iso_8601'])).'">'.date("M j, Y, g:i a", strtotime($spotter_item['date_iso_8601'])).'</a>';
 	  			print '</div>';
 	  		print '</div>';		

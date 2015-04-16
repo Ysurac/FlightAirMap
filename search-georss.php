@@ -61,7 +61,7 @@ if ($_GET['download'] == "true")
 
 header('Content-Type: application/rss+xml; charset=utf-8');
 
-date_default_timezone_set('America/Toronto');
+
 $date = date("c", time());
 
 $spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_GET['aircraft'],strtolower(str_replace("-", " ", $_GET['manufacturer'])),$_GET['highlights'],$_GET['airline'],$_GET['airline_country'],$_GET['airline_type'],$_GET['airport'],$_GET['airport_country'],$_GET['callsign'],$_GET['departure_airport_route'],$_GET['arrival_airport_route'],$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$_GET['sort'],'');
@@ -84,7 +84,7 @@ print '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss
 	foreach($spotter_array as $spotter_item)
 	{
 	
-	  date_default_timezone_set('America/Toronto');    
+	      
 		  print '<entry>';
 		    print '<title>'.$spotter_item['ident'].' '.$spotter_item['airline_name'].' | '.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | '.$spotter_item['departure_airport'].' - '.$spotter_item['arrival_airport'].'</title>';
 		    print '<link href="http://www.barriespotter.com/flightid/'.$spotter_item['spotter_id'].'"/>';

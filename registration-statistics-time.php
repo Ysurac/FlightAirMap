@@ -7,10 +7,8 @@ $aircraft_array = Spotter::getAircraftInfoByRegistration($_GET['registration']);
 
 if (!empty($spotter_array))
 {
-  $title = 'Most Common Time of Day of aircraft with registration '.$_GET['registration'];
+	$title = 'Most Common Time of Day of aircraft with registration '.$_GET['registration'];
 	require('header.php');
-  
-  date_default_timezone_set('America/Toronto');
   
 	print '<div class="info column">';
 		print '<h1>'.$_GET['registration'].' - '.$aircraft_array[0]['aircraft_name'].' ('.$aircraft_array[0]['aircraft_icao'].')</h1>';
@@ -21,13 +19,13 @@ if (!empty($spotter_array))
 	
 	include('registration-sub-menu.php');
   
-  print '<div class="column">';
-  	print '<h2>Most Common Time of Day</h2>';
-  	print '<p>The statistic below shows the most common time of day from aircraft with registration <strong>'.$_GET['registration'].'</strong>.</p>';
-  	
-      $hour_array = Spotter::countAllHoursByRegistration($_GET['registration']);
-      
-      print '<div id="chartHour" class="chart" width="100%"></div>
+	print '<div class="column">';
+	print '<h2>Most Common Time of Day</h2>';
+	print '<p>The statistic below shows the most common time of day from aircraft with registration <strong>'.$_GET['registration'].'</strong>.</p>';
+
+	$hour_array = Spotter::countAllHoursByRegistration($_GET['registration']);
+
+	print '<div id="chartHour" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});
           google.setOnLoadCallback(drawChart);
@@ -72,8 +70,5 @@ if (!empty($spotter_array))
 }
 
 
-?>
-
-<?php
 require('footer.php');
 ?>

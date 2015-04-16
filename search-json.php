@@ -73,7 +73,7 @@ $output .= '{';
 	  {
 	    foreach($spotter_array as $spotter_item)
 	    {
-				date_default_timezone_set('America/Toronto');
+				
 				$output .= '{';    	
 		            $output .= '"id": "'.$spotter_item['spotter_id'].'",';
                     $output .= '"ident": "'.$spotter_item['ident'].'",';

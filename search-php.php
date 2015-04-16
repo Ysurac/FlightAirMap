@@ -69,7 +69,7 @@ if (!empty($spotter_array))
 {
   foreach($spotter_array as $spotter_item)
   {
-	date_default_timezone_set('America/Toronto');  
+	  
 	array_push($flights, array(
                             "id" => $spotter_item['spotter_id'], 
 							"ident" => $spotter_item['ident'], 

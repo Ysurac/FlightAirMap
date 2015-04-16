@@ -33,7 +33,7 @@ if (isset($_POST['airport']))
 	  $title = $airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
 		require('header.php');
 	  
-	  date_default_timezone_set('America/Toronto');
+	  
 	  
 	  print '<div class="select-item">';
   		print '<form action="'.$globalURL.'/airport" method="post">';

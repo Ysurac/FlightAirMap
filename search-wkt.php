@@ -70,7 +70,7 @@ if (!empty($spotter_array))
 {
   foreach($spotter_array as $spotter_item)
   {
-		date_default_timezone_set('America/Toronto');
+		
 		$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
 		$waypoint_pieces = array_chunk($waypoint_pieces, 2);
 		

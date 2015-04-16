@@ -11,7 +11,7 @@ if (!empty($spotter_array))
     $title = 'Most Common Airlines of '.$spotter_array[0]['ident'];
 	require('header.php');
     
-    date_default_timezone_set('America/Toronto');
+    
     
     print '<div class="info column">';
   		print '<h1>'.$spotter_array[0]['ident'].'</h1>';

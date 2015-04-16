@@ -69,7 +69,7 @@ if (!empty($spotter_array))
 {
   foreach($spotter_array as $spotter_item)
   {
-    date_default_timezone_set('America/Toronto');   	
+       	
     $output .= $spotter_item['spotter_id'].',';
     $output .= $spotter_item['ident'].',';
     $output .= $spotter_item['registration'].',';

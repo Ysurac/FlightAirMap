@@ -38,7 +38,7 @@ if (!isset($_GET['country'])){
 	  $title = 'Detailed View for Airports &amp; Airlines from '.$country;
 		require('header.php');
 	  
-	  date_default_timezone_set('America/Toronto');
+	  
 	  
 	  print '<div class="select-item">';
 		print '<form action="'.$globalURL.'/country" method="post">';

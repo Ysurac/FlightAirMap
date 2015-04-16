@@ -6,7 +6,7 @@ $spotter_array = Spotter::getSpotterDataByDate($_GET['date'],"0,1", $_GET['sort'
 
 if (!empty($spotter_array))
 {
-  date_default_timezone_set('America/Toronto');
+  
   
   $title = 'Most Common Departure Airports by Country on '.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']));
 	require('header.php');

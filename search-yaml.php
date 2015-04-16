@@ -69,7 +69,7 @@ if (!empty($spotter_array))
 {
   foreach($spotter_array as $spotter_item)
   {
-	date_default_timezone_set('America/Toronto');   	
+	   	
     $output .= ' - id: '.$spotter_item['spotter_id'];
     $output .= "\n";
     $output .= ' - ident: '.$spotter_item['ident'];

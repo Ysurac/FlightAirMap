@@ -73,7 +73,7 @@ $output .= '<?xml version="1.0" encoding="UTF-8" ?>';
 	  {
 	    foreach($spotter_array as $spotter_item)
 	    {
-	    	date_default_timezone_set('America/Toronto');
+	    	
             $output .= '<aircraft>';
               $output .= '<id>'.$spotter_item['spotter_id'].'</id>';
 		      $output .= '<ident>'.$spotter_item['ident'].'</ident>';

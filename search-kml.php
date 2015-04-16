@@ -93,7 +93,7 @@ $output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	  {	  
 	    foreach($spotter_array as $spotter_item)
 	    {
-				date_default_timezone_set('America/Toronto');
+				
 				
 				$altitude = $spotter_item['altitude'].'00';
 				

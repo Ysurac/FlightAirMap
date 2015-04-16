@@ -256,7 +256,7 @@ if (!empty($_GET)){
 
 
 <div class="column">
-  <form action="<?php print $globalURL; ?>/search" method="get" role="form">
+  <form action="<?php print $globalURL; ?>/search" method="get" role="form" class="form-horizontal">
     <fieldset>
     	<div class="form-group">
 	    	<label>Keyword</label> 
@@ -351,13 +351,13 @@ if (!empty($_GET)){
     		  <div class="form-group">
     		  	<label>Callsign</label> 
     		  	<input type="text" name="callsign" value="<?php if (isset($_GET['callsign'])) print $_GET['callsign']; ?>" size="8" />
-    			</div>
-    			<div class="form-group radio">
-    				<div><input type="radio" name="airline_type" value="all" id="airline_type_all" <?php if (!isset($_GET['airline_type']) || $_GET['airline_type'] == "all"){ print 'checked="checked"'; } ?>> <label for="airline_type_all">All airlines types</label></div>
-    				<div><input type="radio" name="airline_type" value="passenger" id="airline_type_passenger" <?php if (isset($_GET['airline_type'])) if ($_GET['airline_type'] == "passenger"){ print 'checked="checked"'; } ?>> <label for="airline_type_passenger">Only Passenger airlines</label></div>
-    				<div><input type="radio" name="airline_type" value="cargo" id="airline_type_cargo" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "cargo"){ print 'checked="checked"'; } ?>> <label for="airline_type_cargo">Only Cargo airlines</label></div>
-    				<div><input type="radio" name="airline_type" value="military" id="airline_type_military" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "military"){ print 'checked="checked"'; } ?>> <label for="airline_type_military">Only Military airlines</label></div>
-    			</div>
+    		</div>
+    		<div class="form-group radio">
+    			<div><input type="radio" name="airline_type" value="all" id="airline_type_all" <?php if (!isset($_GET['airline_type']) || $_GET['airline_type'] == "all"){ print 'checked="checked"'; } ?>> <label for="airline_type_all">All airlines types</label></div>
+    			<div><input type="radio" name="airline_type" value="passenger" id="airline_type_passenger" <?php if (isset($_GET['airline_type'])) if ($_GET['airline_type'] == "passenger"){ print 'checked="checked"'; } ?>> <label for="airline_type_passenger">Only Passenger airlines</label></div>
+    			<div><input type="radio" name="airline_type" value="cargo" id="airline_type_cargo" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "cargo"){ print 'checked="checked"'; } ?>> <label for="airline_type_cargo">Only Cargo airlines</label></div>
+    			<div><input type="radio" name="airline_type" value="military" id="airline_type_military" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "military"){ print 'checked="checked"'; } ?>> <label for="airline_type_military">Only Military airlines</label></div>
+    		</div>
         </fieldset>
         <fieldset>
         	<legend>Airport</legend>

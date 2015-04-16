@@ -5,7 +5,7 @@ require('require/class.Spotter.php');
 $title = "Statistic";
 require('header.php');
 ?>
-
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <div class="column">
     <div class="info">
             <h1>Barrie Spotter Statistics</h1>

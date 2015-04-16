@@ -38,7 +38,7 @@ if (!isset($_GET['airline'])){
 		} else $title = '';
 		require('header.php');
 	  
-	  date_default_timezone_set('America/Toronto');
+	  
 	  
 	  print '<div class="select-item">';
 	  		print '<form action="'.$globalURL.'/airline" method="post">';

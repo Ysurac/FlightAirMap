@@ -36,7 +36,7 @@ if (!isset($_GET['registration'])){
 	  $title = 'Detailed View of aircraft with registration '.$_GET['registration'];
 		require('header.php');
 	  
-	  date_default_timezone_set('America/Toronto');
+	  
 	  
 		print '<div class="info column">';
 			print '<h1>'.$_GET['registration'].' - '.$aircraft_array[0]['aircraft_name'].' ('.$aircraft_array[0]['aircraft_icao'].')</h1>';
