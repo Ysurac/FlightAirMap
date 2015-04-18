@@ -53,9 +53,11 @@ class ACARS {
     static function add($data) {
 	global $globalDebug;
 //  (null) 4 09/03/2015 08:11:14 0 -41 2         ! SQ   02XA LYSLFL L104544N00505BV136975/ARINC
-  //(null) 1 09/03/2015 08:10:08 0 -36 R .F-GPMD T _d 8 S65A AF6202
+//  (null) 1 09/03/2015 08:10:08 0 -36 R .F-GPMD T _d 8 S65A AF6202
 //    $line = sscapreg_split('/\(null\) \d 
-	$n = sscanf($data,'(null) %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] .%6s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+	//$n = sscanf($data,'(null) %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] .%6s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+	$n = sscanf($data,'(null) %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+	if ($n == 0) $n = sscanf($data,'AC%*c %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 /*
     
 	$line = explode(' ',$data,13);
@@ -149,10 +151,10 @@ ONS PAS LE MESSAGE ...
     	    if ($n == 4) {
         	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
         	if ($ahour != '') $ahour = substr(sprintf('%04d',$ahour),0,2).':'.substr(sprintf('%04d',$ahour),2);
-    		if ($globalDebug) echo 'departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour.' - arrival airport : '.$aair.' - arrival piste : '.$apiste."\n";
+    		if ($globalDebug) echo 'departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,$dhour,$darr,$ahour,'ACARS');
-        	$decode = array('Departure airport' => $dair, 'Departure date' => $ddate, 'Departure hour' => $dhour, 'Arrival airport' => $darr);
+        	$decode = array('Departure airport' => $dair, 'Departure hour' => $dhour, 'Arrival airport' => $darr, 'Arrival hour' => $ahour);
         	$found = true;
     	    } elseif ($n == 2) {
         	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
@@ -198,7 +200,8 @@ ONS PAS LE MESSAGE ...
 		    WXR/META/LFLL/LFLC/LFPG
 	    */
 
-	    $n = sscanf($message, "%*[0-9A-Z]/%*3d/%4s/%*c\nSCH/%6[0-9A-Z ]/%4c/%4c/%5s/%4d\n%*3c/%4d/%4c/%[0-9A-Z ]/", $airicao,$aident,$dair, $darr, $ddate, $dhour,$ahour, $aair, $apiste);
+	    //$n = sscanf($message, "%*[0-9A-Z]/%*3d/%4s/%*c\nSCH/%6[0-9A-Z ]/%4c/%4c/%5s/%4d\n%*3c/%4d/%4c/%[0-9A-Z ]/", $airicao,$aident,$dair, $darr, $ddate, $dhour,$ahour, $aair, $apiste);
+	    $n = sscanf(str_replace(array("\r\n", "\n", "\r"),'',$message), "%*[0-9A-Z]/%*3d/%4s/%*cSCH/%6[0-9A-Z ]/%4c/%4c/%5s/%4d%*3c/%4d/%4c/%[0-9A-Z ]/", $airicao,$aident,$dair, $darr, $ddate, $dhour,$ahour, $aair, $apiste);
     	    if ($n > 8) {
     		if ($globalDebug) echo 'airicao : '. $airicao.' - ident : '.$aident.' - departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour.' - arrival airport : '.$aair.' - arrival piste : '.$apiste."\n";
         	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
@@ -298,7 +301,8 @@ ONS PAS LE MESSAGE ...
 	     Reg. : PH-BXO - Ident : KL079K - Label : H1 - Message : #DFB(POS-KLM79K  -4319N00252E/143435 F390
 RMK/FUEL   2.6 M0.79)
 	    */
-	    $n = sscanf($message, "#DFB(POS-%s -%4d%c%5d%c/%*d F%d\nRMK/FUEL %f M%f", $aident, $las, $lac, $lns, $lnc, $alt, $fuel, $speed);
+	    //$n = sscanf($message, "#DFB(POS-%s -%4d%c%5d%c/%*d F%d\nRMK/FUEL %f M%f", $aident, $las, $lac, $lns, $lnc, $alt, $fuel, $speed);
+	    $n = sscanf(str_replace(array("\r\n", "\n", "\r"),'',$message), "#DFB(POS-%s -%4d%c%5d%c/%*d F%dRMK/FUEL %f M%f", $aident, $las, $lac, $lns, $lnc, $alt, $fuel, $speed);
     	    if ($n == 9) {
         	//if (self::$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
         	$icao = trim($aident);
@@ -349,7 +353,8 @@ RMK/FUEL   2.6 M0.79)
 		AB7757,
 		DABNK,10100,  7100,02:46, 200, 44068,52.4, 77000, 62500, 66000,3, 4,
 	    */
-    	    $n = sscanf($message, "%*[0-9A-Z],,\n%*[0-9A-Z],%*[0-9A-Z],%4s,%4s,.%*6s,\n%*4[A-Z],\n%[0-9A-Z],", $dair, $darr, $aident);
+//    	    $n = sscanf($message, "%*[0-9A-Z],,\n%*[0-9A-Z],%*[0-9A-Z],%4s,%4s,.%*6s,\n%*4[A-Z],\n%[0-9A-Z],", $dair, $darr, $aident);
+    	    $n = sscanf(str_replace(array("\r\n", "\n", "\r"),'',$message), "%*[0-9A-Z],,%*[0-9A-Z],%*[0-9A-Z],%4s,%4s,.%*6s,%*4[A-Z],%[0-9A-Z],", $dair, $darr, $aident);
     	    if ($n == 8) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
         	$icao = trim($aident);
@@ -578,7 +583,7 @@ RMK/FUEL   2.6 M0.79)
 	
 	    // Business jets always use GS0001
 	    if ($ident != 'GS0001') $info = ACARS::addModeSData($ident,$registration,$icao,$airicao);
-	    if ($globalDebug && $info != '') echo $info;
+	    if ($globalDebug && isset($info) && $info != '') echo $info;
 	    
     	    $image_array = Image::getSpotterImage($registration);
     	    if (!isset($image_array[0]['registration'])) {
