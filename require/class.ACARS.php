@@ -840,7 +840,6 @@ RMK/FUEL   2.6 M0.79)
 		    if (filter_var(substr($row['ident'],2),FILTER_VALIDATE_INT,array("flags"=>FILTER_FLAG_ALLOW_OCTAL))) $icao = $row['ident'];
 		    else $icao = 'AFR'.ltrim(substr($row['ident'],2),'0');
 		} else $icao = $identicao[0]['icao'].ltrim(substr($row['ident'],2),'0');
-        	
         	$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
     	    } else $icao = $row['ident'];
 
@@ -848,12 +847,12 @@ RMK/FUEL   2.6 M0.79)
     	    $found = false;
     	    if ($decode != '' && array_key_exists('Departure airport',$decode)) {
 		$airport_info = Spotter::getAllAirportInfo($decode['Departure airport']);
-		$decode['Departure airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
+		if (isset($airport_info[0]['icao'])) $decode['Departure airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
 		$found = true;
     	    }
     	    if ($decode != '' && array_key_exists('Arrival airport',$decode)) {
 		$airport_info = Spotter::getAllAirportInfo($decode['Arrival airport']);
-		$decode['Arrival airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
+		if (isset($airport_info[0]['icao'])) $decode['Arrival airport'] = '<a href="'.$globalURL.'/airport/'.$airport_info[0]['icao'].'">'.$airport_info[0]['city'].','.$airport_info[0]['country'].' ('.$airport_info[0]['icao'].')</a>';
 		$found = true;
     	    }
     	    if ($decode != '' && array_key_exists('Airport/Waypoint name',$decode)) {
