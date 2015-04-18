@@ -60,9 +60,13 @@ while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
     $dataFound = false;
 
     $SBS::del();
+    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
     // SBS format is CSV format
-    $line = explode(',', $buffer);
-    $SBS::add($line);
+    if ($buffer != '') {
+	$line = explode(',', $buffer);
+        if (count($line) < 20) echo "!! Error in message : ".$buffer."\n";
+	else $SBS::add($line);
+    }
 }
 if (function_exists('pcntl_fork')) pcntl_exec($_,$argv);
 ?>
