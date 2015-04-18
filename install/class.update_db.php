@@ -9,12 +9,13 @@ $tmp_dir = 'tmp/';
 class update_db {
 	public static $db_sqlite;
 
-	public static function download($url, $file) {
+	public static function download($url, $file, $referer = '') {
 		$fp = fopen($file, 'w+');
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		if ($referer != '') curl_setopt($ch, CURLOPT_REFERER, $referer);
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
 		curl_setopt($ch, CURLOPT_FILE, $fp);
 		$data = curl_exec($ch);
@@ -691,13 +692,24 @@ class update_db {
 			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		
-		
+/*
 		if ($globalDebug) echo "Modes : Download...";
 		update_db::download('http://pp-sqb.mantma.co.uk/basestation_latest.zip',$tmp_dir.'basestation_latest.zip');
 		if ($globalDebug) echo "Unzip...";
 		update_db::unzip($tmp_dir.'basestation_latest.zip');
 		if ($globalDebug) echo "Add to DB...";
 		$error = update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'/basestation_latest/basestation.sqb');
+		if ($error != true) {
+			echo $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+*/
+		if ($globalDebug) echo "Modes : Download...";
+		update_db::download('http://planebase.biz/sqb.php?f=basestationall.zip',$tmp_dir.'basestation_latest.zip','http://planebase.biz/bstnsqb');
+		if ($globalDebug) echo "Unzip...";
+		update_db::unzip($tmp_dir.'basestation_latest.zip');
+		if ($globalDebug) echo "Add to DB...";
+		$error = update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'BaseStation.sqb');
 		if ($error != true) {
 			echo $error;
 			exit;
