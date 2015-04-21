@@ -21,11 +21,11 @@ if (!empty($spotter_array))
     {
     	$title .= ' - '.$spotter_array[0]['airline_name'];
     }
-    if(isset($spotter_array[0]['aircraft_name']))
+    if(isset($spotter_array[0]['aircraft_name']) && $spotter_array[0]['aircraft_name'] != 'Not Available')
     {
     	$title .= ' - '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
     }
-    if(isset($spotter_array[0]['registration']))
+    if(isset($spotter_array[0]['registration']) && $spotter_array[0]['registration'] != 'NA' && $spotter_array[0]['registration'] != 'N/A')
     {
     	$title .= ' - '.$spotter_array[0]['registration'];
     }
@@ -36,11 +36,11 @@ if (!empty($spotter_array))
     	    print '<h1>';
 		if (@getimagesize($globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png'))
 		{
-			print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png" class="airline-logo" /></a>';
+			print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png" class="airline-logo" /></a> ';
 		} else {
 			if ($spotter_array[0]['airline_name'] != "")
 			{
-				print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a>';
+				print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a> ';
 			}
 		}
 	    	    if(isset($spotter_array[0]['ident']))
@@ -51,11 +51,11 @@ if (!empty($spotter_array))
 	    	    {
 	    	    	print ' - '.$spotter_array[0]['airline_name'];
 	    	    }
-	    	    if(isset($spotter_array[0]['aircraft_name']))
+	    	    if(isset($spotter_array[0]['aircraft_name']) && $spotter_array[0]['aircraft_name'] != 'Not Available')
 	    	    {
 	    	    	print ' - '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
 	    	    }
-	    	    if(isset($spotter_array[0]['registration']))
+	    	    if(isset($spotter_array[0]['registration']) && $spotter_array[0]['registration'] != 'NA')
 	    	    {
 	    	    	print ' - '.$spotter_array[0]['registration'];
 	    	    }
@@ -356,7 +356,7 @@ if (!empty($spotter_array))
      	print '</div>';
      	
      	
-    if ($spotter_array[0]['registration'] != "")
+    if ($spotter_array[0]['registration'] != "" && $spotter_array[0]['registration'] != "NA" && $spotter_array[0]['registration'] != "N/A")
     {
     	print '<div class="last-flights">';
 	    	
@@ -373,8 +373,9 @@ if (!empty($spotter_array))
     	print '</div>';
     	
     }
-	     	?>
+/*	     	?>
 	     <div class="column">
+
     	<div class="share">
 	    	<span class='st_facebook' displayText='Facebook'></span>
 			<span class='st_twitter' displayText='Tweet'></span>
@@ -385,9 +386,10 @@ if (!empty($spotter_array))
 		<script type="text/javascript">var switchTo5x=true;</script>
 		<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 		<script type="text/javascript">stLight.options({publisher: "ur-5a9fbd4d-de8a-6441-d567-29163a2526c7", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+
     	<?php
     print '</div>';
-
+*/
 } else {
 
 	$title = "ID";
