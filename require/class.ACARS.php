@@ -359,7 +359,7 @@ RMK/FUEL   2.6 M0.79)
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
         	$icao = trim($aident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
-        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $daar);
+        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
     	    }
 	}
@@ -373,7 +373,7 @@ RMK/FUEL   2.6 M0.79)
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
-        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $daar);
+        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
     	    }
 	}
@@ -386,7 +386,7 @@ RMK/FUEL   2.6 M0.79)
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
-        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $daar);
+        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
     	    }
 	}
@@ -399,7 +399,7 @@ RMK/FUEL   2.6 M0.79)
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 		$icao = ACARS::ident2icao($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
-        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $daar);
+        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
     	    }
 	}
@@ -592,9 +592,9 @@ RMK/FUEL   2.6 M0.79)
         }
         if (count($decode) > 0) $decode_json = json_encode($decode);
         else $decode_json = '';
-	ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	$result = ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	//if ((is_numeric($label) && (($label > 9 && $label < 50) || ($label > 79 && $label < 90))) || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
-	if ($label == '10' || $label == '80' || $label == '81' || $label == '82' || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	if ($result != false && ($label == '10' || $label == '80' || $label == '81' || $label == '82' || $label == '3F')) ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	
 	if ($globalDebug && count($decode) > 0) {
 	     echo "Human readable data : ".implode(' - ',$decode)."\n";
@@ -615,15 +615,30 @@ RMK/FUEL   2.6 M0.79)
 	global $globalDebug;
 	date_default_timezone_set('UTC');
 	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
-	    if ($globalDebug) echo "Add Live ACARS data...";
-    	    $query = "INSERT INTO acars_live (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
-    	    $query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
+	    if ($globalDebug) echo "Test if not already in Live ACARS table...";
+    	    $query_test = "SELECT COUNT(*) as nb FROM acars_live WHERE `ident` = :ident AND `registration` = :registration AND `message` = :message";
+    	    $query_test_values = array(':ident' => $ident,':registration' => $registration, ':message' => $message);
     	    try {
         	$Connection = new Connection();
-        	$sth = Connection::$db->prepare($query);
-            	$sth->execute($query_values);
+        	$stht = Connection::$db->prepare($query_test);
+            	$stht->execute($query_test_values);
     	    } catch(PDOException $e) {
                 return "error : ".$e->getMessage();
+    	    }
+	    if ($stht->fetchColumn() == 0) {
+		if ($globalDebug) echo "Add Live ACARS data...";
+    		$query = "INSERT INTO acars_live (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
+    		$query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
+    		try {
+        	    $Connection = new Connection();
+        	    $sth = Connection::$db->prepare($query);
+            	    $sth->execute($query_values);
+    		} catch(PDOException $e) {
+            	    return "error : ".$e->getMessage();
+    		}
+    	    } else {
+		if ($globalDebug) echo "Data already in DB...";
+		return false;
     	    }
 	    if ($globalDebug) echo "Done\n";
 	}
@@ -643,16 +658,30 @@ RMK/FUEL   2.6 M0.79)
 	global $globalDebug;
 	date_default_timezone_set('UTC');
 	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '' && preg_match('/^MET0/',$message) == FALSE && preg_match('/^ARR0/',$message) == FALSE && preg_match('/^ETA/',$message) == FALSE && preg_match('/^WXR/',$message) == FALSE && preg_match('/^FTX01.FIC/',$message) == FALSE) {
-	    if ($globalDebug) echo "Add Live ACARS data...";
-    	    $query = "INSERT INTO acars_archive (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
-    	    $query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
+/*
+	    if ($globalDebug) echo "Test if not already in Archive ACARS table...";
+    	    $query_test = "SELECT COUNT(*) as nb FROM acars_archive WHERE `ident` = :ident AND `registration` = :registration AND `message` = :message";
+    	    $query_test_values = array(':ident' => $ident,':registration' => $registration, ':message' => $message);
     	    try {
         	$Connection = new Connection();
-        	$sth = Connection::$db->prepare($query);
-            	$sth->execute($query_values);
+        	$stht = Connection::$db->prepare($query_test);
+            	$stht->execute($query_test_values);
     	    } catch(PDOException $e) {
                 return "error : ".$e->getMessage();
     	    }
+	    if ($stht->fetchColumn() == 0) {
+*/
+		if ($globalDebug) echo "Add Live ACARS data...";
+		$query = "INSERT INTO acars_archive (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
+    		$query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
+		try {
+		    $Connection = new Connection();
+		    $sth = Connection::$db->prepare($query);
+		    $sth->execute($query_values);
+		} catch(PDOException $e) {
+            	    return "error : ".$e->getMessage();
+    		}
+//    	    }
 	    if ($globalDebug) echo "Done\n";
 	}
     }
@@ -675,6 +704,26 @@ RMK/FUEL   2.6 M0.79)
     	}
     	$row = $sth->fetchAll(PDO::FETCH_ASSOC);
     	if (count($row) > 0) return $row[0]['title'];
+    	else return '';
+    }
+
+    /**
+    * List all Message title & label from DB
+    *
+    * @return Array Return ACARS data in array
+    */
+    public static function getAllTitleLabel() {
+    	$query = "SELECT * FROM acars_label ORDER BY title";
+    	$query_values = array();
+    	try {
+    	    $Connection = new Connection();
+    	    $sth = Connection::$db->prepare($query);
+            $sth->execute($query_values);
+    	} catch(PDOException $e) {
+            return "error : ".$e->getMessage();
+    	}
+    	$row = $sth->fetchAll(PDO::FETCH_ASSOC);
+    	if (count($row) > 0) return $row;
     	else return '';
     }
 
@@ -704,7 +753,7 @@ RMK/FUEL   2.6 M0.79)
     *
     * @return Array Return ACARS data in array
     */
-    public static function getLatestAcarsData($limit = '') {
+    public static function getLatestAcarsData($limit = '',$label = '') {
 	global $globalURL;
 	date_default_timezone_set('UTC');
 	
@@ -724,8 +773,13 @@ RMK/FUEL   2.6 M0.79)
 	
     	//$query = "SELECT *, name as airline_name FROM acars_live a, spotter_image i, airlines l WHERE i.registration = a.registration AND l.icao = a.airline_icao AND l.icao != '' ORDER BY acars_live_id DESC LIMIT 25";
     	
-    	$query = "SELECT * FROM acars_live ORDER BY acars_live_id DESC".$limit_query;
-    	$query_values = array();
+    	if ($label != '') {
+	    $query = "SELECT * FROM acars_live WHERE `label` = :label ORDER BY acars_live_id DESC".$limit_query;
+	    $query_values = array(':label' => $label);
+    	} else {
+    	    $query = "SELECT * FROM acars_live ORDER BY acars_live_id DESC".$limit_query;
+	    $query_values = array();
+    	}
     	try {
     	    $Connection = new Connection();
     	    $sth = Connection::$db->prepare($query);
@@ -794,7 +848,7 @@ RMK/FUEL   2.6 M0.79)
     *
     * @return Array Return ACARS data in array
     */
-    public static function getArchiveAcarsData($limit = '') {
+    public static function getArchiveAcarsData($limit = '',$label) {
 	global $globalURL;
 	date_default_timezone_set('UTC');
 
@@ -814,8 +868,21 @@ RMK/FUEL   2.6 M0.79)
 
 
     	//$query = "SELECT *, name as airline_name FROM acars_live a, spotter_image i, airlines l WHERE i.registration = a.registration AND l.icao = a.airline_icao AND l.icao != '' ORDER BY acars_live_id DESC LIMIT 25";
-    	$query = "SELECT * FROM acars_archive ORDER BY acars_archive_id DESC".$limit_query;
-    	$query_values = array();
+
+    	if ($label != '') {
+    	    if ($label == 'undefined') {
+		$query = "SELECT * FROM acars_archive WHERE `label` NOT IN (SELECT label FROM acars_label) ORDER BY acars_archive_id DESC".$limit_query;
+		$query_values = array();
+    	    } else {
+		$query = "SELECT * FROM acars_archive WHERE `label` = :label ORDER BY acars_archive_id DESC".$limit_query;
+		$query_values = array(':label' => $label);
+	    }
+    	} else {
+    	    $query = "SELECT * FROM acars_archive ORDER BY acars_archive_id DESC".$limit_query;
+	    $query_values = array();
+    	}
+
+
     	try {
     	    $Connection = new Connection();
     	    $sth = Connection::$db->prepare($query);
