@@ -139,7 +139,7 @@ class SBS {
 		    //if there was no aircraft with the same callsign within the last hour and go post it into the archive
 		    if($last_hour_ident == "")
 		    {
-			if (self::$debug) echo "\o/ Add in archive DB : ";
+			if (self::$debug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in archive DB : ";
 			if (self::$all_flights[$id]['departure_airport'] == "") { self::$all_flights[$id]['departure_airport'] = "NA"; }
 			if (self::$all_flights[$id]['arrival_airport'] == "") { self::$all_flights[$id]['arrival_airport'] = "NA"; }
 			//adds the spotter data for the archive
@@ -156,7 +156,8 @@ class SBS {
 			}
 			$ignoreImport = false;
 			if (self::$debug) echo $result."\n";
-			SpotterLive::deleteLiveSpotterData();
+			SpotterLive::deleteLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
+			//SpotterLive::deleteLiveSpotterData();
 		    }
 
 		    //adds the spotter LIVE data
@@ -174,7 +175,7 @@ class SBS {
 			}
 		    }
 		    if (!$ignoreImport) {
-			if (self::$debug) echo "\o/ Add in Live DB : ";
+			if (self::$debug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in Live DB : ";
 			$result = SpotterLive::addLiveSpotterData(self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'], self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'], self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],self::$all_flights[$id]['hex']);
 		    }
 		    $ignoreImport = false;

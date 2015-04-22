@@ -138,8 +138,7 @@ class SpotterLive {
 		date_default_timezone_set('UTC');
 
 		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
-
-		$query  = $global_query." WHERE spotter_live.ident = :ident";
+                $query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE l.ident = :ident GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate";
 
 		$spotter_array = Spotter::getDataFromDB($query,array(':ident' => $ident));
 
@@ -187,6 +186,28 @@ class SpotterLive {
 			$Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
 			$sth->execute();
+		} catch(PDOException $e) {
+			return "error";
+		}
+
+		return "success";
+	}
+
+	/**
+	* Deletes all info in the table for an ident
+	*
+	* @return String success or false
+	*
+	*/
+	public static function deleteLiveSpotterDataByIdent($ident)
+	{
+		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
+		$query  = "DELETE FROM spotter_live WHERE `ident` = :ident";
+        
+    		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute(array(':ident' => $ident));
 		} catch(PDOException $e) {
 			return "error";
 		}

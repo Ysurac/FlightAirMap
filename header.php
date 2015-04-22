@@ -55,6 +55,19 @@ if (strtolower($current_page) == "index")
 }
 ?>
 <?php
+if (strtolower($current_page) == "ident-detailed" && isset($ident))
+{
+?>
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print time(); ?>" />
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
+<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
+<script src="<?php print $globalURL; ?>/js/Marker.Rotate.js?<?php print time(); ?>"></script>
+<script src="<?php print $globalURL; ?>/js/map.js.php?ident=<?php print $ident; ?>&<?php print time(); ?>"></script>
+<?php
+}
+?>
+<?php
 /*
 if ($facebook_meta_image != "")
 {
@@ -153,6 +166,14 @@ if (isset($top_header) && $top_header != "")
 	print '<div class="top-header container clear" role="main">';
 		print '<img src="'.$globalURL.'/images/'.$top_header.'" alt="'.$title.'" title="'.$title.'" />';
 	print '</div>';
+}
+
+if (strtolower($current_page) =='ident-detailed') {
+?>
+    <div class="top-header clear" role="main">
+    <div id="archive-map"></div>
+    </div>
+<?php
 }
 if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower($current_page),'statistics-') === false) || (strpos(strtolower($current_page),'route-') !== false && strpos(strtolower($current_page),'statistics-') === false))
 {

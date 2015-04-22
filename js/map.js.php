@@ -3,8 +3,11 @@
 var map;
 var user = new L.FeatureGroup();
 var weatherprecipitation;
+var weatherprecipitationrefresh;
 var weatherrain;
+var weatherrainrefresh;
 var weatherclouds;
+var weathercloudsrefresh;
 
 var geojsonLayer;
 
@@ -13,8 +16,36 @@ waypoints = '';
 var weatherradarrefresh;
 var weathersatellite;
 var weathersatelliterefresh; 
+
+<?php
+if (isset($_GET['ident'])) {
+    $ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+}
+?>
+
+<?php
+    if (isset($ident)) {
+?>
 $( document ).ready(function() {
-    
+  //setting the zoom functionality for either mobile or desktop
+  if( navigator.userAgent.match(/Android/i)
+     || navigator.userAgent.match(/webOS/i)
+     || navigator.userAgent.match(/iPhone/i)
+     || navigator.userAgent.match(/iPod/i)
+     || navigator.userAgent.match(/BlackBerry/i)
+     || navigator.userAgent.match(/Windows Phone/i))
+  {
+    var zoom = 8;
+  } else {
+    var zoom = 8;
+  }
+
+  //create the map
+  map = L.map('archive-map', { zoomControl:false }).setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], zoom);
+<?php
+    } else {
+?>
+$( document ).ready(function() {
   //setting the zoom functionality for either mobile or desktop
   if( navigator.userAgent.match(/Android/i)
      || navigator.userAgent.match(/webOS/i)
@@ -30,7 +61,9 @@ $( document ).ready(function() {
 
   //create the map
   map = L.map('live-map', { zoomControl:false }).setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], zoom);
-
+<?php
+    }
+?>
   //initialize the layer group for the aircrft markers
   var layer_data = L.layerGroup();
 
@@ -149,7 +182,7 @@ $( document ).ready(function() {
 
 	function update_airportsLayer() {
 	    var bbox = map.getBounds().toBBoxString();
-	    airportsLayer = new L.GeoJSON.AJAX("airport-geojson.php?coord="+bbox,{
+	    airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
 	    onEachFeature: airportPopup,
 		pointToLayer: function (feature, latlng) {
 		    return L.marker(latlng, {icon: L.icon({
@@ -195,9 +228,12 @@ $( document ).ready(function() {
 	//update_waypointsLayer();
 	update_airportsLayer();
 	
+	<?php
+	    if (!isset($ident)) {
+	?>
 	var info = L.control();
 	info.onAdd = function (map) {
-		this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+		this._div = L.DomUtil.create('div', 'infobox'); // create a div with a class "info"
 		this.update();
 		return this._div;
 	};
@@ -207,6 +243,9 @@ $( document ).ready(function() {
 		}
 	};
 	info.addTo(map);
+	<?php
+	    }
+	?>
 
   function getLiveData()
   {
@@ -217,7 +256,17 @@ $( document ).ready(function() {
     $.ajax({
       dataType: "json",
 //      url: "live/geojson?"+Math.random(),
-      url: "live/geojson?"+Math.random()+"&coord="+bbox,
+      <?php
+        if (isset($ident)) {
+      ?>
+      url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&ident=<?php print $ident; ?>",
+      <?php
+        } else {
+      ?>
+      url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox,
+      <?php 
+        }
+      ?>
       success: function(data) {
 	    map.removeLayer(layer_data);
 	    layer_data = L.layerGroup();
@@ -234,8 +283,8 @@ $( document ).ready(function() {
                 title: markerLabel,
                 alt: feature.properties.callsign,
                 icon: L.icon({
-                  iconUrl: 'images/map-icon-shadow.png',
-                  iconRetinaUrl: 'images/map-icon-shadow@2x.png',
+                  iconUrl: '<?php print $globalURL; ?>/images/map-icon-shadow.png',
+                  iconRetinaUrl: '<?php print $globalURL; ?>/images/map-icon-shadow@2x.png',
                   iconSize: [40, 40],
                   iconAnchor: [20, 40]
                 })
@@ -247,7 +296,13 @@ $( document ).ready(function() {
                 
               //individual aircraft
               if (feature.properties.type == "aircraft"){
-		info.update(feature.properties);
+		<?php
+		    if (!isset($ident)) {
+		?>
+		     info.update(feature.properties);
+		<?php
+		    }
+		?>
                 output += '<div class="top">';
                   if (typeof feature.properties.image_source_website != 'undefined') {
                     if (typeof feature.properties.image_copyright != 'undefined') {
@@ -352,8 +407,13 @@ $( document ).ready(function() {
 		    output += '</div>';
                 }
                 output += '</div>';
-
+                <?php
+            	    if (!isset($ident)) {
+                ?>
                 layer.bindPopup(output);
+		<?php
+		    }
+		?>
 
                 layer_data.addLayer(layer);
                }
@@ -632,8 +692,8 @@ function showPosition(position) {
         title: "Your location",
         alt: "Your location",
         icon: L.icon({
-          iconUrl: '/images/map-user.png',
-          iconRetinaUrl: '/images/map-user@2x.png',
+          iconUrl: '<?php print $globalURL; ?>/images/map-user.png',
+          iconRetinaUrl: '<?php print $globalURL; ?>/images/map-user@2x.png',
           iconSize: [40, 40],
           iconAnchor: [20, 40]
         })
@@ -761,7 +821,7 @@ var lineStyle = {
 
 function update_waypointsLayer() {
     var bbox = map.getBounds().toBBoxString();
-    waypointsLayer = new L.GeoJSON.AJAX("waypoints-geojson.php?coord="+bbox,{
+    waypointsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/waypoints-geojson.php?coord="+bbox,{
     onEachFeature: waypointsPopup,
 	pointToLayer: function (feature, latlng) {
 	    return L.marker(latlng, {icon: L.icon({
@@ -813,7 +873,7 @@ function airspacePopup (feature, layer) {
 
 function update_airspaceLayer() {
     var bbox = map.getBounds().toBBoxString();
-    airspaceLayer = new L.GeoJSON.AJAX("airspace-geojson.php?coord="+bbox,{
+    airspaceLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airspace-geojson.php?coord="+bbox,{
     onEachFeature: airspacePopup,
 	pointToLayer: function (feature, latlng) {
 	    return L.marker(latlng, {icon: L.icon({

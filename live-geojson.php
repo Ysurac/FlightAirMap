@@ -17,9 +17,14 @@ if (isset($_GET['coord'])) {
 } else {
 	$spotter_array = SpotterLive::getLiveSpotterData();
 }
+if (isset($_GET['ident'])) {
+	$ident = $_GET['ident'];
+	$spotter_array = SpotterLive::getAllLiveSpotterDataByIdent($ident);
+}
 
 if (!empty($spotter_array)) {
 	$flightcnt = SpotterLive::getLiveSpotterCount();
+	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;
 
 $output = '{';
@@ -140,7 +145,7 @@ $output = '{';
 							$output .= '"squawk_usage": "'.$spotter_item['squawk_usage'].'",';
 						}
 						if (isset($spotter_item['acars'])) {
-							$output .= '"acars": "'.$spotter_item['acars']['label'].' - '.trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"), '<br />',$spotter_item['acars']['message'])).'",';
+							$output .= '"acars": "'.trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"), '<br />',$spotter_item['acars']['message'])).'",';
 						}
 							// FIXME : type when not aircraft ?
 							$output .= '"type": "aircraft"';

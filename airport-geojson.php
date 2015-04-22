@@ -32,15 +32,15 @@ if (!empty($spotter_array))
 			$output .= '"altitude": "'.$spotter_item['altitude'].'",';
 			$output .= '"popupContent": "'.$spotter_item['name'].' : '.$spotter_item['city'].', '.$spotter_item['country'].'",';
 			if ($spotter_item['type'] == 'large_airport') {
-				$output .= '"icon": "images/airport.png",';
+				$output .= '"icon": "'.$globalURL.'/images/airport.png",';
 			} elseif ($spotter_item['type'] == 'heliport') {
-				$output .= '"icon": "images/heliport.png",';
+				$output .= '"icon": "'.$globalURL.'/images/heliport.png",';
 			} elseif ($spotter_item['type'] == 'military') {
-				$output .= '"icon": "images/military.png",';
+				$output .= '"icon": "'.$globalURL.'/images/military.png",';
 			} elseif ($spotter_item['type'] == 'medium_airport') {
-				$output .= '"icon": "images/medium_airport.png",';
+				$output .= '"icon": "'.$globalURL.'/images/medium_airport.png",';
 			} else {
-				$output .= '"icon": "images/small_airport.png",';
+				$output .= '"icon": "'.$globalURL.'/images/small_airport.png",';
 			}
 			$output .= '"type": "'.$spotter_item['type'].'",';
 			$output .= '"icao": "'.$spotter_item['icao'].'",';

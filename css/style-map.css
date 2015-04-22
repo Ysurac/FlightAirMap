@@ -4,6 +4,9 @@ html, body, #live-map, .container.main-content {
   margin: 0px !important;
   padding: 0px !important;
 }
+#archive-map {
+    height: 350px;
+}
 body {
   font-family: 'Arial', sans-serif;
   font-size: 14px;
@@ -73,7 +76,7 @@ body {
   top:410px;
 }
 
-.info {
+.infobox {
     top: 65px;
     padding: 16px 18px;
     font: 12px/14px Arial, Helvetica, sans-serif;
@@ -83,7 +86,7 @@ body {
     border-radius: 5px;
     text-align: center;
 }
-.info h4 {
+.infobox h4 {
     margin: 0 0 5px;
     color: #777;
 }

@@ -9,10 +9,10 @@ if (!isset($_GET['ident'])){
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
-	  $limit_start = 0;
-	  $limit_end = 25;
-	  $absolute_difference = 25;
-	}  else {
+		$limit_start = 0;
+		$limit_end = 25;
+		$absolute_difference = 25;
+	} else {
 		$limit_explode = explode(",", $_GET['limit']);
 		$limit_start = $limit_explode[0];
 		$limit_end = $limit_explode[1];
@@ -35,7 +35,7 @@ if (!isset($_GET['ident'])){
 	if (!empty($spotter_array))
 	{
 		$title = 'Detailed View for '.$spotter_array[0]['ident'];
-
+		$ident = $spotter_array[0]['ident'];
 		require('header.php');
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['ident'].'</h1>';
