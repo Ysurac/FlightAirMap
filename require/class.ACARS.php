@@ -75,7 +75,7 @@ class ACARS {
 	$found = false;
 	if ($globalDebug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
 	
-	if ($registration != '' && $ident != '') {
+	if ($registration != '' && $ident != '' && $registration != '!') {
 	/*
 Messages not yet parsed :
 =========================
@@ -848,7 +848,7 @@ RMK/FUEL   2.6 M0.79)
     *
     * @return Array Return ACARS data in array
     */
-    public static function getArchiveAcarsData($limit = '',$label) {
+    public static function getArchiveAcarsData($limit = '',$label = '') {
 	global $globalURL;
 	date_default_timezone_set('UTC');
 
