@@ -49,8 +49,7 @@ $globalTimezone = 'Europe/Paris';
 
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
-$globalSBS1Host = '127.0.0.1';
-$globalSBS1Port = '30003';
+$globalSBS1Hosts = array('127.0.0.1:30003'); // in the form array('host1:port1','host2:port2');
 $globalSBS1TimeOut = '15';
 
 //ACARS Listen in UDP

@@ -195,6 +195,15 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		</p>
 		</div>
 		<div id="sbs_data">
+		<?php
+		    if (isset($globalSBS1Hosts)) {
+			$hostport = explode(':',$globalSBS1Hosts);
+			if (count($hostport) == 2) {
+			    $globalSBS1Host = $hostport[0];
+			    $globalSBS1Port = $hostport[1];
+			}
+		    }
+		?>
 		<p>
 			<label for="sbshost">SBS-1 host</label>
 			<input type="text" name="sbshost" id="sbshost" value="<?php if (isset($globalSBS1Host)) print $globalSBS1Host; ?>" />
@@ -312,7 +321,9 @@ if (isset($_POST['dbtype'])) {
 	$sbshost = filter_input(INPUT_POST,'sbshost',FILTER_SANITIZE_STRING);
 	$sbsport = filter_input(INPUT_POST,'sbsport',FILTER_SANITIZE_NUMBER_INT);
 	$sbstimeout = filter_input(INPUT_POST,'sbstimeout',FILTER_SANITIZE_NUMBER_INT);
-	$settings = array_merge($settings,array('globalSBS1Host' => $sbshost,'globalSBS1Port' => $sbsport,'globalSBS1TimeOut' => $sbstimeout));
+	if (isset($globalSBS1Hosts) && is_array($globalSBS1Hosts) && count($globalSBS1Hosts) > 1) {
+		$settings = array_merge($settings,array('globalSBS1Hosts' => $globalSBS1Hosts,'globalSBS1TimeOut' => $sbstimeout));
+	} else $settings = array_merge($settings,array('globalSBS1Hosts' => array($sbshost.':'.$sbsport),'globalSBS1TimeOut' => $sbstimeout));
 
 	$acarshost = filter_input(INPUT_POST,'acarshost',FILTER_SANITIZE_STRING);
 	$acarsport = filter_input(INPUT_POST,'acarsport',FILTER_SANITIZE_NUMBER_INT);
