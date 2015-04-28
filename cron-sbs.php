@@ -77,7 +77,7 @@ while (count($sockets)) {
     if ($n > 0) {
 	foreach ($read as $r) {
             $id = array_search($r, $sockets);
-            $buffer = socket_read($r, 8192);
+            $buffer = socket_read($r, 3000);
 	    // lets play nice and handle signals such as ctrl-c/kill properly
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 	    $dataFound = false;

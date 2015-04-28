@@ -67,7 +67,7 @@ class SBS {
 	
 	// SBS format is CSV format
 	if(is_array($line) && isset($line[4])) {
-  	    if ($line[4] != '' && $line[4] != '00000' && $line[4] != '000000') {
+  	    if ($line[4] != '' && $line[4] != '00000' && $line[4] != '000000' && ctype_xdigit($line[4]) && strlen($line[4]) == 6) {
 		$hex = trim($line[4]);
 	        $id = trim($line[4]);
 
