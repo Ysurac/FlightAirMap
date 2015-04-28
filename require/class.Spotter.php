@@ -86,7 +86,7 @@ class Spotter{
 			$temp_array['altitude'] = $row['altitude'];
 			$temp_array['heading'] = $row['heading'];
 			$heading_direction = Spotter::parseDirection($row['heading']);
-			$temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
+			if (isset($heading_direction[0]['direction_fullname']) $temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
 			$temp_array['ground_speed'] = $row['ground_speed'];
 			$temp_array['image'] = "";
 			$temp_array['image_thumbnail'] = "";
