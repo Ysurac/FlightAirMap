@@ -29,7 +29,7 @@ if (function_exists('pcntl_fork')) {
 echo "Connecting to SBS ...\n";
 
 
-function connection($host, $port, &$errno, &$errstr, $timeout) {
+function create_socket($host, $port, &$errno, &$errstr) {
     $ip = gethostbyname($host);
     $s = socket_create(AF_INET, SOCK_STREAM, 0);
     if (socket_set_nonblock($s)) {
@@ -44,6 +44,21 @@ function connection($host, $port, &$errno, &$errstr, $timeout) {
     return false;
 }
 
+function connect_all($hosts) {
+    global $sockets;
+    foreach ($hosts as $id => $host) {
+	$hostport = explode(':',$host);
+        $s = create_socket($hostport[0],$hostport[1], $errno, $errstr);
+	if ($s) {
+    	    $sockets[$id] = $s;
+	    echo 'Connection in progress to '.$host.'....'."\n";
+        } else {
+	    echo 'Connection failed to '.$host.' : '.$errno.' '.$errstr."\n";
+        }
+    }
+}
+
+
 if (isset($globalSBS1Hosts)) {
     $hosts = $globalSBS1Hosts;
 } else {
@@ -54,29 +69,16 @@ $sockets = array();
 $errno = '';
 $errstr='';
 /* Initiate connections to all the hosts simultaneously */
-foreach ($hosts as $id => $host) {
-    $hostport = explode(':',$host);
-    $s = connection($hostport[0],$hostport[1], $errno, $errstr, $globalSBS1TimeOut);
-    if ($s) {
-        $sockets[$id] = $s;
-        echo 'Connection in progress to '.$host.'....'."\n";
-    } else {
-        echo 'Connection failed to '.$host.' : '.$errno.' '.$errstr."\n";
-    }
-}
-
+connect_all($hosts);
 // connected - lets do some work
 echo "Connected!\n";
 sleep(1);
 echo "SCAN MODE \n\n";
-//while($buffer = socket_read($sock, 3000, PHP_NORMAL_READ)) {
-while (count($sockets)) {
+while (true) {
     $read = $sockets;
-    /* This is the magic function - explained below */
     $n = @socket_select($read, $write = NULL, $e = NULL, $globalSBS1TimeOut);
     if ($n > 0) {
 	foreach ($read as $r) {
-            $id = array_search($r, $sockets);
             $buffer = socket_read($r, 3000);
 	    // lets play nice and handle signals such as ctrl-c/kill properly
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
@@ -88,7 +90,7 @@ while (count($sockets)) {
 	    if ($buffer != '') {
 		$line = explode(',', $buffer);
     		if (count($line) > 20) $SBS::add($line);
-	    }
+	    } else connect_all($hosts);
 	}
     }
 }
