@@ -513,6 +513,33 @@ class Schedule {
 	}
 
 	/**
+	* Get flight info from Brussels airlines
+	* @param String $callsign The callsign
+	* @param String $date date we want flight number info
+	* @return Flight departure and arrival airports and time
+	*/
+	private static function getBrussels($callsign, $date = 'NOW') {
+		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
+		$check_date = new Datetime($date);
+		$url= "http://www.brusselsairlines.com/api/flightstatus/getresults?from=NA&to=NA&date=".$check_date->format('d/m/Y')."&hour=NA&lookup=flightnumber&flightnumber=".$numvol."&publicationID=302";
+		//http://www.brusselsairlines.com/fr-fr/informations-pratiques/statut-de-votre-vol/resultat.aspx?flightnumber=".$numvol."&date=".$check_date->format('d/m/Y')."&lookup=flightnumber";
+		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
+		$data = Schedule::getData($url);
+		if ($data != '') {
+		    //echo $data;
+		    $parsed_json = json_decode($data);
+		    if (isset($parsed_json[0]->FromAirportCode)) {
+			$DepartureAirportIata = $parsed_json[0]->FromAirportCode;
+			$ArrivalAirportIata = $parsed_json[0]->ToAirportCode;
+			$departureTime = date('H:i',strtotime($parsed_json[0]->ScheduledDepatureDate));
+			$arrivalTime = date('H:i',strtotime($parsed_json[0]->ScheduledArrivalDate));
+			return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime);
+ 
+		    }
+		}
+	}
+
+	/**
 	* Get flight info from Lufthansa
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
@@ -538,6 +565,31 @@ class Schedule {
 			$arrivalTime = trim(str_replace($check_date->format('d.m.Y'),'',$table[25][3]));
 		}
 		return array('DepartureAirportIATA' => '','DepartureTime' => $departureTime,'ArrivalAirportIATA' => '','ArrivalTime' => $arrivalTime);
+	}
+
+	/**
+	* Get flight info from flytap
+	* @param String $callsign The callsign
+	* @param String $date date we want flight number info
+	* @return Flight departure and arrival airports and time
+	*/
+	private static function getFlyTap($callsign, $date = 'NOW') {
+		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
+		$url= "http://www.flytap.com/France/fr/PlanifierEtReserver/Outils/DepartsEtArrivees";
+		$check_date = new Datetime($date);
+		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
+		$post = array('arrivalsdepartures_content' => 'number','arrivalsdepartures_tp' => $numvol,'arrivalsdepartures_trk' => 'ARR','arrivalsdepartures_date_trk' => '1','aptCode' => '','arrivalsdepartures' => 'DEP','arrivalsdepartures_date' => '1','aptCodeFrom' => '','aptCodeTo' => '','arrivalsdepartures2' => 'DEP','arrivalsdepartures_date2' => '1');
+		$data = Schedule::getData($url,'post',$post);
+		if ($data != '') {
+			$table = Schedule::table2array($data);
+			$departureTime = trim(substr($table[15][0],0,5));
+			$arrivalTime = trim(substr($table[35][0],0,5));
+			preg_match('/([A-Z]{3})/',$table[11][0],$DepartureAirportIataMatch);
+			preg_match('/([A-Z]{3})/',$table[31][0],$ArrivalAirportIataMatch);
+			$DepartureAirportIata = $DepartureAirportIataMatch[0];
+			$ArrivalAirportIata = $ArrivalAirportIataMatch[0];
+		}
+		return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime);
 	}
 
 	/**
@@ -658,6 +710,7 @@ class Schedule {
 		}
 		if ($airline_icao != '') {
 			switch ($airline_icao) {
+/*
 				// Adria Airways
 				case "ADR":
 				case "JP":
@@ -708,11 +761,13 @@ class Schedule {
 				case "AV":
 					return Schedule::getStarAlliance($ident,$date,'AV');
 					break;
+*/
 				// Brussels Airlines
 				case "BEL":
 				case "SN":
-					return Schedule::getStarAlliance($ident,$date,'SN');
+					return Schedule::getBrussels($ident,$date,'SN');
 					break;
+/*
 				// Copa Airlines
 				case "CMP":
 				case "CM":
@@ -788,7 +843,7 @@ class Schedule {
 				case "UA":
 					return Schedule::getStarAlliance($ident,$date,'UA');
 					break;
-
+*/
 				// Air France
 				case "AF":
 				case "AFR":
@@ -811,13 +866,11 @@ class Schedule {
 				case "RYR":
 					return Schedule::getRyanair($ident);
 					break;
-				/*
 				// Swiss
 				case "LX":
 				case "SWR":
 					return Schedule::getSwiss($ident);
 					break;
-				*/
 				// British Airways
 				case "BA":
 				case "SHT":
@@ -850,10 +903,12 @@ class Schedule {
 					return Schedule::getLufthansa($ident);
 					break;
 					*/
+/*
 				case "DLH":
 				case "LH":
 					return Schedule::getStarAlliance($ident,$date,'LH');
 					break;
+*/
 				// Iberia
 				case "IBE":
 				case "IB":
@@ -877,6 +932,11 @@ class Schedule {
 				case "4T":
 				case "BHP":
 					return Schedule::getAirBerlin($ident,$date,'4T');
+					break;
+				// TAP Portugal
+				case "TAP":
+				case "TP":
+					return Schedule::getFlyTap($ident,$date,'TP');
 					break;
 			}
 		}
@@ -908,5 +968,8 @@ class Schedule {
 //print_r(Schedule::getSchedule('KLM2411'));
 //print_r(Schedule::fetchSchedule('TAR629'));
 //print_r(Schedule::fetchSchedule('VLG8993'));
+//print_r(Schedule::fetchSchedule('TAP9424'));
+//print_r(Schedule::fetchSchedule('LX447'));
+//print_r(Schedule::fetchSchedule('SN2725'));
 
 ?>
