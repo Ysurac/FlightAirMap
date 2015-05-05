@@ -8,7 +8,7 @@ require('header.php');
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <div class="column">
     <div class="info">
-            <h1>Barrie Spotter Statistics</h1>
+            <h1>Statistics</h1>
     </div>
 
     <?php include('statistics-sub-menu.php'); ?>
