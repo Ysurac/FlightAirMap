@@ -2133,7 +2133,7 @@ class Spotter{
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			if ($airport_array[$row['airport_country']]['airport_country'] != $row['airport_country'])
+			if (isset($airport_array[$row['airport_country']]['airport_country']) && $airport_array[$row['airport_country']]['airport_country'] != $row['airport_country'])
 			{
 				$temp_array['airport_country'] = $row['airport_country'];
 				
@@ -2208,7 +2208,7 @@ class Spotter{
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			if ($country_array[$row['airline_country']]['country'] != $row['airline_country'])
+			if (isset($country_array[$row['airline_country']]['country']) && $country_array[$row['airline_country']]['country'] != $row['airline_country'])
 			{
 				$temp_array['country'] = $row['airline_country'];
 				
