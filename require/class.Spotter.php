@@ -61,6 +61,10 @@ class Spotter{
 			$temp_array['ident'] = $row['ident'];
 			$temp_array['registration'] = $row['registration'];
 			$temp_array['aircraft_type'] = $row['aircraft_icao'];
+			if (isset($row['aircraft_shadow'])) {
+				$temp_array['aircraft_shadow'] = $row['aircraft_shadow'];
+			} else $temp_array['aircraft_shadow'] = 'default.png';
+			
 			$temp_array['departure_airport'] = $row['departure_airport_icao'];
 			$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
 			$temp_array['latitude'] = $row['latitude'];
@@ -1724,6 +1728,7 @@ class Spotter{
 			$temp_array['icao'] = $row['icao'];
 			$temp_array['type'] = $row['type'];
 			$temp_array['manufacturer'] = $row['manufacturer'];
+			$temp_array['aircraft_shadow'] = $row['aircraft_shadow'];
 
 			$aircraft_array[] = $temp_array;
 		}
@@ -7206,10 +7211,11 @@ public static function addSpotterImage($registration)
 	public static function updateFieldsFromOtherTables()
 	{
 		global $globalDebug;
+		$Connection = new Connection();
+
 		// routes
 		if ($globalDebug) print "Routes...\n";
 		$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != ''";
-		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
 		$sth->execute();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -7225,7 +7231,7 @@ public static function addSpotterImage($registration)
 		
 		if ($globalDebug) print "Airlines...\n";
 		//airlines
-		$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE spotter_output.airline_name = ''";
+		$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE spotter_output.airline_name = '' OR spotter_output.airline_name = 'Not Available'";
 		$sth = Connection::$db->prepare($query);
 		$sth->execute();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -7239,20 +7245,30 @@ public static function addSpotterImage($registration)
 			}
 		}
 
+		if ($globalDebug) print "Remove Duplicate in aircraft_modes...\n";
+		//duplicate modes
+		$query = "DELETE aircraft_modes FROM aircraft_modes LEFT OUTER JOIN (SELECT max(`AircraftID`) as `AircraftID`,`ModeS` FROM `aircraft_modes` group by ModeS) as KeepRows ON aircraft_modes.AircraftID = KeepRows.AircraftID WHERE KeepRows.AircraftID IS NULL";
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
+		
 		if ($globalDebug) print "Aircraft...\n";
 		//aircraft
-		$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE spotter_output.aircraft_name = ''";
+		$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE spotter_output.aircraft_name = '' OR spotter_output.aircraft_name = 'Not Available'";
 		$sth = Connection::$db->prepare($query);
 		$sth->execute();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			$aircraft_name = Spotter::getAllAircraftInfo($row['aircraft_icao']);
-			if ($row['registration'] != ""){
-				Image::addSpotterImage($row['registration']);
+			if ($row['aircraft_icao'] != '') {
+				$aircraft_name = Spotter::getAllAircraftInfo($row['aircraft_icao']);
+				if ($row['registration'] != ""){
+					Image::addSpotterImage($row['registration']);
+				}
+				if (count($aircraft_name) > 0) {
+					$update_query  = "UPDATE spotter_output SET spotter_output.aircraft_name = :aircraft_name, spotter_output.aircraft_manufacturer = :aircraft_manufacturer WHERE spotter_output.spotter_id = :spotter_id";
+					$sthu = Connection::$db->prepare($update_query);
+					$sthu->execute(array(':aircraft_name' => $aircraft_name[0]['type'], ':aircraft_manufacturer' => $aircraft_name[0]['manufacturer'], ':spotter_id' => $row['spotter_id']));
+				}
 			}
-			$update_query  = "UPDATE spotter_output SET spotter_output.aircraft_name = :aircraft_name, spotter_output.aircraft_manufacturer = :aircraft_manufacturer WHERE spotter_output.spotter_id = :spotter_id";
-			$sthu = Connection::$db->prepare($update_query);
-			$sthu->execute(array(':aircraft_name' => $aircraft_name[0]['type'], ':aircraft_manufacturer' => $aircraft_name[0]['manufacturer'], ':spotter_id' => $row['spotter_id']));
 		}
 	}	
 	

@@ -3,6 +3,7 @@ require_once('class.Connection.php');
 require_once('class.Spotter.php');
 require_once('class.Image.php');
 require_once('class.Scheduler.php');
+require_once('class.Translation.php');
 
 class ACARS {
     /**
@@ -141,30 +142,34 @@ ONS PAS LE MESSAGE ...
         	if ($globalDebug) echo 'latitude : '.$latitude.' - longitude : '.$longitude.' - airport depart : '.$dair.' - airport arrival : '.$darr.' - température : '.$temp."°C\n";
         	if ($temp == '') $decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr,'Altitude' => $alt);
         	else $decode = array('Latitude' => $latitude, 'Longitude' =>  $longitude, 'Departure airport' => $dair, 'Arrival airport' => $darr, 'Altitude' => 'FL'.$alt,'Temperature' => $temp.'°C');
-        	$icao = ACARS::ident2icao($ident);
+        	//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$found = true;
     	    }
 	}
 	if (!$found && ($label == '10')) {
 	    $n = sscanf($message, "ARR01 %4[A-Z]%4d %4[A-Z]%4d", $dair, $dhour, $darr,$ahour);
-    	    if ($n == 4) {
+    	    if ($n == 4 && strlen($darr) == 4) {
         	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
         	if ($ahour != '') $ahour = substr(sprintf('%04d',$ahour),0,2).':'.substr(sprintf('%04d',$ahour),2);
-    		if ($globalDebug) echo 'departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour."\n";
-		$icao = ACARS::ident2icao($ident);
+    		if ($globalDebug) echo 'departure airport : '.$dair.' - arrival airport : '. $darr.' - departure hour : '. $dhour.' - arrival hour : '.$ahour."\n";
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
         	Schedule::addSchedule($icao,$dair,$dhour,$darr,$ahour,'ACARS');
         	$decode = array('Departure airport' => $dair, 'Departure hour' => $dhour, 'Arrival airport' => $darr, 'Arrival hour' => $ahour);
         	$found = true;
-    	    } elseif ($n == 2) {
+    	    } elseif ($n == 2 || $n  == 4) {
         	if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
         	if ($globalDebug) echo 'airport arrival : '.$dair.' - arrival hour : '.$dhour."\n";
-		$icao = ACARS::ident2icao($ident);
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
         	$decode = array('Arrival airport' => $dair, 'Arrival hour' => $dhour);
         	$found = true;
     	    } elseif ($n == 1) {
         	if ($globalDebug) echo 'airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
         	$decode = array('Arrival airport' => $darr);
         	$found = true;
     	    }
@@ -180,7 +185,8 @@ ONS PAS LE MESSAGE ...
 	    $n = sscanf($message, "%4c,%4c,%*7s,%*d", $dair, $darr);
     	    if ($n == 4) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
@@ -245,7 +251,8 @@ ONS PAS LE MESSAGE ...
     	    $n = sscanf($message, "%*[0-9A-Z ]/%*s %4c/%4c .", $dair, $darr);
     	    if ($n == 4) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
@@ -256,8 +263,9 @@ ONS PAS LE MESSAGE ...
     	    $n = sscanf($message, "%*[0-9],%4c,%4c,", $dair, $darr);
     	    if ($n == 4) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
-        	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
+		Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
     	    }
@@ -267,8 +275,9 @@ ONS PAS LE MESSAGE ...
     	    $n = sscanf($message, "002AF %4c %4c ", $dair, $darr);
     	    if ($n == 2) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
-        	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
+		$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$found = true;
     	    }
@@ -279,8 +288,9 @@ ONS PAS LE MESSAGE ...
     	    $n = sscanf($message, "#DFBA%*02d/%*[A-Z-],%*[0-9A-Z],%*d,%4c,%4c", $dair, $darr);
     	    if ($n == 6) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
-        	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
+		//$icao = ACARS::ident2icao($ident);
+		$icao = Translation::checkTranslation($ident);
+    		Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
     	    }
@@ -290,7 +300,8 @@ ONS PAS LE MESSAGE ...
     	    $n = sscanf($message, "#DFBA%*02d/%*[0-9A-Z,]/%*[A-Z-],%*[0-9A-Z],%*d,%4c,%4c", $dair, $darr);
     	    if ($n == 7) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
@@ -311,7 +322,7 @@ RMK/FUEL   2.6 M0.79)
         	if ($lac == 'S') $latitude = '-'.$latitude;
         	if ($lnc == 'W') $longitude = '-'.$longitude;
 
-		$decode = array('Latitute' => $latitude,'Longitude' => $longitude,'Altitude' => 'FL'.$alt,'Fuel' => $fuel,'speed' => $speed);
+		$decode = array('Latitude' => $latitude,'Longitude' => $longitude,'Altitude' => 'FL'.$alt,'Fuel' => $fuel,'speed' => $speed);
         	$found = true;
     	    }
 	}
@@ -326,7 +337,7 @@ RMK/FUEL   2.6 M0.79)
         	if ($lac == 'S') $latitude = '-'.$latitude;
         	if ($lnc == 'W') $longitude = '-'.$longitude;
 
-		$decode = array('Latitute' => $latitude,'Longitude' => $longitude);
+		$decode = array('Latitude' => $latitude,'Longitude' => $longitude);
         	$found = true;
     	    }
 	}
@@ -339,7 +350,8 @@ RMK/FUEL   2.6 M0.79)
     	    $n = sscanf($message, "%*[0-9A-Z] NLINFO %*d/%*d %4c/%4c .", $dair, $darr);
     	    if ($n == 5) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
@@ -371,7 +383,9 @@ RMK/FUEL   2.6 M0.79)
 	    $n = sscanf($message, "%*d/%*d %4s/%4s .%*6s", $dair, $darr);
     	    if ($n == 5) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
+
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
@@ -384,7 +398,9 @@ RMK/FUEL   2.6 M0.79)
 	    $n = sscanf($message,'%4[A-Z]%4[A-Z]%*4d',$dair,$darr);
     	    if ($n == 3) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
+
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
@@ -397,7 +413,9 @@ RMK/FUEL   2.6 M0.79)
 	    $n = sscanf($message,'3J01 DSPTCH %*d/%*d %4s/%4s .%*6s',$dair,$darr);
     	    if ($n == 3) {
         	if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
-		$icao = ACARS::ident2icao($ident);
+		//$icao = ACARS::ident2icao($ident);
+        	$icao = Translation::checkTranslation($ident);
+
         	Schedule::addSchedule($icao,$dair,'',$darr,'','ACARS');
         	$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
         	$found = true;
@@ -807,6 +825,7 @@ RMK/FUEL   2.6 M0.79)
         	
         	$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
     	    } else $icao = $row['ident'];
+    	    $icao = Translation::checkTranslation($icao);
     	    
     	    $decode = json_decode($row['decode'],true);
     	    $found = false;
@@ -909,6 +928,8 @@ RMK/FUEL   2.6 M0.79)
 		} else $icao = $identicao[0]['icao'].ltrim(substr($row['ident'],2),'0');
         	$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
     	    } else $icao = $row['ident'];
+    	    $icao = Translation::checkTranslation($icao);
+
 
     	    $decode = json_decode($row['decode'],true);
     	    $found = false;
@@ -952,7 +973,8 @@ RMK/FUEL   2.6 M0.79)
     public static function addModeSData($ident,$registration,$icao = '',$ICAOTypeCode = '') {
 	global $globalDebug;
 	if ($globalDebug) echo "Test if we add ModeS data...";
-	if ($icao == '') $icao = ACARS::ident2icao($ident);
+	//if ($icao == '') $icao = ACARS::ident2icao($ident);
+        if ($icao == '') $icao = Translation::checkTranslation($ident);
 	if ($globalDebug) echo '- Ident : '.$icao.' - ';
 	if ($ident == '' || $registration == '') {
 	    if ($globalDebug) echo "Ident or registration null, exit\n";
@@ -1005,10 +1027,10 @@ RMK/FUEL   2.6 M0.79)
     		} else {
     		    if ($globalDebug) echo " Update ModeS table - ";
     		    if ($ICAOTypeCode != '') {
-    			$queryi = "UPDATE aircraft_modes SET `ModeSCountry` = :ModeSCountry,`Registration` = :Registration,`ICAOTypeCode` = :ICAOTypeCode,`Source` = 'ACARS' WHERE `ModeS` = :ModeS";
+    			$queryi = "UPDATE aircraft_modes SET `ModeSCountry` = :ModeSCountry,`Registration` = :Registration,`ICAOTypeCode` = :ICAOTypeCode,`Source` = 'ACARS',`LastModified` = NOW() WHERE `ModeS` = :ModeS";
     			$queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
     		    } else {
-    			$queryi = "UPDATE aircraft_modes SET `ModeSCountry` = :ModeSCountry,`Registration` = :Registration,`Source` = 'ACARS' WHERE `ModeS` = :ModeS";
+    			$queryi = "UPDATE aircraft_modes SET `ModeSCountry` = :ModeSCountry,`Registration` = :Registration,`Source` = 'ACARS',`LastModified` = NOW() WHERE `ModeS` = :ModeS";
     			$queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration);
     		    }
     		    try {

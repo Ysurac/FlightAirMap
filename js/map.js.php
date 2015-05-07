@@ -109,8 +109,9 @@ $( document ).ready(function() {
 ?>
 
 <?php
-    if ($globalLatitudeMin != '' && $globalLatitudeMax != '' && $globalLongitudeMin != '' && $globalLongitudeMax != '') 
-    {
+    if (!isset($globalBounding) || $globalBounding == 'polygon') {
+	if ($globalLatitudeMin != '' && $globalLatitudeMax != '' && $globalLongitudeMin != '' && $globalLongitudeMax != '') 
+	{ 
     ?>
   //create the bounding box to show the coverage area
   var polygon = L.polygon(
@@ -129,9 +130,18 @@ $( document ).ready(function() {
     stroke: false
     }).addTo(map);
 <?php
+	}
+    } elseif ($globalBounding == 'circle') {
+?>
+    var circle = L.circle([<?php print $globalCenterLatitude; ?>, <?php print $globalCenterLongitude; ?>],<?php if (isset($globalBoundingCircleSize)) print $globalBoundingCircleSize; else print '70000'; ?>,{
+    color: '#92C7D1',
+    fillColor: '#92C7D1',
+    fillOpacity: 0.3,
+    stroke: false
+    }).addTo(map);
+<?php
     }
 ?>
-
 	// Show airports on map
 	function airportPopup (feature, layer) {
 		var output = '';
@@ -240,7 +250,10 @@ $( document ).ready(function() {
 	info.update = function (props) {
 		if (typeof props != 'undefined') {
 			this._div.innerHTML = '<h4>Aircrafts detected</h4>' +  '<b>' + props.flight_cnt + '</b>';
+		} else {
+			this._div.innerHTML = '<h4>Aircrafts detected</h4>' +  '<b>0</b>';
 		}
+
 	};
 	info.addTo(map);
 	<?php
@@ -277,25 +290,6 @@ $( document ).ready(function() {
               var markerLabel = "";
               if (feature.properties.callsign != ""){ markerLabel += feature.properties.callsign+'<br />'; }
               if (feature.properties.departure_airport_code != "" || feature.properties.arrival_airport_code != ""){ markerLabel += '<span class="nomobile">'+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+'</span>'; }
-                
-              return new L.Marker(latLng, {
-                iconAngle: feature.properties.heading,
-                title: markerLabel,
-                alt: feature.properties.callsign,
-                icon: L.icon({
-                  iconUrl: '<?php print $globalURL; ?>/images/map-icon-shadow.png',
-                  iconRetinaUrl: '<?php print $globalURL; ?>/images/map-icon-shadow@2x.png',
-                  iconSize: [40, 40],
-                  iconAnchor: [20, 40]
-                })
-                  //on marker click show the modal window with the iframe
-              })
-            },
-            onEachFeature: function (feature, layer) {
-              var output = '';
-                
-              //individual aircraft
-              if (feature.properties.type == "aircraft"){
 		<?php
 		    if (!isset($ident)) {
 		?>
@@ -303,6 +297,28 @@ $( document ).ready(function() {
 		<?php
 		    }
 		?>
+                                
+              return new L.Marker(latLng, {
+                iconAngle: feature.properties.heading,
+                title: markerLabel,
+                alt: feature.properties.callsign,
+                icon: L.icon({
+                  iconUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
+                  iconRetinaUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
+                  iconSize: [30, 30],
+                  iconAnchor: [15, 30]
+                })
+//                  iconUrl: '<?php print $globalURL; ?>/images/map-icon-shadow.png',
+   //               iconRetinaUrl: '<?php print $globalURL; ?>/images/map-icon-shadow@2x.png',
+
+                  //on marker click show the modal window with the iframe
+              })
+            },
+            onEachFeature: function (feature, layer) {
+              var output = '';
+		
+              //individual aircraft
+              if (feature.properties.type == "aircraft"){
                 output += '<div class="top">';
                   if (typeof feature.properties.image_source_website != 'undefined') {
                     if (typeof feature.properties.image_copyright != 'undefined') {

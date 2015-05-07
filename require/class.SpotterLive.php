@@ -1,7 +1,8 @@
 <?php
-$global_query = "SELECT spotter_live.* FROM spotter_live";
+//$global_query = "SELECT spotter_live.* FROM spotter_live";
 
 class SpotterLive {
+	static $global_query = "SELECT spotter_live.* FROM spotter_live";
 
 	/**
 	* Gets all the spotter information based on the latest data entry
@@ -109,7 +110,7 @@ class SpotterLive {
                 } 
             }
                 } else {
-         $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_output.date ';   
+         $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= spotter_live.date ';   
         }
 
                 $query  = "SELECT spotter_live.*, ( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(:lng) ) + sin( radians(:lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM spotter_live 
@@ -131,9 +132,8 @@ class SpotterLive {
 	* @return Array the spotter information
 	*
 	*/
-	public static function getAllLiveSpotterDataByIdent($ident)
+	public static function getLastLiveSpotterDataByIdent($ident)
 	{
-		global $global_query;
 
 		date_default_timezone_set('UTC');
 
@@ -146,6 +146,35 @@ class SpotterLive {
 	}
 
         /**
+	* Gets altitude information based on a particular callsign
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getAltitudeLiveSpotterDataByIdent($ident)
+	{
+
+		date_default_timezone_set('UTC');
+
+		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
+                $query  = "SELECT spotter_live.altitude, spotter_live.date FROM spotter_live WHERE spotter_live.ident = :ident";
+
+    		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute(array(':ident' => $ident));
+		} catch(PDOException $e) {
+			return "error";
+		}
+		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+		return $spotter_array;
+
+
+		return $spotter_array;
+	}
+
+        /**
 	* Gets all the spotter information based on a particular id
 	*
 	* @return Array the spotter information
@@ -153,10 +182,9 @@ class SpotterLive {
 	*/
 	public static function getAllLiveSpotterDataById($id)
 	{
-		global $global_query;
 		date_default_timezone_set('UTC');
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
-		$query  = $global_query." WHERE spotter_live.flightaware_id = :id";
+		$query  = SpotterLive::$global_query." WHERE spotter_live.flightaware_id = :id";
 //		$spotter_array = Spotter::getDataFromDB($query,array(':id' => $id));
 
     		try {
@@ -168,6 +196,28 @@ class SpotterLive {
 		}
 		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
+		return $spotter_array;
+	}
+
+        /**
+	* Gets all the spotter information based on a particular ident
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getAllLiveSpotterDataByIdent($ident)
+	{
+		date_default_timezone_set('UTC');
+		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
+		$query  = SpotterLive::$global_query." WHERE spotter_live.ident = :ident";
+    		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute(array(':ident' => $ident));
+		} catch(PDOException $e) {
+			return "error";
+		}
+		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $spotter_array;
 	}
 
@@ -405,10 +455,10 @@ class SpotterLive {
 			$aircraft_array = Spotter::getAllAircraftInfo('NA');
             	}
             	if ($registration == '') $registration = 'NA';
-		$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop, ModeS) 
-		VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,'', '', '', :arrival_airport_icao, '', '', '', :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date,:departure_airport_time,:arrival_airport_time,:squawk,:route_stop,:ModeS)";
+		$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_shadow, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop, ModeS) 
+		VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_shadow,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,'', '', '', :arrival_airport_icao, '', '', '', :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date,:departure_airport_time,:arrival_airport_time,:squawk,:route_stop,:ModeS)";
 
-		$query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao,':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk,':route_stop' => $route_stop,':ModeS' => $ModeS);
+		$query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_shadow' => $aircraft_array[0]['aircraft_shadow'],':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao,':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk,':route_stop' => $route_stop,':ModeS' => $ModeS);
 		//$query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao,':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date);
 		try {
 			$Connection = new Connection();

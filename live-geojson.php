@@ -19,7 +19,7 @@ if (isset($_GET['coord'])) {
 }
 if (isset($_GET['ident'])) {
 	$ident = $_GET['ident'];
-	$spotter_array = SpotterLive::getAllLiveSpotterDataByIdent($ident);
+	$spotter_array = SpotterLive::getLastlLiveSpotterDataByIdent($ident);
 }
 
 if (!empty($spotter_array)) {
@@ -104,6 +104,7 @@ $output = '{';
 						} else {
 							$output .= '"aircraft_name": "NA ('.$spotter_item['aircraft_type'].')",';
 						}
+						$output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
 						if (isset($spotter_item['airline_name'])) {
 							$output .= '"airline_name": "'.$spotter_item['airline_name'].'",';
 						} else {
@@ -186,7 +187,13 @@ $output = '{';
 				$output .= '},';
                 
 			}
+		} else {
+			$output .= '{';
+			$output .= '"type": "Feature",';
+			$output .= '"properties": {';
+			$output .= '"flight_cnt": "'.$flightcnt.'"}},';
 		}
+		
 		$output  = substr($output, 0, -1);
 
 		$output .= ']';

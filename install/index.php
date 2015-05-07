@@ -240,8 +240,12 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="text" name="britishairways" id="britishairways" value="<?php if (isset($globalBritishAirwaysKey)) print $globalBritishAirwaysKey; ?>" />
 		</p>
 		<p>
-			<label for="waypoints">Add Waypoints and Airspace data</label>
+			<label for="waypoints">Add Waypoints and Airspace data (about 40Mio in DB)</label>
 			<input type="checkbox" name="waypoints" id="waypoints" value="waypoints" checked="checked" />
+		</p>
+		<p>
+			<label for="archive">Archive all SBS data</label>
+			<input type="checkbox" name="archive" id="archive" value="archive"<?php if (isset($globalArchive) && $globalArchive) { ?> checked="checked"<?php } ?> />
 		</p>
 		</fieldset>
 		<input type="submit" name="submit" value="Create/Update database & write setup" />
@@ -336,9 +340,21 @@ if (isset($_POST['dbtype'])) {
 	$settings = array_merge($settings,array('globalBritishAirwaysKey' => $britishairways));
 
 	// Create in settings.php keys not yet configurable if not already here
-	if (!isset($globalImageBingKey)) $settings = array_merge($settings,array('globalImageBingKey' => ''));
+	//if (!isset($globalImageBingKey)) $settings = array_merge($settings,array('globalImageBingKey' => ''));
 	if (!isset($globalDebug)) $settings = array_merge($settings,array('globalDebug' => 'TRUE'));
+	if (!isset($globalArchive)) $settings = array_merge($settings,array('globalArchive' => 'FALSE'));
 	if (!isset($globalTransaction)) $settings = array_merge($settings,array('globalTransaction' => 'FALSE'));
+
+	// Set some defaults values...
+	if (!isset($globalAircraftImageSources)) {
+	    $globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
+	    $settings = array_merge($settings,array('globalAircraftImageSources' => $globalAircraftImageSources));
+	}
+
+	if (!isset($globalSchedulesSources)) {
+	    $globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','flightaware');
+    	    $settings = array_merge($settings,array('globalSchedulesSources' => $globalSchedulesSources));
+    	}
 
 	$settings = array_merge($settings,array('globalInstalled' => 'TRUE'));
 

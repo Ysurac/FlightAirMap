@@ -1,5 +1,6 @@
 <?php
 require_once('class.Spotter.php');
+require_once('class.Common.php');
 require_once('settings.php');
 
 class Image {
@@ -89,7 +90,7 @@ class Image {
         else $aircraft_name = '';
 	if ($aircraft_registration == '') return array('thumbnail' => '','original' => '', 'copyright' => '', 'source' => '','source_website' => '');
 
-	if (!isset($globalAircraftImageSources)) $globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','planespotters');
+	if (!isset($globalAircraftImageSources)) $globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
 	
 	foreach ($globalAircraftImageSources as $source) {
 		$source = strtolower($source);
@@ -98,6 +99,8 @@ class Image {
 		if ($source == 'bing') $images_array = Image::fromBing($aircraft_registration,$aircraft_name);
 		if ($source == 'deviantart') $images_array = Image::fromDeviantart($aircraft_registration,$aircraft_name);
 		if ($source == 'wikimedia') $images_array = Image::fromWikimedia($aircraft_registration,$aircraft_name);
+		if ($source == 'jetphotos') $images_array = Image::fromJetPhotos($aircraft_registration,$aircraft_name);
+		if ($source == 'planepictures') $images_array = Image::fromPlanePictures($aircraft_registration,$aircraft_name);
 		if (is_array($images_array) && $images_array['original'] != '') return $images_array;
 	}
 	return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
@@ -120,15 +123,7 @@ class Image {
 	    $url= 'http://www.planespotters.net/Aviation_Photos/search.php?reg='.$aircraft_registration.'&output=rss';
 	}
 	
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,100); 
-	curl_setopt($ch, CURLOPT_TIMEOUT, 100); 
-	curl_setopt($ch, CURLOPT_URL, $url);
-	$data = curl_exec($ch);
-	curl_close($ch);
+	$data = Common::getData($url);
 	if ($xml = simplexml_load_string($data)) {
 	    if (isset($xml->channel->item)) {
 		$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
@@ -159,15 +154,7 @@ class Image {
 	    $url= 'http://backend.deviantart.com/rss.xml?type=deviation&q=aircraft%20'.$aircraft_registration;
 	}
 	
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,100); 
-	curl_setopt($ch, CURLOPT_TIMEOUT, 100); 
-	curl_setopt($ch, CURLOPT_URL, $url);
-	$data = curl_exec($ch);
-	curl_close($ch);
+	$data = Common::getData($url);
 	if ($xml = simplexml_load_string($data)) {
 	    if (isset($xml->channel->item->link)) {
 		$thumbnail_url = trim((string)$xml->channel->item->children('http://search.yahoo.com/mrss/')->thumbnail->attributes()->url);
@@ -184,6 +171,81 @@ class Image {
     }
 
     /**
+    * Gets the aircraft image from JetPhotos
+    *
+    * @param String $aircraft_registration the registration of the aircraft
+    * @param String $aircraft_name type of the aircraft
+    * @return Array the aircraft thumbnail, orignal url and copyright
+    *
+    */
+    public static function fromJetPhotos($aircraft_registration, $aircraft_name='') {
+	$url= 'http://jetphotos.net/showphotos.php?displaymode=2&regsearch='.$aircraft_registration;
+	
+	$data = Common::getData($url);
+	$dom = new DOMDocument();
+	@$dom->loadHTML($data);
+	$all_pics = array();
+	foreach($dom->getElementsByTagName('img') as $image) {
+	    if ($image->getAttribute('itemprop') == "http://schema.org/image") {
+		$all_pics[] = $image->getAttribute('src');
+	    }
+	}
+	$all_authors = array();
+	foreach($dom->getElementsByTagName('meta') as $author) {
+	    if ($author->getAttribute('itemprop') == "http://schema.org/author") {
+		$all_authors[] = $author->getAttribute('content');
+	    }
+	}
+	$all_ref = array();
+	foreach($dom->getElementsByTagName('a') as $link) {
+	    $all_ref[] = $link->getAttribute('href');
+	}
+
+	if (isset($all_pics[0])) {
+		$image_url['thumbnail'] = $all_pics[0];
+		$image_url['original'] = str_replace('_tb','',$all_pics[0]);
+		$image_url['copyright'] = $all_authors[0];
+		$image_url['source_website'] = 'http://jetphotos.net'.$all_ref[8];
+		$image_url['source'] = 'JetPhotos';
+		return $image_url;
+	}
+	return false;
+    }
+  
+    /**
+    * Gets the aircraft image from PlanePictures
+    *
+    * @param String $aircraft_registration the registration of the aircraft
+    * @param String $aircraft_name type of the aircraft
+    * @return Array the aircraft thumbnail, orignal url and copyright
+    *
+    */
+    public static function fromPlanePictures($aircraft_registration, $aircraft_name='') {
+	$url= 'http://www.planepictures.net/netsearch4.cgi?srch='.$aircraft_registration.'&stype=reg&srng=2';
+	
+	$data = Common::getData($url);
+	$dom = new DOMDocument();
+	@$dom->loadHTML($data);
+	$all_pics = array();
+	foreach($dom->getElementsByTagName('img') as $image) {
+	    $all_pics[] = $image->getAttribute('src');
+	}
+	$all_links = array();
+	foreach($dom->getElementsByTagName('a') as $link) {
+	    $all_links[] = array('text' => $link->textContent,'href' => $link->getAttribute('href'));
+	}
+	if (isset($all_pics[1])) {
+		$image_url['thumbnail'] = 'http://www.planepictures.net'.$all_pics[1];
+		$image_url['original'] = 'http://www.planepictures.net'.str_replace('_TN','',$all_pics[1]);
+		$image_url['copyright'] = $all_links[6]['text'];
+		$image_url['source_website'] = $all_links[2]['href'];
+		$image_url['source'] = 'PlanePictures';
+		return $image_url;
+	}
+	return false;
+    }
+  
+    /**
     * Gets the aircraft image from Flickr
     *
     * @param String $aircraft_registration the registration of the aircraft
@@ -196,15 +258,7 @@ class Image {
 	    if ($aircraft_name != '') $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$aircraft_registration.','.urlencode($aircraft_name);
 	    else $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$aircraft_registration.',aircraft';
 	    
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,100); 
-	curl_setopt($ch, CURLOPT_TIMEOUT, 100); 
-	curl_setopt($ch, CURLOPT_URL, $url);
-	$data = curl_exec($ch);
-	curl_close($ch);
+	$data = Common::getData($url);
 	
 	if ($xml = simplexml_load_string($data)) {
 	    if (isset($xml->channel->item)) {
@@ -237,23 +291,15 @@ class Image {
 
 	$headers = array("Authorization: Basic " . base64_encode("ignored:".$globalImageBingKey));
 
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,100); 
-	curl_setopt($ch, CURLOPT_TIMEOUT, 100); 
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($ch, CURLOPT_URL, $url);
-	$data = curl_exec($ch);
-	curl_close($ch);
+	$data = Common::getData($url);
 
 	$result = json_decode($data);
 	if (isset($result->d->results[0]->MediaUrl)) {
 	    $image_url['original'] = $result->d->results[0]->MediaUrl;
 	    $image_url['source_website'] = $result->d->results[0]->SourceUrl;
-	    $image_url['thumbnail'] = $result->d->results[0]->Thumbnail->MediaUrl;
+	    // Thumbnail can't be used this way...
+	    // $image_url['thumbnail'] = $result->d->results[0]->Thumbnail->MediaUrl;
+	    $image_url['thumbnail'] = $result->d->results[0]->MediaUrl;
 	    $url = parse_url($image_url['source_website']);
 	    $image_url['copyright'] = $url['host'];
 	    $image_url['source'] = 'bing';
@@ -274,16 +320,7 @@ class Image {
 	if ($aircraft_name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$aircraft_registration.'"%20'.urlencode($aircraft_name);
 	else $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$aircraft_registration.'"%20aircraft';
 
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,100); 
-	curl_setopt($ch, CURLOPT_TIMEOUT, 100); 
-	curl_setopt($ch, CURLOPT_URL, $url);
-	$data = curl_exec($ch);
-	curl_close($ch);
+	$data = Common::getData($url);
 	$result = json_decode($data);
 	if (isset($result->query->search[0]->title)) {
 	    $fileo = $result->query->search[0]->title;
@@ -291,17 +328,7 @@ class Image {
 	    $file = urlencode($fileo);
 	    $url2 = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&continue&iilimit=500&prop=imageinfo&iiprop=user|url|size|mime|sha1|timestamp&iiurlwidth=200%27&titles='.$file;
 
-	    $ch = curl_init();
-	    curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
-	    curl_setopt($ch, CURLOPT_HEADER, 0);
-	    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,100); 
-	    curl_setopt($ch, CURLOPT_TIMEOUT, 100); 
-	    curl_setopt($ch, CURLOPT_URL, $url2);
-	    $data2 = curl_exec($ch);
-	    curl_close($ch);
-
+	    $data2 = Common::getData($url2);
 	    $result2 = json_decode($data2);
 	    if (isset($result2->query->pages)) {
 		foreach ($result2->query->pages as $page) {
@@ -319,17 +346,7 @@ class Image {
 	    if (isset($image_url['original'])) {
 		$url2 = 'https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&iiprop=extmetadata&format=json&continue&titles='.$file;
 
-	        $ch = curl_init();
-		curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0');
-	        curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,100); 
-		curl_setopt($ch, CURLOPT_TIMEOUT, 100); 
-		curl_setopt($ch, CURLOPT_URL, $url2);
-		$data2 = curl_exec($ch);
-		curl_close($ch);
-
+		$data2 = Common::getData($url2);
 		$result2 = json_decode($data2);
 		if (isset($result2->query->pages)) {
 		    foreach ($result2->query->pages as $page) {
@@ -357,5 +374,7 @@ class Image {
 //print_r(Image::findAircraftImage('F-GRHG'));
 //print_r(Image::fromBing('CN-RGF'));
 //print_r(Image::fromBing('472/CC'));
+//print_r(Image::fromJetPhotos('F-GZHM'));
+//print_r(Image::fromPlanePictures('F-GZHM'));
 
 ?>

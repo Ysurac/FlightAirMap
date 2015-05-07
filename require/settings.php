@@ -69,4 +69,12 @@ $globalBritishAirwaysKey = '';
 //ignore the flights during imports that have the following airports (departure/arrival) associated with them
 $globalAirportIgnore = array();
 
+//Archive all data
+$globalArchive = FALSE;
+
+//Sources for Aircraft image
+$globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
+
+//Sources for airline schedule
+$globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','flightaware');
 ?>

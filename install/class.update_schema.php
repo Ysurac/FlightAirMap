@@ -186,6 +186,48 @@ class update_schema {
     		}
 		return $error;
 	}
+
+	private static function update_from_5() {
+    		$Connection = new Connection();
+    		// Add columns to translation
+		$query = "ALTER TABLE `translation` ADD `Source` VARCHAR(255) NULL, ADD `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , ADD `date_modified` DATETIME NULL DEFAULT NULL ;";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add new columns to translation) : ".$e->getMessage()."\n";
+    		}
+    		// Add aircraft_shadow column to aircraft
+    		$query = "ALTER TABLE `aircraft` ADD `aircraft_shadow` VARCHAR(255) NULL";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add new column to aircraft) : ".$e->getMessage()."\n";
+    		}
+    		// Add aircraft_shadow column to spotter_live
+    		$query = "ALTER TABLE `spotter_live` ADD `aircraft_shadow` VARCHAR(255) NULL";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add new column to spotter_live) : ".$e->getMessage()."\n";
+    		}
+    		$error = '';
+    		// Update table aircraft
+		$error .= create_db::import_file('../db/aircraft.sql');
+
+		// Update schema_version to 6
+		$query = "UPDATE `config` SET `value` = '6' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
     	
     	public static function check_version($update = false) {
     	    $version = 0;
@@ -215,6 +257,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '4') {
     			    self::update_from_4();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '5') {
+    			    self::update_from_5();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';
