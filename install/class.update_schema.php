@@ -216,6 +216,7 @@ class update_schema {
     		$error = '';
     		// Update table aircraft
 		$error .= create_db::import_file('../db/aircraft.sql');
+		$error .= create_db::import_file('../db/spotter_archive.sql');
 
 		// Update schema_version to 6
 		$query = "UPDATE `config` SET `value` = '6' WHERE `name` = 'schema_version'";
