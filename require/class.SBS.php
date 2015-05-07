@@ -161,6 +161,7 @@ class SBS {
 			}
 			$ignoreImport = false;
 			if (self::$debug) echo $result."\n";
+			/*
 			if (isset($globalArchive) && $globalArchive) {
 			    $archives_ident = SpotterLive::getAllLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
 			    foreach ($archives_ident as $archive) {
@@ -170,6 +171,7 @@ class SBS {
 				$archive['squawk'],$archive['ModeS']);
 			    }
 			}
+			*/
 			SpotterLive::deleteLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
 			//SpotterLive::deleteLiveSpotterData();
 		    }

@@ -19,7 +19,7 @@ if (isset($_GET['coord'])) {
 }
 if (isset($_GET['ident'])) {
 	$ident = $_GET['ident'];
-	$spotter_array = SpotterLive::getLastlLiveSpotterDataByIdent($ident);
+	$spotter_array = SpotterLive::getLastLiveSpotterDataByIdent($ident);
 }
 
 if (!empty($spotter_array)) {

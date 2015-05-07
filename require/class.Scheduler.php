@@ -158,7 +158,7 @@ class Schedule {
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$url = "http://www.airfrance.fr/cgi-bin/AF/FR/fr/local/resainfovol/infovols/detailsVolJson.do?codeCompagnie[0]=".$carrier."&numeroVol[0]=".$numvol."&dayFlightDate=".$check_date->format('d')."&yearMonthFlightDate=".$check_date->format('Ym');
-		$json = Schedule::getData($url);
+		$json = Common::getData($url);
 	
 		$parsed_json = json_decode($json);
 		if (property_exists($parsed_json,'errors') === false) {
@@ -199,7 +199,7 @@ class Schedule {
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$url = "http://www.easyjet.com/ft/api/flights?date=".$check_date->format('Y-m-d')."&fn=".$callsign;
-		$json = Commmon::getData($url);
+		$json = Common::getData($url);
 		$parsed_json = json_decode($json);
 
 		$flights = $parsed_json->{'flights'};
@@ -224,7 +224,7 @@ class Schedule {
 		$url = "http://www.ryanair.com/fr/api/2/flight-info/0/50/";
 		$post = '{"flight":"'.$numvol.'","minDepartureTime":"00:00","maxDepartureTime":"23:59"}';
 		$headers = array('Content-Type: application/json','Content-Length: ' . strlen($post));
-		$json = Commmon::getData($url,'post',$post,$headers);
+		$json = Common::getData($url,'post',$post,$headers);
 		$parsed_json = json_decode($json);
 
 		$flights = $parsed_json->{'flightInfo'};
@@ -247,7 +247,7 @@ class Schedule {
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$url = "http://www.world-of-swiss.com/fr/routenetwork.json";
-		$json = Commmon::getData($url);
+		$json = Common::getData($url);
 		$parsed_json = json_decode($json);
 
 
@@ -282,7 +282,7 @@ class Schedule {
 		$url = "https://api.ba.com/rest-v1/v1/flights;flightNumber=".$numvol.";scheduledDepartureDate=".$check_date->format('Y-m-d').".json";
 		$headers = array('Client-Key: '.$globalBritishAirwaysKey);
 
-		$json = Commmon::getData($url,'get','',$headers);
+		$json = Common::getData($url,'get','',$headers);
 		if ($json == '') return array();
 		$parsed_json = json_decode($json);
 		$flights = $parsed_json->{'FlightsResponse'};
@@ -304,8 +304,8 @@ class Schedule {
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$url = "http://www.tunisair.com/site/publish/module/Volj/fr/Flight_List.asp";
-		$data = Commmon::getData($url);
-		$table = Commmon::table2array($data);
+		$data = Common::getData($url);
+		$table = Common::table2array($data);
 		foreach ($table as $flight) {
 			if (isset($flight[1]) && $flight[1] == "TU ".sprintf('%04d',$numvol)) {
 				return array('DepartureAirportIATA' => $flight[2],'DepartureTime' => str_replace('.',':',$flight[5]),'ArrivalAirportIATA' => $flight[3],'ArrivalTime' => str_replace('.',':',$flight[6]),'Source' => 'website_tunisair');
@@ -323,9 +323,9 @@ class Schedule {
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$url = "https://www.vueling.com/Base/BaseProxy/RenderMacro/?macroalias=DailyFlights&OriginSelected=&DestinationSelected=&idioma=en-GB&pageid=30694&ItemsByPage=50&FlightNumberFilter=".$numvol;
-		$data = Commmon::getData($url);
+		$data = Common::getData($url);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			foreach ($table as $flight) {
 				if (count($flight) > 0 && $flight[0] == "VY".$numvol) {
 					preg_match('/flightOri=[A-Z]{3}/',$flight[13],$result);
@@ -351,9 +351,9 @@ class Schedule {
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$url = "https://www.iberia.com/web/flightDetail.do";
 		$post = array('numvuelo' => $numvol,'fecha' => $check_date->format('Ymd'),'airlineID' => 'IB');
-		$data = Commmon::getData($url,'post',$post);
+		$data = Common::getData($url,'post',$post);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			//print_r($table);
 			if (count($table) > 0) {
 				$flight = $table;
@@ -383,9 +383,9 @@ class Schedule {
 		$check_date = new Datetime($date);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$url = "http://www.staralliance.com/flifoQueryAction.do?myAirline=&airlineCode=".$carrier."&flightNo=".$numvol."&day=".$check_date->format('d')."&month=".$check_date->format('m')."&year=".$check_date->format('Y')."&departuredate=".$check_date->format('d-M-Y');
-		$data = Commmon::getData($url);
+		$data = Common::getData($url);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			if (count($table) > 0) {
 				$flight = $table;
 				//print_r($table);
@@ -416,9 +416,9 @@ class Schedule {
 		$check_date = new Datetime($date);
 		$url= "http://booking.alitalia.com/FlightStatus/fr_fr/FlightInfo?Brand=az&NumeroVolo=".$numvol."&DataCompleta=".$check_date->format('d/m/Y');
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
-		$data = Commmon::getData($url);
+		$data = Common::getData($url);
 		if ($data != '') {
-			$table = Commmon::text2array($data);
+			$table = Common::text2array($data);
 			$DepartureAirportIata = '';
 			$ArrivalAirportIata = '';
 			$departureTime = $table[4];
@@ -439,7 +439,7 @@ class Schedule {
 		$url= "http://www.brusselsairlines.com/api/flightstatus/getresults?from=NA&to=NA&date=".$check_date->format('d/m/Y')."&hour=NA&lookup=flightnumber&flightnumber=".$numvol."&publicationID=302";
 		//http://www.brusselsairlines.com/fr-fr/informations-pratiques/statut-de-votre-vol/resultat.aspx?flightnumber=".$numvol."&date=".$check_date->format('d/m/Y')."&lookup=flightnumber";
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
-		$data = Commmon::getData($url);
+		$data = Common::getData($url);
 		if ($data != '') {
 		    //echo $data;
 		    $parsed_json = json_decode($data);
@@ -461,14 +461,14 @@ class Schedule {
 	*/
 	public static function getFlightRadar24($callsign, $date = 'NOW') {
 		$url= "http://arn.data.fr24.com/zones/fcgi/feed.js?flight=".$callsign;
-		$data = Commmon::getData($url);
+		$data = Common::getData($url);
 		if ($data != '') {
 			$parsed_json = get_object_vars(json_decode($data));
 			if (count($parsed_json) > 2) {
 				$info = array_splice($parsed_json,2,1);
 				$fr24id = current(array_keys($info));
 				$urldata = "http://krk.data.fr24.com/_external/planedata_json.1.4.php?f=".$fr24id;
-				$datapl = Commmon::getData($urldata);
+				$datapl = Common::getData($urldata);
 				if ($datapl != '') {
 					$parsed_jsonpl = json_decode($datapl);
 					if (isset($parsed_jsonpl->from_iata)) {
@@ -497,16 +497,16 @@ class Schedule {
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 
 		$post = array('flightNumber' => $numvol, 'date' => $check_date->format('Y-m-d'),'time' => '12:00','timezoneOffset' => '0','selection' => '0','arrivalDeparture' => 'D');
-		$data = Commmon::getData($url,'post',$post);
+		$data = Common::getData($url,'post',$post);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			$departureTime = trim(str_replace($check_date->format('d.m.Y'),'',$table[25][3]));
 		}
 
 		$post = array('flightNumber' => $numvol, 'date' => $check_date->format('Y-m-d'),'time' => '12:00','timezoneOffset' => '0','selection' => '0','arrivalDeparture' => 'A');
-		$data = Commmon::getData($url,'post',$post);
+		$data = Common::getData($url,'post',$post);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			$arrivalTime = trim(str_replace($check_date->format('d.m.Y'),'',$table[25][3]));
 		}
 		return array('DepartureAirportIATA' => '','DepartureTime' => $departureTime,'ArrivalAirportIATA' => '','ArrivalTime' => $arrivalTime,'Source' => 'website_lufthansa');
@@ -524,17 +524,18 @@ class Schedule {
 		$check_date = new Datetime($date);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$post = array('arrivalsdepartures_content' => 'number','arrivalsdepartures_tp' => $numvol,'arrivalsdepartures_trk' => 'ARR','arrivalsdepartures_date_trk' => '1','aptCode' => '','arrivalsdepartures' => 'DEP','arrivalsdepartures_date' => '1','aptCodeFrom' => '','aptCodeTo' => '','arrivalsdepartures2' => 'DEP','arrivalsdepartures_date2' => '1');
-		$data = Commmon::getData($url,'post',$post);
+		$data = Common::getData($url,'post',$post);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			$departureTime = trim(substr($table[15][0],0,5));
 			$arrivalTime = trim(substr($table[35][0],0,5));
 			preg_match('/([A-Z]{3})/',$table[11][0],$DepartureAirportIataMatch);
 			preg_match('/([A-Z]{3})/',$table[31][0],$ArrivalAirportIataMatch);
 			$DepartureAirportIata = $DepartureAirportIataMatch[0];
 			$ArrivalAirportIata = $ArrivalAirportIataMatch[0];
+			return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_flytap');
 		}
-		return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_flytap');
+		return array();
 	}
 
 	/**
@@ -556,9 +557,9 @@ class Schedule {
 		$url= "http://info.flightmapper.net/flight/".$airline_icao.'_'.$numvol;
 		$check_date = new Datetime($date);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
-		$data = Commmon::getData($url);
+		$data = Common::getData($url);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			if (isset($table[5][0])) {
 				$sched = $table[5][0];
 				$n = sscanf($sched,'%*s %5[0-9:] %*[^()] (%3[A-Z]) %5[0-9:] %*[^()] (%3[A-Z])',$dhour,$darr,$ahour,$aarr);
@@ -593,9 +594,9 @@ class Schedule {
 		$url= "http://fr.flightaware.com/live/flight/".$callsign;
 		$check_date = new Datetime($date);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
-		$data = Commmon::getData($url);
+		$data = Common::getData($url);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			if (isset($table[11][0])) {
 				$departureTime = str_replace('h',':',substr($table[15][1],0,5));
 				$arrivalTime = str_replace('h',':',substr($table[15][4],0,5));
@@ -617,9 +618,9 @@ class Schedule {
 		$url= "http://www.costtotravel.com/flight-number/".$callsign;
 		$check_date = new Datetime($date);
 		//if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
-		$data = Commmon::getData($url);
+		$data = Common::getData($url);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			//print_r($table);
 			if (isset($table[11][1])) {
 				$departureTime = substr($table[11][1],0,5);
@@ -644,7 +645,7 @@ class Schedule {
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		$url= "http://services.aircanada.com/portal/rest/getFlightsByFlightNumber?forceTimetable=true&flightNumber=".$numvol."&carrierCode=AC&date=".$check_date->format('m-d-Y')."&app_key=AE919FDCC80311DF9BABC975DFD72085&cache=74249";
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
-		$data = Commmon::getData($url);
+		$data = Common::getData($url);
 		$dom = new DomDocument();
 		$dom->loadXML($data);
 		if ($dom->getElementsByTagName('DepartureStationInfo')->length == 0) return array();
@@ -670,9 +671,9 @@ class Schedule {
 		$check_date = new Datetime($date);
 		$url= "https://cat.sabresonicweb.com/SSWVN/meridia?posid=VNVN&page=flifoFlightInfoDetailsMessage_learn&action=flightInfoDetails&airline=VN&language=fr&depDay=".$check_date->format('j')."&depMonth=".strtoupper($check_date->format('M'))."&=&flight=".$numvol."&";
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
-		$data = Commmon::getData($url);
+		$data = Common::getData($url);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			$flight = $table;
 			preg_match('/([A-Z]{3})/',$flight[3][0],$DepartureAirportIataMatch);
 			preg_match('/([A-Z]{3})/',$flight[21][0],$ArrivalAirportIataMatch);
@@ -698,27 +699,27 @@ class Schedule {
 		$url= "http://www.airberlin.com/en-US/site/aims.php";
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$post = array('type' => 'departure','searchFlightNo' => '1','requestsent' => 'true', 'flightno' => $numvol,'date' => $check_date->format('Y-m-d'),'carrier' => 'AB');
-		$data = Commmon::getData($url,'post',$post);
+		$data = Common::getData($url,'post',$post);
 		//echo $data;
 		$DepartureAirportIata = '';
 		$ArrivalAirportIata = '';
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			$flight = $table;
 //			print_r($table);
 			$departureTime = $flight[5][4];
 			$departureAirport = $flight[5][2];
 		}
 		$post = array('type' => 'arrival','searchFlightNo' => '1','requestsent' => 'true', 'flightno' => $numvol,'date' => $check_date->format('Y-m-d'),'carrier' => 'AB');
-		$data = Commmon::getData($url,'post',$post);
+		$data = Common::getData($url,'post',$post);
 		if ($data != '') {
-			$table = Commmon::table2array($data);
+			$table = Common::table2array($data);
 			$flight = $table;
 			$arrivalTime = $flight[5][4];
 			$arrivalAirport = $flight[5][3];
 		}
 		$url = 'http://www.airberlin.com/en-US/site/json/suggestAirport.php?searchfor=departures&searchflightid=0&departures%5B%5D=&suggestsource%5B0%5D=activeairports&withcountries=0&withoutroutings=0&promotion%5Bid%5D=&promotion%5Btype%5D=&routesource%5B0%5D=airberlin&routesource%5B1%5D=partner';
-		$json = Commmon::getData($url);
+		$json = Common::getData($url);
 		if ($json == '') return array();
 		$parsed_json = json_decode($json);
 		$airports = $parsed_json->{'suggestList'};
