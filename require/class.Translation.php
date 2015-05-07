@@ -65,13 +65,13 @@ class Translation {
                 }
         }
         
-        public static function checkTranslation($ident) {
+        public static function checkTranslation($ident,$web = true) {
     	    //echo "Check Translation for ".$ident."...";
     	    $correct = Translation::getOperator($ident);
     	    if ($correct != '' && $correct != $ident) {
     		//echo "Found in DB !\n";
     		 return $correct;
-    	    } else {
+    	    } elseif ($web) {
     		if (! is_numeric(substr($ident,-4))) {
     		    $correct = Translation::fromPlanefinder($ident);
     		    if ($correct != '') {
