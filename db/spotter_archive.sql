@@ -26,8 +26,8 @@ SET time_zone = "+00:00";
 -- Table structure for table `spotter_live`
 --
 
-CREATE TABLE IF NOT EXISTS `spotter_live` (
-  `spotter_live_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `spotter_archive` (
+  `spotter_archive_id` int(11) NOT NULL AUTO_INCREMENT,
   `flightaware_id` varchar(999) NOT NULL,
   `ident` varchar(999) NOT NULL,
   `registration` varchar(999),
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `spotter_live` (
   `ground_speed` int(11) NOT NULL,
   `squawk` int(11),
   `ModeS` varchar(255),
-  PRIMARY KEY (`spotter_live_id`)
+  PRIMARY KEY (`spotter_archive_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
