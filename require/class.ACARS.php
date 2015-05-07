@@ -825,7 +825,7 @@ RMK/FUEL   2.6 M0.79)
         	
         	$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
     	    } else $icao = $row['ident'];
-    	    $icao = Translation::checkTranslation($icao);
+    	    $icao = Translation::checkTranslation($icao,false);
     	    
     	    $decode = json_decode($row['decode'],true);
     	    $found = false;
