@@ -327,7 +327,7 @@ class Schedule {
 		if ($data != '') {
 			$table = Common::table2array($data);
 			foreach ($table as $flight) {
-				if (count($flight) > 0 && $flight[0] == "VY".$numvol) {
+				if (count($flight) > 0 && $flight[0] == "VY".$numvol && isset($flight[13])) {
 					preg_match('/flightOri=[A-Z]{3}/',$flight[13],$result);
 					$DepartureAirportIata = str_replace('flightOri=','',$result[0]);
 					preg_match('/flightDest=[A-Z]{3}/',$flight[13],$result);
