@@ -463,7 +463,7 @@ class SpotterLive {
 		$aircraft_type = $aircraft_array[0]['type'];
 		$aircraft_manufacturer = $aircraft_array[0]['manufacturer'];
 		$aircraft_name = '';
-		if (isset($departure_airport_array)) {
+		if (isset($departure_airport_array[0])) {
 			$departure_airport_name = $departure_airport_array[0]['name'];
 			$departure_airport_city = $departure_airport_array[0]['city'];
 			$departure_airport_country = $departure_airport_array[0]['country'];
@@ -472,7 +472,7 @@ class SpotterLive {
 			$departure_airport_city = '';
 			$departure_airport_country = '';
 		}
-		if (isset($arrival_airport_array)) {
+		if (isset($arrival_airport_array[0])) {
 			$arrival_airport_name = $arrival_airport_array[0]['name'];
 			$arrival_airport_city = $arrival_airport_array[0]['city'];
 			$arrival_airport_country = $arrival_airport_array[0]['country'];
