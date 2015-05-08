@@ -491,7 +491,7 @@ if (isset($_POST['dbtype'])) {
 	foreach ($_SESSION['done'] as $done) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
-	print '<li>Populate database with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i></li></ul></div>';
+	print '<li>Populate database with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i><b>If it fails, run install/install_db.php in console, this will finish install</b></li></ul></div>';
 	ob_flush();
 	flush();
 
