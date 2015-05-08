@@ -475,7 +475,7 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
-                        $sth->execute(array(':source' => 'translation.csv');
+                        $sth->execute(array(':source' => 'translation.csv'));
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
