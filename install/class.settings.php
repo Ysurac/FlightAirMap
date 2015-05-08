@@ -11,12 +11,12 @@ class settings {
 			    $pattern = '/\$'.$settingname." = ".'(TRUE|FALSE)'."/";
 			    $replace = '\$'.$settingname." = ".$value."";
 			} elseif (is_array($value)) {
-			    $pattern = '/\$'.$settingname." = array(".'(.*)'.")/";
+			    $pattern = '/\$'.$settingname." = array\(".'(.*)'."\)/";
 			    foreach ($value as $data) {
 				if (!isset($array_value)) {
 				    $array_value = "'".$data."'";
 				} else {
-				    $array_value = ",'".$data."'";
+				    $array_value .= ",'".$data."'";
 				}
 			    }
 			    $replace = '\$'.$settingname." = array(".$array_value.")";

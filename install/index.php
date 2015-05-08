@@ -196,13 +196,24 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		</div>
 		<div id="sbs_data">
 		<?php
+		    $displaysbs = true;
 		    if (isset($globalSBS1Hosts)) {
-			$hostport = explode(':',$globalSBS1Hosts);
-			if (count($hostport) == 2) {
-			    $globalSBS1Host = $hostport[0];
-			    $globalSBS1Port = $hostport[1];
-			}
+			if (! is_array($globalSBS1Hosts)) {
+			    $hostport = explode(':',$globalSBS1Hosts);
+			    if (count($hostport) == 2) {
+				$globalSBS1Host = $hostport[0];
+				$globalSBS1Port = $hostport[1];
+			    }
+			} elseif (count($globalSBS1Hosts) == 1) {
+			    $hostport = explode(':',$globalSBS1Hosts[0]);
+			    if (count($hostport) == 2) {
+				$globalSBS1Host = $hostport[0];
+				$globalSBS1Port = $hostport[1];
+			    }
+			} else $displaysbs = false;
 		    }
+		    
+		    if ($displaysbs) {
 		?>
 		<p>
 			<label for="sbshost">SBS-1 host</label>
@@ -216,6 +227,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<label for="sbstimeout">SBS-1 timeout</label>
 			<input type="text" name="sbstimeout" id="sbstimeout" value="<?php if (isset($globalSBS1TimeOut)) print $globalSBS1TimeOut; ?>" />
 		</p>
+		<?php
+		    }
+		?>
 		</div>
 		<div id="acars_data">
 		<p>
