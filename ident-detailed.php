@@ -63,7 +63,7 @@ if (!isset($_GET['ident'])){
                         var options = {
                             legend: {position: "none"},
                             chartArea: {"width": "80%", "height": "60%"},
-                            vAxis: {title: "Altitude of last flight"},
+                            vAxis: {title: "Altitude of last flight",format: "FL#","minValue": 0},
                             hAxis: {showTextEvery: 2},
                             height:210,
                             colors: ["#1a3151"]
