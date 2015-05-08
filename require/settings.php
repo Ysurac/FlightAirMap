@@ -36,7 +36,7 @@ $globalDBhost = 'localhost'; //database connection url
 $globalDBuser = ''; //database username
 $globalDBpass = ''; //database password
 $globalDBname = ''; //database name
-$globalTransaction = FALSE; //Activate database transaction support
+$globalTransaction = TRUE; //Activate database transaction support
 
 
 //FLIGHTAWARE API INFO
