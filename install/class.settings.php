@@ -27,9 +27,15 @@ class settings {
 			$rep_cnt = 0;
 			$content = preg_replace($pattern,$replace,$content,1,$rep_cnt);
 			
+			/// If setting was a string and is now an array
+			if ($rep_cnt == 0 && is_array($value)) {
+			    $pattern = '/\$'.$settingname." = '".'(.*)'."'/";
+			    $content = preg_replace($pattern,$replace,$content,1,$rep_cnt);
+			}
+			
 			// If setting is not in settings.php (for update)
 			if ($rep_cnt == 0) {
-				$content = preg_replace('/\?>/',$replace.";\n?>",$content,1,$rep_cnt);
+			    $content = preg_replace('/\?>/',$replace.";\n?>",$content,1,$rep_cnt);
 			}
 
 		}
