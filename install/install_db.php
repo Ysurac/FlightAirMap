@@ -3,7 +3,7 @@
     require_once('../require/settings.php');
     require('class.update_db.php');
     update_db::update_all();
-    echo "\nInstall waypoints...";
+    echo "\nInstall waypoints...(VERY slow!)";
     update_db::update_waypoints();
     echo "Done !\n";
     echo "Install airspace...";

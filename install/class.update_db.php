@@ -470,11 +470,12 @@ class update_db {
 		//update_db::download('http://www.acarsd.org/download/translation.php',$out_file);
 		//if (!file_exists($out_file) || !is_readable($out_file)) return FALSE;
 		
-		$query = 'TRUNCATE TABLE translation';
+		//$query = 'TRUNCATE TABLE translation';
+		$query = "DELETE FROM translation WHERE `Source` = '' OR `Source` = :source";
 		try {
 			$Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':source' => 'translation.csv');
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
@@ -511,10 +512,10 @@ class update_db {
                                             		$operator_correct = $airline_array[0]['icao'].substr($operator_correct,2);
                                             	}
                                         }
-					$query = 'INSERT INTO `translation` (`Reg`,`Reg_correct`,`Operator`,`Operator_correct`) VALUES (:Reg, :Reg_correct, :Operator, :Operator_correct)';
+					$query = 'INSERT INTO `translation` (`Reg`,`Reg_correct`,`Operator`,`Operator_correct`,`Source`) VALUES (:Reg, :Reg_correct, :Operator, :Operator_correct, :source)';
 					try {
 						$sth = Connection::$db->prepare($query);
-						$sth->execute(array(':Reg' => $data[0],':Reg_correct' => $data[1],':Operator' => $operator,':Operator_correct' => $operator_correct));
+						$sth->execute(array(':Reg' => $data[0],':Reg_correct' => $data[1],':Operator' => $operator,':Operator_correct' => $operator_correct, ':source' => 'translation.csv'));
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage();
 					}
