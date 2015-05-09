@@ -101,11 +101,11 @@ class SBS {
 		    }
 		}
 	        
-		if ($line[14] != '' && $line[14] != 0) {
+		if ($line[14] != '' && $line[14] != 0 && $line[14] < 91) {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('latitude' => $line[14]));
 		    $dataFound = true;
 		}
-		if ($line[15] != '' && $line[15] != 0) {
+		if ($line[15] != '' && $line[15] != 0 && $line[15] < 181) {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('longitude' => $line[15]));
 		    $dataFound = true;
 		}

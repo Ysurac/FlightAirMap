@@ -132,7 +132,7 @@ class update_db {
 			return "error : ".$e->getMessage();
 		}
 
-		$query = "DELETE FROM aircraft_modes WHERE `Source` = :source AND `ModeS` IN (SELECT `ModeS` FROM aircraft_modes WHERE `Source` = 'ACARS')";
+		$query = "DELETE FROM aircraft_modes WHERE `Source` = :source AND `ModeS` IN (SELECT * FROM (SELECT `ModeS` FROM aircraft_modes WHERE `Source` = 'ACARS') _alias)";
 		try {
 			$Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
@@ -688,7 +688,7 @@ class update_db {
 		update_db::gunzip($tmp_dir.'StandingData.sqb.gz');
 		if ($globalDebug) echo "Add to DB...";
 		$error = update_db::retrieve_route_sqlite_to_dest($tmp_dir.'StandingData.sqb');
-		if ($error != true) {
+		if ($error != '') {
 			echo $error;
 			exit;
 		} elseif ($globalDebug) echo "Done\n";
@@ -711,7 +711,7 @@ class update_db {
 		update_db::unzip($tmp_dir.'basestation_latest.zip');
 		if ($globalDebug) echo "Add to DB...";
 		$error = update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'BaseStation.sqb');
-		if ($error != true) {
+		if ($error != '') {
 			echo $error;
 			exit;
 		} elseif ($globalDebug) echo "Done\n";
@@ -722,7 +722,7 @@ class update_db {
 		update_db::unzip($tmp_dir.'translation.zip');
 		if ($globalDebug) echo "Add to DB...";
 		$error = update_db::translation();
-		if ($error != true) {
+		if ($error != '') {
 			echo $error;
 			exit;
 		} elseif ($globalDebug) echo "Done\n";
