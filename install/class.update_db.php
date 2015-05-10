@@ -98,7 +98,7 @@ class update_db {
 	public static function retrieve_modes_sqlite_to_dest($database_file) {
 		global $globalTransaction;
 		//$query = 'TRUNCATE TABLE aircraft_modes';
-		$query = "DELETE FROM aircraft_modes WHERE `Source` = '' OR `Source` = :source";
+		$query = "DELETE FROM aircraft_modes WHERE `Source` = '' OR `Source` IS NULL OR `Source` = :source";
 		try {
 			$Connection = new Connection();
 			$sth = Connection::$db->prepare($query);

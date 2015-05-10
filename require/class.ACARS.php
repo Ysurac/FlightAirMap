@@ -612,7 +612,7 @@ RMK/FUEL   2.6 M0.79)
         else $decode_json = '';
 	$result = ACARS::addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	//if ((is_numeric($label) && (($label > 9 && $label < 50) || ($label > 79 && $label < 90))) || $label == '3F') ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
-	if ($result != false && ($label == '10' || $label == '80' || $label == '81' || $label == '82' || $label == '3F')) ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	if ($result && ($label == '10' || $label == '80' || $label == '81' || $label == '82' || $label == '3F')) ACARS::addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	
 	if ($globalDebug && count($decode) > 0) {
 	     echo "Human readable data : ".implode(' - ',$decode)."\n";
@@ -655,10 +655,11 @@ RMK/FUEL   2.6 M0.79)
             	    return "error : ".$e->getMessage();
     		}
     	    } else {
-		if ($globalDebug) echo "Data already in DB...";
+		if ($globalDebug) echo "Data already in DB...\n";
 		return false;
     	    }
 	    if ($globalDebug) echo "Done\n";
+	    return true;
 	}
     }
 
