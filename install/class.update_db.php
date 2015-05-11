@@ -92,8 +92,7 @@ class update_db {
 			if ($globalTransaction) Connection::$db->rollBack(); 
 			return "error : ".$e->getMessage();
 		}
-		
-                return true;
+//                return true;
 	}
 	public static function retrieve_modes_sqlite_to_dest($database_file) {
 		global $globalTransaction;
@@ -141,7 +140,7 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 
-                return true;
+//                return true;
 	}
 
 	/*
@@ -524,7 +523,7 @@ class update_db {
 			fclose($handle);
 			//Connection::$db->commit();
 		}
-		return true;
+//		return true;
         }
 	
 	/**
@@ -674,7 +673,8 @@ class update_db {
 		global $tmp_dir;
 //		update_db::download('http://dev.x-plane.com/update/data/AptNav201310XP1000.zip',$tmp_dir.'AptNav.zip');
 //		update_db::unzip($tmp_dir.'AptNav.zip');
-		update_db::download('https://gitorious.org/fg/fgdata/raw/e81f8a15424a175a7b715f8f7eb8f4147b802a27:Navaids/awy.dat.gz',$tmp_dir.'awy.dat.gz');
+//		update_db::download('https://gitorious.org/fg/fgdata/raw/e81f8a15424a175a7b715f8f7eb8f4147b802a27:Navaids/awy.dat.gz',$tmp_dir.'awy.dat.gz');
+		update_db::download('http://sourceforge.net/p/flightgear/fgdata/ci/next/tree/Navaids/awy.dat.gz?format=raw',$tmp_dir.'awy.dat.gz');
 		update_db::gunzip($tmp_dir.'awy.dat.gz');
 		update_db::waypoints($tmp_dir.'awy.dat');
 	}
