@@ -101,7 +101,7 @@ class Image {
 		if ($source == 'wikimedia') $images_array = Image::fromWikimedia($aircraft_registration,$aircraft_name);
 		if ($source == 'jetphotos') $images_array = Image::fromJetPhotos($aircraft_registration,$aircraft_name);
 		if ($source == 'planepictures') $images_array = Image::fromPlanePictures($aircraft_registration,$aircraft_name);
-		if (is_array($images_array) && $images_array['original'] != '') return $images_array;
+		if (isset($images_array) && $images_array['original'] != '') return $images_array;
 	}
 	return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
     }
