@@ -1,6 +1,9 @@
 <?php
 @session_start();
-ob_implicit_flush();
+header('Content-Encoding: none;');
+if (ob_get_level() == 0) ob_start();
+ob_implicit_flush(true);
+ob_end_flush();
 require_once('class.create_db.php');
 require_once('class.update_schema.php');
 require_once('class.settings.php');
@@ -8,7 +11,7 @@ $title="Install";
 require('header.php');
 require('../require/settings.php');
 
-if ($globalInstalled && !isset($_SESSION['install']) && !isset($_POST['populate']) && !isset($_POST['waypoints']) && !isset($_POST['airspace'])) {
+if ($globalInstalled && !isset($_SESSION['install'])) {
 	print '<div class="info column"><p>You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</p></div>';
 	require('../footer.php');
 	exit;
@@ -23,7 +26,9 @@ if (!is_writable('../require/settings.php')) {
 if (!set_time_limit(0)) {
 	print '<div class="info column"><p><strong>You may need to update the maximum execution time.</strong></p></div>';
 }
-
+if (preg_match('/nginx/',$_SERVER["SERVER_SOFTWARE"])) {
+	print '<div class="info column"><p><strong>You seems to use nginx. This can cause some problem when populating DB, if this fail, you should use <i>install/install_db.php</i> or <i>install/install_db.sh</i> to finish installation.</strong></p></div>';
+}
 $error = array();
 if (!extension_loaded('SimpleXML')) {
 	$error[] = "SimpleXML is not loaded.";
@@ -264,6 +269,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		</fieldset>
 		<input type="submit" name="submit" value="Create/Update database & write setup" />
 	</form>
+	<p>
+	    If it fails to populate tables, you can run inside console <i>install/install_db.php</i> or <i>install/install_db.sh</i>.
+	</p>
 <?php
 	require('../footer.php');
         exit;
@@ -388,14 +396,12 @@ if (isset($_POST['dbtype'])) {
 			print '<li>Create database....<strong>SUCCESS</strong></li>';
 		} else $_SESSION['done'] = array('Write configuration');
 		print '<li>Write configuration....<img src="../images/loading.gif" /></li></ul></div>';
-		ob_flush();
 		flush();
+		@ob_flush();
 		sleep(10);
-		print "<script>window.location = 'index.php?".rand()."';</script>";
+		print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
 //		header("Location: index.php?".rand());
-		require('../footer.php');
-		ob_end_flush();
-
+//		require('../footer.php');
 	}
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
 	unset($_SESSION['install']);
@@ -405,8 +411,8 @@ if (isset($_POST['dbtype'])) {
 		    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 		}
 		print '<li>Create and import tables....<img src="../images/loading.gif" /></li></ul></div>';
-		ob_flush();
 		flush();
+		@ob_flush();
 		$error .= create_db::import_all_db('../db/');
 		if ($error != '') {
 			print '<div class="info column"><span class="error"><strong>Error</strong>'.$error.'</span></div>';
@@ -423,8 +429,8 @@ if (isset($_POST['dbtype'])) {
 		    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 		}
 		print '<li>Update schema....<img src="../images/loading.gif" /></li></ul></div>';
-		ob_flush();
 		flush();
+		ob_flush();
 		$error .= update_schema::check_version(true);
 		if ($error != '') {
 			print '<div class="info column"><span class="error"><strong>Error</strong>'.$error.'</span></div>';
@@ -436,9 +442,8 @@ if (isset($_POST['dbtype'])) {
 		
 	}
 	sleep(2);
-	print "<script>window.location = 'index.php?".rand()."';</script>";
-	require('../footer.php');
-	ob_end_flush();
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+//	require('../footer.php');
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'waypoints') {
 	unset($_SESSION['install']);
 	print '<div class="info column"><ul>';
@@ -446,8 +451,8 @@ if (isset($_POST['dbtype'])) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
 	print '<li>Populate waypoints database....<img src="../images/loading.gif" /></li></ul></div>';
-	ob_flush();
 	flush();
+	@ob_flush();
 
 	include_once('class.update_db.php');
 	update_db::update_waypoints();
@@ -456,9 +461,8 @@ if (isset($_POST['dbtype'])) {
 	$_SESSION['install'] = 'airspace';
 //	ob_end_clean();
 //	header("Location: index.php?".rand());
-	print "<script>window.location = 'index.php?".rand()."';</script>";
-	require('../footer.php');
-	ob_end_flush();
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+//	require('../footer.php');
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'airspace') {
 	unset($_SESSION['install']);
 	print '<div class="info column"><ul>';
@@ -466,8 +470,8 @@ if (isset($_POST['dbtype'])) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
 	print '<li>Populate airspace database....<img src="../images/loading.gif" /></li></ul></div>';
-	ob_flush();
 	flush();
+	@ob_flush();
 
 	include_once('class.update_db.php');
 	update_db::update_airspace();
@@ -476,9 +480,8 @@ if (isset($_POST['dbtype'])) {
 //	require('../footer.php');
 //	ob_end_clean();
 //	header("Location: index.php?".rand());
-	print "<script>window.location = 'index.php?".rand()."';</script>";
-	require('../footer.php');
-	ob_end_flush();
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+//	require('../footer.php');
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'populate') {
 	unset($_SESSION['install']);
 	if (!is_writable('tmp')) {
@@ -491,13 +494,60 @@ if (isset($_POST['dbtype'])) {
 	foreach ($_SESSION['done'] as $done) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
-	print '<li>Populate database with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i><b>If it fails, run install/install_db.php in console, this will finish install</b></li></ul></div>';
-	ob_flush();
+	print '<li>Populate aircraft_modes table with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i><b>If it fails, run install/install_db.php or install/install_db.sh in console, this will finish install</b></li></ul></div>';
 	flush();
+	@ob_flush();
+	include_once('class.update_db.php');
+	$globalDebug = FALSE;
+	update_db::update_ModeS();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data'));
+	$_SESSION['install'] = 'routes';
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+
+//	require('../footer.php');
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'routes') {
+	unset($_SESSION['install']);
+	if (!is_writable('tmp')) {
+		print '<p><strong>The directory <i>install/tmp</i> must be writable.</strong></p>';
+		require('../footer.php');
+		exit;
+	}
+
+	print '<div class="info column"><ul>';
+	foreach ($_SESSION['done'] as $done) {
+	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
+	}
+	print '<li>Populate routes table with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i><b>If it fails, run install/install_db.php or install/install_db.sh in console, this will finish install</b></li></ul></div>';
+	flush();
+	@ob_flush();
 
 	include_once('class.update_db.php');
-	update_db::update_all();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate database with externals data'));
+	$globalDebug = FALSE;
+	update_db::update_routes();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate routes table with externals data'));
+	$_SESSION['install'] = 'translation';
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+//	require('../footer.php');
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'translation') {
+	unset($_SESSION['install']);
+	if (!is_writable('tmp')) {
+		print '<p><strong>The directory <i>install/tmp</i> must be writable.</strong></p>';
+		require('../footer.php');
+		exit;
+	}
+
+	print '<div class="info column"><ul>';
+	foreach ($_SESSION['done'] as $done) {
+	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
+	}
+	print '<li>Populate translation table with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i><b>If it fails, run install/install_db.php or install/install_db.sh in console, this will finish install</b></li></ul></div>';
+	flush();
+	@ob_flush();
+
+	include_once('class.update_db.php');
+	$globalDebug = FALSE;
+	update_db::update_translation();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate translation table with externals data'));
 
 	if ($_SESSION['waypoints'] == 1) {
 	    $_SESSION['install'] = 'waypoints';
@@ -506,9 +556,8 @@ if (isset($_POST['dbtype'])) {
 //	require('../footer.php');
 //	ob_end_clean();
 //	header("Location: index.php?".rand());
-	print "<script>window.location = 'index.php?".rand()."';</script>";
-	require('../footer.php');
-	ob_end_flush();
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+//	require('../footer.php');
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'finish') {
 	unset($_SESSION['install']);
 	print '<div class="info column"><ul>';
@@ -533,5 +582,4 @@ if (isset($_POST['dbtype'])) {
 //	header("Location: index.php");
 }
 require('../footer.php');
-ob_end_flush();
 ?>

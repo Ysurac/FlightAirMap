@@ -633,7 +633,7 @@ class update_db {
 		if (($handle = fopen($filename, 'r')) !== FALSE)
 		{
 			$i = 0;
-			//Connection::$db->beginTransaction();
+			if ($globalTransaction) Connection::$db->beginTransaction();
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				$i++;
@@ -647,18 +647,19 @@ class update_db {
 						$data[9] = $value;
 					}
 					//print_r($data);
-					$query = 'INSERT INTO `waypoints` (`name_begin`,`latitude_begin`,`longitude_begin`,`name_end`,`latitude_end`,`longitude_end`,`high`,`base`,`top`,`segment_name`) VALUES (:name_begin, :latitude_begin, :longitude_begin, :name_end, :latitude_end, :longitude_end, :high, :base, :top, :segment_name)';
-					try {
-						$sth = Connection::$db->prepare($query);
-						$sth->execute(array(':name_begin' => $data[0],':latitude_begin' => $data[1],':longitude_begin' => $data[2],':name_end' => $data[3], ':latitude_end' => $data[4], ':longitude_end' => $data[5], ':high' => $data[6], ':base' => $data[7], ':top' => $data[8], ':segment_name' => $data[9]));
-					} catch(PDOException $e) {
-						return "error : ".$e->getMessage();
+					if (count($data) > 9) {
+						$query = 'INSERT INTO `waypoints` (`name_begin`,`latitude_begin`,`longitude_begin`,`name_end`,`latitude_end`,`longitude_end`,`high`,`base`,`top`,`segment_name`) VALUES (:name_begin, :latitude_begin, :longitude_begin, :name_end, :latitude_end, :longitude_end, :high, :base, :top, :segment_name)';
+						try {
+							$sth = Connection::$db->prepare($query);
+							$sth->execute(array(':name_begin' => $data[0],':latitude_begin' => $data[1],':longitude_begin' => $data[2],':name_end' => $data[3], ':latitude_end' => $data[4], ':longitude_end' => $data[5], ':high' => $data[6], ':base' => $data[7], ':top' => $data[8], ':segment_name' => $data[9]));
+						} catch(PDOException $e) {
+							return "error : ".$e->getMessage();
+						}
 					}
-				
 				}
 			}
 			fclose($handle);
-			//Connection::$db->commit();
+			if ($globalTransaction) Connection::$db->commit();
 		}
         }
 	
@@ -674,12 +675,13 @@ class update_db {
 //		update_db::download('http://dev.x-plane.com/update/data/AptNav201310XP1000.zip',$tmp_dir.'AptNav.zip');
 //		update_db::unzip($tmp_dir.'AptNav.zip');
 //		update_db::download('https://gitorious.org/fg/fgdata/raw/e81f8a15424a175a7b715f8f7eb8f4147b802a27:Navaids/awy.dat.gz',$tmp_dir.'awy.dat.gz');
-		update_db::download('http://sourceforge.net/p/flightgear/fgdata/ci/next/tree/Navaids/awy.dat.gz?format=raw',$tmp_dir.'awy.dat.gz');
+//		update_db::download('http://sourceforge.net/p/flightgear/fgdata/ci/next/tree/Navaids/awy.dat.gz?format=raw',$tmp_dir.'awy.dat.gz','http://sourceforge.net');
+		update_db::download('http://pkgs.fedoraproject.org/repo/extras/FlightGear-Atlas/awy.dat.gz/f530c9d1c4b31a288ba88dcc8224268b/awy.dat.gz',$tmp_dir.'awy.dat.gz','http://sourceforge.net');
 		update_db::gunzip($tmp_dir.'awy.dat.gz');
 		update_db::waypoints($tmp_dir.'awy.dat');
 	}
 
-	public static function update_all() {
+	public static function update_routes() {
 		global $tmp_dir, $globalDebug;
 		
 		if ($globalDebug) echo "Routes : Download...";
@@ -692,7 +694,9 @@ class update_db {
 			echo $error;
 			exit;
 		} elseif ($globalDebug) echo "Done\n";
-		
+	}
+	public static function update_ModeS() {
+		global $tmp_dir, $globalDebug;
 /*
 		if ($globalDebug) echo "Modes : Download...";
 		update_db::download('http://pp-sqb.mantma.co.uk/basestation_latest.zip',$tmp_dir.'basestation_latest.zip');
@@ -715,7 +719,10 @@ class update_db {
 			echo $error;
 			exit;
 		} elseif ($globalDebug) echo "Done\n";
+	}
 
+	public static function update_translation() {
+		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Translation : Download...";
 		update_db::download('http://www.acarsd.org/download/translation.php',$tmp_dir.'translation.zip');
 		if ($globalDebug) echo "Unzip...";
@@ -727,6 +734,11 @@ class update_db {
 			exit;
 		} elseif ($globalDebug) echo "Done\n";
 
+	}
+	public static function update_all() {
+		update_db::update_routes();
+		update_db::update_ModeS();
+		update_db::update_translation();
 	}
 }
 //echo update_db::update_airports();
