@@ -43,8 +43,8 @@ cd /tmp
 rm -f awy.dat.gz
 rm -f awy.dat
 #wget https://gitorious.org/fg/fgdata/raw/e81f8a15424a175a7b715f8f7eb8f4147b802a27:Navaids/awy.dat.gz
-#wget https://pkgs.fedoraproject.org/repo/extras/FlightGear-Atlas/awy.dat.gz/f530c9d1c4b31a288ba88dcc8224268b/awy.dat.gz
-wget http://sourceforge.net/p/flightgear/fgdata/ci/next/tree/Navaids/awy.dat.gz?format=raw -O /tmp/awy.dat.gz
+wget http://pkgs.fedoraproject.org/repo/extras/FlightGear-Atlas/awy.dat.gz/f530c9d1c4b31a288ba88dcc8224268b/awy.dat.gz
+#wget http://sourceforge.net/p/flightgear/fgdata/ci/next/tree/Navaids/awy.dat.gz?format=raw -O /tmp/awy.dat.gz
 gunzip awy.dat.gz
 dos2unix awy.dat
 mysql -u ${DB_USER} -p${DB_PASS} -h ${DB_HOST}  -e "use ${DB_NAME};" -e "TRUNCATE TABLE waypoints;" -e "LOAD DATA INFILE '/tmp/awy.dat' INTO TABLE waypoints FIELDS TERMINATED BY ' ' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 3 LINES (name_begin,latitude_begin,longitude_begin,name_end,latitude_end,longitude_end,high,base,top,segment_name);"
