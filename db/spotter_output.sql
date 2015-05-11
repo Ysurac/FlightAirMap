@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `spotter_output` (
   `arrival_airport_country` varchar(999) NOT NULL,
   `arrival_airport_time` varchar(20),
   `route_stop` varchar(255) NOT NULL,
-  `date` datetime NOT NULL,
+  `date` timestamp NOT NULL,
   `latitude` float NOT NULL,
   `longitude` float NOT NULL,
   `waypoints` longtext NOT NULL,

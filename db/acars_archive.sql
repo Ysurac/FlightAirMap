@@ -6,7 +6,7 @@ CREATE TABLE `acars_archive` (
   `block_id` int(11) NOT NULL,
   `msg_no` varchar(10) NOT NULL,
   `message` text NOT NULL,
-  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `decode` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

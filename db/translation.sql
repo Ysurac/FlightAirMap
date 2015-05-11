@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `translation` (
   `Operator` varchar(20),
   `Operator_correct` varchar(20),
   `Source` varchar(255),
-  `date_added` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `date_modified` datetime DEFAULT NULL,
+  `date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_modified` timestamp DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`TranslationID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;

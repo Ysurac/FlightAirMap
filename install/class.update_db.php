@@ -611,7 +611,7 @@ class update_db {
 */
 	public static function waypoints($filename) {
 		require_once('../require/class.Spotter.php');
-		global $tmp_dir;
+		global $tmp_dir, $globalTransaction;
 		//$out_file = $tmp_dir.'translation.zip';
 		//update_db::download('http://www.acarsd.org/download/translation.php',$out_file);
 		//if (!file_exists($out_file) || !is_readable($out_file)) return FALSE;

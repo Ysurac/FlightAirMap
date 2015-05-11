@@ -44,7 +44,7 @@ class update_schema {
     		$Connection = new Connection();
     		// Add new column to routes table
     		//$query = "ALTER TABLE `routes` ADD `FromAirport_Time` VARCHAR(10),`ToAirport_Time` VARCHAR(10),`Source` VARCHAR(255),`date_added` DATETIME DEFAULT CURRENT TIMESTAMP,`date_modified` DATETIME,`date_lastseen` DATETIME";
-		$query = "ALTER TABLE `routes` ADD `FromAirport_Time` VARCHAR(10) NULL , ADD `ToAirport_Time` VARCHAR(10) NULL , ADD `Source` VARCHAR(255) NULL , ADD `date_added` DATETIME NULL DEFAULT CURRENT_TIMESTAMP , ADD `date_modified` DATETIME NULL , ADD `date_lastseen` DATETIME NULL";
+		$query = "ALTER TABLE `routes` ADD `FromAirport_Time` VARCHAR(10) NULL , ADD `ToAirport_Time` VARCHAR(10) NULL , ADD `Source` VARCHAR(255) NULL, ADD `date_added` timestamp DEFAULT CURRENT_TIMESTAMP, ADD `date_modified` timestamp, ADD `date_lastseen` timestamp";
         	try {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();
@@ -141,7 +141,7 @@ class update_schema {
 	private static function update_from_3() {
     		$Connection = new Connection();
     		// Add default CURRENT_TIMESTAMP to aircraft_modes column FirstCreated
-		$query = "ALTER TABLE `aircraft_modes` CHANGE `FirstCreated` `FirstCreated` DATETIME NULL DEFAULT CURRENT_TIMESTAMP";
+		$query = "ALTER TABLE `aircraft_modes` CHANGE `FirstCreated` `FirstCreated` timestamp DEFAULT CURRENT_TIMESTAMP";
         	try {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();
@@ -190,7 +190,7 @@ class update_schema {
 	private static function update_from_5() {
     		$Connection = new Connection();
     		// Add columns to translation
-		$query = "ALTER TABLE `translation` ADD `Source` VARCHAR(255) NULL, ADD `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , ADD `date_modified` DATETIME NULL DEFAULT NULL ;";
+		$query = "ALTER TABLE `translation` ADD `Source` VARCHAR(255) NULL, ADD `date_added` timestamp DEFAULT CURRENT_TIMESTAMP , ADD `date_modified` timestamp DEFAULT CURRENT_TIMESTAMP ;";
         	try {
             	    $sth = Connection::$db->prepare($query);
 		    $sth->execute();

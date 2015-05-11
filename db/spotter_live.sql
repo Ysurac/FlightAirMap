@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `spotter_live` (
   `arrival_airport_country` varchar(999) NOT NULL,
   `arrival_airport_time` varchar(20),
   `route_stop` varchar(255),
-  `date` datetime NOT NULL,
+  `date` timestamp NOT NULL,
   `latitude` float NOT NULL,
   `longitude` float NOT NULL,
   `waypoints` longtext NOT NULL,
