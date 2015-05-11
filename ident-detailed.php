@@ -54,7 +54,7 @@ if (!isset($_GET['ident'])){
                             $altitude_data = '';
                           foreach($all_data as $data)
                                     {
-                                        $altitude_data .= '[ "'.date("h:m:i",strtotime($data['date']." UTC")).'",'.$data['altitude'].'],';
+                                        $altitude_data .= '[ "'.date("G:i",strtotime($data['date']." UTC")).'",'.$data['altitude'].'],';
                                     }
                                     $altitude_data = substr($altitude_data, 0, -1);
                                     print $altitude_data;
