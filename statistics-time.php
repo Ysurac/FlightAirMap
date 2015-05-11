@@ -26,9 +26,14 @@ print '<div id="chartHour" class="chart" width="100%"></div>
             	["Hour", "# of Flights"], ';
 
 $hour_data = '';
+if (isset($globalTimezone)) {
+	date_default_timezone_set($globalTimezone);
+} else {
+	date_default_timezone_set('UTC');
+}
 foreach($hour_array as $hour_item)
 {
-	$hour_data .= '[ "'.date("ga", strtotime($hour_item['hour_name'].":00")).'",'.$hour_item['hour_count'].'],';
+	$hour_data .= '[ "'.date("G:i", strtotime($hour_item['hour_name'].":00 UTC")).'",'.$hour_item['hour_count'].'],';
 }
 $hour_data = substr($hour_data, 0, -1);
 print $hour_data;
@@ -67,7 +72,7 @@ if (!empty($hour_array))
 	{
 		print '<tr>';
 		print '<td><strong>'.$i.'</strong></td>';
-		print '<td>'.date("g a", strtotime($hour_item['hour_name'].":00")).'</td>';
+		print '<td>'.date("G:i", strtotime($hour_item['hour_name'].":00 UTC")).'</td>';
 		print '<td>'.$hour_item['hour_count'].'</td>';
 		print '</tr>';
 		$i++;
