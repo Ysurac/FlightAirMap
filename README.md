@@ -8,7 +8,7 @@ Browse through the data based on a particular aircraft, airline or airport to se
 To install the web app which Barrie Spotter runs, you need to have meet the following requirements:
 
 * PHP version 5.2.3 or greater (5.3 or greater is recommended)
-* MySQL version 5.0 or greater (5.6 if you want to see airspace)
+* MySQL version 5.6 or greater (or MariaDB)
 * SQLite 3 (if you use ADS-B as datasource)
 * An HTTP Server such as:
 	* Apache 2.0+
