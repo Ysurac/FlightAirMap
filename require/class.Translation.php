@@ -49,7 +49,7 @@ class Translation {
                 }
                 $row = $sth->fetch(PDO::FETCH_ASSOC);
                 if (count($row) > 0) {
-                        return $row['Operator_correct'];
+                        return $row['operator_correct'];
                 } else return $ident;
         }
 
