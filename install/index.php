@@ -72,7 +72,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<label for="dbtype">Database type</label>
 			<select name="dbtype" id="dbtype">
 			<option value="mysql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'mysql') { ?>selected="selected" <?php } ?>>MySQL</option>
-			<option value="pgsql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'pgsql') { ?>selected="selected" <?php } ?>>PostgreSQL (not tested)</option>
+			<option value="pgsql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'pgsql') { ?>selected="selected" <?php } ?>>PostgreSQL (alpha support)</option>
 			</select>
 		</p>
 		<p>
@@ -259,7 +259,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="text" name="britishairways" id="britishairways" value="<?php if (isset($globalBritishAirwaysKey)) print $globalBritishAirwaysKey; ?>" />
 		</p>
 		<p>
-			<label for="waypoints">Add Waypoints and Airspace data (about 40Mio in DB)</label>
+			<label for="waypoints">Add Waypoints and Airspace data (about 40Mio in DB) <i>Not yet available for PostgreSQL</i></label>
 			<input type="checkbox" name="waypoints" id="waypoints" value="waypoints" checked="checked" />
 		</p>
 		<p>
@@ -413,7 +413,11 @@ if (isset($_POST['dbtype'])) {
 		print '<li>Create and import tables....<img src="../images/loading.gif" /></li></ul></div>';
 		flush();
 		@ob_flush();
-		$error .= create_db::import_all_db('../db/');
+		if ($globalDBdriver == 'mysql') {
+		    $error .= create_db::import_all_db('../db/');
+		} elseif ($globalDBdriver == 'pgsql') {
+		    $error .= create_db::import_all_db('../db/pgsql/');
+		}
 		if ($error != '') {
 			print '<div class="info column"><span class="error"><strong>Error</strong>'.$error.'</span></div>';
 			require('../footer.php');

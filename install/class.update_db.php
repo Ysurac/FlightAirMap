@@ -57,7 +57,7 @@ class update_db {
 		global $globalDebug, $globalTransaction;
 		//$query = 'TRUNCATE TABLE routes';
 		if ($globalDebug) echo " - Delete previous routes from DB -";
-		$query = "DELETE FROM routes WHERE `Source` = '' OR `Source` = :source";
+		$query = "DELETE FROM routes WHERE Source = '' OR Source = :source";
 		try {
 			$Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
@@ -77,7 +77,7 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 		//$query_dest = 'INSERT INTO routes (`RouteID`,`CallSign`,`Operator_ICAO`,`FromAirport_ICAO`,`ToAirport_ICAO`,`RouteStop`,`Source`) VALUES (:RouteID, :CallSign, :Operator_ICAO, :FromAirport_ICAO, :ToAirport_ICAO, :routestop, :source)';
-		$query_dest = 'INSERT INTO routes (`CallSign`,`Operator_ICAO`,`FromAirport_ICAO`,`ToAirport_ICAO`,`RouteStop`,`Source`) VALUES (:CallSign, :Operator_ICAO, :FromAirport_ICAO, :ToAirport_ICAO, :routestop, :source)';
+		$query_dest = 'INSERT INTO routes (CallSign,Operator_ICAO,FromAirport_ICAO,ToAirport_ICAO,RouteStop,Source) VALUES (:CallSign, :Operator_ICAO, :FromAirport_ICAO, :ToAirport_ICAO, :routestop, :source)';
 		$Connection = new Connection();
 		$sth_dest = Connection::$db->prepare($query_dest);
 		try {
@@ -97,7 +97,7 @@ class update_db {
 	public static function retrieve_modes_sqlite_to_dest($database_file) {
 		global $globalTransaction;
 		//$query = 'TRUNCATE TABLE aircraft_modes';
-		$query = "DELETE FROM aircraft_modes WHERE `Source` = '' OR `Source` IS NULL OR `Source` = :source";
+		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source IS NULL OR Source = :source";
 		try {
 			$Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
@@ -115,7 +115,7 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 		//$query_dest = 'INSERT INTO aircraft_modes (`AircraftID`,`FirstCreated`,`LastModified`, `ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`SerialNo`, `OperatorFlagCode`, `Manufacturer`, `Type`, `FirstRegDate`, `CurrentRegDate`, `Country`, `PreviousID`, `DeRegDate`, `Status`, `PopularName`,`GenericName`,`AircraftClass`, `Engines`, `OwnershipStatus`,`RegisteredOwners`,`MTOW`, `TotalHours`, `YearBuilt`, `CofACategory`, `CofAExpiry`, `UserNotes`, `Interested`, `UserTag`, `InfoUrl`, `PictureUrl1`, `PictureUrl2`, `PictureUrl3`, `UserBool1`, `UserBool2`, `UserBool3`, `UserBool4`, `UserBool5`, `UserString1`, `UserString2`, `UserString3`, `UserString4`, `UserString5`, `UserInt1`, `UserInt2`, `UserInt3`, `UserInt4`, `UserInt5`) VALUES (:AircraftID,:FirstCreated,:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:SerialNo, :OperatorFlagCode, :Manufacturer, :Type, :FirstRegDate, :CurrentRegDate, :Country, :PreviousID, :DeRegDate, :Status, :PopularName,:GenericName,:AircraftClass, :Engines, :OwnershipStatus,:RegisteredOwners,:MTOW, :TotalHours,:YearBuilt, :CofACategory, :CofAExpiry, :UserNotes, :Interested, :UserTag, :InfoUrl, :PictureUrl1, :PictureUrl2, :PictureUrl3, :UserBool1, :UserBool2, :UserBool3, :UserBool4, :UserBool5, :UserString1, :UserString2, :UserString3, :UserString4, :UserString5, :UserInt1, :UserInt2, :UserInt3, :UserInt4, :UserInt5)';
-		$query_dest = 'INSERT INTO aircraft_modes (`LastModified`, `ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`Source`) VALUES (:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:source)';
+		$query_dest = 'INSERT INTO aircraft_modes (LastModified, ModeS,ModeSCountry,Registration,ICAOTypeCode,Source) VALUES (:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:source)';
 		
 		$Connection = new Connection();
 		$sth_dest = Connection::$db->prepare($query_dest);
@@ -131,7 +131,7 @@ class update_db {
 			return "error : ".$e->getMessage();
 		}
 
-		$query = "DELETE FROM aircraft_modes WHERE `Source` = :source AND `ModeS` IN (SELECT * FROM (SELECT `ModeS` FROM aircraft_modes WHERE `Source` = 'ACARS') _alias)";
+		$query = "DELETE FROM aircraft_modes WHERE Source = :source AND ModeS IN (SELECT * FROM (SELECT ModeS FROM aircraft_modes WHERE Source = 'ACARS') _alias)";
 		try {
 			$Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
@@ -470,7 +470,7 @@ class update_db {
 		//if (!file_exists($out_file) || !is_readable($out_file)) return FALSE;
 		
 		//$query = 'TRUNCATE TABLE translation';
-		$query = "DELETE FROM translation WHERE `Source` = '' OR `Source` = :source";
+		$query = "DELETE FROM translation WHERE Source = '' OR Source = :source";
 		try {
 			$Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
@@ -511,7 +511,7 @@ class update_db {
                                             		$operator_correct = $airline_array[0]['icao'].substr($operator_correct,2);
                                             	}
                                         }
-					$query = 'INSERT INTO `translation` (`Reg`,`Reg_correct`,`Operator`,`Operator_correct`,`Source`) VALUES (:Reg, :Reg_correct, :Operator, :Operator_correct, :source)';
+					$query = 'INSERT INTO translation (Reg,Reg_correct,Operator,Operator_correct,Source) VALUES (:Reg, :Reg_correct, :Operator, :Operator_correct, :source)';
 					try {
 						$sth = Connection::$db->prepare($query);
 						$sth->execute(array(':Reg' => $data[0],':Reg_correct' => $data[1],':Operator' => $operator,':Operator_correct' => $operator_correct, ':source' => 'translation.csv'));
@@ -685,7 +685,7 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		
 		if ($globalDebug) echo "Routes : Download...";
-		update_db::download('http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz',$tmp_dir.'StandingData.sqb.gz');
+//		update_db::download('http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz',$tmp_dir.'StandingData.sqb.gz');
 		if ($globalDebug) echo "Gunzip...";
 		update_db::gunzip($tmp_dir.'StandingData.sqb.gz');
 		if ($globalDebug) echo "Add to DB...";

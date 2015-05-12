@@ -634,7 +634,7 @@ RMK/FUEL   2.6 M0.79)
 	date_default_timezone_set('UTC');
 	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
 	    if ($globalDebug) echo "Test if not already in Live ACARS table...";
-    	    $query_test = "SELECT COUNT(*) as nb FROM acars_live WHERE `ident` = :ident AND `registration` = :registration AND `message` = :message";
+    	    $query_test = "SELECT COUNT(*) as nb FROM acars_live WHERE ident = :ident AND registration = :registration AND message = :message";
     	    $query_test_values = array(':ident' => $ident,':registration' => $registration, ':message' => $message);
     	    try {
         	$Connection = new Connection();
@@ -645,7 +645,7 @@ RMK/FUEL   2.6 M0.79)
     	    }
 	    if ($stht->fetchColumn() == 0) {
 		if ($globalDebug) echo "Add Live ACARS data...";
-    		$query = "INSERT INTO acars_live (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
+    		$query = "INSERT INTO acars_live (ident,registration,label,block_id,msg_no,message,decode) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
     		$query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
     		try {
         	    $Connection = new Connection();
@@ -679,7 +679,7 @@ RMK/FUEL   2.6 M0.79)
 	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '' && preg_match('/^MET0/',$message) == FALSE && preg_match('/^ARR0/',$message) == FALSE && preg_match('/^ETA/',$message) == FALSE && preg_match('/^WXR/',$message) == FALSE && preg_match('/^FTX01.FIC/',$message) == FALSE) {
 /*
 	    if ($globalDebug) echo "Test if not already in Archive ACARS table...";
-    	    $query_test = "SELECT COUNT(*) as nb FROM acars_archive WHERE `ident` = :ident AND `registration` = :registration AND `message` = :message";
+    	    $query_test = "SELECT COUNT(*) as nb FROM acars_archive WHERE ident = :ident AND registration = :registration AND message = :message";
     	    $query_test_values = array(':ident' => $ident,':registration' => $registration, ':message' => $message);
     	    try {
         	$Connection = new Connection();
@@ -691,7 +691,7 @@ RMK/FUEL   2.6 M0.79)
 	    if ($stht->fetchColumn() == 0) {
 */
 		if ($globalDebug) echo "Add Live ACARS data...";
-		$query = "INSERT INTO acars_archive (`ident`,`registration`,`label`,`block_id`,`msg_no`,`message`,`decode`) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
+		$query = "INSERT INTO acars_archive (ident,registration,label,block_id,msg_no,message,decode) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
     		$query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
 		try {
 		    $Connection = new Connection();
@@ -712,7 +712,7 @@ RMK/FUEL   2.6 M0.79)
     * @return Array Return ACARS data in array
     */
     public static function getTitlefromLabel($label) {
-    	$query = "SELECT * FROM acars_label WHERE `label` = :label";
+    	$query = "SELECT * FROM acars_label WHERE label = :label";
     	$query_values = array(':label' => $label);
     	try {
     	    $Connection = new Connection();
@@ -753,7 +753,7 @@ RMK/FUEL   2.6 M0.79)
     * @return Array Return ACARS data in array
     */
     public static function getLiveAcarsData($ident) {
-    	$query = "SELECT * FROM acars_live WHERE `ident` = :ident ORDER BY acars_live_id DESC";
+    	$query = "SELECT * FROM acars_live WHERE ident = :ident ORDER BY acars_live_id DESC";
     	$query_values = array(':ident' => $ident);
     	try {
     	    $Connection = new Connection();
@@ -773,7 +773,7 @@ RMK/FUEL   2.6 M0.79)
     * @return Array Return ACARS data in array
     */
     public static function getLatestAcarsData($limit = '',$label = '') {
-	global $globalURL;
+	global $globalURL, $globalDBdriver;
 	date_default_timezone_set('UTC');
 	
 	$limit_query = '';
@@ -786,14 +786,15 @@ RMK/FUEL   2.6 M0.79)
 	    
 	    if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 	    {
-		$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+//		$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+		$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 	    }
 	}
 	
     	//$query = "SELECT *, name as airline_name FROM acars_live a, spotter_image i, airlines l WHERE i.registration = a.registration AND l.icao = a.airline_icao AND l.icao != '' ORDER BY acars_live_id DESC LIMIT 25";
     	
     	if ($label != '') {
-	    $query = "SELECT * FROM acars_live WHERE `label` = :label ORDER BY acars_live_id DESC".$limit_query;
+	    $query = "SELECT * FROM acars_live WHERE label = :label ORDER BY acars_live_id DESC".$limit_query;
 	    $query_values = array(':label' => $label);
     	} else {
     	    $query = "SELECT * FROM acars_live ORDER BY acars_live_id DESC".$limit_query;
@@ -869,7 +870,7 @@ RMK/FUEL   2.6 M0.79)
     * @return Array Return ACARS data in array
     */
     public static function getArchiveAcarsData($limit = '',$label = '') {
-	global $globalURL;
+	global $globalURL, $globalDBdriver;
 	date_default_timezone_set('UTC');
 
 	$limit_query = '';
@@ -882,7 +883,8 @@ RMK/FUEL   2.6 M0.79)
 	    
 	    if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 	    {
-		$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+			//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+			$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 	    }
 	}
 
@@ -891,10 +893,10 @@ RMK/FUEL   2.6 M0.79)
 
     	if ($label != '') {
     	    if ($label == 'undefined') {
-		$query = "SELECT * FROM acars_archive WHERE `label` NOT IN (SELECT label FROM acars_label) ORDER BY acars_archive_id DESC".$limit_query;
+		$query = "SELECT * FROM acars_archive WHERE label NOT IN (SELECT label FROM acars_label) ORDER BY acars_archive_id DESC".$limit_query;
 		$query_values = array();
     	    } else {
-		$query = "SELECT * FROM acars_archive WHERE `label` = :label ORDER BY acars_archive_id DESC".$limit_query;
+		$query = "SELECT * FROM acars_archive WHERE label = :label ORDER BY acars_archive_id DESC".$limit_query;
 		$query_values = array(':label' => $label);
 	    }
     	} else {
@@ -981,7 +983,7 @@ RMK/FUEL   2.6 M0.79)
 	    if ($globalDebug) echo "Ident or registration null, exit\n";
 	    return '';
 	}
-    	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE `ident` =  :ident ORDER BY spotter_id DESC LIMIT 1";
+    	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE ident =  :ident ORDER BY spotter_id DESC LIMIT 1";
     	$query_values = array(':ident' => $icao);
     	try {
     	    $Connection = new Connection();
@@ -1001,7 +1003,7 @@ RMK/FUEL   2.6 M0.79)
     	    }
     	    if ($ModeS != '') {
     		$country = Spotter::countryFromAircraftRegistration($registration);
-		$queryc = "SELECT * FROM aircraft_modes WHERE `ModeS` = :modes LIMIT 1";
+		$queryc = "SELECT * FROM aircraft_modes WHERE ModeS = :modes LIMIT 1";
     		$queryc_values = array(':modes' => $ModeS);
     		try {
     		    $Connection = new Connection();
@@ -1015,7 +1017,7 @@ RMK/FUEL   2.6 M0.79)
     		
     		if (count($row) ==  0) {
     		    if ($globalDebug) echo " Add to ModeS table - ";
-    		    $queryi = "INSERT INTO aircraft_modes (`ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`Source`) VALUES (:ModeS,:ModeSCountry,:Registration, :ICAOTypeCode,'ACARS')";
+    		    $queryi = "INSERT INTO aircraft_modes (ModeS,ModeSCountry,Registration,ICAOTypeCode,Source) VALUES (:ModeS,:ModeSCountry,:Registration, :ICAOTypeCode,'ACARS')";
     		    $queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
     		    try {
         		$Connection = new Connection();
@@ -1028,10 +1030,10 @@ RMK/FUEL   2.6 M0.79)
     		} else {
     		    if ($globalDebug) echo " Update ModeS table - ";
     		    if ($ICAOTypeCode != '') {
-    			$queryi = "UPDATE aircraft_modes SET `ModeSCountry` = :ModeSCountry,`Registration` = :Registration,`ICAOTypeCode` = :ICAOTypeCode,`Source` = 'ACARS',`LastModified` = NOW() WHERE `ModeS` = :ModeS";
+    			$queryi = "UPDATE aircraft_modes SET ModeSCountry = :ModeSCountry,Registration = :Registration,ICAOTypeCode = :ICAOTypeCode,Source = 'ACARS',LastModified = NOW() WHERE ModeS = :ModeS";
     			$queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
     		    } else {
-    			$queryi = "UPDATE aircraft_modes SET `ModeSCountry` = :ModeSCountry,`Registration` = :Registration,`Source` = 'ACARS',`LastModified` = NOW() WHERE `ModeS` = :ModeS";
+    			$queryi = "UPDATE aircraft_modes SET ModeSCountry = :ModeSCountry,Registration = :Registration,Source = 'ACARS',LastModified = NOW() WHERE ModeS = :ModeS";
     			$queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration);
     		    }
     		    try {
@@ -1045,10 +1047,10 @@ RMK/FUEL   2.6 M0.79)
     		}
     		if ($globalDebug) echo " Update Spotter_live table - ";
     		if ($ICAOTypeCode != '') {
-    		    $queryi = "UPDATE spotter_live SET `registration` = :Registration,`aircraft_icao` = :ICAOTypeCode WHERE `ident` = :ident";
+    		    $queryi = "UPDATE spotter_live SET registration = :Registration,aircraft_icao = :ICAOTypeCode WHERE ident = :ident";
     		    $queryi_values = array(':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode, ':ident' => $icao);
     		} else {
-    		    $queryi = "UPDATE spotter_live SET `registration` = :Registration WHERE `ident` = :ident";
+    		    $queryi = "UPDATE spotter_live SET registration = :Registration WHERE ident = :ident";
     		    $queryi_values = array(':Registration' => $registration,':ident' => $icao);
     		}
     		try {

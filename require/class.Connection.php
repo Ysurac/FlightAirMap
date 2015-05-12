@@ -23,6 +23,7 @@ class Connection{
 		try {
 			self::$db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname", $globalDBuser,  $globalDBpass);
 			self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			self::$db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
 		} catch(PDOException $e) {
 			echo $e->getMessage();
 			exit;
@@ -33,7 +34,12 @@ class Connection{
 
 	public static function tableExists($table)
 	{
-		$query = 'SHOW TABLE LIKE '.$table;
+		global $globalDBdriver, $globalDBname;
+		if ($globalDBdriver == 'mysql') {
+			$query = 'SHOW TABLE LIKE '.$table;
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query = "SELECT * FROM pg_catalog.pg_tables WHERE tablename = '".$table."'";
+		}
 		try {
 			$Connection = new Connection();
 			$results = Connection::$db->query($query);
@@ -52,7 +58,7 @@ class Connection{
 	    			return $version;
 			} else {
 				$Connection = new Connection();
-				$query = "SELECT value FROM `config` WHERE `name` = 'schema_version' LIMIT 1";
+				$query = "SELECT value FROM config WHERE name = 'schema_version' LIMIT 1";
 				try {
 					$sth = Connection::$db->prepare($query);
 					$sth->execute();

@@ -38,7 +38,7 @@ class Translation {
 
 
        public static function getOperator($ident) {
-                $query = "SELECT * FROM translation WHERE `Operator` = :ident LIMIT 1";
+                $query = "SELECT * FROM translation WHERE Operator = :ident LIMIT 1";
                 $query_values = array(':ident' => $ident);
                  try {
                         $Connection = new Connection();
@@ -54,7 +54,7 @@ class Translation {
         }
 
        public static function addOperator($ident,$correct_ident,$source) {
-                $query = "INSERT INTO translation (`Operator`,`Operator_correct`,`Source`) VALUES (:ident,:correct_ident,:source)";
+                $query = "INSERT INTO translation (Operator,Operator_correct,Source) VALUES (:ident,:correct_ident,:source)";
                 $query_values = array(':ident' => $ident,':correct_ident' => $correct_ident, ':source' => $source);
                  try {
                         $Connection = new Connection();

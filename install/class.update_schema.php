@@ -20,7 +20,7 @@ class update_schema {
     	    }
 	
 	}
-
+/*
 	private static function tableExists($tableName) {
 	    $Connection = new Connection();
 	    $query = "SHOW TABLES LIKE :tableName";
@@ -39,7 +39,7 @@ class update_schema {
         	return false;
     	    }
     	}
-	
+*/	
 	private static function update_from_1() {
     		$Connection = new Connection();
     		// Add new column to routes table
@@ -232,14 +232,14 @@ class update_schema {
     	
     	public static function check_version($update = false) {
     	    $version = 0;
-    	    if (self::tableExists('aircraft')) {
-    		if (!self::tableExists('config')) {
+    	    if (Connection::tableExists('aircraft')) {
+    		if (!Connection::tableExists('config')) {
     		    $version = '1';
     		    if ($update) return self::update_from_1();
     		    else return $version;
 		} else {
     		    $Connection = new Connection();
-		    $query = "SELECT value FROM `config` WHERE `name` = 'schema_version' LIMIT 1";
+		    $query = "SELECT value FROM config WHERE `name` = 'schema_version' LIMIT 1";
 		    try {
             		$sth = Connection::$db->prepare($query);
 		        $sth->execute();

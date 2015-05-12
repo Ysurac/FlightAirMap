@@ -72,7 +72,7 @@ class SBS {
 	
 	// SBS format is CSV format
 	if(is_array($line) && isset($line[4])) {
-  	    if ($line[4] != '' && $line[4] != '00000' && $line[4] != '000000' && ctype_xdigit($line[4]) && strlen($line[4]) == 6) {
+  	    if ($line[4] != '' && $line[4] != '00000' && $line[4] != '000000' && $line[4] != '111111' && ctype_xdigit($line[4]) && strlen($line[4]) == 6) {
 		$hex = trim($line[4]);
 	        $id = trim($line[4]);
 
@@ -87,8 +87,10 @@ class SBS {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ident' => trim($line[10])));
 		    $route = Spotter::getRouteInfo(trim($line[10]));
 		    if (count($route) > 0) {
-			if ($route['FromAirport_ICAO'] != $route['ToAirport_ICAO']) {
-		    	    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('departure_airport' => $route['FromAirport_ICAO'],'arrival_airport' => $route['ToAirport_ICAO'],'route_stop' => $route['RouteStop']));
+			//if ($route['FromAirport_ICAO'] != $route['ToAirport_ICAO']) {
+			if ($route['fromairport_icao'] != $route['toairport_icao']) {
+		    	//    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('departure_airport' => $route['FromAirport_ICAO'],'arrival_airport' => $route['ToAirport_ICAO'],'route_stop' => $route['RouteStop']));
+		    	    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('departure_airport' => $route['fromairport_icao'],'arrival_airport' => $route['toairport_icao'],'route_stop' => $route['routestop']));
 		        }
 		    }
 		    if (function_exists('pcntl_fork')) {
@@ -118,7 +120,8 @@ class SBS {
 		    //$dataFound = true;
 		}
 		if ($line[12] != '') {
-		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('speed' => $line[12]));
+		//    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('speed' => $line[12]));
+		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('speed' => round($line[12])));
 		    $dataFound = true;
 		}
 		if ($line[17] != '') {
@@ -128,7 +131,7 @@ class SBS {
 
 		$waypoints = '';
 		if ($line[11] != '') {
-		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('altitude' => $line[11]/100));
+		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('altitude' => round($line[11]/100)));
 		    $dataFound = true;
   		}
 

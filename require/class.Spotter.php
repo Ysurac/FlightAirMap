@@ -490,7 +490,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -539,7 +540,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -653,7 +655,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -694,7 +697,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -735,7 +739,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -776,7 +781,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -817,7 +823,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -906,7 +913,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 
@@ -961,7 +969,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 
@@ -1015,7 +1024,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 
@@ -1071,7 +1081,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -1124,7 +1135,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -1153,7 +1165,7 @@ class Spotter{
 	*/
 	public static function getSpotterDataByDate($date = '', $limit = '', $sort = '')
 	{
-		global $global_query, $globalTimezone;
+		global $global_query, $globalTimezone, $globalDBdriver;
 		
 		$query_values = array();
 		
@@ -1164,8 +1176,13 @@ class Spotter{
 				$datetime = new DateTime($date);
 				$offset = $datetime->format('P');
 			} else $offset = '+00:00';
-			$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date ";
-			$query_values = array(':date' => $datetime->format('Y-m-d'), ':offset' => $offset);
+			if ($globalDBdriver == 'mysql') {
+				$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date ";
+				$query_values = array(':date' => $datetime->format('Y-m-d'), ':offset' => $offset);
+			} elseif ($globalDBdriver == 'pgsql') {
+				$additional_query = " AND spotter_output.date AT TIME ZONE :timezone = :date ";
+				$query_values = array(':date' => $datetime->format('Y-m-d'), ':timezone' => $globalTimezone);
+			}
 		}
 		
 		if ($limit != "")
@@ -1177,7 +1194,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 
@@ -1233,7 +1251,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 					
@@ -1288,7 +1307,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 
@@ -1357,7 +1377,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 	
@@ -1401,7 +1422,8 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -1762,7 +1784,7 @@ class Spotter{
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
-			return $row['ICAOTypeCode'];
+			return $row['icaotypecode'];
 		} else return '';
 	}
 
@@ -2574,14 +2596,23 @@ class Spotter{
 	*/
 	public static function getIdentFromLastHour($ident)
 	{
-		$query  = "SELECT spotter_output.ident FROM spotter_output 
+		global $globalDBdriver, $globalTimezone;
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.ident FROM spotter_output 
 								WHERE spotter_output.ident = :ident 
 								AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) 
 								AND spotter_output.date < UTC_TIMESTAMP()";
-      
+			$query_data = array(':ident' => $ident);
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query  = "SELECT spotter_output.ident FROM spotter_output 
+								WHERE spotter_output.ident = :ident 
+								AND spotter_output.date >= now() AT TIME ZONE 'UTC' - '1 HOUR'::INTERVAL
+								AND spotter_output.date < now() AT TIME ZONE 'UTC'";
+			$query_data = array(':ident' => $ident);
+    		}
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':ident' => $ident));
+		$sth->execute($query_data);
     		$ident_result='';
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
@@ -2641,13 +2672,20 @@ class Spotter{
 	*/
 	public static function countAllAirlines()
 	{
-
+/*
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
 					WHERE spotter_output.airline_name <> '' 
           GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC
 					LIMIT 0,10";
+*/
+		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
+		 			FROM spotter_output
+					WHERE spotter_output.airline_name <> '' 
+          GROUP BY spotter_output.airline_name,spotter_output.airline_icao, spotter_output.airline_country
+					ORDER BY airline_count DESC
+					LIMIT 10";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
@@ -3217,12 +3255,20 @@ class Spotter{
 	*/
 	public static function countAllAircraftTypes()
 	{
+/*
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
                     WHERE spotter_output.aircraft_name  <> '' 
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC
 					LIMIT 0,10";
+*/
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
+                    FROM spotter_output
+                    WHERE spotter_output.aircraft_name  <> '' 
+                    GROUP BY spotter_output.aircraft_name,spotter_output.aircraft_icao 
+					ORDER BY aircraft_icao_count DESC
+					LIMIT 10 OFFSET 0";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
@@ -4179,12 +4225,20 @@ class Spotter{
 	*/
 	public static function countAllDepartureAirports()
 	{
+/*
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
                     WHERE spotter_output.departure_airport_name <> '' 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC
 					LIMIT 0,10";
+*/
+		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
+								FROM spotter_output
+                    WHERE spotter_output.departure_airport_name <> '' 
+                    GROUP BY spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
+					ORDER BY airport_departure_icao_count DESC
+					LIMIT 10";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
@@ -4822,12 +4876,20 @@ class Spotter{
 	*/
 	public static function countAllArrivalAirports()
 	{
+/*
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
                     WHERE spotter_output.arrival_airport_name <> '' 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC
 					LIMIT 0,10";
+*/
+		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
+								FROM spotter_output 
+                    WHERE spotter_output.arrival_airport_name <> '' 
+                    GROUP BY spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
+					ORDER BY airport_arrival_icao_count DESC
+					LIMIT 10";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
@@ -6048,22 +6110,32 @@ class Spotter{
 	*/
 	public static function countAllDatesLast7Days()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
-
-		$query  = "SELECT DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS date_name, count(*) as date_count
+		
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS date_name, count(*) as date_count
 								FROM spotter_output 
 								WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY)
 								GROUP BY date_name 
 								ORDER BY spotter_output.date ASC";
-      
+			$query_data = array(':offset' => $offset);
+		} elseif ($globalDBdriver == 'pgsql') {
+			// FIXME : not working
+			$query  = "SELECT spotter_output.date AT TIME ZONE :timezone AS date_name, count(*) as date_count
+								FROM spotter_output 
+								WHERE spotter_output.date >= NOW() AT TIME ZONE :timezone - '7 DAYS'::INTERVAL
+								GROUP BY date_name 
+								ORDER BY date_name ASC";
+			$query_data = array(':timezone' => $globalTimezone);
+    		}
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':offset' => $offset));
+		$sth->execute($query_data);
       
 		$date_array = array();
 		$temp_array = array();
@@ -6089,7 +6161,7 @@ class Spotter{
 	*/
 	public static function countAllHours($orderby)
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -6104,22 +6176,32 @@ class Spotter{
 		{
 			$orderby_sql = "ORDER BY hour_count DESC";
 		}
-/*
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								GROUP BY hour_name 
 								".$orderby_sql."
 								LIMIT 0,100";
-*/
-		$query  = "SELECT HOUR(spotter_output.date) AS hour_name, count(*) as hour_count
+
+/*		$query  = "SELECT HOUR(spotter_output.date) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								GROUP BY hour_name 
 								".$orderby_sql."
 								LIMIT 0,100";
-      
+  */    
+		$query_data = array(':offset' => $offset);
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query  = "SELECT EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								GROUP BY hour_name 
+								".$orderby_sql."
+								LIMIT 100";
+		$query_data = array(':timezone' => $globalTimezone);
+		}
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':offset' => $offset));
+		$sth->execute($query_data);
       
 		$hour_array = array();
 		$temp_array = array();
@@ -6617,7 +6699,7 @@ class Spotter{
 	*/
 	public static function getUpcomingFlights($limit = '', $sort = '')
 	{
-		global $global_query;
+		global $global_query, $globalDBdriver, $globalTimezone;
 		date_default_timezone_set('UTC');
 		if ($limit != "")
 		{
@@ -6626,15 +6708,9 @@ class Spotter{
 			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
-		}
-		if ($sort != "")
-		{
-			$search_orderby_array = Spotter::getOrderBy();
-			$orderby_query = $search_orderby_array[$sort]['sql'];
-		} else {
-			$orderby_query = " ORDER BY HOUR(spotter_output.date) ASC";
 		}
 		$currentHour = date("G");
 		$next3Hours = date("G", strtotime("+3 hour"));
@@ -6644,11 +6720,33 @@ class Spotter{
 			$next3Hours = 24;
 		}
 		$currentDayofWeek = date("l");
-		$query = "SELECT spotter_output.*, count(spotter_output.ident) as ident_count
-		    FROM spotter_output
-		    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours'
-		    GROUP BY spotter_output.ident HAVING ident_count > 10 $orderby_query";
-		$spotter_array = Spotter::getDataFromDB($query.$limit_query);
+		if ($globalDBdriver == 'mysql') {
+			if ($sort != "")
+			{
+				$search_orderby_array = Spotter::getOrderBy();
+				$orderby_query = $search_orderby_array[$sort]['sql'];
+			} else {
+				$orderby_query = " ORDER BY HOUR(spotter_output.date) ASC";
+			}
+			$query = "SELECT spotter_output.*, count(spotter_output.ident) as ident_count
+			    FROM spotter_output
+			    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours'
+			    GROUP BY spotter_output.ident HAVING ident_count > 10 $orderby_query";
+			$spotter_array = Spotter::getDataFromDB($query.$limit_query);
+		} else if ($globalDBdriver == 'pgsql') {
+			if ($sort != "")
+			{
+				$search_orderby_array = Spotter::getOrderBy();
+				$orderby_query = $search_orderby_array[$sort]['sql'];
+			} else {
+				$orderby_query = " ORDER BY EXTRACT (HOUR FROM spotter_output.date) ASC";
+			}
+			$query = "SELECT spotter_output.*, count(spotter_output.ident) as ident_count
+			    FROM spotter_output
+			    WHERE DATE_PART('dow', spotter_output.date) = DATE_PART('dow', date 'now' AT TIME ZONE :timezone) AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) >= '$currentHour' AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) <= '$next3Hours'
+			    GROUP BY spotter_output.ident, spotter_output.spotter_id HAVING count(spotter_output.ident) > 10 $orderby_query";
+		$spotter_array = Spotter::getDataFromDB($query.$limit_query,array(':timezone' => $globalTimezone));
+		}
 		return $spotter_array;
 	}
     
@@ -7007,7 +7105,8 @@ public static function addSpotterImage($registration)
     
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
-		    return $row['Registration'];
+		    //return $row['Registration'];
+		    return $row['registration'];
 		} else return '';
 	
 	}
