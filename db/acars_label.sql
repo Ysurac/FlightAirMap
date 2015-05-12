@@ -1,8 +1,11 @@
 CREATE TABLE IF NOT EXISTS `acars_label` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `label` varchar(3) NOT NULL,
-  `title` varchar(500) NOT NULL
+  `title` varchar(500) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8;
+
+TRUNCATE TABLE `acars_label`;
 
 INSERT INTO `acars_label` (`id`, `label`, `title`) VALUES
 (1, '00', 'Emergency situation report'),
@@ -101,8 +104,3 @@ INSERT INTO `acars_label` (`id`, `label`, `title`) VALUES
 (94, 'SQ', 'Squitter Message'),
 (95, 'X1', 'Service Provider Defined DSP');
 
-ALTER TABLE `acars_label`
-  ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `label` (`label`);
-
-ALTER TABLE `acars_label`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=96;

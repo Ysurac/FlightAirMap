@@ -1,12 +1,14 @@
-DROP TABLE IF EXISTS `aircraft`;
 CREATE TABLE IF NOT EXISTS `aircraft` (
-  `aircraft_id` int(11) NOT NULL,
+  `aircraft_id` int(11) NOT NULL AUTO_INCREMENT,
   `icao` varchar(999) NOT NULL,
   `type` varchar(999) NOT NULL,
   `manufacturer` varchar(999) NOT NULL,
   `official_page` varchar(999) NOT NULL,
-  `aircraft_shadow` varchar(255) DEFAULT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=355 DEFAULT CHARSET=latin1;
+  `aircraft_shadow` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`aircraft_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=355 DEFAULT CHARSET=latin1 AUTO_INCREMENT=355;
+
+TRUNCATE TABLE `aircraft`;
 
 INSERT INTO `aircraft` (`aircraft_id`, `icao`, `type`, `manufacturer`, `official_page`, `aircraft_shadow`) VALUES
 (1, 'A124', 'Antonov AN-124 Ruslan', 'Antonov', 'http://www.antonov.com/aircraft/transport-aircraft/an-124-100-ruslan', 'A124.png'),
@@ -361,9 +363,3 @@ INSERT INTO `aircraft` (`aircraft_id`, `icao`, `type`, `manufacturer`, `official
 (352, 'R721', 'Boeing 727-100RE Super 27', 'Boeing', '', 'R721.png'),
 (353, 'NG5', 'Bristell NG-5', 'Bristell', 'http://www.brmaero.com/aeroplanes-classic', 'NG5.png'),
 (354, 'LJ75', 'Bombardier Learjet 75', 'Bombardier', 'http://businessaircraft.bombardier.com/en/aircraft/learjet/learjet75.html', 'LJ75.png');
-
-ALTER TABLE `aircraft`
-  ADD PRIMARY KEY (`aircraft_id`), ADD KEY `aircraft_id` (`aircraft_id`);
-
-ALTER TABLE `aircraft`
-  MODIFY `aircraft_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=355;

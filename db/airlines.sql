@@ -1,31 +1,3 @@
--- phpMyAdmin SQL Dump  
--- version 4.1.8
--- http://www.phpmyadmin.net
---
--- Host: localhost
--- Generation Time: Sep 12, 2014 at 11:21 AM
--- Server version: 5.5.36-cll
--- PHP Version: 5.4.23
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
---
--- Database: `barriesp_spotter`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `airlines`
---
-
 CREATE TABLE IF NOT EXISTS `airlines` (
   `airlines_id` int(11) NOT NULL AUTO_INCREMENT,
   `airline_id` int(11) NOT NULL,
@@ -42,10 +14,6 @@ CREATE TABLE IF NOT EXISTS `airlines` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6004 ;
 
 TRUNCATE TABLE `airlines`;
-
---
--- Dumping data for table `airlines`
---
 
 INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `icao`, `callsign`, `country`, `active`, `type`) VALUES
 (1, 1, 'Private flight', 'N', '-', 'N/A', '', '', 'Y', 'passenger'),
@@ -6111,7 +6079,3 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (7050, 0, 'Ata Airlines', '', '','TBZ','ATALAR AIR','Iran','Y','Passenger'),
 (7051, 0, 'Delta Air Lines', 'N', 'NW', 'NWA', '', 'United States', 'Y', 'passenger');
 
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
