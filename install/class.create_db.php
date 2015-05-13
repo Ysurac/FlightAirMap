@@ -30,9 +30,11 @@ class create_db {
 
 	public static function import_all_db($directory) {
 		$error = '';
-		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $filename)
+		$dh = opendir($directory);
+		//foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $filename)
+		while(false !== ($filename = readdir($dh)))
 		{
-		    if (preg_match('/\.sql$/',$filename)) $error .= create_db::import_file($filename);
+		    if (preg_match('/\.sql$/',$filename)) $error .= create_db::import_file($directory.$filename);
 		}
 		return $error;
 	}

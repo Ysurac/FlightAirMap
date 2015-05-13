@@ -36,7 +36,7 @@ class Connection{
 	{
 		global $globalDBdriver, $globalDBname;
 		if ($globalDBdriver == 'mysql') {
-			$query = 'SHOW TABLE LIKE '.$table;
+			$query = "SHOW TABLES LIKE '".$table."'";
 		} elseif ($globalDBdriver == 'pgsql') {
 			$query = "SELECT * FROM pg_catalog.pg_tables WHERE tablename = '".$table."'";
 		}
@@ -44,10 +44,12 @@ class Connection{
 			$Connection = new Connection();
 			$results = Connection::$db->query($query);
 		} catch(PDOException $e) {
-			return $e->getMessage();
 			return false;
 		}
-		if($results->rowCount()>0) return true; else return false;
+		if($results->rowCount()>0) {
+		    return true; 
+		}
+		else return false;
 	}
 
 	public static function check_schema_version() {

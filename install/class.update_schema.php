@@ -239,7 +239,7 @@ class update_schema {
     		    else return $version;
 		} else {
     		    $Connection = new Connection();
-		    $query = "SELECT value FROM config WHERE `name` = 'schema_version' LIMIT 1";
+		    $query = "SELECT value FROM config WHERE name = 'schema_version' LIMIT 1";
 		    try {
             		$sth = Connection::$db->prepare($query);
 		        $sth->execute();

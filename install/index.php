@@ -453,7 +453,7 @@ if (isset($_POST['dbtype'])) {
 		}
 		print '<li>Update schema....<img src="../images/loading.gif" /></li></ul></div>';
 		flush();
-		ob_flush();
+		@ob_flush();
 		$error .= update_schema::check_version(true);
 		if ($error != '') {
 			print '<div class="info column"><span class="error"><strong>Error</strong>'.$error.'</span></div>';
