@@ -29,6 +29,10 @@ if (!set_time_limit(0)) {
 if (preg_match('/nginx/',$_SERVER["SERVER_SOFTWARE"])) {
 	print '<div class="info column"><p><strong>You seems to use nginx. This can cause some problem when populating DB, if this fail, you should use <i>install/install_db.php</i> or <i>install/install_db.sh</i> to finish installation.</strong></p></div>';
 }
+if (!function_exists('pcntl_fork')) {
+	print '<div class="info column"><p><strong>pcntl_fork is not available. Schedules will not be fetched.</strong></p></div>';
+}
+
 $error = array();
 if (!extension_loaded('SimpleXML')) {
 	$error[] = "SimpleXML is not loaded.";
