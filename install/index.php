@@ -29,10 +29,11 @@ if (!set_time_limit(0)) {
 if (preg_match('/nginx/',$_SERVER["SERVER_SOFTWARE"])) {
 	print '<div class="info column"><p><strong>You seems to use nginx. This can cause some problem when populating DB, if this fail, you should use <i>install/install_db.php</i> or <i>install/install_db.sh</i> to finish installation.</strong></p></div>';
 }
+/*
 if (!function_exists('pcntl_fork')) {
 	print '<div class="info column"><p><strong>pcntl_fork is not available. Schedules will not be fetched.</strong></p></div>';
 }
-
+*/
 $error = array();
 if (!extension_loaded('SimpleXML')) {
 	$error[] = "SimpleXML is not loaded.";
@@ -214,10 +215,14 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				$globalSBS1Port = $hostport[1];
 			    }
 			} elseif (count($globalSBS1Hosts) == 1) {
-			    $hostport = explode(':',$globalSBS1Hosts[0]);
-			    if (count($hostport) == 2) {
-				$globalSBS1Host = $hostport[0];
-				$globalSBS1Port = $hostport[1];
+			    if (filter_var($globalSBS1Hosts[0],FILTER_VALIDATE_URL)) {
+			        $globalSBS1url = $globalSBS1Hosts[0];
+			    } else {
+				$hostport = explode(':',$globalSBS1Hosts[0]);
+				if (count($hostport) == 2) {
+				    $globalSBS1Host = $hostport[0];
+				    $globalSBS1Port = $hostport[1];
+				}
 			    }
 			} else $displaysbs = false;
 		    }
@@ -235,6 +240,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		<p>
 			<label for="sbstimeout">SBS-1 timeout</label>
 			<input type="text" name="sbstimeout" id="sbstimeout" value="<?php if (isset($globalSBS1TimeOut)) print $globalSBS1TimeOut; ?>" />
+		</p>
+		<b>OR</b>
+		<p>
+			<label for="sbsurl">SBS-1 URL (can be deltadb.txt or aircraftlist.json url to Radarcape)</label>
+			<input type="text" name="sbsurl" id="sbsurl" value="<?php if (isset($globalSBS1url)) print $globalSBS1url; ?>" />
 		</p>
 		<?php
 		    }
@@ -351,9 +361,14 @@ if (isset($_POST['dbtype'])) {
 	$sbshost = filter_input(INPUT_POST,'sbshost',FILTER_SANITIZE_STRING);
 	$sbsport = filter_input(INPUT_POST,'sbsport',FILTER_SANITIZE_NUMBER_INT);
 	$sbstimeout = filter_input(INPUT_POST,'sbstimeout',FILTER_SANITIZE_NUMBER_INT);
+	$sbsurl = filter_input(INPUT_POST,'sbsurl',FILTER_SANITIZE_URL);
 	if (isset($globalSBS1Hosts) && is_array($globalSBS1Hosts) && count($globalSBS1Hosts) > 1) {
 		$settings = array_merge($settings,array('globalSBS1Hosts' => $globalSBS1Hosts,'globalSBS1TimeOut' => $sbstimeout));
-	} else $settings = array_merge($settings,array('globalSBS1Hosts' => array($sbshost.':'.$sbsport),'globalSBS1TimeOut' => $sbstimeout));
+	} elseif ($sbshost != '') {
+		$settings = array_merge($settings,array('globalSBS1Hosts' => array($sbshost.':'.$sbsport),'globalSBS1TimeOut' => $sbstimeout));
+	} elseif ($sbsurl != '') {
+		$settings = array_merge($settings,array('globalSBS1Hosts' => array('$sbsurl')));
+	}
 
 	$acarshost = filter_input(INPUT_POST,'acarshost',FILTER_SANITIZE_STRING);
 	$acarsport = filter_input(INPUT_POST,'acarsport',FILTER_SANITIZE_NUMBER_INT);
