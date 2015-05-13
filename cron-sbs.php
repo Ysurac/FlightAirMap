@@ -78,6 +78,7 @@ while (true) {
     $read = $sockets;
     $n = @socket_select($read, $write = NULL, $e = NULL, $globalSBS1TimeOut);
     if ($n > 0) {
+	$tt = 0;
 	foreach ($read as $r) {
             $buffer = socket_read($r, 3000);
 	    // lets play nice and handle signals such as ctrl-c/kill properly
@@ -86,11 +87,19 @@ while (true) {
 
 	    $SBS::del();
 	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
+	//    echo $buffer."\n";
 	    // SBS format is CSV format
 	    if ($buffer != '') {
+		$tt = 0;
 		$line = explode(',', $buffer);
     		if (count($line) > 20) $SBS::add($line);
-	    } else connect_all($hosts);
+	    } else {
+		$tt ++;
+		if ($tt == 5) {
+		     connect_all($hosts);
+		     $tt = 0;
+		}
+	    }
 	}
     }
 }
