@@ -339,7 +339,7 @@ class SpotterLive {
 					}
 
 				} else {
-					echo "\n arg numeric : ".substr($ident, -1, 1)." - ".substr($ident, 0, 3)."\n";
+					//echo "\n arg numeric : ".substr($ident, -1, 1)." - ".substr($ident, 0, 3)."\n";
 					$airline_array = Spotter::getAllAirlineInfo("NA");
 				}
 			}
