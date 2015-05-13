@@ -976,13 +976,15 @@ class Schedule {
 				default:
 					// Randomly use a generic function to get hours
 					if (strlen($airline_icao) == 2) {
-					if (!isset($globalSchedulesSources)) $globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','flightaware');
-						$rand = mt_rand(1,count($globalSchedulesSources));
-						$source = $globalSchedulesSources[$rand];
-						if ($source == 'flightmapper') return Schedule::getFlightMapper($ident,$date);
-						elseif ($source == 'costtotravel') return Schedule::getCostToTravel($ident,$date);
-						elseif ($source == 'flightradar24') return Schedule::getFlightRadar24($ident,$date);
-						elseif ($source == 'flightaware') return Schedule::getFlightAware($ident,$date);
+						if (!isset($globalSchedulesSources)) $globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','flightaware');
+						if (count($globalSchedulesSources) > 0) {
+							$rand = mt_rand(1,count($globalSchedulesSources));
+							$source = $globalSchedulesSources[$rand];
+							if ($source == 'flightmapper') return Schedule::getFlightMapper($ident,$date);
+							elseif ($source == 'costtotravel') return Schedule::getCostToTravel($ident,$date);
+							elseif ($source == 'flightradar24') return Schedule::getFlightRadar24($ident,$date);
+							elseif ($source == 'flightaware') return Schedule::getFlightAware($ident,$date);
+						}
 					}
 			}
 		}
