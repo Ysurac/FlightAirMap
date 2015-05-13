@@ -685,7 +685,7 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		
 		if ($globalDebug) echo "Routes : Download...";
-//		update_db::download('http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz',$tmp_dir.'StandingData.sqb.gz');
+		update_db::download('http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz',$tmp_dir.'StandingData.sqb.gz');
 		if ($globalDebug) echo "Gunzip...";
 		update_db::gunzip($tmp_dir.'StandingData.sqb.gz');
 		if ($globalDebug) echo "Add to DB...";
