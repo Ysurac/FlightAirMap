@@ -55,7 +55,8 @@ if (strtolower($current_page) == "index")
 }
 ?>
 <?php
-if (strtolower($current_page) == "ident-detailed" && isset($ident))
+//if ((strtolower($current_page) == "ident-detailed" && isset($ident)) || strtolower($current_page) == "flightid-overview")
+if ((strtolower($current_page) == "ident-detailed" && isset($ident)))
 {
 ?>
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print time(); ?>" />
@@ -98,7 +99,7 @@ if ($facebook_meta_image != "")
         <span class="icon-bar"></span>
       </button>
       <a href="<?php print $globalURL; ?>/search" class="navbar-toggle navbar-toggle-search"><i class="fa fa-search"></i></a>
-      <a class="navbar-brand" href="<?php print $globalURL; ?>"><img src="<?php print $globalURL.$logoURL; ?>" height="30px" /></a>
+      <a class="navbar-brand" href="<?php if ($globalURL == '') print '/'; else print $globalURL; ?>"><img src="<?php print $globalURL.$logoURL; ?>" height="30px" /></a>
     </div>
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
