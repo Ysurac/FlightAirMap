@@ -20,6 +20,7 @@ $globalLanguage = 'EN'; // Used only for wikipedia links for now
 // MAP PROVIDER
 $globalMapProvider = 'MapQuest-OSM'; // Can be Mapbox, OpenStreetMap, MapQuest-OSM or MapQuest-Aerial
 $globalMapboxId = 'examples.map-i86nkdio'; // Mapbox id
+$globalMapboxToken = ''; // Mapbox token
 
 //COVERAGE AREA (its based on a box model. i.e. top-left | top-right | bottom-right | bottom-left)
 $globalLatitudeMax = '46.92'; //the maximum latitude (north)
