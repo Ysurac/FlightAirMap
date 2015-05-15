@@ -794,7 +794,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.departure_airport_name <> '' GROUP BY spotter_output.departure_airport_icao ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' GROUP BY spotter_output.departure_airport_icao ".$orderby_query;
 
 		$spotter_array = Spotter::getDataFromDB($query, array(), $limit_query);
 
@@ -836,7 +836,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.arrival_airport_name <> '' GROUP BY spotter_output.arrival_airport_icao ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' GROUP BY spotter_output.arrival_airport_icao ".$orderby_query;
 
 		$spotter_array = Spotter::getDataFromDB($query, array(), $limit_query);
 
@@ -1148,7 +1148,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." AND ((spotter_output.departure_airport_icao <> 'NA') AND (spotter_output.arrival_airport_icao <> 'NA')) ".$orderby_query;
 
 		$spotter_array = Spotter::getDataFromDB($query, $query_values, $limit_query);
 
@@ -2081,7 +2081,7 @@ class Spotter{
 								
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao AS airport_icao, spotter_output.departure_airport_name AS airport_name, spotter_output.departure_airport_city AS airport_city, spotter_output.departure_airport_country AS airport_country
 								FROM spotter_output 
-								WHERE spotter_output.departure_airport_icao <> '' 
+								WHERE spotter_output.departure_airport_icao <> '' AND spotter_output.departure_airport_icao <> 'NA' 
 								ORDER BY spotter_output.departure_airport_city ASC";		
 					
 		$Connection = new Connection();
@@ -2102,7 +2102,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao AS airport_icao, spotter_output.arrival_airport_name AS airport_name, spotter_output.arrival_airport_city AS airport_city, spotter_output.arrival_airport_country AS airport_country
 								FROM spotter_output 
-								WHERE spotter_output.arrival_airport_icao <> '' 
+								WHERE spotter_output.arrival_airport_icao <> '' AND spotter_output.arrival_airport_icao <> 'NA' 
 								ORDER BY spotter_output.arrival_airport_city ASC";
 					
 		$sth = Connection::$db->prepare($query);
@@ -4235,7 +4235,7 @@ class Spotter{
 */
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' 
+                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' 
                     GROUP BY spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
 					ORDER BY airport_departure_icao_count DESC
 					LIMIT 10";
@@ -4257,7 +4257,6 @@ class Spotter{
           
 			$airport_array[] = $temp_array;
 		}
-
 		return $airport_array;
 	}
 	
@@ -4275,7 +4274,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.airline_icao = :airline_icao 
+                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.airline_icao = :airline_icao 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -4350,7 +4349,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.aircraft_icao = :aircraft_icao 
+                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.aircraft_icao = :aircraft_icao 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -4423,7 +4422,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.registration = :registration 
+                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.registration = :registration 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -4496,7 +4495,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.arrival_airport_icao = :airport_icao 
+                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao = :airport_icao 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -4570,7 +4569,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
+                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -4651,7 +4650,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
+                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -4732,7 +4731,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.ident = :ident 
+                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.ident = :ident 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -4886,7 +4885,7 @@ class Spotter{
 */
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' 
                     GROUP BY spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_icao_count DESC
 					LIMIT 10";
@@ -4926,7 +4925,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.airline_icao = :airline_icao 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.airline_icao = :airline_icao 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -4999,7 +4998,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.aircraft_icao = :aircraft_icao 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.aircraft_icao = :aircraft_icao 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -5073,7 +5072,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.registration = :registration 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.registration = :registration 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -5147,7 +5146,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.departure_airport_icao = :airport_icao 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.departure_airport_icao = :airport_icao 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -5220,7 +5219,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -5301,7 +5300,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date  
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date  
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -5382,7 +5381,7 @@ class Spotter{
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.ident = :ident  
+                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.ident = :ident  
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -5600,7 +5599,7 @@ class Spotter{
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
-                    WHERE spotter_output.ident <> '' 
+                    WHERE spotter_output.ident <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> 'NA'
                     GROUP BY route
                     ORDER BY route_count DESC
 					LIMIT 0,10";
