@@ -372,7 +372,7 @@ if (isset($_POST['dbtype'])) {
 	} elseif ($sbshost != '') {
 		$settings = array_merge($settings,array('globalSBS1Hosts' => array($sbshost.':'.$sbsport),'globalSBS1TimeOut' => $sbstimeout));
 	} elseif ($sbsurl != '') {
-		$settings = array_merge($settings,array('globalSBS1Hosts' => array('$sbsurl')));
+		$settings = array_merge($settings,array('globalSBS1Hosts' => array($sbsurl)));
 	}
 
 	$acarshost = filter_input(INPUT_POST,'acarshost',FILTER_SANITIZE_STRING);
