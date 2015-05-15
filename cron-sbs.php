@@ -53,6 +53,10 @@ function connect_all($hosts) {
         	$formats[$id] = 'deltadbtxt';
             } else if (preg_match('/aircraftlist.json$/',$host)) {
         	$formats[$id] = 'aircraftlistjson';
+            } else if (preg_match('/\/action.php\/acars\/data$/',$host)) {
+        	$formats[$id] = 'phpvmacars';
+            } else if (preg_match('/whazzup/',$host)) {
+        	$formats[$id] = 'whazzup';
             }
         } else {
 	    $hostport = explode(':',$host);
@@ -79,13 +83,17 @@ $sockets = array();
 $formats = array();
 $errno = '';
 $errstr='';
+//$globalDaemon = FALSE;
+if (!isset($globalDaemon)) $globalDaemon = TRUE;
 /* Initiate connections to all the hosts simultaneously */
 connect_all($hosts);
 // connected - lets do some work
 echo "Connected!\n";
 sleep(1);
 echo "SCAN MODE \n\n";
-while (true) {
+$i = 1;
+while ($i > 0) {
+    if (!$globalDaemon) $i = 0;
     foreach ($formats as $id => $value) {
 	if ($value == 'deltadbtxt') {
 	    $buffer = Common::getData($hosts[$id]);
@@ -95,19 +103,51 @@ while (true) {
     		if ($line != '') {
     		    $line = explode(',', $line);
 	            $data = array();
-	            $data[4] = $line[1]; // hex
-	            $data[10] = $line[2]; // ident
-	            $data[11] = $line[3]; // altitude
-	            $data[12] = $line[4]; // speed
-	            $data[13] = $line[5]; // heading
-	            $data[14] = $line[6]; // lat
-	            $data[15] = $line[7]; // long
-	            $data[16] = ''; // vertical rate
-	            $data[17] = ''; // squawk
-	            $data[20] = ''; // emergency
-		    $data[7] = date('Y-m-d');
-		    $data[8] = date('h:i:s');
+	            $data['hex'] = $line[1]; // hex
+	            $data['ident'] = $line[2]; // ident
+	            $data['altitude'] = $line[3]; // altitude
+	            $data['speed'] = $line[4]; // speed
+	            $data['heading'] = $line[5]; // heading
+	            $data['latitude'] = $line[6]; // lat
+	            $data['longitude'] = $line[7]; // long
+	            $data['verticalrate'] = ''; // vertical rate
+	            $data['squawk'] = ''; // squawk
+	            $data['emergency'] = ''; // emergency
+		    $data['datetime'] = date('Y-m-d h:i:s');
     		    $SBS::add($data);
+    		}
+    	    }
+	} elseif ($value == 'whazzup') {
+	    $buffer = Common::getData($hosts[$id]);
+    	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
+	    $buffer = explode('\n',$buffer);
+	    foreach ($buffer as $line) {
+    		if ($line != '') {
+    		    $line = explode(':', $line);
+    		    if (count($line) > 43) {
+			$data = array();
+			$data['hex'] = str_pad(dechex($line[1]),6,'000000',STR_PAD_LEFT);
+			$data['ident'] = $line[0]; // ident
+			if ($line[7] != '' && $line[7] != 0) $data['altitude'] = $line[7]*100; // altitude
+			$data['speed'] = $line[8]; // speed
+			$data['heading'] = $line[45]; // heading
+			$data['latitude'] = $line[5]; // lat
+	        	$data['longitude'] = $line[6]; // long
+	        	$data['verticalrate'] = ''; // vertical rate
+	        	$data['squawk'] = ''; // squawk
+	        	$data['emergency'] = ''; // emergency
+			//$data['datetime'] = date('Y-m-d h:i:s');
+			$data['datetime'] = date('Y-m-d h:i:s',strtotime($line[37])); // FIXME convert to correct format
+		        $data['departure_airport_icao'] = $line[11];
+		        $data['departure_airport_time'] = $line[22]; // FIXME put a :
+		        $data['arrival_airport_icao'] = $line[13];
+	    		//$data['arrival_airport_time'] = ;
+	    		if ($line[9] != '') {
+	    		    $aircraft_data = explode('/',$line[9]);
+	    		    $data['aircraft_icao'] = $aircraft_data[1];
+        		}
+    			$SBS::add($data);
+    		    }
     		}
     	    }
     	} elseif ($value == 'aircraftlistjson') {
@@ -115,18 +155,41 @@ while (true) {
 	    $all_data = json_decode($buffer,true);
 	    foreach ($all_data as $line) {
 	        $data = array();
-	        $data[4] = $line['hex']; // hex
-	        $data[10] = $line['flight']; // ident
-	        $data[11] = $line['altitude']; // altitude
-	        $data[12] = $line['speed']; // speed
-	        $data[13] = $line['track']; // heading
-	        $data[14] = $line['lat']; // lat
-	        $data[15] = $line['lon']; // long
-	        $data[16] = $line['vrt']; // verticale rate
-	        $data[17] = $line['squawk']; // squawk
-	        $data[20] = ''; // emergency
-		$data[7] = date('Y-m-d');
-		$data[8] = date('h:i:s');
+	        $data['hex'] = $line['hex']; // hex
+	        $data['ident'] = $line['flight']; // ident
+	        $data['altitude'] = $line['altitude']; // altitude
+	        $data['speed'] = $line['speed']; // speed
+	        $data['heading'] = $line['track']; // heading
+	        $data['latitude'] = $line['lat']; // lat
+	        $data['longitude'] = $line['lon']; // long
+	        $data['verticalrate'] = $line['vrt']; // verticale rate
+	        $data['squawk'] = $line['squawk']; // squawk
+	        $data['emergency'] = ''; // emergency
+		$data['datetime'] = date('Y-m-d h:i:s');
+		$SBS::add($data);
+	    }
+    	} elseif ($value == 'phpvmacars') {
+	    $buffer = Common::getData($hosts[$id]);
+	    $all_data = json_decode($buffer,true);
+	    foreach ($all_data as $line) {
+	        $data = array();
+	        $data['hex'] = str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT); // hex
+	        $data['ident'] = $line['flightnum']; // ident
+	        $data['altitude'] = $line['alt']; // altitude
+	        $data['speed'] = $line['gs']; // speed
+	        $data['heading'] = $line['heading']; // heading
+	        $data['latitude'] = $line['lat']; // lat
+	        $data['longitude'] = $line['lng']; // long
+	        $data['verticalrate'] = ''; // verticale rate
+	        $data['squawk'] = ''; // squawk
+	        $data['emergency'] = ''; // emergency
+	        $data['datetime'] = $line['lastupdate'];
+	        $data['departure_airport_icao'] = $line['depicao'];
+	        $data['departure_airport_time'] = $line['deptime'];
+	        $data['arrival_airport_icao'] = $line['arricao'];
+    		$data['arrival_airport_time'] = $line['arrtime'];
+    		$data['aircraft_icao'] = $line['aircraft'];
+	        $data['format_source'] = 'phpvmacars';
 		$SBS::add($data);
 	    }
 	} elseif ($value == 'sbs') {
@@ -145,7 +208,21 @@ while (true) {
 		    if ($buffer != '') {
 			$tt = 0;
 			$line = explode(',', $buffer);
-    			if (count($line) > 20) $SBS::add($line);
+    			if (count($line) > 20) {
+    				$data['hex'] = $line[4];
+    				$data['datetime'] = $line[8].' '.$line[7];
+    				$data['ident'] = trim($line[10]);
+    				$data['latitude'] = $line[14];
+    				$data['longitude'] = $line[15];
+    				$data['verticalrate'] = $line[16];
+    				$data['emergency'] = $line[20];
+    				$data['speed'] = $line[12];
+    				$data['squawk'] = $line[17];
+    				$data['altitude'] = $line[11];
+    				$data['heading'] = $line[13];
+    				
+    				$SBS::add($data);
+    			}
 		    } else {
 			$tt ++;
 			if ($tt == 5) {

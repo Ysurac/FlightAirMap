@@ -48,9 +48,15 @@ $globalFlightAwarePassword = ''; //FlightAware Password/API key
 // TIMEZONE
 $globalTimezone = 'Europe/Paris';
 
+// DAEMON
+$globalDaemon = TRUE; // Run cron-sbs.php as daemon (don't work well if source is a real SBS1 device)
+
+// DISPLAY FLIGHT INTERVAL ON MAP
+$globalLiveInterval = '200';
+
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
-$globalSBS1Hosts = array('127.0.0.1:30003'); // in the form array('host1:port1','host2:port2');
+$globalSBS1Hosts = array('127.0.0.1:30003'); // in the form array('host1:port1','host2:port2','http://xxxxx/whazzup.txt');
 $globalSBS1TimeOut = '15';
 
 //ACARS Listen in UDP

@@ -707,8 +707,10 @@ class Schedule {
 			$table = Common::table2array($data);
 			$flight = $table;
 //			print_r($table);
-			$departureTime = $flight[5][4];
-			$departureAirport = $flight[5][2];
+			if (isset($flight[5][4])) $departureTime = $flight[5][4];
+			else $departureTime = '';
+			if (isset($flight[5][2])) $departureAirport = $flight[5][2];
+			else $departureAirport = '';
 		}
 		$post = array('type' => 'arrival','searchFlightNo' => '1','requestsent' => 'true', 'flightno' => $numvol,'date' => $check_date->format('Y-m-d'),'carrier' => 'AB');
 		$data = Common::getData($url,'post',$post);
