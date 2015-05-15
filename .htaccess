@@ -2,926 +2,228 @@ RewriteEngine On
 
 ########### GENERAL ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^latest/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^latest/([^/]+)/([^/]+)(/?)$ latest.php?limit=$1&sort=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^latest/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^latest/([^/]+)(/?)$ latest.php?limit=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^latest(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^latest(/?)$ latest.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^acars-latest/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^acars-latest/([^/]+)(/?)$ acars-latest.php?limit=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^acars-archive/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^acars-archive/([^/]+)(/?)$ acars-archive.php?limit=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^acars-latest(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^acars-latest(/?)$ acars-latest.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^acars-archive(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^acars-archive(/?)$ acars-archive.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^newest/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^newest/([^/]+)/([^/]+)/([^/]+)(/?)$ newest.php?category=$1&limit=$2&sort=$3 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^newest/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^newest/([^/]+)/([^/]+)(/?)$ newest.php?category=$1&limit=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^newest/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^newest/([^/]+)(/?)$ newest.php?category=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^newest(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^newest(/?)$ newest.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^highlights/table/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^highlights/table/([^/]+)/([^/]+)(/?)$ highlights-table.php?limit=$1&sort=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^highlights/table/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^highlights/table/([^/]+)(/?)$ highlights-table.php?limit=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^highlights/table(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^highlights/table(/?)$ highlights-table.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^highlights/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^highlights/([^/]+)(/?)$ highlights-display.php?limit=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^highlights(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^highlights(/?)$ highlights-display.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^about/tv(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^about/tv(/?)$ about-tv.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^about/map(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^about/map(/?)$ about-map.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^about/export(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^about/export(/?)$ about-export.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^about(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^about(/?)$ about.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^sitemap/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^sitemap/([^/]+)(/?)$ sitemap.php?type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^sitemap(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^sitemap(/?)$ sitemap.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^tv/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^tv/([^/]+)(/?)$ tv.php?q=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^tv(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^tv(/?)$ tv.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^redirect/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^redirect/([^/]+)(/?)$ redirect.php?flightaware_id=$1 [L,NC]
 
 
 ########### LIVE ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^live/geojson(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^live/geojson(/?)$ live-geojson.php [L,NC]
 
 
 ########### SEARCH ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/csv(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/csv(/?)$ search-csv.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/json(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/json(/?)$ search-json.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/xml(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/xml(/?)$ search-xml.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/rss(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/rss(/?)$ search-rss.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/kml(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/kml(/?)$ search-kml.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/geojson(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/geojson(/?)$ search-geojson.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/yaml(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/yaml(/?)$ search-yaml.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/php(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/php(/?)$ search-php.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/wkt(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/wkt(/?)$ search-wkt.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/gpx(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/gpx(/?)$ search-gpx.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search/georss(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search/georss(/?)$ search-georss.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^search(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^search(/?)$ search.php [L,NC]
-
 
 ########### AIRPORT ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/aircraft/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/aircraft/([^/]+)(/?)$ airport-statistics-aircraft.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/registration/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/registration/([^/]+)(/?)$ airport-statistics-registration.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/manufacturer/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/manufacturer/([^/]+)(/?)$ airport-statistics-manufacturer.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/airline/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/airline/([^/]+)(/?)$ airport-statistics-airline.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/airline-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/airline-country/([^/]+)(/?)$ airport-statistics-airline-country.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/departure-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/departure-airport/([^/]+)(/?)$ airport-statistics-departure-airport.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/departure-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/departure-airport-country/([^/]+)(/?)$ airport-statistics-departure-airport-country.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/arrival-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/arrival-airport/([^/]+)(/?)$ airport-statistics-arrival-airport.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/arrival-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/arrival-airport-country/([^/]+)(/?)$ airport-statistics-arrival-airport-country.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/time/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/time/([^/]+)(/?)$ airport-statistics-time.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/statistics/route/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/statistics/route/([^/]+)(/?)$ airport-statistics-route.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/detailed/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/detailed/([^/]+)/([^/]+)/([^/]+)(/?)$ airport-detailed.php?airport=$1&limit=$2&sort=$3 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/detailed/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/detailed/([^/]+)/([^/]+)(/?)$ airport-detailed.php?airport=$1&limit=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport/([^/]+)(/?)$ airport-detailed.php?airport=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airport(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airport(/?)$ airport.php [L,NC]
-
-
 
 ########### COUNTRY ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/aircraft/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/aircraft/([^/]+)(/?)$ country-statistics-aircraft.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/registration/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/registration/([^/]+)(/?)$ country-statistics-registration.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/manufacturer/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/manufacturer/([^/]+)(/?)$ country-statistics-manufacturer.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/airline/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/airline/([^/]+)(/?)$ country-statistics-airline.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/airline-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/airline-country/([^/]+)(/?)$ country-statistics-airline-country.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/departure-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/departure-airport/([^/]+)(/?)$ country-statistics-departure-airport.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/departure-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/departure-airport-country/([^/]+)(/?)$ country-statistics-departure-airport-country.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/arrival-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/arrival-airport/([^/]+)(/?)$ country-statistics-arrival-airport.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/arrival-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/arrival-airport-country/([^/]+)(/?)$ country-statistics-arrival-airport-country.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/time/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/time/([^/]+)(/?)$ country-statistics-time.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/statistics/route/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/statistics/route/([^/]+)(/?)$ country-statistics-route.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/([^/]+)/([^/]+)/([^/]+)(/?)$ country-detailed.php?country=$1&limit=$2&sort=$3 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/([^/]+)/([^/]+)(/?)$ country-detailed.php?country=$1&limit=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country/([^/]+)(/?)$ country-detailed.php?country=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^country(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^country(/?)$ country.php [L,NC]
-
 
 
 ########### REGISTRATION ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^registration/statistics/departure-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^registration/statistics/departure-airport/([^/]+)(/?)$ registration-statistics-departure-airport.php?registration=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^registration/statistics/departure-airport-country([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^registration/statistics/departure-airport-country/([^/]+)(/?)$ registration-statistics-departure-airport-country.php?registration=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^registration/statistics/arrival-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^registration/statistics/arrival-airport-country/([^/]+)(/?)$ registration-statistics-arrival-airport-country.php?registration=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^registration/statistics/arrival-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^registration/statistics/arrival-airport/([^/]+)(/?)$ registration-statistics-arrival-airport.php?registration=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^registration/statistics/time/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^registration/statistics/time/([^/]+)(/?)$ registration-statistics-time.php?registration=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^registration/statistics/route/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^registration/statistics/route/([^/]+)(/?)$ registration-statistics-route.php?registration=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^registration/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^registration/([^/]+)/([^/]+)/([^/]+)(/?)$ registration-detailed.php?registration=$1&limit=$2&sort=$3 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^registration/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^registration/([^/]+)/([^/]+)(/?)$ registration-detailed.php?registration=$1&limit=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^registration/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^registration/([^/]+)(/?)$ registration-detailed.php?registration=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^registration(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^registration(/?)$ registration.php [L,NC]
-
 
 
 ########### MANUFACTURER ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/statistics/aircraft/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/statistics/aircraft/([^/]+)(/?)$ manufacturer-statistics-aircraft.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/statistics/registration/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/statistics/registration/([^/]+)(/?)$ manufacturer-statistics-registration.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/statistics/airline/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/statistics/airline/([^/]+)(/?)$ manufacturer-statistics-airline.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/statistics/airline-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/statistics/airline-country/([^/]+)(/?)$ manufacturer-statistics-airline-country.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/statistics/departure-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/statistics/departure-airport/([^/]+)(/?)$ manufacturer-statistics-departure-airport.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/statistics/departure-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/statistics/departure-airport-country/([^/]+)(/?)$ manufacturer-statistics-departure-airport-country.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/statistics/arrival-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/statistics/arrival-airport/([^/]+)(/?)$ manufacturer-statistics-arrival-airport.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/statistics/arrival-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/statistics/arrival-airport-country/([^/]+)(/?)$ manufacturer-statistics-arrival-airport-country.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/statistics/time/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/statistics/time/([^/]+)(/?)$ manufacturer-statistics-time.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/statistics/route/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/statistics/route/([^/]+)(/?)$ manufacturer-statistics-route.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/([^/]+)/([^/]+)/([^/]+)(/?)$ manufacturer-detailed.php?aircraft_manufacturer=$1&limit=$2&sort=$3 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/([^/]+)/([^/]+)(/?)$ manufacturer-detailed.php?aircraft_manufacturer=$1&limit=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer/([^/]+)(/?)$ manufacturer-detailed.php?aircraft_manufacturer=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^manufacturer(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^manufacturer(/?)$ manufacturer.php [L,NC]
-
 
 
 ########### AIRLINE ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/statistics/aircraft/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/statistics/aircraft/([^/]+)(/?)$ airline-statistics-aircraft.php?airline=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/statistics/registration/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/statistics/registration/([^/]+)(/?)$ airline-statistics-registration.php?airline=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/statistics/manufacturer/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/statistics/manufacturer/([^/]+)(/?)$ airline-statistics-manufacturer.php?airline=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/statistics/departure-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/statistics/departure-airport/([^/]+)(/?)$ airline-statistics-departure-airport.php?airline=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/statistics/departure-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/statistics/departure-airport-country/([^/]+)(/?)$ airline-statistics-departure-airport-country.php?airline=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/statistics/arrival-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/statistics/arrival-airport/([^/]+)(/?)$ airline-statistics-arrival-airport.php?airline=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/statistics/arrival-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/statistics/arrival-airport-country/([^/]+)(/?)$ airline-statistics-arrival-airport-country.php?airline=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/statistics/time/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/statistics/time/([^/]+)(/?)$ airline-statistics-time.php?airline=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/statistics/route/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/statistics/route/([^/]+)(/?)$ airline-statistics-route.php?airline=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/([^/]+)/([^/]+)/([^/]+)(/?)$ airline-detailed.php?airline=$1&limit=$2&sort=$3 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/([^/]+)/([^/]+)(/?)$ airline-detailed.php?airline=$1&limit=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline/([^/]+)(/?)$ airline-detailed.php?airline=$1&limit=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^airline(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^airline(/?)$ airline.php [L,NC]
-
 
 
 ########### ROUTE ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^route/statistics/aircraft/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^route/statistics/aircraft/([^/]+)/([^/]+)(/?)$ route-statistics-aircraft.php?departure_airport=$1&arrival_airport=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^route/statistics/registration/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^route/statistics/registration/([^/]+)/([^/]+)(/?)$ route-statistics-registration.php?departure_airport=$1&arrival_airport=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^route/statistics/manufacturer/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^route/statistics/manufacturer/([^/]+)/([^/]+)(/?)$ route-statistics-manufacturer.php?departure_airport=$1&arrival_airport=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^route/statistics/airline/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^route/statistics/airline/([^/]+)/([^/]+)(/?)$ route-statistics-airline.php?departure_airport=$1&arrival_airport=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^route/statistics/airline-country/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^route/statistics/airline-country/([^/]+)/([^/]+)(/?)$ route-statistics-airline-country.php?departure_airport=$1&arrival_airport=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^route/statistics/time/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^route/statistics/time/([^/]+)/([^/]+)(/?)$ route-statistics-time.php?departure_airport=$1&arrival_airport=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^route/([^/]+)/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^route/([^/]+)/([^/]+)/([^/]+)/([^/]+)(/?)$ route-detailed.php?departure_airport=$1&arrival_airport=$2&limit=$3&sort=$4 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^route/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^route/([^/]+)/([^/]+)/([^/]+)(/?)$ route-detailed.php?departure_airport=$1&arrival_airport=$2&limit=$3 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^route/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^route/([^/]+)/([^/]+)(/?)$ route-detailed.php?departure_airport=$1&arrival_airport=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^route(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^route(/?)$ route.php [L,NC]
-
 
 
 ########### IDENT ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/statistics/aircraft/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/statistics/aircraft/([^/]+)(/?)$ ident-statistics-aircraft.php?ident=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/statistics/registration/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/statistics/registration/([^/]+)(/?)$ ident-statistics-registration.php?ident=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/statistics/manufacturer/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/statistics/manufacturer/([^/]+)(/?)$ ident-statistics-manufacturer.php?ident=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/statistics/departure-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/statistics/departure-airport/([^/]+)(/?)$ ident-statistics-departure-airport.php?ident=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/statistics/departure-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/statistics/departure-airport-country/([^/]+)(/?)$ ident-statistics-departure-airport-country.php?ident=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/statistics/arrival-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/statistics/arrival-airport/([^/]+)(/?)$ ident-statistics-arrival-airport.php?ident=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/statistics/arrival-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/statistics/arrival-airport-country/([^/]+)(/?)$ ident-statistics-arrival-airport-country.php?ident=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/statistics/time/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/statistics/time/([^/]+)(/?)$ ident-statistics-time.php?ident=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/statistics/route/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/statistics/route/([^/]+)(/?)$ ident-statistics-route.php?ident=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/([^/]+)/([^/]+)/([^/]+)(/?)$ ident-detailed.php?ident=$1&limit=$2&sort=$3 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/([^/]+)/([^/]+)(/?)$ ident-detailed.php?ident=$1&limit=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident/([^/]+)(/?)$ ident-detailed.php?ident=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^ident(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^ident(/?)$ ident.php [L,NC]
-
 
 
 ########### AIRCRAFT ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/statistics/airline/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/statistics/airline/([^/]+)(/?)$ aircraft-statistics-airline.php?aircraft_type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/statistics/airline-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/statistics/airline-country/([^/]+)(/?)$ aircraft-statistics-airline-country.php?aircraft_type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/statistics/registration/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/statistics/registration/([^/]+)(/?)$ aircraft-statistics-registration.php?aircraft_type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/statistics/departure-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/statistics/departure-airport/([^/]+)(/?)$ aircraft-statistics-departure-airport.php?aircraft_type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/statistics/departure-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/statistics/departure-airport-country/([^/]+)(/?)$ aircraft-statistics-departure-airport-country.php?aircraft_type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/statistics/arrival-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/statistics/arrival-airport/([^/]+)(/?)$ aircraft-statistics-arrival-airport.php?aircraft_type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/statistics/arrival-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/statistics/arrival-airport-country/([^/]+)(/?)$ aircraft-statistics-arrival-airport-country.php?aircraft_type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/statistics/time/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/statistics/time/([^/]+)(/?)$ aircraft-statistics-time.php?aircraft_type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/statistics/route/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/statistics/route/([^/]+)(/?)$ aircraft-statistics-route.php?aircraft_type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/([^/]+)/([^/]+)/([^/]+)(/?)$ aircraft-detailed.php?aircraft_type=$1&limit=$2&sort=$3 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/([^/]+)/([^/]+)(/?)$ aircraft-detailed.php?aircraft_type=$1&limit=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft/([^/]+)(/?)$ aircraft-detailed.php?aircraft_type=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^aircraft(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^aircraft(/?)$ aircraft.php [L,NC]
-
 
 
 ########### DATE ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/aircraft/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/aircraft/([^/]+)(/?)$ date-statistics-aircraft.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/registration/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/registration/([^/]+)(/?)$ date-statistics-registration.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/manufacturer/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/manufacturer/([^/]+)(/?)$ date-statistics-manufacturer.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/airline/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/airline/([^/]+)(/?)$ date-statistics-airline.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/airline-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/airline-country/([^/]+)(/?)$ date-statistics-airline-country.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/departure-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/departure-airport/([^/]+)(/?)$ date-statistics-departure-airport.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/departure-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/departure-airport-country/([^/]+)(/?)$ date-statistics-departure-airport-country.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/arrival-airport/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/arrival-airport/([^/]+)(/?)$ date-statistics-arrival-airport.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/arrival-airport-country/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/arrival-airport-country/([^/]+)(/?)$ date-statistics-arrival-airport-country.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/time/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/time/([^/]+)(/?)$ date-statistics-time.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/statistics/route/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/statistics/route/([^/]+)(/?)$ date-statistics-route.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/([^/]+)/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/([^/]+)/([^/]+)/([^/]+)(/?)$ date-detailed.php?date=$1&limit=$2&sort=$3 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/([^/]+)/([^/]+)(/?)$ date-detailed.php?date=$1&limit=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date/([^/]+)(/?)$ date-detailed.php?date=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^date(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^date(/?)$ date.php [L,NC]
-
 
 
 ########### FLIGHTID ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^flightid/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^flightid/([^/]+)(/?)$ flightid-overview.php?id=$1 [L,NC]
-
 
 
 ########### STATISTICS ###########
 
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics(/?)$ statistics.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/aircraft(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/aircraft(/?)$ statistics-aircraft.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/registration(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/registration(/?)$ statistics-registration.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/manufacturer(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/manufacturer(/?)$ statistics-manufacturer.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/airline(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/airline(/?)$ statistics-airline.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/airline-country(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/airline-country(/?)$ statistics-airline-country.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/airport-departure(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/airport-departure(/?)$ statistics-airport-departure.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/airport-departure-country(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/airport-departure-country(/?)$ statistics-airport-departure-country.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/airport-arrival(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/airport-arrival(/?)$ statistics-airport-arrival.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/airport-arrival-country(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/airport-arrival-country(/?)$ statistics-airport-arrival-country.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/route-airport(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/route-airport(/?)$ statistics-route-airport.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/route-waypoint(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/route-waypoint(/?)$ statistics-route-waypoint.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/callsign(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/callsign(/?)$ statistics-callsign.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/date(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/date(/?)$ statistics-date.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^statistics/time(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^statistics/time(/?)$ statistics-time.php [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^upcoming/([^/]+)/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^upcoming/([^/]+)/([^/]+)(/?)$ upcoming.php?limit=$1&sort=$2 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^upcoming/([^/]+)(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^upcoming/([^/]+)(/?)$ upcoming.php?limit=$1 [L,NC]
-
-RewriteCond %{HTTPS} !=off
-RewriteRule ^upcoming(/?)$ http://%{SERVER_NAME}%{REQUEST_URI} [R,NC]
-RewriteCond %{HTTPS} =off
 RewriteRule ^upcoming(/?)$ upcoming.php [L,NC]
