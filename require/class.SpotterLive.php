@@ -297,7 +297,7 @@ class SpotterLive {
 	*/
 	public static function addLiveSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $departure_airport_time = '', $arrival_airport_time = '', $squawk = '', $route_stop = '', $ModeS = '')
 	{
-		global $globalURL;
+		global $globalURL, $globalArchive;
 
 		date_default_timezone_set('UTC');
 
