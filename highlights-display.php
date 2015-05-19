@@ -41,7 +41,6 @@ if (isset($_GET['sort'])) {
 }
 if (!empty($spotter_array))
 {
-	print_r($spotter_array);
 	print '<div class="dispay-view">';
 	foreach($spotter_array as $spotter_item)
 	{
