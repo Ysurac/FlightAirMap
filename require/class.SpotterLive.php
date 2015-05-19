@@ -72,7 +72,7 @@ class SpotterLive {
                 } else return array();
                 if ($globalDBdriver == 'mysql') {
         		$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL ".$globalLiveInterval." SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
-        	} else {
+        	} else if ($globalDBdriver == 'pgsql') {
             		$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE NOW() at time zone 'UTC'  - '".$globalLiveInterval." SECONDS'::INTERVAL <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
                 }
                 $spotter_array = Spotter::getDataFromDB($query);
@@ -187,9 +187,6 @@ class SpotterLive {
 		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
 		return $spotter_array;
-
-
-		return $spotter_array;
 	}
 
         /**
@@ -248,7 +245,13 @@ class SpotterLive {
 	*/
 	public static function deleteLiveSpotterData()
 	{
-		$query  = "DELETE FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) >= spotter_live.date";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			//$query  = "DELETE FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) >= spotter_live.date";
+			$query  = "DELETE FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 9 HOURS) >= spotter_live.date";
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query  = "DELETE FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOURS'::INTERVAL >= spotter_live.date";
+		}
         
     		try {
 			$Connection = new Connection();

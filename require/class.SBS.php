@@ -59,7 +59,7 @@ class SBS {
     }
 
     static function add($line) {
-	global $globalAirportIgnore;
+	global $globalAirportIgnore, $globalFork;
 	date_default_timezone_set('UTC');
 	// signal handler - playing nice with sockets and dump1090
 	// pcntl_signal_dispatch();
@@ -88,6 +88,11 @@ class SBS {
  
 		if (isset($line['ident']) && $line['ident'] != '' && (self::$all_flights[$id]['ident'] != trim($line['ident']))) {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ident' => trim($line['ident'])));
+		    if (!isset($line['id'])) {
+			if (isset($line['format_source']) && $line['format_source'] == 'sbs') self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident'].'-'.date('Ymdhm')));
+		        else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident']));
+		     } else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => $line['id']));
+
 		    if (isset($line['departure_airport_icao']) && isset($line['arrival_airport_icao'])) {
 		    		self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('departure_airport' => $line['departure_airport_icao'],'arrival_airport' => $line['arrival_airport_icao'],'route_stop' => ''));
 		    } else {
@@ -99,7 +104,8 @@ class SBS {
 		    		self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('departure_airport' => $route['fromairport_icao'],'arrival_airport' => $route['toairport_icao'],'route_stop' => $route['routestop']));
 		    	    }
 			}
-			if (function_exists('pcntl_fork')) {
+			if (!isset($globalFork)) $globalFork = TRUE;
+			if (function_exists('pcntl_fork') && $globalFork) {
 			    $pids[$id] = pcntl_fork();
 			    if (!$pids[$id]) {
 				$sid = posix_setsid();
@@ -170,7 +176,7 @@ class SBS {
 			    if (self::$all_flights[$id]['squawk'] == '7500') $highlight = 'Squawk 7500 : Hijack';
 			    if (self::$all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure)';
 			    if (self::$all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency';
-			    $result = Spotter::addSpotterData(self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'],'', self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'],self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],$highlight,self::$all_flights[$id]['hex']);
+			    $result = Spotter::addSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'],'', self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'],self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],$highlight,self::$all_flights[$id]['hex']);
 			}
 			$ignoreImport = false;
 			if (self::$debug) echo $result."\n";
@@ -185,8 +191,8 @@ class SBS {
 			    }
 			}
 			*/
-			SpotterLive::deleteLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
-			//SpotterLive::deleteLiveSpotterData();
+			//SpotterLive::deleteLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
+			SpotterLive::deleteLiveSpotterData();
 		    }
 
 		    //adds the spotter LIVE data
@@ -205,7 +211,7 @@ class SBS {
 		    }
 		    if (!$ignoreImport) {
 			if (self::$debug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in Live DB : ";
-			$result = SpotterLive::addLiveSpotterData(self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'], self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'], self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],self::$all_flights[$id]['hex']);
+			$result = SpotterLive::addLiveSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'], self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'], self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],self::$all_flights[$id]['hex']);
 		    }
 		    $ignoreImport = false;
 		    if (self::$debug) echo $result."\n";

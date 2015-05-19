@@ -56,7 +56,7 @@ if (strtolower($current_page) == "index")
 ?>
 <?php
 //if ((strtolower($current_page) == "ident-detailed" && isset($ident)) || strtolower($current_page) == "flightid-overview")
-if ((strtolower($current_page) == "ident-detailed" && isset($ident)))
+if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($globalArchive) && $globalArchive))
 {
 ?>
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print time(); ?>" />

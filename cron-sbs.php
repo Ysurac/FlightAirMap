@@ -126,6 +126,7 @@ while ($i > 0) {
     		    $line = explode(':', $line);
     		    if (count($line) > 43) {
 			$data = array();
+			$data['id'] = $line[1];
 			$data['hex'] = str_pad(dechex($line[1]),6,'000000',STR_PAD_LEFT);
 			$data['ident'] = $line[0]; // ident
 			if ($line[7] != '' && $line[7] != 0) $data['altitude'] = $line[7]*100; // altitude
@@ -173,6 +174,7 @@ while ($i > 0) {
 	    $all_data = json_decode($buffer,true);
 	    foreach ($all_data as $line) {
 	        $data = array();
+	        $data['id'] = $line['id']; // id
 	        $data['hex'] = str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT); // hex
 	        $data['ident'] = $line['flightnum']; // ident
 	        $data['altitude'] = $line['alt']; // altitude
@@ -220,6 +222,7 @@ while ($i > 0) {
     				$data['squawk'] = $line[17];
     				$data['altitude'] = $line[11];
     				$data['heading'] = $line[13];
+    				$data['format_source'] = 'sbs';
     				
     				$SBS::add($data);
     			}

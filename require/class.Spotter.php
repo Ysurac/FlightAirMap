@@ -54,6 +54,8 @@ class Spotter{
 			$temp_array = array();
 			if (isset($row['spotter_live_id'])) {
 				$temp_array['spotter_id'] = $row['spotter_live_id'];
+			} elseif (isset($row['spotter_archive_id'])) {
+				$temp_array['spotter_id'] = $row['spotter_archive_id'];
 			} else {
 				$temp_array['spotter_id'] = $row['spotter_id'];
 			}
@@ -112,9 +114,10 @@ class Spotter{
 					$temp_array['image_copyright'] = $image_array[0]['image_copyright'];
 				}
 			}
-  
-			//  $temp_array['highlight'] = $row['highlight'];
-			$temp_array['highlight'] = '';
+ 
+			if (isset($row['highlight'])) {
+				$temp_array['highlight'] = $row['highlight'];
+			} else $temp_array['highlight'] = '';
 			
 			$dateArray = Spotter::parseDateString($row['date']);
 			if ($dateArray['seconds'] < 10)

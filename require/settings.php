@@ -51,6 +51,9 @@ $globalTimezone = 'Europe/Paris';
 // DAEMON
 $globalDaemon = TRUE; // Run cron-sbs.php as daemon (don't work well if source is a real SBS1 device)
 
+// FORK
+$globalFork = TRUE; // Allow cron-sbs.php to fork to fetch schedule, no more schedules fetch if set to FALSE
+
 // DISPLAY FLIGHT INTERVAL ON MAP
 $globalLiveInterval = '200';
 
@@ -79,9 +82,9 @@ $globalAirportIgnore = array();
 //Archive all data
 $globalArchive = FALSE;
 
-//Sources for Aircraft image
+//Sources for Aircraft image (should be set to array() if no real aircrafts)
 $globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
 
-//Sources for airline schedule
+//Sources for airline schedule (should be set to array() if no real aircrafts or/and set $globalFork = FALSE )
 $globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','flightaware');
 ?>

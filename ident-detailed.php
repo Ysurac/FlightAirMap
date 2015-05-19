@@ -2,6 +2,7 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterLive.php');
+require('require/class.SpotterArchive.php');
 
 if (!isset($_GET['ident'])){
 	header('Location: '.$globalURL.'');
@@ -38,9 +39,11 @@ if (!isset($_GET['ident'])){
 		$title = 'Detailed View for '.$spotter_array[0]['ident'];
 		$ident = $spotter_array[0]['ident'];
 		require('header.php');
+		if (isset($globalArchive) && $globalArchive) {
 		// Requirement for altitude graph
 		print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
-		$all_data = SpotterLive::getAltitudeLiveSpotterDataByIdent($_GET['ident']);
+		//$all_data = SpotterLive::getAltitudeLiveSpotterDataByIdent($_GET['ident']);
+		$all_data = SpotterArchive::getAltitudeArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
 		if (isset($globalTimezone)) {
 			date_default_timezone_set($globalTimezone);
 		} else date_default_timezone_set('UTC');
@@ -76,7 +79,7 @@ if (!isset($_GET['ident'])){
                               drawChart6();
                             });
                   </script>';
-		
+		}
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['ident'].'</h1>';
 		print '<div><span class="label">Ident</span>'.$spotter_array[0]['ident'].'</div>';

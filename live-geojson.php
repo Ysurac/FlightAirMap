@@ -2,15 +2,17 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterLive.php');
+require('require/class.SpotterArchive.php');
 
 if (isset($_GET['download'])) {
     if ($_GET['download'] == "true")
     {
-	header('Content-disposition: attachment; filename="barriespotter.json"');
+	header('Content-disposition: attachment; filename="flightairmap.json"');
     }
 }
 header('Content-Type: text/javascript');
 
+$from_archive = false;
 if (isset($_GET['coord'])) {
 	$coord = explode(',',$_GET['coord']);
 	$spotter_array = SpotterLive::getLiveSpotterDatabyCoord($coord);
@@ -20,6 +22,10 @@ if (isset($_GET['coord'])) {
 if (isset($_GET['ident'])) {
 	$ident = $_GET['ident'];
 	$spotter_array = SpotterLive::getLastLiveSpotterDataByIdent($ident);
+	if (empty($spotter_array)) {
+		$from_archive = true;
+		$spotter_array = SpotterArchive::getLastArchiveSpotterDataByIdent($ident);
+	}
 }
 
 if (!empty($spotter_array)) {
@@ -172,7 +178,11 @@ $output = '{';
 							$output .= '"type": "LineString",';
 								$output .= '"coordinates": [';
                                     //$spotter_history_array = SpotterLive::getAllLiveSpotterDataByIdent($spotter_item['ident']);
-                                    $spotter_history_array = SpotterLive::getAllLiveSpotterDataById($spotter_item['flightaware_id']);
+                                    if ($from_archive) {
+					    $spotter_history_array = SpotterArchive::getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
+                                    } else {
+					    $spotter_history_array = SpotterLive::getAllLiveSpotterDataById($spotter_item['flightaware_id']);
+                                    }
 									foreach ($spotter_history_array as $spotter_history)
 									{
 										$output .= '[';
