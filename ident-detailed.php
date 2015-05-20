@@ -40,14 +40,15 @@ if (!isset($_GET['ident'])){
 		$ident = $spotter_array[0]['ident'];
 		require('header.php');
 		if (isset($globalArchive) && $globalArchive) {
-		// Requirement for altitude graph
-		print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
-		//$all_data = SpotterLive::getAltitudeLiveSpotterDataByIdent($_GET['ident']);
-		$all_data = SpotterArchive::getAltitudeArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
-		if (isset($globalTimezone)) {
-			date_default_timezone_set($globalTimezone);
-		} else date_default_timezone_set('UTC');
-		print '<div id="chart6" class="chart" width="100%"></div>
+			// Requirement for altitude graph
+			print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+			//$all_data = SpotterLive::getAltitudeLiveSpotterDataByIdent($_GET['ident']);
+			$all_data = SpotterArchive::getAltitudeArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
+			if (isset($globalTimezone)) {
+				date_default_timezone_set($globalTimezone);
+			} else date_default_timezone_set('UTC');
+			if (count($all_data) > 0) {
+				print '<div id="chart6" class="chart" width="100%"></div>
                     <script> 
                         google.load("visualization", "1", {packages:["corechart"]});
                       google.setOnLoadCallback(drawChart6);
@@ -79,6 +80,7 @@ if (!isset($_GET['ident'])){
                               drawChart6();
                             });
                   </script>';
+			}
 		}
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['ident'].'</h1>';
