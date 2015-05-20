@@ -66,7 +66,7 @@ class Spotter{
 				$temp_array['registration'] = $row['registration'];
 			} elseif (isset($temp_array['modes'])) {
 				$temp_array['registration'] = Spotter::getAircraftRegistrationBymodeS($temp_array['modes']);
-			}
+			} else $temp_array['registration'] = '';
 			$temp_array['aircraft_type'] = $row['aircraft_icao'];
 			
 			$temp_array['departure_airport'] = $row['departure_airport_icao'];
@@ -100,9 +100,9 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
 			$temp_array['image_source'] = "";
 			$temp_array['image_copyright'] = "";
-			if($row['registration'] != "")
+			if($temp_array['registration'] != "")
 			{
-				$image_array = Image::getSpotterImage($row['registration']);
+				$image_array = Image::getSpotterImage($temp_array['registration']);
 				if (count($image_array) > 0) {
 					$temp_array['image'] = $image_array[0]['image'];
 					$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
