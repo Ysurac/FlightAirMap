@@ -71,6 +71,7 @@ class SpotterLive {
                         $maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
                 } else return array();
                 if ($globalDBdriver == 'mysql') {
+        		//$query  = "SELECT spotter_output.* FROM spotter_output WHERE spotter_output.flightaware_id IN (SELECT spotter_live.flightaware_id FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL ".$globalLiveInterval." SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong.")";
         		$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL ".$globalLiveInterval." SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
         	} else if ($globalDBdriver == 'pgsql') {
             		$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE NOW() at time zone 'UTC'  - '".$globalLiveInterval." SECONDS'::INTERVAL <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
@@ -248,9 +249,9 @@ class SpotterLive {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			//$query  = "DELETE FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) >= spotter_live.date";
-			$query  = "DELETE FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 9 HOURS) >= spotter_live.date";
+			$query  = "DELETE FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 9 HOUR) >= spotter_live.date";
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "DELETE FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOURS'::INTERVAL >= spotter_live.date";
+			$query  = "DELETE FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'::INTERVAL >= spotter_live.date";
 		}
         
     		try {
@@ -307,19 +308,8 @@ class SpotterLive {
 		$registration = '';
 		//getting the registration
 		
-		/*
-		if ($flightaware_id != "")
-		{
-			if (!is_string($flightaware_id))
-			{
-				return false;
-			} else {
-				$myhex = explode('-',$flightaware_id);
-				$registration = Spotter::getAircraftRegistrationBymodeS($myhex[0]);
-			}
-		}
-		*/
-		if ($ModeS != '') $registration = Spotter::getAircraftRegistrationBymodeS($ModeS);
+
+//		if ($ModeS != '') $registration = Spotter::getAircraftRegistrationBymodeS($ModeS);
 		
 
 		//getting the airline information
@@ -328,7 +318,9 @@ class SpotterLive {
 			if (!is_string($ident))
 			{
 				return false;
-			} else {
+			} 
+			/*
+			else {
 				//if (!is_numeric(substr($ident, -1, 1)))
 				if (!is_numeric(substr($ident, 0, 3)))
 				{
@@ -351,6 +343,7 @@ class SpotterLive {
 					$airline_array = Spotter::getAllAirlineInfo("NA");
 				}
 			}
+		*/
 		}
 
 		//getting the aircraft information
@@ -359,7 +352,9 @@ class SpotterLive {
 			if (!is_string($aircraft_icao))
 			{
 				return false;
-			} else {
+			} 
+			/*
+			else {
 				if ($aircraft_icao == "" || $aircraft_icao == "XXXX")
 				{
 					$aircraft_array = Spotter::getAllAircraftInfo("NA");
@@ -367,6 +362,7 @@ class SpotterLive {
 					$aircraft_array = Spotter::getAllAircraftInfo($aircraft_icao);
 				}
 			}
+			*/
 		} 
 		//getting the departure airport information
 		if ($departure_airport_icao != "")
@@ -374,9 +370,12 @@ class SpotterLive {
 			if (!is_string($departure_airport_icao))
 			{
 				return false;
-			} else {
+			} 
+			/*
+			else {
 				$departure_airport_array = Spotter::getAllAirportInfo($departure_airport_icao);
 			}
+			*/
 		}
 
 		//getting the arrival airport information
@@ -385,9 +384,13 @@ class SpotterLive {
 			if (!is_string($arrival_airport_icao))
 			{
 				return false;
-			} else {
+			}
+			/*
+			
+			 else {
 				$arrival_airport_array = Spotter::getAllAirportInfo($arrival_airport_icao);
 			}
+			*/
 		}
 
 
@@ -442,6 +445,7 @@ class SpotterLive {
 
 		$date = date("Y-m-d H:i:s", time());
 
+/*
 		//getting the aircraft image
 		if ($registration != "")
 		{
@@ -451,8 +455,7 @@ class SpotterLive {
 				Image::addSpotterImage($registration);
 			}
 		}
-		//}
-
+  */
         
 		$flightaware_id = filter_var($flightaware_id,FILTER_SANITIZE_STRING);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
@@ -469,6 +472,7 @@ class SpotterLive {
 		$route_stop = filter_var($route_stop,FILTER_SANITIZE_STRING);
 		$ModeS = filter_var($ModeS,FILTER_SANITIZE_STRING);
 
+/*
 		if (!isset($airline_array) || count($airline_array) == 0) {
 			$airline_array = Spotter::getAllAirlineInfo('NA');
 		}
@@ -483,6 +487,17 @@ class SpotterLive {
 		$aircraft_shadow = $aircraft_array[0]['aircraft_shadow'];
 		$aircraft_type = $aircraft_array[0]['type'];
 		$aircraft_manufacturer = $aircraft_array[0]['manufacturer'];
+*/
+		$airline_name = '';
+		$airline_icao = '';
+		$airline_country = '';
+		$airline_type = '';
+		$aircraft_shadow = '';
+		$aircraft_type = '';
+		$aircraft_manufacturer = '';
+
+
+
 		$aircraft_name = '';
 		if (isset($departure_airport_array[0])) {
 			$departure_airport_name = $departure_airport_array[0]['name'];
@@ -506,7 +521,7 @@ class SpotterLive {
 		$query  = "INSERT INTO spotter_live (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_shadow, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop, ModeS) 
 		VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_shadow,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name, :departure_airport_city, :departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date,:departure_airport_time,:arrival_airport_time,:squawk,:route_stop,:ModeS)";
 
-		$query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_shadow' => $aircraft_array[0]['aircraft_shadow'],':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_name,':departure_airport_city' => $departure_airport_city,':departure_airport_country' => $departure_airport_country,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_name,':arrival_airport_city' => $arrival_airport_city,':arrival_airport_country' => $arrival_airport_country,':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk,':route_stop' => $route_stop,':ModeS' => $ModeS);
+		$query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_name,':airline_icao' => $airline_icao,':airline_country' => $airline_country,':airline_type' => $airline_type,':aircraft_icao' => $aircraft_icao,':aircraft_shadow' => $aircraft_shadow,':aircraft_type' => $aircraft_type,':aircraft_manufacturer' => $aircraft_manufacturer,':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_name,':departure_airport_city' => $departure_airport_city,':departure_airport_country' => $departure_airport_country,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_name,':arrival_airport_city' => $arrival_airport_city,':arrival_airport_country' => $arrival_airport_country,':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk,':route_stop' => $route_stop,':ModeS' => $ModeS);
 		//$query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao,':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date);
 		try {
 			$Connection = new Connection();

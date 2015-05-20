@@ -60,8 +60,13 @@ class Spotter{
 				$temp_array['spotter_id'] = $row['spotter_id'];
 			}
 			$temp_array['flightaware_id'] = $row['flightaware_id'];
+			if (isset($row['modes'])) $temp_array['modes'] = $row['modes'];
 			$temp_array['ident'] = $row['ident'];
-			$temp_array['registration'] = $row['registration'];
+			if (isset($row['registration']) && $row['registration'] != '') {
+				$temp_array['registration'] = $row['registration'];
+			} elseif (isset($temp_array['modes'])) {
+				$temp_array['registration'] = Spotter::getAircraftRegistrationBymodeS($temp_array['modes']);
+			}
 			$temp_array['aircraft_type'] = $row['aircraft_icao'];
 			if (isset($row['aircraft_shadow'])) {
 				$temp_array['aircraft_shadow'] = $row['aircraft_shadow'];
@@ -152,12 +157,19 @@ class Spotter{
 			if (isset($row['aircraft_name']) && $row['aircraft_name'] != '') {
 				$temp_array['aircraft_name'] = $row['aircraft_name'];
 				$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
+				if (isset($row['aircraft_shadow'])) {
+					$temp_array['aircraft_shadow'] = $row['aircraft_shadow'];
+				}
 			} else {
 				$aircraft_array = Spotter::getAllAircraftInfo($row['aircraft_icao']);
 				if (count($aircraft_array) > 0) {
 					$temp_array['aircraft_name'] = $aircraft_array[0]['type'];
 					$temp_array['aircraft_manufacturer'] = $aircraft_array[0]['manufacturer'];
-				}
+				
+					if ($aircraft_array[0]['aircraft_shadow'] != NULL) {
+						$temp_array['aircraft_shadow'] = $aircraft_array[0]['aircraft_shadow'];
+					} else $temp_array['aircraft_shadow'] = 'default.png';
+                                } else $temp_array['aircraft_shadow'] = 'default.png';
 			}
 			$airline_array = array();
 			if (!is_numeric(substr($row['ident'], 0, 3))) {
@@ -207,18 +219,20 @@ class Spotter{
 			
 			if ($row['departure_airport_icao'] != '') {
 				$departure_airport_array = Spotter::getAllAirportInfo($row['departure_airport_icao']);
-				if (isset($departure_airport_array[0]['name'])) {
-					$temp_array['departure_airport_name'] = $departure_airport_array[0]['name'];
-					$temp_array['departure_airport_city'] = $departure_airport_array[0]['city'];
-					$temp_array['departure_airport_country'] = $departure_airport_array[0]['country'];
-					$temp_array['departure_airport_iata'] = $departure_airport_array[0]['iata'];
-					$temp_array['departure_airport_icao'] = $departure_airport_array[0]['icao'];
-					$temp_array['departure_airport_latitude'] = $departure_airport_array[0]['latitude'];
-					$temp_array['departure_airport_longitude'] = $departure_airport_array[0]['longitude'];
-					$temp_array['departure_airport_altitude'] = $departure_airport_array[0]['altitude'];
-				} else $departure_airport_array = Spotter::getAllAirportInfo('NA');
+				if (!isset($departure_airport_array[0]['name'])) $departure_airport_array = Spotter::getAllAirportInfo('NA');
 			
 			} else $departure_airport_array = Spotter::getAllAirportInfo('NA');
+			if (isset($departure_airport_array[0]['name'])) {
+				$temp_array['departure_airport_name'] = $departure_airport_array[0]['name'];
+				$temp_array['departure_airport_city'] = $departure_airport_array[0]['city'];
+				$temp_array['departure_airport_country'] = $departure_airport_array[0]['country'];
+				$temp_array['departure_airport_iata'] = $departure_airport_array[0]['iata'];
+				$temp_array['departure_airport_icao'] = $departure_airport_array[0]['icao'];
+				$temp_array['departure_airport_latitude'] = $departure_airport_array[0]['latitude'];
+				$temp_array['departure_airport_longitude'] = $departure_airport_array[0]['longitude'];
+				$temp_array['departure_airport_altitude'] = $departure_airport_array[0]['altitude'];
+			}
+
 			/*
 			if (isset($row['departure_airport_time'])) {
 				$temp_array['departure_airport_time'] = $row['departure_airport_time'];
@@ -227,17 +241,18 @@ class Spotter{
 			
 			if ($row['arrival_airport_icao'] != '') {
 				$arrival_airport_array = Spotter::getAllAirportInfo($row['arrival_airport_icao']);
-				if (count($arrival_airport_array) > 0) {
-					$temp_array['arrival_airport_name'] = $arrival_airport_array[0]['name'];
-					$temp_array['arrival_airport_city'] = $arrival_airport_array[0]['city'];
-					$temp_array['arrival_airport_country'] = $arrival_airport_array[0]['country'];
-					$temp_array['arrival_airport_iata'] = $arrival_airport_array[0]['iata'];
-					$temp_array['arrival_airport_icao'] = $arrival_airport_array[0]['icao'];
-					$temp_array['arrival_airport_latitude'] = $arrival_airport_array[0]['latitude'];
-					$temp_array['arrival_airport_longitude'] = $arrival_airport_array[0]['longitude'];
-					$temp_array['arrival_airport_altitude'] = $arrival_airport_array[0]['altitude'];
-				} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
+				if (count($arrival_airport_array) == 0) $arrival_airport_array = Spotter::getAllAirportInfo('NA');
 			} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
+			if (count($arrival_airport_array) > 0) {
+				$temp_array['arrival_airport_name'] = $arrival_airport_array[0]['name'];
+				$temp_array['arrival_airport_city'] = $arrival_airport_array[0]['city'];
+				$temp_array['arrival_airport_country'] = $arrival_airport_array[0]['country'];
+				$temp_array['arrival_airport_iata'] = $arrival_airport_array[0]['iata'];
+				$temp_array['arrival_airport_icao'] = $arrival_airport_array[0]['icao'];
+				$temp_array['arrival_airport_latitude'] = $arrival_airport_array[0]['latitude'];
+				$temp_array['arrival_airport_longitude'] = $arrival_airport_array[0]['longitude'];
+				$temp_array['arrival_airport_altitude'] = $arrival_airport_array[0]['altitude'];
+			}
 			/*
 			if (isset($row['arrival_airport_time'])) {
 				$temp_array['arrival_airport_time'] = $row['arrival_airport_time'];

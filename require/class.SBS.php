@@ -135,7 +135,7 @@ class SBS {
 		if (isset($line['speed']) && $line['speed'] != '') {
 		//    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('speed' => $line[12]));
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('speed' => round($line['speed'])));
-		    $dataFound = true;
+		    //$dataFound = true;
 		}
 		if (isset($line['squawk']) && $line['squawk'] != '') {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('squawk' => $line['squawk']));
@@ -145,12 +145,12 @@ class SBS {
 		$waypoints = '';
 		if (isset($line['altitude']) && $line['altitude'] != '') {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('altitude' => round($line['altitude']/100)));
-		    $dataFound = true;
+		    //$dataFound = true;
   		}
 
 		if (isset($line['heading']) && $line['heading'] != '') {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('heading' => round($line['heading'])));
-		    $dataFound = true;
+		    //$dataFound = true;
   		}
 //		print_r(self::$all_flights[$id]);
 		//gets the callsign from the last hour
