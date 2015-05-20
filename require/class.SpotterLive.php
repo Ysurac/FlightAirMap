@@ -289,6 +289,72 @@ class SpotterLive {
 
 
 	/**
+	* Gets the aircraft ident within the last hour
+	*
+	* @return String the ident
+	*
+	*/
+	public static function getIdentFromLastHour($ident)
+	{
+		global $globalDBdriver, $globalTimezone;
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_live.ident FROM spotter_live 
+				WHERE spotter_live.ident = :ident 
+				AND spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) 
+				AND spotter_live.date < UTC_TIMESTAMP()";
+			$query_data = array(':ident' => $ident);
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query  = "SELECT spotter_live.ident FROM spotter_live 
+				WHERE spotter_live.ident = :ident 
+				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - '1 HOUR'::INTERVAL
+				AND spotter_live.date < now() AT TIME ZONE 'UTC'";
+			$query_data = array(':ident' => $ident);
+		}
+		$Connection = new Connection();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute($query_data);
+		$ident_result='';
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$ident_result = $row['ident'];
+		}
+		return $ident_result;
+        }
+
+	/**
+	* Check recent aircraft
+	*
+	* @return String the ident
+	*
+	*/
+	public static function checkIdentRecent($ident)
+	{
+		global $globalDBdriver, $globalTimezone;
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_live.ident FROM spotter_live 
+				WHERE spotter_live.ident = :ident 
+				AND spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) 
+				AND spotter_live.date < UTC_TIMESTAMP()";
+			$query_data = array(':ident' => $ident);
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query  = "SELECT spotter_live.ident FROM spotter_live 
+				WHERE spotter_live.ident = :ident 
+				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - '30 MINUTE'::INTERVAL
+				AND spotter_live.date < now() AT TIME ZONE 'UTC'";
+			$query_data = array(':ident' => $ident);
+		}
+		$Connection = new Connection();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute($query_data);
+		$ident_result='';
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$ident_result = $row['ident'];
+		}
+		return $ident_result;
+        }
+
+	/**
 	* Adds a new spotter data
 	*
 	* @param String $flightaware_id the ID from flightaware

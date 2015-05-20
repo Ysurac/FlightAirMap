@@ -157,9 +157,10 @@ class SBS {
 		//if (time()-self::$all_flights[$id]['lastupdate'] > 30 && $dataFound == true && self::$all_flights[$id]['ident'] != '' && self::$all_flights[$id]['latitude'] != '' && self::$all_flights[$id]['longitude'] != '') {
 		if ($dataFound == true && isset(self::$all_flights[$id]['hex']) && self::$all_flights[$id]['ident'] != '' && self::$all_flights[$id]['latitude'] != '' && self::$all_flights[$id]['longitude'] != '') {
 		    self::$all_flights[$id]['lastupdate'] = time();
-		    $last_hour_ident = Spotter::getIdentFromLastHour(self::$all_flights[$id]['ident']);
+		    //$last_hour_ident = Spotter::getIdentFromLastHour(self::$all_flights[$id]['ident']);
+		    $recent_ident = SpotterLive::checkIdentRecent(self::$all_flights[$id]['ident']);
 		    //if there was no aircraft with the same callsign within the last hour and go post it into the archive
-		    if($last_hour_ident == "")
+		    if($recent_ident == "")
 		    {
 			if (self::$debug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in archive DB : ";
 			if (self::$all_flights[$id]['departure_airport'] == "") { self::$all_flights[$id]['departure_airport'] = "NA"; }
