@@ -68,9 +68,6 @@ class Spotter{
 				$temp_array['registration'] = Spotter::getAircraftRegistrationBymodeS($temp_array['modes']);
 			}
 			$temp_array['aircraft_type'] = $row['aircraft_icao'];
-			if (isset($row['aircraft_shadow'])) {
-				$temp_array['aircraft_shadow'] = $row['aircraft_shadow'];
-			} else $temp_array['aircraft_shadow'] = 'default.png';
 			
 			$temp_array['departure_airport'] = $row['departure_airport_icao'];
 			$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
@@ -154,7 +151,7 @@ class Spotter{
 			$temp_array['date_rfc_2822'] = date("r",strtotime($row['date']." UTC"));
 			$temp_array['date_unix'] = strtotime($row['date']." UTC");
 			
-			if (isset($row['aircraft_name']) && $row['aircraft_name'] != '') {
+			if (isset($row['aircraft_name']) && $row['aircraft_name'] != '' && isset($row['aircraft_shadow']) && $row['aircraft_shadow'] != '') {
 				$temp_array['aircraft_name'] = $row['aircraft_name'];
 				$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 				if (isset($row['aircraft_shadow'])) {
