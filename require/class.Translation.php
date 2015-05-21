@@ -66,6 +66,8 @@ class Translation {
         }
         
         public static function checkTranslation($ident,$web = true) {
+    	    global $globalTranslationSources;
+    	    if (!isset($globalTranslationSources)) $globalTranslationSources = array('planefinder');
     	    //echo "Check Translation for ".$ident."...";
     	    $correct = Translation::getOperator($ident);
     	    if ($correct != '' && $correct != $ident) {
@@ -73,13 +75,15 @@ class Translation {
     		 return $correct;
     	    } elseif ($web) {
     		if (! is_numeric(substr($ident,-4))) {
-    		    $correct = Translation::fromPlanefinder($ident);
-    		    if ($correct != '') {
-    			$correct = Translation::ident2icao($correct);
-    			if ($correct != $ident) {
+    		    if (count($globalTranslationSources) > 0) {
+    			$correct = Translation::fromPlanefinder($ident);
+    			if ($correct != '') {
+    			    $correct = Translation::ident2icao($correct);
+    			    if ($correct != $ident) {
     				Translation::addOperator($ident,$correct,'planefinder');
     				//echo "Add to DB ! (".$correct.") \n";
     				return $correct;
+    			    }
     			}
     		    }
     		}

@@ -93,4 +93,7 @@ $globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','je
 
 //Sources for airline schedule (should be set to array() if no real aircrafts or/and set $globalFork = FALSE )
 $globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','flightaware');
+
+//Sources for translation, to find name of flight from callsign (set to array() to disable)
+$globalTranslationSources = array('planefinder');
 ?>
