@@ -31,6 +31,9 @@ $globalLongitudeMin = '1.0'; //the minimum longitude (east)
 $globalCenterLatitude = '46.38'; //the latitude center of your coverage area
 $globalCenterLongitude = '5.29';//the longitude center of your coverage area
 
+// FLIGHTS MUST BE INSIDE THIS CIRCLE
+$globalDistanceIgnore = array(); // example for 100km : array('latitude' => '46.38','longitide' => '5.29','distance' => '100') 
+
 // DATABASE CONNECTION LOGIN
 $globalDBdriver = 'mysql'; // PDO driver used. Tested with mysql, maybe pgsql or others work...
 $globalDBhost = 'localhost'; //database connection url

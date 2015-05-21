@@ -97,7 +97,21 @@ class Common {
 		return(array_filter($tabledata));
 	}
 
+
+	public static function distance($lat, $lon, $latc, $lonc, $unit = 'km') {
+		$dist = rad2deg(acos(sin(deg2rad($lat))*sin(deg2rad($latc))+ cos(deg2rad($lat))*cos(deg2rad($latc))*cos(deg2rad($lon-$lonc))))*60*1.1515;
+		if ($unit == "km") {
+			return round($dist * 1.609344);
+		} else {
+			return round($dist);
+		}
+	}
+
+	// Check is an array is assoc
+	function isAssoc($array)
+	{
+		return ($array !== array_values($array));
+	}
+
 }
-
-
 ?>
