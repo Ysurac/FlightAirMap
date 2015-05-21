@@ -229,7 +229,10 @@ while ($i > 0) {
 		    } else {
 			$tt ++;
 			if ($tt == 5) {
+			    echo "ERROR : Reconnect...";
+			    socket_close($r);
 			    connect_all($hosts);
+			    break;
 			    $tt = 0;
 			}
 		    }
