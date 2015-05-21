@@ -188,16 +188,36 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		</p>
 		</fieldset>
 		<fieldset>
+		<legend>Zone of interest</legend>
+		<p><i>Only put in DB flights that are inside a circle</i></p>
+		<p>
+			<label for="latitude">Center latitude</label>
+			<input type="text" name="zoilatitude" id="latitude" value="<?php if (isset($globalDistanceIgnore['latitude'])) echo $globalDistanceIgnore['latitude']; ?>" />
+		</p>
+		<p>
+			<label for="longitude">Center longitude</label>
+			<input type="text" name="zoilongitude" id="longitude" value="<?php if (isset($globalDistanceIgnore['longitude'])) echo $globalDistanceIgnore['longitude']; ?>" />
+		</p>
+		<p>
+			<label for="Distance">Distance (in km)</label>
+			<input type="text" name="zoidistance" id="distance" value="<?php if (isset($globalDistanceIgnore['distance'])) echo $globalDistanceIgnore['distance']; ?>" />
+		</p>
+		</fieldset>
+
+		<fieldset>
 		<legend>Data source</legend>
 		<p>
 			<label>Choose data source</label>
+<!--
 			<input type="radio" name="datasource" id="flightaware" value="flightaware" onClick="datasource_js()" <?php if (isset($globalFlightAware) && $globalFlightAware) { ?>checked="checked" <?php } ?>/>
-			<label for="flightaware">FlightAware (not tested)</label>
+			<label for="flightaware">FlightAware (not tested, no more supported no data feed available for test)</label>
+-->
 			<input type="radio" name="datasource" id="sbs" value="sbs" onClick="datasource_js()" <?php if (isset($globalSBS1) && $globalSBS1) { ?>checked="checked" <?php } ?> />
 			<label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format)</label>
 			<input type="checkbox" name="acars" id="acars" value="acars" onClick="datasource_js()" <?php if (isset($globalACARS) && $globalACARS) { ?>checked="checked" <?php } ?> />
 			<label for="acars">ACARS</label>
 		</p>
+<!--
 		<div id="flightaware_data">
 		<p>
 			<label for="flightawareusername">FlightAware username</label>
@@ -208,6 +228,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="text" name="flightawarepassword" id="flightawarepassword" value="<?php if (isset($globalFlightAwarePassword)) print $globalFlightAwarePassword; ?>" />
 		</p>
 		</div>
+-->
 		<div id="sbs_data">
 		<?php
 		    $displaysbs = true;
@@ -247,8 +268,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		</p>
 		<b>OR</b>
 		<p>
-			<label for="sbsurl">SBS-1 URL (can be deltadb.txt or aircraftlist.json url to Radarcape)</label>
+			<label for="sbsurl">SBS-1 URL</label>
 			<input type="text" name="sbsurl" id="sbsurl" value="<?php if (isset($globalSBS1url)) print $globalSBS1url; ?>" />
+			 (can be deltadb.txt or aircraftlist.json url to Radarcape, or <i>/action.php/acars/data</i> of phpvms, or wazzup file format)
 		</p>
 		<?php
 		    }
@@ -282,9 +304,26 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		</p>
 		<p>
 			<label for="archive">Archive all SBS data</label>
-			<input type="checkbox" name="archive" id="archive" value="archive"<?php if (isset($globalArchive) && $globalArchive) { ?> checked="checked"<?php } ?> />
+			<input type="checkbox" name="archive" id="archive" value="archive"<?php if ((isset($globalArchive) && $globalArchive) || !isset($globalArchive)) { ?> checked="checked"<?php } ?> />
+		</p>
+		<p>
+			<label for="daemon">Use cron-sbs as daemon</label>
+			<input type="checkbox" name="daemon" id="daemon" value="daemon"<?php if ((isset($globalDaemon) && $globalDaemon) || !isset($globalDaemon)) { ?> checked="checked"<?php } ?> />
+		</p>
+		<p>
+			<label for="fork">Allow processes fork</label>
+			<input type="checkbox" name="fork" id="fork" value="fork"<?php if ((isset($globalFork) && $globalFork) || !isset($globalFork)) { ?> checked="checked"<?php } ?> />
+		</p>
+		<p>
+			<label for="refresh">Show flights from xxx seconds</label>
+			<input type="text" name="refresh" id="refresh" value="<?php if (isset($globalLiveInterval)) echo $globalLiveInterval; else echo '200'; ?>" />
+		</p>
+		<p>
+			<label for="maprefresh">Live map refresh (in seconds)</label>
+			<input type="text" name="maprefresh" id="maprefresh" value="<?php if (isset($globalMapRefresh)) echo $globalMapRefresh; else echo '30'; ?>" />
 		</p>
 		</fieldset>
+		
 		<input type="submit" name="submit" value="Create/Update database & write setup" />
 	</form>
 	<p>
@@ -382,14 +421,45 @@ if (isset($_POST['dbtype'])) {
 	$bitly = filter_input(INPUT_POST,'bitly',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalBitlyAccessToken' => $bitly));
 
+	$zoilatitude = filter_input(INPUT_POST,'zoilatitude',FILTER_SANITIZE_STRING);
+	$zoilongitude = filter_input(INPUT_POST,'zoilongitude',FILTER_SANITIZE_STRING);
+	$zoidistance = filter_input(INPUT_POST,'zoidistance',FILTER_SANITIZE_NUMBER_INT);
+	if ($zoilatitude != '' && $zoilongitude != '' && $zoidistance != '') {
+	$settings = array_merge($settings,array('globalDistanceIgnore' => array('latitude' => $zoilatitude,'longitude' => $zoilongitude,'distance' => $zoidistance)));
+	} else $settings = array_merge($settings,array('globalDistanceIgnore' => array()));
+
+	$refresh = filter_input(INPUT_POST,'refresh',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalLiveInterval' => $refresh));
+	$maprefresh = filter_input(INPUT_POST,'maprefresh',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalMapRefresh' => $maprefresh));
+
 	$britishairways = filter_input(INPUT_POST,'britishairways',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalBritishAirwaysKey' => $britishairways));
 
 	// Create in settings.php keys not yet configurable if not already here
 	//if (!isset($globalImageBingKey)) $settings = array_merge($settings,array('globalImageBingKey' => ''));
 	if (!isset($globalDebug)) $settings = array_merge($settings,array('globalDebug' => 'TRUE'));
-	if (!isset($globalArchive)) $settings = array_merge($settings,array('globalArchive' => 'FALSE'));
-	if (!isset($globalTransaction)) $settings = array_merge($settings,array('globalTransaction' => 'FALSE'));
+
+	$archive = filter_input(INPUT_POST,'archive',FILTER_SANITIZE_STRING);
+	if ($archive == 'archive') {
+		$settings = array_merge($settings,array('globalArchive' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalArchive' => 'FALSE'));
+	}
+	$daemon = filter_input(INPUT_POST,'daemon',FILTER_SANITIZE_STRING);
+	if ($daemon == 'daemon') {
+		$settings = array_merge($settings,array('globalDaemon' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalDaemon' => 'FALSE'));
+	}
+	$fork = filter_input(INPUT_POST,'fork',FILTER_SANITIZE_STRING);
+	if ($fork == 'fork') {
+		$settings = array_merge($settings,array('globalFork' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalFork' => 'FALSE'));
+	}
+
+	if (!isset($globalTransaction)) $settings = array_merge($settings,array('globalTransaction' => 'TRUE'));
 
 	// Set some defaults values...
 	if (!isset($globalAircraftImageSources)) {

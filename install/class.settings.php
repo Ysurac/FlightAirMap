@@ -1,5 +1,6 @@
 <?php
 require_once('../require/settings.php');
+require_once('../require/class.Common.php');
 
 class settings {
 	public static function modify_settings($settings) {
@@ -12,14 +13,26 @@ class settings {
 			    $replace = '\$'.$settingname." = ".$value."";
 			} elseif (is_array($value)) {
 			    $pattern = '/\$'.$settingname." = array\(".'(.*)'."\)/";
-			    foreach ($value as $data) {
-				if (!isset($array_value)) {
-				    $array_value = "'".$data."'";
-				} else {
-				    $array_value .= ",'".$data."'";
+			    if (Common::isAssoc($value)) {
+				foreach ($value as $key => $data) {
+				    if (!isset($array_value)) {
+					$array_value = "'".$key."' => '".$data."'";
+				    } else {
+					$array_value .= ",'".$key."' => '".$data."'";
+				    }
+				}
+			    } else {
+				foreach ($value as $data) {
+				    if (!isset($array_value)) {
+					$array_value = "'".$data."'";
+				    } else {
+					$array_value .= ",'".$data."'";
+				    }
 				}
 			    }
+			    if (!isset($array_value)) $array_value = '';
 			    $replace = '\$'.$settingname." = array(".$array_value.")";
+			    unset($array_value);
 			} else {
 			    $pattern = '/\$'.$settingname." = '".'(.*)'."'/";
 			    $replace = '\$'.$settingname." = '".$value."'";

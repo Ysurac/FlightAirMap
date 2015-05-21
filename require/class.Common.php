@@ -108,7 +108,7 @@ class Common {
 	}
 
 	// Check is an array is assoc
-	function isAssoc($array)
+	public static function isAssoc($array)
 	{
 		return ($array !== array_values($array));
 	}
