@@ -458,6 +458,7 @@ $( document ).ready(function() {
         }
     }).error(function() {
               map.removeLayer(layer_data);
+		//info.update();
 
     });
   }
@@ -466,7 +467,7 @@ $( document ).ready(function() {
   getLiveData();
 
   //then load it again every 30 seconds
-  setInterval(function(){getLiveData()},30000);
+  setInterval(function(){getLiveData()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 
   //adds the bootstrap hover to the map buttons
   $('.button').tooltip({ placement: 'right' });

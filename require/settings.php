@@ -54,8 +54,11 @@ $globalDaemon = TRUE; // Run cron-sbs.php as daemon (don't work well if source i
 // FORK
 $globalFork = TRUE; // Allow cron-sbs.php to fork to fetch schedule, no more schedules fetch if set to FALSE
 
-// DISPLAY FLIGHT INTERVAL ON MAP
+// DISPLAY FLIGHT INTERVAL ON MAP (in seconds)
 $globalLiveInterval = '200';
+
+// LIVE MAP REFRESH (in seconds)
+$globalMapRefresh = '30';
 
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
