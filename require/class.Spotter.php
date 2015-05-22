@@ -2673,7 +2673,7 @@ class Spotter{
 								WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 20 SECOND) ".$additional_query." 
 								AND spotter_output.date < UTC_TIMESTAMP()";
       
-		$spotter_array = Spotter::getDataFromDB($query, array(),$limit_query);
+		$spotter_array = Spotter::getDataFromDB($query, array());
 
 		return $spotter_array;
 	}
