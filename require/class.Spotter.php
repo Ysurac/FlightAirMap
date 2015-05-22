@@ -7443,12 +7443,12 @@ public static function addSpotterImage($registration)
 		$sth->execute();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			$departure_airport_array = Spotter::getAllAirportInfo($row['FromAirport_ICAO']);
-			$arrival_airport_array = Spotter::getAllAirportInfo($row['ToAirport_ICAO']);
+			$departure_airport_array = Spotter::getAllAirportInfo($row['fromairport_icao']);
+			$arrival_airport_array = Spotter::getAllAirportInfo($row['toairport_icao']);
 			if (count($departure_airport_array) > 0 && count($arrival_airport_array) > 0) {
 				$update_query="UPDATE spotter_output SET departure_airport_icao = :fromicao, arrival_airport_icao = :toicao, departure_airport_name = :departure_airport_name, departure_airport_city = :departure_airport_city, departure_airport_country = :departure_airport_country, arrival_airport_name = :arrival_airport_name, arrival_airport_city = :arrival_airport_city, arrival_airport_country = :arrival_airport_country WHERE spotter_id = :spotter_id";
 				$sthu = Connection::$db->prepare($update_query);
-				$sthu->execute(array(':fromicao' => $row['FromAirport_ICAO'],':toicao' => $row['ToAirport_ICAO'],':spotter_id' => $row['spotter_id'],':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country']));
+				$sthu->execute(array(':fromicao' => $row['fromairport_icao'],':toicao' => $row['toairport_icao'],':spotter_id' => $row['spotter_id'],':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country']));
 			}
 		}
 		
