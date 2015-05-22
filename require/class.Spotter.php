@@ -2646,6 +2646,7 @@ class Spotter{
 	*/
 	public static function getRealTimeData($q = '')
 	{
+		$additional_query = '';
 		if ($q != "")
 		{
 			if (!is_string($q))
