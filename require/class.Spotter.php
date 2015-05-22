@@ -3238,7 +3238,7 @@ class Spotter{
 	{
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
 		 			FROM spotter_output
-					WHERE spotter_output.airline_country <> '' 
+					WHERE spotter_output.airline_country <> '' AND spotter_output.airline_country <> 'NA' 
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
@@ -4197,7 +4197,7 @@ class Spotter{
 	{
 		$query  = "SELECT DISTINCT spotter_output.registration, COUNT(spotter_output.registration) AS aircraft_registration_count, spotter_output.aircraft_icao,  spotter_output.aircraft_name, spotter_output.airline_name    
                     FROM spotter_output 
-                    WHERE spotter_output.registration <> '' 
+                    WHERE spotter_output.registration <> '' AND spotter_output.registration <> 'NA' 
                     GROUP BY spotter_output.registration
 					ORDER BY aircraft_registration_count DESC
 					LIMIT 0,10";
@@ -5542,7 +5542,7 @@ class Spotter{
 	{
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' 
+                    WHERE spotter_output.departure_airport_country <> '' AND spotter_output.departure_airport_icao <> 'NA' 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC
 					LIMIT 0,10";
@@ -5576,7 +5576,7 @@ class Spotter{
 	{
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' 
+                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.arrival_airport_icao <> 'NA' 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC
 					LIMIT 0,10";
