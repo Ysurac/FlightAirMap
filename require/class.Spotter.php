@@ -7247,6 +7247,17 @@ public static function addSpotterImage($registration)
 		return $country;
 	}
 	
+	/**
+	* Set a new highlight value for a flight
+	*
+	* @param String $flightaware_id flightaware_id from spotter_output table
+	* @param String $highlight New highlight value
+	*/
+	public static function setHighlightFlight($flightaware_id,$highlight) {
+		$query  = "UPDATE spotter_output SET highlight = :highlight WHERE flightaware_id = :flightaware_id";
+		$sth = Connection::$db->prepare($query);
+		$sth->execute(array(':flightaware_id' => $flightaware_id, ':highlight' => $highlight));
+	}
 	
 	/**
 	* Gets the short url from bit.ly
