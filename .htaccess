@@ -209,7 +209,6 @@ RewriteRule ^flightid/([^/]+)(/?)$ flightid-overview.php?id=$1 [L,NC]
 
 ########### STATISTICS ###########
 
-RewriteRule ^statistics(/?)$ statistics.php [L,NC]
 RewriteRule ^statistics/aircraft(/?)$ statistics-aircraft.php [L,NC]
 RewriteRule ^statistics/registration(/?)$ statistics-registration.php [L,NC]
 RewriteRule ^statistics/manufacturer(/?)$ statistics-manufacturer.php [L,NC]
@@ -224,6 +223,7 @@ RewriteRule ^statistics/route-waypoint(/?)$ statistics-route-waypoint.php [L,NC]
 RewriteRule ^statistics/callsign(/?)$ statistics-callsign.php [L,NC]
 RewriteRule ^statistics/date(/?)$ statistics-date.php [L,NC]
 RewriteRule ^statistics/time(/?)$ statistics-time.php [L,NC]
+RewriteRule ^statistics(/?)$ statistics.php [L,NC]
 RewriteRule ^upcoming/([^/]+)/([^/]+)(/?)$ upcoming.php?limit=$1&sort=$2 [L,NC]
 RewriteRule ^upcoming/([^/]+)(/?)$ upcoming.php?limit=$1 [L,NC]
 RewriteRule ^upcoming(/?)$ upcoming.php [L,NC]
