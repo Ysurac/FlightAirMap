@@ -24,6 +24,7 @@ class Connection{
 			self::$db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname", $globalDBuser,  $globalDBpass);
 			self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			self::$db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
+			self::$db->setAttribute(PDO::ATTR_TIMEOUT,10);
 		} catch(PDOException $e) {
 			echo $e->getMessage();
 			exit;
