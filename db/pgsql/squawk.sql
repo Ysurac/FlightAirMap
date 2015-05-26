@@ -1,10 +1,9 @@
-DROP TABLE IF EXISTS squawk;
 CREATE TABLE squawk (
-  id int(11) NOT NULL,
-  code int(6) DEFAULT NULL,
-  country varchar(4) DEFAULT NULL,
-  usage varchar(255) DEFAULT NULL
-) TYPE=InnoDB AUTO_INCREMENT=18207;
+  id serial,
+  code integer NULL,
+  country varchar(4) NULL,
+  usage varchar(255) NULL
+);
 
 INSERT INTO squawk (id, code, country, usage) VALUES
 (2, 0, 'FR', 'NON ATTRIBUE'),
@@ -18229,6 +18228,4 @@ INSERT INTO squawk (id, code, country, usage) VALUES
 (18206, 7777, 'US', 'Military interception');
 
 ALTER TABLE squawk
-  ADD PRIMARY KEY (id), ADD KEY code_index (code);
-ALTER TABLE squawk
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18207;
+  ADD PRIMARY KEY (id);
