@@ -56,6 +56,7 @@ if (strtolower($current_page) == "index")
 ?>
 <?php
 //if ((strtolower($current_page) == "ident-detailed" && isset($ident)) || strtolower($current_page) == "flightid-overview")
+//if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($globalArchive) && $globalArchive))
 if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($globalArchive) && $globalArchive))
 {
 ?>
@@ -64,7 +65,18 @@ if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($gl
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js?<?php print time(); ?>"></script>
-<script src="<?php print $globalURL; ?>/js/map.js.php?ident=<?php print $ident; ?>&<?php print time(); ?>"></script>
+<script src="<?php print $globalURL; ?>/js/map.js.php?ident=<?php print $ident; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
+<?php
+}
+if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) && $globalArchive && isset($flightaware_id))
+{
+?>
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print time(); ?>" />
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
+<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
+<script src="<?php print $globalURL; ?>/js/Marker.Rotate.js?<?php print time(); ?>"></script>
+<script src="<?php print $globalURL; ?>/js/map.js.php?flightaware_id=<?php print $flightaware_id; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
 <?php
 }
 ?>
@@ -169,7 +181,7 @@ if (isset($top_header) && $top_header != "")
 	print '</div>';
 }
 
-if (strtolower($current_page) =='ident-detailed') {
+if (strtolower($current_page) =='ident-detailed' || strtolower($current_page) == 'flightid-overview') {
 ?>
     <div class="top-header clear" role="main">
     <div id="archive-map"></div>

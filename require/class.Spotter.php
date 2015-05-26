@@ -73,6 +73,9 @@ class Spotter{
 			$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
 			$temp_array['latitude'] = $row['latitude'];
 			$temp_array['longitude'] = $row['longitude'];
+			$country_info = Spotter::getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
+			$temp_array['country'] = $country_info['name'];
+			$temp_array['country_iso2'] = $country_info['iso2'];
 			$temp_array['waypoints'] = $row['waypoints'];
 			if (isset($row['route_stop'])) {
 				$temp_array['route_stop'] = $row['route_stop'];
@@ -257,8 +260,8 @@ class Spotter{
 			*/
 			if (isset($row['squawk'])) {
 				$temp_array['squawk'] = $row['squawk'];
-				if ($row['squawk'] != '' && $globalSquawkCountry != '') {
-					$temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$globalSquawkCountry);
+				if ($row['squawk'] != '' && isset($temp_array['country_iso2'])) {
+					$temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$temp_array['country_iso2']);
 				}
 			}
     			
@@ -1503,7 +1506,7 @@ class Spotter{
 		$query_values = array();
 
 		$query  = "SELECT squawk.* FROM squawk WHERE squawk.code = :squawk AND squawk.country = :country LIMIT 1";
-		$query_values = array(':squawk' => $squawk, ':country' => $country);
+		$query_values = array(':squawk' => ltrim($squawk,'0'), ':country' => $country);
 		
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
@@ -2594,6 +2597,7 @@ class Spotter{
 		        $Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
 			$sth->execute($query_values);
+			Connection::$db = null;
 		} catch (PDOException $e) {
 		    return "error : ".$e->getMessage();
 		}
@@ -7127,6 +7131,34 @@ public static function addSpotterImage($registration)
 	}
 
 	/**
+	* Gets Countrie from latitude/longitude
+	*
+	* @param String $aircraft_modes the flight ModeS in hex
+	* @return String the aircraft registration
+	*
+	*/
+	
+	public static function getCountryFromLatitudeLongitude($latitude,$longitude)
+	{
+		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+	
+//		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(:latitude :longitude)'), ogc_geom) LIMIT 1";
+		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(".$latitude.' '.$longitude.")'), ogc_geom) LIMIT 1";
+
+		$Connection = new Connection();
+		$sth = Connection::$db->prepare($query);
+		//$sth->execute(array(':latitude' => $latitude,':longitude' => $longitude));
+		$sth->execute();
+    
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if (count($row) > 0) {
+		    return $row;
+		} else return '';
+	
+	}
+
+	/**
 	* converts the registration code using the country prefix
 	*
 	* @param String $registration the aircraft registration
@@ -7497,6 +7529,4 @@ public static function addSpotterImage($registration)
 	}	
 	
 }
-
-
 ?>

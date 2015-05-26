@@ -38,6 +38,8 @@ if (!isset($_GET['ident'])){
 	{
 		$title = 'Detailed View for '.$spotter_array[0]['ident'];
 		$ident = $spotter_array[0]['ident'];
+		if (isset($spotter_array[0]['latitude'])) $latitude = $spotter_array[0]['latitude'];
+		if (isset($spotter_array[0]['longitude'])) $longitude = $spotter_array[0]['longitude'];
 		require('header.php');
 		if (isset($globalArchive) && $globalArchive) {
 			// Requirement for altitude graph

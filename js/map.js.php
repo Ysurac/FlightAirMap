@@ -21,10 +21,19 @@ var weathersatelliterefresh;
 if (isset($_GET['ident'])) {
     $ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
 }
+if (isset($_GET['flightaware_id'])) {
+    $flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
+}
+if (isset($_GET['latitude'])) {
+    $latitude = filter_input(INPUT_GET,'latitude',FILTER_SANITIZE_STRING);
+}
+if (isset($_GET['longitude'])) {
+    $longitude = filter_input(INPUT_GET,'longitude',FILTER_SANITIZE_STRING);
+}
 ?>
 
 <?php
-    if (isset($ident)) {
+    if (isset($ident) || isset($flightaware_id)) {
 ?>
 $( document ).ready(function() {
   //setting the zoom functionality for either mobile or desktop
@@ -41,7 +50,7 @@ $( document ).ready(function() {
   }
 
   //create the map
-  map = L.map('archive-map', { zoomControl:false }).setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], zoom);
+  map = L.map('archive-map', { zoomControl:false }).setView([<?php if (isset($latitude)) print $latitude; else print $globalCenterLatitude; ?>,<?php if (isset($longitude)) print $longitude; else print $globalCenterLongitude; ?>], zoom);
 <?php
     } else {
 ?>
@@ -241,7 +250,7 @@ $( document ).ready(function() {
 	update_airportsLayer();
 	
 	<?php
-	    if (!isset($ident)) {
+	    if (!isset($ident) && !isset($flightaware_id)) {
 	?>
 	var info = L.control();
 	info.onAdd = function (map) {
@@ -276,6 +285,10 @@ $( document ).ready(function() {
       ?>
       url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&ident=<?php print $ident; ?>",
       <?php
+        } elseif (isset($flightaware_id)) {
+      ?>
+      url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&flightaware_id=<?php print $flightaware_id; ?>",
+	<?php
         } else {
       ?>
       url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox,
@@ -293,7 +306,7 @@ $( document ).ready(function() {
               if (feature.properties.callsign != ""){ markerLabel += feature.properties.callsign+'<br />'; }
               if (feature.properties.departure_airport_code != "" || feature.properties.arrival_airport_code != ""){ markerLabel += '<span class="nomobile">'+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+'</span>'; }
 		<?php
-		    if (!isset($ident)) {
+		    if (!isset($ident) && !isset($flightaware_id)) {
 		?>
 		     info.update(feature.properties);
 		<?php
@@ -426,7 +439,7 @@ $( document ).ready(function() {
                 }
                 output += '</div>';
                 <?php
-            	    if (!isset($ident)) {
+            	    if (!isset($ident) && !isset($flightaware_id)) {
                 ?>
                 layer.bindPopup(output);
 		<?php

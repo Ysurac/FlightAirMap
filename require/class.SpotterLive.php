@@ -165,6 +165,25 @@ class SpotterLive {
 	}
 
         /**
+	* Gets last spotter information based on a particular callsign
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public static function getLastLiveSpotterDataById($id)
+	{
+
+		date_default_timezone_set('UTC');
+
+		$id = filter_var($id, FILTER_SANITIZE_STRING);
+                $query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE l.flightaware_id = :id GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate";
+
+		$spotter_array = Spotter::getDataFromDB($query,array(':id' => $id));
+
+		return $spotter_array;
+	}
+
+        /**
 	* Gets altitude information based on a particular callsign
 	*
 	* @return Array the spotter information
@@ -250,6 +269,8 @@ class SpotterLive {
 		if ($globalDBdriver == 'mysql') {
 			//$query  = "DELETE FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) >= spotter_live.date";
 			$query  = "DELETE FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 9 HOUR) >= spotter_live.date";
+            		//$query  = "DELETE FROM spotter_live WHERE spotter_live.id IN (SELECT spotter_live.id FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) >= spotter_live.date)";
+
 		} elseif ($globalDBdriver == 'pgsql') {
 			$query  = "DELETE FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'::INTERVAL >= spotter_live.date";
 		}
@@ -593,6 +614,7 @@ class SpotterLive {
 			$Connection = new Connection();
 			$sth = Connection::$db->prepare($query);
 			$sth->execute($query_values);
+//			Connection::$db = null;
                 } catch(PDOException $e) {
                 	return "error : ".$e->getMessage();
                 }

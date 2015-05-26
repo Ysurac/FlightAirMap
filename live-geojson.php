@@ -27,6 +27,14 @@ if (isset($_GET['ident'])) {
 		$spotter_array = SpotterArchive::getLastArchiveSpotterDataByIdent($ident);
 	}
 }
+if (isset($_GET['flightaware_id'])) {
+	$flightaware_id = $_GET['flightaware_id'];
+	$spotter_array = SpotterLive::getLastLiveSpotterDataById($flightaware_id);
+	if (empty($spotter_array)) {
+		$from_archive = true;
+		$spotter_array = SpotterArchive::getLastArchiveSpotterDataById($flightaware_id);
+	}
+}
 
 if (!empty($spotter_array)) {
 	$flightcnt = SpotterLive::getLiveSpotterCount();
@@ -44,7 +52,7 @@ $output = '{';
 			{
 				date_default_timezone_set('UTC');
 
-				if ($spotter_item['image_thumbnail'] != "")
+				if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
 				{
 					$image = $spotter_item['image_thumbnail'];
 				} else {
@@ -104,11 +112,13 @@ $output = '{';
 							//$output .= '"flight_cnt": "'.$spotter_item['nb'].'",';
 							$output .= '"callsign": "'.$spotter_item['ident'].'",';
 							$output .= '"registration": "'.$spotter_item['registration'].'",';
-						if (isset($spotter_item['aircraft_name'])) {
+						if (isset($spotter_item['aircraft_name']) && isset($spotter_item['aircraft_type'])) {
 							$output .= '"aircraft_name": "'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')",';
 							$output .= '"aircraft_wiki": "http://'.strtolower($globalLanguage).'.wikipedia.org/wiki/'.urlencode(str_replace(' ','_',$spotter_item['aircraft_name'])).'",';
-						} else {
+						} elseif (isset($spotter_item['aircraft_type'])) {
 							$output .= '"aircraft_name": "NA ('.$spotter_item['aircraft_type'].')",';
+						} else {
+							$output .= '"aircraft_name": "NA",';
 						}
 						$output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
 						if (isset($spotter_item['airline_name'])) {
@@ -116,10 +126,11 @@ $output = '{';
 						} else {
 							$output .= '"airline_name": "NA",';
 						}
+						if (isset($spotter_item['departure_airport'])) {
 							$output .= '"departure_airport_code": "'.$spotter_item['departure_airport'].'",';
+						}
 						if (isset($spotter_item['departure_airport_city'])) {
 							$output .= '"departure_airport": "'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_country'].'",';
-						
 						}
 						if (isset($spotter_item['departure_airport_time'])) {
 							$output .= '"departure_airport_time": "'.$spotter_item['departure_airport_time'].'",';
@@ -127,12 +138,15 @@ $output = '{';
 						if (isset($spotter_item['arrival_airport_time'])) {
 							$output .= '"arrival_airport_time": "'.$spotter_item['arrival_airport_time'].'",';
 						}
-						
+						if (isset($spotter_item['arrival_airport'])) {
 							$output .= '"arrival_airport_code": "'.$spotter_item['arrival_airport'].'",';
+						}
 						if (isset($spotter_item['arrival_airport_city'])) {
 							$output .= '"arrival_airport": "'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].'",';
 						}
+						if (isset($spotter_item['date_iso_8601'])) {
 							$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
+						}
 							$output .= '"latitude": "'.$spotter_item['latitude'].'",';
 							$output .= '"longitude": "'.$spotter_item['longitude'].'",';
 							$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';

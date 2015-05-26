@@ -39,6 +39,35 @@ class SpotterArchive {
 
 
         /**
+        * Gets last the spotter information based on a particular id
+        *
+        * @return Array the spotter information
+        *
+        */
+        public static function getLastArchiveSpotterDataById($id)
+        {
+                date_default_timezone_set('UTC');
+                $id = filter_var($id, FILTER_SANITIZE_STRING);
+                //$query  = SpotterArchive::$global_query." WHERE spotter_archive.flightaware_id = :id";
+                $query  = "SELECT spotter_archive.* FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE l.flightaware_id = :id GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate";
+
+//              $spotter_array = Spotter::getDataFromDB($query,array(':id' => $id));
+                  /*
+                try {
+                        $Connection = new Connection();
+                        $sth = Connection::$db->prepare($query);
+                        $sth->execute(array(':id' => $id));
+                } catch(PDOException $e) {
+                        return "error";
+                }
+                $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+                */
+                $spotter_array = Spotter::getDataFromDB($query,array(':id' => $id));
+
+                return $spotter_array;
+        }
+
+        /**
         * Gets all the spotter information based on a particular id
         *
         * @return Array the spotter information
@@ -49,6 +78,7 @@ class SpotterArchive {
                 date_default_timezone_set('UTC');
                 $id = filter_var($id, FILTER_SANITIZE_STRING);
                 $query  = SpotterArchive::$global_query." WHERE spotter_archive.flightaware_id = :id";
+
 //              $spotter_array = Spotter::getDataFromDB($query,array(':id' => $id));
 
                 try {

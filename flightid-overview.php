@@ -6,82 +6,121 @@ if ($_GET['id'] == "")
 
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+require('require/class.SpotterArchive.php');
 
 $spotter_array = Spotter::getSpotterDataByID($_GET['id']);
 
 
 if (!empty($spotter_array))
 {
-    $title = '';
-    if(isset($spotter_array[0]['ident']))
-    {
-    	$title .= $spotter_array[0]['ident'];
-    }
-    if(isset($spotter_array[0]['airline_name']))
-    {
-    	$title .= ' - '.$spotter_array[0]['airline_name'];
-    }
-    if(isset($spotter_array[0]['aircraft_name']) && $spotter_array[0]['aircraft_name'] != 'Not Available')
-    {
-    	$title .= ' - '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
-    }
-    if(isset($spotter_array[0]['registration']) && $spotter_array[0]['registration'] != 'NA' && $spotter_array[0]['registration'] != 'N/A')
-    {
-    	$title .= ' - '.$spotter_array[0]['registration'];
-    }
-    $facebook_meta_image = $spotter_array[0]['image'];
+	if(isset($spotter_array[0]['flightaware_id'])) {
+		$flightaware_id = $spotter_array[0]['flightaware_id'];
+	}
+	if(isset($spotter_array[0]['latitude'])) {
+		$latitude = $spotter_array[0]['latitude'];
+	}
+	if(isset($spotter_array[0]['longitude'])) {
+		$longitude = $spotter_array[0]['longitude'];
+	}
+	$title = '';
+	if(isset($spotter_array[0]['ident'])) {
+		$title .= $spotter_array[0]['ident'];
+	}
+	if(isset($spotter_array[0]['airline_name'])) {
+		$title .= ' - '.$spotter_array[0]['airline_name'];
+	}
+	if(isset($spotter_array[0]['aircraft_name']) && $spotter_array[0]['aircraft_name'] != 'Not Available') {
+		$title .= ' - '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+	}
+	if(isset($spotter_array[0]['registration']) && $spotter_array[0]['registration'] != 'NA' && $spotter_array[0]['registration'] != 'N/A') {
+		$title .= ' - '.$spotter_array[0]['registration'];
+	}
+	//$facebook_meta_image = $spotter_array[0]['image'];
 	require('header.php');
-    
-    	print '<div class="info column">';
-    	    print '<h1>';
-		if (@getimagesize($globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png'))
-		{
-			print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png" class="airline-logo" /></a> ';
-		} else {
-			if ($spotter_array[0]['airline_name'] != "")
+
+	if (isset($globalArchive) && $globalArchive) {
+		// Requirement for altitude graph
+		print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+		//$all_data = SpotterLive::getAltitudeLiveSpotterDataByIdent($_GET['ident']);
+		$all_data = SpotterArchive::getAltitudeArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
+		if (isset($globalTimezone)) {
+			date_default_timezone_set($globalTimezone);
+		} else date_default_timezone_set('UTC');
+		if (count($all_data) > 0) {
+			print '<div id="chart6" class="chart" width="100%"></div>
+                    <script> 
+                        google.load("visualization", "1", {packages:["corechart"]});
+                      google.setOnLoadCallback(drawChart6);
+                      function drawChart6() {
+                        var data = google.visualization.arrayToDataTable([
+                            ["Hour","Altitude"], ';
+                            $altitude_data = '';
+			foreach($all_data as $data)
 			{
-				print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a> ';
+				$altitude_data .= '[ "'.date("G:i",strtotime($data['date']." UTC")).'",'.$data['altitude'].'],';
 			}
+			$altitude_data = substr($altitude_data, 0, -1);
+			print $altitude_data.']);
+
+                        var options = {
+                            legend: {position: "none"},
+                            chartArea: {"width": "80%", "height": "60%"},
+                            vAxis: {title: "Altitude of last flight",format: "FL#","minValue": 0},
+                            hAxis: {showTextEvery: 2},
+                            height:210,
+                            colors: ["#1a3151"]
+                        };
+
+                        var chart = new google.visualization.AreaChart(document.getElementById("chart6"));
+                        chart.draw(data, options);
+                      }
+                      $(window).resize(function(){
+                              drawChart6();
+                            });
+                  </script>';
 		}
-	    	    if(isset($spotter_array[0]['ident']))
-	    	    {
-	    	    	print $spotter_array[0]['ident'];
-	    	    }
-	    	    if(isset($spotter_array[0]['airline_name']))
-	    	    {
-	    	    	print ' - '.$spotter_array[0]['airline_name'];
-	    	    }
-	    	    if(isset($spotter_array[0]['aircraft_name']) && $spotter_array[0]['aircraft_name'] != 'Not Available')
-	    	    {
-	    	    	print ' - '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
-	    	    }
-	    	    if(isset($spotter_array[0]['registration']) && $spotter_array[0]['registration'] != 'NA')
-	    	    {
-	    	    	print ' - '.$spotter_array[0]['registration'];
-	    	    }
-    	    print '</h1>';
-     print '</div>';
-    
-        if ($spotter_array[0]['registration'] != "")
-        {
-            $highlight = Spotter::getHighlightByRegistration($spotter_array[0]['registration']);
-            if ($highlight != "")
-            {
-             print '<div class="alert alert-warning">'.$highlight.'</div>';
-            }
-        }
-        	
-		 include('flightid-sub-menu.php');
-		 
-		 print '<div class="clear column">';
-		
-		    print '<div class="image">';
-		    if ($spotter_array[0]['image'] != "")
+	}
+
+
+	print '<div class="info column">';
+	print '<h1>';
+	if (@getimagesize($globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png')) {
+		print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png" class="airline-logo" /></a> ';
+	} else {
+		if ($spotter_array[0]['airline_name'] != "") {
+			print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a> ';
+		}
+	}
+	if(isset($spotter_array[0]['ident'])) {
+		print $spotter_array[0]['ident'];
+	}
+	if(isset($spotter_array[0]['airline_name'])) {
+		print ' - '.$spotter_array[0]['airline_name'];
+	}
+	if(isset($spotter_array[0]['aircraft_name']) && $spotter_array[0]['aircraft_name'] != 'Not Available') {
+		print ' - '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+	}
+	if(isset($spotter_array[0]['registration']) && $spotter_array[0]['registration'] != 'NA') {
+		print ' - '.$spotter_array[0]['registration'];
+	}
+	print '</h1>';
+	print '</div>';
+
+	if ($spotter_array[0]['registration'] != "") {
+		$highlight = Spotter::getHighlightByRegistration($spotter_array[0]['registration']);
+		if ($highlight != "") {
+			print '<div class="alert alert-warning">'.$highlight.'</div>';
+		}
+	}
+
+	include('flightid-sub-menu.php');
+	print '<div class="clear column">';
+	print '<div class="image">';
+	if ($spotter_array[0]['image'] != "")
 		    {	 
 			if ($spotter_array[0]['image_source'] == 'planespotters') {
 			    $planespotter_url_array = explode("_", $spotter_array[0]['image']);
 			    $planespotter_id = str_replace(".jpg", "", $planespotter_url_array[1]);
-			    //print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$spotter_array[0]['image'].'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" width="100%" /></a>';
 			    print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$spotter_array[0]['image_thumbnail'].'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" width="100%" /></a>';
 			    print '<div class="note">Disclaimer: The images are courtesy of Planespotters.net and their respective uploaders. This system may not always 100% accuratly show the actual aircraft.</div>';
 			    print '<div class="note">Planespotters.net didn\'t allow us to show full size pics here. This pic is copyright '.$spotter_array[0]['image_copyright'].'</div>';
@@ -341,38 +380,31 @@ if (!empty($spotter_array))
                     print '</div>';
                 print '</div>';	
                 
-                print '<div class="detail date">';
-                    print '<div class="title">Date (UTC)</div>';
-                    print '<div>';
-                        date_default_timezone_set('UTC');
-                        print date("M j, Y G:i", strtotime($spotter_item['date_iso_8601']));
-                    print '</div>';
-                print '</div>';	
+		print '<div class="detail date">';
+		print '<div class="title">Date (UTC)</div>';
+		print '<div>';
+		date_default_timezone_set('UTC');
+		print date("M j, Y G:i", strtotime($spotter_item['date_iso_8601']));
+		print '</div>';
+		print '</div>';
+		print '</div>';
+	}
+	print '</div>';
 
- 			print '</div>';
+//	print '<div id="archive-map"></div>';
 
-		  }
-
-     	print '</div>';
-     	
-     	
-    if ($spotter_array[0]['registration'] != "" && $spotter_array[0]['registration'] != "NA" && $spotter_array[0]['registration'] != "N/A")
-    {
-    	print '<div class="last-flights">';
-	    	
-	    	print '<h3>Last 5 Flights of this Aircraft ('.$spotter_array[0]['registration'].')</h3>';
-	    	$hide_th_links = true;
-	    	$spotter_array = Spotter::getSpotterDataByRegistration($spotter_array[0]['registration'],"0,5", "");
-	    	
-	    	include('table-output.php'); 
-
+	if ($spotter_array[0]['registration'] != "" && $spotter_array[0]['registration'] != "NA" && $spotter_array[0]['registration'] != "N/A")
+	{
+		print '<div class="last-flights">';
+		print '<h3>Last 5 Flights of this Aircraft ('.$spotter_array[0]['registration'].')</h3>';
+		$hide_th_links = true;
+		$spotter_array = Spotter::getSpotterDataByRegistration($spotter_array[0]['registration'],"0,5", "");
+		include('table-output.php'); 
 		print '<div class="more">';
 		print '<a href="'.$globalURL.'/registration/'.$spotter_array[0]['registration'].'" class="btn btn-default btn" role="button">See all Flights&raquo;</a>';
 		print '</div>';
-
-    	print '</div>';
-    	
-    }
+		print '</div>';
+	}
 /*	     	?>
 	     <div class="column">
 
@@ -391,18 +423,11 @@ if (!empty($spotter_array))
     print '</div>';
 */
 } else {
-
 	$title = "ID";
 	require('header.php');
-	
 	print '<h1>Error</h1>';
-
-  print '<p>Sorry, this flight is not in the database. :(</p>'; 
+	print '<p>Sorry, this flight is not in the database. :(</p>'; 
 }
 
-
-?>
-
-<?php
-require('footer.php');
+	require('footer.php');
 ?>
