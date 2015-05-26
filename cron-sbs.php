@@ -34,6 +34,7 @@ function create_socket($host, $port, &$errno, &$errstr) {
     $ip = gethostbyname($host);
     $s = socket_create(AF_INET, SOCK_STREAM, 0);
     if (socket_set_nonblock($s)) {
+    //if (socket_set_block($s)) {
         $r = @socket_connect($s, $ip, $port);
         if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
             return $s;
@@ -81,8 +82,11 @@ if (isset($globalSBS1Hosts)) {
 $status = array();
 $sockets = array();
 $formats = array();
+$time = time();
+$timeout = $globalSBS1TimeOut;
 $errno = '';
 $errstr='';
+$_ = $_SERVER['_'];
 //$globalDaemon = FALSE;
 if (!isset($globalDaemon)) $globalDaemon = TRUE;
 /* Initiate connections to all the hosts simultaneously */
@@ -195,6 +199,8 @@ while ($i > 0) {
 		$SBS::add($data);
 	    }
 	} elseif ($value == 'sbs') {
+	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
+
 	    $read = $sockets;
 	    $n = @socket_select($read, $write = NULL, $e = NULL, $globalSBS1TimeOut);
 	    if ($n > 0) {
@@ -202,9 +208,9 @@ while ($i > 0) {
 		foreach ($read as $r) {
         	    $buffer = socket_read($r, 3000);
 		    // lets play nice and handle signals such as ctrl-c/kill properly
-		    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
+		    //if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 		    $dataFound = false;
-		    $SBS::del();
+		    //$SBS::del();
 		    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
 		    // SBS format is CSV format
 		    if ($buffer != '') {
@@ -236,6 +242,19 @@ while ($i > 0) {
 			    $tt = 0;
 			}
 		    }
+		}
+	    } else {
+		$error = socket_strerror(socket_last_error());
+		echo "ERROR : socket_select give this error ".$error . "\n";
+		if (($error != SOCKET_EINPROGRESS && $error != SOCKET_EALREADY) || time() - $time >= $timeout) {
+			echo "Restarting...\n";
+			// Restart the script if possible
+			foreach ($sockets as $sock) {
+			    @socket_shutdown($sock,2);
+			    @socket_close($sock);
+			}
+			if (function_exists('pcntl_fork')) pcntl_exec($_,$argv);
+			else connect_all($hosts);
 		}
 	    }
 	}
