@@ -20,6 +20,7 @@ class Common {
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		//curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
 		curl_setopt($ch, CURLOPT_USERAGENT, UAgent::random());
+		curl_setopt($ch, CURLOPT_TIMEOUT, 10); 
 		curl_setopt($ch, CURLOPT_HEADERFUNCTION, array('Common',"curlResponseHeaderCallback"));
 		if ($type == 'post') {
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
