@@ -1,4 +1,4 @@
-html, body, #live-map, .container.main-content {
+html, body, #live-map, .container.main-content.index {
   height: 100% !important;
   width:100% !important;
   margin: 0px !important;

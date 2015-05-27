@@ -266,4 +266,4 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
 
 ?>
 
-<section class="container main-content clear">
+<section class="container main-content <?php if (strtolower($current_page) == 'index') print 'index '; ?>clear">
