@@ -50,9 +50,13 @@ if (!empty($spotter_array))
 			//print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image'].'" alt="'.$spotter_item['highlight'].'" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_name'].' ('.$spotter_item['airline_name'].')" data-toggle="popover" data-content="'.$spotter_item['highlight'].'" /></a>';
 			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$spotter_item['image_thumbnail'].'" alt="'.$spotter_item['highlight'].'" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_name'].' ('.$spotter_item['airline_name'].')" data-toggle="popover" data-content="'.$spotter_item['highlight'].'" /></a>';
 			print '</div>';
-		} else {
+		} elseif (isset($spotter_item['aircraft_name'])) {
 			print '<div>';
 			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" alt="'.$spotter_item['highlight'].'" title="'.$spotter_item['registration'].' - '.$spotter_item['aircraft_name'].' ('.$spotter_item['airline_name'].')" data-toggle="popover" data-content="'.$spotter_item['highlight'].'" /></a>';
+			print '</div>';
+		} else {
+			print '<div>';
+			print '<a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" alt="'.$spotter_item['highlight'].'" title="'.$spotter_item['registration'].' ('.$spotter_item['airline_name'].')" data-toggle="popover" data-content="'.$spotter_item['highlight'].'" /></a>';
 			print '</div>';
 		}
 	}

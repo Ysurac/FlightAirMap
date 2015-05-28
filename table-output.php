@@ -184,6 +184,8 @@ if (strtolower($current_page) == "search")
 		} else {
 			print '<th class="arrival"><span class="nomobile">Flying to</span><span class="mobile">To</span></th>';
 		}
+		print '<th class="route"><span class="nomobile">Route</span><span class="mobile">Route</span></th>';
+		
 		if (strtolower($current_page) == "date")
 		{
 			if ($_GET['sort'] == "date_asc")
@@ -294,7 +296,7 @@ foreach($spotter_array as $spotter_item)
 	if ($showSpecial == true)
 	{
 		print '<tr class="special">'."\n";
-		print '<td colspan="7"><h4>'.$spotter_item['registration'].' - '.$spotter_item['highlight'].'</h4></td>'."\n";
+		print '<td colspan="8"><h4>'.$spotter_item['registration'].' - '.$spotter_item['highlight'].'</h4></td>'."\n";
 		print '</tr>'."\n";
 	}
 	if (strtolower($current_page) == "upcoming" && date("ga") == date("ga", strtotime($spotter_item['date_iso_8601'])))

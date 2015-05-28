@@ -135,7 +135,7 @@ if ($facebook_meta_image != "")
         	}
     	    ?>
             <li><hr /></li>
-            <li><a href="<?php print $globalURL; ?>/highlights">Special Highlights</a></li>
+            <li><a href="<?php print $globalURL; ?>/highlights/table">Special Highlights</a></li>
             <li><a href="<?php print $globalURL; ?>/upcoming">Upcoming Flights</a></li>
           </ul>
         </li>

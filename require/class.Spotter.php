@@ -169,7 +169,10 @@ class Spotter{
 					if ($aircraft_array[0]['aircraft_shadow'] != NULL) {
 						$temp_array['aircraft_shadow'] = $aircraft_array[0]['aircraft_shadow'];
 					} else $temp_array['aircraft_shadow'] = 'default.png';
-                                } else $temp_array['aircraft_shadow'] = 'default.png';
+                                } else {
+                            		$temp_array['aircraft_shadow'] = 'default.png';
+					$temp_array['aircraft_name'] = 'N/A';
+                            	}
 			}
 			$airline_array = array();
 			if (!is_numeric(substr($row['ident'], 0, 3))) {
