@@ -261,11 +261,13 @@ while ($i > 0) {
 		if (($error != SOCKET_EINPROGRESS && $error != SOCKET_EALREADY) || time() - $time >= $timeout) {
 			echo "Restarting...\n";
 			// Restart the script if possible
-			foreach ($sockets as $sock) {
-			    @socket_shutdown($sock,2);
-			    @socket_close($sock);
+			if (is_array($sockets)) {
+			    foreach ($sockets as $sock) {
+				@socket_shutdown($sock,2);
+				@socket_close($sock);
+			    }
 			}
-			if (function_exists('pcntl_fork')) pcntl_exec($_,$argv);
+			if (function_exists('pcntl_fork') && $globalDaemon) pcntl_exec($_);
 			else connect_all($hosts);
 		}
 	    }
