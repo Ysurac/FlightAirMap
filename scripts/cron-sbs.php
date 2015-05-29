@@ -210,7 +210,7 @@ while ($i > 0) {
 	    if ($n > 0) {
 		$tt = 0;
 		foreach ($read as $r) {
-        	    $buffer = socket_read($r, 3000);
+        	    $buffer = socket_read($r, 3000,PHP_NORMAL_READ);
 		    // lets play nice and handle signals such as ctrl-c/kill properly
 		    //if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 		    $dataFound = false;
