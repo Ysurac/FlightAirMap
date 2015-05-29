@@ -33,7 +33,7 @@ if (isset($globalTimezone)) {
 }
 foreach($hour_array as $hour_item)
 {
-	$hour_data .= '[ "'.date("G:i", strtotime($hour_item['hour_name'].":00 UTC")).'",'.$hour_item['hour_count'].'],';
+	$hour_data .= '[ "'.date("G:i", strtotime($hour_item['hour_name'])).'",'.$hour_item['hour_count'].'],';
 }
 $hour_data = substr($hour_data, 0, -1);
 print $hour_data;
@@ -72,7 +72,7 @@ if (!empty($hour_array))
 	{
 		print '<tr>';
 		print '<td><strong>'.$i.'</strong></td>';
-		print '<td>'.date("G:i", strtotime($hour_item['hour_name'].":00 UTC")).'</td>';
+		print '<td>'.date("G:i", strtotime($hour_item['hour_name'])).'</td>';
 		print '<td>'.$hour_item['hour_count'].'</td>';
 		print '</tr>';
 		$i++;
