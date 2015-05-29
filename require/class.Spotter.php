@@ -73,9 +73,11 @@ class Spotter{
 			$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
 			$temp_array['latitude'] = $row['latitude'];
 			$temp_array['longitude'] = $row['longitude'];
-			$country_info = Spotter::getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
-			$temp_array['country'] = $country_info['name'];
-			$temp_array['country_iso2'] = $country_info['iso2'];
+			if (Connection::tableExists('countries')) {
+				$country_info = Spotter::getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
+				$temp_array['country'] = $country_info['name'];
+				$temp_array['country_iso2'] = $country_info['iso2'];
+			}
 			$temp_array['waypoints'] = $row['waypoints'];
 			if (isset($row['route_stop'])) {
 				$temp_array['route_stop'] = $row['route_stop'];
