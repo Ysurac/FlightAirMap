@@ -100,6 +100,7 @@ echo "Connected!\n";
 sleep(1);
 echo "SCAN MODE \n\n";
 $i = 1;
+$tt = 0;
 while ($i > 0) {
     if (!$globalDaemon) $i = 0;
     foreach ($formats as $id => $value) {
@@ -208,7 +209,6 @@ while ($i > 0) {
 	    $read = $sockets;
 	    $n = @socket_select($read, $write = NULL, $e = NULL, $globalSBS1TimeOut);
 	    if ($n > 0) {
-		$tt = 0;
 		foreach ($read as $r) {
         	    $buffer = socket_read($r, 3000,PHP_NORMAL_READ);
 		    // lets play nice and handle signals such as ctrl-c/kill properly
@@ -241,12 +241,14 @@ while ($i > 0) {
     				echo $buffer;
     				print_r($line);
     			    }
+			    socket_close($r);
+			    connect_all($hosts);
     			}
 		    } else {
 			$tt++;
-			if ($tt == 5) {
+			if ($tt > 5) {
 			    echo "ERROR : Reconnect...";
-			    socket_close($r);
+			    @socket_close($r);
 			    connect_all($hosts);
 			    break;
 			    $tt = 0;
