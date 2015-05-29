@@ -255,7 +255,7 @@ require('header.php');
                             $hour_data = '';
                           foreach($hour_array as $hour_item)
                                     {
-                                        $hour_data .= '[ "'.date("G", strtotime($hour_item['hour_name'].":00 UTC")).':00",'.$hour_item['hour_count'].'],';
+                                        $hour_data .= '[ "'.$hour_item['hour_name'].':00",'.$hour_item['hour_count'].'],';
                                     }
                                     $hour_data = substr($hour_data, 0, -1);
                                     print $hour_data;
