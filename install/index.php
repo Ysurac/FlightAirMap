@@ -665,10 +665,10 @@ if (isset($_POST['dbtype'])) {
 	print '</ul></div>';
 	print '<p>All is now installed ! Thanks</p>';
 	if ($globalSBS1) {
-		print '<p>You need to run cron-sbs.php as a daemon. You can use init script in the install/init directory.</p>';
+		print '<p>You need to run scripts/cron-sbs.php as a daemon. You can use init script in the install/init directory.</p>';
 	}
 	if ($globalACARS) {
-		print '<p>You need to run cron-acars.php as a daemon. You can use init script in the install/init directory.</p>';
+		print '<p>You need to run scripts/daemon-acars.php as a daemon. You can use init script in the install/init directory.</p>';
 	}
 	if ($globalFlightAware && ($globalFlightAwareUsername == '' || $globalFlightAwarePassword == '')) {
 		print '<p>You <strong>must</strong> have a FlightAware API account to use FlightAware source</p>';

@@ -1,7 +1,17 @@
 #!/usr/bin/php
 <?php
     require_once('../require/settings.php');
+    if ($globalInstalled) {
+        echo '$globalInstalled must be set to FALSE in require/settings.php';
+        exit;
+    }
+    require('class.create_db.php');
+    echo "Create and import all tables...";
+    create_db::import_all_db('../db/');
+    echo "Done !\n";
+
     require('class.update_db.php');
+    echo "Populate all tables...\n";
     update_db::update_all();
     echo "\nInstall waypoints...(VERY slow!)";
     update_db::update_waypoints();

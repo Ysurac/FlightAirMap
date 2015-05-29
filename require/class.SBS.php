@@ -72,6 +72,7 @@ class SBS {
 	
 	// SBS format is CSV format
 	if(is_array($line) && isset($line['hex'])) {
+	    //print_r($line);
   	    if ($line['hex'] != '' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) == 6) {
 		$hex = trim($line['hex']);
 	        $id = trim($line['hex']);
@@ -117,7 +118,7 @@ class SBS {
 		}
 	        
 		if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91) {
-		    if (!isset(self::$all_flights[$id]['latitude']) || self::$all_flights[$id]['latitude'] == '' || abs(self::$all_flights[$id]['latitude']-$line['latitude']) < 3) {
+		    if (!isset(self::$all_flights[$id]['latitude']) || self::$all_flights[$id]['latitude'] == '' || abs(self::$all_flights[$id]['latitude']-$line['latitude']) < 2) {
 			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('latitude' => $line['latitude']));
 			$dataFound = true;
 		    } elseif (isset(self::$all_flights[$id]['latitude'])) {
@@ -125,7 +126,7 @@ class SBS {
 		    }
 		}
 		if (isset($line['longitude']) && $line['longitude'] != '' && $line['longitude'] != 0 && $line['longitude'] < 181) {
-		    if (!isset(self::$all_flights[$id]['longitude']) || self::$all_flights[$id]['longitude'] == ''  || abs(self::$all_flights[$id]['longitude']-$line['longitude']) < 3) {
+		    if (!isset(self::$all_flights[$id]['longitude']) || self::$all_flights[$id]['longitude'] == ''  || abs(self::$all_flights[$id]['longitude']-$line['longitude']) < 2) {
 			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('longitude' => $line['longitude']));
 			$dataFound = true;
 		    } elseif (isset(self::$all_flights[$id]['longitude'])) {
@@ -164,8 +165,10 @@ class SBS {
 
 		$waypoints = '';
 		if (isset($line['altitude']) && $line['altitude'] != '') {
-		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('altitude' => round($line['altitude']/100)));
-		    //$dataFound = true;
+		    if (!isset(self::$all_flights[$id]['altitude']) || self::$all_flights[$id]['altitude'] == '' || (self::$all_flights[$id]['altitude'] > 0 && $line['altitude'] != 0)) {
+			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('altitude' => round($line['altitude']/100)));
+			//$dataFound = true;
+		    } elseif (self::$debug) echo "!!! Strange altitude data... not added.\n";
   		}
 
 		if (isset($line['heading']) && $line['heading'] != '') {
@@ -243,7 +246,7 @@ class SBS {
 		    }
 		    $ignoreImport = false;
 		}
-		if (function_exists('pcntl_fork')) pcntl_signal(SIGCHLD, SIG_IGN);
+		if (function_exists('pcntl_fork') && $globalFork) pcntl_signal(SIGCHLD, SIG_IGN);
 
     	    }
 	}
