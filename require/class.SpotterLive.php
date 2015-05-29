@@ -386,9 +386,9 @@ class SpotterLive {
 	* @return String success or false
 	*
 	*/
-	public static function addLiveSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $departure_airport_time = '', $arrival_airport_time = '', $squawk = '', $route_stop = '', $ModeS = '')
+	public static function addLiveSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $departure_airport_time = '', $arrival_airport_time = '', $squawk = '', $route_stop = '', $ModeS = '', $putinarchive = false)
 	{
-		global $globalURL, $globalArchive;
+		global $globalURL, $globalArchive, $globalDebug;
 
 		date_default_timezone_set('UTC');
 
@@ -618,7 +618,11 @@ class SpotterLive {
                 } catch(PDOException $e) {
                 	return "error : ".$e->getMessage();
                 }
-		if (isset($globalArchive) && $globalArchive) SpotterArchive::addSpotterArchiveData($flightaware_id, $ident, $registration, $airline_name, $airline_icao, $airline_country, $airline_type, $aircraft_icao, $aircraft_shadow, $aircraft_name, $aircraft_manufacturer, $departure_airport_icao, $departure_airport_name, $departure_airport_city, $departure_airport_country, $departure_airport_time,$arrival_airport_icao, $arrival_airport_name, $arrival_airport_city, $arrival_airport_country, $arrival_airport_time, $route_stop, $date,$latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed, $squawk, $ModeS);
+		if (isset($globalArchive) && $globalArchive && $putinarchive) {
+		    if ($globalDebug) echo "(Add to SBS archive : ";
+		    $result =  SpotterArchive::addSpotterArchiveData($flightaware_id, $ident, $registration, $airline_name, $airline_icao, $airline_country, $airline_type, $aircraft_icao, $aircraft_shadow, $aircraft_name, $aircraft_manufacturer, $departure_airport_icao, $departure_airport_name, $departure_airport_city, $departure_airport_country, $departure_airport_time,$arrival_airport_icao, $arrival_airport_name, $arrival_airport_city, $arrival_airport_country, $arrival_airport_time, $route_stop, $date,$latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed, $squawk, $ModeS);
+		    if ($globalDebug) echo $result.')';
+		}
 		return "success";
 
 	}
