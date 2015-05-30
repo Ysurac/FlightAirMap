@@ -199,7 +199,7 @@ class SBS {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('heading' => round($line['heading'])));
 		    //$dataFound = true;
   		}
-		if (isset($globalSBSupdate) && isset(self::$all_flights[$id]['lastupdate']) && time()-self::$all_flights[$id]['lastupdate'] < $globalSBSupdate) $dataFound = false;
+		if (isset($globalSBS1update) && $globalSBS1update != '' && isset(self::$all_flights[$id]['lastupdate']) && time()-self::$all_flights[$id]['lastupdate'] < $globalSBS1update) $dataFound = false;
 
 //		print_r(self::$all_flights[$id]);
 		//gets the callsign from the last hour

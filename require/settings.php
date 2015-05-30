@@ -70,6 +70,7 @@ $globalMapRefresh = '30';
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
 $globalSBS1Hosts = array('127.0.0.1:30003'); // in the form array('host1:port1','host2:port2','http://xxxxx/whazzup.txt');
 $globalSBS1TimeOut = '15';
+$globalSBS1update = '10'; //Put data in DB after xx seconds/flight
 
 //ACARS Listen in UDP
 $globalACARS = TRUE;
