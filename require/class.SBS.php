@@ -88,7 +88,7 @@ class SBS {
 		    if (self::$debug) echo "*********** New aircraft hex : ".$hex." ***********\n";
 		}
  
-		if (isset($line['ident']) && $line['ident'] != '' && (self::$all_flights[$id]['ident'] != trim($line['ident']))) {
+		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && (self::$all_flights[$id]['ident'] != trim($line['ident']))) {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ident' => trim($line['ident'])));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;

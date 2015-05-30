@@ -2,7 +2,7 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-if ($_POST['ident'] != "")
+if (isset($_POST['ident']) && $_POST['ident'] != "")
 {
 	header('Location: '.$globalURL.'/ident/'.$_POST['ident']);
 } else {
