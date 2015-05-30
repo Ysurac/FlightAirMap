@@ -59,7 +59,7 @@ class SBS {
     }
 
     static function add($line) {
-	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore;
+	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon;
 	date_default_timezone_set('UTC');
 	// signal handler - playing nice with sockets and dump1090
 	// pcntl_signal_dispatch();
