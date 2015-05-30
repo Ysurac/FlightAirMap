@@ -267,6 +267,7 @@ class Spotter{
 				$temp_array['squawk'] = $row['squawk'];
 				if ($row['squawk'] != '' && isset($temp_array['country_iso2'])) {
 					$temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$temp_array['country_iso2']);
+					if ($temp_array['squawk_usage'] == '' && isset($globalSquawkCountry)) $temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$globalSquawkCountry);
 				}
 			}
     			
@@ -1512,7 +1513,6 @@ class Spotter{
 
 		$query  = "SELECT squawk.* FROM squawk WHERE squawk.code = :squawk AND squawk.country = :country LIMIT 1";
 		$query_values = array(':squawk' => ltrim($squawk,'0'), ':country' => $country);
-		
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
 		$sth->execute($query_values);
@@ -7149,8 +7149,7 @@ public static function addSpotterImage($registration)
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
 //		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(:latitude :longitude)'), ogc_geom) LIMIT 1";
-		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(".$latitude.' '.$longitude.")'), ogc_geom) LIMIT 1";
-
+		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(".$longitude.' '.$latitude.")'), ogc_geom) LIMIT 1";
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
 		//$sth->execute(array(':latitude' => $latitude,':longitude' => $longitude));
