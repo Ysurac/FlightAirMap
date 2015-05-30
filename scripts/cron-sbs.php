@@ -239,13 +239,17 @@ while ($i > 0) {
     				$SBS::add($data);
     				unset($data);
     			} else {
-    			    echo "Wrong line format. Ignoring... \n";
-    			    if ($globalDebug) {
-    				echo $buffer;
-    				print_r($line);
-    			    }
-			    socket_close($r);
-			    connect_all($hosts);
+    			    if (count($line) > 1 && ($line[0] == 'STA' || $line[0] == 'AIR' || $line[0] == 'SEL' || $line[0] == 'ID' || $line[0] == 'CLK')) { 
+    				echo "Not a message. Ignoring... \n";
+    			    } else {
+    				echo "Wrong line format. Ignoring... \n";
+    				if ($globalDebug) {
+    				    echo $buffer;
+    			    	    print_r($line);
+    				}
+				socket_close($r);
+				connect_all($hosts);
+			    }
     			}
 		    } else {
 			$tt++;
