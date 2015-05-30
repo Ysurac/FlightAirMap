@@ -9,3 +9,5 @@ CREATE TABLE IF NOT EXISTS `aircraft_modes` (
   `Source` varchar(255),
   PRIMARY KEY (`AircraftID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
+
+ALTER TABLE `aircraft_modes` ADD INDEX(`ModeS`);

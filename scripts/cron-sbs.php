@@ -124,6 +124,7 @@ while ($i > 0) {
 	            $data['emergency'] = ''; // emergency
 		    $data['datetime'] = date('Y-m-d h:i:s');
     		    $SBS::add($data);
+		    unset($data);
     		}
     	    }
 	} elseif ($value == 'whazzup') {
@@ -157,6 +158,7 @@ while ($i > 0) {
 	    		    $data['aircraft_icao'] = $aircraft_data[1];
         		}
     			$SBS::add($data);
+    			unset($data);
     		    }
     		}
     	    }
@@ -202,6 +204,7 @@ while ($i > 0) {
     		$data['aircraft_icao'] = $line['aircraft'];
 	        $data['format_source'] = 'phpvmacars';
 		$SBS::add($data);
+		unset($data);
 	    }
 	} elseif ($value == 'sbs') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
@@ -233,8 +236,8 @@ while ($i > 0) {
     				$data['altitude'] = $line[11];
     				$data['heading'] = $line[13];
     				$data['format_source'] = 'sbs';
-    				
     				$SBS::add($data);
+    				unset($data);
     			} else {
     			    echo "Wrong line format. Ignoring... \n";
     			    if ($globalDebug) {

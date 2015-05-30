@@ -363,3 +363,5 @@ INSERT INTO `aircraft` (`aircraft_id`, `icao`, `type`, `manufacturer`, `official
 (352, 'R721', 'Boeing 727-100RE Super 27', 'Boeing', '', 'R721.png'),
 (353, 'NG5', 'Bristell NG-5', 'Bristell', 'http://www.brmaero.com/aeroplanes-classic', 'NG5.png'),
 (354, 'LJ75', 'Bombardier Learjet 75', 'Bombardier', 'http://businessaircraft.bombardier.com/en/aircraft/learjet/learjet75.html', 'LJ75.png');
+
+ALTER TABLE `aircraft` ADD INDEX(`icao`);

@@ -9,3 +9,5 @@ CREATE TABLE IF NOT EXISTS `translation` (
   `date_modified` timestamp DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`TranslationID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
+
+ALTER TABLE `translation` ADD INDEX(`Operator`);
