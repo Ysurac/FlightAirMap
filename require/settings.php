@@ -34,7 +34,8 @@ $globalCenterLongitude = '5.29';//the longitude center of your coverage area
 $globalLiveZoom = '9'; //default zoom on Live Map
 
 // FLIGHTS MUST BE INSIDE THIS CIRCLE
-$globalDistanceIgnore = array(); // example for 100km : array('latitude' => '46.38','longitide' => '5.29','distance' => '100') 
+$globalDistanceIgnore = array();
+// ^^ example for 100km : array('latitude' => '46.38','longitide' => '5.29','distance' => '100');
 
 // DATABASE CONNECTION LOGIN
 $globalDBdriver = 'mysql'; // PDO driver used. Tested with mysql, maybe pgsql or others work...
@@ -68,7 +69,8 @@ $globalMapRefresh = '30';
 
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
-$globalSBS1Hosts = array('127.0.0.1:30003'); // in the form array('host1:port1','host2:port2','http://xxxxx/whazzup.txt');
+$globalSBS1Hosts = array('127.0.0.1:30003');
+// ^^ in the form array('host1:port1','host2:port2','http://xxxxx/whazzup.txt');
 $globalSBS1TimeOut = '15';
 $globalSBS1update = '10'; //Put data in DB after xx seconds/flight
 
