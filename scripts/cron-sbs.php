@@ -138,7 +138,7 @@ while ($i > 0) {
 			$data['id'] = $line[1];
 			$data['hex'] = str_pad(dechex($line[1]),6,'000000',STR_PAD_LEFT);
 			$data['ident'] = $line[0]; // ident
-			if ($line[7] != '' && $line[7] != 0) $data['altitude'] = $line[7]*100; // altitude
+			if ($line[7] != '' && $line[7] != 0) $data['altitude'] = $line[7]; // altitude
 			$data['speed'] = $line[8]; // speed
 			$data['heading'] = $line[45]; // heading
 			$data['latitude'] = $line[5]; // lat
