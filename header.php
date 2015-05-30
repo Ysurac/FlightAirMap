@@ -127,11 +127,20 @@ if ($facebook_meta_image != "")
             <li><a href="<?php print $globalURL; ?>/newest">Newest by Category</a></li>
             <?php
         	if ($globalACARS) {
+        	    if (isset($globalDemo) && $globalDemo) {
+    	    ?>
+            <li><hr /></li>
+            <li><i>ACARS data not available publicly</i></li>
+            <li><a href="">Latest ACARS messages</a></li>
+            <li><a href="">Archive ACARS messages</a></li>
+            <?php
+        	} else {
     	    ?>
             <li><hr /></li>
             <li><a href="<?php print $globalURL; ?>/acars-latest">Latest ACARS messages</a></li>
             <li><a href="<?php print $globalURL; ?>/acars-archive">Archive ACARS messages</a></li>
             <?php
+        	}
         	}
     	    ?>
             <li><hr /></li>

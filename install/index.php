@@ -182,6 +182,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="text" name="longitudecenter" id="longitudecenter" value="<?php if (isset($globalCenterLongitude)) print $globalCenterLongitude; ?>" />
 		</p>
 		<p>
+			<label for="livezoom">Default Zoom on live map</label>
+			<input type="text" name="livezoom" id="livezoom" value="<?php if (isset($globalLiveZoom)) print $globalLiveZoom; else print '9'; ?>" />
+		</p>
+		<p>
 			<label for="squawk_country">Country for squawk usage</label>
 			<input type="text" name="squawk_country" id="squawk_country" value="<?php if (isset($globalSquawkCountry)) print $globalSquawkCountry; ?>" />
 			UK, FR or let it blank for now
@@ -375,7 +379,8 @@ if (isset($_POST['dbtype'])) {
 	$latitudemin = filter_input(INPUT_POST,'latitudemin',FILTER_SANITIZE_STRING);
 	$longitudemax = filter_input(INPUT_POST,'longitudemax',FILTER_SANITIZE_STRING);
 	$longitudemin = filter_input(INPUT_POST,'longitudemin',FILTER_SANITIZE_STRING);
-	$settings = array_merge($settings,array('globalLatitudeMax' => $latitudemax,'globalLatitudeMin' => $latitudemin,'globalLongitudeMax' => $longitudemax,'globalLongitudeMin' => $longitudemin));
+	$livezoom = filter_input(INPUT_POST,'livezoom',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalLatitudeMax' => $latitudemax,'globalLatitudeMin' => $latitudemin,'globalLongitudeMax' => $longitudemax,'globalLongitudeMin' => $longitudemin,'globalLiveZoom' => $livezoom));
 
 	$squawk_country = filter_input(INPUT_POST,'squawk_country',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalSquawkCountry' => $squawk_country));

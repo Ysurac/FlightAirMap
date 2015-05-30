@@ -63,9 +63,9 @@ $( document ).ready(function() {
      || navigator.userAgent.match(/BlackBerry/i)
      || navigator.userAgent.match(/Windows Phone/i))
   {
-    var zoom = 8;
+    var zoom = <?php if (isset($globalLiveZoom)) print $globalLiveZoom-1; else print '8'; ?>;
   } else {
-    var zoom = 9;
+    var zoom = <?php if (isset($globalLiveZoom)) print $globalLiveZoom; else print '9'; ?>;
   }
 
   //create the map
