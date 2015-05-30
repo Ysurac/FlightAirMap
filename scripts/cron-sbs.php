@@ -262,13 +262,21 @@ while ($i > 0) {
 			echo "Restarting...\n";
 			// Restart the script if possible
 			if (is_array($sockets)) {
+			    echo "Shutdown all sockets...";
 			    foreach ($sockets as $sock) {
 				@socket_shutdown($sock,2);
 				@socket_close($sock);
 			    }
 			}
-			if (function_exists('pcntl_fork') && $globalDaemon) pcntl_exec($_);
-			else connect_all($hosts);
+/*
+			if (function_exists('pcntl_exec') && $globalDaemon) {
+			    echo "Script restart...";
+			    pcntl_exec($_);
+			} else {
+*/
+			    echo "Restart all connections...";
+			    connect_all($hosts);
+//			}
 		}
 	    }
 	}
