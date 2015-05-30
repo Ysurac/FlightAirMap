@@ -55,6 +55,7 @@ $globalTimezone = 'Europe/Paris';
 
 // DAEMON
 $globalDaemon = TRUE; // Run cron-sbs.php as daemon (don't work well if source is a real SBS1 device)
+$globalCronEnd = '60'; //the script run for xx seconds if $globalDaemon is disable in SBS mode
 
 // FORK
 $globalFork = TRUE; // Allow cron-sbs.php to fork to fetch schedule, no more schedules fetch if set to FALSE

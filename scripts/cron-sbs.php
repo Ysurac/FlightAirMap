@@ -99,10 +99,12 @@ connect_all($hosts);
 echo "Connected!\n";
 sleep(1);
 echo "SCAN MODE \n\n";
+if (!isset($globalCronEnd)) $globalCronEnd = 60;
+$endtime = time()+60;
 $i = 1;
 $tt = 0;
 while ($i > 0) {
-    if (!$globalDaemon) $i = 0;
+    if (!$globalDaemon) $i = $endtime-time();
     foreach ($formats as $id => $value) {
 	if ($value == 'deltadbtxt') {
 	    $buffer = Common::getData($hosts[$id]);
