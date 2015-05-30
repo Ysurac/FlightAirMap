@@ -59,7 +59,7 @@ class SBS {
     }
 
     static function add($line) {
-	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon;
+	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate;
 	date_default_timezone_set('UTC');
 	// signal handler - playing nice with sockets and dump1090
 	// pcntl_signal_dispatch();
@@ -123,12 +123,16 @@ class SBS {
 		if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91) {
 		    if (!isset(self::$all_flights[$id]['latitude']) || self::$all_flights[$id]['latitude'] == '' || abs(self::$all_flights[$id]['latitude']-$line['latitude']) < 2) {
 			if (!isset(self::$all_flights[$id]['archive_latitude'])) self::$all_flights[$id]['archive_latitude'] = $line['latitude'];
+			if (!isset(self::$all_flights[$id]['livedb_latitude']) || abs(self::$all_flights[$id]['livedb_latitude']-$line['latitude']) > 0.02) {
+			    self::$all_flights[$id]['livedb_latitude'] = $line['latitude'];
+			    $dataFound = true;
+			}
+			// elseif (self::$debug) echo '!*!*! Ignore data, too close to previous one'."\n";
 			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('latitude' => $line['latitude']));
 			if (abs(self::$all_flights[$id]['archive_latitude']-self::$all_flights[$id]['latitude']) > 0.3) {
 			    self::$all_flights[$id]['archive_latitude'] = $line['latitude'];
 			    $putinarchive = true;
 			}
-			$dataFound = true;
 		    } elseif (isset(self::$all_flights[$id]['latitude'])) {
 			if (self::$debug) echo '!!! Strange latitude value - diff : '.abs(self::$all_flights[$id]['latitude']-$line['latitude']).'- previous lat : '.self::$all_flights[$id]['latitude'].'- new lat : '.$line['latitude']."\n";
 		    }
@@ -136,13 +140,16 @@ class SBS {
 		if (isset($line['longitude']) && $line['longitude'] != '' && $line['longitude'] != 0 && $line['longitude'] < 181) {
 		    if (!isset(self::$all_flights[$id]['longitude']) || self::$all_flights[$id]['longitude'] == ''  || abs(self::$all_flights[$id]['longitude']-$line['longitude']) < 2) {
 			if (!isset(self::$all_flights[$id]['archive_longitude'])) self::$all_flights[$id]['archive_longitude'] = $line['longitude'];
+			if (!isset(self::$all_flights[$id]['livedb_longitude']) || abs(self::$all_flights[$id]['livedb_longitude']-$line['longitude']) > 0.02) {
+			    self::$all_flights[$id]['livedb_longitude'] = $line['longitude'];
+			    $dataFound = true;
+			}
+			// elseif (self::$debug) echo '!*!*! Ignore data, too close to previous one'."\n";
 			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('longitude' => $line['longitude']));
 			if (abs(self::$all_flights[$id]['archive_longitude']-self::$all_flights[$id]['longitude']) > 0.3) {
 			    self::$all_flights[$id]['archive_longitude'] = $line['longitude'];
 			    $putinarchive = true;
 			}
-			
-			$dataFound = true;
 		    } elseif (isset(self::$all_flights[$id]['longitude'])) {
 			if (self::$debug) echo '!!! Strange longitude value - diff : '.abs(self::$all_flights[$id]['longitude']-$line['longitude']).'- previous lat : '.self::$all_flights[$id]['longitude'].'- new lat : '.$line['longitude']."\n";
 		    }
@@ -192,6 +199,8 @@ class SBS {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('heading' => round($line['heading'])));
 		    //$dataFound = true;
   		}
+		if (isset($globalSBSupdate) && isset(self::$all_flights[$id]['lastupdate']) && time()-self::$all_flights[$id]['lastupdate'] < $globalSBSupdate) $dataFound = false;
+
 //		print_r(self::$all_flights[$id]);
 		//gets the callsign from the last hour
 		//if (time()-self::$all_flights[$id]['lastupdate'] > 30 && $dataFound == true && self::$all_flights[$id]['ident'] != '' && self::$all_flights[$id]['latitude'] != '' && self::$all_flights[$id]['longitude'] != '') {
