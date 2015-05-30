@@ -75,8 +75,10 @@ class Spotter{
 			$temp_array['longitude'] = $row['longitude'];
 			if (Connection::tableExists('countries')) {
 				$country_info = Spotter::getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
-				$temp_array['country'] = $country_info['name'];
-				$temp_array['country_iso2'] = $country_info['iso2'];
+				if (is_array($country_info) && isset($country_info['name']) && isset($country_info['iso2'])) {
+				    $temp_array['country'] = $country_info['name'];
+				    $temp_array['country_iso2'] = $country_info['iso2'];
+				}
 			}
 			$temp_array['waypoints'] = $row['waypoints'];
 			if (isset($row['route_stop'])) {
@@ -268,7 +270,7 @@ class Spotter{
 				if ($row['squawk'] != '' && isset($temp_array['country_iso2'])) {
 					$temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$temp_array['country_iso2']);
 					if ($temp_array['squawk_usage'] == '' && isset($globalSquawkCountry)) $temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$globalSquawkCountry);
-				}
+				} elseif ($row['squawk'] != '' && isset($globalSquawkCountry)) $temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$globalSquawkCountry);
 			}
     			
 			$temp_array['query_number_rows'] = $num_rows;
