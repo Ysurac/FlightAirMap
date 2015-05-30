@@ -100,7 +100,7 @@ echo "Connected!\n";
 sleep(1);
 echo "SCAN MODE \n\n";
 if (!isset($globalCronEnd)) $globalCronEnd = 60;
-$endtime = time()+60;
+$endtime = time()+$globalCronEnd;
 $i = 1;
 $tt = 0;
 while ($i > 0) {
