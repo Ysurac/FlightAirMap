@@ -3,6 +3,7 @@ require_once('../require/settings.php');
 require_once('../require/class.Connection.php');
 require_once('../require/class.Scheduler.php');
 require_once('class.create_db.php');
+require_once('class.update_db.php');
 
 class update_schema {
 
@@ -229,8 +230,48 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_6() {
+    		$Connection = new Connection();
+    		if (!Connection::indexExists('spotter_output','flightaware_id')) {
+    		    $query = "ALTER TABLE spotter_output ADD INDEX(flightaware_id);
+			ALTER TABLE spotter_output ADD INDEX(date);
+			ALTER TABLE spotter_output ADD INDEX(ident);
+			ALTER TABLE spotter_live ADD INDEX(flightaware_id);
+			ALTER TABLE spotter_live ADD INDEX(ident);
+			ALTER TABLE spotter_live ADD INDEX(date);
+			ALTER TABLE spotter_live ADD INDEX(longitude);
+			ALTER TABLE spotter_live ADD INDEX(latitude);
+			ALTER TABLE routes ADD INDEX(CallSign);
+			ALTER TABLE aircraft_modes ADD INDEX(ModeS);
+			ALTER TABLE aircraft ADD INDEX(icao);
+			ALTER TABLE airport ADD INDEX(icao);
+			ALTER TABLE translation ADD INDEX(Operator);";
+        	    try {
+            		$sth = Connection::$db->prepare($query);
+			$sth->execute();
+    		    } catch(PDOException $e) {
+			return "error (add some indexes) : ".$e->getMessage()."\n";
+    		    }
+    		}
+    		$error = '';
+    		// Update table countries
+    		if (Connection::tableExists('airspace')) {
+    		    $error .= update_db::update_countries();
+		    if ($error != '') return $error;
+		}
+		// Update schema_version to 7
+		$query = "UPDATE `config` SET `value` = '7' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+    	}
     	
     	public static function check_version($update = false) {
+    	    global $globalDBname;
     	    $version = 0;
     	    if (Connection::tableExists('aircraft')) {
     		if (!Connection::tableExists('config')) {
@@ -253,15 +294,19 @@ class update_schema {
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '3') {
-    			    self::update_from_3();
+    			    $error = self::update_from_3();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '4') {
-    			    self::update_from_4();
+    			    $error = self::update_from_4();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '5') {
-    			    self::update_from_5();
+    			    $error = self::update_from_5();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '6') {
+    			    $error = self::update_from_6();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

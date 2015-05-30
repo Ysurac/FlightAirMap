@@ -303,7 +303,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="text" name="britishairways" id="britishairways" value="<?php if (isset($globalBritishAirwaysKey)) print $globalBritishAirwaysKey; ?>" />
 		</p>
 		<p>
-			<label for="waypoints">Add Waypoints and Airspace data (about 40Mio in DB) <i>Not yet available for PostgreSQL</i></label>
+			<label for="waypoints">Add Waypoints, Airspace and countries data (about 45Mio in DB) <i>Not yet available for PostgreSQL</i></label>
 			<input type="checkbox" name="waypoints" id="waypoints" value="waypoints" checked="checked" />
 		</p>
 		<p>
@@ -579,6 +579,25 @@ if (isset($_POST['dbtype'])) {
 	include_once('class.update_db.php');
 	update_db::update_airspace();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate airspace database'));
+	$_SESSION['install'] = 'countries';
+//	require('../footer.php');
+//	ob_end_clean();
+//	header("Location: index.php?".rand());
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+//	require('../footer.php');
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'countries') {
+	unset($_SESSION['install']);
+	print '<div class="info column"><ul>';
+	foreach ($_SESSION['done'] as $done) {
+	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
+	}
+	print '<li>Populate countries database....<img src="../images/loading.gif" /></li></ul></div>';
+	flush();
+	@ob_flush();
+
+	include_once('class.update_db.php');
+	update_db::update_countries();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate countries database'));
 	$_SESSION['install'] = 'finish';
 //	require('../footer.php');
 //	ob_end_clean();

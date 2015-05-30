@@ -3,7 +3,7 @@ require_once("settings.php");
 
 class Connection{
 	public static $db;
-	public static $latest_schema = 6;
+	public static $latest_schema = 7;
 	
 	public function __construct() {
 	    $this->createDBConnection();
@@ -25,6 +25,7 @@ class Connection{
 			self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			self::$db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
 			self::$db->setAttribute(PDO::ATTR_TIMEOUT,10);
+			self::$db->setAttribute(PDO::ATTR_PERSISTENT,true);
 		} catch(PDOException $e) {
 			echo $e->getMessage();
 			exit;
@@ -40,6 +41,26 @@ class Connection{
 			$query = "SHOW TABLES LIKE '".$table."'";
 		} elseif ($globalDBdriver == 'pgsql') {
 			$query = "SELECT * FROM pg_catalog.pg_tables WHERE tablename = '".$table."'";
+		}
+		try {
+			$Connection = new Connection();
+			$results = Connection::$db->query($query);
+		} catch(PDOException $e) {
+			return false;
+		}
+		if($results->rowCount()>0) {
+		    return true; 
+		}
+		else return false;
+	}
+
+	public static function indexExists($table,$index)
+	{
+		global $globalDBdriver, $globalDBname;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(1) IndexIsThere FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema=DATABASE() AND table_name='".$table."' AND index_name='".$index."'";
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query = "SELECT 1 FROM   pg_class c JOIN   pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '".$index."' AND n.nspname = '".$table."'";
 		}
 		try {
 			$Connection = new Connection();
