@@ -7,10 +7,10 @@ require_once('class.Scheduler.php');
 require_once('class.Translation.php');
 
 class SBS {
-    static $debug = true;
     static $all_flights = array();
 
     static function get_Schedule($id,$ident) {
+	global $globalDebug;
 	// Get schedule here, so it's done only one time
 	$operator = Spotter::getOperator($ident);
 	if (Schedule::checkSchedule($operator) == 0) {
@@ -18,7 +18,7 @@ class SBS {
 	    if (Schedule::checkSchedule($operator) == 0) {
 		$schedule = Schedule::fetchSchedule($operator);
 		if (count($schedule) > 0) {
-		    if (self::$debug) echo "-> Schedule info for ".$operator." (".$ident.")\n";
+		    if ($globalDebug) echo "-> Schedule info for ".$operator." (".$ident.")\n";
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('departure_airport_time' => $schedule['DepartureTime']));
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('arrival_airport_time' => $schedule['ArrivalTime']));
 		    // FIXME : Check if route schedule = route from DB
@@ -27,7 +27,7 @@ class SBS {
 			    $airport_icao = Spotter::getAirportIcao($schedule['DepartureAirportIATA']);
 			    if ($airport_icao != '') {
 				self::$all_flights[$id]['departure_airport'] = $airport_icao;
-				if (self::$debug) echo "-> Change departure airport to ".$airport_icao." for ".$ident."\n";
+				if ($globalDebug) echo "-> Change departure airport to ".$airport_icao." for ".$ident."\n";
 			    }
 			}
 		    }
@@ -36,7 +36,7 @@ class SBS {
 			    $airport_icao = Spotter::getAirportIcao($schedule['ArrivalAirportIATA']);
 			    if ($airport_icao != '') {
 				self::$all_flights[$id]['arrival_airport'] = $airport_icao;
-				if (self::$debug) echo "-> Change arrival airport to ".$airport_icao." for ".$ident."\n";
+				if ($globalDebug) echo "-> Change arrival airport to ".$airport_icao." for ".$ident."\n";
 			    }
 			}
 		    }
@@ -59,7 +59,7 @@ class SBS {
     }
 
     static function add($line) {
-	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate;
+	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug;
 	date_default_timezone_set('UTC');
 	// signal handler - playing nice with sockets and dump1090
 	// pcntl_signal_dispatch();
@@ -85,7 +85,7 @@ class SBS {
 		    else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => ''));
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('lastupdate' => time()));
-		    if (self::$debug) echo "*********** New aircraft hex : ".$hex." ***********\n";
+		    if ($globalDebug) echo "*********** New aircraft hex : ".$hex." ***********\n";
 		}
  
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && (self::$all_flights[$id]['ident'] != trim($line['ident']))) {
@@ -127,14 +127,14 @@ class SBS {
 			    self::$all_flights[$id]['livedb_latitude'] = $line['latitude'];
 			    $dataFound = true;
 			}
-			// elseif (self::$debug) echo '!*!*! Ignore data, too close to previous one'."\n";
+			// elseif ($globalDebug) echo '!*!*! Ignore data, too close to previous one'."\n";
 			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('latitude' => $line['latitude']));
 			if (abs(self::$all_flights[$id]['archive_latitude']-self::$all_flights[$id]['latitude']) > 0.3) {
 			    self::$all_flights[$id]['archive_latitude'] = $line['latitude'];
 			    $putinarchive = true;
 			}
 		    } elseif (isset(self::$all_flights[$id]['latitude'])) {
-			if (self::$debug) echo '!!! Strange latitude value - diff : '.abs(self::$all_flights[$id]['latitude']-$line['latitude']).'- previous lat : '.self::$all_flights[$id]['latitude'].'- new lat : '.$line['latitude']."\n";
+			if ($globalDebug) echo '!!! Strange latitude value - diff : '.abs(self::$all_flights[$id]['latitude']-$line['latitude']).'- previous lat : '.self::$all_flights[$id]['latitude'].'- new lat : '.$line['latitude']."\n";
 		    }
 		}
 		if (isset($line['longitude']) && $line['longitude'] != '' && $line['longitude'] != 0 && $line['longitude'] < 181) {
@@ -144,14 +144,14 @@ class SBS {
 			    self::$all_flights[$id]['livedb_longitude'] = $line['longitude'];
 			    $dataFound = true;
 			}
-			// elseif (self::$debug) echo '!*!*! Ignore data, too close to previous one'."\n";
+			// elseif ($globalDebug) echo '!*!*! Ignore data, too close to previous one'."\n";
 			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('longitude' => $line['longitude']));
 			if (abs(self::$all_flights[$id]['archive_longitude']-self::$all_flights[$id]['longitude']) > 0.3) {
 			    self::$all_flights[$id]['archive_longitude'] = $line['longitude'];
 			    $putinarchive = true;
 			}
 		    } elseif (isset(self::$all_flights[$id]['longitude'])) {
-			if (self::$debug) echo '!!! Strange longitude value - diff : '.abs(self::$all_flights[$id]['longitude']-$line['longitude']).'- previous lat : '.self::$all_flights[$id]['longitude'].'- new lat : '.$line['longitude']."\n";
+			if ($globalDebug) echo '!!! Strange longitude value - diff : '.abs(self::$all_flights[$id]['longitude']-$line['longitude']).'- previous lat : '.self::$all_flights[$id]['longitude'].'- new lat : '.$line['longitude']."\n";
 		    }
 
 		}
@@ -191,7 +191,7 @@ class SBS {
 			if (abs(round($line['altitude']/100)-self::$all_flights[$id]['altitude']) > 2) $putinarchive = true;
 			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('altitude' => round($line['altitude']/100)));
 			//$dataFound = true;
-		    } elseif (self::$debug) echo "!!! Strange altitude data... not added.\n";
+		    } elseif ($globalDebug) echo "!!! Strange altitude data... not added.\n";
   		}
 
 		if (isset($line['heading']) && $line['heading'] != '') {
@@ -212,7 +212,7 @@ class SBS {
 		    //if there was no aircraft with the same callsign within the last hour and go post it into the archive
 		    if($recent_ident == "")
 		    {
-			if (self::$debug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in archive DB : ";
+			if ($globalDebug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in archive DB : ";
 			if (self::$all_flights[$id]['departure_airport'] == "") { self::$all_flights[$id]['departure_airport'] = "NA"; }
 			if (self::$all_flights[$id]['arrival_airport'] == "") { self::$all_flights[$id]['arrival_airport'] = "NA"; }
 			//adds the spotter data for the archive
@@ -230,7 +230,7 @@ class SBS {
 			    $result = Spotter::addSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'],'', self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'],self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],$highlight,self::$all_flights[$id]['hex']);
 			}
 			$ignoreImport = false;
-			if (self::$debug) echo $result."\n";
+			if ($globalDebug) echo $result."\n";
 			/*
 			if (isset($globalArchive) && $globalArchive) {
 			    $archives_ident = SpotterLive::getAllLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
@@ -251,7 +251,7 @@ class SBS {
 		    //SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
 		    //echo "\nAdd in Live !! \n";
 		    //echo "{$line[8]} {$line[7]} - MODES:{$line[4]}  CALLSIGN:{$line[10]}   ALT:{$line[11]}   VEL:{$line[12]}   HDG:{$line[13]}   LAT:{$line[14]}   LON:{$line[15]}   VR:{$line[16]}   SQUAWK:{$line[17]}\n";
-		    if (self::$debug) echo 'DATA : hex : '.self::$all_flights[$id]['hex'].' - ident : '.self::$all_flights[$id]['ident'].' - ICAO : '.self::$all_flights[$id]['aircraft_icao'].' - Departure Airport : '.self::$all_flights[$id]['departure_airport'].' - Arrival Airport : '.self::$all_flights[$id]['arrival_airport'].' - Latitude : '.self::$all_flights[$id]['latitude'].' - Longitude : '.self::$all_flights[$id]['longitude'].' - waypoints : '.$waypoints.' - Altitude : '.self::$all_flights[$id]['altitude'].' - Heading : '.self::$all_flights[$id]['heading'].' - Speed : '.self::$all_flights[$id]['speed'].' - Departure Airport Time : '.self::$all_flights[$id]['departure_airport_time'].' - Arrival Airport time : '.self::$all_flights[$id]['arrival_airport_time']."\n";
+		    if ($globalDebug) echo 'DATA : hex : '.self::$all_flights[$id]['hex'].' - ident : '.self::$all_flights[$id]['ident'].' - ICAO : '.self::$all_flights[$id]['aircraft_icao'].' - Departure Airport : '.self::$all_flights[$id]['departure_airport'].' - Arrival Airport : '.self::$all_flights[$id]['arrival_airport'].' - Latitude : '.self::$all_flights[$id]['latitude'].' - Longitude : '.self::$all_flights[$id]['longitude'].' - waypoints : '.$waypoints.' - Altitude : '.self::$all_flights[$id]['altitude'].' - Heading : '.self::$all_flights[$id]['heading'].' - Speed : '.self::$all_flights[$id]['speed'].' - Departure Airport Time : '.self::$all_flights[$id]['departure_airport_time'].' - Arrival Airport time : '.self::$all_flights[$id]['arrival_airport_time']."\n";
 		    $ignoreImport = false;
 		    if (self::$all_flights[$id]['departure_airport'] == "") { self::$all_flights[$id]['departure_airport'] = "NA"; }
 		    if (self::$all_flights[$id]['arrival_airport'] == "") { self::$all_flights[$id]['arrival_airport'] = "NA"; }
@@ -263,11 +263,11 @@ class SBS {
 		    }
 		    if (!$ignoreImport) {
 			if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
-				if (self::$debug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in Live DB : ";
+				if ($globalDebug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in Live DB : ";
 				$result = SpotterLive::addLiveSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'], self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'], self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],self::$all_flights[$id]['hex'],$putinarchive);
-				//if (self::$debug) echo "Distance : ".Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
-				if (self::$debug) echo $result."\n";
-			} elseif (isset(self::$all_flights[$id]['latitude']) && isset($globalDistanceIgnore['latitude']) && self::$debug) echo "!! Too far -> Distance : ".Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
+				//if ($globalDebug) echo "Distance : ".Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
+				if ($globalDebug) echo $result."\n";
+			} elseif (isset(self::$all_flights[$id]['latitude']) && isset($globalDistanceIgnore['latitude']) && $globalDebug) echo "!! Too far -> Distance : ".Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
 			self::del();
 		    }
 		    $ignoreImport = false;

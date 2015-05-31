@@ -11,6 +11,8 @@ require_once(dirname(__FILE__).'/../require/class.SBS.php');
 require_once(dirname(__FILE__).'/../require/class.Connection.php');
 require_once(dirname(__FILE__).'/../require/class.Common.php');
 
+if (!isset($globalDebug)) $globalDebug = FALSE;
+
 $schema = new Connection();
 if ($schema::latest() === false) {
     echo "You MUST update to latest schema. Run install/index.php";
@@ -31,7 +33,7 @@ if (function_exists('pcntl_fork')) {
 }
 
 // let's try and connect
-echo "Connecting to SBS ...\n";
+if ($globalDebug) echo "Connecting to SBS ...\n";
 
 
 function create_socket($host, $port, &$errno, &$errstr) {
@@ -51,7 +53,7 @@ function create_socket($host, $port, &$errno, &$errstr) {
 }
 
 function connect_all($hosts) {
-    global $sockets, $formats;
+    global $sockets, $formats, $globalDebug;
     foreach ($hosts as $id => $host) {
 	if (filter_var($host,FILTER_VALIDATE_URL)) {
             if (preg_match('/deltadb.txt$/',$host)) {
@@ -69,9 +71,9 @@ function connect_all($hosts) {
 	    if ($s) {
     	        $sockets[$id] = $s;
         	$formats[$id] = 'sbs';
-		echo 'Connection in progress to '.$host.'....'."\n";
+		if ($globalDebug) echo 'Connection in progress to '.$host.'....'."\n";
             } else {
-		echo 'Connection failed to '.$host.' : '.$errno.' '.$errstr."\n";
+		if ($globalDebug) echo 'Connection failed to '.$host.' : '.$errno.' '.$errstr."\n";
     	    }
         }
     }
@@ -96,9 +98,9 @@ if (!isset($globalDaemon)) $globalDaemon = TRUE;
 /* Initiate connections to all the hosts simultaneously */
 connect_all($hosts);
 // connected - lets do some work
-echo "Connected!\n";
+if ($globalDebug) echo "Connected!\n";
 sleep(1);
-echo "SCAN MODE \n\n";
+if ($globalDebug) echo "SCAN MODE \n\n";
 if (!isset($globalCronEnd)) $globalCronEnd = 60;
 $endtime = time()+$globalCronEnd;
 $i = 1;
@@ -244,9 +246,9 @@ while ($i > 0) {
     				unset($data);
     			} else {
     			    if (count($line) > 1 && ($line[0] == 'STA' || $line[0] == 'AIR' || $line[0] == 'SEL' || $line[0] == 'ID' || $line[0] == 'CLK')) { 
-    				echo "Not a message. Ignoring... \n";
+    				if ($globalDebug) echo "Not a message. Ignoring... \n";
     			    } else {
-    				echo "Wrong line format. Ignoring... \n";
+    				if ($globalDebug) echo "Wrong line format. Ignoring... \n";
     				if ($globalDebug) {
     				    echo $buffer;
     			    	    print_r($line);
@@ -258,7 +260,7 @@ while ($i > 0) {
 		    } else {
 			$tt++;
 			if ($tt > 5) {
-			    echo "ERROR : Reconnect...";
+			    if ($globalDebug)echo "ERROR : Reconnect...";
 			    @socket_close($r);
 			    connect_all($hosts);
 			    break;
@@ -268,12 +270,12 @@ while ($i > 0) {
 		}
 	    } else {
 		$error = socket_strerror(socket_last_error());
-		echo "ERROR : socket_select give this error ".$error . "\n";
+		if ($globalDebug) echo "ERROR : socket_select give this error ".$error . "\n";
 		if (($error != SOCKET_EINPROGRESS && $error != SOCKET_EALREADY) || time() - $time >= $timeout) {
-			echo "Restarting...\n";
+			if (isset($globalDebug)) echo "Restarting...\n";
 			// Restart the script if possible
 			if (is_array($sockets)) {
-			    echo "Shutdown all sockets...";
+			    if ($globalDebug) echo "Shutdown all sockets...";
 			    foreach ($sockets as $sock) {
 				@socket_shutdown($sock,2);
 				@socket_close($sock);
@@ -285,7 +287,8 @@ while ($i > 0) {
 			    pcntl_exec($_);
 			} else {
 */
-			    echo "Restart all connections...";
+			    if ($globalDebug) echo "Restart all connections...";
+			    sleep(2);
 			    connect_all($hosts);
 //			}
 		}
