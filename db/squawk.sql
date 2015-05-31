@@ -4,7 +4,7 @@ CREATE TABLE squawk (
   `code` int(6) DEFAULT NULL,
   country varchar(4) DEFAULT NULL,
   `usage` varchar(255) DEFAULT NULL
-) TYPE=InnoDB AUTO_INCREMENT=18207;
+) ENGINE=InnoDB;
 
 INSERT INTO squawk (id, code, country, `usage`) VALUES
 (2, 0, 'FR', 'NON ATTRIBUE'),
