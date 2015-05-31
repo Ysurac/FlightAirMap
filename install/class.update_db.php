@@ -25,13 +25,15 @@ class update_db {
 	public static function gunzip($in_file,$out_file_name = '') {
 		$buffer_size = 4096; // read 4kb at a time
 		if ($out_file_name == '') $out_file_name = str_replace('.gz', '', $in_file); 
-		$file = gzopen($in_file,'rb');
-		$out_file = fopen($out_file_name, 'wb'); 
-		while(!gzeof($file)) {
-			fwrite($out_file, gzread($file, $buffer_size));
-		}  
-		fclose($out_file);
-		gzclose($file);
+		if ($in_file != '' && file_exists($in_file)) {
+			$file = gzopen($in_file,'rb');
+			$out_file = fopen($out_file_name, 'wb'); 
+			while(!gzeof($file)) {
+				fwrite($out_file, gzread($file, $buffer_size));
+			}  
+			fclose($out_file);
+			gzclose($file);
+		}
 	}
 
 	public static function unzip($in_file) {
