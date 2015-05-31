@@ -121,7 +121,7 @@ class SBS {
 		}
 	        
 		if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91) {
-		    if (!isset(self::$all_flights[$id]['latitude']) || self::$all_flights[$id]['latitude'] == '' || abs(self::$all_flights[$id]['latitude']-$line['latitude']) < 2) {
+		    if (!isset(self::$all_flights[$id]['latitude']) || self::$all_flights[$id]['latitude'] == '' || abs(self::$all_flights[$id]['latitude']-$line['latitude']) < 2 || $line['format_source'] != 'sbs') {
 			if (!isset(self::$all_flights[$id]['archive_latitude'])) self::$all_flights[$id]['archive_latitude'] = $line['latitude'];
 			if (!isset(self::$all_flights[$id]['livedb_latitude']) || abs(self::$all_flights[$id]['livedb_latitude']-$line['latitude']) > 0.02) {
 			    self::$all_flights[$id]['livedb_latitude'] = $line['latitude'];
@@ -138,7 +138,7 @@ class SBS {
 		    }
 		}
 		if (isset($line['longitude']) && $line['longitude'] != '' && $line['longitude'] != 0 && $line['longitude'] < 181) {
-		    if (!isset(self::$all_flights[$id]['longitude']) || self::$all_flights[$id]['longitude'] == ''  || abs(self::$all_flights[$id]['longitude']-$line['longitude']) < 2) {
+		    if (!isset(self::$all_flights[$id]['longitude']) || self::$all_flights[$id]['longitude'] == ''  || abs(self::$all_flights[$id]['longitude']-$line['longitude']) < 2 || $line['format_source'] != 'sbs') {
 			if (!isset(self::$all_flights[$id]['archive_longitude'])) self::$all_flights[$id]['archive_longitude'] = $line['longitude'];
 			if (!isset(self::$all_flights[$id]['livedb_longitude']) || abs(self::$all_flights[$id]['livedb_longitude']-$line['longitude']) > 0.02) {
 			    self::$all_flights[$id]['livedb_longitude'] = $line['longitude'];

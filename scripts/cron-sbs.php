@@ -125,6 +125,7 @@ while ($i > 0) {
 	            $data['squawk'] = ''; // squawk
 	            $data['emergency'] = ''; // emergency
 		    $data['datetime'] = date('Y-m-d h:i:s');
+		    $data['format_source'] = 'deltadbtxt';
     		    $SBS::add($data);
 		    unset($data);
     		}
@@ -159,6 +160,7 @@ while ($i > 0) {
 	    		    $aircraft_data = explode('/',$line[9]);
 	    		    $data['aircraft_icao'] = $aircraft_data[1];
         		}
+	    		$data['format_source'] = 'whazzup';
     			$SBS::add($data);
     			unset($data);
     		    }
