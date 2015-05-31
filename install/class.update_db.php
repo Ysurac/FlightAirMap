@@ -37,12 +37,14 @@ class update_db {
 	}
 
 	public static function unzip($in_file) {
-		$path = pathinfo(realpath($in_file), PATHINFO_DIRNAME);
-		$zip = new ZipArchive;
-		$res = $zip->open($in_file);
-		if ($res === TRUE) {
-			$zip->extractTo($path);
-			$zip->close();
+		if ($in_file != '' && file_exists($in_file)) {
+			$path = pathinfo(realpath($in_file), PATHINFO_DIRNAME);
+			$zip = new ZipArchive;
+			$res = $zip->open($in_file);
+			if ($res === TRUE) {
+				$zip->extractTo($path);
+				$zip->close();
+			} else return false;
 		} else return false;
 	}
 	
