@@ -1,9 +1,9 @@
 <?php
-require_once('libs/simple_html_dom.php');
+//require_once('libs/simple_html_dom.php');
 require('../require/settings.php');
 require_once('../require/class.Connection.php');
 
-$tmp_dir = 'tmp/';
+$tmp_dir = dirname(__FILE__).'/tmp/';
 //$globalDebug = true;
 //$globalTransaction = true;
 class update_db {
@@ -692,15 +692,18 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		
 		if ($globalDebug) echo "Routes : Download...";
-//		update_db::download('http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz',$tmp_dir.'StandingData.sqb.gz');
-		if ($globalDebug) echo "Gunzip...";
-		update_db::gunzip($tmp_dir.'StandingData.sqb.gz');
-		if ($globalDebug) echo "Add to DB...";
-		$error = update_db::retrieve_route_sqlite_to_dest($tmp_dir.'StandingData.sqb');
+		update_db::download('http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz',$tmp_dir.'StandingData.sqb.gz');
+		if (file_exists($tmp_dir.'StandingData.sqb.gz')) {
+			if ($globalDebug) echo "Gunzip...";
+			update_db::gunzip($tmp_dir.'StandingData.sqb.gz');
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_route_sqlite_to_dest($tmp_dir.'StandingData.sqb');
+		} else $error = "File ".$tmp_dir.'StandingData.sqb.gz'." doesn't exist. Download failed.";
 		if ($error != '') {
 			echo $error;
 			exit;
 		} elseif ($globalDebug) echo "Done\n";
+		
 	}
 	public static function update_ModeS() {
 		global $tmp_dir, $globalDebug;
@@ -718,10 +721,12 @@ class update_db {
 */
 		if ($globalDebug) echo "Modes : Download...";
 		update_db::download('http://planebase.biz/sqb.php?f=basestationall.zip',$tmp_dir.'basestation_latest.zip','http://planebase.biz/bstnsqb');
-		if ($globalDebug) echo "Unzip...";
-		update_db::unzip($tmp_dir.'basestation_latest.zip');
-		if ($globalDebug) echo "Add to DB...";
-		$error = update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'BaseStation.sqb');
+		if (file_exists($tmp_dir.'basestation_latest.zip')) {
+			if ($globalDebug) echo "Unzip...";
+			update_db::unzip($tmp_dir.'basestation_latest.zip');
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'BaseStation.sqb');
+		} else $error = "File ".$tmp_dir.'basestation_latest.zip'." doesn't exist. Download failed.";
 		if ($error != '') {
 			echo $error;
 			exit;
@@ -732,10 +737,12 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Translation : Download...";
 		update_db::download('http://www.acarsd.org/download/translation.php',$tmp_dir.'translation.zip');
-		if ($globalDebug) echo "Unzip...";
-		update_db::unzip($tmp_dir.'translation.zip');
-		if ($globalDebug) echo "Add to DB...";
-		$error = update_db::translation();
+		if (file_exists($tmp_dir.'translation.zip')) {
+			if ($globalDebug) echo "Unzip...";
+			update_db::unzip($tmp_dir.'translation.zip');
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::translation();
+		} else $error = "File ".$tmp_dir.'translation.zip'." doesn't exist. Download failed.";
 		if ($error != '') {
 			echo $error;
 			exit;
