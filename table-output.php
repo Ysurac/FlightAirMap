@@ -197,6 +197,16 @@ if (strtolower($current_page) == "search")
 			} else {
 				print '<th class="time">Time</th>';
 			}
+		} elseif (strtolower($current_page) == "currently") {
+			if ($_GET['sort'] == "date_asc")
+			{
+				print '<th class="time">Date first seen</th>';
+			} else if ($_GET['sort'] == "date_desc")
+			{
+				print '<th class="time">Date first seen</th>';
+			} else {
+				print '<th class="time">Date first seen</th>';
+			}
 		} else {
 			if ($_GET['sort'] == "date_asc")
 			{
@@ -269,6 +279,16 @@ if (strtolower($current_page) == "search")
 				print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_asc" class="active">Time</a> <i class="fa fa-caret-down"></i></th>';
 			} else {
 				print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_asc">Time</a> <i class="fa fa-sort small"></i></th>';
+			}
+		} elseif (strtolower($current_page) == "currently") {
+			if ($_GET['sort'] == "date_asc")
+			{
+				print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_desc" class="active">Date first seen</a> <i class="fa fa-caret-up"></i></th>';
+			} else if ($_GET['sort'] == "date_desc")
+			{
+				print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_asc" class="active">Date first seen</a> <i class="fa fa-caret-down"></i></th>';
+			} else {
+				print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_asc">Date first seen</a> <i class="fa fa-sort small"></i></th>';
 			}
 		} else {
 			if ($_GET['sort'] == "date_asc")
