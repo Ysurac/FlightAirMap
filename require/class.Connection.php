@@ -21,7 +21,8 @@ class Connection{
 	{
 		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname;
 		try {
-			self::$db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname", $globalDBuser,  $globalDBpass);
+			self::$db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname;charset=utf8", $globalDBuser,  $globalDBpass);
+			self::$db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
 			self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			self::$db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
 			self::$db->setAttribute(PDO::ATTR_TIMEOUT,10);
