@@ -295,6 +295,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		<fieldset>
 		<legend>Optional configuration</legend>
 		<p>
+			<label for="schedules">Retrieve schedules from external websites (should be disabled if source is IVAO)</label>
+			<input type="checkbox" name="schedules" id="schedules" value="schedules"<?php if (isset($globalSchedulesFetch) && $globalSchedulesFetch || !isset($globalSchedulesFetch)) { ?> checked="checked"<?php } ?> />
+		</p>
+		<p>
 			<label for="bitly">Bit.ly access token api (used in search page)</label>
 			<input type="text" name="bitly" id="bitly" value="<?php if (isset($globalBitlyAccessToken)) print $globalBitlyAccessToken; ?>" />
 		</p>
@@ -456,6 +460,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalDaemon' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalDaemon' => 'FALSE'));
+	}
+	$schedules = filter_input(INPUT_POST,'schedules',FILTER_SANITIZE_STRING);
+	if ($schedules == 'schedules') {
+		$settings = array_merge($settings,array('globalSchedulesFetch' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalSchedulesFetch' => 'FALSE'));
 	}
 	$fork = filter_input(INPUT_POST,'fork',FILTER_SANITIZE_STRING);
 	if ($fork == 'fork') {

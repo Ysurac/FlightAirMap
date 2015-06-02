@@ -107,7 +107,6 @@ class Schedule {
 	}
 
 	public static function getSchedule($ident) {
-	
 	        //$query = "SELECT * FROM schedule WHERE ident = :ident LIMIT 1";
 	        $operator = Translation::checkTranslation($ident,false);
 	        if ($ident != $operator) {
@@ -741,8 +740,8 @@ class Schedule {
 
 	
 	public static function fetchSchedule($ident,$date = 'NOW') {
-		global $globalSchedulesSources;
-		
+		global $globalSchedulesSources, $globalSchedulesFetch;
+		if (!$globalSchedulesFetch) return array();
 		$airline_icao = '';
 		if (!is_numeric(substr($ident, 0, 3)))
 		{
