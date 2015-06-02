@@ -64,6 +64,8 @@ function connect_all($hosts) {
         	$formats[$id] = 'phpvmacars';
             } else if (preg_match('/whazzup/',$host)) {
         	$formats[$id] = 'whazzup';
+            } else if (preg_match('/recentpireps/',$host)) {
+        	$formats[$id] = 'pirepsjson';
             }
         } else {
 	    $hostport = explode(':',$host);
@@ -185,6 +187,32 @@ while ($i > 0) {
 	        $data['emergency'] = ''; // emergency
 		$data['datetime'] = date('Y-m-d h:i:s');
 		$SBS::add($data);
+	    }
+    	} elseif ($value == 'pirepsjson') {
+	    $buffer = Common::getData($hosts[$id]);
+	    $all_data = json_decode($buffer,true);
+	    if (isset($all_data['pireps'])) {
+	    foreach ($all_data['pireps'] as $line) {
+	        $data = array();
+	        $data['hex'] = str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT);
+	        $data['ident'] = $line['callsign']; // ident
+	        $data['altitude'] = $line['alt']; // altitude
+	        if (isset($line['gs'])) {
+	    	    $data['speed'] = $line['speed']; // speed
+	    	}
+	        $data['heading'] = $line['heading']; // heading
+	        $data['latitude'] = $line['lat']; // lat
+	        $data['longitude'] = $line['lon']; // long
+	        //$data['verticalrate'] = $line['vrt']; // verticale rate
+	        //$data['squawk'] = $line['squawk']; // squawk
+	        //$data['emergency'] = ''; // emergency
+	        $data['departure_airport_icao'] = $line['depicao'];
+	        $data['departure_airport_time'] = $line['deptime'];
+	        $data['arrival_airport_icao'] = $line['arricao'];
+    		//$data['arrival_airport_time'] = $line['arrtime'];
+		$data['datetime'] = date('Y-m-d h:i:s');
+		if ($line['icon'] != 'ct') $SBS::add($data);
+	    }
 	    }
     	} elseif ($value == 'phpvmacars') {
 	    $buffer = Common::getData($hosts[$id]);
