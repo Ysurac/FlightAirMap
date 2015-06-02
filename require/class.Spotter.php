@@ -3292,7 +3292,7 @@ class Spotter{
 */
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
-                    WHERE spotter_output.aircraft_name  <> '' 
+                    WHERE spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' 
                     GROUP BY spotter_output.aircraft_name,spotter_output.aircraft_icao 
 					ORDER BY aircraft_icao_count DESC
 					LIMIT 10 OFFSET 0";
@@ -4174,10 +4174,10 @@ class Spotter{
 	{
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output 
-                    WHERE spotter_output.aircraft_manufacturer <> '' 
+                    WHERE spotter_output.aircraft_manufacturer <> '' AND spotter_output.aircraft_manufacturer <> 'Not Available' 
                     GROUP BY spotter_output.aircraft_manufacturer
 					ORDER BY aircraft_manufacturer_count DESC
-					LIMIT 0,10";
+					LIMIT 10";
       
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
