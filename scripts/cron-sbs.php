@@ -198,7 +198,7 @@ while ($i > 0) {
 	        $data['ident'] = $line['callsign']; // ident
 	        $data['altitude'] = $line['alt']; // altitude
 	        if (isset($line['gs'])) {
-	    	    $data['speed'] = $line['speed']; // speed
+	    	    $data['speed'] = $line['gs']; // speed
 	    	}
 	        $data['heading'] = $line['heading']; // heading
 	        $data['latitude'] = $line['lat']; // lat
