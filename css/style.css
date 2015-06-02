@@ -301,7 +301,6 @@ footer a:hover{
 }
 .column{
 	margin-bottom:15px;
-	margin-left: 30px;
 }
 .info{
 	clear:both;
@@ -366,7 +365,7 @@ a.tablet{
 }
 form{
   margin-bottom:20px;
-  padding:10px;
+  padding:40px;
   padding-bottom:30px;
 }
 form fieldset{
