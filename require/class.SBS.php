@@ -187,11 +187,11 @@ class SBS {
 
 		$waypoints = '';
 		if (isset($line['altitude']) && $line['altitude'] != '') {
-		    if (!isset(self::$all_flights[$id]['altitude']) || self::$all_flights[$id]['altitude'] == '' || (self::$all_flights[$id]['altitude'] > 0 && $line['altitude'] != 0)) {
+		    //if (!isset(self::$all_flights[$id]['altitude']) || self::$all_flights[$id]['altitude'] == '' || (self::$all_flights[$id]['altitude'] > 0 && $line['altitude'] != 0)) {
 			if (abs(round($line['altitude']/100)-self::$all_flights[$id]['altitude']) > 2) $putinarchive = true;
 			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('altitude' => round($line['altitude']/100)));
 			//$dataFound = true;
-		    } elseif ($globalDebug) echo "!!! Strange altitude data... not added.\n";
+		    //} elseif ($globalDebug) echo "!!! Strange altitude data... not added.\n";
   		}
 
 		if (isset($line['heading']) && $line['heading'] != '') {
