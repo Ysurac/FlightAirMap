@@ -162,7 +162,9 @@ while ($i > 0) {
 	    		//$data['arrival_airport_time'] = ;
 	    		if ($line[9] != '') {
 	    		    $aircraft_data = explode('/',$line[9]);
-	    		    $data['aircraft_icao'] = $aircraft_data[1];
+	    		    if (isset($aircraft_data[1])) {
+	    			$data['aircraft_icao'] = $aircraft_data[1];
+	    		    }
         		}
 	    		$data['format_source'] = 'whazzup';
     			$SBS::add($data);
@@ -210,6 +212,13 @@ while ($i > 0) {
 	        $data['departure_airport_time'] = $line['deptime'];
 	        $data['arrival_airport_icao'] = $line['arricao'];
     		//$data['arrival_airport_time'] = $line['arrtime'];
+	    	if (isset($line['aircraft'])) {
+	    	    $aircraft_data = explode('/',$line['aircraft']);
+	    	    if (isset($aircraft_data[1])) {
+	    		$data['aircraft_icao'] = $aircraft_data[1];
+	    	    }
+        	}
+
 		$data['datetime'] = date('Y-m-d h:i:s');
 		if ($line['icon'] != 'ct') $SBS::add($data);
 	    }
