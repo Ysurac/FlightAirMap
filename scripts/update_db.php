@@ -8,10 +8,9 @@
     require_once(dirname(__FILE__).'/../require/settings.php');
     require(dirname(__FILE__).'/../install/class.update_db.php');
     if (update_db::check_last_update()) {
-//        update_db::update_all();
+        update_db::update_all();
 #    require_once('../require/class.Spotter.php');
 #    Spotter::updateFieldsFromOtherTables();
-    echo 'add';
 	update_db::insert_last_update();
     }
 ?>
