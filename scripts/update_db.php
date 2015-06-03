@@ -12,5 +12,5 @@
 #    require_once('../require/class.Spotter.php');
 #    Spotter::updateFieldsFromOtherTables();
 	update_db::insert_last_update();
-    }
+    } else echo "You can run this script only every 15 days ! Files are not updated more often."
 ?>
