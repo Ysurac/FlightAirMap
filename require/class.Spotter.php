@@ -2709,7 +2709,7 @@ class Spotter{
 */
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
-					WHERE spotter_output.airline_name <> '' 
+					WHERE spotter_output.airline_name <> '' AND spotter_output.airline_icao <> 'NA' 
           GROUP BY spotter_output.airline_name,spotter_output.airline_icao, spotter_output.airline_country
 					ORDER BY airline_count DESC
 					LIMIT 10";
