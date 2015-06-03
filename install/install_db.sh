@@ -1,4 +1,6 @@
 #!/bin/sh
+# You should always use PHP scripts.
+# This script is here if PHP scripts can't be used.
 
 # Config #
 DB_USER=""
@@ -59,3 +61,10 @@ rm airspace.sql
 cp ${CURRENT_PATH}/../db/airspace.sql.gz /tmp/airspace.sql.gz
 gunzip /tmp/airspace.sql.gz
 mysql -u ${DB_USER} -p${DB_PASS} -h ${DB_HOST} ${DB_NAME} < /tmp/airspace.sql
+
+## Countries ##
+cd /tmp
+rm countries.sql
+cp ${CURRENT_PATH}/../db/countries.sql.gz /tmp/countries.sql.gz
+gunzip /tmp/countries.sql.gz
+mysql -u ${DB_USER} -p${DB_PASS} -h ${DB_HOST} ${DB_NAME} < /tmp/countries.sql
