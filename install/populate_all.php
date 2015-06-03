@@ -14,4 +14,7 @@
     echo "Install airspace...";
     update_db::update_airspace();
     echo "Done !\n";
+    echo "Install countries...";
+    update_db::update_countries();
+    echo "Done !\n";
 ?>
