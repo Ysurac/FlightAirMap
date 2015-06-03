@@ -10,12 +10,15 @@ CURRENT_PATH=`pwd`
 
 # You should go to http://virtualradarserver.co.uk and http://planebase.biz/ to read the licences
 
+## Create All tables ##
+ls -1 ${CURRENT_PATH}/../db/*.sql | awk '{ print "source",$0 }' | mysql -u ${DB_USER} -p${DB_PASS} -h ${DB_HOST} ${DB_NAME}
+
 ## Routes ##
 cd /tmp
 rm -f StandingData.sqb
 wget http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz
 gunzip StandingData.sqb.gz
-sqlite3 -header -csv StandingData.sqb "select Route.RouteID, Route.callsign, operator.Icao AS operator_icao, FromAir.Icao AS FromAirportIcao, ToAir.Icao AS ToAirportIcao, rstp.allstop AS AllStop, 'tmp/BaseStation.sqb' as Source from Route inner join operator ON Route.operatorId = operator.operatorId LEFT JOIN Airport AS FromAir ON route.FromAirportId = FromAir.AirportId LEFT JOIN Airport AS ToAir ON ToAir.AirportID = route.ToAirportID LEFT JOIN (select RouteId,GROUP_CONCAT(icao,' ') as allstop from routestop left join Airport as air ON routestop.AirportId = air.AirportID group by RouteID) AS rstp ON Route.RouteID = rstp.RouteID" > routes.csv
+sqlite3 -header -csv StandingData.sqb "select Route.RouteID, Route.callsign, operator.Icao AS operator_icao, FromAir.Icao AS FromAirportIcao, '' as FromAirport_Time, ToAir.Icao AS ToAirportIcao, '' as ToAirport_Time, rstp.allstop AS AllStop, 'tmp/BaseStation.sqb' as Source from Route inner join operator ON Route.operatorId = operator.operatorId LEFT JOIN Airport AS FromAir ON route.FromAirportId = FromAir.AirportId LEFT JOIN Airport AS ToAir ON ToAir.AirportID = route.ToAirportID LEFT JOIN (select RouteId,GROUP_CONCAT(icao,' ') as allstop from routestop left join Airport as air ON routestop.AirportId = air.AirportID group by RouteID) AS rstp ON Route.RouteID = rstp.RouteID" > routes.csv
 mysql -u ${DB_USER} -p${DB_PASS} -h ${DB_HOST} -e "use ${DB_NAME};" -e "DELETE FROM routes WHERE Source = '' OR Source = 'tmp/StandingData.sqb' OR Source IS NULL;" -e "LOAD DATA INFILE '/tmp/routes.csv' INTO TABLE routes FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 LINES;"
 cd -
 
