@@ -97,7 +97,7 @@ $globalAirportIgnore = array();
 //Archive all data
 $globalArchive = FALSE;
 
-//Retrieve Image from externals sources (set to FALSE for IVAO)
+//Retrieve Image from externals sources
 $globalAircraftImageFetch = TRUE;
 //Sources for Aircraft image
 $globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
