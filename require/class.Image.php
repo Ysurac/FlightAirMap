@@ -320,7 +320,6 @@ class Image {
     *
     */
     public static function fromWikimedia($aircraft_registration,$aircraft_name='') {
-	if ($aircraft_registration == '')
 	if ($aircraft_name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$aircraft_registration.'"%20'.urlencode($aircraft_name);
 	else $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$aircraft_registration.'"%20aircraft';
 
