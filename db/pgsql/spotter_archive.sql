@@ -31,5 +31,7 @@ CREATE TABLE spotter_archive (
   ground_speed integer NOT NULL,
   squawk integer,
   ModeS varchar(255),
+  pilot_id varchar(255),
+  pilot_name varchar(255),
   PRIMARY KEY (spotter_archive_id)
 );

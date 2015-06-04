@@ -385,6 +385,9 @@ form select{
 	padding:5px;
 	border:1px solid #ddd;
 }
+form .sources input[type="text"] {
+	width:auto;
+}
 form .radio label{
 	display:inline-block;
 	width:inherit;

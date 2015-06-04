@@ -183,7 +183,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		</p>
 		<p>
 			<label for="livezoom">Default Zoom on live map</label>
-			<input type="text" name="livezoom" id="livezoom" value="<?php if (isset($globalLiveZoom)) print $globalLiveZoom; else print '9'; ?>" />
+			<input type="number" name="livezoom" id="livezoom" value="<?php if (isset($globalLiveZoom)) print $globalLiveZoom; else print '9'; ?>" />
 		</p>
 		<p>
 			<label for="squawk_country">Country for squawk usage</label>
@@ -207,7 +207,53 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="text" name="zoidistance" id="distance" value="<?php if (isset($globalDistanceIgnore['distance'])) echo $globalDistanceIgnore['distance']; ?>" />
 		</p>
 		</fieldset>
+		<fieldset>
+		<legend>Sources location</legend>
+		<table class="sources">
+		    <tr>
+			<th>Name</th>
+			<th>Latitude</th>
+			<th>Longitude</th>
+			<th>Altitude</th>
+			<th>City</th>
+			<th>Country</th>
+		    </tr>
+		<?php
+		    require_once('../require/class.Connection.php');
+		    if (Connection::tableExists('source_location')) {
+			require_once('../require/class.Source.php');
+			$alllocations = Source::getAllLocationInfo();
+			foreach ($alllocations as $location) {
+		?>
+		    <tr>
+			<input type="hidden" name="source_id[]" value="<?php print $location['id']; ?>" />
+			<td><input type="text" name="source_name[]" value="<?php print $location['name']; ?>" /></td>
+			<td><input type="text" name="source_latitude[]" value="<?php print $location['latitude']; ?>" /></td>
+			<td><input type="text" name="source_longitude[]" value="<?php print $location['longitude']; ?>" /></td>
+			<td><input type="text" name="source_altitude[]" value="<?php print $location['altitude']; ?>" /></td>
+			<td><input type="text" name="source_city[]" value="<?php print $location['city']; ?>" /></td>
+			<td><input type="text" name="source_country[]" value="<?php print $location['country']; ?>" /></td>
+		    </tr>
+		
+		<?php
+			}
+		    }
+		?>
 
+		    <tr>
+			<td><input type="text" name="source_name[]" value="" /></td>
+			<td><input type="text" name="source_latitude[]" value="" /></td>
+			<td><input type="text" name="source_longitude[]" value="" /></td>
+			<td><input type="text" name="source_altitude[]" value="" /></td>
+			<td><input type="text" name="source_city[]" value="" /></td>
+			<td><input type="text" name="source_country[]" value="" /></td>
+		    </tr>
+		</table>
+		<center>
+		    <input type="button" value="Add a row" class="add-row-source" />
+		    <input type="button" value="Remove last row" class="del-row-source" />
+		</center>
+		</fieldset>
 		<fieldset>
 		<legend>Data source</legend>
 		<p>
@@ -216,6 +262,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="radio" name="datasource" id="flightaware" value="flightaware" onClick="datasource_js()" <?php if (isset($globalFlightAware) && $globalFlightAware) { ?>checked="checked" <?php } ?>/>
 			<label for="flightaware">FlightAware (not tested, no more supported no data feed available for test)</label>
 -->
+			<input type="radio" name="datasource" id="ivao" value="ivao" onClick="datasource_js()" <?php if (isset($globalIVAO) && $globalIVAO) { ?>checked="checked" <?php } ?>/>
+			<label for="ivao">IVAO</label>
 			<input type="radio" name="datasource" id="sbs" value="sbs" onClick="datasource_js()" <?php if (isset($globalSBS1) && $globalSBS1) { ?>checked="checked" <?php } ?> />
 			<label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format)</label>
 			<input type="checkbox" name="acars" id="acars" value="acars" onClick="datasource_js()" <?php if (isset($globalACARS) && $globalACARS) { ?>checked="checked" <?php } ?> />
@@ -234,68 +282,116 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		</div>
 -->
 		<div id="sbs_data">
+		
 		<?php
-		    $displaysbs = true;
+		    $globalSURL = array();
+		    $globalIP = array();
 		    if (isset($globalSBS1Hosts)) {
 			if (! is_array($globalSBS1Hosts)) {
-			    $hostport = explode(':',$globalSBS1Hosts);
-			    if (count($hostport) == 2) {
-				$globalSBS1Host = $hostport[0];
-				$globalSBS1Port = $hostport[1];
-			    }
-			} elseif (count($globalSBS1Hosts) == 1) {
-			    if (filter_var($globalSBS1Hosts[0],FILTER_VALIDATE_URL)) {
-			        $globalSBS1url = $globalSBS1Hosts[0];
+			    if (filter_var($globalSBS1Hosts,FILTER_VALIDATE_URL)) {
+                        	$globalSURL[] = $globalSBS1Hosts;
 			    } else {
-				$hostport = explode(':',$globalSBS1Hosts[0]);
+				$hostport = explode(':',$globalSBS1Hosts);
 				if (count($hostport) == 2) {
-				    $globalSBS1Host = $hostport[0];
-				    $globalSBS1Port = $hostport[1];
+				    $globalIP[] = array('host' => $hostport[0],'port' => $hostport[1]);
 				}
 			    }
-			} else $displaysbs = false;
+			} else {
+			    foreach ($globalSBS1Hosts as $sbshost) {
+				if (filter_var($sbshost,FILTER_VALIDATE_URL)) {
+			    	    $globalSURL[] = $sbshost;
+				} else {
+				    $hostport = explode(':',$globalSBS1Hosts[0]);
+				    if (count($hostport) == 2) {
+					$globalIP[] = array('host' =>  $hostport[0],'port' => $hostport[1]);
+				    }
+				}
+			    }
+			}
 		    }
-		    
-		    if ($displaysbs) {
 		?>
-		<p>
-			<label for="sbshost">SBS-1 host</label>
-			<input type="text" name="sbshost" id="sbshost" value="<?php if (isset($globalSBS1Host)) print $globalSBS1Host; ?>" />
-		</p>
-		<p>
-			<label for="sbsport">SBS-1 port</label>
-			<input type="text" name="sbsport" id="sbsport" value="<?php if (isset($globalSBS1Port)) print $globalSBS1Port; ?>" />
-		</p>
+		<fieldset>
+		<legend>Source ADS-B</legend>
+		<p>In SBS-1 format (dump1090 or SBS-1 compatible format)</p>
+		<table class="sbsip">
+		    <tr>
+			<th>Host</th>
+			<th>Port</th>
+		    </tr>
+		    <?php
+			foreach ($globalIP as $hp) {
+		    ?>
+		    <tr>
+			<td><input type="text" name="sbshost[]" value="<?php print $hp['host']; ?>" /></td>
+			<td><input type="number" name="sbsport[]" value="<?php print $hp['port']; ?>" /></td>
+		    </tr>
+		    <?php
+			}
+		    ?>
+		    <tr>
+			<td><input type="text" name="sbshost[]" value="" /></td>
+			<td><input type="number" name="sbsport[]" value="" /></td>
+		    </tr>
+		</table>
+		<center>
+		    <input type="button" value="Add a row" class="add-row-ip" />
+		    <input type="button" value="Remove last row" class="del-row-ip" />
+		</center>
 		<p>
 			<label for="sbstimeout">SBS-1 timeout</label>
-			<input type="text" name="sbstimeout" id="sbstimeout" value="<?php if (isset($globalSBS1TimeOut)) print $globalSBS1TimeOut; ?>" />
+			<input type="number" name="sbstimeout" id="sbstimeout" value="<?php if (isset($globalSBS1TimeOut)) print $globalSBS1TimeOut; ?>" />
 		</p>
-		<b>OR</b>
-		<p>
-			<label for="sbsurl">SBS-1 URL</label>
-			<input type="text" name="sbsurl" id="sbsurl" value="<?php if (isset($globalSBS1url)) print $globalSBS1url; ?>" />
-			 (can be deltadb.txt or aircraftlist.json url to Radarcape, or <i>/action.php/acars/data</i> of phpvms, or wazzup file format)
-		</p>
-		<?php
-		    }
-		?>
+		</fieldset>
 		</div>
+		<div id="sbs_url">
+		<br />
+		<fieldset>
+		<legend>Source URL</legend>
+		<p>URL can be deltadb.txt or aircraftlist.json url to Radarcape, or <i>/action.php/acars/data</i> of phpvms, or wazzup file format</p>
+		<table class="sbsurl">
+		    <tr>
+			<th>URL</th>
+		    </tr>
+		    <?php
+			foreach ($globalSURL as $url) {
+		    ?>
+		    <tr>
+			<td><input type="text" name="sbsurl[]" value="<?php print $url; ?>" placeholder="URL can be deltadb.txt or aircraftlist.json url to Radarcape, or <i>/action.php/acars/data</i> of phpvms, or wazzup file format" /></td>
+		    </tr>
+		    <?php
+			}
+		    ?>
+		    <tr>
+			<td><input type="text" name="sbsurl[]" value="" /></td>
+		    </tr>
+		</table>
+		<center>
+		    <input type="button" value="Add a row" class="add-row-url" />
+		    <input type="button" value="Remove last row" class="del-row-url" />
+		</center>
+		<br />
+		</div>
+		</fieldset>
 		<div id="acars_data">
+		<fieldset>
+		<legend>Source ACARS</legend>
+		<p>Listen UDP server for acarsdec</p>
 		<p>
 			<label for="acarshost">ACARS UDP host</label>
 			<input type="text" name="acarshost" id="acarshost" value="<?php if (isset($globalACARSHost)) print $globalACARSHost; ?>" />
 		</p>
 		<p>
 			<label for="acarsport">ACARS UDP port</label>
-			<input type="text" name="acarsport" id="acarsport" value="<?php if (isset($globalACARSPort)) print $globalACARSPort; ?>" />
+			<input type="number" name="acarsport" id="acarsport" value="<?php if (isset($globalACARSPort)) print $globalACARSPort; ?>" />
 		</p>
+		</fieldset>
 		</div>
 		</fieldset>
 		
 		<fieldset>
 		<legend>Optional configuration</legend>
 		<p>
-			<label for="schedules">Retrieve schedules from external websites (should be disabled if source is IVAO)</label>
+			<label for="schedules">Retrieve schedules from external websites (disabled if source is IVAO)</label>
 			<input type="checkbox" name="schedules" id="schedules" value="schedules"<?php if (isset($globalSchedulesFetch) && $globalSchedulesFetch || !isset($globalSchedulesFetch)) { ?> checked="checked"<?php } ?> />
 		</p>
 		<p>
@@ -316,19 +412,24 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		</p>
 		<p>
 			<label for="daemon">Use cron-sbs as daemon</label>
-			<input type="checkbox" name="daemon" id="daemon" value="daemon"<?php if ((isset($globalDaemon) && $globalDaemon) || !isset($globalDaemon)) { ?> checked="checked"<?php } ?> />
+			<input type="checkbox" name="daemon" id="daemon" value="daemon"<?php if ((isset($globalDaemon) && $globalDaemon) || !isset($globalDaemon)) { ?> checked="checked"<?php } ?> onClick="daemon_js()" />
+			<div id="cronends"> 
+			<label for="cronend">Run script for xx seconds</label>
+			<input type="number" name="cronend" id="cronend" value="<?php if (isset($globalCronEnd)) print $globalCronEnd; else print '0'; ?>" />
+			Set to 0 to disable. Should be disabled if source is URL.
+			</div>
 		</p>
 		<p>
 			<label for="fork">Allow processes fork</label>
 			<input type="checkbox" name="fork" id="fork" value="fork"<?php if ((isset($globalFork) && $globalFork) || !isset($globalFork)) { ?> checked="checked"<?php } ?> />
 		</p>
 		<p>
-			<label for="refresh">Show flights from xxx seconds</label>
-			<input type="text" name="refresh" id="refresh" value="<?php if (isset($globalLiveInterval)) echo $globalLiveInterval; else echo '200'; ?>" />
+			<label for="refresh">Show flights detected since xxx seconds</label>
+			<input type="number" name="refresh" id="refresh" value="<?php if (isset($globalLiveInterval)) echo $globalLiveInterval; else echo '200'; ?>" />
 		</p>
 		<p>
 			<label for="maprefresh">Live map refresh (in seconds)</label>
-			<input type="text" name="maprefresh" id="maprefresh" value="<?php if (isset($globalMapRefresh)) echo $globalMapRefresh; else echo '30'; ?>" />
+			<input type="number" name="maprefresh" id="maprefresh" value="<?php if (isset($globalMapRefresh)) echo $globalMapRefresh; else echo '30'; ?>" />
 		</p>
 		</fieldset>
 		
@@ -399,6 +500,10 @@ if (isset($_POST['dbtype'])) {
 	} else {
 		$settings = array_merge($settings,array('globalFlightAware' => 'FALSE','globalSBS1' => 'TRUE'));
 	}
+	if ($datasource == 'ivao') {
+		$settings = array_merge($settings,array('globalIVAO' => 'TRUE','globalSchedulesFetch' => 'FALSE','globalTranslationFetch' => 'FALSE'));
+	} else $settings = array_merge($settings,array('globalIVAO' => 'FALSE','globalSchedulesFetch' => 'TRUE','globalTranslationFetch' => 'TRUE'));
+
 
 	$acars = filter_input(INPUT_POST,'acars',FILTER_SANITIZE_STRING);
 	if ($acars == 'acars') {
@@ -411,17 +516,38 @@ if (isset($_POST['dbtype'])) {
 	$flightawarepassword = filter_input(INPUT_POST,'flightawarepassword',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalFlightAwareUsername' => $flightawareusername,'globalFlightAwarePassword' => $flightawarepassword));
 	
-	$sbshost = filter_input(INPUT_POST,'sbshost',FILTER_SANITIZE_STRING);
-	$sbsport = filter_input(INPUT_POST,'sbsport',FILTER_SANITIZE_NUMBER_INT);
-	$sbstimeout = filter_input(INPUT_POST,'sbstimeout',FILTER_SANITIZE_NUMBER_INT);
-	$sbsurl = filter_input(INPUT_POST,'sbsurl',FILTER_SANITIZE_URL);
-	if (isset($globalSBS1Hosts) && is_array($globalSBS1Hosts) && count($globalSBS1Hosts) > 1) {
-		$settings = array_merge($settings,array('globalSBS1Hosts' => $globalSBS1Hosts,'globalSBS1TimeOut' => $sbstimeout));
-	} elseif ($sbshost != '') {
-		$settings = array_merge($settings,array('globalSBS1Hosts' => array($sbshost.':'.$sbsport),'globalSBS1TimeOut' => $sbstimeout));
-	} elseif ($sbsurl != '') {
-		$settings = array_merge($settings,array('globalSBS1Hosts' => array($sbsurl)));
+	$source_name = $_POST['source_name'];
+	$source_latitude = $_POST['source_latitude'];
+	$source_longitude = $_POST['source_longitude'];
+	$source_altitude = $_POST['source_altitude'];
+	$source_city = $_POST['source_city'];
+	$source_country = $_POST['source_country'];
+	if (isset($source_id)) $source_id = $_POST['source_id'];
+	else $source_id = array();
+	
+	$sources = array();
+	foreach ($source_name as $keys => $name) {
+	    if (isset($source_id[$keys])) $sources[] = array('name' => $name,'latitude' => $source_latitude[$keys],'longitude' => $source_longitude[$keys],'altitude' => $source_altitude[$keys],'city' => $source_city[$keys],'country' => $source_country[$keys],'id' => $source_id[$keys]);
+	    else $sources[] = array('name' => $name,'latitude' => $source_latitude[$keys],'longitude' => $source_longitude[$keys],'altitude' => $source_altitude[$keys],'city' => $source_city[$keys],'country' => $source_country[$keys]);
 	}
+	if (count($sources) > 0) $_SESSION['sources'] = $sources;
+
+	//$sbshost = filter_input(INPUT_POST,'sbshost',FILTER_SANITIZE_STRING);
+	//$sbsport = filter_input(INPUT_POST,'sbsport',FILTER_SANITIZE_NUMBER_INT);
+	//$sbsurl = filter_input(INPUT_POST,'sbsurl',FILTER_SANITIZE_URL);
+	$sbshost = $_POST['sbshost'];
+	$sbsport = $_POST['sbsport'];
+	$sbsurl = $_POST['sbsurl'];
+	
+	$globalSBS1Hosts = array();
+	foreach ($sbshost as $key => $host) {
+	    if ($host != '') $globalSBS1Hosts[] = $host.':'.$sbsport[$key];
+	}
+	if (count($sbsurl) > 0 && $sbsurl[0] != '') $globalSBS1Hosts = array_merge($globalSBS1Hosts,$sbsurl);
+	$settings = array_merge($settings,array('globalSBS1Hosts' => $globalSBS1Hosts));
+
+	$sbstimeout = filter_input(INPUT_POST,'sbstimeout',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalSBS1TimeOut' => $sbstimeout));
 
 	$acarshost = filter_input(INPUT_POST,'acarshost',FILTER_SANITIZE_STRING);
 	$acarsport = filter_input(INPUT_POST,'acarsport',FILTER_SANITIZE_NUMBER_INT);
@@ -535,7 +661,7 @@ if (isset($_POST['dbtype'])) {
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Create and import tables'));
 		if ($globalSBS1) {
 			$_SESSION['install'] = 'populate';
-		} else $_SESSION['install'] = 'finish';
+		} else $_SESSION['install'] = 'sources';
 	} else {
 		print '<div class="info column"><ul>';
 		foreach ($_SESSION['done'] as $done) {
@@ -551,7 +677,7 @@ if (isset($_POST['dbtype'])) {
                         exit;
 		}
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Update schema'));
-		$_SESSION['install'] = 'finish';
+		$_SESSION['install'] = 'sources';
 		
 	}
 	sleep(2);
@@ -608,7 +734,7 @@ if (isset($_POST['dbtype'])) {
 	include_once('class.update_db.php');
 	update_db::update_countries();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate countries database'));
-	$_SESSION['install'] = 'finish';
+	$_SESSION['install'] = 'sources';
 //	require('../footer.php');
 //	ob_end_clean();
 //	header("Location: index.php?".rand());
@@ -684,12 +810,35 @@ if (isset($_POST['dbtype'])) {
 	if ($_SESSION['waypoints'] == 1) {
 	    $_SESSION['install'] = 'waypoints';
 	    unset($_SESSION['waypoints']);
-	} else $_SESSION['install'] = 'finish';
+	} else $_SESSION['install'] = 'sources';
 //	require('../footer.php');
 //	ob_end_clean();
 //	header("Location: index.php?".rand());
 	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
 //	require('../footer.php');
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'sources') {
+	unset($_SESSION['install']);
+	print '<div class="info column"><ul>';
+	foreach ($_SESSION['done'] as $done) {
+	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
+	}
+	if (isset($_SESSION['sources']) && count($_SESSION['sources']) > 0) {
+	    $sources = $_SESSION['sources'];
+	    print '<li>Insert data in source table....<img src="../images/loading.gif" /></li></ul></div>';
+	    flush();
+	    @ob_flush();
+
+	    include_once('../require/class.Source.php');
+	    $globalDebug = FALSE;
+	    foreach ($sources as $source) {
+		if (isset($source['id'])) Source::deleteLocation($source['id']);
+		if (isset($source['latitude']) && $source['latitude'] != '') Source::addLocation($source['name'],$source['latitude'],$source['longitude'],$source['altitude'],$source['city'],$source['country'],'antenna.png');
+	    }
+	    $_SESSION['done'] = array_merge($_SESSION['done'],array('Insert data in source table'));
+	    unset($_SESSION['sources']);
+	}
+	$_SESSION['install'] = 'finish';
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'finish') {
 	unset($_SESSION['install']);
 	print '<div class="info column"><ul>';

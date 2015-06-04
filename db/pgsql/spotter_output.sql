@@ -31,5 +31,7 @@ CREATE TABLE spotter_output (
   highlight text NOT NULL,
   squawk integer,
   ModeS varchar(255) NOT NULL,
+  pilot_id varchar(255),
+  pilot_name varchar(255),
   PRIMARY KEY (spotter_id)
 );

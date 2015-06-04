@@ -3,7 +3,7 @@ require_once("settings.php");
 
 class Connection{
 	public static $db;
-	public static $latest_schema = 7;
+	public static $latest_schema = 8;
 	
 	public function __construct() {
 	    $this->createDBConnection();
@@ -19,7 +19,7 @@ class Connection{
 
 	public static function createDBConnection()
 	{
-		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname;
+		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug;
 		try {
 			self::$db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname;charset=utf8", $globalDBuser,  $globalDBpass);
 			self::$db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
@@ -28,8 +28,8 @@ class Connection{
 			self::$db->setAttribute(PDO::ATTR_TIMEOUT,10);
 			self::$db->setAttribute(PDO::ATTR_PERSISTENT,true);
 		} catch(PDOException $e) {
-			echo $e->getMessage();
-			exit;
+			if (isset($globalDebug) && $globalDebug) echo $e->getMessage();
+			//exit;
 			return false;
 		}
 		return true;

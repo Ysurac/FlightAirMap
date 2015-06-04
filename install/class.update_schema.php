@@ -269,6 +269,63 @@ class update_schema {
     		}
 		return $error;
     	}
+
+	private static function update_from_7() {
+		global $globalDBname, $globalDBdriver;
+    		$Connection = new Connection();
+    		$query="ALTER TABLE spotter_live ADD pilot_name VARCHAR(255) NULL, ADD pilot_id VARCHAR(255) NULL;
+    			ALTER TABLE spotter_output ADD pilot_name VARCHAR(255) NULL, ADD pilot_id VARCHAR(255) NULL;";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add pilot column to spotter_live and spotter_output) : ".$e->getMessage()."\n";
+    		}
+    		if ($globalDBdriver == 'mysql') {
+    		    $query = "SELECT ENGINE FROM information_schema.TABLES where TABLE_SCHEMA = '".$globalDBname."' AND TABLE_NAME = 'spotter_archive'";
+		    try {
+            		$sth = Connection::$db->prepare($query);
+			$sth->execute();
+    		    } catch(PDOException $e) {
+			return "error (problem when select engine for spotter_engine) : ".$e->getMessage()."\n";
+    		    }
+    		    $row = $sth->fetch(PDO::FETCH_ASSOC);
+    		    if ($row['engine'] == 'ARCHIVE') {
+			$query = "CREATE TABLE copy LIKE spotter_archive; 
+				ALTER TABLE copy ENGINE=ARCHIVE;
+				ALTER TABLE copy ADD pilot_name VARCHAR(255) NULL, ADD pilot_id VARCHAR(255) NULL;
+				INSERT INTO copy SELECT *, '' as pilot_name, '' as pilot_id FROM spotter_archive ORDER BY `spotter_archive_id`;
+				DROP TABLE spotter_archive;
+				RENAME TABLE copy TO spotter_archive;";
+            	    } else {
+    			$query="ALTER TABLE spotter_archive ADD pilot VARCHAR(255) NULL";
+            	    }
+                } else {
+    		    $query="ALTER TABLE spotter_archive ADD pilot VARCHAR(255) NULL";
+                }
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add pilot column to spotter_archive) : ".$e->getMessage()."\n";
+    		}
+
+    		$error = '';
+    		// Update table aircraft
+		$error .= create_db::import_file('../db/source_location.sql');
+		if ($error != '') return $error;
+		// Update schema_version to 6
+		$query = "UPDATE `config` SET `value` = '8' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
+
     	
     	public static function check_version($update = false) {
     	    global $globalDBname;
@@ -307,6 +364,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '6') {
     			    $error = self::update_from_6();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '7') {
+    			    $error = self::update_from_7();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

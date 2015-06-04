@@ -16,7 +16,8 @@ class Spotter{
 	*/
 	public static function getDataFromDB($query, $params = array(), $limitQuery = '')
 	{
-		global $globalSquawkCountry;
+		global $globalSquawkCountry, $globalIVAO;
+		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		date_default_timezone_set('UTC');
 		
 		if (!is_string($query))
@@ -107,9 +108,10 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
 			$temp_array['image_source'] = "";
 			$temp_array['image_copyright'] = "";
-			if($temp_array['registration'] != "")
+			if($temp_array['registration'] != "" || ($globalIVAO && $temp_array['aircraft_type'] != ''))
 			{
-				$image_array = Image::getSpotterImage($temp_array['registration']);
+				if ($globalIVAO) $image_array = Image::getSpotterImage($temp_array['aircraft_type']);
+				else $image_array = Image::getSpotterImage($temp_array['registration']);
 				if (count($image_array) > 0) {
 					$temp_array['image'] = $image_array[0]['image'];
 					$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
@@ -207,21 +209,22 @@ class Spotter{
 					//print_r($acars_array);
 				}
 			}
-			
-			$schedule_array = Schedule::getSchedule($temp_array['ident']);
-			//print_r($schedule_array);
-			if (count($schedule_array) > 0) {
-				if ($schedule_array['departure_airport_icao'] != '') {
-					$row['departure_airport_icao'] = $schedule_array['departure_airport_icao'];
-					 $temp_array['departure_airport'] = $row['departure_airport_icao'];
-				}
-				if ($schedule_array['arrival_airport_icao'] != '') {
-					$row['arrival_airport_icao'] = $schedule_array['arrival_airport_icao'];
-					$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
-				}
+			if (!isset($globalIVAO) || ! $globalIVAO) {
+				$schedule_array = Schedule::getSchedule($temp_array['ident']);
+				//print_r($schedule_array);
+				if (count($schedule_array) > 0) {
+					if ($schedule_array['departure_airport_icao'] != '') {
+						$row['departure_airport_icao'] = $schedule_array['departure_airport_icao'];
+						 $temp_array['departure_airport'] = $row['departure_airport_icao'];
+					}
+					if ($schedule_array['arrival_airport_icao'] != '') {
+						$row['arrival_airport_icao'] = $schedule_array['arrival_airport_icao'];
+						$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
+					}
 
-				$temp_array['departure_airport_time'] = $schedule_array['departure_airport_time'];
-				$temp_array['arrival_airport_time'] = $schedule_array['arrival_airport_time'];
+					$temp_array['departure_airport_time'] = $schedule_array['departure_airport_time'];
+					$temp_array['arrival_airport_time'] = $schedule_array['arrival_airport_time'];
+				}
 			}
 			
 			if ($row['departure_airport_icao'] != '') {
@@ -2394,8 +2397,8 @@ class Spotter{
 	*/	
 	public static function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '')
 	{
-		global $globalURL;
-		
+		global $globalURL, $globalIVAO;
+		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		date_default_timezone_set('UTC');
 		
 		//getting the registration
@@ -2551,13 +2554,23 @@ class Spotter{
 		}
 
 		//getting the aircraft image
-		if ($registration != "" || $registration != 'NA')
+		if (($registration != "" || $registration != 'NA') && !$globalIVAO)
 		{
 			$image_array = Image::getSpotterImage($registration);
 			if (!isset($image_array[0]['registration']))
 			{
 				//echo "Add image !!!! \n";
 				Image::addSpotterImage($registration);
+			}
+		}
+    
+		if ($globalIVAO && $aircraft_icao != '')
+		{
+			$image_array = Image::getSpotterImage($aircraft_icao);
+			if (!isset($image_array[0]['registration']))
+			{
+				//echo "Add image !!!! \n";
+				Image::addSpotterImage($aircraft_icao);
 			}
 		}
     

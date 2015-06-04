@@ -20,6 +20,7 @@ $current_page = $file_path['filename'];
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css?<?php print time(); ?>" />
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-2.1.3.min.js"></script>
 <?php
 /*
 if ($facebook_meta_image != "")
@@ -43,9 +44,13 @@ if ($facebook_meta_image != "")
 ?>
 <script language="JavaScript" type="text/javascript">
     function datasource_js() {
-        document.getElementById("flightaware_data").style.display = document.getElementById("flightaware").checked ? "inline" : "none" ;
+        //document.getElementById("flightaware_data").style.display = document.getElementById("flightaware").checked ? "inline" : "none" ;
         document.getElementById("sbs_data").style.display = document.getElementById("sbs").checked ? "inline" : "none" ;
+        document.getElementById("sbs_url").style.display = (document.getElementById("ivao").checked || document.getElementById("sbs").checked) ? "inline" : "none" ;
         document.getElementById("acars_data").style.display = document.getElementById("acars").checked ? "inline" : "none" ;
+    }
+    function daemon_js() {
+        document.getElementById("cronends").style.display = document.getElementById("daemon").checked ? "none" : "inline" ;
     }
     function map_provider_js() {
         if (document.getElementById("mapprovider").value == "Mapbox") {
@@ -57,7 +62,37 @@ if ($facebook_meta_image != "")
     function create_database_js() {
         document.getElementById("createdb_data").style.display = document.getElementById("createdb").checked ? "inline" : "none" ;
     }
-
+</script>
+<script type='text/javascript'>
+    $(function(){
+	$('.add-row-ip').click(function() {
+	    $(".sbsip").append('<tr><td><input type="text" name="sbshost[]" value="" /></td><td><input type="number" name="sbsport[]" value="" /></td></tr>');
+	});
+	$('.del-row-ip').click(function() {
+	    if($(".sbsip tr").length != 2)
+	    {
+		$(".sbsip tr:last-child").remove();
+	    }
+	});
+	$('.add-row-url').click(function() {
+	    $(".sbsurl").append('<tr><td><input type="text" name="sbsurl[]" value="" /></td></tr>');
+	});
+	$('.del-row-url').click(function() {
+	    if($(".sbsurl tr").length != 2)
+	    {
+		$(".sbsurl tr:last-child").remove();
+	    }
+	});
+	$('.add-row-source').click(function() {
+	    $(".sources").append('<tr><td><input type="text" name="source_name[]" value="" /></td><td><input type="text" name="source_latitude[]" value="" /></td><td><input type="text" name="source_longitude[]" value="" /></td><td><input type="text" name="source_altitude[]" value="" /></td><td><input type="text" name="source_city[]" value="" /></td><td><input type="text" name="source_country[]" value="" /></td></tr>');
+	});
+	$('.del-row-source').click(function() {
+	    if($(".sources tr").length != 2)
+	    {
+		$(".sources tr:last-child").remove();
+	    }
+	});
+    });
 </script>
 <?php
     }
@@ -69,7 +104,7 @@ if ($facebook_meta_image != "")
     if (!isset($_SESSION['install'])) {
 ?>
 
-<body class="page-<?php print strtolower($current_page); ?>" onload="datasource_js(); map_provider_js(); create_database_js()">
+<body class="page-<?php print strtolower($current_page); ?>" onload="datasource_js(); map_provider_js(); create_database_js(); daemon_js()">
 <?php
     } else {
 ?>

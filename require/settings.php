@@ -67,6 +67,9 @@ $globalLiveInterval = '200';
 // LIVE MAP REFRESH (in seconds)
 $globalMapRefresh = '30';
 
+//IVAO
+$globalIVAO = FALSE;
+
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
 $globalSBS1Hosts = array('127.0.0.1:30003');
@@ -94,14 +97,18 @@ $globalAirportIgnore = array();
 //Archive all data
 $globalArchive = FALSE;
 
-//Sources for Aircraft image (should be set to array() if no real aircrafts)
+//Retrieve Image from externals sources (set to FALSE for IVAO)
+$globalAircraftImageFetch = TRUE;
+//Sources for Aircraft image
 $globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
 
-//Retrieve schedules from externals sources
+//Retrieve schedules from externals sources (set to FALSE for IVAO or if $globalFork = FALSE)
 $globalSchedulesFetch = TRUE;
-//Sources for airline schedule if not official airline site (should be set to array() if no real aircrafts or/and set $globalFork = FALSE )
+//Sources for airline schedule if not official airline site
 $globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','flightaware');
 
-//Sources for translation, to find name of flight from callsign (set to array() to disable)
+//Retrieve translation from external sources (set to FALSE for IVAO)
+$globalTranslationFetch = TRUE;
+//Sources for translation, to find name of flight from callsign
 $globalTranslationSources = array('planefinder');
 ?>

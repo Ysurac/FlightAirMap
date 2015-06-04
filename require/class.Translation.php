@@ -66,14 +66,15 @@ class Translation {
         }
         
         public static function checkTranslation($ident,$web = true) {
-    	    global $globalTranslationSources;
+    	    global $globalTranslationSources, $globalTranslationFetch;
     	    if (!isset($globalTranslationSources)) $globalTranslationSources = array('planefinder');
+    	    if (!isset($globalTranslationFetch)) $globalTranslationFetch = TRUE;
     	    //echo "Check Translation for ".$ident."...";
     	    $correct = Translation::getOperator($ident);
     	    if ($correct != '' && $correct != $ident) {
     		//echo "Found in DB !\n";
     		 return $correct;
-    	    } elseif ($web) {
+    	    } elseif ($web && $globalTranslationFetch) {
     		if (! is_numeric(substr($ident,-4))) {
     		    if (count($globalTranslationSources) > 0) {
     			$correct = Translation::fromPlanefinder($ident);

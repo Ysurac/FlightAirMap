@@ -52,6 +52,8 @@ class Image {
     */
     public static function addSpotterImage($registration)
     {
+	global $globalAircraftImageFetch;
+	if (isset($globalAircraftImageFetch) && !$globalAircraftImageFetch) return '';
 	$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 	$registration = trim($registration);
 	//getting the aircraft image
@@ -80,7 +82,8 @@ class Image {
     */
     public static function findAircraftImage($aircraft_registration)
     {
-	global $globalAircraftImageSources;
+	global $globalAircraftImageSources, $globalIVAO;
+	if (!isset($globalIVAO)) $globalIVAO = FALSE;
 	$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
 	if (strpos($aircraft_registration,'/') !== false) return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 
@@ -94,13 +97,13 @@ class Image {
 	
 	foreach ($globalAircraftImageSources as $source) {
 		$source = strtolower($source);
-		if ($source == 'planespotters') $images_array = Image::fromPlanespotters($aircraft_registration,$aircraft_name);
+		if ($source == 'planespotters' && !$globalIVAO) $images_array = Image::fromPlanespotters($aircraft_registration,$aircraft_name);
 		if ($source == 'flickr') $images_array = Image::fromFlickr($aircraft_registration,$aircraft_name);
 		if ($source == 'bing') $images_array = Image::fromBing($aircraft_registration,$aircraft_name);
 		if ($source == 'deviantart') $images_array = Image::fromDeviantart($aircraft_registration,$aircraft_name);
 		if ($source == 'wikimedia') $images_array = Image::fromWikimedia($aircraft_registration,$aircraft_name);
-		if ($source == 'jetphotos') $images_array = Image::fromJetPhotos($aircraft_registration,$aircraft_name);
-		if ($source == 'planepictures') $images_array = Image::fromPlanePictures($aircraft_registration,$aircraft_name);
+		if ($source == 'jetphotos' && !$globalIVAO) $images_array = Image::fromJetPhotos($aircraft_registration,$aircraft_name);
+		if ($source == 'planepictures' && !$globalIVAO) $images_array = Image::fromPlanePictures($aircraft_registration,$aircraft_name);
 		if (isset($images_array) && $images_array['original'] != '') return $images_array;
 	}
 	return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
@@ -317,6 +320,7 @@ class Image {
     *
     */
     public static function fromWikimedia($aircraft_registration,$aircraft_name='') {
+	if ($aircraft_registration == '')
 	if ($aircraft_name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$aircraft_registration.'"%20'.urlencode($aircraft_name);
 	else $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$aircraft_registration.'"%20aircraft';
 

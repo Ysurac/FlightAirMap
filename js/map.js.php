@@ -216,10 +216,75 @@ $( document ).ready(function() {
 	    }).addTo(map);
 	};
 
+	// Show airports on map
+	function locationPopup (feature, layer) {
+		var output = '';
+		output += '<div class="top">';
+		    output += '<div class="left">';
+			if (typeof feature.properties.image_thumb != 'undefined' && feature.properties.image_thumb != '') {
+			    output += '<img src="'+feature.properties.image_thumb+'" /></a>';
+			}
+		    output += '</div>';
+		    output += '<div class="right">';
+			output += '<div class="callsign-details">';
+			    output += '<div class="callsign">'+feature.properties.name+'</div>';
+			output += '</div>';
+		     output += '</div>';
+		output += '</div>';
+		output += '<div class="details">';
+		    if (feature.properties.city != "")
+		    {
+			output += '<div>';
+			    output += '<span>City</span>';
+			    output += feature.properties.city;
+			output += '</div>';
+		    }
+		    if (feature.properties.altitude != "" || feature.properties.altitude != 0)
+		    {
+			output += '<div>';
+			    output += '<span>Altitude</span>';
+			    output += Math.round(feature.properties.altitude*3,2809)+' feet - '+feature.properties.altitude+' m';
+			output += '</div>';
+		    }
+		    if (feature.properties.country != "")
+		    {
+			output += '<div>';
+			    output += '<span>Country</span>';
+			    output += feature.properties.country;
+			output += '</div>';
+		    }
+		output += '</div>';
+		output += '</div>';
+		layer.bindPopup(output);
+	};
+
+
+
+
+	function update_locationsLayer() {
+	    //var bbox = map.getBounds().toBBoxString();
+	    //locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox,{
+	    locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php",{
+	    onEachFeature: locationPopup,
+		pointToLayer: function (feature, latlng) {
+		    return L.marker(latlng, {
+			icon: L.icon({
+			iconUrl: feature.properties.icon,
+			iconSize: [16, 18]
+			//iconAnchor: [0, 0],
+			//popupAnchor: [0, -28]
+			})
+                    });
+		}
+	    }).addTo(map);
+	};
+
 	map.on('moveend', function() {
 	    if (map.getZoom() > 7) {
 		map.removeLayer(airportsLayer);
 		update_airportsLayer();
+		map.removeLayer(locationsLayer);
+		update_locationsLayer();
 		if ($(".airspace").hasClass("active"))
 		{
 		    map.removeLayer(airspaceLayer);
@@ -248,6 +313,7 @@ $( document ).ready(function() {
 	
 	//update_waypointsLayer();
 	update_airportsLayer();
+	update_locationsLayer();
 	
 	<?php
 	    if (!isset($ident) && !isset($flightaware_id)) {
@@ -274,6 +340,8 @@ $( document ).ready(function() {
   function getLiveData()
   {
 	var bbox = map.getBounds().toBBoxString();
+	layer_data_p = L.layerGroup();
+
 //    map.removeLayer(layer_data);
 //    layer_data = L.layerGroup();
 
@@ -442,6 +510,14 @@ $( document ).ready(function() {
             	    if (!isset($ident) && !isset($flightaware_id)) {
                 ?>
                 layer.bindPopup(output);
+                /*
+                layer.on('mouseover', function (e) {
+        		this.openPopup();
+	        });
+    		layer.on('mouseout', function (e) {
+        		this.closePopup();
+    		});
+    		*/
 		<?php
 		    }
 		?>

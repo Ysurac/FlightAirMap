@@ -199,9 +199,7 @@ while ($i > 0) {
 	        $data['hex'] = str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT);
 	        $data['ident'] = $line['callsign']; // ident
 	        $data['altitude'] = $line['alt']; // altitude
-	        if (isset($line['gs'])) {
-	    	    $data['speed'] = $line['gs']; // speed
-	    	}
+	        if (isset($line['gs'])) $data['speed'] = $line['gs']; // speed
 	        $data['heading'] = $line['heading']; // heading
 	        $data['latitude'] = $line['lat']; // lat
 	        $data['longitude'] = $line['lon']; // long
@@ -213,7 +211,7 @@ while ($i > 0) {
 	        $data['arrival_airport_icao'] = $line['arricao'];
     		//$data['arrival_airport_time'] = $line['arrtime'];
 	    	$data['aircraft_icao'] = $line['aircraft'];
-
+	    	if (isset($line['transponder'])) $data['squawk'] = $line['transponder'];
 		$data['datetime'] = date('Y-m-d h:i:s');
 		if ($line['icon'] != 'ct') $SBS::add($data);
 	    }
