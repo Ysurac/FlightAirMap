@@ -66,13 +66,17 @@ function connect_all($hosts) {
         	$formats[$id] = 'whazzup';
             } else if (preg_match('/recentpireps/',$host)) {
         	$formats[$id] = 'pirepsjson';
+            } else if (preg_match('/10001/',$host)) {
+        	$formats[$id] = 'tsv';
             }
         } else {
 	    $hostport = explode(':',$host);
     	    $s = create_socket($hostport[0],$hostport[1], $errno, $errstr);
 	    if ($s) {
     	        $sockets[$id] = $s;
-        	$formats[$id] = 'sbs';
+    	        if ($hostport[1] == '10001') {
+        	    $formats[$id] = 'tsv';
+		} else $formats[$id] = 'sbs';
 		if ($globalDebug) echo 'Connection in progress to '.$host.'....'."\n";
             } else {
 		if ($globalDebug) echo 'Connection failed to '.$host.' : '.$errno.' '.$errstr."\n";
@@ -242,7 +246,7 @@ while ($i > 0) {
 		$SBS::add($data);
 		unset($data);
 	    }
-	} elseif ($value == 'sbs') {
+	} elseif ($value == 'sbs' || $value == 'tsv') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 
 	    $read = $sockets;
@@ -253,14 +257,37 @@ while ($i > 0) {
 		    // lets play nice and handle signals such as ctrl-c/kill properly
 		    //if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 		    $dataFound = false;
+		    $error = false;
 		    //$SBS::del();
 		    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
 		    // SBS format is CSV format
 		    if ($buffer != '') {
 			$tt = 0;
-			$line = explode(',', $buffer);
-    			if (count($line) > 20) {
-    				$data['hex'] = $line[4];
+			if ($value == 'tsv' || substr($buffer,0,4) == 'clock') {
+			    $line = explode("\t", $buffer);
+			    for($k = 0; $k < count($line); $k=$k+2) {
+				$key = $line[$k];
+			        $lined[$key] = $line[$k+1];
+			    }
+    			    if (count($lined) > 3) {
+    				$data['hex'] = $lined['hexid'];
+    				$data['datetime'] = date('Y-m-d h:i:s',strtotime($lined['clock']));;
+    				if (isset($lined['ident'])) $data['ident'] = $lined['ident'];
+    				if (isset($lined['lat']))$data['latitude'] = $lined['lat'];
+    				if (isset($lined['lon']))$data['longitude'] = $lined['lon'];
+    				if (isset($lined['speed']))$data['speed'] = $lined['speed'];
+    				if (isset($lined['squawk']))$data['squawk'] = $lined['squawk'];
+    				if (isset($lined['alt']))$data['altitude'] = $lined['alt'];
+    				if (isset($lined['heading']))$data['heading'] = $lined['heading'];
+    				$data['format_source'] = 'tsv';
+    				$SBS::add($data);
+    				unset($lined);
+    				unset($data);
+    			    } else $error = true;
+			} else {
+			    $line = explode(',', $buffer);
+    			    if (count($line) > 20) {
+    			    	$data['hex'] = $line[4];
     				$data['datetime'] = $line[8].' '.$line[7];
     				$data['ident'] = trim($line[10]);
     				$data['latitude'] = $line[14];
@@ -274,7 +301,9 @@ while ($i > 0) {
     				$data['format_source'] = 'sbs';
     				$SBS::add($data);
     				unset($data);
-    			} else {
+    			    } else $error = true;
+    			}
+    			if ($error) {
     			    if (count($line) > 1 && ($line[0] == 'STA' || $line[0] == 'AIR' || $line[0] == 'SEL' || $line[0] == 'ID' || $line[0] == 'CLK')) { 
     				if ($globalDebug) echo "Not a message. Ignoring... \n";
     			    } else {

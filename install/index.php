@@ -830,8 +830,8 @@ if (isset($_POST['dbtype'])) {
 
 	    include_once('../require/class.Source.php');
 	    $globalDebug = FALSE;
+	    Source::deleteAllLocation();
 	    foreach ($sources as $source) {
-		if (isset($source['id'])) Source::deleteLocation($source['id']);
 		if (isset($source['latitude']) && $source['latitude'] != '') Source::addLocation($source['name'],$source['latitude'],$source['longitude'],$source['altitude'],$source['city'],$source['country'],'antenna.png');
 	    }
 	    $_SESSION['done'] = array_merge($_SESSION['done'],array('Insert data in source table'));
