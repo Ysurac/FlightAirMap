@@ -43,11 +43,10 @@ class Source {
         }
        public static function deleteAllLocation() {
                 $query = "DELETE FROM source_location";
-                $query_values = array(':id' => $id);
                  try {
                         $Connection = new Connection();
                         $sth = Connection::$db->prepare($query);
-                        $sth->execute($query_values);
+                        $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
