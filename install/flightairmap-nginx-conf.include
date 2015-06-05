@@ -3,6 +3,11 @@ location /latest {
     rewrite ^/latest/([^/]+)(/?)$ /latest.php?limit=$1 last;
     rewrite ^/latest(/?)$ /latest.php last;
 }
+location /currently {
+    rewrite ^/currently/([^/]+)/([^/]+)(/?)$ /currently.php?limit=$1&sort=$2 last;
+    rewrite ^/currently/([^/]+)(/?)$ /currently.php?limit=$1 last;
+    rewrite ^/currently(/?)$ /currently.php last;
+}
 location /acars-latest {
     rewrite ^/acars-latest/([^/]+)(/?)$ /acars-latest.php?limit=$1 last;
     rewrite ^/acars-latest(/?)$ /acars-latest.php last;
