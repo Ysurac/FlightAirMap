@@ -42,6 +42,15 @@ if (!empty($spotter_array))
 //			$output .= '"image_thumb": "'.$spotter_item['image_thumb'].'"';
 //			$output .= '"photo": "'.$spotter_item['image_thumbnail'].'",';
 //			if ($spotter_item['radius'] > 30) $spotter_item['radius'] = 30;
+			if ($spotter_item['scope'] == 'Airport warning') {
+			    $output .= '"color": "#EACC04",';
+			} elseif ($spotter_item['scope'] == 'Airport/Enroute warning') {
+			    $output .= '"color": "#EA7D00",';
+			} elseif ($spotter_item['scope'] == 'Navigation warning') {
+			    $output .= '"color": "#BBEA00",';
+			} else {
+			    $output .= '"color": "#FF0000",';
+			}
 			$radius = $spotter_item['radius']*1852;
 			$output .= '"radiusm": "'.$radius.'",';
 			$output .= '"radiusnm": "'.$spotter_item['radius'].'",';

@@ -784,10 +784,13 @@ class update_db {
 				$data['fir'] = $q[0];
 				$data['code'] = $q[1];
 				$ifrvfr = $q[2];
-				if ($q[4] == 'A') $data['scope'] = 'Aerodrome';
-				if ($q[4] == 'E') $data['scope'] = 'en-route';
-				if ($q[4] == 'W') $data['scope'] = 'nav warning';
-				if ($q[4] == 'AE') $data['scope'] = 'Aerodrome/en-route';
+				if ($ifrvfr == 'IV') $data['rules'] = 'IFR/VFR';
+				if ($ifrvfr == 'I') $data['rules'] = 'IFR';
+				if ($ifrvfr == 'V') $data['rules'] = 'VFR';
+				if ($q[4] == 'A') $data['scope'] = 'Airport warning';
+				if ($q[4] == 'E') $data['scope'] = 'Enroute warning';
+				if ($q[4] == 'W') $data['scope'] = 'Navigation warning';
+				if ($q[4] == 'AE') $data['scope'] = 'Airport/Enroute warning';
 				//$data['scope'] = $q[4];
 				$data['lower_limit'] = $q[5];
 				$data['upper_limit'] = $q[6];
@@ -822,7 +825,6 @@ class update_db {
 				    $data['permanent'] = true;
 				}
 				$data['full_notam'] = $notam['title'].'<br>'.$notam['description'];
-				print_r($data);
 				NOTAM::addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['center_latitude'],$data['center_longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
 				unset($data);
 			} 

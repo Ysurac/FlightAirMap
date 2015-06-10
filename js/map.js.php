@@ -1089,11 +1089,11 @@ function update_notamLayer() {
     onEachFeature: notamPopup,
 	pointToLayer: function (feature, latlng) {
 	    return L.circle(latlng, feature.properties.radius, {
-                    fillColor: "#ff0000",
-                    color: "#ff0022",
+                    fillColor: feature.properties.color,
+                    color: feature.properties.color,
                     weight: 1,
-                    opacity: 0.5,
-                    fillOpacity: 0.6
+                    opacity: 0.3,
+                    fillOpacity: 0.3
             });
 	}
     }).addTo(map);
