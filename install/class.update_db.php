@@ -759,6 +759,15 @@ class update_db {
 	public static function update_notam() {
 		global $tmp_dir, $globalDebug, $globalNOTAMSource;
 		require('../require/class.NOTAM.php');
+		$query = 'TRUNCATE TABLE notam';
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
 		$error = '';
 		if ($globalDebug) echo "Notam : Download...";
 		update_db::download($globalNOTAMSource,$tmp_dir.'notam.rss');

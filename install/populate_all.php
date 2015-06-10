@@ -17,4 +17,9 @@
     echo "Install countries...";
     update_db::update_countries();
     echo "Done !\n";
+    if (isset($globalNOTAM) && $globalNOTAM && isset($globalNOTAMSource) && $globalNOTAMSource != '') {
+	echo "Install NOTAM from notaminfo.com...";
+        update_db:update_notam();
+        echo "Done !\n";
+    }
 ?>

@@ -695,7 +695,6 @@ if (isset($_POST['dbtype'])) {
 		}
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Update schema'));
 		$_SESSION['install'] = 'sources';
-		
 	}
 	sleep(2);
 	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
@@ -751,7 +750,8 @@ if (isset($_POST['dbtype'])) {
 	include_once('class.update_db.php');
 	update_db::update_countries();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate countries database'));
-	$_SESSION['install'] = 'sources';
+	if (isset($globalNOTAM) && $globalNOTAM && isset($globalNOTAMSource) && $globalNOTAMSource != '') $_SESSION['install'] = 'notam';
+	else $_SESSION['install'] = 'sources';
 //	require('../footer.php');
 //	ob_end_clean();
 //	header("Location: index.php?".rand());
@@ -827,12 +827,36 @@ if (isset($_POST['dbtype'])) {
 	if ($_SESSION['waypoints'] == 1) {
 	    $_SESSION['install'] = 'waypoints';
 	    unset($_SESSION['waypoints']);
-	} else $_SESSION['install'] = 'sources';
+	} elseif (isset($globalNOTAM) && $globalNOTAM && isset($globalNOTAMSource) && $globalNOTAMSource != '') $_SESSION['install'] = 'notam';
+	else $_SESSION['install'] = 'sources';
 //	require('../footer.php');
 //	ob_end_clean();
 //	header("Location: index.php?".rand());
 	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
 //	require('../footer.php');
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'notam') {
+	unset($_SESSION['install']);
+	if (!is_writable('tmp')) {
+		print '<p><strong>The directory <i>install/tmp</i> must be writable.</strong></p>';
+		require('../footer.php');
+		exit;
+	}
+
+	print '<div class="info column"><ul>';
+	foreach ($_SESSION['done'] as $done) {
+	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
+	}
+	print '<li>Populate notam table with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i><b>If it fails, run install/install_db.php or install/install_db.sh in console, this will finish install</b></li></ul></div>';
+	flush();
+	@ob_flush();
+
+	include_once('class.update_db.php');
+	$globalDebug = FALSE;
+	update_db::update_translation();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate notam table with externals data'));
+
+	$_SESSION['install'] = 'sources';
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'sources') {
 	unset($_SESSION['install']);
 	print '<div class="info column"><ul>';
