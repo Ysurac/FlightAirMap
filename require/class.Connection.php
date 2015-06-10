@@ -3,7 +3,7 @@ require_once("settings.php");
 
 class Connection{
 	public static $db;
-	public static $latest_schema = 8;
+	public static $latest_schema = 9;
 	
 	public function __construct() {
 	    $this->createDBConnection();

@@ -395,6 +395,14 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="checkbox" name="schedules" id="schedules" value="schedules"<?php if (isset($globalSchedulesFetch) && $globalSchedulesFetch || !isset($globalSchedulesFetch)) { ?> checked="checked"<?php } ?> />
 		</p>
 		<p>
+			<label for="notam">Activate NOTAM support</label>
+			<input type="checkbox" name="notam" id="notam" value="notam"<?php if (isset($globalNOTAM) && $globalNOTAM) { ?> checked="checked"<?php } ?> />
+		</p>
+		<p>
+			<label for="notamsource">URL of your feed from notaminfo.com</label>
+			<input type="text" name="notamsource" id="notamsource" value="<?php if (isset($globalNOTAMSource)) print $globalNOTAMSource; ?>" />
+		</p>
+		<p>
 			<label for="bitly">Bit.ly access token api (used in search page)</label>
 			<input type="text" name="bitly" id="bitly" value="<?php if (isset($globalBitlyAccessToken)) print $globalBitlyAccessToken; ?>" />
 		</p>
@@ -556,6 +564,9 @@ if (isset($_POST['dbtype'])) {
 	$bitly = filter_input(INPUT_POST,'bitly',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalBitlyAccessToken' => $bitly));
 
+	$notamsource = filter_input(INPUT_POST,'notamsource',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalNOTAMSource' => $notamsource));
+
 	$zoilatitude = filter_input(INPUT_POST,'zoilatitude',FILTER_SANITIZE_STRING);
 	$zoilongitude = filter_input(INPUT_POST,'zoilongitude',FILTER_SANITIZE_STRING);
 	$zoidistance = filter_input(INPUT_POST,'zoidistance',FILTER_SANITIZE_NUMBER_INT);
@@ -592,6 +603,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalSchedulesFetch' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalSchedulesFetch' => 'FALSE'));
+	}
+	$notam = filter_input(INPUT_POST,'notam',FILTER_SANITIZE_STRING);
+	if ($notam == 'notam') {
+		$settings = array_merge($settings,array('globalNOTAM' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalNOTAM' => 'FALSE'));
 	}
 	$fork = filter_input(INPUT_POST,'fork',FILTER_SANITIZE_STRING);
 	if ($fork == 'fork') {

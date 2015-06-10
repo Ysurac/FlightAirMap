@@ -11,6 +11,13 @@ require_once(dirname(__FILE__).'/../require/class.SBS.php');
 require_once(dirname(__FILE__).'/../require/class.Connection.php');
 require_once(dirname(__FILE__).'/../require/class.Common.php');
 
+if (!isset($globalServerUser)) $globalServerUser = '';
+if (!isset($globalServerPass)) $globalServerPass = '';
+if (!isset($globalServer) || $globalServerUser == '' || $globalServerPass == '') {
+	$globalServer = FALSE;
+}
+$globalServerHosts = 'sbs.flightairmap.fr:1001';
+
 if (!isset($globalDebug)) $globalDebug = FALSE;
 
 $schema = new Connection();
@@ -35,6 +42,13 @@ if (function_exists('pcntl_fork')) {
 // let's try and connect
 if ($globalDebug) echo "Connecting to SBS ...\n";
 
+
+function create_socket_to_server($host, $port, &$errno, &$errstr) {
+    $ip = gethostbyname($host);
+    $s = stream_socket_client("udp://".$host.':'.$port,$errno,$errstr,30);
+	if ($s) return $s;
+	else return false;
+}
 
 function create_socket($host, $port, &$errno, &$errstr) {
     $ip = gethostbyname($host);
@@ -66,6 +80,9 @@ function connect_all($hosts) {
         	$formats[$id] = 'whazzup';
             } else if (preg_match('/recentpireps/',$host)) {
         	$formats[$id] = 'pirepsjson';
+            } else if (preg_match(':data.fr24.com/zones/fcgi/feed.js:',$host)) {
+        	// Desactivated. Here only because it's possible. Do not use without fr24 rights.
+        	//$formats[$id] = 'fr24json';
             } else if (preg_match('/10001/',$host)) {
         	$formats[$id] = 'tsv';
             }
@@ -76,6 +93,8 @@ function connect_all($hosts) {
     	        $sockets[$id] = $s;
     	        if ($hostport[1] == '10001') {
         	    $formats[$id] = 'tsv';
+		} elseif ($hostport[1] == '30002') {
+        	    $formats[$id] = 'raw';
 		} else $formats[$id] = 'sbs';
 		if ($globalDebug) echo 'Connection in progress to '.$host.'....'."\n";
             } else {
@@ -85,6 +104,14 @@ function connect_all($hosts) {
     }
 }
 
+if ($globalServer) {
+
+	$serverhostport = explode(':',$globalServerHosts);
+	$se = create_socket_to_server(gethostbyname($serverhostport[0]),$serverhostport[1], $errno, $errstr);
+	if (!$se) {
+		if ($globalDebug) echo 'Connection failed to '.$serverhostport[0].' : '.$errno.' '.$errstr."\n";
+	}
+}
 
 if (isset($globalSBS1Hosts)) {
     $hosts = $globalSBS1Hosts;
@@ -109,6 +136,7 @@ sleep(1);
 if ($globalDebug) echo "SCAN MODE \n\n";
 if (!isset($globalCronEnd)) $globalCronEnd = 60;
 $endtime = time()+$globalCronEnd;
+$lastsend = time();
 $i = 1;
 $tt = 0;
 while ($i > 0) {
@@ -147,7 +175,9 @@ while ($i > 0) {
     		    $line = explode(':', $line);
     		    if (count($line) > 43) {
 			$data = array();
-			$data['id'] = $line[1];
+			$data['id'] = $line[1].'-'.$line[0];
+			$data['pilot_id'] = $line[1];
+			$data['pilot_name'] = $line[2];
 			$data['hex'] = str_pad(dechex($line[1]),6,'000000',STR_PAD_LEFT);
 			$data['ident'] = $line[0]; // ident
 			if ($line[7] != '' && $line[7] != 0) $data['altitude'] = $line[7]; // altitude
@@ -194,6 +224,30 @@ while ($i > 0) {
 		$data['datetime'] = date('Y-m-d h:i:s');
 		$SBS::add($data);
 	    }
+    	} elseif ($value == 'fr24json') {
+	    $buffer = Common::getData($hosts[$id]);
+	    $all_data = json_decode($buffer,true);
+	    foreach ($all_data as $key => $line) {
+		if ($key != 'full_count' && $key != 'version' && $key != 'stats') {
+		    $data = array();
+		    $data['hex'] = $line[0];
+		    $data['ident'] = $line[16]; //$line[13]
+	    	    $data['altitude'] = $line[4]; // altitude
+	    	    $data['speed'] = $line[5]; // speed
+	    	    $data['heading'] = $line[3]; // heading
+	    	    $data['latitude'] = $line[1]; // lat
+	    	    $data['longitude'] = $line[2]; // long
+	    	    $data['verticalrate'] = $line[15]; // verticale rate
+	    	    $data['squawk'] = $line[6]; // squawk
+	    	    $data['aircraft_icao'] = $line[8];
+	    	    $data['registration'] = $line[9];
+		    $data['departure_airport_iata'] = $line[11];
+		    $data['arrival_airport_iata'] = $line[12];
+	    	    $data['emergency'] = ''; // emergency
+		    $data['datetime'] = date('Y-m-d h:i:s'); //$line[10]
+		    $SBS::add($data);
+		}
+	    }
     	} elseif ($value == 'pirepsjson') {
 	    $buffer = Common::getData($hosts[$id]);
 	    $all_data = json_decode($buffer,true);
@@ -202,22 +256,25 @@ while ($i > 0) {
 	        $data = array();
 	        $data['hex'] = str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT);
 	        $data['ident'] = $line['callsign']; // ident
-	        $data['altitude'] = $line['alt']; // altitude
+	        if (isset($line['pilotid'])) $data['pilot_id'] = $line['pilotid']; // pilot id
+	        if (isset($line['name'])) $data['pilot_name'] = $line['name']; // pilot name
+	        if (isset($line['alt'])) $data['altitude'] = $line['alt']; // altitude
 	        if (isset($line['gs'])) $data['speed'] = $line['gs']; // speed
-	        $data['heading'] = $line['heading']; // heading
+	        if (isset($line['heading'])) $data['heading'] = $line['heading']; // heading
 	        $data['latitude'] = $line['lat']; // lat
 	        $data['longitude'] = $line['lon']; // long
 	        //$data['verticalrate'] = $line['vrt']; // verticale rate
 	        //$data['squawk'] = $line['squawk']; // squawk
 	        //$data['emergency'] = ''; // emergency
-	        $data['departure_airport_icao'] = $line['depicao'];
-	        $data['departure_airport_time'] = $line['deptime'];
-	        $data['arrival_airport_icao'] = $line['arricao'];
+	        if (isset($line['depicao'])) $data['departure_airport_icao'] = $line['depicao'];
+	        if (isset($line['deptime'])) $data['departure_airport_time'] = $line['deptime'];
+	        if (isset($line['arricao'])) $data['arrival_airport_icao'] = $line['arricao'];
     		//$data['arrival_airport_time'] = $line['arrtime'];
-	    	$data['aircraft_icao'] = $line['aircraft'];
+	    	if (isset($line['aircraft'])) $data['aircraft_icao'] = $line['aircraft'];
 	    	if (isset($line['transponder'])) $data['squawk'] = $line['transponder'];
 		$data['datetime'] = date('Y-m-d h:i:s');
 		if ($line['icon'] != 'ct') $SBS::add($data);
+		unset($data);
 	    }
 	    }
     	} elseif ($value == 'phpvmacars') {
@@ -227,6 +284,8 @@ while ($i > 0) {
 	        $data = array();
 	        $data['id'] = $line['id']; // id
 	        $data['hex'] = str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT); // hex
+	        if (isset($line['pilotname'])) $data['pilot_name'] = $line['pilotname'];
+	        if (isset($line['pilotid'])) $data['pilot_id'] = $line['pilotid'];
 	        $data['ident'] = $line['flightnum']; // ident
 	        $data['altitude'] = $line['alt']; // altitude
 	        $data['speed'] = $line['gs']; // speed
@@ -246,7 +305,7 @@ while ($i > 0) {
 		$SBS::add($data);
 		unset($data);
 	    }
-	} elseif ($value == 'sbs' || $value == 'tsv') {
+	} elseif ($value == 'sbs' || $value == 'tsv' || $value = 'raw') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 
 	    $read = $sockets;
@@ -263,7 +322,39 @@ while ($i > 0) {
 		    // SBS format is CSV format
 		    if ($buffer != '') {
 			$tt = 0;
-			if ($value == 'tsv' || substr($buffer,0,4) == 'clock') {
+			if ($value == 'raw') {
+				// Not yet finished
+				$hex = substr($buffer,1,-1);
+				$bin = base_convert($hex,16,2);
+				$df = intval(substr($bin,0,5),2);
+				$ca = intval(substr($bin,6,3),2);
+				echo date("Y-m-d").'T'.date("H:i:s.u")."    ".$hex."\n";
+//				echo $bin."\n";
+//				echo 'df : '.$df.' ( '.substr($bin,0,5).' )'."\n";
+//				echo 'ca : '.$ca.' ( '.substr($bin,6,3).' )'."\n";
+				if ($df == 17) {
+					//echo $hex;
+					$icao = substr($hex,2,6);
+					$tc = intval(substr($bin,32,5),2);
+					//echo 'icao : '.$icao.' - tc : '.$tc."\n";
+					if ($tc >= 1 && $tc <= 4) {
+						//callsign
+						//strtr(,,'#ABCDEFGHIJKLMNOPQRSTUVWXYZ#####_###############0123456789######');
+						$callsign = strtr(substr($bin,40,56),array('000001' => 'A','000010' => 'B','000011' => 'C','000100' => 'D','000101' => 'E','000110' => 'F','000111' => 'G','001000' => 'H','001001' => 'I','001010' => 'J','001011' => 'K','001100' => 'L','001101' => 'M', '001110' => 'N','001111' => 'O','010000' => 'P','010001' => 'Q','010010' => 'R','010011' => 'S','010100' => 'T','010101' => 'U','010110' => 'V','010111' => 'W','011000' => 'X','011001' => 'Y','011010' => 'Z'));
+						echo 'icao : '.$icao.' - tc : '.$tc."\n";
+						echo 'Callsign : '.$callsign;
+					} elseif ($tc >= 9 && $tc <= 18) {
+						// alt
+						$latitude = intval(substr($bin,54,17),2);
+						$longitude = intval(substr($bin,71,17),2);
+
+						echo 'latitude : '.$latitude.' - longitude :'.$longitude;
+					} elseif ($tc == 19) {
+						// speed & heading
+					}
+				}
+				
+			} elseif ($value == 'tsv' || substr($buffer,0,4) == 'clock') {
 			    $line = explode("\t", $buffer);
 			    for($k = 0; $k < count($line); $k=$k+2) {
 				$key = $line[$k];
@@ -299,7 +390,8 @@ while ($i > 0) {
     				$data['altitude'] = $line[11];
     				$data['heading'] = $line[13];
     				$data['format_source'] = 'sbs';
-    				$SBS::add($data);
+    				$send = $SBS::add($data);
+				//$send = $data;
     				unset($data);
     			    } else $error = true;
     			}
@@ -316,11 +408,27 @@ while ($i > 0) {
 				connect_all($hosts);
 			    }
     			}
+			if ($globalServer && count($send) > 3 && time()-$lastsend > 1 && $value == 'sbs') {
+				unset($send['archive_latitude']);
+				unset($send['archive_longitude']);
+				unset($send['livedb_latitude']);
+				unset($send['livedb_longitude']);
+				$send['datetime'] = strtotime($send['datetime']);
+				$send['user'] = $globalServerUser;
+				$send['pass'] = $globalServerPass;
+				$send_data = json_encode($send);
+				$salt = $globalServerPass;
+				$send_data = $globalServerUser.':'.trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $salt, $send_data, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+				fwrite($se,$send_data);
+				unset($send);
+				$lastsend = time();
+			}
 		    } else {
 			$tt++;
 			if ($tt > 5) {
 			    if ($globalDebug)echo "ERROR : Reconnect...";
 			    @socket_close($r);
+			    sleep(2);
 			    connect_all($hosts);
 			    break;
 			    $tt = 0;
@@ -348,6 +456,7 @@ while ($i > 0) {
 */
 			    if ($globalDebug) echo "Restart all connections...";
 			    sleep(2);
+			    $time = time();
 			    connect_all($hosts);
 //			}
 		}

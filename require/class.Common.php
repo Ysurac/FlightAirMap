@@ -108,11 +108,21 @@ class Common {
 		}
 	}
 
-	// Check is an array is assoc
+	// Check if an array is assoc
 	public static function isAssoc($array)
 	{
 		return ($array !== array_values($array));
 	}
 
+	public static function convertDec($dms,$latlong) {
+		if ($latlong == 'latitude') {
+			$deg = substr($dms, 0, 2);
+			$min = substr($dms, 2, 4);
+		} else {
+			$deg = substr($dms, 0, 3);
+			$min = substr($dms, 3, 5);
+		}
+		return $deg+(($min*60)/3600);
+	}
 }
 ?>

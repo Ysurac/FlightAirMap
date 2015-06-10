@@ -73,7 +73,7 @@ $globalIVAO = FALSE;
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
 $globalSBS1Hosts = array('127.0.0.1:30003');
-// ^^ in the form array('host1:port1','host2:port2','http://xxxxx/whazzup.txt');
+// ^^ in the form array('host1:port1','host2:port2','http://xxxxx/whazzup.txt'); Use only sources you have the rights for.
 $globalSBS1TimeOut = '15';
 $globalSBS1update = '10'; //Put data in DB after xx seconds/flight
 
@@ -96,6 +96,11 @@ $globalAirportIgnore = array();
 
 //Archive all data
 $globalArchive = FALSE;
+
+//NOTAM
+$globalNOTAM = TRUE;
+$globalNOTAMSource = ''; //URL of your feed from notaminfo.com
+
 
 //Retrieve Image from externals sources
 $globalAircraftImageFetch = TRUE;

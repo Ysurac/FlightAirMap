@@ -281,6 +281,8 @@ $( document ).ready(function() {
 
 	map.on('moveend', function() {
 	    if (map.getZoom() > 7) {
+	        map.removeLayer(layer_data);
+
 		map.removeLayer(airportsLayer);
 		update_airportsLayer();
 		map.removeLayer(locationsLayer);
@@ -298,6 +300,8 @@ $( document ).ready(function() {
 		}
 	    } else {
 		map.removeLayer(airportsLayer);
+		map.removeLayer(locationsLayer);
+		update_locationsLayer();
 		if ($(".airspace").hasClass("active"))
 		{
 		    map.removeLayer(airspaceLayer);
@@ -380,22 +384,32 @@ $( document ).ready(function() {
 		<?php
 		    }
 		?>
-                                
-              return new L.Marker(latLng, {
-                iconAngle: feature.properties.heading,
-                title: markerLabel,
-                alt: feature.properties.callsign,
-                icon: L.icon({
-                  iconUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
-                  iconRetinaUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
-                  iconSize: [30, 30],
-                  iconAnchor: [15, 30]
-                })
-//                  iconUrl: '<?php print $globalURL; ?>/images/map-icon-shadow.png',
-   //               iconRetinaUrl: '<?php print $globalURL; ?>/images/map-icon-shadow@2x.png',
+		if (map.getZoom() > 7) {
+		    return new L.Marker(latLng, {
+			iconAngle: feature.properties.heading,
+			title: markerLabel,
+			alt: feature.properties.callsign,
+			icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
+			    iconRetinaUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
+			    iconSize: [30, 30],
+			    iconAnchor: [15, 30]
+			})
+		    })
+		} else {
+		    return new L.Marker(latLng, {
+			iconAngle: feature.properties.heading,
+			title: markerLabel,
+			alt: feature.properties.callsign,
+			icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
+			    iconRetinaUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
+			    iconSize: [15, 15],
+			    iconAnchor: [7, 15]
+			})
+		    })
+		}
 
-                  //on marker click show the modal window with the iframe
-              })
             },
             onEachFeature: function (feature, layer) {
               var output = '';
@@ -490,6 +504,16 @@ $( document ).ready(function() {
                       output += '<span>Heading</span>';
                       output += feature.properties.heading;
                     output += '</div>';
+            	    if (typeof feature.properties.pilot_name != 'undefined') {
+                	output += '<div>';
+                        output += '<span>Pilot</span>';
+            		if (typeof feature.properties.pilot_id != 'undefined') {
+                    	    output += feature.properties.pilot_name+" ("+feature.properties.pilot_id+")";
+                        } else {
+                    	    output += feature.properties.pilot_name;
+                        }
+                	output += '</div>';
+                    }
                 output += '</div>';
                 if (typeof feature.properties.acars != 'undefined') {
             	    output += '<div class="acars"><span>Latest ACARS message</span>';
@@ -1046,5 +1070,46 @@ function showAirspace() {
 	map.removeLayer(airspaceLayer);
 	//remove the active class
 	$(".airspace").removeClass("active");
+     }
+}
+
+function notamPopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	output += '&nbsp;'+feature.properties.ref+' '+feature.properties.title+'<br /> ';
+	output += '&nbsp;'+feature.properties.text+'<br /> ';
+	output += '&nbsp;<i>'+feature.properties.latitude+'/'+feature.properties.longitude+' '+feature.properties.radiusnm+'NM/'+feature.properties.radiusm+'m</i><br /> ';
+	output += '</div>';
+	layer.bindPopup(output);
+};
+
+function update_notamLayer() {
+    var bbox = map.getBounds().toBBoxString();
+    notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
+    onEachFeature: notamPopup,
+	pointToLayer: function (feature, latlng) {
+	    return L.circle(latlng, feature.properties.radius, {
+                    fillColor: "#ff0000",
+                    color: "#ff0022",
+                    weight: 1,
+                    opacity: 0.5,
+                    fillOpacity: 0.6
+            });
+	}
+    }).addTo(map);
+};
+
+function showNotam() {
+    if (!$(".notam").hasClass("active"))
+    {
+	//loads the function to load the waypoints
+	update_notamLayer();
+	//add the active class
+	$(".notam").addClass("active");
+    } else {
+	//remove the waypoints layer
+	map.removeLayer(notamLayer);
+	//remove the active class
+	$(".notam").removeClass("active");
      }
 }

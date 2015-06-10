@@ -20,8 +20,12 @@ require('header.php');
 <a class="button weatherrain" href="#" onclick="showWeatherRain(); return false;" title="Weather Rain"><i class="fa fa-soundcloud"></i></a>
 <a class="button weatherclouds" href="#" onclick="showWeatherClouds(); return false;" title="Weather Clouds"><i class="fa fa-cloud"></i></a>
 <a class="button waypoints" href="#" onclick="showWaypoints(); return false;" title="Waypoints"><i class="fa fa-exchange"></i></a>
-<a class="button airspace" href="#" onclick="showAirspace(); return false;" title="Airspace"><i class="fa fa-ils"></i></a>
-
+<a class="button airspace" href="#" onclick="showAirspace(); return false;" title="Airspace"><i class="fa fa-share-alt"></i></a>
 <?php
+    if (isset($globalNOTAM) && $globalNOTAM) {
+?>
+<a class="button notam" href="#" onclick="showNotam(); return false;" title="NOTAM"><i class="fa fa-circle-o"></i></a>
+<?php
+    }
 require('footer.php');
 ?>

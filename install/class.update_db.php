@@ -1,6 +1,7 @@
 <?php
 //require_once('libs/simple_html_dom.php');
 require('../require/settings.php');
+require_once('../require/class.Common.php');
 require_once('../require/class.Connection.php');
 
 $tmp_dir = dirname(__FILE__).'/tmp/';
@@ -739,6 +740,7 @@ class update_db {
 
 	public static function update_translation() {
 		global $tmp_dir, $globalDebug;
+		$error = '';
 		if ($globalDebug) echo "Translation : Download...";
 		update_db::download('http://www.acarsd.org/download/translation.php',$tmp_dir.'translation.zip');
 		if (file_exists($tmp_dir.'translation.zip')) {
@@ -752,6 +754,75 @@ class update_db {
 			exit;
 		} elseif ($globalDebug) echo "Done\n";
 
+	}
+
+	public static function update_notam() {
+		global $tmp_dir, $globalDebug, $globalNOTAMSource;
+		require('../require/class.NOTAM.php');
+		$error = '';
+		if ($globalDebug) echo "Notam : Download...";
+		update_db::download($globalNOTAMSource,$tmp_dir.'notam.rss');
+		if (file_exists($tmp_dir.'notam.rss')) {
+			$notams = json_decode(json_encode(simplexml_load_file($tmp_dir.'notam.rss')),true);
+			foreach ($notams['channel']['item'] as $notam) {
+				$title = explode(':',$notam['title']);
+				$data['ref'] = trim($title[0]);
+				unset($title[0]);
+				$data['title'] = trim(implode(':',$title));
+				$description = strip_tags($notam['description'],'<pre>');
+				preg_match(':^(.*?)<pre>:',$description,$match);
+				$q = explode('/',$match[1]);
+				$data['fir'] = $q[0];
+				$data['code'] = $q[1];
+				$ifrvfr = $q[2];
+				if ($q[4] == 'A') $data['scope'] = 'Aerodrome';
+				if ($q[4] == 'E') $data['scope'] = 'en-route';
+				if ($q[4] == 'W') $data['scope'] = 'nav warning';
+				if ($q[4] == 'AE') $data['scope'] = 'Aerodrome/en-route';
+				//$data['scope'] = $q[4];
+				$data['lower_limit'] = $q[5];
+				$data['upper_limit'] = $q[6];
+				$latlonrad = $q[7];
+				sscanf($latlonrad,'%4c%c%5c%c%3d',$las,$lac,$lns,$lnc,$radius);
+				$latitude = Common::convertDec($las,'latitude');
+				$longitude = Common::convertDec($lns,'longitude');
+				if ($lac == 'S') $latitude = '-'.$latitude;
+				if ($lnc == 'W') $longitude = '-'.$longitude;
+				$data['center_latitude'] = $latitude;
+				$data['center_longitude'] = $longitude;
+				$data['radius'] = intval($radius);
+				
+				preg_match(':<pre>(.*?)</pre>:',$description,$match);
+				$data['text'] = $match[1];
+				preg_match(':</pre>(.*?)$:',$description,$match);
+				$fromto = $match[1];
+				preg_match('#FROM:(.*?)TO:#',$fromto,$match);
+				$fromall = trim($match[1]);
+				preg_match('#^(.*?) \((.*?)\)$#',$fromall,$match);
+				$from = trim($match[1]);
+				$data['date_begin'] = date("Y-m-d H:i:s",strtotime($from));
+				preg_match('#TO:(.*?)$#',$fromto,$match);
+				$toall = trim($match[1]);
+				if ($toall != 'Permanent') {
+					preg_match('#^(.*?) \((.*?)\)$#',$toall,$match);
+					$to = trim($match[1]);
+					$data['date_end'] = date("Y-m-d H:i:s",strtotime($to));
+					$data['permanent'] = false;
+				} else {
+				    $data['date_end'] = '';
+				    $data['permanent'] = true;
+				}
+				$data['full_notam'] = $notam['title'].'<br>'.$notam['description'];
+				print_r($data);
+				NOTAM::addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['center_latitude'],$data['center_longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
+				unset($data);
+			} 
+		} else $error = "File ".$tmp_dir.'notam.rss'." doesn't exist. Download failed.";
+		if ($error != '') {
+			echo $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+	
 	}
 	
 	public static function check_last_update() {
@@ -779,6 +850,32 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 	}
+
+	public static function check_last_notam_update() {
+		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_notam_db' AND value < DATE_SUB(DATE(NOW()), INTERVAL 1 DAY)";
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return true;
+                else return false;
+	}
+
+	public static function insert_last_notam_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_notam_db';
+			INSERT INTO config (name,value) VALUES ('last_update_notam_db',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
 	
 	public static function update_all() {
 		update_db::update_routes();
@@ -790,4 +887,5 @@ class update_db {
 //echo update_db::translation();
 //echo update_db::update_waypoints();
 //echo update_db::update_airspace();
+//echo update_db::update_notam();
 ?>

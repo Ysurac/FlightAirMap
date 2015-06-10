@@ -325,6 +325,32 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_8() {
+    		$Connection = new Connection();
+    		$error = '';
+    		// Update table aircraft
+		$error .= create_db::import_file('../db/notam.sql');
+		if ($error != '') return $error;
+		$query = "DELETE FROM config WHERE name = 'last_update_db';
+                        INSERT INTO config (name,value) VALUES ('last_update_db',NOW());
+                        DELETE FROM config WHERE name = 'last_update_notam_db';
+                        INSERT INTO config (name,value) VALUES ('last_update_notam_db',NOW());";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (insert last_update values) : ".$e->getMessage()."\n";
+    		}
+		$query = "UPDATE `config` SET `value` = '9' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
 
     	
     	public static function check_version($update = false) {
@@ -368,6 +394,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '7') {
     			    $error = self::update_from_7();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '8') {
+    			    $error = self::update_from_8();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

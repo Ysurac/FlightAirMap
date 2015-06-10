@@ -51,7 +51,7 @@ class SBS {
 	// Delete old infos
 	foreach (self::$all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
-        	if ($flight['lastupdate'] < (time()-3600)) {
+        	if ($flight['lastupdate'] < (time()-5000)) {
             	    unset(self::$all_flights[$key]);
     	        }
 	    }
@@ -70,6 +70,7 @@ class SBS {
 	//pcntl_signal_dispatch();
 	$dataFound = false;
 	$putinarchive = false;
+	$send = false;
 	
 	// SBS format is CSV format
 	if(is_array($line) && isset($line['hex'])) {
@@ -83,9 +84,22 @@ class SBS {
 		    self::$all_flights[$id] = array('hex' => $hex,'datetime' => $line['datetime']);
 		    if (!isset($line['aircraft_icao'])) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('aircraft_icao' => Spotter::getAllAircraftType($hex)));
 		    else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
-		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => ''));
+		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => ''));
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('lastupdate' => time()));
 		    if ($globalDebug) echo "*********** New aircraft hex : ".$hex." ***********\n";
+		}
+		
+		if (isset($line['datetime']) && $line['datetime'] != '') {
+		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('datetime' => $line['datetime']));
+		}
+		if (isset($line['registration']) && $line['registration'] != '') {
+		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('registration' => $line['registration']));
+		}
+		if (isset($line['pilot_id']) && $line['pilot_id'] != '') {
+		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('pilot_id' => $line['pilot_id']));
+		}
+		if (isset($line['pilot_name']) && $line['pilot_name'] != '') {
+		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('pilot_name' => $line['pilot_name']));
 		}
  
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && (self::$all_flights[$id]['ident'] != trim($line['ident']))) {
@@ -98,6 +112,10 @@ class SBS {
 
 		    $putinarchive = true;
 		    if (isset($line['departure_airport_icao']) && isset($line['arrival_airport_icao'])) {
+		    		self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('departure_airport' => $line['departure_airport_icao'],'arrival_airport' => $line['arrival_airport_icao'],'route_stop' => ''));
+		    } elseif (isset($line['departure_airport_iata']) && isset($line['arrival_airport_iata'])) {
+				$line['departure_airport_icao'] = Spotter::getAirportIcao($line['departure_airport_iata']);
+				$line['arrival_airport_icao'] = Spotter::getAirportIcao($line['arrival_airport_iata']);
 		    		self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('departure_airport' => $line['departure_airport_icao'],'arrival_airport' => $line['arrival_airport_icao'],'route_stop' => ''));
 		    } else {
 			$route = Spotter::getRouteInfo(trim($line['ident']));
@@ -228,7 +246,7 @@ class SBS {
 			    if (self::$all_flights[$id]['squawk'] == '7500') $highlight = 'Squawk 7500 : Hijack';
 			    if (self::$all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure)';
 			    if (self::$all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency';
-			    $result = Spotter::addSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'],'', self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'],self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],$highlight,self::$all_flights[$id]['hex']);
+			    $result = Spotter::addSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'],'', self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'],self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],$highlight,self::$all_flights[$id]['hex'],self::$all_flights[$id]['registration'],self::$all_flights[$id]['pilot_id'],self::$all_flights[$id]['pilot_name']);
 			}
 			$ignoreImport = false;
 			if ($globalDebug) echo $result."\n";
@@ -265,7 +283,8 @@ class SBS {
 		    if (!$ignoreImport) {
 			if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 				if ($globalDebug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in Live DB : ";
-				$result = SpotterLive::addLiveSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'], self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'], self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],self::$all_flights[$id]['hex'],$putinarchive);
+				$result = SpotterLive::addLiveSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], $waypoints, self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'], self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'], self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],self::$all_flights[$id]['hex'],$putinarchive,self::$all_flights[$id]['registration'],self::$all_flights[$id]['pilot_id'],self::$all_flights[$id]['pilot_name']);
+				if ($putinarchive) $send = true;
 				//if ($globalDebug) echo "Distance : ".Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
 				if ($globalDebug) echo $result."\n";
 			} elseif (isset(self::$all_flights[$id]['latitude']) && isset($globalDistanceIgnore['latitude']) && $globalDebug) echo "!! Too far -> Distance : ".Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
@@ -274,6 +293,7 @@ class SBS {
 		    $ignoreImport = false;
 		}
 		if (function_exists('pcntl_fork') && $globalFork) pcntl_signal(SIGCHLD, SIG_IGN);
+		if ($send) return self::$all_flights[$id];
 
     	    }
 	}

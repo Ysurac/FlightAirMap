@@ -165,6 +165,12 @@ $output = '{';
 						if (isset($spotter_item['squawk_usage'])) {
 							$output .= '"squawk_usage": "'.$spotter_item['squawk_usage'].'",';
 						}
+						if (isset($spotter_item['pilot_id'])) {
+							$output .= '"pilot_id": "'.$spotter_item['pilot_id'].'",';
+						}
+						if (isset($spotter_item['pilot_name'])) {
+							$output .= '"pilot_name": "'.$spotter_item['pilot_name'].'",';
+						}
 						if (isset($spotter_item['acars'])) {
 							$output .= '"acars": "'.trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"), '<br />',$spotter_item['acars']['message'])).'",';
 						}
@@ -197,13 +203,24 @@ $output = '{';
                                     } else {
 					    $spotter_history_array = SpotterLive::getAllLiveSpotterDataById($spotter_item['flightaware_id']);
                                     }
-									foreach ($spotter_history_array as $spotter_history)
+										$d = false;
+										$neg = false;
+									foreach ($spotter_history_array as $key => $spotter_history)
 									{
-										$output .= '[';
-													$output .=  $spotter_history['longitude'].', ';
-													$output .=  $spotter_history['latitude'];
-										$output .= '],';
-
+										
+										
+										if (abs($spotter_history['longitude']-$spotter_item['longitude']) > 200 || $d==true) {
+											if ($d == false) {
+												$output .= '';
+												$output .= ',';
+												$d = true;
+											}
+									        } else {
+											$output .= '[';
+											$output .=  $spotter_history['longitude'].', ';
+											$output .=  $spotter_history['latitude'];
+											$output .= '],';
+										}
 									}
 									$output = substr($output, 0, -1);
 								$output .= ']';
