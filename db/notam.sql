@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS notam (
   fir varchar(4) NOT NULL,
   code varchar(5) NOT NULL,
   rules enum('IFR/VFR','IFR','VFR','') NOT NULL,
-  scope enum('Airport warning','Enroute warning','Navigation warning','') NOT NULL DEFAULT 'Airport warning',
+  scope enum('Airport warning','Enroute warning','Navigation warning','Airport/Enroute warning','Airport/Navigation warning','Enroute/Navigation warning','Airport/Enroute/Navigation warning') NOT NULL DEFAULT 'Airport warning',
   lower_limit int(11) NOT NULL,
   upper_limit int(11) NOT NULL,
   center_latitude float NOT NULL,
