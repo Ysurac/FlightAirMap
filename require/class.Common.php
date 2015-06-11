@@ -124,5 +124,21 @@ class Common {
 		}
 		return $deg+(($min*60)/3600);
 	}
+	
+	/**
+	* Copy folder contents
+	* @param       string   $source    Source path
+	* @param       string   $dest      Destination path
+	* @return      bool     Returns true on success, false on failure
+	*/
+	public static function xcopy($source, $dest, $permissions = 0755)
+	{
+		$files = glob($source.'*.*');
+		foreach($files as $file){
+			$file_to_go = str_replace($source,$dest,$file);
+			copy($file, $file_to_go);
+		}
+		return true;
+	}
 }
 ?>

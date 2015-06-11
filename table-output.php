@@ -408,7 +408,12 @@ foreach($spotter_array as $spotter_item)
 			print '</td>'."\n";
 		}
 	}
-	if (@getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
+	if ($globalIVAO && @getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.gif') || @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.gif'))
+	{
+		print '<td class="logo">'."\n";
+		print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.gif" alt="Click to see airline information" title="Click to see airline information" /></a>'."\n";
+		print '</td>'."\n";
+	} elseif (!$globalIVAO && @getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
 	{
 		print '<td class="logo">'."\n";
 		print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png" alt="Click to see airline information" title="Click to see airline information" /></a>'."\n";

@@ -257,7 +257,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		<fieldset>
 		<legend>Data source</legend>
 		<p>
-			<label>Choose data source</label>
+			<p><i>If you choose IVAO, airlines names and logos will come from ivao.aero (you have to run install/populate_all.php to populate table with IVAO data)</i></p>
 <!--
 			<input type="radio" name="datasource" id="flightaware" value="flightaware" onClick="datasource_js()" <?php if (isset($globalFlightAware) && $globalFlightAware) { ?>checked="checked" <?php } ?>/>
 			<label for="flightaware">FlightAware (not tested, no more supported no data feed available for test)</label>
@@ -265,7 +265,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="radio" name="datasource" id="ivao" value="ivao" onClick="datasource_js()" <?php if (isset($globalIVAO) && $globalIVAO) { ?>checked="checked" <?php } ?>/>
 			<label for="ivao">IVAO</label>
 			<input type="radio" name="datasource" id="sbs" value="sbs" onClick="datasource_js()" <?php if (isset($globalSBS1) && $globalSBS1) { ?>checked="checked" <?php } ?> />
-			<label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format)</label>
+			<label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format), others,...</label>
 			<input type="checkbox" name="acars" id="acars" value="acars" onClick="datasource_js()" <?php if (isset($globalACARS) && $globalACARS) { ?>checked="checked" <?php } ?> />
 			<label for="acars">ACARS</label>
 		</p>
@@ -846,16 +846,39 @@ if (isset($_POST['dbtype'])) {
 	foreach ($_SESSION['done'] as $done) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
-	print '<li>Populate notam table with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i><b>If it fails, run install/install_db.php or install/install_db.sh in console, this will finish install</b></li></ul></div>';
+	print '<li>Populate notam table with externals data....<img src="../images/loading.gif" /></li></ul></div>';
 	flush();
 	@ob_flush();
 
 	include_once('class.update_db.php');
 	$globalDebug = FALSE;
-	update_db::update_translation();
+	update_db::update_notam();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate notam table with externals data'));
 
 	$_SESSION['install'] = 'sources';
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'ivao') {
+	unset($_SESSION['install']);
+	if (!is_writable('tmp')) {
+		print '<p><strong>The directory <i>install/tmp</i> must be writable.</strong></p>';
+		require('../footer.php');
+		exit;
+	}
+
+	print '<div class="info column"><ul>';
+	foreach ($_SESSION['done'] as $done) {
+	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
+	}
+	print '<li>Populate airlines table and airlines logos with data from ivao.aero....<img src="../images/loading.gif" /></li></ul></div>';
+	flush();
+	@ob_flush();
+
+	include_once('class.update_db.php');
+	$globalDebug = FALSE;
+	update_db::update_notam();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate ivao table with externals data'));
+
+	$_SESSION['install'] = 'finish';
 	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'sources') {
 	unset($_SESSION['install']);
@@ -878,7 +901,8 @@ if (isset($_POST['dbtype'])) {
 	    $_SESSION['done'] = array_merge($_SESSION['done'],array('Insert data in source table'));
 	    unset($_SESSION['sources']);
 	}
-	$_SESSION['install'] = 'finish';
+	if (isset($globalIVAO) && $globalIVAO) $_SESSION['install'] = 'ivao';
+	else $_SESSION['install'] = 'finish';
 	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'finish') {
 	unset($_SESSION['install']);

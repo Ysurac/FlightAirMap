@@ -2441,7 +2441,7 @@ class Spotter{
 					if (count($airline_array) == 0) {
 						$airline_array = Spotter::getAllAirlineInfo("NA");
 					}
-					if ($airline_array[0]['icao'] == ""){
+					if (!isset($airline_array[0]['icao']) || $airline_array[0]['icao'] == ""){
 						$airline_array = Spotter::getAllAirlineInfo("NA");
 					}
 					

@@ -667,6 +667,41 @@ class update_db {
 			if ($globalTransaction) Connection::$db->commit();
 		}
         }
+
+	public static function ivao_airlines($filename) {
+		require_once('../require/class.Spotter.php');
+		global $tmp_dir, $globalTransaction;
+		$query = 'TRUNCATE TABLE airlines';
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+		$header = NULL;
+		$delimiter = ':';
+		$Connection = new Connection();
+		if (($handle = fopen($filename, 'r')) !== FALSE)
+		{
+			if ($globalTransaction) Connection::$db->beginTransaction();
+			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				if(count($row) > 1) {
+					$query = "INSERT INTO airlines (name,icao,active) VALUES (:name, :icao, 'Y')";
+					try {
+						$sth = Connection::$db->prepare($query);
+						$sth->execute(array(':name' => $row[1],':icao' => $row[0]));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				}
+			}
+			fclose($handle);
+			if ($globalTransaction) Connection::$db->commit();
+		}
+        }
 	
 	public static function update_airspace() {
 		global $tmp_dir;
@@ -681,6 +716,7 @@ class update_db {
 		update_db::gunzip('../db/countries.sql.gz',$tmp_dir.'countries.sql');
 		create_db::import_file($tmp_dir.'countries.sql');
 	}
+
 	
 	public static function update_waypoints() {
 		global $tmp_dir;
@@ -693,9 +729,30 @@ class update_db {
 		update_db::waypoints($tmp_dir.'awy.dat');
 	}
 
+	public static function update_ivao() {
+		global $tmp_dir, $globalDebug;
+		$error = '';
+		if ($globalDebug) echo "IVAO : Download...";
+		update_db::download('http://fr.mirror.ivao.aero/software/ivae_feb2013.zip',$tmp_dir.'ivao.zip');
+		if (file_exists($tmp_dir.'ivao.zip')) {
+			if ($globalDebug) echo "Unzip...";
+			update_db::unzip($tmp_dir.'ivao.zip');
+			if ($globalDebug) echo "Add to DB...";
+			update_db::ivao_airlines($tmp_dir.'data/airlines.dat');
+			if ($globalDebug) echo "Copy airlines logos to airlines images directory...";
+			if (is_writable(dirname(__FILE__).'/../images/airlines')) {
+				if (!Common::xcopy($tmp_dir.'logos/',dirname(__FILE__).'/../images/airlines/')) $error = "Failed to copy airlines logo.";
+			} else $error = "The directory ".dirname(__FILE__).'/../images/airlines'." must be writable";
+		} else $error = "File ".$tmp_dir.'ivao.zip'." doesn't exist. Download failed.";
+		if ($error != '') {
+			echo $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+	}
+
 	public static function update_routes() {
 		global $tmp_dir, $globalDebug;
-		
+		$error = '';
 		if ($globalDebug) echo "Routes : Download...";
 		update_db::download('http://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz',$tmp_dir.'StandingData.sqb.gz');
 		if (file_exists($tmp_dir.'StandingData.sqb.gz')) {
@@ -900,4 +957,5 @@ class update_db {
 //echo update_db::update_waypoints();
 //echo update_db::update_airspace();
 //echo update_db::update_notam();
+//echo update_db::update_ivao();
 ?>
