@@ -7,8 +7,12 @@
     }
     require('class.update_db.php');
     if (isset($globalIVAO) && $globalIVAO) {
-        echo "Install IVAO airlines and logos...";
-        update_db::update_IVAO();
-	echo "Done !\n";
+	if (!file_exists('tmp/')) {
+		echo "You have to download the file ivae_feb2013.zip from https://www.ivao.aero/softdev/mirrors.asp?software=IvAeDataUp and put it in install/tmp directory";
+	} else {
+	        echo "Install IVAO airlines and logos...";
+	        update_db::update_IVAO();
+		echo "Done !\n";
+	}
     }
 ?>

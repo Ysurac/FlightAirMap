@@ -732,9 +732,10 @@ class update_db {
 	public static function update_ivao() {
 		global $tmp_dir, $globalDebug;
 		$error = '';
-		if ($globalDebug) echo "IVAO : Download...";
-		update_db::download('http://fr.mirror.ivao.aero/software/ivae_feb2013.zip',$tmp_dir.'ivao.zip');
-		if (file_exists($tmp_dir.'ivao.zip')) {
+		//Direct download forbidden
+		//if ($globalDebug) echo "IVAO : Download...";
+		//update_db::download('http://fr.mirror.ivao.aero/software/ivae_feb2013.zip',$tmp_dir.'ivae_feb2013.zip');
+		if (file_exists($tmp_dir.'ivae_feb2013.zip')) {
 			if ($globalDebug) echo "Unzip...";
 			update_db::unzip($tmp_dir.'ivao.zip');
 			if ($globalDebug) echo "Add to DB...";

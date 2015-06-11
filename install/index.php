@@ -257,7 +257,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		<fieldset>
 		<legend>Data source</legend>
 		<p>
-			<p><i>If you choose IVAO, airlines names and logos will come from ivao.aero (you have to run install/populate_all.php to populate table with IVAO data)</i></p>
+			<p><i>If you choose IVAO, airlines names and logos will come from ivao.aero (you have to run install/populate_ivao.php to populate table with IVAO data)</i></p>
 <!--
 			<input type="radio" name="datasource" id="flightaware" value="flightaware" onClick="datasource_js()" <?php if (isset($globalFlightAware) && $globalFlightAware) { ?>checked="checked" <?php } ?>/>
 			<label for="flightaware">FlightAware (not tested, no more supported no data feed available for test)</label>
@@ -864,6 +864,7 @@ if (isset($_POST['dbtype'])) {
 
 	$_SESSION['install'] = 'sources';
 	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+/*
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'ivao') {
 	unset($_SESSION['install']);
 	if (!is_writable('tmp')) {
@@ -887,6 +888,7 @@ if (isset($_POST['dbtype'])) {
 
 	$_SESSION['install'] = 'finish';
 	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+*/
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'sources') {
 	unset($_SESSION['install']);
 	print '<div class="info column"><ul>';
@@ -908,8 +910,11 @@ if (isset($_POST['dbtype'])) {
 	    $_SESSION['done'] = array_merge($_SESSION['done'],array('Insert data in source table'));
 	    unset($_SESSION['sources']);
 	}
+	/*
 	if (isset($globalIVAO) && $globalIVAO) $_SESSION['install'] = 'ivao';
 	else $_SESSION['install'] = 'finish';
+	*/
+	$_SESSION['install'] = 'finish';
 	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'finish') {
 	unset($_SESSION['install']);
