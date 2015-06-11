@@ -737,7 +737,7 @@ class update_db {
 		//update_db::download('http://fr.mirror.ivao.aero/software/ivae_feb2013.zip',$tmp_dir.'ivae_feb2013.zip');
 		if (file_exists($tmp_dir.'ivae_feb2013.zip')) {
 			if ($globalDebug) echo "Unzip...";
-			update_db::unzip($tmp_dir.'ivao.zip');
+			update_db::unzip($tmp_dir.'ivae_feb2013.zip');
 			if ($globalDebug) echo "Add to DB...";
 			update_db::ivao_airlines($tmp_dir.'data/airlines.dat');
 			if ($globalDebug) echo "Copy airlines logos to airlines images directory...";
