@@ -281,8 +281,6 @@ $( document ).ready(function() {
 
 	map.on('moveend', function() {
 	    if (map.getZoom() > 7) {
-	        map.removeLayer(layer_data);
-
 		map.removeLayer(airportsLayer);
 		update_airportsLayer();
 		map.removeLayer(locationsLayer);
