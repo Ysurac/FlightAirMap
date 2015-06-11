@@ -381,6 +381,22 @@ $( document ).ready(function() {
 		     info.update(feature.properties);
 		<?php
 		    }
+		    if (isset($globalAircraftSize) && $globalAircraftSize != '') {
+		?>
+		    return new L.Marker(latLng, {
+			iconAngle: feature.properties.heading,
+			title: markerLabel,
+			alt: feature.properties.callsign,
+			icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
+			    iconRetinaUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
+			    iconSize: [<?php print $globalAircraftSize; ?>, <?php print $globalAircraftSize; ?>],
+			    iconAnchor: [<?php print $globalAircraftSize/2; ?>, <?php print $globalAircraftSize; ?>]
+			})
+		    })
+		    
+		<?php
+		    } else {
 		?>
 		if (map.getZoom() > 7) {
 		    return new L.Marker(latLng, {
@@ -407,6 +423,9 @@ $( document ).ready(function() {
 			})
 		    })
 		}
+		<?php
+		    }
+		?>
 
             },
             onEachFeature: function (feature, layer) {

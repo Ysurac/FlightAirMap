@@ -439,6 +439,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<label for="maprefresh">Live map refresh (in seconds)</label>
 			<input type="number" name="maprefresh" id="maprefresh" value="<?php if (isset($globalMapRefresh)) echo $globalMapRefresh; else echo '30'; ?>" />
 		</p>
+		<p>
+			<label for="aircraftsize">Size of aircraft icon on map (default to 30px if zoom > 7 else 15px), empty to default</label>
+			<input type="number" name="aircraftsize" id="aircraftsize" value="<?php if (isset($globalAircraftSize)) echo $globalAircraftSize; ?>" />
+		</p>
 		</fieldset>
 		
 		<input type="submit" name="submit" value="Create/Update database & write setup" />
@@ -578,6 +582,9 @@ if (isset($_POST['dbtype'])) {
 	$settings = array_merge($settings,array('globalLiveInterval' => $refresh));
 	$maprefresh = filter_input(INPUT_POST,'maprefresh',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalMapRefresh' => $maprefresh));
+
+	$aircraftsize = filter_input(INPUT_POST,'aircraftsize',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalAircraftSize' => $aircraftsize));
 
 	$britishairways = filter_input(INPUT_POST,'britishairways',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalBritishAirwaysKey' => $britishairways));
