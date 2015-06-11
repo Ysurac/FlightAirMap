@@ -759,6 +759,7 @@ class update_db {
 	public static function update_notam() {
 		global $tmp_dir, $globalDebug, $globalNOTAMSource;
 		require('../require/class.NOTAM.php');
+		date_default_timezone_set('UTC');
 		$query = 'TRUNCATE TABLE notam';
 		try {
 			$Connection = new Connection();
