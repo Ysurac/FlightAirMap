@@ -205,24 +205,19 @@ $output = '{';
                                     }
 										$d = false;
 										$neg = false;
+									$history_output = '';
 									foreach ($spotter_history_array as $key => $spotter_history)
 									{
-										
-										
 										if (abs($spotter_history['longitude']-$spotter_item['longitude']) > 200 || $d==true) {
-											if ($d == false) {
-												$output .= '';
-												$output .= ',';
-												$d = true;
-											}
+											if ($d == false) $d = true;
 									        } else {
-											$output .= '[';
-											$output .=  $spotter_history['longitude'].', ';
-											$output .=  $spotter_history['latitude'];
-											$output .= '],';
+											$history_output .= '[';
+											$history_output .=  $spotter_history['longitude'].', ';
+											$history_output .=  $spotter_history['latitude'];
+											$history_output .= '],';
 										}
 									}
-									$output = substr($output, 0, -1);
+									if ($history_output != '') $output .= substr($history_output, 0, -1);
 								$output .= ']';
 							$output .= '}';
 				$output .= '},';
