@@ -84,7 +84,9 @@ if (!empty($spotter_array))
 
 	print '<div class="info column">';
 	print '<h1>';
-	if (@getimagesize($globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png')) {
+	if ($globalIVAO && @getimagesize($globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.gif')) {
+		print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.gif" class="airline-logo" /></a> ';
+	} elseif (@getimagesize($globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png')) {
 		print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png" class="airline-logo" /></a> ';
 	} else {
 		if ($spotter_array[0]['airline_name'] != "") {

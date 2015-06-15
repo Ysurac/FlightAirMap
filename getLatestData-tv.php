@@ -12,7 +12,7 @@ $output = '{';
 	
 	foreach($spotter_array as $spotter_item)
 	  {
-	  	date_default_timezone_set('America/Toronto');
+	  	
 	  	
 	  	$output .= '{';
 		  	$output .= '"flight_id": "'.$spotter_item['spotter_id'].'",';
@@ -31,7 +31,12 @@ $output = '{';
 			      	 $output .= '</td>';
 			    	 }
 		    	 }
-		    	if (@getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
+		    	if ($globalIVAO && @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.gif'))
+		  		{
+		    		$output .= '<td class=\"logo\">';
+		    			$output .= '<img src=\"'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.gif\" />';
+		    		$output .= '</td>';
+		    	} elseif (@getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
 		  		{
 		    		$output .= '<td class=\"logo\">';
 		    			$output .= '<img src=\"'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png\" />';

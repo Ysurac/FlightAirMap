@@ -55,12 +55,17 @@ print '<div class="table-responsive">';
 			      	 print '</td>';
 			    	 }
 		    	 }
-		    	if (@getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
-		  		{
+		    	if ($globalIVAO && (@getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.gif') || @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.gif')))
+		  	{
+		    		print '<td class="logo">';
+		    			print '<img src="'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.gif" />';
+		    		print '</td>';
+		    	} elseif (@getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
+		  	{
 		    		print '<td class="logo">';
 		    			print '<img src="'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png" />';
 		    		print '</td>';
-		  		} else {
+		  	} else {
 		  			print '<td class="logo-no-image">';
 		  				if ($spotter_item['airline_name'] != "")
 		  				{
