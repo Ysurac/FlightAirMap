@@ -850,6 +850,7 @@ class update_db {
 				if ($q[4] == 'E') $data['scope'] = 'Enroute warning';
 				if ($q[4] == 'W') $data['scope'] = 'Navigation warning';
 				if ($q[4] == 'AE') $data['scope'] = 'Airport/Enroute warning';
+				if ($q[4] == 'AW') $data['scope'] = 'Airport/Navigation warning';
 				//$data['scope'] = $q[4];
 				$data['lower_limit'] = $q[5];
 				$data['upper_limit'] = $q[6];
@@ -874,8 +875,8 @@ class update_db {
 				$data['date_begin'] = date("Y-m-d H:i:s",strtotime($from));
 				preg_match('#TO:(.*?)$#',$fromto,$match);
 				$toall = trim($match[1]);
-				if ($toall != 'Permanent') {
-					preg_match('#^(.*?) \((.*?)\)$#',$toall,$match);
+				if (!preg_match(':Permanent:',$toall)) {
+					preg_match('#^(.*?) \((.*?)\)#',$toall,$match);
 					$to = trim($match[1]);
 					$data['date_end'] = date("Y-m-d H:i:s",strtotime($to));
 					$data['permanent'] = false;
