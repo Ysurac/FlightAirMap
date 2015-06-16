@@ -11,10 +11,14 @@ class Image {
     * @return Array the images list
     *
     */
-    public static function getSpotterImage($registration)
+    public static function getSpotterImage($registration,$aircraft_icao = '', $airline_icao = '')
     {
 	    $registration = filter_var($registration,FILTER_SANITIZE_STRING);
-	$registration = trim($registration);
+	    $aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
+	    $airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
+	    if ($registration == '' && $aircraft_icao != '') $registration = $aircraft_icao.$airline_icao;
+	    
+	    $registration = trim($registration);
 
 	$query  = "SELECT spotter_image.*
 				FROM spotter_image 
@@ -50,14 +54,15 @@ class Image {
     * @return String either success or error
     *
     */
-    public static function addSpotterImage($registration)
+    public static function addSpotterImage($registration,$aircraft_icao = '', $airline_icao = '')
     {
 	global $globalAircraftImageFetch;
 	if (isset($globalAircraftImageFetch) && !$globalAircraftImageFetch) return '';
 	$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 	$registration = trim($registration);
 	//getting the aircraft image
-	$image_url = Image::findAircraftImage($registration);
+	$image_url = Image::findAircraftImage($registration,$aircraft_icao,$airline_icao);
+	if ($registration == '' && $aircraft_icao != '') $registration = $aircraft_icao.$airline_icao;
 	if ($image_url['original'] != '') {
 	    $query  = "INSERT INTO spotter_image (registration, image, image_thumbnail, image_copyright, image_source,image_source_website) VALUES (:registration,:image,:image_thumbnail,:copyright,:source,:source_website)";
 	    try {
@@ -80,23 +85,32 @@ class Image {
     * @return Array the aircraft thumbnail, orignal url and copyright
     *
     */
-    public static function findAircraftImage($aircraft_registration)
+    public static function findAircraftImage($aircraft_registration, $aircraft_icao = '', $airline_icao = '')
     {
 	global $globalAircraftImageSources, $globalIVAO;
 	if (!isset($globalIVAO)) $globalIVAO = FALSE;
 	$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
+	
+	if ($aircraft_registration != '') {
 	if (strpos($aircraft_registration,'/') !== false) return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
+	    $aircraft_registration = urlencode(trim($aircraft_registration));
+	    $aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
+    	    if (isset($aircraft_info[0]['aircraft_name'])) $aircraft_name = $aircraft_info[0]['aircraft_name'];
+	    else $aircraft_name = '';
+	    if (isset($aircraft_info[0]['aircraft_icao'])) $aircraft_name = $aircraft_info[0]['aircraft_icao'];
+    	    else $aircraft_icao = '';
+    	    if (isset($aircraft_info[0]['airline_icao'])) $airline_icao = $aircraft_info[0]['airline_icao'];
+    	    else $airline_icao = '';
+        } elseif ($aircraft_icao != '') {
+    	    $aircraft_registration = $aircraft_icao;
+    	    $aircraft_name = '';
+	} else return array('thumbnail' => '','original' => '', 'copyright' => '', 'source' => '','source_website' => '');
 
-	$aircraft_registration = urlencode(trim($aircraft_registration));
-	$aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
-        if (isset($aircraft_info[0]['aircraft_name'])) $aircraft_name = $aircraft_info[0]['aircraft_name'];
-        else $aircraft_name = '';
-	if ($aircraft_registration == '') return array('thumbnail' => '','original' => '', 'copyright' => '', 'source' => '','source_website' => '');
-
-	if (!isset($globalAircraftImageSources)) $globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
+	if (!isset($globalAircraftImageSources)) $globalAircraftImageSources = array('ivaomtl','wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
 	
 	foreach ($globalAircraftImageSources as $source) {
 		$source = strtolower($source);
+		if ($source == 'ivaomtl' && $globalIVAO && $aircraft_icao != '' && $airline_icao != '') $images_array = Image::fromIvaoMtl($aircraft_icao,$airline_icao);
 		if ($source == 'planespotters' && !$globalIVAO) $images_array = Image::fromPlanespotters($aircraft_registration,$aircraft_name);
 		if ($source == 'flickr') $images_array = Image::fromFlickr($aircraft_registration,$aircraft_name);
 		if ($source == 'bing') $images_array = Image::fromBing($aircraft_registration,$aircraft_name);
@@ -278,6 +292,22 @@ class Image {
 	return false;
     }
 
+
+    public static function fromIvaoMtl($aircraft_icao,$airline_icao) {
+	if (Common::urlexist('http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg')) {
+	    $image_url['thumbnail'] = 'http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
+	    $image_url['original'] = 'http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
+	    $image_url['copyright'] = 'IVAO';
+	    $image_url['source_website'] = 'http://mtlcatalog.ivao.aero/';
+	    $image_url['source'] = 'ivao.aero';
+	    return $image_url;
+	} else {
+	    return false;
+	}
+    
+    }
+    
+    
     /**
     * Gets the aircraft image from Bing
     *

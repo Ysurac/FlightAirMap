@@ -171,6 +171,9 @@ $output = '{';
 						if (isset($spotter_item['pilot_name'])) {
 							$output .= '"pilot_name": "'.$spotter_item['pilot_name'].'",';
 						}
+						if (isset($spotter_item['waypoints']) && $spotter_item['waypoints'] != '') {
+							$output .= '"waypoints": "'.$spotter_item['waypoints'].'",';
+						}
 						if (isset($spotter_item['acars'])) {
 							$output .= '"acars": "'.trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"), '<br />',$spotter_item['acars']['message'])).'",';
 						}

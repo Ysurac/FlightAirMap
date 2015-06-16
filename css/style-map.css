@@ -149,6 +149,14 @@ body.page-index .leaflet-popup-content-wrapper .acars span{
     text-transform: uppercase;
     color:#aaa;
 }
+body.page-index .leaflet-popup-content-wrapper .waypoints{
+  padding:4px;
+}
+body.page-index .leaflet-popup-content-wrapper .waypoints span{
+    display:block;
+    text-transform: uppercase;
+    color:#aaa;
+}
 body.page-index .leaflet-popup-content-wrapper .bottom{
   background-color:#1a3151;
   color:#fff;

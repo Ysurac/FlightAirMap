@@ -140,5 +140,15 @@ class Common {
 		}
 		return true;
 	}
+	
+	/**
+	* Check if an url exist
+	* @param	String $url url to check
+	* @return	bool Return true on succes false on failure
+	*/
+	public static function urlexist($url){
+		$headers=get_headers($url);
+		return stripos($headers[0],"200 OK")?true:false;
+	}
 }
 ?>

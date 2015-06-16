@@ -188,6 +188,7 @@ while ($i > 0) {
 	        	$data['verticalrate'] = ''; // vertical rate
 	        	$data['squawk'] = ''; // squawk
 	        	$data['emergency'] = ''; // emergency
+	        	$data['waypoints'] = $line[30];
 			//$data['datetime'] = date('Y-m-d h:i:s');
 			$data['datetime'] = date('Y-m-d h:i:s',strtotime($line[37])); // FIXME convert to correct format
 		        $data['departure_airport_icao'] = $line[11];
@@ -201,7 +202,7 @@ while ($i > 0) {
 	    		    }
         		}
 	    		$data['format_source'] = 'whazzup';
-    			$SBS::add($data);
+    			if ($line[3] == 'PILOT') $SBS::add($data);
     			unset($data);
     		    }
     		}
@@ -261,6 +262,7 @@ while ($i > 0) {
 	        if (isset($line['alt'])) $data['altitude'] = $line['alt']; // altitude
 	        if (isset($line['gs'])) $data['speed'] = $line['gs']; // speed
 	        if (isset($line['heading'])) $data['heading'] = $line['heading']; // heading
+	        if (isset($line['route'])) $data['waypoints'] = $line['route']; // route
 	        $data['latitude'] = $line['lat']; // lat
 	        $data['longitude'] = $line['lon']; // long
 	        //$data['verticalrate'] = $line['vrt']; // verticale rate
@@ -301,6 +303,7 @@ while ($i > 0) {
 	        $data['arrival_airport_icao'] = $line['arricao'];
     		$data['arrival_airport_time'] = $line['arrtime'];
     		$data['aircraft_icao'] = $line['aircraft'];
+    		if (isset($line['route'])) $data['route'] = $line['route'];
 	        $data['format_source'] = 'phpvmacars';
 		$SBS::add($data);
 		unset($data);
@@ -323,37 +326,124 @@ while ($i > 0) {
 		    if ($buffer != '') {
 			$tt = 0;
 			if ($value == 'raw') {
-				// Not yet finished
-				$hex = substr($buffer,1,-1);
-				$bin = base_convert($hex,16,2);
+			    // Not yet finished, no CRC checks
+			    $hex = substr($buffer,1,-1);
+			    //echo strlen($hex)."\n";
+				$bin = gmp_strval( gmp_init($hex,16), 2);
+			//	echo 'check : '.SBS::parityCheck(substr($bin,0,-24))."\n";
+				echo 'check : '.SBS::parityCheck($bin)."\n";
+				echo 'crc : '.SBS::crc($bin)."\n";
+			    if (strlen($hex) == 28 && SBS::parityCheck(substr($bin,0,-24)) == substr($bin,-24)) {
+				//$bin = base_convert($hex,16,2);
+//				$bin = gmp_strval( gmp_init($hex,16), 2);
 				$df = intval(substr($bin,0,5),2);
-				$ca = intval(substr($bin,6,3),2);
-				echo date("Y-m-d").'T'.date("H:i:s.u")."    ".$hex."\n";
-//				echo $bin."\n";
-//				echo 'df : '.$df.' ( '.substr($bin,0,5).' )'."\n";
-//				echo 'ca : '.$ca.' ( '.substr($bin,6,3).' )'."\n";
+				$ca = intval(substr($bin,5,3),2);
+//				echo 'df : '.$df.' ( '.substr($bin,0,5).' ) ca : '.$ca.' '.$hex.' - '.$bin."\n";
+				// Only support DF17 for now
+				//if ($df == 17 || ($df == 18 && ($ca == 0 || $ca == 1 || $ca == 6))) {
 				if ($df == 17) {
 					//echo $hex;
 					$icao = substr($hex,2,6);
+					$data['hex'] = $icao;
 					$tc = intval(substr($bin,32,5),2);
 					//echo 'icao : '.$icao.' - tc : '.$tc."\n";
 					if ($tc >= 1 && $tc <= 4) {
 						//callsign
-						//strtr(,,'#ABCDEFGHIJKLMNOPQRSTUVWXYZ#####_###############0123456789######');
-						$callsign = strtr(substr($bin,40,56),array('000001' => 'A','000010' => 'B','000011' => 'C','000100' => 'D','000101' => 'E','000110' => 'F','000111' => 'G','001000' => 'H','001001' => 'I','001010' => 'J','001011' => 'K','001100' => 'L','001101' => 'M', '001110' => 'N','001111' => 'O','010000' => 'P','010001' => 'Q','010010' => 'R','010011' => 'S','010100' => 'T','010101' => 'U','010110' => 'V','010111' => 'W','011000' => 'X','011001' => 'Y','011010' => 'Z'));
-						echo 'icao : '.$icao.' - tc : '.$tc."\n";
-						echo 'Callsign : '.$callsign;
+						$csbin = substr($bin,40,56);
+						$charset = str_split('#ABCDEFGHIJKLMNOPQRSTUVWXYZ#####_###############0123456789######');
+						$cs = '';
+						$cs .= $charset[intval(substr($csbin,0,6),2)];
+						$cs .= $charset[intval(substr($csbin,6,6),2)];
+						$cs .= $charset[intval(substr($csbin,12,6),2)];
+						$cs .= $charset[intval(substr($csbin,18,6),2)];
+						$cs .= $charset[intval(substr($csbin,24,6),2)];
+						$cs .= $charset[intval(substr($csbin,30,6),2)];
+						$cs .= $charset[intval(substr($csbin,36,6),2)];
+						$cs .= $charset[intval(substr($csbin,42,6),2)];
+						$cs = str_replace('_','',$cs);
+						$cs = str_replace('#','',$cs);
+						$callsign = $cs;
+						
+						//echo 'icao : '.$icao.' - tc : '.$tc."\n";
+						//echo 'Callsign : '.$callsign."\n";
+						$data['ident'] = $callsign;
 					} elseif ($tc >= 9 && $tc <= 18) {
-						// alt
-						$latitude = intval(substr($bin,54,17),2);
-						$longitude = intval(substr($bin,71,17),2);
-
-						echo 'latitude : '.$latitude.' - longitude :'.$longitude;
+						// Check Q-bit
+						$q = substr($bin,47,1);
+						if ($q) {
+							$n = intval(substr($bin,40,7).substr($bin,48,4),2);
+							$alt = $n*25-1000;
+							//echo 'altitude : '.$alt."ft\n";
+							$data['altitude'] = $alt;
+						}
+						// Check odd/even flag
+						$oe = substr($bin,53,1);
+						//if ($oe) => odd else even
+						//  131072 is 2^17 since CPR latitude and longitude are encoded in 17 bits.
+						$cprlat = intval(substr($bin,54,17),2)/131072.0;
+						$cprlon = intval(substr($bin,71,17),2)/131072.0;
+						if ($oe == 0) $latlon[$icao] = array('latitude' => $cprlat,'longitude' => $cprlon,'created' => time());
+						elseif (isset($latlon[$icao]) && (time() - $latlon[$icao]['created']) < 10) {
+						    $cprlat_odd = $cprlat;
+						    $cprlon_odd = $cprlon;
+						    $cprlat_even = $latlon[$icao]['latitude'];
+						    $cprlon_even = $latlon[$icao]['longitude'];
+						    
+						    $j = 59*$cprlat_even-60*$cprlat_odd+0.5;
+						    
+						    $lat_even = (360.0/60)*($j%60+$cprlat_even);
+						    $lat_odd = (360.0/59)*($j%59+$cprlat_odd);
+						    if ($lat_even >= 270) $lat_even = $lat_even - 360;
+						    if ($lat_odd >= 270) $lat_odd = $lat_odd - 360;
+						    // check latitude zone;
+						    if (SBS::cprNL($lat_even) == SBS::cprNL($lat_odd)) {
+							if ($latlon[$icao]['created'] > time()) {
+							    $ni = SBS::cprN($lat_even,0);
+							    $m = floor($cprlon_even*(SBS::cprNL($lat_even)-1) - $cprlon_odd * SBS::cprNL($lat_even)+0.5);
+							    $lon = (360.0/$ni)*($m%$ni+$cprlon_even);
+							    $lat = $lat_even;
+							    if ($lon > 180) $lon = $lon -360;
+							    echo 'cs : '.$cs.' - hex : '.$hex.' - lat : '.$lat.' - lon : '.$lon;
+							    $data['latitude'] = $lat;
+							    $data['longitude'] = $lon;
+							} else {
+							    $ni = SBS::cprN($lat_odd,1);
+							    $m = floor($cprlon_even*(SBS::cprNL($lat_odd)-1) - $cprlon_odd * SBS::cprNL($lat_odd)+0.5);
+							    $lon = (360.0/$ni)*($m%$ni+$cprlon_odd);
+							    $lat = $lat_odd;
+							    if ($lon > 180) $lon = $lon -360;
+							    echo 'cs : '.$cs.' - hex : '.$hex.' - lat : '.$lat.' - lon : '.$lon.' second'."\n";
+							    $data['latitude'] = $lat;
+							    $data['longitude'] = $lon;
+							}
+						    }
+						    unset($latlon[$icao]);
+						}
 					} elseif ($tc == 19) {
 						// speed & heading
+						$v_ew_dir = intval(substr($bin,45,1));
+						$v_ew = intval(substr($bin,46,10),2);
+						$v_ns_dir = intval(substr($bin,56,1));
+						$v_ns = intval(substr($bin,57,10),2);
+						if ($v_ew_dir) $v_ew = -1*$v_ew;
+						if ($v_ns_dir) $v_ns = -1*$v_ns;
+						$speed = sqrt($v_ns*$v_ns+$v_ew*$v_ew);
+						$heading = atan2($v_ew,$v_ns)*360.0/(2*pi());
+						if ($heading <0) $heading = $heading+360;
+						//echo 'v_ew : '.$v_ew.' - v_ns : '.$v_ns."\n";
+						//echo 'speed : '.$speed.' - heading : '.$heading."\n";
+						$data['speed'] = $speed;
+						$data['heading'] = $heading;
 					}
+					if (isset($data)) {
+					    $data['datetime'] = date('Y-m-d h:i:s');
+					    $data['format_source'] = 'raw';
+    					    $SBS::add($data);
+    					    unset($data);
+					}
+
 				}
-				
+			    }
 			} elseif ($value == 'tsv' || substr($buffer,0,4) == 'clock') {
 			    $line = explode("\t", $buffer);
 			    for($k = 0; $k < count($line); $k=$k+2) {

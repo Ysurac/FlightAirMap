@@ -532,6 +532,12 @@ $( document ).ready(function() {
                 	output += '</div>';
                     }
                 output += '</div>';
+                if (typeof feature.properties.waypoints != 'undefined') {
+            	    output += '<div class="waypoints"><span>Waypoints</span>';
+            	    output += feature.properties.waypoints;
+            	    output += '</div>';
+                }
+                
                 if (typeof feature.properties.acars != 'undefined') {
             	    output += '<div class="acars"><span>Latest ACARS message</span>';
             	    output += feature.properties.acars;
@@ -547,6 +553,7 @@ $( document ).ready(function() {
 		    output += '</div>';
                 }
                 output += '</div>';
+                
                 <?php
             	    if (!isset($ident) && !isset($flightaware_id)) {
                 ?>

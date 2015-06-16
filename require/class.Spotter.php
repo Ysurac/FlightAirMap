@@ -108,23 +108,6 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
 			$temp_array['image_source'] = "";
 			$temp_array['image_copyright'] = "";
-			if($temp_array['registration'] != "" || ($globalIVAO && $temp_array['aircraft_type'] != ''))
-			{
-				if ($globalIVAO) $image_array = Image::getSpotterImage($temp_array['aircraft_type']);
-				else $image_array = Image::getSpotterImage($temp_array['registration']);
-				if (count($image_array) > 0) {
-					$temp_array['image'] = $image_array[0]['image'];
-					$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
-					$temp_array['image_source'] = $image_array[0]['image_source'];
-					$temp_array['image_source_website'] = $image_array[0]['image_source_website'];
-					if ($temp_array['image_source_website'] == '' && $temp_array['image_source'] == 'planespotters') {
-						$planespotter_url_array = explode("_", $temp_array['image']);
-						$planespotter_id = str_replace(".jpg", "", $planespotter_url_array[1]);
-						$temp_array['image_source_website'] = 'http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id;
-					 }
-					$temp_array['image_copyright'] = $image_array[0]['image_copyright'];
-				}
-			}
  
 			if (isset($row['highlight'])) {
 				$temp_array['highlight'] = $row['highlight'];
@@ -209,6 +192,28 @@ class Spotter{
 					//print_r($acars_array);
 				}
 			}
+
+			if($temp_array['registration'] != "" || ($globalIVAO && $temp_array['aircraft_type'] != ''))
+			{
+				if ($globalIVAO) {
+					if (isset($temp_array['airline_icao']))	$image_array = Image::getSpotterImage('',$temp_array['aircraft_type'],$temp_array['airline_icao']);
+					else $image_array = Image::getSpotterImage('',$temp_array['aircraft_type']);
+				} else $image_array = Image::getSpotterImage($temp_array['registration']);
+				if (count($image_array) > 0) {
+					$temp_array['image'] = $image_array[0]['image'];
+					$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+					$temp_array['image_source'] = $image_array[0]['image_source'];
+					$temp_array['image_source_website'] = $image_array[0]['image_source_website'];
+					if ($temp_array['image_source_website'] == '' && $temp_array['image_source'] == 'planespotters') {
+						$planespotter_url_array = explode("_", $temp_array['image']);
+						$planespotter_id = str_replace(".jpg", "", $planespotter_url_array[1]);
+						$temp_array['image_source_website'] = 'http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id;
+					 }
+					$temp_array['image_copyright'] = $image_array[0]['image_copyright'];
+				}
+			}
+
+
 			if (!isset($globalIVAO) || ! $globalIVAO) {
 				$schedule_array = Schedule::getSchedule($temp_array['ident']);
 				//print_r($schedule_array);
@@ -1734,31 +1739,34 @@ class Spotter{
 	public static function getAllAirlineInfo($airline_icao)
 	{
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
-
-		if (strlen($airline_icao) == 2) {
-		    $query  = "SELECT airlines.* FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y'";
+		if ($airline_icao == 'NA') {
+			$airline_array[] = array('name' => 'Not Available','iata' => 'NA', 'icao' => 'NA', 'callsign' => '', 'country' => 'NA', 'type' =>'');
+			return $airline_array;
 		} else {
-		    $query  = "SELECT airlines.* FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y'";
-		}
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
-		$sth->execute(array(':airline_icao' => $airline_icao));
+			if (strlen($airline_icao) == 2) {
+			    $query  = "SELECT airlines.* FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y'";
+			} else {
+			    $query  = "SELECT airlines.* FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y'";
+			}
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute(array(':airline_icao' => $airline_icao));
 
-		$airline_array = array();
-		$temp_array = array();
+			$airline_array = array();
+			$temp_array = array();
 		
-		while($row = $sth->fetch(PDO::FETCH_ASSOC))
-		{
-			$temp_array['name'] = $row['name'];
-			$temp_array['iata'] = $row['iata'];
-			$temp_array['icao'] = $row['icao'];
-			$temp_array['callsign'] = $row['callsign'];
-			$temp_array['country'] = $row['country'];
-			$temp_array['type'] = $row['type'];
-
-			$airline_array[] = $temp_array;
+			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+			{
+				$temp_array['name'] = $row['name'];
+				$temp_array['iata'] = $row['iata'];
+				$temp_array['icao'] = $row['icao'];
+				$temp_array['callsign'] = $row['callsign'];
+				$temp_array['country'] = $row['country'];
+				$temp_array['type'] = $row['type'];
+				$airline_array[] = $temp_array;
+			}
+			return $airline_array;
 		}
-		return $airline_array;
 	}
 	
 	
@@ -1872,7 +1880,7 @@ class Spotter{
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
-		$query  = "SELECT spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer FROM spotter_output WHERE spotter_output.registration = :registration";
+		$query  = "SELECT spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.airline_icao FROM spotter_output WHERE spotter_output.registration = :registration";
 		$Connection = new Connection();
 		$sth = Connection::$db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
@@ -1882,6 +1890,7 @@ class Spotter{
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
+			$temp_array['airline_icao'] = $row['airline_icao'];
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
@@ -2570,11 +2579,13 @@ class Spotter{
     
 		if ($globalIVAO && $aircraft_icao != '')
 		{
-			$image_array = Image::getSpotterImage($aircraft_icao);
+            		if (isset($airline_array[0]['icao'])) $airline_icao = $airline_array[0]['icao'];
+            		else $airline_icao = '';
+			$image_array = Image::getSpotterImage('',$aircraft_icao,$airline_icao);
 			if (!isset($image_array[0]['registration']))
 			{
 				//echo "Add image !!!! \n";
-				Image::addSpotterImage($aircraft_icao);
+				Image::addSpotterImage('',$aircraft_icao,$airline_icao);
 			}
 		}
     
@@ -2616,7 +2627,20 @@ class Spotter{
                 $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop,highlight,ModeS, pilot_id, pilot_name) 
                 VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time, :squawk, :route_stop, :highlight, :ModeS, :pilot_id, :pilot_name)";
 
-                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'],':airline_country' => $airline_array[0]['country'],':airline_type' => $airline_array[0]['type'],':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_array[0]['type'],':aircraft_manufacturer' => $aircraft_array[0]['manufacturer'],':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country'],':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date,':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk, ':route_stop' => $route_stop, ':highlight' => $highlight, ':ModeS' => $ModeS, ':pilot_id' => $pilot_id, ':pilot_name' => $pilot_name);
+                $airline_name = $airline_array[0]['name'];
+                $airline_icao = $airline_array[0]['icao'];
+                $airline_country = $airline_array[0]['country'];
+                $airline_type = $airline_array[0]['type'];
+                $aircraft_type = $aircraft_array[0]['type'];
+                $aircraft_manufacturer = $aircraft_array[0]['manufacturer'];
+                $departure_airport_name = $departure_airport_array[0]['name'];
+                $departure_airport_city = $departure_airport_array[0]['city'];
+                $departure_airport_country = $departure_airport_array[0]['country'];
+                $arrival_airport_icao = $arrival_airport_icao;
+                $arrival_airport_name = $arrival_airport_array[0]['name'];
+                $arrival_airport_city = $arrival_airport_array[0]['city'];
+                $arrival_airport_country = $arrival_airport_array[0]['country'];
+                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_name,':airline_icao' => $airline_icao,':airline_country' => $airline_country,':airline_type' => $airline_type,':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_type,':aircraft_manufacturer' => $aircraft_manufacturer,':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_name,':departure_airport_city' => $departure_airport_city,':departure_airport_country' => $departure_airport_country,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_name,':arrival_airport_city' => $arrival_airport_city,':arrival_airport_country' => $arrival_airport_country,':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date,':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk, ':route_stop' => $route_stop, ':highlight' => $highlight, ':ModeS' => $ModeS, ':pilot_id' => $pilot_id, ':pilot_name' => $pilot_name);
 
 
 		try {

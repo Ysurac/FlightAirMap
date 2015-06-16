@@ -628,7 +628,7 @@ if (isset($_POST['dbtype'])) {
 
 	// Set some defaults values...
 	if (!isset($globalAircraftImageSources)) {
-	    $globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
+	    $globalAircraftImageSources = array('ivaomtl','wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
 	    $settings = array_merge($settings,array('globalAircraftImageSources' => $globalAircraftImageSources));
 	}
 
