@@ -105,7 +105,7 @@ $globalNOTAMSource = ''; //URL of your feed from notaminfo.com
 //Retrieve Image from externals sources
 $globalAircraftImageFetch = TRUE;
 //Sources for Aircraft image
-$globalAircraftImageSources = array('wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
+$globalAircraftImageSources = array('ivaomtl','wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
 
 //Retrieve schedules from externals sources (set to FALSE for IVAO or if $globalFork = FALSE)
 $globalSchedulesFetch = TRUE;
