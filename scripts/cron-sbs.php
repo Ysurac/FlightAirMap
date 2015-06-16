@@ -331,9 +331,10 @@ while ($i > 0) {
 			    //echo strlen($hex)."\n";
 				$bin = gmp_strval( gmp_init($hex,16), 2);
 			//	echo 'check : '.SBS::parityCheck(substr($bin,0,-24))."\n";
-				echo 'check : '.SBS::parityCheck($bin)."\n";
-				echo 'crc : '.SBS::crc($bin)."\n";
-			    if (strlen($hex) == 28 && SBS::parityCheck(substr($bin,0,-24)) == substr($bin,-24)) {
+				//echo 'check : '.SBS::parityCheck($bin)."\n";
+				//echo 'crc : '.SBS::crc($bin)."\n";
+			    //if (strlen($hex) == 28 && SBS::parityCheck(substr($bin,0,-24)) == substr($bin,-24)) {
+			    if (strlen($hex) == 28) {
 				//$bin = base_convert($hex,16,2);
 //				$bin = gmp_strval( gmp_init($hex,16), 2);
 				$df = intval(substr($bin,0,5),2);
@@ -403,18 +404,22 @@ while ($i > 0) {
 							    $lon = (360.0/$ni)*($m%$ni+$cprlon_even);
 							    $lat = $lat_even;
 							    if ($lon > 180) $lon = $lon -360;
-							    echo 'cs : '.$cs.' - hex : '.$hex.' - lat : '.$lat.' - lon : '.$lon;
+							    if ($lat > -91 && $lat < 91 && $lon > -181 && $lon < 181) {
+							    //if ($globalDebug) echo 'cs : '.$cs.' - hex : '.$hex.' - lat : '.$lat.' - lon : '.$lon;
 							    $data['latitude'] = $lat;
 							    $data['longitude'] = $lon;
+							    }
 							} else {
 							    $ni = SBS::cprN($lat_odd,1);
 							    $m = floor($cprlon_even*(SBS::cprNL($lat_odd)-1) - $cprlon_odd * SBS::cprNL($lat_odd)+0.5);
 							    $lon = (360.0/$ni)*($m%$ni+$cprlon_odd);
 							    $lat = $lat_odd;
 							    if ($lon > 180) $lon = $lon -360;
-							    echo 'cs : '.$cs.' - hex : '.$hex.' - lat : '.$lat.' - lon : '.$lon.' second'."\n";
+							    if ($lat > -91 && $lat < 91 && $lon > -181 && $lon < 181) {
+							    //if ($globalDebug) echo 'icao : '.$icao.' - hex : '.$hex.' - lat : '.$lat.' - lon : '.$lon.' second'."\n";
 							    $data['latitude'] = $lat;
 							    $data['longitude'] = $lon;
+							    }
 							}
 						    }
 						    unset($latlon[$icao]);
