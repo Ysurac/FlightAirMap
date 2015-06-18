@@ -13,10 +13,10 @@
 	update_db::insert_last_notam_update();
     } elseif (isset($globalDebug) && $globalDebug && isset($globalNOTAM) && $globalNOTAM) echo "NOTAM are only updated once a day.\n";
 
-    if (update_db::check_last_update()) {
+    if (update_db::check_last_update() && (!isset($globalIVAO) || !$globalIVAO)) {
         update_db::update_all();
 #    require_once('../require/class.Spotter.php');
 #    Spotter::updateFieldsFromOtherTables();
 	update_db::insert_last_update();
-    } elseif (isset($globalDebug) && $globalDebug) echo "DB are populated with external data only every 15 days ! Files are not updated more often.\n";
+    } elseif (isset($globalDebug) && $globalDebug && (!isset($globalIVAO) || !$globalIVAO)) echo "DB are populated with external data only every 15 days ! Files are not updated more often.\n";
 ?>
