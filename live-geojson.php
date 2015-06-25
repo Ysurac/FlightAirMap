@@ -189,7 +189,8 @@ $output = '{';
 							$output .= '}';
 				$output .= '},';
                 
-                
+
+/*                
                 //previous location history of aircraft
                 $output .= '{';
 					$output .= '"type": "Feature",';
@@ -216,8 +217,10 @@ $output = '{';
 									        } else {
 											$history_output .= '[';
 											$history_output .=  $spotter_history['longitude'].', ';
-											$history_output .=  $spotter_history['latitude'];
+											$history_output .=  $spotter_history['latitude'].',';
+											$history_output .=  $spotter_history['altitude'];
 											$history_output .= '],';
+
 										}
 									}
 									if ($history_output != '') $output .= substr($history_output, 0, -1);
@@ -225,6 +228,45 @@ $output = '{';
 							$output .= '}';
 				$output .= '},';
                 
+			}
+*/
+
+                                    if ($from_archive) {
+					    $spotter_history_array = SpotterArchive::getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
+                                    } else {
+					    $spotter_history_array = SpotterLive::getAllLiveSpotterDataById($spotter_item['flightaware_id']);
+                                    }
+                            	$d = false;
+				foreach ($spotter_history_array as $key => $spotter_history)
+				{
+				    if (abs($spotter_history['longitude']-$spotter_item['longitude']) > 200 || $d==true) {
+					if ($d == false) $d = true;
+				    } else {
+					$alt = round($spotter_history['altitude']/10)*10;
+					if (!isset($prev_alt) || $prev_alt != $alt) {
+					    if (isset($prev_alt)) {
+						//$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].','.$spotter_history['altitude'].']';
+						$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].']';
+						$output_history .= ']}},';
+						$output .= $output_history;
+					    }
+					    $output_history = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "history","altitude": "'.$alt.'"},"geometry": {"type": "LineString","coordinates": [';
+					}
+					$output_history .= '[';
+					$output_history .=  $spotter_history['longitude'].', ';
+					$output_history .=  $spotter_history['latitude'];
+					//$output_history .=  $spotter_history['altitude'];
+					$output_history .= '],';
+					$prev_alt = $alt;
+				    }
+				}
+				if (isset($output_history)) {
+				    $output_history  = substr($output_history, 0, -1);
+				    $output_history .= ']}},';
+				    $output .= $output_history;
+				    unset($prev_alt);
+				    unset($output_history);
+				}
 			}
 		} else {
 			$output .= '{';

@@ -339,6 +339,36 @@ $( document ).ready(function() {
 	    }
 	?>
 
+
+function getAltitudeColor(x) {
+console.log(x);
+	return x < 10     ?    '#ea0000':
+         x < 30     ?   '#ea3a00':
+         x < 60     ?   '#ea6500':
+         x < 80     ?   '#ea8500':
+         x < 100     ?   '#eab800':
+         x < 150     ?   '#eae300':
+         x < 200     ?   '#d3ea00':
+         x < 250     ?   '#b0ea00':
+         x < 300     ?   '#9cea00':
+         x < 350     ?   '#8cea00':
+         x < 400     ?   '#46ea00':
+         x < 450     ?   '#00ea4a':
+         x < 500     ?   '#00eac7':
+         x < 550     ?   '#00cfea':
+         x < 600     ?   '#009cea':
+         x < 650     ?   '#0065ea':
+         x < 700     ?   '#001bea':
+         x < 750     ?   '#3e00ea':
+         x < 800     ?   '#6900ea':
+         x < 850     ?   '#a400ea':
+         x < 900     ?   '#cb00ea':
+         x < 950     ?   '#ea00db':
+                          '#3e00ea' ;
+
+//	return '#' + ('00000' + (x*2347 | 0).toString(16)).substr(-6);
+};
+
   function getLiveData()
   {
 	var bbox = map.getBounds().toBBoxString();
@@ -576,9 +606,19 @@ $( document ).ready(function() {
                 //aircraft history position as a line
                 if (feature.properties.type == "history"){
                     var style = {
+			    <?php
+				if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
+				?>
                         "color": "#1a3151",
+				<?php
+				} else {
+				?>
+                        "color": getAltitudeColor(feature.properties.altitude),
+				<?php
+				}
+				?>
                         "weight": 3,
-                        "opacity": 0.3
+                        "opacity": 0.6
                     };
                     layer.setStyle(style);
                     layer_data.addLayer(layer);
