@@ -67,6 +67,9 @@ $globalLiveInterval = '200';
 // LIVE MAP REFRESH (in seconds)
 $globalMapRefresh = '30';
 
+// DISPLAY INFO OF FLIGHTS IN A POPUP
+$globalMapPopup = FALSE;
+
 //IVAO
 $globalIVAO = FALSE;
 
