@@ -3,7 +3,7 @@ require_once("settings.php");
 
 class Connection{
 	public static $db;
-	public static $latest_schema = 9;
+	public static $latest_schema = 10;
 	
 	public function __construct() {
 	    $this->createDBConnection();
@@ -25,7 +25,8 @@ class Connection{
 			self::$db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
 			self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			self::$db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
-			self::$db->setAttribute(PDO::ATTR_TIMEOUT,10);
+			if (!isset($globalDBTimeOut)) self::$db->setAttribute(PDO::ATTR_TIMEOUT,20);
+			else self::$db->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
 			self::$db->setAttribute(PDO::ATTR_PERSISTENT,true);
 		} catch(PDOException $e) {
 			if (isset($globalDebug) && $globalDebug) echo $e->getMessage();

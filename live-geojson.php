@@ -13,9 +13,17 @@ if (isset($_GET['download'])) {
 header('Content-Type: text/javascript');
 
 $from_archive = false;
-if (isset($_GET['coord'])) {
+$min = false;
+if (isset($globalMapPopup) && !$globalMapPopup) $min = true;
+
+if (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup)) {
+//if (isset($_GET['coord'])) {
 	$coord = explode(',',$_GET['coord']);
 	$spotter_array = SpotterLive::getLiveSpotterDatabyCoord($coord);
+
+} elseif (isset($globalMapPopup) && !$globalMapPopup) {
+	$spotter_array = SpotterLive::getMinLiveSpotterData();
+	$min = true;
 } else {
 	$spotter_array = SpotterLive::getLiveSpotterData();
 }
@@ -109,21 +117,25 @@ $output = '{';
 						$output .= '"properties": {';
 							$output .= '"flightaware_id": "'.$spotter_item['flightaware_id'].'",';
 							$output .= '"flight_cnt": "'.$flightcnt.'",';
+							if ($min) $output .= '"minimal": "true",';
+							else $output .= '"minimal": "false",';
 							//$output .= '"flight_cnt": "'.$spotter_item['nb'].'",';
 							$output .= '"callsign": "'.$spotter_item['ident'].'",';
-							$output .= '"registration": "'.$spotter_item['registration'].'",';
+						if (isset($spotter_item['registration'])) $output .= '"registration": "'.$spotter_item['registration'].'",';
 						if (isset($spotter_item['aircraft_name']) && isset($spotter_item['aircraft_type'])) {
 							$output .= '"aircraft_name": "'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')",';
 							$output .= '"aircraft_wiki": "http://'.strtolower($globalLanguage).'.wikipedia.org/wiki/'.urlencode(str_replace(' ','_',$spotter_item['aircraft_name'])).'",';
 						} elseif (isset($spotter_item['aircraft_type'])) {
 							$output .= '"aircraft_name": "NA ('.$spotter_item['aircraft_type'].')",';
-						} else {
+						} elseif (!$min) {
 							$output .= '"aircraft_name": "NA",';
 						}
-						$output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
+						if ($spotter_item['aircraft_shadow'] == '') {
+						    $output .= '"aircraft_shadow": "default.png",';
+						} else $output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
 						if (isset($spotter_item['airline_name'])) {
 							$output .= '"airline_name": "'.$spotter_item['airline_name'].'",';
-						} else {
+						} elseif (!$min) {
 							$output .= '"airline_name": "NA",';
 						}
 						if (isset($spotter_item['departure_airport'])) {
@@ -152,7 +164,7 @@ $output = '{';
 							$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
 							$output .= '"altitude": "'.$spotter_item['altitude'].'",';
 							$output .= '"heading": "'.$spotter_item['heading'].'",';
-							$output .= '"image": "'.$image.'",';
+						if (!$min) $output .= '"image": "'.$image.'",';
 						if (isset($spotter_item['image_copyright']) && $spotter_item['image_copyright'] != '') {
 							$output .= '"image_copyright": "'.str_replace('"',"'",trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$spotter_item['image_copyright']))).'",';
 						}

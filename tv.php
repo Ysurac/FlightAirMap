@@ -139,8 +139,25 @@ $( document ).ready(function() {
 function getNewDataTV()
 {
    
+   <?php
+    if (isset($_GET['image']) && isset($_GET['q'])) {
+    ?>
    $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&image=<?php print $_GET['image']; ?>&q=<?php print $_GET['q']; ?>", function( data ) {
-   
+   <?php
+    } elseif (isset($_GET['image'])) {
+    ?>
+   $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&image=<?php print $_GET['image']; ?>", function( data ) {
+   <?php
+      } elseif (isset($_GET['q'])) {
+    ?>
+   $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&q=<?php print $_GET['q']; ?>", function( data ) {
+   <?php
+    } else {
+    ?>
+   $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"", function( data ) {
+   <?php
+    }
+    ?>
    	$.each(data.flights, function(i, item) {
 	   	if (item.html != "")
 	   	{

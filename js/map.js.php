@@ -262,21 +262,21 @@ $( document ).ready(function() {
 
 
 	function update_locationsLayer() {
-	    //var bbox = map.getBounds().toBBoxString();
-	    //locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox,{
-	    locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php",{
-	    onEachFeature: locationPopup,
-		pointToLayer: function (feature, latlng) {
-		    return L.marker(latlng, {
-			icon: L.icon({
-			iconUrl: feature.properties.icon,
-			iconSize: [16, 18]
-			//iconAnchor: [0, 0],
-			//popupAnchor: [0, -28]
-			})
-                    });
-		}
-	    }).addTo(map);
+		//var bbox = map.getBounds().toBBoxString();
+		//locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox,{
+		locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php",{
+		onEachFeature: locationPopup,
+		    pointToLayer: function (feature, latlng) {
+			return L.marker(latlng, {
+			    icon: L.icon({
+				iconUrl: feature.properties.icon,
+				iconSize: [16, 18]
+				//iconAnchor: [0, 0],
+				//popupAnchor: [0, -28]
+			    })
+			});
+		    }
+		}).addTo(map);
 	};
 
 	map.on('moveend', function() {
@@ -320,6 +320,7 @@ $( document ).ready(function() {
 	<?php
 	    if (!isset($ident) && !isset($flightaware_id)) {
 	?>
+	
 	var info = L.control();
 	info.onAdd = function (map) {
 		this._div = L.DomUtil.create('div', 'infobox'); // create a div with a class "info"
@@ -335,13 +336,28 @@ $( document ).ready(function() {
 
 	};
 	info.addTo(map);
+
+
+	<?php
+	    }
+	?>
+
+	<?php
+	    if (isset($globalMapPopup) && !$globalMapPopup) {
+	?>
+	var showdetails = L.control();
+	showdetails.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'showdetails'); // create a div with a class "info"
+		//this.update();
+		return this._div;
+	};
+	showdetails.addTo(map);
 	<?php
 	    }
 	?>
 
 
 function getAltitudeColor(x) {
-console.log(x);
 	return x < 10     ?    '#ea0000':
          x < 30     ?   '#ea3a00':
          x < 60     ?   '#ea6500':
@@ -369,187 +385,221 @@ console.log(x);
 //	return '#' + ('00000' + (x*2347 | 0).toString(16)).substr(-6);
 };
 
-  function getLiveData()
-  {
+$("#aircraft_ident").attr('class','');
+
+function getLiveData()
+{
 	var bbox = map.getBounds().toBBoxString();
 	layer_data_p = L.layerGroup();
+	//    map.removeLayer(layer_data);
+	//    layer_data = L.layerGroup();
 
-//    map.removeLayer(layer_data);
-//    layer_data = L.layerGroup();
+	$.ajax({
+	    dataType: "json",
+	    //      url: "live/geojson?"+Math.random(),
+	    <?php
+		if (isset($ident)) {
+	    ?>
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&ident=<?php print $ident; ?>",
+	    <?php
+		} elseif (isset($flightaware_id)) {
+	    ?>
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&flightaware_id=<?php print $flightaware_id; ?>",
+	    <?php
+		} else {
+	    ?>
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox,
+	    <?php 
+		}
+	    ?>
+	    success: function(data) {
+		map.removeLayer(layer_data);
+		layer_data = L.layerGroup();
+		var live_data = L.geoJson(data, {
+		    pointToLayer: function (feature, latLng) {
+		    var markerLabel = "";
+		    if (feature.properties.callsign != ""){ markerLabel += feature.properties.callsign+'<br />'; }
+		    if (feature.properties.departure_airport_code != "" || feature.properties.arrival_airport_code != ""){ markerLabel += '<span class="nomobile">'+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+'</span>'; }
+		    <?php
+			if (!isset($ident) && !isset($flightaware_id)) {
+		    ?>
+		    info.update(feature.properties);
 
-    $.ajax({
-      dataType: "json",
-//      url: "live/geojson?"+Math.random(),
-      <?php
-        if (isset($ident)) {
-      ?>
-      url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&ident=<?php print $ident; ?>",
-      <?php
-        } elseif (isset($flightaware_id)) {
-      ?>
-      url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&flightaware_id=<?php print $flightaware_id; ?>",
-	<?php
-        } else {
-      ?>
-      url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox,
-      <?php 
-        }
-      ?>
-      success: function(data) {
-	    map.removeLayer(layer_data);
-	    layer_data = L.layerGroup();
-          
-          var live_data = L.geoJson(data, {
-            pointToLayer: function (feature, latLng) {
-                
-              var markerLabel = "";
-              if (feature.properties.callsign != ""){ markerLabel += feature.properties.callsign+'<br />'; }
-              if (feature.properties.departure_airport_code != "" || feature.properties.arrival_airport_code != ""){ markerLabel += '<span class="nomobile">'+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+'</span>'; }
-		<?php
-		    if (!isset($ident) && !isset($flightaware_id)) {
-		?>
-		     info.update(feature.properties);
-		<?php
-		    }
-		    if (isset($globalAircraftSize) && $globalAircraftSize != '') {
-		?>
+				//console.log(document.getElementById('aircraft_ident').className);
+			if (document.getElementById('aircraft_ident').className == feature.properties.callsign) {
+				var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/selected/'+feature.properties.aircraft_shadow;
+			} else {
+				var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;				
+			}
+		    <?php
+			}
+			if (isset($globalAircraftSize) && $globalAircraftSize != '') {
+		    ?>
 		    return new L.Marker(latLng, {
 			iconAngle: feature.properties.heading,
 			title: markerLabel,
 			alt: feature.properties.callsign,
 			icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
-			    iconRetinaUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
+			    iconUrl: iconURLpath,
 			    iconSize: [<?php print $globalAircraftSize; ?>, <?php print $globalAircraftSize; ?>],
 			    iconAnchor: [<?php print $globalAircraftSize/2; ?>, <?php print $globalAircraftSize; ?>]
 			})
 		    })
-		    
-		<?php
-		    } else {
-		?>
-		if (map.getZoom() > 7) {
-		    return new L.Marker(latLng, {
-			iconAngle: feature.properties.heading,
-			title: markerLabel,
-			alt: feature.properties.callsign,
-			icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
-			    iconRetinaUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
-			    iconSize: [30, 30],
-			    iconAnchor: [15, 30]
-			})
-		    })
-		} else {
-		    return new L.Marker(latLng, {
-			iconAngle: feature.properties.heading,
-			title: markerLabel,
-			alt: feature.properties.callsign,
-			icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
-			    iconRetinaUrl: '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow,
-			    iconSize: [15, 15],
-			    iconAnchor: [7, 15]
-			})
-		    })
-		}
-		<?php
-		    }
-		?>
+		    <?php
+			if (isset($globalMapPopup) && !$globalMapPopup) {
+		    ?>
+		    .on('click', function() {
+				$("#aircraft_ident").attr('class',feature.properties.callsign);
+				$(".showdetails").load("aircraft-data.php?ident="+feature.properties.callsign);
+				getLiveData();
+			});
+		    <?php
+		      }
+		    ?>
 
-            },
+		    <?php
+			} else {
+		    ?>
+		    if (map.getZoom() > 7) {
+			return new L.Marker(latLng, {
+			    iconAngle: feature.properties.heading,
+			    title: markerLabel,
+			    alt: feature.properties.callsign,
+			    icon: L.icon({
+				iconUrl: iconURLpath,
+				iconSize: [30, 30],
+				iconAnchor: [15, 30]
+			    })
+			})
+					    <?php
+			if (isset($globalMapPopup) && !$globalMapPopup) {
+		    ?>
+
+			.on('click', function() {
+				$("#aircraft_ident").attr('class',feature.properties.callsign);
+				$(".showdetails").load("aircraft-data.php?ident="+feature.properties.callsign);
+				getLiveData();
+			});
+		    <?php
+		      }
+		    ?>
+		    } else {
+			return new L.Marker(latLng, {
+			    iconAngle: feature.properties.heading,
+			    title: markerLabel,
+			    alt: feature.properties.callsign,
+			    icon: L.icon({
+				iconUrl: iconURLpath,
+				iconSize: [15, 15],
+				iconAnchor: [7, 15]
+			    })
+			})
+		    <?php
+			if (isset($globalMapPopup) && !$globalMapPopup) {
+		    ?>
+			.on('click', function() {
+				$("#aircraft_ident").attr('class',feature.properties.callsign);
+				$(".showdetails").load("aircraft-data.php?ident="+feature.properties.callsign);
+				getLiveData();
+			});
+		    
+		    <?php
+		      }
+		    ?>
+                    }
+		    <?php
+			}
+		    ?>
+		},
             onEachFeature: function (feature, layer) {
               var output = '';
 		
               //individual aircraft
-              if (feature.properties.type == "aircraft"){
-                output += '<div class="top">';
-                  if (typeof feature.properties.image_source_website != 'undefined') {
-                    if (typeof feature.properties.image_copyright != 'undefined') {
-                	output += '<div class="left"><a href="'+feature.properties.image_source_website+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a>Image &copy; '+ feature.properties.image_copyright+'</div>';
-            	    } else {
-                	output += '<div class="left"><a href="'+feature.properties.image_source_website+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a></div>';
-            	    }
-                  } else {
-            	     if (typeof feature.properties.image_copyright != 'undefined') {
-                	output += '<div class="left"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a>Image &copy; '+ feature.properties.image_copyright+'</div>';
-            	    } else {
-                	output += '<div class="left"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a></div>';
-            	    }
-                  }
-                  output += '<div class="right">';
+		if (feature.properties.minimal == "false" && feature.properties.type == "aircraft"){
+		    output += '<div class="top">';
+                    if (typeof feature.properties.image_source_website != 'undefined') {
+                	if (typeof feature.properties.image_copyright != 'undefined') {
+                	    output += '<div class="left"><a href="'+feature.properties.image_source_website+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a>Image &copy; '+ feature.properties.image_copyright+'</div>';
+            		} else {
+                	    output += '<div class="left"><a href="'+feature.properties.image_source_website+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a></div>';
+			}
+		    } else {
+			if (typeof feature.properties.image_copyright != 'undefined') {
+			    output += '<div class="left"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a>Image &copy; '+ feature.properties.image_copyright+'</div>';
+			} else {
+			    output += '<div class="left"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a></div>';
+			}
+		    }
+		    output += '<div class="right">';
                     output += '<div class="callsign-details">';
-                      output += '<div class="callsign"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank">'+feature.properties.callsign+'</a></div>';
-                      output += '<div class="airline">'+feature.properties.airline_name+'</div>';
+                    output += '<div class="callsign"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank">'+feature.properties.callsign+'</a></div>';
+                    output += '<div class="airline">'+feature.properties.airline_name+'</div>';
                     output += '</div>';
                     output += '<div class="nomobile airports">';
-                      output += '<div class="airport">';
-                        output += '<span class="code"><a href="/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
-                	if (typeof feature.properties.departure_airport_time != 'undefined') {
-                	    output += '<br /><span class="time">'+feature.properties.departure_airport_time+'</span>';
-                	}
-                      output += '</div>';
-                      output += '<i class="fa fa-long-arrow-right"></i>';
-                      output += '<div class="airport">';
-                        output += '<span class="code"><a href="/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
-                	if (typeof feature.properties.arrival_airport_time != 'undefined') {
-                	    output += '<br /><span class="time">'+feature.properties.arrival_airport_time+'</span>';
-                	}
-                      output += '</div>';
+                    output += '<div class="airport">';
+                    output += '<span class="code"><a href="/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
+		    if (typeof feature.properties.departure_airport_time != 'undefined') {
+			output += '<br /><span class="time">'+feature.properties.departure_airport_time+'</span>';
+		    }
+		    output += '</div>';
+		    output += '<i class="fa fa-long-arrow-right"></i>';
+		    output += '<div class="airport">';
+                    output += '<span class="code"><a href="/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
+		    if (typeof feature.properties.arrival_airport_time != 'undefined') {
+			output += '<br /><span class="time">'+feature.properties.arrival_airport_time+'</span>';
+		    }
+		    output += '</div>';
                     output += '</div>';
                     if (typeof feature.properties.route_stop != 'undefined') {
                 	output += 'Route stop : '+feature.properties.route_stop;
                     }
-                  output += '</div>';
-
-                output += '</div>';
-
-                output += '<div class="details">';
+                    output += '</div>';
+                    output += '</div>';
+                    output += '<div class="details">';
                     output += '<div class="mobile airports">';
-                      output += '<div class="airport">';
-                        output += '<span class="code"><a href="/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
-                      output += '</div>';
-                      output += '<i class="fa fa-long-arrow-right"></i>';
-                      output += '<div class="airport">';
-                        output += '<span class="code"><a href="/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
-                      output += '</div>';
+                    output += '<div class="airport">';
+                    output += '<span class="code"><a href="/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
+                    output += '</div>';
+                    output += '<i class="fa fa-long-arrow-right"></i>';
+                    output += '<div class="airport">';
+                    output += '<span class="code"><a href="/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
+                    output += '</div>';
                     output += '</div>';
                     output += '<div>';
-                      output += '<span>Aircraft</span>';
-                      if (feature.properties.aircraft_wiki != 'undefined') {
+                    output += '<span>Aircraft</span>';
+                    if (feature.properties.aircraft_wiki != 'undefined') {
                         output += '<a href="'+feature.properties.aircraft_wiki+'">';
                         output += feature.properties.aircraft_name;
                         output += '</a>';
-                      
-                      } else {
+                    } else {
                         output += feature.properties.aircraft_name;
-                      }
+                    }
                     output += '</div>';
                     if (feature.properties.altitude != "" || feature.properties.altitude != 0)
                     {
-                      output += '<div>';
-                        output += '<span>Altitude</span>';
+                        output += '<div>';
+                	output += '<span>Altitude</span>';
                         output += feature.properties.altitude+'00 feet - '+Math.round(feature.properties.altitude*30.48)+' m (FL'+feature.properties.altitude+')';
-                      output += '</div>';
+                        output += '</div>';
                     }
                     if (feature.properties.registration != "")
                     {
-                      output += '<div>';
+                	output += '<div>';
                         output += '<span>Registration</span>';
                         output += '<a href="/registration/'+feature.properties.registration+'" target="_blank">'+feature.properties.registration+'</a>';
-                      output += '</div>';
+                        output += '</div>';
                     }
                     output += '<div>';
-                      output += '<span>Speed</span>';
-                      output += feature.properties.ground_speed+' knots - '+Math.round(feature.properties.ground_speed*1.852)+' km/h';
+                    output += '<span>Speed</span>';
+                    output += feature.properties.ground_speed+' knots - '+Math.round(feature.properties.ground_speed*1.852)+' km/h';
                     output += '</div>';
                     output += '<div>';
-                      output += '<span>Coordinates</span>';
-                      output += feature.properties.latitude+", "+feature.properties.longitude;
+                    output += '<span>Coordinates</span>';
+                    output += feature.properties.latitude+", "+feature.properties.longitude;
                     output += '</div>';
                     output += '<div>';
-                      output += '<span>Heading</span>';
-                      output += feature.properties.heading;
+                    output += '<span>Heading</span>';
+                    output += feature.properties.heading;
                     output += '</div>';
             	    if (typeof feature.properties.pilot_name != 'undefined') {
                 	output += '<div>';
@@ -561,48 +611,35 @@ console.log(x);
                         }
                 	output += '</div>';
                     }
-                output += '</div>';
-                if (typeof feature.properties.waypoints != 'undefined') {
-            	    output += '<div class="waypoints"><span>Waypoints</span>';
-            	    output += feature.properties.waypoints;
             	    output += '</div>';
-                }
-                
-                if (typeof feature.properties.acars != 'undefined') {
-            	    output += '<div class="acars"><span>Latest ACARS message</span>';
-            	    output += feature.properties.acars;
-            	    output += '</div>';
-                }
-                if (typeof feature.properties.squawk != 'undefined') {
-                    output += '<div class="bottom">';
+            	    if (typeof feature.properties.waypoints != 'undefined') {
+            		output += '<div class="waypoints"><span>Waypoints</span>';
+            		output += feature.properties.waypoints;
+            		output += '</div>';
+            	    }
+                    if (typeof feature.properties.acars != 'undefined') {
+            		output += '<div class="acars"><span>Latest ACARS message</span>';
+            		output += feature.properties.acars;
+            		output += '</div>';
+            	    }
+            	    if (typeof feature.properties.squawk != 'undefined') {
+                	output += '<div class="bottom">';
                 	output += 'Squawk : ';
 			output += feature.properties.squawk;
             		if (typeof feature.properties.squawk_usage != 'undefined') {
             			output += ' - '+feature.properties.squawk_usage;
             		}
-		    output += '</div>';
+			output += '</div>';
+            	    }
+            	    output += '</div>';
+                
+            	    <?php if (!isset($ident) && !isset($flightaware_id)) { ?>
+            	    layer.bindPopup(output);
+		    <?php } ?>
+            	    layer_data.addLayer(layer);
+                } else {
+            	    layer_data.addLayer(layer);
                 }
-                output += '</div>';
-                
-                <?php
-            	    if (!isset($ident) && !isset($flightaware_id)) {
-                ?>
-                layer.bindPopup(output);
-                /*
-                layer.on('mouseover', function (e) {
-        		this.openPopup();
-	        });
-    		layer.on('mouseout', function (e) {
-        		this.closePopup();
-    		});
-    		*/
-		<?php
-		    }
-		?>
-
-                layer_data.addLayer(layer);
-               }
-                
                 //aircraft history position as a line
                 if (feature.properties.type == "history"){
                     var style = {
@@ -648,8 +685,15 @@ console.log(x);
 
   //adds the bootstrap hover to the map buttons
   $('.button').tooltip({ placement: 'right' });
-    
 
+<?php
+    if (isset($globalIVAO) && $globalIVAO) {
+?>
+    update_atcLayer();
+  setInterval(function(){map.removeLayer(atcLayer);update_atcLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
+<?php
+    }
+?>
 //update_airspaceLayer();
 
 
@@ -1159,6 +1203,41 @@ function update_notamLayer() {
                     opacity: 0.3,
                     fillOpacity: 0.3
             });
+	}
+    }).addTo(map);
+};
+
+function atcPopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	output += '&nbsp;'+feature.properties.ident+'<br /> ';
+	output += '&nbsp;'+feature.properties.info+'<br /> ';
+	output += '</div>';
+	layer.bindPopup(output);
+};
+
+
+function update_atcLayer() {
+    var bbox = map.getBounds().toBBoxString();
+    atcLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/atc-geojson.php?coord="+bbox,{
+    onEachFeature: atcPopup,
+	pointToLayer: function (feature, latlng) {
+	    if (feature.properties.atc_range > 0) {
+		return L.circle(latlng, feature.properties.atc_range, {
+                    fillColor: '#781212',
+                    color: '#781212',
+                    weight: 1,
+                    opacity: 0.3,
+                    fillOpacity: 0.3
+		});
+            } else {
+		return L.marker(latlng, {icon: L.icon({
+			iconUrl: '<?php print $globalURL; ?>/images/atc.png',
+			iconSize: [30, 30],
+			iconAnchor: [15, 30]
+		    })
+		});
+            }
 	}
     }).addTo(map);
 };

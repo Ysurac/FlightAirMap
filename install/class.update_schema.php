@@ -351,8 +351,31 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_9() {
+    		$Connection = new Connection();
+    		$query="ALTER TABLE spotter_live ADD verticalrate INT(11) NULL;
+    			ALTER TABLE spotter_output ADD verticalrate INT(11) NULL;";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add verticalrate column to spotter_live and spotter_output) : ".$e->getMessage()."\n";
+    		}
+		$error = '';
+    		// Update table atc
+		$error .= create_db::import_file('../db/atc.sql');
+		if ($error != '') return $error;
+		
+		$query = "UPDATE `config` SET `value` = '10' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = Connection::$db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
 
-    	
     	public static function check_version($update = false) {
     	    global $globalDBname;
     	    $version = 0;
@@ -398,6 +421,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '8') {
     			    $error = self::update_from_8();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '9') {
+    			    $error = self::update_from_9();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

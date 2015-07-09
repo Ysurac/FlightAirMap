@@ -7,7 +7,7 @@ require('header.php');
 ?>
 
 <div id="live-map"></div>
-
+<div id="aircraft_ident"></div>
 <a class="button zoom-in" href="#" onclick="zoomInMap(); return false;" title="Zoom in"><i class="fa fa-plus"></i></a>
 <a class="button zoom-out" href="#" onclick="zoomOutMap(); return false;" title="Zoom out"><i class="fa fa-minus"></i></a>
 <a class="button geocode" href="#" onclick="getUserLocation(); return false;" title="Plot your Location"><i class="fa fa-map-marker"></i></a>

@@ -436,6 +436,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="checkbox" name="colormap" id="colormap" value="colormap"<?php if ((isset($globalMapAltitudeColor) && $globalMapAltitudeColor) || !isset($globalMapAltitudeColor)) { ?> checked="checked"<?php } ?> />
 		</p>
 		<p>
+			<label for="mappopup">Show flights info in popup</label>
+			<input type="checkbox" name="mappopup" id="mappopup" value="mappopup"<?php if ((isset($globalMapPopup) && $globalMapPopup)) { ?> checked="checked"<?php } ?> />
+		</p>
+		<p>
 			<label for="refresh">Show flights detected since xxx seconds</label>
 			<input type="number" name="refresh" id="refresh" value="<?php if (isset($globalLiveInterval)) echo $globalLiveInterval; else echo '200'; ?>" />
 		</p>
@@ -633,6 +637,13 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapAltitudeColor' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapAltitudeColor' => 'FALSE'));
+	}
+
+	$mappopup = filter_input(INPUT_POST,'mappopup',FILTER_SANITIZE_STRING);
+	if ($mappopup == 'mappopup') {
+		$settings = array_merge($settings,array('globalMapPopup' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMapPopup' => 'FALSE'));
 	}
 
 	if (!isset($globalTransaction)) $settings = array_merge($settings,array('globalTransaction' => 'TRUE'));

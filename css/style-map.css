@@ -79,8 +79,21 @@ body {
   top:450px;
 }
 
+.showdetails {
+	top: 55px;
+   width: 300px;
+    /*padding: 3px 3px;*/
+    font: 12px/14px Arial, Helvetica, sans-serif;
+    text-align: center;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    text-align: center;
+}
+
 .infobox {
-    top: 65px;
+    top: 55px;
     padding: 16px 18px;
     font: 12px/14px Arial, Helvetica, sans-serif;
     background: white;
@@ -217,6 +230,109 @@ body.page-index .leaflet-popup-content-wrapper .details span{
 body.page-index .leaflet-popup-content-wrapper .details div a{
     color:#333;
 }
+
+/* new details */
+
+.showdetails a:hover{
+    text-decoration: underline;
+}
+
+.showdetails {
+/*  display:inline-block;*/
+  margin: 0px;
+}
+.showdetails img {
+	  display:inline-block;
+  margin: 0px;
+  max-width: 280px;
+  max-height: 280px;
+}
+.showdetails .callsign-details{
+  background-color:#1a3151;
+  color:#fff;
+  padding:10px;
+  border-radius: 12px 12px 0 0;
+  margin: 2px;
+}
+.showdetails .acars{
+  padding:4px;
+}
+.showdetails .acars span{
+    display:block;
+    text-transform: uppercase;
+    color:#aaa;
+}
+.showdetails .waypoints{
+  padding:4px;
+}
+.showdetails .waypoints span{
+    display:block;
+    text-transform: uppercase;
+    color:#aaa;
+}
+.showdetails .bottom{
+  background-color:#1a3151;
+  color:#fff;
+  margin: 2px;
+  padding: 10px;
+  border-radius: 0 0 12px 12px;
+}
+.showdetails .callsign-details .callsign a{
+  font-size:1.5em;
+  color:#fff;
+}
+.showdetails .airports .airport{
+  display:inline-block;
+  width:40%;
+  vertical-align:top;
+  text-align:center;
+  padding:5px;
+  margin-bottom:5px;
+}
+.showdetails .airports .fa{
+  display:inline-block;
+  margin-top:10px;
+  font-size:1.5em;
+}
+.showdetails .airports .airport .code a{
+  font-size:1.4em;
+  font-weight:bold;
+  color:#1a3151;
+    display:block;
+}
+.showdetails.airports .airport .time{
+  display:inline-block;
+  font-size:0.8em;
+  font-style:italic;
+  color:#92a2b7;
+}
+.showdetails .details{
+  padding:10px;
+  padding-top:5px;
+}
+.showdetails .details div{
+  margin-bottom:5px;
+  padding-bottom:5px;
+  width:45%;
+  display:inline-block;
+  vertical-align:top;
+  margin-right:5%;
+  border-bottom:1px solid #eee;
+}
+.showdetails .details div:nth-child(6),
+.showdetails .details div:nth-child(7){
+  border-bottom:0px;
+}
+.showdetails .details span{
+  display:block;
+  text-transform:uppercase;
+  color:#aaa;
+}
+.showdetails .details div a{
+    color:#333;
+}
+
+
 
 /* Mobile (Portrait/Landscape) */
 @media only screen and (max-width: 767px) {
