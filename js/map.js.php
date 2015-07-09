@@ -348,7 +348,7 @@ $( document ).ready(function() {
 	var showdetails = L.control();
 	showdetails.onAdd = function (map) {
 		this._div = L.DomUtil.create('div', 'showdetails'); // create a div with a class "info"
-		//this.update();
+		//L.DomEvent.addListener(this._div,'dblclick',this.hide, this);
 		return this._div;
 	};
 	showdetails.addTo(map);
@@ -490,7 +490,6 @@ function getLiveData()
 		      }
 		    ?>
 		    } else {
-			var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;
 			return new L.Marker(latLng, {
 			    iconAngle: feature.properties.heading,
 			    title: markerLabel,
