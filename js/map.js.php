@@ -643,6 +643,7 @@ function getLiveData()
                 }
                 //aircraft history position as a line
                 if (feature.properties.type == "history"){
+            	    <?php if (!isset($ident) && !isset($flightaware_id)) { ?>
                    if (document.getElementById('aircraft_ident').className == feature.properties.callsign) {
 
                     var style = {
@@ -681,6 +682,29 @@ function getLiveData()
                 	layer.setStyle(style);
                 	layer_data.addLayer(layer);
                     }
+                <?php
+            	    } else {
+            	?>
+                	var style = {
+			    <?php
+				if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
+				?>
+                    	    "color": "#1a3151",
+				<?php
+				} else {
+				?>
+                    	    "color": getAltitudeColor(feature.properties.altitude),
+				<?php
+				}
+				?>
+                    	    "weight": 3,
+                    	    "opacity": 0.6
+                	};
+                	layer.setStyle(style);
+                	layer_data.addLayer(layer);
+            	<?php
+            	  }
+            	?>
                 }
 
              }
