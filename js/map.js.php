@@ -432,7 +432,13 @@ function getLiveData()
 				var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;				
 			}
 		    <?php
+			} else {
+		    ?>
+			var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;
+		    
+		    <?php
 			}
+			
 			if (isset($globalAircraftSize) && $globalAircraftSize != '') {
 		    ?>
 		    return new L.Marker(latLng, {
@@ -1162,13 +1168,14 @@ function update_airspaceLayer() {
     airspaceLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airspace-geojson.php?coord="+bbox,{
     onEachFeature: airspacePopup,
 	pointToLayer: function (feature, latlng) {
-	    return L.marker(latlng, {icon: L.icon({
+/*	    return L.marker(latlng, {icon: L.icon({
 	//	iconUrl: feature.properties.icon,
 		iconSize: [12, 13],
 		iconAnchor: [2, 13]
 //		//popupAnchor: [0, -28]
 		})
             });
+            */
 	},
 	style: function(feature) {
 	    if (feature.properties.type == 'RESTRICTED' || feature.properties.type == 'CLASS D') {
