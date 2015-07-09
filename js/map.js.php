@@ -484,6 +484,7 @@ function getLiveData()
 		      }
 		    ?>
 		    } else {
+			var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;
 			return new L.Marker(latLng, {
 			    iconAngle: feature.properties.heading,
 			    title: markerLabel,
@@ -642,23 +643,44 @@ function getLiveData()
                 }
                 //aircraft history position as a line
                 if (feature.properties.type == "history"){
+                   if (document.getElementById('aircraft_ident').className == feature.properties.callsign) {
+
                     var style = {
 			    <?php
 				if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
 				?>
-                        "color": "#1a3151",
+			    "color": "#1a3151",
 				<?php
 				} else {
 				?>
-                        "color": getAltitudeColor(feature.properties.altitude),
+			    "color": getAltitudeColor(feature.properties.altitude),
 				<?php
 				}
 				?>
-                        "weight": 3,
-                        "opacity": 0.6
-                    };
-                    layer.setStyle(style);
-                    layer_data.addLayer(layer);
+			    "weight": 3,
+			    "opacity": 1
+			};
+			layer.setStyle(style);
+			layer_data.addLayer(layer);
+            	    } else {
+                	var style = {
+			    <?php
+				if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
+				?>
+                    	    "color": "#1a3151",
+				<?php
+				} else {
+				?>
+                    	    "color": getAltitudeColor(feature.properties.altitude),
+				<?php
+				}
+				?>
+                    	    "weight": 3,
+                    	    "opacity": 0.6
+                	};
+                	layer.setStyle(style);
+                	layer_data.addLayer(layer);
+                    }
                 }
 
              }
