@@ -242,9 +242,10 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
   margin: 0px;
 }
 .showdetails img {
-	  display:inline-block;
-  margin: 0px;
+  display:inline-block;
+  margin: 5px;
   max-width: 280px;
+  width: 90%;
   max-height: 280px;
 }
 .showdetails .callsign-details{
