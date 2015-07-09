@@ -186,10 +186,10 @@ class Spotter{
 			}
 			} else {
 				$temp_array['airline_icao'] = $row['airline_icao'];
-				$temp_array['airline_iata'] = $row['airline_iata'];
+				if (isset($row['airline_iata'])) $temp_array['airline_iata'] = $row['airline_iata'];
 				$temp_array['airline_name'] = $row['airline_name'];
 				$temp_array['airline_country'] = $row['airline_country'];
-				$temp_array['airline_callsign'] = $row['airline_callsign'];
+				if (isset($row['airline_callsign'])) $temp_array['airline_callsign'] = $row['airline_callsign'];
 				$temp_array['airline_type'] = $row['airline_type'];
 			}
 			if (isset($temp_array['airline_iata'])) {
