@@ -12,6 +12,10 @@ body {
   font-size: 14px;
   font-weight: 300;
 }
+.close {
+    margin: 7px;
+    color: white;
+}
 .button{
   position:absolute;
   left:14px;
@@ -37,6 +41,7 @@ body {
   margin-top:3px;
   color:#1a3151;
 }
+
 .zoom-in .fa,
 .zoom-out .fa{
   font-size:1.0em;

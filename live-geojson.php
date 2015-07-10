@@ -27,6 +27,7 @@ if (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup)) {
 } else {
 	$spotter_array = SpotterLive::getLiveSpotterData();
 }
+$allhistory = false;
 if (isset($_GET['ident'])) {
 	$ident = $_GET['ident'];
 	$spotter_array = SpotterLive::getLastLiveSpotterDataByIdent($ident);
@@ -34,6 +35,7 @@ if (isset($_GET['ident'])) {
 		$from_archive = true;
 		$spotter_array = SpotterArchive::getLastArchiveSpotterDataByIdent($ident);
 	}
+	$allhistory = true;
 }
 if (isset($_GET['flightaware_id'])) {
 	$flightaware_id = $_GET['flightaware_id'];
@@ -42,6 +44,7 @@ if (isset($_GET['flightaware_id'])) {
 		$from_archive = true;
 		$spotter_array = SpotterArchive::getLastArchiveSpotterDataById($flightaware_id);
 	}
+	$allhistory = true;
 }
 
 if (!empty($spotter_array)) {
@@ -243,6 +246,7 @@ $output = '{';
 			}
 */
 
+				if (!isset($globalMapHistory) || $globalMapHistory || $allhistory || (isset($_GET['history']) && $_GET['history'] == $spotter_item['ident'])) {
                                     if ($from_archive) {
 					    $spotter_history_array = SpotterArchive::getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
                                     } else {
@@ -278,6 +282,7 @@ $output = '{';
 				    $output .= $output_history;
 				    unset($prev_alt);
 				    unset($output_history);
+				}
 				}
 			}
 		} else {

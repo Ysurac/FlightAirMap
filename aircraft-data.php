@@ -21,7 +21,7 @@ if (isset($_GET['flightaware_id'])) {
 		$spotter_array = SpotterArchive::getLastArchiveSpotterDataById($flightaware_id);
 	}
 }
-
+/*
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -44,8 +44,13 @@ if (isset($_GET['flightaware_id'])) {
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print time(); ?>" />
 </head>
 <body class="alldetails">
+<button class="close">close</button>
 <?php
-  
+  */
+ ?>
+<div class="alldetails">
+<button type="button" class="close">&times;</button>
+<?php
 $spotter_item = $spotter_array[0];
 date_default_timezone_set('UTC');
 if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
@@ -100,5 +105,11 @@ if (isset($spotter_item['acars']['message'])) print '<div class="acars"><span>La
 print '<div class="bottom">Squawk : '.$spotter_item['squawk'].' - '.$spotter_item['squawk_usage'].'</div>';
 print '</div>';
 ?>
+</div>
+
+<?php
+/*
 </body>
 </html>
+*/
+?>

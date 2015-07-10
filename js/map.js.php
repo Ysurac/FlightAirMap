@@ -352,6 +352,13 @@ $( document ).ready(function() {
 		return this._div;
 	};
 	showdetails.addTo(map);
+
+	$(".showdetails").on("click",".close",function(){
+    	    $(".showdetails").empty();
+	    $("#aircraft_ident").attr('class','');
+	    getLiveData();
+            return false;
+	})
 	<?php
 	    }
 	?>
@@ -400,15 +407,15 @@ function getLiveData()
 	    <?php
 		if (isset($ident)) {
 	    ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&ident=<?php print $ident; ?>",
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&ident=<?php print $ident; ?>&history",
 	    <?php
 		} elseif (isset($flightaware_id)) {
 	    ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&flightaware_id=<?php print $flightaware_id; ?>",
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&flightaware_id=<?php print $flightaware_id; ?>&history",
 	    <?php
 		} else {
 	    ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox,
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className,
 	    <?php 
 		}
 	    ?>
@@ -429,7 +436,7 @@ function getLiveData()
 			if (document.getElementById('aircraft_ident').className == feature.properties.callsign) {
 				var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/selected/'+feature.properties.aircraft_shadow;
 			} else {
-				var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;				
+				var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;
 			}
 		    <?php
 			} else {
@@ -711,7 +718,6 @@ function getLiveData()
             	  }
             	?>
                 }
-
              }
               
             
@@ -1308,3 +1314,4 @@ function showNotam() {
 	$(".notam").removeClass("active");
      }
 }
+

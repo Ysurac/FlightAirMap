@@ -51,7 +51,7 @@ class SBS {
 	// Delete old infos
 	foreach (self::$all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
-        	if ($flight['lastupdate'] < (time()-5000)) {
+        	if ($flight['lastupdate'] < (time()-10000)) {
             	    unset(self::$all_flights[$key]);
     	        }
 	    }
@@ -286,6 +286,7 @@ class SBS {
 			if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 				if ($globalDebug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in Live DB : ";
 				$result = SpotterLive::addLiveSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], self::$all_flights[$id]['waypoints'], self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'], self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'], self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],self::$all_flights[$id]['hex'],$putinarchive,self::$all_flights[$id]['registration'],self::$all_flights[$id]['pilot_id'],self::$all_flights[$id]['pilot_name']);
+				self::$all_flights[$id]['lastupdate'] = time();
 				if ($putinarchive) $send = true;
 				//if ($globalDebug) echo "Distance : ".Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
 				if ($globalDebug) echo $result."\n";
