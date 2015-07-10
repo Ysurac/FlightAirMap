@@ -14,7 +14,9 @@ body {
 }
 .close {
     margin: 7px;
-    color: white;
+    color: rebeccapurple;
+    position: absolute;
+    right: 10px;
 }
 .button{
   position:absolute;
