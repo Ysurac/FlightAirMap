@@ -655,84 +655,139 @@ function getLiveData()
                 }
                 //aircraft history position as a line
                 if (feature.properties.type == "history"){
-            	    <?php if (!isset($ident) && !isset($flightaware_id)) { ?>
-                   if (document.getElementById('aircraft_ident').className == feature.properties.callsign) {
-
-                    var style = {
-			    <?php
-				if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
-				?>
-			    "color": "#1a3151",
+		    <?php if (!isset($ident) && !isset($flightaware_id)) { ?>
+		    if (document.getElementById('aircraft_ident').className == feature.properties.callsign) {
+			if (map.getZoom() > 7) {
+                	    var style = {
 				<?php
-				} else {
+				    if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
 				?>
-			    "color": getAltitudeColor(feature.properties.altitude),
+				"color": "#1a3151",
 				<?php
-				}
+				    } else {
 				?>
-			    "weight": 3,
-			    "opacity": 1
-			};
-			layer.setStyle(style);
-			layer_data.addLayer(layer);
+				"color": getAltitudeColor(feature.properties.altitude),
+				<?php
+				    }
+				?>
+				"weight": 3,
+				"opacity": 1
+			    };
+			    layer.setStyle(style);
+			    layer_data.addLayer(layer);
+			} else {
+			    var style = {
+				<?php
+				    if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
+				?>
+				"color": "#1a3151",
+				<?php
+				    } else {
+				?>
+				"color": getAltitudeColor(feature.properties.altitude),
+				<?php
+				    }
+				?>
+				"weight": 2,
+				"opacity": 1
+			    };
+			    layer.setStyle(style);
+			    layer_data.addLayer(layer);
+			}
             	    } else {
-                	var style = {
-			    <?php
-				if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
-				?>
-                    	    "color": "#1a3151",
+			if (map.getZoom() > 7) {
+                	    var style = {
 				<?php
-				} else {
+				    if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
 				?>
-                    	    "color": getAltitudeColor(feature.properties.altitude),
+                    		"color": "#1a3151",
 				<?php
-				}
+				    } else {
 				?>
-                    	    "weight": 3,
-                    	    "opacity": 0.6
-                	};
-                	layer.setStyle(style);
-                	layer_data.addLayer(layer);
+				"color": getAltitudeColor(feature.properties.altitude),
+				<?php
+				    }
+				?>
+				"weight": 3,
+				"opacity": 0.6
+			    };
+			    layer.setStyle(style);
+			    layer_data.addLayer(layer);
+			} else {
+                	    var style = {
+				<?php
+				    if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
+				?>
+                    		"color": "#1a3151",
+				<?php
+				    } else {
+				?>
+                    		"color": getAltitudeColor(feature.properties.altitude),
+				<?php
+				    }
+				?>
+				"weight": 2,
+				"opacity": 0.6
+			    };
+			    layer.setStyle(style);
+			    layer_data.addLayer(layer);
+			}
                     }
-                <?php
-            	    } else {
-            	?>
+		    <?php
+            		} else {
+            	    ?>
+		    if (map.getZoom() > 7) {
                 	var style = {
 			    <?php
 				if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
-				?>
+			    ?>
                     	    "color": "#1a3151",
-				<?php
+			    <?php
 				} else {
-				?>
+			    ?>
                     	    "color": getAltitudeColor(feature.properties.altitude),
-				<?php
+			    <?php
 				}
-				?>
+			    ?>
                     	    "weight": 3,
                     	    "opacity": 0.6
                 	};
                 	layer.setStyle(style);
                 	layer_data.addLayer(layer);
-            	<?php
-            	  }
-            	?>
-                }
-             }
-              
-            
-              
-          });
-          layer_data.addTo(map);
-          //re-create the bootstrap tooltips on the marker 
-          showBootstrapTooltip();
-        }
-    }).error(function() {
-              map.removeLayer(layer_data);
-		//info.update();
-
+		    } else {
+                	var style = {
+			    <?php
+				if (isset($globalMapAltitudeColor) && !$globalMapAltitudeColor) {
+			    ?>
+			    "color": "#1a3151",
+			    <?php
+				} else {
+			    ?>
+			    "color": getAltitudeColor(feature.properties.altitude),
+			    <?php
+				}
+			    ?>
+                    	    "weight": 2,
+                    	    "opacity": 0.6
+                	};
+                	layer.setStyle(style);
+                	layer_data.addLayer(layer);
+		    }
+            	    <?php
+            		}
+            	    ?>
+		}
+	    }
+	});
+	layer_data.addTo(map);
+	//re-create the bootstrap tooltips on the marker 
+	showBootstrapTooltip();
+    }
+}).error(function() {
+    map.removeLayer(layer_data);
+    //info.update();
     });
-  }
+}
 
   //load the function on startup
   getLiveData();
