@@ -105,7 +105,7 @@ class SBS {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('pilot_name' => $line['pilot_name']));
 		}
  
-		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && (self::$all_flights[$id]['ident'] != trim($line['ident']))) {
+		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && (self::$all_flights[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9]+$/', $line['ident'])) {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ident' => trim($line['ident'])));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
