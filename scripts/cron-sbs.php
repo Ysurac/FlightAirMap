@@ -164,7 +164,7 @@ while ($i > 0) {
 	            $data['verticalrate'] = ''; // vertical rate
 	            $data['squawk'] = ''; // squawk
 	            $data['emergency'] = ''; // emergency
-		    $data['datetime'] = date('Y-m-d h:i:s');
+		    $data['datetime'] = date('Y-m-d H:i:s');
 		    $data['format_source'] = 'deltadbtxt';
     		    $SBS::add($data);
 		    unset($data);
@@ -194,7 +194,7 @@ while ($i > 0) {
 	        	$data['emergency'] = ''; // emergency
 	        	$data['waypoints'] = $line[30];
 			//$data['datetime'] = date('Y-m-d h:i:s');
-			$data['datetime'] = date('Y-m-d h:i:s',strtotime($line[37])); // FIXME convert to correct format
+			$data['datetime'] = date('Y-m-d H:i:s',strtotime($line[37])); // FIXME convert to correct format
 		        $data['departure_airport_icao'] = $line[11];
 		        $data['departure_airport_time'] = $line[22]; // FIXME put a :
 		        $data['arrival_airport_icao'] = $line[13];
@@ -234,7 +234,7 @@ while ($i > 0) {
 	        $data['verticalrate'] = $line['vrt']; // verticale rate
 	        $data['squawk'] = $line['squawk']; // squawk
 	        $data['emergency'] = ''; // emergency
-		$data['datetime'] = date('Y-m-d h:i:s');
+		$data['datetime'] = date('Y-m-d H:i:s');
 		$SBS::add($data);
 	    }
     	} elseif ($value == 'fr24json') {
@@ -257,7 +257,7 @@ while ($i > 0) {
 		    $data['departure_airport_iata'] = $line[11];
 		    $data['arrival_airport_iata'] = $line[12];
 	    	    $data['emergency'] = ''; // emergency
-		    $data['datetime'] = date('Y-m-d h:i:s'); //$line[10]
+		    $data['datetime'] = date('Y-m-d H:i:s'); //$line[10]
 		    $SBS::add($data);
 		}
 	    }
@@ -286,7 +286,7 @@ while ($i > 0) {
     		//$data['arrival_airport_time'] = $line['arrtime'];
 	    	if (isset($line['aircraft'])) $data['aircraft_icao'] = $line['aircraft'];
 	    	if (isset($line['transponder'])) $data['squawk'] = $line['transponder'];
-		$data['datetime'] = date('Y-m-d h:i:s');
+		$data['datetime'] = date('Y-m-d H:i:s');
     		if ($line['icon'] == 'plane') $SBS::add($data);
 		elseif ($line['icon'] == 'ct') {
 			echo ATC::add($data['ident'],'',$data['latitude'],$data['longitude'],'0','',$data['datetime'],'',$data['pilot_id'],$data['pilot_name']);
@@ -441,7 +441,7 @@ while ($i > 0) {
 					$data['heading'] = $heading;
 				    }
 				    if (isset($data)) {
-				        $data['datetime'] = date('Y-m-d h:i:s');
+				        $data['datetime'] = date('Y-m-d H:i:s');
 				        $data['format_source'] = 'raw';
     				        $SBS::add($data);
     				        unset($data);
@@ -456,7 +456,7 @@ while ($i > 0) {
 			    }
     			    if (count($lined) > 3) {
     				$data['hex'] = $lined['hexid'];
-    				$data['datetime'] = date('Y-m-d h:i:s',strtotime($lined['clock']));;
+    				$data['datetime'] = date('Y-m-d H:i:s',strtotime($lined['clock']));;
     				if (isset($lined['ident'])) $data['ident'] = $lined['ident'];
     				if (isset($lined['lat']))$data['latitude'] = $lined['lat'];
     				if (isset($lined['lon']))$data['longitude'] = $lined['lon'];
