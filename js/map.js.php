@@ -512,7 +512,7 @@ function getLiveData()
 		    ?>
 			.on('click', function() {
 				$("#aircraft_ident").attr('class',feature.properties.callsign);
-				$(".showdetails").load("aircraft-data.php?"+Math.random()+"ident="+feature.properties.callsign);
+				$(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
 				getLiveData();
 			});
 		    
