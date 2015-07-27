@@ -64,7 +64,7 @@ if (!empty($airline_array))
 		print '<td><strong>'.$i.'</strong></td>';
 		print '<td class="logo">';
 		print '<a href="'.$globalURL.'/airline/'.$airline_item['airline_icao'].'"><img src="';
-		if ($globalIVAO && @getimagesize($globalURL.'/images/airlines/'.$airline_item['airline_icao'].'.gif'))
+		if (isset($globalIVAO) && $globalIVAO && (@getimagesize($globalURL.'/images/airlines/'.$airline_item['airline_icao'].'.gif') || @getimagesize('images/airlines/'.$airline_item['airline_icao'].'.gif')))
 		{
 			print $globalURL.'/images/airlines/'.$airline_item['airline_icao'].'.gif';
 		} elseif (@getimagesize($globalURL.'/images/airlines/'.$airline_item['airline_icao'].'.png'))
