@@ -67,7 +67,7 @@ if (!empty($airline_array))
 		if (isset($globalIVAO) && $globalIVAO && (@getimagesize($globalURL.'/images/airlines/'.$airline_item['airline_icao'].'.gif') || @getimagesize('images/airlines/'.$airline_item['airline_icao'].'.gif')))
 		{
 			print $globalURL.'/images/airlines/'.$airline_item['airline_icao'].'.gif';
-		} elseif (@getimagesize($globalURL.'/images/airlines/'.$airline_item['airline_icao'].'.png'))
+		} elseif (@getimagesize('images/airlines/'.$airline_item['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$airline_item['airline_icao'].'.png'))
 		{
 			print $globalURL.'/images/airlines/'.$airline_item['airline_icao'].'.png';
 		} else {
