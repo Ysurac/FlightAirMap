@@ -369,7 +369,7 @@ INSERT INTO aircraft (aircraft_id, icao, type, manufacturer, official_page, airc
 (357, 'AS55', 'HELIBRAS VH-55 Esquilo', 'Aerospatiale', 'http://www.aviastar.org/helicopters_eng/snias-355.php', 'helico.png'),
 (358, 'ULAC', 'Generic Ultralight', 'Generic Ultralight', '', ''),
 (359, 'BE60', 'Beechcraft Duke', 'Beechcraft', 'https://www.beechcraft.com', ''),
-(360, 'SHIP', 'Zepellin NT', 'Zeppelin NT', 'http://zeppelin-nt.de/en/zeppelin-NT.html', ''),
+(360, 'SHIP', 'Generic Airship', 'Genereic Airship', '', 'SHIP.png'),
 (361, 'B74D', '747-Domestic', 'Boeing', 'http://www.boeing.com/boeing/commercial/747family/index.page', 'B74X.png'),
 (362, 'MIR2', 'Mirage 2000', 'Dassault', 'http://www.dassault-aviation.com/en/defense/rafale/introduction/', 'MIR2.png'),
 (363, 'F16X', 'F-16 Fighting Falcon X', 'Lockheed Martin', 'http://www.lockheedmartin.com/', 'F16X.png'),
