@@ -51,7 +51,7 @@ class SBS {
 	// Delete old infos
 	foreach (self::$all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
-        	if ($flight['lastupdate'] < (time()-10000)) {
+        	if ($flight['lastupdate'] < (time()-20000)) {
             	    unset(self::$all_flights[$key]);
     	        }
 	    }
@@ -59,7 +59,7 @@ class SBS {
     }
 
     static function add($line) {
-	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug;
+	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO;
 	date_default_timezone_set('UTC');
 	// signal handler - playing nice with sockets and dump1090
 	// pcntl_signal_dispatch();
@@ -130,7 +130,7 @@ class SBS {
 		    	    }
 			}
 			if (!isset($globalFork)) $globalFork = TRUE;
-			if (function_exists('pcntl_fork') && $globalFork) {
+			if (function_exists('pcntl_fork') && $globalFork && !$globalIVAO) {
 			    $pids[$id] = pcntl_fork();
 			    if (!$pids[$id]) {
 				$sid = posix_setsid();
