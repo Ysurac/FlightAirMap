@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `atc` (
   `atc_range` float NOT NULL,
   `ivao_id` int(11) NOT NULL,
   `ivao_name` varchar(255) NOT NULL,
-  `atc_lastseen` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `atc_lastseen` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `info` text NOT NULL,
   `type` enum('Observer','Flight Information','Delivery','Tower','Approach','ACC','Departure') DEFAULT NULL,
   PRIMARY KEY (`atc_id`)
