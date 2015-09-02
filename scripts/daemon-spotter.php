@@ -117,7 +117,6 @@ if (isset($globalAPRSssid)) $aprs_ssid = $globalAPRSssid;
 else $aprs_ssid = 'PerlEx';
 if (isset($globalAPRSfilter)) $aprs_filter = $globalAPRSfilter;
 else $aprs_filter =  'r/'.$globalCenterLatitude.'/'.$globalCenterLongitude.'/250.0';
-//else $aprs_filter =  'r/+46.3870/+5.2941/250.0';
 $aprs_login = "user {$aprs_ssid} appid {$aprs_version} filter {$aprs_filter}\n";
 
 $_ = $_SERVER['_'];
@@ -494,7 +493,7 @@ while ($i > 0) {
 						$send = $SBS::add($data);
 						unset($data);
 					} elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
-					elseif ($globalDebug) echo '!! Failed : '.$aprs_data."!!\n";
+					elseif ($globalDebug) echo '!! Failed : '.$buffer."!!\n";
 				}
 			} else {
 			    $line = explode(',', $buffer);

@@ -404,13 +404,13 @@ class SpotterLive {
 	{
 		global $globalDBdriver, $globalTimezone;
 		if ($globalDBdriver == 'mysql') {
-			$query  = "SELECT spotter_live.ident FROM spotter_live 
+			$query  = "SELECT spotter_live.ident, spotter_live.spotter_live_id FROM spotter_live 
 				WHERE spotter_live.ident = :ident 
 				AND spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE)"; 
 //				AND spotter_live.date < UTC_TIMESTAMP()";
 			$query_data = array(':ident' => $ident);
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "SELECT spotter_live.ident FROM spotter_live 
+			$query  = "SELECT spotter_live.ident, spotter_live.spotter_live_id FROM spotter_live 
 				WHERE spotter_live.ident = :ident 
 				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - '30 MINUTE'::INTERVAL";
 //				AND spotter_live.date < now() AT TIME ZONE 'UTC'";
@@ -422,7 +422,7 @@ class SpotterLive {
 		$ident_result='';
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			$ident_result = $row['ident'];
+			$ident_result = $row['spotter_live_id'];
 		}
 		return $ident_result;
         }

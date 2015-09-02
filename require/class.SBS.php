@@ -278,7 +278,7 @@ class SBS {
 			//SpotterLive::deleteLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
 			SpotterLive::deleteLiveSpotterData();
 			}
-		    }
+		    } else self::$all_flights[$id]['id'] = $recent_ident;
 
 		    //adds the spotter LIVE data
 		    //SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
