@@ -19,11 +19,11 @@ date_default_timezone_set($globalTimezone);
   <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
   <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
-<link rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.4-dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.5-dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui.min.css">
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-2.1.3.min.js"></script>
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-ui.min.js"></script>
-<script src="<?php print $globalURL; ?>/js/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+<script src="<?php print $globalURL; ?>/js/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 <!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
 <script src="<?php print $globalURL; ?>/js/bootstrap-select.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery-ui-timepicker-addon.js"></script>
@@ -47,8 +47,10 @@ if (strtolower($current_page) == "index")
 ?>
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print date("H"); ?>" />
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script>
 <?php
@@ -62,8 +64,10 @@ if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($gl
 ?>
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print date("H"); ?>" />
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.js.php?ident=<?php print $ident; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
 <?php
@@ -73,8 +77,10 @@ if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) &&
 ?>
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print date("H"); ?>" />
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.js.php?flightaware_id=<?php print $flightaware_id; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
 <?php

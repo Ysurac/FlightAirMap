@@ -14,9 +14,9 @@ header('Content-Type: text/javascript');
 
 $from_archive = false;
 $min = false;
-if (isset($globalMapPopup) && !$globalMapPopup) $min = true;
+if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) $min = true;
 
-if (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup)) {
+if (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true'))) {
 //if (isset($_GET['coord'])) {
 	$coord = explode(',',$_GET['coord']);
 	$spotter_array = SpotterLive::getLiveSpotterDatabyCoord($coord);
@@ -56,9 +56,8 @@ $output = '{';
 	$output .= '"type": "FeatureCollection",';
 		$output .= '"features": [';
 
-		if (!empty($spotter_array))
+		if (!empty($spotter_array) && is_array($spotter_array))
 		{
-			//print_r($spotter_array);
 			foreach($spotter_array as $spotter_item)
 			{
 				date_default_timezone_set('UTC');
@@ -245,8 +244,7 @@ $output = '{';
                 
 			}
 */
-
-				if (!isset($globalMapHistory) || $globalMapHistory || $allhistory || (isset($_GET['history']) && $_GET['history'] == $spotter_item['ident'])) {
+				if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || (!isset($_COOKIE['flightpath']) && (!isset($globalMapHistory) || $globalMapHistory || $allhistory) || (isset($_GET['history']) && $_GET['history'] == $spotter_item['ident']))) {
                                     if ($from_archive) {
 					    $spotter_history_array = SpotterArchive::getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
                                     } else {

@@ -70,6 +70,9 @@ $globalMapRefresh = '30';
 // DISPLAY INFO OF FLIGHTS IN A POPUP
 $globalMapPopup = FALSE;
 
+// DISPLAY FLIGHTS PATH HISTORY
+$globalMapHistory = FALSE;
+
 //IVAO
 $globalIVAO = FALSE;
 

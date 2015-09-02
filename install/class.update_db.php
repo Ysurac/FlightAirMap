@@ -148,6 +148,141 @@ class update_db {
 //                return true;
 	}
 
+	public static function retrieve_modes_flarmnet($database_file) {
+		global $globalTransaction;
+		//$query = 'TRUNCATE TABLE aircraft_modes';
+		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source IS NULL OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute(array(':source' => $database_file));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+		
+		if ($fh = fopen($database_file,"r")) {
+			//$query_dest = 'INSERT INTO aircraft_modes (`AircraftID`,`FirstCreated`,`LastModified`, `ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`SerialNo`, `OperatorFlagCode`, `Manufacturer`, `Type`, `FirstRegDate`, `CurrentRegDate`, `Country`, `PreviousID`, `DeRegDate`, `Status`, `PopularName`,`GenericName`,`AircraftClass`, `Engines`, `OwnershipStatus`,`RegisteredOwners`,`MTOW`, `TotalHours`, `YearBuilt`, `CofACategory`, `CofAExpiry`, `UserNotes`, `Interested`, `UserTag`, `InfoUrl`, `PictureUrl1`, `PictureUrl2`, `PictureUrl3`, `UserBool1`, `UserBool2`, `UserBool3`, `UserBool4`, `UserBool5`, `UserString1`, `UserString2`, `UserString3`, `UserString4`, `UserString5`, `UserInt1`, `UserInt2`, `UserInt3`, `UserInt4`, `UserInt5`) VALUES (:AircraftID,:FirstCreated,:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:SerialNo, :OperatorFlagCode, :Manufacturer, :Type, :FirstRegDate, :CurrentRegDate, :Country, :PreviousID, :DeRegDate, :Status, :PopularName,:GenericName,:AircraftClass, :Engines, :OwnershipStatus,:RegisteredOwners,:MTOW, :TotalHours,:YearBuilt, :CofACategory, :CofAExpiry, :UserNotes, :Interested, :UserTag, :InfoUrl, :PictureUrl1, :PictureUrl2, :PictureUrl3, :UserBool1, :UserBool2, :UserBool3, :UserBool4, :UserBool5, :UserString1, :UserString2, :UserString3, :UserString4, :UserString5, :UserInt1, :UserInt2, :UserInt3, :UserInt4, :UserInt5)';
+			$query_dest = 'INSERT INTO aircraft_modes (ModeS,Registration,ICAOTypeCode,Source) VALUES (:ModeS,:Registration,:ICAOTypeCode,:source)';
+		
+			$Connection = new Connection();
+			$sth_dest = Connection::$db->prepare($query_dest);
+			try {
+				if ($globalTransaction) Connection::$db->beginTransaction();
+            			while (!feof($fh)) {
+            				$line = Common::hex2str(fgets($fh,9999));
+					//FFFFFF                     RIDEAU VALLEY SOARINGASW-20               C-FBKN MZ 123.400
+            				$values['ModeS'] = substr($line,0,6);
+            				$values['Registration'] = trim(substr($line,69,6));
+            				$aircraft_name = trim(substr($line,48,6));
+            				// Check if we can find ICAO, else set it to GLID
+            				$aircraft_name_split = explode(' ',$aircraft_name);
+            				$search_more = '';
+            				if (count($aircraft_name) > 1 && strlen($aircraft_name_split[1]) > 3) $search_more .= " AND LIKE '%".$aircraft_name_split[0]."%'";
+            				$query_search = "SELECT * FROM aircraft WHERE type LIKE '%".$aircraft_name."%'".$search_more;
+            				$sth_search = Connection::$db->prepare($query_search);
+					try {
+                                    		$sth_search->execute();
+	            				$result = $sth_search->fetch(PDO::FETCH_ASSOC);
+	            				if (count($values) > 0) $values['ICAOTypeCode'] = $result['icao'];
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+					if (!isset($values['ICAOTypeCode'])) $values['ICAOTypeCode'] = 'GLID';
+					// Add data to db
+					if ($values['ModeS'] != '' && $values['Registration'] != '' && $values['Registration'] != '0000') {
+						//$query_dest_values = array(':AircraftID' => $values['AircraftID'],':FirstCreated' => $values['FirstCreated'],':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':SerialNo' => $values['SerialNo'], ':OperatorFlagCode' => $values['OperatorFlagCode'], ':Manufacturer' => $values['Manufacturer'], ':Type' => $values['Type'], ':FirstRegDate' => $values['FirstRegDate'], ':CurrentRegDate' => $values['CurrentRegDate'], ':Country' => $values['Country'], ':PreviousID' => $values['PreviousID'], ':DeRegDate' => $values['DeRegDate'], ':Status' => $values['Status'], ':PopularName' => $values['PopularName'],':GenericName' => $values['GenericName'],':AircraftClass' => $values['AircraftClass'], ':Engines' => $values['Engines'], ':OwnershipStatus' => $values['OwnershipStatus'],':RegisteredOwners' => $values['RegisteredOwners'],':MTOW' => $values['MTOW'], ':TotalHours' => $values['TotalHours'],':YearBuilt' => $values['YearBuilt'], ':CofACategory' => $values['CofACategory'], ':CofAExpiry' => $values['CofAExpiry'], ':UserNotes' => $values['UserNotes'], ':Interested' => $values['Interested'], ':UserTag' => $values['UserTag'], ':InfoUrl' => $values['InfoURL'], ':PictureUrl1' => $values['PictureURL1'], ':PictureUrl2' => $values['PictureURL2'], ':PictureUrl3' => $values['PictureURL3'], ':UserBool1' => $values['UserBool1'], ':UserBool2' => $values['UserBool2'], ':UserBool3' => $values['UserBool3'], ':UserBool4' => $values['UserBool4'], ':UserBool5' => $values['UserBool5'], ':UserString1' => $values['UserString1'], ':UserString2' => $values['UserString2'], ':UserString3' => $values['UserString3'], ':UserString4' => $values['UserString4'], ':UserString5' => $values['UserString5'], ':UserInt1' => $values['UserInt1'], ':UserInt2' => $values['UserInt2'], ':UserInt3' => $values['UserInt3'], ':UserInt4' => $values['UserInt4'], ':UserInt5' => $values['UserInt5']);
+						$query_dest_values = array(':ModeS' => $values['ModeS'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':source' => $database_file);
+						//print_r($query_dest_values);
+						$sth_dest->execute($query_dest_values);
+					}
+				}
+				if ($globalTransaction) Connection::$db->commit();
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+		}
+
+		$query = "DELETE FROM aircraft_modes WHERE Source = :source AND ModeS IN (SELECT * FROM (SELECT ModeS FROM aircraft_modes WHERE Source = 'ACARS') _alias)";
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute(array(':source' => $database_file));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+//                return true;
+	}
+
+	public static function retrieve_modes_ogn($database_file) {
+		global $globalTransaction;
+		//$query = 'TRUNCATE TABLE aircraft_modes';
+		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source IS NULL OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute(array(':source' => $database_file));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+		
+		if ($fh = fopen($database_file,"r")) {
+			//$query_dest = 'INSERT INTO aircraft_modes (`AircraftID`,`FirstCreated`,`LastModified`, `ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`SerialNo`, `OperatorFlagCode`, `Manufacturer`, `Type`, `FirstRegDate`, `CurrentRegDate`, `Country`, `PreviousID`, `DeRegDate`, `Status`, `PopularName`,`GenericName`,`AircraftClass`, `Engines`, `OwnershipStatus`,`RegisteredOwners`,`MTOW`, `TotalHours`, `YearBuilt`, `CofACategory`, `CofAExpiry`, `UserNotes`, `Interested`, `UserTag`, `InfoUrl`, `PictureUrl1`, `PictureUrl2`, `PictureUrl3`, `UserBool1`, `UserBool2`, `UserBool3`, `UserBool4`, `UserBool5`, `UserString1`, `UserString2`, `UserString3`, `UserString4`, `UserString5`, `UserInt1`, `UserInt2`, `UserInt3`, `UserInt4`, `UserInt5`) VALUES (:AircraftID,:FirstCreated,:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:SerialNo, :OperatorFlagCode, :Manufacturer, :Type, :FirstRegDate, :CurrentRegDate, :Country, :PreviousID, :DeRegDate, :Status, :PopularName,:GenericName,:AircraftClass, :Engines, :OwnershipStatus,:RegisteredOwners,:MTOW, :TotalHours,:YearBuilt, :CofACategory, :CofAExpiry, :UserNotes, :Interested, :UserTag, :InfoUrl, :PictureUrl1, :PictureUrl2, :PictureUrl3, :UserBool1, :UserBool2, :UserBool3, :UserBool4, :UserBool5, :UserString1, :UserString2, :UserString3, :UserString4, :UserString5, :UserInt1, :UserInt2, :UserInt3, :UserInt4, :UserInt5)';
+			$query_dest = 'INSERT INTO aircraft_modes (ModeS,Registration,ICAOTypeCode,Source) VALUES (:ModeS,:Registration,:ICAOTypeCode,:source)';
+		
+			$Connection = new Connection();
+			$sth_dest = Connection::$db->prepare($query_dest);
+			try {
+				if ($globalTransaction) Connection::$db->beginTransaction();
+				$tmp = fgetcsv($fh,9999,',',"'");
+            			while (!feof($fh)) {
+            				$line = fgetcsv($fh,9999,',',"'");
+            				
+					//FFFFFF                     RIDEAU VALLEY SOARINGASW-20               C-FBKN MZ 123.400
+					//print_r($line);
+            				$values['ModeS'] = $line[1];
+            				$values['Registration'] = $line[3];
+            				$aircraft_name = $line[2];
+            				// Check if we can find ICAO, else set it to GLID
+            				$aircraft_name_split = explode(' ',$aircraft_name);
+            				$search_more = '';
+            				if (count($aircraft_name) > 1 && strlen($aircraft_name_split[1]) > 3) $search_more .= " AND LIKE '%".$aircraft_name_split[0]."%'";
+            				$query_search = "SELECT * FROM aircraft WHERE type LIKE '%".$aircraft_name."%'".$search_more;
+            				$sth_search = Connection::$db->prepare($query_search);
+					try {
+                                    		$sth_search->execute();
+	            				$result = $sth_search->fetch(PDO::FETCH_ASSOC);
+	            				if (count($values) > 0) $values['ICAOTypeCode'] = $result['icao'];
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+					if (!isset($values['ICAOTypeCode'])) $values['ICAOTypeCode'] = 'GLID';
+					// Add data to db
+					if ($values['ModeS'] != '' && $values['Registration'] != '' && $values['Registration'] != '0000') {
+						//$query_dest_values = array(':AircraftID' => $values['AircraftID'],':FirstCreated' => $values['FirstCreated'],':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':SerialNo' => $values['SerialNo'], ':OperatorFlagCode' => $values['OperatorFlagCode'], ':Manufacturer' => $values['Manufacturer'], ':Type' => $values['Type'], ':FirstRegDate' => $values['FirstRegDate'], ':CurrentRegDate' => $values['CurrentRegDate'], ':Country' => $values['Country'], ':PreviousID' => $values['PreviousID'], ':DeRegDate' => $values['DeRegDate'], ':Status' => $values['Status'], ':PopularName' => $values['PopularName'],':GenericName' => $values['GenericName'],':AircraftClass' => $values['AircraftClass'], ':Engines' => $values['Engines'], ':OwnershipStatus' => $values['OwnershipStatus'],':RegisteredOwners' => $values['RegisteredOwners'],':MTOW' => $values['MTOW'], ':TotalHours' => $values['TotalHours'],':YearBuilt' => $values['YearBuilt'], ':CofACategory' => $values['CofACategory'], ':CofAExpiry' => $values['CofAExpiry'], ':UserNotes' => $values['UserNotes'], ':Interested' => $values['Interested'], ':UserTag' => $values['UserTag'], ':InfoUrl' => $values['InfoURL'], ':PictureUrl1' => $values['PictureURL1'], ':PictureUrl2' => $values['PictureURL2'], ':PictureUrl3' => $values['PictureURL3'], ':UserBool1' => $values['UserBool1'], ':UserBool2' => $values['UserBool2'], ':UserBool3' => $values['UserBool3'], ':UserBool4' => $values['UserBool4'], ':UserBool5' => $values['UserBool5'], ':UserString1' => $values['UserString1'], ':UserString2' => $values['UserString2'], ':UserString3' => $values['UserString3'], ':UserString4' => $values['UserString4'], ':UserString5' => $values['UserString5'], ':UserInt1' => $values['UserInt1'], ':UserInt2' => $values['UserInt2'], ':UserInt3' => $values['UserInt3'], ':UserInt4' => $values['UserInt4'], ':UserInt5' => $values['UserInt5']);
+						$query_dest_values = array(':ModeS' => $values['ModeS'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':source' => $database_file);
+						//print_r($query_dest_values);
+						$sth_dest->execute($query_dest_values);
+					}
+				}
+				if ($globalTransaction) Connection::$db->commit();
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+		}
+
+		$query = "DELETE FROM aircraft_modes WHERE Source = :source AND ModeS IN (SELECT * FROM (SELECT ModeS FROM aircraft_modes WHERE Source = 'ACARS') _alias)";
+		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+                        $sth->execute(array(':source' => $database_file));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+//                return true;
+	}
+
 	/*
 	* This function is used to create a list of airports. Sources : Wikipedia, ourairports.com ans partow.net
 	*/
@@ -796,6 +931,34 @@ class update_db {
 		} elseif ($globalDebug) echo "Done\n";
 	}
 
+	public static function update_ModeS_flarm() {
+		global $tmp_dir, $globalDebug;
+		if ($globalDebug) echo "Modes Flarmnet: Download...";
+		update_db::download('http://flarmnet.org/files/data.fln',$tmp_dir.'data.fln');
+		if (file_exists($tmp_dir.'data.fln')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_modes_flarmnet($tmp_dir.'data.fln');
+		} else $error = "File ".$tmp_dir.'data.fln'." doesn't exist. Download failed.";
+		if ($error != '') {
+			echo $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+	}
+
+	public static function update_ModeS_ogn() {
+		global $tmp_dir, $globalDebug;
+		if ($globalDebug) echo "Modes OGN: Download...";
+		update_db::download('http://ddb.glidernet.org/download/',$tmp_dir.'ogn.csv');
+		if (file_exists($tmp_dir.'ogn.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_modes_ogn($tmp_dir.'ogn.csv');
+		} else $error = "File ".$tmp_dir.'ogn.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			echo $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+	}
+
 	public static function update_translation() {
 		global $tmp_dir, $globalDebug;
 		$error = '';
@@ -951,6 +1114,8 @@ class update_db {
 	public static function update_all() {
 		update_db::update_routes();
 		update_db::update_ModeS();
+		update_db::update_ModeS_flarm();
+		update_db::update_ModeS_ogn();
 		update_db::update_translation();
 	}
 }
@@ -960,4 +1125,6 @@ class update_db {
 //echo update_db::update_airspace();
 //echo update_db::update_notam();
 //echo update_db::update_ivao();
+//echo update_db::update_ModeS_flarm();
+//echo update_db::update_ModeS_ogn();
 ?>

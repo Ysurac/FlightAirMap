@@ -51,7 +51,7 @@ class SBS {
 	// Delete old infos
 	foreach (self::$all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
-        	if ($flight['lastupdate'] < (time()-20000)) {
+        	if ($flight['lastupdate'] < (time()-60000)) {
             	    unset(self::$all_flights[$key]);
     	        }
 	    }
@@ -82,10 +82,13 @@ class SBS {
 		//print_r(self::$all_flights);
 		if (!isset(self::$all_flights[$id]['hex'])) {
 		    self::$all_flights[$id] = array('hex' => $hex,'datetime' => $line['datetime']);
-		    if (!isset($line['aircraft_icao'])) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('aircraft_icao' => Spotter::getAllAircraftType($hex)));
-		    else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
+		    if (!isset($line['aircraft_icao'])) {
+			$aircraft_icao = Spotter::getAllAircraftType($hex);
+			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('aircraft_icao' => $aircraft_icao));
+		    }else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => ''));
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('lastupdate' => time()));
+
 		    if ($globalDebug) echo "*********** New aircraft hex : ".$hex." ***********\n";
 		}
 		
@@ -120,7 +123,7 @@ class SBS {
 				$line['departure_airport_icao'] = Spotter::getAirportIcao($line['departure_airport_iata']);
 				$line['arrival_airport_icao'] = Spotter::getAirportIcao($line['arrival_airport_iata']);
 		    		self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('departure_airport' => $line['departure_airport_icao'],'arrival_airport' => $line['arrival_airport_icao'],'route_stop' => ''));
-		    } else {
+		    } elseif (!isset($line['format_source']) || $line['format_source'] != 'aprs') {
 			$route = Spotter::getRouteInfo(trim($line['ident']));
 			if (count($route) > 0) {
 			    //if ($route['FromAirport_ICAO'] != $route['ToAirport_ICAO']) {
@@ -141,41 +144,50 @@ class SBS {
 		    }
 		}
 	        
-		if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
-		    if (!isset(self::$all_flights[$id]['latitude']) || self::$all_flights[$id]['latitude'] == '' || abs(self::$all_flights[$id]['latitude']-$line['latitude']) < 3 || $line['format_source'] != 'sbs' || time() - self::$all_flights[$id]['lastupdate'] > 30) {
-			if (!isset(self::$all_flights[$id]['archive_latitude'])) self::$all_flights[$id]['archive_latitude'] = $line['latitude'];
-			if (!isset(self::$all_flights[$id]['livedb_latitude']) || abs(self::$all_flights[$id]['livedb_latitude']-$line['latitude']) > 0.02) {
-			    self::$all_flights[$id]['livedb_latitude'] = $line['latitude'];
-			    $dataFound = true;
+	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '') {
+	    	    if (!isset(self::$all_flights[$id]['time_last_coord']) || Common::withinThreshold(time()-self::$all_flights[$id]['time_last_coord'],Common::distance($line['latitude'],$line['longitude'],self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude']))) {
+			if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
+			    //if (!isset(self::$all_flights[$id]['latitude']) || self::$all_flights[$id]['latitude'] == '' || abs(self::$all_flights[$id]['latitude']-$line['latitude']) < 3 || $line['format_source'] != 'sbs' || time() - self::$all_flights[$id]['lastupdate'] > 30) {
+				if (!isset(self::$all_flights[$id]['archive_latitude'])) self::$all_flights[$id]['archive_latitude'] = $line['latitude'];
+				if (!isset(self::$all_flights[$id]['livedb_latitude']) || abs(self::$all_flights[$id]['livedb_latitude']-$line['latitude']) > 0.02) {
+				    self::$all_flights[$id]['livedb_latitude'] = $line['latitude'];
+				    $dataFound = true;
+				    self::$all_flights[$id]['time_last_coord'] = time();
+				}
+				// elseif ($globalDebug) echo '!*!*! Ignore data, too close to previous one'."\n";
+				self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('latitude' => $line['latitude']));
+				if (abs(self::$all_flights[$id]['archive_latitude']-self::$all_flights[$id]['latitude']) > 0.3) {
+				    self::$all_flights[$id]['archive_latitude'] = $line['latitude'];
+				    $putinarchive = true;
+				}
+			    /*
+			    } elseif (isset(self::$all_flights[$id]['latitude'])) {
+				if ($globalDebug) echo '!!! Strange latitude value - diff : '.abs(self::$all_flights[$id]['latitude']-$line['latitude']).'- previous lat : '.self::$all_flights[$id]['latitude'].'- new lat : '.$line['latitude']."\n";
+			    }
+			    */
 			}
-			// elseif ($globalDebug) echo '!*!*! Ignore data, too close to previous one'."\n";
-			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('latitude' => $line['latitude']));
-			if (abs(self::$all_flights[$id]['archive_latitude']-self::$all_flights[$id]['latitude']) > 0.3) {
-			    self::$all_flights[$id]['archive_latitude'] = $line['latitude'];
-			    $putinarchive = true;
+			if (isset($line['longitude']) && $line['longitude'] != '' && $line['longitude'] != 0 && $line['longitude'] < 360 && $line['longitude'] > -180) {
+			    if ($line['longitude'] > 180) $line['longitude'] = $line['longitude'] - 360;
+			    //if (!isset(self::$all_flights[$id]['longitude']) || self::$all_flights[$id]['longitude'] == ''  || abs(self::$all_flights[$id]['longitude']-$line['longitude']) < 2 || $line['format_source'] != 'sbs' || time() - self::$all_flights[$id]['lastupdate'] > 30) {
+				if (!isset(self::$all_flights[$id]['archive_longitude'])) self::$all_flights[$id]['archive_longitude'] = $line['longitude'];
+				if (!isset(self::$all_flights[$id]['livedb_longitude']) || abs(self::$all_flights[$id]['livedb_longitude']-$line['longitude']) > 0.02) {
+				    self::$all_flights[$id]['livedb_longitude'] = $line['longitude'];
+				    $dataFound = true;
+				    self::$all_flights[$id]['time_last_coord'] = time();
+				}
+				// elseif ($globalDebug) echo '!*!*! Ignore data, too close to previous one'."\n";
+				self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('longitude' => $line['longitude']));
+				if (abs(self::$all_flights[$id]['archive_longitude']-self::$all_flights[$id]['longitude']) > 0.3) {
+				    self::$all_flights[$id]['archive_longitude'] = $line['longitude'];
+				    $putinarchive = true;
+				}
+			/*
+			    } elseif (isset(self::$all_flights[$id]['longitude'])) {
+				if ($globalDebug) echo '!!! Strange longitude value - diff : '.abs(self::$all_flights[$id]['longitude']-$line['longitude']).'- previous lat : '.self::$all_flights[$id]['longitude'].'- new lat : '.$line['longitude']."\n";
+			    }
+			    */
 			}
-		    } elseif (isset(self::$all_flights[$id]['latitude'])) {
-			if ($globalDebug) echo '!!! Strange latitude value - diff : '.abs(self::$all_flights[$id]['latitude']-$line['latitude']).'- previous lat : '.self::$all_flights[$id]['latitude'].'- new lat : '.$line['latitude']."\n";
-		    }
-		}
-		if (isset($line['longitude']) && $line['longitude'] != '' && $line['longitude'] != 0 && $line['longitude'] < 360 && $line['longitude'] > -180) {
-		    if ($line['longitude'] > 180) $line['longitude'] = $line['longitude'] - 360;
-		    if (!isset(self::$all_flights[$id]['longitude']) || self::$all_flights[$id]['longitude'] == ''  || abs(self::$all_flights[$id]['longitude']-$line['longitude']) < 2 || $line['format_source'] != 'sbs' || time() - self::$all_flights[$id]['lastupdate'] > 30) {
-			if (!isset(self::$all_flights[$id]['archive_longitude'])) self::$all_flights[$id]['archive_longitude'] = $line['longitude'];
-			if (!isset(self::$all_flights[$id]['livedb_longitude']) || abs(self::$all_flights[$id]['livedb_longitude']-$line['longitude']) > 0.02) {
-			    self::$all_flights[$id]['livedb_longitude'] = $line['longitude'];
-			    $dataFound = true;
-			}
-			// elseif ($globalDebug) echo '!*!*! Ignore data, too close to previous one'."\n";
-			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('longitude' => $line['longitude']));
-			if (abs(self::$all_flights[$id]['archive_longitude']-self::$all_flights[$id]['longitude']) > 0.3) {
-			    self::$all_flights[$id]['archive_longitude'] = $line['longitude'];
-			    $putinarchive = true;
-			}
-		    } elseif (isset(self::$all_flights[$id]['longitude'])) {
-			if ($globalDebug) echo '!!! Strange longitude value - diff : '.abs(self::$all_flights[$id]['longitude']-$line['longitude']).'- previous lat : '.self::$all_flights[$id]['longitude'].'- new lat : '.$line['longitude']."\n";
-		    }
-
+		    } else if ($globalDebug) echo '!!! Too much distance in short time... for '.self::$all_flights[$id]['ident']."\n";
 		}
 		if (isset($line['verticalrate']) && $line['verticalrate'] != '') {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('verticalrate' => $line['verticalrate']));

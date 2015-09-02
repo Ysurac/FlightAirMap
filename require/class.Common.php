@@ -98,15 +98,39 @@ class Common {
 		return(array_filter($tabledata));
 	}
 
-
+	/**
+	* Give distance between 2 coordonnates
+	* @param Float $lat latitude of first point
+	* @param Float $lon longitude of first point
+	* @param Float $latc latitude of second point
+	* @param Float $lonc longitude of second point
+	* @param String $unit km else no unit used
+	* @return Float Distance in $unit
+	*/
 	public static function distance($lat, $lon, $latc, $lonc, $unit = 'km') {
-		$dist = rad2deg(acos(sin(deg2rad($lat))*sin(deg2rad($latc))+ cos(deg2rad($lat))*cos(deg2rad($latc))*cos(deg2rad($lon-$lonc))))*60*1.1515;
+		$dist = rad2deg(acos(sin(deg2rad(floatval($lat)))*sin(deg2rad(floatval($latc)))+ cos(deg2rad(floatval($lat)))*cos(deg2rad(floatval($latc)))*cos(deg2rad(floatval($lon)-floatval($lonc)))))*60*1.1515;
 		if ($unit == "km") {
 			return round($dist * 1.609344);
 		} else {
 			return round($dist);
 		}
 	}
+
+	/**
+	* Check is distance realistic
+	* @param int $timeDifference the time between the reception of both messages
+	* @param float $distance distance covered
+	* @return whether distance is realistic
+	*/
+	public static function withinThreshold ($timeDifference, $distance) {
+		$x = abs($timeDifference);
+		$d = abs($distance);
+		if ($x == 0 || $d == 0) return true;
+		// may be due to Internet jitter; distance is realistic
+		if ($x < 0.7 && $d < 2000) return true;
+		else return $d/$x < 514.4*2.5; // 1000 knots for airborne, 100 for surface
+	}
+
 
 	// Check if an array is assoc
 	public static function isAssoc($array)
@@ -149,6 +173,17 @@ class Common {
 	public static function urlexist($url){
 		$headers=get_headers($url);
 		return stripos($headers[0],"200 OK")?true:false;
+	}
+	
+	/**
+	* Convert hexa to string
+	* @param	String $hex data in hexa
+	* @return	String Return result
+	*/
+	public static function hex2str($hex) {
+		$str = '';
+		for($i=0;$i<strlen($hex);$i+=2) $str .= chr(hexdec(substr($hex,$i,2)));
+		return $str;
 	}
 }
 ?>

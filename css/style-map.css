@@ -19,10 +19,10 @@ body {
     right: 10px;
 }
 .button{
-  position:absolute;
-  left:14px;
+/*  position:absolute;*/
+/*  left:14px;*/
   background-color:#fff;
-  width: 26px;
+  width: 126px;
   height: 26px;
   text-align:center;
   border-top-left-radius: 4px;
@@ -44,6 +44,7 @@ body {
   color:#1a3151;
 }
 
+/*
 .zoom-in .fa,
 .zoom-out .fa{
   font-size:1.0em;
@@ -85,7 +86,7 @@ body {
 .notam{
   top:450px;
 }
-
+  */
 .showdetails {
 	top: 55px;
    width: 300px;

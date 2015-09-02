@@ -343,7 +343,7 @@ $( document ).ready(function() {
 	?>
 
 	<?php
-	    if (isset($globalMapPopup) && !$globalMapPopup) {
+	    //if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (isset($globalMapPopup) && !$globalMapPopup)) {
 	?>
 	var showdetails = L.control();
 	showdetails.onAdd = function (map) {
@@ -360,8 +360,10 @@ $( document ).ready(function() {
             return false;
 	})
 	<?php
-	    }
+	   // }
 	?>
+	
+	var sidebar = L.control.sidebar('sidebar').addTo(map);
 
 
 function getAltitudeColor(x) {
@@ -398,8 +400,6 @@ function getLiveData()
 {
 	var bbox = map.getBounds().toBBoxString();
 	layer_data_p = L.layerGroup();
-	//    map.removeLayer(layer_data);
-	//    layer_data = L.layerGroup();
 
 	$.ajax({
 	    dataType: "json",
@@ -459,7 +459,7 @@ function getLiveData()
 			})
 		    })
 		    <?php
-			if (isset($globalMapPopup) && !$globalMapPopup) {
+			if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 		    ?>
 		    .on('click', function() {
 				$("#aircraft_ident").attr('class',feature.properties.callsign);
@@ -485,7 +485,7 @@ function getLiveData()
 			    })
 			})
 					    <?php
-			if (isset($globalMapPopup) && !$globalMapPopup) {
+			if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 		    ?>
 
 			.on('click', function() {
@@ -508,7 +508,7 @@ function getLiveData()
 			    })
 			})
 		    <?php
-			if (isset($globalMapPopup) && !$globalMapPopup) {
+			if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 		    ?>
 			.on('click', function() {
 				$("#aircraft_ident").attr('class',feature.properties.callsign);
@@ -626,7 +626,7 @@ function getLiveData()
                     }
             	    output += '</div>';
             	    if (typeof feature.properties.waypoints != 'undefined') {
-            		output += '<div class="waypoints"><span>Waypoints</span>';
+            		output += '<div class="waypoints"><span>Route</span>';
             		output += feature.properties.waypoints;
             		output += '</div>';
             	    }
@@ -809,13 +809,33 @@ function getLiveData()
 //update_airspaceLayer();
 
 
+<?php
+    // Add support for custom json via $globalMapJson
+    if (isset($globalMapJson) && is_array($globalMapJson)) {
+	foreach ($globalMapJson as $json) {
+	    if (isset($json['url'])) {
+?>
+update_genLayer('<?php print $json['url']; ?>');
+<?php
+		if (isset($json['refresh']) && $json['refresh'] > 0) {
+?>
+setInterval(function(){update_genLayer('<?php print $json['url']; ?>')}, <?php print $json['refresh']; ?>);
+<?php
+		}
+	    }
+	}
+    }
+
+?>
+
+
 
   
 });
 
 //adds the bootstrap tooltip to the map icons
 function showBootstrapTooltip(){
-    $(".leaflet-marker-icon").tooltip('destroy');
+    $('.leaflet-marker-icon').tooltip('destroy');
     $('.leaflet-marker-icon').tooltip({ html: true });
 }
 
@@ -1294,6 +1314,31 @@ function showAirspace() {
      }
 }
 
+function genLayerPopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	if (typeof feature.properties.text != 'undefined') output += '&nbsp;'+feature.properties.text+'<br /> ';
+	output += '</div>';
+	layer.bindPopup(output);
+};
+
+function update_genLayer(url) {
+//    var bbox = map.getBounds().toBBoxString();
+//    notamLayer = new L.GeoJSON.AJAX(url+"?coord="+bbox,{
+    genLayer = new L.GeoJSON.AJAX(url,{
+	onEachFeature: genLayerPopup,
+	pointToLayer: function (feature, latlng) {
+	    return L.circle(latlng, feature.properties.radius, {
+                    fillColor: feature.properties.fillcolor,
+                    color: feature.properties.color,
+                    weight: feature.properties.weight,
+                    opacity: feature.properties.opacity,
+                    fillOpacity: feature.properties.fillOpacity
+            });
+	}
+    }).addTo(map);
+};
+
 function notamPopup (feature, layer) {
 	var output = '';
 	output += '<div class="top">';
@@ -1370,3 +1415,43 @@ function showNotam() {
      }
 }
 
+
+function flightPopup() {
+    if (!$(".flightpopup").hasClass("active"))
+    {
+	document.cookie =  'flightpopup=true; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	//add the active class
+	$(".flightpopup").addClass("active");
+	// FIXME : Don't reload page (for now not working without reload)
+	window.location.reload();
+    } else {
+	document.cookie =  'flightpopup=false; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	//remove the active class
+	$(".flightpopup").removeClass("active");
+	window.location.reload();
+     }
+}
+
+function flightPath() {
+    if (!$(".flightpath").hasClass("active"))
+    {
+	document.cookie =  'flightpath=true; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	//add the active class
+	$(".flightpath").addClass("active");
+    } else {
+	document.cookie =  'flightpath=false; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	//remove the active class
+	$(".flightpath").removeClass("active");
+     }
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
