@@ -814,6 +814,8 @@ if (isset($_POST['dbtype'])) {
 	include_once('class.update_db.php');
 	$globalDebug = FALSE;
 	update_db::update_ModeS();
+	update_db::update_ModeS_flarm();
+	update_db::update_ModeS_ogn();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data'));
 	$_SESSION['install'] = 'routes';
 	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
