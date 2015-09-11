@@ -21,11 +21,10 @@ $ACARS=new ACARS();
 date_default_timezone_set('UTC');
 // signal handler - playing nice with sockets and dump1090
 pcntl_signal(SIGINT,  function($signo) {
-    global $sock, $db;
+    global $sock;
     echo "\n\nctrl-c or kill signal received. Tidying up ... ";
     socket_shutdown($sock, 0);
     socket_close($sock);
-    $db = null;
     die("Bye!\n");
 });
 pcntl_signal_dispatch();
