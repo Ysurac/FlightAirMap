@@ -292,8 +292,8 @@ while ($i > 0) {
 	    $all_data = json_decode($buffer,true);
 	    foreach ($all_data as $line) {
 	        $data = array();
-	        $data['id'] = $line['id']; // id
-	        $data['hex'] = str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT); // hex
+	        //$data['id'] = $line['id']; // id not usable
+	        $data['hex'] = substr(str_pad(bin2hex($line['flightnum']),6,'000000',STR_PAD_LEFT),-6); // hex
 	        if (isset($line['pilotname'])) $data['pilot_name'] = $line['pilotname'];
 	        if (isset($line['pilotid'])) $data['pilot_id'] = $line['pilotid'];
 	        $data['ident'] = $line['flightnum']; // ident
