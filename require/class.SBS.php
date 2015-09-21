@@ -81,7 +81,10 @@ class SBS {
 		
 		//print_r(self::$all_flights);
 		if (!isset(self::$all_flights[$id]['hex'])) {
-		    self::$all_flights[$id] = array('hex' => $hex,'datetime' => $line['datetime']);
+		    self::$all_flights[$id] = array('hex' => $hex);
+		    if (preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
+			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('datetime' => $line['datetime']));
+		    } else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
 		    if (!isset($line['aircraft_icao'])) {
 			$aircraft_icao = Spotter::getAllAircraftType($hex);
 			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('aircraft_icao' => $aircraft_icao));

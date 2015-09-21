@@ -36,7 +36,7 @@ if (function_exists('pcntl_fork')) {
 }
 
 // let's try and connect
-if ($globalDebug) echo "Connecting to SBS ...\n";
+if ($globalDebug) echo "Connecting...\n";
 
 function create_socket($host, $port, &$errno, &$errstr) {
     $ip = gethostbyname($host);
@@ -59,19 +59,26 @@ function connect_all($hosts) {
 	if (filter_var($host,FILTER_VALIDATE_URL)) {
             if (preg_match('/deltadb.txt$/',$host)) {
         	$formats[$id] = 'deltadbtxt';
-            } else if (preg_match('/aircraftlist.json$/',$host)) {
+        	if ($globalDebug) echo "Connect to deltadb source...\n";
+    	    } else if (preg_match('/aircraftlist.json$/',$host)) {
         	$formats[$id] = 'aircraftlistjson';
+        	if ($globalDebug) echo "Connect to aircraftlist.json source...\n";
             } else if (preg_match('/\/action.php\/acars\/data$/',$host)) {
         	$formats[$id] = 'phpvmacars';
+        	if ($globalDebug) echo "Connect to phpvmacars source...\n";
             } else if (preg_match('/whazzup/',$host)) {
         	$formats[$id] = 'whazzup';
+        	if ($globalDebug) echo "Connect to whazzup source...\n";
             } else if (preg_match('/recentpireps/',$host)) {
         	$formats[$id] = 'pirepsjson';
+        	if ($globalDebug) echo "Connect to pirepsjson source...\n";
             } else if (preg_match(':data.fr24.com/zones/fcgi/feed.js:',$host)) {
         	// Desactivated. Here only because it's possible. Do not use without fr24 rights.
         	//$formats[$id] = 'fr24json';
+        	//if ($globalDebug) echo "Connect to fr24 source...\n";
             } else if (preg_match('/10001/',$host)) {
         	$formats[$id] = 'tsv';
+        	if ($globalDebug) echo "Connect to tsv source...\n";
             }
         } else {
 	    $hostport = explode(':',$host);
