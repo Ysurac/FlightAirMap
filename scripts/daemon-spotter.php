@@ -205,6 +205,7 @@ while ($i > 0) {
     			if ($line[3] == 'PILOT') $SBS::add($data);
 			elseif ($line[3] == 'ATC') {
 				//print_r($data);
+				$data['info'] = str_replace('^&sect;','<br />',$data['info']);
 				echo ATC::add($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name']);
 			}
     			unset($data);
@@ -278,10 +279,13 @@ while ($i > 0) {
     		//$data['arrival_airport_time'] = $line['arrtime'];
 	    	if (isset($line['aircraft'])) $data['aircraft_icao'] = $line['aircraft'];
 	    	if (isset($line['transponder'])) $data['squawk'] = $line['transponder'];
+	    	if (isset($line['atis'])) $data['info'] = $line['atis'];
+	    	else $data['info'] = '';
 		$data['datetime'] = date('Y-m-d H:i:s');
     		if ($line['icon'] == 'plane') $SBS::add($data);
 		elseif ($line['icon'] == 'ct') {
-			echo ATC::add($data['ident'],'',$data['latitude'],$data['longitude'],'0','',$data['datetime'],'',$data['pilot_id'],$data['pilot_name']);
+			$data['info'] = str_replace('^&sect;','<br />',$data['info']);
+			echo ATC::add($data['ident'],'',$data['latitude'],$data['longitude'],'0',$data['info'],$data['datetime'],'',$data['pilot_id'],$data['pilot_name']);
 		}
 
 		unset($data);
