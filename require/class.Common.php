@@ -138,6 +138,11 @@ class Common {
 		return ($array !== array_values($array));
 	}
 
+	public static function isInteger($input){
+	    return(ctype_digit(strval($input)));
+	}
+
+
 	public static function convertDec($dms,$latlong) {
 		if ($latlong == 'latitude') {
 			$deg = substr($dms, 0, 2);
