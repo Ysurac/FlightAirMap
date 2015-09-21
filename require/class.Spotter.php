@@ -2637,7 +2637,10 @@ class Spotter{
                         $arrival_airport_array = Spotter::getAllAirportInfo('NA');
                 }
                 if ($registration == '') $registration = 'NA';
-                if ($squawk == '' || Common::isInteger($squawk) == false) $squawk = 0;
+                if ($squawk == '' || Common::isInteger($squawk) == false) $squawk = NULL;
+                if ($verticalrate == '' || Common::isInteger($verticalrate) == false) $verticalrate = NULL;
+                if ($heading == '' || Common::isInteger($heading) == false) $heading = 0;
+                if ($groundspeed == '' || Common::isInteger($groundspeed) == false) $groundspeed = 0;
                 $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop,highlight,ModeS, pilot_id, pilot_name, verticalrate) 
                 VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time, :squawk, :route_stop, :highlight, :ModeS, :pilot_id, :pilot_name, :verticalrate)";
 
