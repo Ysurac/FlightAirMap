@@ -56,7 +56,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
 if ($_GET['download'] == "true")
 {
-	header('Content-disposition: attachment; filename="barriespotter.geojson"');
+	header('Content-disposition: attachment; filename="flightairmap.geojson"');
 }
 
 header('Content-Type: application/json');

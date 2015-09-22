@@ -56,7 +56,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
 if ($_GET['download'] == "true")
 {
-	header('Content-disposition: attachment; filename="barriespotter.rss"');
+	header('Content-disposition: attachment; filename="flightairmap.rss"');
 }
 
 header('Content-Type: application/rss+xml; charset=utf-8');
@@ -69,15 +69,15 @@ $spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_G
 print '<?xml version="1.0" encoding="UTF-8" ?>';
 print '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">';
 
-	print '<title>Barrie Spotter GeoRSS Feed</title>';
-	print '<link href="http://www.barriespotter.com/"/>';
-	print '<subtitle>The latest airplanes flying over the Barrie area</subtitle>';
+	print '<title>GeoRSS Feed</title>';
+	print '<link href="http://www/flightairmap.fr/"/>';
+	print '<subtitle>The latest airplanes</subtitle>';
 	print '<updated>'.$date.'</updated>';
 	print '<author>';
-    	print '<name>Barrie Spotter</name>';
-    	print '<email>no-reply@barriespotter.com</email>';
+    	print '<name>FlightAirMap</name>';
+    	print '<email>no@no.com</email>';
 	print '</author>';
-	print '<id>http://www.barriespotter.com/</id>';
+	print '<id>FlightAirMap</id>';
 	
 	if (!empty($spotter_array))
 	{
@@ -87,8 +87,8 @@ print '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss
 	      
 		  print '<entry>';
 		    print '<title>'.$spotter_item['ident'].' '.$spotter_item['airline_name'].' | '.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | '.$spotter_item['departure_airport'].' - '.$spotter_item['arrival_airport'].'</title>';
-		    print '<link href="http://www.barriespotter.com/flightid/'.$spotter_item['spotter_id'].'"/>';
-		    print '<id>http://www.barriespotter.com/flightid/'.$spotter_item['spotter_id'].'</id>';
+		    print '<link href="http://www.flightairmap.fr/flightid/'.$spotter_item['spotter_id'].'"/>';
+		    print '<id>http://www.flightairmap.fr/flightid/'.$spotter_item['spotter_id'].'</id>';
 		    print '<content>Ident: '.$spotter_item['ident'].' | Registration: '.$spotter_item['registration'].' | Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | Airline: '.$spotter_item['airline_name'].' | Coming From: '.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].') | Flying to: '.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].') | Flew nearby on: '.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'</content>';
 		    print '<updated>'.$date.'</updated>';
 		    if ($spotter_item['waypoints'] != "")

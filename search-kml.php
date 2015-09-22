@@ -56,7 +56,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
 if (!isset($_GET['download']))
 {
-	header('Content-disposition: attachment; filename="barriespotter.kml"');
+	header('Content-disposition: attachment; filename="flightairmap.kml"');
 }
 
 header('Content-Type: text/xml');
@@ -70,14 +70,14 @@ $output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	    $output .= '<Style id="departureAirport">';
 	    	$output .= '<IconStyle>';
 	      	$output .= '<Icon>';
-	        	$output .= '<href>http://barriespotter.com/images/kml_departure_airport.png</href>';
+	        	$output .= '<href>http://www.flightairmap.fr/images/kml_departure_airport.png</href>';
 	         $output .= '</Icon>';
 	        $output .= '</IconStyle>';
 	    $output .= '</Style>';
 	    $output .= '<Style id="arrivalAirport">';
 	    	$output .= '<IconStyle>';
 	      	$output .= '<Icon>';
-	        	$output .= '<href>http://barriespotter.com/images/kml_arrival_airport.png</href>';
+	        	$output .= '<href>http://www.flightairmap.fr/images/kml_arrival_airport.png</href>';
 	         $output .= '</Icon>';
 	        $output .= '</IconStyle>';
 	    $output .= '</Style>';
@@ -249,7 +249,7 @@ $output .= '<div class="ge-row">';
 				$output .= '<Style id="aircraft_'.$spotter_item['spotter_id'].'">';
 		    	$output .= '<IconStyle>';
 		      	$output .= '<Icon>';
-		        	$output .= '<href>http://barriespotter.com/images/kml_aircraft.png</href>';
+		        	$output .= '<href>http://www.flightairmap.fr/images/kml_aircraft.png</href>';
 		         $output .= '</Icon>';
 		         $output .= '<heading>'.$spotter_item['heading'].'</heading>';
 		        $output .= '</IconStyle>';

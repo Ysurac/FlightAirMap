@@ -56,7 +56,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
 if ($_GET['download'] == "true")
 {
-	header('Content-disposition: attachment; filename="barriespotter.gpx"');
+	header('Content-disposition: attachment; filename="flightairmap.gpx"');
 }
 
 header('Content-Type: text/xml');
@@ -66,7 +66,7 @@ $spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_G
       
 $output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<gpx version="1.0">';
-		$output .= '<name>Barrie Spotter GPX Feed</name>';
+		$output .= '<name>FlightAirMap GPX Feed</name>';
 		
 	  if (!empty($spotter_array))
 	  {	  

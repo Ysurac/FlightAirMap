@@ -56,7 +56,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
 if ($_GET['download'] == "true")
 {
-	header('Content-disposition: attachment; filename="barriespotter.json"');
+	header('Content-disposition: attachment; filename="flightairmap.json"');
 }
 
 header('Content-Type: application/json');
@@ -64,9 +64,9 @@ header('Content-Type: application/json');
 $spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_GET['aircraft'],strtolower(str_replace("-", " ", $_GET['manufacturer'])),$_GET['highlights'],$_GET['airline'],$_GET['airline_country'],$_GET['airline_type'],$_GET['airport'],$_GET['airport_country'],$_GET['callsign'],$_GET['departure_airport_route'],$_GET['arrival_airport_route'],$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$_GET['sort'],'');
       
 $output .= '{';
-  $output .= '"barriespotter": {';
-    $output .= '"title": "Barrie Spotter JSON Feed",';
-    $output .= '"link": "http://www.barriespotter.com",';
+  $output .= '"flightairmap": {';
+    $output .= '"title": "FlightAirMap JSON Feed",';
+    $output .= '"link": "http://www.flightairmap.fr",';
     $output .= '"aircraft": [';
     
     if (!empty($spotter_array))

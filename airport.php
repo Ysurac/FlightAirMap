@@ -77,7 +77,7 @@ if (isset($_POST['airport']))
 		  
 		  if ($airport_array[0]['iata'] != "NA")
 			{
-		  	print '<p>The table below shows the route(s) aircrafts have used to/from <strong>'.$airport_array[0]['name'].'</strong> that flew near Barrie, sorted by the most recent one.</p>';
+		  	print '<p>The table below shows the route(s) aircrafts have used to/from <strong>'.$airport_array[0]['name'].'</strong>, sorted by the most recent one.</p>';
 		  }
 		  
 		 include('table-output.php');  

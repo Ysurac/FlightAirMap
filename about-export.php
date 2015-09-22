@@ -2,7 +2,7 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-$title = "Exporting Barrie Spotter Data";
+$title = "Exporting Data";
 require('header.php');
 ?>
 
@@ -37,10 +37,10 @@ require('header.php');
     
     <h3>Geospatial Data</h3>
     
-    <p>As seen above, some of the export formats can be used for Geospatial analysis. For those formats, they include the location of the aircraft when it first entered the <a href="<?php print $globalURL; ?>/about#coverage">coverage area</a> as well as the entire planned flight route. Barrie Spotter does <u>not</u> track the flight coordinates of the entire flight. In addition, some of the geospatial formats also take into consideration the altitude when the aircraft flew over the coverage area, allowing for a three-dimensional geospatial analysis of air traffic.</p>
+    <p>As seen above, some of the export formats can be used for Geospatial analysis. For those formats, they include the location of the aircraft when it first entered the <a href="<?php print $globalURL; ?>/about#coverage">coverage area</a> as well as the entire planned flight route. In addition, some of the geospatial formats also take into consideration the altitude when the aircraft flew over the coverage area, allowing for a three-dimensional geospatial analysis of air traffic.</p>
     
     <div class="export-image">
-    	<img src="/images/about-export.png" alt="Three-Dimensional Geospatial Analysis" title="Three-Dimensional Geospatial Analysis" />
+    	<img src="<?php echo $globalURL; ?>/images/about-export.png" alt="Three-Dimensional Geospatial Analysis" title="Three-Dimensional Geospatial Analysis" />
     </div>
     
     <h3>Data License</h3>

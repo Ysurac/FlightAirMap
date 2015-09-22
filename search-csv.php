@@ -56,7 +56,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
 if ($_GET['download'] == "true")
 {
-	header('Content-disposition: attachment; filename="barriespotter.csv"');
+	header('Content-disposition: attachment; filename="flightairmap.csv"');
 }
 
 header("Content-type: text/csv");
