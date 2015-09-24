@@ -35,6 +35,9 @@ location /about {
     rewrite ^/about/export(/?)$ /about-export.php last;
     rewrite ^/about(/?)$ /about.php last;
 }
+location /contribute {
+    rewrite ^/contribute(/?)$ /contribute.php last;
+}
 location /sitemap {
     rewrite ^/sitemap/([^/]+)(/?)$ /sitemap.php?type=$1 last;
     rewrite ^/sitemap(/?)$ /sitemap.php last;
