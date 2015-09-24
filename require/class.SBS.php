@@ -51,7 +51,7 @@ class SBS {
 	// Delete old infos
 	foreach (self::$all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
-        	if ($flight['lastupdate'] < (time()-60000)) {
+        	if ($flight['lastupdate'] < (time()-6000)) {
             	    unset(self::$all_flights[$key]);
     	        }
 	    }
