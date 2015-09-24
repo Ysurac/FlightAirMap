@@ -5,7 +5,7 @@ Browse through the data based on a particular aircraft, airline or airport to se
 
 ## System Requirements
 
-To install the web app which Barrie Spotter runs, you need to have meet the following requirements:
+To install the web app, you need to have meet the following requirements:
 
 * PHP version 5.2.3 or greater (5.3 or greater is recommended)
 * MySQL version 5.6 or greater (or MariaDB)
@@ -35,7 +35,7 @@ Use install/index.php
 * Create a mysql database.
 * Populate the database with db/*.sql
 * supply require/settings.php with your database credentials.
-* If you use ADS-B as datasource, supply install/update_db.sh with your database credentials and run it. (You should go to http://www.virtualradarserver.co.uk/ and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me)
+* run install/populate_all.php (You should go to http://www.virtualradarserver.co.uk/ and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me) or install/populate_ivao.php if you use IVAO as datasource
 
 ## Data Sources
 You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (BaseStation) format AND/OR ACARS from acarsdec.
