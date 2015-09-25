@@ -104,6 +104,10 @@ function connect_all($hosts) {
 if (isset($globalSBS1Hosts)) {
     $hosts = $globalSBS1Hosts;
 } else {
+    if (!isset($globalSBS1Host)) {
+        echo '$globalSBS1Host MUST be defined !';
+        die;
+    }
     $hosts = array($globalSBS1Host.':'.$globalSBS1Port);
 }
 $status = array();
@@ -119,13 +123,15 @@ $aprs_connect = 0;
 $aprs_keep = 240;
 $aprs_last_tx = time();
 if (isset($globalAPRSversion)) $aprs_version = $globalAPRSversion;
-else $aprs_version = 'Perl Example App';
+else $aprs_version = $globalName.' using FlightAirMap';
+//else $aprs_version = 'Perl Example App';
 if (isset($globalAPRSssid)) $aprs_ssid = $globalAPRSssid;
-else $aprs_ssid = 'PerlEx';
+else $aprs_ssid = 'FAM';
+//else $aprs_ssid = 'PerlEx';
 if (isset($globalAPRSfilter)) $aprs_filter = $globalAPRSfilter;
 else $aprs_filter =  'r/'.$globalCenterLatitude.'/'.$globalCenterLongitude.'/250.0';
 $aprs_login = "user {$aprs_ssid} appid {$aprs_version} filter {$aprs_filter}\n";
-
+echo $aprs_login;
 $_ = $_SERVER['_'];
 if (!isset($globalDaemon)) $globalDaemon = TRUE;
 /* Initiate connections to all the hosts simultaneously */
