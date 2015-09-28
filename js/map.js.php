@@ -100,8 +100,9 @@ $( document ).ready(function() {
 <?php
     } elseif ($globalMapProvider == 'MapQuest-OSM') {
 ?>
-  L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+  L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
     maxZoom: 18,
+    subdomains: "1234",
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
       '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
       'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>'
@@ -109,8 +110,9 @@ $( document ).ready(function() {
 <?php
     } elseif ($globalMapProvider == 'MapQuest-Aerial') {
 ?>
-  L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
+  L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
     maxZoom: 18,
+    subdomains: "1234",
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
       '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
       'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>, Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency"'
