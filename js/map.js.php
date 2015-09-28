@@ -78,7 +78,12 @@ $( document ).ready(function() {
 
   //a few title layers
 <?php
-    if ($globalMapProvider == 'Mapbox') {
+    if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
+    else $MapType = $globalMapProvider;
+
+    if ($MapType == 'Mapbox') {
+	if ($_COOKIE['MapTypeId'] == 'default') $MapBoxId = $globalMapboxId;
+	else $MapBoxId = $_COOKIE['MapTypeId'];
 ?>
   L.tileLayer('https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={token}', {
     maxZoom: 18,
@@ -86,12 +91,11 @@ $( document ).ready(function() {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
       '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    id: '<?php print $globalMapboxId; ?>',
+    id: '<?php print $MapBoxId; ?>',
     token: '<?php print $globalMapboxToken; ?>'
-    
   }).addTo(map);
 <?php
-    } elseif ($globalMapProvider == 'OpenStreetMap') {
+    } elseif ($MapType == 'OpenStreetMap') {
 ?>
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -100,7 +104,7 @@ $( document ).ready(function() {
       '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>'
   }).addTo(map);
 <?php
-    } elseif ($globalMapProvider == 'MapQuest-OSM') {
+    } elseif ($MapType == 'MapQuest-OSM') {
 ?>
   L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -111,7 +115,7 @@ $( document ).ready(function() {
       'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>'
   }).addTo(map);
 <?php
-    } elseif ($globalMapProvider == 'MapQuest-Aerial') {
+    } elseif ($MapType == 'MapQuest-Aerial') {
 ?>
   L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -1444,12 +1448,29 @@ function flightPath() {
 	document.cookie =  'flightpath=true; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	//add the active class
 	$(".flightpath").addClass("active");
+	window.location.reload();
     } else {
 	document.cookie =  'flightpath=false; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	//remove the active class
 	$(".flightpath").removeClass("active");
+	window.location.reload();
      }
 }
+
+function mapType(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var atype = selectObj.options[idx].value;
+    var type = atype.split('-');
+    document.cookie =  'MapType='+type+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    if (type[0] == 'Mapbox') {
+    document.cookie =  'MapType='+type[0]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    document.cookie =  'MapTypeId='+type[1]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    } else {
+	document.cookie =  'MapType='+atype+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    }
+    window.location.reload();
+}
+
 
 function getCookie(cname) {
     var name = cname + "=";

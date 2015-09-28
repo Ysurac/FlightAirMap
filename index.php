@@ -48,6 +48,33 @@ require('header.php');
 		<ul>
 		    <li><a class="button flightpopup" onclick="flightPopup(); return false;" title="Flight info as Popup" />Display flight info as popup</a></li>
 		    <li><a class="button flightpath" onclick="flightPath(); return false;" title="Show all flights path" />Display flight path</a></li>
+		    <li>Type of Map :
+			<select onchange="mapType(this);">
+			    <?php
+				if (isset($globalMapboxToken) && $globalMapboxToken != '') {
+				if (!isset($_COOKIE['MapTypeId'])) $MapBoxId = 'default';
+				else $MapBoxId = $_COOKIE['MapTypeId'];
+			    ?>
+			    <option value="Mapbox-default"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'default') print ' selected'; ?>>Mapbox default</option>
+			    <option value="Mapbox-mapbox.streets"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.streets') print ' selected'; ?>>Mapbox streets</option>
+			    <option value="Mapbox-mapbox.light"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.light') print ' selected'; ?>>Mapbox light</option>
+			    <option value="Mapbox-mapbox.dark"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.dark') print ' selected'; ?>>Mapbox dark</option>
+			    <option value="Mapbox-mapbox.satellite"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.satellite') print ' selected'; ?>>Mapbox satellite</option>
+			    <option value="Mapbox-mapbox.streets-satellite"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.streets-satellite') print ' selected'; ?>>Mapbox streets-satellite</option>
+			    <option value="Mapbox-mapbox.streets-basic"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.streets-basic') print ' selected'; ?>>Mapbox streets-basic</option>
+			    <option value="Mapbox-mapbox.comic"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.comic') print ' selected'; ?>>Mapbox comic</option>
+			    <option value="Mapbox-mapbox.outdoors"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.outdoors') print ' selected'; ?>>Mapbox outdoors</option>
+			    <option value="Mapbox-mapbox.pencil"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.pencil') print ' selected'; ?>>Mapbox pencil</option>
+			    <option value="Mapbox-mapbox.pirates"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.pirates') print ' selected'; ?>>Mapbox pirates</option>
+			    <option value="Mapbox-mapbox.emerald"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'Mapbox' && $MapBoxId == 'mapbox.emerald') print ' selected'; ?>>Mapbox emerald</option>
+			    <?php
+				}
+			    ?>
+			    <option value="OpenStreetMap"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'OpenStreetMap') print ' selected'; ?>>OpenStreetMap</option>
+			    <option value="MapQuest-OSM"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'MapQuest-OSM') print ' selected'; ?>>MapQuest-OSM</option>
+			    <option value="MapQuest-Aerial"<?php if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'MapQuest-Aerial') print ' selected'; ?>>MapQuest-Aerial</option>
+			</select>
+		    </li>
 		</ul>
 	    </form>
 	    <p>Any change in settings reload page</p>
