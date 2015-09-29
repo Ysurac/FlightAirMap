@@ -455,6 +455,25 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<label for="aircraftsize">Size of aircraft icon on map (default to 30px if zoom > 7 else 15px), empty to default</label>
 			<input type="number" name="aircraftsize" id="aircraftsize" value="<?php if (isset($globalAircraftSize)) echo $globalAircraftSize; ?>" />
 		</p>
+		<p>
+			<?php 
+			    if (extension_loaded('gd') && function_exists('gd_info')) {
+			?>
+			<label for="aircrafticoncolor">Color of aircraft icon on map</label>
+			<input type="color" name="aircrafticoncolor" id="aircrafticoncolor" value="#<?php if (isset($globalAircraftIconColor)) echo $globalAircraftIconColo; else echo '1a3151'; ?>" />
+			<?php
+				if (!is_writable('cache')) {
+			?>
+			    <b>The directory cache is not writable, aircraft icon will not be cached</b>
+			<?php
+				}
+			    } else {
+			?>
+			    <b>PHP GD is not installed, you can t change color of aircraft icon on map</b>
+			<?php
+			    }
+			?>
+		</p>
 		</fieldset>
 		
 		<input type="submit" name="submit" value="Create/Update database & write setup" />
@@ -641,6 +660,11 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapAltitudeColor' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapAltitudeColor' => 'FALSE'));
+	}
+	
+	if (isset($_POST['aircrafticoncolor'])) {
+		$aircrafticoncolor = filter_input(INPUT_POST,'aircrafticoncolor',FILTER_SANITIZE_STRING);
+		$settings = array_merge($settings,array('globalAircraftIconColor' => substr($aircrafticoncolor,1)));
 	}
 
 	$mappopup = filter_input(INPUT_POST,'mappopup',FILTER_SANITIZE_STRING);

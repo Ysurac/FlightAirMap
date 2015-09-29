@@ -76,6 +76,10 @@ $( document ).ready(function() {
   //initialize the layer group for the aircrft markers
   var layer_data = L.layerGroup();
 
+var southWest = L.latLng(-90,-180),
+    northEast = L.latLng(90,180);
+bounds = L.latLngBounds(southWest,northEast);
+
   //a few title layers
 <?php
     if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
@@ -108,6 +112,7 @@ $( document ).ready(function() {
 ?>
   L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
     maxZoom: 18,
+    continuousWorld: false,
     subdomains: "1234",
     noWrap: true,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -438,20 +443,29 @@ function getLiveData()
 		    if (feature.properties.callsign != ""){ markerLabel += feature.properties.callsign+'<br />'; }
 		    if (feature.properties.departure_airport_code != "" || feature.properties.arrival_airport_code != ""){ markerLabel += '<span class="nomobile">'+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+'</span>'; }
 		    <?php
+			if (isset($_COOKIE['IconColor'])) $IconColor = $_COOKIE['IconColor'];
+			elseif (isset($globalAircraftIconColor)) $IconColor = $globalAircraftIconColor;
+			else $IconColor = '1a3151';
 			if (!isset($ident) && !isset($flightaware_id)) {
 		    ?>
 		    info.update(feature.properties);
 
 				//console.log(document.getElementById('aircraft_ident').className);
 			if (document.getElementById('aircraft_ident').className == feature.properties.callsign) {
-				var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/selected/'+feature.properties.aircraft_shadow;
+				//var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/selected/'+feature.properties.aircraft_shadow;
+				var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=FF0000&filename='+feature.properties.aircraft_shadow;
+				var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?color=8D93B9&filename='+feature.properties.aircraft_shadow;
 			} else {
-				var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;
+				//var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;
+				var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=<?php print $IconColor; ?>&filename='+feature.properties.aircraft_shadow;
+				var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?color=8D93B9&filename='+feature.properties.aircraft_shadow;
 			}
 		    <?php
 			} else {
 		    ?>
-			var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;
+			//var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;
+			var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=<?php print $IconColor; ?>&filename='+feature.properties.aircraft_shadow;
+			var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?color=8D93B9&filename='+feature.properties.aircraft_shadow;
 		    
 		    <?php
 			}
@@ -466,6 +480,9 @@ function getLiveData()
 			    iconUrl: iconURLpath,
 			    iconSize: [<?php print $globalAircraftSize; ?>, <?php print $globalAircraftSize; ?>],
 			    iconAnchor: [<?php print $globalAircraftSize/2; ?>, <?php print $globalAircraftSize; ?>]
+			    shadowUrl: iconURLShadowpath,
+			    shadowSize: [<?php print $globalAircraftSize; ?>, <?php print $globalAircraftSize; ?>],
+			    shadowAnchor: [<?php print ($globalAircraftSize/2)+1; ?>, <?php print $globalAircraftSize; ?>]
 			})
 		    })
 		    <?php
@@ -490,11 +507,14 @@ function getLiveData()
 			    alt: feature.properties.callsign,
 			    icon: L.icon({
 				iconUrl: iconURLpath,
+				shadowUrl: iconURLShadowpath,
 				iconSize: [30, 30],
-				iconAnchor: [15, 30]
+				shadowSize: [30,30],
+				iconAnchor: [15, 30],
+				shadowAnchor: [16,30]
 			    })
 			})
-					    <?php
+		    <?php
 			if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 		    ?>
 
@@ -513,6 +533,9 @@ function getLiveData()
 			    alt: feature.properties.callsign,
 			    icon: L.icon({
 				iconUrl: iconURLpath,
+				shadowUrl: iconURLShadowpath,
+				shadowSize: [15,15],
+				shadowAnchor: [8,15],
 				iconSize: [15, 15],
 				iconAnchor: [7, 15]
 			    })
@@ -1468,6 +1491,11 @@ function mapType(selectObj) {
     } else {
 	document.cookie =  'MapType='+atype+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     }
+    window.location.reload();
+}
+
+function iconColor(color) {
+    document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
 }
 

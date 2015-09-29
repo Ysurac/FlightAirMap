@@ -77,6 +77,15 @@ require('header.php');
 			    <option value="MapQuest-Aerial"<?php if ($MapType == 'MapQuest-Aerial') print ' selected'; ?>>MapQuest-Aerial</option>
 			</select>
 		    </li>
+		    <?php
+		        if (extension_loaded('gd') && function_exists('gd_info')) {
+		    ?>
+		    <li>Aircraft icon color :
+			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print '1a3151'; ?>">
+		    </li>
+		    <?php
+		        }
+		    ?>
 		</ul>
 	    </form>
 	    <p>Any change in settings reload page</p>
