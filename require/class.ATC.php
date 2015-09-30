@@ -21,6 +21,7 @@ class ATC {
        public static function add($ident,$frequency,$latitude,$longitude,$range,$info,$date,$type = '',$ivao_id = '',$ivao_name = '') {
     		$info = preg_replace('/[^(\x20-\x7F)]*/','',$info);
     		$info = str_replace('^','<br />',$info);
+    		if ($type == '') $type = NULL;
                 $query = "INSERT INTO atc (ident,frequency,latitude,longitude,atc_range,info,atc_lastseen,type,ivao_id,ivao_name) VALUES (:ident,:frequency,:latitude,:longitude,:range,:info,:date,:type,:ivao_id,:ivao_name)";
                 $query_values = array(':ident' => $ident,':frequency' => $frequency,':latitude' => $latitude,':longitude' => $longitude,':range' => $range,':info' => $info,':date' => $date,':ivao_id' => $ivao_id,':ivao_name' => $ivao_name, ':type' => $type);
                  try {
