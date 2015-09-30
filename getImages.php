@@ -16,7 +16,7 @@ function hexToRGB($hex) {
 }
 
 
-if (!isset($_GET['color']) || $_GET['color'] == '') {
+if (!isset($_GET['color']) || $_GET['color'] == '' || !preg_match('/^([a-fA-F0-9]){3}(([a-fA-F0-9]){3})?\b/',$_GET['color'])) { 
     exit(0);
 }
 $color = $_GET['color'];
