@@ -269,7 +269,7 @@ while ($i > 0) {
 	    }
     	} elseif ($value == 'pirepsjson') {
 	    $buffer = Common::getData($hosts[$id]);
-	    $all_data = json_decode($buffer,true);
+	    $all_data = json_decode(utf8_encode($buffer),true);
 	    if (isset($all_data['pireps'])) {
 	    foreach ($all_data['pireps'] as $line) {
 	        $data = array();
