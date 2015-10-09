@@ -2487,16 +2487,13 @@ class Spotter{
 				}
 			}
 		} else {
-			if ($flightaware_id != "") {
-				$myhex = explode('-',$flightaware_id);
-				if (count($myhex) > 0) {
-					$aircraft_icao = Spotter::getAllAircraftType($myhex[0]);
-					if ($aircraft_icao == "" || $aircraft_icao == "XXXX")
-					{
-						$aircraft_array = Spotter::getAllAircraftInfo("NA");
-					} else {
-						$aircraft_array = Spotter::getAllAircraftInfo($aircraft_icao);
-					}
+			if ($ModeS != '') {
+				$aircraft_icao = Spotter::getAllAircraftType($ModeS);
+				if ($aircraft_icao == "" || $aircraft_icao == "XXXX")
+				{
+					$aircraft_array = Spotter::getAllAircraftInfo("NA");
+				} else {
+					$aircraft_array = Spotter::getAllAircraftInfo($aircraft_icao);
 				}
 			}
 		}
