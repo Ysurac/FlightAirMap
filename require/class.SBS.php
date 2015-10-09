@@ -48,7 +48,7 @@ class SBS {
 		    $cprlat = intval(substr($bin,54,17),2)/131072.0;
 		    $cprlon = intval(substr($bin,71,17),2)/131072.0;
 		    if ($oe == 0) self::$latlon[$icao] = array('latitude' => $cprlat,'longitude' => $cprlon,'created' => time());
-		    elseif (isset(self::$latlon[$icao]) && (time() - self::$latlon[$icao]['created']) < 1000) {
+		    elseif (isset(self::$latlon[$icao]) && (time() - self::$latlon[$icao]['created']) < 10) {
 			$cprlat_odd = $cprlat;
 			$cprlon_odd = $cprlon;
 			$cprlat_even = self::$latlon[$icao]['latitude'];
