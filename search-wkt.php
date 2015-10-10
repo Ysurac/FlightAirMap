@@ -68,8 +68,21 @@ header("Content-type: text/csv");
 
 if (isset($_GET['sort'])) $sort = $_GET['sort'];
 else $sort = '';
-$spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_GET['aircraft'],strtolower(str_replace("-", " ", $_GET['manufacturer'])),$_GET['highlights'],$_GET['airline'],$_GET['airline_country'],$_GET['airline_type'],$_GET['airport'],$_GET['airport_country'],$_GET['callsign'],$_GET['departure_airport_route'],$_GET['arrival_airport_route'],$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
-      
+$q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
+$registration = filter_input(INPUT_GET,'registratrion',FILTER_SANITIZE_STRING);
+$aircraft = filter_input(INPUT_GET,'aircraft',FILTER_SANITIZE_STRING);
+$manufacturer = filter_input(INPUT_GET,'manufacturer',FILTER_SANITIZE_STRING);
+$highlights = filter_input(INPUT_GET,'highlights',FILTER_SANITIZE_STRING);
+$airline = filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
+$airline_country = filter_input(INPUT_GET,'airline_country',FILTER_SANITIZE_STRING);
+$airline_type = filter_input(INPUT_GET,'airline_type',FILTER_SANITIZE_STRING);
+$airport = filter_input(INPUT_GET,'airport',FILTER_SANITIZE_STRING);
+$airport_country = filter_input(INPUT_GET,'airport_country',FILTER_SANITIZE_STRING);
+$callsign = filter_input(INPUT_GET,'callsign',FILTER_SANITIZE_STRING);
+$departure_airport_route = filter_input(INPUT_GET,'departure_airport_route',FILTER_SANITIZE_STRING);
+$arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_SANITIZE_STRING);
+$spotter_array = Spotter::searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
+       
 $i = 1;      
 //$output .= "oid;Line\n";
 

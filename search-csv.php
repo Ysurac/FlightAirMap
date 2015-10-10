@@ -67,7 +67,22 @@ header("Content-type: text/csv");
 
 if (isset($_GET['sort'])) $sort = $_GET['sort'];
 else $sort = '';
-$spotter_array = Spotter::searchSpotterData($_GET['q'],$_GET['registration'],$_GET['aircraft'],strtolower(str_replace("-", " ", $_GET['manufacturer'])),$_GET['highlights'],$_GET['airline'],$_GET['airline_country'],$_GET['airline_type'],$_GET['airport'],$_GET['airport_country'],$_GET['callsign'],$_GET['departure_airport_route'],$_GET['arrival_airport_route'],$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
+
+$q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
+$registration = filter_input(INPUT_GET,'registratrion',FILTER_SANITIZE_STRING);
+$aircraft = filter_input(INPUT_GET,'aircraft',FILTER_SANITIZE_STRING);
+$manufacturer = filter_input(INPUT_GET,'manufacturer',FILTER_SANITIZE_STRING);
+$highlights = filter_input(INPUT_GET,'highlights',FILTER_SANITIZE_STRING);
+$airline = filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
+$airline_country = filter_input(INPUT_GET,'airline_country',FILTER_SANITIZE_STRING);
+$airline_type = filter_input(INPUT_GET,'airline_type',FILTER_SANITIZE_STRING);
+$airport = filter_input(INPUT_GET,'airport',FILTER_SANITIZE_STRING);
+$airport_country = filter_input(INPUT_GET,'airport_country',FILTER_SANITIZE_STRING);
+$callsign = filter_input(INPUT_GET,'callsign',FILTER_SANITIZE_STRING);
+$departure_airport_route = filter_input(INPUT_GET,'departure_airport_route',FILTER_SANITIZE_STRING);
+$arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_SANITIZE_STRING);
+$spotter_array = Spotter::searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
+ 
       
 $output .= "id,ident,registration,aircraft_icao,aircraft_name,aircraft_manufacturer,airline,airline_icao,airline_iata,airline_country,airline_callsign,airline_type,departure_airport_city,departure_airport_country,departure_airport_iata,departure_airport_icao,departure_airport_latitude,departure_airport_longitude,departure_airport_altitude,arrival_airport_city,arrival_airport_country,arrival_airport_iata,arrival_airport_icao,arrival_airport_latitude,arrival_airport_longitude,arrival_airport_altitude,latitude,longitude,altitude,ground_speed,heading,heading_name,waypoints,date\n";
 
