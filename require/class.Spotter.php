@@ -2243,6 +2243,23 @@ class Spotter{
 		
 		$country_array = array();
 					
+		$query  = "SELECT countries.name AS airport_country
+								FROM countries
+								ORDER BY countries.name ASC";
+					
+		$Connection = new Connection();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute();
+   
+		$temp_array = array();
+		
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['country'] = $row['airport_country'];
+
+			$country_array[$row['airport_country']] = $temp_array;
+		}
+/*
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country AS airport_country
 								FROM spotter_output
 								WHERE spotter_output.departure_airport_country <> '' 
@@ -2296,7 +2313,7 @@ class Spotter{
 				$country_array[$row['country']] = $temp_array;
 			}
 		}
-
+  */
 		return $country_array;
 	} 
 	
