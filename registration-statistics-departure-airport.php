@@ -2,7 +2,8 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], "0,1", $_GET['sort']);
+if (isset($_GET['sort'])) $spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], "0,1", $_GET['sort']);
+else $spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], "0,1");
 $aircraft_array = Spotter::getAircraftInfoByRegistration($_GET['registration']);
 
 
@@ -41,6 +42,7 @@ if (!empty($spotter_array))
         var data = google.visualization.arrayToDataTable([ 
         	["Airport", "# of Times"],
         	<?php
+    	$airport_data = '';
           foreach($airport_airport_array as $airport_item)
     			{
     				$name = $airport_item['airport_departure_city'].', '.$airport_item['airport_departure_country'].' ('.$airport_item['airport_departure_icao'].')';
