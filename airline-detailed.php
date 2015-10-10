@@ -7,7 +7,7 @@ if (!isset($_GET['airline'])){
 } else{
 
 	//calculuation for the pagination
-	if($_GET['limit'] == "")
+	if(!isset($_GET['limit']) || $_GET['limit'] == "")
 	{
 	  $limit_start = 0;
 	  $limit_end = 25;
@@ -34,16 +34,14 @@ if (!isset($_GET['airline'])){
 	if (!empty($spotter_array))
 	{
 		if (isset($spotter_array[0]['airline_name']) && isset($spotter_array[0]['airline_icao'])) {
-	  $title = 'Detailed View for '.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')';
+			$title = 'Detailed View for '.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')';
 		} else $title = '';
 		require('header.php');
 	  
-	  
-	  
-	  print '<div class="select-item">';
-	  		print '<form action="'.$globalURL.'/airline" method="post">';
-	  			print '<select name="airline" class="selectpicker" data-live-search="true">';
-    		      print '<option></option>';
+		print '<div class="select-item">';
+		print '<form action="'.$globalURL.'/airline" method="post">';
+		print '<select name="airline" class="selectpicker" data-live-search="true">';
+		print '<option></option>';
     		      $airline_names = Spotter::getAllAirlineNames();
     		      foreach($airline_names as $airline_name)
     		      {
@@ -73,8 +71,8 @@ if (!isset($_GET['airline'])){
 	  	print '<div><span class="label">Name</span>'.$spotter_array[0]['airline_name'].'</div>';
 	  	print '<div><span class="label">Country</span>'.$spotter_array[0]['airline_country'].'</div>';
 	  	print '<div><span class="label">ICAO</span>'.$spotter_array[0]['airline_icao'].'</div>';
-	  	print '<div><span class="label">IATA</span>'.$spotter_array[0]['airline_iata'].'</div>';
-	  	print '<div><span class="label">Callsign</span>'.$spotter_array[0]['airline_callsign'].'</div>'; 
+	  	if (isset($spotter_array[0]['airline_iata'])) print '<div><span class="label">IATA</span>'.$spotter_array[0]['airline_iata'].'</div>';
+	  	if (isset($spotter_array[0]['airline_callsign'])) print '<div><span class="label">Callsign</span>'.$spotter_array[0]['airline_callsign'].'</div>'; 
 	  	print '<div><span class="label">Type</span>'.ucwords($spotter_array[0]['airline_type']).'</div>';        
 	  print '</div>';
 	 } else {
