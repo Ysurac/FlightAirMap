@@ -240,7 +240,8 @@ class Spotter{
 				}
 			}
 			
-			if ($row['departure_airport_icao'] != '' && $row['departure_airport_name'] == '') {
+			//if ($row['departure_airport_icao'] != '' && $row['departure_airport_name'] == '') {
+			if ($row['departure_airport_icao'] != '') {
 				$departure_airport_array = Spotter::getAllAirportInfo($row['departure_airport_icao']);
 				if (!isset($departure_airport_array[0]['name'])) $departure_airport_array = Spotter::getAllAirportInfo('NA');
 			/*
