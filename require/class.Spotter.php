@@ -243,11 +243,13 @@ class Spotter{
 			if ($row['departure_airport_icao'] != '' && $row['departure_airport_name'] == '') {
 				$departure_airport_array = Spotter::getAllAirportInfo($row['departure_airport_icao']);
 				if (!isset($departure_airport_array[0]['name'])) $departure_airport_array = Spotter::getAllAirportInfo('NA');
+			/*
 			} elseif ($row['departure_airport_name'] != '') {
 				$temp_array['departure_airport_name'] = $row['departure_airport_name'];
 				$temp_array['departure_airport_city'] = $row['departure_airport_city'];
 				$temp_array['departure_airport_country'] = $row['departure_airport_country'];
 				$temp_array['departure_airport_icao'] = $row['departure_airport_icao'];
+			*/
 			} else $departure_airport_array = Spotter::getAllAirportInfo('NA');
 			if (isset($departure_airport_array[0]['name'])) {
 				$temp_array['departure_airport_name'] = $departure_airport_array[0]['name'];
