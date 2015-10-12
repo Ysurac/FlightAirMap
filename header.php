@@ -261,7 +261,7 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>'
+      '<a href="http://www.openstreetmap.org/copyright">Open Database Licence</a>'
   }).addTo(map);
 <?php
     } elseif ($globalMapProvider == 'MapQuest-OSM') {
