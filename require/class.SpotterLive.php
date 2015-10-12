@@ -404,13 +404,13 @@ class SpotterLive {
 	{
 		global $globalDBdriver, $globalTimezone;
 		if ($globalDBdriver == 'mysql') {
-			$query  = "SELECT spotter_live.ident, spotter_live.spotter_live_id FROM spotter_live 
+			$query  = "SELECT spotter_live.ident, spotter_live.flightaware_id FROM spotter_live 
 				WHERE spotter_live.ident = :ident 
 				AND spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE)"; 
 //				AND spotter_live.date < UTC_TIMESTAMP()";
 			$query_data = array(':ident' => $ident);
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "SELECT spotter_live.ident, spotter_live.spotter_live_id FROM spotter_live 
+			$query  = "SELECT spotter_live.ident, spotter_live.flightaware_id FROM spotter_live 
 				WHERE spotter_live.ident = :ident 
 				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - '30 MINUTE'::INTERVAL";
 //				AND spotter_live.date < now() AT TIME ZONE 'UTC'";
@@ -422,8 +422,44 @@ class SpotterLive {
 		$ident_result='';
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			$ident_result = $row['spotter_live_id'];
+			$ident_result = $row['flightaware_id'];
 		}
+		return $ident_result;
+        }
+
+	/**
+	* Check recent aircraft by ModeS
+	*
+	* @return String the ModeS
+	*
+	*/
+	public static function checkModeSRecent($modes)
+	{
+		global $globalDBdriver, $globalTimezone;
+		echo 'ModeS-'.$modes.'-'."\n";
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_live.ModeS, spotter_live.flightaware_id FROM spotter_live 
+				WHERE spotter_live.ModeS = :modes 
+				AND spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE)"; 
+//				AND spotter_live.date < UTC_TIMESTAMP()";
+			$query_data = array(':modes' => $modes);
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query  = "SELECT spotter_live.ModeS, spotter_live.flightaware_id FROM spotter_live 
+				WHERE spotter_live.ModeS = :modes 
+				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - '30 MINUTE'::INTERVAL";
+//				AND spotter_live.date < now() AT TIME ZONE 'UTC'";
+			$query_data = array(':modes' => $modes);
+		}
+		$Connection = new Connection();
+		$sth = Connection::$db->prepare($query);
+		$sth->execute($query_data);
+		$ident_result='';
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			//$ident_result = $row['spotter_live_id'];
+			$ident_result = $row['flightaware_id'];
+		}
+		echo 'ident_result : '.$ident_result."\n";
 		return $ident_result;
         }
 
