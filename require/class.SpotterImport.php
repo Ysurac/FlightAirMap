@@ -52,7 +52,7 @@ class SpotterImport {
 	foreach (self::$all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
         	if ($flight['lastupdate'] < (time()-6000)) {
-            	    unset(self::$all_flights[$key]);
+            	    //unset(self::$all_flights[$key]);
     	        }
 	    }
         }
@@ -82,6 +82,7 @@ class SpotterImport {
 		//print_r(self::$all_flights);
 		if (!isset(self::$all_flights[$id]['hex'])) {
 		    self::$all_flights[$id] = array('hex' => $hex);
+		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('addedSpotter' => 0));
 		    if (preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
 			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('datetime' => $line['datetime']));
 		    } else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
@@ -97,6 +98,12 @@ class SpotterImport {
 		    }else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => ''));
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('lastupdate' => time()));
+		    if (!isset($line['id'])) {
+			if (!isset($globalDaemon)) $globalDaemon = TRUE;
+//			if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw') && $globalDaemon) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident'].'-'.date('YmdGi')));
+			if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw') && $globalDaemon) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.date('YmdGi')));
+		        //else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident']));
+		     } else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => $line['id']));
 
 		    if ($globalDebug) echo "*********** New aircraft hex : ".$hex." ***********\n";
 		}
@@ -119,11 +126,15 @@ class SpotterImport {
  
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && (self::$all_flights[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9]+$/', $line['ident'])) {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ident' => trim($line['ident'])));
+/*
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
-			if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw') && $globalDaemon) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident'].'-'.date('YmdGi')));
+//			if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw') && $globalDaemon) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident'].'-'.date('YmdGi')));
+			if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw') && $globalDaemon) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.date('YmdGi')));
 		        else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident']));
 		     } else self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => $line['id']));
+  */
+		    if (!isset(self::$all_flights[$id]['id'])) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident']));
 
 		    $putinarchive = true;
 		    if (isset($line['departure_airport_icao']) && isset($line['arrival_airport_icao'])) {
@@ -249,8 +260,16 @@ class SpotterImport {
 		if ($dataFound == true && isset(self::$all_flights[$id]['hex']) && self::$all_flights[$id]['ident'] != '' && self::$all_flights[$id]['latitude'] != '' && self::$all_flights[$id]['longitude'] != '') {
 		    if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 		    self::$all_flights[$id]['lastupdate'] = time();
+		    if (self::$all_flights[$id]['addedSpotter'] == 0) {
+			if ($globalDebug) echo "Check if aircraft is already in DB...\n";
+			//print_r(self::$all_flights);
+			//echo self::$all_flights[$id]['id'].' - '.self::$all_flights[$id]['addedSpotter']."\n";
 		    //$last_hour_ident = Spotter::getIdentFromLastHour(self::$all_flights[$id]['ident']);
-		    $recent_ident = SpotterLive::checkIdentRecent(self::$all_flights[$id]['ident']);
+		    if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw')) {
+			$recent_ident = SpotterLive::checkModeSRecent(self::$all_flights[$id]['hex']);
+		    } else {
+			$recent_ident = SpotterLive::checkIdentRecent(self::$all_flights[$id]['ident']);
+		    }
 		    //if there was no aircraft with the same callsign within the last hour and go post it into the archive
 		    if($recent_ident == "")
 		    {
@@ -272,6 +291,8 @@ class SpotterImport {
 			    $result = Spotter::addSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], self::$all_flights[$id]['waypoints'], self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'],'', self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'],self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],$highlight,self::$all_flights[$id]['hex'],self::$all_flights[$id]['registration'],self::$all_flights[$id]['pilot_id'],self::$all_flights[$id]['pilot_name']);
 			}
 			$ignoreImport = false;
+			self::$all_flights[$id]['addedSpotter'] = 1;
+			//print_r(self::$all_flights[$id]);
 			if ($globalDebug) echo $result."\n";
 			/*
 			if (isset($globalArchive) && $globalArchive) {
@@ -286,9 +307,13 @@ class SpotterImport {
 			*/
 			//SpotterLive::deleteLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
 			SpotterLive::deleteLiveSpotterData();
-			}
-		    } else self::$all_flights[$id]['id'] = $recent_ident;
-
+			
+		    } else {
+			self::$all_flights[$id]['id'] = $recent_ident;
+			self::$all_flights[$id]['addedSpotter'] = 1;
+		    }
+		    }
+		    }
 		    //adds the spotter LIVE data
 		    //SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
 		    //echo "\nAdd in Live !! \n";

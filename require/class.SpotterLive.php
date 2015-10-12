@@ -436,7 +436,6 @@ class SpotterLive {
 	public static function checkModeSRecent($modes)
 	{
 		global $globalDBdriver, $globalTimezone;
-		echo 'ModeS-'.$modes.'-'."\n";
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_live.ModeS, spotter_live.flightaware_id FROM spotter_live 
 				WHERE spotter_live.ModeS = :modes 
@@ -459,7 +458,6 @@ class SpotterLive {
 			//$ident_result = $row['spotter_live_id'];
 			$ident_result = $row['flightaware_id'];
 		}
-		echo 'ident_result : '.$ident_result."\n";
 		return $ident_result;
         }
 
