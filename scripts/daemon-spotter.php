@@ -397,8 +397,8 @@ while ($i > 0) {
 			    }
 			    if ( $aprs_keep>60 && time() - $aprs_last_tx > $aprs_keep ) {
 				$aprs_last_tx = time();
-				$data = "# Keep alive";
-				$send = @ socket_send( $r  , $data , strlen($data) , 0 );
+				$data_aprs = "# Keep alive";
+				$send = @ socket_send( $r  , $data_aprs , strlen($data_aprs) , 0 );
 			    }
 			    if (substr($buffer,0,1) != '#') {
 				$line = $APRS::parse($buffer);
