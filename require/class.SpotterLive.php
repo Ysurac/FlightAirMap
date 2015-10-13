@@ -360,6 +360,28 @@ class SpotterLive {
 		return "success";
 	}
 
+	/**
+	* Deletes all info in the table for an id
+	*
+	* @return String success or false
+	*
+	*/
+	public static function deleteLiveSpotterDataById($id)
+	{
+		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
+		$query  = "DELETE FROM spotter_live WHERE flightaware_id = :id";
+        
+    		try {
+			$Connection = new Connection();
+			$sth = Connection::$db->prepare($query);
+			$sth->execute(array(':id' => $id));
+		} catch(PDOException $e) {
+			return "error";
+		}
+
+		return "success";
+	}
+
 
 	/**
 	* Gets the aircraft ident within the last hour

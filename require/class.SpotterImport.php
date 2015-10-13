@@ -52,7 +52,8 @@ class SpotterImport {
 	foreach (self::$all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
         	if ($flight['lastupdate'] < (time()-6000)) {
-            	    //unset(self::$all_flights[$key]);
+            	    unset(self::$all_flights[$key]);
+            	    if (isset(self::$all_flights[$key]['id'])) SpotterLive::deleteLiveSpotterById(self::$all_flights[$key]['id']);
     	        }
 	    }
         }
@@ -258,42 +259,42 @@ class SpotterImport {
 		//gets the callsign from the last hour
 		//if (time()-self::$all_flights[$id]['lastupdate'] > 30 && $dataFound == true && self::$all_flights[$id]['ident'] != '' && self::$all_flights[$id]['latitude'] != '' && self::$all_flights[$id]['longitude'] != '') {
 		if ($dataFound == true && isset(self::$all_flights[$id]['hex']) && self::$all_flights[$id]['ident'] != '' && self::$all_flights[$id]['latitude'] != '' && self::$all_flights[$id]['longitude'] != '') {
-		    if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 		    self::$all_flights[$id]['lastupdate'] = time();
 		    if (self::$all_flights[$id]['addedSpotter'] == 0) {
-			if ($globalDebug) echo "Check if aircraft is already in DB...\n";
-			//print_r(self::$all_flights);
-			//echo self::$all_flights[$id]['id'].' - '.self::$all_flights[$id]['addedSpotter']."\n";
-		    //$last_hour_ident = Spotter::getIdentFromLastHour(self::$all_flights[$id]['ident']);
-		    if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw')) {
-			$recent_ident = SpotterLive::checkModeSRecent(self::$all_flights[$id]['hex']);
-		    } else {
-			$recent_ident = SpotterLive::checkIdentRecent(self::$all_flights[$id]['ident']);
-		    }
-		    //if there was no aircraft with the same callsign within the last hour and go post it into the archive
-		    if($recent_ident == "")
-		    {
-			if ($globalDebug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in archive DB : ";
-			if (self::$all_flights[$id]['departure_airport'] == "") { self::$all_flights[$id]['departure_airport'] = "NA"; }
-			if (self::$all_flights[$id]['arrival_airport'] == "") { self::$all_flights[$id]['arrival_airport'] = "NA"; }
-			//adds the spotter data for the archive
-			$ignoreImport = false;
-			foreach($globalAirportIgnore as $airportIgnore) {
-			    if ((self::$all_flights[$id]['departure_airport'] != $airportIgnore) && (self::$all_flights[$id]['arrival_airport'] != $airportIgnore)) {
-				$ignoreImport = true;
+		        if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
+			    if ($globalDebug) echo "Check if aircraft is already in DB...\n";
+			    //print_r(self::$all_flights);
+			    //echo self::$all_flights[$id]['id'].' - '.self::$all_flights[$id]['addedSpotter']."\n";
+			    //$last_hour_ident = Spotter::getIdentFromLastHour(self::$all_flights[$id]['ident']);
+			    if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw')) {
+				$recent_ident = SpotterLive::checkModeSRecent(self::$all_flights[$id]['hex']);
+			    } else {
+				$recent_ident = SpotterLive::checkIdentRecent(self::$all_flights[$id]['ident']);
 			    }
-			}
-			if (!$ignoreImport) {
-			    $highlight = '';
-			    if (self::$all_flights[$id]['squawk'] == '7500') $highlight = 'Squawk 7500 : Hijack';
-			    if (self::$all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure)';
-			    if (self::$all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency';
-			    $result = Spotter::addSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], self::$all_flights[$id]['waypoints'], self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'],'', self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'],self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],$highlight,self::$all_flights[$id]['hex'],self::$all_flights[$id]['registration'],self::$all_flights[$id]['pilot_id'],self::$all_flights[$id]['pilot_name']);
-			}
-			$ignoreImport = false;
-			self::$all_flights[$id]['addedSpotter'] = 1;
-			//print_r(self::$all_flights[$id]);
-			if ($globalDebug) echo $result."\n";
+			    //if there was no aircraft with the same callsign within the last hour and go post it into the archive
+			    if($recent_ident == "")
+			    {
+				if ($globalDebug) echo "\o/ Add ".self::$all_flights[$id]['ident']." in archive DB : ";
+				if (self::$all_flights[$id]['departure_airport'] == "") { self::$all_flights[$id]['departure_airport'] = "NA"; }
+				if (self::$all_flights[$id]['arrival_airport'] == "") { self::$all_flights[$id]['arrival_airport'] = "NA"; }
+				//adds the spotter data for the archive
+				$ignoreImport = false;
+				foreach($globalAirportIgnore as $airportIgnore) {
+				    if ((self::$all_flights[$id]['departure_airport'] != $airportIgnore) && (self::$all_flights[$id]['arrival_airport'] != $airportIgnore)) {
+					$ignoreImport = true;
+				    }
+				}
+				if (!$ignoreImport) {
+				    $highlight = '';
+				    if (self::$all_flights[$id]['squawk'] == '7500') $highlight = 'Squawk 7500 : Hijack';
+				    if (self::$all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure)';
+				    if (self::$all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency';
+				    $result = Spotter::addSpotterData(self::$all_flights[$id]['id'], self::$all_flights[$id]['ident'], self::$all_flights[$id]['aircraft_icao'], self::$all_flights[$id]['departure_airport'], self::$all_flights[$id]['arrival_airport'], self::$all_flights[$id]['latitude'], self::$all_flights[$id]['longitude'], self::$all_flights[$id]['waypoints'], self::$all_flights[$id]['altitude'], self::$all_flights[$id]['heading'], self::$all_flights[$id]['speed'],'', self::$all_flights[$id]['departure_airport_time'], self::$all_flights[$id]['arrival_airport_time'],self::$all_flights[$id]['squawk'],self::$all_flights[$id]['route_stop'],$highlight,self::$all_flights[$id]['hex'],self::$all_flights[$id]['registration'],self::$all_flights[$id]['pilot_id'],self::$all_flights[$id]['pilot_name']);
+				}
+				$ignoreImport = false;
+				self::$all_flights[$id]['addedSpotter'] = 1;
+				//print_r(self::$all_flights[$id]);
+				if ($globalDebug) echo $result."\n";
 			/*
 			if (isset($globalArchive) && $globalArchive) {
 			    $archives_ident = SpotterLive::getAllLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
@@ -306,13 +307,12 @@ class SpotterImport {
 			}
 			*/
 			//SpotterLive::deleteLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
-			SpotterLive::deleteLiveSpotterData();
-			
-		    } else {
-			self::$all_flights[$id]['id'] = $recent_ident;
-			self::$all_flights[$id]['addedSpotter'] = 1;
-		    }
-		    }
+				SpotterLive::deleteLiveSpotterData();
+			    } else {
+				self::$all_flights[$id]['id'] = $recent_ident;
+				self::$all_flights[$id]['addedSpotter'] = 1;
+			    }
+			}
 		    }
 		    //adds the spotter LIVE data
 		    //SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
