@@ -692,6 +692,7 @@ class Schedule {
 	* @return Flight departure and arrival airports and time
 	*/
 	private static function getAirBerlin($callsign, $date = 'NOW', $carrier = 'AB') {
+		date_default_timezone_set('UTC');
 		//AB = airberlin, HG/NLY = NIKI, 4T/BHP = Belair 
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		$check_date = new Datetime($date);
@@ -702,10 +703,10 @@ class Schedule {
 		//echo $data;
 		$DepartureAirportIata = '';
 		$ArrivalAirportIata = '';
+		
 		if ($data != '') {
 			$table = Common::table2array($data);
 			$flight = $table;
-//			print_r($table);
 			if (isset($flight[5][4])) $departureTime = $flight[5][4];
 			else $departureTime = '';
 			if (isset($flight[5][2])) $departureAirport = $flight[5][2];
@@ -716,8 +717,13 @@ class Schedule {
 		if ($data != '') {
 			$table = Common::table2array($data);
 			$flight = $table;
-			$arrivalTime = $flight[5][4];
-			$arrivalAirport = $flight[5][3];
+			if (isset($flight[5][4])) {
+			    $arrivalTime = $flight[5][4];
+			    $arrivalAirport = $flight[5][3];
+			} else {
+			    $arrivalTime = '';
+			    $arrivalAirport = '';
+			}
 		}
 		$url = 'http://www.airberlin.com/en-US/site/json/suggestAirport.php?searchfor=departures&searchflightid=0&departures%5B%5D=&suggestsource%5B0%5D=activeairports&withcountries=0&withoutroutings=0&promotion%5Bid%5D=&promotion%5Btype%5D=&routesource%5B0%5D=airberlin&routesource%5B1%5D=partner';
 		$json = Common::getData($url);
@@ -734,7 +740,9 @@ class Schedule {
 				}
 			}
 		}
-		return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_airberlin');
+		if (isset($DepartureAirportIata)) {
+			return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_airberlin');
+		} else return array();
 	}
 
 
@@ -1007,6 +1015,8 @@ class Schedule {
 //print_r(Schedule::getFlightMapper('TO3213'));
 //print_r(Schedule::fetchSchedule('EZY1241'));
 //print_r(Schedule::getFlightAware('BAW548'));
+//print_r(Schedule::fetchSchedule('BER246Z'));
+//print_r(Schedule::fetchSchedule('RYR4828'));
 
 
 ?>
