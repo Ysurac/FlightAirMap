@@ -339,6 +339,76 @@ class SpotterLive {
 	}
 
 	/**
+	* Deletes all info in the table for aircraft not seen since 1 HOUR
+	*
+	* @return String success or false
+	*
+	*/
+	public static function deleteLiveSpotterDataNotUpdated()
+	{
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) < spotter_live.date)";
+    			try {
+				$Connection = new Connection();
+				$sth = Connection::$db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error";
+			}
+			$query_delete = "DELETE FROM spotter_live WHERE flightaware_id IN (";
+                        $i = 0;
+			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+			{
+				$i++;
+				$delete_id[] = $row['flightaware_id'];
+				$query_delete .= "'".$row['flightaware_id']."',";
+			}
+			if ($i > 0) {
+				$query_delete = substr($query_delete,0,-1).")";
+				//echo $query_delete."\n";
+			}
+    			try {
+				$Connection = new Connection();
+				$sth = Connection::$db->prepare($query_delete);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error";
+			}
+			return "success";
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query = "SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'::INTERVAL >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'::INTERVAL < spotter_live.date)";
+    			try {
+				$Connection = new Connection();
+				$sth = Connection::$db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error";
+			}
+			$query_delete = "DELETE FROM spotter_live WHERE flightaware_id IN (";
+                        $i = 0;
+			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+			{
+				$i++;
+				$delete_id[] = $row['flightaware_id'];
+				$query_delete .= "'".$row['flightaware_id']."',";
+			}
+			if ($i > 0) {
+				$query_delete = substr($query_delete,0,-1).")";
+				//echo $query_delete."\n";
+			}
+    			try {
+				$Connection = new Connection();
+				$sth = Connection::$db->prepare($query_delete);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error";
+			}
+			return "success";
+		}
+	}
+
+	/**
 	* Deletes all info in the table for an ident
 	*
 	* @return String success or false

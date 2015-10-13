@@ -427,7 +427,7 @@ while ($i > 0) {
 			    $line = explode(',', $buffer);
     			    if (count($line) > 20) {
     			    	$data['hex'] = $line[4];
-    				$data['datetime'] = $line[8].' '.$line[7];
+    				$data['datetime'] = $line[6].' '.$line[7];
     				$data['ident'] = trim($line[10]);
     				$data['latitude'] = $line[14];
     				$data['longitude'] = $line[15];
@@ -437,6 +437,8 @@ while ($i > 0) {
     				$data['squawk'] = $line[17];
     				$data['altitude'] = $line[11];
     				$data['heading'] = $line[13];
+    				$data['ground'] = $line[21];
+    				$data['emergency'] = $line[19];
     				$data['format_source'] = 'sbs';
     				$send = $SI::add($data);
 				//$send = $data;

@@ -52,7 +52,7 @@ class SpotterImport {
 	// Delete old infos
 	foreach (self::$all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
-        	if ($flight['lastupdate'] < (time()-6000)) {
+        	if ($flight['lastupdate'] < (time()-3000)) {
             	    unset(self::$all_flights[$key]);
             	    if (isset(self::$all_flights[$key]['id'])) {
             		if ($globalDebug) echo "--- Delete old values with id ".self::$all_flights[$key]['id']."\n";
@@ -222,6 +222,18 @@ class SpotterImport {
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('emergency' => $line['emergency']));
 		    //$dataFound = true;
 		}
+		if (isset($line['ground']) && $line['ground'] != '') {
+		    if (isset(self::$all_flights[$id]['ground']) && self::$all_flights[$id]['ground'] == 1 && $line['ground'] == 0) {
+			// Here we force archive of flight because after ground it's a new one (or should be)
+			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('addedSpotter' => 0));
+			self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('forcenew' => 1));
+			if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw') && $globalDaemon) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.date('YmdGi')));
+		        elseif (isset($line['id'])) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => $line['id']));
+			elseif (isset(self::$all_flights[$id]['ident'])) self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('id' => self::$all_flights[$id]['hex'].'-'.self::$all_flights[$id]['ident']));
+		    }
+		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('ground' => $line['ground']));
+		    //$dataFound = true;
+		}
 		if (isset($line['speed']) && $line['speed'] != '') {
 		//    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('speed' => $line[12]));
 		    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('speed' => round($line['speed'])));
@@ -266,14 +278,21 @@ class SpotterImport {
 		    self::$all_flights[$id]['lastupdate'] = time();
 		    if (self::$all_flights[$id]['addedSpotter'] == 0) {
 		        if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
-			    if ($globalDebug) echo "Check if aircraft is already in DB...\n";
 			    //print_r(self::$all_flights);
 			    //echo self::$all_flights[$id]['id'].' - '.self::$all_flights[$id]['addedSpotter']."\n";
 			    //$last_hour_ident = Spotter::getIdentFromLastHour(self::$all_flights[$id]['ident']);
-			    if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw')) {
-				$recent_ident = SpotterLive::checkModeSRecent(self::$all_flights[$id]['hex']);
+			    if (!isset(self::$all_flights[$id]['forcenew']) || self::$all_flights[$id]['forcenew'] == 0) {
+				if ($globalDebug) echo "Check if aircraft is already in DB...";
+				if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw')) {
+				    $recent_ident = SpotterLive::checkModeSRecent(self::$all_flights[$id]['hex']);
+				} else {
+				    $recent_ident = SpotterLive::checkIdentRecent(self::$all_flights[$id]['ident']);
+				}
+				if ($globalDebug && $recent_ident == '') echo " Not in DB.\n";
+				elseif ($globalDebug && $recent_ident != '') echo " Already in DB.\n";
 			    } else {
-				$recent_ident = SpotterLive::checkIdentRecent(self::$all_flights[$id]['ident']);
+				$recent_ident = '';
+				self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('forcenew' => 0));
 			    }
 			    //if there was no aircraft with the same callsign within the last hour and go post it into the archive
 			    if($recent_ident == "")
@@ -311,7 +330,10 @@ class SpotterImport {
 			}
 			*/
 			//SpotterLive::deleteLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
-				SpotterLive::deleteLiveSpotterData();
+				if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 1 hour...";
+				SpotterLive::deleteLiveSpotterDataNotUpdated();
+				//SpotterLive::deleteLiveSpotterData();
+				if ($globalDebug) echo " Done\n";
 			    } else {
 				self::$all_flights[$id]['id'] = $recent_ident;
 				self::$all_flights[$id]['addedSpotter'] = 1;
