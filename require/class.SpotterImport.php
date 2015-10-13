@@ -8,6 +8,7 @@ require_once('class.Translation.php');
 
 class SpotterImport {
     static $all_flights = array();
+    static $last_delete_hourly = '';
     static $last_delete = '';
 
     static function get_Schedule($id,$ident) {
@@ -332,9 +333,9 @@ class SpotterImport {
 			*/
 			//SpotterLive::deleteLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
 				if (self::$last_delete == '' || time() - self::$last_delete > 1800) {
-				    if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 1 hour...";
-				    SpotterLive::deleteLiveSpotterDataNotUpdated();
-				    //SpotterLive::deleteLiveSpotterData();
+				    if ($globalDebug) echo "---- Deleting Live Spotter data older than 9 hours...";
+				    //SpotterLive::deleteLiveSpotterDataNotUpdated();
+				    SpotterLive::deleteLiveSpotterData();
 				    if ($globalDebug) echo " Done\n";
 				    self::$last_delete = time();
 				}
@@ -368,6 +369,16 @@ class SpotterImport {
 				if ($globalDebug) echo $result."\n";
 			} elseif (isset(self::$all_flights[$id]['latitude']) && isset($globalDistanceIgnore['latitude']) && $globalDebug) echo "!! Too far -> Distance : ".Common::distance(self::$all_flights[$id]['latitude'],self::$all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
 			self::del();
+			
+			
+			if (self::$last_delete_hourly == '' || time() - self::$last_delete_hourly > 900) {
+			    if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 1 hour...";
+			    SpotterLive::deleteLiveSpotterDataNotUpdated();
+			    //SpotterLive::deleteLiveSpotterData();
+			    if ($globalDebug) echo " Done\n";
+			    self::$last_delete_hourly = time();
+			}
+			
 		    }
 		    $ignoreImport = false;
 		}

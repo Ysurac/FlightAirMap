@@ -346,9 +346,9 @@ class SpotterLive {
 	*/
 	public static function deleteLiveSpotterDataNotUpdated()
 	{
-		global $globalDBdriver;
+		global $globalDBdriver, $globalDebug;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) < spotter_live.date)";
+			$query = "SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) < spotter_live.date) LIMIT 600";
     			try {
 				$Connection = new Connection();
 				$sth = Connection::$db->prepare($query);
@@ -358,22 +358,34 @@ class SpotterLive {
 			}
 			$query_delete = "DELETE FROM spotter_live WHERE flightaware_id IN (";
                         $i = 0;
-			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+                        $j =0;
+			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			foreach($all as $row)
 			{
 				$i++;
-				$delete_id[] = $row['flightaware_id'];
+				$j++;
+				if ($j == 10) {
+					if ($globalDebug) echo ".";
+				    	try {
+						$Connection = new Connection();
+						$sth = Connection::$db->prepare(substr($query_delete,0,-1).")");
+						$sth->execute();
+					} catch(PDOException $e) {
+						return "error";
+					}
+                                	$query_delete = "DELETE FROM spotter_live WHERE flightaware_id IN (";
+                                	$j = 0;
+				}
 				$query_delete .= "'".$row['flightaware_id']."',";
 			}
 			if ($i > 0) {
-				$query_delete = substr($query_delete,0,-1).")";
-				//echo $query_delete."\n";
-			}
-    			try {
-				$Connection = new Connection();
-				$sth = Connection::$db->prepare($query_delete);
-				$sth->execute();
-			} catch(PDOException $e) {
-				return "error";
+    				try {
+					$Connection = new Connection();
+					$sth = Connection::$db->prepare(substr($query_delete,0,-1).")");
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error";
+				}
 			}
 			return "success";
 		} elseif ($globalDBdriver == 'pgsql') {
@@ -387,22 +399,34 @@ class SpotterLive {
 			}
 			$query_delete = "DELETE FROM spotter_live WHERE flightaware_id IN (";
                         $i = 0;
-			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+                        $j =0;
+			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			foreach($all as $row)
 			{
 				$i++;
-				$delete_id[] = $row['flightaware_id'];
+				$j++;
+				if ($j == 10) {
+					if ($globalDebug) echo ".";
+				    	try {
+						$Connection = new Connection();
+						$sth = Connection::$db->prepare(substr($query_delete,0,-1).")");
+						$sth->execute();
+					} catch(PDOException $e) {
+						return "error";
+					}
+                                	$query_delete = "DELETE FROM spotter_live WHERE flightaware_id IN (";
+                                	$j = 0;
+				}
 				$query_delete .= "'".$row['flightaware_id']."',";
 			}
 			if ($i > 0) {
-				$query_delete = substr($query_delete,0,-1).")";
-				//echo $query_delete."\n";
-			}
-    			try {
-				$Connection = new Connection();
-				$sth = Connection::$db->prepare($query_delete);
-				$sth->execute();
-			} catch(PDOException $e) {
-				return "error";
+    				try {
+					$Connection = new Connection();
+					$sth = Connection::$db->prepare(substr($query_delete,0,-1).")");
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error";
+				}
 			}
 			return "success";
 		}
