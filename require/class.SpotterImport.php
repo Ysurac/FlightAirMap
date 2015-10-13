@@ -8,6 +8,7 @@ require_once('class.Translation.php');
 
 class SpotterImport {
     static $all_flights = array();
+    static $last_delete = '';
 
     static function get_Schedule($id,$ident) {
 	global $globalDebug;
@@ -330,10 +331,13 @@ class SpotterImport {
 			}
 			*/
 			//SpotterLive::deleteLiveSpotterDataByIdent(self::$all_flights[$id]['ident']);
-				if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 1 hour...";
-				SpotterLive::deleteLiveSpotterDataNotUpdated();
-				//SpotterLive::deleteLiveSpotterData();
-				if ($globalDebug) echo " Done\n";
+				if (self::$last_delete == '' || time() - self::$last_delete > 1800) {
+				    if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 1 hour...";
+				    SpotterLive::deleteLiveSpotterDataNotUpdated();
+				    //SpotterLive::deleteLiveSpotterData();
+				    if ($globalDebug) echo " Done\n";
+				    self::$last_delete = time();
+				}
 			    } else {
 				self::$all_flights[$id]['id'] = $recent_ident;
 				self::$all_flights[$id]['addedSpotter'] = 1;
