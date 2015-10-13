@@ -348,7 +348,7 @@ class SpotterLive {
 	{
 		global $globalDBdriver, $globalDebug;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) < spotter_live.date) LIMIT 600";
+			$query = "SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) < spotter_live.date) LIMIT 0,800";
     			try {
 				$Connection = new Connection();
 				$sth = Connection::$db->prepare($query);
@@ -389,7 +389,7 @@ class SpotterLive {
 			}
 			return "success";
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query = "SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'::INTERVAL >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'::INTERVAL < spotter_live.date)";
+			$query = "SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'::INTERVAL >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'::INTERVAL < spotter_live.date) LIMIT 0,800";
     			try {
 				$Connection = new Connection();
 				$sth = Connection::$db->prepare($query);
@@ -462,7 +462,7 @@ class SpotterLive {
 	*/
 	public static function deleteLiveSpotterDataById($id)
 	{
-		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
+		$id = filter_var($id, FILTER_SANITIZE_STRING);
 		$query  = "DELETE FROM spotter_live WHERE flightaware_id = :id";
         
     		try {
