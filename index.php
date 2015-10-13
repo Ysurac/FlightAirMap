@@ -86,6 +86,13 @@ require('header.php');
 		    <?php
 		        }
 		    ?>
+		    <li>Show airport icon at zoom level :
+			<div class="range">
+			    <input type="range" min="0" max="19" step="1" name="airportzoom" onchange="range.value=value;airportDisplayZoom(airportzoom.value);" value="<?php if (isset($_COOKIE['AirportZoom'])) print $_COOKIE['AirportZoom']; elseif (isset($globalAirportZoom)) print $globalAirportZoom; else print '7'; ?>">
+			    <output id="range"><?php if (isset($_COOKIE['AirportZoom'])) print $_COOKIE['AirportZoom']; elseif (isset($globalAirportZoom)) print $globalAirportZoom; else print '7'; ?></output>
+			</div>
+		    </li>
+
 		</ul>
 	    </form>
 	    <p>Any change in settings reload page</p>

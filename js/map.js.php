@@ -222,9 +222,11 @@ bounds = L.latLngBounds(southWest,northEast);
 		    map.removeLayer(airportsLayer);
 		}
 	    }
-
-
-	    if (map.getZoom() > 7) {
+	    <?php
+		if (isset($_COOKIE['AirportZoom'])) $getZoom = $_COOKIE['AirportZoom'];
+		else $getZoom = '7';
+	    ?>
+	    if (map.getZoom() > <?php print $getZoom; ?>) {
 	    var bbox = map.getBounds().toBBoxString();
 	    airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
 	    onEachFeature: airportPopup,
@@ -1514,6 +1516,11 @@ function mapType(selectObj) {
 
 function iconColor(color) {
     document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+
+function airportDisplayZoom(zoom) {
+    document.cookie =  'AirportZoom='+zoom+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
 }
 

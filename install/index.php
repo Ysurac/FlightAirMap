@@ -460,7 +460,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			    if (extension_loaded('gd') && function_exists('gd_info')) {
 			?>
 			<label for="aircrafticoncolor">Color of aircraft icon on map</label>
-			<input type="color" name="aircrafticoncolor" id="aircrafticoncolor" value="#<?php if (isset($globalAircraftIconColor)) echo $globalAircraftIconColo; else echo '1a3151'; ?>" />
+			<input type="color" name="aircrafticoncolor" id="aircrafticoncolor" value="#<?php if (isset($globalAircraftIconColor)) echo $globalAircraftIconColor; else echo '1a3151'; ?>" />
 			<?php
 				if (!is_writable('cache')) {
 			?>
@@ -473,6 +473,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<?php
 			    }
 			?>
+		</p>
+		<p>
+			<label for="airportzoom">Zoom level minimum to see airports icons</label>
+			<div class="range">
+			    <input type="range" name="airportzoom" id="airportzoom" value="<?php if (isset($globalAirportZoom)) echo $globalAirportZoom; else echo '7'; ?>" />
+			    <output id="range"><?php if (isset($globalAirportZoom)) echo $globalAirportZoom; else echo '7'; ?></output>
+			</div>
 		</p>
 		</fieldset>
 		
@@ -666,6 +673,9 @@ if (isset($_POST['dbtype'])) {
 		$aircrafticoncolor = filter_input(INPUT_POST,'aircrafticoncolor',FILTER_SANITIZE_STRING);
 		$settings = array_merge($settings,array('globalAircraftIconColor' => substr($aircrafticoncolor,1)));
 	}
+
+	$airportzoom = filter_input(INPUT_POST,'airportzoom',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalAirportZoom' => $airportzoom));
 
 	$mappopup = filter_input(INPUT_POST,'mappopup',FILTER_SANITIZE_STRING);
 	if ($mappopup == 'mappopup') {
