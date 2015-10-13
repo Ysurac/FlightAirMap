@@ -215,7 +215,7 @@ class aprs {
 	}
 	if (isset($result['latitude'])) $result['latitude'] = round($result['latitude'],4);
 	if (isset($result['longitude'])) $result['longitude'] = round($result['longitude'],4);
-	print_r($result);
+	//print_r($result);
 	return $result;
     }
 }
