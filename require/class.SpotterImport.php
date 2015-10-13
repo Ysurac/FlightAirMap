@@ -53,7 +53,10 @@ class SpotterImport {
     	    if (isset($flight['lastupdate'])) {
         	if ($flight['lastupdate'] < (time()-6000)) {
             	    unset(self::$all_flights[$key]);
-            	    if (isset(self::$all_flights[$key]['id'])) SpotterLive::deleteLiveSpotterById(self::$all_flights[$key]['id']);
+            	    if (isset(self::$all_flights[$key]['id'])) {
+            		if ($globalDebug) echo "--- Delete old values with id ".self::$all_flights[$key]['id']."\n";
+            		SpotterLive::deleteLiveSpotterById(self::$all_flights[$key]['id']);
+            	    }
     	        }
 	    }
         }
@@ -158,7 +161,7 @@ class SpotterImport {
 			    $pids[$id] = pcntl_fork();
 			    if (!$pids[$id]) {
 				$sid = posix_setsid();
-				SBS::get_Schedule($id,trim($line['ident']));
+				SpotterImport::get_Schedule($id,trim($line['ident']));
 		    		exit(0);
 			    }
 			}
