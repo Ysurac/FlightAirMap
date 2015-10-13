@@ -48,6 +48,7 @@ class SpotterImport {
 
 
     static function del() {
+	global $globalDebug;
 	// Delete old infos
 	foreach (self::$all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
