@@ -217,6 +217,14 @@ bounds = L.latLngBounds(southWest,northEast);
 
 
 	function update_airportsLayer() {
+	    if (typeof airportsLayer != 'undefined') {
+	        if (map.hasLayer(airportsLayer) == true) {
+		    map.removeLayer(airportsLayer);
+		}
+	    }
+
+
+	    if (map.getZoom() > 7) {
 	    var bbox = map.getBounds().toBBoxString();
 	    airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
 	    onEachFeature: airportPopup,
@@ -229,6 +237,7 @@ bounds = L.latLngBounds(southWest,northEast);
                     });
 		}
 	    }).addTo(map);
+	    }
 	};
 
 	// Show airports on map
@@ -296,7 +305,11 @@ bounds = L.latLngBounds(southWest,northEast);
 
 	map.on('moveend', function() {
 	    if (map.getZoom() > 7) {
-		map.removeLayer(airportsLayer);
+		//if (typeof airportsLayer != 'undefined') {
+		//    if (map.hasLayer(airportsLayer) == true) {
+		//	map.removeLayer(airportsLayer);
+		//    }
+		//}
 		update_airportsLayer();
 		map.removeLayer(locationsLayer);
 		update_locationsLayer();
@@ -312,7 +325,12 @@ bounds = L.latLngBounds(southWest,northEast);
 		    //map.removeLayer(waypointsLayer);
 		}
 	    } else {
-		map.removeLayer(airportsLayer);
+		//if (typeof airportsLayer != 'undefined') {
+		//    if (map.hasLayer(airportsLayer) == true) {
+		//	map.removeLayer(airportsLayer);
+		//    }
+		//}
+		update_airportsLayer();
 		map.removeLayer(locationsLayer);
 		update_locationsLayer();
 		if ($(".airspace").hasClass("active"))

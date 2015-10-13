@@ -26,11 +26,11 @@ if (!empty($spotter_array))
 		//waypoint plotting
 		$output .= '{"type": "Feature",';
 		    $output .= '"properties": {';
-			$output .= '"name": "'.$spotter_item['name'].'",';
+			$output .= '"name": "'.str_replace('"',"'",$spotter_item['name']).'",';
 			$output .= '"city": "'.$spotter_item['city'].'",';
 			$output .= '"country": "'.$spotter_item['country'].'",';
 			$output .= '"altitude": "'.$spotter_item['altitude'].'",';
-			$output .= '"popupContent": "'.$spotter_item['name'].' : '.$spotter_item['city'].', '.$spotter_item['country'].'",';
+			$output .= '"popupContent": "'.str_replace('"',"'",$spotter_item['name']).' : '.$spotter_item['city'].', '.$spotter_item['country'].'",';
 			if ($spotter_item['type'] == 'large_airport') {
 				$output .= '"icon": "'.$globalURL.'/images/airport.png",';
 			} elseif ($spotter_item['type'] == 'heliport') {
