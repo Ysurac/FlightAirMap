@@ -55,11 +55,11 @@ class SpotterImport {
 	foreach (self::$all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
         	if ($flight['lastupdate'] < (time()-3000)) {
-            	    unset(self::$all_flights[$key]);
             	    if (isset(self::$all_flights[$key]['id'])) {
             		if ($globalDebug) echo "--- Delete old values with id ".self::$all_flights[$key]['id']."\n";
             		SpotterLive::deleteLiveSpotterById(self::$all_flights[$key]['id']);
             	    }
+            	    unset(self::$all_flights[$key]);
     	        }
 	    }
         }
