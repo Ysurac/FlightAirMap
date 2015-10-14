@@ -2,7 +2,8 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-$spotter_array = Spotter::getSpotterDataByDate($_GET['date'],"0,1", $_GET['sort']);
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$spotter_array = Spotter::getSpotterDataByDate($_GET['date'],"0,1", $sort);
 
 if (!empty($spotter_array))
 {
