@@ -83,7 +83,7 @@ $departure_airport_route = filter_input(INPUT_GET,'departure_airport_route',FILT
 $arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_SANITIZE_STRING);
 $spotter_array = Spotter::searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
        
-$output .= '<?xml version="1.0" encoding="UTF-8" ?>';
+$output = '<?xml version="1.0" encoding="UTF-8" ?>';
   $output .= '<barriespotter>';
     $output .= '<title>Barrie Spotter XML Feed</title>';
     $output .= '<link>http://www.barriespotter.com</link>';
@@ -103,9 +103,13 @@ $output .= '<?xml version="1.0" encoding="UTF-8" ?>';
               $output .= '<aircraft_manufacturer>'.$spotter_item['aircraft_manufacturer'].'</aircraft_manufacturer>';
               $output .= '<airline_name>'.$spotter_item['airline_name'].'</airline_name>';
 		      $output .= '<airline_icao>'.$spotter_item['airline_icao'].'</airline_icao>';
-              $output .= '<airline_iata>'.$spotter_item['airline_iata'].'</airline_iata>';
+		if (isset($spotter_item['airline_iata'])) {
+            	    $output .= '<airline_iata>'.$spotter_item['airline_iata'].'</airline_iata>';
+              }
               $output .= '<airline_country>'.$spotter_item['airline_country'].'</airline_country>';
-              $output .= '<airline_callsign>'.$spotter_item['airline_callsign'].'</airline_callsign>';
+              if (isset($spotter_item['airline_callsign'])) {
+            	$output .= '<airline_callsign>'.$spotter_item['airline_callsign'].'</airline_callsign>';
+              }
               $output .= '<airline_type>'.$spotter_item['airline_type'].'</airline_type>';
               $output .= '<departure_airport_city>'.$spotter_item['departure_airport_city'].'</departure_airport_city>';
 		      $output .= '<departure_airport_country>'.$spotter_item['departure_airport_country'].'</departure_airport_country>';  

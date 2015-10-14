@@ -152,7 +152,7 @@ if (!empty($_GET)){
 			if (isset($_GET['airport']) && $_GET['airport'] != ""){ print 'airport: <span>'.$_GET['airport'].'</span> '; }
 			if (isset($_GET['airport_country']) && $_GET['airport_country'] != ""){ print 'airport country: <span>'.$_GET['airport_country'].'</span> '; }
 			if (isset($_GET['callsign']) && $_GET['callsign'] != ""){ print 'callsign: <span>'.$_GET['callsign'].'</span> '; }
-			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && $_GET['arrival_airport_route'] == ""){ print 'route out of: <span>'.$_GET['departure_airport_route'].'</span> '; }
+			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && (!isset($_GET['arrival_airport_route']) || $_GET['arrival_airport_route'] == "")){ print 'route out of: <span>'.$_GET['departure_airport_route'].'</span> '; }
 			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] == "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print 'route into: <span>'.$_GET['arrival_airport_route'].'</span> '; }
 			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print 'route between: <span>'.$_GET['departure_airport_route'].'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
 			if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] == ""){ print 'date starting at: <span>'.$_GET['start_date'].'</span> '; }

@@ -222,9 +222,13 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
         var zoom = 13;
 //create the map
 <?php
-    if (strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower($current_page),'statistics-') === false) {
+    if (strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower($current_page),'statistics-') === false && isset($airport_array[0]['latitude'])) {
 ?>
   map = L.map('map', { zoomControl:true }).setView([<?php print $airport_array[0]['latitude']; ?>,<?php print $airport_array[0]['longitude']; ?>], zoom);
+<?php
+    } elseif (strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower($current_page),'statistics-') === false) {
+?>
+  map = L.map('map', { zoomControl:true });
 <?php
     } elseif (strpos(strtolower($current_page),'route-') !== false && strpos(strtolower($current_page),'statistics-') === false && isset($spotter_array[0]['departure_airport_latitude'])) {
 ?>
@@ -237,6 +241,10 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
     } elseif (strpos(strtolower($current_page),'route-') !== false && strpos(strtolower($current_page),'statistics-') === false && !isset($spotter_array[0]['departure_airport_latitude'])) {
 ?>
   map = L.map('map', { zoomControl:true }).setView([<?php print $spotter_array[0]['latitude']; ?>,<?php print $spotter_array[0]['longitude']; ?>]);
+<?php
+    } elseif (!isset($spotter_array[0]['latitude']) && !isset($spotter_array[0]['longitude'])) {
+?>
+  map = L.map('map', { zoomControl:true });
 <?php
     }
 ?>
