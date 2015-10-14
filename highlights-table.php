@@ -6,7 +6,7 @@ $title = "Special Highlights - Table View";
 require('header.php');
 
 //calculuation for the pagination
-if($_GET['limit'] == "")
+if(!isset($_GET['limit']) || $_GET['limit'] == "")
 {
   $limit_start = 0;
   $limit_end = 25;

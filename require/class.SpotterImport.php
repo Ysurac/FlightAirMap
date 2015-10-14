@@ -245,9 +245,9 @@ class SpotterImport {
 		    if (isset(self::$all_flights[$id]['squawk']) && self::$all_flights[$id]['squawk'] != '7500' && self::$all_flights[$id]['squawk'] != '7600' && self::$all_flights[$id]['squawk'] != '7700' && isset(self::$all_flights[$id]['id'])) {
 			    self::$all_flights[$id] = array_merge(self::$all_flights[$id],array('squawk' => $line['squawk']));
 			    $highlight = '';
-			    if (self::$all_flights[$id]['squawk'] == '7500') $highlight = 'Squawk 7500 : Hijack at '.date('G:i').' UTC';
-			    if (self::$all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure) at '.date('G:i').' UTC';
-			    if (self::$all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency at '.date('G:i').' UTC';
+			    if (self::$all_flights[$id]['squawk'] == '7500') $highlight = 'Squawk 7500 : Hijack at '.date('Y-m-d G:i').' UTC';
+			    if (self::$all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure) at '.date('Y-m-d G:i').' UTC';
+			    if (self::$all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency at '.date('Y-m-d G:i').' UTC';
 			    if ($highlight != '') {
 				Spotter::setHighlightFlight(self::$all_flights[$id]['id'],$highlight);
 				$putinarchive = true;
