@@ -80,6 +80,8 @@ location /airport {
     rewrite ^/airport/statistics/route/([^/]+)(/?)$ /airport-statistics-route.php?airport=$1 last;
     rewrite ^/airport/detailed/([^/]+)/([^/]+)/([^/]+)(/?)$ /airport-detailed.php?airport=$1&limit=$2&sort=$3 last;
     rewrite ^/airport/detailed/([^/]+)/([^/]+)(/?)$ /airport-detailed.php?airport=$1&limit=$2 last;
+    rewrite ^/airport/([^/]+)/([^/]+)/([^/]+)(/?)$ /airport-detailed.php?airport=$1&limit=$2&sort=$3 last;
+    rewrite ^/airport/([^/]+)/([^/]+)(/?)$ /airport-detailed.php?airport=$1&limit=$2 last;
     rewrite ^/airport/([^/]+)(/?)$ /airport-detailed.php?airport=$1 last;
     rewrite ^/airport(/?)$ /airport.php last;
 }
