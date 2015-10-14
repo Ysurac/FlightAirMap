@@ -558,7 +558,7 @@ foreach($spotter_array as $spotter_item)
 		{
 			print '<li><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_item['aircraft_manufacturer'])).'">Manufacturer Profile</a></li>';
 		}
-		if (isset($spotter_item['aircraft_type']) && $spotter_item['aircraft_type'] != "" && $spotter_item['airline_icao'] != "")
+		if (isset($spotter_item['aircraft_type']) && $spotter_item['aircraft_type'] != "" && isset($spotter_item['airline_icao']) && $spotter_item['airline_icao'] != "")
 		{
 			print '<li><a href="'.$globalURL.'/search?aircraft='.$spotter_item['aircraft_type'].'&airline='.$spotter_item['airline_icao'].'">Flights of Aircraft Type &amp; Airline</a></li>';
 			print '<li><hr /></li>';
