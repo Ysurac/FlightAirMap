@@ -987,7 +987,7 @@ class Schedule {
 					if (strlen($airline_icao) == 2) {
 						if (!isset($globalSchedulesSources)) $globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','flightaware');
 						if (count($globalSchedulesSources) > 0) {
-							$rand = mt_rand(1,count($globalSchedulesSources));
+							$rand = mt_rand(0,count($globalSchedulesSources)-1);
 							$source = $globalSchedulesSources[$rand];
 							if ($source == 'flightmapper') return Schedule::getFlightMapper($ident,$date);
 							elseif ($source == 'costtotravel') return Schedule::getCostToTravel($ident,$date);
