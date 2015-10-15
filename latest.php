@@ -23,44 +23,33 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
 $page_url = $globalURL.'/latest';
 
-?>
- 
-  <?php
-  
-  	print '<div class="info column">';
-  		print '<h1>Latest Activity</h1>';
-  	print '</div>';
-  	
-  	print '<div class="table column">';	
-	  	print '<p>The table below shows the detailed information of all recent flights.</p>';
-	  
-		  if (isset($_GET['sort'])) {
-		  $spotter_array = Spotter::getLatestSpotterData($limit_start.",".$absolute_difference, $_GET['sort']);
-		  } else {
-		    $spotter_array = Spotter::getLatestSpotterData($limit_start.",".$absolute_difference);
-		  }
-		
-		  if (!empty($spotter_array))
-		  {	
-				include('table-output.php');
-				
-			  print '<div class="pagination">';
-			  	if ($limit_previous_1 >= 0)
-			  	{
-			  	print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
-			  	}
-			  	if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
-			  	{
-			  		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
-			  	}
-			  print '</div>';
-    
-    print '</div>';
-			
-	  }
+print '<div class="info column">';
+print '<h1>Latest Activity</h1>';
+print '</div>';
+print '<div class="table column">';
+print '<p>The table below shows the detailed information of all recent flights.</p>';
 
-  ?>
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$sql_begin = microtime(true);
+$spotter_array = Spotter::getLatestSpotterData($limit_start.",".$absolute_difference, $sort);
+$sql_time = microtime(true)-$sql_begin;
 
-<?php
+$page_begin = microtime(true);
+if (!empty($spotter_array))
+{
+	include('table-output.php');
+	print '<div class="pagination">';
+	if ($limit_previous_1 >= 0)
+	{
+		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
+	}
+	if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
+	{
+		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
+	}
+	print '</div>';
+	print '</div>';
+}
+$page_time = microtime(true)-$page_begin;
 require('footer.php');
 ?>
