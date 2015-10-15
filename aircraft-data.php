@@ -55,7 +55,7 @@ $spotter_item = $spotter_array[0];
 date_default_timezone_set('UTC');
 if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
 {
-	$image = $spotter_item['image_thumbnail'];
+	$image = preg_replace("/^http:/i","https:",$spotter_item['image_thumbnail']);
 }
 /* else {
 	$image = "images/placeholder_thumb.png";
