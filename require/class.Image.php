@@ -251,11 +251,11 @@ class Image {
 	foreach($dom->getElementsByTagName('a') as $link) {
 	    $all_links[] = array('text' => $link->textContent,'href' => $link->getAttribute('href'));
 	}
-	if (isset($all_pics[1])) {
+	if (isset($all_pics[1]) && !preg_match('/bit.ly/',$all_pics[1])) {
 		$image_url['thumbnail'] = 'http://www.planepictures.net'.$all_pics[1];
 		$image_url['original'] = 'http://www.planepictures.net'.str_replace('_TN','',$all_pics[1]);
 		$image_url['copyright'] = $all_links[6]['text'];
-		$image_url['source_website'] = $all_links[2]['href'];
+		$image_url['source_website'] = 'http://www.planepictures.net/'.$all_links[2]['href'];
 		$image_url['source'] = 'PlanePictures';
 		return $image_url;
 	}
