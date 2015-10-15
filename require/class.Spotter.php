@@ -74,6 +74,7 @@ class Spotter{
 			$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
 			$temp_array['latitude'] = $row['latitude'];
 			$temp_array['longitude'] = $row['longitude'];
+			/*
 			if (Connection::tableExists('countries')) {
 				$country_info = Spotter::getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
 				if (is_array($country_info) && isset($country_info['name']) && isset($country_info['iso2'])) {
@@ -81,6 +82,7 @@ class Spotter{
 				    $temp_array['country_iso2'] = $country_info['iso2'];
 				}
 			}
+			*/
 			$temp_array['waypoints'] = $row['waypoints'];
 			if (isset($row['route_stop'])) {
 				$temp_array['route_stop'] = $row['route_stop'];
@@ -2243,6 +2245,7 @@ class Spotter{
 		{
 			return false;
 		}
+		if (Connection::tableExists('countries')) {
 		
 		$country_array = array();
 					
@@ -2262,7 +2265,8 @@ class Spotter{
 
 			$country_array[$row['airport_country']] = $temp_array;
 		}
-/*
+		} else {
+
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country AS airport_country
 								FROM spotter_output
 								WHERE spotter_output.departure_airport_country <> '' 
@@ -2316,7 +2320,7 @@ class Spotter{
 				$country_array[$row['country']] = $temp_array;
 			}
 		}
-  */
+		}  
 		return $country_array;
 	} 
 	
