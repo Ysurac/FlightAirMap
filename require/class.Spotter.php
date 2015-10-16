@@ -5214,7 +5214,7 @@ class Spotter{
 	*/
 	public static function countAllArrivalAirportCountriesByRegistration($registration)
 	{
-		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 

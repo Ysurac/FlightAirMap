@@ -2,48 +2,46 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], "0,1", $_GET['sort']);
-$aircraft_array = Spotter::getAircraftInfoByRegistration($_GET['registration']);
-
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+if (isset($_GET['registration'])) {
+	$registration = filter_input(INPUT_GET,'registration',FILTER_SANITIZE_STRING);
+	$spotter_array = Spotter::getSpotterDataByRegistration($registration, "0,1", $sort);
+	$aircraft_array = Spotter::getAircraftInfoByRegistration($registration);
+} else $spotter_array = array();
 
 if (!empty($spotter_array))
 {
-  $title = 'Most Common Departure Airports by Country of aircraft with registration '.$_GET['registration'];
+	$title = 'Most Common Departure Airports by Country of aircraft with registration '.$_GET['registration'];
 	require('header.php');
-  
-  
-  
 	print '<div class="info column">';
-		print '<h1>'.$_GET['registration'].' - '.$aircraft_array[0]['aircraft_name'].' ('.$aircraft_array[0]['aircraft_icao'].')</h1>';
-		print '<div><span class="label">Name</span><a href="'.$globalURL.'/aircraft/'.$aircraft_array[0]['aircraft_icao'].'">'.$aircraft_array[0]['aircraft_name'].'</a></div>';
-		print '<div><span class="label">ICAO</span><a href="'.$globalURL.'/aircraft/'.$aircraft_array[0]['aircraft_icao'].'">'.$aircraft_array[0]['aircraft_icao'].'</a></div>'; 
-		print '<div><span class="label">Manufacturer</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $aircraft_array[0]['aircraft_manufacturer'])).'">'.$aircraft_array[0]['aircraft_manufacturer'].'</a></div>';
+	print '<h1>'.$_GET['registration'].' - '.$aircraft_array[0]['aircraft_name'].' ('.$aircraft_array[0]['aircraft_icao'].')</h1>';
+	print '<div><span class="label">Name</span><a href="'.$globalURL.'/aircraft/'.$aircraft_array[0]['aircraft_icao'].'">'.$aircraft_array[0]['aircraft_name'].'</a></div>';
+	print '<div><span class="label">ICAO</span><a href="'.$globalURL.'/aircraft/'.$aircraft_array[0]['aircraft_icao'].'">'.$aircraft_array[0]['aircraft_icao'].'</a></div>'; 
+	print '<div><span class="label">Manufacturer</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $aircraft_array[0]['aircraft_manufacturer'])).'">'.$aircraft_array[0]['aircraft_manufacturer'].'</a></div>';
 	print '</div>';
-	
+
 	include('registration-sub-menu.php');
-  
-  print '<div class="column">';
-  	print '<h2>Most Common Departure Airports by Country</h2>';
-  	
-  	?>
+	print '<div class="column">';
+	print '<h2>Most Common Departure Airports by Country</h2>';
+	?>
   	<p>The statistic below shows all departure airports by Country of origin of flights with aircraft registration <strong><?php print $_GET['registration']; ?></strong>.</p>
-  	<?php
-    	 $airport_country_array = Spotter::countAllDepartureAirportCountriesByRegistration($_GET['registration']);
-      
-      print '<div id="chartCountry" class="chart" width="100%"></div>
-      	<script> 
-      		google.load("visualization", "1", {packages:["geochart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-            	["Country", "# of Times"], ';
-              foreach($airport_country_array as $airport_item)
-    					{
-    						$country_data .= '[ "'.$airport_item['departure_airport_country'].'",'.$airport_item['airport_departure_country_count'].'],';
-    					}
-    					$country_data = substr($country_data, 0, -1);
-    					print $country_data;
-            print ']);
+	<?php
+	$airport_country_array = Spotter::countAllDepartureAirportCountriesByRegistration($_GET['registration']);
+	print '<div id="chartCountry" class="chart" width="100%"></div>
+		<script> 
+		    google.load("visualization", "1", {packages:["geochart"]});
+		    google.setOnLoadCallback(drawChart);
+		    function drawChart() {
+			var data = google.visualization.arrayToDataTable([
+			    ["Country", "# of Times"], ';
+	$country_data = '';
+	foreach($airport_country_array as $airport_item)
+	{
+		$country_data .= '[ "'.$airport_item['departure_airport_country'].'",'.$airport_item['airport_departure_country_count'].'],';
+	}
+	$country_data = substr($country_data, 0, -1);
+	print $country_data;
+	print ']);
     
             var options = {
             	legend: {position: "none"},
@@ -101,9 +99,5 @@ if (!empty($spotter_array))
   print '<p>Sorry, this registration does not exist in this database. :(</p>';  
 }
 
-
-?>
-
-<?php
 require('footer.php');
 ?>

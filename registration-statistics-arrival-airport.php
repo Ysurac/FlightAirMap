@@ -2,8 +2,12 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], "0,1", $_GET['sort']);
-$aircraft_array = Spotter::getAircraftInfoByRegistration($_GET['registration']);
+$sort=filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$registration = filter_input(INPUT_GET,'registration',FILTER_SANITIZE_STRING);
+if ($registration != '') {
+	$spotter_array = Spotter::getSpotterDataByRegistration($registration, "0,1", $sort);
+	$aircraft_array = Spotter::getAircraftInfoByRegistration($registration);
+} else $spotter_array=array();
 
 
 if (!empty($spotter_array))
