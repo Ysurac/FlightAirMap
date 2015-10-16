@@ -163,6 +163,7 @@ class Spotter{
                                 } else {
                             		$temp_array['aircraft_shadow'] = 'default.png';
 					$temp_array['aircraft_name'] = 'N/A';
+					$temp_array['aircraft_manufacturer'] = 'N/A';
                             	}
 			}
 			if (!isset($row['airline_name']) || $row['airline_name'] == '') {

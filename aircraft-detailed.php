@@ -6,7 +6,7 @@ if (!isset($_GET['aircraft_type'])){
 	header('Location: '.$globalURL.'/aircraft');
 } else {
 	//calculuation for the pagination
-	if(!isset($_GET['limit']))
+	if(!isset($_GET['limit']) || count(explode(",", $_GET['limit'])) < 2)
 	{
 		$limit_start = 0;
 		$limit_end = 25;
@@ -88,7 +88,7 @@ if (!isset($_GET['aircraft_type'])){
 		$title = "Aircraft";
 		require('header.php');
 		
-		print '<h1>Errorss</h1>';
+		print '<h1>Errors</h1>';
 		
 		print '<p>Sorry, the aircraft type does not exist in this database. :(</p>'; 
 	}
