@@ -340,8 +340,10 @@ class SpotterImport {
 				    self::$last_delete = time();
 				}
 			    } else {
-				self::$all_flights[$id]['id'] = $recent_ident;
-				self::$all_flights[$id]['addedSpotter'] = 1;
+				if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw')) {
+				    self::$all_flights[$id]['id'] = $recent_ident;
+				    self::$all_flights[$id]['addedSpotter'] = 1;
+				}
 			    }
 			}
 		    }
