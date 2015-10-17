@@ -306,7 +306,10 @@ while ($i > 0) {
 	    	if (isset($line['atis'])) $data['info'] = $line['atis'];
 	    	else $data['info'] = '';
 		$data['datetime'] = date('Y-m-d H:i:s');
-    		if ($line['icon'] == 'plane') $SI::add($data);
+    		if ($line['icon'] == 'plane') {
+    		    $SI::add($data);
+    		//    print_r($data);
+    		}
 		elseif ($line['icon'] == 'ct') {
 			$data['info'] = str_replace('^&sect;','<br />',$data['info']);
 			echo ATC::add($data['ident'],'',$data['latitude'],$data['longitude'],'0',$data['info'],$data['datetime'],'',$data['pilot_id'],$data['pilot_name']);
@@ -367,6 +370,7 @@ while ($i > 0) {
 			    $data = $SBS::parse($buffer);
 			    if (is_array($data)) {
 				$data['datetime'] = date('Y-m-d H:i:s');
+				$data['format_source'] = 'raw';
                                 $SI::add($data);
                             }
 			} elseif ($value == 'tsv' || substr($buffer,0,4) == 'clock') {
