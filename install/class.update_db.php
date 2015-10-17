@@ -1042,10 +1042,10 @@ class update_db {
 					preg_match('#^(.*?) \((.*?)\)#',$toall,$match);
 					$to = trim($match[1]);
 					$data['date_end'] = date("Y-m-d H:i:s",strtotime($to));
-					$data['permanent'] = false;
+					$data['permanent'] = 0;
 				} else {
-				    $data['date_end'] = '';
-				    $data['permanent'] = true;
+				    $data['date_end'] = NULL;
+				    $data['permanent'] = 1;
 				}
 				$data['full_notam'] = $notam['title'].'<br>'.$notam['description'];
 				NOTAM::addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['center_latitude'],$data['center_longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
