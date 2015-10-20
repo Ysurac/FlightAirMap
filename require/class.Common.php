@@ -13,14 +13,16 @@ class Common {
 	* @param Array $headers header to submit with the form
 	* @return String the result
 	*/
-	public static function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '') {
+	public static function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '') {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLINFO_HEADER_OUT, true); 
 		//curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
 		curl_setopt($ch, CURLOPT_USERAGENT, UAgent::random());
-		curl_setopt($ch, CURLOPT_TIMEOUT, 10); 
+		if ($timeout == '') curl_setopt($ch, CURLOPT_TIMEOUT, 10); 
+		else curl_setopt($ch, CURLOPT_TIMEOUT, $timeout); 
 		curl_setopt($ch, CURLOPT_HEADERFUNCTION, array('Common',"curlResponseHeaderCallback"));
 		if ($type == 'post') {
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -33,7 +35,6 @@ class Common {
 			} else {
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 			}
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		}
 		if ($headers != '') {
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -41,7 +42,13 @@ class Common {
 		if ($cookie != '') {
 			curl_setopt($ch, CURLOPT_COOKIE, implode($cookie,';'));
 		}
-		return curl_exec($ch);
+		if ($referer != '') {
+			curl_setopt($ch, CURLOPT_REFERER, $referer);
+		}
+		$result = curl_exec($ch);
+//		print_r(curl_getinfo($ch));
+		curl_close($ch);
+		return $result;
 	}
 	
 	private static function curlResponseHeaderCallback($ch, $headerLine) {

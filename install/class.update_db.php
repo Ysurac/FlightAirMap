@@ -183,7 +183,10 @@ class update_db {
 					try {
                                     		$sth_search->execute();
 	            				$result = $sth_search->fetch(PDO::FETCH_ASSOC);
-	            				if (count($values) > 0) $values['ICAOTypeCode'] = $result['icao'];
+	            				//if (count($result) > 0) {
+	            				if (isset($result['icao']) && $result['icao'] != '') {
+	            				    $values['ICAOTypeCode'] = $result['icao'];
+	            				} 
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage();
 					}
@@ -252,7 +255,7 @@ class update_db {
 					try {
                                     		$sth_search->execute();
 	            				$result = $sth_search->fetch(PDO::FETCH_ASSOC);
-	            				if (count($values) > 0) $values['ICAOTypeCode'] = $result['icao'];
+	            				if (isset($result['icao']) && $result['icao'] != '') $values['ICAOTypeCode'] = $result['icao'];
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage();
 					}
@@ -977,6 +980,30 @@ class update_db {
 
 	}
 
+	public static function update_aircraft() {
+		global $tmp_dir, $globalDebug;
+		date_default_timezone_set('UTC');
+		$error = '';
+		/*
+		if ($globalDebug) echo "Aircrafts : Download...";
+		$data_req_array = array('Mnfctrer' => '','Model' => '','Dscrptn'=> '','EngCount' =>'' ,'EngType'=> '','TDesig' => '*','WTC' => '','Button' => 'Search');
+		$data_req = 'Mnfctrer=Airbus&Model=&Dscrptn=&EngCount=&EngType=&TDesig=&WTC=&Button=Search';
+		//$data = Common::getData('http://cfapp.icao.int/Doc8643/8643_List1.cfm','post',$data_req_array,array('Content-Type: application/x-www-form-urlencoded','Host: cfapp.icao.int','Origin: http://cfapp.icao.int','Pragma: no-cache','Upgrade-Insecure-Requests: 1','Content-Length: '.strlen($data_req)),'','http://cfapp.icao.int/Doc8643/search.cfm',20);
+		$data = Common::getData('http://cfapp.icao.int/Doc8643/8643_List1.cfm','post',$data_req_array,'','','http://cfapp.icao.int/Doc8643/search.cfm',30);
+//		echo strlen($data_req);
+		echo $data;
+		*/
+		if (file_exists($tmp_dir.'aircrafts.html')) {
+		    var_dump(file_get_html($tmp_dir.'aircrafts.html'));
+		    $fh = fopen($tmp_dir.'aircrafts.html',"r");
+		    $result = fread($fh,100000000);
+		    //echo $result;
+		    var_dump(str_get_html($result));
+		    //print_r(self::table2array($result));
+		}
+
+	}
+	
 	public static function update_notam() {
 		global $tmp_dir, $globalDebug, $globalNOTAMSource;
 		require('../require/class.NOTAM.php');
@@ -1127,4 +1154,5 @@ class update_db {
 //echo update_db::update_ivao();
 //echo update_db::update_ModeS_flarm();
 //echo update_db::update_ModeS_ogn();
+//echo update_db::update_aircraft();
 ?>
