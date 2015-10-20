@@ -217,16 +217,19 @@ bounds = L.latLngBounds(southWest,northEast);
 
 
 	function update_airportsLayer() {
-	    if (typeof airportsLayer != 'undefined') {
-	        if (map.hasLayer(airportsLayer) == true) {
-		    map.removeLayer(airportsLayer);
-		}
-	    }
 	    <?php
 		if (isset($_COOKIE['AirportZoom'])) $getZoom = $_COOKIE['AirportZoom'];
 		else $getZoom = '7';
 	    ?>
+	    //if (map.getZoom() <= <?php print $getZoom; ?>) {
+		if (typeof airportsLayer != 'undefined') {
+	    	    if (map.hasLayer(airportsLayer) == true) {
+			map.removeLayer(airportsLayer);
+		    }
+		}
+	    //}
 	    if (map.getZoom() > <?php print $getZoom; ?>) {
+		//if (typeof airportsLayer == 'undefined' || map.hasLayer(airportsLayer) == false) {
 	    var bbox = map.getBounds().toBBoxString();
 	    airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
 	    onEachFeature: airportPopup,
@@ -239,6 +242,8 @@ bounds = L.latLngBounds(southWest,northEast);
                     });
 		}
 	    }).addTo(map);
+	    
+	    //}
 	    }
 	};
 
@@ -474,6 +479,10 @@ function getLiveData()
 			if (document.getElementById('aircraft_ident').className == feature.properties.callsign) {
 				//var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/selected/'+feature.properties.aircraft_shadow;
 				var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=FF0000&filename='+feature.properties.aircraft_shadow;
+				var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?color=8D93B9&filename='+feature.properties.aircraft_shadow;
+			} else if ( feature.properties.squawk == "7700" || feature.properties.squawk == "7600" || feature.properties.squawk == "7500" ) {
+				//var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/selected/'+feature.properties.aircraft_shadow;
+				var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=FF8C00&filename='+feature.properties.aircraft_shadow;
 				var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?color=8D93B9&filename='+feature.properties.aircraft_shadow;
 			} else {
 				//var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/'+feature.properties.aircraft_shadow;
