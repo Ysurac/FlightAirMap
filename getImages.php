@@ -20,7 +20,7 @@ if (!isset($_GET['color']) || $_GET['color'] == '' || !preg_match('/^([a-fA-F0-9
     exit(0);
 }
 $color = $_GET['color'];
-if (!isset($_GET['filename']) || !preg_match('/^[a-z0-9-]+\.png$/', strtolower($_GET['filename']))) {
+if (!isset($_GET['filename']) || !preg_match('/^[a-z0-9-_]+\.png$/', strtolower($_GET['filename']))) {
     echo "Incorrect filename";
     exit(0);
 }
