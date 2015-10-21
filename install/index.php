@@ -220,9 +220,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		    </tr>
 		<?php
 		    require_once('../require/class.Connection.php');
-		    if (Connection::tableExists('source_location')) {
+		    $Connection = new Connection();
+		    if ($Connection->tableExists('source_location')) {
 			require_once('../require/class.Source.php');
-			$alllocations = Source::getAllLocationInfo();
+			$Source = new Source();
+			$alllocations = $Source->getAllLocationInfo();
 			foreach ($alllocations as $location) {
 		?>
 		    <tr>
