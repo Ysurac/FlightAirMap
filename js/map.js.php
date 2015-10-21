@@ -590,7 +590,7 @@ function getLiveData()
               var output = '';
 		
               //individual aircraft
-		if (feature.properties.minimal == "false" && feature.properties.type == "aircraft"){
+		if (feature.minimal == "false" && feature.properties.type == "aircraft"){
 		    output += '<div class="top">';
                     if (typeof feature.properties.image_source_website != 'undefined') {
                 	if (typeof feature.properties.image_copyright != 'undefined') {

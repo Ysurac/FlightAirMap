@@ -56,6 +56,8 @@ if (!empty($spotter_array)) {
 
 $output = '{';
 	$output .= '"type": "FeatureCollection",';
+		if ($min) $output .= '"minimal": "true",';
+		else $output .= '"minimal": "false",';
 		$output .= '"features": [';
 
 		if (!empty($spotter_array) && is_array($spotter_array))
@@ -121,8 +123,10 @@ $output = '{';
 						$output .= '"properties": {';
 							$output .= '"flightaware_id": "'.$spotter_item['flightaware_id'].'",';
 							$output .= '"flight_cnt": "'.$flightcnt.'",';
+/*
 							if ($min) $output .= '"minimal": "true",';
 							else $output .= '"minimal": "false",';
+*/
 							//$output .= '"flight_cnt": "'.$spotter_item['nb'].'",';
 							$output .= '"callsign": "'.$spotter_item['ident'].'",';
 						if (isset($spotter_item['registration'])) $output .= '"registration": "'.$spotter_item['registration'].'",';
