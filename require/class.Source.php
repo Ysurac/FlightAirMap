@@ -17,7 +17,7 @@ class Source {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
-                $all = $sth->fetchAll(PDO->FETCH_ASSOC);
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
         }
 
