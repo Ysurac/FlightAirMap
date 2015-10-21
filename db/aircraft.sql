@@ -105,7 +105,7 @@ INSERT INTO `aircraft` (`aircraft_id`, `icao`, `type`, `manufacturer`, `official
 (91, 'CL44', 'CL-44 Forty Four', 'CANADAIR', '', 'generic_T4M.png', 'Landplane', 'Turboprop', 4, 'M'),
 (92, 'CL60', 'CL-600 Challenger 601', 'CANADAIR', '', 'generic_J2M.png', 'Landplane', 'Jet', 2, 'M'),
 (93, 'CN35', 'CN-235', 'TAI', '', 'generic_T2M.png', 'Landplane', 'Turboprop', 2, 'M'),
-(94, 'CONC', 'Aerospatiale/BAC Concorde', 'BAC', '', NULL, NULL, NULL, NULL, NULL),
+(94, 'CONC', 'Aerospatiale/BAC Concorde', 'BAC', '', 'CONC.png', NULL, NULL, NULL, NULL),
 (95, 'CONI', 'L-049 Constellation', 'LOCKHEED', '', 'generic_P4M.png', 'Landplane', 'Piston', 4, 'M'),
 (96, 'COUC', 'Helio H-250 Courier / H-295 / 385 Super Courier', 'Helio', '', NULL, NULL, NULL, NULL, NULL),
 (97, 'CRJ1', 'Regional Jet RJ-100', 'CANADAIR', '', 'generic_J2M.png', 'Landplane', 'Jet', 2, 'M'),
