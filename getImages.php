@@ -38,12 +38,19 @@ if (!file_exists($original)) {
 if (extension_loaded('gd') && function_exists('gd_info')) {
     $image = imagecreatefrompng($original);
     $index = imagecolorexact($image,26,49,81);
+    if ($index < 0) {
+	$index = imagecolorexact($image,25,49,79);
+    }
+    if ($index < 0) {
+	$index = imagecolorexact($image,0,0,0);
+    }
     $c = hexToRGB($color);
     imagecolorset($image,$index,$c['r'],$c['g'],$c['b']);
-/*
+ /*
     $ig = imagecolorat($image, 0, 0);
     imagecolortransparent($image, $ig);
-  */
+   */
+
 
     header('Content-type: image/png');
     imagealphablending($image, false);
@@ -52,6 +59,7 @@ if (extension_loaded('gd') && function_exists('gd_info')) {
     if (is_writable('cache')) {
         imagepng($image,dirname(__FILE__).DIRECTORY_SEPARATOR.'cache/'.$color.'-'.$filename);
     }
+    
     imagedestroy($image);
 } else {
     header('Content-type: image/png');
