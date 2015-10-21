@@ -2246,7 +2246,7 @@ class Spotter{
 	*/
 	public function getAllCountries()
 	{
-		
+		$Connection= new Connection();
 		if ($Connection->tableExists('countries')) {
 		
 		$country_array = array();

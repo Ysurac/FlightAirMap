@@ -2,7 +2,8 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 $Spotter = new Spotter();
-$spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], "0,1", $_GET['sort']);
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], "0,1", $sort);
 $aircraft_array = $Spotter->getAircraftInfoByRegistration($_GET['registration']);
 
 if (!empty($spotter_array))
@@ -32,6 +33,7 @@ if (!empty($spotter_array))
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
             	["Hour", "# of Flights"], ';
+            	$hour_data = '';
               foreach($hour_array as $hour_item)
     					{
     						$hour_data .= '[ "'.date("ga", strtotime($hour_item['hour_name'].":00")).'",'.$hour_item['hour_count'].'],';
