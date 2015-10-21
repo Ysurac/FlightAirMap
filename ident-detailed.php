@@ -8,6 +8,7 @@ if (!isset($_GET['ident'])){
 	header('Location: '.$globalURL.'');
 } else {
 	$Spotter = new Spotter();
+	$SpotterArchive = new SpotterArchive();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
@@ -45,7 +46,7 @@ if (!isset($_GET['ident'])){
 			// Requirement for altitude graph
 			print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 			//$all_data = SpotterLive::getAltitudeLiveSpotterDataByIdent($_GET['ident']);
-			$all_data = SpotterArchive::getAltitudeArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
+			$all_data = $SpotterArchive->getAltitudeArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
 			if (isset($globalTimezone)) {
 				date_default_timezone_set($globalTimezone);
 			} else date_default_timezone_set('UTC');

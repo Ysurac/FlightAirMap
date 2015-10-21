@@ -8,6 +8,7 @@ require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterArchive.php');
 $Spotter = new Spotter();
+$SpotterArchive = new SpotterArchive();
 $spotter_array = $Spotter->getSpotterDataByID($_GET['id']);
 
 
@@ -42,7 +43,7 @@ if (!empty($spotter_array))
 		// Requirement for altitude graph
 		print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 		//$all_data = SpotterLive::getAltitudeLiveSpotterDataByIdent($_GET['ident']);
-		$all_data = SpotterArchive::getAltitudeArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
+		$all_data = $SpotterArchive->getAltitudeArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
 		if (isset($globalTimezone)) {
 			date_default_timezone_set($globalTimezone);
 		} else date_default_timezone_set('UTC');
