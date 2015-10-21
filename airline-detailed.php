@@ -5,13 +5,13 @@ require('require/class.Spotter.php');
 if (!isset($_GET['airline'])){
 	header('Location: '.$globalURL.'/airline');
 } else{
-
+	$Spotter = new Spotter();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']) || $_GET['limit'] == "")
 	{
-	  $limit_start = 0;
-	  $limit_end = 25;
-	  $absolute_difference = 25;
+		$limit_start = 0;
+		$limit_end = 25;
+		$absolute_difference = 25;
 	}  else {
 		$limit_explode = explode(",", $_GET['limit']);
 		$limit_start = $limit_explode[0];
@@ -25,9 +25,9 @@ if (!isset($_GET['airline'])){
 	$page_url = $globalURL.'/airline/'.$_GET['airline'];
 	
 	if (isset($_GET['sort'])) {
-	$spotter_array = Spotter::getSpotterDataByAirline($_GET['airline'],$limit_start.",".$absolute_difference, $_GET['sort']);
+	$spotter_array = $Spotter->getSpotterDataByAirline($_GET['airline'],$limit_start.",".$absolute_difference, $_GET['sort']);
 	} else {
-		$spotter_array = Spotter::getSpotterDataByAirline($_GET['airline'],$limit_start.",".$absolute_difference, '');
+		$spotter_array = $Spotter->getSpotterDataByAirline($_GET['airline'],$limit_start.",".$absolute_difference, '');
 	}
 	
 	
@@ -42,7 +42,7 @@ if (!isset($_GET['airline'])){
 		print '<form action="'.$globalURL.'/airline" method="post">';
 		print '<select name="airline" class="selectpicker" data-live-search="true">';
 		print '<option></option>';
-    		      $airline_names = Spotter::getAllAirlineNames();
+    		      $airline_names = $Spotter->getAllAirlineNames();
     		      foreach($airline_names as $airline_name)
     		      {
     		        if($_GET['airline'] == $airline_name['airline_icao'])

@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Special Highlights - Table View";
 require('header.php');
 
@@ -35,9 +35,9 @@ print '<div class="table column">';
 print '<p>The table below shows the detailed information of all custom selected flights who have special aspects to it, such as unique liveries, destinations etc.</p>';
 
 if (isset($_GET['sort'])) {
-	$spotter_array = Spotter::getSpotterDataByHighlight($limit_start.",".$absolute_difference, $_GET['sort']);
+	$spotter_array = $Spotter->getSpotterDataByHighlight($limit_start.",".$absolute_difference, $_GET['sort']);
 } else {
-	$spotter_array = Spotter::getSpotterDataByHighlight($limit_start.",".$absolute_difference);
+	$spotter_array = $Spotter->getSpotterDataByHighlight($limit_start.",".$absolute_difference);
 }
 
 if (!empty($spotter_array))

@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 if (!isset($_GET['aircraft_manufacturer'])){
 	header('Location: '.$globalURL.'');
 } else {
@@ -27,9 +27,9 @@ if (!isset($_GET['aircraft_manufacturer'])){
 	$page_url = $globalURL.'/manufacturer/'.$_GET['aircraft_manufacturer'];
 	
 	if (isset($_GET['sort'])) {
-		$spotter_array = Spotter::getSpotterDataByManufacturer($manufacturer,$limit_start.",".$absolute_difference, $_GET['sort']);
+		$spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,$limit_start.",".$absolute_difference, $_GET['sort']);
 	} else {
-		$spotter_array = Spotter::getSpotterDataByManufacturer($manufacturer,$limit_start.",".$absolute_difference, '');
+		$spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,$limit_start.",".$absolute_difference, '');
 	}
 	
 	
@@ -44,7 +44,7 @@ if (!isset($_GET['aircraft_manufacturer'])){
 		print '<form action="'.$globalURL.'/manufacturer" method="post">';
 			print '<select name="aircraft_manufacturer" class="selectpicker" data-live-search="true">';
 	      print '<option></option>';
-	      $all_manufacturers = Spotter::getAllManufacturers();
+	      $all_manufacturers = $Spotter->getAllManufacturers();
 	      foreach($all_manufacturers as $all_manufacturer)
 	      {
 	        if($_GET['aircraft_manufacturer'] == strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])))

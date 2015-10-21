@@ -1,8 +1,12 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
-$spotter_array = Spotter::getSpotterDataByAirline($_GET['airline'],"0,1","");
+if (!isset($_GET['airline'])) {
+        header('Location: '.$globalURL.'/airline');
+        die();
+}
+$Spotter = new Spotter();
+$spotter_array = $Spotter->getSpotterDataByAirline($_GET['airline'],"0,1","");
 
 if (!empty($spotter_array))
 {
@@ -12,7 +16,7 @@ if (!empty($spotter_array))
 	print '<form action="'.$globalURL.'/airline" method="post">';
 	print '<select name="airline" class="selectpicker" data-live-search="true">';
 	print '<option></option>';
-	$airline_names = Spotter::getAllAirlineNames();
+	$airline_names = $Spotter->getAllAirlineNames();
 	foreach($airline_names as $airline_name)
 	{
 		if($_GET['airline'] == $airline_name['airline_icao'])
@@ -55,7 +59,7 @@ if (!empty($spotter_array))
 	print '<h2>Most Common Aircraft Manufacturer</h2>';
 	print '<p>The statistic below shows the most common Aircraft Manufacturer of flights from <strong>'.$spotter_array[0]['airline_name'].'</strong>.</p>';
 
-	$manufacturers_array = Spotter::countAllAircraftManufacturerByAirline($_GET['airline']);
+	$manufacturers_array = $Spotter->countAllAircraftManufacturerByAirline($_GET['airline']);
 	if (!empty($manufacturers_array))
 	{
 		print '<div class="table-responsive">';

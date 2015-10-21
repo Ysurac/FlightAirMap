@@ -2,11 +2,11 @@
 class SBS {
     static $latlon = array();
     
-    static function parse($buffer) {
+    function parse($buffer) {
 	// Not yet finished, no CRC checks
 	$hex = substr($buffer,1,-1);
 	$bin = gmp_strval( gmp_init($hex,16), 2);
-	//if (strlen($hex) == 28 && SBS::parityCheck(substr($bin,0,-24)) == substr($bin,-24)) {
+	//if (strlen($hex) == 28 && SBS->parityCheck(substr($bin,0,-24)) == substr($bin,-24)) {
 	if (strlen($hex) == 28) {
 	    $df = intval(substr($bin,0,5),2);
 	    $ca = intval(substr($bin,5,3),2);
@@ -47,12 +47,12 @@ class SBS {
 		    //  131072 is 2^17 since CPR latitude and longitude are encoded in 17 bits.
 		    $cprlat = intval(substr($bin,54,17),2)/131072.0;
 		    $cprlon = intval(substr($bin,71,17),2)/131072.0;
-		    if ($oe == 0) self::$latlon[$icao] = array('latitude' => $cprlat,'longitude' => $cprlon,'created' => time());
-		    elseif (isset(self::$latlon[$icao]) && (time() - self::$latlon[$icao]['created']) < 10) {
+		    if ($oe == 0) $this->$latlon[$icao] = array('latitude' => $cprlat,'longitude' => $cprlon,'created' => time());
+		    elseif (isset($this->$latlon[$icao]) && (time() - $this->$latlon[$icao]['created']) < 10) {
 			$cprlat_odd = $cprlat;
 			$cprlon_odd = $cprlon;
-			$cprlat_even = self::$latlon[$icao]['latitude'];
-			$cprlon_even = self::$latlon[$icao]['longitude'];
+			$cprlat_even = $this->$latlon[$icao]['latitude'];
+			$cprlon_even = $this->$latlon[$icao]['longitude'];
 		    
 			$j = 59*$cprlat_even-60*$cprlat_odd+0.5;
 			$lat_even = (360.0/60)*($j%60+$cprlat_even);
@@ -60,10 +60,10 @@ class SBS {
 			if ($lat_even >= 270) $lat_even = $lat_even - 360;
 			if ($lat_odd >= 270) $lat_odd = $lat_odd - 360;
 			// check latitude zone
-			if (SBS::cprNL($lat_even) == SBS::cprNL($lat_odd)) {
-			    if (self::$latlon[$icao]['created'] > time()) {
-				$ni = SBS::cprN($lat_even,0);
-				$m = floor($cprlon_even*(SBS::cprNL($lat_even)-1) - $cprlon_odd * SBS::cprNL($lat_even)+0.5);
+			if ($this->cprNL($lat_even) == $this->cprNL($lat_odd)) {
+			    if ($this->$latlon[$icao]['created'] > time()) {
+				$ni = $this->cprN($lat_even,0);
+				$m = floor($cprlon_even*($this->cprNL($lat_even)-1) - $cprlon_odd * $this->cprNL($lat_even)+0.5);
 				$lon = (360.0/$ni)*($m%$ni+$cprlon_even);
 				$lat = $lat_even;
 				if ($lon > 180) $lon = $lon -360;
@@ -73,8 +73,8 @@ class SBS {
 				    $data['longitude'] = $lon;
 				}
 			    } else {
-				$ni = self::cprN($lat_odd,1);
-				$m = floor($cprlon_even*(self::cprNL($lat_odd)-1) - $cprlon_odd * self::cprNL($lat_odd)+0.5);
+				$ni = $this->cprN($lat_odd,1);
+				$m = floor($cprlon_even*($this->cprNL($lat_odd)-1) - $cprlon_odd * $this->cprNL($lat_odd)+0.5);
 				$lon = (360.0/$ni)*($m%$ni+$cprlon_odd);
 				$lat = $lat_odd;
 				if ($lon > 180) $lon = $lon -360;
@@ -85,7 +85,7 @@ class SBS {
 				}
 			    }
 			} else echo "Not cprNL";
-			unset(self::$latlon[$icao]);
+			unset($this->$latlon[$icao]);
 		    }
 		} elseif ($tc == 19) {
 		    // speed & heading
@@ -110,7 +110,7 @@ class SBS {
     }
 
 
-    static function cprNL($lat) {
+    function cprNL($lat) {
 	//Lookup table to convert the latitude to index.
 	if ($lat < 0) $lat = -$lat;             // Table is simmetric about the equator.
 	if ($lat < 10.47047130) return 59;
@@ -174,8 +174,8 @@ class SBS {
 	return 1;
     }
     
-    static function cprN($lat,$isodd) {
-        $nl = SBS::cprNL($lat) - $isodd;
+    function cprN($lat,$isodd) {
+        $nl = $this->cprNL($lat) - $isodd;
         if ($nl > 1) return $nl;
         else return 1;
     }
@@ -183,7 +183,7 @@ class SBS {
 
 
 
-    static function parityCheck($msg, $bits=112) {
+    function parityCheck($msg, $bits=112) {
 $modes_checksum_table = array(
 0x3935ea, 0x1c9af5, 0xf1b77e, 0x78dbbf, 0xc397db, 0x9e31e9, 0xb0e2f0, 0x587178,
 0x2c38bc, 0x161c5e, 0x0b0e2f, 0xfa7d13, 0x82c48d, 0xbe9842, 0x5f4c21, 0xd05c14,
@@ -213,19 +213,19 @@ $modes_checksum_table = array(
         /* If bit is set, xor with corresponding table entry. */
         if ($msg[$byte] & $bitmask)  $crc = decbin($crc^intval($modes_checksum_table[$j+$offset],0));
 //        echo 'msgbyte : '.$msg[$byte].' - bitmask : '.$bitmask."\n";
-//        if ($msg[$byte] & $bitmask)  $crc = SBS::_xor($crc,$modes_checksum_table[$j+$offset]);
+//        if ($msg[$byte] & $bitmask)  $crc = $this->_xor($crc,$modes_checksum_table[$j+$offset]);
     }
 //    echo 'crc : '.$crc;
     return $crc; /* 24 bit checksum. */
 }
 
-    static function crc($data,$bits = 112) {
+    function crc($data,$bits = 112) {
 	    echo 'data : '.$data."\n";
         $bytes = $bits/8;
         return decbin($data[$bytes-3] << 16) | decbin($data[$bytes-2] << 8) | $data[$bytes-1];
     }
 
-    static function _xor($text,$key){
+    function _xor($text,$key){
 	for($i=0; $i<strlen($text); $i++){
 	    $text[$i] = intval($text[$i])^intval($key[$i]);
 	}

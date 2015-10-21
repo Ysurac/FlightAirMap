@@ -6,7 +6,7 @@ if (isset($_POST['airport']))
 {
 	header('Location: '.$globalURL.'/airport/'.$_POST['airport']);
 } else if (isset($_GET['airport'])){
-
+	$Spotter = new Spotter();
 	//calculuation for the pagination
 	if($_GET['limit'] == "")
 	{
@@ -25,8 +25,8 @@ if (isset($_POST['airport']))
 	
 	$page_url = $globalURL.'/airport/'.$_GET['airport'];
 	
-	$spotter_array = Spotter::getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, $_GET['sort']);
-	$airport_array = Spotter::getAllAirportInfo($_GET['airport']);
+	$spotter_array = $Spotter->getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, $_GET['sort']);
+	$airport_array = $Spotter->getAllAirportInfo($_GET['airport']);
 	
 	if (!empty($airport_array))
 	{
@@ -39,7 +39,7 @@ if (isset($_POST['airport']))
   		print '<form action="'.$globalURL.'/airport" method="post">';
   			print '<select name="airport" class="selectpicker" data-live-search="true">';
 		      print '<option></option>';
-		      $airport_names = Spotter::getAllAirportNames();
+		      $airport_names = $Spotter->getAllAirportNames();
 		      ksort($airport_names);
 		      foreach($airport_names as $airport_name)
 		      {
@@ -107,7 +107,7 @@ if (isset($_POST['airport']))
 	}
 	
 } else {
-
+	$Spotter= new Spotter();
 	$title = "Airports";
 	require('header.php');
 	
@@ -115,7 +115,7 @@ if (isset($_POST['airport']))
 		
 		print '<h1>Airports</h1>';
 		
-		$airport_names = Spotter::getAllAirportNames();
+		$airport_names = $Spotter->getAllAirportNames();
 		ksort($airport_names);
 		$previous = null;
 		print '<div class="alphabet-legend">';

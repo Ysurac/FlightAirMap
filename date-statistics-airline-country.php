@@ -1,8 +1,8 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
-$spotter_array = Spotter::getSpotterDataByDate($_GET['date'],"0,1", $_GET['sort']);
+$Spotter = new Spotter();
+$spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $_GET['sort']);
 
 if (!empty($spotter_array))
 {
@@ -29,7 +29,7 @@ if (!empty($spotter_array))
   	print '<h2>Most Common Airlines by Country</h2>';
   	print '<p>The statistic below shows the most common airlines by Country of origin of flights on <strong>'.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])).'</strong>.</p>';
 
-	  $airline_array = Spotter::countAllAirlineCountriesByDate($_GET['date']);
+	  $airline_array = $Spotter->countAllAirlineCountriesByDate($_GET['date']);
       
       print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 

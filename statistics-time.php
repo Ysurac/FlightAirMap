@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Statistic - Most busiest Time of the Day";
 require('header.php');
 include('statistics-sub-menu.php'); 
@@ -16,7 +16,7 @@ include('statistics-sub-menu.php');
       
 <?php
 
-$hour_array = Spotter::countAllHours('hour');
+$hour_array = $Spotter->countAllHours('hour');
 print '<div id="chartHour" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});
@@ -57,7 +57,7 @@ print ']);
     			});
       </script>';
 
-$hour_array = Spotter::countAllHours('count');
+$hour_array = $Spotter->countAllHours('count');
 if (!empty($hour_array))
 {
 	print '<div class="table-responsive">';

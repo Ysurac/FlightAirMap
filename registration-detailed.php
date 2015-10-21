@@ -5,7 +5,7 @@ require('require/class.Spotter.php');
 if (!isset($_GET['registration'])){
 	header('Location: '.$globalURL.'');
 } else {
-
+	$Spotter = new Spotter();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
@@ -25,11 +25,11 @@ if (!isset($_GET['registration'])){
 	$page_url = $globalURL.'/registration/'.$_GET['registration'];
 	
 	if (isset($_GET['sort'])) {
-		$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], $limit_start.",".$absolute_difference, $_GET['sort']);
+		$spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], $limit_start.",".$absolute_difference, $_GET['sort']);
 	} else {
-		$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], $limit_start.",".$absolute_difference, '');
+		$spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], $limit_start.",".$absolute_difference, '');
 	}
-	$aircraft_array = Spotter::getAircraftInfoByRegistration($_GET['registration']);
+	$aircraft_array = $Spotter->getAircraftInfoByRegistration($_GET['registration']);
 	
 	if (!empty($spotter_array))
 	{
@@ -78,9 +78,5 @@ if (!isset($_GET['registration'])){
 	}
 }
 
-
-?>
-
-<?php
 require('footer.php');
 ?>

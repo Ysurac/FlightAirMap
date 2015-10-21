@@ -7,7 +7,7 @@ require('require/class.SpotterArchive.php');
 if (!isset($_GET['ident'])){
 	header('Location: '.$globalURL.'');
 } else {
-	
+	$Spotter = new Spotter();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
@@ -28,9 +28,9 @@ if (!isset($_GET['ident'])){
 	
 	if (isset($_GET['sort'])) 
 	{
-		$spotter_array = Spotter::getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference, $_GET['sort']);
+		$spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference, $_GET['sort']);
 	} else {
-		$spotter_array = Spotter::getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference);
+		$spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference);
 	}
 	
 	

@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.NOTAM.php');
-
+$NOTAM = new NOTAM();
 if (isset($_GET['download']))
 {
 	header('Content-disposition: attachment; filename="notam.geojson"');
@@ -12,9 +12,9 @@ if (isset($_GET['coord']))
 {
 	$coords = explode(',',$_GET['coord']);
 //	$spotter_array = Spotter::getAllNOTAMbyCoord($coords);
-	$spotter_array = NOTAM::getAllNOTAM();
+	$spotter_array = $NOTAM->getAllNOTAM();
 } else {
-	$spotter_array = NOTAM::getAllNOTAM();
+	$spotter_array = $NOTAM->getAllNOTAM();
 }
       
 $output = '{"type": "FeatureCollection","features": [';

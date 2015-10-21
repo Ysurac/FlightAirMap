@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Statistic - Most common Aircraft Manufacturer";
 require('header.php');
 include('statistics-sub-menu.php'); 
@@ -15,7 +15,7 @@ include('statistics-sub-menu.php');
       
 <?php
 
-$manufacturers_array = Spotter::countAllAircraftManufacturers();
+$manufacturers_array = $Spotter->countAllAircraftManufacturers();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});

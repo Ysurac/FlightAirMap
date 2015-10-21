@@ -11,5 +11,6 @@ if ($globalInstalled) {
 
 require_once('../require/class.Connection.php');
 require_once('../require/class.Spotter.php');
-Spotter::updateFieldsFromOtherTables();
+$Spotter = new Spotter();
+$Spotter->updateFieldsFromOtherTables();
 ?>

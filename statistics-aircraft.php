@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Statistic - Most common Aircraft";
 require('header.php');
 ?>
@@ -15,7 +15,7 @@ require('header.php');
 		<p>Below are the <strong>Top 10</strong> most common aircraft types.</p>
 	  
 	  <?php
-	  $aircraft_array = Spotter::countAllAircraftTypes();
+	  $aircraft_array = $Spotter->countAllAircraftTypes();
 	  
 		print '<div id="chart" class="chart" width="100%"></div>
       	<script> 

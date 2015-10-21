@@ -5,7 +5,7 @@ require('require/class.SpotterLive.php');
 
 $title = "Current Activity";
 require('header.php');
-
+$SpotterLive=new SpotterLive();
 //calculuation for the pagination
 if(!isset($_GET['limit']))
 {
@@ -32,9 +32,9 @@ print '<div class="table column">';
 print '<p>The table below shows the detailed information of all current flights.</p>';
 
 if (isset($_GET['sort'])) {
-	$spotter_array = SpotterLive::getLiveSpotterData($limit_start.",".$absolute_difference, $_GET['sort']);
+	$spotter_array = $SpotterLive->getLiveSpotterData($limit_start.",".$absolute_difference, $_GET['sort']);
 } else {
-	$spotter_array = SpotterLive::getLiveSpotterData($limit_start.",".$absolute_difference);
+	$spotter_array = $SpotterLive->getLiveSpotterData($limit_start.",".$absolute_difference);
 }
 
 if (!empty($spotter_array))

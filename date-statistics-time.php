@@ -1,8 +1,9 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
-$spotter_array = Spotter::getSpotterDataByDate($_GET['date'],"0,1", $_GET['sort']);
+$Spotter = new Spotter();
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $sort);
 
 if (!empty($spotter_array))
 {
@@ -29,7 +30,7 @@ if (!empty($spotter_array))
   	print '<h2>Most Common Time of Day</h2>';
   	print '<p>The statistic below shows the most common time of day on <strong>'.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])).'</strong>.</p>';
   	
-      $hour_array = Spotter::countAllHoursByDate($_GET['date']);
+      $hour_array = $Spotter->countAllHoursByDate($_GET['date']);
       
       print '<div id="chartHour" class="chart" width="100%"></div>
       	<script> 

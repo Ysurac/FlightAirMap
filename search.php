@@ -1,8 +1,8 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
-$orderby = Spotter::getOrderBy();
+$Spotter = new Spotter();
+$orderby = $Spotter->getOrderBy();
 
 $title = "Search";
 
@@ -83,7 +83,7 @@ if (!empty($_GET)){
 	$arrival_airport_route = filter_input(INPUT_GET, 'arrival_airport_route',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	if (!isset($sql_date)) $sql_date = '';
-	$spotter_array = Spotter::searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
+	$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
 	  
 	 print '<span class="sub-menu-statistic column mobile">';
 	 	print '<a href="#" onclick="showSubMenu(); return false;">Export <i class="fa fa-plus"></i></a>';
@@ -129,7 +129,7 @@ if (!empty($_GET)){
                 if ($globalBitlyAccessToken != "")
                 {
                     print '<li class="short-url">';
-                        $bitly = Spotter::getBitlyURL(urlencode('http://'.$_SERVER[HTTP_HOST].''.$_SERVER[REQUEST_URI]));
+                        $bitly = $Spotter->getBitlyURL(urlencode('http://'.$_SERVER[HTTP_HOST].''.$_SERVER[REQUEST_URI]));
                         print 'Short URL: <input type="text" name="short_url" value="'.$bitly.'" readonly="readonly" />';
                     print '</li>';
                 }
@@ -271,7 +271,7 @@ if (!empty($_GET)){
     		    <select name="manufacturer" class="selectpicker" data-live-search="true">
     		      <option></option>
     		      <?php
-    		      $manufacturers = Spotter::getAllManufacturers();
+    		      $manufacturers = $Spotter->getAllManufacturers();
     		      foreach($manufacturers as $manufacturer)
     		      {
     		        if(isset($_GET['manufacturer']) && $_GET['manufacturer'] == strtolower(str_replace(" ", "-", $manufacturer['aircraft_manufacturer'])))
@@ -289,7 +289,7 @@ if (!empty($_GET)){
     		    <select name="aircraft" class="selectpicker" data-live-search="true">
     		      <option></option>
     		      <?php
-    		      $aircraft_types = Spotter::getAllAircraftTypes();
+    		      $aircraft_types = $Spotter->getAllAircraftTypes();
     		      foreach($aircraft_types as $aircraft_type)
     		      {
     		        if(isset($_GET['aircraft']) && $_GET['aircraft'] == $aircraft_type['aircraft_icao'])
@@ -317,7 +317,7 @@ if (!empty($_GET)){
     		    <select name="airline" class="selectpicker" data-live-search="true">
     		      <option></option>
     		      <?php
-    		      $airline_names = Spotter::getAllAirlineNames();
+    		      $airline_names = $Spotter->getAllAirlineNames();
     		      foreach($airline_names as $airline_name)
     		      {
     		        if(isset($_GET['airline']) && $_GET['airline'] == $airline_name['airline_icao'])
@@ -335,7 +335,7 @@ if (!empty($_GET)){
     		    <select name="airline_country" class="selectpicker" data-live-search="true">
     		      <option></option>
     		      <?php
-    		      $airline_countries = Spotter::getAllAirlineCountries();
+    		      $airline_countries = $Spotter->getAllAirlineCountries();
     		      foreach($airline_countries as $airline_country)
     		      {
     		        if(isset($_GET['airline_country']) && $_GET['airline_country'] == $airline_country['airline_country'])
@@ -366,7 +366,7 @@ if (!empty($_GET)){
     		    <select name="airport" class="selectpicker" data-live-search="true">
     		      <option></option>
     		      <?php
-    		      $airport_names = Spotter::getAllAirportNames();
+    		      $airport_names = $Spotter->getAllAirportNames();
     		      ksort($airport_names);
     		      foreach($airport_names as $airport_name)
     		      {
@@ -384,7 +384,7 @@ if (!empty($_GET)){
     		    <select name="airport_country" class="selectpicker" data-live-search="true">
     		      <option></option>
     		      <?php
-    		      $airport_countries = Spotter::getAllAirportCountries();
+    		      $airport_countries = $Spotter->getAllAirportCountries();
     		      foreach($airport_countries as $airport_country)
     		      {
     		        if(isset($_GET['airport_country']) && $_GET['airport_country'] == $airport_country['airport_country'])

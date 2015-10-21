@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 if (isset($_GET['download']))
 {
 	header('Content-disposition: attachment; filename="waypoints.geojson"');
@@ -11,7 +11,7 @@ header('Content-Type: text/javascript');
 if (isset($_GET['coord'])) 
 {
 	$coords = explode(',',$_GET['coord']);
-	$spotter_array = Spotter::getAllWaypointsInfobyCoord($coords);
+	$spotter_array = $Spotter->getAllWaypointsInfobyCoord($coords);
 } else {
 	die;
 }

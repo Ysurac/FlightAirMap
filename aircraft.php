@@ -6,12 +6,13 @@ if (isset($_POST['aircraft_type']))
 {
 	header('Location: '.$globalURL.'/aircraft/'.$_POST['aircraft_type']);
 } else {
+	$Spotter = new Spotter();
 	$title = "Aircraft Types";
 	require('header.php');
 	print '<div class="column">';
 	print '<h1>Aircraft Types</h1>';
 
-	$aircraft_types = Spotter::getAllAircraftTypes();
+	$aircraft_types = $Spotter->getAllAircraftTypes();
 	$previous = null;
 	print '<div class="alphabet-legend">';
 	foreach($aircraft_types as $value) {

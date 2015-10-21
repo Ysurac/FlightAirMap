@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Statistic - Most Busiest Day";
 require('header.php');
 include('statistics-sub-menu.php'); 
@@ -15,7 +15,7 @@ include('statistics-sub-menu.php');
       
 <?php
 
-$date_array = Spotter::countAllDatesLast7Days();
+$date_array = $Spotter->countAllDatesLast7Days();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});
@@ -54,7 +54,7 @@ print ']);
       <p>Below are the <strong>Top 10</strong> most busiest dates.</p>
 
 <?php
-$date_array = Spotter::countAllDates();
+$date_array = $Spotter->countAllDates();
 if (!empty($date_array))
 {
 	print '<div class="table-responsive">';

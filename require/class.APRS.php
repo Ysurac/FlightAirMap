@@ -1,12 +1,12 @@
 <?php
 class aprs {
-    private static function urshift($n, $s) {
+    private function urshift($n, $s) {
 	return ($n >= 0) ? ($n >> $s) :
     	    (($n & 0x7fffffff) >> $s) | 
         	(0x40000000 >> ($s - 1));
     }
 
-    public static function parse($input) {
+    public function parse($input) {
 	$debug = false;
 	$result = array();
 	$input_len = strlen($input);
@@ -155,7 +155,7 @@ class aprs {
 			elseif ($addressType == 1) $result['addresstype'] = "ICAO";
 			elseif ($addressType == 2) $result['addresstype'] = "FLARM";
 			elseif ($addressType == 3) $result['addresstype'] = "OGN";
-			$aircraftType = self::urshift(((intval(substr($id,0,2),16)) & 0b1111100),2);
+			$aircraftType = $this->urshift(((intval(substr($id,0,2),16)) & 0b1111100),2);
 			$result['aircrafttype_code'] = $aircraftType;
 			if ($aircraftType == 0) $result['aircrafttype'] = "UNKNOWN";
 			elseif ($aircraftType == 1) $result['aircrafttype'] = "GLIDER";

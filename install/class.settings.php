@@ -4,6 +4,7 @@ require_once('../require/class.Common.php');
 
 class settings {
 	public static function modify_settings($settings) {
+		$Common = new Common();
 		$settings_filename = '../require/settings.php';
 		$content = file_get_contents($settings_filename);
 		$fh = fopen($settings_filename,'w');
@@ -13,7 +14,7 @@ class settings {
 			    $replace = '\$'.$settingname." = ".$value."";
 			} elseif (is_array($value)) {
 			    $pattern = '/\$'.$settingname." = array\(".'(.*)'."\)/";
-			    if (Common::isAssoc($value)) {
+			    if ($Common->isAssoc($value)) {
 				foreach ($value as $key => $data) {
 				    if (!isset($array_value)) {
 					$array_value = "'".$key."' => '".$data."'";

@@ -1,10 +1,14 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+if (!isset($_GET['country'])) {
+        header('Location: '.$globalURL.'/country');
+        die();
+}
+$Spotter = new Spotter();
 $country = ucwords(str_replace("-", " ", $_GET['country']));
 
-$spotter_array = Spotter::getSpotterDataByCountry($country, "0,1", $_GET['sort']);
+$spotter_array = $Spotter->getSpotterDataByCountry($country, "0,1", $_GET['sort']);
 
 
 if (!empty($spotter_array))
@@ -18,7 +22,7 @@ if (!empty($spotter_array))
 	print '<form action="'.$globalURL.'/country" method="post">';
 		print '<select name="country" class="selectpicker" data-live-search="true">';
       print '<option></option>';
-      $all_countries = Spotter::getAllCountries();
+      $all_countries = $Spotter->getAllCountries();
       foreach($all_countries as $all_country)
       {
         if($country == $all_country['country'])
@@ -48,7 +52,7 @@ if (!empty($spotter_array))
   	print '<h2>Most Common Airlines by Country</h2>';
   	print '<p>The statistic below shows the most common airlines by Country of origin of flights from airports &amp; airlines of <strong>'.$country.'</strong>.</p>';
 
-	 $airline_array = Spotter::countAllAirlineCountriesByCountry($country);
+	 $airline_array = $Spotter->countAllAirlineCountriesByCountry($country);
       
       print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 

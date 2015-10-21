@@ -5,6 +5,12 @@ require_once('class.Image.php');
 $global_query = "SELECT spotter_output.* FROM spotter_output";
 
 class Spotter{
+	public $db;
+	
+	function __construct() {
+		$Connection = new Connection();
+		$this->db = $Connection->db;
+	}
 	
 	/**
 	* Executes the SQL statements to get the spotter information
@@ -14,9 +20,12 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getDataFromDB($query, $params = array(), $limitQuery = '')
+	public function getDataFromDB($query, $params = array(), $limitQuery = '')
 	{
 		global $globalSquawkCountry, $globalIVAO;
+		$Image = new Image();
+		$Schedule = new Schedule();
+		$ACARS = new ACARS();
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		date_default_timezone_set('UTC');
 		
@@ -33,9 +42,9 @@ class Spotter{
 			}
 		}
 
-		$Connection = new Connection();
+		
 		try {
-			$sth = Connection::$db->prepare($query.$limitQuery);
+			$sth = $this->db->prepare($query.$limitQuery);
 			$sth->execute($params);
 		} catch (PDOException $e) {
 			printf("Invalid query : %s\nWhole query: %s\n",$e->getMessage(), $query.$limitQuery);
@@ -66,7 +75,7 @@ class Spotter{
 			if (isset($row['registration']) && $row['registration'] != '') {
 				$temp_array['registration'] = $row['registration'];
 			} elseif (isset($temp_array['modes'])) {
-				$temp_array['registration'] = Spotter::getAircraftRegistrationBymodeS($temp_array['modes']);
+				$temp_array['registration'] = $this->getAircraftRegistrationBymodeS($temp_array['modes']);
 			} else $temp_array['registration'] = '';
 			$temp_array['aircraft_type'] = $row['aircraft_icao'];
 			
@@ -75,8 +84,8 @@ class Spotter{
 			$temp_array['latitude'] = $row['latitude'];
 			$temp_array['longitude'] = $row['longitude'];
 			/*
-			if (Connection::tableExists('countries')) {
-				$country_info = Spotter::getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
+			if (Connection->tableExists('countries')) {
+				$country_info = Spotter->getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
 				if (is_array($country_info) && isset($country_info['name']) && isset($country_info['iso2'])) {
 				    $temp_array['country'] = $country_info['name'];
 				    $temp_array['country_iso2'] = $country_info['iso2'];
@@ -90,7 +99,7 @@ class Spotter{
 					$allroute = explode(' ',$row['route_stop']);
 			
 					foreach ($allroute as $route) {
-						$route_airport_array = Spotter::getAllAirportInfo($route);
+						$route_airport_array = $this->getAllAirportInfo($route);
 						if (isset($route_airport_array[0]['name'])) {
 							$route_stop_details['airport_name'] = $route_airport_array[0]['name'];
 							$route_stop_details['airport_city'] = $route_airport_array[0]['city'];
@@ -103,7 +112,7 @@ class Spotter{
 			}
 			$temp_array['altitude'] = $row['altitude'];
 			$temp_array['heading'] = $row['heading'];
-			$heading_direction = Spotter::parseDirection($row['heading']);
+			$heading_direction = $this->parseDirection($row['heading']);
 			if (isset($heading_direction[0]['direction_fullname'])) $temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
 			$temp_array['ground_speed'] = $row['ground_speed'];
 			$temp_array['image'] = "";
@@ -115,7 +124,7 @@ class Spotter{
 				$temp_array['highlight'] = $row['highlight'];
 			} else $temp_array['highlight'] = '';
 			
-			$dateArray = Spotter::parseDateString($row['date']);
+			$dateArray = $this->parseDateString($row['date']);
 			if ($dateArray['seconds'] < 10)
 			{
 				$temp_array['date'] = "a few seconds ago";
@@ -152,7 +161,7 @@ class Spotter{
 					$temp_array['aircraft_shadow'] = $row['aircraft_shadow'];
 				}
 			} else {
-				$aircraft_array = Spotter::getAllAircraftInfo($row['aircraft_icao']);
+				$aircraft_array = $this->getAllAircraftInfo($row['aircraft_icao']);
 				if (count($aircraft_array) > 0) {
 					$temp_array['aircraft_name'] = $aircraft_array[0]['type'];
 					$temp_array['aircraft_manufacturer'] = $aircraft_array[0]['manufacturer'];
@@ -167,26 +176,26 @@ class Spotter{
                             	}
 			}
 			if (!isset($row['airline_name']) || $row['airline_name'] == '') {
-			$airline_array = array();
-			if (!is_numeric(substr($row['ident'], 0, 3))) {
-				if (is_numeric(substr(substr($row['ident'], 0, 3), -1, 1))) {
-					$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 2));
-				} elseif (is_numeric(substr(substr($row['ident'], 0, 4), -1, 1))) {
-					$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 3));
+				$airline_array = array();
+				if (!is_numeric(substr($row['ident'], 0, 3))) {
+					if (is_numeric(substr($row['ident'], 2, 1))) {
+						$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 2));
+					} elseif (is_numeric(substr($row['ident'], 3, 1))) {
+						$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3));
+					} else {
+						$airline_array = $this->getAllAirlineInfo('NA');
+					}
 				} else {
-					$airline_array = Spotter::getAllAirlineInfo('NA');
-			}
-			} else {
-				$airline_array = Spotter::getAllAirlineInfo('NA');
-			}
-			if (count($airline_array) > 0) {
-				$temp_array['airline_icao'] = $airline_array[0]['icao'];
-				$temp_array['airline_iata'] = $airline_array[0]['iata'];
-				$temp_array['airline_name'] = $airline_array[0]['name'];
-				$temp_array['airline_country'] = $airline_array[0]['country'];
-				$temp_array['airline_callsign'] = $airline_array[0]['callsign'];
-				$temp_array['airline_type'] = $airline_array[0]['type'];
-			}
+					$airline_array = $this->getAllAirlineInfo('NA');
+				}
+				if (count($airline_array) > 0) {
+					$temp_array['airline_icao'] = $airline_array[0]['icao'];
+					$temp_array['airline_iata'] = $airline_array[0]['iata'];
+					$temp_array['airline_name'] = $airline_array[0]['name'];
+					$temp_array['airline_country'] = $airline_array[0]['country'];
+					$temp_array['airline_callsign'] = $airline_array[0]['callsign'];
+					$temp_array['airline_type'] = $airline_array[0]['type'];
+				}
 			} else {
 				$temp_array['airline_icao'] = $row['airline_icao'];
 				if (isset($row['airline_iata'])) $temp_array['airline_iata'] = $row['airline_iata'];
@@ -196,8 +205,8 @@ class Spotter{
 				$temp_array['airline_type'] = $row['airline_type'];
 			}
 			if (isset($temp_array['airline_iata'])) {
-				$acars_array = ACARS::getLiveAcarsData($temp_array['airline_iata'].substr($temp_array['ident'],3));
-				//$acars_array = ACARS::getLiveAcarsData('BA40YL');
+				$acars_array = $ACARS->getLiveAcarsData($temp_array['airline_iata'].substr($temp_array['ident'],3));
+				//$acars_array = ACARS->getLiveAcarsData('BA40YL');
 				if (count($acars_array) > 0) {
 					$temp_array['acars'] = $acars_array;
 					//print_r($acars_array);
@@ -207,9 +216,9 @@ class Spotter{
 			if($temp_array['registration'] != "" || ($globalIVAO && $temp_array['aircraft_type'] != ''))
 			{
 				if ($globalIVAO) {
-					if (isset($temp_array['airline_icao']))	$image_array = Image::getSpotterImage('',$temp_array['aircraft_type'],$temp_array['airline_icao']);
-					else $image_array = Image::getSpotterImage('',$temp_array['aircraft_type']);
-				} else $image_array = Image::getSpotterImage($temp_array['registration']);
+					if (isset($temp_array['airline_icao']))	$image_array = $Image->getSpotterImage('',$temp_array['aircraft_type'],$temp_array['airline_icao']);
+					else $image_array = $Image->getSpotterImage('',$temp_array['aircraft_type']);
+				} else $image_array = $Image->getSpotterImage($temp_array['registration']);
 				if (count($image_array) > 0) {
 					$temp_array['image'] = $image_array[0]['image'];
 					$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
@@ -226,7 +235,7 @@ class Spotter{
 
 
 			if (!isset($globalIVAO) || ! $globalIVAO) {
-				$schedule_array = Schedule::getSchedule($temp_array['ident']);
+				$schedule_array = $Schedule->getSchedule($temp_array['ident']);
 				//print_r($schedule_array);
 				if (count($schedule_array) > 0) {
 					if ($schedule_array['departure_airport_icao'] != '') {
@@ -245,8 +254,8 @@ class Spotter{
 			
 			//if ($row['departure_airport_icao'] != '' && $row['departure_airport_name'] == '') {
 			if ($row['departure_airport_icao'] != '') {
-				$departure_airport_array = Spotter::getAllAirportInfo($row['departure_airport_icao']);
-				if (!isset($departure_airport_array[0]['name'])) $departure_airport_array = Spotter::getAllAirportInfo('NA');
+				$departure_airport_array = $this->getAllAirportInfo($row['departure_airport_icao']);
+				if (!isset($departure_airport_array[0]['name'])) $departure_airport_array = $this->getAllAirportInfo('NA');
 			/*
 			} elseif ($row['departure_airport_name'] != '') {
 				$temp_array['departure_airport_name'] = $row['departure_airport_name'];
@@ -254,7 +263,7 @@ class Spotter{
 				$temp_array['departure_airport_country'] = $row['departure_airport_country'];
 				$temp_array['departure_airport_icao'] = $row['departure_airport_icao'];
 			*/
-			} else $departure_airport_array = Spotter::getAllAirportInfo('NA');
+			} else $departure_airport_array = $this->getAllAirportInfo('NA');
 			if (isset($departure_airport_array[0]['name'])) {
 				$temp_array['departure_airport_name'] = $departure_airport_array[0]['name'];
 				$temp_array['departure_airport_city'] = $departure_airport_array[0]['city'];
@@ -273,9 +282,9 @@ class Spotter{
 			*/
 			
 			if ($row['arrival_airport_icao'] != '') {
-				$arrival_airport_array = Spotter::getAllAirportInfo($row['arrival_airport_icao']);
-				if (count($arrival_airport_array) == 0) $arrival_airport_array = Spotter::getAllAirportInfo('NA');
-			} else $arrival_airport_array = Spotter::getAllAirportInfo('NA');
+				$arrival_airport_array = $this->getAllAirportInfo($row['arrival_airport_icao']);
+				if (count($arrival_airport_array) == 0) $arrival_airport_array = $this->getAllAirportInfo('NA');
+			} else $arrival_airport_array = $this->getAllAirportInfo('NA');
 			if (isset($arrival_airport_array[0]['name'])) {
 				$temp_array['arrival_airport_name'] = $arrival_airport_array[0]['name'];
 				$temp_array['arrival_airport_city'] = $arrival_airport_array[0]['city'];
@@ -296,9 +305,9 @@ class Spotter{
 			if (isset($row['squawk'])) {
 				$temp_array['squawk'] = $row['squawk'];
 				if ($row['squawk'] != '' && isset($temp_array['country_iso2'])) {
-					$temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$temp_array['country_iso2']);
-					if ($temp_array['squawk_usage'] == '' && isset($globalSquawkCountry)) $temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$globalSquawkCountry);
-				} elseif ($row['squawk'] != '' && isset($globalSquawkCountry)) $temp_array['squawk_usage'] = Spotter::getSquawkUsage($row['squawk'],$globalSquawkCountry);
+					$temp_array['squawk_usage'] = $this->getSquawkUsage($row['squawk'],$temp_array['country_iso2']);
+					if ($temp_array['squawk_usage'] == '' && isset($globalSquawkCountry)) $temp_array['squawk_usage'] = $this->getSquawkUsage($row['squawk'],$globalSquawkCountry);
+				} elseif ($row['squawk'] != '' && isset($globalSquawkCountry)) $temp_array['squawk_usage'] = $this->getSquawkUsage($row['squawk'],$globalSquawkCountry);
 			}
     			
 			$temp_array['query_number_rows'] = $num_rows;
@@ -317,7 +326,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '')
+	public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '')
 	{
 		global $globalTimezone;
 		date_default_timezone_set('UTC');
@@ -551,7 +560,7 @@ class Spotter{
 		
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -567,7 +576,7 @@ class Spotter{
 					".$additional_query."
 					".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, array(),$limit_query);
+		$spotter_array = $this->getDataFromDB($query, array(),$limit_query);
 
 		return $spotter_array;
 	}
@@ -579,7 +588,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getLatestSpotterData($limit = '', $sort = '')
+	public function getLatestSpotterData($limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -601,7 +610,7 @@ class Spotter{
 		
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -609,7 +618,7 @@ class Spotter{
 
 		$query  = $global_query." ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, array(),$limit_query);
+		$spotter_array = $this->getDataFromDB($query, array(),$limit_query);
 
 		return $spotter_array;
 	}
@@ -621,7 +630,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getLatestSpotterForLayar($lat, $lng, $radius, $interval)
+	public function getLatestSpotterForLayar($lat, $lng, $radius, $interval)
 	{
 		date_default_timezone_set('UTC');
 		
@@ -656,21 +665,21 @@ class Spotter{
 				return false;
 			} else {
 				if ($interval == "30m"){
-					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) <= spotter_output.date ';
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) <= $this_output.date ';
 				} else if ($interval == "1h"){
-					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) <= spotter_output.date ';
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) <= $this_output.date ';
 				} else if ($interval == "3h"){
-					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 3 HOUR) <= spotter_output.date ';
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 3 HOUR) <= $this_output.date ';
 				} else if ($interval == "6h"){
-					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 6 HOUR) <= spotter_output.date ';
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 6 HOUR) <= $this_output.date ';
 				} else if ($interval == "12h"){
-					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 HOUR) <= spotter_output.date ';
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 HOUR) <= $this_output.date ';
 				} else if ($interval == "24h"){
-					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 24 HOUR) <= spotter_output.date ';
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 24 HOUR) <= $this_output.date ';
 				} else if ($interval == "7d"){
-					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY) <= spotter_output.date ';
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY) <= $this_output.date ';
 				} else if ($interval == "30d"){
-					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 DAY) <= spotter_output.date ';
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 DAY) <= $this_output.date ';
 				} 
 			}
 		}
@@ -682,7 +691,7 @@ class Spotter{
                    HAVING distance < :radius  
 				   ORDER BY distance";
 
-		$spotter_array = Spotter::getDataFromDB($query, array(':radius' => $radius),$limit_query);
+		$spotter_array = $this->getDataFromDB($query, array(':radius' => $radius),$limit_query);
 
 		return $spotter_array;
 	}
@@ -694,7 +703,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getNewestSpotterDataSortedByAircraftType($limit = '', $sort = '')
+	public function getNewestSpotterDataSortedByAircraftType($limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -716,7 +725,7 @@ class Spotter{
 		
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
@@ -724,7 +733,7 @@ class Spotter{
 
 		$query  = $global_query." WHERE spotter_output.aircraft_name <> '' GROUP BY spotter_output.aircraft_icao ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, array(), $limit_query);
+		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
 		return $spotter_array;
 	}
@@ -736,7 +745,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getNewestSpotterDataSortedByAircraftRegistration($limit = '', $sort = '')
+	public function getNewestSpotterDataSortedByAircraftRegistration($limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -758,7 +767,7 @@ class Spotter{
 		
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
@@ -766,7 +775,7 @@ class Spotter{
 
 		$query  = $global_query." WHERE spotter_output.registration <> '' GROUP BY spotter_output.registration ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, array(), $limit_query);
+		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
 		return $spotter_array;
 	}
@@ -778,7 +787,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getNewestSpotterDataSortedByAirline($limit = '', $sort = '')
+	public function getNewestSpotterDataSortedByAirline($limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -800,7 +809,7 @@ class Spotter{
 		
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
@@ -808,7 +817,7 @@ class Spotter{
 
 		$query  = $global_query." WHERE spotter_output.airline_name <> '' GROUP BY spotter_output.airline_icao ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, array(), $limit_query);
+		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
 		return $spotter_array;
 	}
@@ -820,7 +829,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getNewestSpotterDataSortedByDepartureAirport($limit = '', $sort = '')
+	public function getNewestSpotterDataSortedByDepartureAirport($limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -842,7 +851,7 @@ class Spotter{
 		
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
@@ -850,7 +859,7 @@ class Spotter{
 
 		$query  = $global_query." WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' GROUP BY spotter_output.departure_airport_icao ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, array(), $limit_query);
+		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
 		return $spotter_array;
 	}
@@ -862,7 +871,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getNewestSpotterDataSortedByArrivalAirport($limit = '', $sort = '')
+	public function getNewestSpotterDataSortedByArrivalAirport($limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -884,7 +893,7 @@ class Spotter{
 		
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
@@ -892,7 +901,7 @@ class Spotter{
 
 		$query  = $global_query." WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' GROUP BY spotter_output.arrival_airport_icao ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, array(), $limit_query);
+		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
 		return $spotter_array;
 	}
@@ -904,7 +913,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByID($id = '')
+	public function getSpotterDataByID($id = '')
 	{
 		global $global_query;
 		
@@ -925,7 +934,7 @@ class Spotter{
 
 		$query  = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ";
 
-		$spotter_array = Spotter::getDataFromDB($query,$query_values);
+		$spotter_array = $this->getDataFromDB($query,$query_values);
 
 		return $spotter_array;
 	}
@@ -939,7 +948,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByIdent($ident = '', $limit = '', $sort = '')
+	public function getSpotterDataByIdent($ident = '', $limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -974,7 +983,7 @@ class Spotter{
 
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -982,7 +991,7 @@ class Spotter{
 
 		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, $query_values, $limit_query);
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
 	}
@@ -995,7 +1004,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByAircraft($aircraft_type = '', $limit = '', $sort = '')
+	public function getSpotterDataByAircraft($aircraft_type = '', $limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -1030,7 +1039,7 @@ class Spotter{
 
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -1038,7 +1047,7 @@ class Spotter{
 
 		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, $query_values, $limit_query);
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
 	}
@@ -1050,7 +1059,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByRegistration($registration = '', $limit = '', $sort = '')
+	public function getSpotterDataByRegistration($registration = '', $limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -1085,7 +1094,7 @@ class Spotter{
 
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -1093,7 +1102,7 @@ class Spotter{
 
 		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, $query_values, $limit_query);
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
 	}
@@ -1107,7 +1116,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByAirline($airline = '', $limit = '', $sort = '')
+	public function getSpotterDataByAirline($airline = '', $limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -1142,14 +1151,14 @@ class Spotter{
 		
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
 		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
-		$spotter_array = Spotter::getDataFromDB($query, $query_values, $limit_query);
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
 	}
@@ -1161,7 +1170,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByAirport($airport = '', $limit = '', $sort = '')
+	public function getSpotterDataByAirport($airport = '', $limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -1196,7 +1205,7 @@ class Spotter{
 		
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -1204,7 +1213,7 @@ class Spotter{
 
 		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." AND ((spotter_output.departure_airport_icao <> 'NA') AND (spotter_output.arrival_airport_icao <> 'NA')) ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, $query_values, $limit_query);
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
 	}
@@ -1217,7 +1226,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByDate($date = '', $limit = '', $sort = '')
+	public function getSpotterDataByDate($date = '', $limit = '', $sort = '')
 	{
 		global $global_query, $globalTimezone, $globalDBdriver;
 		
@@ -1255,7 +1264,7 @@ class Spotter{
 
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -1263,7 +1272,7 @@ class Spotter{
 
 		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
 		
-		$spotter_array = Spotter::getDataFromDB($query, $query_values, $limit_query);
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
 	}
@@ -1276,7 +1285,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByCountry($country = '', $limit = '', $sort = '')
+	public function getSpotterDataByCountry($country = '', $limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -1312,7 +1321,7 @@ class Spotter{
 					
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -1320,7 +1329,7 @@ class Spotter{
 
 		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, $query_values, $limit_query);
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
 	}	
@@ -1332,7 +1341,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByManufacturer($aircraft_manufacturer = '', $limit = '', $sort = '')
+	public function getSpotterDataByManufacturer($aircraft_manufacturer = '', $limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -1368,7 +1377,7 @@ class Spotter{
 
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -1376,7 +1385,7 @@ class Spotter{
 
 		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, $query_values, $limit_query);
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
 	}
@@ -1392,7 +1401,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByRoute($departure_airport_icao = '', $arrival_airport_icao = '', $limit = '', $sort = '')
+	public function getSpotterDataByRoute($departure_airport_icao = '', $arrival_airport_icao = '', $limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -1438,7 +1447,7 @@ class Spotter{
 	
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -1448,7 +1457,7 @@ class Spotter{
           
 		//$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 
-		$spotter_array = Spotter::getDataFromDB($query, $query_values, $limit_query);
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
 	}
@@ -1461,7 +1470,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getSpotterDataByHighlight($limit = '', $sort = '')
+	public function getSpotterDataByHighlight($limit = '', $sort = '')
 	{
 		global $global_query;
 		
@@ -1483,7 +1492,7 @@ class Spotter{
 		
 		if ($sort != "")
 		{
-			$search_orderby_array = Spotter::getOrderBy();
+			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
@@ -1491,7 +1500,7 @@ class Spotter{
 
 		$query  = $global_query." WHERE spotter_output.highlight <> '' ".$orderby_query;
 
-		$spotter_array = Spotter::getDataFromDB($query, array(), $limit_query);
+		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
 		return $spotter_array;
 	}
@@ -1504,7 +1513,7 @@ class Spotter{
 	* @return String the highlight text
 	*
 	*/
-	public static function getHighlightByRegistration($registration)
+	public function getHighlightByRegistration($registration)
 	{
 		global $global_query;
 		
@@ -1512,9 +1521,9 @@ class Spotter{
 		
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
-		$Connection = new Connection();
+		
 		$query  = $global_query." WHERE spotter_output.highlight <> '' AND spotter_output.registration = :registration";
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
 
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -1533,7 +1542,7 @@ class Spotter{
 	* @return String usage
 	*
 	*/
-	public static function getSquawkUsage($squawk = '',$country = 'FR')
+	public function getSquawkUsage($squawk = '',$country = 'FR')
 	{
 		
 		$squawk = filter_var($squawk,FILTER_SANITIZE_STRING);
@@ -1543,8 +1552,8 @@ class Spotter{
 
 		$query  = "SELECT squawk.* FROM squawk WHERE squawk.code = :squawk AND squawk.country = :country LIMIT 1";
 		$query_values = array(':squawk' => ltrim($squawk,'0'), ':country' => $country);
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute($query_values);
     
 		$temp_array = array();
@@ -1562,7 +1571,7 @@ class Spotter{
 	* @return String airport iata
 	*
 	*/
-	public static function getAirportIcao($airport_iata = '')
+	public function getAirportIcao($airport_iata = '')
 	{
 		
 		$airport_iata = filter_var($airport_iata,FILTER_SANITIZE_STRING);
@@ -1572,8 +1581,8 @@ class Spotter{
 		$query  = "SELECT airport.* FROM airport WHERE airport.iata = :airport LIMIT 1";
 		$query_values = array(':airport' => $airport_iata);
 		
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute($query_values);
     
 		$airport_array = array();
@@ -1592,7 +1601,7 @@ class Spotter{
 	* @return Array airport information
 	*
 	*/
-	public static function getAllAirportInfo($airport = '')
+	public function getAllAirportInfo($airport = '')
 	{
 		
 		$airport = filter_var($airport,FILTER_SANITIZE_STRING);
@@ -1605,8 +1614,8 @@ class Spotter{
 			$query  = "SELECT airport.* FROM airport WHERE airport.icao = :airport";
 			$query_values = array(':airport' => $airport);
 		}
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute($query_values);
     
 		$airport_array = array();
@@ -1636,7 +1645,7 @@ class Spotter{
 	* @return Array airport information
 	*
 	*/
-	public static function getAllAirportInfobyCountry($countries)
+	public function getAllAirportInfobyCountry($countries)
 	{
 		$lst_countries = '';
 		foreach ($countries as $country) {
@@ -1648,8 +1657,8 @@ class Spotter{
 			}
 		}
 		$query  = "SELECT airport.* FROM airport WHERE airport.country IN (".$lst_countries.")";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
     
 		$airport_array = array();
@@ -1679,7 +1688,7 @@ class Spotter{
 	* @return Array airport information
 	*
 	*/
-	public static function getAllAirportInfobyCoord($coord)
+	public function getAllAirportInfobyCoord($coord)
 	{
 		$lst_countries = '';
 		if (is_array($coord)) {
@@ -1689,8 +1698,8 @@ class Spotter{
 			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		}
 		$query  = "SELECT airport.* FROM airport WHERE airport.latitude BETWEEN ".$minlat." AND ".$maxlat." AND airport.longitude BETWEEN ".$minlong." AND ".$maxlong." AND airport.type != 'closed'";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
     
 		$airport_array = array();
@@ -1713,7 +1722,7 @@ class Spotter{
 	* @return Array airport information
 	*
 	*/
-	public static function getAllWaypointsInfobyCoord($coord)
+	public function getAllWaypointsInfobyCoord($coord)
 	{
 		$lst_countries = '';
 		if (is_array($coord)) {
@@ -1729,8 +1738,8 @@ class Spotter{
 		//$query = "SELECT * FROM waypoints LEFT JOIN waypoints w ON waypoints.name_end = w.name_begin WHERE waypoints.latitude_begin BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude_begin BETWEEN ".$minlong." AND ".$maxlong;
 		//$query = "SELECT z.name_begin as name_begin, z.name_end as name_end, z.latitude_begin as latitude_begin, z.longitude_begin as longitude_begin, z.latitude_end as latitude_end, z.longitude_end as longitude_end, z.segment_name as segment_name, w.name_end as name_end_seg2, w.latitude_end as latitude_end_seg2, w.longitude_end as longitude_end_seg2, w.segment_name as segment_name_seg2 FROM waypoints z INNER JOIN waypoints w ON z.name_end = w.name_begin WHERE z.latitude_begin BETWEEN ".$minlat." AND ".$maxlat." AND z.longitude_begin BETWEEN ".$minlong." AND ".$maxlong;
 		//echo $query;
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
     
 		$waypoints_array = array();
@@ -1754,7 +1763,7 @@ class Spotter{
 	* @return Array airport information
 	*
 	*/
-	public static function getAllAirlineInfo($airline_icao)
+	public function getAllAirlineInfo($airline_icao)
 	{
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 		if ($airline_icao == 'NA') {
@@ -1766,8 +1775,8 @@ class Spotter{
 			} else {
 			    $query  = "SELECT airlines.* FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y'";
 			}
-			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			
+			$sth = $this->db->prepare($query);
 			$sth->execute(array(':airline_icao' => $airline_icao));
 
 			$airline_array = array();
@@ -1796,13 +1805,13 @@ class Spotter{
 	* @return Array aircraft information
 	*
 	*/
-	public static function getAllAircraftInfo($aircraft_type)
+	public function getAllAircraftInfo($aircraft_type)
 	{
 		$aircraft_type = filter_var($aircraft_type,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT aircraft.* FROM aircraft WHERE aircraft.icao = :aircraft_type";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_type' => $aircraft_type));
 
 		$aircraft_array = array();
@@ -1829,13 +1838,13 @@ class Spotter{
 	* @return String aircraft type
 	*
 	*/
-	public static function getAllAircraftType($aircraft_modes)
+	public function getAllAircraftType($aircraft_modes)
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT aircraft_modes.ICAOTypeCode FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes LIMIT 1";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
@@ -1851,12 +1860,12 @@ class Spotter{
 	* @return String aircraft operator code
 	*
 	*/
-	public static function getOperator($operator)
+	public function getOperator($operator)
 	{
 		$operator = filter_var($operator,FILTER_SANITIZE_STRING);
 		$query  = "SELECT translation.operator_correct FROM translation WHERE translation.operator = :operator LIMIT 1";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':operator' => $operator));
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
@@ -1872,13 +1881,13 @@ class Spotter{
 	* @return Array aircraft type
 	*
 	*/
-	public static function getRouteInfo($callsign)
+	public function getRouteInfo($callsign)
 	{
 		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
                 if ($callsign == '') return array();
 		$query  = "SELECT * FROM routes WHERE CallSign = :callsign LIMIT 1";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':callsign' => $callsign));
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
@@ -1894,13 +1903,13 @@ class Spotter{
 	* @return Array aircraft information
 	*
 	*/
-	public static function getAircraftInfoByRegistration($registration)
+	public function getAircraftInfoByRegistration($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.airline_icao FROM spotter_output WHERE spotter_output.registration = :registration";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
 
 		$aircraft_array = array();
@@ -1926,11 +1935,11 @@ class Spotter{
 	* @return Array basic flight information
 	*
 	*/
-	public static function getAllFlightsforSitemap()
+	public function getAllFlightsforSitemap()
 	{
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.ident, spotter_output.airline_name, spotter_output.aircraft_name, spotter_output.aircraft_icao, spotter_output.image FROM spotter_output";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 
 		$flight_array = array();
@@ -1957,19 +1966,14 @@ class Spotter{
 	* @return Array list of aircraft types
 	*
 	*/
-	public static function getAllManufacturers()
+	public function getAllManufacturers()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer AS aircraft_manufacturer
 								FROM spotter_output
 								WHERE spotter_output.aircraft_manufacturer <> '' 
 								ORDER BY spotter_output.aircraft_manufacturer ASC";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 
 		$manufacturer_array = array();
@@ -1992,15 +1996,15 @@ class Spotter{
 	* @return Array list of aircraft types
 	*
 	*/
-	public static function getAllAircraftTypes()
+	public function getAllAircraftTypes()
 	{
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao AS aircraft_icao, spotter_output.aircraft_name AS aircraft_name
 								FROM spotter_output  
 								WHERE spotter_output.aircraft_icao <> '' 
 								ORDER BY spotter_output.aircraft_name ASC";
 								
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 
 		$aircraft_array = array();
@@ -2024,15 +2028,15 @@ class Spotter{
 	* @return Array list of aircraft registrations
 	*
 	*/
-	public static function getAllAircraftRegistrations()
+	public function getAllAircraftRegistrations()
 	{
 		$query  = "SELECT DISTINCT spotter_output.registration 
 								FROM spotter_output  
 								WHERE spotter_output.registration <> '' 
 								ORDER BY spotter_output.registration ASC";						
 								
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 
 		$aircraft_array = array();
@@ -2056,7 +2060,7 @@ class Spotter{
 	* @return Array list of airline names
 	*
 	*/
-	public static function getAllAirlineNames($airline_type = '')
+	public function getAllAirlineNames($airline_type = '')
 	{
 		$airline_type = filter_var($airline_type,FILTER_SANITIZE_STRING);
 		if ($airline_type == '' || $airline_type == 'all') {
@@ -2071,8 +2075,8 @@ class Spotter{
 								AND spotter_output.airline_type = :airline_type 
 								ORDER BY spotter_output.airline_name ASC";
 		}
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		if ($airline_type != '' || $airline_type == 'all') {
 			$sth->execute(array(':airline_type' => $airline_type));
 		} else {
@@ -2100,15 +2104,15 @@ class Spotter{
 	* @return Array list of airline countries
 	*
 	*/
-	public static function getAllAirlineCountries()
+	public function getAllAirlineCountries()
 	{
 		$query  = "SELECT DISTINCT spotter_output.airline_country AS airline_country
 								FROM spotter_output  
 								WHERE spotter_output.airline_country <> '' 
 								ORDER BY spotter_output.airline_country ASC";						
 								
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 
 		$airline_array = array();
@@ -2132,7 +2136,7 @@ class Spotter{
 	* @return Array list of airport names
 	*
 	*/
-	public static function getAllAirportNames()
+	public function getAllAirportNames()
 	{
 		$airport_array = array();
 								
@@ -2141,8 +2145,8 @@ class Spotter{
 								WHERE spotter_output.departure_airport_icao <> '' AND spotter_output.departure_airport_icao <> 'NA' 
 								ORDER BY spotter_output.departure_airport_city ASC";		
 					
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 
 		$temp_array = array();
@@ -2162,7 +2166,7 @@ class Spotter{
 								WHERE spotter_output.arrival_airport_icao <> '' AND spotter_output.arrival_airport_icao <> 'NA' 
 								ORDER BY spotter_output.arrival_airport_city ASC";
 					
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -2188,7 +2192,7 @@ class Spotter{
 	* @return Array list of airport countries
 	*
 	*/
-	public static function getAllAirportCountries()
+	public function getAllAirportCountries()
 	{
 		$airport_array = array();
 					
@@ -2197,8 +2201,8 @@ class Spotter{
 								WHERE spotter_output.departure_airport_country <> '' 
 								ORDER BY spotter_output.departure_airport_country ASC";
 					
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
    
 		$temp_array = array();
@@ -2215,7 +2219,7 @@ class Spotter{
 								WHERE spotter_output.arrival_airport_country <> '' 
 								ORDER BY spotter_output.arrival_airport_country ASC";
 					
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -2240,13 +2244,10 @@ class Spotter{
 	* @return Array list of countries
 	*
 	*/
-	public static function getAllCountries()
+	public function getAllCountries()
 	{
-		if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-		if (Connection::tableExists('countries')) {
+		
+		if ($Connection->tableExists('countries')) {
 		
 		$country_array = array();
 					
@@ -2254,8 +2255,7 @@ class Spotter{
 								FROM countries
 								ORDER BY countries.name ASC";
 					
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute();
    
 		$temp_array = array();
@@ -2273,8 +2273,8 @@ class Spotter{
 								WHERE spotter_output.departure_airport_country <> '' 
 								ORDER BY spotter_output.departure_airport_country ASC";
 					
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
    
 		$temp_array = array();
@@ -2291,7 +2291,7 @@ class Spotter{
 								WHERE spotter_output.arrival_airport_country <> '' 
 								ORDER BY spotter_output.arrival_airport_country ASC";
 					
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -2309,7 +2309,7 @@ class Spotter{
 								WHERE spotter_output.airline_country <> '' 
 								ORDER BY spotter_output.airline_country ASC";
 					
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -2334,15 +2334,15 @@ class Spotter{
 	* @return Array list of ident/callsign names
 	*
 	*/
-	public static function getAllIdents()
+	public function getAllIdents()
 	{
 		$query  = "SELECT DISTINCT spotter_output.ident
 								FROM spotter_output
 								WHERE spotter_output.ident <> '' 
 								ORDER BY spotter_output.ident ASC";							
 								
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
     
 		$ident_array = array();
@@ -2366,7 +2366,7 @@ class Spotter{
 	* @return Array list of date names
 	*
 	*/
-	public static function getAllDates()
+	public function getAllDates()
 	{
 		global $globalTimezone;
 		if ($globalTimezone != '') {
@@ -2380,8 +2380,8 @@ class Spotter{
 								WHERE spotter_output.date <> '' 
 								ORDER BY spotter_output.date ASC";							
 								
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
     
 		$date_array = array();
@@ -2405,7 +2405,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function getAllRoutes()
+	public function getAllRoutes()
 	{
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route,  spotter_output.departure_airport_icao, spotter_output.arrival_airport_icao 
 					FROM spotter_output
@@ -2413,8 +2413,8 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
 	        $routes_array = array();
@@ -2443,9 +2443,13 @@ class Spotter{
 	* @return String success or false
 	*
 	*/	
-	public static function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '')
+	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '')
 	{
 		global $globalURL, $globalIVAO;
+		
+		$Image = new Image();
+		$Common = new Common();
+		
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		date_default_timezone_set('UTC');
 		
@@ -2457,11 +2461,11 @@ class Spotter{
 				return false;
 			} else {
 				if ($ModeS != '') {
-					$registration = Spotter::getAircraftRegistrationBymodeS($ModeS);
+					$registration = $this->getAircraftRegistrationBymodeS($ModeS);
 				} else {
 					$myhex = explode('-',$flightaware_id);
 					if (count($myhex) > 0) {
-						$registration = Spotter::getAircraftRegistrationBymodeS($myhex[0]);
+						$registration = $this->getAircraftRegistrationBymodeS($myhex[0]);
 					}
 				}
 			}
@@ -2478,21 +2482,21 @@ class Spotter{
 				if (!is_numeric(substr($ident, 0, 3)))
 				{
 					if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
-						$airline_array = Spotter::getAllAirlineInfo(substr($ident, 0, 2));
+						$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 2));
 					} elseif (is_numeric(substr(substr($ident, 0, 4), -1, 1))) {
-						$airline_array = Spotter::getAllAirlineInfo(substr($ident, 0, 3));
+						$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 3));
 					} else {
-						$airline_array = Spotter::getAllAirlineInfo("NA");
+						$airline_array = $this->getAllAirlineInfo("NA");
 					}
 					if (count($airline_array) == 0) {
-						$airline_array = Spotter::getAllAirlineInfo("NA");
+						$airline_array = $this->getAllAirlineInfo("NA");
 					}
 					if (!isset($airline_array[0]['icao']) || $airline_array[0]['icao'] == ""){
-						$airline_array = Spotter::getAllAirlineInfo("NA");
+						$airline_array = $this->getAllAirlineInfo("NA");
 					}
 					
 				} else {
-					$airline_array = Spotter::getAllAirlineInfo("NA");
+					$airline_array = $this->getAllAirlineInfo("NA");
 				}
 			}
 		}
@@ -2506,19 +2510,19 @@ class Spotter{
 			} else {
 				if ($aircraft_icao == "" || $aircraft_icao == "XXXX")
 				{
-					$aircraft_array = Spotter::getAllAircraftInfo("NA");
+					$aircraft_array = $this->getAllAircraftInfo("NA");
 				} else {
-					$aircraft_array = Spotter::getAllAircraftInfo($aircraft_icao);
+					$aircraft_array = $this->getAllAircraftInfo($aircraft_icao);
 				}
 			}
 		} else {
 			if ($ModeS != '') {
-				$aircraft_icao = Spotter::getAllAircraftType($ModeS);
+				$aircraft_icao = $this->getAllAircraftType($ModeS);
 				if ($aircraft_icao == "" || $aircraft_icao == "XXXX")
 				{
-					$aircraft_array = Spotter::getAllAircraftInfo("NA");
+					$aircraft_array = $this->getAllAircraftInfo("NA");
 				} else {
-					$aircraft_array = Spotter::getAllAircraftInfo($aircraft_icao);
+					$aircraft_array = $this->getAllAircraftInfo($aircraft_icao);
 				}
 			}
 		}
@@ -2530,7 +2534,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$departure_airport_array = Spotter::getAllAirportInfo($departure_airport_icao);
+				$departure_airport_array = $this->getAllAirportInfo($departure_airport_icao);
 			}
 		}
 		
@@ -2541,7 +2545,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$arrival_airport_array = Spotter::getAllAirportInfo($arrival_airport_icao);
+				$arrival_airport_array = $this->getAllAirportInfo($arrival_airport_icao);
 			}
 		}
 
@@ -2603,11 +2607,11 @@ class Spotter{
 		//getting the aircraft image
 		if (($registration != "" || $registration != 'NA') && !$globalIVAO)
 		{
-			$image_array = Image::getSpotterImage($registration);
+			$image_array = $Image->getSpotterImage($registration);
 			if (!isset($image_array[0]['registration']))
 			{
 				//echo "Add image !!!! \n";
-				Image::addSpotterImage($registration);
+				$Image->addSpotterImage($registration);
 			}
 		}
     
@@ -2615,11 +2619,11 @@ class Spotter{
 		{
             		if (isset($airline_array[0]['icao'])) $airline_icao = $airline_array[0]['icao'];
             		else $airline_icao = '';
-			$image_array = Image::getSpotterImage('',$aircraft_icao,$airline_icao);
+			$image_array = $Image->getSpotterImage('',$aircraft_icao,$airline_icao);
 			if (!isset($image_array[0]['registration']))
 			{
 				//echo "Add image !!!! \n";
-				Image::addSpotterImage('',$aircraft_icao,$airline_icao);
+				$Image->addSpotterImage('',$aircraft_icao,$airline_icao);
 			}
 		}
     
@@ -2644,25 +2648,25 @@ class Spotter{
 	
 		if (count($airline_array) == 0) 
 		{
-                        $airline_array = Spotter::getAllAirlineInfo('NA');
+                        $airline_array = $this->getAllAirlineInfo('NA');
                 }
                 if (count($aircraft_array) == 0) 
                 {
-                        $aircraft_array = Spotter::getAllAircraftInfo('NA');
+                        $aircraft_array = $this->getAllAircraftInfo('NA');
                 }
                 if (count($departure_airport_array) == 0) 
                 {
-                        $departure_airport_array = Spotter::getAllAirportInfo('NA');
+                        $departure_airport_array = $this->getAllAirportInfo('NA');
                 }
                 if (count($arrival_airport_array) == 0) 
                 {
-                        $arrival_airport_array = Spotter::getAllAirportInfo('NA');
+                        $arrival_airport_array = $this->getAllAirportInfo('NA');
                 }
                 if ($registration == '') $registration = 'NA';
-                if ($squawk == '' || Common::isInteger($squawk) == false) $squawk = NULL;
-                if ($verticalrate == '' || Common::isInteger($verticalrate) == false) $verticalrate = NULL;
-                if ($heading == '' || Common::isInteger($heading) == false) $heading = 0;
-                if ($groundspeed == '' || Common::isInteger($groundspeed) == false) $groundspeed = 0;
+                if ($squawk == '' || $Common->isInteger($squawk) == false) $squawk = NULL;
+                if ($verticalrate == '' || $Common->isInteger($verticalrate) == false) $verticalrate = NULL;
+                if ($heading == '' || $Common->isInteger($heading) == false) $heading = 0;
+                if ($groundspeed == '' || $Common->isInteger($groundspeed) == false) $groundspeed = 0;
                 $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop,highlight,ModeS, pilot_id, pilot_name, verticalrate) 
                 VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time, :squawk, :route_stop, :highlight, :ModeS, :pilot_id, :pilot_name, :verticalrate)";
 
@@ -2683,10 +2687,10 @@ class Spotter{
 
 
 		try {
-		        $Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+		        
+			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
-			Connection::$db = null;
+			$this->db = null;
 		} catch (PDOException $e) {
 		    return "error : ".$e->getMessage();
 		}
@@ -2702,7 +2706,7 @@ class Spotter{
 	* @return String the ident
 	*
 	*/
-	public static function getIdentFromLastHour($ident)
+	public function getIdentFromLastHour($ident)
 	{
 		global $globalDBdriver, $globalTimezone;
 		if ($globalDBdriver == 'mysql') {
@@ -2714,12 +2718,12 @@ class Spotter{
 		} elseif ($globalDBdriver == 'pgsql') {
 			$query  = "SELECT spotter_output.ident FROM spotter_output 
 								WHERE spotter_output.ident = :ident 
-								AND spotter_output.date >= now() AT TIME ZONE 'UTC' - '1 HOUR'::INTERVAL
+								AND spotter_output.date >= now() AT TIME ZONE 'UTC' - '1 HOUR'->INTERVAL
 								AND spotter_output.date < now() AT TIME ZONE 'UTC'";
 			$query_data = array(':ident' => $ident);
     		}
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute($query_data);
     		$ident_result='';
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -2737,7 +2741,7 @@ class Spotter{
 	* @return Array the spotter data
 	*
 	*/
-	public static function getRealTimeData($q = '')
+	public function getRealTimeData($q = '')
 	{
 		$additional_query = '';
 		if ($q != "")
@@ -2766,7 +2770,7 @@ class Spotter{
 								WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 20 SECOND) ".$additional_query." 
 								AND spotter_output.date < UTC_TIMESTAMP()";
       
-		$spotter_array = Spotter::getDataFromDB($query, array());
+		$spotter_array = $this->getDataFromDB($query, array());
 
 		return $spotter_array;
 	}
@@ -2779,7 +2783,7 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public static function countAllAirlines()
+	public function countAllAirlines()
 	{
 /*
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
@@ -2796,8 +2800,8 @@ class Spotter{
 					ORDER BY airline_count DESC
 					LIMIT 10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
         $airline_array = array();
@@ -2823,7 +2827,7 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public static function countAllAirlinesByAircraft($aircraft_icao)
+	public function countAllAirlinesByAircraft($aircraft_icao)
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
@@ -2833,8 +2837,8 @@ class Spotter{
                     GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
         $airline_array = array();
@@ -2860,7 +2864,7 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public static function countAllAirlineCountriesByAircraft($aircraft_icao)
+	public function countAllAirlineCountriesByAircraft($aircraft_icao)
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
       
@@ -2871,8 +2875,8 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
         $airline_country_array = array();
@@ -2899,7 +2903,7 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public static function countAllAirlinesByAirport($airport_icao)
+	public function countAllAirlinesByAirport($airport_icao)
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
@@ -2909,8 +2913,8 @@ class Spotter{
                     GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
         $airline_array = array();
@@ -2936,7 +2940,7 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public static function countAllAirlineCountriesByAirport($airport_icao)
+	public function countAllAirlineCountriesByAirport($airport_icao)
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
       
@@ -2947,8 +2951,8 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
         $airline_country_array = array();
@@ -2972,7 +2976,7 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public static function countAllAirlinesByManufacturer($aircraft_manufacturer)
+	public function countAllAirlinesByManufacturer($aircraft_manufacturer)
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
@@ -2982,8 +2986,8 @@ class Spotter{
                     GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
         $airline_array = array();
@@ -3011,7 +3015,7 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public static function countAllAirlineCountriesByManufacturer($aircraft_manufacturer)
+	public function countAllAirlineCountriesByManufacturer($aircraft_manufacturer)
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
       
@@ -3022,8 +3026,8 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
         $airline_country_array = array();
@@ -3049,7 +3053,7 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public static function countAllAirlinesByDate($date)
+	public function countAllAirlinesByDate($date)
 	{
 		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
@@ -3067,8 +3071,8 @@ class Spotter{
            GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
         $airline_array = array();
@@ -3094,7 +3098,7 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public static function countAllAirlineCountriesByDate($date)
+	public function countAllAirlineCountriesByDate($date)
 	{
 		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
@@ -3111,8 +3115,8 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
         $airline_country_array = array();
@@ -3137,7 +3141,7 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public static function countAllAirlinesByIdent($ident)
+	public function countAllAirlinesByIdent($ident)
 	{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
@@ -3147,8 +3151,8 @@ class Spotter{
            GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
       
         $airline_array = array();
@@ -3176,7 +3180,7 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public static function countAllAirlinesByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllAirlinesByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
@@ -3187,8 +3191,8 @@ class Spotter{
            GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao));
       
         $airline_array = array();
@@ -3215,7 +3219,7 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public static function countAllAirlineCountriesByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllAirlineCountriesByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
@@ -3227,8 +3231,8 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao));
       
         $airline_country_array = array();
@@ -3253,7 +3257,7 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public static function countAllAirlinesByCountry($country)
+	public function countAllAirlinesByCountry($country)
 	{
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
@@ -3263,8 +3267,8 @@ class Spotter{
            GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
         $airline_array = array();
@@ -3290,7 +3294,7 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public static function countAllAirlineCountriesByCountry($country)
+	public function countAllAirlineCountriesByCountry($country)
 	{
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
       
@@ -3301,8 +3305,8 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
         $airline_country_array = array();
@@ -3328,7 +3332,7 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public static function countAllAirlineCountries()
+	public function countAllAirlineCountries()
 	{
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
 		 			FROM spotter_output
@@ -3337,8 +3341,8 @@ class Spotter{
 					ORDER BY airline_country_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
         $airline_array = array();
@@ -3362,7 +3366,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftTypes()
+	public function countAllAircraftTypes()
 	{
 /*
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
@@ -3379,8 +3383,8 @@ class Spotter{
 					ORDER BY aircraft_icao_count DESC
 					LIMIT 10 OFFSET 0";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
         $aircraft_array = array();
@@ -3405,8 +3409,9 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftRegistrationByAircraft($aircraft_icao)
+	public function countAllAircraftRegistrationByAircraft($aircraft_icao)
 	{
+		$Image = new Image();
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
@@ -3415,8 +3420,8 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
         $aircraft_array = array();
@@ -3431,7 +3436,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Image::getSpotterImage($row['registration']);
+                  $image_array = $Image->getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3451,7 +3456,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftTypesByAirline($airline_icao)
+	public function countAllAircraftTypesByAirline($airline_icao)
 	{
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
@@ -3461,8 +3466,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
       
         $aircraft_array = array();
@@ -3487,8 +3492,9 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftRegistrationByAirline($airline_icao)
+	public function countAllAircraftRegistrationByAirline($airline_icao)
 	{
+		$Image = new Image();
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
@@ -3497,8 +3503,8 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
       
         $aircraft_array = array();
@@ -3513,7 +3519,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Image::getSpotterImage($row['registration']);
+                  $image_array = $Image->getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3532,7 +3538,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftManufacturerByAirline($airline_icao)
+	public function countAllAircraftManufacturerByAirline($airline_icao)
 	{
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
@@ -3542,8 +3548,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
       
     $aircraft_array = array();
@@ -3567,7 +3573,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftTypesByAirport($airport_icao)
+	public function countAllAircraftTypesByAirport($airport_icao)
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
@@ -3577,8 +3583,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
         $aircraft_array = array();
@@ -3603,8 +3609,9 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftRegistrationByAirport($airport_icao)
+	public function countAllAircraftRegistrationByAirport($airport_icao)
 	{
+		$Image = new Image();
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
@@ -3613,8 +3620,8 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
         $aircraft_array = array();
@@ -3629,7 +3636,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Image::getSpotterImage($row['registration']);
+                  $image_array = $Image->getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3647,7 +3654,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftManufacturerByAirport($airport_icao)
+	public function countAllAircraftManufacturerByAirport($airport_icao)
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
@@ -3657,8 +3664,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
     $aircraft_array = array();
@@ -3683,7 +3690,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftTypesByManufacturer($aircraft_manufacturer)
+	public function countAllAircraftTypesByManufacturer($aircraft_manufacturer)
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
@@ -3693,8 +3700,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
         $aircraft_array = array();
@@ -3719,8 +3726,9 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftRegistrationByManufacturer($aircraft_manufacturer)
+	public function countAllAircraftRegistrationByManufacturer($aircraft_manufacturer)
 	{
+		$Image = new Image();
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
@@ -3729,8 +3737,8 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
         $aircraft_array = array();
@@ -3745,7 +3753,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Image::getSpotterImage($row['registration']);
+                  $image_array = $Image->getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3764,7 +3772,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftTypesByDate($date)
+	public function countAllAircraftTypesByDate($date)
 	{
 		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
@@ -3780,8 +3788,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
         $aircraft_array = array();
@@ -3806,9 +3814,10 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftRegistrationByDate($date)
+	public function countAllAircraftRegistrationByDate($date)
 	{
 		global $globalTimezone;
+		$Image = new Image();
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -3824,8 +3833,8 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
         $aircraft_array = array();
@@ -3840,7 +3849,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
             if($row['registration'] != "")
               {
-                  $image_array = Image::getSpotterImage($row['registration']);
+                  $image_array = $Image->getSpotterImage($row['registration']);
                   $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
               }
             $temp_array['registration_count'] = $row['registration_count'];
@@ -3858,7 +3867,7 @@ class Spotter{
 	* @return Array the aircraft manufacturer list
 	*
 	*/
-	public static function countAllAircraftManufacturerByDate($date)
+	public function countAllAircraftManufacturerByDate($date)
 	{
 		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
@@ -3875,8 +3884,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
     $aircraft_array = array();
@@ -3901,7 +3910,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftTypesByIdent($ident)
+	public function countAllAircraftTypesByIdent($ident)
 	{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
@@ -3911,8 +3920,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
       
         $aircraft_array = array();
@@ -3937,8 +3946,9 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftRegistrationByIdent($ident)
+	public function countAllAircraftRegistrationByIdent($ident)
 	{
+		$Image = new Image();
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
@@ -3947,8 +3957,8 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
       
 		$aircraft_array = array();
@@ -3963,7 +3973,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
 			if($row['registration'] != "")
 			{
-				$image_array = Image::getSpotterImage($row['registration']);
+				$image_array = $Image->getSpotterImage($row['registration']);
 				if (isset($image_array[0]['image_thumbnail'])) $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
 				else $temp_array['image_thumbnail'] = '';
 			}
@@ -3980,7 +3990,7 @@ class Spotter{
 	* @return Array the aircraft manufacturer list
 	*
 	*/
-	public static function countAllAircraftManufacturerByIdent($ident)
+	public function countAllAircraftManufacturerByIdent($ident)
 	{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
@@ -3990,8 +4000,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
       
     $aircraft_array = array();
@@ -4015,7 +4025,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftTypesByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllAircraftTypesByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
@@ -4027,8 +4037,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao));
       
         $aircraft_array = array();
@@ -4053,8 +4063,9 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftRegistrationByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllAircraftRegistrationByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
+		$Image = new Image();
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
@@ -4064,8 +4075,8 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao));
       
 		$aircraft_array = array();
@@ -4080,7 +4091,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
 			if($row['registration'] != "")
 			{
-				$image_array = Image::getSpotterImage($row['registration']);
+				$image_array = $Image->getSpotterImage($row['registration']);
 				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
 			}
 			$temp_array['registration_count'] = $row['registration_count'];
@@ -4098,7 +4109,7 @@ class Spotter{
 	* @return Array the aircraft manufacturer list
 	*
 	*/
-	public static function countAllAircraftManufacturerByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllAircraftManufacturerByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
@@ -4109,8 +4120,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao));
       
 		$aircraft_array = array();
@@ -4136,7 +4147,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftTypesByCountry($country)
+	public function countAllAircraftTypesByCountry($country)
 	{
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
@@ -4146,8 +4157,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
 		$aircraft_array = array();
@@ -4172,8 +4183,9 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftRegistrationByCountry($country)
+	public function countAllAircraftRegistrationByCountry($country)
 	{
+		$Image = new Image();
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name 
@@ -4182,8 +4194,8 @@ class Spotter{
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
 		$aircraft_array = array();
@@ -4198,7 +4210,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
 			if($row['registration'] != "")
 			{
-				$image_array = Image::getSpotterImage($row['registration']);
+				$image_array = $Image->getSpotterImage($row['registration']);
 				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
 			}
 			$temp_array['registration_count'] = $row['registration_count'];
@@ -4216,7 +4228,7 @@ class Spotter{
 	* @return Array the aircraft manufacturer list
 	*
 	*/
-	public static function countAllAircraftManufacturerByCountry($country)
+	public function countAllAircraftManufacturerByCountry($country)
 	{
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
@@ -4226,8 +4238,8 @@ class Spotter{
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
 		$aircraft_array = array();
@@ -4252,7 +4264,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftManufacturers()
+	public function countAllAircraftManufacturers()
 	{
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output 
@@ -4261,8 +4273,8 @@ class Spotter{
 					ORDER BY aircraft_manufacturer_count DESC
 					LIMIT 10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
 		$manufacturer_array = array();
@@ -4287,8 +4299,9 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public static function countAllAircraftRegistrations()
+	public function countAllAircraftRegistrations()
 	{
+		$Image = new Image();
 		$query  = "SELECT DISTINCT spotter_output.registration, COUNT(spotter_output.registration) AS aircraft_registration_count, spotter_output.aircraft_icao,  spotter_output.aircraft_name, spotter_output.airline_name    
                     FROM spotter_output 
                     WHERE spotter_output.registration <> '' AND spotter_output.registration <> 'NA' 
@@ -4296,8 +4309,8 @@ class Spotter{
 					ORDER BY aircraft_registration_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
 		$aircraft_array = array();
@@ -4313,7 +4326,7 @@ class Spotter{
 			$temp_array['image_thumbnail'] = "";
 			if($row['registration'] != "")
 			{
-				$image_array = Image::getSpotterImage($row['registration']);
+				$image_array = $Image->getSpotterImage($row['registration']);
 				if (isset($image_array[0]['image_thumbnail'])) $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
 			}
           
@@ -4332,7 +4345,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirports()
+	public function countAllDepartureAirports()
 	{
 /*
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
@@ -4349,8 +4362,8 @@ class Spotter{
 					ORDER BY airport_departure_icao_count DESC
 					LIMIT 10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
 		$airport_array = array();
@@ -4377,7 +4390,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportsByAirline($airline_icao)
+	public function countAllDepartureAirportsByAirline($airline_icao)
 	{
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
@@ -4387,8 +4400,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
       
 		$airport_array = array();
@@ -4416,7 +4429,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportCountriesByAirline($airline_icao)
+	public function countAllDepartureAirportCountriesByAirline($airline_icao)
 	{
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 					
@@ -4426,8 +4439,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
       
 		$airport_array = array();
@@ -4452,7 +4465,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportsByAircraft($aircraft_icao)
+	public function countAllDepartureAirportsByAircraft($aircraft_icao)
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
@@ -4462,8 +4475,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
 		$airport_array = array();
@@ -4490,7 +4503,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportCountriesByAircraft($aircraft_icao)
+	public function countAllDepartureAirportCountriesByAircraft($aircraft_icao)
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 					
@@ -4500,8 +4513,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
 		$airport_array = array();
@@ -4525,7 +4538,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportsByRegistration($registration)
+	public function countAllDepartureAirportsByRegistration($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
@@ -4535,8 +4548,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
       
 		$airport_array = array();
@@ -4563,7 +4576,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportCountriesByRegistration($registration)
+	public function countAllDepartureAirportCountriesByRegistration($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 					
@@ -4573,8 +4586,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
       
 		$airport_array = array();
@@ -4598,7 +4611,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportsByAirport($airport_icao)
+	public function countAllDepartureAirportsByAirport($airport_icao)
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
@@ -4608,8 +4621,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
 		$airport_array = array();
@@ -4636,7 +4649,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportCountriesByAirport($airport_icao)
+	public function countAllDepartureAirportCountriesByAirport($airport_icao)
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 					
@@ -4646,8 +4659,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
 		$airport_array = array();
@@ -4672,7 +4685,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportsByManufacturer($aircraft_manufacturer)
+	public function countAllDepartureAirportsByManufacturer($aircraft_manufacturer)
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
@@ -4682,8 +4695,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
 		$airport_array = array();
@@ -4710,7 +4723,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportCountriesByManufacturer($aircraft_manufacturer)
+	public function countAllDepartureAirportCountriesByManufacturer($aircraft_manufacturer)
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 					
@@ -4720,8 +4733,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
 		$airport_array = array();
@@ -4745,7 +4758,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportsByDate($date)
+	public function countAllDepartureAirportsByDate($date)
 	{
 		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
@@ -4763,8 +4776,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$airport_array = array();
@@ -4792,7 +4805,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportCountriesByDate($date)
+	public function countAllDepartureAirportCountriesByDate($date)
 	{
 		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
@@ -4808,8 +4821,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$airport_array = array();
@@ -4834,7 +4847,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportsByIdent($ident)
+	public function countAllDepartureAirportsByIdent($ident)
 	{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
@@ -4844,8 +4857,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
       
 		$airport_array = array();
@@ -4873,7 +4886,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportCountriesByIdent($ident)
+	public function countAllDepartureAirportCountriesByIdent($ident)
 	{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 					
@@ -4883,8 +4896,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
       
 		$airport_array = array();
@@ -4909,7 +4922,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportsByCountry($country)
+	public function countAllDepartureAirportsByCountry($country)
 	{
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 
@@ -4919,8 +4932,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
 		$airport_array = array();
@@ -4947,7 +4960,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllDepartureAirportCountriesByCountry($country)
+	public function countAllDepartureAirportCountriesByCountry($country)
 	{
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 					
@@ -4957,8 +4970,8 @@ class Spotter{
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
 		$airport_array = array();
@@ -4982,7 +4995,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirports()
+	public function countAllArrivalAirports()
 	{
 /*
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
@@ -4999,8 +5012,8 @@ class Spotter{
 					ORDER BY airport_arrival_icao_count DESC
 					LIMIT 10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
 		$airport_array = array();
@@ -5028,7 +5041,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportsByAirline($airline_icao)
+	public function countAllArrivalAirportsByAirline($airline_icao)
 	{
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
@@ -5038,8 +5051,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
       
 		$airport_array = array();
@@ -5066,7 +5079,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportCountriesByAirline($airline_icao)
+	public function countAllArrivalAirportCountriesByAirline($airline_icao)
 	{
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 					
@@ -5076,8 +5089,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
       
 		$airport_array = array();
@@ -5101,7 +5114,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportsByAircraft($aircraft_icao)
+	public function countAllArrivalAirportsByAircraft($aircraft_icao)
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
@@ -5111,8 +5124,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
 		$airport_array = array();
@@ -5140,7 +5153,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportCountriesByAircraft($aircraft_icao)
+	public function countAllArrivalAirportCountriesByAircraft($aircraft_icao)
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 					
@@ -5150,8 +5163,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
 		$airport_array = array();
@@ -5175,7 +5188,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportsByRegistration($registration)
+	public function countAllArrivalAirportsByRegistration($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
@@ -5185,8 +5198,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
       
 		$airport_array = array();
@@ -5213,7 +5226,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportCountriesByRegistration($registration)
+	public function countAllArrivalAirportCountriesByRegistration($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 					
@@ -5223,8 +5236,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
       
 		$airport_array = array();
@@ -5249,7 +5262,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportsByAirport($airport_icao)
+	public function countAllArrivalAirportsByAirport($airport_icao)
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
@@ -5259,8 +5272,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
 		$airport_array = array();
@@ -5287,7 +5300,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportCountriesByAirport($airport_icao)
+	public function countAllArrivalAirportCountriesByAirport($airport_icao)
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 					
@@ -5297,8 +5310,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
 		$airport_array = array();
@@ -5322,7 +5335,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportsByManufacturer($aircraft_manufacturer)
+	public function countAllArrivalAirportsByManufacturer($aircraft_manufacturer)
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
@@ -5332,8 +5345,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
 		$airport_array = array();
@@ -5361,7 +5374,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportCountriesByManufacturer($aircraft_manufacturer)
+	public function countAllArrivalAirportCountriesByManufacturer($aircraft_manufacturer)
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 					
@@ -5371,8 +5384,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
 		$airport_array = array();
@@ -5397,7 +5410,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportsByDate($date)
+	public function countAllArrivalAirportsByDate($date)
 	{
 		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
@@ -5413,8 +5426,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$airport_array = array();
@@ -5442,7 +5455,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportCountriesByDate($date)
+	public function countAllArrivalAirportCountriesByDate($date)
 	{
 		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
@@ -5458,8 +5471,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$airport_array = array();
@@ -5484,7 +5497,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportsByIdent($ident)
+	public function countAllArrivalAirportsByIdent($ident)
 	{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
@@ -5494,8 +5507,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
       
 		$airport_array = array();
@@ -5522,7 +5535,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportCountriesByIdent($ident)
+	public function countAllArrivalAirportCountriesByIdent($ident)
 	{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 					
@@ -5532,8 +5545,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
       
 		$airport_array = array();
@@ -5558,7 +5571,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportsByCountry($country)
+	public function countAllArrivalAirportsByCountry($country)
 	{
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
@@ -5568,8 +5581,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
 		$airport_array = array();
@@ -5596,7 +5609,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public static function countAllArrivalAirportCountriesByCountry($country)
+	public function countAllArrivalAirportCountriesByCountry($country)
 	{
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 					
@@ -5606,8 +5619,8 @@ class Spotter{
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
 		$airport_array = array();
@@ -5632,7 +5645,7 @@ class Spotter{
 	* @return Array the airport departure list
 	*
 	*/
-	public static function countAllDepartureCountries()
+	public function countAllDepartureCountries()
 	{
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 								FROM spotter_output 
@@ -5641,8 +5654,8 @@ class Spotter{
 					ORDER BY airport_departure_country_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
 		$airport_array = array();
@@ -5666,7 +5679,7 @@ class Spotter{
 	* @return Array the airport arrival list
 	*
 	*/
-	public static function countAllArrivalCountries()
+	public function countAllArrivalCountries()
 	{
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 								FROM spotter_output 
@@ -5675,8 +5688,8 @@ class Spotter{
 					ORDER BY airport_arrival_country_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
 		$airport_array = array();
@@ -5703,7 +5716,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function countAllRoutes()
+	public function countAllRoutes()
 	{
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
@@ -5713,8 +5726,8 @@ class Spotter{
                     ORDER BY route_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
 		$routes_array = array();
@@ -5747,7 +5760,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function countAllRoutesByAircraft($aircraft_icao)
+	public function countAllRoutesByAircraft($aircraft_icao)
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 		
@@ -5757,8 +5770,8 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
       
 		$routes_array = array();
@@ -5789,7 +5802,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function countAllRoutesByRegistration($registration)
+	public function countAllRoutesByRegistration($registration)
 	{
 		$registration = filter_var($registration, FILTER_SANITIZE_STRING);
 		
@@ -5799,8 +5812,8 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
       
 		$routes_array = array();
@@ -5832,7 +5845,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function countAllRoutesByAirline($airline_icao)
+	public function countAllRoutesByAirline($airline_icao)
 	{
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 		
@@ -5842,8 +5855,8 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
       
 		$routes_array = array();
@@ -5875,7 +5888,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function countAllRoutesByAirport($airport_icao)
+	public function countAllRoutesByAirport($airport_icao)
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 		
@@ -5885,8 +5898,8 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
       
 		$routes_array = array();
@@ -5918,7 +5931,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function countAllRoutesByCountry($country)
+	public function countAllRoutesByCountry($country)
 	{
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 		
@@ -5928,8 +5941,8 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
       
 		$routes_array = array();
@@ -5960,7 +5973,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function countAllRoutesByDate($date)
+	public function countAllRoutesByDate($date)
 	{
 		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
@@ -5976,8 +5989,8 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$routes_array = array();
@@ -6008,7 +6021,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function countAllRoutesByIdent($ident)
+	public function countAllRoutesByIdent($ident)
 	{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 		
@@ -6018,8 +6031,8 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
       
 		$routes_array = array();
@@ -6050,7 +6063,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function countAllRoutesByManufacturer($aircraft_manufacturer)
+	public function countAllRoutesByManufacturer($aircraft_manufacturer)
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufactuer,FILTER_SANITIZE_STRING);
 		
@@ -6060,8 +6073,8 @@ class Spotter{
                     GROUP BY route
                     ORDER BY route_count DESC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
       
 		$routes_array = array();
@@ -6093,7 +6106,7 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public static function countAllRoutesWithWaypoints()
+	public function countAllRoutesWithWaypoints()
 	{
 		$query  = "SELECT DISTINCT spotter_output.waypoints AS route, count(spotter_output.waypoints) AS route_count, spotter_output.spotter_id, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
 								FROM spotter_output
@@ -6102,8 +6115,8 @@ class Spotter{
                     ORDER BY route_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
 		$routes_array = array();
@@ -6137,7 +6150,7 @@ class Spotter{
 	* @return Array the callsign list
 	*
 	*/
-	public static function countAllCallsigns()
+	public function countAllCallsigns()
 	{
 		$query  = "SELECT DISTINCT spotter_output.ident, COUNT(spotter_output.ident) AS callsign_icao_count, spotter_output.airline_name, spotter_output.airline_icao  
                     FROM spotter_output
@@ -6146,8 +6159,8 @@ class Spotter{
 					ORDER BY callsign_icao_count DESC
 					LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
       
 		$callsign_array = array();
@@ -6175,7 +6188,7 @@ class Spotter{
 	* @return Array the date list
 	*
 	*/
-	public static function countAllDates()
+	public function countAllDates()
 	{
 		global $globalTimezone;
 		if ($globalTimezone != '') {
@@ -6190,8 +6203,8 @@ class Spotter{
 								ORDER BY date_count DESC
 								LIMIT 0,10";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
       
 		$date_array = array();
@@ -6216,7 +6229,7 @@ class Spotter{
 	* @return Array the date list
 	*
 	*/
-	public static function countAllDatesLast7Days()
+	public function countAllDatesLast7Days()
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -6236,13 +6249,13 @@ class Spotter{
 			// FIXME : not working
 			$query  = "SELECT spotter_output.date AT TIME ZONE :timezone AS date_name, count(*) as date_count
 								FROM spotter_output 
-								WHERE spotter_output.date >= NOW() AT TIME ZONE :timezone - '7 DAYS'::INTERVAL
+								WHERE spotter_output.date >= NOW() AT TIME ZONE :timezone - '7 DAYS'->INTERVAL
 								GROUP BY date_name 
 								ORDER BY date_name ASC";
 			$query_data = array(':timezone' => $globalTimezone);
     		}
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute($query_data);
       
 		$date_array = array();
@@ -6267,7 +6280,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHours($orderby)
+	public function countAllHours($orderby)
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -6307,8 +6320,8 @@ class Spotter{
 								LIMIT 100";
 		$query_data = array(':timezone' => $globalTimezone);
 		}
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute($query_data);
       
 		$hour_array = array();
@@ -6332,7 +6345,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursByAirline($airline_icao)
+	public function countAllHoursByAirline($airline_icao)
 	{
 		global $globalTimezone;
 		if ($globalTimezone != '') {
@@ -6349,8 +6362,8 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao,':offset' => $offset));
       
 		$hour_array = array();
@@ -6376,7 +6389,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursByAircraft($aircraft_icao)
+	public function countAllHoursByAircraft($aircraft_icao)
 	{
 		global $globalTimezone;
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
@@ -6392,8 +6405,8 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao,':offset' => $offset));
       
 		$hour_array = array();
@@ -6417,7 +6430,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursByRegistration($registration)
+	public function countAllHoursByRegistration($registration)
 	{
 		global $globalTimezone;
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
@@ -6433,8 +6446,8 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration,':offset' => $offset));
       
 		$hour_array = array();
@@ -6458,7 +6471,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursByAirport($airport_icao)
+	public function countAllHoursByAirport($airport_icao)
 	{
 		global $globalTimezone;
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
@@ -6474,8 +6487,8 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao,':offset' => $offset));
       
 		$hour_array = array();
@@ -6500,7 +6513,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursByManufacturer($aircraft_manufacturer)
+	public function countAllHoursByManufacturer($aircraft_manufacturer)
 	{
 		global $globalTimezone;
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
@@ -6516,8 +6529,8 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer,':offset' => $offset));
       
 		$hour_array = array();
@@ -6542,7 +6555,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursByDate($date)
+	public function countAllHoursByDate($date)
 	{
 		global $globalTimezone;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
@@ -6558,8 +6571,8 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
       
 		$hour_array = array();
@@ -6584,7 +6597,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursByIdent($ident)
+	public function countAllHoursByIdent($ident)
 	{
 		global $globalTimezone;
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
@@ -6600,8 +6613,8 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident,':offset' => $offset));
       
 		$hour_array = array();
@@ -6626,7 +6639,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllHoursByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
 		global $globalTimezone;
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
@@ -6643,8 +6656,8 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao,':offset' => $offset));
       
 		$hour_array = array();
@@ -6668,7 +6681,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursByCountry($country)
+	public function countAllHoursByCountry($country)
 	{
 		global $globalTimezone;
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
@@ -6684,8 +6697,8 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country,':offset' => $offset));
       
 		$hour_array = array();
@@ -6711,14 +6724,14 @@ class Spotter{
 	* @return Integer the number of aircrafts
 	*
 	*/
-	public static function countOverallAircrafts()
+	public function countOverallAircrafts()
 	{
 		$query  = "SELECT COUNT(DISTINCT spotter_output.aircraft_icao) AS aircraft_count  
                     FROM spotter_output
                     WHERE spotter_output.ident <> ''";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 		return $sth->fetchColumn();
 	}
@@ -6730,13 +6743,13 @@ class Spotter{
 	* @return Integer the number of flights
 	*
 	*/
-	public static function countOverallFlights()
+	public function countOverallFlights()
 	{
 		$query  = "SELECT COUNT(DISTINCT spotter_output.spotter_id) AS flight_count  
                     FROM spotter_output";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 		return $sth->fetchColumn();
 	}
@@ -6749,13 +6762,13 @@ class Spotter{
 	* @return Integer the number of airlines
 	*
 	*/
-	public static function countOverallAirlines()
+	public function countOverallAirlines()
 	{
 		$query  = "SELECT COUNT(DISTINCT spotter_output.airline_name) AS airline_count 
 							FROM spotter_output";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 		return $sth->fetchColumn();
 	}
@@ -6767,7 +6780,7 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public static function countAllHoursFromToday()
+	public function countAllHoursFromToday()
 	{
 		global $globalTimezone;
 		if ($globalTimezone != '') {
@@ -6782,8 +6795,8 @@ class Spotter{
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
       
 		$hour_array = array();
@@ -6805,7 +6818,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public static function getUpcomingFlights($limit = '', $sort = '')
+	public function getUpcomingFlights($limit = '', $sort = '')
 	{
 		global $global_query, $globalDBdriver, $globalTimezone;
 		date_default_timezone_set('UTC');
@@ -6831,7 +6844,7 @@ class Spotter{
 		if ($globalDBdriver == 'mysql') {
 			if ($sort != "")
 			{
-				$search_orderby_array = Spotter::getOrderBy();
+				$search_orderby_array = $this->getOrderBy();
 				$orderby_query = $search_orderby_array[$sort]['sql'];
 			} else {
 				$orderby_query = " ORDER BY HOUR(spotter_output.date) ASC";
@@ -6840,11 +6853,11 @@ class Spotter{
 			    FROM spotter_output
 			    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours'
 			    GROUP BY spotter_output.ident HAVING ident_count > 10 $orderby_query";
-			$spotter_array = Spotter::getDataFromDB($query.$limit_query);
+			$spotter_array = $this->getDataFromDB($query.$limit_query);
 		} else if ($globalDBdriver == 'pgsql') {
 			if ($sort != "")
 			{
-				$search_orderby_array = Spotter::getOrderBy();
+				$search_orderby_array = $this->getOrderBy();
 				$orderby_query = $search_orderby_array[$sort]['sql'];
 			} else {
 				$orderby_query = " ORDER BY EXTRACT (HOUR FROM spotter_output.date) ASC";
@@ -6853,7 +6866,7 @@ class Spotter{
 			    FROM spotter_output
 			    WHERE DATE_PART('dow', spotter_output.date) = DATE_PART('dow', date 'now' AT TIME ZONE :timezone) AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) >= '$currentHour' AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) <= '$next3Hours'
 			    GROUP BY spotter_output.ident, spotter_output.spotter_id HAVING count(spotter_output.ident) > 10 $orderby_query";
-		$spotter_array = Spotter::getDataFromDB($query.$limit_query,array(':timezone' => $globalTimezone));
+		$spotter_array = $this->getDataFromDB($query.$limit_query,array(':timezone' => $globalTimezone));
 		}
 		return $spotter_array;
 	}
@@ -6865,19 +6878,19 @@ class Spotter{
 	*
 	*/
 /*
-public static function addSpotterImage($registration)
+public function addSpotterImage($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		$registration = trim($registration);
 		//getting the aircraft image
-		$image_url = Spotter::findAircraftImage($registration);
+		$image_url = $this->findAircraftImage($registration);
 		//echo "Image :\n";
 		//print_r($image_url);
 		if ($image_url['original'] != '') {
 			$query  = "INSERT INTO spotter_image (registration, image, image_thumbnail, image_copyright, image_source) VALUES (:registration,:image,:image_thumbnail,:copyright,:source)";
 			try {
-				$Connection = new Connection();
-				$sth = Connection::$db->prepare($query);
+				
+				$sth = $this->db->prepare($query);
 				$sth->execute(array(':registration' => $registration,':image' => $image_url['original'],':image_thumbnail' => $image_url['thumbnail'], ':copyright' => $image_url['copyright'],':source' => $image_url['source']));
 			} catch(PDOException $e) {
 				echo $e->message;
@@ -6895,7 +6908,7 @@ public static function addSpotterImage($registration)
 	*
 	*/
 	/*
-	public static function getSpotterImage($registration)
+	public function getSpotterImage($registration)
 	{
     		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		$registration = trim($registration);
@@ -6904,8 +6917,8 @@ public static function addSpotterImage($registration)
 								FROM spotter_image 
 								WHERE spotter_image.registration = :registration";
 
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
         
         $images_array = array();
@@ -6933,7 +6946,7 @@ public static function addSpotterImage($registration)
 	* @return Integer the Barrie Spotter ID
 	*
 	*/
-	public static function getBarrieSpotterIDBasedOnFlightAwareID($flightaware_id)
+	public function getBarrieSpotterIDBasedOnFlightAwareID($flightaware_id)
 	{
 		$flightaware_id = filter_var($flightaware_id,FILTER_SANITIZE_STRING);
 
@@ -6941,8 +6954,8 @@ public static function addSpotterImage($registration)
 								FROM spotter_output 
 								WHERE spotter_output.flightaware_id = '".$flightaware_id."'";
         
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -6960,7 +6973,7 @@ public static function addSpotterImage($registration)
 	* @return Array the time information
 	*
 	*/
-	public static function parseDateString($dateString, $timezone = '')
+	public function parseDateString($dateString, $timezone = '')
 	{
 		$time_array = array();
 	
@@ -7001,7 +7014,7 @@ public static function addSpotterImage($registration)
 	* @return Array the direction information
 	*
 	*/
-	public static function parseDirection($direction)
+	public function parseDirection($direction)
 	{
 
 		if ($direction != "")
@@ -7091,7 +7104,7 @@ public static function addSpotterImage($registration)
 	*
 	*/
 	/*
-	public static function findAircraftImage($aircraft_registration)
+	public function findAircraftImage($aircraft_registration)
 	{
 		$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
 		$aircraft_registration = trim($aircraft_registration);
@@ -7099,7 +7112,7 @@ public static function addSpotterImage($registration)
 		// If aircraft registration is only number, also check with aircraft model
   
 		if (preg_match('/^[[:digit]]+$/',$aircraft_registration)) {
-			$aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
+			$aircraft_info = $this->getAircraftInfoByRegistration($aircraft_registration);
 			$url= 'http://www.planespotters.net/Aviation_Photos/search.php?tag='.$aircraft_registration.'&actype=s_'.$aircraft_info['name'].'&output=rss';
 		} else {
 			//$url= 'http://www.planespotters.net/Aviation_Photos/search.php?tag='.$airline_aircraft_type.'&output=rss';
@@ -7127,7 +7140,7 @@ public static function addSpotterImage($registration)
 		} 
 
 		if (preg_match('/^[[:digit]]+$/',$aircraft_registration)) {
-			$aircraft_info = Spotter::getAircraftInfoByRegistration($aircraft_registration);
+			$aircraft_info = $this->getAircraftInfoByRegistration($aircraft_registration);
 			$url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration.','.$aircraft_info['name'].',aircraft';
 		} else {
 			$url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&per_page=1&tags='.$aircraft_registration.',aircraft';
@@ -7168,7 +7181,7 @@ public static function addSpotterImage($registration)
 	*
 	*/
 	
-	public static function getAircraftRegistration($flightaware_id)
+	public function getAircraftRegistration($flightaware_id)
 	{
 		global $globalFlightAwareUsername, $globalFlightAwarePassword;
         
@@ -7188,7 +7201,7 @@ public static function addSpotterImage($registration)
 			$registration = $result->AirlineFlightInfoResult->tailnumber;
 		}
 		
-		$registration = Spotter::convertAircraftRegistration($registration);
+		$registration = $this->convertAircraftRegistration($registration);
 		
 		return $registration;	
 	}
@@ -7202,13 +7215,13 @@ public static function addSpotterImage($registration)
 	*
 	*/
 	
-	public static function getAircraftRegistrationBymodeS($aircraft_modes)
+	public function getAircraftRegistrationBymodeS($aircraft_modes)
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
 	
 		$query  = "SELECT aircraft_modes.Registration FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes LIMIT 1";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
     
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
@@ -7227,15 +7240,15 @@ public static function addSpotterImage($registration)
 	*
 	*/
 	
-	public static function getCountryFromLatitudeLongitude($latitude,$longitude)
+	public function getCountryFromLatitudeLongitude($latitude,$longitude)
 	{
 		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
 //		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(:latitude :longitude)'), ogc_geom) LIMIT 1";
 		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(".$longitude.' '.$latitude.")'), ogc_geom) LIMIT 1";
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		//$sth->execute(array(':latitude' => $latitude,':longitude' => $longitude));
 		$sth->execute();
     
@@ -7253,7 +7266,7 @@ public static function addSpotterImage($registration)
 	* @return String the aircraft registration
 	*
 	*/
-	public static function convertAircraftRegistration($registration)
+	public function convertAircraftRegistration($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		$registration_prefix = '';
@@ -7263,8 +7276,8 @@ public static function addSpotterImage($registration)
 		//first get the prefix based on two characters
 		$query  = "SELECT aircraft_registration.registration_prefix FROM aircraft_registration WHERE registration_prefix = :registration_2";
       
-		$Connection = new Connection();
-		$sth = Connection::$db->prepare($query);
+		
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration_2' => $registration_2));
         
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -7277,7 +7290,7 @@ public static function addSpotterImage($registration)
 		{
 			$query  = "SELECT aircraft_registration.registration_prefix FROM aircraft_registration WHERE registration_prefix = :registration_1";
 	      
-			$sth = Connection::$db->prepare($query);
+			$sth = $this->db->prepare($query);
 			$sth->execute(array(':registration_1' => $registration_1));
 	        
 			while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -7312,7 +7325,7 @@ public static function addSpotterImage($registration)
 	* @return String the country
 	*
 	*/
-	public static function countryFromAircraftRegistration($registration)
+	public function countryFromAircraftRegistration($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		
@@ -7323,7 +7336,7 @@ public static function addSpotterImage($registration)
 		if ($registration_test[0] != $registration) {
 			$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_1 LIMIT 1";
 	      
-			$sth = Connection::$db->prepare($query);
+			$sth = $this->db->prepare($query);
 			$sth->execute(array(':registration_1' => $registration_test[0]));
 	        
 			while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -7339,8 +7352,8 @@ public static function addSpotterImage($registration)
 			//first get the prefix based on two characters
 			$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_2 LIMIT 1";
       
-			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			
+			$sth = $this->db->prepare($query);
 			$sth->execute(array(':registration_2' => $registration_2));
         
 			while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -7354,7 +7367,7 @@ public static function addSpotterImage($registration)
 			{
 				$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_1 LIMIT 1";
 	      
-				$sth = Connection::$db->prepare($query);
+				$sth = $this->db->prepare($query);
 				$sth->execute(array(':registration_1' => $registration_1));
 	        
 				while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -7374,9 +7387,10 @@ public static function addSpotterImage($registration)
 	* @param String $flightaware_id flightaware_id from spotter_output table
 	* @param String $highlight New highlight value
 	*/
-	public static function setHighlightFlight($flightaware_id,$highlight) {
+	public function setHighlightFlight($flightaware_id,$highlight) {
+		
 		$query  = "UPDATE spotter_output SET highlight = :highlight WHERE flightaware_id = :flightaware_id";
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute(array(':flightaware_id' => $flightaware_id, ':highlight' => $highlight));
 	}
 	
@@ -7387,7 +7401,7 @@ public static function addSpotterImage($registration)
 	* @return String the bit.ly url
 	*
 	*/
-	public static function getBitlyURL($url)
+	public function getBitlyURL($url)
 	{
 		global $globalBitlyAccessToken;
 		
@@ -7412,7 +7426,7 @@ public static function addSpotterImage($registration)
 	}
 
 
-	public static function getOrderBy()
+	public function getOrderBy()
 	{
 		$orderby = array("aircraft_asc" => array("key" => "aircraft_asc", "value" => "Aircraft Type - ASC", "sql" => "ORDER BY spotter_output.aircraft_icao ASC"), "aircraft_desc" => array("key" => "aircraft_desc", "value" => "Aircraft Type - DESC", "sql" => "ORDER BY spotter_output.aircraft_icao DESC"),"manufacturer_asc" => array("key" => "manufacturer_asc", "value" => "Aircraft Manufacturer - ASC", "sql" => "ORDER BY spotter_output.aircraft_manufacturer ASC"), "manufacturer_desc" => array("key" => "manufacturer_desc", "value" => "Aircraft Manufacturer - DESC", "sql" => "ORDER BY spotter_output.aircraft_manufacturer DESC"),"airline_name_asc" => array("key" => "airline_name_asc", "value" => "Airline Name - ASC", "sql" => "ORDER BY spotter_output.airline_name ASC"), "airline_name_desc" => array("key" => "airline_name_desc", "value" => "Airline Name - DESC", "sql" => "ORDER BY spotter_output.airline_name DESC"), "ident_asc" => array("key" => "ident_asc", "value" => "Ident - ASC", "sql" => "ORDER BY spotter_output.ident ASC"), "ident_desc" => array("key" => "ident_desc", "value" => "Ident - DESC", "sql" => "ORDER BY spotter_output.ident DESC"), "airport_departure_asc" => array("key" => "airport_departure_asc", "value" => "Departure Airport - ASC", "sql" => "ORDER BY spotter_output.departure_airport_city ASC"), "airport_departure_desc" => array("key" => "airport_departure_desc", "value" => "Departure Airport - DESC", "sql" => "ORDER BY spotter_output.departure_airport_city DESC"), "airport_arrival_asc" => array("key" => "airport_arrival_asc", "value" => "Arrival Airport - ASC", "sql" => "ORDER BY spotter_output.arrival_airport_city ASC"), "airport_arrival_desc" => array("key" => "airport_arrival_desc", "value" => "Arrival Airport - DESC", "sql" => "ORDER BY spotter_output.arrival_airport_city DESC"), "date_asc" => array("key" => "date_asc", "value" => "Date - ASC", "sql" => "ORDER BY spotter_output.date ASC"), "date_desc" => array("key" => "date_desc", "value" => "Date - DESC", "sql" => "ORDER BY spotter_output.date DESC"));
 		
@@ -7421,15 +7435,11 @@ public static function addSpotterImage($registration)
 	}
     
     
-    public static function importFromFlightAware()
+    public function importFromFlightAware()
     {
        global $globalFlightAwareUsername, $globalFlightAwarePassword, $globalLatitudeMax, $globalLatitudeMin, $globalLongitudeMax, $globalLongitudeMin, $globalAirportIgnore;
-        
-        if(!Connection::createDBConnection())
-		{
-			return false;
-		}
-        
+	$Spotter = new Spotter();
+	$SPotterLive = new SpotterLive();
         $options = array(
             'trace' => true,
             'exceptions' => 0,
@@ -7477,7 +7487,7 @@ public static function addSpotterImage($registration)
                             $dataFound = true;
 
                             //gets the callsign from the last hour
-                            $last_hour_ident = Spotter::getIdentFromLastHour($ident);
+                            $last_hour_ident = $this->getIdentFromLastHour($ident);
 
                             //change the departure/arrival airport to NA if its not available
                                 if ($departure_airport == "" || $departure_airport == "---" || $departure_airport == "ZZZ" || $departure_airport == "ZZZZ") { $departure_airport = "NA"; }
@@ -7488,11 +7498,11 @@ public static function addSpotterImage($registration)
                             if($last_hour_ident == "")
                             {
                                 //adds the spotter data for the archive
-                                Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                                $Spotter->addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
                             }
 
                             //adds the spotter LIVE data
-                            SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                            $SpotterLive->addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
                         }
                         }
                         $ignoreImport = false;
@@ -7526,7 +7536,7 @@ public static function addSpotterImage($registration)
                         $dataFound = true;
 
                         //gets the callsign from the last hour
-                        $last_hour_ident = Spotter::getIdentFromLastHour($ident);
+                        $last_hour_ident = $this->getIdentFromLastHour($ident);
 
                         //change the departure/arrival airport to NA if its not available
                                 if ($departure_airport == "" || $departure_airport == "---" || $departure_airport == "ZZZ" || $departure_airport == "ZZZZ") { $departure_airport = "NA"; }
@@ -7536,11 +7546,11 @@ public static function addSpotterImage($registration)
                         if($last_hour_ident == "")
                         {
                             //adds the spotter data for the archive
-                            Spotter::addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                            $Spotter->addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
                         }
 
                         //adds the spotter LIVE data
-                        SpotterLive::addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+                        $SpotterLive->addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
                     }
                             $ignoreImport = false;
                         }
@@ -7552,23 +7562,24 @@ public static function addSpotterImage($registration)
 
 
 	// Update flights data when new data in DB
-	public static function updateFieldsFromOtherTables()
+	public function updateFieldsFromOtherTables()
 	{
 		global $globalDebug;
-		$Connection = new Connection();
+		$Image = new Image();
+		
 
 		// routes
 		if ($globalDebug) print "Routes...\n";
 		$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != ''";
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			$departure_airport_array = Spotter::getAllAirportInfo($row['fromairport_icao']);
-			$arrival_airport_array = Spotter::getAllAirportInfo($row['toairport_icao']);
+			$departure_airport_array = $this->getAllAirportInfo($row['fromairport_icao']);
+			$arrival_airport_array = $this->getAllAirportInfo($row['toairport_icao']);
 			if (count($departure_airport_array) > 0 && count($arrival_airport_array) > 0) {
 				$update_query="UPDATE spotter_output SET departure_airport_icao = :fromicao, arrival_airport_icao = :toicao, departure_airport_name = :departure_airport_name, departure_airport_city = :departure_airport_city, departure_airport_country = :departure_airport_country, arrival_airport_name = :arrival_airport_name, arrival_airport_city = :arrival_airport_city, arrival_airport_country = :arrival_airport_country WHERE spotter_id = :spotter_id";
-				$sthu = Connection::$db->prepare($update_query);
+				$sthu = $this->db->prepare($update_query);
 				$sthu->execute(array(':fromicao' => $row['fromairport_icao'],':toicao' => $row['toairport_icao'],':spotter_id' => $row['spotter_id'],':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country']));
 			}
 		}
@@ -7576,15 +7587,15 @@ public static function addSpotterImage($registration)
 		if ($globalDebug) print "Airlines...\n";
 		//airlines
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE spotter_output.airline_name = '' OR spotter_output.airline_name = 'Not Available'";
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			if (is_numeric(substr($row['ident'], -1, 1)))
 			{
-				$airline_array = Spotter::getAllAirlineInfo(substr($row['ident'], 0, 3));
+				$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3));
 				$update_query  = "UPDATE spotter_output SET spotter_output.airline_name = :airline_name, spotter_output.airline_icao = :airline_icao, spotter_output.airline_country = :airline_country, spotter_output.airline_type = :airline_type WHERE spotter_output.spotter_id = :spotter_id";
-				$sthu = Connection::$db->prepare($update_query);
+				$sthu = $this->db->prepare($update_query);
 				$sthu->execute(array(':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'], ':airline_country' => $airline_array[0]['country'], ':airline_type' => $airline_array[0]['type'], ':spotter_id' => $row['spotter_id']));
 			}
 		}
@@ -7592,24 +7603,24 @@ public static function addSpotterImage($registration)
 		if ($globalDebug) print "Remove Duplicate in aircraft_modes...\n";
 		//duplicate modes
 		$query = "DELETE aircraft_modes FROM aircraft_modes LEFT OUTER JOIN (SELECT max(`AircraftID`) as `AircraftID`,`ModeS` FROM `aircraft_modes` group by ModeS) as KeepRows ON aircraft_modes.AircraftID = KeepRows.AircraftID WHERE KeepRows.AircraftID IS NULL";
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 		
 		if ($globalDebug) print "Aircraft...\n";
 		//aircraft
 		$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE spotter_output.aircraft_name = '' OR spotter_output.aircraft_name = 'Not Available'";
-		$sth = Connection::$db->prepare($query);
+		$sth = $this->db->prepare($query);
 		$sth->execute();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			if ($row['aircraft_icao'] != '') {
-				$aircraft_name = Spotter::getAllAircraftInfo($row['aircraft_icao']);
+				$aircraft_name = $this->getAllAircraftInfo($row['aircraft_icao']);
 				if ($row['registration'] != ""){
-					Image::addSpotterImage($row['registration']);
+					$Image->addSpotterImage($row['registration']);
 				}
 				if (count($aircraft_name) > 0) {
 					$update_query  = "UPDATE spotter_output SET spotter_output.aircraft_name = :aircraft_name, spotter_output.aircraft_manufacturer = :aircraft_manufacturer WHERE spotter_output.spotter_id = :spotter_id";
-					$sthu = Connection::$db->prepare($update_query);
+					$sthu = $this->db->prepare($update_query);
 					$sthu->execute(array(':aircraft_name' => $aircraft_name[0]['type'], ':aircraft_manufacturer' => $aircraft_name[0]['manufacturer'], ':spotter_id' => $row['spotter_id']));
 				}
 			}

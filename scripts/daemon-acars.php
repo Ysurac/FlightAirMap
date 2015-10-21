@@ -10,7 +10,7 @@ require_once(dirname(__FILE__).'/../require/class.ACARS.php');
 // Check if schema is at latest version
 require_once(dirname(__FILE__).'/../require/class.Connection.php');
 $schema = new Connection();
-if ($schema::latest() === false) {
+if ($schema->latest() === false) {
     echo "You MUST update to latest schema. Run install/index.php";
     exit();
 }
@@ -52,9 +52,9 @@ while(1) {
     pcntl_signal_dispatch();
     $dataFound = false;
     //  (null) 2 23/02/2015 14:46:06 0 -16 X .D-AIPW ! 1L 7 M82A LH077P 010952342854:VP-MIBI+W+0)-V+(),GB1
-    $ACARS::add(trim($buffer));
+    $ACARS->add(trim($buffer));
     socket_sendto($sock, "OK " . $buffer , 100 , 0 , $remote_ip , $remote_port);
-    $ACARS::deleteLiveAcarsData();
+    $ACARS->deleteLiveAcarsData();
 }
 pcntl_exec($_,$argv);
 ?>

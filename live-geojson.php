@@ -3,6 +3,8 @@ require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterLive.php');
 require('require/class.SpotterArchive.php');
+$SpotterLive = new SpotterLive();
+$SpotterArchive = new SpotterArchive();
 
 if (isset($_GET['download'])) {
     if ($_GET['download'] == "true")
@@ -19,36 +21,36 @@ if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup'
 if (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true'))) {
 //if (isset($_GET['coord'])) {
 	$coord = explode(',',$_GET['coord']);
-	$spotter_array = SpotterLive::getLiveSpotterDatabyCoord($coord);
+	$spotter_array = $SpotterLive->getLiveSpotterDatabyCoord($coord);
 
 } elseif (isset($globalMapPopup) && !$globalMapPopup) {
-	$spotter_array = SpotterLive::getMinLiveSpotterData();
+	$spotter_array = $SpotterLive->getMinLiveSpotterData();
 	$min = true;
 } else {
-	$spotter_array = SpotterLive::getLiveSpotterData();
+	$spotter_array = $SpotterLive->getLiveSpotterData();
 }
 $allhistory = false;
 if (isset($_GET['ident'])) {
-	$ident = $_GET['ident'];
-	$spotter_array = SpotterLive::getLastLiveSpotterDataByIdent($ident);
+	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+	$spotter_array = $SpotterLive->getLastLiveSpotterDataByIdent($ident);
 	if (empty($spotter_array)) {
 		$from_archive = true;
-		$spotter_array = SpotterArchive::getLastArchiveSpotterDataByIdent($ident);
+		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataByIdent($ident);
 	}
 	$allhistory = true;
 }
 if (isset($_GET['flightaware_id'])) {
-	$flightaware_id = $_GET['flightaware_id'];
-	$spotter_array = SpotterLive::getLastLiveSpotterDataById($flightaware_id);
+	$flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
+	$spotter_array = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
 	if (empty($spotter_array)) {
 		$from_archive = true;
-		$spotter_array = SpotterArchive::getLastArchiveSpotterDataById($flightaware_id);
+		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
 	}
 	$allhistory = true;
 }
 
 if (!empty($spotter_array)) {
-	$flightcnt = SpotterLive::getLiveSpotterCount();
+	$flightcnt = $SpotterLive->getLiveSpotterCount();
 	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;
 
@@ -246,9 +248,9 @@ $output = '{';
 */
 				if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || (!isset($_COOKIE['flightpath']) && (!isset($globalMapHistory) || $globalMapHistory || $allhistory) || (isset($_GET['history']) && $_GET['history'] == $spotter_item['ident']))) {
                                     if ($from_archive) {
-					    $spotter_history_array = SpotterArchive::getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
+					    $spotter_history_array = $SpotterArchive->getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
                                     } else {
-					    $spotter_history_array = SpotterLive::getAllLiveSpotterDataById($spotter_item['flightaware_id']);
+					    $spotter_history_array = $SpotterLive->getAllLiveSpotterDataById($spotter_item['flightaware_id']);
                                     }
                             	$d = false;
 				foreach ($spotter_history_array as $key => $spotter_history)

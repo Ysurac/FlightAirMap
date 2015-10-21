@@ -1,10 +1,14 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+if (!isset($_GET['ident'])) {
+        header('Location: '.$globalURL.'/ident');
+        die();
+}
+$Spotter = new Spotter();
 $sort = '';
 if (isset($_GET['sort'])) $sort = $_GET['sort'];
-$spotter_array = Spotter::getSpotterDataByIdent($_GET['ident'],"0,1", $sort);
+$spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],"0,1", $sort);
 
 if (!empty($spotter_array))
 {
@@ -28,7 +32,7 @@ if (!empty($spotter_array))
   	?>
   	<p>The statistic below shows all arrival airports of flights with the ident/callsign <strong><?php print $spotter_array[0]['ident']; ?></strong>.</p>
   	<?php
-    	 $airport_airport_array = Spotter::countAllArrivalAirportsByIdent($_GET['ident']);
+    	 $airport_airport_array = $Spotter->countAllArrivalAirportsByIdent($_GET['ident']);
     	?>
     	<script>
     	google.load("visualization", "1", {packages:["geochart"]});

@@ -1,9 +1,14 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+if (!isset($_GET['airport'])) {
+        header('Location: '.$globalURL.'/airport');
+        die();
+}
+$Spotter = new Spotter();
 
-$spotter_array = Spotter::getSpotterDataByAirport($_GET['airport'],"0,1","");
-$airport_array = Spotter::getAllAirportInfo($_GET['airport']);
+$spotter_array = $Spotter->getSpotterDataByAirport($_GET['airport'],"0,1","");
+$airport_array = $Spotter->getAllAirportInfo($_GET['airport']);
 
 if (!empty($airport_array))
 {
@@ -16,7 +21,7 @@ if (!empty($airport_array))
 	print '<form action="'.$globalURL.'/airport" method="post">';
 		print '<select name="airport" class="selectpicker" data-live-search="true">';
       print '<option></option>';
-      $airport_names = Spotter::getAllAirportNames();
+      $airport_names = $Spotter->getAllAirportNames();
       ksort($airport_names);
       foreach($airport_names as $airport_name)
       {
@@ -54,7 +59,7 @@ if (!empty($airport_array))
   	print '<h2>Most Common Aircraft</h2>';
   	print '<p>The statistic below shows the most common aircrafts of flights to/from <strong>'.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')</strong>.</p>';
 
-	  $aircraft_array = Spotter::countAllAircraftTypesByAirport($_GET['airport']);
+	  $aircraft_array = $Spotter->countAllAircraftTypesByAirport($_GET['airport']);
 	
 	  if (!empty($aircraft_array))
 	  {

@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Statistic";
 require('header.php');
 ?>
@@ -14,9 +14,9 @@ require('header.php');
     <?php include('statistics-sub-menu.php'); ?>
 
     <div class="row global-stats">
-        <div class="col-md-4"><span class="type">Flights</span><span><?php print number_format(Spotter::countOverallFlights()); ?></span></div> 
-        <div class="col-md-4"><span class="type">Aircrafts</span><span><?php print number_format(Spotter::countOverallAircrafts()); ?></span></div> 
-        <div class="col-md-4"><span class="type">Airlines</span><span><?php print number_format(Spotter::countOverallAirlines()); ?></span></div>
+        <div class="col-md-4"><span class="type">Flights</span><span><?php print number_format($Spotter->countOverallFlights()); ?></span></div> 
+        <div class="col-md-4"><span class="type">Aircrafts</span><span><?php print number_format($Spotter->countOverallAircrafts()); ?></span></div> 
+        <div class="col-md-4"><span class="type">Airlines</span><span><?php print number_format($Spotter->countOverallAirlines()); ?></span></div>
     </div>
 
     <div class="specific-stats">
@@ -24,7 +24,7 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Top 10 Most Common Aircraft Type</h2>
                  <?php
-                  $aircraft_array = Spotter::countAllAircraftTypes();
+                  $aircraft_array = $Spotter->countAllAircraftTypes();
 
                     print '<div id="chart1" class="chart" width="100%"></div>
                     <script> 
@@ -64,7 +64,7 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Top 10 Most Common Airline</h2>
                  <?php
-                  $airline_array = Spotter::countAllAirlines();
+                  $airline_array = $Spotter->countAllAirlines();
 
                   print '<div id="chart2" class="chart" width="100%"></div>
                     <script> 
@@ -106,7 +106,7 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Top 10 Most Common Departure Airports</h2>
                 <?php
-                $airport_airport_array = Spotter::countAllDepartureAirports();
+                $airport_airport_array = $Spotter->countAllDepartureAirports();
 
                  print '<div id="chart3" class="chart" width="100%"></div>
                 <script>
@@ -152,7 +152,7 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Top 10 Most Common Arrival Airports</h2>
                 <?php
-                $airport_airport_array2 = Spotter::countAllArrivalAirports();
+                $airport_airport_array2 = $Spotter->countAllArrivalAirports();
 
                 print '<div id="chart4" class="chart" width="100%"></div>
                 <script>
@@ -200,7 +200,7 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Busiest Day in the last 7 Days</h2>
                 <?php
-                  $date_array = Spotter::countAllDatesLast7Days();
+                  $date_array = $Spotter->countAllDatesLast7Days();
 
                   print '<div id="chart5" class="chart" width="100%"></div>
                     <script> 
@@ -243,7 +243,7 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Busiest Time of the Day</h2>
                 <?php
-                  $hour_array = Spotter::countAllHours('hour');
+                  $hour_array = $Spotter->countAllHours('hour');
 
                   print '<div id="chart6" class="chart" width="100%"></div>
                     <script> 

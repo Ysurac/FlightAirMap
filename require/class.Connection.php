@@ -2,11 +2,13 @@
 require_once("settings.php");
 
 class Connection{
-	public static $db;
-	public static $latest_schema = 10;
+	public $db;
+	public $latest_schema = 10;
 	
 	public function __construct() {
-	    $this->createDBConnection();
+	    if ($this->db === null) {
+		$this->createDBConnection();
+	    }
 	}
 
 
@@ -17,17 +19,17 @@ class Connection{
 	*
 	*/
 
-	public static function createDBConnection()
+	public function createDBConnection()
 	{
 		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug;
 		try {
-			self::$db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname;charset=utf8", $globalDBuser,  $globalDBpass);
-			self::$db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
-			self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			self::$db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
-			if (!isset($globalDBTimeOut)) self::$db->setAttribute(PDO::ATTR_TIMEOUT,20);
-			else self::$db->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
-			self::$db->setAttribute(PDO::ATTR_PERSISTENT,true);
+			$this->db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname;charset=utf8", $globalDBuser,  $globalDBpass);
+			$this->db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
+			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
+			if (!isset($globalDBTimeOut)) $this->db->setAttribute(PDO::ATTR_TIMEOUT,20);
+			else $this->db->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
+			$this->db->setAttribute(PDO::ATTR_PERSISTENT,true);
 		} catch(PDOException $e) {
 			if (isset($globalDebug) && $globalDebug) echo $e->getMessage();
 			//exit;
@@ -36,7 +38,7 @@ class Connection{
 		return true;
 	}
 
-	public static function tableExists($table)
+	public function tableExists($table)
 	{
 		global $globalDBdriver, $globalDBname;
 		if ($globalDBdriver == 'mysql') {
@@ -46,7 +48,7 @@ class Connection{
 		}
 		try {
 			$Connection = new Connection();
-			$results = Connection::$db->query($query);
+			$results = $this->db->query($query);
 		} catch(PDOException $e) {
 			return false;
 		}
@@ -56,7 +58,7 @@ class Connection{
 		else return false;
 	}
 
-	public static function indexExists($table,$index)
+	public function indexExists($table,$index)
 	{
 		global $globalDBdriver, $globalDBname;
 		if ($globalDBdriver == 'mysql') {
@@ -66,7 +68,7 @@ class Connection{
 		}
 		try {
 			$Connection = new Connection();
-			$results = Connection::$db->query($query);
+			$results = $Connection->$db->query($query);
 		} catch(PDOException $e) {
 			return false;
 		}
@@ -76,17 +78,17 @@ class Connection{
 		else return false;
 	}
 
-	public static function check_schema_version() {
+	public function check_schema_version() {
 		$version = 0;
-		if (self::tableExists('aircraft')) {
-			if (!self::tableExists('config')) {
+		if ($this->tableExists('aircraft')) {
+			if (!$this->tableExists('config')) {
 	    			$version = '1';
 	    			return $version;
 			} else {
 				$Connection = new Connection();
 				$query = "SELECT value FROM config WHERE name = 'schema_version' LIMIT 1";
 				try {
-					$sth = Connection::$db->prepare($query);
+					$sth = $this->db->prepare($query);
 					$sth->execute();
 				} catch(PDOException $e) {
 					return "error : ".$e->getMessage()."\n";
@@ -97,8 +99,8 @@ class Connection{
 		} else return $version;
 	}
 	
-	public static function latest() {
-	    if (self::check_schema_version() == self::$latest_schema) return true;
+	public function latest() {
+	    if ($this->check_schema_version() == $this->latest_schema) return true;
 	    else return false;
 	}
 

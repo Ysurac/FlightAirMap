@@ -5,7 +5,7 @@ require('require/class.Spotter.php');
 if (!isset($_GET['country'])){
 	header('Location: '.$globalURL.'');
 } else {
-
+	$Spotter = new Spotter();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
@@ -27,9 +27,9 @@ if (!isset($_GET['country'])){
 	$page_url = $globalURL.'/country/'.$_GET['country'];
 	
 	if (isset($_GET['sort'])) {
-		$spotter_array = Spotter::getSpotterDataByCountry($country, $limit_start.",".$absolute_difference, $_GET['sort']);
+		$spotter_array = $Spotter->getSpotterDataByCountry($country, $limit_start.",".$absolute_difference, $_GET['sort']);
 	} else {
-		$spotter_array = Spotter::getSpotterDataByCountry($country, $limit_start.",".$absolute_difference, '');
+		$spotter_array = $Spotter->getSpotterDataByCountry($country, $limit_start.",".$absolute_difference, '');
 	}
 	
 	
@@ -44,7 +44,7 @@ if (!isset($_GET['country'])){
 		print '<form action="'.$globalURL.'/country" method="post">';
 			print '<select name="country" class="selectpicker" data-live-search="true">';
 	      print '<option></option>';
-	      $all_countries = Spotter::getAllCountries();
+	      $all_countries = $Spotter->getAllCountries();
 	      foreach($all_countries as $all_country)
 	      {
 	        if($country == $all_country['country'])
@@ -101,9 +101,5 @@ if (!isset($_GET['country'])){
 	}
 }
 
-
-?>
-
-<?php
 require('footer.php');
 ?>

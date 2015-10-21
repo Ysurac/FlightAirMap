@@ -5,7 +5,7 @@ require('require/class.Spotter.php');
 if (!isset($_GET['airport'])){
 	header('Location: '.$globalURL.'/airport');
 } else {
-
+	$Spotter = new Spotter();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
@@ -25,11 +25,11 @@ if (!isset($_GET['airport'])){
 	$page_url = $globalURL.'/airport/'.$_GET['airport'];
 	
 	if (isset($_GET['sort'])) {
-		$spotter_array = Spotter::getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, $_GET['sort']);
+		$spotter_array = $Spotter->getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, $_GET['sort']);
 	} else {
-		$spotter_array = Spotter::getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, '');
+		$spotter_array = $Spotter->getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, '');
 	}
-	$airport_array = Spotter::getAllAirportInfo($_GET['airport']);
+	$airport_array = $Spotter->getAllAirportInfo($_GET['airport']);
 	
 	if (!empty($airport_array))
 	{
@@ -42,7 +42,7 @@ if (!isset($_GET['airport'])){
   		print '<form action="'.$globalURL.'/airport" method="post">';
   			print '<select name="airport" class="selectpicker" data-live-search="true">';
 		      print '<option></option>';
-		      $airport_names = Spotter::getAllAirportNames();
+		      $airport_names = $Spotter->getAllAirportNames();
 		      ksort($airport_names);
 		      foreach($airport_names as $airport_name)
 		      {

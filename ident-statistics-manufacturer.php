@@ -1,10 +1,14 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+if (!isset($_GET['ident'])) {
+        header('Location: '.$globalURL.'/ident');
+        die();
+}
+$Spotter = new Spotter();
 $sort = '';
 if (isset($_GET['sort'])) $sort = $_GET['sort'];
-$spotter_array = Spotter::getSpotterDataByIdent($_GET['ident'],"0,1", $sort);
+$spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],"0,1", $sort);
 
 if (!empty($spotter_array))
 {
@@ -26,7 +30,7 @@ if (!empty($spotter_array))
   	print '<h2>Most Common Aircraft Manufacturer</h2>';
   	print '<p>The statistic below shows the most common Aircraft Manufacturer of flights using the ident/callsign <strong>'.$spotter_array[0]['ident'].'</strong>.</p>';
 
-	  $manufacturers_array = Spotter::countAllAircraftManufacturerByIdent($_GET['ident']);
+	  $manufacturers_array = $Spotter->countAllAircraftManufacturerByIdent($_GET['ident']);
 	
 	  if (!empty($manufacturers_array))
 	  {

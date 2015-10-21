@@ -7,8 +7,11 @@ if ($_GET['departure_airport'] == "" || $_GET['arrival_airport'] == "")
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
-
-  $spotter_array = Spotter::getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $_GET['sort']);
+$Spotter = new Spotter();
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+if (isset($_GET['departure_airport']) && isset($_GET['arrival_airport'])) {
+  $spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $sort);
+} else $spotter_array = array();
   
   if (!empty($spotter_array))
   {
@@ -28,7 +31,7 @@ require('require/class.Spotter.php');
   	print '<h2>Most Common Time of Day</h2>';
   	print '<p>The statistic below shows the most common time of day of flights between <strong>'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</strong> and <strong>'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</strong>.</p>';
   	
-      $hour_array = Spotter::countAllHoursByRoute($_GET['departure_airport'], $_GET['arrival_airport']);
+      $hour_array = $Spotter->countAllHoursByRoute($_GET['departure_airport'], $_GET['arrival_airport']);
       
       print '<div id="chartHour" class="chart" width="100%"></div>
       	<script> 

@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Statistic - Most common Route by Waypoint";
 require('header.php');
 include('statistics-sub-menu.php'); 
@@ -15,7 +15,7 @@ include('statistics-sub-menu.php');
       
 <?php
 
-$route_array = Spotter::countAllRoutesWithWaypoints();
+$route_array = $Spotter->countAllRoutesWithWaypoints();
 if (!empty($route_array))
 {
 	print '<div class="table-responsive">';

@@ -1,6 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Source.php');
+$Source = new Source();
 
 if (isset($_GET['download']))
 {
@@ -13,9 +14,9 @@ if (!isset($globalDemo)) {
 	{
 		$coords = explode(',',$_GET['coord']);
 //		$spotter_array = Source::getAllLocationInfobyCoord($coords);
-		$spotter_array = Source::getAllLocationInfo();
+		$spotter_array = $Source->getAllLocationInfo();
 	} else {
-		$spotter_array = Source::getAllLocationInfo();
+		$spotter_array = $Source->getAllLocationInfo();
 	}
 }
 

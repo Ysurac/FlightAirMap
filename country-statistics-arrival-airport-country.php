@@ -1,10 +1,14 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+if (!isset($_GET['country'])) {
+        header('Location: '.$globalURL.'/country');
+        die();
+}
+$Spotter = new Spotter();
 $country = ucwords(str_replace("-", " ", $_GET['country']));
 
-$spotter_array = Spotter::getSpotterDataByCountry($country, "0,1", $_GET['sort']);
+$spotter_array = $Spotter->getSpotterDataByCountry($country, "0,1", $_GET['sort']);
 
 
 if (!empty($spotter_array))
@@ -18,7 +22,7 @@ if (!empty($spotter_array))
 	print '<form action="'.$globalURL.'/country" method="post">';
 		print '<select name="country" class="selectpicker" data-live-search="true">';
       print '<option></option>';
-      $all_countries = Spotter::getAllCountries();
+      $all_countries = $Spotter->getAllCountries();
       foreach($all_countries as $all_country)
       {
         if($country == $all_country['country'])
@@ -50,7 +54,7 @@ if (!empty($spotter_array))
   	?>
   	 <p>The statistic below shows all arrival airports by Country of origin of flights of airports &amp; airlines from <strong><?php print $country; ?></strong>.</p>
   	<?php
-    	$airport_country_array = Spotter::countAllArrivalAirportCountriesByCountry($country);
+    	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByCountry($country);
       
       print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 

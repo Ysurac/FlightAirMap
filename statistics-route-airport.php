@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Statistic - Most common Route by Airport";
 require('header.php');
 include('statistics-sub-menu.php'); 
@@ -16,7 +16,7 @@ include('statistics-sub-menu.php');
      
 <?php
 
-$route_array = Spotter::countAllRoutes();
+$route_array = $Spotter->countAllRoutes();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});

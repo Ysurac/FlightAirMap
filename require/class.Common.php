@@ -13,7 +13,7 @@ class Common {
 	* @param Array $headers header to submit with the form
 	* @return String the result
 	*/
-	public static function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '') {
+	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '') {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -51,7 +51,7 @@ class Common {
 		return $result;
 	}
 	
-	private static function curlResponseHeaderCallback($ch, $headerLine) {
+	private function curlResponseHeaderCallback($ch, $headerLine) {
 		global $cookies;
 		if (preg_match('/^Set-Cookie:\s*([^;]*)/mi', $headerLine, $cookie) == 1)
 			$cookies[] = $cookie;
@@ -63,7 +63,7 @@ class Common {
 	* @param String $data HTML page
 	* @return Array array of the tables in HTML page
 	*/
-	public static function table2array($data) {
+	public function table2array($data) {
 		$html = str_get_html($data);
 		$tabledata=array();
 		foreach($html->find('tr') as $element)
@@ -95,7 +95,7 @@ class Common {
 	* @param String $data HTML page
 	* @return Array array of the <p> in HTML page
 	*/
-	public static function text2array($data) {
+	public function text2array($data) {
 		$html = str_get_html($data);
 		$tabledata=array();
 		foreach($html->find('p') as $element)
@@ -114,7 +114,7 @@ class Common {
 	* @param String $unit km else no unit used
 	* @return Float Distance in $unit
 	*/
-	public static function distance($lat, $lon, $latc, $lonc, $unit = 'km') {
+	public function distance($lat, $lon, $latc, $lonc, $unit = 'km') {
 		$dist = rad2deg(acos(sin(deg2rad(floatval($lat)))*sin(deg2rad(floatval($latc)))+ cos(deg2rad(floatval($lat)))*cos(deg2rad(floatval($latc)))*cos(deg2rad(floatval($lon)-floatval($lonc)))))*60*1.1515;
 		if ($unit == "km") {
 			return round($dist * 1.609344);
@@ -129,7 +129,7 @@ class Common {
 	* @param float $distance distance covered
 	* @return whether distance is realistic
 	*/
-	public static function withinThreshold ($timeDifference, $distance) {
+	public function withinThreshold ($timeDifference, $distance) {
 		$x = abs($timeDifference);
 		$d = abs($distance);
 		if ($x == 0 || $d == 0) return true;
@@ -140,17 +140,17 @@ class Common {
 
 
 	// Check if an array is assoc
-	public static function isAssoc($array)
+	public function isAssoc($array)
 	{
 		return ($array !== array_values($array));
 	}
 
-	public static function isInteger($input){
+	public function isInteger($input){
 	    return(ctype_digit(strval($input)));
 	}
 
 
-	public static function convertDec($dms,$latlong) {
+	public function convertDec($dms,$latlong) {
 		if ($latlong == 'latitude') {
 			$deg = substr($dms, 0, 2);
 			$min = substr($dms, 2, 4);
@@ -167,7 +167,7 @@ class Common {
 	* @param       string   $dest      Destination path
 	* @return      bool     Returns true on success, false on failure
 	*/
-	public static function xcopy($source, $dest, $permissions = 0755)
+	public function xcopy($source, $dest, $permissions = 0755)
 	{
 		$files = glob($source.'*.*');
 		foreach($files as $file){
@@ -182,7 +182,7 @@ class Common {
 	* @param	String $url url to check
 	* @return	bool Return true on succes false on failure
 	*/
-	public static function urlexist($url){
+	public function urlexist($url){
 		$headers=get_headers($url);
 		return stripos($headers[0],"200 OK")?true:false;
 	}
@@ -192,7 +192,7 @@ class Common {
 	* @param	String $hex data in hexa
 	* @return	String Return result
 	*/
-	public static function hex2str($hex) {
+	public function hex2str($hex) {
 		$str = '';
 		for($i=0;$i<strlen($hex);$i+=2) $str .= chr(hexdec(substr($hex,$i,2)));
 		return $str;

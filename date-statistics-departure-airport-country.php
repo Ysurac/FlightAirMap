@@ -1,8 +1,9 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
-$spotter_array = Spotter::getSpotterDataByDate($_GET['date'],"0,1", $_GET['sort']);
+$Spotter = new Spotter();
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $sort);
 
 if (!empty($spotter_array))
 {
@@ -31,7 +32,7 @@ if (!empty($spotter_array))
   	?>
   	<p>The statistic below shows all departure airports by Country of origin of flights on <strong><?php print date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])); ?></strong>.</p>
   	<?php
-    	 $airport_country_array = Spotter::countAllDepartureAirportCountriesByDate($_GET['date']);
+    	 $airport_country_array = $Spotter->countAllDepartureAirportCountriesByDate($_GET['date']);
       
       print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 

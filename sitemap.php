@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 header('Content-Type: text/xml');
 
 date_default_timezone_set('UTC');
@@ -11,7 +11,7 @@ if ($_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$spotter_array = Spotter::getAllFlightsforSitemap();
+		$spotter_array = $Spotter->getAllFlightsforSitemap();
 		foreach($spotter_array as $spotter_item)
 		{
 			$output .= '<url>';
@@ -28,7 +28,7 @@ if ($_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$aircraft_types = Spotter::getAllAircraftTypes();
+		$aircraft_types = $Spotter->getAllAircraftTypes();
 		foreach($aircraft_types as $aircraft_item)
 		{
 			$output .= '<url>';
@@ -45,7 +45,7 @@ if ($_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$aircraft_registrations = Spotter::getAllAircraftRegistrations();
+		$aircraft_registrations = $Spotter->getAllAircraftRegistrations();
 		foreach($aircraft_registrations as $aircraft_item)
 		{
 			$output .= '<url>';
@@ -61,7 +61,7 @@ if ($_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$airline_names = Spotter::getAllAirlineNames();
+		$airline_names = $Spotter->getAllAirlineNames();
 		foreach($airline_names as $airline_item)
 		{
 			$output .= '<url>';
@@ -77,7 +77,7 @@ if ($_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$airport_names = Spotter::getAllAirportNames();
+		$airport_names = $Spotter->getAllAirportNames();
 		foreach($airport_names as $airport_item)
 		{
 			$output .= '<url>';
@@ -93,7 +93,7 @@ if ($_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$manufacturer_names = Spotter::getAllManufacturers();
+		$manufacturer_names = $Spotter->getAllManufacturers();
 		foreach($manufacturer_names as $manufacturer_item)
 		{
 			$output .= '<url>';
@@ -109,7 +109,7 @@ if ($_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$country_names = Spotter::getAllCountries();
+		$country_names = $Spotter->getAllCountries();
 		foreach($country_names as $country_item)
 		{
 			$output .= '<url>';
@@ -125,7 +125,7 @@ if ($_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$ident_names = Spotter::getAllIdents();
+		$ident_names = $Spotter->getAllIdents();
 		foreach($ident_names as $ident_item)
 		{
 			$output .= '<url>';
@@ -141,7 +141,7 @@ if ($_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$date_names = Spotter::getAllDates();
+		$date_names = $Spotter->getAllDates();
 		foreach($date_names as $date_item)
 		{
 			$output .= '<url>';
@@ -157,7 +157,7 @@ if ($_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$route_names = Spotter::getAllRoutes();
+		$route_names = $Spotter->getAllRoutes();
 		foreach($route_names as $route_item)
 		{
 			$output .= '<url>';

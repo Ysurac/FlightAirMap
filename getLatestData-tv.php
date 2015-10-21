@@ -3,8 +3,8 @@ require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
 header('Content-Type: text/javascript');
-
-$spotter_array = Spotter::getRealTimeData($_GET['q']);
+$Spotter = new Spotter();
+$spotter_array = $Spotter->getRealTimeData($_GET['q']);
 
 $output = '{';
 

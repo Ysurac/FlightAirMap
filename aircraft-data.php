@@ -3,50 +3,26 @@ require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterLive.php');
 require('require/class.SpotterArchive.php');
+$SpotterLive = new SpotterLive();
+$SpotterArchive = new SpotterArchive();
 
 $from_archive = false;
 if (isset($_GET['ident'])) {
 	$ident = $_GET['ident'];
-	$spotter_array = SpotterLive::getLastLiveSpotterDataByIdent($ident);
+	$spotter_array = $SpotterLive->getLastLiveSpotterDataByIdent($ident);
 	if (empty($spotter_array)) {
 		$from_archive = true;
-		$spotter_array = SpotterArchive::getLastArchiveSpotterDataByIdent($ident);
+		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataByIdent($ident);
 	}
 }
 if (isset($_GET['flightaware_id'])) {
 	$flightaware_id = $_GET['flightaware_id'];
-	$spotter_array = SpotterLive::getLastLiveSpotterDataById($flightaware_id);
+	$spotter_array = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
 	if (empty($spotter_array)) {
 		$from_archive = true;
-		$spotter_array = SpotterArchive::getLastArchiveSpotterDataById($flightaware_id);
+		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
 	}
 }
-/*
-?>
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Spotter TV</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-<link rel="apple-touch-icon" href="<?php print $globalURL; ?>/images/touch-icon.png">
-<link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css?<?php print time(); ?>" />
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print time(); ?>" />
-</head>
-<body class="alldetails">
-<button class="close">close</button>
-<?php
-  */
  ?>
 <div class="alldetails">
 <button type="button" class="close">&times;</button>
@@ -86,7 +62,7 @@ print '<span class="code"><a href="/airport/'.$spotter_item['arrival_airport'].'
 print '</div></div><div>';
 print '<span>Aircraft</span>';
 if (isset($spotter_item['aircraft_wiki'])) print '<a href="'.$spotter_item['aircraft_wiki'].'">'.$spotter_item['aircraft_name'].'</a>';
-print $spotter_item['aircraft_name'];
+print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
 print '</div>';
 print '<div><span>Altitude</span>';
 print $spotter_item['altitude'].'00 feet - '.round($spotter_item['altitude']*30.48).' m (FL'.$spotter_item['altitude'].')';

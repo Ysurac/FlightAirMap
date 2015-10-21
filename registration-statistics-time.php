@@ -1,9 +1,9 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
-$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], "0,1", $_GET['sort']);
-$aircraft_array = Spotter::getAircraftInfoByRegistration($_GET['registration']);
+$Spotter = new Spotter();
+$spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], "0,1", $_GET['sort']);
+$aircraft_array = $Spotter->getAircraftInfoByRegistration($_GET['registration']);
 
 if (!empty($spotter_array))
 {
@@ -23,7 +23,7 @@ if (!empty($spotter_array))
 	print '<h2>Most Common Time of Day</h2>';
 	print '<p>The statistic below shows the most common time of day from aircraft with registration <strong>'.$_GET['registration'].'</strong>.</p>';
 
-	$hour_array = Spotter::countAllHoursByRegistration($_GET['registration']);
+	$hour_array = $Spotter->countAllHoursByRegistration($_GET['registration']);
 
 	print '<div id="chartHour" class="chart" width="100%"></div>
       	<script> 

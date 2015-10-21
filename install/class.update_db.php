@@ -65,7 +65,7 @@ class update_db {
 		$query = "DELETE FROM routes WHERE Source = '' OR Source = :source";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute(array(':source' => $database_file));
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -84,17 +84,17 @@ class update_db {
 		//$query_dest = 'INSERT INTO routes (`RouteID`,`CallSign`,`Operator_ICAO`,`FromAirport_ICAO`,`ToAirport_ICAO`,`RouteStop`,`Source`) VALUES (:RouteID, :CallSign, :Operator_ICAO, :FromAirport_ICAO, :ToAirport_ICAO, :routestop, :source)';
 		$query_dest = 'INSERT INTO routes (CallSign,Operator_ICAO,FromAirport_ICAO,ToAirport_ICAO,RouteStop,Source) VALUES (:CallSign, :Operator_ICAO, :FromAirport_ICAO, :ToAirport_ICAO, :routestop, :source)';
 		$Connection = new Connection();
-		$sth_dest = Connection::$db->prepare($query_dest);
+		$sth_dest = $Connection->db->prepare($query_dest);
 		try {
-			if ($globalTransaction) Connection::$db->beginTransaction();
+			if ($globalTransaction) $Connection->db->beginTransaction();
             		while ($values = $sth->fetch(PDO::FETCH_ASSOC)) {
 				//$query_dest_values = array(':RouteID' => $values['RouteId'],':CallSign' => $values['Callsign'],':Operator_ICAO' => $values['operator_icao'],':FromAirport_ICAO' => $values['FromAirportIcao'],':ToAirport_ICAO' => $values['ToAirportIcao'],':routestop' => $values['AllStop'],':source' => $database_file);
 				$query_dest_values = array(':CallSign' => $values['Callsign'],':Operator_ICAO' => $values['operator_icao'],':FromAirport_ICAO' => $values['FromAirportIcao'],':ToAirport_ICAO' => $values['ToAirportIcao'],':routestop' => $values['AllStop'],':source' => $database_file);
 				$sth_dest->execute($query_dest_values);
             		}
-			if ($globalTransaction) Connection::$db->commit();
+			if ($globalTransaction) $Connection->db->commit();
 		} catch(PDOException $e) {
-			if ($globalTransaction) Connection::$db->rollBack(); 
+			if ($globalTransaction) $Connection->db->rollBack(); 
 			return "error : ".$e->getMessage();
 		}
 //                return true;
@@ -105,7 +105,7 @@ class update_db {
 		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source IS NULL OR Source = :source";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute(array(':source' => $database_file));
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -123,15 +123,15 @@ class update_db {
 		$query_dest = 'INSERT INTO aircraft_modes (LastModified, ModeS,ModeSCountry,Registration,ICAOTypeCode,Source) VALUES (:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:source)';
 		
 		$Connection = new Connection();
-		$sth_dest = Connection::$db->prepare($query_dest);
+		$sth_dest = $Connection->db->prepare($query_dest);
 		try {
-			if ($globalTransaction) Connection::$db->beginTransaction();
+			if ($globalTransaction) $Connection->db->beginTransaction();
             		while ($values = $sth->fetch(PDO::FETCH_ASSOC)) {
 			//$query_dest_values = array(':AircraftID' => $values['AircraftID'],':FirstCreated' => $values['FirstCreated'],':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':SerialNo' => $values['SerialNo'], ':OperatorFlagCode' => $values['OperatorFlagCode'], ':Manufacturer' => $values['Manufacturer'], ':Type' => $values['Type'], ':FirstRegDate' => $values['FirstRegDate'], ':CurrentRegDate' => $values['CurrentRegDate'], ':Country' => $values['Country'], ':PreviousID' => $values['PreviousID'], ':DeRegDate' => $values['DeRegDate'], ':Status' => $values['Status'], ':PopularName' => $values['PopularName'],':GenericName' => $values['GenericName'],':AircraftClass' => $values['AircraftClass'], ':Engines' => $values['Engines'], ':OwnershipStatus' => $values['OwnershipStatus'],':RegisteredOwners' => $values['RegisteredOwners'],':MTOW' => $values['MTOW'], ':TotalHours' => $values['TotalHours'],':YearBuilt' => $values['YearBuilt'], ':CofACategory' => $values['CofACategory'], ':CofAExpiry' => $values['CofAExpiry'], ':UserNotes' => $values['UserNotes'], ':Interested' => $values['Interested'], ':UserTag' => $values['UserTag'], ':InfoUrl' => $values['InfoURL'], ':PictureUrl1' => $values['PictureURL1'], ':PictureUrl2' => $values['PictureURL2'], ':PictureUrl3' => $values['PictureURL3'], ':UserBool1' => $values['UserBool1'], ':UserBool2' => $values['UserBool2'], ':UserBool3' => $values['UserBool3'], ':UserBool4' => $values['UserBool4'], ':UserBool5' => $values['UserBool5'], ':UserString1' => $values['UserString1'], ':UserString2' => $values['UserString2'], ':UserString3' => $values['UserString3'], ':UserString4' => $values['UserString4'], ':UserString5' => $values['UserString5'], ':UserInt1' => $values['UserInt1'], ':UserInt2' => $values['UserInt2'], ':UserInt3' => $values['UserInt3'], ':UserInt4' => $values['UserInt4'], ':UserInt5' => $values['UserInt5']);
 				$query_dest_values = array(':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':source' => $database_file);
 				$sth_dest->execute($query_dest_values);
             		}
-			if ($globalTransaction) Connection::$db->commit();
+			if ($globalTransaction) $Connection->db->commit();
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
@@ -139,7 +139,7 @@ class update_db {
 		$query = "DELETE FROM aircraft_modes WHERE Source = :source AND ModeS IN (SELECT * FROM (SELECT ModeS FROM aircraft_modes WHERE Source = 'ACARS') _alias)";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute(array(':source' => $database_file));
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -150,11 +150,12 @@ class update_db {
 
 	public static function retrieve_modes_flarmnet($database_file) {
 		global $globalTransaction;
+		$Common = new Common();
 		//$query = 'TRUNCATE TABLE aircraft_modes';
 		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source IS NULL OR Source = :source";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute(array(':source' => $database_file));
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -165,11 +166,11 @@ class update_db {
 			$query_dest = 'INSERT INTO aircraft_modes (ModeS,Registration,ICAOTypeCode,Source) VALUES (:ModeS,:Registration,:ICAOTypeCode,:source)';
 		
 			$Connection = new Connection();
-			$sth_dest = Connection::$db->prepare($query_dest);
+			$sth_dest = $Connection->db->prepare($query_dest);
 			try {
-				if ($globalTransaction) Connection::$db->beginTransaction();
+				if ($globalTransaction) $Connection->db->beginTransaction();
             			while (!feof($fh)) {
-            				$line = Common::hex2str(fgets($fh,9999));
+            				$line = $Common->hex2str(fgets($fh,9999));
 					//FFFFFF                     RIDEAU VALLEY SOARINGASW-20               C-FBKN MZ 123.400
             				$values['ModeS'] = substr($line,0,6);
             				$values['Registration'] = trim(substr($line,69,6));
@@ -179,7 +180,7 @@ class update_db {
             				$search_more = '';
             				if (count($aircraft_name) > 1 && strlen($aircraft_name_split[1]) > 3) $search_more .= " AND LIKE '%".$aircraft_name_split[0]."%'";
             				$query_search = "SELECT * FROM aircraft WHERE type LIKE '%".$aircraft_name."%'".$search_more;
-            				$sth_search = Connection::$db->prepare($query_search);
+            				$sth_search = $Connection->db->prepare($query_search);
 					try {
                                     		$sth_search->execute();
 	            				$result = $sth_search->fetch(PDO::FETCH_ASSOC);
@@ -199,7 +200,7 @@ class update_db {
 						$sth_dest->execute($query_dest_values);
 					}
 				}
-				if ($globalTransaction) Connection::$db->commit();
+				if ($globalTransaction) $Connection->db->commit();
 			} catch(PDOException $e) {
 				return "error : ".$e->getMessage();
 			}
@@ -208,7 +209,7 @@ class update_db {
 		$query = "DELETE FROM aircraft_modes WHERE Source = :source AND ModeS IN (SELECT * FROM (SELECT ModeS FROM aircraft_modes WHERE Source = 'ACARS') _alias)";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute(array(':source' => $database_file));
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -223,7 +224,7 @@ class update_db {
 		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source IS NULL OR Source = :source";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute(array(':source' => $database_file));
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -234,9 +235,9 @@ class update_db {
 			$query_dest = 'INSERT INTO aircraft_modes (ModeS,Registration,ICAOTypeCode,Source) VALUES (:ModeS,:Registration,:ICAOTypeCode,:source)';
 		
 			$Connection = new Connection();
-			$sth_dest = Connection::$db->prepare($query_dest);
+			$sth_dest = $Connection->db->prepare($query_dest);
 			try {
-				if ($globalTransaction) Connection::$db->beginTransaction();
+				if ($globalTransaction) $Connection->db->beginTransaction();
 				$tmp = fgetcsv($fh,9999,',',"'");
             			while (!feof($fh)) {
             				$line = fgetcsv($fh,9999,',',"'");
@@ -251,7 +252,7 @@ class update_db {
             				$search_more = '';
             				if (count($aircraft_name) > 1 && strlen($aircraft_name_split[1]) > 3) $search_more .= " AND LIKE '%".$aircraft_name_split[0]."%'";
             				$query_search = "SELECT * FROM aircraft WHERE type LIKE '%".$aircraft_name."%'".$search_more;
-            				$sth_search = Connection::$db->prepare($query_search);
+            				$sth_search = $Connection->db->prepare($query_search);
 					try {
                                     		$sth_search->execute();
 	            				$result = $sth_search->fetch(PDO::FETCH_ASSOC);
@@ -268,7 +269,7 @@ class update_db {
 						$sth_dest->execute($query_dest_values);
 					}
 				}
-				if ($globalTransaction) Connection::$db->commit();
+				if ($globalTransaction) $Connection->db->commit();
 			} catch(PDOException $e) {
 				return "error : ".$e->getMessage();
 			}
@@ -277,7 +278,7 @@ class update_db {
 		$query = "DELETE FROM aircraft_modes WHERE Source = :source AND ModeS IN (SELECT * FROM (SELECT ModeS FROM aircraft_modes WHERE Source = 'ACARS') _alias)";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute(array(':source' => $database_file));
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -392,7 +393,7 @@ class update_db {
 		$query = 'TRUNCATE TABLE airport';
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -402,7 +403,7 @@ class update_db {
 		$query = 'ALTER TABLE airport DROP INDEX icaoidx';
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -411,8 +412,8 @@ class update_db {
 		$query_dest = "INSERT INTO airport (`airport_id`,`name`,`city`,`country`,`iata`,`icao`,`latitude`,`longitude`,`altitude`,`type`,`home_link`,`wikipedia_link`,`image_thumb`,`image`)
 		    VALUES (:airport_id, :name, :city, :country, :iata, :icao, :latitude, :longitude, :altitude, :type, :home_link, :wikipedia_link, :image_thumb, :image)";
 		$Connection = new Connection();
-		$sth_dest = Connection::$db->prepare($query_dest);
-		if ($globalTransaction) Connection::$db->beginTransaction();
+		$sth_dest = $Connection->db->prepare($query_dest);
+		if ($globalTransaction) $Connection->db->beginTransaction();
   
 		$i = 0;
 		while($row = sparql_fetch_array($result))
@@ -466,12 +467,12 @@ class update_db {
 
 			$i++;
 		}
-		if ($globalTransaction) Connection::$db->commit();
+		if ($globalTransaction) $Connection->db->commit();
 		echo "Delete duplicate rows...\n";
 		$query = 'ALTER IGNORE TABLE airport ADD UNIQUE INDEX icaoidx (icao)';
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -484,7 +485,7 @@ class update_db {
 		$query_values = array(':airport_id' => $i, ':name' => 'Not available',':iata' => 'NA',':icao' => 'NA',':latitude' => '0',':longitude' => '0',':altitude' => '0',':type' => 'NA',':city' => 'N/A',':country' => 'N/A',':home_link' => '',':wikipedia_link' => '',':image' => '',':image_thumb' => '');
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute($query_values);
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -494,7 +495,7 @@ class update_db {
 		$query = 'DELETE FROM airport WHERE airport_id IN (SELECT * FROM (SELECT min(a.airport_id) FROM airport a GROUP BY a.icao) x)';
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -512,7 +513,7 @@ class update_db {
 		if (($handle = fopen($out_file, 'r')) !== FALSE)
 		{
 			$Connection = new Connection();
-			//Connection::$db->beginTransaction();
+			//$Connection->db->beginTransaction();
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				if(!$header) $header = $row;
@@ -520,7 +521,7 @@ class update_db {
 					$data = array();
 					$data = array_combine($header, $row);
 					try {
-						$sth = Connection::$db->prepare('SELECT COUNT(*) FROM airport WHERE `icao` = :icao');
+						$sth = $Connection->db->prepare('SELECT COUNT(*) FROM airport WHERE `icao` = :icao');
 						$sth->execute(array(':icao' => $data['gps_code']));
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage();
@@ -528,7 +529,7 @@ class update_db {
 					if ($sth->fetchColumn() > 0) {
 						$query = 'UPDATE airport SET `type` = :type WHERE icao = :icao';
 						try {
-							$sth = Connection::$db->prepare($query);
+							$sth = $Connection->db->prepare($query);
 							$sth->execute(array(':icao' => $data['gps_code'],':type' => $data['type']));
 						} catch(PDOException $e) {
 							return "error : ".$e->getMessage();
@@ -538,7 +539,7 @@ class update_db {
 						    VALUES (:airport_id, :name, :city, :country, :iata, :icao, :latitude, :longitude, :altitude, :type, :home_link, :wikipedia_link)";
 						$query_values = array(':airport_id' => $i, ':name' => $data['name'],':iata' => $data['iata_code'],':icao' => $data['gps_code'],':latitude' => $data['latitude_deg'],':longitude' => $data['longitude_deg'],':altitude' => $data['elevation_ft'],':type' => $data['type'],':city' => $data['municipality'],':country' => $data['iso_country'],':home_link' => $data['home_link'],':wikipedia_link' => $data['wikipedia_link']);
 						try {
-							$sth = Connection::$db->prepare($query);
+							$sth = $Connection->db->prepare($query);
 							$sth->execute($query_values);
 						} catch(PDOException $e) {
 							return "error : ".$e->getMessage();
@@ -548,7 +549,7 @@ class update_db {
 				}
 			}
 			fclose($handle);
-			//Connection::$db->commit();
+			//$Connection->db->commit();
 		}
 
 		echo "Download data from another free database...\n";
@@ -562,7 +563,7 @@ class update_db {
 		$Connection = new Connection();
 		if (($handle = fopen($tmp_dir.'GlobalAirportDatabase.txt', 'r')) !== FALSE)
 		{
-			//Connection::$db->beginTransaction();
+			//$Connection->db->beginTransaction();
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				if(!$header) $header = $row;
@@ -571,7 +572,7 @@ class update_db {
 
 					$query = 'UPDATE airport SET `city` = :city, `country` = :country WHERE icao = :icao';
 					try {
-						$sth = Connection::$db->prepare($query);
+						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':icao' => $data[0],':city' => ucwords(strtolower($data[3])),':country' => ucwords(strtolower($data[4]))));
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage();
@@ -579,13 +580,13 @@ class update_db {
 				}
 			}
 			fclose($handle);
-			//Connection::$db->commit();
+			//$Connection->db->commit();
 		}
 
 		echo "Put type military for all air base";
 		$Connection = new Connection();
 		try {
-			$sth = Connection::$db->prepare("SELECT icao FROM airport WHERE `name` LIKE '%Air Base%'");
+			$sth = $Connection->db->prepare("SELECT icao FROM airport WHERE `name` LIKE '%Air Base%'");
 			$sth->execute();
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
@@ -593,7 +594,7 @@ class update_db {
 		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 			$query2 = 'UPDATE airport SET `type` = :type WHERE icao = :icao';
 			try {
-				$sth2 = Connection::$db->prepare($query2);
+				$sth2 = $Connection->db->prepare($query2);
 				$sth2->execute(array(':icao' => $row['icao'],':type' => 'military'));
 			} catch(PDOException $e) {
 				return "error : ".$e->getMessage();
@@ -608,6 +609,7 @@ class update_db {
 	public static function translation() {
 		require_once('../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
+		$Spotter = new Spotter();
 		//$out_file = $tmp_dir.'translation.zip';
 		//update_db::download('http://www.acarsd.org/download/translation.php',$out_file);
 		//if (!file_exists($out_file) || !is_readable($out_file)) return FALSE;
@@ -616,7 +618,7 @@ class update_db {
 		$query = "DELETE FROM translation WHERE Source = '' OR Source = :source";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute(array(':source' => 'translation.csv'));
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -630,8 +632,8 @@ class update_db {
 		if (($handle = fopen($tmp_dir.'translation.csv', 'r')) !== FALSE)
 		{
 			$i = 0;
-			//Connection::$db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
-			//Connection::$db->beginTransaction();
+			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
+			//$Connection->db->beginTransaction();
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				$i++;
@@ -639,7 +641,7 @@ class update_db {
 					$data = $row;
 					$operator = $data[2];
 					if ($operator != '' && is_numeric(substr(substr($operator, 0, 3), -1, 1))) {
-                                                $airline_array = Spotter::getAllAirlineInfo(substr($operator, 0, 2));
+                                                $airline_array = $Spotter->getAllAirlineInfo(substr($operator, 0, 2));
                                                 //echo substr($operator, 0, 2)."\n";;
                                                 if (count($airline_array) > 0) {
 							//print_r($airline_array);
@@ -649,14 +651,14 @@ class update_db {
 					
 					$operator_correct = $data[3];
 					if ($operator_correct != '' && is_numeric(substr(substr($operator_correct, 0, 3), -1, 1))) {
-                                                $airline_array = Spotter::getAllAirlineInfo(substr($operator_correct, 0, 2));
+                                                $airline_array = $Spotter->getAllAirlineInfo(substr($operator_correct, 0, 2));
                                                 if (count($airline_array) > 0) {
                                             		$operator_correct = $airline_array[0]['icao'].substr($operator_correct,2);
                                             	}
                                         }
 					$query = 'INSERT INTO translation (Reg,Reg_correct,Operator,Operator_correct,Source) VALUES (:Reg, :Reg_correct, :Operator, :Operator_correct, :source)';
 					try {
-						$sth = Connection::$db->prepare($query);
+						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':Reg' => $data[0],':Reg_correct' => $data[1],':Operator' => $operator,':Operator_correct' => $operator_correct, ':source' => 'translation.csv'));
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage();
@@ -664,7 +666,7 @@ class update_db {
 				}
 			}
 			fclose($handle);
-			//Connection::$db->commit();
+			//$Connection->db->commit();
 		}
 //		return true;
         }
@@ -723,7 +725,7 @@ class update_db {
 		$query = 'TRUNCATE TABLE waypoints';
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -731,8 +733,8 @@ class update_db {
 
 		$query_dest = 'INSERT INTO waypoints (`ident`,`latitude`,`longitude`,`control`,`usage`) VALUES (:ident, :latitude, :longitude, :control, :usage)';
 		$Connection = new Connection();
-		$sth_dest = Connection::$db->prepare($query_dest);
-		Connection::$db->beginTransaction();
+		$sth_dest = $Connection->db->prepare($query_dest);
+		$Connection->db->beginTransaction();
                 foreach ($table as $row) {
             		if ($row[0] != 'Ident') {
 				$ident = $row[0];
@@ -748,13 +750,14 @@ class update_db {
 				}
 			}
                 }
-		Connection::$db->commit();
+		$Connection->db->commit();
 
 	}
 */
 	public static function waypoints($filename) {
-		require_once('../require/class.Spotter.php');
+		//require_once('../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
+		//$Spotter = new Spotter();
 		//$out_file = $tmp_dir.'translation.zip';
 		//update_db::download('http://www.acarsd.org/download/translation.php',$out_file);
 		//if (!file_exists($out_file) || !is_readable($out_file)) return FALSE;
@@ -762,7 +765,7 @@ class update_db {
 		$query = 'TRUNCATE TABLE waypoints';
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -776,7 +779,7 @@ class update_db {
 		if (($handle = fopen($filename, 'r')) !== FALSE)
 		{
 			$i = 0;
-			if ($globalTransaction) Connection::$db->beginTransaction();
+			if ($globalTransaction) $Connection->db->beginTransaction();
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				$i++;
@@ -793,7 +796,7 @@ class update_db {
 					if (count($data) > 9) {
 						$query = 'INSERT INTO `waypoints` (`name_begin`,`latitude_begin`,`longitude_begin`,`name_end`,`latitude_end`,`longitude_end`,`high`,`base`,`top`,`segment_name`) VALUES (:name_begin, :latitude_begin, :longitude_begin, :name_end, :latitude_end, :longitude_end, :high, :base, :top, :segment_name)';
 						try {
-							$sth = Connection::$db->prepare($query);
+							$sth = $Connection->db->prepare($query);
 							$sth->execute(array(':name_begin' => $data[0],':latitude_begin' => $data[1],':longitude_begin' => $data[2],':name_end' => $data[3], ':latitude_end' => $data[4], ':longitude_end' => $data[5], ':high' => $data[6], ':base' => $data[7], ':top' => $data[8], ':segment_name' => $data[9]));
 						} catch(PDOException $e) {
 							return "error : ".$e->getMessage();
@@ -802,17 +805,17 @@ class update_db {
 				}
 			}
 			fclose($handle);
-			if ($globalTransaction) Connection::$db->commit();
+			if ($globalTransaction) $Connection->db->commit();
 		}
         }
 
 	public static function ivao_airlines($filename) {
-		require_once('../require/class.Spotter.php');
+		//require_once('../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
 		$query = 'TRUNCATE TABLE airlines';
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -823,13 +826,13 @@ class update_db {
 		$Connection = new Connection();
 		if (($handle = fopen($filename, 'r')) !== FALSE)
 		{
-			if ($globalTransaction) Connection::$db->beginTransaction();
+			if ($globalTransaction) $Connection->db->beginTransaction();
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				if(count($row) > 1) {
 					$query = "INSERT INTO airlines (name,icao,active) VALUES (:name, :icao, 'Y')";
 					try {
-						$sth = Connection::$db->prepare($query);
+						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':name' => $row[1],':icao' => $row[0]));
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage();
@@ -837,7 +840,7 @@ class update_db {
 				}
 			}
 			fclose($handle);
-			if ($globalTransaction) Connection::$db->commit();
+			if ($globalTransaction) $Connection->db->commit();
 		}
         }
 	
@@ -869,6 +872,7 @@ class update_db {
 
 	public static function update_ivao() {
 		global $tmp_dir, $globalDebug;
+		$Common = new Common();
 		$error = '';
 		//Direct download forbidden
 		//if ($globalDebug) echo "IVAO : Download...";
@@ -880,7 +884,7 @@ class update_db {
 			update_db::ivao_airlines($tmp_dir.'data/airlines.dat');
 			if ($globalDebug) echo "Copy airlines logos to airlines images directory...";
 			if (is_writable(dirname(__FILE__).'/../images/airlines')) {
-				if (!Common::xcopy($tmp_dir.'logos/',dirname(__FILE__).'/../images/airlines/')) $error = "Failed to copy airlines logo.";
+				if (!$Common->xcopy($tmp_dir.'logos/',dirname(__FILE__).'/../images/airlines/')) $error = "Failed to copy airlines logo.";
 			} else $error = "The directory ".dirname(__FILE__).'/../images/airlines'." must be writable";
 		} else $error = "File ".$tmp_dir.'ivao.zip'." doesn't exist. Download failed.";
 		if ($error != '') {
@@ -1007,11 +1011,12 @@ class update_db {
 	public static function update_notam() {
 		global $tmp_dir, $globalDebug, $globalNOTAMSource;
 		require('../require/class.NOTAM.php');
+		$Common = new Common();
 		date_default_timezone_set('UTC');
 		$query = 'TRUNCATE TABLE notam';
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -1046,8 +1051,8 @@ class update_db {
 				$data['upper_limit'] = $q[6];
 				$latlonrad = $q[7];
 				sscanf($latlonrad,'%4c%c%5c%c%3d',$las,$lac,$lns,$lnc,$radius);
-				$latitude = Common::convertDec($las,'latitude');
-				$longitude = Common::convertDec($lns,'longitude');
+				$latitude = $Common->convertDec($las,'latitude');
+				$longitude = $Common->convertDec($lns,'longitude');
 				if ($lac == 'S') $latitude = '-'.$latitude;
 				if ($lnc == 'W') $longitude = '-'.$longitude;
 				$data['center_latitude'] = $latitude;
@@ -1075,7 +1080,8 @@ class update_db {
 				    $data['permanent'] = 1;
 				}
 				$data['full_notam'] = $notam['title'].'<br>'.$notam['description'];
-				NOTAM::addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['center_latitude'],$data['center_longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
+				$NOTAM = new NOTAM();
+				$NOTAM->addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['center_latitude'],$data['center_longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
 				unset($data);
 			} 
 		} else $error = "File ".$tmp_dir.'notam.rss'." doesn't exist. Download failed.";
@@ -1090,7 +1096,7 @@ class update_db {
 		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -1105,7 +1111,7 @@ class update_db {
 			INSERT INTO config (name,value) VALUES ('last_update_db',NOW());";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -1116,7 +1122,7 @@ class update_db {
 		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_notam_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 1 DAY)";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
@@ -1131,7 +1137,7 @@ class update_db {
 			INSERT INTO config (name,value) VALUES ('last_update_notam_db',NOW());";
 		try {
 			$Connection = new Connection();
-			$sth = Connection::$db->prepare($query);
+			$sth = $Connection->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();

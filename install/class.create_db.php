@@ -16,7 +16,7 @@ class create_db {
                 	if (substr(trim($line), -1,1) == ';')
                 	{
                 		try {
-                			$sth = Connection::$db->prepare($templine);
+                			$sth = $Connection->db->prepare($templine);
 					$sth->execute();
                     		} catch(PDOException $e) {
 					return "error (import ".$filename.") : ".$e->getMessage()."\n";

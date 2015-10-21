@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Statistic - Most common Departure Airport";
 require('header.php');
 include('statistics-sub-menu.php'); 
@@ -14,7 +14,7 @@ include('statistics-sub-menu.php');
     	<p>Below are the <strong>Top 10</strong> most common departure airports.</p>
     
     	<?php
-    	 $airport_airport_array = Spotter::countAllDepartureAirports();
+    	 $airport_airport_array = $Spotter->countAllDepartureAirports();
     	?>
     
     	<script>

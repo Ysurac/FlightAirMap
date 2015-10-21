@@ -1,6 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+$Spotter = new Spotter();
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -27,9 +28,9 @@ require('require/class.Spotter.php');
 <?php
 if (isset($_GET['q']))
 {
-	$spotter_array = Spotter::searchSpotterData($_GET['q'],"","","","","","","","","","","","","","0,10","","");
+	$spotter_array = $Spotter->searchSpotterData($_GET['q'],"","","","","","","","","","","","","","0,10","","");
 } else {
-	$spotter_array = Spotter::getLatestSpotterData("0,10", "");
+	$spotter_array = $Spotter->getLatestSpotterData("0,10", "");
 }
    
 print '<div class="table-responsive">';

@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Statistic - Most common Callsign";
 require('header.php');
 include('statistics-sub-menu.php'); 
@@ -14,7 +14,7 @@ include('statistics-sub-menu.php');
     	<p>Below are the <strong>Top 10</strong> most common ident/callsigns of all airlines.</p>
           	
 <?php
-$callsign_array = Spotter::countAllCallsigns();
+$callsign_array = $Spotter->countAllCallsigns();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});

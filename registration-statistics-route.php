@@ -1,10 +1,10 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-$spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], "0,1", $sort);
-$aircraft_array = Spotter::getAircraftInfoByRegistration($_GET['registration']);
+$spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], "0,1", $sort);
+$aircraft_array = $Spotter->getAircraftInfoByRegistration($_GET['registration']);
 
 
 if (!empty($spotter_array))
@@ -27,7 +27,7 @@ if (!empty($spotter_array))
   	print '<h2>Most Common Routes</h2>';
   	print '<p>The statistic below shows the most common routes of aircraft with registration <strong>'.$_GET['registration'].'</strong>.</p>';
   	
-      $route_array = Spotter::countAllRoutesByRegistration($_GET['registration']);
+      $route_array = $Spotter->countAllRoutesByRegistration($_GET['registration']);
 	  
 	  if (!empty($route_array))
     {

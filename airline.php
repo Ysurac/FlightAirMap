@@ -8,13 +8,14 @@ if (isset($_POST['airline']))
 } else {
 	$title = "Airlines";
 	require('header.php');
+	$Spotter = new Spotter();
 	print '<div class="column">';
 	print '<h1>Airlines</h1>';
 	if (isset($_POST['airline_type'])) {
 		$airline_type = filter_input(INPUT_POST,'airline_type',FILTER_SANITIZE_STRING);
-		$airline_names = Spotter::getAllAirlineNames($airline_type);
+		$airline_names = $Spotter->getAllAirlineNames($airline_type);
 	} else {
-		$airline_names = Spotter::getAllAirlineNames();
+		$airline_names = $Spotter->getAllAirlineNames();
 		$airline_type = 'all';
 	}
 
@@ -33,9 +34,9 @@ if (isset($_POST['airline']))
 	if (isset($_POST['airline_type'])) 
 	{
 		$airline_type = filter_input(INPUT_POST,'airline_type',FILTER_SANITIZE_STRING);
-		$airline_names = Spotter::getAllAirlineNames($airline_type);
+		$airline_names = $Spotter->getAllAirlineNames($airline_type);
 	} else {
-		$airline_names = Spotter::getAllAirlineNames();
+		$airline_names = $Spotter->getAllAirlineNames();
 	}
 	$previous = null;
 	print '<div class="alphabet-legend">';

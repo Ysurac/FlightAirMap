@@ -1,7 +1,8 @@
 <?php
+$Spotter = new Spotter();
 if ($spotter_array[0]['registration'] != "")
 {
-    $highlight = Spotter::getHighlightByRegistration($spotter_array[0]['registration']);
+    $highlight = $Spotter->getHighlightByRegistration($spotter_array[0]['registration']);
     if ($highlight != "")
     {
      print '<div class="alert alert-warning">This aircraft has a Highlight: '.$highlight.'</div>';

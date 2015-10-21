@@ -1,13 +1,12 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-$spotter_array = Spotter::getSpotterDataByDate($_GET['date'],"0,1", $sort);
+$spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $sort);
 
 if (!empty($spotter_array))
 {
-  
   
   $title = 'Most Common Arrival Airports by Country on '.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']));
 	require('header.php');
@@ -32,7 +31,7 @@ if (!empty($spotter_array))
   	?>
   	<p>The statistic below shows all arrival airports by Country of origin of flights on <strong><?php print date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])); ?></strong>.</p>
   	<?php
-    	 $airport_country_array = Spotter::countAllArrivalAirportCountriesByDate($_GET['date']);
+    	 $airport_country_array = $Spotter->countAllArrivalAirportCountriesByDate($_GET['date']);
       
       print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 

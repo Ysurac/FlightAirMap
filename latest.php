@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $title = "Latest Activity";
 require('header.php');
 
@@ -31,7 +31,7 @@ print '<p>The table below shows the detailed information of all recent flights.<
 
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $sql_begin = microtime(true);
-$spotter_array = Spotter::getLatestSpotterData($limit_start.",".$absolute_difference, $sort);
+$spotter_array = $Spotter->getLatestSpotterData($limit_start.",".$absolute_difference, $sort);
 $sql_time = microtime(true)-$sql_begin;
 
 $page_begin = microtime(true);

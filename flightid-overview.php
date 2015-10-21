@@ -7,8 +7,8 @@ if ($_GET['id'] == "")
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterArchive.php');
-
-$spotter_array = Spotter::getSpotterDataByID($_GET['id']);
+$Spotter = new Spotter();
+$spotter_array = $Spotter->getSpotterDataByID($_GET['id']);
 
 
 if (!empty($spotter_array))
@@ -109,7 +109,7 @@ if (!empty($spotter_array))
 	print '</div>';
 
 	if ($spotter_array[0]['registration'] != "") {
-		$highlight = Spotter::getHighlightByRegistration($spotter_array[0]['registration']);
+		$highlight = $Spotter->getHighlightByRegistration($spotter_array[0]['registration']);
 		if ($highlight != "") {
 			print '<div class="alert alert-warning">'.$highlight.'</div>';
 		}
@@ -400,7 +400,7 @@ if (!empty($spotter_array))
 		print '<div class="last-flights">';
 		print '<h3>Last 5 Flights of this Aircraft ('.$spotter_array[0]['registration'].')</h3>';
 		$hide_th_links = true;
-		$spotter_array = Spotter::getSpotterDataByRegistration($spotter_array[0]['registration'],"0,5", "");
+		$spotter_array = $Spotter->getSpotterDataByRegistration($spotter_array[0]['registration'],"0,5", "");
 		include('table-output.php'); 
 		print '<div class="more">';
 		print '<a href="'.$globalURL.'/registration/'.$spotter_array[0]['registration'].'" class="btn btn-default btn" role="button">See all Flights&raquo;</a>';

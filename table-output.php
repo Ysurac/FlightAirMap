@@ -449,7 +449,7 @@ foreach($spotter_array as $spotter_item)
 		if (!isset($spotter_item['aircraft_name'])) {
 			print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">Not available</a></span>'."\n";
 		} else {
-			print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_name'].'</a></span>'."\n";
+			print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].'</a></span>'."\n";
 		}
 		print '<span class="mobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a></span>'."\n";
 		print '</td>'."\n";

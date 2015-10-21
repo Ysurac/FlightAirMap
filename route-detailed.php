@@ -5,7 +5,7 @@ require('require/class.Spotter.php');
 if (!isset($_GET['departure_airport']) || !isset($_GET['arrival_airport'])){
 	header('Location: '.$globalURL.'');
 } else {
-
+	$Spotter = new Spotter();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
@@ -25,9 +25,9 @@ if (!isset($_GET['departure_airport']) || !isset($_GET['arrival_airport'])){
 	$page_url = $globalURL.'/route/'.$_GET['departure_airport'].'/'.$_GET['arrival_airport'];
 	
 	if (isset($_GET['sort'])) {
-		$spotter_array = Spotter::getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], $limit_start.",".$absolute_difference, $_GET['sort']);
+		$spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], $limit_start.",".$absolute_difference, $_GET['sort']);
 	} else {
-		$spotter_array = Spotter::getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], $limit_start.",".$absolute_difference, '');
+		$spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], $limit_start.",".$absolute_difference, '');
 	}
 	  
 	  if (!empty($spotter_array))
@@ -74,8 +74,5 @@ if (!isset($_GET['departure_airport']) || !isset($_GET['arrival_airport'])){
 	}
 }
 
-?>
-
-<?php
 require('footer.php');
 ?>

@@ -1,10 +1,10 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 if (isset($_GET['sort'])) $sort = $_GET['sort'];
 else $sort = '';
-if (isset($_GET['date'])) $spotter_array = Spotter::getSpotterDataByDate($_GET['date'],"0,1", $sort);
+if (isset($_GET['date'])) $spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $sort);
 else $spotter_array = '';
 
 if (!empty($spotter_array))
@@ -32,7 +32,7 @@ if (!empty($spotter_array))
   	print '<h2>Most Common Airlines</h2>';
   	print '<p>The statistic below shows the most common airlines of flights on <strong>'.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])).'</strong>.</p>';
 
-	  $airline_array = Spotter::countAllAirlinesByDate($_GET['date']);
+	  $airline_array = $Spotter->countAllAirlinesByDate($_GET['date']);
 	 
 	  if (!empty($airline_array))
     {

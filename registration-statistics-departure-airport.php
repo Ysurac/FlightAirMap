@@ -1,10 +1,10 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
-if (isset($_GET['sort'])) $spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], "0,1", $_GET['sort']);
-else $spotter_array = Spotter::getSpotterDataByRegistration($_GET['registration'], "0,1");
-$aircraft_array = Spotter::getAircraftInfoByRegistration($_GET['registration']);
+$Spotter = new Spotter();
+if (isset($_GET['sort'])) $spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], "0,1", $_GET['sort']);
+else $spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], "0,1");
+$aircraft_array = $Spotter->getAircraftInfoByRegistration($_GET['registration']);
 
 
 if (!empty($spotter_array))
@@ -29,7 +29,7 @@ if (!empty($spotter_array))
   	?>
   	<p>The statistic below shows all departure airports of flights with aircraft registration <strong><?php print $_GET['registration']; ?></strong>.</p>
   	<?php
-    	 $airport_airport_array = Spotter::countAllDepartureAirportsByRegistration($_GET['registration']);
+    	 $airport_airport_array = $Spotter->countAllDepartureAirportsByRegistration($_GET['registration']);
     	?>
     	<script>
     	google.load("visualization", "1", {packages:["geochart"]});

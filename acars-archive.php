@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.ACARS.php');
-
+$ACARS = new ACARS();
 $title = "Latest ACARS messages";
 require('header.php');
 
@@ -28,7 +28,7 @@ print '</div>';
 
 print '<div class="table column">';	
 print '<p>The table below shows the latest ACARS messages.</p>';
-$spotter_array = ACARS::getArchiveAcarsData($limit_start.",".$absolute_difference);
+$spotter_array = $ACARS->getArchiveAcarsData($limit_start.",".$absolute_difference);
 if (!empty($spotter_array)) {
     include('table-output.php');
     print '<div class="pagination">';

@@ -1,6 +1,5 @@
 <?php
 require('require/class.Connection.php');
-require('require/class.Spotter.php');
 include_once('require/libs/geoPHP/geoPHP.inc');
 
 if (isset($_GET['download']))
@@ -11,7 +10,7 @@ header('Content-Type: text/javascript');
 
 $Connection = new Connection();
 
-if (!Connection::tableExists('airspace')) {
+if (!$Connection->tableExists('airspace')) {
     die;
 }
 
@@ -20,7 +19,7 @@ if (isset($_GET['coord']))
 	$coords = explode(',',$_GET['coord']);
 	$query = "SELECT *, AsWKB(SHAPE) AS wkb FROM airspace WHERE ST_Intersects(SHAPE, envelope(linestring(point(:minlon,:minlat), point(:maxlon,:maxlat))))";
 	try {
-		$sth = Connection::$db->prepare($query);
+		$sth = $Connection->db->prepare($query);
 		$sth->execute(array(':minlon' => $coords[0],':minlat' => $coords[1],':maxlon' => $coords[2],':maxlat' => $coords[3]));
 	} catch(PDOException $e) {
 		return "error";
@@ -29,7 +28,7 @@ if (isset($_GET['coord']))
 
 	$query = "SELECT *, AsWKB(SHAPE) AS wkb FROM airspace";
 	try {
-		$sth = Connection::$db->prepare($query);
+		$sth = $Connection->db->prepare($query);
 		$sth->execute();
 	} catch(PDOException $e) {
 		return "error";

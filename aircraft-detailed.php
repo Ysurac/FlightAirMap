@@ -1,6 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+$Spotter = new Spotter();
 
 if (!isset($_GET['aircraft_type'])){
 	header('Location: '.$globalURL.'/aircraft');
@@ -23,11 +24,8 @@ if (!isset($_GET['aircraft_type'])){
 	
 	$page_url = $globalURL.'/aircraft/'.$_GET['aircraft_type'];
 	
-	if (isset($_GET['sort'])) {
-		$spotter_array = Spotter::getSpotterDataByAircraft($_GET['aircraft_type'],$limit_start.",".$absolute_difference, $_GET['sort']);
-	} else {
-		$spotter_array = Spotter::getSpotterDataByAircraft($_GET['aircraft_type'],$limit_start.",".$absolute_difference, '');
-	}
+	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+	$spotter_array = $Spotter->getSpotterDataByAircraft($_GET['aircraft_type'],$limit_start.",".$absolute_difference, $sort);
 	
 	if (!empty($spotter_array))
 	{
@@ -38,7 +36,7 @@ if (!isset($_GET['aircraft_type'])){
 		print '<form action="'.$globalURL.'/aircraft" method="post">';
 		print '<select name="aircraft_type" class="selectpicker" data-live-search="true">';
     		print '<option></option>';
-    		$aircraft_types = Spotter::getAllAircraftTypes();
+    		$aircraft_types = $Spotter->getAllAircraftTypes();
     		foreach($aircraft_types as $aircraft_type)
     		{
     			if($_GET['aircraft_type'] == $aircraft_type['aircraft_icao'])

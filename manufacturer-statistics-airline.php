@@ -1,10 +1,14 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+if (!isset($_GET['aircraft_manufacturer'])) {
+        header('Location: '.$globalURL.'/manufacturer');
+        die();
+}
+$Spotter = new Spotter();
 $manufacturer = ucwords(str_replace("-", " ", $_GET['aircraft_manufacturer']));
 
-$spotter_array = Spotter::getSpotterDataByManufacturer($manufacturer,"0,1", $_GET['sort']);
+$spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,"0,1", $_GET['sort']);
 
 if (!empty($spotter_array))
 {
@@ -17,7 +21,7 @@ if (!empty($spotter_array))
 	print '<form action="'.$globalURL.'/manufacturer" method="post">';
 		print '<select name="aircraft_manufacturer" class="selectpicker" data-live-search="true">';
       print '<option></option>';
-      $all_manufacturers = Spotter::getAllManufacturers();
+      $all_manufacturers = $Spotter->getAllManufacturers();
       foreach($all_manufacturers as $all_manufacturer)
       {
         if($_GET['aircraft_manufacturer'] == strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])))
@@ -42,7 +46,7 @@ if (!empty($spotter_array))
   	print '<h2>Most Common Airlines</h2>';
   	print '<p>The statistic below shows the most common airlines of flights from <strong>'.$manufacturer.'</strong>.</p>';
 
-	  $airline_array = Spotter::countAllAirlinesByManufacturer($manufacturer);
+	  $airline_array = $Spotter->countAllAirlinesByManufacturer($manufacturer);
 	  
 	  if (!empty($airline_array))
     {

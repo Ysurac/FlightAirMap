@@ -5,6 +5,7 @@ require('require/class.Spotter.php');
 if (!isset($_GET['date'])){
 	header('Location: '.$globalURL.'');
 } else {
+	$Spotter = new Spotter();
 
 	
 	//calculuation for the pagination
@@ -27,9 +28,9 @@ if (!isset($_GET['date'])){
 	
 	if (isset($_GET['sort'])) 
 	{
-		$spotter_array = Spotter::getSpotterDataByDate($_GET['date'],$limit_start.",".$absolute_difference, $_GET['sort']);
+		$spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],$limit_start.",".$absolute_difference, $_GET['sort']);
 	} else {
-		$spotter_array = Spotter::getSpotterDataByDate($_GET['date'],$limit_start.",".$absolute_difference);
+		$spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],$limit_start.",".$absolute_difference);
 	}
 	
 	

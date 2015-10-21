@@ -1,8 +1,12 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
-$spotter_array = Spotter::getSpotterDataByAirline($_GET['airline'],"0,1","");
+if (!isset($_GET['airline'])) {
+        header('Location: '.$globalURL.'/airline');
+        die();
+}
+$Spotter = new Spotter();
+$spotter_array = $Spotter->getSpotterDataByAirline($_GET['airline'],"0,1","");
 
 if (!empty($spotter_array))
 {
@@ -12,7 +16,7 @@ if (!empty($spotter_array))
 	print '<form action="'.$globalURL.'/airline" method="post">';
 	print '<select name="airline" class="selectpicker" data-live-search="true">';
 	print '<option></option>';
-	$airline_names = Spotter::getAllAirlineNames();
+	$airline_names = $Spotter->getAllAirlineNames();
 	foreach($airline_names as $airline_name)
 	{
 		if($_GET['airline'] == $airline_name['airline_icao'])
@@ -57,7 +61,7 @@ if (!empty($spotter_array))
   	?>
   	<p>The statistic below shows all departure airports of flights from <strong><?php print $spotter_array[0]['airline_name']; ?></strong>.</p>
   	<?php
-	$airport_airport_array = Spotter::countAllDepartureAirportsByAirline($_GET['airline']);
+	$airport_airport_array = $Spotter->countAllDepartureAirportsByAirline($_GET['airline']);
     	?>
     	<script>
     	google.load("visualization", "1", {packages:["geochart"]});

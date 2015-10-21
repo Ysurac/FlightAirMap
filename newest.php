@@ -1,6 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+$Spotter = new Spotter();
 
 if (isset($_POST['category']))
 {
@@ -122,19 +123,19 @@ $page_url = $globalURL.'/newest/'.$category;
 
     if ($category == "aircraft")
         {
-            $spotter_array = Spotter::getNewestSpotterDataSortedByAircraftType($limit_start.",".$absolute_difference, $_GET['sort']);
+            $spotter_array = $Spotter->getNewestSpotterDataSortedByAircraftType($limit_start.",".$absolute_difference, $_GET['sort']);
         } else if ($category == "registration")
         {
-            $spotter_array = Spotter::getNewestSpotterDataSortedByAircraftRegistration($limit_start.",".$absolute_difference, $_GET['sort']);
+            $spotter_array = $Spotter->getNewestSpotterDataSortedByAircraftRegistration($limit_start.",".$absolute_difference, $_GET['sort']);
         } else if ($category == "airline")
         {
-            $spotter_array = Spotter::getNewestSpotterDataSortedByAirline($limit_start.",".$absolute_difference, $_GET['sort']);
+            $spotter_array = $Spotter->getNewestSpotterDataSortedByAirline($limit_start.",".$absolute_difference, $_GET['sort']);
         } else if ($category == "departure_airport")
         {
-            $spotter_array = Spotter::getNewestSpotterDataSortedByDepartureAirport($limit_start.",".$absolute_difference, $_GET['sort']);
+            $spotter_array = $Spotter->getNewestSpotterDataSortedByDepartureAirport($limit_start.",".$absolute_difference, $_GET['sort']);
         } else if ($category == "arrival_airport")
         {
-            $spotter_array = Spotter::getNewestSpotterDataSortedByArrivalAirport($limit_start.",".$absolute_difference, $_GET['sort']);
+            $spotter_array = $Spotter->getNewestSpotterDataSortedByArrivalAirport($limit_start.",".$absolute_difference, $_GET['sort']);
         }
 	  
 		  if (!empty($spotter_array))

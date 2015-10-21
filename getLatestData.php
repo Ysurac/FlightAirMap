@@ -3,8 +3,8 @@ require('require/class.Connection.php');
 require('require/class.Spotter.php');
 
 header('Content-Type: text/javascript');
-
-$spotter_array = Spotter::getRealTimeData();
+$Spotter = new Spotter();
+$spotter_array = $Spotter->getRealTimeData();
 
 print '{';
 	print '"airline_logo": "';

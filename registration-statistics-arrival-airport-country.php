@@ -1,12 +1,12 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+$Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $registration = filter_input(INPUT_GET,'registration',FILTER_SANITIZE_STRING);
 if ($registration != '') {
-	$spotter_array = Spotter::getSpotterDataByRegistration($registration, "0,1", $sort);
-	$aircraft_array = Spotter::getAircraftInfoByRegistration($registration);
+	$spotter_array = $Spotter->getSpotterDataByRegistration($registration, "0,1", $sort);
+	$aircraft_array = $Spotter->getAircraftInfoByRegistration($registration);
 } else $spotter_array=array();
 
 
@@ -27,7 +27,7 @@ if (!empty($spotter_array))
 ?>
 	 <p>The statistic below shows all arrival airports by Country of origin of flights with aircraft registration <strong><?php print $_GET['registration']; ?></strong>.</p>
 <?php
-	$airport_country_array = Spotter::countAllArrivalAirportCountriesByRegistration($_GET['registration']);
+	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByRegistration($_GET['registration']);
 	print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["geochart"]});

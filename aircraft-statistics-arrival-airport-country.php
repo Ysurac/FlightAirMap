@@ -1,8 +1,12 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
-$spotter_array = Spotter::getSpotterDataByAircraft($_GET['aircraft_type'],"0,1","");
+if (!isset($_GET['aircraft_type'])) {
+        header('Location: '.$globalURL.'/aircraft');
+        die();
+}
+$Spotter = new Spotter();
+$spotter_array = $Spotter->getSpotterDataByAircraft($_GET['aircraft_type'],"0,1","");
 
 
 if (!empty($spotter_array))
@@ -13,7 +17,7 @@ if (!empty($spotter_array))
 	print '<form action="'.$globalURL.'/aircraft" method="post">';
 	print '<select name="aircraft_type" class="selectpicker" data-live-search="true">';
 	print '<option></option>';
-	$aircraft_types = Spotter::getAllAircraftTypes();
+	$aircraft_types = $Spotter->getAllAircraftTypes();
 	foreach($aircraft_types as $aircraft_type)
 	{
 		if($_GET['aircraft_type'] == $aircraft_type['aircraft_icao'])
@@ -48,7 +52,7 @@ if (!empty($spotter_array))
     	
   	<?php
 
-	$airport_country_array = Spotter::countAllArrivalAirportCountriesByAircraft($_GET['aircraft_type']);
+	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByAircraft($_GET['aircraft_type']);
 	print '<div id="chartCountry" class="chart" width="100%"></div>
     	    <script> 
       		google.load("visualization", "1", {packages:["geochart"]});

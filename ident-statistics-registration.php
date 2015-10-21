@@ -1,12 +1,16 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-
+if (!isset($_GET['ident'])) {
+        header('Location: '.$globalURL.'/ident');
+        die();
+}
+$Spotter = new Spotter();
 $ident = '';
 $sort = '';
 if (isset($_GET['ident'])) $ident = $_GET['ident'];
 if (isset($_GET['sort'])) $sort = $_GET['sort'];
-$spotter_array = Spotter::getSpotterDataByIdent($ident,"0,1", $sort);
+$spotter_array = $Spotter->getSpotterDataByIdent($ident,"0,1", $sort);
 
 if (!empty($spotter_array))
 {
@@ -24,7 +28,7 @@ if (!empty($spotter_array))
 	print '<h2>Most Common Aircraft by Registration</h2>';
 	print '<p>The statistic below shows the most common aircraft by Registration of flights using the ident/callsign <strong>'.$spotter_array[0]['ident'].'</strong>.</p>';
 
-	$aircraft_array = Spotter::countAllAircraftRegistrationByIdent($_GET['ident']);
+	$aircraft_array = $Spotter->countAllAircraftRegistrationByIdent($_GET['ident']);
 	
 	if (!empty($aircraft_array))
 	{

@@ -7,14 +7,13 @@ if (isset($_GET['download']))
 	header('Content-disposition: attachment; filename="atc.geojson"');
 }
 header('Content-Type: text/javascript');
-
+$ATC=new ATC();
 if (isset($_GET['coord'])) 
 {
-	$coords = explode(',',$_GET['coord']);
-//	$spotter_array = Spotter::getAllNOTAMbyCoord($coords);
-	$spotter_array = ATC::getAll();
+	//$coords = explode(',',$_GET['coord']);
+	$spotter_array = $ATC->getAll();
 } else {
-	$spotter_array = ATC::getAll();
+	$spotter_array = $ATC->getAll();
 }
       
 $output = '{"type": "FeatureCollection","features": [';
