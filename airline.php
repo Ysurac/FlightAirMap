@@ -64,7 +64,7 @@ if (isset($_POST['airline']))
 			$previous = $firstLetter;
 			print '<div class="alphabet-airline alphabet-item">';
 			print '<a href="'.$globalURL.'/airline/'.$value['airline_icao'].'">';
-			if ($globalIVAO && (@getimagesize('images/airlines/'.$value['airline_icao'].'.gif') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.gif')))
+			if (isset($globalIVAO) && $globalIVAO && (@getimagesize('images/airlines/'.$value['airline_icao'].'.gif') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.gif')))
 			{
 				print '<img src="'.$globalURL.'/images/airlines/'.$value['airline_icao'].'.gif" alt="Click to see airline activity" title="Click to see airline activity" /> ';
 			} elseif (@getimagesize('images/airlines/'.$value['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.png'))
