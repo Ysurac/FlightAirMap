@@ -6,9 +6,9 @@ if ($_GET['departure_airport'] == "" || $_GET['arrival_airport'] == "")
 
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-    $Spotter = new Spotter();
-
-  $spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $_GET['sort']);
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$Spotter = new Spotter();
+$spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $sort);
   
   if (!empty($spotter_array))
   {

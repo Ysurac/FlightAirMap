@@ -199,12 +199,14 @@ class Spotter{
 			} else {
 				$temp_array['airline_icao'] = $row['airline_icao'];
 				if (isset($row['airline_iata'])) $temp_array['airline_iata'] = $row['airline_iata'];
+				else $temp_array['airline_iata'] = '';
 				$temp_array['airline_name'] = $row['airline_name'];
 				$temp_array['airline_country'] = $row['airline_country'];
 				if (isset($row['airline_callsign'])) $temp_array['airline_callsign'] = $row['airline_callsign'];
+				else $temp_array['airline_callsign'] = 'N/A';
 				$temp_array['airline_type'] = $row['airline_type'];
 			}
-			if (isset($temp_array['airline_iata'])) {
+			if (isset($temp_array['airline_iata']) && $temp_array['airline_iata'] != '') {
 				$acars_array = $ACARS->getLiveAcarsData($temp_array['airline_iata'].substr($temp_array['ident'],3));
 				//$acars_array = ACARS->getLiveAcarsData('BA40YL');
 				if (count($acars_array) > 0) {
