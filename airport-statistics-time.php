@@ -67,6 +67,7 @@ if (!empty($airport_array))
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
             	["Hour", "# of Flights"], ';
+            $hour_data = '';
               foreach($hour_array as $hour_item)
     					{
     						$hour_data .= '[ "'.date("ga", strtotime($hour_item['hour_name'].":00")).'",'.$hour_item['hour_count'].'],';
