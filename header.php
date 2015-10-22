@@ -277,7 +277,7 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
   L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
+      '<a href="http://www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
       'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>'
   }).addTo(map);
 <?php
@@ -286,7 +286,7 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
   L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
+      '<a href="http://www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
       'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>, Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency"'
   }).addTo(map);
 <?php
