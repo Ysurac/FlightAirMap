@@ -922,7 +922,7 @@ class Spotter{
 		date_default_timezone_set('UTC');
 		
 		$query_values = array();
-		
+		$additional_query = '';
 		if ($id != "")
 		{
 			if (!is_string($id))

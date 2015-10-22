@@ -88,37 +88,36 @@ $output = '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<gpx version="1.0">';
 		$output .= '<name>FlightAirMap GPX Feed</name>';
 		
-	  if (!empty($spotter_array))
-	  {	  
-	    foreach($spotter_array as $spotter_item)
-	    {				
-				$altitude = $spotter_item['altitude'].'00';
-				
-				//waypoint plotting
-				$output .= '<trk>';
-					$output .= '<name>'.$spotter_item['ident'].' '.$spotter_item['airline_name'].' | '.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | '.$spotter_item['departure_airport'].' - '.$spotter_item['arrival_airport'].'</name>';
-					$output .= '<number>1</number>';
-						$output .= '<trkseg>';
-							$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
-							$waypoint_pieces = array_chunk($waypoint_pieces, 2);  
-							foreach ($waypoint_pieces as $waypoint_coordinate)
-							{
-							        $output .= '<trkpt lat="'.$waypoint_coordinate[0].'" lon="'.$waypoint_coordinate[1].'"><ele>'.$altitude.'</ele><time>'.date("c", strtotime($spotter_item['date_iso_8601'])).'</time></trkpt>';
-							}
-					$output .= '</trkseg>';
-				$output .= '</trk>';
+if (!empty($spotter_array))
+{
+	foreach($spotter_array as $spotter_item)
+	{
+		$altitude = $spotter_item['altitude'].'00';
 
-				
-				//location of aircraft
-				$output .= '<wpt lat="'.$spotter_item['latitude'].'" lon="'.$spotter_item['longitude'].'">';
-					$output .= '<ele>'.$altitude.'</ele>';
-					$output .= '<name>Ident: '.$spotter_item['ident'].' | Registration: '.$spotter_item['registration'].' | Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | Airline: '.$spotter_item['airline_name'].' | Route: '.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].') - '.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].') | Date: '.date("D M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'</name>';
-				$output .= '</wpt>';
-	    }
-	   }
-	   
+		//waypoint plotting
+		$output .= '<trk>';
+		$output .= '<name>'.$spotter_item['ident'].' '.$spotter_item['airline_name'].' | '.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | '.$spotter_item['departure_airport'].' - '.$spotter_item['arrival_airport'].'</name>';
+		$output .= '<number>1</number>';
+		if ($spotter_item['waypoints'] != '') {
+			$output .= '<trkseg>';
+			$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
+			$waypoint_pieces = array_chunk($waypoint_pieces, 2);  
+			foreach ($waypoint_pieces as $waypoint_coordinate)
+			{
+				$output .= '<trkpt lat="'.$waypoint_coordinate[0].'" lon="'.$waypoint_coordinate[1].'"><ele>'.$altitude.'</ele><time>'.date("c", strtotime($spotter_item['date_iso_8601'])).'</time></trkpt>';
+			}
+			$output .= '</trkseg>';
+		}
+		$output .= '</trk>';
+
+		//location of aircraft
+		$output .= '<wpt lat="'.$spotter_item['latitude'].'" lon="'.$spotter_item['longitude'].'">';
+		$output .= '<ele>'.$altitude.'</ele>';
+		$output .= '<name>Ident: '.$spotter_item['ident'].' | Registration: '.$spotter_item['registration'].' | Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | Airline: '.$spotter_item['airline_name'].' | Route: '.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].') - '.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].') | Date: '.date("D M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'</name>';
+		$output .= '</wpt>';
+	}
+}
 $output .= '</gpx>';
-
 print $output;
 
 ?>

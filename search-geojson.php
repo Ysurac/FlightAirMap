@@ -132,8 +132,9 @@ $output = '{';
                     $output .= '"heading": "'.$spotter_item['heading'].'",';
                     $output .= '"heading_name": "'.$spotter_item['heading_name'].'",';
                     $output .= '"date": "'.date("c", strtotime($spotter_item['date_iso_8601'])).'"';
-	          $output .= '},';
-	          $output .= '"geometry": {';
+	          $output .= '}';
+	          if ($spotter_item['waypoints'] != '') {
+	          $output .= ',"geometry": {';
 	          	$output .= '"type": "LineString",';
 	            	$output .= '"coordinates": [';
 		            	$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
@@ -150,6 +151,7 @@ $output = '{';
 		            	$output = substr($output, 0, -1);
 								$output .= ']';
 							$output .= '}';
+		}
 				$output .= '},';
 				
 				//location of aircraft

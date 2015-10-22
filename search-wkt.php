@@ -88,30 +88,25 @@ $i = 1;
 
 if (!empty($spotter_array))
 {
-  foreach($spotter_array as $spotter_item)
-  {
-		
-		$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
-		$waypoint_pieces = array_chunk($waypoint_pieces, 2);
-		
-        //waypoint plotting
-		$output .= 'MULTILINESTRING((';
-		    
-		foreach ($waypoint_pieces as $waypoint_coordinate)
-		{
-		  $output .= $waypoint_coordinate[1].' '.$waypoint_coordinate[0].', ';		  
+	foreach($spotter_array as $spotter_item)
+	{
+		if ($spotter_item['waypoints'] != '') {
+			$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
+			$waypoint_pieces = array_chunk($waypoint_pieces, 2);
+			//waypoint plotting
+			$output .= 'MULTILINESTRING((';
+			foreach ($waypoint_pieces as $waypoint_coordinate)
+			{
+				$output .= $waypoint_coordinate[1].' '.$waypoint_coordinate[0].', ';
+			}
+			$output = substr($output, 0, -2);
+			$output .= ")) ";
 		}
-		$output = substr($output, 0, -2);
-      
-        $output .= ")) ";
-      
-        //location of aircraft
-        $output .= 'MULTIPOINT(('.$spotter_item['longitude'].' '.$spotter_item['latitude'].')) ';
-    $i++;
-    
-  }  
- }
-
+		//location of aircraft
+		$output .= 'MULTIPOINT(('.$spotter_item['longitude'].' '.$spotter_item['latitude'].')) ';
+		$i++;
+	}
+}
 print $output;
 
 ?>
