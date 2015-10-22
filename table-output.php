@@ -325,7 +325,7 @@ foreach($spotter_array as $spotter_item)
 	} else {
 		print '<tr>';
 	}
-	if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive") {
+	if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive" || strtolower($current_page) == "currently") {
 		if ($spotter_item['image_thumbnail'] != "")
 		{
 			print '<td class="aircraft_thumbnail">'."\n";
@@ -359,7 +359,7 @@ foreach($spotter_array as $spotter_item)
 			print '</td>'."\n";
 		}
 	}
-	if(strtolower($current_page) != "upcoming" && strtolower($current_page) != "acars-latest" && strtolower($current_page) != "acars-archive"){
+	if(strtolower($current_page) != "currently" && strtolower($current_page) != "upcoming" && strtolower($current_page) != "acars-latest" && strtolower($current_page) != "acars-archive"){
 		if (!isset($spotter_item['squawk']) || $spotter_item['squawk'] == 0) {
 		    $spotter_item['squawk'] = '-';
 		}
