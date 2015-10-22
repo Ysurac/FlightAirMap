@@ -85,7 +85,7 @@ $spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolow
        
 $i = 1;      
 //$output .= "oid;Line\n";
-
+$output = '';
 if (!empty($spotter_array))
 {
 	foreach($spotter_array as $spotter_item)

@@ -117,6 +117,7 @@ $output = '<?xml version="1.0" encoding="UTF-8"?>';
 				
 				$altitude = $spotter_item['altitude'].'00';
 				
+				if ($spotter_item['waypoints'] != '') {
 				//waypoint plotting
 				$output .= '<Placemark>'; 
 					$output .= '<styleUrl>#route</styleUrl>';
@@ -134,6 +135,7 @@ $output = '<?xml version="1.0" encoding="UTF-8"?>';
 						$output .= '<altitudeMode>absolute</altitudeMode>';
 					$output .= '</LineString>';
 				$output .= '</Placemark>';
+				}
 
 				//departure airport 
 				$output .= '<Placemark>';  
