@@ -85,7 +85,7 @@ $arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_S
 $spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
  
       
-$output .= "id,ident,registration,aircraft_icao,aircraft_name,aircraft_manufacturer,airline,airline_icao,airline_iata,airline_country,airline_callsign,airline_type,departure_airport_city,departure_airport_country,departure_airport_iata,departure_airport_icao,departure_airport_latitude,departure_airport_longitude,departure_airport_altitude,arrival_airport_city,arrival_airport_country,arrival_airport_iata,arrival_airport_icao,arrival_airport_latitude,arrival_airport_longitude,arrival_airport_altitude,latitude,longitude,altitude,ground_speed,heading,heading_name,waypoints,date\n";
+$output = "id,ident,registration,aircraft_icao,aircraft_name,aircraft_manufacturer,airline,airline_icao,airline_iata,airline_country,airline_callsign,airline_type,departure_airport_city,departure_airport_country,departure_airport_iata,departure_airport_icao,departure_airport_latitude,departure_airport_longitude,departure_airport_altitude,arrival_airport_city,arrival_airport_country,arrival_airport_iata,arrival_airport_icao,arrival_airport_latitude,arrival_airport_longitude,arrival_airport_altitude,latitude,longitude,altitude,ground_speed,heading,heading_name,waypoints,date\n";
 
 if (!empty($spotter_array))
 {

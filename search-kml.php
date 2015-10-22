@@ -84,7 +84,7 @@ $arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_S
 $spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
       
       
-$output .= '<?xml version="1.0" encoding="UTF-8"?>';
+$output = '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<kml xmlns="http://www.opengis.net/kml/2.2">';
     $output .= '<Document>';
 	    $output .= '<Style id="departureAirport">';

@@ -6,9 +6,9 @@ if ($_GET['departure_airport'] == "" || $_GET['arrival_airport'] == "")
 
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-    $Spotter = new Spotter();
-
-  $spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $_GET['sort']);
+$Spotter = new Spotter();
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $sort);
   
   if (!empty($spotter_array))
   {
@@ -37,6 +37,7 @@ require('require/class.Spotter.php');
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
             	["Country", "# of Times"], ';
+            	$country_data = '';
               foreach($airline_array as $airline_item)
     					{
     						$country_data .= '[ "'.$airline_item['airline_country'].'",'.$airline_item['airline_country_count'].'],';

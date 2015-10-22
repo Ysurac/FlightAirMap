@@ -83,7 +83,7 @@ $departure_airport_route = filter_input(INPUT_GET,'departure_airport_route',FILT
 $arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_SANITIZE_STRING);
 $spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
        
-$output .= '{';
+$output = '{';
   $output .= '"flightairmap": {';
     $output .= '"title": "FlightAirMap JSON Feed",';
     $output .= '"link": "http://www.flightairmap.fr",';
