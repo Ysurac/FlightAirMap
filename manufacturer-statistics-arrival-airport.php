@@ -61,6 +61,7 @@ if (!empty($spotter_array))
         var data = google.visualization.arrayToDataTable([ 
         	["Airport", "# of Times"],
         	<?php
+        	$airport_data = '';
           foreach($airport_airport_array as $airport_item)
     			{
     				$name = $airport_item['airport_arrival_city'].', '.$airport_item['airport_arrival_country'].' ('.$airport_item['airport_arrival_icao'].')';

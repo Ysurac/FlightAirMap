@@ -5,7 +5,7 @@ $Spotter = new Spotter();
 header('Content-Type: text/xml');
 
 date_default_timezone_set('UTC');
-
+$output = '';
 if ($_GET['type'] == "flight")
 {
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';

@@ -31,7 +31,7 @@ if (isset($globalTimezone)) {
 } else {
 	date_default_timezone_set('UTC');
 }
-print_r($hour_array);
+//print_r($hour_array);
 foreach($hour_array as $hour_item)
 {
 	$hour_data .= '[ "'.$hour_item['hour_name'].':00",'.$hour_item['hour_count'].'],';

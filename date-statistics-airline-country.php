@@ -38,6 +38,7 @@ if (!empty($spotter_array))
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
             	["Country", "# of Times"], ';
+            	$country_data = '';
               foreach($airline_array as $airline_item)
     					{
     						$country_data .= '[ "'.$airline_item['airline_country'].'",'.$airline_item['airline_country_count'].'],';

@@ -67,6 +67,7 @@ if (!empty($airport_array))
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
             	["Aircraft", "# of Times"], ';
+            	$airline_data = '';
               foreach($airline_array as $airline_item)
     					{
 	    						$airline_data .= '[ "'.$airline_item['airline_name'].'",'.$airline_item['airline_count'].'],';
