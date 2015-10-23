@@ -16,9 +16,26 @@ header('Content-Type: text/javascript');
 
 $from_archive = false;
 $min = false;
+$allhistory = false;
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) $min = true;
 
-if (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true'))) {
+if (isset($_GET['ident'])) {
+	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+	$spotter_array = $SpotterLive->getLastLiveSpotterDataByIdent($ident);
+	if (empty($spotter_array)) {
+		$from_archive = true;
+		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataByIdent($ident);
+	}
+	$allhistory = true;
+} elseif (isset($_GET['flightaware_id'])) {
+	$flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
+	$spotter_array = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
+	if (empty($spotter_array)) {
+		$from_archive = true;
+		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
+	}
+	$allhistory = true;
+} elseif (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true'))) {
 //if (isset($_GET['coord'])) {
 	$coord = explode(',',$_GET['coord']);
 	$spotter_array = $SpotterLive->getLiveSpotterDatabyCoord($coord);
@@ -29,25 +46,7 @@ if (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (iss
 } else {
 	$spotter_array = $SpotterLive->getLiveSpotterData();
 }
-$allhistory = false;
-if (isset($_GET['ident'])) {
-	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
-	$spotter_array = $SpotterLive->getLastLiveSpotterDataByIdent($ident);
-	if (empty($spotter_array)) {
-		$from_archive = true;
-		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataByIdent($ident);
-	}
-	$allhistory = true;
-}
-if (isset($_GET['flightaware_id'])) {
-	$flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
-	$spotter_array = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
-	if (empty($spotter_array)) {
-		$from_archive = true;
-		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
-	}
-	$allhistory = true;
-}
+
 
 if (!empty($spotter_array)) {
 	$flightcnt = $SpotterLive->getLiveSpotterCount();
