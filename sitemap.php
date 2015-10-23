@@ -6,7 +6,7 @@ header('Content-Type: text/xml');
 
 date_default_timezone_set('UTC');
 $output = '';
-if ($_GET['type'] == "flight")
+if (isset($_GET['type']) && $_GET['type'] == "flight")
 {
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
@@ -23,7 +23,7 @@ if ($_GET['type'] == "flight")
 	$output .= '</urlset>';
 	
 	
-} else if ($_GET['type'] == "aircraft"){
+} else if (isset($_GET['type']) && $_GET['type'] == "aircraft"){
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
@@ -40,7 +40,7 @@ if ($_GET['type'] == "flight")
 	$output .= '</urlset>';
 	
 	
-} else if ($_GET['type'] == "registration"){
+} else if (isset($_GET['type']) && $_GET['type'] == "registration"){
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
@@ -56,7 +56,7 @@ if ($_GET['type'] == "flight")
 		}
 	$output .= '</urlset>';
 	
-} else if ($_GET['type'] == "airline"){
+} else if (isset($_GET['type']) && $_GET['type'] == "airline"){
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
@@ -72,7 +72,7 @@ if ($_GET['type'] == "flight")
 		}
 	$output .= '</urlset>';
 	
-} else if ($_GET['type'] == "airport"){
+} else if (isset($_GET['type']) && $_GET['type'] == "airport"){
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
@@ -88,7 +88,7 @@ if ($_GET['type'] == "flight")
 		}
 	$output .= '</urlset>';
 	
-} else if ($_GET['type'] == "manufacturer"){
+} else if (isset($_GET['type']) && $_GET['type'] == "manufacturer"){
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
@@ -104,7 +104,7 @@ if ($_GET['type'] == "flight")
 		}
 	$output .= '</urlset>';
 	
-} else if ($_GET['type'] == "country"){
+} else if (isset($_GET['type']) && $_GET['type'] == "country"){
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
@@ -120,7 +120,7 @@ if ($_GET['type'] == "flight")
 		}
 	$output .= '</urlset>';
 	
-} else if ($_GET['type'] == "ident"){
+} else if (isset($_GET['type']) && $_GET['type'] == "ident"){
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
@@ -136,7 +136,7 @@ if ($_GET['type'] == "flight")
 		}
 	$output .= '</urlset>';
 	
-} else if ($_GET['type'] == "date"){
+} else if (isset($_GET['type']) && $_GET['type'] == "date"){
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
@@ -152,7 +152,7 @@ if ($_GET['type'] == "flight")
 		}
 	$output .= '</urlset>';
 	
-} else if ($_GET['type'] == "route"){
+} else if (isset($_GET['type']) && $_GET['type'] == "route"){
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
@@ -168,7 +168,7 @@ if ($_GET['type'] == "flight")
 		}
 	$output .= '</urlset>';
 	
-} else if ($_GET['type'] == "static"){
+} else if (isset($_GET['type']) && $_GET['type'] == "static"){
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';

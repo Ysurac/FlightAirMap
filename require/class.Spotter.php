@@ -1939,7 +1939,8 @@ class Spotter{
 	*/
 	public function getAllFlightsforSitemap()
 	{
-		$query  = "SELECT spotter_output.spotter_id, spotter_output.ident, spotter_output.airline_name, spotter_output.aircraft_name, spotter_output.aircraft_icao, spotter_output.image FROM spotter_output";
+		//$query  = "SELECT spotter_output.spotter_id, spotter_output.ident, spotter_output.airline_name, spotter_output.aircraft_name, spotter_output.aircraft_icao FROM spotter_output ORDER BY LIMIT ";
+		$query  = "SELECT spotter_output.spotter_id FROM spotter_output ORDER BY spotter_id DESC LIMIT 0,200";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute();
@@ -1950,11 +1951,11 @@ class Spotter{
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['spotter_id'] = $row['spotter_id'];
-			$temp_array['ident'] = $row['ident'];
-			$temp_array['airline_name'] = $row['airline_name'];
-			$temp_array['aircraft_type'] = $row['aircraft_icao'];
-			$temp_array['aircraft_name'] = $row['aircraft_name'];
-			$temp_array['image'] = $row['image'];
+//			$temp_array['ident'] = $row['ident'];
+//			$temp_array['airline_name'] = $row['airline_name'];
+//			$temp_array['aircraft_type'] = $row['aircraft_icao'];
+//			$temp_array['aircraft_name'] = $row['aircraft_name'];
+			//$temp_array['image'] = $row['image'];
 
 			$flight_array[] = $temp_array;
 		}
@@ -2380,7 +2381,7 @@ class Spotter{
 		$query  = "SELECT DISTINCT DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) as date
 								FROM spotter_output
 								WHERE spotter_output.date <> '' 
-								ORDER BY spotter_output.date ASC";							
+								ORDER BY spotter_output.date ASC LIMIT 0,200";
 								
 		
 		$sth = $this->db->prepare($query);

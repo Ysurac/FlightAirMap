@@ -7,8 +7,8 @@ if (!isset($_GET['aircraft_manufacturer'])) {
 }
 $Spotter = new Spotter();
 $manufacturer = ucwords(str_replace("-", " ", $_GET['aircraft_manufacturer']));
-
-$spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,"0,1", $_GET['sort']);
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,"0,1", $sort);
 
 if (!empty($spotter_array))
 {

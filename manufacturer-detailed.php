@@ -23,7 +23,6 @@ if (!isset($_GET['aircraft_manufacturer'])){
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
 	$manufacturer = ucwords(str_replace("-", " ", $_GET['aircraft_manufacturer']));
-	
 	$page_url = $globalURL.'/manufacturer/'.$_GET['aircraft_manufacturer'];
 	
 	if (isset($_GET['sort'])) {
