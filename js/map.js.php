@@ -402,8 +402,14 @@ bounds = L.latLngBounds(southWest,northEast);
 	<?php
 	   // }
 	?>
-	
+    
+	<?php
+	if (!isset($ident) && !isset($flightaware_id)) {
+	?>
 	var sidebar = L.control.sidebar('sidebar').addTo(map);
+	<?php
+	}
+	?>
 
 
 function getAltitudeColor(x) {
