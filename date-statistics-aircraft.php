@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-$Spotter = new Spotte();
+$Spotter = new Spotter();
 $spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $_GET['sort']);
 
 if (!empty($spotter_array))

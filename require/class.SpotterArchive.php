@@ -1,6 +1,6 @@
 <?php
 class SpotterArchive {
-    static $global_query = "SELECT spotter_archive.* FROM spotter_archive";
+    public $global_query = "SELECT spotter_archive.* FROM spotter_archive";
     public $db;
 
     function __construct() {
@@ -84,7 +84,7 @@ class SpotterArchive {
         {
                 date_default_timezone_set('UTC');
                 $id = filter_var($id, FILTER_SANITIZE_STRING);
-                $query  = $this->$global_query." WHERE spotter_archive.flightaware_id = :id";
+                $query  = $this->global_query." WHERE spotter_archive.flightaware_id = :id";
 
 //              $spotter_array = Spotter->getDataFromDB($query,array(':id' => $id));
 
