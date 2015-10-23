@@ -128,11 +128,13 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		$ident_names = $Spotter->getAllIdents();
 		foreach($ident_names as $ident_item)
 		{
-			$output .= '<url>';
-			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/ident/'.$ident_item['ident'].'</loc>';
-			    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
-			    $output .= '<changefreq>daily</changefreq>';
-			$output .= '</url>';
+			if (ctype_alnum($ident_item['ident'])) {
+				$output .= '<url>';
+				    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/ident/'.$ident_item['ident'].'</loc>';
+				    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
+				    $output .= '<changefreq>daily</changefreq>';
+				$output .= '</url>';
+			}
 		}
 	$output .= '</urlset>';
 	
