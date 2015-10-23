@@ -2342,7 +2342,7 @@ class Spotter{
 		$query  = "SELECT DISTINCT spotter_output.ident
 								FROM spotter_output
 								WHERE spotter_output.ident <> '' 
-								ORDER BY spotter_output.ident ASC";							
+								ORDER BY spotter_output.date ASC LIMIT 0,700";
 								
 		
 		$sth = $this->db->prepare($query);
