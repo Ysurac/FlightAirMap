@@ -4,6 +4,7 @@ require('require/class.Spotter.php');
 require('require/class.SpotterLive.php');
 require('require/class.SpotterArchive.php');
 $SpotterLive = new SpotterLive();
+$Spotter = new Spotter();
 $SpotterArchive = new SpotterArchive();
 
 if (isset($_GET['download'])) {
@@ -163,6 +164,7 @@ $output = '{';
 						if (isset($spotter_item['arrival_airport_city'])) {
 							$output .= '"arrival_airport": "'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].'",';
 						}
+						
 						if (isset($spotter_item['date_iso_8601'])) {
 							$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
 						}
@@ -286,6 +288,32 @@ $output = '{';
 				    unset($prev_alt);
 				    unset($output_history);
 				}
+				}
+				
+				if (isset($_GET['history']) && $_GET['history'] == $spotter_item['ident'] && isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != 'NA' && isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != 'NA' && ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == "true") || (!isset($_COOKIE['MapRoute']) && (!isset($globalMapRoute) || (isset($globalMapRoute) && $globalMapRoute))))) {
+				    $output_air = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "route"},"geometry": {"type": "LineString","coordinates": [';
+				    if (isset($spotter_item['departure_airport_latitude'])) {
+					$output_air .= '['.$spotter_item['departure_airport_longitude'].','.$spotter_item['departure_airport_latitude'].'],';
+				    } elseif (isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != 'NA') {
+					$dairport = $Spotter->getAllAirportInfo($spotter_item['departure_airport']);
+					//print_r($dairport);
+					//echo $spotter_item['departure_airport'];
+					if (isset($dairport[0]['latitude'])) {
+					    $output_air .= '['.$dairport[0]['longitude'].','.$dairport[0]['latitude'].'],';
+					}
+				    }
+				    if (isset($spotter_item['arrival_airport_latitude'])) {
+					$output_air .= '['.$spotter_item['arrival_airport_longitude'].','.$spotter_item['arrival_airport_latitude'].']';
+				    } elseif (isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != 'NA') {
+					//print_r($aairport);
+					$aairport = $Spotter->getAllAirportInfo($spotter_item['arrival_airport']);
+					if (isset($aairport[0]['latitude'])) {
+					    $output_air .= '['.$aairport[0]['longitude'].','.$aairport[0]['latitude'].']';
+					}
+				    }
+				    $output_air .= ']}},';
+				    $output .= $output_air;
+				    unset($output_air);
 				}
 			}
 		} else {

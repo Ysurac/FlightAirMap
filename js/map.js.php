@@ -721,6 +721,19 @@ function getLiveData()
                 } else {
             	    layer_data.addLayer(layer);
                 }
+
+                if (feature.properties.type == "route"){
+            	    var style = {
+		    	"color": "#c74343",
+		    	"weight": 2,
+		    	"opacity": 0.5
+		    };
+		    layer.setStyle(style);
+		    layer_data.addLayer(layer);
+		    console.log('Niark Niark !');
+		}
+
+
                 //aircraft history position as a line
                 if (feature.properties.type == "history"){
 		    <?php if (!isset($ident) && !isset($flightaware_id)) { ?>
@@ -1512,6 +1525,18 @@ function flightPath() {
 	//remove the active class
 	$(".flightpath").removeClass("active");
 	window.location.reload();
+     }
+}
+function flightRoute() {
+    if (!$(".flightroute").hasClass("active"))
+    {
+	document.cookie =  'MapRoute=true; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	//add the active class
+	$(".flightroute").addClass("active");
+    } else {
+	document.cookie =  'MapRoute=false; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	//remove the active class
+	$(".flightroute").removeClass("active");
      }
 }
 

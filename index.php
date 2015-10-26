@@ -48,6 +48,7 @@ require('header.php');
 		<ul>
 		    <li><a class="button flightpopup" onclick="flightPopup(); return false;" title="Flight info as Popup" />Display flight info as popup</a></li>
 		    <li><a class="button flightpath" onclick="flightPath(); return false;" title="Show all flights path" />Display flight path</a></li>
+		    <li><a class="button flightroute" onclick="flightRoute(); return false;" title="Show flight route on click" />Display flight route on click</a></li>
 		    <li>Type of Map :
 			<select onchange="mapType(this);">
 			    <?php
@@ -92,7 +93,6 @@ require('header.php');
 			    <output id="range"><?php if (isset($_COOKIE['AirportZoom'])) print $_COOKIE['AirportZoom']; elseif (isset($globalAirportZoom)) print $globalAirportZoom; else print '7'; ?></output>
 			</div>
 		    </li>
-
 		</ul>
 	    </form>
 	    <p>Any change in settings reload page</p>
@@ -106,6 +106,7 @@ require('header.php');
 <script>
     if (getCookie('flightpath') == 'true') $(".flightpath").addClass("active");
     if (getCookie('flightpopup') == 'true') $(".flightpopup").addClass("active");
+    if (getCookie('maproute') == 'true') $(".flightroute").addClass("active");
 </script>
 <?php
 require('footer.php');

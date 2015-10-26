@@ -446,6 +446,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="checkbox" name="maphistory" id="maphistory" value="maphistory"<?php if ((isset($globalMapHistory) && $globalMapHistory) || !isset($globalMapHistory)) { ?> checked="checked"<?php } ?> />
 		</p>
 		<p>
+			<label for="flightroute">Show route of flights when selected</label>
+			<input type="checkbox" name="flightroute" id="flightroute" value="flightroute"<?php if ((isset($globalMapRoute) && $globalMapRoute) || !isset($globalMapRoute)) { ?> checked="checked"<?php } ?> />
+		</p>
+		<p>
 			<label for="refresh">Show flights detected since xxx seconds</label>
 			<input type="number" name="refresh" id="refresh" value="<?php if (isset($globalLiveInterval)) echo $globalLiveInterval; else echo '200'; ?>" />
 		</p>
@@ -690,6 +694,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapHistory' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapHistory' => 'FALSE'));
+	}
+	$flightroute = filter_input(INPUT_POST,'flightroute',FILTER_SANITIZE_STRING);
+	if ($flightroute == 'flightroute') {
+		$settings = array_merge($settings,array('globalMapRoute' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMapRoute' => 'FALSE'));
 	}
 
 	if (!isset($globalTransaction)) $settings = array_merge($settings,array('globalTransaction' => 'TRUE'));
