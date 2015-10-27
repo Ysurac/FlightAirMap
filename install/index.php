@@ -221,7 +221,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		<?php
 		    require_once('../require/class.Connection.php');
 		    $Connection = new Connection();
-		    if ($Connection->tableExists('source_location')) {
+		    if ($Connection->db != NULL && $Connection->tableExists('source_location')) {
 			require_once('../require/class.Source.php');
 			$Source = new Source();
 			$alllocations = $Source->getAllLocationInfo();
