@@ -54,19 +54,17 @@ class create_db {
 		try {
 			$dbh = new PDO($db_type.':host='.$host,$root,$root_pass);
 			if ($db_type == 'mysql') {
-				$dbh->exec("CREATE DATABASE IF NOT EXISTS `".$db."`;
-					GRANT ALL ON `".$db."`.* TO '".$user."'@'".$grantright."' IDENTIFIED BY '".$password."';
-					FLUSH PRIVILEGES;");
+				$dbh->exec('CREATE DATABASE IF NOT EXISTS `'.$db.'`;GRANT ALL ON `'.$db."`.* TO '".$user."'@'".$grantright."' IDENTIFIED BY '".$password."';FLUSH PRIVILEGES;");
 			} else if ($db_type == 'pgsql') {
 				$dbh->exec("CREATE DATABASE ".$db.";
 					CREATE USER ".$user." WITH PASSWORD '".$password."';
 					GRANT ALL PRIVILEGES ON DATABASE ".$db." TO ".$user.";");
 			}
 	//		or return($dbh->errorInfo());
+			$dbh = null;
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
-
 		return true;
 	}
 	
