@@ -5,9 +5,11 @@ class SpotterLive {
 	public $db;
 	static $global_query = "SELECT spotter_live.* FROM spotter_live";
 
-	function __construct() {
-		$Connection = new Connection();
-		$this->db = $Connection->db;
+	function __construct($dbc = null) {
+		if ($dbc === null) {
+			$Connection = new Connection();
+			$this->db = $Connection->db;
+		} else $this->db = $dbc;
 	}
 	    
 	/**

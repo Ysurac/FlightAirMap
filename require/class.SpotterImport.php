@@ -10,13 +10,18 @@ class SpotterImport {
     private $all_flights = array();
     private $last_delete_hourly = '';
     private $last_delete = '';
+    public $db = null;
+    public $nb = 0;
 
     function get_Schedule($id,$ident) {
 	global $globalDebug;
 	// Get schedule here, so it's done only one time
-	$Spotter = new Spotter();
-	$Schedule = new Schedule();
-	$Translation = new Translation();
+	$Connection = new Connection();
+	$dbc = $Connection->db;
+
+	$Spotter = new Spotter($dbc);
+	$Schedule = new Schedule($dbc);
+	$Translation = new Translation($dbc);
 	$operator = $Spotter->getOperator($ident);
 	if ($Schedule->checkSchedule($operator) == 0) {
 	    $operator = $Translation->checkTranslation($ident);
@@ -49,6 +54,7 @@ class SpotterImport {
 		}
 	    }
 	}
+	//$Connection->db = null;
     }
 
 
@@ -71,10 +77,13 @@ class SpotterImport {
 
     function add($line) {
 	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO;
+/*
 	$Spotter = new Spotter();
-	$SpotterLive = new SpotterLive();
+	$dbc = $Spotter->db;
+	$SpotterLive = new SpotterLive($dbc);
 	$Common = new Common();
-	$Schedule = new Schedule();
+	$Schedule = new Schedule($dbc);
+*/
 	date_default_timezone_set('UTC');
 	// signal handler - playing nice with sockets and dump1090
 	// pcntl_signal_dispatch();
@@ -91,6 +100,18 @@ class SpotterImport {
 	if(is_array($line) && isset($line['hex'])) {
 	    //print_r($line);
   	    if ($line['hex'] != '' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) === 6) {
+		/*
+		$dbc = $this->db;
+		$Connection = new Connection($dbc);
+		$Connection->connectionExists();
+		$dbc = $Connection->db;
+		*/
+		//$Spotter = new Spotter($dbc);
+		//$SpotterLive = new SpotterLive($dbc);
+		$Common = new Common();
+//		echo $this->nb++."\n";
+		//$this->db = $dbc;
+
 		$hex = trim($line['hex']);
 	        $id = trim($line['hex']);
 		
@@ -102,7 +123,9 @@ class SpotterImport {
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
 		    } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
 		    if (!isset($line['aircraft_icao'])) {
+			$Spotter = new Spotter();
 			$aircraft_icao = $Spotter->getAllAircraftType($hex);
+			$Spotter->db = null;
 			if ($aircraft_icao == '' && isset($line['aircraft_type'])) {
 			    if ($line['aircraft_type'] == 'PARA_GLIDER') $aircraft_icao = 'GLID';
 			    elseif ($line['aircraft_type'] == 'HELICOPTER_ROTORCRAFT') $aircraft_icao = 'UHEL';
@@ -155,12 +178,15 @@ class SpotterImport {
 		    if (isset($line['departure_airport_icao']) && isset($line['arrival_airport_icao'])) {
 		    		$this->all_flights[$id] = array_merge($this->all_flights[$id],array('departure_airport' => $line['departure_airport_icao'],'arrival_airport' => $line['arrival_airport_icao'],'route_stop' => ''));
 		    } elseif (isset($line['departure_airport_iata']) && isset($line['arrival_airport_iata'])) {
+				$Spotter = new Spotter();
 				$line['departure_airport_icao'] = $Spotter->getAirportIcao($line['departure_airport_iata']);
 				$line['arrival_airport_icao'] = $Spotter->getAirportIcao($line['arrival_airport_iata']);
 		    		$this->all_flights[$id] = array_merge($this->all_flights[$id],array('departure_airport' => $line['departure_airport_icao'],'arrival_airport' => $line['arrival_airport_icao'],'route_stop' => ''));
 		    } elseif (!isset($line['format_source']) || $line['format_source'] != 'aprs') {
+			$Spotter = new Spotter();
 			$route = $Spotter->getRouteInfo(trim($line['ident']));
-			if (count($route) > 0) {
+			$Spotter->db = null;
+			if (isset($route['fromairport_icao']) && isset($route['toairport_icao'])) {
 			    //if ($route['FromAirport_ICAO'] != $route['ToAirport_ICAO']) {
 			    if ($route['fromairport_icao'] != $route['toairport_icao']) {
 				//    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('departure_airport' => $route['FromAirport_ICAO'],'arrival_airport' => $route['ToAirport_ICAO'],'route_stop' => $route['RouteStop']));
@@ -169,6 +195,7 @@ class SpotterImport {
 			}
 			if (!isset($globalFork)) $globalFork = TRUE;
 			if (function_exists('pcntl_fork') && $globalFork && !$globalIVAO) {
+			    $this->nb++;
 			    $pids[$id] = pcntl_fork();
 			    if (!$pids[$id]) {
 				$sid = posix_setsid();
@@ -178,7 +205,6 @@ class SpotterImport {
 			}
 		    }
 		}
-	        
 	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '') {
 	    	    if (!isset($this->all_flights[$id]['time_last_coord']) || $Common->withinThreshold(time()-$this->all_flights[$id]['time_last_coord'],$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']))) {
 			if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
@@ -257,7 +283,9 @@ class SpotterImport {
 			    if ($this->all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure) at '.date('Y-m-d G:i').' UTC';
 			    if ($this->all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency at '.date('Y-m-d G:i').' UTC';
 			    if ($highlight != '') {
+				$Spotter = new Spotter();
 				$Spotter->setHighlightFlight($this->all_flights[$id]['id'],$highlight);
+				$Spotter->db = null;
 				$putinarchive = true;
 				$highlight = '';
 			    }
@@ -293,11 +321,13 @@ class SpotterImport {
 			    //$last_hour_ident = Spotter->getIdentFromLastHour($this->all_flights[$id]['ident']);
 			    if (!isset($this->all_flights[$id]['forcenew']) || $this->all_flights[$id]['forcenew'] == 0) {
 				if ($globalDebug) echo "Check if aircraft is already in DB...";
+				$SpotterLive = new SpotterLive();
 				if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'aprs')) {
 				    $recent_ident = $SpotterLive->checkModeSRecent($this->all_flights[$id]['hex']);
 				} else {
 				    $recent_ident = $SpotterLive->checkIdentRecent($this->all_flights[$id]['ident']);
 				}
+				$SpotterLive->db=null;
 				if ($globalDebug && $recent_ident == '') echo " Not in DB.\n";
 				elseif ($globalDebug && $recent_ident != '') echo " Already in DB.\n";
 			    } else {
@@ -322,7 +352,9 @@ class SpotterImport {
 				    if ($this->all_flights[$id]['squawk'] == '7500') $highlight = 'Squawk 7500 : Hijack';
 				    if ($this->all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure)';
 				    if ($this->all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency';
+				    $Spotter = new Spotter();
 				    $result = $Spotter->addSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'],'', $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'],$this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$highlight,$this->all_flights[$id]['hex'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name']);
+				    $Spotter->db = null;
 				}
 				$ignoreImport = false;
 				$this->all_flights[$id]['addedSpotter'] = 1;
@@ -343,7 +375,9 @@ class SpotterImport {
 				if ($this->last_delete == '' || time() - $this->last_delete > 1800) {
 				    if ($globalDebug) echo "---- Deleting Live Spotter data older than 9 hours...";
 				    //SpotterLive->deleteLiveSpotterDataNotUpdated();
+				    $SpotterLive = new SpotterLive();
 				    $SpotterLive->deleteLiveSpotterData();
+				    $SpotterLive->db=null;
 				    if ($globalDebug) echo " Done\n";
 				    $this->last_delete = time();
 				}
@@ -372,7 +406,9 @@ class SpotterImport {
 		    if (!$ignoreImport) {
 			if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 				if ($globalDebug) echo "\o/ Add ".$this->all_flights[$id]['ident']." in Live DB : ";
+				$SpotterLive = new SpotterLive();
 				$result = $SpotterLive->addLiveSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'], $this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$this->all_flights[$id]['hex'],$putinarchive,$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name']);
+			    $SpotterLive->db = null;
 				$this->all_flights[$id]['lastupdate'] = time();
 				if ($putinarchive) $send = true;
 				//if ($globalDebug) echo "Distance : ".Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
@@ -383,7 +419,9 @@ class SpotterImport {
 			
 			if ($this->last_delete_hourly == '' || time() - $this->last_delete_hourly > 900) {
 			    if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 1 hour...";
+			    $SpotterLive = new SpotterLive();
 			    $SpotterLive->deleteLiveSpotterDataNotUpdated();
+			    $SpotterLive->db = null;
 			    //SpotterLive->deleteLiveSpotterData();
 			    if ($globalDebug) echo " Done\n";
 			    $this->last_delete_hourly = time();

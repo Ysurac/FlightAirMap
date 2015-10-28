@@ -2,12 +2,17 @@
 require_once("settings.php");
 
 class Connection{
-	public $db;
+	public $db = null;
 	public $latest_schema = 10;
 	
-	public function __construct() {
-	    if ($this->db === null) {
-		$this->createDBConnection();
+	public function __construct($dbc = null) {
+	    if ($dbc === null) {
+		if ($this->db === null ) {
+		    $this->createDBConnection();
+		}
+	    } else {
+		$this->connectionExists();
+		$this->db = $dbc;
 	    }
 	}
 
@@ -27,9 +32,11 @@ class Connection{
 			$this->db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
-			if (!isset($globalDBTimeOut)) $this->db->setAttribute(PDO::ATTR_TIMEOUT,20);
+			if (!isset($globalDBTimeOut)) $this->db->setAttribute(PDO::ATTR_TIMEOUT,200);
 			else $this->db->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
-			$this->db->setAttribute(PDO::ATTR_PERSISTENT,true);
+			$this->db->setAttribute(PDO::ATTR_PERSISTENT,false);
+			//$this->db->setAttribute(PDO::ATTR_PERSISTENT,true);
+			//$this->db->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 		} catch(PDOException $e) {
 			if (isset($globalDebug) && $globalDebug) echo $e->getMessage();
 			//exit;
@@ -46,8 +53,9 @@ class Connection{
 		} elseif ($globalDBdriver == 'pgsql') {
 			$query = "SELECT * FROM pg_catalog.pg_tables WHERE tablename = '".$table."'";
 		}
+		if ($this->db == NULL) return false;
 		try {
-			$Connection = new Connection();
+			//$Connection = new Connection();
 			$results = $this->db->query($query);
 		} catch(PDOException $e) {
 			return false;
@@ -56,6 +64,27 @@ class Connection{
 		    return true; 
 		}
 		else return false;
+	}
+
+	public function connectionExists()
+	{
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SHOW STATUS";
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query = "SELECT * FROM pg_catalog.pg_tables WHERE tablename = '".$table."'";
+		}
+		if ($this->db == NULL) return false;
+		try {
+			//$Connection = new Connection();
+			$this->db->query($query)->execute();
+		} catch(PDOException $e) {
+			if($e->getCode() != 'HY000' || !stristr($e->getMessage(), 'server has gone away')) {
+            			throw $e;
+	                }
+			$this->createDBConnection();
+		}
+		return true; 
 	}
 
 	public function indexExists($table,$index)
@@ -67,7 +96,7 @@ class Connection{
 			$query = "SELECT 1 FROM   pg_class c JOIN   pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '".$index."' AND n.nspname = '".$table."'";
 		}
 		try {
-			$Connection = new Connection();
+			//$Connection = new Connection();
 			$results = $Connection->$db->query($query);
 		} catch(PDOException $e) {
 			return false;

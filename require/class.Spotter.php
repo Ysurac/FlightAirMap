@@ -7,9 +7,11 @@ $global_query = "SELECT spotter_output.* FROM spotter_output";
 class Spotter{
 	public $db;
 	
-	function __construct() {
-		$Connection = new Connection();
-		$this->db = $Connection->db;
+	function __construct($dbc = null) {
+		if ($dbc === null) {
+			$Connection = new Connection();
+			$this->db = $Connection->db;
+		} else $this->db = $dbc;
 	}
 	
 	/**
@@ -1850,7 +1852,7 @@ class Spotter{
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
-		if (count($row) > 0) {
+		if (isset($row['icaotypecode'])) {
 			return $row['icaotypecode'];
 		} else return '';
 	}

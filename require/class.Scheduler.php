@@ -10,9 +10,11 @@ require_once('libs/uagent/uagent.php');
 class Schedule {
 	protected $cookies = array();
         public $db;
-	function __construct() {
-                $Connection = new Connection();
-                $this->db = $Connection->db;
+	function __construct($dbc = null) {
+		if ($dbc === null) {
+			$Connection = new Connection();
+			$this->db = $Connection->db;
+                } else $this->db = $dbc;
         }
 	
 	/**
@@ -132,7 +134,7 @@ class Schedule {
 	public function checkSchedule($ident) {
 	
 	        //$query = "SELECT COUNT(*) as nb FROM schedule WHERE ident = :ident AND date_added > DATE_SUB(CURDATE(), INTERVAL 8 DAY) - 8 LIMIT 1";
-	        $query = "SELECT COUNT(*) as nb FROM routes WHERE CallSign = :ident AND (date_added BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 8 DAY)) AND DATE(NOW()) OR date_modified BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 8 DAY)) AND DATE(NOW())) LIMIT 1";
+	        $query = "SELECT COUNT(*) as nb FROM routes WHERE CallSign = :ident AND ((date_added BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 8 DAY)) AND DATE(NOW()) and date_modified IS NULL) OR (date_modified BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 8 DAY)) AND DATE(NOW()))) LIMIT 1";
 	        $query_values = array(':ident' => $ident);
 		 try {
 			$sth = $this->db->prepare($query);

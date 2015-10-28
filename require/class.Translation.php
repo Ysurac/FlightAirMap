@@ -8,9 +8,11 @@ require_once('libs/uagent/uagent.php');
 
 class Translation {
     public $db;
-    function __construct() {
-	$Connection = new Connection();
-	$this->db = $Connection->db;
+    function __construct($dbc = null) {
+	if ($dbc === null) {
+	    $Connection = new Connection();
+	    $this->db = $Connection->db;
+	} else $this->db = $dbc;
     }
 
     /**
