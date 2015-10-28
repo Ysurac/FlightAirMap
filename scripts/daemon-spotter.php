@@ -154,7 +154,7 @@ $i = 1;
 $tt = 0;
 
 // Delete all ATC
-if (!$globalDaemon && $globalIVAO) $ATC->deleteAll();
+if (!$globalDaemon && isset($globalIVAO) && $globalIVAO) $ATC->deleteAll();
 
 // Infinite loop if daemon, else work for time defined in $globalCronEnd or only one time.
 while ($i > 0) {
