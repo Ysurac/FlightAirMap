@@ -160,7 +160,7 @@ if (!$globalDaemon && isset($globalIVAO) && $globalIVAO) $ATC->deleteAll();
 while ($i > 0) {
     if (!$globalDaemon) $i = $endtime-time();
     // Delete old ATC
-    if ($globalDaemon && $globalIVAO) $ATC->deleteOldAtc();
+    if ($globalDaemon && isset($globalIVAO) && $globalIVAO) $ATC->deleteOldAtc();
     foreach ($formats as $id => $value) {
 	if ($value == 'deltadbtxt') {
 	    $buffer = $Common->getData($hosts[$id]);
