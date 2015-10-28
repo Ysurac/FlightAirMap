@@ -730,7 +730,6 @@ function getLiveData()
 		    };
 		    layer.setStyle(style);
 		    layer_data.addLayer(layer);
-		    console.log('Niark Niark !');
 		}
 
 
