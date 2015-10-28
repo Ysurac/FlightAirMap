@@ -13,6 +13,7 @@ require('header.php');
     if ($globalName == 'FlightAirMap') {
 ?>
     <p>This is an open source project displaying <u>most</u> (mostly <a href="http://en.wikipedia.org/wiki/Instrument_flight_rules" target="_blank">IFR</a>) flights that have flown near this site area.
+    <?php if ($globalADSBHUB) { ?> Some ADS-B sources come from <a href="http://www.adsbhub.net">ADSBHUB.net</a>.<?php } ?>
     <?php if ($globalFlightAware) { ?> The data is provided by <a href="http://flightaware.com/" target="_blank">FlightAware</a>.<?php } ?> This project was created by (<a href="http://www.mariotrunz.com" target="_blank">Mario Trunz</a>) as part of his passion of aviation and web design and forked by Ycarus from <a href="http://www.zugaina.com" target="_blank">Zugaina</a>.</p>
     <a name="history"></a>
 		<h3>History</h3>
@@ -48,6 +49,7 @@ require('header.php');
 	<li>Font Awesome by Dave Gandy <a href="http://fontawesome.io/">fontawesome.io</a></li>
 	<li>Leaflet <a href="http://leafletjs.com/">leafletjs.com</a></li>
 	<li>Boostrap <a href="http://getbootstrap.com/">getbootstrap.com</a></li>
+	<li><a href="http://www.adsbhub.net/">ADSBHUB.net</a> to share ADS-B data</li>
     </ul>
 
     <h3>Data License</h3>
