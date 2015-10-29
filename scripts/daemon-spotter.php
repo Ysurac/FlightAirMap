@@ -22,7 +22,8 @@ if ($schema->latest() === false) {
     exit();
 }
 
-$SI=new SpotterImport();
+if (isset($globalServer) && $globalServer) $SI=new SpotterServer();
+else $SI=new SpotterImport();
 $APRS=new APRS();
 $SBS=new SBS();
 $ATC=new ATC();

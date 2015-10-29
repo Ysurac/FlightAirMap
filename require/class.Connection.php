@@ -3,16 +3,23 @@ require_once("settings.php");
 
 class Connection{
 	public $db = null;
+	public $dbs = array();
 	public $latest_schema = 10;
 	
-	public function __construct($dbc = null) {
+	public function __construct($dbc = null,$dbname = null) {
+	    global $globalDBdriver;
 	    if ($dbc === null) {
-		if ($this->db === null ) {
+		if ($this->db === null && $dbname === null) {
 		    $this->createDBConnection();
+		} else {
+		    $this->createDBConnection($dbname);
 		}
-	    } else {
-		$this->connectionExists();
+	    } elseif ($dbname === null || $dbname === 'default') {
+		if ($globalDBdriver == 'mysql') $this->connectionExists();
 		$this->db = $dbc;
+	    } else {
+		//$this->connectionExists();
+		$this->dbs[$dbname] = $dbc;
 	    }
 	}
 
@@ -24,24 +31,39 @@ class Connection{
 	*
 	*/
 
-	public function createDBConnection()
+	public function createDBConnection($DBname = null)
 	{
-		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug;
+		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB;
+		if ($DBname === null) {
+			$DBname = 'default';
+			$globalDBSdriver = $globalDBdriver;
+			$globalDBShost = $globalDBhost;
+			$globalDBSname = $globalDBname;
+			$globalDBSuser = $globalDBuser;
+			$globalDBSpass = $globalDBpass;
+		} else {
+			$globalDBSdriver = $globalDB[$DBname]['driver'];
+			$globalDBShost = $globalDB[$DBname]['host'];
+			$globalDBSname = $globalDB[$DBname]['name'];
+			$globalDBSuser = $globalDB[$DBname]['user'];
+			$globalDBSpass = $globalDB[$DBname]['pass'];
+                }
 		try {
-			$this->db = new PDO("$globalDBdriver:host=$globalDBhost;dbname=$globalDBname;charset=utf8", $globalDBuser,  $globalDBpass);
-			$this->db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
-			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$this->db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
-			if (!isset($globalDBTimeOut)) $this->db->setAttribute(PDO::ATTR_TIMEOUT,200);
-			else $this->db->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
-			$this->db->setAttribute(PDO::ATTR_PERSISTENT,false);
-			//$this->db->setAttribute(PDO::ATTR_PERSISTENT,true);
-			//$this->db->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+			$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;dbname=$globalDBSname;charset=utf8", $globalDBSuser,  $globalDBSpass);
+			$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
+			$this->dbs[$DBname]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->dbs[$DBname]->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
+			if (!isset($globalDBTimeOut)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,200);
+			else $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
+			$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,false);
+			//$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
+			//$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 		} catch(PDOException $e) {
 			if (isset($globalDebug) && $globalDebug) echo $e->getMessage();
 			//exit;
 			return false;
 		}
+		if ($DBname === 'default') $this->db = $this->dbs['default'];
 		return true;
 	}
 
@@ -71,9 +93,12 @@ class Connection{
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			$query = "SHOW STATUS";
-		} elseif ($globalDBdriver == 'pgsql') {
+		}
+		/*
+		 elseif ($globalDBdriver == 'pgsql') {
 			$query = "SELECT * FROM pg_catalog.pg_tables WHERE tablename = '".$table."'";
 		}
+		*/
 		if ($this->db == NULL) return false;
 		try {
 			//$Connection = new Connection();
@@ -87,6 +112,9 @@ class Connection{
 		return true; 
 	}
 
+	/*
+	* Check if index exist
+	*/
 	public function indexExists($table,$index)
 	{
 		global $globalDBdriver, $globalDBname;
@@ -107,6 +135,10 @@ class Connection{
 		else return false;
 	}
 
+	/*
+	* Get schema version
+	* @return integer schema version
+	*/
 	public function check_schema_version() {
 		$version = 0;
 		if ($this->tableExists('aircraft')) {
@@ -128,6 +160,10 @@ class Connection{
 		} else return $version;
 	}
 	
+	/*
+	* Check if schema version is latest_schema
+	* @return Boolean if latest version or not
+	*/
 	public function latest() {
 	    if ($this->check_schema_version() == $this->latest_schema) return true;
 	    else return false;

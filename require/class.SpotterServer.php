@@ -1,0 +1,110 @@
+<?php
+require_once('class.Connection.php');
+require_once('class.Spotter.php');
+require_once('class.SpotterLive.php');
+require_once('class.SpotterArchive.php');
+require_once('class.Scheduler.php');
+require_once('class.Translation.php');
+
+class SpotterServer {
+    public $dbs = null;
+    
+    function __construct($dbs = null) {
+	if ($dbs === null) {
+	    $Connection = new Connection('server');
+	    $this->dbs = $Connection->dbs;
+	    $query = 'CREATE TABLE `spotter_temp` ( `id_data` INT NOT NULL AUTO_INCREMENT , `id_user` INT NOT NULL , `datetime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `hex` VARCHAR(20) NOT NULL , `ident` VARCHAR(20) NOT NULL , `latitude` FLOAT NOT NULL , `longitude` FLOAT NOT NULL , `verticalrate` INT NOT NULL , `speed` INT NOT NULL , `squawk` INT NULL , `altitude` INT NOT NULL , `heading` INT NOT NULL , `registration` VARCHAR(255) NULL , `aircraft_icao` VARCHAR(255) NULL , `waypoints` VARCHAR(999) NULL , `id_source` INT NOT NULL DEFAULT '1' , PRIMARY KEY (`id_data`) ) ENGINE = MEMORY;';
+	    try {
+		$sth = $this->dbs['server']->exec($query);
+	    } catch(PDOException $e) {
+		return "error : ".$e->getMessage();
+	    }
+	}
+    }
+
+    function add($line) {
+	global $globalDebug, $globalServerUserID;
+	date_default_timezone_set('UTC');
+	if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'aprs')) {
+	    if(is_array($line) && isset($line['hex'])) {
+		if ($line['hex'] != '' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) === 6) {
+		    $data['hex'] = trim($line['hex']);
+		    if (preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
+		        $data['datetime'];
+		    } else $data['datetime'] = date('Y-m-d H:i:s');
+		    if (!isset($line['aircraft_icao'])) {
+		        $Spotter = new Spotter();
+		        $aircraft_icao = $Spotter->getAllAircraftType($hex);
+		        $Spotter->db = null;
+			if ($aircraft_icao == '' && isset($line['aircraft_type'])) {
+			    if ($line['aircraft_type'] == 'PARA_GLIDER') $aircraft_icao = 'GLID';
+			    elseif ($line['aircraft_type'] == 'HELICOPTER_ROTORCRAFT') $aircraft_icao = 'UHEL';
+			    elseif ($line['aircraft_type'] == 'TOW_PLANE') $aircraft_icao = 'TOWPLANE';
+			    elseif ($line['aircraft_type'] == 'POWERED_AIRCRAFT') $aircraft_icao = 'POWAIRC';
+			}
+			$data['aircraft_icao'] = $aircraft_icao;
+		    } else $data['aircraft_icao'] = $line['aircraft_icao'];
+		    if ($globalDebug) echo "*********** New aircraft hex : ".$hex." ***********\n";
+		}
+		if (isset($line['registration']) && $line['registration'] != '') {
+		    $data['registration'] = $line['registration'];
+		} else $data['registration'] = '';
+		if (isset($line['waypoints']) && $line['waypoints'] != '') {
+		    $data['waypoints'] = $line['waypoints'];
+		} else $data['waypoints'] = '';
+		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_flights[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9]+$/', $line['ident'])) {
+		    $data['ident'] = trim($line['ident']);
+		} else $data['ident'] = '';
+
+	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '') {
+		    if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
+			$data['latitude'] = $line['latitude'];
+		    } else $data['latitude'] = '';
+		    if (isset($line['longitude']) && $line['longitude'] != '' && $line['longitude'] != 0 && $line['longitude'] < 360 && $line['longitude'] > -180) {
+		        if ($line['longitude'] > 180) $line['longitude'] = $line['longitude'] - 360;
+			    $data['longitude'] = $line['longitude'];
+			} else $data['longitude'] = '';
+		    }
+		} else {
+		    $data['latitude'] = '';
+		    $data['longitude'] = '';
+		}
+		if (isset($line['verticalrate']) && $line['verticalrate'] != '') {
+		    $data['verticalrate'] = $line['verticalrate'];
+		} else $data['verticalrate'] = '';
+		if (isset($line['emergency']) && $line['emergency'] != '') {
+		    $data['emergency'] = $line['emergency'];
+		} else $data['emergency'] = '';
+		if (isset($line['ground']) && $line['ground'] != '') {
+		    $data['ground'] = $line['ground'];
+		} else $data['ground'] = '';
+		if (isset($line['speed']) && $line['speed'] != '') {
+		    $data['speed'] = round($line['speed']);
+		} else $data['speed'] = '';
+		if (isset($line['squawk']) && $line['squawk'] != '') {
+		    $data['squawk'] = $line['squawk'];
+		} else $data['squawk'] = '';
+
+		if (isset($line['altitude']) && $line['altitude'] != '') {
+			$data['altitude'] = round($line['altitude']/100);
+  		} else $data['altitude'] = '';
+		if (isset($line['heading']) && $line['heading'] != '') {
+		    $data['heading'] = round($line['heading']);
+  		} else $data['heading'] = '';
+  		
+  		$id_user = $globalServerUserID;
+  		$id_source = 1;
+  		$query = 'INSERT INTO spotter_temp (id_user,datetime,hex,ident,latitude,longitude,verticalrate,speed,squawk,altitude,heading,registration,aircraft_icao,waypoints,id_source) VALUES (:id_user,:datetime,:hex,:ident,:latitude,:longitude,:verticalrate,:speed,:squawk,:altitude,:heading,:registration,:aircraft_icao,:waypoints,:id_source)';
+  		$query_values = array(':id_user' => $id_user,':datetime' => $data['datetime'],':hex' => $data['hex'],':ident' => $data['ident'],':latitude' => $data['latitude'],':longitude' => $data['longitude'],':verticalrate' => $data['verticalrate'],':speed' => $data['speed'],':squawk' => $data['squawk'],':altitude' => $data['altitude'],':heading' => $data['heading'],':registration' => $data['registration'],':aircraft_icao' => $data['aircraft_icao'],':waypoints' => $data['waypoints'],':id_source' => $id_source);
+  		try {
+                        $sth = $this->dbs['server']->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+  		
+    	    }
+	}
+    }
+}
+?>
