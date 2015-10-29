@@ -11,7 +11,7 @@ class SpotterServer {
     
     function __construct($dbs = null) {
 	if ($dbs === null) {
-	    $Connection = new Connection('server');
+	    $Connection = new Connection(null,'server');
 	    $this->dbs = $Connection->dbs;
 	    $query = "CREATE TABLE IF NOT EXISTS `spotter_temp` ( `id_data` INT NOT NULL AUTO_INCREMENT , `id_user` INT NOT NULL , `datetime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `hex` VARCHAR(20) NOT NULL , `ident` VARCHAR(20) NOT NULL , `latitude` FLOAT NOT NULL , `longitude` FLOAT NOT NULL , `verticalrate` INT NOT NULL , `speed` INT NOT NULL , `squawk` INT NULL , `altitude` INT NOT NULL , `heading` INT NOT NULL , `registration` VARCHAR(255) NULL , `aircraft_icao` VARCHAR(255) NULL , `waypoints` VARCHAR(999) NULL , `id_source` INT NOT NULL DEFAULT '1' , PRIMARY KEY (`id_data`) ) ENGINE = MEMORY;";
 	    try {
@@ -34,7 +34,7 @@ class SpotterServer {
 		    } else $data['datetime'] = date('Y-m-d H:i:s');
 		    if (!isset($line['aircraft_icao'])) {
 		        $Spotter = new Spotter();
-		        $aircraft_icao = $Spotter->getAllAircraftType($hex);
+		        $aircraft_icao = $Spotter->getAllAircraftType($data['hex']);
 		        $Spotter->db = null;
 			if ($aircraft_icao == '' && isset($line['aircraft_type'])) {
 			    if ($line['aircraft_type'] == 'PARA_GLIDER') $aircraft_icao = 'GLID';
@@ -44,7 +44,7 @@ class SpotterServer {
 			}
 			$data['aircraft_icao'] = $aircraft_icao;
 		    } else $data['aircraft_icao'] = $line['aircraft_icao'];
-		    if ($globalDebug) echo "*********** New aircraft hex : ".$hex." ***********\n";
+		    if ($globalDebug) echo "*********** New aircraft hex : ".$data['hex']." ***********\n";
 		}
 		if (isset($line['registration']) && $line['registration'] != '') {
 		    $data['registration'] = $line['registration'];
