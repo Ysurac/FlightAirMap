@@ -52,7 +52,7 @@ class SpotterServer {
 		if (isset($line['waypoints']) && $line['waypoints'] != '') {
 		    $data['waypoints'] = $line['waypoints'];
 		} else $data['waypoints'] = '';
-		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_flights[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9]+$/', $line['ident'])) {
+		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && preg_match('/^[a-zA-Z0-9]+$/', $line['ident'])) {
 		    $data['ident'] = trim($line['ident']);
 		} else $data['ident'] = '';
 
