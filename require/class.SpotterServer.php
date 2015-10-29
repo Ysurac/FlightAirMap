@@ -62,9 +62,8 @@ class SpotterServer {
 		    } else $data['latitude'] = '';
 		    if (isset($line['longitude']) && $line['longitude'] != '' && $line['longitude'] != 0 && $line['longitude'] < 360 && $line['longitude'] > -180) {
 		        if ($line['longitude'] > 180) $line['longitude'] = $line['longitude'] - 360;
-			    $data['longitude'] = $line['longitude'];
-			} else $data['longitude'] = '';
-		    }
+			$data['longitude'] = $line['longitude'];
+		    } else $data['longitude'] = '';
 		} else {
 		    $data['latitude'] = '';
 		    $data['longitude'] = '';
@@ -102,7 +101,6 @@ class SpotterServer {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
-  		
     	    }
 	}
     }
