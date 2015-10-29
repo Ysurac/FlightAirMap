@@ -139,7 +139,7 @@ class SpotterImport {
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
 //			if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw') && $globalDaemon) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.$this->all_flights[$id]['ident'].'-'.date('YmdGi')));
-			if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'aprs') && $globalDaemon) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.date('YmdGi')));
+			if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs') && $globalDaemon) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.date('YmdGi')));
 		        //else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.$this->all_flights[$id]['ident']));
 		     } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $line['id']));
 
@@ -149,7 +149,7 @@ class SpotterImport {
 		if (isset($line['datetime']) && $line['datetime'] != '') {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
 		}
-		if (isset($line['registration']) && $line['registration'] != '') {
+		if (isset($line['registration']) && $line['registration'] != '' && $line['registration'] != 'z.NO-REG') {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('registration' => $line['registration']));
 		}
 		if (isset($line['waypoints']) && $line['waypoints'] != '') {
@@ -322,7 +322,7 @@ class SpotterImport {
 			    if (!isset($this->all_flights[$id]['forcenew']) || $this->all_flights[$id]['forcenew'] == 0) {
 				if ($globalDebug) echo "Check if aircraft is already in DB...";
 				$SpotterLive = new SpotterLive();
-				if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'aprs')) {
+				if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs')) {
 				    $recent_ident = $SpotterLive->checkModeSRecent($this->all_flights[$id]['hex']);
 				} else {
 				    $recent_ident = $SpotterLive->checkIdentRecent($this->all_flights[$id]['ident']);
@@ -382,7 +382,7 @@ class SpotterImport {
 				    $this->last_delete = time();
 				}
 			    } else {
-				if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'aprs')) {
+				if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt'|| $line['format_source'] === 'planeupdatefaa'  || $line['format_source'] === 'aprs')) {
 				    $this->all_flights[$id]['id'] = $recent_ident;
 				    $this->all_flights[$id]['addedSpotter'] = 1;
 				}

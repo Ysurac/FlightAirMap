@@ -63,22 +63,25 @@ function connect_all($hosts) {
     foreach ($hosts as $id => $host) {
 	// Here we check type of source(s)
 	if (filter_var($host,FILTER_VALIDATE_URL)) {
-            if (preg_match('/deltadb.txt$/',$host)) {
+            if (preg_match('/deltadb.txt$/i',$host)) {
         	$formats[$id] = 'deltadbtxt';
         	if ($globalDebug) echo "Connect to deltadb source...\n";
-    	    } else if (preg_match('/aircraftlist.json$/',$host)) {
+    	    } else if (preg_match('/aircraftlist.json$/i',$host)) {
         	$formats[$id] = 'aircraftlistjson';
         	if ($globalDebug) echo "Connect to aircraftlist.json source...\n";
-            } else if (preg_match('/\/action.php\/acars\/data$/',$host)) {
+    	    } else if (preg_match('/planeUpdateFAA.php$/i',$host)) {
+        	$formats[$id] = 'planeupdatefaa';
+        	if ($globalDebug) echo "Connect to planeUpdateFAA.php source...\n";
+            } else if (preg_match('/\/action.php\/acars\/data$/i',$host)) {
         	$formats[$id] = 'phpvmacars';
         	if ($globalDebug) echo "Connect to phpvmacars source...\n";
-            } else if (preg_match('/whazzup/',$host)) {
+            } else if (preg_match('/whazzup/i',$host)) {
         	$formats[$id] = 'whazzup';
         	if ($globalDebug) echo "Connect to whazzup source...\n";
-            } else if (preg_match('/recentpireps/',$host)) {
+            } else if (preg_match('/recentpireps/i',$host)) {
         	$formats[$id] = 'pirepsjson';
         	if ($globalDebug) echo "Connect to pirepsjson source...\n";
-            } else if (preg_match(':data.fr24.com/zones/fcgi/feed.js:',$host)) {
+            } else if (preg_match(':data.fr24.com/zones/fcgi/feed.js:i',$host)) {
         	// Desactivated. Here only because it's possible. Do not use without fr24 rights.
         	//$formats[$id] = 'fr24json';
         	//if ($globalDebug) echo "Connect to fr24 source...\n";
@@ -239,22 +242,73 @@ while ($i > 0) {
     		}
     	    }
     	} elseif ($value == 'aircraftlistjson') {
+	    $buffer = $Common->getData($hosts[$id],'get','','','','','50');
+	    if ($buffer != '') {
+	    $all_data = json_decode($buffer,true);
+	    if (isset($all_data['acList'])) {
+		foreach ($all_data['acList'] as $line) {
+		    $data = array();
+		    $data['hex'] = $line['Icao']; // hex
+		    if (isset($line['Call'])) $data['ident'] = $line['Call']; // ident
+		    if (isset($line['Alt'])) $data['altitude'] = $line['Alt']; // altitude
+		    if (isset($line['Spd'])) $data['speed'] = $line['Spd']; // speed
+		    if (isset($line['Trak'])) $data['heading'] = $line['Trak']; // heading
+		    if (isset($line['Lat'])) $data['latitude'] = $line['Lat']; // lat
+		    if (isset($line['Long'])) $data['longitude'] = $line['Long']; // long
+		    //$data['verticalrate'] = $line['']; // verticale rate
+		    if (isset($line['Sqk'])) $data['squawk'] = $line['Sqk']; // squawk
+		    $data['emergency'] = ''; // emergency
+		    if (isset($line['Reg'])) $data['registration'] = $line['Reg'];
+		    if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',$line['PosTime']/1000);
+		    if (isset($line['Type'])) $data['aircraft_icao'] = $line['Type'];
+		    if (isset($data['datetime'])) $SI->add($data);
+		    unset($data);
+		}
+	    } else {
+		foreach ($all_data as $line) {
+		    $data = array();
+		    $data['hex'] = $line['hex']; // hex
+		    $data['ident'] = $line['flight']; // ident
+		    $data['altitude'] = $line['altitude']; // altitude
+		    $data['speed'] = $line['speed']; // speed
+		    $data['heading'] = $line['track']; // heading
+		    $data['latitude'] = $line['lat']; // lat
+		    $data['longitude'] = $line['lon']; // long
+		    $data['verticalrate'] = $line['vrt']; // verticale rate
+		    $data['squawk'] = $line['squawk']; // squawk
+		    $data['emergency'] = ''; // emergency
+		    $data['datetime'] = date('Y-m-d H:i:s');
+		    $SI->add($data);
+		    unset($data);
+		}
+	    }
+	    }
+    	} elseif ($value == 'planeupdatefaa') {
 	    $buffer = $Common->getData($hosts[$id]);
 	    $all_data = json_decode($buffer,true);
-	    foreach ($all_data as $line) {
-	        $data = array();
-	        $data['hex'] = $line['hex']; // hex
-	        $data['ident'] = $line['flight']; // ident
-	        $data['altitude'] = $line['altitude']; // altitude
-	        $data['speed'] = $line['speed']; // speed
-	        $data['heading'] = $line['track']; // heading
-	        $data['latitude'] = $line['lat']; // lat
-	        $data['longitude'] = $line['lon']; // long
-	        $data['verticalrate'] = $line['vrt']; // verticale rate
-	        $data['squawk'] = $line['squawk']; // squawk
-	        $data['emergency'] = ''; // emergency
-		$data['datetime'] = date('Y-m-d H:i:s');
-		$SI->add($data);
+	    if (isset($all_data['planes'])) {
+		foreach ($all_data['planes'] as $key => $line) {
+		    $data = array();
+		    $data['hex'] = $key; // hex
+		    $data['ident'] = $line[3]; // ident
+		    $data['altitude'] = $line[6]; // altitude
+		    $data['speed'] = $line[8]; // speed
+		    $data['heading'] = $line[7]; // heading
+		    $data['latitude'] = $line[4]; // lat
+		    $data['longitude'] = $line[5]; // long
+		    //$data['verticalrate'] = $line[]; // verticale rate
+		    $data['squawk'] = $line[10]; // squawk
+		    $data['emergency'] = ''; // emergency
+		    $data['registration'] = $line[2];
+		    $data['aircraft_icao'] = $line[0];
+		    $deparr = explode('-',$line[1]);
+		    if (count($deparr) == 2) {
+			$data['departure_airport_icao'] = $deparr[0];
+			$data['arrival_airport_icao'] = $deparr[1];
+		    }
+		    $data['datetime'] = date('Y-m-d H:i:s',$line[9]);
+		    $SI->add($data);
+		}
 	    }
     	} elseif ($value == 'fr24json') {
 	    $buffer = $Common->getData($hosts[$id]);
