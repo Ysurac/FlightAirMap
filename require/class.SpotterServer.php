@@ -44,7 +44,7 @@ class SpotterServer {
 			}
 			$data['aircraft_icao'] = $aircraft_icao;
 		    } else $data['aircraft_icao'] = $line['aircraft_icao'];
-		    if ($globalDebug) echo "*********** New aircraft hex : ".$data['hex']." ***********\n";
+		    //if ($globalDebug) echo "*********** New aircraft hex : ".$data['hex']." ***********\n";
 		}
 		if (isset($line['registration']) && $line['registration'] != '') {
 		    $data['registration'] = $line['registration'];
