@@ -7,6 +7,7 @@
 
 
 require_once(dirname(__FILE__).'/../require/class.SpotterImport.php');
+require_once(dirname(__FILE__).'/../require/class.SpotterServer.php');
 require_once(dirname(__FILE__).'/../require/class.APRS.php');
 require_once(dirname(__FILE__).'/../require/class.ATC.php');
 require_once(dirname(__FILE__).'/../require/class.SBS.php');
