@@ -48,48 +48,48 @@ class SpotterServer {
 		}
 		if (isset($line['registration']) && $line['registration'] != '') {
 		    $data['registration'] = $line['registration'];
-		} else $data['registration'] = '';
+		} else $data['registration'] = null;
 		if (isset($line['waypoints']) && $line['waypoints'] != '') {
 		    $data['waypoints'] = $line['waypoints'];
-		} else $data['waypoints'] = '';
+		} else $data['waypoints'] = null;
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && preg_match('/^[a-zA-Z0-9]+$/', $line['ident'])) {
 		    $data['ident'] = trim($line['ident']);
-		} else $data['ident'] = '';
+		} else $data['ident'] = null;
 
 	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '') {
 		    if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
 			$data['latitude'] = $line['latitude'];
-		    } else $data['latitude'] = '';
+		    } else $data['latitude'] = null;
 		    if (isset($line['longitude']) && $line['longitude'] != '' && $line['longitude'] != 0 && $line['longitude'] < 360 && $line['longitude'] > -180) {
 		        if ($line['longitude'] > 180) $line['longitude'] = $line['longitude'] - 360;
 			$data['longitude'] = $line['longitude'];
-		    } else $data['longitude'] = '';
+		    } else $data['longitude'] = null;
 		} else {
-		    $data['latitude'] = '';
-		    $data['longitude'] = '';
+		    $data['latitude'] = null;
+		    $data['longitude'] = null;
 		}
 		if (isset($line['verticalrate']) && $line['verticalrate'] != '') {
 		    $data['verticalrate'] = $line['verticalrate'];
-		} else $data['verticalrate'] = '';
+		} else $data['verticalrate'] = null;
 		if (isset($line['emergency']) && $line['emergency'] != '') {
 		    $data['emergency'] = $line['emergency'];
-		} else $data['emergency'] = '';
+		} else $data['emergency'] = null;
 		if (isset($line['ground']) && $line['ground'] != '') {
 		    $data['ground'] = $line['ground'];
-		} else $data['ground'] = '';
+		} else $data['ground'] = null;
 		if (isset($line['speed']) && $line['speed'] != '') {
 		    $data['speed'] = round($line['speed']);
-		} else $data['speed'] = '';
+		} else $data['speed'] = null;
 		if (isset($line['squawk']) && $line['squawk'] != '') {
 		    $data['squawk'] = $line['squawk'];
-		} else $data['squawk'] = '';
+		} else $data['squawk'] = null;
 
 		if (isset($line['altitude']) && $line['altitude'] != '') {
 			$data['altitude'] = round($line['altitude']);
-  		} else $data['altitude'] = '';
+  		} else $data['altitude'] = null;
 		if (isset($line['heading']) && $line['heading'] != '') {
 		    $data['heading'] = round($line['heading']);
-  		} else $data['heading'] = '';
+  		} else $data['heading'] = null;
   		
   		$id_user = $globalServerUserID;
   		$id_source = 1;
