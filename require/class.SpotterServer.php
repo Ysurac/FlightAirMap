@@ -13,7 +13,7 @@ class SpotterServer {
 	if ($dbs === null) {
 	    $Connection = new Connection('server');
 	    $this->dbs = $Connection->dbs;
-	    $query = 'CREATE TABLE IF NOT EXISTS `spotter_temp` ( `id_data` INT NOT NULL AUTO_INCREMENT , `id_user` INT NOT NULL , `datetime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `hex` VARCHAR(20) NOT NULL , `ident` VARCHAR(20) NOT NULL , `latitude` FLOAT NOT NULL , `longitude` FLOAT NOT NULL , `verticalrate` INT NOT NULL , `speed` INT NOT NULL , `squawk` INT NULL , `altitude` INT NOT NULL , `heading` INT NOT NULL , `registration` VARCHAR(255) NULL , `aircraft_icao` VARCHAR(255) NULL , `waypoints` VARCHAR(999) NULL , `id_source` INT NOT NULL DEFAULT '1' , PRIMARY KEY (`id_data`) ) ENGINE = MEMORY;';
+	    $query = "CREATE TABLE IF NOT EXISTS `spotter_temp` ( `id_data` INT NOT NULL AUTO_INCREMENT , `id_user` INT NOT NULL , `datetime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `hex` VARCHAR(20) NOT NULL , `ident` VARCHAR(20) NOT NULL , `latitude` FLOAT NOT NULL , `longitude` FLOAT NOT NULL , `verticalrate` INT NOT NULL , `speed` INT NOT NULL , `squawk` INT NULL , `altitude` INT NOT NULL , `heading` INT NOT NULL , `registration` VARCHAR(255) NULL , `aircraft_icao` VARCHAR(255) NULL , `waypoints` VARCHAR(999) NULL , `id_source` INT NOT NULL DEFAULT '1' , PRIMARY KEY (`id_data`) ) ENGINE = MEMORY;";
 	    try {
 		$sth = $this->dbs['server']->exec($query);
 	    } catch(PDOException $e) {
