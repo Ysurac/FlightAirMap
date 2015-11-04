@@ -12,3 +12,9 @@ File : db/countries.sql.gz
 License : Creative Commons Attribution-Share Alike 3.0 Unported license.
 Attribution : Author : Bjorn Sandvik, thematicmapping.org
 Source : http://thematicmapping.org/downloads/world_borders.php
+
+File : images/aircrafts/*
+License : GPLv3
+Attribution : Author : Ycarus (Yannick Chabanois)
+Source : http://github.com/Ysurac/FlightAirMap
+
