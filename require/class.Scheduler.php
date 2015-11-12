@@ -286,7 +286,6 @@ class Schedule {
 		if ($globalBritishAirwaysKey == '') return array();
 		$url = "https://api.ba.com/rest-v1/v1/flights;flightNumber=".$numvol.";scheduledDepartureDate=".$check_date->format('Y-m-d').".json";
 		$headers = array('Client-Key: '.$globalBritishAirwaysKey);
-
 		$json = $Common->getData($url,'get','',$headers);
 		if ($json == '') return array();
 		$parsed_json = json_decode($json);
@@ -1023,22 +1022,7 @@ class Schedule {
 	}
 }
 
-//print_r($this->fetch$this('LX447'));
-//print_r($this->fetch$this('SN2725'));
-//print_r($this->fetch$this('AFR1785'));
-//print_r($this->fetch$this('EZY1167'));
-//print_r($this->fetch$this('EZY1115'));
-//print_r($this->get$this('AFR1785'));
-//print_r($this->check$this('AFR1785'));
-//print_r($this->fetch$this('TCX7013'));
-//print_r($this->fetch$this('TAR720'));
-//print_r($this->fetch$this('ZB3566'));
-//print_r($this->getFlightRadar24('TO3213'));
-//print_r($this->getFlightMapper('TO3213'));
-//print_r($this->fetch$this('EZY1241'));
-//print_r($this->getFlightAware('BAW548'));
-//print_r($this->fetchSchedule('BER246Z'));
-//print_r($this->fetch$this('RYR4828'));
-
+//$Schedule = new Schedule();
+//print_r($Schedule->fetchSchedule('BAW540'));
 
 ?>

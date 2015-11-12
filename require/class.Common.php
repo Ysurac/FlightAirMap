@@ -119,6 +119,8 @@ class Common {
 		$dist = rad2deg(acos(sin(deg2rad(floatval($lat)))*sin(deg2rad(floatval($latc)))+ cos(deg2rad(floatval($lat)))*cos(deg2rad(floatval($latc)))*cos(deg2rad(floatval($lon)-floatval($lonc)))))*60*1.1515;
 		if ($unit == "km") {
 			return round($dist * 1.609344);
+		} elseif ($unit == "m") {
+			return round($dist * 1.609344 * 1000);
 		} else {
 			return round($dist);
 		}
@@ -197,6 +199,24 @@ class Common {
 		$str = '';
 		for($i=0;$i<strlen($hex);$i+=2) $str .= chr(hexdec(substr($hex,$i,2)));
 		return $str;
+	}
+	
+	
+	public function getHeading($lat1, $lon1, $lat2, $lon2) {
+		//difference in longitudinal coordinates
+		$dLon = deg2rad($lon2) - deg2rad($lon1);
+		//difference in the phi of latitudinal coordinates
+		$dPhi = log(tan(deg2rad($lat2) / 2 + pi() / 4) / tan(deg2rad($lat1) / 2 + pi() / 4));
+		//we need to recalculate $dLon if it is greater than pi
+		if(abs($dLon) > pi()) {
+			if($dLon > 0) {
+				$dLon = (2 * pi() - $dLon) * -1;
+			} else {
+				$dLon = 2 * pi() + $dLon;
+			}
+		}
+		//return the angle, normalized
+		return (rad2deg(atan2($dLon, $dPhi)) + 360) % 360;
 	}
 }
 ?>

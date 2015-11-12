@@ -2504,7 +2504,7 @@ class Spotter{
 					$airline_array = $this->getAllAirlineInfo("NA");
 				}
 			}
-		}
+		} else $airline_array = array();
 		
 		//getting the aircraft information
 		if ($aircraft_icao != "")

@@ -482,7 +482,7 @@ function getLiveData()
 		    info.update(feature.properties);
 
 				//console.log(document.getElementById('aircraft_ident').className);
-			if (document.getElementById('aircraft_ident').className == feature.properties.callsign) {
+			if (document.getElementById('aircraft_ident').className == feature.properties.callsign || document.getElementById('aircraft_ident').className == feature.properties.flightaware_id) {
 				//var iconURLpath = '<?php print $globalURL; ?>/images/aircrafts/selected/'+feature.properties.aircraft_shadow;
 				var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=FF0000&filename='+feature.properties.aircraft_shadow;
 				var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?color=8D93B9&filename='+feature.properties.aircraft_shadow;
@@ -524,8 +524,13 @@ function getLiveData()
 			if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 		    ?>
 		    .on('click', function() {
-				$("#aircraft_ident").attr('class',feature.properties.callsign);
-				$(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
+				if (feature.properties.callsign == "NA") {
+				    $("#aircraft_ident").attr('class',feature.properties.flightaware_id);
+				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&flightaware_id="+feature.properties.flightaware_id);
+				} else {
+				    $("#aircraft_ident").attr('class',feature.properties.callsign);
+				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
+				}
 				getLiveData();
 			});
 		    <?php
@@ -555,7 +560,13 @@ function getLiveData()
 
 			.on('click', function() {
 				$("#aircraft_ident").attr('class',feature.properties.callsign);
-				$(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
+				if (feature.properties.callsign == "NA") {
+				    $("#aircraft_ident").attr('class',feature.properties.flightaware_id);
+				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&flightaware_id="+feature.properties.flightaware_id);
+				} else {
+				    $("#aircraft_ident").attr('class',feature.properties.callsign);
+				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
+				}
 				getLiveData();
 			});
 		    <?php
@@ -579,8 +590,13 @@ function getLiveData()
 			if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 		    ?>
 			.on('click', function() {
-				$("#aircraft_ident").attr('class',feature.properties.callsign);
-				$(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
+				if (feature.properties.callsign == "NA") {
+				    $("#aircraft_ident").attr('class',feature.properties.flightaware_id);
+				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&flightaware_id="+feature.properties.flightaware_id);
+				} else {
+				    $("#aircraft_ident").attr('class',feature.properties.callsign);
+				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
+				}
 				getLiveData();
 			});
 		    

@@ -59,31 +59,38 @@ function create_socket($host, $port, &$errno, &$errstr) {
 }
 
 function connect_all($hosts) {
-    global $sockets, $formats, $globalDebug,$aprs_connect;
+    global $sockets, $formats, $globalDebug,$aprs_connect,$last_exec;
     foreach ($hosts as $id => $host) {
 	// Here we check type of source(s)
 	if (filter_var($host,FILTER_VALIDATE_URL)) {
             if (preg_match('/deltadb.txt$/i',$host)) {
         	$formats[$id] = 'deltadbtxt';
+        	$last_exec['deltadbtxt'] = 0;
         	if ($globalDebug) echo "Connect to deltadb source...\n";
     	    } else if (preg_match('/aircraftlist.json$/i',$host)) {
         	$formats[$id] = 'aircraftlistjson';
+        	$last_exec['aircraftlistjson'] = 0;
         	if ($globalDebug) echo "Connect to aircraftlist.json source...\n";
     	    } else if (preg_match('/planeUpdateFAA.php$/i',$host)) {
         	$formats[$id] = 'planeupdatefaa';
+        	$last_exec['planeupdatefaa'] = 0;
         	if ($globalDebug) echo "Connect to planeUpdateFAA.php source...\n";
             } else if (preg_match('/\/action.php\/acars\/data$/i',$host)) {
         	$formats[$id] = 'phpvmacars';
+        	$last_exec['phpvmacars'] = 0;
         	if ($globalDebug) echo "Connect to phpvmacars source...\n";
             } else if (preg_match('/whazzup/i',$host)) {
         	$formats[$id] = 'whazzup';
+        	$last_exec['whazzup'] = 0;
         	if ($globalDebug) echo "Connect to whazzup source...\n";
             } else if (preg_match('/recentpireps/i',$host)) {
         	$formats[$id] = 'pirepsjson';
+        	$last_exec['pirepsjson'] = 0;
         	if ($globalDebug) echo "Connect to pirepsjson source...\n";
             } else if (preg_match(':data.fr24.com/zones/fcgi/feed.js:i',$host)) {
         	// Desactivated. Here only because it's possible. Do not use without fr24 rights.
         	//$formats[$id] = 'fr24json';
+        	//$lastexec['fr24json'] = 0;
         	//if ($globalDebug) echo "Connect to fr24 source...\n";
             } else if (preg_match('/10001/',$host)) {
         	$formats[$id] = 'tsv';
@@ -101,6 +108,9 @@ function connect_all($hosts) {
         	    $formats[$id] = 'tsv';
 		} elseif ($hostport[1] == '30002') {
         	    $formats[$id] = 'raw';
+		} elseif ($hostport[1] == '30005') {
+		    // Not yet supported
+        	    $formats[$id] = 'beast';
 		} else $formats[$id] = 'sbs';
 		if ($globalDebug) echo 'Connection in progress to '.$host.'('.$formats[$id].')....'."\n";
             } else {
@@ -111,20 +121,26 @@ function connect_all($hosts) {
 }
 
 // This is to be compatible with old version of settings.php
-if (isset($globalSBS1Hosts)) {
-    $hosts = $globalSBS1Hosts;
+if (isset($globalSource)) {
+    
 } else {
-    if (!isset($globalSBS1Host)) {
-        echo '$globalSBS1Host MUST be defined !';
-        die;
+    if (isset($globalSBS1Hosts)) {
+	$hosts = $globalSBS1Hosts;
+    } else {
+	if (!isset($globalSBS1Host)) {
+	    echo '$globalSBS1Host MUST be defined !';
+	    die;
+	}
+	$hosts = array($globalSBS1Host.':'.$globalSBS1Port);
     }
-    $hosts = array($globalSBS1Host.':'.$globalSBS1Port);
 }
+if (!isset($globalMinFetch)) $globalMinFetch = 0;
 
 // Initialize all
 $status = array();
 $sockets = array();
 $formats = array();
+$last_exec = array();
 $time = time();
 $timeout = $globalSBS1TimeOut;
 $errno = '';
@@ -167,7 +183,7 @@ while ($i > 0) {
     // Delete old ATC
     if ($globalDaemon && isset($globalIVAO) && $globalIVAO) $ATC->deleteOldAtc();
     foreach ($formats as $id => $value) {
-	if ($value == 'deltadbtxt') {
+	if ($value == 'deltadbtxt' && (time() - $last_exec['deltadbtxt'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 	    $buffer = explode('\n',$buffer);
@@ -191,7 +207,8 @@ while ($i > 0) {
 		    unset($data);
     		}
     	    }
-	} elseif ($value == 'whazzup') {
+    	    $last_exec['deltadbtxt'] = time();
+	} elseif ($value == 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 	    $buffer = explode('\n',$buffer);
@@ -241,7 +258,8 @@ while ($i > 0) {
     		    }
     		}
     	    }
-    	} elseif ($value == 'aircraftlistjson') {
+    	    $last_exec['whazzup'] = time();
+    	} elseif ($value == 'aircraftlistjson' && (time() - $last_exec['aircraftlistjson'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id],'get','','','','','50');
 	    if ($buffer != '') {
 	    $all_data = json_decode($buffer,true);
@@ -283,7 +301,8 @@ while ($i > 0) {
 		}
 	    }
 	    }
-    	} elseif ($value == 'planeupdatefaa') {
+    	    $last_exec['aircraftlistjson'] = time();
+    	} elseif ($value == 'planeupdatefaa' && (time() - $last_exec['planeupdatefaa'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['planes'])) {
@@ -308,9 +327,11 @@ while ($i > 0) {
 		    }
 		    $data['datetime'] = date('Y-m-d H:i:s',$line[9]);
 		    $SI->add($data);
+		    unset($data);
 		}
 	    }
-    	} elseif ($value == 'fr24json') {
+    	    $last_exec['planeupdatefaa'] = time();
+    	} elseif ($value == 'fr24json' && (time() - $last_exec['fr24json'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);
 	    $all_data = json_decode($buffer,true);
 	    foreach ($all_data as $key => $line) {
@@ -332,50 +353,51 @@ while ($i > 0) {
 	    	    $data['emergency'] = ''; // emergency
 		    $data['datetime'] = date('Y-m-d H:i:s'); //$line[10]
 		    $SI->add($data);
+		    unset($data);
 		}
 	    }
-    	} elseif ($value == 'pirepsjson') {
+    	    $last_exec['fr24json'] = time();
+    	} elseif ($value == 'pirepsjson' && (time() - $last_exec['pirepsjson'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);
 	    $all_data = json_decode(utf8_encode($buffer),true);
 	    
 	    if (isset($all_data['pireps'])) {
-	    foreach ($all_data['pireps'] as $line) {
-	        $data = array();
-	        $data['hex'] = str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT);
-	        $data['ident'] = $line['callsign']; // ident
-	        if (isset($line['pilotid'])) $data['pilot_id'] = $line['pilotid']; // pilot id
-	        if (isset($line['name'])) $data['pilot_name'] = $line['name']; // pilot name
-	        if (isset($line['alt'])) $data['altitude'] = $line['alt']; // altitude
-	        if (isset($line['gs'])) $data['speed'] = $line['gs']; // speed
-	        if (isset($line['heading'])) $data['heading'] = $line['heading']; // heading
-	        if (isset($line['route'])) $data['waypoints'] = $line['route']; // route
-	        $data['latitude'] = $line['lat']; // lat
-	        $data['longitude'] = $line['lon']; // long
-	        //$data['verticalrate'] = $line['vrt']; // verticale rate
-	        //$data['squawk'] = $line['squawk']; // squawk
-	        //$data['emergency'] = ''; // emergency
-	        if (isset($line['depicao'])) $data['departure_airport_icao'] = $line['depicao'];
-	        if (isset($line['deptime'])) $data['departure_airport_time'] = $line['deptime'];
-	        if (isset($line['arricao'])) $data['arrival_airport_icao'] = $line['arricao'];
-    		//$data['arrival_airport_time'] = $line['arrtime'];
-	    	if (isset($line['aircraft'])) $data['aircraft_icao'] = $line['aircraft'];
-	    	if (isset($line['transponder'])) $data['squawk'] = $line['transponder'];
-	    	if (isset($line['atis'])) $data['info'] = $line['atis'];
-	    	else $data['info'] = '';
-		$data['datetime'] = date('Y-m-d H:i:s');
-    		if ($line['icon'] == 'plane') {
-    		    $SI->add($data);
-    		//    print_r($data);
-    		}
-		elseif ($line['icon'] == 'ct') {
+	        foreach ($all_data['pireps'] as $line) {
+		    $data = array();
+		    $data['hex'] = str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT);
+		    $data['ident'] = $line['callsign']; // ident
+		    if (isset($line['pilotid'])) $data['pilot_id'] = $line['pilotid']; // pilot id
+		    if (isset($line['name'])) $data['pilot_name'] = $line['name']; // pilot name
+		    if (isset($line['alt'])) $data['altitude'] = $line['alt']; // altitude
+		    if (isset($line['gs'])) $data['speed'] = $line['gs']; // speed
+		    if (isset($line['heading'])) $data['heading'] = $line['heading']; // heading
+		    if (isset($line['route'])) $data['waypoints'] = $line['route']; // route
+		    $data['latitude'] = $line['lat']; // lat
+		    $data['longitude'] = $line['lon']; // long
+		    //$data['verticalrate'] = $line['vrt']; // verticale rate
+		    //$data['squawk'] = $line['squawk']; // squawk
+		    //$data['emergency'] = ''; // emergency
+		    if (isset($line['depicao'])) $data['departure_airport_icao'] = $line['depicao'];
+		    if (isset($line['deptime'])) $data['departure_airport_time'] = $line['deptime'];
+		    if (isset($line['arricao'])) $data['arrival_airport_icao'] = $line['arricao'];
+		    //$data['arrival_airport_time'] = $line['arrtime'];
+		    if (isset($line['aircraft'])) $data['aircraft_icao'] = $line['aircraft'];
+		    if (isset($line['transponder'])) $data['squawk'] = $line['transponder'];
+		    if (isset($line['atis'])) $data['info'] = $line['atis'];
+		    else $data['info'] = '';
+		    $data['datetime'] = date('Y-m-d H:i:s');
+		    if ($line['icon'] == 'plane') {
+			$SI->add($data);
+		    //    print_r($data);
+    		    } elseif ($line['icon'] == 'ct') {
 			$data['info'] = str_replace('^&sect;','<br />',$data['info']);
 			echo $ATC->add($data['ident'],'',$data['latitude'],$data['longitude'],'0',$data['info'],$data['datetime'],'',$data['pilot_id'],$data['pilot_name']);
+		    }
+		    unset($data);
 		}
-
-		unset($data);
 	    }
-	    }
-    	} elseif ($value == 'phpvmacars') {
+    	    $last_exec['pirepsjson'] = time();
+    	} elseif ($value == 'phpvmacars' && (time() - $last_exec['phpvmacars'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);
 	    $all_data = json_decode($buffer,true);
 	    foreach ($all_data as $line) {
@@ -404,7 +426,8 @@ while ($i > 0) {
 		$SI->add($data);
 		unset($data);
 	    }
-	} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs') {
+    	    $last_exec['phpvmacars'] = time();
+	} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 
 	    //$read = array( $sockets[$id] );
@@ -424,12 +447,16 @@ while ($i > 0) {
 		    if ($buffer != '') {
 			$tt = 0;
 			if ($value == 'raw') {
+			    // AVR format
 			    $data = $SBS->parse($buffer);
 			    if (is_array($data)) {
 				$data['datetime'] = date('Y-m-d H:i:s');
 				$data['format_source'] = 'raw';
                                 $SI->add($data);
                             }
+			} elseif ($value == 'beast') {
+			    echo 'Beast Binary format not yet supported. Beast AVR format is supported in alpha state'."\n";
+			    die;
 			} elseif ($value == 'tsv' || substr($buffer,0,4) == 'clock') {
 			    $line = explode("\t", $buffer);
 			    for($k = 0; $k < count($line); $k=$k+2) {
@@ -477,6 +504,7 @@ while ($i > 0) {
 				    if (isset($line['course'])) $data['heading'] = $line['course'];
 				    else $data['heading'] = 0;
 				    $data['aircraft_type'] = $line['stealth'];
+				    $data['noarchive'] = true;
 				    $data['format_source'] = 'aprs';
 				    //print_r($data);
 				    if ($line['stealth'] == 0) $send = $SI->add($data);
@@ -502,7 +530,6 @@ while ($i > 0) {
     				$data['emergency'] = $line[19];
     				$data['format_source'] = 'sbs';
     				$send = $SI->add($data);
-				//$send = $data;
     				unset($data);
     			    } else $error = true;
 			    if ($error) {
