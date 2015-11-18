@@ -471,8 +471,10 @@ function getLiveData()
 		var live_data = L.geoJson(data, {
 		    pointToLayer: function (feature, latLng) {
 		    var markerLabel = "";
-		    if (feature.properties.callsign != ""){ markerLabel += feature.properties.callsign+'<br />'; }
-		    if (feature.properties.departure_airport_code != "" || feature.properties.arrival_airport_code != ""){ markerLabel += '<span class="nomobile">'+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+'</span>'; }
+		    //if (feature.properties.callsign != ""){ markerLabel += feature.properties.callsign+'<br />'; }
+		    //if (feature.properties.departure_airport_code != "" || feature.properties.arrival_airport_code != ""){ markerLabel += '<span class="nomobile">'+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+'</span>'; }
+		    if (feature.properties.callsign != ""){ markerLabel += feature.properties.callsign; }
+		    if (feature.properties.departure_airport_code != "" && feature.properties.arrival_airport_code != "" && feature.properties.departure_airport_code != "NA" && feature.properties.arrival_airport_code != "NA"){ markerLabel += ' ( '+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+' )'; }
 		    <?php
 			if (isset($_COOKIE['IconColor'])) $IconColor = $_COOKIE['IconColor'];
 			elseif (isset($globalAircraftIconColor)) $IconColor = $globalAircraftIconColor;
@@ -877,7 +879,7 @@ function getLiveData()
 	});
 	layer_data.addTo(map);
 	//re-create the bootstrap tooltips on the marker 
-	showBootstrapTooltip();
+	//showBootstrapTooltip();
     }
 }).error(function() {
     map.removeLayer(layer_data);
