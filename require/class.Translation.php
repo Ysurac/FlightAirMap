@@ -73,7 +73,8 @@ class Translation {
         
         public function checkTranslation($ident,$web = true) {
     	    global $globalTranslationSources, $globalTranslationFetch;
-    	    if (!isset($globalTranslationSources)) $globalTranslationSources = array('planefinder');
+    	    //if (!isset($globalTranslationSources)) $globalTranslationSources = array('planefinder');
+    	    $globalTranslationSources = array();
     	    if (!isset($globalTranslationFetch)) $globalTranslationFetch = TRUE;
     	    //echo "Check Translation for ".$ident."...";
     	    $correct = $this->getOperator($ident);
