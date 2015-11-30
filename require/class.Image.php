@@ -113,7 +113,7 @@ class Image {
     	    $aircraft_name = '';
 	} else return array('thumbnail' => '','original' => '', 'copyright' => '', 'source' => '','source_website' => '');
 
-	if (!isset($globalAircraftImageSources)) $globalAircraftImageSources = array('ivaomtl','wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
+	if (!isset($globalAircraftImageSources)) $globalAircraftImageSources = array('ivaomtl','wikimedia','airportdata','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
 	
 	foreach ($globalAircraftImageSources as $source) {
 		$source = strtolower($source);
@@ -125,6 +125,7 @@ class Image {
 		if ($source == 'wikimedia') $images_array = $Image->fromWikimedia($aircraft_registration,$aircraft_name);
 		if ($source == 'jetphotos' && !$globalIVAO) $images_array = $Image->fromJetPhotos($aircraft_registration,$aircraft_name);
 		if ($source == 'planepictures' && !$globalIVAO) $images_array = $Image->fromPlanePictures($aircraft_registration,$aircraft_name);
+		if ($source == 'airportdata' && !$globalIVAO) $images_array = $Image->fromAirportData($aircraft_registration,$aircraft_name);
 		if (isset($images_array) && $images_array['original'] != '') return $images_array;
 	}
 	return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
@@ -338,7 +339,7 @@ class Image {
 
 	$headers = array("Authorization: Basic " . base64_encode("ignored:".$globalImageBingKey));
 
-	$data = $Common->getData($url);
+	$data = $Common->getData($url,'get','',$headers);
 
 	$result = json_decode($data);
 	if (isset($result->d->results[0]->MediaUrl)) {
@@ -350,6 +351,32 @@ class Image {
 	    $url = parse_url($image_url['source_website']);
 	    $image_url['copyright'] = $url['host'];
 	    $image_url['source'] = 'bing';
+	    return $image_url;
+	}
+	return false;
+    }
+
+    /**
+    * Gets the aircraft image from airport-data
+    *
+    * @param String $aircraft_registration the registration of the aircraft
+    * @param String $aircraft_name type of the aircraft
+    * @return Array the aircraft thumbnail, orignal url and copyright
+    *
+    */
+    public function fromAirportData($aircraft_registration,$aircraft_name='') {
+	$Common = new Common();
+	$url = 'http://www.airport-data.com/api/ac_thumb.json?&n=1&r='.$aircraft_registration;
+	$data = $Common->getData($url);
+	$result = json_decode($data);
+	
+	if (isset($result->count) && $result->count > 0) {
+	    $image_url['original'] = str_replace('thumbnails','large',$result->data[0]->image);
+	    $image_url['source_website'] = $result->data[0]->link;
+	    $image_url['thumbnail'] = $result->data[0]->image;
+	    $image_url['copyright'] = $result->data[0]->photographer;
+	    $image_url['source'] = 'AirportData';
+	
 	    return $image_url;
 	}
 	return false;
@@ -424,5 +451,7 @@ class Image {
 //print_r(Image->fromBing('472/CC'));
 //print_r(Image->fromJetPhotos('F-GZHM'));
 //print_r(Image->fromPlanePictures('F-GZHM'));
+$Image = new Image();
+print_r($Image->fromAirportData('F-GZHM'));
 
 ?>
