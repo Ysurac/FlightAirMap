@@ -158,7 +158,8 @@ else $aprs_ssid = 'FAM';
 //else $aprs_ssid = 'PerlEx';
 if (isset($globalAPRSfilter)) $aprs_filter = $globalAPRSfilter;
 else $aprs_filter =  'r/'.$globalCenterLatitude.'/'.$globalCenterLongitude.'/250.0';
-$aprs_login = "user {$aprs_ssid} appid {$aprs_version} filter {$aprs_filter}\n";
+if ($aprs_filter != '') $aprs_login = "user {$aprs_ssid} appid {$aprs_version} filter {$aprs_filter}\n";
+else $aprs_login = "user {$aprs_ssid} appid {$aprs_version}\n";
 //echo $aprs_login;
 
 $_ = $_SERVER['_'];

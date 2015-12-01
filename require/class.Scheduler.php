@@ -300,6 +300,67 @@ class Schedule {
 	}
 
 	/**
+	* Get flight info from Lutfhansa API
+	* @param String $callsign The callsign
+	* @param String $date date we want flight number info
+	* @return Flight departure and arrival airports and time
+	*/
+	private function getLufthansa($callsign, $date = 'NOW') {
+		global $globalLufthansaKey;
+		$Common = new Common();
+		$check_date = new Datetime($date);
+		$numvol = sprintf('%04d',preg_replace('/^[A-Z]*/','',$callsign));
+		if (!filter_var(preg_replace('/^[A-Z]*/','',$callsign),FILTER_VALIDATE_INT)) return array();
+		if ($globalLufthansaKey == '') return array();
+		$url = "https://api.lufthansa.com/v1/oauth/token";
+		$post = array('client_id' => $globalLufthansaKey['key'],'client_secret' => $globalLufthansaKey['secret'],'grant_type' => 'client_credentials');
+		$data = $Common->getData($url,'post',$post);
+		$parsed_data = json_decode($data);
+		$token = $parsed_data->{'access_token'};
+		
+		$url = "https://api.lufthansa.com/v1/operations/flightstatus/LH".$numvol."/".$check_date->format('Y-m-d');
+		$headers = array('Authorization: Bearer '.$token,'Accept: application/json');
+		$json = $Common->getData($url,'get','',$headers);
+		if ($json == '') return array();
+		$parsed_json = json_decode($json);
+		if (isset($parsed_json->{'FlightStatusResource'}) && count($parsed_json->{'FlightStatusResource'}) > 0) {
+			$DepartureAirportIata = $parsed_json->{'FlightStatusResource'}->{'Flights'}->{'Flight'}->{'Departure'}->{'AirportCode'};
+			$departureTime = date('H:i',strtotime($parsed_json->{'FlightStatusResource'}->{'Flights'}->{'Flight'}->{'Departure'}->{'ScheduledTimeLocal'}->{'DateTime'}));
+			$ArrivalAirportIata = $parsed_json->{'FlightStatusResource'}->{'Flights'}->{'Flight'}->{'Arrival'}->{'AirportCode'};
+			$arrivalTime = date('H:i',strtotime($parsed_json->{'FlightStatusResource'}->{'Flights'}->{'Flight'}->{'Arrival'}->{'ScheduledTimeLocal'}->{'DateTime'}));
+			return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_lufthansa');
+		} else return array();
+	}
+
+	/**
+	* Get flight info from Transavia API
+	* @param String $callsign The callsign
+	* @param String $date date we want flight number info
+	* @return Flight departure and arrival airports and time
+	*/
+	private function getTransavia($callsign, $date = 'NOW') {
+		global $globalTransaviaKey;
+		$Common = new Common();
+		$check_date = new Datetime($date);
+		$numvol = sprintf('%04d',preg_replace('/^[A-Z]*/','',$callsign));
+		if (!filter_var(preg_replace('/^[A-Z]*/','',$callsign),FILTER_VALIDATE_INT)) return array();
+		if ($globalTransaviaKey == '') return array();
+		$url = "https://tst.api.transavia.com/v1/flightstatus/departuredate/".$check_date->format('Ymd').'/flightnumber/HV'.$numvol;
+		$headers = array('apikey: '.$globalTransaviaKey);
+		$json = $Common->getData($url,'get','',$headers);
+		if ($json == '') return array();
+		$parsed_json = json_decode($json);
+		
+		if (isset($parsed_json->{'data'}[0])) {
+			$DepartureAirportIata = $parsed_json->{'data'}[0]->{'flight'}->{'departureAirport'}->{'locationCode'};
+			$departureTime = date('H:i',strtotime($parsed_json->{'data'}[0]->{'flight'}->{'departureDateTime'}));
+			$ArrivalAirportIata = $parsed_json->{'data'}[0]->{'flight'}->{'arrivalAirport'}->{'locationCode'};
+			$arrivalTime = date('H:i',strtotime($parsed_json->{'data'}[0]->{'flight'}->{'arrivalDateTime'}));
+			return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_transavia');
+		} else return array();
+	}
+
+	/**
 	* Get flight info from Tunisair
 	* @param String $callsign The callsign
 	* @return Flight departure and arrival airports and time
@@ -501,9 +562,12 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getLufthansa($callsign, $date = 'NOW') {
+
+/*	private function getLufthansa($callsign, $date = 'NOW') {
 		$Common = new Common();
-		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
+		*/
+		//$numvol = preg_replace('/^[A-Z]*/','',$callsign);
+/*
 		$url= "http://www.lufthansa.com/fr/fr/Arrivees-Departs-fonction";
 		$check_date = new Datetime($date);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
@@ -523,7 +587,7 @@ class Schedule {
 		}
 		return array('DepartureAirportIATA' => '','DepartureTime' => $departureTime,'ArrivalAirportIATA' => '','ArrivalTime' => $arrivalTime,'Source' => 'website_lufthansa');
 	}
-
+  */
 	/**
 	* Get flight info from flytap
 	* @param String $callsign The callsign
@@ -969,10 +1033,16 @@ class Schedule {
 					return $this->getAirCanada($ident);
 					break;
 				// Lufthansa
-/*				case "DLH":
+				case "DLH":
+				case "LH":
 					return $this->getLufthansa($ident);
 					break;
-					*/
+				// Transavia
+				case "TRA":
+				case "HV":
+					return $this->getTransavia($ident);
+					break;
+					
 /*
 				case "DLH":
 				case "LH":
@@ -1023,6 +1093,5 @@ class Schedule {
 }
 
 //$Schedule = new Schedule();
-//print_r($Schedule->fetchSchedule('BAW540'));
-
+//print_r($Schedule->fetchSchedule('HV5661'));
 ?>

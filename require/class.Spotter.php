@@ -7574,6 +7574,7 @@ public function addSpotterImage($registration)
 		
 
 		// routes
+		/*
 		if ($globalDebug) print "Routes...\n";
 		$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != ''";
 		$sth = $this->db->prepare($query);
@@ -7588,6 +7589,7 @@ public function addSpotterImage($registration)
 				$sthu->execute(array(':fromicao' => $row['fromairport_icao'],':toicao' => $row['toairport_icao'],':spotter_id' => $row['spotter_id'],':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country']));
 			}
 		}
+		*/
 		
 		if ($globalDebug) print "Airlines...\n";
 		//airlines
@@ -7599,9 +7601,11 @@ public function addSpotterImage($registration)
 			if (is_numeric(substr($row['ident'], -1, 1)))
 			{
 				$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3));
-				$update_query  = "UPDATE spotter_output SET spotter_output.airline_name = :airline_name, spotter_output.airline_icao = :airline_icao, spotter_output.airline_country = :airline_country, spotter_output.airline_type = :airline_type WHERE spotter_output.spotter_id = :spotter_id";
-				$sthu = $this->db->prepare($update_query);
-				$sthu->execute(array(':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'], ':airline_country' => $airline_array[0]['country'], ':airline_type' => $airline_array[0]['type'], ':spotter_id' => $row['spotter_id']));
+				if (isset($airline_array[0]['name'])) {
+					$update_query  = "UPDATE spotter_output SET spotter_output.airline_name = :airline_name, spotter_output.airline_icao = :airline_icao, spotter_output.airline_country = :airline_country, spotter_output.airline_type = :airline_type WHERE spotter_output.spotter_id = :spotter_id";
+					$sthu = $this->db->prepare($update_query);
+					$sthu->execute(array(':airline_name' => $airline_array[0]['name'],':airline_icao' => $airline_array[0]['icao'], ':airline_country' => $airline_array[0]['country'], ':airline_type' => $airline_array[0]['type'], ':spotter_id' => $row['spotter_id']));
+				}
 			}
 		}
 

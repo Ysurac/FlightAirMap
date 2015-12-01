@@ -451,7 +451,7 @@ class Image {
 //print_r(Image->fromBing('472/CC'));
 //print_r(Image->fromJetPhotos('F-GZHM'));
 //print_r(Image->fromPlanePictures('F-GZHM'));
-$Image = new Image();
-print_r($Image->fromAirportData('F-GZHM'));
+//$Image = new Image();
+//print_r($Image->fromAirportData('F-GZHM'));
 
 ?>

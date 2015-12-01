@@ -30,7 +30,7 @@ class SpotterServer {
 		if ($line['hex'] != '' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) === 6) {
 		    $data['hex'] = trim($line['hex']);
 		    if (preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
-		        $data['datetime'];
+		        $data['datetime'] = $line['datetime'];
 		    } else $data['datetime'] = date('Y-m-d H:i:s');
 		    if (!isset($line['aircraft_icao'])) {
 		        $Spotter = new Spotter();

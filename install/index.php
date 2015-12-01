@@ -415,6 +415,25 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<input type="text" name="britishairways" id="britishairways" value="<?php if (isset($globalBritishAirwaysKey)) print $globalBritishAirwaysKey; ?>" />
 		</p>
 		<p>
+			<label for="transavia">Transavia Test API Consumer Key</label>
+			<i><a href="https://developer.transavia.com">https://developer.transavia.com</a></i>
+			<input type="text" name="transavia" id="transavia" value="<?php if (isset($globalTransaviaKey)) print $globalTransaviaKey; ?>" />
+		</p>
+		<p>
+		    <fieldset>
+			<legend>Lufthansa API Key</legend>
+			<i><a href="https://developer.lufthansa.com/page">https://developer.lufthansa.com/page</a></i>
+			<p>
+			<label for="lufthansakey">Key</label>
+			<input type="text" name="lufthansakey" id="lufthansakey" value="<?php if (isset($globalLufthansaKey['key'])) print $globalLufthansaKey['key']; ?>" />
+			</p>
+			<p>
+			<label for="lufthansasecret">Secret</label>
+			<input type="text" name="lufthansasecret" id="lufthansasecret" value="<?php if (isset($globalLufthansaKey['secret'])) print $globalLufthansaKey['secret']; ?>" />
+			</p>
+		    </fieldset>
+		</p>
+		<p>
 			<label for="waypoints">Add Waypoints, Airspace and countries data (about 45Mio in DB) <i>Not yet available for PostgreSQL</i></label>
 			<input type="checkbox" name="waypoints" id="waypoints" value="waypoints" checked="checked" />
 		</p>
@@ -634,6 +653,12 @@ if (isset($_POST['dbtype'])) {
 
 	$britishairways = filter_input(INPUT_POST,'britishairways',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalBritishAirwaysKey' => $britishairways));
+	$transavia = filter_input(INPUT_POST,'transavia',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalTransaviaKey' => $transavia));
+
+	$lufthansakey = filter_input(INPUT_POST,'lufthansakey',FILTER_SANITIZE_STRING);
+	$lufthansasecret = filter_input(INPUT_POST,'lufthansasecret',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalLufthansaKey' => array('key' => $lufthansakey,'secret' => $lufthansasecret));
 
 	// Create in settings.php keys not yet configurable if not already here
 	//if (!isset($globalImageBingKey)) $settings = array_merge($settings,array('globalImageBingKey' => ''));
