@@ -13,7 +13,7 @@ class SpotterServer {
 	if ($dbs === null) {
 	    $Connection = new Connection(null,'server');
 	    $this->dbs = $Connection->dbs;
-	    $query = "CREATE TABLE IF NOT EXISTS `spotter_temp` ( `id_data` INT NOT NULL AUTO_INCREMENT , `id_user` INT NOT NULL , `datetime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `hex` VARCHAR(20) NOT NULL , `ident` VARCHAR(20) NULL , `latitude` FLOAT NULL , `longitude` FLOAT NULL , `verticalrate` INT NULL , `speed` INT NULL , `squawk` INT NULL , `altitude` INT NULL , `heading` INT NULL , `registration` VARCHAR(255) NULL , `aircraft_icao` VARCHAR(255) NULL , `waypoints` VARCHAR(999) NULL , `id_source` INT NOT NULL DEFAULT '1' , PRIMARY KEY (`id_data`) ) ENGINE = MEMORY;";
+	    $query = "CREATE TABLE IF NOT EXISTS `spotter_temp` ( `id_data` INT NOT NULL AUTO_INCREMENT , `id_user` INT NOT NULL , `datetime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `hex` VARCHAR(20) NOT NULL , `ident` VARCHAR(20) NULL , `latitude` FLOAT NULL , `longitude` FLOAT NULL , `verticalrate` INT NULL , `speed` INT NULL , `squawk` INT NULL , `altitude` INT NULL , `heading` INT NULL , `registration` VARCHAR(255) NULL , `aircraft_icao` VARCHAR(255) NULL , `waypoints` VARCHAR(999) NULL , `noarchive` BOOLEAN NOT NULL DEFAULT FALSE, `id_source` INT NOT NULL DEFAULT '1' , PRIMARY KEY (`id_data`) ) ENGINE = MEMORY;";
 	    try {
 		$sth = $this->dbs['server']->exec($query);
 	    } catch(PDOException $e) {
@@ -90,11 +90,14 @@ class SpotterServer {
 		if (isset($line['heading']) && $line['heading'] != '') {
 		    $data['heading'] = round($line['heading']);
   		} else $data['heading'] = null;
+  		if (isset($line['noarchive']) && $line['noarchive']) {
+  		    $data['noarchive'] = true;
+  		} else $data['noarchive'] = false;
   		
   		$id_user = $globalServerUserID;
   		$id_source = 1;
-  		$query = 'INSERT INTO spotter_temp (id_user,datetime,hex,ident,latitude,longitude,verticalrate,speed,squawk,altitude,heading,registration,aircraft_icao,waypoints,id_source) VALUES (:id_user,:datetime,:hex,:ident,:latitude,:longitude,:verticalrate,:speed,:squawk,:altitude,:heading,:registration,:aircraft_icao,:waypoints,:id_source)';
-  		$query_values = array(':id_user' => $id_user,':datetime' => $data['datetime'],':hex' => $data['hex'],':ident' => $data['ident'],':latitude' => $data['latitude'],':longitude' => $data['longitude'],':verticalrate' => $data['verticalrate'],':speed' => $data['speed'],':squawk' => $data['squawk'],':altitude' => $data['altitude'],':heading' => $data['heading'],':registration' => $data['registration'],':aircraft_icao' => $data['aircraft_icao'],':waypoints' => $data['waypoints'],':id_source' => $id_source);
+  		$query = 'INSERT INTO spotter_temp (id_user,datetime,hex,ident,latitude,longitude,verticalrate,speed,squawk,altitude,heading,registration,aircraft_icao,waypoints,id_source,noarchive) VALUES (:id_user,:datetime,:hex,:ident,:latitude,:longitude,:verticalrate,:speed,:squawk,:altitude,:heading,:registration,:aircraft_icao,:waypoints,:id_source,:noarchive)';
+  		$query_values = array(':id_user' => $id_user,':datetime' => $data['datetime'],':hex' => $data['hex'],':ident' => $data['ident'],':latitude' => $data['latitude'],':longitude' => $data['longitude'],':verticalrate' => $data['verticalrate'],':speed' => $data['speed'],':squawk' => $data['squawk'],':altitude' => $data['altitude'],':heading' => $data['heading'],':registration' => $data['registration'],':aircraft_icao' => $data['aircraft_icao'],':waypoints' => $data['waypoints'],':id_source' => $id_source,':noarchive' => $data['noarchive']);
   		try {
                         $sth = $this->dbs['server']->prepare($query);
                         $sth->execute($query_values);

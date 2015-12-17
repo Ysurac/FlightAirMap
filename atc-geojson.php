@@ -32,7 +32,8 @@ if (!empty($spotter_array))
 			$output .= '"atc_range": "'.$radius.'",';
 			$output .= '"ivao_id": "'.$spotter_item['ivao_id'].'",';
 			$output .= '"ivao_name": "'.$spotter_item['ivao_name'].'",';
-			$output .= '"info": "'.$spotter_item['info'].'"';
+			$output .= '"info": "'.$spotter_item['info'].'",';
+			$output .= '"type": "'.$spotter_item['type'].'"';
 		    $output .= '},';
 		    $output .= '"geometry": {';
 			$output .= '"type": "Point",';

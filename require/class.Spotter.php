@@ -216,6 +216,13 @@ class Spotter{
 					//print_r($acars_array);
 				}
 			}
+			
+			if ($temp_array['registration'] != "" && !$globalIVAO) {
+				$owner_info = $this->getAircraftOwnerByRegistration($temp_array['registration']);
+				if ($owner_info['owner'] != '') $temp_array['aircraft_owner'] = ucwords(strtolower($owner_info['owner']));
+				$temp_array['aircraft_base'] = $owner_info['base'];
+				$temp_array['aircraft_date_first_reg'] = $owner_info['date_first_reg'];
+			}
 
 			if($temp_array['registration'] != "" || ($globalIVAO && $temp_array['aircraft_type'] != ''))
 			{
@@ -1635,6 +1642,10 @@ class Spotter{
 			$temp_array['latitude'] = $row['latitude'];
 			$temp_array['longitude'] = $row['longitude'];
 			$temp_array['altitude'] = $row['altitude'];
+			$temp_array['home_link'] = $row['home_link'];
+			$temp_array['wikipedia_link'] = $row['wikipedia_link'];
+			$temp_array['image'] = $row['image'];
+			$temp_array['image_thumb'] = $row['image_thumb'];
 
 			$airport_array[] = $temp_array;
 		}
@@ -1930,6 +1941,27 @@ class Spotter{
 		}
 
 		return $aircraft_array;
+	}
+	
+	/**
+	* Gets the aircraft owner & base based on the aircraft registration
+	*
+	* @param String $aircraft_registration the aircraft registration
+	* @return Array aircraft information
+	*
+	*/
+	public function getAircraftOwnerByRegistration($registration)
+	{
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
+		$Connection = new Connection();
+		if ($Connection->tableExists('aircraft_owner')) {
+			$query  = "SELECT * FROM aircraft_owner WHERE registration = :registration LIMIT 1";
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':registration' => $registration));
+
+			$row = $sth->fetch(PDO::FETCH_ASSOC);
+			return $row;
+		} else return array();
 	}
 	
   

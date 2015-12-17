@@ -122,14 +122,21 @@ class update_db {
 		//$query_dest = 'INSERT INTO aircraft_modes (`AircraftID`,`FirstCreated`,`LastModified`, `ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`SerialNo`, `OperatorFlagCode`, `Manufacturer`, `Type`, `FirstRegDate`, `CurrentRegDate`, `Country`, `PreviousID`, `DeRegDate`, `Status`, `PopularName`,`GenericName`,`AircraftClass`, `Engines`, `OwnershipStatus`,`RegisteredOwners`,`MTOW`, `TotalHours`, `YearBuilt`, `CofACategory`, `CofAExpiry`, `UserNotes`, `Interested`, `UserTag`, `InfoUrl`, `PictureUrl1`, `PictureUrl2`, `PictureUrl3`, `UserBool1`, `UserBool2`, `UserBool3`, `UserBool4`, `UserBool5`, `UserString1`, `UserString2`, `UserString3`, `UserString4`, `UserString5`, `UserInt1`, `UserInt2`, `UserInt3`, `UserInt4`, `UserInt5`) VALUES (:AircraftID,:FirstCreated,:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:SerialNo, :OperatorFlagCode, :Manufacturer, :Type, :FirstRegDate, :CurrentRegDate, :Country, :PreviousID, :DeRegDate, :Status, :PopularName,:GenericName,:AircraftClass, :Engines, :OwnershipStatus,:RegisteredOwners,:MTOW, :TotalHours,:YearBuilt, :CofACategory, :CofAExpiry, :UserNotes, :Interested, :UserTag, :InfoUrl, :PictureUrl1, :PictureUrl2, :PictureUrl3, :UserBool1, :UserBool2, :UserBool3, :UserBool4, :UserBool5, :UserString1, :UserString2, :UserString3, :UserString4, :UserString5, :UserInt1, :UserInt2, :UserInt3, :UserInt4, :UserInt5)';
 		$query_dest = 'INSERT INTO aircraft_modes (LastModified, ModeS,ModeSCountry,Registration,ICAOTypeCode,Source) VALUES (:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:source)';
 		
+		$query_dest_owner = 'INSERT INTO aircraft_owner (registration,owner,Source) VALUES (:registration,:owner,:source)';
+		
 		$Connection = new Connection();
 		$sth_dest = $Connection->db->prepare($query_dest);
+		$sth_dest_owner = $Connection->db->prepare($query_dest_owner);
 		try {
 			if ($globalTransaction) $Connection->db->beginTransaction();
             		while ($values = $sth->fetch(PDO::FETCH_ASSOC)) {
 			//$query_dest_values = array(':AircraftID' => $values['AircraftID'],':FirstCreated' => $values['FirstCreated'],':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':SerialNo' => $values['SerialNo'], ':OperatorFlagCode' => $values['OperatorFlagCode'], ':Manufacturer' => $values['Manufacturer'], ':Type' => $values['Type'], ':FirstRegDate' => $values['FirstRegDate'], ':CurrentRegDate' => $values['CurrentRegDate'], ':Country' => $values['Country'], ':PreviousID' => $values['PreviousID'], ':DeRegDate' => $values['DeRegDate'], ':Status' => $values['Status'], ':PopularName' => $values['PopularName'],':GenericName' => $values['GenericName'],':AircraftClass' => $values['AircraftClass'], ':Engines' => $values['Engines'], ':OwnershipStatus' => $values['OwnershipStatus'],':RegisteredOwners' => $values['RegisteredOwners'],':MTOW' => $values['MTOW'], ':TotalHours' => $values['TotalHours'],':YearBuilt' => $values['YearBuilt'], ':CofACategory' => $values['CofACategory'], ':CofAExpiry' => $values['CofAExpiry'], ':UserNotes' => $values['UserNotes'], ':Interested' => $values['Interested'], ':UserTag' => $values['UserTag'], ':InfoUrl' => $values['InfoURL'], ':PictureUrl1' => $values['PictureURL1'], ':PictureUrl2' => $values['PictureURL2'], ':PictureUrl3' => $values['PictureURL3'], ':UserBool1' => $values['UserBool1'], ':UserBool2' => $values['UserBool2'], ':UserBool3' => $values['UserBool3'], ':UserBool4' => $values['UserBool4'], ':UserBool5' => $values['UserBool5'], ':UserString1' => $values['UserString1'], ':UserString2' => $values['UserString2'], ':UserString3' => $values['UserString3'], ':UserString4' => $values['UserString4'], ':UserString5' => $values['UserString5'], ':UserInt1' => $values['UserInt1'], ':UserInt2' => $values['UserInt2'], ':UserInt3' => $values['UserInt3'], ':UserInt4' => $values['UserInt4'], ':UserInt5' => $values['UserInt5']);
 				$query_dest_values = array(':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':source' => $database_file);
 				$sth_dest->execute($query_dest_values);
+				if ($values['RegisteredOwners'] != '' && $values['RegisteredOwners'] != NULL && $values['RegisteredOwners'] != 'Private') {
+				    $query_dest_owner_values = array(':registration' => $values['Registration'],':source' => $database_file,':owner' => $values['RegisteredOwners']);
+				    $sth_dest_owner->execute($query_dest_owner_values);
+				}
             		}
 			if ($globalTransaction) $Connection->db->commit();
 		} catch(PDOException $e) {
@@ -285,6 +292,128 @@ class update_db {
                 }
 
 //                return true;
+	}
+
+	public static function retrieve_owner($database_file,$country = 'F') {
+		global $globalTransaction;
+		//$query = 'TRUNCATE TABLE aircraft_modes';
+		$query = "DELETE FROM aircraft_owner WHERE Source = '' OR Source IS NULL OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => $database_file));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+		
+		if ($fh = fopen($database_file,"r")) {
+			//$query_dest = 'INSERT INTO aircraft_modes (`AircraftID`,`FirstCreated`,`LastModified`, `ModeS`,`ModeSCountry`,`Registration`,`ICAOTypeCode`,`SerialNo`, `OperatorFlagCode`, `Manufacturer`, `Type`, `FirstRegDate`, `CurrentRegDate`, `Country`, `PreviousID`, `DeRegDate`, `Status`, `PopularName`,`GenericName`,`AircraftClass`, `Engines`, `OwnershipStatus`,`RegisteredOwners`,`MTOW`, `TotalHours`, `YearBuilt`, `CofACategory`, `CofAExpiry`, `UserNotes`, `Interested`, `UserTag`, `InfoUrl`, `PictureUrl1`, `PictureUrl2`, `PictureUrl3`, `UserBool1`, `UserBool2`, `UserBool3`, `UserBool4`, `UserBool5`, `UserString1`, `UserString2`, `UserString3`, `UserString4`, `UserString5`, `UserInt1`, `UserInt2`, `UserInt3`, `UserInt4`, `UserInt5`) VALUES (:AircraftID,:FirstCreated,:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:SerialNo, :OperatorFlagCode, :Manufacturer, :Type, :FirstRegDate, :CurrentRegDate, :Country, :PreviousID, :DeRegDate, :Status, :PopularName,:GenericName,:AircraftClass, :Engines, :OwnershipStatus,:RegisteredOwners,:MTOW, :TotalHours,:YearBuilt, :CofACategory, :CofAExpiry, :UserNotes, :Interested, :UserTag, :InfoUrl, :PictureUrl1, :PictureUrl2, :PictureUrl3, :UserBool1, :UserBool2, :UserBool3, :UserBool4, :UserBool5, :UserString1, :UserString2, :UserString3, :UserString4, :UserString5, :UserInt1, :UserInt2, :UserInt3, :UserInt4, :UserInt5)';
+			$query_dest = 'INSERT INTO aircraft_owner (registration,base,owner,date_first_reg,Source) VALUES (:registration,:base,:owner,:date_first_reg,:source)';
+		
+			$Connection = new Connection();
+			$sth_dest = $Connection->db->prepare($query_dest);
+			try {
+				if ($globalTransaction) $Connection->db->beginTransaction();
+				$tmp = fgetcsv($fh,9999,',','"');
+            			while (!feof($fh)) {
+            				$line = fgetcsv($fh,9999,',','"');
+            				//print_r($line);
+            				if ($country == 'F') {
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = $line[4];
+            				    $values['owner'] = $line[5];
+            				    if ($line[6] == '') $values['date_first_reg'] = '';
+					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[6]));
+					    $values['cancel'] = $line[7];
+					} elseif ($country == 'EI') {
+					    // TODO : add modeS & reg to aircraft_modes
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = $line[3];
+            				    $values['owner'] = $line[2];
+            				    if ($line[1] == '') $values['date_first_reg'] = '';
+					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[1]));
+					    $values['cancel'] = '';
+					} elseif ($country == 'HB') {
+					    // TODO : add modeS & reg to aircraft_modes
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = null;
+            				    $values['owner'] = $line[5];
+            				    $values['date_first_reg'] = '';
+					    $values['cancel'] = '';
+					} elseif ($country == 'OK') {
+					    // TODO : add modeS & reg to aircraft_modes
+            				    $values['registration'] = $line[3];
+            				    $values['base'] = null;
+            				    $values['owner'] = $line[5];
+            				    if ($line[18] == '') $values['date_first_reg'] = '';
+					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[18]));
+					    $values['cancel'] = '';
+					} elseif ($country == 'VH') {
+					    // TODO : add modeS & reg to aircraft_modes
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = null;
+            				    $values['owner'] = $line[12];
+            				    if ($line[28] == '') $values['date_first_reg'] = '';
+					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[28]));
+
+					    $values['cancel'] = $line[39];
+					} elseif ($country == 'OE' || $country == '9A' || $country == 'VP' || $country == 'LX' || $country == 'P2' || $country == 'HC') {
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = null;
+            				    $values['owner'] = $line[4];
+            				    $values['date_first_reg'] = null;
+					    $values['cancel'] = '';
+					} elseif ($country == 'CC') {
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = null;
+            				    $values['owner'] = $line[6];
+            				    $values['date_first_reg'] = null;
+					    $values['cancel'] = '';
+					} elseif ($country == 'HJ') {
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = null;
+            				    $values['owner'] = $line[8];
+            				    if ($line[7] == '') $values['date_first_reg'] = '';
+					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[7]));
+					    $values['cancel'] = '';
+					} elseif ($country == 'PP') {
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = null;
+            				    $values['owner'] = $line[4];
+            				    if ($line[6] == '') $values['date_first_reg'] = '';
+					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[6]));
+					    $values['cancel'] = $line[7];
+					} elseif ($country == 'E7') {
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = null;
+            				    $values['owner'] = $line[4];
+            				    if ($line[5] == '') $values['date_first_reg'] = '';
+					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[5]));
+					    $values['cancel'] = '';
+					} elseif ($country == '8Q') {
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = null;
+            				    $values['owner'] = $line[3];
+            				    if ($line[7] == '') $values['date_first_reg'] = '';
+					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[7]));
+					    $values['cancel'] = '';
+					} elseif ($country == 'ZK' || $country == 'OM' || $country == 'TF') {
+            				    $values['registration'] = $line[0];
+            				    $values['base'] = null;
+            				    $values['owner'] = $line[3];
+            				    $values['date_first_reg'] = '';
+					    $values['cancel'] = '';
+					}
+					if ($values['cancel'] == '' && $values['registration'] != null) {
+						$query_dest_values = array(':registration' => $values['registration'],':base' => $values['base'],':date_first_reg' => $values['date_first_reg'],':owner' => $values['owner'],':source' => $database_file);
+						$sth_dest->execute($query_dest_values);
+					}
+				}
+				if ($globalTransaction) $Connection->db->commit();
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+		}
 	}
 
 	/*
@@ -966,6 +1095,202 @@ class update_db {
 		} elseif ($globalDebug) echo "Done\n";
 	}
 
+	public static function update_owner() {
+		global $tmp_dir, $globalDebug;
+		
+		if ($globalDebug) echo "Owner France: Download...";
+		update_db::download('http://antonakis.co.uk/registers/France.txt',$tmp_dir.'owner_f.csv');
+		if (file_exists($tmp_dir.'owner_f.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_f.csv','F');
+		} else $error = "File ".$tmp_dir.'owner_f.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		
+		if ($globalDebug) echo "Owner Ireland: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Ireland.txt',$tmp_dir.'owner_ei.csv');
+		if (file_exists($tmp_dir.'owner_ei.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_ei.csv','EI');
+		} else $error = "File ".$tmp_dir.'owner_ei.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Switzerland: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Switzerland.txt',$tmp_dir.'owner_hb.csv');
+		if (file_exists($tmp_dir.'owner_hb.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_hb.csv','HB');
+		} else $error = "File ".$tmp_dir.'owner_hb.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Czech Republic: Download...";
+		update_db::download('http://antonakis.co.uk/registers/CzechRepublic.txt',$tmp_dir.'owner_ok.csv');
+		if (file_exists($tmp_dir.'owner_ok.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_ok.csv','OK');
+		} else $error = "File ".$tmp_dir.'owner_ok.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Australia: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Australia.txt',$tmp_dir.'owner_vh.csv');
+		if (file_exists($tmp_dir.'owner_vh.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_vh.csv','VH');
+		} else $error = "File ".$tmp_dir.'owner_vh.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Austria: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Austria.txt',$tmp_dir.'owner_oe.csv');
+		if (file_exists($tmp_dir.'owner_oe.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_oe.csv','OE');
+		} else $error = "File ".$tmp_dir.'owner_oe.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Chile: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Chile.txt',$tmp_dir.'owner_cc.csv');
+		if (file_exists($tmp_dir.'owner_cc.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_cc.csv','CC');
+		} else $error = "File ".$tmp_dir.'owner_cc.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Colombia: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Colombia.txt',$tmp_dir.'owner_hj.csv');
+		if (file_exists($tmp_dir.'owner_hj.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_hj.csv','HJ');
+		} else $error = "File ".$tmp_dir.'owner_hj.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Bosnia Herzegobina: Download...";
+		update_db::download('http://antonakis.co.uk/registers/BosniaHerzegovina.txt',$tmp_dir.'owner_e7.csv');
+		if (file_exists($tmp_dir.'owner_e7.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_e7.csv','E7');
+		} else $error = "File ".$tmp_dir.'owner_e7.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Brazil: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Brazil.txt',$tmp_dir.'owner_pp.csv');
+		if (file_exists($tmp_dir.'owner_pp.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_pp.csv','PP');
+		} else $error = "File ".$tmp_dir.'owner_pp.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Cayman Islands: Download...";
+		update_db::download('http://antonakis.co.uk/registers/CaymanIslands.txt',$tmp_dir.'owner_vp.csv');
+		if (file_exists($tmp_dir.'owner_vp.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_vp.csv','VP');
+		} else $error = "File ".$tmp_dir.'owner_vp.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Croatia: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Croatia.txt',$tmp_dir.'owner_9a.csv');
+		if (file_exists($tmp_dir.'owner_9a.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_9a.csv','9A');
+		} else $error = "File ".$tmp_dir.'owner_9a.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Luxembourg: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Luxembourg.txt',$tmp_dir.'owner_lx.csv');
+		if (file_exists($tmp_dir.'owner_lx.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_lx.csv','LX');
+		} else $error = "File ".$tmp_dir.'owner_lx.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Maldives: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Maldives.txt',$tmp_dir.'owner_8q.csv');
+		if (file_exists($tmp_dir.'owner_8q.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_8q.csv','8Q');
+		} else $error = "File ".$tmp_dir.'owner_8q.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner New Zealand: Download...";
+		update_db::download('http://antonakis.co.uk/registers/NewZealand.txt',$tmp_dir.'owner_zk.csv');
+		if (file_exists($tmp_dir.'owner_zk.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_zk.csv','ZK');
+		} else $error = "File ".$tmp_dir.'owner_zk.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Papua New Guinea: Download...";
+		update_db::download('http://antonakis.co.uk/registers/PapuaNewGuinea.txt',$tmp_dir.'owner_p2.csv');
+		if (file_exists($tmp_dir.'owner_p2.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_p2.csv','P2');
+		} else $error = "File ".$tmp_dir.'owner_p2.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Slovakia: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Slovakia.txt',$tmp_dir.'owner_om.csv');
+		if (file_exists($tmp_dir.'owner_om.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_om.csv','OM');
+		} else $error = "File ".$tmp_dir.'owner_om.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Ecuador: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Ecuador.txt',$tmp_dir.'owner_hc.csv');
+		if (file_exists($tmp_dir.'owner_hc.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_hc.csv','HC');
+		} else $error = "File ".$tmp_dir.'owner_hc.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Owner Iceland: Download...";
+		update_db::download('http://antonakis.co.uk/registers/Iceland.txt',$tmp_dir.'owner_tf.csv');
+		if (file_exists($tmp_dir.'owner_tf.csv')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_owner($tmp_dir.'owner_tf.csv','TF');
+		} else $error = "File ".$tmp_dir.'owner_tf.csv'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+	}
+
 	public static function update_translation() {
 		global $tmp_dir, $globalDebug;
 		$error = '';
@@ -1161,4 +1486,6 @@ class update_db {
 //echo update_db::update_ModeS_flarm();
 //echo update_db::update_ModeS_ogn();
 //echo update_db::update_aircraft();
+//$update_db = new update_db();
+//echo $update_db->update_owner();
 ?>

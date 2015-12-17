@@ -70,6 +70,17 @@ class Translation {
                         return "error : ".$e->getMessage();
                 }
         }
+
+       public function updateOperator($ident,$correct_ident,$source) {
+                $query = "UPDATE translation SET Operator_correct = :correct_ident,Source = :source WHERE Operator = :ident";
+                $query_values = array(':ident' => $ident,':correct_ident' => $correct_ident, ':source' => $source);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+        }
         
         public function checkTranslation($ident,$web = true) {
     	    global $globalTranslationSources, $globalTranslationFetch;

@@ -62,5 +62,4 @@ $output  = substr($output, 0, -1);
 $output .= ']}';
 
 print $output;
-
 ?>

@@ -1,0 +1,291 @@
+<?php
+@session_start();
+header('Content-Encoding: none;');
+require_once('class.create_db.php');
+require_once('class.update_schema.php');
+require_once('class.settings.php');
+require('../require/settings.php');
+
+/*
+if ($globalInstalled && !isset($_SESSION['install'])) {
+	print '<div class="info column"><p>You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</p></div>';
+	require('../footer.php');
+	exit;
+}
+ */
+/*
+$writable = false;
+if (!is_writable('../require/settings.php')) {
+	print '<div class="info column"><p><strong>The file <i>require/settings</i> must be writable.</strong></p></div>';
+	require('../footer.php');
+	exit;
+}
+if (!set_time_limit(0)) {
+	print '<div class="info column"><p><strong>You may need to update the maximum execution time.</strong></p></div>';
+}
+
+$error = array();
+if (!extension_loaded('SimpleXML')) {
+	$error[] = "SimpleXML is not loaded.";
+}
+if (!extension_loaded('dom')) {
+	$error[] = "Dom is not loaded. Needed for aircraft schedule";
+}
+if (!extension_loaded('PDO')) {
+	$error[] = "PDO is not loaded.";
+}
+if (!extension_loaded('pdo_sqlite')) {
+	$error[] = "PDO SQLite is not loaded. Needed to populate database for SBS.";
+}
+if (!extension_loaded('zip')) {
+	$error[] = "ZIP is not loaded. Needed to populate database for SBS.";
+}
+if (!extension_loaded('json')) {
+	$error[] = "Json is not loaded. Needed for aircraft schedule and bitly.";
+}
+if (!extension_loaded('curl')) {
+	$error[] = "Curl is not loaded.";
+}
+
+if (count($error) > 0) {
+	print '<div class="info column"><ul>';
+	foreach ($error as $err) {
+		print '<li>'.$err.'</li>';
+	}
+	print '</ul>You <strong>must</strong> add these modules.</div>';
+	require('../footer.php');
+        exit;
+}
+*/
+$settings = array();
+$error = '';
+
+if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
+	if (update_schema::check_version(false) == '0') {
+		$_SESSION['next'] = 'Create and import tables';
+		if ($globalDBdriver == 'mysql') {
+		    $error .= create_db::import_all_db('../db/');
+		} elseif ($globalDBdriver == 'pgsql') {
+		    $error .= create_db::import_all_db('../db/pgsql/');
+		}
+		if ($error != '') {
+                        $_SESSION['error'] = $error;
+		}
+		$_SESSION['done'] = array_merge($_SESSION['done'],array('Create and import tables'));
+		if ($globalSBS1) {
+			$_SESSION['install'] = 'populate';
+			$_SESSION['next'] = 'Populate aircraft_modes table with externals data';
+			setcookie('next','Populate aircraft_modes table with externals data');
+		} else {
+		    $_SESSION['install'] = 'sources';
+		    $_SESSION['next'] = 'Insert data in source table';
+		    setcookie('next','Insert data in source table');
+		}
+		$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+		print json_encode($result);
+	} else {
+		$error .= update_schema::check_version(true);
+		if ($error != '') {
+                        $_SESSION['error'] = $error;
+		}
+		$_SESSION['done'] = array_merge($_SESSION['done'],array('Update schema if needed'));
+		$_SESSION['install'] = 'sources';
+		$_SESSION['next'] = 'Insert data in source table';
+		setcookie('next','Insert data in source table');
+		$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+		print json_encode($result);
+	}
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'waypoints') {
+	include_once('class.update_db.php');
+	update_db::update_waypoints();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate waypoints database'));
+
+	$_SESSION['install'] = 'airspace';
+	$_SESSION['next'] = 'Populate airspace table';
+	setcookie('next','Populate airspace table');
+	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	print json_encode($result);
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'airspace') {
+	include_once('class.update_db.php');
+	update_db::update_airspace();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate airspace database'));
+	$_SESSION['install'] = 'countries';
+	$_SESSION['next'] = 'Populate countries table';
+	setcookie('next','Populate countries table');
+	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	print json_encode($result);
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'countries') {
+	include_once('class.update_db.php');
+	update_db::update_countries();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate countries database'));
+	if (isset($globalNOTAM) && $globalNOTAM && isset($globalNOTAMSource) && $globalNOTAMSource != '') {
+	    $_SESSION['install'] = 'notam';
+	    $_SESSION['next'] = 'Populate NOTAM table with externals data';
+	    setcookie('next','Populate NOTAM table with externals data');
+	    $result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	    print json_encode($result);
+	} elseif ($_SESSION['owner'] == 1) {
+	    $_SESSION['install'] = 'owner';
+	    $_SESSION['next'] = 'Populate owner table with externals data';
+	    setcookie('next','Populate owner table with externals data');
+	    unset($_SESSION['owner']);
+	    $result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	    print json_encode($result);
+	} else {
+	    $_SESSION['install'] = 'sources';
+	    $_SESSION['next'] = 'Insert data in source table';
+	    setcookie('next','Insert data in source table');
+	    $result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	    print json_encode($result);
+	}
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'populate') {
+	if (!is_writable('tmp')) {
+                $error = 'The directory <i>install/tmp</i> must be writable.';
+	}
+
+	include_once('class.update_db.php');
+	$globalDebug = FALSE;
+	update_db::update_ModeS();
+	update_db::update_ModeS_flarm();
+	update_db::update_ModeS_ogn();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data'));
+	$_SESSION['install'] = 'routes';
+	$_SESSION['next'] = 'Populate routes table with externals data';
+	setcookie('next', 'Populate routes table with externals data');
+	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	print json_encode($result);
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'routes') {
+	if (!is_writable('tmp')) {
+                $error = 'The directory <i>install/tmp</i> must be writable.';
+	}
+
+	include_once('class.update_db.php');
+	$globalDebug = FALSE;
+	update_db::update_routes();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate routes table with externals data'));
+	$_SESSION['install'] = 'translation';
+	$_SESSION['next'] = 'Populate translation table with externals data';
+	setcookie('next','Populate translation table with externals data');
+	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	print json_encode($result);
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'translation') {
+	if (!is_writable('tmp')) {
+                $error = 'The directory <i>install/tmp</i> must be writable.';
+	}
+
+	include_once('class.update_db.php');
+	$globalDebug = FALSE;
+	update_db::update_translation();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate translation table with externals data'));
+
+	if ($_SESSION['waypoints'] == 1) {
+	    $_SESSION['install'] = 'waypoints';
+	    $_SESSION['next'] = 'Populate waypoints table';
+	    setcookie('next','Populate waypoints table');
+	    unset($_SESSION['waypoints']);
+	} elseif (isset($globalNOTAM) && $globalNOTAM && isset($globalNOTAMSource) && $globalNOTAMSource != '') {
+	    $_SESSION['install'] = 'notam';
+	    $_SESSION['next'] = 'Populate NOTAM table with externals data';
+	    setcookie('next','Populate NOTAM table with externals data');
+	} elseif ($_SESSION['owner'] == 1) {
+	    $_SESSION['install'] = 'owner';
+	    $_SESSION['next'] = 'Populate owner table with externals data';
+	    setcookie('next','Populate owner table with externals data');
+	    unset($_SESSION['owner']);
+	} else {
+	    $_SESSION['install'] = 'sources';
+	    $_SESSION['next'] = 'Insert data in source table';
+	    setcookie('next','Insert data in source table');
+	}
+	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	print json_encode($result);
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'owner') {
+	if (!is_writable('tmp')) {
+                $error = 'The directory <i>install/tmp</i> must be writable.';
+	}
+	include_once('class.update_db.php');
+	$globalDebug = FALSE;
+	$error = update_db::update_owner();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate owner table with externals data'));
+	$_SESSION['install'] = 'sources';
+	$_SESSION['next'] = 'Insert data in source table';
+	setcookie('next','Insert data in source table');
+	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	print json_encode($result);
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'notam') {
+	if (!is_writable('tmp')) {
+                $error = 'The directory <i>install/tmp</i> must be writable.';
+	}
+	include_once('class.update_db.php');
+	$globalDebug = FALSE;
+	update_db::update_notam();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate notam table with externals data'));
+	if ($_SESSION['owner'] == 1) {
+	    $_SESSION['install'] = 'owner';
+	    $_SESSION['next'] = 'Populate owner table';
+	    setcookie('next','Populate owner table');
+	    unset($_SESSION['owner']);
+	    $result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	    print json_encode($result);
+	} else {
+	    $_SESSION['install'] = 'sources';
+	    $_SESSION['next'] = 'Insert data in source table';
+	    setcookie('next','Insert data in source table');
+	    $result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	    print json_encode($result);
+	}
+/*
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'ivao') {
+	unset($_SESSION['install']);
+	if (!is_writable('tmp')) {
+		print '<p><strong>The directory <i>install/tmp</i> must be writable.</strong></p>';
+		require('../footer.php');
+		exit;
+	}
+
+	print '<div class="info column"><ul>';
+	foreach ($_SESSION['done'] as $done) {
+	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
+	}
+	print '<li>Populate airlines table and airlines logos with data from ivao.aero....<img src="../images/loading.gif" /></li></ul></div>';
+	flush();
+	@ob_flush();
+
+	include_once('class.update_db.php');
+	$globalDebug = FALSE;
+	update_db::update_ivao();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate ivao table with externals data'));
+
+	$_SESSION['install'] = 'finish';
+	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+*/
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'sources') {
+	if (isset($_SESSION['sources']) && count($_SESSION['sources']) > 0) {
+	    $sources = $_SESSION['sources'];
+
+	    include_once('../require/class.Source.php');
+	    $globalDebug = FALSE;
+	    $Source = new Source();
+	    $Source->deleteAllLocation();
+	    foreach ($sources as $src) {
+		if (isset($src['latitude']) && $src['latitude'] != '') $Source->addLocation($src['name'],$src['latitude'],$src['longitude'],$src['altitude'],$src['city'],$src['country'],'antenna.png');
+	    }
+	    $_SESSION['done'] = array_merge($_SESSION['done'],array('Insert data in source table'));
+	    unset($_SESSION['sources']);
+	}
+	/*
+	if (isset($globalIVAO) && $globalIVAO) $_SESSION['install'] = 'ivao';
+	else $_SESSION['install'] = 'finish';
+	*/
+	$_SESSION['install'] = 'finish';
+	$_SESSION['next'] = 'finish';
+	setcookie('install','finish',time()+50000);
+	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	print json_encode($result);
+} else {
+	//unset($_SESSION['install']);
+	$_SESSION['error'] = 'Unknwon task : '.$_SESSION['install'];
+	$result = array('error' => 'Unknwon task : '.$_SESSION['install'],'done' => $_SESSION['done'],'next' => 'finish','install' => 'finish');
+	print json_encode($result);
+}
+?>

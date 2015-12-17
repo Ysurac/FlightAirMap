@@ -61,6 +61,9 @@ $globalCronEnd = '60'; //the script run for xx seconds if $globalDaemon is disab
 // FORK
 $globalFork = TRUE; // Allow cron-sbs.php to fork to fetch schedule, no more schedules fetch if set to FALSE
 
+// MINIMUM TIME BETWEEN UPDATES FOR HTTP SOURCES (in seconds)
+$globalMinFetch = '50';
+
 // DISPLAY FLIGHT INTERVAL ON MAP (in seconds)
 $globalLiveInterval = '200';
 
@@ -69,6 +72,9 @@ $globalMapRefresh = '30';
 
 // DISPLAY INFO OF FLIGHTS IN A POPUP
 $globalMapPopup = FALSE;
+
+// DISPLAY ROUTE OF FLIGHT
+$globalMapRoute = TRUE;
 
 // DISPLAY FLIGHTS PATH HISTORY
 $globalMapHistory = FALSE;
@@ -84,7 +90,7 @@ $globalSBS1TimeOut = '15';
 $globalSBS1update = '10'; //Put data in DB after xx seconds/flight
 
 //ACARS Listen in UDP
-$globalACARS = TRUE;
+$globalACARS = FALSE;
 $globalACARSHost = '0.0.0.0'; // Local IP to listen
 $globalACARSPort = '9999';
 
@@ -94,8 +100,14 @@ $globalSquawkCountry = 'UK';
 //BIT.LY API INFO (used in the search page for a shorter URL)
 $globalBitlyAccessToken = ''; //the access token from the bit.ly API
 
-//BRITISH AIRWAYS API INFO
+//British Airways API info
 $globalBritishAirwaysKey = '';
+
+// Lufhansa API info
+$globalLufthansaKey = '';
+
+// Transavia API info
+$globalTransaviaKey = '';
 
 //ignore the flights during imports that have the following airports (departure/arrival) associated with them
 $globalAirportIgnore = array();
@@ -107,11 +119,19 @@ $globalArchive = FALSE;
 $globalNOTAM = TRUE;
 $globalNOTAMSource = ''; //URL of your feed from notaminfo.com
 
+//METAR
+$globalMETAR = TRUE;
+$globalMETARcycle = TRUE; // If update_db.php in cron job, all METAR are downloaded from NOAA
+// else put an url as METAR source, can be vatsim.
+$globalMETARurl = ''; // Use {icao} to indicate where airport icao must be put in url
+
+//Retrieve private Owner
+$globalOwner = FALSE;
 
 //Retrieve Image from externals sources
 $globalAircraftImageFetch = TRUE;
 //Sources for Aircraft image
-$globalAircraftImageSources = array('ivaomtl','wikimedia','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
+$globalAircraftImageSources = array('ivaomtl','wikimedia','airportdata','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
 
 //Retrieve schedules from externals sources (set to FALSE for IVAO or if $globalFork = FALSE)
 $globalSchedulesFetch = TRUE;
@@ -121,5 +141,5 @@ $globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','f
 //Retrieve translation from external sources (set to FALSE for IVAO)
 $globalTranslationFetch = TRUE;
 //Sources for translation, to find name of flight from callsign
-$globalTranslationSources = array('planefinder');
+$globalTranslationSources = array();
 ?>

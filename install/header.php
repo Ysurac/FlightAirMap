@@ -14,7 +14,6 @@ $current_page = $file_path['filename'];
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="<?php print $globalURL; ?>/images/touch-icon.png">
-<link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css?<?php print time(); ?>" />
@@ -40,14 +39,18 @@ if ($facebook_meta_image != "")
 <meta property="og:site_name" content="<?php print $globalName; ?>"/>
 
 <?php
-    if (!isset($_SESSION['install'])) {
+    if (!isset($_SESSION['install']) && !$globalInstalled) {
 ?>
 <script language="JavaScript" type="text/javascript">
     function datasource_js() {
         //document.getElementById("flightaware_data").style.display = document.getElementById("flightaware").checked ? "inline" : "none" ;
         document.getElementById("sbs_data").style.display = document.getElementById("sbs").checked ? "inline" : "none" ;
+        document.getElementById("optional_sbs").style.display = document.getElementById("sbs").checked ? "inline" : "none" ;
         document.getElementById("sbs_url").style.display = (document.getElementById("ivao").checked || document.getElementById("sbs").checked) ? "inline" : "none" ;
         document.getElementById("acars_data").style.display = document.getElementById("acars").checked ? "inline" : "none" ;
+    }
+    function schedule_js() {
+        document.getElementById("schedules_options").style.display = document.getElementById("schedules").checked ? "inline" : "none" ;
     }
     function daemon_js() {
         document.getElementById("cronends").style.display = document.getElementById("daemon").checked ? "none" : "inline" ;
@@ -101,10 +104,10 @@ if ($facebook_meta_image != "")
 </head>
 
 <?php
-    if (!isset($_SESSION['install'])) {
+    if (!isset($_SESSION['install']) && !$globalInstalled) {
 ?>
 
-<body class="page-<?php print strtolower($current_page); ?>" onload="datasource_js(); map_provider_js(); create_database_js(); daemon_js()">
+<body class="page-<?php print strtolower($current_page); ?>" onload="datasource_js(); map_provider_js(); create_database_js(); daemon_js(); schedule_js()">
 <?php
     } else {
 ?>

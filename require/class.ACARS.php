@@ -607,8 +607,8 @@ RMK/FUEL   2.6 M0.79)
 	    }
 	}
 	
-	$title = $this->getTitlefromLabel($label);
-	if ($title != '') $decode = array_merge(array('Message title' => $title),$decode);
+	    $title = $this->getTitlefromLabel($label);
+	    if ($title != '') $decode = array_merge(array('Message title' => $title),$decode);
 	
 	    // Business jets always use GS0001
 	    if ($ident != 'GS0001') $info = $this->addModeSData($ident,$registration,$icao,$airicao);
@@ -644,11 +644,13 @@ RMK/FUEL   2.6 M0.79)
 	global $globalDebug;
 	date_default_timezone_set('UTC');
 	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
+	    $Connection = new Connection();
+	    $this->db = $Connection->db;
+
 	    if ($globalDebug) echo "Test if not already in Live ACARS table...";
     	    $query_test = "SELECT COUNT(*) as nb FROM acars_live WHERE ident = :ident AND registration = :registration AND message = :message";
     	    $query_test_values = array(':ident' => $ident,':registration' => $registration, ':message' => $message);
     	    try {
-        	
         	$stht = $this->db->prepare($query_test);
             	$stht->execute($query_test_values);
     	    } catch(PDOException $e) {
@@ -723,6 +725,8 @@ RMK/FUEL   2.6 M0.79)
     * @return Array Return ACARS data in array
     */
     public function getTitlefromLabel($label) {
+	$Connection = new Connection();
+	$this->db = $Connection->db;
     	$query = "SELECT * FROM acars_label WHERE label = :label";
     	$query_values = array(':label' => $label);
     	try {
@@ -991,7 +995,7 @@ RMK/FUEL   2.6 M0.79)
     * @param String $ICAOTypeCode
     */
     public function addModeSData($ident,$registration,$icao = '',$ICAOTypeCode = '') {
-	global $globalDebug;
+	global $globalDebug, $globalDBdriver;
 	$Translation = new Translation();
 	$Spotter = new Spotter();
 	if ($globalDebug) echo "Test if we add ModeS data...";
@@ -1002,6 +1006,32 @@ RMK/FUEL   2.6 M0.79)
 	    if ($globalDebug) echo "Ident or registration null, exit\n";
 	    return '';
 	}
+	
+	$registration = str_replace('.','',$registration);
+	$ident = $Translation->ident2icao($ident);
+	// Check if a flight with same registration is flying now, if ok check if callsign = name in ACARS, else add it to translation
+	if ($globalDebug) echo "Check if needed to add translation ".$ident.'... ';
+	$querysi = "SELECT ident FROM spotter_live s,aircraft_modes a WHERE a.ModeS = s.ModeS AND a.Registration = :registration LIMIT 1";
+    	$querysi_values = array(':registration' => $registration);
+    	try {
+    	    
+    	    $sthsi = $this->db->prepare($querysi);
+            $sthsi->execute($querysi_values);
+    	} catch(PDOException $e) {
+    	    if ($globalDebug) echo $e->getMessage();
+            return "error : ".$e->getMessage();
+    	}
+    	$resultsi = $sthsi->fetch(PDO::FETCH_ASSOC);
+    	//print_r($resultsi);
+    	if (count($resultsi) > 0 && $resultsi['ident'] != $ident && $resultsi['ident'] != '') {
+    	    $Translation = new Translation();
+    	    $trans_ident = $Translation->getOperator($resultsi['ident']);
+    	    if ($globalDebug) echo 'Add translation to table : '.$ident.' -> '.$resultsi['ident'].' ';
+    	    if ($ident != $trans_ident) $Translation->addOperator($resultsi['ident'],$ident,'ACARS');
+    	    elseif ($trans_ident == $ident) $Translation->updateOperator($resultsi['ident'],$ident,'ACARS');
+    	}
+    	if ($globalDebug) echo 'Done'."\n";
+
     	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE ident =  :ident ORDER BY spotter_id DESC LIMIT 1";
     	$query_values = array(':ident' => $icao);
     	try {
@@ -1015,7 +1045,8 @@ RMK/FUEL   2.6 M0.79)
     	$result = $sth->fetch(PDO::FETCH_ASSOC);
     	//print_r($result);
     	if (isset($result['flightaware_id'])) {
-    	    $ModeS = $result['ModeS'];
+    	    if (isset($result['ModeS'])) $ModeS = $result['ModeS'];
+    	    else $ModeS = '';
     	    if ($ModeS == '') {
     		$id = explode('-',$result['flightaware_id']);
     		$ModeS = $id[0];
@@ -1064,6 +1095,7 @@ RMK/FUEL   2.6 M0.79)
             		return "error : ".$e->getMessage();
     		    }
     		}
+    		/*
     		if ($globalDebug) echo " Update Spotter_live table - ";
     		if ($ICAOTypeCode != '') {
     		    $queryi = "UPDATE spotter_live SET registration = :Registration,aircraft_icao = :ICAOTypeCode WHERE ident = :ident";
@@ -1080,7 +1112,31 @@ RMK/FUEL   2.6 M0.79)
     		    if ($globalDebug) echo $e->getMessage();
             	    return "error : ".$e->getMessage();
     		}
-    		
+    		*/
+    		if ($globalDebug) echo " Update Spotter_output table - ";
+    		if ($ICAOTypeCode != '') {
+    		    if ($globalDBdriver == 'mysql') {
+    			$queryi = "UPDATE spotter_output SET registration = :Registration,aircraft_icao = :ICAOTypeCode WHERE ident = :ident AND date >= date_sub(UTC_TIMESTAMP(), INTERVAL 1 HOUR)";
+    		    } else if ($globalDBdriver == 'pgsql') {
+    			$queryi = "UPDATE spotter_output SET registration = :Registration,aircraft_icao = :ICAOTypeCode WHERE ident = :ident AND date >= NOW() AT TIME ZONE 'UTC' - '1 HOUR'->INTERVAL";
+    		    }
+    		    $queryi_values = array(':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode, ':ident' => $icao);
+    		} else {
+    		    if ($globalDBdriver == 'mysql') {
+    			$queryi = "UPDATE spotter_output SET registration = :Registration WHERE ident = :ident AND date >= date_sub(UTC_TIMESTAMP(), INTERVAL 1 HOUR)";
+    		    } elseif ($globalDBdriver == 'pgsql') {
+    			$queryi = "UPDATE spotter_output SET registration = :Registration WHERE ident = :ident AND date >= NOW() AT TIME ZONE 'UTC' - '1 HOUR'->INTERVAL";
+    		    }
+    		    $queryi_values = array(':Registration' => $registration,':ident' => $icao);
+    		}
+    		try {
+        	    
+        	    $sthi = $this->db->prepare($queryi);
+            	    $sthi->execute($queryi_values);
+    		} catch(PDOException $e) {
+    		    if ($globalDebug) echo $e->getMessage();
+            	    return "error : ".$e->getMessage();
+    		}
     		
     	    }
     	} else {

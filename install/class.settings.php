@@ -10,10 +10,10 @@ class settings {
 		$fh = fopen($settings_filename,'w');
 		foreach ($settings as $settingname => $value) {
 			if ($value == 'TRUE' || $value == 'FALSE') {
-			    $pattern = '/\$'.$settingname." = ".'(TRUE|FALSE)'."/";
-			    $replace = '\$'.$settingname." = ".$value."";
+			    $pattern = '/\R\$'.$settingname." = ".'(TRUE|FALSE)'."/";
+			    $replace = "\n".'\$'.$settingname." = ".$value."";
 			} elseif (is_array($value)) {
-			    $pattern = '/\$'.$settingname." = array\(".'(.*)'."\)/";
+			    $pattern = '/\R\$'.$settingname." = array\(".'(.*)'."\)/";
 			    if ($Common->isAssoc($value)) {
 				foreach ($value as $key => $data) {
 				    if (!isset($array_value)) {
@@ -32,18 +32,18 @@ class settings {
 				}
 			    }
 			    if (!isset($array_value)) $array_value = '';
-			    $replace = '\$'.$settingname." = array(".$array_value.")";
+			    $replace = "\n".'\$'.$settingname." = array(".$array_value.")";
 			    unset($array_value);
 			} else {
-			    $pattern = '/\$'.$settingname." = '".'(.*)'."'/";
-			    $replace = '\$'.$settingname." = '".$value."'";
+			    $pattern = '/\R\$'.$settingname." = '".'(.*)'."'/";
+			    $replace = "\n".'\$'.$settingname." = '".$value."'";
 			}
 			$rep_cnt = 0;
 			$content = preg_replace($pattern,$replace,$content,1,$rep_cnt);
 			
 			/// If setting was a string and is now an array
 			if ($rep_cnt == 0 && is_array($value)) {
-			    $pattern = '/\$'.$settingname." = '".'(.*)'."'/";
+			    $pattern = '/\R\$'.$settingname." = '".'(.*)'."'/";
 			    $content = preg_replace($pattern,$replace,$content,1,$rep_cnt);
 			}
 			

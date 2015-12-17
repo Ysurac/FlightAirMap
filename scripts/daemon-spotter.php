@@ -253,6 +253,17 @@ while ($i > 0) {
 			elseif ($line[3] == 'ATC') {
 				//print_r($data);
 				$data['info'] = str_replace('^&sect;','<br />',$data['info']);
+				$typec = substr($data['ident'],-3);
+				if ($typec == 'APP') $data['type'] = 'Approach';
+				elseif ($typec == 'TWR') $data['type'] = 'Tower';
+				elseif ($typec == 'OBS') $data['type'] = 'Observer';
+				elseif ($typec == 'GND') $data['type'] = 'Ground';
+				elseif ($typec == 'DEL') $data['type'] = 'Delivery';
+				elseif ($typec == 'DEP') $data['type'] = 'Departure';
+				elseif ($typec == 'FSS') $data['type'] = 'Flight Service Station';
+				elseif ($typec == 'CTR') $data['type'] = 'Control Radar or Centre';
+				elseif ($data['type'] == '') $data['type'] = 'Observer';
+				
 				echo $ATC->add($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name']);
 			}
     			unset($data);
@@ -392,7 +403,18 @@ while ($i > 0) {
 		    //    print_r($data);
     		    } elseif ($line['icon'] == 'ct') {
 			$data['info'] = str_replace('^&sect;','<br />',$data['info']);
-			echo $ATC->add($data['ident'],'',$data['latitude'],$data['longitude'],'0',$data['info'],$data['datetime'],'',$data['pilot_id'],$data['pilot_name']);
+			$typec = substr($data['ident'],-3);
+			$data['type'] = '';
+			if ($typec == 'APP') $data['type'] = 'Approach';
+			elseif ($typec == 'TWR') $data['type'] = 'Tower';
+			elseif ($typec == 'OBS') $data['type'] = 'Observer';
+			elseif ($typec == 'GND') $data['type'] = 'Ground';
+			elseif ($typec == 'DEL') $data['type'] = 'Delivery';
+			elseif ($typec == 'DEP') $data['type'] = 'Departure';
+			elseif ($typec == 'FSS') $data['type'] = 'Flight Service Station';
+			elseif ($typec == 'CTR') $data['type'] = 'Control Radar or Centre';
+			else $data['type'] = 'Observer';
+			echo $ATC->add($data['ident'],'',$data['latitude'],$data['longitude'],'0',$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name']);
 		    }
 		    unset($data);
 		}
@@ -510,8 +532,9 @@ while ($i > 0) {
 				    //print_r($data);
 				    if ($line['stealth'] == 0) $send = $SI->add($data);
 				    unset($data);
-				} elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
-				elseif ($globalDebug) echo '!! Failed : '.$buffer."!!\n";
+				} 
+				//elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
+				elseif ($line == true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
 			    }
 			} else {
 			    $line = explode(',', $buffer);

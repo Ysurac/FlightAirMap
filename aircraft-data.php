@@ -78,6 +78,12 @@ if (isset($spotter_item['pilot_name'])) {
 	print '</div>';
 }
 
+if (isset($spotter_item['aircraft_owner'])) {
+	print '<div><span>Owner</span>';
+	print $spotter_item['aircraft_owner'];
+	print '</div>';
+}
+
 print '</div>';
 if (isset($spotter_item['waypoints']) && $spotter_item['waypoints'] != '') print '<div class="waypoints"><span>Route</span>'.$spotter_item['waypoints'].'</div>';
 if (isset($spotter_item['acars']['message'])) print '<div class="acars"><span>Latest ACARS message</span>'.trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'<br/>',$spotter_item['acars']['message'])).'</div>';

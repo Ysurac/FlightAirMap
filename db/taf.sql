@@ -1,0 +1,15 @@
+DROP TABLE IF EXISTS taf;
+CREATE TABLE taf (
+  taf_id int(11) NOT NULL,
+  taf_location varchar(10) NOT NULL,
+  taf_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  taf varchar(999) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+ALTER TABLE taf
+  ADD PRIMARY KEY (taf_id), ADD UNIQUE KEY location (taf_location);
+
+
+ALTER TABLE taf
+  MODIFY taf_id int(11) NOT NULL AUTO_INCREMENT;

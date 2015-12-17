@@ -1,9 +1,10 @@
 <?php
 @session_start();
 header('Content-Encoding: none;');
-if (ob_get_level() == 0) ob_start();
-ob_implicit_flush(true);
-ob_end_flush();
+if (isset($_SESSION['error'])) unset($_SESSION['install']);
+#if (ob_get_level() == 0) ob_start();
+#ob_implicit_flush(true);
+#ob_end_flush();
 require_once('class.create_db.php');
 require_once('class.update_schema.php');
 require_once('class.settings.php');
@@ -72,152 +73,152 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 	<div class="info column">
 	<form method="post">
 		<fieldset>
-		<legend>Database configuration</legend>
-		<p>
-			<label for="dbtype">Database type</label>
-			<select name="dbtype" id="dbtype">
-			<option value="mysql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'mysql') { ?>selected="selected" <?php } ?>>MySQL</option>
-			<option value="pgsql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'pgsql') { ?>selected="selected" <?php } ?>>PostgreSQL (alpha support)</option>
-			</select>
-		</p>
-		<p>
-			<label for="createdb">Create database</label>
-			<input type="checkbox" name="createdb" id="createdb" value="createdb" onClick="create_database_js()" />
-		</p>
-		<div id="createdb_data">
-		<p>
-			<label for="dbroot">Database admin user</label>
-			<input type="text" name="dbroot" id="dbroot" />
-		</p>
-		<p>
-			<label for="dbrootpass">Database admin password</label>
-			<input type="password" name="dbrootpass" id="dbrootpass" />
-		</p>
-		</div>
-		<p>
-			<label for="dbhost">Database hostname</label>
-			<input type="text" name="dbhost" id="dbhost" value="<?php if (isset($globalDBhost)) print $globalDBhost; ?>" />
-		</p>
-		<p>
-			<label for="dbname">Database name</label>
-			<input type="text" name="dbname" id="dbname" value="<?php if (isset($globalDBname)) print $globalDBname; ?>" />
-		</p>
-		<p>
-			<label for="dbuser">Database user</label>
-			<input type="text" name="dbuser" id="dbuser" value="<?php if (isset($globalDBuser)) print $globalDBuser; ?>" />
-		</p>
-		<p>
-			<label for="dbuserpass">Database user password</label>
-			<input type="password" name="dbuserpass" id="dbuserpass" value="<?php if (isset($globalDBpass)) print $globalDBpass; ?>" />
-		</p>
+			<legend>Database configuration</legend>
+			<p>
+				<label for="dbtype">Database type</label>
+				<select name="dbtype" id="dbtype">
+					<option value="mysql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'mysql') { ?>selected="selected" <?php } ?>>MySQL</option>
+					<option value="pgsql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'pgsql') { ?>selected="selected" <?php } ?>>PostgreSQL (alpha support)</option>
+				</select>
+			</p>
+			<p>
+				<label for="createdb">Create database</label>
+				<input type="checkbox" name="createdb" id="createdb" value="createdb" onClick="create_database_js()" />
+			</p>
+			<div id="createdb_data">
+				<p>
+					<label for="dbroot">Database admin user</label>
+					<input type="text" name="dbroot" id="dbroot" />
+				</p>
+				<p>
+					<label for="dbrootpass">Database admin password</label>
+					<input type="password" name="dbrootpass" id="dbrootpass" />
+				</p>
+			</div>
+			<p>
+				<label for="dbhost">Database hostname</label>
+				<input type="text" name="dbhost" id="dbhost" value="<?php if (isset($globalDBhost)) print $globalDBhost; ?>" />
+			</p>
+			<p>
+				<label for="dbname">Database name</label>
+				<input type="text" name="dbname" id="dbname" value="<?php if (isset($globalDBname)) print $globalDBname; ?>" />
+			</p>
+			<p>
+				<label for="dbuser">Database user</label>
+				<input type="text" name="dbuser" id="dbuser" value="<?php if (isset($globalDBuser)) print $globalDBuser; ?>" />
+			</p>
+			<p>
+				<label for="dbuserpass">Database user password</label>
+				<input type="password" name="dbuserpass" id="dbuserpass" value="<?php if (isset($globalDBpass)) print $globalDBpass; ?>" />
+			</p>
 		</fieldset>
 		<fieldset>
-		<legend>Site configuration</legend>
-		<p>
-			<label for="sitename">Site name</label>
-			<input type="text" name="sitename" id="sitename" value="<?php if (isset($globalName)) print $globalName; ?>" />
-		</p>
-		<p>
-			<label for="siteurl">Site URL</label>
-			<input type="text" name="siteurl" id="siteurl" value="<?php if (isset($globalURL)) print $globalURL; ?>" />
-			Can be null.
-		</p>
-		<p>
-			<label for="timezone">Timezone</label>
-			<input type="text" name="timezone" id="timezone" value="<?php if (isset($globalTimezone)) print $globalTimezone; ?>" />
-			ex : UTC, Europe/Paris,...
-		</p>
-		<p>
-			<label for="language">Language</label>
-			<input type="text" name="language" id="language" value="<?php if (isset($globalLanguage)) print $globalLanguage; ?>" />
-			Used only when link to wikipedia for now. Can be EN,DE,FR,...
-		</p>
+			<legend>Site configuration</legend>
+			<p>
+				<label for="sitename">Site name</label>
+				<input type="text" name="sitename" id="sitename" value="<?php if (isset($globalName)) print $globalName; ?>" />
+			</p>
+			<p>
+				<label for="siteurl">Site URL</label>
+				<input type="text" name="siteurl" id="siteurl" value="<?php if (isset($globalURL)) print $globalURL; ?>" />
+				<p class="help-block">Can be null.</p>
+			</p>
+			<p>
+				<label for="timezone">Timezone</label>
+				<input type="text" name="timezone" id="timezone" value="<?php if (isset($globalTimezone)) print $globalTimezone; ?>" />
+				<p class="help-block">ex : UTC, Europe/Paris,...</p>
+			</p>
+			<p>
+				<label for="language">Language</label>
+				<input type="text" name="language" id="language" value="<?php if (isset($globalLanguage)) print $globalLanguage; ?>" />
+				<p class="help-block">Used only when link to wikipedia for now. Can be EN,DE,FR,...</p>
+			</p>
 		</fieldset>
 		<fieldset>
-		<legend>Map provider</legend>
-		<p>
-			<label for="mapprovider">map Provider</label>
-			<select name="mapprovider" id="mapprovider" onClick="map_provider_js()";>
-			<option value="OpenStreetMap" <?php if (isset($globalMapProvider) && $globalMapProvider == 'OpenStreetMap') { ?>selected="selected" <?php } ?>>OpenStreetMap</option>
-			<option value="Mapbox" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Mapbox') { ?>selected="selected" <?php } ?>>Mapbox</option>
-			<option value="MapQuest-OSM" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-OSM') { ?>selected="selected" <?php } ?>>MapQuest-OSM</option>
-			<option value="MapQuest-Aerial" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-Aerial') { ?>selected="selected" <?php } ?>>MapQuest-Aerial</option>
-			</select>
-		</p>
-		<div id="mapbox_data">
-		<p>
-			<label for="mapboxid">Mapbox id</label>
-			<input type="text" name="mapboxid" id="mapboxid" value="<?php if (isset($globalMapboxId)) print $globalMapboxId; ?>" />
-		</p>
-		<p>
-			<label for="mapboxtoken">Mapbox token</label>
-			<input type="text" name="mapboxtoken" id="mapboxtoken" value="<?php if (isset($globalMapboxToken)) print $globalMapboxToken; ?>" />
-		</p>
-		</div>
+			<legend>Map provider</legend>
+			<p>
+				<label for="mapprovider">map Provider</label>
+				<select name="mapprovider" id="mapprovider" onClick="map_provider_js()";>
+					<option value="OpenStreetMap" <?php if (isset($globalMapProvider) && $globalMapProvider == 'OpenStreetMap') { ?>selected="selected" <?php } ?>>OpenStreetMap</option>
+					<option value="Mapbox" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Mapbox') { ?>selected="selected" <?php } ?>>Mapbox</option>
+					<option value="MapQuest-OSM" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-OSM') { ?>selected="selected" <?php } ?>>MapQuest-OSM</option>
+					<option value="MapQuest-Aerial" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-Aerial') { ?>selected="selected" <?php } ?>>MapQuest-Aerial</option>
+				</select>
+			</p>
+			<div id="mapbox_data">
+				<p>
+					<label for="mapboxid">Mapbox id</label>
+					<input type="text" name="mapboxid" id="mapboxid" value="<?php if (isset($globalMapboxId)) print $globalMapboxId; ?>" />
+				</p>
+				<p>
+					<label for="mapboxtoken">Mapbox token</label>
+					<input type="text" name="mapboxtoken" id="mapboxtoken" value="<?php if (isset($globalMapboxToken)) print $globalMapboxToken; ?>" />
+				</p>
+			</div>
 		</fieldset>
 		<fieldset>
-		<legend>Coverage area</legend>
-		<p>
-			<label for="latitudemax">The maximum latitude (north)</label>
-			<input type="text" name="latitudemax" id="latitudemax" value="<?php if (isset($globalLatitudeMax)) print $globalLatitudeMax; ?>" />
-		</p>
-		<p>
-			<label for="latitudemin">The minimum latitude (south)</label>
-			<input type="text" name="latitudemin" id="latitudemin" value="<?php if (isset($globalLatitudeMin)) print $globalLatitudeMin; ?>" />
-		</p>
-		<p>
-			<label for="longitudemax">The maximum longitude (west)</label>
-			<input type="text" name="longitudemax" id="longitudemax" value="<?php if (isset($globalLongitudeMax)) print $globalLongitudeMax; ?>" />
-		</p>
-		<p>
-			<label for="longitudemin">The minimum longitude (east)</label>
-			<input type="text" name="longitudemin" id="longitudemin" value="<?php if (isset($globalLongitudeMin)) print $globalLongitudeMin; ?>" />
-		</p>
-		<p>
-			<label for="latitudecenter">The latitude center</label>
-			<input type="text" name="latitudecenter" id="latitudecenter" value="<?php if (isset($globalCenterLatitude)) print $globalCenterLatitude; ?>" />
-		</p>
-		<p>
-			<label for="longitudecenter">The longitude center</label>
-			<input type="text" name="longitudecenter" id="longitudecenter" value="<?php if (isset($globalCenterLongitude)) print $globalCenterLongitude; ?>" />
-		</p>
-		<p>
-			<label for="livezoom">Default Zoom on live map</label>
-			<input type="number" name="livezoom" id="livezoom" value="<?php if (isset($globalLiveZoom)) print $globalLiveZoom; else print '9'; ?>" />
-		</p>
-		<p>
-			<label for="squawk_country">Country for squawk usage</label>
-			<input type="text" name="squawk_country" id="squawk_country" value="<?php if (isset($globalSquawkCountry)) print $globalSquawkCountry; ?>" />
-			UK, FR or let it blank for now
-		</p>
+			<legend>Coverage area</legend>
+			<p>
+				<label for="latitudemax">The maximum latitude (north)</label>
+				<input type="text" name="latitudemax" id="latitudemax" value="<?php if (isset($globalLatitudeMax)) print $globalLatitudeMax; ?>" />
+			</p>
+			<p>
+				<label for="latitudemin">The minimum latitude (south)</label>
+				<input type="text" name="latitudemin" id="latitudemin" value="<?php if (isset($globalLatitudeMin)) print $globalLatitudeMin; ?>" />
+			</p>
+			<p>
+				<label for="longitudemax">The maximum longitude (west)</label>
+				<input type="text" name="longitudemax" id="longitudemax" value="<?php if (isset($globalLongitudeMax)) print $globalLongitudeMax; ?>" />
+			</p>
+			<p>
+				<label for="longitudemin">The minimum longitude (east)</label>
+				<input type="text" name="longitudemin" id="longitudemin" value="<?php if (isset($globalLongitudeMin)) print $globalLongitudeMin; ?>" />
+			</p>
+			<p>
+				<label for="latitudecenter">The latitude center</label>
+				<input type="text" name="latitudecenter" id="latitudecenter" value="<?php if (isset($globalCenterLatitude)) print $globalCenterLatitude; ?>" />
+			</p>
+			<p>
+				<label for="longitudecenter">The longitude center</label>
+				<input type="text" name="longitudecenter" id="longitudecenter" value="<?php if (isset($globalCenterLongitude)) print $globalCenterLongitude; ?>" />
+			</p>
+			<p>
+				<label for="livezoom">Default Zoom on live map</label>
+				<input type="number" name="livezoom" id="livezoom" value="<?php if (isset($globalLiveZoom)) print $globalLiveZoom; else print '9'; ?>" />
+			</p>
+			<p>
+				<label for="squawk_country">Country for squawk usage</label>
+				<input type="text" name="squawk_country" id="squawk_country" value="<?php if (isset($globalSquawkCountry)) print $globalSquawkCountry; ?>" />
+				<p class="help-block">UK, FR or let it blank for now</p>
+			</p>
 		</fieldset>
 		<fieldset>
-		<legend>Zone of interest</legend>
-		<p><i>Only put in DB flights that are inside a circle</i></p>
-		<p>
-			<label for="latitude">Center latitude</label>
-			<input type="text" name="zoilatitude" id="latitude" value="<?php if (isset($globalDistanceIgnore['latitude'])) echo $globalDistanceIgnore['latitude']; ?>" />
-		</p>
-		<p>
-			<label for="longitude">Center longitude</label>
-			<input type="text" name="zoilongitude" id="longitude" value="<?php if (isset($globalDistanceIgnore['longitude'])) echo $globalDistanceIgnore['longitude']; ?>" />
-		</p>
-		<p>
-			<label for="Distance">Distance (in km)</label>
-			<input type="text" name="zoidistance" id="distance" value="<?php if (isset($globalDistanceIgnore['distance'])) echo $globalDistanceIgnore['distance']; ?>" />
-		</p>
+			<legend>Zone of interest</legend>
+			<p><i>Only put in DB flights that are inside a circle</i></p>
+			<p>
+				<label for="latitude">Center latitude</label>
+				<input type="text" name="zoilatitude" id="latitude" value="<?php if (isset($globalDistanceIgnore['latitude'])) echo $globalDistanceIgnore['latitude']; ?>" />
+			</p>
+			<p>
+				<label for="longitude">Center longitude</label>
+				<input type="text" name="zoilongitude" id="longitude" value="<?php if (isset($globalDistanceIgnore['longitude'])) echo $globalDistanceIgnore['longitude']; ?>" />
+			</p>
+			<p>
+				<label for="Distance">Distance (in km)</label>
+				<input type="text" name="zoidistance" id="distance" value="<?php if (isset($globalDistanceIgnore['distance'])) echo $globalDistanceIgnore['distance']; ?>" />
+			</p>
 		</fieldset>
 		<fieldset>
-		<legend>Sources location</legend>
-		<table class="sources">
-		    <tr>
-			<th>Name</th>
-			<th>Latitude</th>
-			<th>Longitude</th>
-			<th>Altitude</th>
-			<th>City</th>
-			<th>Country</th>
-		    </tr>
+			<legend>Sources location</legend>
+			<table class="sources">
+				<tr>
+					<th>Name</th>
+					<th>Latitude</th>
+					<th>Longitude</th>
+					<th>Altitude</th>
+					<th>City</th>
+					<th>Country</th>
+				</tr>
 		<?php
 		    require_once('../require/class.Connection.php');
 		    $Connection = new Connection();
@@ -228,15 +229,15 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			    $alllocations = $Source->getAllLocationInfo();
 			    foreach ($alllocations as $location) {
 		?>
-		    <tr>
-			<input type="hidden" name="source_id[]" value="<?php print $location['id']; ?>" />
-			<td><input type="text" name="source_name[]" value="<?php print $location['name']; ?>" /></td>
-			<td><input type="text" name="source_latitude[]" value="<?php print $location['latitude']; ?>" /></td>
-			<td><input type="text" name="source_longitude[]" value="<?php print $location['longitude']; ?>" /></td>
-			<td><input type="text" name="source_altitude[]" value="<?php print $location['altitude']; ?>" /></td>
-			<td><input type="text" name="source_city[]" value="<?php print $location['city']; ?>" /></td>
-			<td><input type="text" name="source_country[]" value="<?php print $location['country']; ?>" /></td>
-		    </tr>
+				<tr>
+	    				<input type="hidden" name="source_id[]" value="<?php print $location['id']; ?>" />
+					<td><input type="text" name="source_name[]" value="<?php print $location['name']; ?>" /></td>
+					<td><input type="text" name="source_latitude[]" value="<?php print $location['latitude']; ?>" /></td>
+					<td><input type="text" name="source_longitude[]" value="<?php print $location['longitude']; ?>" /></td>
+					<td><input type="text" name="source_altitude[]" value="<?php print $location['altitude']; ?>" /></td>
+					<td><input type="text" name="source_city[]" value="<?php print $location['city']; ?>" /></td>
+					<td><input type="text" name="source_country[]" value="<?php print $location['country']; ?>" /></td>
+				</tr>
 		
 		<?php
 			    }
@@ -244,49 +245,48 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		    }
 		?>
 
-		    <tr>
-			<td><input type="text" name="source_name[]" value="" /></td>
-			<td><input type="text" name="source_latitude[]" value="" /></td>
-			<td><input type="text" name="source_longitude[]" value="" /></td>
-			<td><input type="text" name="source_altitude[]" value="" /></td>
-			<td><input type="text" name="source_city[]" value="" /></td>
-			<td><input type="text" name="source_country[]" value="" /></td>
-		    </tr>
-		</table>
-		<center>
-		    <input type="button" value="Add a row" class="add-row-source" />
-		    <input type="button" value="Remove last row" class="del-row-source" />
-		</center>
+				<tr>
+					<td><input type="text" name="source_name[]" value="" /></td>
+					<td><input type="text" name="source_latitude[]" value="" /></td>
+					<td><input type="text" name="source_longitude[]" value="" /></td>
+					<td><input type="text" name="source_altitude[]" value="" /></td>
+					<td><input type="text" name="source_city[]" value="" /></td>
+					<td><input type="text" name="source_country[]" value="" /></td>
+				</tr>
+			</table>
+			<center>
+				<input type="button" value="Add a row" class="add-row-source" />
+				<input type="button" value="Remove last row" class="del-row-source" />
+			</center>
 		</fieldset>
 		<fieldset>
-		<legend>Data source</legend>
-		<p>
-			<p><i>If you choose IVAO, airlines names and logos will come from ivao.aero (you have to run install/populate_ivao.php to populate table with IVAO data)</i></p>
+			<legend>Data source</legend>
+			<p>
+				<p><i>If you choose IVAO, airlines names and logos will come from ivao.aero (you have to run install/populate_ivao.php to populate table with IVAO data)</i></p>
 <!--
-			<input type="radio" name="datasource" id="flightaware" value="flightaware" onClick="datasource_js()" <?php if (isset($globalFlightAware) && $globalFlightAware) { ?>checked="checked" <?php } ?>/>
-			<label for="flightaware">FlightAware (not tested, no more supported no data feed available for test)</label>
+				<input type="radio" name="datasource" id="flightaware" value="flightaware" onClick="datasource_js()" <?php if (isset($globalFlightAware) && $globalFlightAware) { ?>checked="checked" <?php } ?>/>
+				<label for="flightaware">FlightAware (not tested, no more supported no data feed available for test)</label>
 -->
-			<input type="radio" name="datasource" id="ivao" value="ivao" onClick="datasource_js()" <?php if (isset($globalIVAO) && $globalIVAO) { ?>checked="checked" <?php } ?>/>
-			<label for="ivao">IVAO</label>
-			<input type="radio" name="datasource" id="sbs" value="sbs" onClick="datasource_js()" <?php if (isset($globalSBS1) && $globalSBS1) { ?>checked="checked" <?php } ?> />
-			<label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format), APRS from glidernet,...</label>
-			<input type="checkbox" name="acars" id="acars" value="acars" onClick="datasource_js()" <?php if (isset($globalACARS) && $globalACARS) { ?>checked="checked" <?php } ?> />
-			<label for="acars">ACARS</label>
-		</p>
+				<input type="radio" name="datasource" id="ivao" value="ivao" onClick="datasource_js()" <?php if (isset($globalIVAO) && $globalIVAO) { ?>checked="checked" <?php } ?>/>
+				<label for="ivao">IVAO</label>
+				<input type="radio" name="datasource" id="sbs" value="sbs" onClick="datasource_js()" <?php if (isset($globalSBS1) && $globalSBS1) { ?>checked="checked" <?php } ?> />
+				<label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format), APRS from glidernet,...</label>
+				<input type="checkbox" name="acars" id="acars" value="acars" onClick="datasource_js()" <?php if (isset($globalACARS) && $globalACARS) { ?>checked="checked" <?php } ?> />
+				<label for="acars">ACARS</label>
+			</p>
 <!--
-		<div id="flightaware_data">
-		<p>
-			<label for="flightawareusername">FlightAware username</label>
-			<input type="text" name="flightawareusername" id="flightawareusername" value="<?php if (isset($globalFlightAwareUsername)) print $globalFlightAwareUsername; ?>" />
-		</p>
-		<p>
-			<label for="flightawarepassword">FlightAware password/API key</label>
-			<input type="text" name="flightawarepassword" id="flightawarepassword" value="<?php if (isset($globalFlightAwarePassword)) print $globalFlightAwarePassword; ?>" />
-		</p>
-		</div>
+			<div id="flightaware_data">
+				<p>
+					<label for="flightawareusername">FlightAware username</label>
+					<input type="text" name="flightawareusername" id="flightawareusername" value="<?php if (isset($globalFlightAwareUsername)) print $globalFlightAwareUsername; ?>" />
+				</p>
+				<p>
+					<label for="flightawarepassword">FlightAware password/API key</label>
+					<input type="text" name="flightawarepassword" id="flightawarepassword" value="<?php if (isset($globalFlightAwarePassword)) print $globalFlightAwarePassword; ?>" />
+				</p>
+			</div>
 -->
-		<div id="sbs_data">
-		
+			<div id="sbs_data">
 		<?php
 		    $globalSURL = array();
 		    $globalIP = array();
@@ -305,7 +305,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				if (filter_var($sbshost,FILTER_VALIDATE_URL)) {
 			    	    $globalSURL[] = $sbshost;
 				} else {
-				    $hostport = explode(':',$globalSBS1Hosts[0]);
+				    $hostport = explode(':',$sbshost);
 				    if (count($hostport) == 2) {
 					$globalIP[] = array('host' =>  $hostport[0],'port' => $hostport[1]);
 				    }
@@ -314,202 +314,236 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			}
 		    }
 		?>
-		<fieldset>
-		<legend>Source ADS-B</legend>
-		<p>In SBS-1 format (dump1090 or SBS-1 compatible format) or APRS (support glidernet)</p>
-		<table class="sbsip">
-		    <tr>
-			<th>Host</th>
-			<th>Port</th>
-		    </tr>
+				<fieldset>
+					<legend>Source ADS-B</legend>
+					<p>In SBS-1 format (dump1090 or SBS-1 compatible format) or APRS (support glidernet)</p>
+					<table class="sbsip">
+						<tr>
+							<th>Host</th>
+							<th>Port</th>
+						</tr>
 		    <?php
 			foreach ($globalIP as $hp) {
 		    ?>
-		    <tr>
-			<td><input type="text" name="sbshost[]" value="<?php print $hp['host']; ?>" /></td>
-			<td><input type="number" name="sbsport[]" value="<?php print $hp['port']; ?>" /></td>
-		    </tr>
+						<tr>
+							<td><input type="text" name="sbshost[]" value="<?php print $hp['host']; ?>" /></td>
+							<td><input type="number" name="sbsport[]" value="<?php print $hp['port']; ?>" /></td>
+						</tr>
 		    <?php
 			}
 		    ?>
-		    <tr>
-			<td><input type="text" name="sbshost[]" value="" /></td>
-			<td><input type="number" name="sbsport[]" value="" /></td>
-		    </tr>
-		</table>
-		<center>
-		    <input type="button" value="Add a row" class="add-row-ip" />
-		    <input type="button" value="Remove last row" class="del-row-ip" />
-		</center>
-		<p>
-			<label for="sbstimeout">SBS-1 timeout</label>
-			<input type="number" name="sbstimeout" id="sbstimeout" value="<?php if (isset($globalSBS1TimeOut)) print $globalSBS1TimeOut; ?>" />
-		</p>
-		</fieldset>
-		</div>
-		<div id="sbs_url">
-		<br />
-		<fieldset>
-		<legend>Source URL</legend>
-		<p>URL can be deltadb.txt or aircraftlist.json url to Radarcape, or <i>/action.php/acars/data</i> of phpvms, or wazzup file format</p>
-		<table class="sbsurl">
-		    <tr>
-			<th>URL</th>
-		    </tr>
+						<tr>
+							<td><input type="text" name="sbshost[]" value="" /></td>
+							<td><input type="number" name="sbsport[]" value="" /></td>
+						</tr>
+					</table>
+					<center>
+						<input type="button" value="Add a row" class="add-row-ip" />
+						<input type="button" value="Remove last row" class="del-row-ip" />
+					</center>
+					<p>
+						<label for="sbstimeout">SBS-1 timeout</label>
+						<input type="number" name="sbstimeout" id="sbstimeout" value="<?php if (isset($globalSBS1TimeOut)) print $globalSBS1TimeOut; ?>" />
+					</p>
+				</fieldset>
+			</div>
+			<div id="sbs_url">
+				<br />
+				<fieldset>
+					<legend>Source URL</legend>
+					<p>URL can be deltadb.txt or aircraftlist.json url to Radarcape, or <i>/action.php/acars/data</i> of phpvms, or wazzup file format</p>
+					<table class="sbsurl">
+						<tr>
+							<th>URL</th>
+						</tr>
 		    <?php
 			foreach ($globalSURL as $url) {
 		    ?>
-		    <tr>
-			<td><input type="text" name="sbsurl[]" value="<?php print $url; ?>" placeholder="URL can be deltadb.txt or aircraftlist.json url to Radarcape, or <i>/action.php/acars/data</i> of phpvms, or wazzup file format" /></td>
-		    </tr>
+						<tr>
+							<td><input type="text" name="sbsurl[]" value="<?php print $url; ?>" placeholder="URL can be deltadb.txt or aircraftlist.json url to Radarcape, or <i>/action.php/acars/data</i> of phpvms, or wazzup file format" /></td>
+						</tr>
 		    <?php
 			}
 		    ?>
-		    <tr>
-			<td><input type="text" name="sbsurl[]" value="" /></td>
-		    </tr>
-		</table>
-		<center>
-		    <input type="button" value="Add a row" class="add-row-url" />
-		    <input type="button" value="Remove last row" class="del-row-url" />
-		</center>
-		<br />
-		</div>
-		</fieldset>
-		<div id="acars_data">
-		<fieldset>
-		<legend>Source ACARS</legend>
-		<p>Listen UDP server for acarsdec</p>
-		<p>
-			<label for="acarshost">ACARS UDP host</label>
-			<input type="text" name="acarshost" id="acarshost" value="<?php if (isset($globalACARSHost)) print $globalACARSHost; ?>" />
-		</p>
-		<p>
-			<label for="acarsport">ACARS UDP port</label>
-			<input type="number" name="acarsport" id="acarsport" value="<?php if (isset($globalACARSPort)) print $globalACARSPort; ?>" />
-		</p>
-		</fieldset>
-		</div>
+						<tr>
+							<td><input type="text" name="sbsurl[]" value="" /></td>
+						</tr>
+					</table>
+					<center>
+						<input type="button" value="Add a row" class="add-row-url" />
+						<input type="button" value="Remove last row" class="del-row-url" />
+					</center>
+					<br />
+				</div>
+			</fieldset>
+			<div id="acars_data">
+				<fieldset>
+					<legend>Source ACARS</legend>
+					<p>Listen UDP server for acarsdec</p>
+					<p>
+						<label for="acarshost">ACARS UDP host</label>
+						<input type="text" name="acarshost" id="acarshost" value="<?php if (isset($globalACARSHost)) print $globalACARSHost; ?>" />
+					</p>
+					<p>
+						<label for="acarsport">ACARS UDP port</label>
+						<input type="number" name="acarsport" id="acarsport" value="<?php if (isset($globalACARSPort)) print $globalACARSPort; ?>" />
+					</p>
+				</fieldset>
+			</div>
 		</fieldset>
 		
 		<fieldset>
-		<legend>Optional configuration</legend>
-		<p>
-			<label for="schedules">Retrieve schedules from external websites (disabled if source is IVAO)</label>
-			<input type="checkbox" name="schedules" id="schedules" value="schedules"<?php if (isset($globalSchedulesFetch) && $globalSchedulesFetch || !isset($globalSchedulesFetch)) { ?> checked="checked"<?php } ?> />
-		</p>
-		<p>
-			<label for="notam">Activate NOTAM support</label>
-			<input type="checkbox" name="notam" id="notam" value="notam"<?php if (isset($globalNOTAM) && $globalNOTAM) { ?> checked="checked"<?php } ?> />
-		</p>
-		<p>
-			<label for="notamsource">URL of your feed from notaminfo.com</label>
-			<input type="text" name="notamsource" id="notamsource" value="<?php if (isset($globalNOTAMSource)) print $globalNOTAMSource; ?>" />
-		</p>
-		<p>
-			<label for="bitly">Bit.ly access token api (used in search page)</label>
-			<input type="text" name="bitly" id="bitly" value="<?php if (isset($globalBitlyAccessToken)) print $globalBitlyAccessToken; ?>" />
-		</p>
-		<p>
-			<label for="britishairways">British Airways API Key</label>
-			<input type="text" name="britishairways" id="britishairways" value="<?php if (isset($globalBritishAirwaysKey)) print $globalBritishAirwaysKey; ?>" />
-		</p>
-		<p>
-			<label for="transavia">Transavia Test API Consumer Key</label>
-			<i><a href="https://developer.transavia.com">https://developer.transavia.com</a></i>
-			<input type="text" name="transavia" id="transavia" value="<?php if (isset($globalTransaviaKey)) print $globalTransaviaKey; ?>" />
-		</p>
-		<p>
-		    <fieldset>
-			<legend>Lufthansa API Key</legend>
-			<i><a href="https://developer.lufthansa.com/page">https://developer.lufthansa.com/page</a></i>
+			<legend>Optional configuration</legend>
+			<div id="optional_sbs">
 			<p>
-			<label for="lufthansakey">Key</label>
-			<input type="text" name="lufthansakey" id="lufthansakey" value="<?php if (isset($globalLufthansaKey['key'])) print $globalLufthansaKey['key']; ?>" />
+				<label for="schedules">Retrieve schedules from external websites</label>
+				<input type="checkbox" name="schedules" id="schedules" value="schedules"<?php if (isset($globalSchedulesFetch) && $globalSchedulesFetch || !isset($globalSchedulesFetch)) { ?> checked="checked"<?php } ?> onClick="schedule_js()" />
+				<p class="help-block">Not available for IVAO</p>
 			</p>
-			<p>
-			<label for="lufthansasecret">Secret</label>
-			<input type="text" name="lufthansasecret" id="lufthansasecret" value="<?php if (isset($globalLufthansaKey['secret'])) print $globalLufthansaKey['secret']; ?>" />
-			</p>
-		    </fieldset>
-		</p>
-		<p>
-			<label for="waypoints">Add Waypoints, Airspace and countries data (about 45Mio in DB) <i>Not yet available for PostgreSQL</i></label>
-			<input type="checkbox" name="waypoints" id="waypoints" value="waypoints" checked="checked" />
-		</p>
-		<p>
-			<label for="archive">Archive all SBS data</label>
-			<input type="checkbox" name="archive" id="archive" value="archive"<?php if ((isset($globalArchive) && $globalArchive) || !isset($globalArchive)) { ?> checked="checked"<?php } ?> />
-		</p>
-		<p>
-			<label for="daemon">Use cron-sbs as daemon</label>
-			<input type="checkbox" name="daemon" id="daemon" value="daemon"<?php if ((isset($globalDaemon) && $globalDaemon) || !isset($globalDaemon)) { ?> checked="checked"<?php } ?> onClick="daemon_js()" />
-			<div id="cronends"> 
-			<label for="cronend">Run script for xx seconds</label>
-			<input type="number" name="cronend" id="cronend" value="<?php if (isset($globalCronEnd)) print $globalCronEnd; else print '0'; ?>" />
-			Set to 0 to disable. Should be disabled if source is URL.
+			<div id="schedules_options">
+			<div class="form-group">
+				<p>
+					<label for="britishairways">British Airways API Key</label>
+					<input type="text" name="britishairways" id="britishairways" value="<?php if (isset($globalBritishAirwaysKey)) print $globalBritishAirwaysKey; ?>" />
+				</p>
+				<p class="help-block">Register an account on <a href="https://developer.ba.com/">https://developer.ba.com/</a></p>
 			</div>
-		</p>
-		<p>
-			<label for="fork">Allow processes fork</label>
-			<input type="checkbox" name="fork" id="fork" value="fork"<?php if ((isset($globalFork) && $globalFork) || !isset($globalFork)) { ?> checked="checked"<?php } ?> />
-		</p>
-		<p>
-			<label for="colormap">Show altitudes on map with several colors</label>
-			<input type="checkbox" name="colormap" id="colormap" value="colormap"<?php if ((isset($globalMapAltitudeColor) && $globalMapAltitudeColor) || !isset($globalMapAltitudeColor)) { ?> checked="checked"<?php } ?> />
-		</p>
-		<p>
-			<label for="mappopup">Show flights info in popup</label>
-			<input type="checkbox" name="mappopup" id="mappopup" value="mappopup"<?php if ((isset($globalMapPopup) && $globalMapPopup)) { ?> checked="checked"<?php } ?> />
-		</p>
-		<p>
-			<label for="maphistory">Always show path of flights (else only when flight is selected)</label>
-			<input type="checkbox" name="maphistory" id="maphistory" value="maphistory"<?php if ((isset($globalMapHistory) && $globalMapHistory) || !isset($globalMapHistory)) { ?> checked="checked"<?php } ?> />
-		</p>
-		<p>
-			<label for="flightroute">Show route of flights when selected</label>
-			<input type="checkbox" name="flightroute" id="flightroute" value="flightroute"<?php if ((isset($globalMapRoute) && $globalMapRoute) || !isset($globalMapRoute)) { ?> checked="checked"<?php } ?> />
-		</p>
-		<p>
-			<label for="refresh">Show flights detected since xxx seconds</label>
-			<input type="number" name="refresh" id="refresh" value="<?php if (isset($globalLiveInterval)) echo $globalLiveInterval; else echo '200'; ?>" />
-		</p>
-		<p>
-			<label for="maprefresh">Live map refresh (in seconds)</label>
-			<input type="number" name="maprefresh" id="maprefresh" value="<?php if (isset($globalMapRefresh)) echo $globalMapRefresh; else echo '30'; ?>" />
-		</p>
-		<p>
-			<label for="aircraftsize">Size of aircraft icon on map (default to 30px if zoom > 7 else 15px), empty to default</label>
-			<input type="number" name="aircraftsize" id="aircraftsize" value="<?php if (isset($globalAircraftSize)) echo $globalAircraftSize; ?>" />
-		</p>
-		<p>
+			<div class="form-group">
+				<p>
+					<label for="transavia">Transavia Test API Consumer Key</label>
+					<input type="text" name="transavia" id="transavia" value="<?php if (isset($globalTransaviaKey)) print $globalTransaviaKey; ?>" />
+					<p class="help-block">Register an account on <a href="https://developer.transavia.com">https://developer.transavia.com</a></p>
+				</p>
+			</div>
+			<div class="form-group">
+				<p>
+					<fieldset>
+						<b>Lufthansa API Key</b>
+						<p>
+							<label for="lufthansakey">Key</label>
+							<input type="text" name="lufthansakey" id="lufthansakey" value="<?php if (isset($globalLufthansaKey['key'])) print $globalLufthansaKey['key']; ?>" />
+						</p><p>
+							<label for="lufthansasecret">Secret</label>
+							<input type="text" name="lufthansasecret" id="lufthansasecret" value="<?php if (isset($globalLufthansaKey['secret'])) print $globalLufthansaKey['secret']; ?>" />
+						</p>
+						<p class="help-block">Register an account on <a href="https://developer.lufthansa.com/page">https://developer.lufthansa.com/page</a></p>
+					</fieldset>
+				</p>
+			</div>
+			</div>
+			<p>
+				<label for="owner">Add private owners of aircrafts</label>
+				<input type="checkbox" name="owner" id="owner" value="owner"<?php if (isset($globalOwner) && $globalOwner) { ?> checked="checked"<?php } ?> />
+			</p>
+			</div>
+			<p>
+				<label for="notam">Activate NOTAM support</label>
+				<input type="checkbox" name="notam" id="notam" value="notam"<?php if (isset($globalNOTAM) && $globalNOTAM) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="notamsource">URL of your feed from notaminfo.com</label>
+				<input type="text" name="notamsource" id="notamsource" value="<?php if (isset($globalNOTAMSource)) print $globalNOTAMSource; ?>" />
+			</p>
+			<p>
+				<label for="metar">Activate METAR support</label>
+				<input type="checkbox" name="metar" id="metar" value="metar"<?php if (isset($globalMETAR) && $globalMETAR) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="metarcycle">Activate METAR cycle support</label>
+				<input type="checkbox" name="metarcycle" id="metarcycle" value="metarcycle"<?php if (isset($globalMETARcycle) && $globalMETARcycle) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Download feed from NOAA every hour. Need <i>scripts/update_db.php</i> in cron</p>
+			</p>
+			<p>
+				<label for="metarsource">URL of your METAR source</label>
+				<input type="text" name="metarsource" id="metarsource" value="<?php if (isset($globalMETARurl)) print $globalMETARurl; ?>" />
+				<p class="help-block">Use {icao} to specify where we replace by airport icao. ex : http://metar.vatsim.net/metar.php?id={icao}</p>
+			</p>
+			<p>
+				<label for="bitly">Bit.ly access token api (used in search page)</label>
+				<input type="text" name="bitly" id="bitly" value="<?php if (isset($globalBitlyAccessToken)) print $globalBitlyAccessToken; ?>" />
+			</p>
+			<p>
+				<label for="waypoints">Add Waypoints, Airspace and countries data (about 45Mio in DB) <i>Not yet available for PostgreSQL</i></label>
+				<input type="checkbox" name="waypoints" id="waypoints" value="waypoints" checked="checked" />
+			</p>
+			<p>
+				<label for="archive">Archive all flights data</label>
+				<input type="checkbox" name="archive" id="archive" value="archive"<?php if ((isset($globalArchive) && $globalArchive) || !isset($globalArchive)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="daemon">Use daemon-spotter.php as daemon</label>
+				<input type="checkbox" name="daemon" id="daemon" value="daemon"<?php if ((isset($globalDaemon) && $globalDaemon) || !isset($globalDaemon)) { ?> checked="checked"<?php } ?> onClick="daemon_js()" />
+				<div id="cronends"> 
+					<label for="cronend">Run script for xx seconds</label>
+					<input type="number" name="cronend" id="cronend" value="<?php if (isset($globalCronEnd)) print $globalCronEnd; else print '0'; ?>" />
+					<p class="help-block">Set to 0 to disable. Should be disabled if source is URL.</p>
+				</div>
+				<p class="help-block">Uncheck if the script is running as cron job</p>
+			</p>
+			<p>
+				<label for="fork">Allow processes fork</label>
+				<input type="checkbox" name="fork" id="fork" value="fork"<?php if ((isset($globalFork) && $globalFork) || !isset($globalFork)) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Used for schedule</p>
+			</p>
+			<p>
+				<label for="colormap">Show altitudes on map with several colors</label>
+				<input type="checkbox" name="colormap" id="colormap" value="colormap"<?php if ((isset($globalMapAltitudeColor) && $globalMapAltitudeColor) || !isset($globalMapAltitudeColor)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="mappopup">Show flights info in popup</label>
+				<input type="checkbox" name="mappopup" id="mappopup" value="mappopup"<?php if ((isset($globalMapPopup) && $globalMapPopup)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="airportpopup">Show airport info in popup</label>
+				<input type="checkbox" name="airportpopup" id="airportpopup" value="airportpopup"<?php if ((isset($globalAirportPopup) && $globalAirportPopup)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="maphistory">Always show path of flights (else only when flight is selected)</label>
+				<input type="checkbox" name="maphistory" id="maphistory" value="maphistory"<?php if ((isset($globalMapHistory) && $globalMapHistory) || !isset($globalMapHistory)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="flightroute">Show route of flights when selected</label>
+				<input type="checkbox" name="flightroute" id="flightroute" value="flightroute"<?php if ((isset($globalMapRoute) && $globalMapRoute) || !isset($globalMapRoute)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="refresh">Show flights detected since xxx seconds</label>
+				<input type="number" name="refresh" id="refresh" value="<?php if (isset($globalLiveInterval)) echo $globalLiveInterval; else echo '200'; ?>" />
+			</p>
+			<p>
+				<label for="maprefresh">Live map refresh (in seconds)</label>
+				<input type="number" name="maprefresh" id="maprefresh" value="<?php if (isset($globalMapRefresh)) echo $globalMapRefresh; else echo '30'; ?>" />
+			</p>
+			<p>
+				<label for="aircraftsize">Size of aircraft icon on map (default to 30px if zoom > 7 else 15px), empty to default</label>
+				<input type="number" name="aircraftsize" id="aircraftsize" value="<?php if (isset($globalAircraftSize)) echo $globalAircraftSize;?>" />
+			</p>
+			<p>
 			<?php 
 			    if (extension_loaded('gd') && function_exists('gd_info')) {
 			?>
-			<label for="aircrafticoncolor">Color of aircraft icon on map</label>
-			<input type="color" name="aircrafticoncolor" id="aircrafticoncolor" value="#<?php if (isset($globalAircraftIconColor)) echo $globalAircraftIconColor; else echo '1a3151'; ?>" />
+				<label for="aircrafticoncolor">Color of aircraft icon on map</label>
+				<input type="color" name="aircrafticoncolor" id="aircrafticoncolor" value="#<?php if (isset($globalAircraftIconColor)) echo $globalAircraftIconColor; else echo '1a3151'; ?>" />
 			<?php
 				if (!is_writable('cache')) {
 			?>
-			    <b>The directory cache is not writable, aircraft icon will not be cached</b>
+				<b>The directory cache is not writable, aircraft icon will not be cached</b>
 			<?php
 				}
 			    } else {
 			?>
-			    <b>PHP GD is not installed, you can t change color of aircraft icon on map</b>
+				<b>PHP GD is not installed, you can t change color of aircraft icon on map</b>
 			<?php
 			    }
 			?>
-		</p>
-		<p>
-			<label for="airportzoom">Zoom level minimum to see airports icons</label>
-			<div class="range">
-			    <input type="range" name="airportzoom" id="airportzoom" value="<?php if (isset($globalAirportZoom)) echo $globalAirportZoom; else echo '7'; ?>" />
-			    <output id="range"><?php if (isset($globalAirportZoom)) echo $globalAirportZoom; else echo '7'; ?></output>
-			</div>
-		</p>
+			</p>
+			<p>
+				<label for="airportzoom">Zoom level minimum to see airports icons</label>
+				<div class="range">
+					<input type="range" name="airportzoom" id="airportzoom" value="<?php if (isset($globalAirportZoom)) echo $globalAirportZoom; else echo '7'; ?>" />
+					<output id="range"><?php if (isset($globalAirportZoom)) echo $globalAirportZoom; else echo '7'; ?></output>
+				</div>
+			</p>
 		</fieldset>
-		
 		<input type="submit" name="submit" value="Create/Update database & write setup" />
 	</form>
 	<p>
@@ -635,6 +669,8 @@ if (isset($_POST['dbtype'])) {
 
 	$notamsource = filter_input(INPUT_POST,'notamsource',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalNOTAMSource' => $notamsource));
+	$metarsource = filter_input(INPUT_POST,'metarsource',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalMETARurl' => $notamsource));
 
 	$zoilatitude = filter_input(INPUT_POST,'zoilatitude',FILTER_SANITIZE_STRING);
 	$zoilongitude = filter_input(INPUT_POST,'zoilongitude',FILTER_SANITIZE_STRING);
@@ -658,7 +694,7 @@ if (isset($_POST['dbtype'])) {
 
 	$lufthansakey = filter_input(INPUT_POST,'lufthansakey',FILTER_SANITIZE_STRING);
 	$lufthansasecret = filter_input(INPUT_POST,'lufthansasecret',FILTER_SANITIZE_STRING);
-	$settings = array_merge($settings,array('globalLufthansaKey' => array('key' => $lufthansakey,'secret' => $lufthansasecret));
+	$settings = array_merge($settings,array('globalLufthansaKey' => array('key' => $lufthansakey,'secret' => $lufthansasecret)));
 
 	// Create in settings.php keys not yet configurable if not already here
 	//if (!isset($globalImageBingKey)) $settings = array_merge($settings,array('globalImageBingKey' => ''));
@@ -688,6 +724,24 @@ if (isset($_POST['dbtype'])) {
 	} else {
 		$settings = array_merge($settings,array('globalNOTAM' => 'FALSE'));
 	}
+	$owner = filter_input(INPUT_POST,'owner',FILTER_SANITIZE_STRING);
+	if ($owner == 'owner') {
+		$settings = array_merge($settings,array('globalOwner' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalOwner' => 'FALSE'));
+	}
+	$metar = filter_input(INPUT_POST,'metar',FILTER_SANITIZE_STRING);
+	if ($metar == 'metar') {
+		$settings = array_merge($settings,array('globalMETAR' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMETAR' => 'FALSE'));
+	}
+	$metarcycle = filter_input(INPUT_POST,'metarcycle',FILTER_SANITIZE_STRING);
+	if ($metarcycle == 'metarcycle') {
+		$settings = array_merge($settings,array('globalMETARcycle' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMETARcycle' => 'FALSE'));
+	}
 	$fork = filter_input(INPUT_POST,'fork',FILTER_SANITIZE_STRING);
 	if ($fork == 'fork') {
 		$settings = array_merge($settings,array('globalFork' => 'TRUE'));
@@ -715,6 +769,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapPopup' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapPopup' => 'FALSE'));
+	}
+	$airportpopup = filter_input(INPUT_POST,'airportpopup',FILTER_SANITIZE_STRING);
+	if ($airportpopup == 'airportpopup') {
+		$settings = array_merge($settings,array('globalAirportPopup' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalAirportPopup' => 'FALSE'));
 	}
 	$maphistory = filter_input(INPUT_POST,'maphistory',FILTER_SANITIZE_STRING);
 	if ($maphistory == 'maphistory') {
@@ -750,7 +810,8 @@ if (isset($_POST['dbtype'])) {
 		require('../footer.php');
 		exit;
 	} else {
-		if (isset($_POST['waypoints'])) $_SESSION['waypoints'] = 1;
+		if (isset($_POST['waypoints']) && $_POST['waypoints'] == 'waypoints') $_SESSION['waypoints'] = 1;
+		if (isset($_POST['owner']) && $_POST['owner'] == 'owner') $_SESSION['owner'] = 1;
 		$_SESSION['install'] = 'database_import';
 		//require('../footer.php');
 		print '<div class="info column"><ul>';
@@ -760,276 +821,79 @@ if (isset($_POST['dbtype'])) {
 			print '<li>Create database....<strong>SUCCESS</strong></li>';
 		} else $_SESSION['done'] = array('Write configuration');
 		print '<li>Write configuration....<img src="../images/loading.gif" /></li></ul></div>';
-		flush();
-		@ob_flush();
-		sleep(10);
-		print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+#		flush();
+#		@ob_flush();
+#		sleep(10);
+		print "<script>setTimeout(window.location = 'index.php?".rand()."&next=".$_SESSION['install']."',10000)</script>";
 //		header("Location: index.php?".rand());
 //		require('../footer.php');
 	}
-} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
-	unset($_SESSION['install']);
-	if (update_schema::check_version(false) == '0') {
-		print '<div class="info column"><ul>';
-		foreach ($_SESSION['done'] as $done) {
-		    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
-		}
-		print '<li>Create and import tables....<img src="../images/loading.gif" /></li></ul></div>';
-		flush();
-		@ob_flush();
-		if ($globalDBdriver == 'mysql') {
-		    $error .= create_db::import_all_db('../db/');
-		} elseif ($globalDBdriver == 'pgsql') {
-		    $error .= create_db::import_all_db('../db/pgsql/');
-		}
-		if ($error != '') {
-			print '<div class="info column"><span class="error"><strong>Error</strong>'.$error.'</span></div>';
-			require('../footer.php');
-                        exit;
-		}
-		$_SESSION['done'] = array_merge($_SESSION['done'],array('Create and import tables'));
-		if ($globalSBS1) {
-			$_SESSION['install'] = 'populate';
-		} else $_SESSION['install'] = 'sources';
-	} else {
-		print '<div class="info column"><ul>';
-		foreach ($_SESSION['done'] as $done) {
-		    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
-		}
-		print '<li>Update schema....<img src="../images/loading.gif" /></li></ul></div>';
-		flush();
-		@ob_flush();
-		$error .= update_schema::check_version(true);
-		if ($error != '') {
-			print '<div class="info column"><span class="error"><strong>Error</strong>'.$error.'</span></div>';
-			require('../footer.php');
-                        exit;
-		}
-		$_SESSION['done'] = array_merge($_SESSION['done'],array('Update schema'));
-		$_SESSION['install'] = 'sources';
-	}
-	sleep(2);
-	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
-//	require('../footer.php');
-} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'waypoints') {
-	unset($_SESSION['install']);
-	print '<div class="info column"><ul>';
+} else if (isset($_SESSION['install']) && $_SESSION['install'] != 'finish') {
+	print '<div class="info column">';
+	print '<ul><div id="step">';
+	$pop = false;
 	foreach ($_SESSION['done'] as $done) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
+	    if ($done == 'Create database') $pop = true;
 	}
-	print '<li>Populate waypoints database....<img src="../images/loading.gif" /></li></ul></div>';
-	flush();
-	@ob_flush();
-
-	include_once('class.update_db.php');
-	update_db::update_waypoints();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate waypoints database'));
-
-	$_SESSION['install'] = 'airspace';
-//	ob_end_clean();
-//	header("Location: index.php?".rand());
-	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
-//	require('../footer.php');
-} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'airspace') {
-	unset($_SESSION['install']);
-	print '<div class="info column"><ul>';
-	foreach ($_SESSION['done'] as $done) {
+	if ($pop) print '<li>Create and import tables....<img src="../images/loading.gif" /></li>';
+	else print '<li>Update schema if needed....<img src="../images/loading.gif" /></li>';
+	print '</div></ul>';
+	print '<div id="error"></div>';
+/*	foreach ($_SESSION['done'] as $done) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
-	print '<li>Populate airspace database....<img src="../images/loading.gif" /></li></ul></div>';
-	flush();
-	@ob_flush();
+	print '<li>'.$SESSION['next'].'....<img src="../images/loading.gif" /></li>';
 
-	include_once('class.update_db.php');
-	update_db::update_airspace();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate airspace database'));
-	$_SESSION['install'] = 'countries';
-//	require('../footer.php');
-//	ob_end_clean();
-//	header("Location: index.php?".rand());
-	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
-//	require('../footer.php');
-} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'countries') {
-	unset($_SESSION['install']);
-	print '<div class="info column"><ul>';
-	foreach ($_SESSION['done'] as $done) {
-	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
-	}
-	print '<li>Populate countries database....<img src="../images/loading.gif" /></li></ul></div>';
-	flush();
-	@ob_flush();
-
-	include_once('class.update_db.php');
-	update_db::update_countries();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate countries database'));
-	if (isset($globalNOTAM) && $globalNOTAM && isset($globalNOTAMSource) && $globalNOTAMSource != '') $_SESSION['install'] = 'notam';
-	else $_SESSION['install'] = 'sources';
-//	require('../footer.php');
-//	ob_end_clean();
-//	header("Location: index.php?".rand());
-	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
-//	require('../footer.php');
-} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'populate') {
-	unset($_SESSION['install']);
-	if (!is_writable('tmp')) {
-		print '<p><strong>The directory <i>install/tmp</i> must be writable.</strong></p>';
+	if ($error != '') {
+		print '<div class="info column"><span class="error"><strong>Error</strong>'.$error.'</span></div>';
 		require('../footer.php');
-		exit;
+                exit;
 	}
-
-	print '<div class="info column"><ul>';
-	foreach ($_SESSION['done'] as $done) {
-	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
-	}
-	print '<li>Populate aircraft_modes table with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i><b>If it fails, run install/install_db.php or install/install_db.sh in console, this will finish install</b></li></ul></div>';
-	flush();
-	@ob_flush();
-	include_once('class.update_db.php');
-	$globalDebug = FALSE;
-	update_db::update_ModeS();
-	update_db::update_ModeS_flarm();
-	update_db::update_ModeS_ogn();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data'));
-	$_SESSION['install'] = 'routes';
-	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
-
-//	require('../footer.php');
-} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'routes') {
-	unset($_SESSION['install']);
-	if (!is_writable('tmp')) {
-		print '<p><strong>The directory <i>install/tmp</i> must be writable.</strong></p>';
-		require('../footer.php');
-		exit;
-	}
-
-	print '<div class="info column"><ul>';
-	foreach ($_SESSION['done'] as $done) {
-	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
-	}
-	print '<li>Populate routes table with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i><b>If it fails, run install/install_db.php or install/install_db.sh in console, this will finish install</b></li></ul></div>';
-	flush();
-	@ob_flush();
-
-	include_once('class.update_db.php');
-	$globalDebug = FALSE;
-	update_db::update_routes();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate routes table with externals data'));
-	$_SESSION['install'] = 'translation';
-	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
-//	require('../footer.php');
-} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'translation') {
-	unset($_SESSION['install']);
-	if (!is_writable('tmp')) {
-		print '<p><strong>The directory <i>install/tmp</i> must be writable.</strong></p>';
-		require('../footer.php');
-		exit;
-	}
-
-	print '<div class="info column"><ul>';
-	foreach ($_SESSION['done'] as $done) {
-	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
-	}
-	print '<li>Populate translation table with externals data....<img src="../images/loading.gif" /> <i>(Can be very slow)</i><b>If it fails, run install/install_db.php or install/install_db.sh in console, this will finish install</b></li></ul></div>';
-	flush();
-	@ob_flush();
-
-	include_once('class.update_db.php');
-	$globalDebug = FALSE;
-	update_db::update_translation();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate translation table with externals data'));
-
-	if ($_SESSION['waypoints'] == 1) {
-	    $_SESSION['install'] = 'waypoints';
-	    unset($_SESSION['waypoints']);
-	} elseif (isset($globalNOTAM) && $globalNOTAM && isset($globalNOTAMSource) && $globalNOTAMSource != '') $_SESSION['install'] = 'notam';
-	else $_SESSION['install'] = 'sources';
-//	require('../footer.php');
-//	ob_end_clean();
-//	header("Location: index.php?".rand());
-	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
-//	require('../footer.php');
-} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'notam') {
-	unset($_SESSION['install']);
-	if (!is_writable('tmp')) {
-		print '<p><strong>The directory <i>install/tmp</i> must be writable.</strong></p>';
-		require('../footer.php');
-		exit;
-	}
-
-	print '<div class="info column"><ul>';
-	foreach ($_SESSION['done'] as $done) {
-	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
-	}
-	print '<li>Populate notam table with externals data....<img src="../images/loading.gif" /></li></ul></div>';
-	flush();
-	@ob_flush();
-
-	include_once('class.update_db.php');
-	$globalDebug = FALSE;
-	update_db::update_notam();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate notam table with externals data'));
-
-	$_SESSION['install'] = 'sources';
-	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
-/*
-} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'ivao') {
-	unset($_SESSION['install']);
-	if (!is_writable('tmp')) {
-		print '<p><strong>The directory <i>install/tmp</i> must be writable.</strong></p>';
-		require('../footer.php');
-		exit;
-	}
-
-	print '<div class="info column"><ul>';
-	foreach ($_SESSION['done'] as $done) {
-	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
-	}
-	print '<li>Populate airlines table and airlines logos with data from ivao.aero....<img src="../images/loading.gif" /></li></ul></div>';
-	flush();
-	@ob_flush();
-
-	include_once('class.update_db.php');
-	$globalDebug = FALSE;
-	update_db::update_ivao();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate ivao table with externals data'));
-
-	$_SESSION['install'] = 'finish';
-	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
 */
-} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'sources') {
-	unset($_SESSION['install']);
-	print '<div class="info column"><ul>';
-	foreach ($_SESSION['done'] as $done) {
-	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
-	}
-	if (isset($_SESSION['sources']) && count($_SESSION['sources']) > 0) {
-	    $sources = $_SESSION['sources'];
-	    print '<li>Insert data in source table....<img src="../images/loading.gif" /></li></ul></div>';
-	    flush();
-	    @ob_flush();
-
-	    include_once('../require/class.Source.php');
-	    $globalDebug = FALSE;
-	    $Source = new Source();
-	    $Source->deleteAllLocation();
-	    foreach ($sources as $src) {
-		if (isset($src['latitude']) && $src['latitude'] != '') $Source->addLocation($src['name'],$src['latitude'],$src['longitude'],$src['altitude'],$src['city'],$src['country'],'antenna.png');
-	    }
-	    $_SESSION['done'] = array_merge($_SESSION['done'],array('Insert data in source table'));
-	    unset($_SESSION['sources']);
-	}
-	/*
-	if (isset($globalIVAO) && $globalIVAO) $_SESSION['install'] = 'ivao';
-	else $_SESSION['install'] = 'finish';
-	*/
-	$_SESSION['install'] = 'finish';
-	print "<script>window.location = 'index.php?".rand()."&next=".$_SESSION['install']."';</script>";
+?>
+    <script language="JavaScript">
+	$(document).ready(function() {
+	    var loop = true;
+		do {
+		    $.ajax({
+			url:'install-action.php',
+			dataType: 'json',
+			async: false,
+			success: function(result) {
+			    console.log(result);
+			    $('#step').html('');
+			    result['done'].forEach(function(done) {
+				$('#step').append('<li>'+ done +'....<strong>SUCCESS</strong></li>');
+			    });
+			    if (result['error'] != '') {
+				setTimeout(function(){
+				    console.log('error !');
+				    $('#error').html('<p><b>Error : </b> ' + result['error'] + '</p>');
+				}, 1000);
+				loop = false;
+			    } else if (result['next'] != 'finish') {
+				$('#step').append('<li>'+ result['next'] +'....<img src="../images/loading.gif" /></li>');
+			    } else if (result['install'] == 'finish') {
+				console.log('finish !!!');
+				$('#step').append('<li>Reloading page to check all is now ok....<img src="../images/loading.gif" /></li>');
+				$(location).attr('href','index.php?next=finish');
+				loop = false;
+			    }
+			}
+		    });
+		} while (loop == true);
+	});
+    </script>
+<?php
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'finish') {
 	unset($_SESSION['install']);
+	unset($_COOKIE['install']);
 	print '<div class="info column"><ul>';
 	foreach ($_SESSION['done'] as $done) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	}
+	print '<li>Reloading page to check all is now ok....<strong>SUCCESS</strong></li>';
 	print '</ul></div>';
 	print '<p>All is now installed ! Thanks</p>';
 	if ($globalSBS1) {

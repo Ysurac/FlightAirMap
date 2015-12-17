@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS aircraft;
+DROP TABLE aircraft;
 CREATE TABLE aircraft (
   aircraft_id serial,
   icao varchar(999) NOT NULL,

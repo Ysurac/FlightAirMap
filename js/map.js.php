@@ -232,14 +232,30 @@ bounds = L.latLngBounds(southWest,northEast);
 		//if (typeof airportsLayer == 'undefined' || map.hasLayer(airportsLayer) == false) {
 	    var bbox = map.getBounds().toBBoxString();
 	    airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
+	    <?php
+		if (isset($globalAirportPopup) && $globalAirportPopup) {
+	    ?>
 	    onEachFeature: airportPopup,
+	    <?php
+		}
+	    ?>
 		pointToLayer: function (feature, latlng) {
-		    return L.marker(latlng, {icon: L.icon({
-			iconUrl: feature.properties.icon,
-			iconSize: [16, 18]
+		    return L.marker(latlng, {
+			icon: L.icon({
+			    iconUrl: feature.properties.icon,
+			    iconSize: [16, 18]
 			//popupAnchor: [0, -28]
 			})
-                    });
+		<?php
+		    if (!isset($globalAirportPopup) || $globalAirportPopup == FALSE) {
+		?>
+                    }).on('click', function() {
+			$(".showdetails").load("airport-data.php?"+Math.random()+"&airport_icao="+feature.properties.icao);
+		    });
+		<?php
+		    }
+		?>
+		
 		}
 	    }).addTo(map);
 	    
@@ -900,7 +916,7 @@ function getLiveData()
     if (isset($globalIVAO) && $globalIVAO) {
 ?>
     update_atcLayer();
-  setInterval(function(){map.removeLayer(atcLayer);update_atcLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
+    setInterval(function(){map.removeLayer(atcLayer);update_atcLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
 <?php
     }
 ?>
@@ -1479,20 +1495,81 @@ function update_atcLayer() {
     onEachFeature: atcPopup,
 	pointToLayer: function (feature, latlng) {
 	    if (feature.properties.atc_range > 0) {
-		return L.circle(latlng, feature.properties.atc_range, {
-                    fillColor: '#781212',
-                    color: '#781212',
-                    weight: 1,
-                    opacity: 0.3,
-                    fillOpacity: 0.3
+        	if (feature.properties.type == 'Delivery') {
+        	    var atccolor = '#781212';
+        	} else if (feature.properties.type == 'Ground') {
+        	    var atccolor = '#682213';
+        	} else if (feature.properties.type == 'Tower') {
+        	    var atccolor = '#583214';
+        	} else if (feature.properties.type == 'Approach') {
+        	    var atccolor = '#484215';
+        	} else if (feature.properties.type == 'Departure') {
+        	    var atccolor = '#385216';
+        	} else if (feature.properties.type == 'Observer') {
+        	    var atccolor = '#286217';
+        	} else if (feature.properties.type == 'Control Radar or Centre') {
+        	    var atccolor = '#187218';
+        	} else {
+        	    var atccolor = '#888219';
+		}
+		return L.circle(latlng, feature.properties.atc_range*1, {
+            	    fillColor: atccolor,
+            	    color: atccolor,
+            	    weight: 1,
+            	    opacity: 0.3,
+            	    fillOpacity: 0.3
 		});
             } else {
-		return L.marker(latlng, {icon: L.icon({
-			iconUrl: '<?php print $globalURL; ?>/images/atc.png',
-			iconSize: [30, 30],
-			iconAnchor: [15, 30]
-		    })
-		});
+        	if (feature.properties.type == 'Delivery') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_del.png',
+			    iconSize: [15, 15],
+			    iconAnchor: [7, 7]
+			})
+		    });
+		} else if (feature.properties.type == 'Ground') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_gnd.png',
+			    iconSize: [20, 20],
+			    iconAnchor: [10, 10]
+			})
+		    });
+		} else if (feature.properties.type == 'Tower') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_twr.png',
+			    iconSize: [25, 25],
+			    iconAnchor: [12, 12]
+			})
+		    });
+		} else if (feature.properties.type == 'Approach') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_app.png',
+			    iconSize: [30, 30],
+			    iconAnchor: [15, 15]
+			})
+		    });
+		} else if (feature.properties.type == 'Departure') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_dep.png',
+			    iconSize: [35, 35],
+			    iconAnchor: [17, 17]
+			})
+		    });
+		} else if (feature.properties.type == 'Control Radar or Centre') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_ctr.png',
+			    iconSize: [40, 40],
+			    iconAnchor: [20, 20]
+			})
+		    });
+		} else {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc.png',
+			    iconSize: [30, 30],
+			    iconAnchor: [15, 30]
+			})
+		    });
+		}
             }
 	}
     }).addTo(map);

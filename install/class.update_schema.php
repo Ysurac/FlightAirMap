@@ -377,6 +377,34 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_10() {
+    		$Connection = new Connection();
+    		$query="ALTER TABLE atc CHANGE `type` `type` ENUM('Observer','Flight Information','Delivery','Tower','Approach','ACC','Departure','Ground','Flight Service Station','Control Radar or Centre') CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add new enum to ATC table) : ".$e->getMessage()."\n";
+    		}
+		$error = '';
+    		// Add tables
+		$error .= create_db::import_file('../db/aircraft_owner.sql');
+		if ($error != '') return $error;
+		$error .= create_db::import_file('../db/metar.sql');
+		if ($error != '') return $error;
+		$error .= create_db::import_file('../db/taf.sql');
+		if ($error != '') return $error;
+		
+		$query = "UPDATE `config` SET `value` = '11' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
     	public static function check_version($update = false) {
     	    global $globalDBname;
     	    $version = 0;
@@ -427,6 +455,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '9') {
     			    $error = self::update_from_9();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '10') {
+    			    $error = self::update_from_10();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

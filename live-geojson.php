@@ -58,10 +58,10 @@ $output = '{';
 	$output .= '"type": "FeatureCollection",';
 		if ($min) $output .= '"minimal": "true",';
 		else $output .= '"minimal": "false",';
-		$output .= '"features": [';
 
 		if (!empty($spotter_array) && is_array($spotter_array))
 		{
+			$output .= '"features": [';
 			foreach($spotter_array as $spotter_item)
 			{
 				date_default_timezone_set('UTC');
@@ -320,16 +320,16 @@ $output = '{';
 				    unset($output_air);
 				}
 			}
+			$output  = substr($output, 0, -1);
+			$output .= ']';
 		} else {
+			$output .= '"features": ';
 			$output .= '{';
 			$output .= '"type": "Feature",';
 			$output .= '"properties": {';
-			$output .= '"flight_cnt": "'.$flightcnt.'"}},';
+			$output .= '"flight_cnt": "'.$flightcnt.'"}}';
 		}
 		
-		$output  = substr($output, 0, -1);
-
-		$output .= ']';
 $output .= '}';
 
 print $output;
