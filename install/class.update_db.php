@@ -110,6 +110,14 @@ class update_db {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
+		$query = "DELETE FROM aircraft_owner WHERE Source = '' OR Source IS NULL OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => $database_file));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
 
     		update_db::connect_sqlite($database_file);
 		$query = 'select * from Aircraft';
