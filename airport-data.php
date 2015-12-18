@@ -88,7 +88,7 @@ if (isset($metar_parse)) {
         print 'Visibility : '.$metar_parse['visibility'].' m'."<br/>";
     }
     if (isset($metar_parse['weather'])) {
-        print 'Weather : '.$metar_parse['weather'].' m'."<br/>";
+        print 'Weather : '.$metar_parse['weather']."<br/>";
     }
     if (isset($metar_parse['temperature'])) {
         print 'Temperature : '.$metar_parse['temperature'].' °C'."<br/>";
