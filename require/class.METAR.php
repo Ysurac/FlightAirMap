@@ -231,8 +231,8 @@ class METAR {
     		if (isset($globalMETARcycle) && $globalMETARcycle) {
             		$query = "SELECT * FROM metar WHERE metar_location = :icao";
                 } else {
-            		if ($globalDBdriver == 'mysql') $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR)";
-            		elseif ($globalDBdriver == 'pgsql') $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= now() AT TIMEZONE 'UTC' - '1 HOUR'->INTERVAL";
+            		if ($globalDBdriver == 'mysql') $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 10 HOUR) LIMIT 1";
+            		elseif ($globalDBdriver == 'pgsql') $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= now() AT TIMEZONE 'UTC' - '10 HOUR'->INTERVAL LIMIT 0,1";
                 }
                 $query_values = array(':icao' => $icao);
                  try {
