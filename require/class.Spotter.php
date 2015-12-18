@@ -7601,14 +7601,17 @@ public function addSpotterImage($registration)
 	// Update flights data when new data in DB
 	public function updateFieldsFromOtherTables()
 	{
-		global $globalDebug;
+		global $globalDebug, $globalDBdriver;
 		$Image = new Image();
 		
 
 		// routes
-		/*
 		if ($globalDebug) print "Routes...\n";
-		$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != ''";
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != '' AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 DAY)";
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != '' AND spotter_output.date >= now() AT TIME ZONE 'UTC' - '15 DAY'->INTERVAL";
+		}
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -7621,11 +7624,14 @@ public function addSpotterImage($registration)
 				$sthu->execute(array(':fromicao' => $row['fromairport_icao'],':toicao' => $row['toairport_icao'],':spotter_id' => $row['spotter_id'],':departure_airport_name' => $departure_airport_array[0]['name'],':departure_airport_city' => $departure_airport_array[0]['city'],':departure_airport_country' => $departure_airport_array[0]['country'],':arrival_airport_name' => $arrival_airport_array[0]['name'],':arrival_airport_city' => $arrival_airport_array[0]['city'],':arrival_airport_country' => $arrival_airport_array[0]['country']));
 			}
 		}
-		*/
 		
 		if ($globalDebug) print "Airlines...\n";
 		//airlines
-		$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE spotter_output.airline_name = '' OR spotter_output.airline_name = 'Not Available'";
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE (spotter_output.airline_name = '' OR spotter_output.airline_name = 'Not Available') AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 DAY)";
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE (spotter_output.airline_name = '' OR spotter_output.airline_name = 'Not Available') AND spotter_output.date >= now() AT TIME ZONE 'UTC' - '15 DAY'->INTERVAL";
+		}
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -7649,7 +7655,11 @@ public function addSpotterImage($registration)
 		
 		if ($globalDebug) print "Aircraft...\n";
 		//aircraft
-		$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE spotter_output.aircraft_name = '' OR spotter_output.aircraft_name = 'Not Available'";
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE (spotter_output.aircraft_name = '' OR spotter_output.aircraft_name = 'Not Available') AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY)";
+		} elseif ($globalDBdriver == 'pgsql') {
+			$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE (spotter_output.aircraft_name = '' OR spotter_output.aircraft_name = 'Not Available') AND spotter_output.date >= now() AT TIME ZONE 'UTC' - '15 DAY'->INTERVAL";
+		}
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
