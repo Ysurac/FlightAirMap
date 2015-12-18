@@ -7667,7 +7667,10 @@ public function addSpotterImage($registration)
 			if ($row['aircraft_icao'] != '') {
 				$aircraft_name = $this->getAllAircraftInfo($row['aircraft_icao']);
 				if ($row['registration'] != ""){
-					$Image->addSpotterImage($row['registration']);
+					$image_array = $Image->getSpotterImage($row['registration']);
+					if (count($image_array) == 0) {
+						$Image->addSpotterImage($row['registration']);
+					}
 				}
 				if (count($aircraft_name) > 0) {
 					$update_query  = "UPDATE spotter_output SET spotter_output.aircraft_name = :aircraft_name, spotter_output.aircraft_manufacturer = :aircraft_manufacturer WHERE spotter_output.spotter_id = :spotter_id";
