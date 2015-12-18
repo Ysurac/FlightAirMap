@@ -22,7 +22,7 @@ if ($update_db->check_last_update() && (!isset($globalIVAO) || !$globalIVAO)) {
 	$update_db->insert_last_update();
 } elseif (isset($globalDebug) && $globalDebug && (!isset($globalIVAO) || !$globalIVAO)) echo "DB are populated with external data only every 15 days ! Files are not updated more often.\n";
 
-if (isset($globalMETAR) && isset($globalMETARcyle) && $globalMETAR && $globalMETARcyle) {
+if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalMETARcycle) {
 	echo "updating METAR...";
 	require_once('../require/class.METAR.php');
 	$METAR = new METAR();
