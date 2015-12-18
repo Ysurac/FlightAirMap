@@ -394,6 +394,8 @@ class update_schema {
 		if ($error != '') return $error;
 		$error .= create_db::import_file('../db/taf.sql');
 		if ($error != '') return $error;
+		$error .= create_db::import_file('../db/airport.sql');
+		if ($error != '') return $error;
 		
 		$query = "UPDATE `config` SET `value` = '11' WHERE `name` = 'schema_version'";
         	try {
