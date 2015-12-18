@@ -1476,6 +1476,32 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 	}
+
+	public static function check_last_owner_update() {
+		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_owner_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return false;
+                else return true;
+	}
+
+	public static function insert_last_owner_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_owner_db';
+			INSERT INTO config (name,value) VALUES ('last_update_owner_db',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
 	
 	public static function update_all() {
 		update_db::update_routes();

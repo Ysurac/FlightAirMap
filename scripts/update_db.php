@@ -28,4 +28,9 @@ if (isset($globalMETAR) && isset($globalMETARcyle) && $globalMETAR && $globalMET
 	$METAR = new METAR();
 	$METAR->addMETARCycle();
 }
+if (isset($globalOwner) && $globalOwner && $update_db->check_last_owner_update() && (!isset($globalIVAO) || !$globalIVAO)) {
+	echo "Updating private aircraft's owners...";
+	$update_db->update_owner();
+	$update_db->insert_last_owner_update();
+} elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalIVAO) || !$globalIVAO)) echo "Owner are only updated every 15 days.\n";
 ?>
