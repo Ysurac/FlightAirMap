@@ -229,15 +229,15 @@ class Schedule {
 		$headers = array('Content-Type: application/json','Content-Length: ' . strlen($post));
 		$json = $Common->getData($url,'post',$post,$headers);
 		$parsed_json = json_decode($json);
-
-		$flights = $parsed_json->{'flightInfo'};
-		if (count($flights) > 0) {
-			$DepartureAirportIata = $parsed_json->{'flightInfo'}[0]->{'departureAirport'}->{'iata'}; //name
-			$ArrivalAirportIata = $parsed_json->{'flightInfo'}[0]->{'arrivalAirport'}->{'iata'}; //name
-			$departureTime = $parsed_json->{'flightInfo'}[0]->{'departureTime'};
-			$arrivalTime = $parsed_json->{'flightInfo'}[0]->{'arrivalTime'};
-
-			return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime, 'Source' => 'website_ryanair');
+		if (isset($parsed_json->{'flightInfo'})) {
+			$flights = $parsed_json->{'flightInfo'};
+			if (count($flights) > 0) {
+				$DepartureAirportIata = $parsed_json->{'flightInfo'}[0]->{'departureAirport'}->{'iata'}; //name
+				$ArrivalAirportIata = $parsed_json->{'flightInfo'}[0]->{'arrivalAirport'}->{'iata'}; //name
+				$departureTime = $parsed_json->{'flightInfo'}[0]->{'departureTime'};
+				$arrivalTime = $parsed_json->{'flightInfo'}[0]->{'arrivalTime'};
+				return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime, 'Source' => 'website_ryanair');
+			} else return array();
 		} else return array();
 	}
 
