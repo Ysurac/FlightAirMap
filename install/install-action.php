@@ -282,6 +282,11 @@ if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
 	setcookie('install','finish',time()+50000);
 	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	print json_encode($result);
+} else if (isset($_GET['reset'])) {
+	echo 'Last session : '.$_SESSION['install']."\n";
+	print_r($_SESSION['done']);
+	unset($_SESSION['install']);
+	echo 'Reset session !!';
 } else {
 	//unset($_SESSION['install']);
 	$_SESSION['error'] = 'Unknwon task : '.$_SESSION['install'];
