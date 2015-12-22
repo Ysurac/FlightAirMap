@@ -67,6 +67,10 @@ function connect_all($hosts) {
         	$formats[$id] = 'deltadbtxt';
         	$last_exec['deltadbtxt'] = 0;
         	if ($globalDebug) echo "Connect to deltadb source...\n";
+            } else if (preg_match('/vatsim-data.txt$/i',$host)) {
+        	$formats[$id] = 'vatsimtxt';
+        	$last_exec['vatsimtxt'] = 0;
+        	if ($globalDebug) echo "Connect to vatsim source...\n";
     	    } else if (preg_match('/aircraftlist.json$/i',$host)) {
         	$formats[$id] = 'aircraftlistjson';
         	$last_exec['aircraftlistjson'] = 0;
@@ -209,14 +213,14 @@ while ($i > 0) {
     		}
     	    }
     	    $last_exec['deltadbtxt'] = time();
-	} elseif ($value == 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) {
+	} elseif (($value == 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value == 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {
 	    $buffer = $Common->getData($hosts[$id]);
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 	    $buffer = explode('\n',$buffer);
 	    foreach ($buffer as $line) {
     		if ($line != '') {
     		    $line = explode(':', $line);
-    		    if (count($line) > 43) {
+    		    if (count($line) > 40) {
 			$data = array();
 			$data['id'] = $line[1].'-'.$line[0];
 			$data['pilot_id'] = $line[1];
@@ -225,7 +229,8 @@ while ($i > 0) {
 			$data['ident'] = $line[0]; // ident
 			if ($line[7] != '' && $line[7] != 0) $data['altitude'] = $line[7]; // altitude
 			$data['speed'] = $line[8]; // speed
-			$data['heading'] = $line[45]; // heading
+			if (isset($line[45])) $data['heading'] = $line[45]; // heading
+			elseif (isset($line[38])) $data['heading'] = $line[38]; // heading
 			$data['latitude'] = $line[5]; // lat
 	        	$data['longitude'] = $line[6]; // long
 	        	$data['verticalrate'] = ''; // vertical rate
