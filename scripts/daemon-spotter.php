@@ -220,7 +220,7 @@ while ($i > 0) {
 	    foreach ($buffer as $line) {
     		if ($line != '') {
     		    $line = explode(':', $line);
-    		    if (count($line) > 40) {
+    		    if (count($line) > 40 && $line[0] != 'callsign') {
 			$data = array();
 			$data['id'] = $line[1].'-'.$line[0];
 			$data['pilot_id'] = $line[1];
@@ -253,7 +253,8 @@ while ($i > 0) {
 	    			$data['aircraft_icao'] = $aircraft_data[1];
 	    		    }
         		}
-	    		$data['format_source'] = 'whazzup';
+	    		if ($value == 'whazzup') $data['format_source'] = 'whazzup';
+	    		elseif ($value == 'vatsimtxt') $data['format_source'] = 'vatsimtxt';
     			if ($line[3] == 'PILOT') $SI->add($data);
 			elseif ($line[3] == 'ATC') {
 				//print_r($data);
@@ -275,7 +276,8 @@ while ($i > 0) {
     		    }
     		}
     	    }
-    	    $last_exec['whazzup'] = time();
+    	    if ($value == 'whazzup') $last_exec['whazzup'] = time();
+    	    elseif ($value == 'vatsimtxt') $last_exec['vatsimtxt'] = time();
     	} elseif ($value == 'aircraftlistjson' && (time() - $last_exec['aircraftlistjson'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id],'get','','','','','50');
 	    if ($buffer != '') {
