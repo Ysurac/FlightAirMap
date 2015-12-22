@@ -450,7 +450,9 @@ while ($i > 0) {
 	        $data['departure_airport_time'] = $line['deptime'];
 	        $data['arrival_airport_icao'] = $line['arricao'];
     		$data['arrival_airport_time'] = $line['arrtime'];
-    		$data['aircraft_icao'] = $line['aircraft'];
+    		$data['registration'] = $line['aircraft'];
+	    	$aircraft_data = explode('-',$line['aircraftname']);
+	    	$data['aircraft_icao'] = $aircraft_data[0];
     		if (isset($line['route'])) $data['route'] = $line['route'];
 	        $data['format_source'] = 'phpvmacars';
 		$SI->add($data);
