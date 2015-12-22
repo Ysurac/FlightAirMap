@@ -71,7 +71,7 @@ if (count($error) > 0) {
 if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) == 0)) {
 	?>
 	<div class="info column">
-	<form method="post">
+	<form method="post" class="form-horizontal">
 		<fieldset>
 			<legend>Database configuration</legend>
 			<p>
@@ -269,7 +269,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 -->
 				<input type="radio" name="datasource" id="ivao" value="ivao" onClick="datasource_js()" <?php if (isset($globalIVAO) && $globalIVAO) { ?>checked="checked" <?php } ?>/>
 				<label for="ivao">IVAO</label>
-				<input type="radio" name="datasource" id="sbs" value="sbs" onClick="datasource_js()" <?php if (isset($globalSBS1) && $globalSBS1) { ?>checked="checked" <?php } ?> />
+				<input type="radio" name="datasource" id="sbs" value="sbs" onClick="datasource_js()" <?php if (isset($globalSBS1) && $globalSBS1 && (!isset($globalIVAO) || (isset($globalIVAO) && !$globalIVAO))) { ?>checked="checked" <?php } ?> />
 				<label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format), APRS from glidernet,...</label>
 				<input type="checkbox" name="acars" id="acars" value="acars" onClick="datasource_js()" <?php if (isset($globalACARS) && $globalACARS) { ?>checked="checked" <?php } ?> />
 				<label for="acars">ACARS</label>
