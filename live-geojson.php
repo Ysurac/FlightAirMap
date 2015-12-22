@@ -41,13 +41,13 @@ if (isset($_GET['ident'])) {
 	$coord = explode(',',$_GET['coord']);
 	$spotter_array = $SpotterLive->getLiveSpotterDatabyCoord($coord);
 
-} elseif (isset($globalMapPopup) && !$globalMapPopup) {
+#} elseif (isset($globalMapPopup) && !$globalMapPopup) {
+} elseif ($min) {
 	$spotter_array = $SpotterLive->getMinLiveSpotterData();
-	$min = true;
+#	$min = true;
 } else {
 	$spotter_array = $SpotterLive->getLiveSpotterData();
 }
-
 
 if (!empty($spotter_array)) {
 	$flightcnt = $SpotterLive->getLiveSpotterCount();
@@ -141,6 +141,14 @@ $output = '{';
 							$output .= '"aircraft_name": "NA ('.$spotter_item['aircraft_type'].')",';
 						} elseif (!$min) {
 							$output .= '"aircraft_name": "NA",';
+						}
+						if (!isset($spotter_item['aircraft_shadow'])) {
+							if (!isset($spotter_item['aircraft_icao']) || $spotter_item['aircraft_icao'] == '') $spotter_item['aircraft_shadow'] = '';
+							else {
+								$aircraft_info = $Spotter->getAllAircraftInfo($spotter_item['aircraft_icao']);
+								if (count($aircraft_info) > 0) $spotter_item['aircraft_shadow'] = $aircraft_info[0]['aircraft_shadow'];
+								else $spotter_item['aircraft_shadow'] = '';
+							}
 						}
 						if ($spotter_item['aircraft_shadow'] == '') {
 						    $output .= '"aircraft_shadow": "default.png",';
