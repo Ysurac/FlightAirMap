@@ -808,6 +808,48 @@ class update_db {
 //		return true;
         }
 	
+	public static function translation_fam() {
+		require_once('../require/class.Spotter.php');
+		global $tmp_dir, $globalTransaction;
+		$Spotter = new Spotter();
+		$query = "DELETE FROM translation WHERE Source = '' OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => 'website_fam'));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+		
+		//update_db::unzip($out_file);
+		$header = NULL;
+		$delimiter = "\t";
+		$Connection = new Connection();
+		if (($handle = fopen($tmp_dir.'translation.tsv', 'r')) !== FALSE)
+		{
+			$i = 0;
+			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
+			//$Connection->db->beginTransaction();
+			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				if ($i > 0) {
+					$query = 'INSERT INTO translation (Reg,Reg_correct,Operator,Operator_correct,Source) VALUES (:Reg, :Reg_correct, :Operator, :Operator_correct, :source)';
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':Reg' => $data[0],':Reg_correct' => $data[1],':Operator' => $data[2],':Operator_correct' => $data[3], ':source' => 'website_fam'));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				}
+				$i++;
+			}
+			fclose($handle);
+			//$Connection->db->commit();
+		}
+//		return true;
+        }
+	
 	/**
         * Convert a HTML table to an array
         * @param String $data HTML page
@@ -1317,6 +1359,24 @@ class update_db {
 
 	}
 
+	public static function update_translation_fam() {
+		global $tmp_dir, $globalDebug;
+		$error = '';
+		if ($globalDebug) echo "Translation from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.fr/data/translation.tsv.gz',$tmp_dir.'translation.tsv.gz');
+		if (file_exists($tmp_dir.'translation.tsv.gz')) {
+			if ($globalDebug) echo "Gunzip...";
+			update_db::gunzip($tmp_dir.'translation.tsv.gz');
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::translation_fam();
+		} else $error = "File ".$tmp_dir.'translation.tsv.gz'." doesn't exist. Download failed.";
+		if ($error != '') {
+			echo $error;
+			exit;
+		} elseif ($globalDebug) echo "Done\n";
+
+	}
+
 	public static function update_aircraft() {
 		global $tmp_dir, $globalDebug;
 		date_default_timezone_set('UTC');
@@ -1509,8 +1569,10 @@ class update_db {
 		update_db::update_ModeS_flarm();
 		update_db::update_ModeS_ogn();
 		update_db::update_translation();
+		update_db::update_translation_fam();
 	}
 }
+
 //echo update_db::update_airports();
 //echo update_db::translation();
 //echo update_db::update_waypoints();
@@ -1522,4 +1584,6 @@ class update_db {
 //echo update_db::update_aircraft();
 //$update_db = new update_db();
 //echo $update_db->update_owner();
+//update_db::update_translation_fam();
+
 ?>

@@ -14,13 +14,13 @@ if (isset($globalNOTAM) && $globalNOTAM && $update_db->check_last_notam_update()
 	$update_db->insert_last_notam_update();
 } elseif (isset($globalDebug) && $globalDebug && isset($globalNOTAM) && $globalNOTAM) echo "NOTAM are only updated once a day.\n";
 
-if ($update_db->check_last_update() && (!isset($globalIVAO) || !$globalIVAO)) {
+if ($update_db->check_last_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM)) {
 	$update_db->update_all();
 	require_once('../require/class.Spotter.php');
 	$Spotter = new Spotter();
 	$Spotter->updateFieldsFromOtherTables();
 	$update_db->insert_last_update();
-} elseif (isset($globalDebug) && $globalDebug && (!isset($globalIVAO) || !$globalIVAO)) echo "DB are populated with external data only every 15 days ! Files are not updated more often.\n";
+} elseif (isset($globalDebug) && $globalDebug && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM)) echo "DB are populated with external data only every 15 days ! Files are not updated more often.\n";
 
 if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalMETARcycle) {
 	echo "updating METAR...";
@@ -28,7 +28,7 @@ if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalME
 	$METAR = new METAR();
 	$METAR->addMETARCycle();
 }
-if (isset($globalOwner) && $globalOwner && $update_db->check_last_owner_update() && (!isset($globalIVAO) || !$globalIVAO)) {
+if (isset($globalOwner) && $globalOwner && $update_db->check_last_owner_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM)) {
 	echo "Updating private aircraft's owners...";
 	$update_db->update_owner();
 	$update_db->insert_last_owner_update();

@@ -1,6 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+require('require/class.METAR.php');
 
 if (!isset($_GET['airport'])){
 	header('Location: '.$globalURL.'/airport');
@@ -21,21 +22,29 @@ if (!isset($_GET['airport'])){
 	$limit_next = $limit_end + $absolute_difference;
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
-	
-	$page_url = $globalURL.'/airport/'.$_GET['airport'];
+	$airport_icao = filter_input(INPUT_GET,'airport',FILTER_SANITIZE_STRING);
+	$page_url = $globalURL.'/airport/'.$airport_icao;
 	
 	if (isset($_GET['sort'])) {
-		$spotter_array = $Spotter->getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, $_GET['sort']);
+		$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, $_GET['sort']);
 	} else {
-		$spotter_array = $Spotter->getSpotterDataByAirport($_GET['airport'],$limit_start.",".$absolute_difference, '');
+		$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, '');
 	}
-	$airport_array = $Spotter->getAllAirportInfo($_GET['airport']);
+	$airport_array = $Spotter->getAllAirportInfo($airport_icao);
 	
 	if (!empty($airport_array))
 	{
-	  $title = 'Detailed View for '.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
+		
+		if (isset($globalMETAR) && $globalMETAR) {
+			$METAR = new METAR();
+			$metar_info = $METAR->getMETAR($airport_icao);
+			//print_r($metar_info);
+			if (isset($metar_info[0]['metar'])) $metar_parse = $METAR->parse($metar_info[0]['metar']);
+            		//print_r($metar_parse);
+		}
+		
+		$title = 'Detailed View for '.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
 		require('header.php');
-	  
 	  
 	  
 	  print '<div class="select-item">';
@@ -46,7 +55,7 @@ if (!isset($_GET['airport'])){
 		      ksort($airport_names);
 		      foreach($airport_names as $airport_name)
 		      {
-		        if($_GET['airport'] == $airport_name['airport_icao'])
+		        if($airport_icao == $airport_name['airport_icao'])
 		        {
 		          print '<option value="'.$airport_name['airport_icao'].'" selected="selected">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
 		        } else {
@@ -58,7 +67,7 @@ if (!isset($_GET['airport'])){
   		print '</form>';
   	print '</div>';
 		
-		if ($_GET['airport'] != "NA")
+		if ($airport_icao != "NA")
 		{
 	    print '<div class="info column">';
 	    	print '<h1>'.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')</h1>';
@@ -70,6 +79,46 @@ if (!isset($_GET['airport'])){
     	print '<div><span class="label">Altitude</span>'.$airport_array[0]['altitude'].'</div>';
     	print '<div><span class="label">Coordinates</span><a href="http://maps.google.ca/maps?z=10&t=k&q='.$airport_array[0]['latitude'].','.$airport_array[0]['longitude'].'" target="_blank">Google Map<i class="fa fa-angle-double-right"></i></a></div>';
 	    print '</div>';
+	    print '<div class="info column">';
+
+	if (isset($metar_parse)) {
+		print '<div><span class="label">METAR</span>';
+		print $metar_info[0]['metar'].'<br />';
+		print '<b>'.$metar_info[0]['metar_date'].'</b> ';
+		if (isset($metar_parse['wind'])) {
+			print 'Wind : ';
+			if (isset($metar_parse['wind']['direction'])) {
+				$direction = $Spotter->parseDirection($metar_parse['wind']['direction']);
+				print $direction[0]['direction_fullname'];
+				print ' ('.$metar_parse['wind']['direction'].'°) ';
+			}
+			if (isset($metar_parse['wind']['speed'])) {
+				print $metar_parse['wind']['speed'].' m/s';
+			}
+			print ' - ';
+		}
+		if (isset($metar_parse['visibility'])) {
+			print 'Visibility : '.$metar_parse['visibility'].' m'." - ";
+		}
+		if (isset($metar_parse['weather'])) {
+			print 'Weather : '.$metar_parse['weather']." - ";
+		}
+		if (isset($metar_parse['temperature'])) {
+			print 'Temperature : '.$metar_parse['temperature'].' °C'." - ";
+		}
+		if (isset($metar_parse['dew'])) {
+			print 'Dew point : '.$metar_parse['dew'].' °C'." - ";
+		}
+		if (isset($metar_parse['temperature']) && isset($metar_parse['dew'])) {
+			$humidity = round(100 * pow((112 - (0.1 * $metar_parse['temperature']) + $metar_parse['dew']) / (112 + (0.9 * $metar_parse['temperature'])), 8),1);
+			print 'Humidity : '.$humidity.'%'." - ";
+		}
+		if (isset($metar_parse['QNH'])) {
+			print 'Pressure : '.$metar_parse['QNH'].' hPa';
+		}
+	    print '</div>';
+	    print '</div>';
+	    }
 	  } else {
 	    print '<div class="alert alert-warning">This special airport profile shows all flights that do <u>not</u> have a departure and/or arrival airport associated with them.</div>';
 	  }

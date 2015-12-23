@@ -76,7 +76,7 @@ class SpotterImport {
     }
 
     function add($line) {
-	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO;
+	global $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO, $globalVATSIM;
 /*
 	$Spotter = new Spotter();
 	$dbc = $Spotter->db;
@@ -194,7 +194,7 @@ class SpotterImport {
 		    	    }
 			}
 			if (!isset($globalFork)) $globalFork = TRUE;
-			if (function_exists('pcntl_fork') && $globalFork && !$globalIVAO) {
+			if (function_exists('pcntl_fork') && $globalFork && !$globalIVAO && !$globalVATSIM) {
 			    $this->nb++;
 			    $pids[$id] = pcntl_fork();
 			    if (!$pids[$id]) {
@@ -225,7 +225,7 @@ class SpotterImport {
 
 
 	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '') {
-	    	    if ((isset($globalIVAO) && $globalIVAO) || !isset($this->all_flights[$id]['time_last_coord']) || $Common->withinThreshold(time()-$this->all_flights[$id]['time_last_coord'],$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']))) {
+	    	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || !isset($this->all_flights[$id]['time_last_coord']) || $Common->withinThreshold(time()-$this->all_flights[$id]['time_last_coord'],$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']))) {
 			if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
 			    //if (!isset($this->all_flights[$id]['latitude']) || $this->all_flights[$id]['latitude'] == '' || abs($this->all_flights[$id]['latitude']-$line['latitude']) < 3 || $line['format_source'] != 'sbs' || time() - $this->all_flights[$id]['lastupdate'] > 30) {
 				if (!isset($this->all_flights[$id]['archive_latitude'])) $this->all_flights[$id]['archive_latitude'] = $line['latitude'];

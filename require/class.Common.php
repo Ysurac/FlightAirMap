@@ -21,6 +21,7 @@ class Common {
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true); 
 		curl_setopt($ch,CURLOPT_ENCODING , "gzip");
 		//curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
+//		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0');
 		curl_setopt($ch, CURLOPT_USERAGENT, UAgent::random());
 		if ($timeout == '') curl_setopt($ch, CURLOPT_TIMEOUT, 10); 
 		else curl_setopt($ch, CURLOPT_TIMEOUT, $timeout); 

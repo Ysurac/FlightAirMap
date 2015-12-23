@@ -79,8 +79,14 @@ $globalMapRoute = TRUE;
 // DISPLAY FLIGHTS PATH HISTORY
 $globalMapHistory = FALSE;
 
+// WRAP MAP OR REPEAT
+$globalMapWrap = TRUE;
+
 //IVAO
 $globalIVAO = FALSE;
+
+//VATSIM
+$globalVATSIM = FALSE;
 
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import

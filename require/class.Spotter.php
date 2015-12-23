@@ -24,11 +24,12 @@ class Spotter{
 	*/
 	public function getDataFromDB($query, $params = array(), $limitQuery = '')
 	{
-		global $globalSquawkCountry, $globalIVAO;
+		global $globalSquawkCountry, $globalIVAO, $globalVATSIM;
 		$Image = new Image();
 		$Schedule = new Schedule();
 		$ACARS = new ACARS();
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
+		if (!isset($globalVATSIM)) $globalVATSIM = FALSE;
 		date_default_timezone_set('UTC');
 		
 		if (!is_string($query))
@@ -217,7 +218,7 @@ class Spotter{
 				}
 			}
 			
-			if ($temp_array['registration'] != "" && !$globalIVAO) {
+			if ($temp_array['registration'] != "" && !$globalIVAO && !$globalVATSIM) {
 				$owner_info = $this->getAircraftOwnerByRegistration($temp_array['registration']);
 				if ($owner_info['owner'] != '') $temp_array['aircraft_owner'] = ucwords(strtolower($owner_info['owner']));
 				$temp_array['aircraft_base'] = $owner_info['base'];
@@ -245,7 +246,7 @@ class Spotter{
 			}
 
 
-			if (!isset($globalIVAO) || ! $globalIVAO) {
+			if ((!isset($globalIVAO) || ! $globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM)) {
 				$schedule_array = $Schedule->getSchedule($temp_array['ident']);
 				//print_r($schedule_array);
 				if (count($schedule_array) > 0) {
@@ -2482,12 +2483,13 @@ class Spotter{
 	*/	
 	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '')
 	{
-		global $globalURL, $globalIVAO;
+		global $globalURL, $globalIVAO, $globalVATSIM;
 		
 		$Image = new Image();
 		$Common = new Common();
 		
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
+		if (!isset($globalVATSIM)) $globalVATSIM = FALSE;
 		date_default_timezone_set('UTC');
 		
 		//getting the registration
@@ -2642,7 +2644,7 @@ class Spotter{
 		}
 
 		//getting the aircraft image
-		if (($registration != "" || $registration != 'NA') && !$globalIVAO)
+		if (($registration != "" || $registration != 'NA') && !$globalIVAO && !$globalVATSIM)
 		{
 			$image_array = $Image->getSpotterImage($registration);
 			if (!isset($image_array[0]['registration']))

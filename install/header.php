@@ -46,7 +46,7 @@ if ($facebook_meta_image != "")
         //document.getElementById("flightaware_data").style.display = document.getElementById("flightaware").checked ? "inline" : "none" ;
         document.getElementById("sbs_data").style.display = document.getElementById("sbs").checked ? "inline" : "none" ;
         document.getElementById("optional_sbs").style.display = document.getElementById("sbs").checked ? "inline" : "none" ;
-        document.getElementById("sbs_url").style.display = (document.getElementById("ivao").checked || document.getElementById("sbs").checked) ? "inline" : "none" ;
+        document.getElementById("sbs_url").style.display = (document.getElementById("ivao").checked || document.getElementById("sbs").checked || document.getElementById("vatsim").checked) ? "inline" : "none" ;
         document.getElementById("acars_data").style.display = document.getElementById("acars").checked ? "inline" : "none" ;
     }
     function schedule_js() {

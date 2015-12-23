@@ -180,13 +180,13 @@ $i = 1;
 $tt = 0;
 
 // Delete all ATC
-if (!$globalDaemon && isset($globalIVAO) && $globalIVAO) $ATC->deleteAll();
+if (!$globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) $ATC->deleteAll();
 
 // Infinite loop if daemon, else work for time defined in $globalCronEnd or only one time.
 while ($i > 0) {
     if (!$globalDaemon) $i = $endtime-time();
     // Delete old ATC
-    if ($globalDaemon && isset($globalIVAO) && $globalIVAO) $ATC->deleteOldAtc();
+    if ($globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) $ATC->deleteOldAtc();
     foreach ($formats as $id => $value) {
 	if ($value == 'deltadbtxt' && (time() - $last_exec['deltadbtxt'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);
@@ -453,7 +453,7 @@ while ($i > 0) {
     		$data['registration'] = $line['aircraft'];
 	    	$aircraft_data = explode('-',$line['aircraftname']);
 	    	$data['aircraft_icao'] = $aircraft_data[0];
-    		if (isset($line['route'])) $data['route'] = $line['route'];
+    		if (isset($line['route'])) $data['waypoints'] = $line['route'];
 	        $data['format_source'] = 'phpvmacars';
 		$SI->add($data);
 		unset($data);

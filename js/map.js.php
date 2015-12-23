@@ -91,7 +91,7 @@ bounds = L.latLngBounds(southWest,northEast);
 ?>
   L.tileLayer('https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={token}', {
     maxZoom: 18,
-    noWrap: true,
+    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
       '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -103,7 +103,7 @@ bounds = L.latLngBounds(southWest,northEast);
 ?>
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
-    noWrap: true,
+    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
       '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>'
   }).addTo(map);
@@ -114,7 +114,7 @@ bounds = L.latLngBounds(southWest,northEast);
     maxZoom: 18,
     continuousWorld: false,
     subdomains: "1234",
-    noWrap: true,
+    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
       '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
       'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>'
@@ -125,7 +125,7 @@ bounds = L.latLngBounds(southWest,northEast);
   L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
     maxZoom: 18,
     subdomains: "1234",
-    noWrap: true,
+    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
       '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
       'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>, Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency"'
@@ -913,7 +913,7 @@ function getLiveData()
   $('.button').tooltip({ placement: 'right' });
 
 <?php
-    if (isset($globalIVAO) && $globalIVAO) {
+    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
 ?>
     update_atcLayer();
     setInterval(function(){map.removeLayer(atcLayer);update_atcLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);

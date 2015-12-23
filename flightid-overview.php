@@ -274,6 +274,50 @@ if (!empty($spotter_array))
                     }
                     print '</div>';
                 print '</div>';
+
+		if (isset($spotter_item['aircraft_owner']) && $spotter_item['aircraft_owner'] != '') 
+		{
+			print '<div class="detail fa-user">';
+			print '<div class="title">Owner</div>';
+			print '<div>';
+			print $spotter_item['aircraft_owner'];
+			print '</div>';
+			print '</div>';
+		} elseif ($globalIVAO) {
+			print '<div class="detail fa-user">';
+			print '<div class="title">Pilot Name</div>';
+			print '<div>';
+			if ($spotter_item['pilot_id'] != "")
+			{
+				print '<a href="https://www.ivao.aero/Member.aspx?ID='.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')</a>';
+			} else {
+				if ($spotter_item['pilot_name'] != "")
+				{
+					print $spotter_item['pilot_name'];
+				} else {
+					print 'N/A';
+				}
+			}
+			print '</div>';
+			print '</div>';
+		} elseif ($globalVATSIM) {
+			print '<div class="detail fa-user">';
+			print '<div class="title">Pilot Name</div>';
+			print '<div>';
+			if ($spotter_item['pilot_id'] != "")
+			{
+				print '<a href="http://www.vataware.com/pilot/'.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')</a>';
+			} else {
+				if ($spotter_item['pilot_name'] != "")
+				{
+					print $spotter_item['pilot_name'];
+				} else {
+					print 'N/A';
+				}
+			}
+			print '</div>';
+			print '</div>';
+		}
                 
                 print '<div class="detail airline">';
                     print '<div class="title">Airline</div>';
@@ -339,6 +383,22 @@ if (!empty($spotter_array))
                             }
                     print '</div>';
                 print '</div>';
+
+		if ($spotter_item['waypoints'] != "" || $spotter_item['route_stop'] != "")
+		{
+			print '<div class="detail coordinates">';
+			print '<div class="title">Route</div>';
+			print '<div>';
+			if ($spotter_item['waypoints'] != "")
+			{
+				print $spotter_item['waypoints'];
+			} elseif ($spotter_item['route_stop'] != "")
+			{
+				print $spotter_item['route_stop'];
+			}
+			print '</div>';
+			print '</div>';
+		}
 
 			print '</div>';
 

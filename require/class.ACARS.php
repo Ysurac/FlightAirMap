@@ -996,6 +996,7 @@ RMK/FUEL   2.6 M0.79)
     */
     public function addModeSData($ident,$registration,$icao = '',$ICAOTypeCode = '') {
 	global $globalDebug, $globalDBdriver;
+	$ident = trim($ident);
 	$Translation = new Translation();
 	$Spotter = new Spotter();
 	if ($globalDebug) echo "Test if we add ModeS data...";
