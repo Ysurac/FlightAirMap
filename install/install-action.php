@@ -277,6 +277,21 @@ if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
 	if (isset($globalIVAO) && $globalIVAO) $_SESSION['install'] = 'ivao';
 	else $_SESSION['install'] = 'finish';
 	*/
+	if (isset($globalVATSIM) && $globalVATSIM) {
+		$_SESSION['install'] = 'vatsim';
+		$_SESSION['next'] = 'Insert VATSIM data';
+	} else {
+		$_SESSION['install'] = 'finish';
+		$_SESSION['next'] = 'finish';
+	}
+	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	print json_encode($result);
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'vatsim') {
+	include_once('../install/class.create_db.php');
+	$globalDebug = FALSE;
+	include_once('class.update_db.php');
+	update_db::update_vatsim();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM data'));
 	$_SESSION['install'] = 'finish';
 	$_SESSION['next'] = 'finish';
 	setcookie('install','finish',time()+50000);

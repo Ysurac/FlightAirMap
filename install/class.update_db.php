@@ -1029,6 +1029,12 @@ class update_db {
 		update_db::gunzip('../db/airspace.sql.gz',$tmp_dir.'airspace.sql');
 		create_db::import_file($tmp_dir.'airspace.sql');
 	}
+
+	public static function update_vatsim() {
+		global $tmp_dir;
+		include_once('class.create_db.php');
+		create_db::import_file('../db/vatsim/airlines.sql');
+	}
 	
 	public static function update_countries() {
 		global $tmp_dir;

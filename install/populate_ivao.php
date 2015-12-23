@@ -15,4 +15,9 @@
 		echo "Done !\n";
 	}
     }
+    if (isset($globalVATSIM) && $globalVATSIM) {
+	echo "Install VATSIM airlines...";
+	update_db::update_vatsim();
+	echo "Done !\n";
+    }
 ?>
