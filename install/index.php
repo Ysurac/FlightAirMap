@@ -903,13 +903,16 @@ if (isset($_POST['dbtype'])) {
 	print '</ul></div>';
 	print '<p>All is now installed ! Thanks</p>';
 	if ($globalSBS1) {
-		print '<p>You need to run scripts/cron-sbs.php as a daemon. You can use init script in the install/init directory.</p>';
+		print '<p>You need to run scripts/daemon-spotter.php as a daemon. You can use init script in the install/init directory.</p>';
 	}
 	if ($globalACARS) {
 		print '<p>You need to run scripts/daemon-acars.php as a daemon. You can use init script in the install/init directory.</p>';
 	}
 	if ($globalFlightAware && ($globalFlightAwareUsername == '' || $globalFlightAwarePassword == '')) {
 		print '<p>You <strong>must</strong> have a FlightAware API account to use FlightAware source</p>';
+	}
+	if (isset($globalIVAO) && $globalIVAO) {
+		print '<p>You need to run install/populate_ivao.php if you want to have IVAO airlines</p>';
 	}
 	print '<p>If you want to keep external data updated, you have to add install/update_db.php in cron.</p>';
 	print '</div>';

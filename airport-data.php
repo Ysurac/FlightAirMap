@@ -70,6 +70,7 @@ print '</div>';
 if (isset($metar_parse)) {
     print '<div class="waypoints">';
     print '<div><span>METAR</span>';
+    print '<i>'.$metar_info[0]['metar'].'</i><br />';
     print '<b>'.$metar_info[0]['metar_date'].'</b><br />';
 //    print_r($metar_parse);
     if (isset($metar_parse['wind'])) {
