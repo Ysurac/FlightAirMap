@@ -670,7 +670,7 @@ if (isset($_POST['dbtype'])) {
 	$notamsource = filter_input(INPUT_POST,'notamsource',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalNOTAMSource' => $notamsource));
 	$metarsource = filter_input(INPUT_POST,'metarsource',FILTER_SANITIZE_STRING);
-	$settings = array_merge($settings,array('globalMETARurl' => $notamsource));
+	$settings = array_merge($settings,array('globalMETARurl' => $metarsource));
 
 	$zoilatitude = filter_input(INPUT_POST,'zoilatitude',FILTER_SANITIZE_STRING);
 	$zoilongitude = filter_input(INPUT_POST,'zoilongitude',FILTER_SANITIZE_STRING);
