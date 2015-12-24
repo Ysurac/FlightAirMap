@@ -60,7 +60,12 @@ if (count($error) > 0) {
 $settings = array();
 $error = '';
 
-if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
+if (isset($_GET['reset'])) {
+	echo 'Last session : '.$_SESSION['install']."\n";
+	print_r($_SESSION['done']);
+	unset($_SESSION['install']);
+	echo 'Reset session !!';
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
 	if (update_schema::check_version(false) == '0') {
 		$_SESSION['next'] = 'Create and import tables';
 		if ($globalDBdriver == 'mysql') {
@@ -297,11 +302,6 @@ if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
 	setcookie('install','finish',time()+50000);
 	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	print json_encode($result);
-} else if (isset($_GET['reset'])) {
-	echo 'Last session : '.$_SESSION['install']."\n";
-	print_r($_SESSION['done']);
-	unset($_SESSION['install']);
-	echo 'Reset session !!';
 } else {
 	//unset($_SESSION['install']);
 	$_SESSION['error'] = 'Unknwon task : '.$_SESSION['install'];
