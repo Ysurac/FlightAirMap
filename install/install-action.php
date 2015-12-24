@@ -77,7 +77,7 @@ if (isset($_GET['reset'])) {
                         $_SESSION['error'] = $error;
 		}
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Create and import tables'));
-		if ($globalSBS1) {
+		if ($globalSBS1 && !$globalIVAO && !$globalVATSIM) {
 			$_SESSION['install'] = 'populate';
 			$_SESSION['next'] = 'Populate aircraft_modes table with externals data';
 			setcookie('next','Populate aircraft_modes table with externals data');
