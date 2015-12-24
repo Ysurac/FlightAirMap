@@ -281,11 +281,15 @@ class METAR {
         }
         
         public function addMETARCycle() {
-    		global $globalDebug;
+    		global $globalDebug, $globalIVAO;
     		if (isset($globalDebug) && $globalDebug) echo "Downloading METAR cycle...";
     		date_default_timezone_set("UTC");
     		$Common = new Common();
-    		$cycle = $Common->getData('http://weather.noaa.gov/pub/data/observations/metar/cycles/'.date('H').'Z.TXT');
+    		if (isset($globalIVAO) && $globalIVAO) {
+        		$cycle = $Common->getData('http://wx.ivao.aero/metar.php');
+    		} else {
+			$cycle = $Common->getData('http://weather.noaa.gov/pub/data/observations/metar/cycles/'.date('H').'Z.TXT');
+    		}
     		if (isset($globalDebug) && $globalDebug) echo "Done - Updating DB...";
     		$date = '';
     		foreach(explode("\n",$cycle) as $line) {
