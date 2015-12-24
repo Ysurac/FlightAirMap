@@ -311,7 +311,7 @@ class Schedule {
 		$check_date = new Datetime($date);
 		$numvol = sprintf('%04d',preg_replace('/^[A-Z]*/','',$callsign));
 		if (!filter_var(preg_replace('/^[A-Z]*/','',$callsign),FILTER_VALIDATE_INT)) return array();
-		if ($globalLufthansaKey == '') return array();
+		if (!isset($globalLufthansaKey) || $globalLufthansaKey == '' || !isset($globalLufthansaKey['key']) || $globalLufthansaKey['key'] == '') return array();
 		$url = "https://api.lufthansa.com/v1/oauth/token";
 		$post = array('client_id' => $globalLufthansaKey['key'],'client_secret' => $globalLufthansaKey['secret'],'grant_type' => 'client_credentials');
 		$data = $Common->getData($url,'post',$post);
