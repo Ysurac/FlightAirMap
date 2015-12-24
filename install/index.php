@@ -2,6 +2,7 @@
 @session_start();
 header('Content-Encoding: none;');
 if (isset($_SESSION['error'])) {
+	echo 'Error : '.$_SESSION['error'].' - Resetting install... You need to fix the problem and run install again.';
 	unset($_SESSION['error']);
 	unset($_SESSION['install']);
 }
@@ -660,10 +661,15 @@ if (isset($_POST['dbtype'])) {
 	$sbsurl = $_POST['sbsurl'];
 	
 	$globalSBS1Hosts = array();
-	foreach ($sbshost as $key => $host) {
-	    if ($host != '') $globalSBS1Hosts[] = $host.':'.$sbsport[$key];
+	if ($datasource != 'ivao' && $datasource != 'vatsim') {
+	    foreach ($sbshost as $key => $host) {
+		if ($host != '') $globalSBS1Hosts[] = $host.':'.$sbsport[$key];
+	    }
 	}
-	if (count($sbsurl) > 0 && $sbsurl[0] != '') $globalSBS1Hosts = array_merge($globalSBS1Hosts,$sbsurl);
+	if (count($sbsurl) > 0 && $sbsurl[0] != '') {
+	    $sbsurl = array_filter($sbsurl);
+	    $globalSBS1Hosts = array_merge($globalSBS1Hosts,$sbsurl);
+	}
 	$settings = array_merge($settings,array('globalSBS1Hosts' => $globalSBS1Hosts));
 
 	$sbstimeout = filter_input(INPUT_POST,'sbstimeout',FILTER_SANITIZE_NUMBER_INT);

@@ -67,7 +67,6 @@ if (isset($_GET['reset'])) {
 	echo 'Reset session !!';
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
 	if (update_schema::check_version(false) == '0') {
-		$_SESSION['next'] = 'Create and import tables';
 		if ($globalDBdriver == 'mysql') {
 		    $error .= create_db::import_all_db('../db/');
 		} elseif ($globalDBdriver == 'pgsql') {

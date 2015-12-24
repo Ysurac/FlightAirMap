@@ -17,6 +17,11 @@
     echo "Install countries...";
     update_db::update_countries();
     echo "Done !\n";
+    if (isset($globalOwner) && $globalOwner) {
+	echo "Install private owners...";
+	update_db::update_owner();
+        echo "Done !\n";
+    }
     /*
     if (isset($globalIVAO) && $globalIVAO) {
         echo "Install IVAO airlines and logos...";
