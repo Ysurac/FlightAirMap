@@ -1,7 +1,10 @@
 <?php
 @session_start();
 header('Content-Encoding: none;');
-if (isset($_SESSION['error'])) unset($_SESSION['install']);
+if (isset($_SESSION['error'])) {
+	unset($_SESSION['error']);
+	unset($_SESSION['install']);
+}
 #if (ob_get_level() == 0) ob_start();
 #ob_implicit_flush(true);
 #ob_end_flush();
