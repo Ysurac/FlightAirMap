@@ -259,6 +259,7 @@ while ($i > 0) {
 			elseif ($line[3] == 'ATC') {
 				//print_r($data);
 				$data['info'] = str_replace('^&sect;','<br />',$data['info']);
+				$data['info'] = str_replace('&sect;','<br />',$data['info']);
 				$typec = substr($data['ident'],-3);
 				if ($typec == 'APP') $data['type'] = 'Approach';
 				elseif ($typec == 'TWR') $data['type'] = 'Tower';
@@ -410,6 +411,7 @@ while ($i > 0) {
 		    //    print_r($data);
     		    } elseif ($line['icon'] == 'ct') {
 			$data['info'] = str_replace('^&sect;','<br />',$data['info']);
+			$data['info'] = str_replace('&sect;','<br />',$data['info']);
 			$typec = substr($data['ident'],-3);
 			$data['type'] = '';
 			if ($typec == 'APP') $data['type'] = 'Approach';
