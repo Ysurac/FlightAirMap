@@ -8,6 +8,9 @@ Can also be used with IVAO sources like whazzup.txt, phpvms,...
 
 It also support glidernet APRS source.
 
+## Demo
+* From ADS-B : [https://www.flightairmap.fr/](https://www.flightairmap.fr/)
+* From IVAO : [https://ivao.flightairmap.fr/](https://ivao.flightairmap.fr/)
 
 
 ## System Requirements
