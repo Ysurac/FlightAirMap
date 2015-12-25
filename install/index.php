@@ -641,6 +641,9 @@ if (isset($_POST['dbtype'])) {
 	$sbshost = $_POST['sbshost'];
 	$sbsport = $_POST['sbsport'];
 	$sbsurl = $_POST['sbsurl'];
+
+	$datasource = filter_input(INPUT_POST,'datasource',FILTER_SANITIZE_STRING);
+
 	
 	$globalSBS1Hosts = array();
 	if ($datasource != 'ivao' && $datasource != 'vatsim') {
