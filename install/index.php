@@ -581,7 +581,7 @@ if (isset($_POST['dbtype'])) {
 			//$error .= create_db::import_all_db('../db/');
 			$settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBuser' => $dbuser,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
 		}
-	}
+	} else $settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBuser' => $dbuser,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
 
 	$sitename = filter_input(INPUT_POST,'sitename',FILTER_SANITIZE_STRING);
 	$siteurl = filter_input(INPUT_POST,'siteurl',FILTER_SANITIZE_STRING);
@@ -607,24 +607,6 @@ if (isset($_POST['dbtype'])) {
 	$latitudecenter = filter_input(INPUT_POST,'latitudecenter',FILTER_SANITIZE_STRING);
 	$longitudecenter = filter_input(INPUT_POST,'longitudecenter',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalCenterLatitude' => $latitudecenter,'globalCenterLongitude' => $longitudecenter));
-
-	$datasource = filter_input(INPUT_POST,'datasource',FILTER_SANITIZE_STRING);
-	if ($datasource == 'flightaware') {
-		$settings = array_merge($settings,array('globalFlightAware' => 'TRUE','globalSBS1' => 'FALSE'));
-	} else {
-		$settings = array_merge($settings,array('globalFlightAware' => 'FALSE','globalSBS1' => 'TRUE'));
-	}
-	if ($datasource == 'ivao') {
-		$settings = array_merge($settings,array('globalIVAO' => 'TRUE','globalVATSIM' => 'FALSE'));
-	} else $settings = array_merge($settings,array('globalIVAO' => 'FALSE'));
-	if ($datasource == 'vatsim') {
-		$settings = array_merge($settings,array('globalVATSIM' => 'TRUE','globalIVAO' => 'FALSE'));
-	} else $settings = array_merge($settings,array('globalVATSIM' => 'FALSE'));
-	if ($datasource == 'vatsim' || $datasource == 'ivao') {
-		$settings = array_merge($settings,array('globalSchedulesFetch' => 'FALSE','globalTranslationFetch' => 'FALSE'));
-	} else $settings = array_merge($settings,array('globalSchedulesFetch' => 'TRUE','globalTranslationFetch' => 'TRUE'));
-	
-
 
 	$acars = filter_input(INPUT_POST,'acars',FILTER_SANITIZE_STRING);
 	if ($acars == 'acars') {
@@ -733,6 +715,25 @@ if (isset($_POST['dbtype'])) {
 	} else {
 		$settings = array_merge($settings,array('globalSchedulesFetch' => 'FALSE'));
 	}
+
+	$datasource = filter_input(INPUT_POST,'datasource',FILTER_SANITIZE_STRING);
+	if ($datasource == 'flightaware') {
+		$settings = array_merge($settings,array('globalFlightAware' => 'TRUE','globalSBS1' => 'FALSE'));
+	} else {
+		$settings = array_merge($settings,array('globalFlightAware' => 'FALSE','globalSBS1' => 'TRUE'));
+	}
+	if ($datasource == 'ivao') {
+		$settings = array_merge($settings,array('globalIVAO' => 'TRUE','globalVATSIM' => 'FALSE'));
+	} else $settings = array_merge($settings,array('globalIVAO' => 'FALSE'));
+	if ($datasource == 'vatsim') {
+		$settings = array_merge($settings,array('globalVATSIM' => 'TRUE','globalIVAO' => 'FALSE'));
+	} else $settings = array_merge($settings,array('globalVATSIM' => 'FALSE'));
+	if ($datasource == 'vatsim' || $datasource == 'ivao') {
+		$settings = array_merge($settings,array('globalSchedulesFetch' => 'FALSE','globalTranslationFetch' => 'FALSE'));
+	} else $settings = array_merge($settings,array('globalSchedulesFetch' => 'TRUE','globalTranslationFetch' => 'TRUE'));
+	
+
+
 	$notam = filter_input(INPUT_POST,'notam',FILTER_SANITIZE_STRING);
 	if ($notam == 'notam') {
 		$settings = array_merge($settings,array('globalNOTAM' => 'TRUE'));
