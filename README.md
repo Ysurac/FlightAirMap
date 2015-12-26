@@ -11,6 +11,7 @@ It also support glidernet APRS source.
 ## Demo
 * From ADS-B : [https://www.flightairmap.fr/](https://www.flightairmap.fr/)
 * From IVAO : [https://ivao.flightairmap.fr/](https://ivao.flightairmap.fr/)
+* From VATSIM : [https://vatsim.flightairmap.fr/](https://vatsim.flightairmap.fr/)
 
 
 ## System Requirements
