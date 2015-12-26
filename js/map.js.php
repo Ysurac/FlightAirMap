@@ -69,8 +69,16 @@ $( document ).ready(function() {
   }
 
   //create the map
-  map = L.map('live-map', { zoomControl:false }).setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], zoom);
 <?php
+	if (isset($globalCenterLatitude) && $globalCenterLatitude != '' && isset($globalCenterLongitude) && $globalCenterLongitude != '') {
+?>
+	map = L.map('live-map', { zoomControl:false }).setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], zoom);
+<?php
+	} else {
+?>
+	map = L.map('live-map', { zoomControl:false }).setView([0,0], zoom);
+<?php
+        }
     }
 ?>
   //initialize the layer group for the aircrft markers
@@ -79,7 +87,6 @@ $( document ).ready(function() {
 var southWest = L.latLng(-90,-180),
     northEast = L.latLng(90,180);
 bounds = L.latLngBounds(southWest,northEast);
-
   //a few title layers
 <?php
     if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
@@ -112,7 +119,6 @@ bounds = L.latLngBounds(southWest,northEast);
 ?>
   L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
     maxZoom: 18,
-    continuousWorld: false,
     subdomains: "1234",
     noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -138,10 +144,12 @@ bounds = L.latLngBounds(southWest,northEast);
     if (!isset($globalBounding) || $globalBounding == 'polygon') {
 	if ($globalLatitudeMin != '' && $globalLatitudeMax != '' && $globalLongitudeMin != '' && $globalLongitudeMax != '') 
 	{ 
+
     ?>
+
   //create the bounding box to show the coverage area
   var polygon = L.polygon(
-    [ [[90, -180],
+   [ [[90, -180],
     [90, 180],
     [-90, 180],
     [-90, -180]], // outer ring
@@ -156,6 +164,7 @@ bounds = L.latLngBounds(southWest,northEast);
     stroke: false
     }).addTo(map);
 <?php
+
 	}
     } elseif ($globalBounding == 'circle') {
 ?>
