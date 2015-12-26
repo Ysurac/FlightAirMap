@@ -1,0 +1,22 @@
+#!/sbin/runscript
+
+extra_started_commands="reload"
+
+start() {
+        ebegin "Starting FlightAirMap Daemon"
+        start-stop-daemon --background --start --make-pidfile --pidfile /var/run/flightairmap-daemon.pid --exec /var/www/flightairmap/Web_App/scripts/daemon-spotter.php
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping FlightAirMap Daemon"
+        start-stop-daemon --stop --pidfile /var/run/flightairmap-daemon.pid --name daemon-spotter.php
+        eend $?
+}
+
+reload() {
+        ebegin "Reloading FlightAirMap Daemon"
+        start-stop-daemon --signal HUP --pidfile /var/run/flightairmap-daemon.pid
+        eend $?
+}
+
