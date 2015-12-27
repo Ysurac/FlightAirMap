@@ -70,6 +70,9 @@ $globalLiveInterval = '200';
 // LIVE MAP REFRESH (in seconds)
 $globalMapRefresh = '30';
 
+// IDLE TIMEOUT (in minutes)
+$globalMapIdleTimeout = '30';
+
 // DISPLAY INFO OF FLIGHTS IN A POPUP
 $globalMapPopup = FALSE;
 
@@ -84,9 +87,6 @@ $globalMapWrap = TRUE;
 
 //IVAO
 $globalIVAO = FALSE;
-
-//VATSIM
-$globalVATSIM = FALSE;
 
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import

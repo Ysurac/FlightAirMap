@@ -52,6 +52,7 @@ if (strtolower($current_page) == "index")
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
+<script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script>
 <?php
 }

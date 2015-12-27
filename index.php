@@ -9,6 +9,10 @@ require('header.php');
 <div id="live-map"></div>
 <div id="aircraft_ident"></div>
 
+<div id="dialog" title="Session has timed-out">
+  <p>In order to save data consumption web page times out after 30 minutes. Close this dialog to continue.</p>
+</div>
+
 <div id="sidebar" class="sidebar collapsed">
     <!-- Nav tabs -->
     <ul class="sidebar-tabs" role="tablist">

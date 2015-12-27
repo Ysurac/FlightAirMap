@@ -16,8 +16,31 @@ waypoints = '';
 var weatherradarrefresh;
 var weathersatellite;
 var weathersatelliterefresh; 
+var noTimeout = true;
 
 <?php
+if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0) {
+?>
+$(document).idle({
+  onIdle: function(){
+    noTimeout = false;
+    $( "#dialog" ).dialog({
+	modal: true,
+	buttons: {
+	    Close: function() {
+		//noTimeout = true;
+		$( this ).dialog( "close" );
+	    }
+	},
+	 close: function() {
+		noTimeout = true;
+        }
+    });
+  },
+  idle: <?php print $globalMapIdleTimeout*60000; ?>
+})
+<?php
+}
 if (isset($_GET['ident'])) {
     $ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
 }
@@ -916,7 +939,7 @@ function getLiveData()
   getLiveData();
 
   //then load it again every 30 seconds
-  setInterval(function(){getLiveData()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+  setInterval(function(){if (noTimeout) getLiveData()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 
   //adds the bootstrap hover to the map buttons
   $('.button').tooltip({ placement: 'right' });
