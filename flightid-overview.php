@@ -295,31 +295,15 @@ if (!empty($spotter_array))
 			print $spotter_item['aircraft_owner'];
 			print '</div>';
 			print '</div>';
-		} elseif ($globalIVAO) {
+		} elseif ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
 			print '<div class="detail fa-user">';
 			print '<div class="title">Pilot Name</div>';
 			print '<div>';
 			if ($spotter_item['pilot_id'] != "")
 			{
 				if ($spotter_item['format_source'] == 'whazzup') print '<a href="https://www.ivao.aero/Member.aspx?ID='.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')</a>';
+				elseif ($spotter_item['format_source'] == 'vatsimtxt')print '<a href="http://www.vataware.com/pilot/'.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')</a>';
 				else print $spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')';
-			} else {
-				if ($spotter_item['pilot_name'] != "")
-				{
-					print $spotter_item['pilot_name'];
-				} else {
-					print 'N/A';
-				}
-			}
-			print '</div>';
-			print '</div>';
-		} elseif ($globalVATSIM) {
-			print '<div class="detail fa-user">';
-			print '<div class="title">Pilot Name</div>';
-			print '<div>';
-			if ($spotter_item['pilot_id'] != "")
-			{
-				print '<a href="http://www.vataware.com/pilot/'.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')</a>';
 			} else {
 				if ($spotter_item['pilot_name'] != "")
 				{
