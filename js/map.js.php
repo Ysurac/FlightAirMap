@@ -1701,3 +1701,10 @@ function getCookie(cname) {
     }
     return "";
 }
+
+function clickVATSIM(cb) {
+    document.cookie =  'ShowVATSIM='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+function clickIVAO(cb) {
+    document.cookie =  'ShowIVAO='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}

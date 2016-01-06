@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS `spotter_live` (
   `pilot_id`varchar(255),
   `pilot_name`varchar(255),
   `verticalrate` int(11),
+  `format_source` varchar(255) DEFAULT NULL,
+  `ground` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`spotter_live_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 

@@ -45,45 +45,49 @@ if (!isset($_GET['ident'])){
 		if (isset($globalArchive) && $globalArchive) {
 			// Requirement for altitude graph
 			print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
-			//$all_data = SpotterLive::getAltitudeLiveSpotterDataByIdent($_GET['ident']);
-			$all_data = $SpotterArchive->getAltitudeArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
+			$all_data = $SpotterArchive->getAltitudeSpeedArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
 			if (isset($globalTimezone)) {
 				date_default_timezone_set($globalTimezone);
 			} else date_default_timezone_set('UTC');
 			if (count($all_data) > 0) {
 				print '<div id="chart6" class="chart" width="100%"></div>
                     <script> 
-                        google.load("visualization", "1", {packages:["corechart"]});
+                        google.load("visualization", "1.1", {packages:["line","corechart"]});
                       google.setOnLoadCallback(drawChart6);
                       function drawChart6() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Hour","Altitude"], ';
+                            ["Hour","Altitude","Speed"], ';
                             $altitude_data = '';
-                          foreach($all_data as $data)
-                                    {
-                                        $altitude_data .= '[ "'.date("G:i",strtotime($data['date']." UTC")).'",'.$data['altitude'].'],';
-                                    }
-                                    $altitude_data = substr($altitude_data, 0, -1);
-                                    print $altitude_data;
-                        print ']);
+				foreach($all_data as $data)
+				{
+					$altitude_data .= '[ "'.date("G:i",strtotime($data['date']." UTC")).'",'.$data['altitude'].','.$data['ground_speed'].'],';
+				}
+				$altitude_data = substr($altitude_data, 0, -1);
+				print $altitude_data.']);
 
                         var options = {
                             legend: {position: "none"},
-                            chartArea: {"width": "80%", "height": "60%"},
-                            vAxis: {title: "Altitude of last flight",format: "FL#","minValue": 0},
-                            hAxis: {showTextEvery: 2},
-                            height:210,
-                            colors: ["#1a3151"]
+                            series: {
+                                0: {axis: "Altitude"},
+                                1: {axis: "Speed"}
+                            },
+                            axes: {
+                                y: {
+                                    Altitude: {label: "Altitude (FL)"},
+                                    Speed: {label: "Speed (knots)"},
+                                }
+                            },
+                            height:210
                         };
 
-                        var chart = new google.visualization.AreaChart(document.getElementById("chart6"));
+                        var chart = new google.charts.Line(document.getElementById("chart6"));
                         chart.draw(data, options);
                       }
                       $(window).resize(function(){
                               drawChart6();
                             });
-                  </script>';
-			}
+				 </script>';
+  			}
 		}
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['ident'].'</h1>';

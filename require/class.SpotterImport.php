@@ -57,17 +57,63 @@ class SpotterImport {
 	//$Connection->db = null;
     }
 
+    public function checkAll() {
+	global $globalDebug;
+	if ($globalDebug) echo "Update last seen flights data...\n";
+	foreach ($this->all_flights as $key => $flight) {
+	    //echo $this->all_flights[$key]['id'].' - '.$this->all_flights[$key]['latitude'].'  '.$this->all_flights[$key]['longitude']."\n";
+    	    $Spotter = new Spotter();
+            $real_arrival = $this->arrival($key);
+            $Spotter->updateLatestSpotterData($this->all_flights[$key]['id'],$this->all_flights[$key]['ident'],$this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$this->all_flights[$key]['altitude'],$this->all_flights[$key]['ground'],$this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'],$real_arrival['airport_icao'],$real_arrival['airport_time']);
+	}
+    }
+
+    public function arrival($key) {
+	$Spotter = new Spotter();
+        $airport_icao = '';
+        $airport_time = '';
+	if ($this->all_flights[$key]['latitude'] != '' && $this->all_flights[$key]['longitude'] != '') {
+	    $closestAirports = $Spotter->closestAirports($this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude']);
+    	    if (isset($closestAirports[0])) {
+        	if (isset($this->all_flights[$key]['arrival_airport']) && $this->all_flights[$key]['arrival_airport'] == $closestAirports[0]['icao']) {
+        	    $airport_icao = $closestAirports[0]['icao'];
+        	    $airport_time = $this->all_flights[$key]['datetime'];
+        	} elseif (count($closestAirports > 1) && isset($this->all_flights[$key]['arrival_airport']) && $this->all_flights[$key]['arrival_airport'] != '') {
+        	    foreach ($closestAirports as $airport) {
+        		if ($this->all_flights[$key]['arrival_airport'] == $airport['icao']) {
+        		    $airport_icao = $airport['icao'];
+        		    $airport_time = $this->all_flights[$key]['datetime'];
+        		    break;
+        		}
+        	    }
+        	} elseif ($closestAirports[0]['altitude'] < $this->all_flights[$key]['altitude'] && $closestAirports[0]['altitude'] < $this->all_flights[$key]['altitude']+100) {
+        		$airport_icao = $airport['icao'];
+        		$airport_time = $this->all_flights[$key]['datetime'];
+        	}
+    	    }
+        }
+        return array('airport_icao' => $airport_icao,'airport_time' => $airport_time);
+    }
+
+
 
     function del() {
 	global $globalDebug;
 	// Delete old infos
-	$SpotterLive = new SpotterLive();
 	foreach ($this->all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
         	if ($flight['lastupdate'] < (time()-3000)) {
             	    if (isset($this->all_flights[$key]['id'])) {
             		if ($globalDebug) echo "--- Delete old values with id ".$this->all_flights[$key]['id']."\n";
+			$SpotterLive = new SpotterLive();
             		$SpotterLive->deleteLiveSpotterDataById($this->all_flights[$key]['id']);
+			$SpotterLive->db = null;
+            		// FIXME : Add check on ground if available
+            		$real_arrival = $this->arrival($key);
+            		$Spotter = new Spotter();
+            		$result = $Spotter->updateLatestSpotterData($this->all_flights[$key]['id'],$this->all_flights[$key]['ident'],$this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$this->all_flights[$key]['altitude'],$this->all_flights[$key]['ground'],$this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'],$real_arrival['airport_icao'],$real_arrival['airport_time']);
+			if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
+			$Spotter->db = null;
             	    }
             	    unset($this->all_flights[$key]);
     	        }
@@ -134,7 +180,7 @@ class SpotterImport {
 			}
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $aircraft_icao));
 		    } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
-		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','noarchive' => false));
+		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','ground' => false, 'format_source' => '','verticalrate' => '','noarchive' => false,'putinarchive' => false));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('lastupdate' => time()));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
@@ -164,6 +210,13 @@ class SpotterImport {
  
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_flights[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9]+$/', $line['ident'])) {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => trim($line['ident'])));
+		    if ($this->all_flights[$id]['addedSpotter'] == 1) {
+            		$Spotter = new Spotter();
+            		$result = $Spotter->updateIdentSpotterData($this->all_flights[$id]['id'],$this->all_flights[$id]['ident']);
+			if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
+			$Spotter->db = null;
+		    }
+
 /*
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
@@ -174,7 +227,13 @@ class SpotterImport {
   */
 		    if (!isset($this->all_flights[$id]['id'])) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.$this->all_flights[$id]['ident']));
 
-		    $putinarchive = true;
+		    //$putinarchive = true;
+		    if (isset($line['departure_airport_time'])) {
+			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('departure_airport_time' => $line['departure_airport_time']));
+		    }
+		    if (isset($line['arrival_airport_time'])) {
+			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('arrival_airport_time' => $line['arrival_airport_time']));
+		    }
 		    if (isset($line['departure_airport_icao']) && isset($line['arrival_airport_icao'])) {
 		    		$this->all_flights[$id] = array_merge($this->all_flights[$id],array('departure_airport' => $line['departure_airport_icao'],'arrival_airport' => $line['arrival_airport_icao'],'route_stop' => ''));
 		    } elseif (isset($line['departure_airport_iata']) && isset($line['arrival_airport_iata'])) {
@@ -225,7 +284,9 @@ class SpotterImport {
 
 
 	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '') {
-	    	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || !isset($this->all_flights[$id]['time_last_coord']) || $Common->withinThreshold(time()-$this->all_flights[$id]['time_last_coord'],$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']))) {
+	    	    if (isset($this->all_flights[$id]['time_last_coord'])) $timediff = round(time()-$this->all_flights[$id]['time_last_coord']);
+	    	    else unset($timediff);
+	    	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || !isset($timediff) || ($timediff > 10 && $Common->withinThreshold(round(time()-$this->all_flights[$id]['time_last_coord']),$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'])))) {
 			if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
 			    //if (!isset($this->all_flights[$id]['latitude']) || $this->all_flights[$id]['latitude'] == '' || abs($this->all_flights[$id]['latitude']-$line['latitude']) < 3 || $line['format_source'] != 'sbs' || time() - $this->all_flights[$id]['lastupdate'] > 30) {
 				if (!isset($this->all_flights[$id]['archive_latitude'])) $this->all_flights[$id]['archive_latitude'] = $line['latitude'];
@@ -238,7 +299,8 @@ class SpotterImport {
 				$this->all_flights[$id] = array_merge($this->all_flights[$id],array('latitude' => $line['latitude']));
 				if (abs($this->all_flights[$id]['archive_latitude']-$this->all_flights[$id]['latitude']) > 0.3) {
 				    $this->all_flights[$id]['archive_latitude'] = $line['latitude'];
-				    $putinarchive = true;
+				    $this->all_flights[$id]['putinarchive'] = true;
+				    //$putinarchive = true;
 				}
 			    /*
 			    } elseif (isset($this->all_flights[$id]['latitude'])) {
@@ -259,7 +321,8 @@ class SpotterImport {
 				$this->all_flights[$id] = array_merge($this->all_flights[$id],array('longitude' => $line['longitude']));
 				if (abs($this->all_flights[$id]['archive_longitude']-$this->all_flights[$id]['longitude']) > 0.3) {
 				    $this->all_flights[$id]['archive_longitude'] = $line['longitude'];
-				    $putinarchive = true;
+				    $this->all_flights[$id]['putinarchive'] = true;
+				    //$putinarchive = true;
 				}
 			/*
 			    } elseif (isset($this->all_flights[$id]['longitude'])) {
@@ -267,11 +330,17 @@ class SpotterImport {
 			    }
 			    */
 			}
-		    } else if ($globalDebug) echo '!!! Too much distance in short time... for '.$this->all_flights[$id]['ident']."\n";
+		    } else if ($globalDebug && $timediff > 10) {
+			echo '!!! Too much distance in short time... for '.$this->all_flights[$id]['ident']."\n";
+			echo 'Time : '.round(time()-($this->all_flights[$id]['time_last_coord'])).'s - Distance : '.$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'])."km \n";
+		    }
 		}
 		if (isset($line['verticalrate']) && $line['verticalrate'] != '') {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('verticalrate' => $line['verticalrate']));
 		    //$dataFound = true;
+		}
+		if (isset($line['format_source']) && $line['format_source'] != '') {
+		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('format_source' => $line['format_source']));
 		}
 		if (isset($line['emergency']) && $line['emergency'] != '') {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('emergency' => $line['emergency']));
@@ -286,6 +355,8 @@ class SpotterImport {
 		        elseif (isset($line['id'])) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $line['id']));
 			elseif (isset($this->all_flights[$id]['ident'])) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.$this->all_flights[$id]['ident']));
 		    }
+		    if ($line['ground'] == 0) $line['ground'] = false;
+		    else if ($line['ground'] == 1) $line['ground'] = true;
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ground' => $line['ground']));
 		    //$dataFound = true;
 		}
@@ -300,7 +371,8 @@ class SpotterImport {
 				$Spotter = new Spotter();
 				$Spotter->setHighlightFlight($this->all_flights[$id]['id'],$highlight);
 				$Spotter->db = null;
-				$putinarchive = true;
+				$this->all_flights[$id]['putinarchive'] = true;
+				//$putinarchive = true;
 				$highlight = '';
 			    }
 			    
@@ -310,7 +382,7 @@ class SpotterImport {
 
 		if (isset($line['altitude']) && $line['altitude'] != '') {
 		    //if (!isset($this->all_flights[$id]['altitude']) || $this->all_flights[$id]['altitude'] == '' || ($this->all_flights[$id]['altitude'] > 0 && $line['altitude'] != 0)) {
-			if (abs(round($line['altitude']/100)-$this->all_flights[$id]['altitude']) > 2) $putinarchive = true;
+			if (abs(round($line['altitude']/100)-$this->all_flights[$id]['altitude']) > 2) $this->all_flights[$id]['putinarchive'] = true;
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('altitude' => round($line['altitude']/100)));
 			//$dataFound = true;
 		    //} elseif ($globalDebug) echo "!!! Strange altitude data... not added.\n";
@@ -321,14 +393,14 @@ class SpotterImport {
 		}
 		
 		if (isset($line['heading']) && $line['heading'] != '') {
-		    if (abs($this->all_flights[$id]['heading']-round($line['heading'])) > 2) $putinarchive = true;
+		    if (abs($this->all_flights[$id]['heading']-round($line['heading'])) > 2) $this->all_flights[$id]['putinarchive'] = true;
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => round($line['heading'])));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading_fromsrc' => true));
 		    //$dataFound = true;
   		} elseif (!isset($this->all_flights[$id]['heading_fromsrc']) && isset($this->all_flights[$id]['archive_latitude']) && $this->all_flights[$id]['archive_latitude'] != $this->all_flights[$id]['latitude'] && isset($this->all_flights[$id]['archive_longitude']) && $this->all_flights[$id]['archive_longitude'] != $this->all_flights[$id]['longitude']) {
   		    $heading = $Common->getHeading($this->all_flights[$id]['archive_latitude'],$this->all_flights[$id]['archive_longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']);
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => round($heading)));
-		    if (abs($this->all_flights[$id]['heading']-round($heading)) > 2) $putinarchive = true;
+		    if (abs($this->all_flights[$id]['heading']-round($heading)) > 2) $this->all_flights[$id]['putinarchive'] = true;
   		    if ($globalDebug) echo "ø Calculated Heading for ".$this->all_flights[$id]['hex']." : ".$heading."\n";
   		}
 		if (isset($globalSBS1update) && $globalSBS1update != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSBS1update) $dataFound = false;
@@ -378,7 +450,7 @@ class SpotterImport {
 				    if ($this->all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure)';
 				    if ($this->all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency';
 				    $Spotter = new Spotter();
-				    $result = $Spotter->addSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'],'', $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'],$this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$highlight,$this->all_flights[$id]['hex'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name']);
+				    $result = $Spotter->addSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'], $this->all_flights[$id]['datetime'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'],$this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$highlight,$this->all_flights[$id]['hex'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'],$this->all_flights[$id]['verticalrate'],$this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source']);
 				    $Spotter->db = null;
 				}
 				$ignoreImport = false;
@@ -411,6 +483,12 @@ class SpotterImport {
 				    $this->all_flights[$id]['id'] = $recent_ident;
 				    $this->all_flights[$id]['addedSpotter'] = 1;
 				}
+				if (isset($globalDaemon) && !$globalDaemon) {
+					$Spotter = new Spotter();
+					$Spotter->updateLatestSpotterData($this->all_flights[$id]['id'],$this->all_flights[$id]['ident'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$this->all_flights[$id]['altitude'],$this->all_flights[$id]['ground'],$this->all_flights[$id]['speed'],$this->all_flights[$id]['datetime'],$this->all_flights[$id]['arrival_airport'],$this->all_flights[$id]['arrival_airport_time']);
+					$Spotter->db = null;
+				}
+				
 			    }
 			}
 		    }
@@ -418,7 +496,11 @@ class SpotterImport {
 		    //SpotterLive->addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
 		    //echo "\nAdd in Live !! \n";
 		    //echo "{$line[8]} {$line[7]} - MODES:{$line[4]}  CALLSIGN:{$line[10]}   ALT:{$line[11]}   VEL:{$line[12]}   HDG:{$line[13]}   LAT:{$line[14]}   LON:{$line[15]}   VR:{$line[16]}   SQUAWK:{$line[17]}\n";
-		    if ($globalDebug) echo 'DATA : hex : '.$this->all_flights[$id]['hex'].' - ident : '.$this->all_flights[$id]['ident'].' - ICAO : '.$this->all_flights[$id]['aircraft_icao'].' - Departure Airport : '.$this->all_flights[$id]['departure_airport'].' - Arrival Airport : '.$this->all_flights[$id]['arrival_airport'].' - Latitude : '.$this->all_flights[$id]['latitude'].' - Longitude : '.$this->all_flights[$id]['longitude'].' - waypoints : '.$this->all_flights[$id]['waypoints'].' - Altitude : '.$this->all_flights[$id]['altitude'].' - Heading : '.$this->all_flights[$id]['heading'].' - Speed : '.$this->all_flights[$id]['speed'].' - Departure Airport Time : '.$this->all_flights[$id]['departure_airport_time'].' - Arrival Airport time : '.$this->all_flights[$id]['arrival_airport_time']."\n";
+		    if ($globalDebug) {
+			if (isset($globalIVAO) || isset($globalVATSIM)) {
+				echo 'DATA : hex : '.$this->all_flights[$id]['hex'].' - ident : '.$this->all_flights[$id]['ident'].' - ICAO : '.$this->all_flights[$id]['aircraft_icao'].' - Departure Airport : '.$this->all_flights[$id]['departure_airport'].' - Arrival Airport : '.$this->all_flights[$id]['arrival_airport'].' - Latitude : '.$this->all_flights[$id]['latitude'].' - Longitude : '.$this->all_flights[$id]['longitude'].' - waypoints : '.$this->all_flights[$id]['waypoints'].' - Altitude : '.$this->all_flights[$id]['altitude'].' - Heading : '.$this->all_flights[$id]['heading'].' - Speed : '.$this->all_flights[$id]['speed'].' - Departure Airport Time : '.$this->all_flights[$id]['departure_airport_time'].' - Arrival Airport time : '.$this->all_flights[$id]['arrival_airport_time'].' - Pilot : '.$this->all_flights[$id]['pilot_name']."\n";
+			} else echo 'DATA : hex : '.$this->all_flights[$id]['hex'].' - ident : '.$this->all_flights[$id]['ident'].' - ICAO : '.$this->all_flights[$id]['aircraft_icao'].' - Departure Airport : '.$this->all_flights[$id]['departure_airport'].' - Arrival Airport : '.$this->all_flights[$id]['arrival_airport'].' - Latitude : '.$this->all_flights[$id]['latitude'].' - Longitude : '.$this->all_flights[$id]['longitude'].' - waypoints : '.$this->all_flights[$id]['waypoints'].' - Altitude : '.$this->all_flights[$id]['altitude'].' - Heading : '.$this->all_flights[$id]['heading'].' - Speed : '.$this->all_flights[$id]['speed'].' - Departure Airport Time : '.$this->all_flights[$id]['departure_airport_time'].' - Arrival Airport time : '.$this->all_flights[$id]['arrival_airport_time']."\n";
+		    }
 		    $ignoreImport = false;
 		    if ($this->all_flights[$id]['departure_airport'] == "") { $this->all_flights[$id]['departure_airport'] = "NA"; }
 		    if ($this->all_flights[$id]['arrival_airport'] == "") { $this->all_flights[$id]['arrival_airport'] = "NA"; }
@@ -430,12 +512,12 @@ class SpotterImport {
 		    }
 		    if (!$ignoreImport) {
 			if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
-				if ($globalDebug) echo "\o/ Add ".$this->all_flights[$id]['ident']." in Live DB : ";
+				if ($globalDebug) echo "\o/ Add ".$this->all_flights[$id]['ident']." from ".$this->all_flights[$id]['format_source']." in Live DB : ";
 				$SpotterLive = new SpotterLive();
-				$result = $SpotterLive->addLiveSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'], $this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$this->all_flights[$id]['hex'],$putinarchive,$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'], $this->all_flights[$id]['noarchive']);
-			    $SpotterLive->db = null;
+				$result = $SpotterLive->addLiveSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'], $this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$this->all_flights[$id]['hex'],$this->all_flights[$id]['putinarchive'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'], $this->all_flights[$id]['verticalrate'], $this->all_flights[$id]['noarchive'], $this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source']);
+				$SpotterLive->db = null;
 				$this->all_flights[$id]['lastupdate'] = time();
-				if ($putinarchive) $send = true;
+				if ($this->all_flights[$id]['putinarchive']) $send = true;
 				//if ($globalDebug) echo "Distance : ".Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
 				if ($globalDebug) echo $result."\n";
 			} elseif (isset($this->all_flights[$id]['latitude']) && isset($globalDistanceIgnore['latitude']) && $globalDebug) echo "!! Too far -> Distance : ".$Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";

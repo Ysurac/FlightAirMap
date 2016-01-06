@@ -33,7 +33,18 @@ CREATE TABLE IF NOT EXISTS `spotter_output` (
   `ModeS` varchar(255) NOT NULL,
   `pilot_id` varchar(255),
   `pilot_name` varchar(255),
+  `owner_name` varchar(255),
   `verticalrate` int(11),
+  `format_source` varchar(255) DEFAULT NULL,
+  `ground` tinyint(1) NOT NULL DEFAULT '0',
+  `last_ground` tinyint(1) NOT NULL DEFAULT '0',
+  `last_seen` datetime DEFAULT NULL,
+  `last_latitude` float DEFAULT NULL,
+  `last_longitude` float DEFAULT NULL,
+  `last_altitude` int(11) DEFAULT NULL,
+  `last_ground_speed` int(11) DEFAULT NULL,
+  `real_arrival_airport_icao` varchar(999) DEFAULT NULL,
+  `real_arrival_airport_time` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`spotter_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 

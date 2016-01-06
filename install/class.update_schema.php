@@ -299,10 +299,10 @@ class update_schema {
 				DROP TABLE spotter_archive;
 				RENAME TABLE copy TO spotter_archive;";
             	    } else {
-    			$query="ALTER TABLE spotter_archive ADD pilot VARCHAR(255) NULL";
+    			$query="ALTER TABLE spotter_archive ADD pilot_name VARCHAR(255) NULL, ADD pilot_id VARCHAR(255) NULL";
             	    }
                 } else {
-    		    $query="ALTER TABLE spotter_archive ADD pilot VARCHAR(255) NULL";
+    		    $query="ALTER TABLE spotter_archive ADD pilot_name VARCHAR(255) NULL, ADD pilot_id VARCHAR(255) NULL";
                 }
         	try {
             	    $sth = $Connection->db->prepare($query);
@@ -407,6 +407,63 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_11() {
+    		$Connection = new Connection();
+    		$query="ALTER TABLE spotter_output ADD owner_name VARCHAR(255) NULL DEFAULT NULL, ADD format_source VARCHAR(255) NULL DEFAULT NULL, ADD ground BOOLEAN NOT NULL DEFAULT FALSE, ADD last_ground BOOLEAN NOT NULL DEFAULT FALSE, ADD last_seen DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, ADD last_latitude FLOAT NULL, ADD last_longitude FLOAT NULL, ADD last_altitude INT(11) NULL, ADD last_ground_speed INT(11), ADD real_arrival_airport_icao VARCHAR(999), ADD real_arrival_airport_time VARCHAR(20),ADD real_departure_airport_icao VARCHAR(999), ADD real_departure_airport_time VARCHAR(20)";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add owner_name & format_source column to spotter_output) : ".$e->getMessage()."\n";
+    		}
+    		$query="ALTER TABLE spotter_live ADD format_source VARCHAR(255) NULL DEFAULT NULL, ADD ground BOOLEAN NOT NULL DEFAULT FALSE";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (format_source column to spotter_live) : ".$e->getMessage()."\n";
+    		}
+    		if ($globalDBdriver == 'mysql') {
+    		    $query = "SELECT ENGINE FROM information_schema.TABLES where TABLE_SCHEMA = '".$globalDBname."' AND TABLE_NAME = 'spotter_archive'";
+		    try {
+            		$sth = $Connection->db->prepare($query);
+			$sth->execute();
+    		    } catch(PDOException $e) {
+			return "error (problem when select engine for spotter_engine) : ".$e->getMessage()."\n";
+    		    }
+    		    $row = $sth->fetch(PDO::FETCH_ASSOC);
+    		    if ($row['engine'] == 'ARCHIVE') {
+			$query = "CREATE TABLE copy LIKE spotter_archive; 
+				ALTER TABLE copy ENGINE=ARCHIVE;
+				ALTER TABLE copy ADD verticalrate INT(11) NULL, ADD format_source VARCHAR(255) NULL DEFAULT NULL, ADD ground BOOLEAN NOT NULL DEFAULT FALSE;
+				INSERT INTO copy SELECT *, '' as owner_name FROM spotter_archive ORDER BY `spotter_archive_id`;
+				DROP TABLE spotter_archive;
+				RENAME TABLE copy TO spotter_archive;";
+            	    } else {
+    			$query="ALTER TABLE spotter_archive ADD verticalrate INT(11) NULL, ADD format_source VARCHAR(255) NULL DEFAULT NULL, ADD ground BOOLEAN NOT NULL DEFAULT FALSE";
+            	    }
+                } else {
+    		    $query="ALTER TABLE spotter_archive ADD verticalrate INT(11) NULL, ADD format_source VARCHAR(255) NULL DEFAULT NULL, ADD ground BOOLEAN NOT NULL DEFAULT FALSE";
+                }
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add pilot column to spotter_archive) : ".$e->getMessage()."\n";
+    		}
+
+		$error = '';
+		
+		$query = "UPDATE `config` SET `value` = '12' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
     	public static function check_version($update = false) {
     	    global $globalDBname;
     	    $version = 0;
@@ -461,6 +518,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '10') {
     			    $error = self::update_from_10();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '11') {
+    			    $error = self::update_from_11();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

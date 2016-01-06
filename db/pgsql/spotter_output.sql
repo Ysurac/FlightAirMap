@@ -33,5 +33,17 @@ CREATE TABLE spotter_output (
   ModeS varchar(255) NOT NULL,
   pilot_id varchar(255),
   pilot_name varchar(255),
+  owner_name varchar(255),
+  verticalrate integer,
+  format_source varchar(255),
+  ground integer NOT NULL DEFAULT '0',
+  last_ground integer NOT NULL DEFAULT '0',
+  last_seen timestamp,
+  last_latitude float,
+  last_longitude float,
+  last_altitude integer,
+  last_ground_speed integer,
+  real_arrival_airport_icao varchar(999),
+  real_arrival_airport_time varchar(20),
   PRIMARY KEY (spotter_id)
 );

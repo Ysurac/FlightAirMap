@@ -66,6 +66,11 @@ if (strtolower($current_page) == "search")
 		print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc"><span class="nomobile">Flying to</span><span class="mobile">To</span></a> <i class="fa fa-sort small"></i></th>';
 	}
 	print '<th class="routestop"><span class="nomobile">Route stop</span><span class="mobile">Stop</span></a></th>';
+	if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+		print '<th class="pilot"><span class="nomobile">Pilot name</span><span class="mobile">Pilot</span></a></th>';
+	} else {
+		print '<th class="owner"><span class="nomobile">Owner name</span><span class="mobile">Owner</span></a></th>';
+	}
 	if ($_GET['sort'] == "date_asc")
 	{
 		print '<th class="time"><a href="'.$page_url.'&sort=date_desc" class="active">Date</a> <i class="fa fa-caret-up"></i></th>';
@@ -185,6 +190,11 @@ if (strtolower($current_page) == "search")
 			print '<th class="arrival"><span class="nomobile">Flying to</span><span class="mobile">To</span></th>';
 		}
 		print '<th class="route"><span class="nomobile">Route</span><span class="mobile">Route</span></th>';
+		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+			print '<th class="pilot"><span class="nomobile">Pilot name</span><span class="mobile">Pilot</span></a></th>';
+		} else {
+			print '<th class="owner"><span class="nomobile">Owner name</span><span class="mobile">Owner</span></a></th>';
+		}
 		
 		if (strtolower($current_page) == "date")
 		{
@@ -269,6 +279,11 @@ if (strtolower($current_page) == "search")
 			print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc"><span class="nomobile">Flying to</span><span class="mobile">To</span></a> <i class="fa fa-sort small"></i></th>';
 		}
 		print '<th class="routestop"><span class="nomobile">Route stop</span><span class="mobile">Stop</span></a></th>';
+		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+			print '<th class="pilot"><span class="nomobile">Pilot name</span><span class="mobile">Pilot</span></a></th>';
+		} else {
+			print '<th class="owner"><span class="nomobile">Owner name</span><span class="mobile">Owner</span></a></th>';
+		}
 		if (strtolower($current_page) == "date")
 		{
 			if ($_GET['sort'] == "date_asc")
@@ -464,22 +479,44 @@ foreach($spotter_array as $spotter_item)
 		print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')</a></span>'."\n";
 		print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport'].'</a></span>'."\n";
 	}
-	if (isset($spotter_item['departure_airport_time'])) {
+	if (isset($spotter_item['departure_airport_time']) && isset($spotter_item['real_departure_airport_time'])) {
+		print '<br /><span class="airport_time">'.$spotter_item['departure_airport_time'].' ('.$spotter_item['real_departure_airport_time'].')</span>'."\n";
+	} elseif (isset($spotter_item['real_departure_airport_time'])) {
+		print '<br /><span class="airport_time">'.$spotter_item['real_departure_airport_time'].'</span>'."\n";
+	} elseif (isset($spotter_item['departure_airport_time'])) {
 		print '<br /><span class="airport_time">'.$spotter_item['departure_airport_time'].'</span>'."\n";
 	}
 	print '</td>'."\n";
 	// Arrival Airport
 	print '<td class="arrival_airport">'."\n";
 	if (!isset($spotter_item['arrival_airport']) || !isset($spotter_item['arrival_airport_city'])) {
-		print '<span class="nomobile">Not available</span>'."\n";
-		print '<span class="mobile">Not available</span>'."\n";
+		if (isset($spotter_item['real_arrival_airport'])) {
+			print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$spotter_item['real_arrival_airport'].'">'.$spotter_item['real_arrival_airport'].'</a></span>'."\n";
+			print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$spotter_item['real_arrival_airport'].'">'.$spotter_item['real_arrival_airport'].'</a></span>'."\n";
+		} else {
+			print '<span class="nomobile">Not available</span>'."\n";
+			print '<span class="mobile">Not available</span>'."\n";
+		}
 	} else {
-		print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a></span>'."\n";
-		print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport'].'</a></span>'."\n";
+		if (isset($spotter_item['real_arrival_airport']) && $spotter_item['real_arrival_airport'] != $spotter_item['arrival_airport']) {
+			print '<span class="nomobile">Scheduled : <a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a></span>'."\n";
+			print '<br /><span class="nomobile">Real : <a href="'.$globalURL.'/airport/'.$spotter_item['real_arrival_airport'].'">'.$spotter_item['real_arrival_airport'].'</a></span>'."\n";
+			print '<span class="mobile">Scheduled : <a href="'.$globalURL.'/airport/'.$spotter_item['real_arrival_airport'].'">'.$spotter_item['real_arrival_airport'].'</a></span>'."\n";
+			print ' - <span class="mobile">Real : <a href="'.$globalURL.'/airport/'.$spotter_item['real_arrival_airport'].'">'.$spotter_item['real_arrival_airport'].'</a></span>'."\n";
+		} else {
+			print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a></span>'."\n";
+			print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport'].'</a></span>'."\n";
+		}
 	}
-	if (isset($spotter_item['arrival_airport_time'])) {
+	if (isset($spotter_item['arrival_airport_time']) && isset($spotter_item['real_arrival_airport_time'])) {
+		print '<br /><span class="airport_time">'.$spotter_item['arrival_airport_time'].' ('.$spotter_item['real_arrival_airport_time'].')</span>'."\n";
+	} elseif (isset($spotter_item['real_arrival_airport_time'])) {
+		print '<br /><span class="airport_time">'.$spotter_item['real_arrival_airport_time'].'</span>'."\n";
+	} elseif (isset($spotter_item['arrival_airport_time'])) {
 		print '<br /><span class="airport_time">'.$spotter_item['arrival_airport_time'].'</span>'."\n";
 	}
+
+
 	print '</td>'."\n";
 	// Route stop
 	if(strtolower($current_page) != "upcoming"){
@@ -495,6 +532,31 @@ foreach($spotter_array as $spotter_item)
 		}
 		print '</td>'."\n";
 	}
+	if(strtolower($current_page) != "upcoming"){
+		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+			print '<td class="pilot">'."\n";
+			if (!isset($spotter_item['pilot_id']) || $spotter_item['pilot_id'] == '') {
+				print '<span class="nomobile">-</span>'."\n";
+				print '<span class="mobile">-</span>'."\n";
+			} else {
+				print '<span class="nomobile">'.$spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')</span>'."\n";
+				print '<span class="mobile">'.$spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')</span>'."\n";
+			}
+			print '</td>'."\n";
+		} else {
+			print '<td class="owner">'."\n";
+			if (!isset($spotter_item['aircraft_owner']) || $spotter_item['aircraft_owner'] == '') {
+				print '<span class="nomobile">-</span>'."\n";
+				print '<span class="mobile">-</span>'."\n";
+			} else {
+				print '<span class="nomobile">'.$spotter_item['aircraft_owner'].'</span>'."\n";
+				print '<span class="mobile">'.$spotter_item['aircraft_owner'].'</span>'."\n";
+			}
+			print '</td>'."\n";
+		
+		}
+	}
+
 	}
 	if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive") {
 		if (isset($spotter_item['decode']) && $spotter_item['decode'] != '') {

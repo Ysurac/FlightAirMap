@@ -97,6 +97,21 @@ require('header.php');
 			    <output id="range"><?php if (isset($_COOKIE['AirportZoom'])) print $_COOKIE['AirportZoom']; elseif (isset($globalAirportZoom)) print $globalAirportZoom; else print '7'; ?></output>
 			</div>
 		    </li>
+		    <?php
+			if (isset($globalVATSIM) && $globalVATSIM && isset($globalIVAO) && $globalIVAO) {
+			    if (isset($_COOKIE['ShowIVAO']) || isset($_COOKIE['ShowVATSIM'])) {
+		    ?>
+			<li><input type="checkbox" name="vatsim" value="1" onclick="clickVATSIM(this)" <?php if (isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM']) print 'checked'; ?> >Display VATSIM data</li>
+			<li><input type="checkbox" name="ivao" value="1" onclick="clickIVAO(this)" <?php if (isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO']) print 'checked'; ?> >Display IVAO data</li>
+		    <?php
+			    } else {
+		    ?>
+			<li><input type="checkbox" name="vatsim" value="1" onclick="clickVATSIM(this)" checked>Display VATSIM data</li>
+			<li><input type="checkbox" name="ivao" value="1" onclick="clickIVAO(this)" checked>Display IVAO data</li>
+		    <?php
+			    }
+			}
+		    ?>
 		</ul>
 	    </form>
 	    <p>Any change in settings reload page</p>

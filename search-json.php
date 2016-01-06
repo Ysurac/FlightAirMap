@@ -79,9 +79,12 @@ $airline_type = filter_input(INPUT_GET,'airline_type',FILTER_SANITIZE_STRING);
 $airport = filter_input(INPUT_GET,'airport',FILTER_SANITIZE_STRING);
 $airport_country = filter_input(INPUT_GET,'airport_country',FILTER_SANITIZE_STRING);
 $callsign = filter_input(INPUT_GET,'callsign',FILTER_SANITIZE_STRING);
+$owner = filter_input(INPUT_GET,'owner',FILTER_SANITIZE_STRING);
+$pilot_id = filter_input(INPUT_GET,'pilot_id',FILTER_SANITIZE_STRING);
+$pilot_name = filter_input(INPUT_GET,'pilot_name',FILTER_SANITIZE_STRING);
 $departure_airport_route = filter_input(INPUT_GET,'departure_airport_route',FILTER_SANITIZE_STRING);
 $arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_SANITIZE_STRING);
-$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
+$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
        
 $output = '{';
   $output .= '"flightairmap": {';

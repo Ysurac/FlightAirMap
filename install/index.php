@@ -268,11 +268,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="radio" name="datasource" id="flightaware" value="flightaware" onClick="datasource_js()" <?php if (isset($globalFlightAware) && $globalFlightAware) { ?>checked="checked" <?php } ?>/>
 				<label for="flightaware">FlightAware (not tested, no more supported no data feed available for test)</label>
 -->
-				<input type="radio" name="datasource" id="ivao" value="ivao" onClick="datasource_js()" <?php if (isset($globalIVAO) && $globalIVAO) { ?>checked="checked" <?php } ?>/>
+				<input type="checkbox" name="globalivao" id="ivao" value="ivao" onClick="datasource_js()" <?php if (isset($globalIVAO) && $globalIVAO) { ?>checked="checked" <?php } ?>/>
 				<label for="ivao">IVAO</label>
-				<input type="radio" name="datasource" id="vatsim" value="vatsim" onClick="datasource_js()" <?php if (isset($globalVATSIM) && $globalVATSIM) { ?>checked="checked" <?php } ?>/>
+				<input type="checkbox" name="globalvatsim" id="vatsim" value="vatsim" onClick="datasource_js()" <?php if (isset($globalVATSIM) && $globalVATSIM) { ?>checked="checked" <?php } ?>/>
 				<label for="vatsim">VATSIM</label>
-				<input type="radio" name="datasource" id="sbs" value="sbs" onClick="datasource_js()" <?php if (isset($globalSBS1) && $globalSBS1 && (!isset($globalIVAO) || (isset($globalIVAO) && !$globalIVAO)) && (!isset($globalVATSIM) || (isset($globalVATSIM) && !$globalVATSIM))) { ?>checked="checked" <?php } ?> />
+				<input type="checkbox" name="globalsbs" id="sbs" value="sbs" onClick="datasource_js()" <?php if (isset($globalSBS1) && $globalSBS1) { ?>checked="checked" <?php } ?> />
 				<label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format), APRS from glidernet,...</label>
 				<input type="checkbox" name="acars" id="acars" value="acars" onClick="datasource_js()" <?php if (isset($globalACARS) && $globalACARS) { ?>checked="checked" <?php } ?> />
 				<label for="acars">ACARS</label>
@@ -647,11 +647,15 @@ if (isset($_POST['dbtype'])) {
 	$sbsport = $_POST['sbsport'];
 	$sbsurl = $_POST['sbsurl'];
 
+	$globalvatsim = filter_input(INPUT_POST,'globalvatsim',FILTER_SANITIZE_STRING);
+	$globalivao = filter_input(INPUT_POST,'globalivao',FILTER_SANITIZE_STRING);
+	$globalsbs = filter_input(INPUT_POST,'globalsbs',FILTER_SANITIZE_STRING);
 	$datasource = filter_input(INPUT_POST,'datasource',FILTER_SANITIZE_STRING);
 
 	
 	$globalSBS1Hosts = array();
-	if ($datasource != 'ivao' && $datasource != 'vatsim') {
+//	if ($datasource != 'ivao' && $datasource != 'vatsim') {
+	if ($globalsbs == 'sbs') {
 	    foreach ($sbshost as $key => $host) {
 		if ($host != '') $globalSBS1Hosts[] = $host.':'.$sbsport[$key];
 	    }
@@ -726,19 +730,24 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalSchedulesFetch' => 'FALSE'));
 	}
 
+/*
 	$datasource = filter_input(INPUT_POST,'datasource',FILTER_SANITIZE_STRING);
 	if ($datasource == 'flightaware') {
 		$settings = array_merge($settings,array('globalFlightAware' => 'TRUE','globalSBS1' => 'FALSE'));
 	} else {
 		$settings = array_merge($settings,array('globalFlightAware' => 'FALSE','globalSBS1' => 'TRUE'));
 	}
-	if ($datasource == 'ivao') {
+*/
+	$settings = array_merge($settings,array('globalFlightAware' => 'FALSE'));
+	if ($globalsbs == 'sbs') $settings = array_merge($settings,array('globalSBS1' => 'TRUE'));
+	else $settings = array_merge($settings,array('globalSBS1' => 'FALSE'));
+	if ($globalivao == 'ivao') {
 		$settings = array_merge($settings,array('globalIVAO' => 'TRUE','globalVATSIM' => 'FALSE'));
 	} else $settings = array_merge($settings,array('globalIVAO' => 'FALSE'));
-	if ($datasource == 'vatsim') {
+	if ($globalvatsim == 'vatsim') {
 		$settings = array_merge($settings,array('globalVATSIM' => 'TRUE','globalIVAO' => 'FALSE'));
 	} else $settings = array_merge($settings,array('globalVATSIM' => 'FALSE'));
-	if ($datasource == 'vatsim' || $datasource == 'ivao') {
+	if ($globalvatsim == 'vatsim' || $globalivao == 'ivao') {
 		$settings = array_merge($settings,array('globalSchedulesFetch' => 'FALSE','globalTranslationFetch' => 'FALSE'));
 	} else $settings = array_merge($settings,array('globalSchedulesFetch' => 'TRUE','globalTranslationFetch' => 'TRUE'));
 	

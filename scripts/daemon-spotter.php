@@ -238,7 +238,7 @@ while ($i > 0) {
 	        	$data['emergency'] = ''; // emergency
 	        	$data['waypoints'] = $line[30];
 			//$data['datetime'] = date('Y-m-d h:i:s');
-			$data['datetime'] = date('Y-m-d H:i:s',strtotime($line[37])); // FIXME convert to correct format
+			$data['datetime'] = date('Y-m-d H:i:s',strtotime($line[37]));
 		        $data['departure_airport_icao'] = $line[11];
 		        $data['departure_airport_time'] = $line[22]; // FIXME put a :
 		        $data['arrival_airport_icao'] = $line[13];
@@ -616,6 +616,9 @@ while ($i > 0) {
 
 		}
 	    }
+	}
+	if ($globalDaemon == false) {
+	    $SI->checkAll();
 	}
     }
 }

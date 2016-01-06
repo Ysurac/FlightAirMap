@@ -18,6 +18,10 @@ header('Content-Type: text/javascript');
 $from_archive = false;
 $min = false;
 $allhistory = false;
+$filter= array();
+if (isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM']) $filter = array_merge($filter,array('vatsimtxt'));
+if (isset($globalIVAO) && $globalIVAO && isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO']) $filter = array_merge($filter,array('whazzup'));
+
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) $min = true;
 
 if (isset($_GET['ident'])) {
@@ -39,18 +43,18 @@ if (isset($_GET['ident'])) {
 } elseif (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true'))) {
 //if (isset($_GET['coord'])) {
 	$coord = explode(',',$_GET['coord']);
-	$spotter_array = $SpotterLive->getLiveSpotterDatabyCoord($coord);
+	$spotter_array = $SpotterLive->getLiveSpotterDatabyCoord($coord,$filter);
 
 #} elseif (isset($globalMapPopup) && !$globalMapPopup) {
 } elseif ($min) {
-	$spotter_array = $SpotterLive->getMinLiveSpotterData();
+	$spotter_array = $SpotterLive->getMinLiveSpotterData($filter);
 #	$min = true;
 } else {
-	$spotter_array = $SpotterLive->getLiveSpotterData();
+	$spotter_array = $SpotterLive->getLiveSpotterData('','',$filter);
 }
 
 if (!empty($spotter_array)) {
-	$flightcnt = $SpotterLive->getLiveSpotterCount();
+	$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
 	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;
 

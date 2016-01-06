@@ -14,9 +14,21 @@ require('header.php');
     <?php include('statistics-sub-menu.php'); ?>
 
     <div class="row global-stats">
-        <div class="col-md-4"><span class="type">Flights</span><span><?php print number_format($Spotter->countOverallFlights()); ?></span></div> 
-        <div class="col-md-4"><span class="type">Aircrafts</span><span><?php print number_format($Spotter->countOverallAircrafts()); ?></span></div> 
-        <div class="col-md-4"><span class="type">Airlines</span><span><?php print number_format($Spotter->countOverallAirlines()); ?></span></div>
+        <div class="col-md-2"><span class="type">Flights</span><span><?php print number_format($Spotter->countOverallFlights()); ?></span></div> 
+        <div class="col-md-2"><span class="type">Arrival seen</span><span><?php print number_format($Spotter->countOverallArrival()); ?></span></div> 
+	<?php
+	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+	?>
+    	    <div class="col-md-2"><span class="type">Pilots</span><span><?php print number_format($Spotter->countOverallPilots()); ?></span></div> 
+        <?php
+    	    } else {
+    	?>
+    	    <div class="col-md-2"><span class="type">Owners</span><span><?php print number_format($Spotter->countOverallOwners()); ?></span></div> 
+    	<?php
+    	    }
+    	?>
+        <div class="col-md-2"><span class="type">Aircrafts</span><span><?php print number_format($Spotter->countOverallAircrafts()); ?></span></div> 
+        <div class="col-md-2"><span class="type">Airlines</span><span><?php print number_format($Spotter->countOverallAirlines()); ?></span></div>
     </div>
 
     <div class="specific-stats">
@@ -101,7 +113,98 @@ require('header.php');
                 </div>
             </div>
         </div>
-        
+        <div class="row column">
+
+	    <?php
+		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+	    ?>
+            <div class="col-md-12">
+                <h2>Top 10 Most Common Pilots</h2>
+                 <?php
+                  $pilot_array = $Spotter->countAllPilots();
+
+                  print '<div id="chart7" class="chart" width="100%"></div>
+                    <script> 
+                        google.load("visualization", "1", {packages:["corechart"]});
+                      google.setOnLoadCallback(drawChart7);
+                      function drawChart7() {
+                        var data = google.visualization.arrayToDataTable([
+                            ["Pilots", "# of Times"], ';
+                            $pilot_data = '';
+                          foreach($pilot_array as $pilot_item)
+                                    {
+                                            $pilot_data .= '[ "'.$pilot_item['pilot_name'].' ('.$pilot_item['pilot_id'].')",'.$pilot_item['pilot_count'].'],';
+                                    }
+                                    $pilot_data = substr($pilot_data, 0, -1);
+                                    print $pilot_data;
+                        print ']);
+
+                        var options = {
+                            chartArea: {"width": "80%", "height": "60%"},
+                            height:300,
+                             is3D: true
+                        };
+
+                        var chart = new google.visualization.PieChart(document.getElementById("chart7"));
+                        chart.draw(data, options);
+                      }
+                      $(window).resize(function(){
+                              drawChart7();
+                            });
+                  </script>';
+                  ?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/statistics/pilot" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                </div>
+            </div>
+        </div>
+        <?php
+    	    } else {
+    	?>
+            <div class="col-md-12">
+                <h2>Top 10 Most Common Owners</h2>
+                 <?php
+                  $owner_array = $Spotter->countAllOwners();
+
+                  print '<div id="chart7" class="chart" width="100%"></div>
+                    <script> 
+                        google.load("visualization", "1", {packages:["corechart"]});
+                      google.setOnLoadCallback(drawChart7);
+                      function drawChart7() {
+                        var data = google.visualization.arrayToDataTable([
+                            ["Owner", "# of Times"], ';
+                            $owner_data = '';
+                          foreach($owner_array as $owner_item)
+                                    {
+                                            $owner_data .= '[ "'.$owner_item['owner_name'].'",'.$owner_item['owner_count'].'],';
+                                    }
+                                    $owner_data = substr($owner_data, 0, -1);
+                                    print $owner_data;
+                        print ']);
+
+                        var options = {
+                            chartArea: {"width": "80%", "height": "60%"},
+                            height:300,
+                             is3D: true
+                        };
+
+                        var chart = new google.visualization.PieChart(document.getElementById("chart7"));
+                        chart.draw(data, options);
+                      }
+                      $(window).resize(function(){
+                              drawChart7();
+                            });
+                  </script>';
+                  ?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/statistics/owner" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                </div>
+            </div>
+        </div>
+        <?php
+    	    }
+    	?>
+        </div>
         <div class="row column">
             <div class="col-md-6">
                 <h2>Top 10 Most Common Departure Airports</h2>
@@ -197,6 +300,49 @@ require('header.php');
         </div>
 
         <div class="row column">
+            <div class="col-md-6">
+                <h2>Busiest Month in the last Year</h2>
+                <?php
+                  $year_array = $Spotter->countAllMonthsLastYear();
+
+                  print '<div id="chart8" class="chart" width="100%"></div>
+                    <script> 
+                        google.load("visualization", "1", {packages:["corechart"]});
+                      google.setOnLoadCallback(drawChart8);
+                      function drawChart8() {
+                        var data = google.visualization.arrayToDataTable([
+                            ["Month", "# of Flights"], ';
+                            $year_data = '';
+                          foreach($year_array as $year_item)
+                                    {
+                                        $year_data .= '[ "'.date('F, Y',strtotime($year_item['year_name'].'-'.$year_item['month_name'].'-01')).'",'.$year_item['date_count'].'],';
+                                    }
+                                    $year_data = substr($year_data, 0, -1);
+                                    print $year_data;
+                        print ']);
+
+                        var options = {
+                            legend: {position: "none"},
+                            chartArea: {"width": "80%", "height": "60%"},
+                            vAxis: {title: "# of Flights"},
+                            hAxis: {showTextEvery: 2},
+                            height:300,
+                            colors: ["#1a3151"]
+                        };
+
+                        var chart = new google.visualization.AreaChart(document.getElementById("chart8"));
+                        chart.draw(data, options);
+                      }
+                      $(window).resize(function(){
+                              drawChart8();
+                            });
+                  </script>';
+                  ?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/statistics/month" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                </div>
+            </div>
+
             <div class="col-md-6">
                 <h2>Busiest Day in the last 7 Days</h2>
                 <?php

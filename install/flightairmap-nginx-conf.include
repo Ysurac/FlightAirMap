@@ -229,6 +229,9 @@ location /statistics {
     rewrite ^/statistics/callsign(/?)$ /statistics-callsign.php last;
     rewrite ^/statistics/date(/?)$ /statistics-date.php last;
     rewrite ^/statistics/time(/?)$ /statistics-time.php last;
+    rewrite ^/statistics/month(/?)$ /statistics-month.php last;
+    rewrite ^/statistics/pilot(/?)$ /statistics-pilot.php last;
+    rewrite ^/statistics/owner(/?)$ /statistics-owner.php last;
 }
 
 location /upcoming {
