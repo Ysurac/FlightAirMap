@@ -17,10 +17,14 @@ if (!empty($spotter_array))
 	if(isset($spotter_array[0]['flightaware_id'])) {
 		$flightaware_id = $spotter_array[0]['flightaware_id'];
 	}
-	if(isset($spotter_array[0]['latitude'])) {
+	if(isset($spotter_array[0]['last_latitude']) && $spotter_array[0]['last_latitude'] != '') {
+		$latitude = $spotter_array[0]['last_latitude'];
+	} elseif(isset($spotter_array[0]['latitude'])) {
 		$latitude = $spotter_array[0]['latitude'];
 	}
-	if(isset($spotter_array[0]['longitude'])) {
+	if(isset($spotter_array[0]['last_longitude']) && $spotter_array[0]['last_longitude'] != '') {
+		$longitude = $spotter_array[0]['last_longitude'];
+	} elseif(isset($spotter_array[0]['longitude'])) {
 		$longitude = $spotter_array[0]['longitude'];
 	}
 	$title = '';
@@ -297,7 +301,8 @@ if (!empty($spotter_array))
 			print '<div>';
 			if ($spotter_item['pilot_id'] != "")
 			{
-				print '<a href="https://www.ivao.aero/Member.aspx?ID='.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')</a>';
+				if ($spotter_item['format_source'] == 'whazzup') print '<a href="https://www.ivao.aero/Member.aspx?ID='.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')</a>';
+				else print $spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')';
 			} else {
 				if ($spotter_item['pilot_name'] != "")
 				{

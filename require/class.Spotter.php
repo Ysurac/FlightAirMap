@@ -66,7 +66,8 @@ class Spotter{
 			$num_rows++;
 			$temp_array = array();
 			if (isset($row['spotter_live_id'])) {
-				$temp_array['spotter_id'] = $row['spotter_live_id'];
+				//$temp_array['spotter_id'] = $row['spotter_live_id'];
+				$temp_array['spotter_id'] = $this->getSpotterIDBasedOnFlightAwareID($row['flightaware_id']);
 			} elseif (isset($row['spotter_archive_id'])) {
 				$temp_array['spotter_id'] = $row['spotter_archive_id'];
 			} else {
@@ -7304,7 +7305,7 @@ class Spotter{
 	* @return Integer the Barrie Spotter ID
 	*
 	*/
-	public function getBarrieSpotterIDBasedOnFlightAwareID($flightaware_id)
+	public function getSpotterIDBasedOnFlightAwareID($flightaware_id)
 	{
 		$flightaware_id = filter_var($flightaware_id,FILTER_SANITIZE_STRING);
 
