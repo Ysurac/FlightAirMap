@@ -57,10 +57,20 @@ You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (Bas
 * supply require/settings.php with this key
 * run cron.php
 
-### ADS-B
+### ADS-B (real flights)
 * You can use dump1090 [https://github.com/mutability/dump1090](https://github.com/mutability/dump1090) with a RTL dongle, Radarcape deltadb.txt or aircraftlist.json, or wazzup file, or /action.php/acars/data of phpvms...
 * run cron-sbs.php (The name is not really good, this should be run one time like a daemon, use a init script or screen)
 
-### ACARS
+### ACARS (only messages from real flights)
 * You have to use acarsdec [http://sourceforge.net/projects/acarsdec/](http://sourceforge.net/projects/acarsdec/) : acarsdec -N 127.0.0.1:9999 -r 0 131.525 131.550 131.725
 * run cron-acars.php (also a daemon)
+
+### APRS (real flights)
+* You can user APRS server from glidernet like aprs.glidernet.org:10152
+
+### IVAO (virtual flights)
+* You can use as source a whazzup.txt file like : http://api.ivao.aero/getdata/whazzup/whazzup.txt
+
+### VATSIM (virtual flights)
+* You can use as source a vatsim-data.txt file like : http://info.vroute.net/vatsim-data.txt
+ 
