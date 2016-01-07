@@ -911,6 +911,11 @@ body.page-flightid-overview .details .detail .title{
     display:block;
     color:#000;
 }
+body.page-flightid-overview .details .detail .time{
+    font-size:0.8em;
+    text-align: center;
+    font-style:italic;
+}
 body.page-flightid-overview .details .detail span{
     margin-right:20px;
 }

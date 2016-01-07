@@ -308,14 +308,17 @@ class Image {
 
     public function fromIvaoMtl($aircraft_icao,$airline_icao) {
 	$Common = new Common();
+	echo "\n".'SEARCH IMAGE : http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
 	if ($Common->urlexist('http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg')) {
 	    $image_url['thumbnail'] = 'http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
 	    $image_url['original'] = 'http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
 	    $image_url['copyright'] = 'IVAO';
 	    $image_url['source_website'] = 'http://mtlcatalog.ivao.aero/';
 	    $image_url['source'] = 'ivao.aero';
+	    echo "Image found !\n";
 	    return $image_url;
 	} else {
+	    echo "\n";
 	    return false;
 	}
     

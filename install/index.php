@@ -940,6 +940,9 @@ if (isset($_POST['dbtype'])) {
 	if ($globalFlightAware && ($globalFlightAwareUsername == '' || $globalFlightAwarePassword == '')) {
 		print '<p>You <strong>must</strong> have a FlightAware API account to use FlightAware source</p>';
 	}
+	if (isset($globalVATSIM) && $globalVATSIM) {
+		print '<p>Airline table is populated with VATSIM data</p>';
+	}
 	if (isset($globalIVAO) && $globalIVAO) {
 		print '<p>You need to run install/populate_ivao.php if you want to have IVAO airlines</p>';
 	}

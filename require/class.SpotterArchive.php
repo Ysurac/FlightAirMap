@@ -168,7 +168,7 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':id' => $id));
                 } catch(PDOException $e) {
-                        return "error";
+		        return "error : ".$e->getMessage();
                 }
                 $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 

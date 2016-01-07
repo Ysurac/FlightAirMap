@@ -405,6 +405,7 @@ while ($i > 0) {
 		    if (isset($line['transponder'])) $data['squawk'] = $line['transponder'];
 		    if (isset($line['atis'])) $data['info'] = $line['atis'];
 		    else $data['info'] = '';
+		    $data['format_source'] = 'pireps';
 		    $data['datetime'] = date('Y-m-d H:i:s');
 		    if ($line['icon'] == 'plane') {
 			$SI->add($data);
