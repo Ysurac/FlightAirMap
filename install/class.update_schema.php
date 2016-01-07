@@ -436,7 +436,7 @@ class update_schema {
 			$query = "CREATE TABLE copy LIKE spotter_archive; 
 				ALTER TABLE copy ENGINE=ARCHIVE;
 				ALTER TABLE copy ADD verticalrate INT(11) NULL, ADD format_source VARCHAR(255) NULL DEFAULT NULL, ADD ground BOOLEAN NOT NULL DEFAULT FALSE;
-				INSERT INTO copy SELECT *, '' as owner_name FROM spotter_archive ORDER BY `spotter_archive_id`;
+				INSERT INTO copy SELECT *, '' as verticalrate, '' as format_source, '0' as ground FROM spotter_archive ORDER BY `spotter_archive_id`;
 				DROP TABLE spotter_archive;
 				RENAME TABLE copy TO spotter_archive;";
             	    } else {
@@ -449,7 +449,7 @@ class update_schema {
             	    $sth = $Connection->db->prepare($query);
 		    $sth->execute();
     		} catch(PDOException $e) {
-		    return "error (add pilot column to spotter_archive) : ".$e->getMessage()."\n";
+		    return "error (add columns to spotter_archive) : ".$e->getMessage()."\n";
     		}
 
 		$error = '';
