@@ -300,13 +300,13 @@ if (!empty($spotter_array))
 			print '<div class="detail fa-user">';
 			print '<div class="title">Pilot Name</div>';
 			print '<div>';
-			if ($spotter_item['pilot_id'] != "")
+			if (isset($spotter_item['pilot_id']) && $spotter_item['pilot_id'] != "")
 			{
 				if ($spotter_item['format_source'] == 'whazzup') print '<a href="https://www.ivao.aero/Member.aspx?ID='.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')</a>';
 				elseif ($spotter_item['format_source'] == 'vatsimtxt')print '<a href="http://www.vataware.com/pilot/'.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')</a>';
 				else print $spotter_item['pilot_id'].' ('.$spotter_item['pilot_name'].')';
 			} else {
-				if ($spotter_item['pilot_name'] != "")
+				if (isset($spotter_item['pilot_name']) && $spotter_item['pilot_name'] != "")
 				{
 					print $spotter_item['pilot_name'];
 				} else {
