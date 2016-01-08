@@ -135,11 +135,11 @@ class Common {
 	*/
 	public function withinThreshold ($timeDifference, $distance) {
 		$x = abs($timeDifference);
-		$d = abs($distance)*1000;
+		$d = abs($distance);
 		if ($x == 0 || $d == 0) return true;
 		// may be due to Internet jitter; distance is realistic
 		if ($x < 0.7 && $d < 2000) return true;
-		else return $d/$x < 1000*0.27778; // 1000 km/h max
+		else return $d/$x < 1200*0.27778; // 1200 km/h max
 	}
 
 
