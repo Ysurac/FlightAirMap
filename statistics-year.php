@@ -8,14 +8,14 @@ include('statistics-sub-menu.php');
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
-	  	<h1>Most Busiest Day Last Month</h1>
+	  	<h1>Most Busiest Month</h1>
 	  </div>
       
-      <p>Below is a chart that plots the busiest day during the <strong>last month</strong>.</p>
+      <p>Below is a chart that plots the busiest month during the <strong>last year</strong>.</p>
       
 <?php
 
-$date_array = $Spotter->countAllDatesLastMonth();
+$date_array = $Spotter->countAllMonthsLastYear();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});
@@ -27,7 +27,7 @@ print '<div id="chart" class="chart" width="100%"></div>
 $date_data = '';
 foreach($date_array as $date_item)
 {
-	$date_data .= '[ "'.date("F j, Y", strtotime($date_item['date_name'])).'",'.$date_item['date_count'].'],';
+	$date_data .= '[ "'.date("F, Y", strtotime($date_item['year_name'].'-'.$date_item['month_name'].'-01')).'",'.$date_item['date_count'].'],';
 }
 $date_data = substr($date_data, 0, -1);
 print $date_data;
@@ -53,7 +53,7 @@ print ']);
       
 
 <?php
-$date_array = $Spotter->countAllDates();
+$date_array = $Spotter->countAllMonths();
 if (!empty($date_array))
 {
 	print '<div class="table-responsive">';
@@ -70,7 +70,7 @@ if (!empty($date_array))
 		print '<tr>';
 		print '<td><strong>'.$i.'</strong></td>';
 		print '<td>';
-		print '<a href="'.$globalURL.'/date/'.date('Y-m-d',strtotime($date_item['date_name'])).'">'.date("l F j, Y", strtotime($date_item['date_name'])).'</a>';
+		print '<a href="'.$globalURL.'/date/'.$date_item['year_name'].'-'.$date_item['month_name'].'">'.date("F, Y", strtotime($date_item['year_name'].'-'.$date_item['month_name'].'-01')).'</a>';
 		print '</td>';
 		print '<td>';
 		print $date_item['date_count'];

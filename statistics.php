@@ -339,6 +339,48 @@ require('header.php');
                   </script>';
                   ?>
                 <div class="more">
+                    <a href="<?php print $globalURL; ?>/statistics/year" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h2>Busiest Day in the last Month</h2>
+                <?php
+                  $month_array = $Spotter->countAllDatesLastMonth();
+                  print '<div id="chart9" class="chart" width="100%"></div>
+                    <script> 
+                        google.load("visualization", "1", {packages:["corechart"]});
+                      google.setOnLoadCallback(drawChart9);
+                      function drawChart9() {
+                        var data = google.visualization.arrayToDataTable([
+                            ["Day", "# of Flights"], ';
+                            $month_data = '';
+                          foreach($month_array as $month_item)
+                                    {
+                                        $month_data .= '[ "'.date('F j, Y',strtotime($month_item['date_name'])).'",'.$month_item['date_count'].'],';
+                                    }
+                                    $month_data = substr($month_data, 0, -1);
+                                    print $month_data;
+                        print ']);
+
+                        var options = {
+                            legend: {position: "none"},
+                            chartArea: {"width": "80%", "height": "60%"},
+                            vAxis: {title: "# of Flights"},
+                            hAxis: {showTextEvery: 2},
+                            height:300,
+                            colors: ["#1a3151"]
+                        };
+
+                        var chart = new google.visualization.AreaChart(document.getElementById("chart9"));
+                        chart.draw(data, options);
+                      }
+                      $(window).resize(function(){
+                              drawChart9();
+                            });
+                  </script>';
+                  ?>
+                <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/month" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
                 </div>
             </div>
