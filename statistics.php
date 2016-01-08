@@ -15,7 +15,7 @@ require('header.php');
 
     <div class="row global-stats">
         <div class="col-md-2"><span class="type">Flights</span><span><?php print number_format($Spotter->countOverallFlights()); ?></span></div> 
-        <div class="col-md-2"><span class="type">Arrival seen</span><span><?php print number_format($Spotter->countOverallArrival()); ?></span></div> 
+        <div class="col-md-2"><span class="type">Arrivals seen</span><span><?php print number_format($Spotter->countOverallArrival()); ?></span></div> 
 	<?php
 	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
 	?>

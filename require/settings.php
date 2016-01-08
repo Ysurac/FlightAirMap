@@ -115,8 +115,15 @@ $globalLufthansaKey = '';
 // Transavia API info
 $globalTransaviaKey = '';
 
-//ignore the flights during imports that have the following airports (departure/arrival) associated with them
+//ignore the flights during imports that have the following airports ICAO (departure/arrival) associated with them
 $globalAirportIgnore = array();
+//accept the flights during imports that have the following airports ICAO (departure/arrival) associated with them
+$globalAirportAccept = array();
+
+//ignore the flights that have the following airline ICAO
+$globalAirlineIgnore = array();
+//accept the flights that have the following airline ICAO
+$globalAirlineAccept = array();
 
 //Archive all data
 $globalArchive = FALSE;
