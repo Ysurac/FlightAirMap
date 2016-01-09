@@ -88,6 +88,12 @@ $globalMapWrap = TRUE;
 //IVAO
 $globalIVAO = FALSE;
 
+//VATSIM
+$globalVATSIM = FALSE;
+
+//User can choose between IVAO or VATSIM
+$globalMapVAchoose = TRUE;
+
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
 $globalSBS1Hosts = array('127.0.0.1:30003');

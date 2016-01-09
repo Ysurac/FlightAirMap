@@ -98,7 +98,7 @@ require('header.php');
 			</div>
 		    </li>
 		    <?php
-			if (isset($globalVATSIM) && $globalVATSIM && isset($globalIVAO) && $globalIVAO) {
+			if (isset($globalVATSIM) && $globalVATSIM && isset($globalIVAO) && $globalIVAO && (!(isset($globalMapVAchoose) || $globalMapVAchoose)) {
 			    if (isset($_COOKIE['ShowIVAO']) || isset($_COOKIE['ShowVATSIM'])) {
 		    ?>
 			<li><input type="checkbox" name="vatsim" value="1" onclick="clickVATSIM(this)" <?php if (isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM']) print 'checked'; ?> >Display VATSIM data</li>

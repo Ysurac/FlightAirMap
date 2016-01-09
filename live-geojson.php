@@ -19,8 +19,8 @@ $from_archive = false;
 $min = false;
 $allhistory = false;
 $filter= array();
-if (isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM']) $filter = array_merge($filter,array('vatsimtxt'));
-if (isset($globalIVAO) && $globalIVAO && isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO']) $filter = array_merge($filter,array('whazzup'));
+if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM']) $filter = array_merge($filter,array('vatsimtxt'));
+if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalIVAO) && $globalIVAO && isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO']) $filter = array_merge($filter,array('whazzup'));
 
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) $min = true;
 
