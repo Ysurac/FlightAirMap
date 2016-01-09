@@ -4,7 +4,7 @@ require('require/class.Spotter.php');
 $Spotter = new Spotter();
 if ($_GET['flightaware_id'] != "")
 {
-	$spotter_id = $Spotter->getBarrieSpotterIDBasedOnFlightAwareID($_GET['flightaware_id']);
+	$spotter_id = $Spotter->getSpotterIDBasedOnFlightAwareID($_GET['flightaware_id']);
     
     if ($spotter_id != "")
     {
