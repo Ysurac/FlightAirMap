@@ -1,7 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
-$Spotter = new Spotte();
+$Spotter = new Spotter();
 $title = "Statistic - Most common Airline by Country";
 require('header.php');
 include('statistics-sub-menu.php'); 
