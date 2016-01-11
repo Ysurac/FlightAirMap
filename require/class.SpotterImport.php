@@ -124,7 +124,7 @@ class SpotterImport {
     }
 
     function add($line) {
-	global $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO, $globalVATSIM;
+	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO, $globalVATSIM;
 /*
 	$Spotter = new Spotter();
 	$dbc = $Spotter->db;
@@ -469,6 +469,14 @@ class SpotterImport {
 					}
 				    }
 				}
+				if (isset($globalPilotIdAccept) && count($globalPilotIdAccept) > 0) {
+				    $ignoreImport = true;
+				    foreach($globalPilotIdAccept as $pilotIdAccept) {
+					if ($this->all_flights[$id]['pilot_id'] == $pilotIdAccept) {
+					    $ignoreImport = false;
+					}
+				    }
+				}
 				
 				if (!$ignoreImport) {
 				    $highlight = '';
@@ -478,7 +486,7 @@ class SpotterImport {
 				    $Spotter = new Spotter();
 				    $result = $Spotter->addSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'], $this->all_flights[$id]['datetime'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'],$this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$highlight,$this->all_flights[$id]['hex'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'],$this->all_flights[$id]['verticalrate'],$this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source']);
 				    $Spotter->db = null;
-				}
+				} elseif ($globalDebug) echo 'Ignore data'."\n";
 				$ignoreImport = false;
 				$this->all_flights[$id]['addedSpotter'] = 1;
 				//print_r($this->all_flights[$id]);
@@ -556,6 +564,14 @@ class SpotterImport {
 			foreach($globalAirlineAccept as $airlineAccept) {
 			    if ((is_numeric(substr(substr($this->all_flights[$id]['ident'],0,4),-1,1)) && substr($this->all_flights[$id]['ident'],0,3) == $airlineAccept) || (is_numeric(substr(substr($this->all_flights[$id]['ident'],0,3),-1,1)) && substr($this->all_flights[$id]['ident'],0,2) == $airlineAccept)) {
 				$ignoreImport = false;
+			    }
+			}
+		    }
+		    if (isset($globalPilotIdAccept) && count($globalPilotIdAccept) > 0) {
+			$ignoreImport = true;
+			foreach($globalPilotIdAccept as $pilotIdAccept) {
+			    if ($this->all_flights[$id]['pilot_id'] == $pilotIdAccept) {
+			        $ignoreImport = false;
 			    }
 			}
 		    }

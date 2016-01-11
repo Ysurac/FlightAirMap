@@ -73,7 +73,7 @@ print '<div><span>Coordinates</span>'.$spotter_item['latitude'].', '.$spotter_it
 print '<div><span>Heading</span>'.$spotter_item['heading'].'</div>';
 if (isset($spotter_item['pilot_name'])) {
 	print '<div><span>Pilot</span>';
-	if (isset($spotter_item['pilot_id'])) print $spotter_item['pilot_name']." (".$spotter_item['pilot_id'].")";
+	if (isset($spotter_item['pilot_id'])) print $spotter_item['pilot_name'];
 	else print $spotter_item['pilot_name'];
 	print '</div>';
 }

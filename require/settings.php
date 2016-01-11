@@ -134,6 +134,9 @@ $globalAirlineIgnore = array();
 //accept the flights that have the following airline ICAO
 $globalAirlineAccept = array();
 
+//accept the flights that have the following pilot id (only for VA)
+$globalPilotIdAccept = array();
+
 //Archive all data
 $globalArchive = FALSE;
 
