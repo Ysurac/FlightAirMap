@@ -369,9 +369,15 @@ if (!empty($spotter_array))
                         }
                     print '</div>';
                     if (isset($spotter_item['departure_airport_time']) && $spotter_item['departure_airport_time'] != '') {
-                	print '<div class="time">';
-                	print 'at '.$spotter_item['departure_airport_time'];
-                	print '</div>';
+                	if ($spotter_item['departure_airport_time'] > 2460) {
+                	    print '<div class="time">';
+                	    print 'at '.date('H:m',$spotter_item['departure_airport_time']);
+                	    print '</div>';
+                	} else {
+                	    print '<div class="time">';
+                	    print 'at '.$spotter_item['departure_airport_time'];
+                	    print '</div>';
+                	}
                     }
                 print '</div>';
 
@@ -419,9 +425,13 @@ if (!empty($spotter_array))
                 print '<h3>Additional information as it flew nearby</h3>';
 
                 print '<div class="detail speed">';
-                    print '<div class="title">Ground Speed (knots)</div>';
+                    print '<div class="title">Ground Speed</div>';
                     print '<div>';
-                        print $spotter_item['ground_speed'];
+                	if (isset($spotter_item['last_ground_speed']) && $spotter_item['last_ground_speed'] != '') {
+                    	    print $spotter_item['last_ground_speed'].' knots - '.round($spotter_item['last_ground_speed']*1.852).' km/h';
+                        } else {
+                    	    print $spotter_item['ground_speed'].' knots - '.round($spotter_item['ground_speed']*1.852).' km/h';
+                        }
                     print '</div>';
                 print '</div>';	
 
@@ -433,9 +443,13 @@ if (!empty($spotter_array))
                 print '</div>';
 
                 print '<div class="detail altitude">';
-                    print '<div class="title">Altitude (feet)</div>';
+                    print '<div class="title">Altitude</div>';
                     print '<div>';
-                        print number_format($spotter_item['altitude'].'00');
+                        if (isset($spotter_item['last_altitude']) && $spotter_item['last_altitude'] != '') {
+                                print number_format($spotter_item['last_altitude'].'00').' feet - '.round($spotter_item['last_altitude']*30.48).' m';
+                        } else {
+                                print number_format($spotter_item['altitude'].'00').' feet - '.round($spotter_item['altitude']*30.48).' m';
+                        }
                     print '</div>';
                 print '</div>';
                 
@@ -443,7 +457,11 @@ if (!empty($spotter_array))
                     print '<div class="title">Coordinates</div>';
                     print '<div>';
                         //print '<a href="https://www.google.com/maps/place/'.$spotter_item['latitude'].','.$spotter_item['longitude'].'/@'.$spotter_item['latitude'].','.$spotter_item['longitude'].',10z" target="_blank">Lat: '.$spotter_item['latitude'].' Lng: '.$spotter_item['longitude'].'</a>';
-                        print 'Lat: '.$spotter_item['latitude'].' Lng: '.$spotter_item['longitude'];
+			if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
+                    	    print 'Lat: '.$spotter_item['last_latitude'].' Lng: '.$spotter_item['last_longitude'];
+			} else {
+                    	    print 'Lat: '.$spotter_item['latitude'].' Lng: '.$spotter_item['longitude'];
+                        }
                     print '</div>';
                 print '</div>';
                 
@@ -462,6 +480,37 @@ if (!empty($spotter_array))
 		print date("M j, Y G:i", strtotime($spotter_item['date_iso_8601']));
 		print '</div>';
 		print '</div>';
+
+		if (isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != '' && $spotter_item['departure_airport'] != 'NA') {
+			print '<div class="detail distance-departure">';
+			print '<div class="title">Distance from Departure Airport (km)</div>';
+			print '<div>';
+			$Common = new Common();
+			$departure_airport_info = $Spotter->getAllAirportInfo($spotter_item['departure_airport']);
+			if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
+				print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'km');
+			} else {
+				print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'km');
+			}
+			print '</div>';
+			print '</div>';
+		}
+		if (isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != '' && $spotter_item['arrival_airport'] != 'NA') {
+			print '<div class="detail distance-arrival">';
+			print '<div class="title">Distance to Arrival Airport (km)</div>';
+			print '<div>';
+			$Common = new Common();
+			$arrival_airport_info = $Spotter->getAllAirportInfo($spotter_item['arrival_airport']);
+			if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
+				print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'km');
+			} else {
+				print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'km');
+			}
+			print '</div>';
+			print '</div>';
+		}
+
+
 		print '</div>';
 	}
 	print '</div>';

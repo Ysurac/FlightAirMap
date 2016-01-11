@@ -907,6 +907,12 @@ body.page-flightid-overview .details .detail.coordinates::before{
 body.page-flightid-overview .details .detail.date::before{
     content: "\f073"; 
 }
+body.page-flightid-overview .details .detail.distance-departure::before{
+    content: "\f148"; 
+}
+body.page-flightid-overview .details .detail.distance-arrival::before{
+    content: "\f149"; 
+}
 body.page-flightid-overview .details .detail .title{
     display:block;
     color:#000;
