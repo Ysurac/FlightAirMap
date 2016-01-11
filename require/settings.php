@@ -106,6 +106,9 @@ $globalACARS = FALSE;
 $globalACARSHost = '0.0.0.0'; // Local IP to listen
 $globalACARSPort = '9999';
 
+//Minimal distance to tell if a flight is arrived to airport (in km)
+$globalClosestMinDist = '10';
+
 // To display Squawk usage we need Squawk country for now
 $globalSquawkCountry = 'UK';
 

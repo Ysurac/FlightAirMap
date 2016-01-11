@@ -69,11 +69,13 @@ class SpotterImport {
     }
 
     public function arrival($key) {
+	global $globalClosestMinDist;
 	$Spotter = new Spotter();
         $airport_icao = '';
         $airport_time = '';
+        if (!isset($globalClosestMinDist) || $globalClosestMinDist == '') $globalClosestMinDist = 10;
 	if ($this->all_flights[$key]['latitude'] != '' && $this->all_flights[$key]['longitude'] != '') {
-	    $closestAirports = $Spotter->closestAirports($this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude']);
+	    $closestAirports = $Spotter->closestAirports($this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$globalClosestMinDist);
     	    if (isset($closestAirports[0])) {
         	if (isset($this->all_flights[$key]['arrival_airport']) && $this->all_flights[$key]['arrival_airport'] == $closestAirports[0]['icao']) {
         	    $airport_icao = $closestAirports[0]['icao'];
