@@ -522,6 +522,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">0 to disable</p>
 			</p>
 			<p>
+				<label for="closestmindist">Distance to airport set as arrival (in km)</label>
+				<input type="number" name="closestmindist" id="closestmindist" value="<?php if (isset($globalClosestMinDist)) echo $globalClosestMinDist; else echo '10'; ?>" />
+			</p>
+			<p>
 				<label for="aircraftsize">Size of aircraft icon on map (default to 30px if zoom > 7 else 15px), empty to default</label>
 				<input type="number" name="aircraftsize" id="aircraftsize" value="<?php if (isset($globalAircraftSize)) echo $globalAircraftSize;?>" />
 			</p>
@@ -694,6 +698,8 @@ if (isset($_POST['dbtype'])) {
 	$settings = array_merge($settings,array('globalMapRefresh' => $maprefresh));
 	$mapidle = filter_input(INPUT_POST,'mapidle',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalMapIdleTimeout' => $mapidle));
+	$closestmindist = filter_input(INPUT_POST,'closestmindist',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalClosestMinDist' => $closestmindist));
 
 	$aircraftsize = filter_input(INPUT_POST,'aircraftsize',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalAircraftSize' => $aircraftsize));
