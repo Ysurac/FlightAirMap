@@ -276,9 +276,17 @@ if (isset($_GET['reset'])) {
 	if (isset($globalIVAO) && $globalIVAO) $_SESSION['install'] = 'ivao';
 	else $_SESSION['install'] = 'finish';
 	*/
-	if ((isset($globalVATSIM) && $globalVATSIM) || (isset($globalIVAO) && $globalIVAO)) {
+	if ((isset($globalVATSIM) && $globalVATSIM) && (isset($globalIVAO) && $globalIVAO)) {
 		$_SESSION['install'] = 'vatsim';
-		$_SESSION['next'] = 'Insert VATSIM/IVAO data';
+		if (file_exists('tmp/ivae_feb2013.zip')) $_SESSION['next'] = 'Insert IVAO data';
+		else $_SESSION['next'] = 'Insert VATSIM data';
+	} elseif (isset($globalVATSIM) && $globalVATSIM) {
+		$_SESSION['install'] = 'vatsim';
+		$_SESSION['next'] = 'Insert VATSIM data';
+	} elseif (isset($globalIVAO) && $globalIVAO) {
+		$_SESSION['install'] = 'vatsim';
+		if (file_exists('tmp/ivae_feb2013.zip')) $_SESSION['next'] = 'Insert IVAO data';
+		else $_SESSION['next'] = 'Insert VATSIM data (IVAO not found)';
 	} else {
 		$_SESSION['install'] = 'finish';
 		$_SESSION['next'] = 'finish';
@@ -289,9 +297,27 @@ if (isset($_GET['reset'])) {
 	include_once('../install/class.create_db.php');
 	$globalDebug = FALSE;
 	include_once('class.update_db.php');
-	if (isset($globalVATSIM) && $globalVATSIM) update_db::update_vatsim();
-	if (isset($globalIVAO) && $globalIVAO && file_exists('tmp/ivae_feb2013.zip')) update_db::update_IVAO();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM/IVAO data'));
+
+	if ((isset($globalVATSIM) && $globalVATSIM) && (isset($globalIVAO) && $globalIVAO)) {
+		if (file_exists('tmp/ivae_feb2013.zip')) {
+			update_db::update_IVAO();
+			$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert IVAO data'));
+		} else {
+			update_db::update_vatsim();
+			$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM data'));
+		}
+	} elseif (isset($globalVATSIM) && $globalVATSIM) {
+		update_db::update_vatsim();
+		$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM data'));
+	} elseif (isset($globalIVAO) && $globalIVAO) {
+		if (file_exists('tmp/ivae_feb2013.zip')) {
+			update_db::update_IVAO();
+			$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert IVAO data'));
+		} else {
+			update_db::update_vatsim();
+			$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM data (IVAO not found)'));
+		}
+	}
 	$_SESSION['install'] = 'finish';
 	$_SESSION['next'] = 'finish';
 	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
