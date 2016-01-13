@@ -276,9 +276,9 @@ if (isset($_GET['reset'])) {
 	if (isset($globalIVAO) && $globalIVAO) $_SESSION['install'] = 'ivao';
 	else $_SESSION['install'] = 'finish';
 	*/
-	if (isset($globalVATSIM) && $globalVATSIM) {
+	if ((isset($globalVATSIM) && $globalVATSIM) || (isset($globalIVAO) && $globalIVAO)) {
 		$_SESSION['install'] = 'vatsim';
-		$_SESSION['next'] = 'Insert VATSIM data';
+		$_SESSION['next'] = 'Insert VATSIM/IVAO data';
 	} else {
 		$_SESSION['install'] = 'finish';
 		$_SESSION['next'] = 'finish';
@@ -289,8 +289,9 @@ if (isset($_GET['reset'])) {
 	include_once('../install/class.create_db.php');
 	$globalDebug = FALSE;
 	include_once('class.update_db.php');
-	update_db::update_vatsim();
-	$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM data'));
+	if (isset($globalVATSIM) && $globalVATSIM) update_db::update_vatsim();
+	if (isset($globalIVAO) && $globalIVAO && file_exists('tmp/ivae_feb2013.zip')) update_db::update_IVAO();
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM/IVAO data'));
 	$_SESSION['install'] = 'finish';
 	$_SESSION['next'] = 'finish';
 	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
