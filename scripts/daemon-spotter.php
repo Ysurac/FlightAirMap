@@ -140,8 +140,8 @@ if (isset($globalSource)) {
 }
 if (isset($globalServer) && $globalServer) {
     $options = getopt('s::',array('source::'));
-    if (isset($options['s'])) $globalSBS1Hosts = array($options['s']);
-    elseif (isset($options['source'])) $globalSBS1Hosts = array($options['source']);
+    if (isset($options['s'])) $hosts = array($options['s']);
+    elseif (isset($options['source'])) $hosts = array($options['source']);
 }
 if (!isset($globalMinFetch)) $globalMinFetch = 0;
 
