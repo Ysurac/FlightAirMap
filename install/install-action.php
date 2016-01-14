@@ -146,8 +146,22 @@ if (isset($_GET['reset'])) {
 		update_db::update_ModeS_flarm();
 		update_db::update_ModeS_ogn();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data'));
-		$_SESSION['install'] = 'routes';
-		$_SESSION['next'] = 'Populate routes table with externals data';
+
+		if ((isset($globalVATSIM) && $globalVATSIM) && (isset($globalIVAO) && $globalIVAO)) {
+			$_SESSION['install'] = 'vatsim';
+			if (file_exists('tmp/ivae_feb2013.zip')) $_SESSION['next'] = 'Insert IVAO data';
+			else $_SESSION['next'] = 'Insert VATSIM data';
+		} elseif (isset($globalVATSIM) && $globalVATSIM) {
+			$_SESSION['install'] = 'vatsim';
+			$_SESSION['next'] = 'Insert VATSIM data';
+		} elseif (isset($globalIVAO) && $globalIVAO) {
+			$_SESSION['install'] = 'vatsim';
+			if (file_exists('tmp/ivae_feb2013.zip')) $_SESSION['next'] = 'Insert IVAO data';
+			else $_SESSION['next'] = 'Insert VATSIM data (IVAO not found)';
+		} else {
+			$_SESSION['install'] = 'routes';
+			$_SESSION['next'] = 'Populate routes table with externals data';
+		}
 		$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 		print json_encode($result);
 	}
@@ -318,8 +332,9 @@ if (isset($_GET['reset'])) {
 			$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM data (IVAO not found)'));
 		}
 	}
-	$_SESSION['install'] = 'finish';
-	$_SESSION['next'] = 'finish';
+	$_SESSION['install'] = 'routes';
+	$_SESSION['next'] = 'Populate routes table with externals data';
+
 	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	print json_encode($result);
 } else {
