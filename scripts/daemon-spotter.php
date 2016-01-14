@@ -138,6 +138,11 @@ if (isset($globalSource)) {
 	$hosts = array($globalSBS1Host.':'.$globalSBS1Port);
     }
 }
+if (isset($globalServer) && $globalServer) {
+    $options = getopt('s::',array('source::'));
+    if (isset($options['s'])) $globalSBS1Hosts = array($options['s']);
+    elseif (isset($options['source'])) $globalSBS1Hosts = array($options['source']);
+}
 if (!isset($globalMinFetch)) $globalMinFetch = 0;
 
 // Initialize all
@@ -299,6 +304,7 @@ while ($i > 0) {
 		    if (isset($line['Reg'])) $data['registration'] = $line['Reg'];
 		    if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',$line['PosTime']/1000);
 		    if (isset($line['Type'])) $data['aircraft_icao'] = $line['Type'];
+	    	    $data['format_source'] = 'aircraftlistjson';
 		    if (isset($data['datetime'])) $SI->add($data);
 		    unset($data);
 		}
@@ -316,6 +322,7 @@ while ($i > 0) {
 		    $data['squawk'] = $line['squawk']; // squawk
 		    $data['emergency'] = ''; // emergency
 		    $data['datetime'] = date('Y-m-d H:i:s');
+	    	    $data['format_source'] = 'aircraftlistjson';
 		    $SI->add($data);
 		    unset($data);
 		}
