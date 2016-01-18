@@ -94,15 +94,17 @@ class SpotterServer {
   		    $data['noarchive'] = true;
   		} else $data['noarchive'] = false;
   		
-  		$id_user = $globalServerUserID;
-  		$id_source = 1;
-  		$query = 'INSERT INTO spotter_temp (id_user,datetime,hex,ident,latitude,longitude,verticalrate,speed,squawk,altitude,heading,registration,aircraft_icao,waypoints,id_source,noarchive) VALUES (:id_user,:datetime,:hex,:ident,:latitude,:longitude,:verticalrate,:speed,:squawk,:altitude,:heading,:registration,:aircraft_icao,:waypoints,:id_source,:noarchive)';
-  		$query_values = array(':id_user' => $id_user,':datetime' => $data['datetime'],':hex' => $data['hex'],':ident' => $data['ident'],':latitude' => $data['latitude'],':longitude' => $data['longitude'],':verticalrate' => $data['verticalrate'],':speed' => $data['speed'],':squawk' => $data['squawk'],':altitude' => $data['altitude'],':heading' => $data['heading'],':registration' => $data['registration'],':aircraft_icao' => $data['aircraft_icao'],':waypoints' => $data['waypoints'],':id_source' => $id_source,':noarchive' => $data['noarchive']);
-  		try {
+  		if (isset($data['hex'])) {
+  		    $id_user = $globalServerUserID;
+  		    $id_source = 1;
+  		    $query = 'INSERT INTO spotter_temp (id_user,datetime,hex,ident,latitude,longitude,verticalrate,speed,squawk,altitude,heading,registration,aircraft_icao,waypoints,id_source,noarchive) VALUES (:id_user,:datetime,:hex,:ident,:latitude,:longitude,:verticalrate,:speed,:squawk,:altitude,:heading,:registration,:aircraft_icao,:waypoints,:id_source,:noarchive)';
+		    $query_values = array(':id_user' => $id_user,':datetime' => $data['datetime'],':hex' => $data['hex'],':ident' => $data['ident'],':latitude' => $data['latitude'],':longitude' => $data['longitude'],':verticalrate' => $data['verticalrate'],':speed' => $data['speed'],':squawk' => $data['squawk'],':altitude' => $data['altitude'],':heading' => $data['heading'],':registration' => $data['registration'],':aircraft_icao' => $data['aircraft_icao'],':waypoints' => $data['waypoints'],':id_source' => $id_source,':noarchive' => $data['noarchive']);
+		    try {
                         $sth = $this->dbs['server']->prepare($query);
                         $sth->execute($query_values);
-                } catch(PDOException $e) {
+                    } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
+            	    }
                 }
     	    }
 	}
