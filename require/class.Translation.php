@@ -82,7 +82,7 @@ class Translation {
                 }
         }
         
-        public function checkTranslation($ident,$web = true) {
+        public function checkTranslation($ident,$web = false) {
     	    global $globalTranslationSources, $globalTranslationFetch;
     	    //if (!isset($globalTranslationSources)) $globalTranslationSources = array('planefinder');
     	    $globalTranslationSources = array();

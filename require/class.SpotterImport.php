@@ -247,6 +247,12 @@ class SpotterImport {
 		    } elseif (!isset($line['format_source']) || $line['format_source'] != 'aprs') {
 			$Spotter = new Spotter();
 			$route = $Spotter->getRouteInfo(trim($line['ident']));
+			if (!isset($route['fromairport_icao']) && !isset($route['toairport_icao'])) {
+				$Translation = new Translation();
+				$ident = $Translation->checkTranslation(trim($line['ident']));
+				$route = $Spotter->getRouteInfo($ident);
+				$Translation->db = null;
+			}
 			$Spotter->db = null;
 			if (isset($route['fromairport_icao']) && isset($route['toairport_icao'])) {
 			    //if ($route['FromAirport_ICAO'] != $route['ToAirport_ICAO']) {
