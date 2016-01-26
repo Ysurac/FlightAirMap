@@ -112,6 +112,22 @@ require('header.php');
 			    }
 			}
 		    ?>
+		    <li>Display airlines :
+			<select class="selectpicker" multiple onchange="airlines(this);">
+			    <?php
+				$Spotter = new Spotter();
+				foreach($Spotter->getAllAirlineNames() as $airline) {
+					$airline_name = $airline['airline_name'];
+					if (strlen($airline_name) > 30) $airline_name = substr($airline_name,0,30).'...';
+					if (isset($_COOKIE['Airlines']) && in_array($airline['airline_icao'],explode(',',$_COOKIE['Airlines']))) {
+						echo '<option value="'.$airline['airline_icao'].'" selected>'.$airline_name.'</option>';
+					} else {
+						echo '<option value="'.$airline['airline_icao'].'">'.$airline_name.'</option>';
+					}
+				}
+			    ?>
+			</select>
+		    </li>
 		</ul>
 	    </form>
 	    <p>Any change in settings reload page</p>

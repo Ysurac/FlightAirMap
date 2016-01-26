@@ -1680,6 +1680,17 @@ function mapType(selectObj) {
     window.location.reload();
 }
 
+function airlines(selectObj) {
+    var airs = [], air;
+    for (var i=0, len=selectObj.options.length; i< len;i++) {
+	air = selectObj.options[i];
+	if (air.selected) {
+	    airs.push(air.value);
+	}
+    }
+    document.cookie =  'Airlines='+airs.join()+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+
 function iconColor(color) {
     document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
