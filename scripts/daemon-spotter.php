@@ -23,6 +23,27 @@ if ($schema->latest() === false) {
     exit();
 }
 
+
+// This is to be compatible with old version of settings.php
+if (isset($globalSource)) {
+    
+} else {
+    if (isset($globalSBS1Hosts)) {
+	$hosts = $globalSBS1Hosts;
+    } else {
+	if (!isset($globalSBS1Host)) {
+	    echo '$globalSBS1Host MUST be defined !';
+	    die;
+	}
+	$hosts = array($globalSBS1Host.':'.$globalSBS1Port);
+    }
+}
+$options = getopt('s::',array('source::','server'));
+if (isset($options['s'])) $hosts = array($options['s']);
+elseif (isset($options['source'])) $hosts = array($options['source']);
+if (isset($options['server'])) $globalServer = TRUE;
+
+
 if (isset($globalServer) && $globalServer) $SI=new SpotterServer();
 else $SI=new SpotterImport();
 $APRS=new APRS();
@@ -59,7 +80,7 @@ function create_socket($host, $port, &$errno, &$errstr) {
 }
 
 function connect_all($hosts) {
-    global $sockets, $formats, $globalDebug,$aprs_connect,$last_exec;
+    global $sockets, $formats, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights;
     foreach ($hosts as $id => $host) {
 	// Here we check type of source(s)
 	if (filter_var($host,FILTER_VALIDATE_URL)) {
@@ -75,10 +96,22 @@ function connect_all($hosts) {
         	$formats[$id] = 'aircraftlistjson';
         	$last_exec['aircraftlistjson'] = 0;
         	if ($globalDebug) echo "Connect to aircraftlist.json source...\n";
+    	    } else if (preg_match('/radarvirtuel.com\/file.json$/i',$host)) {
+        	$formats[$id] = 'radarvirtueljson';
+        	$last_exec['radarvirtueljson'] = 0;
+        	if ($globalDebug) echo "Connect to radarvirtuel.com/file.json source...\n";
+        	if (!isset($globalSourcesRights) || (isset($globalSourcesRights) && !$globalSourcesRights)) {
+        	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
+        	    exit(0);
+        	}
     	    } else if (preg_match('/planeUpdateFAA.php$/i',$host)) {
         	$formats[$id] = 'planeupdatefaa';
         	$last_exec['planeupdatefaa'] = 0;
         	if ($globalDebug) echo "Connect to planeUpdateFAA.php source...\n";
+        	if (!isset($globalSourcesRights) || (isset($globalSourcesRights) && !$globalSourcesRights)) {
+        	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
+        	    exit(0);
+        	}
             } else if (preg_match('/\/action.php\/acars\/data$/i',$host)) {
         	$formats[$id] = 'phpvmacars';
         	$last_exec['phpvmacars'] = 0;
@@ -92,10 +125,13 @@ function connect_all($hosts) {
         	$last_exec['pirepsjson'] = 0;
         	if ($globalDebug) echo "Connect to pirepsjson source...\n";
             } else if (preg_match(':data.fr24.com/zones/fcgi/feed.js:i',$host)) {
-        	// Desactivated. Here only because it's possible. Do not use without fr24 rights.
-        	//$formats[$id] = 'fr24json';
-        	//$lastexec['fr24json'] = 0;
-        	//if ($globalDebug) echo "Connect to fr24 source...\n";
+        	$formats[$id] = 'fr24json';
+        	$last_exec['fr24json'] = 0;
+        	if ($globalDebug) echo "Connect to fr24 source...\n";
+        	if (!isset($globalSourcesRights) || (isset($globalSourcesRights) && !$globalSourcesRights)) {
+        	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
+        	    exit(0);
+        	}
             } else if (preg_match('/10001/',$host)) {
         	$formats[$id] = 'tsv';
         	if ($globalDebug) echo "Connect to tsv source...\n";
@@ -123,7 +159,7 @@ function connect_all($hosts) {
         }
     }
 }
-
+/*
 // This is to be compatible with old version of settings.php
 if (isset($globalSource)) {
     
@@ -143,6 +179,7 @@ if (isset($globalServer) && $globalServer) {
     if (isset($options['s'])) $hosts = array($options['s']);
     elseif (isset($options['source'])) $hosts = array($options['source']);
 }
+*/
 if (!isset($globalMinFetch)) $globalMinFetch = 0;
 
 // Initialize all
@@ -353,6 +390,7 @@ while ($i > 0) {
 			$data['arrival_airport_icao'] = $deparr[1];
 		    }
 		    $data['datetime'] = date('Y-m-d H:i:s',$line[9]);
+	    	    $data['format_source'] = 'planeupdatefaa';
 		    $SI->add($data);
 		    unset($data);
 		}
@@ -379,11 +417,41 @@ while ($i > 0) {
 		    $data['arrival_airport_iata'] = $line[12];
 	    	    $data['emergency'] = ''; // emergency
 		    $data['datetime'] = date('Y-m-d H:i:s'); //$line[10]
+	    	    $data['format_source'] = 'fr24json';
 		    $SI->add($data);
 		    unset($data);
 		}
 	    }
     	    $last_exec['fr24json'] = time();
+    	} elseif ($value == 'radarvirtueljson' && (time() - $last_exec['radarvirtueljson'] > $globalMinFetch)) {
+	    $buffer = $Common->getData($hosts[$id]);
+	    $all_data = json_decode($buffer,true);
+	    if (isset($all_data['mrkrs'])) {
+		foreach ($all_data['mrkrs'] as $key => $line) {
+		    if (isset($line['inf'])) {
+			$data = array();
+			$data['hex'] = $line['inf']['ia'];
+			if (isset($line['inf']['cs'])) $data['ident'] = $line['inf']['cs']; //$line[13]
+	    		$data['altitude'] = round($line['inf']['al']*3.28084); // altitude
+	    		if (isset($line['inf']['gs'])) $data['speed'] = round($line['inf']['gs']*0.539957); // speed
+	    		if (isset($line['inf']['tr'])) $data['heading'] = $line['inf']['tr']; // heading
+	    		$data['latitude'] = $line['pt'][0]; // lat
+	    		$data['longitude'] = $line['pt'][1]; // long
+	    		//if (isset($line['inf']['vs'])) $data['verticalrate'] = $line['inf']['vs']; // verticale rate
+	    		if (isset($line['inf']['sq'])) $data['squawk'] = $line['inf']['sq']; // squawk
+	    		//$data['aircraft_icao'] = $line[8];
+	    		if (isset($line['inf']['rc'])) $data['registration'] = $line['inf']['rc'];
+			//$data['departure_airport_iata'] = $line[11];
+			//$data['arrival_airport_iata'] = $line[12];
+	    		//$data['emergency'] = ''; // emergency
+			$data['datetime'] = date('Y-m-d H:i:s',$line['inf']['dt']); //$line[10]
+	    		$data['format_source'] = 'radarvirtueljson';
+			echo $SI->add($data);
+			unset($data);
+		    }
+		}
+	    }
+    	    $last_exec['radarvirtueljson'] = time();
     	} elseif ($value == 'pirepsjson' && (time() - $last_exec['pirepsjson'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);
 	    $all_data = json_decode(utf8_encode($buffer),true);

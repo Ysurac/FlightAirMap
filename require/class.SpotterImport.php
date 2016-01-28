@@ -61,10 +61,12 @@ class SpotterImport {
 	global $globalDebug;
 	if ($globalDebug) echo "Update last seen flights data...\n";
 	foreach ($this->all_flights as $key => $flight) {
-	    //echo $this->all_flights[$key]['id'].' - '.$this->all_flights[$key]['latitude'].'  '.$this->all_flights[$key]['longitude']."\n";
-    	    $Spotter = new Spotter();
-            $real_arrival = $this->arrival($key);
-            $Spotter->updateLatestSpotterData($this->all_flights[$key]['id'],$this->all_flights[$key]['ident'],$this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$this->all_flights[$key]['altitude'],$this->all_flights[$key]['ground'],$this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'],$real_arrival['airport_icao'],$real_arrival['airport_time']);
+	    if (isset($this->all_flights[$key]['id'])) {
+		//echo $this->all_flights[$key]['id'].' - '.$this->all_flights[$key]['latitude'].'  '.$this->all_flights[$key]['longitude']."\n";
+    		$Spotter = new Spotter();
+        	$real_arrival = $this->arrival($key);
+        	$Spotter->updateLatestSpotterData($this->all_flights[$key]['id'],$this->all_flights[$key]['ident'],$this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$this->all_flights[$key]['altitude'],$this->all_flights[$key]['ground'],$this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'],$real_arrival['airport_icao'],$real_arrival['airport_time']);
+            }
 	}
     }
 
