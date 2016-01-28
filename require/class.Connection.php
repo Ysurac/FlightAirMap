@@ -33,7 +33,7 @@ class Connection{
 
 	public function createDBConnection($DBname = null)
 	{
-		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB;
+		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB, $globalDBport;
 		if ($DBname === null) {
 			$DBname = 'default';
 			$globalDBSdriver = $globalDBdriver;
@@ -41,15 +41,19 @@ class Connection{
 			$globalDBSname = $globalDBname;
 			$globalDBSuser = $globalDBuser;
 			$globalDBSpass = $globalDBpass;
+			if (!isset($globalDBport) || $globalDBport == NULL) $globalDBSport = 3306;
+			else $globalDBSport = $globalDBport;
 		} else {
 			$globalDBSdriver = $globalDB[$DBname]['driver'];
 			$globalDBShost = $globalDB[$DBname]['host'];
 			$globalDBSname = $globalDB[$DBname]['name'];
 			$globalDBSuser = $globalDB[$DBname]['user'];
 			$globalDBSpass = $globalDB[$DBname]['pass'];
+			if (isset($globalDB[$DBname]['port'])) $globalDBSport = $globalDB[$DBname]['port'];
+			else $globalDBSport = 3306;
                 }
 		try {
-			$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;dbname=$globalDBSname;charset=utf8", $globalDBSuser,  $globalDBSpass);
+			$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;port=$globalDBSport;dbname=$globalDBSname;charset=utf8", $globalDBSuser,  $globalDBSpass);
 			$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
 			$this->dbs[$DBname]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->dbs[$DBname]->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
