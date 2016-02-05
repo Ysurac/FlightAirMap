@@ -33,7 +33,7 @@ class Connection{
 
 	public function createDBConnection($DBname = null)
 	{
-		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB, $globalDBport;
+		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB, $globalDBport, $globalDBTimeOut;
 		if ($DBname === null) {
 			$DBname = 'default';
 			$globalDBSdriver = $globalDBdriver;
