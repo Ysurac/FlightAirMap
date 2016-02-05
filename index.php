@@ -85,10 +85,15 @@ require('header.php');
 		    <?php
 		        if (extension_loaded('gd') && function_exists('gd_info')) {
 		    ?>
+		    <li><input type="checkbox" name="aircraftcoloraltitude" value="1" onclick="iconColorAltitude(this)" <?php if (isset($_COOKIE['IconColorAltitude']) && $_COOKIE['IconColorAltitude'] == 'true') print 'checked'; ?> >Aircraft icon color based on altitude</li>
+		    <?php 
+			if (!isset($_COOKIE['IconColorAltitude']) || $_COOKIE['IconColorAltitude'] == 'false') {
+		    ?>
 		    <li>Aircraft icon color :
 			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print '1a3151'; ?>">
 		    </li>
 		    <?php
+			    }
 		        }
 		    ?>
 		    <li>Show airport icon at zoom level :
