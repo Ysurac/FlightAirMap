@@ -13,7 +13,7 @@ class Common {
 	* @param Array $headers header to submit with the form
 	* @return String the result
 	*/
-	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '') {
+	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '',$useragent = '') {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -22,7 +22,11 @@ class Common {
 		curl_setopt($ch,CURLOPT_ENCODING , "gzip");
 		//curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
 //		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0');
-		curl_setopt($ch, CURLOPT_USERAGENT, UAgent::random());
+		if ($useragent == '') {
+			curl_setopt($ch, CURLOPT_USERAGENT, UAgent::random());
+		} else {
+			curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
+		}
 		if ($timeout == '') curl_setopt($ch, CURLOPT_TIMEOUT, 10); 
 		else curl_setopt($ch, CURLOPT_TIMEOUT, $timeout); 
 		curl_setopt($ch, CURLOPT_HEADERFUNCTION, array('Common',"curlResponseHeaderCallback"));
@@ -42,15 +46,29 @@ class Common {
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		}
 		if ($cookie != '') {
-			curl_setopt($ch, CURLOPT_COOKIE, implode($cookie,';'));
+			if (is_array($cookie)) {
+				curl_setopt($ch, CURLOPT_COOKIE, implode($cookie,';'));
+			} else {
+				curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+			}
 		}
 		if ($referer != '') {
 			curl_setopt($ch, CURLOPT_REFERER, $referer);
 		}
 		$result = curl_exec($ch);
-//		print_r(curl_getinfo($ch));
+		$info = curl_getinfo($ch);
 		curl_close($ch);
-		return $result;
+		if ($info['http_code'] == '503' && strstr($result,'DDoS protection by CloudFlare')) {
+			echo "Cloudflare Detected\n";
+			require_once 'libs/cloudflare-bypass/libraries/cloudflareClass.php';
+			$useragent = UAgent::random();
+			cloudflare::useUserAgent($useragent);
+			if ($clearanceCookie = cloudflare::bypass($url)) {
+				return $this->getData($url,'get',$data,$headers,$clearanceCookie,$referer,$timeout,$useragent);
+			}
+		} else {
+		    return $result;
+		}
 	}
 	
 	private function curlResponseHeaderCallback($ch, $headerLine) {
