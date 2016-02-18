@@ -62,6 +62,9 @@ if(function_exists('apache_get_modules') ){
 	if(!in_array('mod_rewrite',apache_get_modules())) {
 		$error[] = "mod_rewrite is not available.";
 	}
+	if (!isset($_SERVER['HTACCESS'])) {
+		$error[] = "htaccess is not interpreted. Check your Apache configuration";
+	}
 }
 
 if (count($error) > 0) {
