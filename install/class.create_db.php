@@ -49,7 +49,7 @@ class create_db {
 		$db_type = filter_var($db_type,FILTER_SANITIZE_STRING);
 		$host = filter_var($host,FILTER_SANITIZE_STRING);
 		// Dirty hack
-		if ($host != 'localhost' || $host != '127.0.0.1') {
+		if ($host != 'localhost' && $host != '127.0.0.1') {
 		    $grantright = $_SERVER['SERVER_ADDR'];
 		} else $grantright = 'localhost';
 		try {
@@ -57,6 +57,7 @@ class create_db {
 			$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			if ($db_type == 'mysql') {
 				$dbh->exec('CREATE DATABASE IF NOT EXISTS `'.$db.'`;GRANT ALL ON `'.$db."`.* TO '".$user."'@'".$grantright."' IDENTIFIED BY '".$password."';FLUSH PRIVILEGES;");
+				if ($grantright == 'localhost') $dbh->exec('GRANT ALL ON `'.$db."`.* TO '".$user."'@'127.0.0.1' IDENTIFIED BY '".$password."';FLUSH PRIVILEGES;");
 			} else if ($db_type == 'pgsql') {
 				$dbh->exec("CREATE DATABASE ".$db.";
 					CREATE USER ".$user." WITH PASSWORD '".$password."';

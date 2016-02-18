@@ -28,6 +28,11 @@ if (!is_writable('../require/settings.php')) {
 	require('../footer.php');
 	exit;
 }
+if (!is_writable('tmp')) {
+	print '<div class="info column"><p><strong>The directory <i>install/tmp</i> must be writable.</strong></p></div>';
+	require('../footer.php');
+	exit;
+}
 if (!set_time_limit(0)) {
 	print '<div class="info column"><p><strong>You may need to update the maximum execution time.</strong></p></div>';
 }
@@ -544,7 +549,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<label for="aircrafticoncolor">Color of aircraft icon on map</label>
 				<input type="color" name="aircrafticoncolor" id="aircrafticoncolor" value="#<?php if (isset($globalAircraftIconColor)) echo $globalAircraftIconColor; else echo '1a3151'; ?>" />
 			<?php
-				if (!is_writable('cache')) {
+				if (!is_writable('../cache')) {
 			?>
 				<b>The directory cache is not writable, aircraft icon will not be cached</b>
 			<?php
