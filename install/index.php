@@ -58,6 +58,11 @@ if (!extension_loaded('json')) {
 if (!extension_loaded('curl')) {
 	$error[] = "Curl is not loaded.";
 }
+if(function_exists('apache_get_modules') ){
+	if(!in_array('mod_rewrite',apache_get_modules())) {
+		$error[] = "mod_rewrite is not available.";
+	}
+}
 
 if (count($error) > 0) {
 	print '<div class="info column"><ul>';
@@ -122,7 +127,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="siteurl">Site URL</label>
 				<input type="text" name="siteurl" id="siteurl" value="<?php if (isset($globalURL)) print $globalURL; ?>" />
-				<p class="help-block">Can be null.</p>
+				<p class="help-block">Can be null. ex : <i>flightairmap</i> if complete URL is <i>http://toto/flightairmap</i></p>
 			</p>
 			<p>
 				<label for="timezone">Timezone</label>
@@ -382,7 +387,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<div id="acars_data">
 				<fieldset>
 					<legend>Source ACARS</legend>
-					<p>Listen UDP server for acarsdec</p>
+					<p>Listen UDP server for acarsdec/acarsdeco2/...</p>
 					<p>
 						<label for="acarshost">ACARS UDP host</label>
 						<input type="text" name="acarshost" id="acarshost" value="<?php if (isset($globalACARSHost)) print $globalACARSHost; ?>" />
@@ -877,8 +882,10 @@ if (isset($_POST['dbtype'])) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	    if ($done == 'Create database') $pop = true;
 	}
-	if ($pop) print '<li>Create and import tables....<img src="../images/loading.gif" /></li>';
-	else print '<li>Update schema if needed....<img src="../images/loading.gif" /></li>';
+	if ($pop) {
+	    sleep(5);
+	    print '<li>Create and import tables....<img src="../images/loading.gif" /></li>';
+	} else print '<li>Update schema if needed....<img src="../images/loading.gif" /></li>';
 	print '</div></ul>';
 	print '<div id="error"></div>';
 /*	foreach ($_SESSION['done'] as $done) {
