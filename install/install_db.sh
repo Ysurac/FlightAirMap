@@ -1,6 +1,6 @@
 #!/bin/sh
 # You should always use PHP scripts.
-# This script is here if PHP scripts can't be used.
+# This script will certainly not work.
 
 # Config #
 DB_USER=""
