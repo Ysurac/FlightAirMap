@@ -25,6 +25,7 @@ class create_db {
                 	}
 		}
                 //Connection::$db->commit();
+                $Connection->db = null;
                 return '';
 	}
 
@@ -50,7 +51,7 @@ class create_db {
 		// Dirty hack
 		if ($host != 'localhost' || $host != '127.0.0.1') {
 		    $grantright = $_SERVER['SERVER_ADDR'];
-		} else $grantright = $host;
+		} else $grantright = 'localhost';
 		try {
 			$dbh = new PDO($db_type.':host='.$host,$root,$root_pass);
 			$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
