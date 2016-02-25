@@ -122,7 +122,7 @@ if (isset($_GET['reset'])) {
 	    $_SESSION['next'] = 'Populate NOTAM table with externals data';
 	    $result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	    print json_encode($result);
-	} elseif ($_SESSION['owner'] == 1) {
+	} elseif (isset($_SESSION['owner']) && $_SESSION['owner'] == 1) {
 	    $_SESSION['install'] = 'owner';
 	    $_SESSION['next'] = 'Populate owner table with externals data';
 	    unset($_SESSION['owner']);
