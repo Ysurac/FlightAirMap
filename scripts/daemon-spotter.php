@@ -224,13 +224,17 @@ $i = 1;
 $tt = 0;
 
 // Delete all ATC
-if (!$globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) $ATC->deleteAll();
+if (!$globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
+	$ATC->deleteAll();
+}
 
 // Infinite loop if daemon, else work for time defined in $globalCronEnd or only one time.
 while ($i > 0) {
     if (!$globalDaemon) $i = $endtime-time();
     // Delete old ATC
-    if ($globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) $ATC->deleteOldAtc();
+    if ($globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
+        $ATC->deleteOldATC();
+    }
     foreach ($formats as $id => $value) {
 	if ($value == 'deltadbtxt' && (time() - $last_exec['deltadbtxt'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);

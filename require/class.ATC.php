@@ -4,10 +4,13 @@ require_once('class.Connection.php');
 
 class ATC {
 	public $db;
-	function __construct() {
-                $Connection = new Connection();
-                $this->db = $Connection->db;
+        function __construct($dbc = null) {
+	    if ($dbc === null) {
+    		$Connection = new Connection();
+    		$this->db = $Connection->db;
+            } else $this->db = $dbc;
 	}
+
        public function getAll() {
                 $query = "SELECT * FROM atc GROUP BY ident";
                 $query_values = array();
@@ -72,7 +75,6 @@ class ATC {
                 } catch(PDOException $e) {
                         return "error";
                 }
-
                 return "success";
         }
 }
