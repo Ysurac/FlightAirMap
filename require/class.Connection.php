@@ -4,7 +4,7 @@ require_once("settings.php");
 class Connection{
 	public $db = null;
 	public $dbs = array();
-	public $latest_schema = 12;
+	public $latest_schema = 13;
 	
 	public function __construct($dbc = null,$dbname = null) {
 	    global $globalDBdriver;
@@ -33,7 +33,7 @@ class Connection{
 
 	public function createDBConnection($DBname = null)
 	{
-		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB, $globalDBport, $globalDBTimeOut;
+		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB, $globalDBport, $globalDBTimeOut, $globalDBretry;
 		if ($DBname === null) {
 			$DBname = 'default';
 			$globalDBSdriver = $globalDBdriver;
@@ -52,21 +52,27 @@ class Connection{
 			if (isset($globalDB[$DBname]['port'])) $globalDBSport = $globalDB[$DBname]['port'];
 			else $globalDBSport = 3306;
                 }
-		try {
-			$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;port=$globalDBSport;dbname=$globalDBSname;charset=utf8", $globalDBSuser,  $globalDBSpass);
-			$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
-			$this->dbs[$DBname]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$this->dbs[$DBname]->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
-			if (!isset($globalDBTimeOut)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,200);
-			else $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
-			$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,false);
-			//$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
-			//$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
-		} catch(PDOException $e) {
-			if (isset($globalDebug) && $globalDebug) echo $e->getMessage();
-			//exit;
-			return false;
-		}
+                if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry == null) $globalDBretry = 5;
+		$i = 0;
+//		while (true) {
+			try {
+				$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;port=$globalDBSport;dbname=$globalDBSname;charset=utf8", $globalDBSuser,  $globalDBSpass);
+				$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
+				$this->dbs[$DBname]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$this->dbs[$DBname]->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
+				if (!isset($globalDBTimeOut)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,200);
+				else $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
+				$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,false);
+				//$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
+				//$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+			} catch(PDOException $e) {
+				$i++;
+				if (isset($globalDebug) && $globalDebug) echo $e->getMessage();
+				//exit;
+//				if ($i > $globalDBretry) return false;
+				return false;
+			}
+//		}
 		if ($DBname === 'default') $this->db = $this->dbs['default'];
 		return true;
 	}

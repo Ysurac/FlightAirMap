@@ -38,14 +38,16 @@ if (isset($globalSource)) {
 	$hosts = array($globalSBS1Host.':'.$globalSBS1Port);
     }
 }
-$options = getopt('s::',array('source::','server'));
+$options = getopt('s::',array('source::','server','idsource::'));
 if (isset($options['s'])) $hosts = array($options['s']);
 elseif (isset($options['source'])) $hosts = array($options['source']);
 if (isset($options['server'])) $globalServer = TRUE;
-
-
-if (isset($globalServer) && $globalServer) $SI=new SpotterServer();
-else $SI=new SpotterImport();
+if (isset($options['idsource'])) $id_source = $options['idsource'];
+else $id_source = 1;
+if (isset($globalServer) && $globalServer) {
+    if ($globalDebug) echo "Using Server Mode\n";
+    $SI=new SpotterServer();
+} else $SI=new SpotterImport();
 $APRS=new APRS();
 $SBS=new SBS();
 $ATC=new ATC();
@@ -87,19 +89,19 @@ function connect_all($hosts) {
             if (preg_match('/deltadb.txt$/i',$host)) {
         	$formats[$id] = 'deltadbtxt';
         	$last_exec['deltadbtxt'] = 0;
-        	if ($globalDebug) echo "Connect to deltadb source...\n";
+        	if ($globalDebug) echo "Connect to deltadb source (".$host.")...\n";
             } else if (preg_match('/vatsim-data.txt$/i',$host)) {
         	$formats[$id] = 'vatsimtxt';
         	$last_exec['vatsimtxt'] = 0;
-        	if ($globalDebug) echo "Connect to vatsim source...\n";
+        	if ($globalDebug) echo "Connect to vatsim source (".$host.")...\n";
     	    } else if (preg_match('/aircraftlist.json$/i',$host)) {
         	$formats[$id] = 'aircraftlistjson';
         	$last_exec['aircraftlistjson'] = 0;
-        	if ($globalDebug) echo "Connect to aircraftlist.json source...\n";
+        	if ($globalDebug) echo "Connect to aircraftlist.json source (".$host.")...\n";
     	    } else if (preg_match('/radarvirtuel.com\/file.json$/i',$host)) {
         	$formats[$id] = 'radarvirtueljson';
         	$last_exec['radarvirtueljson'] = 0;
-        	if ($globalDebug) echo "Connect to radarvirtuel.com/file.json source...\n";
+        	if ($globalDebug) echo "Connect to radarvirtuel.com/file.json source (".$host.")...\n";
         	if (!isset($globalSourcesRights) || (isset($globalSourcesRights) && !$globalSourcesRights)) {
         	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
         	    exit(0);
@@ -107,7 +109,7 @@ function connect_all($hosts) {
     	    } else if (preg_match('/planeUpdateFAA.php$/i',$host)) {
         	$formats[$id] = 'planeupdatefaa';
         	$last_exec['planeupdatefaa'] = 0;
-        	if ($globalDebug) echo "Connect to planeUpdateFAA.php source...\n";
+        	if ($globalDebug) echo "Connect to planeUpdateFAA.php source (".$host.")...\n";
         	if (!isset($globalSourcesRights) || (isset($globalSourcesRights) && !$globalSourcesRights)) {
         	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
         	    exit(0);
@@ -115,26 +117,26 @@ function connect_all($hosts) {
             } else if (preg_match('/\/action.php\/acars\/data$/i',$host)) {
         	$formats[$id] = 'phpvmacars';
         	$last_exec['phpvmacars'] = 0;
-        	if ($globalDebug) echo "Connect to phpvmacars source...\n";
+        	if ($globalDebug) echo "Connect to phpvmacars source (".$host.")...\n";
             } else if (preg_match('/whazzup/i',$host)) {
         	$formats[$id] = 'whazzup';
         	$last_exec['whazzup'] = 0;
-        	if ($globalDebug) echo "Connect to whazzup source...\n";
+        	if ($globalDebug) echo "Connect to whazzup source (".$host.")...\n";
             } else if (preg_match('/recentpireps/i',$host)) {
         	$formats[$id] = 'pirepsjson';
         	$last_exec['pirepsjson'] = 0;
-        	if ($globalDebug) echo "Connect to pirepsjson source...\n";
+        	if ($globalDebug) echo "Connect to pirepsjson source (".$host.")...\n";
             } else if (preg_match(':data.fr24.com/zones/fcgi/feed.js:i',$host)) {
         	$formats[$id] = 'fr24json';
         	$last_exec['fr24json'] = 0;
-        	if ($globalDebug) echo "Connect to fr24 source...\n";
+        	if ($globalDebug) echo "Connect to fr24 source (".$host.")...\n";
         	if (!isset($globalSourcesRights) || (isset($globalSourcesRights) && !$globalSourcesRights)) {
         	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
         	    exit(0);
         	}
             } else if (preg_match('/10001/',$host)) {
         	$formats[$id] = 'tsv';
-        	if ($globalDebug) echo "Connect to tsv source...\n";
+        	if ($globalDebug) echo "Connect to tsv source (".$host.")...\n";
             }
         } else {
 	    $hostport = explode(':',$host);
@@ -250,6 +252,7 @@ while ($i > 0) {
 	            $data['emergency'] = ''; // emergency
 		    $data['datetime'] = date('Y-m-d H:i:s');
 		    $data['format_source'] = 'deltadbtxt';
+    		    $data['id_source'] = $id_source;
     		    $SI->add($data);
 		    unset($data);
     		}
@@ -288,6 +291,7 @@ while ($i > 0) {
 			$data['type'] = $line[18];
 			$data['range'] = $line[19];
 			$data['info'] = $line[35];
+    			$data['id_source'] = $id_source;
 	    		//$data['arrival_airport_time'] = ;
 	    		if ($line[9] != '') {
 	    		    $aircraft_data = explode('/',$line[9]);
@@ -322,7 +326,7 @@ while ($i > 0) {
     	    if ($value == 'whazzup') $last_exec['whazzup'] = time();
     	    elseif ($value == 'vatsimtxt') $last_exec['vatsimtxt'] = time();
     	} elseif ($value == 'aircraftlistjson' && (time() - $last_exec['aircraftlistjson'] > $globalMinFetch)) {
-	    $buffer = $Common->getData($hosts[$id],'get','','','','','50');
+	    $buffer = $Common->getData($hosts[$id],'get','','','','','20');
 	    if ($buffer != '') {
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['acList'])) {
@@ -340,8 +344,10 @@ while ($i > 0) {
 		    $data['emergency'] = ''; // emergency
 		    if (isset($line['Reg'])) $data['registration'] = $line['Reg'];
 		    if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',$line['PosTime']/1000);
+		    else $data['datetime'] = date('Y-m-d H:i:s');
 		    if (isset($line['Type'])) $data['aircraft_icao'] = $line['Type'];
 	    	    $data['format_source'] = 'aircraftlistjson';
+		    $data['id_source'] = $id_source;
 		    if (isset($data['datetime'])) $SI->add($data);
 		    unset($data);
 		}
@@ -360,6 +366,7 @@ while ($i > 0) {
 		    $data['emergency'] = ''; // emergency
 		    $data['datetime'] = date('Y-m-d H:i:s');
 	    	    $data['format_source'] = 'aircraftlistjson';
+    		    $data['id_source'] = $id_source;
 		    $SI->add($data);
 		    unset($data);
 		}
@@ -391,6 +398,7 @@ while ($i > 0) {
 		    }
 		    $data['datetime'] = date('Y-m-d H:i:s',$line[9]);
 	    	    $data['format_source'] = 'planeupdatefaa';
+    		    $data['id_source'] = $id_source;
 		    $SI->add($data);
 		    unset($data);
 		}
@@ -418,14 +426,21 @@ while ($i > 0) {
 	    	    $data['emergency'] = ''; // emergency
 		    $data['datetime'] = date('Y-m-d H:i:s'); //$line[10]
 	    	    $data['format_source'] = 'fr24json';
+    		    $data['id_source'] = $id_source;
 		    $SI->add($data);
 		    unset($data);
 		}
 	    }
     	    $last_exec['fr24json'] = time();
     	} elseif ($value == 'radarvirtueljson' && (time() - $last_exec['radarvirtueljson'] > $globalMinFetch)) {
-	    $buffer = $Common->getData($hosts[$id]);
+	    $buffer = $Common->getData($hosts[$id],'get','','','','','150');
+	    //echo $buffer;
+	    $buffer = str_replace(array("\n","\r"),"",$buffer);
+	    $buffer = preg_replace('/,"num":(.+)/','}',$buffer);
 	    $all_data = json_decode($buffer,true);
+	    if (json_last_error() != JSON_ERROR_NONE) {
+		die(json_last_error_msg());
+	    }
 	    if (isset($all_data['mrkrs'])) {
 		foreach ($all_data['mrkrs'] as $key => $line) {
 		    if (isset($line['inf'])) {
@@ -446,7 +461,8 @@ while ($i > 0) {
 	    		//$data['emergency'] = ''; // emergency
 			$data['datetime'] = date('Y-m-d H:i:s',$line['inf']['dt']); //$line[10]
 	    		$data['format_source'] = 'radarvirtueljson';
-			echo $SI->add($data);
+    			$data['id_source'] = $id_source;
+			$SI->add($data);
 			unset($data);
 		    }
 		}
@@ -481,6 +497,7 @@ while ($i > 0) {
 		    if (isset($line['atis'])) $data['info'] = $line['atis'];
 		    else $data['info'] = '';
 		    $data['format_source'] = 'pireps';
+    		    $data['id_source'] = $id_source;
 		    $data['datetime'] = date('Y-m-d H:i:s');
 		    if ($line['icon'] == 'plane') {
 			$SI->add($data);
@@ -532,6 +549,7 @@ while ($i > 0) {
 	    	$aircraft_data = explode('-',$line['aircraftname']);
 	    	$data['aircraft_icao'] = $aircraft_data[0];
     		if (isset($line['route'])) $data['waypoints'] = $line['route'];
+    		$data['id_source'] = $id_source;
 	        $data['format_source'] = 'phpvmacars';
 		$SI->add($data);
 		unset($data);
@@ -583,6 +601,7 @@ while ($i > 0) {
     				if (isset($lined['squawk']))$data['squawk'] = $lined['squawk'];
     				if (isset($lined['alt']))$data['altitude'] = $lined['alt'];
     				if (isset($lined['heading']))$data['heading'] = $lined['heading'];
+    				$data['id_source'] = $id_source;
     				$data['format_source'] = 'tsv';
     				$SI->add($data);
     				unset($lined);
@@ -615,6 +634,7 @@ while ($i > 0) {
 				    else $data['heading'] = 0;
 				    $data['aircraft_type'] = $line['stealth'];
 				    $data['noarchive'] = true;
+    				    $data['id_source'] = $id_source;
 				    $data['format_source'] = 'aprs';
 				    //print_r($data);
 				    if ($line['stealth'] == 0) $send = $SI->add($data);
@@ -640,6 +660,7 @@ while ($i > 0) {
     				$data['ground'] = $line[21];
     				$data['emergency'] = $line[19];
     				$data['format_source'] = 'sbs';
+    				$data['id_source'] = $id_source;
     				$send = $SI->add($data);
     				unset($data);
     			    } else $error = true;

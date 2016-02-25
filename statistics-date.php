@@ -16,6 +16,9 @@ include('statistics-sub-menu.php');
 <?php
 
 $date_array = $Spotter->countAllDatesLast7Days();
+if (count($date_array) == 0) {
+    print 'Not data available';
+} else {
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});
@@ -49,11 +52,19 @@ print ']);
     			  drawChart();
     			});
       </script>';
+}
+if (isset($globalDBArchiveMonths) && $globalDBArchiveMonths > 0) {
 ?>
       
+      <p>Below are the <strong>Top 10</strong> most busiest dates of last <?php print $globalDBArchiveMonths; ?> month(s).</p>
+
+<?php
+} else {
+?>
       <p>Below are the <strong>Top 10</strong> most busiest dates.</p>
 
 <?php
+}
 $date_array = $Spotter->countAllDates();
 if (!empty($date_array))
 {

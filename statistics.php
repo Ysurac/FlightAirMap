@@ -1,7 +1,9 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+require('require/class.Stats.php');
 $Spotter = new Spotter();
+$Stats = new Stats();
 $title = "Statistic";
 require('header.php');
 ?>
@@ -14,21 +16,21 @@ require('header.php');
     <?php include('statistics-sub-menu.php'); ?>
 
     <div class="row global-stats">
-        <div class="col-md-2"><span class="type">Flights</span><span><?php print number_format($Spotter->countOverallFlights()); ?></span></div> 
-        <div class="col-md-2"><span class="type">Arrivals seen</span><span><?php print number_format($Spotter->countOverallArrival()); ?></span></div> 
+        <div class="col-md-2"><span class="type">Flights</span><span><?php print number_format($Stats->getStatsTotal('flights_bymonth')+$Spotter->countOverallFlights()); ?></span></div> 
+        <div class="col-md-2"><span class="type">Arrivals seen</span><span><?php print number_format($Stats->getStatsTotal('realarrivals_bymonth')+$Spotter->countOverallArrival()); ?></span></div> 
 	<?php
 	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
 	?>
-    	    <div class="col-md-2"><span class="type">Pilots</span><span><?php print number_format($Spotter->countOverallPilots()); ?></span></div> 
+    	    <div class="col-md-2"><span class="type">Pilots</span><span><?php print number_format($Stats->getStatsTotal('pilots_bymonth')+$Spotter->countOverallPilots()); ?></span></div> 
         <?php
     	    } else {
     	?>
-    	    <div class="col-md-2"><span class="type">Owners</span><span><?php print number_format($Spotter->countOverallOwners()); ?></span></div> 
+    	    <div class="col-md-2"><span class="type">Owners</span><span><?php print number_format($Stats->getStatsTotal('owners_bymonth')+$Spotter->countOverallOwners()); ?></span></div> 
     	<?php
     	    }
     	?>
-        <div class="col-md-2"><span class="type">Aircrafts</span><span><?php print number_format($Spotter->countOverallAircrafts()); ?></span></div> 
-        <div class="col-md-2"><span class="type">Airlines</span><span><?php print number_format($Spotter->countOverallAirlines()); ?></span></div>
+        <div class="col-md-2"><span class="type">Aircrafts</span><span><?php print number_format($Stats->getStatsTotal('aircrafts_bymonth')+$Spotter->countOverallAircrafts()); ?></span></div> 
+        <div class="col-md-2"><span class="type">Airlines</span><span><?php print number_format($Stats->getStatsTotal('airlines_bymonth')+$Spotter->countOverallAirlines()); ?></span></div>
     </div>
 
     <div class="specific-stats">
@@ -36,7 +38,9 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Top 10 Most Common Aircraft Type</h2>
                  <?php
-                  $aircraft_array = $Spotter->countAllAircraftTypes();
+                  $aircraft_array = $Stats->countAllAircraftTypes();
+		    if (count($aircraft_array) == 0) print 'No data available';
+		    else {
 
                     print '<div id="chart1" class="chart" width="100%"></div>
                     <script> 
@@ -67,6 +71,7 @@ require('header.php');
                               drawChart1();
                             });
                   </script>';
+                  }
                   ?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/aircraft" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
@@ -76,7 +81,9 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Top 10 Most Common Airline</h2>
                  <?php
-                  $airline_array = $Spotter->countAllAirlines();
+                  $airline_array = $Stats->countAllAirlines();
+		    if (count($airline_array) == 0) print 'No data available';
+		    else {
 
                   print '<div id="chart2" class="chart" width="100%"></div>
                     <script> 
@@ -107,6 +114,7 @@ require('header.php');
                               drawChart2();
                             });
                   </script>';
+                  }
                   ?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/airline" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
@@ -121,7 +129,9 @@ require('header.php');
             <div class="col-md-12">
                 <h2>Top 10 Most Common Pilots</h2>
                  <?php
-                  $pilot_array = $Spotter->countAllPilots();
+                  $pilot_array = $Stats->countAllPilots();
+		    if (count($pilot_array) == 0) print 'No data available';
+		    else {
 
                   print '<div id="chart7" class="chart" width="100%"></div>
                     <script> 
@@ -152,6 +162,7 @@ require('header.php');
                               drawChart7();
                             });
                   </script>';
+                  }
                   ?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/pilot" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
@@ -164,7 +175,9 @@ require('header.php');
             <div class="col-md-12">
                 <h2>Top 10 Most Common Owners</h2>
                  <?php
-                  $owner_array = $Spotter->countAllOwners();
+                  $owner_array = $Stats->countAllOwners();
+		    if (count($owner_array) == 0) print 'No data available';
+		    else {
 
                   print '<div id="chart7" class="chart" width="100%"></div>
                     <script> 
@@ -195,6 +208,7 @@ require('header.php');
                               drawChart7();
                             });
                   </script>';
+                  }
                   ?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/owner" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
@@ -209,7 +223,9 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Top 10 Most Common Departure Airports</h2>
                 <?php
-                $airport_airport_array = $Spotter->countAllDepartureAirports();
+                $airport_airport_array = $Stats->countAllDepartureAirports();
+		    if (count($airport_airport_array) == 0) print 'No data available';
+		    else {
 
                  print '<div id="chart3" class="chart" width="100%"></div>
                 <script>
@@ -246,6 +262,7 @@ require('header.php');
                 chart.draw(data, options);
               }
                 </script>';
+                }
               ?>
               <div class="more">
                 <a href="<?php print $globalURL; ?>/statistics/airport-departure" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
@@ -255,7 +272,9 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Top 10 Most Common Arrival Airports</h2>
                 <?php
-                $airport_airport_array2 = $Spotter->countAllArrivalAirports();
+                $airport_airport_array2 = $Stats->countAllArrivalAirports();
+		    if (count($airport_airport_array2) == 0) print 'No data available';
+		    else {
 
                 print '<div id="chart4" class="chart" width="100%"></div>
                 <script>
@@ -292,7 +311,8 @@ require('header.php');
                 chart.draw(data, options);
               }
                 </script>';
-              ?>	
+                }
+              ?>
               <div class="more">
                 <a href="<?php print $globalURL; ?>/statistics/airport-arrival" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
               </div>
@@ -301,10 +321,11 @@ require('header.php');
 
         <div class="row column">
             <div class="col-md-6">
-                <h2>Busiest Month in the last Year</h2>
+                <h2>Busiest Months of the last 12 Months</h2>
                 <?php
-                  $year_array = $Spotter->countAllMonthsLastYear();
-
+                  $year_array = $Stats->countAllMonthsLastYear();
+		    if (count($year_array) == 0) print 'No data available';
+		    else {
                   print '<div id="chart8" class="chart" width="100%"></div>
                     <script> 
                         google.load("visualization", "1", {packages:["corechart"]});
@@ -337,6 +358,7 @@ require('header.php');
                               drawChart8();
                             });
                   </script>';
+                  }
                   ?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/year" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
@@ -347,6 +369,8 @@ require('header.php');
                 <h2>Busiest Day in the last Month</h2>
                 <?php
                   $month_array = $Spotter->countAllDatesLastMonth();
+		    if (count($month_array) == 0) print 'No data available';
+		    else {
                   print '<div id="chart9" class="chart" width="100%"></div>
                     <script> 
                         google.load("visualization", "1", {packages:["corechart"]});
@@ -379,6 +403,7 @@ require('header.php');
                               drawChart9();
                             });
                   </script>';
+                  }
                   ?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/month" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
@@ -388,8 +413,9 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Busiest Day in the last 7 Days</h2>
                 <?php
-                  $date_array = $Spotter->countAllDatesLast7Days();
-
+                    $date_array = $Spotter->countAllDatesLast7Days();
+		    if (count($date_array) == 0) print 'No data available';
+		    else {
                   print '<div id="chart5" class="chart" width="100%"></div>
                     <script> 
                         google.load("visualization", "1", {packages:["corechart"]});
@@ -398,6 +424,7 @@ require('header.php');
                         var data = google.visualization.arrayToDataTable([
                             ["Date", "# of Flights"], ';
                             $date_data = '';
+                        
                           foreach($date_array as $date_item)
                                     {
                                         $date_data .= '[ "'.date("F j, Y", strtotime($date_item['date_name'])).'",'.$date_item['date_count'].'],';
@@ -422,6 +449,7 @@ require('header.php');
                               drawChart5();
                             });
                   </script>';
+                  }
                   ?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/date" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
@@ -432,6 +460,8 @@ require('header.php');
                 <h2>Busiest Time of the Day</h2>
                 <?php
                   $hour_array = $Spotter->countAllHours('hour');
+		    if (count($hour_array) == 0) print 'No data available';
+		    else {
 
                   print '<div id="chart6" class="chart" width="100%"></div>
                     <script> 
@@ -465,6 +495,7 @@ require('header.php');
                               drawChart6();
                             });
                   </script>';
+                  }
                 ?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/time" class="btn btn-default btn" role="button">See full statistic&raquo;</a>

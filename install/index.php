@@ -487,6 +487,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="checkbox" name="archive" id="archive" value="archive"<?php if ((isset($globalArchive) && $globalArchive) || !isset($globalArchive)) { ?> checked="checked"<?php } ?> />
 			</p>
 			<p>
+				<label for="archivemonths">Put in archive flights older than xx months</label>
+				<input type="number" name="archivemonths" id="archivemonths" value="<?php if (isset($globalDBArchiveMonths)) print $globalDBArchiveMonths; else echo '0'; ?>" />
+				<p class="help-block">0 to disable</p>
+			</p>
+			<p>
 				<label for="daemon">Use daemon-spotter.php as daemon</label>
 				<input type="checkbox" name="daemon" id="daemon" value="daemon"<?php if ((isset($globalDaemon) && $globalDaemon) || !isset($globalDaemon)) { ?> checked="checked"<?php } ?> onClick="daemon_js()" />
 				<div id="cronends"> 
@@ -716,6 +721,9 @@ if (isset($_POST['dbtype'])) {
 
 	$aircraftsize = filter_input(INPUT_POST,'aircraftsize',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalAircraftSize' => $aircraftsize));
+
+	$archivemonths = filter_input(INPUT_POST,'archivemonths',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalDBArchiveMonths' => $archivemonths));
 
 	$britishairways = filter_input(INPUT_POST,'britishairways',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalBritishAirwaysKey' => $britishairways));

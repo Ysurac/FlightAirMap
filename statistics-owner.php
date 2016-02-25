@@ -1,7 +1,9 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+require('require/class.Stats.php');
 $Spotter = new Spotter();
+$Stats = new Stats();
 $title = "Statistic - Most common owners";
 require('header.php');
 ?>
@@ -15,7 +17,7 @@ require('header.php');
 		<p>Below are the <strong>Top 10</strong> most common owner.</p>
 	  
 	  <?php
-	  $owner_array = $Spotter->countAllOwners();
+	  $owner_array = $Stats->countAllOwners();
 	  
 		print '<div id="chart" class="chart" width="100%"></div>
       	<script> 

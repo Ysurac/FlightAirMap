@@ -140,6 +140,9 @@ $globalPilotIdAccept = array();
 //Archive all data
 $globalArchive = FALSE;
 
+//Archive data olders than xx months (0 to disable)
+$globalDBArchiveMonths = '0';
+
 //NOTAM
 $globalNOTAM = TRUE;
 $globalNOTAMSource = ''; //URL of your feed from notaminfo.com

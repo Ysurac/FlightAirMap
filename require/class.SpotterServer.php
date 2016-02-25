@@ -99,10 +99,12 @@ class SpotterServer {
   		    $data['noarchive'] = true;
   		} else $data['noarchive'] = false;
   		$data['format_source'] = $line['format_source'];
+  		if (isset($line['id_source'])) $id_source = $line['id_source'];
   		if (isset($data['hex'])) {
+  		    echo '.';
   		    $id_user = $globalServerUserID;
   		    if ($id_user == NULL) $id_user = 1;
-  		    $id_source = 1;
+  		    if (!isset($id_source)) $id_source = 1;
   		    $query = 'INSERT INTO spotter_temp (id_user,datetime,hex,ident,latitude,longitude,verticalrate,speed,squawk,altitude,heading,registration,aircraft_icao,waypoints,id_source,noarchive,format_source) VALUES (:id_user,:datetime,:hex,:ident,:latitude,:longitude,:verticalrate,:speed,:squawk,:altitude,:heading,:registration,:aircraft_icao,:waypoints,:id_source,:noarchive, :format_source)';
 		    $query_values = array(':id_user' => $id_user,':datetime' => $data['datetime'],':hex' => $data['hex'],':ident' => $data['ident'],':latitude' => $data['latitude'],':longitude' => $data['longitude'],':verticalrate' => $data['verticalrate'],':speed' => $data['speed'],':squawk' => $data['squawk'],':altitude' => $data['altitude'],':heading' => $data['heading'],':registration' => $data['registration'],':aircraft_icao' => $data['aircraft_icao'],':waypoints' => $data['waypoints'],':id_source' => $id_source,':noarchive' => $data['noarchive'], ':format_source' => $data['format_source']);
 		    try {
@@ -111,7 +113,7 @@ class SpotterServer {
                     } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
             	    }
-                }
+        	}
     	    }
 	}
     }

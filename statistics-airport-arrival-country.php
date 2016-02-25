@@ -1,7 +1,9 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+require('require/class.Stats.php');
 $Spotter = new Spotter();
+$Stats = new Stats();
 $title = "Statistic - Most common Arrival Airport by Country";
 require('header.php');
 include('statistics-sub-menu.php'); 
@@ -14,7 +16,7 @@ include('statistics-sub-menu.php');
     	 <p>Below are the <strong>Top 10</strong> most common countries of all the arrival airports.</p>
     
 <?php
-    $airport_country_array = $Spotter->countAllArrivalCountries();
+    $airport_country_array = $Stats->countAllArrivalCountries();
 ?>
     
     	<script>

@@ -8,7 +8,7 @@
 require_once(dirname(__FILE__).'/../require/settings.php');
 require(dirname(__FILE__).'/../install/class.update_db.php');
 $update_db = new update_db();
-if (isset($globalNOTAM) && $globalNOTAM && $update_db->check_last_notam_update()) {
+if (isset($globalNOTAM) && $globalNOTAM && $globalNOTAMSource != '' && $update_db->check_last_notam_update()) {
 	echo "updating NOTAM...";
 	$update_db->update_notam();
 	$update_db->insert_last_notam_update();

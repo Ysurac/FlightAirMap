@@ -52,6 +52,7 @@ while(1) {
     pcntl_signal_dispatch();
     $dataFound = false;
     //  (null) 2 23/02/2015 14:46:06 0 -16 X .D-AIPW ! 1L 7 M82A LH077P 010952342854:VP-MIBI+W+0)-V+(),GB1
+    //echo $buffer."\n";
     $ACARS->add(trim($buffer));
     socket_sendto($sock, "OK " . $buffer , 100 , 0 , $remote_ip , $remote_port);
     $ACARS->deleteLiveAcarsData();

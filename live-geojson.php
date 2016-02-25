@@ -3,6 +3,7 @@ require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.SpotterLive.php');
 require('require/class.SpotterArchive.php');
+$begintime = microtime(true);
 $SpotterLive = new SpotterLive();
 $Spotter = new Spotter();
 $SpotterArchive = new SpotterArchive();
@@ -58,6 +59,8 @@ if (!empty($spotter_array)) {
 	$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
 	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;
+
+$sqltime = round(microtime(true)-$begintime,2);
 
 $output = '{';
 	$output .= '"type": "FeatureCollection",';
@@ -335,6 +338,8 @@ $output = '{';
 			}
 			$output  = substr($output, 0, -1);
 			$output .= ']';
+			$output .= ',"initial_sqltime": "'.$sqltime.'",';
+			$output .= '"totaltime": "'.round(microtime(true)-$begintime,2).'"';
 		} else {
 			$output .= '"features": ';
 			$output .= '{';

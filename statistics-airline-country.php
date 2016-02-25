@@ -1,7 +1,9 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+require('require/class.Stats.php');
 $Spotter = new Spotter();
+$Stats = new Stats();
 $title = "Statistic - Most common Airline by Country";
 require('header.php');
 include('statistics-sub-menu.php'); 
@@ -14,7 +16,8 @@ include('statistics-sub-menu.php');
       <p>Below are the <strong>Top 10</strong> countries that an airline belongs to.</p>
       
 <?php
-$airline_array = $Spotter->countAllAirlineCountries();
+$airline_array = $Stats->countAllAirlineCountries();
+if (count($airline_array) > 0) {
 print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["geochart"]});
@@ -45,7 +48,7 @@ print ']);
     			  drawChart();
     			});
       </script>';
-
+}
 if (!empty($airline_array))
 {
 	print '<div class="table-responsive">';

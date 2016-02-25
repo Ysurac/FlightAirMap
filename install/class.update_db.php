@@ -27,7 +27,9 @@ class update_db {
 		$buffer_size = 4096; // read 4kb at a time
 		if ($out_file_name == '') $out_file_name = str_replace('.gz', '', $in_file); 
 		if ($in_file != '' && file_exists($in_file)) {
-			$file = gzopen($in_file,'rb');
+			// PHP version of Ubuntu use gzopen64 instead of gzopen
+			if (function_exists('gzopen')) $file = gzopen($in_file,'rb');
+			elseif (function_exists('gzopen64')) $file = gzopen64($in_file,'rb');
 			$out_file = fopen($out_file_name, 'wb'); 
 			while(!gzeof($file)) {
 				fwrite($out_file, gzread($file, $buffer_size));
