@@ -78,7 +78,7 @@ if (isset($_GET['reset'])) {
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Create and import tables'));
 		if ($globalSBS1 && !$globalIVAO && !$globalVATSIM) {
 			$_SESSION['install'] = 'populate';
-			$_SESSION['next'] = 'Populate aircraft_modes table with externals data';
+			$_SESSION['next'] = 'Populate aircraft_modes table with externals data for ADS-B';
 		} else {
 		    $_SESSION['install'] = 'sources';
 		    $_SESSION['next'] = 'Insert data in source table';
@@ -143,9 +143,24 @@ if (isset($_GET['reset'])) {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
 		update_db::update_ModeS();
+		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data for ADS-B'));
+
+		$_SESSION['install'] = 'populate_flarm';
+		$_SESSION['next'] = 'Populate aircraft_modes table with externals data for FLARM';
+		$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+		print json_encode($result);
+	}
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'populate_flarm') {
+	if (!is_writable('tmp')) {
+                $error = 'The directory <i>install/tmp</i> must be writable.';
+		$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+		print json_encode($result);
+	} else {
+		include_once('class.update_db.php');
+		$globalDebug = FALSE;
 		update_db::update_ModeS_flarm();
 		update_db::update_ModeS_ogn();
-		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data'));
+		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data for FLARM'));
 
 		if ((isset($globalVATSIM) && $globalVATSIM) && (isset($globalIVAO) && $globalIVAO)) {
 			$_SESSION['install'] = 'vatsim';

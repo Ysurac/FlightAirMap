@@ -417,21 +417,16 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">Not available for IVAO</p>
 			</p>
 			<div id="schedules_options">
-			<div class="form-group">
 				<p>
 					<label for="britishairways">British Airways API Key</label>
 					<input type="text" name="britishairways" id="britishairways" value="<?php if (isset($globalBritishAirwaysKey)) print $globalBritishAirwaysKey; ?>" />
+					<p class="help-block">Register an account on <a href="https://developer.ba.com/">https://developer.ba.com/</a></p>
 				</p>
-				<p class="help-block">Register an account on <a href="https://developer.ba.com/">https://developer.ba.com/</a></p>
-			</div>
-			<div class="form-group">
 				<p>
 					<label for="transavia">Transavia Test API Consumer Key</label>
 					<input type="text" name="transavia" id="transavia" value="<?php if (isset($globalTransaviaKey)) print $globalTransaviaKey; ?>" />
 					<p class="help-block">Register an account on <a href="https://developer.transavia.com">https://developer.transavia.com</a></p>
 				</p>
-			</div>
-			<div class="form-group">
 				<p>
 					<fieldset>
 						<b>Lufthansa API Key</b>
@@ -445,7 +440,6 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 						<p class="help-block">Register an account on <a href="https://developer.lufthansa.com/page">https://developer.lufthansa.com/page</a></p>
 					</fieldset>
 				</p>
-			</div>
 			</div>
 			<p>
 				<label for="owner">Add private owners of aircrafts</label>
@@ -943,6 +937,10 @@ if (isset($_POST['dbtype'])) {
 				$(location).attr('href','index.php?next=finish');
 				loop = false;
 			    }
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				console.log('error !');
+				$('#error').html('<p><b>Error : </b> ' + textStatus + ' - ' + errorThrown + '</p><p><i>If the error is a time-out, you have to increase PHP script execution time-out</i></p>');
 			}
 		    });
 		}
