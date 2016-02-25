@@ -50,7 +50,6 @@ if (isset($globalServer) && $globalServer) {
 } else $SI=new SpotterImport();
 $APRS=new APRS();
 $SBS=new SBS();
-$ATC=new ATC();
 $Common=new Common();
 date_default_timezone_set('UTC');
 // signal handler - playing nice with sockets and dump1090
@@ -224,6 +223,9 @@ $i = 1;
 $tt = 0;
 
 // Delete all ATC
+if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+	$ATC=new ATC();
+}
 if (!$globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
 	$ATC->deleteAll();
 }
