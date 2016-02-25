@@ -917,13 +917,11 @@ if (isset($_POST['dbtype'])) {
 */
 ?>
     <script language="JavaScript">
-	$(document).ready(function() {
-	    var loop = true;
-		do {
+		function installaction() {
 		    $.ajax({
 			url:'install-action.php',
 			dataType: 'json',
-			async: false,
+			async: true,
 			success: function(result) {
 			    console.log(result);
 			    $('#step').html('');
@@ -938,6 +936,7 @@ if (isset($_POST['dbtype'])) {
 				loop = false;
 			    } else if (result['next'] != 'finish') {
 				$('#step').append('<li>'+ result['next'] +'....<img src="../images/loading.gif" /></li>');
+				installaction();
 			    } else if (result['install'] == 'finish') {
 				console.log('finish !!!');
 				$('#step').append('<li>Reloading page to check all is now ok....<img src="../images/loading.gif" /></li>');
@@ -946,7 +945,11 @@ if (isset($_POST['dbtype'])) {
 			    }
 			}
 		    });
-		} while (loop == true);
+		}
+
+
+	$(document).ready(function() {
+		installaction();
 	});
     </script>
 <?php
