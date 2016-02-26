@@ -492,6 +492,28 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_13() {
+    		$Connection = new Connection();
+    		$query="ALTER TABLE spotter_archive_output ADD real_departure_airport_icao VARCHAR(20), ADD real_departure_airport_time VARCHAR(20)";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update spotter_archive_output) : ".$e->getMessage()."\n";
+    		}
+	
+    		$error = '';
+		$query = "UPDATE `config` SET `value` = '14' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
+
     	public static function check_version($update = false) {
     	    global $globalDBname;
     	    $version = 0;
@@ -554,6 +576,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '12') {
     			    $error = self::update_from_12();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '13') {
+    			    $error = self::update_from_13();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

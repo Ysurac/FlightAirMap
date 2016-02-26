@@ -45,6 +45,8 @@ CREATE TABLE IF NOT EXISTS `spotter_output` (
   `last_ground_speed` int(11) DEFAULT NULL,
   `real_arrival_airport_icao` varchar(10) DEFAULT NULL,
   `real_arrival_airport_time` varchar(20) DEFAULT NULL,
+  `real_departure_airport_icao` varchar(10) DEFAULT NULL,
+  `real_departure_airport_time` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`spotter_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 

@@ -4,7 +4,7 @@ require_once("settings.php");
 class Connection{
 	public $db = null;
 	public $dbs = array();
-	public $latest_schema = 13;
+	public $latest_schema = 14;
 	
 	public function __construct($dbc = null,$dbname = null) {
 	    global $globalDBdriver;
