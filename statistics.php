@@ -2,6 +2,7 @@
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
 require('require/class.Stats.php');
+$beginpage = microtime(true);
 $Spotter = new Spotter();
 $Stats = new Stats();
 $title = "Statistic";
@@ -32,7 +33,7 @@ require('header.php');
         <div class="col-md-2"><span class="type">Aircrafts</span><span><?php print number_format($Stats->getStatsTotal('aircrafts_bymonth')+$Spotter->countOverallAircrafts()); ?></span></div> 
         <div class="col-md-2"><span class="type">Airlines</span><span><?php print number_format($Stats->getStatsTotal('airlines_bymonth')+$Spotter->countOverallAirlines()); ?></span></div>
     </div>
-
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
     <div class="specific-stats">
         <div class="row column">
             <div class="col-md-6">
@@ -77,6 +78,7 @@ require('header.php');
                     <a href="<?php print $globalURL; ?>/statistics/aircraft" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
                 </div>
             </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
                 <h2>Top 10 Most Common Airline</h2>
@@ -121,6 +123,7 @@ require('header.php');
                 </div>
             </div>
         </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <div class="row column">
 
 	    <?php
@@ -169,6 +172,7 @@ require('header.php');
                 </div>
             </div>
         </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     	    } else {
     	?>
@@ -215,6 +219,7 @@ require('header.php');
                 </div>
             </div>
         </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     	    }
     	?>
@@ -268,6 +273,7 @@ require('header.php');
                 <a href="<?php print $globalURL; ?>/statistics/airport-departure" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
               </div>
             </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
                 <h2>Top 10 Most Common Arrival Airports</h2>
@@ -318,6 +324,7 @@ require('header.php');
               </div>
             </div>
         </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
         <div class="row column">
             <div class="col-md-6">
@@ -364,6 +371,7 @@ require('header.php');
                     <a href="<?php print $globalURL; ?>/statistics/year" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
                 </div>
             </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
                 <h2>Busiest Day in the last Month</h2>
@@ -409,6 +417,7 @@ require('header.php');
                     <a href="<?php print $globalURL; ?>/statistics/month" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
                 </div>
             </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
                 <h2>Busiest Day in the last 7 Days</h2>
@@ -455,6 +464,7 @@ require('header.php');
                     <a href="<?php print $globalURL; ?>/statistics/date" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
                 </div>
             </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
                 <h2>Busiest Time of the Day</h2>
@@ -501,6 +511,7 @@ require('header.php');
                     <a href="<?php print $globalURL; ?>/statistics/time" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
                 </div>
             </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         </div>
     </div>
 </div>  
