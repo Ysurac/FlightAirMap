@@ -223,6 +223,20 @@ class SpotterArchive {
 
                 return $spotter_array;
         }
+        
+        public function deleteSpotterArchiveTrackData()
+        {
+		global $globalArchiveKeepTrackMonths;
+                date_default_timezone_set('UTC');
+		$query = 'DELETE FROM spotter_archive WHERE spotter_archive.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepTrackMonths.' MONTH)';
+                try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error";
+                }
+	}
+
 
 	// Spotter_Archive_output
 	
@@ -520,6 +534,19 @@ class SpotterArchive {
 
 	return $spotter_array;
     }
+
+    public function deleteSpotterArchiveData()
+    {
+		global $globalArchiveKeepMonths;
+                date_default_timezone_set('UTC');
+		$query = 'DELETE FROM spotter_archive_output WHERE spotter_archive_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepMonths.' MONTH)';
+                try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error";
+                }
+	}
 
 }
 

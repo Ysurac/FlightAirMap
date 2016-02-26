@@ -24,6 +24,7 @@ class update_db {
 	}
 
 	public static function gunzip($in_file,$out_file_name = '') {
+		//echo $in_file.' -> '.$out_file_name."\n";
 		$buffer_size = 4096; // read 4kb at a time
 		if ($out_file_name == '') $out_file_name = str_replace('.gz', '', $in_file); 
 		if ($in_file != '' && file_exists($in_file)) {

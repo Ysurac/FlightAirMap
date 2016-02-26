@@ -137,11 +137,19 @@ $globalAirlineAccept = array();
 //accept the flights that have the following pilot id (only for VA)
 $globalPilotIdAccept = array();
 
+
 //Archive all data
 $globalArchive = FALSE;
 
 //Archive data olders than xx months (0 to disable)
-$globalDBArchiveMonths = '0';
+$globalArchiveMonths = '0';
+
+//Keep Archive track of flight for xx months (0 to disable)
+$globalArchiveKeepTrackMonths = '0';
+
+//Keep Archive of flight for xx months (0 to disable)
+$globalArchiveKeepMonths = '0';
+
 
 //NOTAM
 $globalNOTAM = TRUE;

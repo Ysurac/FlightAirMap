@@ -1,6 +1,7 @@
 <?php
 require('require/class.Connection.php');
 require('require/class.Spotter.php');
+require('require/class.SpotterArchive.php');
 $Spotter = new Spotter();
 $orderby = $Spotter->getOrderBy();
 
@@ -85,9 +86,15 @@ if (!empty($_GET)){
 	$departure_airport_route = filter_input(INPUT_GET, 'departure_airport_route',FILTER_SANITIZE_STRING);
 	$arrival_airport_route = filter_input(INPUT_GET, 'arrival_airport_route',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+	$archive = filter_input(INPUT_GET,'archive',FILTER_SANITIZE_NUMBER_INT);
 	if (!isset($sql_date)) $sql_date = '';
-	$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
-	  
+	if ($archive == 1) {
+		$SpotterArchive = new SpotterArchive();
+		$spotter_array = $SpotterArchive->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
+	} else {
+		$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
+	}
+	 
 	 print '<span class="sub-menu-statistic column mobile">';
 	 	print '<a href="#" onclick="showSubMenu(); return false;">Export <i class="fa fa-plus"></i></a>';
 	 	print '</span>';
@@ -277,6 +284,7 @@ if (!empty($_GET)){
     		    <select name="manufacturer" class="selectpicker" data-live-search="true">
     		      <option></option>
     		      <?php
+    		      
     		      $manufacturers = $Spotter->getAllManufacturers();
     		      foreach($manufacturers as $manufacturer)
     		      {
@@ -534,13 +542,20 @@ if (!empty($_GET)){
     		      </select>
     		  </div>
         </fieldset>
-		
+    	
+        
+		<fieldset>
+			<div class="form-group">
+				<label>Search in archive</label>
+				<input type="checkbox" name="archive" value="1" />
+			</div>
+		</fieldset>
 		<fieldset>
 			<div>
 				<input type="submit" value="Search" />
 			</div>
 		</fieldset>
-  </form>
+	 </form>
 </div>
 
 <?php

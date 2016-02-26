@@ -482,8 +482,18 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<p>
 				<label for="archivemonths">Put in archive flights older than xx months</label>
-				<input type="number" name="archivemonths" id="archivemonths" value="<?php if (isset($globalDBArchiveMonths)) print $globalDBArchiveMonths; else echo '0'; ?>" />
+				<input type="number" name="archivemonths" id="archivemonths" value="<?php if (isset($globalArchiveMonths)) print $globalArchiveMonths; else echo '0'; ?>" />
 				<p class="help-block">0 to disable</p>
+			</p>
+			<p>
+				<label for="archivekeepmonths">Keep flights data for xx months in archive</label>
+				<input type="number" name="archivekeepmonths" id="archivekeepmonths" value="<?php if (isset($globalArchiveKeepMonths)) print $globalArchiveKeepMonths; else echo '0'; ?>" />
+				<p class="help-block">0 to disable</p>
+			</p>
+			<p>
+				<label for="archivekeeptrackmonths">Keep flights track data for xx months in archive</label>
+				<input type="number" name="archivekeeptrackmonths" id="archivekeeptrackmonths" value="<?php if (isset($globalArchiveKeepTrackMonths)) print $globalArchiveKeepTrackMonths; else echo '0'; ?>" />
+				<p class="help-block">0 to disable, should be less or egal to flights data keep value</p>
 			</p>
 			<p>
 				<label for="daemon">Use daemon-spotter.php as daemon</label>
@@ -717,7 +727,11 @@ if (isset($_POST['dbtype'])) {
 	$settings = array_merge($settings,array('globalAircraftSize' => $aircraftsize));
 
 	$archivemonths = filter_input(INPUT_POST,'archivemonths',FILTER_SANITIZE_NUMBER_INT);
-	$settings = array_merge($settings,array('globalDBArchiveMonths' => $archivemonths));
+	$settings = array_merge($settings,array('globalArchiveMonths' => $archivemonths));
+	$archivekeepmonths = filter_input(INPUT_POST,'archivekeepmonths',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalArchiveKeepMonths' => $archivekeepmonths));
+	$archivekeeptrackmonths = filter_input(INPUT_POST,'archivekeeptrackmonths',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalArchiveKeepTrackMonths' => $archivekeeptrackmonths));
 
 	$britishairways = filter_input(INPUT_POST,'britishairways',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalBritishAirwaysKey' => $britishairways));

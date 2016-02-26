@@ -33,4 +33,26 @@ if (isset($globalOwner) && $globalOwner && $update_db->check_last_owner_update()
 	$update_db->update_owner();
 	$update_db->insert_last_owner_update();
 } elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalIVAO) || !$globalIVAO)) echo "Owner are only updated every 15 days.\n";
+
+if (isset($globalArchiveMonths) && $globalArchiveMonths > 0) {
+	echo "Updating statistics and archive old data...";
+	require_once(dirname(__FILE__).'/../require/class.Stats.php');
+	$Stats = new Stats();
+	$Stats->addOldStats();
+}
+if (isset($globalArchive) && $globalArchive) {
+	if (isset($globalArchiveKeepMonths) && $globalArchiveKeepMonths > 0) {
+		echo "Deleting archive old data...";
+		require_once(dirname(__FILE__).'/../require/class.SpotterArchive.php');
+		$SpotterArchive = new SpotterArchive();
+		$SpotterArchive->deleteSpotterArchiveData();
+	}
+	if (isset($globalArchiveKeepTrackMonths) && $globalArchiveKeepTrackMonths > 0) {
+		echo "Deleting archive track old data...";
+		require_once(dirname(__FILE__).'/../require/class.SpotterArchive.php');
+		$SpotterArchive = new SpotterArchive();
+		$SpotterArchive->deleteSpotterArchiveTrackData();
+	}
+}
+
 ?>

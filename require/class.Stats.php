@@ -1,6 +1,6 @@
 <?php
 /*
-* This class save stats older than a year and $globalDBArchiveMonths
+* This class save stats older than a year and $globalArchiveMonths
 */
 
 require_once('class.Spotter.php');
@@ -243,8 +243,8 @@ class Stats {
                 return $all;
         }
 	public function getStatsTotal($type) {
-    		global $globalDBArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats WHERE type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalDBArchiveMonths.' MONTH)";
+    		global $globalArchiveMonths;
+                $query = "SELECT SUM(cnt) as total FROM stats WHERE type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)";
                 $query_values = array(':type' => $type);
                  try {
                         $sth = $this->db->prepare($query);
@@ -256,8 +256,8 @@ class Stats {
                 return $all[0]['total'];
         }
 	public function getStatsAircraftTotal() {
-    		global $globalDBArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats_aircraft AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalDBArchiveMonths.' MONTH)";
+    		global $globalArchiveMonths;
+                $query = "SELECT SUM(cnt) as total FROM stats_aircraft AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -268,8 +268,8 @@ class Stats {
                 return $all[0]['total'];
         }
 	public function getStatsAirlineTotal() {
-    		global $globalDBArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats_airline AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalDBArchiveMonths.' MONTH)";
+    		global $globalArchiveMonths;
+                $query = "SELECT SUM(cnt) as total FROM stats_airline AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -280,8 +280,8 @@ class Stats {
                 return $all[0]['total'];
         }
 	public function getStatsOwnerTotal() {
-    		global $globalDBArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats_owner AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalDBArchiveMonths.' MONTH)";
+    		global $globalArchiveMonths;
+                $query = "SELECT SUM(cnt) as total FROM stats_owner AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -292,8 +292,8 @@ class Stats {
                 return $all[0]['total'];
         }
 	public function getStatsPilotTotal() {
-    		global $globalDBArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats_pilot AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalDBArchiveMonths.' MONTH)";
+    		global $globalArchiveMonths;
+                $query = "SELECT SUM(cnt) as total FROM stats_pilot AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -387,7 +387,7 @@ class Stats {
         }
         
         public function addOldStats() {
-    		global $globalDBArchiveMonths, $globalArchive;
+    		global $globalArchiveMonths, $globalArchive;
 		$Spotter = new Spotter();
 		$alldata = $Spotter->countAllMonths();
 		$lastyear = false;
@@ -458,30 +458,30 @@ class Stats {
 				return "error : ".$e->getMessage();
 			}
 		}
-		if (!isset($globalDBArchiveMonths) || $globalDBArchiveMonths == '') $globalDBArchiveMonths = 2;
-		if ($globalDBArchiveMonths > 0) {
-			$alldata = $Spotter->countAllAircraftTypes(false,$globalDBArchiveMonths);
+		if (!isset($globalArchiveMonths) || $globalArchiveMonths == '') $globalArchiveMonths = 2;
+		if ($globalArchiveMonths > 0) {
+			$alldata = $Spotter->countAllAircraftTypes(false,$globalArchiveMonths);
 			foreach ($alldata as $number) {
 				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count']);
 			}
-			$alldata = $Spotter->countAllAirlines(false,$globalDBArchiveMonths);
+			$alldata = $Spotter->countAllAirlines(false,$globalArchiveMonths);
 			foreach ($alldata as $number) {
 				$this->addStatAirline($number['airline_icao'],$number['airline_count']);
 			}
-			$alldata = $Spotter->countAllOwners(false,$globalDBArchiveMonths);
+			$alldata = $Spotter->countAllOwners(false,$globalArchiveMonths);
 			foreach ($alldata as $number) {
 				$this->addStatOwner($number['owner_name'],$number['owner_count']);
 			}
-			$alldata = $Spotter->countAllPilots(false,$globalDBArchiveMonths);
+			$alldata = $Spotter->countAllPilots(false,$globalArchiveMonths);
 			foreach ($alldata as $number) {
 				$this->addStatPilot($number['pilot_id'],$number['pilot_count']);
 			}
-			$alldata = $Spotter->countAllDepartureAirports(false,$globalDBArchiveMonths);
+			$alldata = $Spotter->countAllDepartureAirports(false,$globalArchiveMonths);
 			//print_r($alldate);
 			foreach ($alldata as $number) {
 				$this->addStatDepartureAirports($number['airport_departure_icao'],$number['airport_departure_city'],$number['airport_departure_country'],$number['airport_departure_icao_count']);
 			}
-			$alldata = $Spotter->countAllArrivalAirports(false,$globalDBArchiveMonths);
+			$alldata = $Spotter->countAllArrivalAirports(false,$globalArchiveMonths);
 			foreach ($alldata as $number) {
 				$this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count']);
 			}
@@ -491,7 +491,7 @@ class Stats {
 			$this->addStat('pilot_byyear',$this->getStatsPilotTotal(),date('Y').'-01-01 00:00:00');
 		
 			if ($globalArchive) {
-				$query = 'INSERT INTO spotter_archive_output SELECT * FROM spotter_output WHERE spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalDBArchiveMonths.' MONTH)';
+				$query = 'INSERT INTO spotter_archive_output SELECT * FROM spotter_output WHERE spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)';
 				try {
 					$sth = $this->db->prepare($query);
 					$sth->execute();
@@ -500,7 +500,7 @@ class Stats {
 				}
 			}
 
-			$query = 'DELETE FROM spotter_output WHERE spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalDBArchiveMonths.' MONTH)';
+			$query = 'DELETE FROM spotter_output WHERE spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)';
 			try {
 				$sth = $this->db->prepare($query);
 				$sth->execute();

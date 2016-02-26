@@ -482,7 +482,7 @@ foreach($spotter_array as $spotter_item)
 	if (isset($spotter_item['departure_airport_time']) && isset($spotter_item['real_departure_airport_time'])) {
 		if ($spotter_item['departure_airport_time'] > 2460) {
 			$departure_airport_time = date('H:m',$spotter_item['departure_airport_time']);
-		} else $departure_airport_time = $spotter_item['departure_airport_time'];
+		} else $departure_airport_time = substr($spotter_item['departure_airport_time'],0,-2).':'.substr($spotter_item['departure_airport_time'],-2);
 		if ($spotter_item['real_departure_airport_time'] > 2460) {
 			$real_departure_airport_time = date('H:m',$spotter_item['real_departure_airport_time']);
 		} else $real_departure_airport_time = $spotter_item['real_departure_airport_time'];
@@ -495,7 +495,9 @@ foreach($spotter_array as $spotter_item)
 	} elseif (isset($spotter_item['departure_airport_time'])) {
 		if ($spotter_item['departure_airport_time'] > 2460) {
 			$departure_airport_time = date('H:m',$spotter_item['departure_airport_time']);
-		} else $departure_airport_time = $spotter_item['departure_airport_time'];
+		} else {
+			$departure_airport_time = substr($spotter_item['departure_airport_time'],0,-2).':'.substr($spotter_item['departure_airport_time'],-2);
+		}
 		print '<br /><span class="airport_time">'.$departure_airport_time.'</span>'."\n";
 	}
 	print '</td>'."\n";
@@ -512,9 +514,11 @@ foreach($spotter_array as $spotter_item)
 	} else {
 		if (isset($spotter_item['real_arrival_airport']) && $spotter_item['real_arrival_airport'] != $spotter_item['arrival_airport']) {
 			print '<span class="nomobile">Scheduled : <a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a></span>'."\n";
-			print '<br /><span class="nomobile">Real : <a href="'.$globalURL.'/airport/'.$spotter_item['real_arrival_airport'].'">'.$spotter_item['real_arrival_airport'].'</a></span>'."\n";
+			if (!isset($Spotter)) $Spotter = new Spotter();
+			$arrival_airport_info = $Spotter->getAllAirportInfo($spotter_item['arrival_airport']);
+			print '<br /><span class="nomobile">Real : <a href="'.$globalURL.'/airport/'.$spotter_item['real_arrival_airport'].'">'.$arrival_airport_info[0]['city'].','.$arrival_airport_info[0]['country'].' ('.$spotter_item['real_arrival_airport'].')</a></span>'."\n";
 			print '<span class="mobile">Scheduled : <a href="'.$globalURL.'/airport/'.$spotter_item['real_arrival_airport'].'">'.$spotter_item['real_arrival_airport'].'</a></span>'."\n";
-			print ' - <span class="mobile">Real : <a href="'.$globalURL.'/airport/'.$spotter_item['real_arrival_airport'].'">'.$spotter_item['real_arrival_airport'].'</a></span>'."\n";
+			print '<span class="mobile">Real : <a href="'.$globalURL.'/airport/'.$spotter_item['real_arrival_airport'].'">'.$arrival_airport_info[0]['city'].','.$arrival_airport_info[0]['country'].' ('.$spotter_item['real_arrival_airport'].')</a></span>'."\n";
 		} else {
 			print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a></span>'."\n";
 			print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport'].'</a></span>'."\n";
