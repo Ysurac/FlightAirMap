@@ -11,6 +11,30 @@ class Stats {
                 $this->db = $Connection->db;
         }
 
+	public function addLastStatsUpdate() {
+                $query = "INSERT INTO config (name,value) VALUES ('last_update_stats',:stats_date) ON DUPLICATE KEY UPDATE value = :stats_date";
+                $query_values = array(':stats_date' => $stats_date);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+        }
+
+	public function getLastStatsUpdate() {
+                $query = "SELECT value FROM config WHERE name = 'last_update_stats'";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
+        }
+
+
 	public function countAllAircraftTypes($limit = true) {
 		$query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> ''";
                  try {
@@ -21,7 +45,8 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllAircraftTypes(false));
+                $spotterall = $Spotter->countAllAircraftTypes(false)
+                $all_result = array_merge($all,$spotterall);
                 $values = array();
                 foreach ($all_result as $cnt) {
                     $values[] = $cnt['aircraft_icao_count'];
@@ -388,6 +413,8 @@ class Stats {
         
         public function addOldStats() {
     		global $globalArchiveMonths, $globalArchive;
+    		$last_update = $this->getLastStatsUpdate();
+    		if (empty($last_update)) {
 		$Spotter = new Spotter();
 		$alldata = $Spotter->countAllMonths();
 		$lastyear = false;
@@ -507,6 +534,7 @@ class Stats {
 			} catch(PDOException $e) {
 				return "error : ".$e->getMessage();
 			}
+		}
 		}
 	}
 }
