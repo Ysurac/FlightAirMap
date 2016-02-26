@@ -244,7 +244,7 @@ class Stats {
         }
 	public function getStatsTotal($type) {
     		global $globalArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats WHERE type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)";
+                $query = "SELECT SUM(cnt) as total FROM stats WHERE type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
                 $query_values = array(':type' => $type);
                  try {
                         $sth = $this->db->prepare($query);
@@ -257,7 +257,7 @@ class Stats {
         }
 	public function getStatsAircraftTotal() {
     		global $globalArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats_aircraft AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)";
+                $query = "SELECT SUM(cnt) as total FROM stats_aircraft AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -269,7 +269,7 @@ class Stats {
         }
 	public function getStatsAirlineTotal() {
     		global $globalArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats_airline AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)";
+                $query = "SELECT SUM(cnt) as total FROM stats_airline AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -281,7 +281,7 @@ class Stats {
         }
 	public function getStatsOwnerTotal() {
     		global $globalArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats_owner AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)";
+                $query = "SELECT SUM(cnt) as total FROM stats_owner AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -293,7 +293,7 @@ class Stats {
         }
 	public function getStatsPilotTotal() {
     		global $globalArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats_pilot AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)";
+                $query = "SELECT SUM(cnt) as total FROM stats_pilot AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
