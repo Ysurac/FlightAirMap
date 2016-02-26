@@ -11,7 +11,7 @@ class Stats {
                 $this->db = $Connection->db;
         }
 
-	public function addLastStatsUpdate() {
+	public function addLastStatsUpdate($stats_date) {
                 $query = "INSERT INTO config (name,value) VALUES ('last_update_stats',:stats_date) ON DUPLICATE KEY UPDATE value = :stats_date";
                 $query_values = array(':stats_date' => $stats_date);
                  try {

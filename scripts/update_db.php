@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 /**
-* This script is used to update databases with external data.
+* This script is used to update databases with external data and archive old data
 * Should be run as cronjob no more than every 2 weeks if NOTAM is not activated, once a day if NOTAM is activated and every hour if METAR is activated.
 */
 
@@ -33,13 +33,14 @@ if (isset($globalOwner) && $globalOwner && $update_db->check_last_owner_update()
 	$update_db->update_owner();
 	$update_db->insert_last_owner_update();
 } elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalIVAO) || !$globalIVAO)) echo "Owner are only updated every 15 days.\n";
-
+/*
 if (isset($globalArchiveMonths) && $globalArchiveMonths > 0) {
 	echo "Updating statistics and archive old data...";
 	require_once(dirname(__FILE__).'/../require/class.Stats.php');
 	$Stats = new Stats();
 	$Stats->addOldStats();
 }
+*/
 if (isset($globalArchive) && $globalArchive) {
 	if (isset($globalArchiveKeepMonths) && $globalArchiveKeepMonths > 0) {
 		echo "Deleting archive old data...";
