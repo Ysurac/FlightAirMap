@@ -481,9 +481,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="checkbox" name="archive" id="archive" value="archive"<?php if ((isset($globalArchive) && $globalArchive) || !isset($globalArchive)) { ?> checked="checked"<?php } ?> />
 			</p>
 			<p>
-				<label for="archivemonths">Put in archive flights older than xx months</label>
+				<label for="archivemonths">Generate statistics, delete or put in archive flights older than xx months</label>
 				<input type="number" name="archivemonths" id="archivemonths" value="<?php if (isset($globalArchiveMonths)) print $globalArchiveMonths; else echo '0'; ?>" />
-				<p class="help-block">0 to disable</p>
+				<p class="help-block">0 to disable, delete old flight if <i>Archive all flights data</i> is disabled</p>
 			</p>
 			<p>
 				<label for="archivekeepmonths">Keep flights data for xx months in archive</label>
@@ -493,7 +493,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="archivekeeptrackmonths">Keep flights track data for xx months in archive</label>
 				<input type="number" name="archivekeeptrackmonths" id="archivekeeptrackmonths" value="<?php if (isset($globalArchiveKeepTrackMonths)) print $globalArchiveKeepTrackMonths; else echo '0'; ?>" />
-				<p class="help-block">0 to disable, should be less or egal to flights data keep value</p>
+				<p class="help-block">0 to disable, should be less or egal to <i>Keep flights data</i> value</p>
 			</p>
 			<p>
 				<label for="daemon">Use daemon-spotter.php as daemon</label>
