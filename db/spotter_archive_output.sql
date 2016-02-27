@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `spotter_archive_output` (
   `last_altitude` int(11) DEFAULT NULL,
   `last_ground_speed` int(11) DEFAULT NULL,
   `real_departure_airport_icao` varchar(10) DEFAULT NULL,
-  `real_departure_airport_time` varchar(20) DEFAULT NULL
+  `real_departure_airport_time` varchar(20) DEFAULT NULL,
   `real_arrival_airport_icao` varchar(10) DEFAULT NULL,
   `real_arrival_airport_time` varchar(20) DEFAULT NULL
 ) ENGINE=ARCHIVE DEFAULT CHARSET=latin1;
