@@ -540,19 +540,19 @@ class Stats {
 		} else {
 			$last_update_day = $last_update[];
 
-			$alldata = $Spotter->countAllAircraftTypes(false,,0,$last_update_day);
+			$alldata = $Spotter->countAllAircraftTypes(false,0,$last_update_day);
 			foreach ($alldata as $number) {
 				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count']);
 			}
-			$alldata = $Spotter->countAllAirlines(false,,0,$last_update_day);
+			$alldata = $Spotter->countAllAirlines(false,0,$last_update_day);
 			foreach ($alldata as $number) {
 				$this->addStatAirline($number['airline_icao'],$number['airline_count']);
 			}
-			$alldata = $Spotter->countAllOwners(false,,0,$last_update_day);
+			$alldata = $Spotter->countAllOwners(false,0,$last_update_day);
 			foreach ($alldata as $number) {
 				$this->addStatOwner($number['owner_name'],$number['owner_count']);
 			}
-			$alldata = $Spotter->countAllPilots(false,,0,$last_update_day);
+			$alldata = $Spotter->countAllPilots(false,0,$last_update_day);
 			foreach ($alldata as $number) {
 				$this->addStatPilot($number['pilot_id'],$number['pilot_count']);
 			}
