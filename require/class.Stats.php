@@ -47,7 +47,7 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 $Spotter = new Spotter();
-                $spotterall = $Spotter->countAllAircraftTypes(false)
+                $spotterall = $Spotter->countAllAircraftTypes(false);
                 $all_result = array_merge($all,$spotterall);
                 $values = array();
                 foreach ($all_result as $cnt) {
