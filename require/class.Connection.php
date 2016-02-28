@@ -62,9 +62,9 @@ class Connection{
 				$this->dbs[$DBname]->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
 				if (!isset($globalDBTimeOut)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,200);
 				else $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
-				$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,false);
-				//$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
-				//$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+				//$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,false);
+				$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
+				$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 			} catch(PDOException $e) {
 				$i++;
 				if (isset($globalDebug) && $globalDebug) echo $e->getMessage();

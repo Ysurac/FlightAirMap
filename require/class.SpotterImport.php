@@ -23,11 +23,11 @@ class SpotterImport {
     function get_Schedule($id,$ident) {
 	global $globalDebug;
 	// Get schedule here, so it's done only one time
-	/*
+	
 	$Connection = new Connection();
 	$dbc = $Connection->db;
-        */
-	$dbc = $this->db;
+        
+	//$dbc = $this->db;
 	$Spotter = new Spotter($dbc);
 	$Schedule = new Schedule($dbc);
 	$Translation = new Translation($dbc);
@@ -63,7 +63,10 @@ class SpotterImport {
 		}
 	    }
 	}
-	//$Connection->db = null;
+	$Spotter->db = null;
+	$Schedule->db = null;
+	$Translation->db = null;
+	$Connection->db = null;
     }
 
     public function checkAll() {
