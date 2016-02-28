@@ -6,9 +6,11 @@
 require_once('class.Spotter.php');
 class Stats {
 	public $db;
-        function __construct() {
-                $Connection = new Connection();
-                $this->db = $Connection->db;
+        function __construct($dbc = null) {
+    		if ($dbc === null) {
+			$Connection = new Connection();
+			$this->db = $Connection->db;
+		} else $this->db = $dbc;
         }
 
 	public function addLastStatsUpdate($stats_date) {
@@ -256,7 +258,7 @@ class Stats {
 	}
 
 	public function getStats($type) {
-                $query = "SELECT * FROM stats WHERE type = :type";
+                $query = "SELECT * FROM stats WHERE type = :type ORDER BY stat_date";
                 $query_values = array(':type' => $type);
                  try {
                         $sth = $this->db->prepare($query);
@@ -535,6 +537,54 @@ class Stats {
 				return "error : ".$e->getMessage();
 			}
 		}
+		} else {
+			$last_update_day = $last_update[];
+
+			$alldata = $Spotter->countAllAircraftTypes(false,,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count']);
+			}
+			$alldata = $Spotter->countAllAirlines(false,,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatAirline($number['airline_icao'],$number['airline_count']);
+			}
+			$alldata = $Spotter->countAllOwners(false,,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatOwner($number['owner_name'],$number['owner_count']);
+			}
+			$alldata = $Spotter->countAllPilots(false,,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatPilot($number['pilot_id'],$number['pilot_count']);
+			}
+
+
+			$alldata = $Spotter->countAllAircraftTypes(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count']);
+			}
+			$alldata = $Spotter->countAllAirlines(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatAirline($number['airline_icao'],$number['airline_count']);
+			}
+			$alldata = $Spotter->countAllOwners(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatOwner($number['owner_name'],$number['owner_count']);
+			}
+			$alldata = $Spotter->countAllPilots(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatPilot($number['pilot_id'],$number['pilot_count']);
+			}
+			$alldata = $Spotter->countAllDepartureAirports(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatDepartureAirports($number['airport_departure_icao'],$number['airport_departure_city'],$number['airport_departure_country'],$number['airport_departure_icao_count']);
+			}
+			$alldata = $Spotter->countAllArrivalAirports(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count']);
+			}
+			
+			// Add by month using getstat if month finish...
+			
 		}
 	}
 }

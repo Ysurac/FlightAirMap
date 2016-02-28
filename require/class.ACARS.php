@@ -8,9 +8,11 @@ require_once('class.Translation.php');
 class ACARS {
     public $db;
 
-    function __construct() {
-	$Connection = new Connection();
-	$this->db = $Connection->db;
+    function __construct($dbc = null) {
+	if ($dbc === null) {
+	    $Connection = new Connection();
+	    $this->db = $Connection->db;
+	} else $this->db = $dbc;
     }
     /**
     * Change IATA to ICAO value for ident

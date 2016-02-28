@@ -3,9 +3,11 @@ class SpotterArchive {
     public $global_query = "SELECT spotter_archive.* FROM spotter_archive";
     public $db;
 
-    function __construct() {
-                $Connection = new Connection();
-                $this->db = $Connection->db;
+    function __construct($dbc = null) {
+	if ($dbc === null) {
+            $Connection = new Connection();
+            $this->db = $Connection->db;
+        } else $this->db = $dbc;
     }
 
 

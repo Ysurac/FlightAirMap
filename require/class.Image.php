@@ -6,10 +6,12 @@ require_once('settings.php');
 class Image {
     public $db;
 
-    function __construct() {
+    function __construct($dbc = null) {
+	if ($dbc === null) {
                 $Connection = new Connection();
                 $this->db = $Connection->db;
-        }
+        } else $this->db = $dbc;
+    }
     /**
     * Gets the images based on the aircraft registration
     *

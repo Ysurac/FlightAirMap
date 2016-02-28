@@ -38,9 +38,11 @@ class METAR {
 	    'DS' => 'Duststorm'
 	);
 	
-	function __construct() {
+	function __construct($dbc = null) {
+	    if ($dbc === null) {
                 $Connection = new Connection();
                 $this->db = $Connection->db;
+            } else $this->db = $dbc;
         }
         
         public function parse($data) {

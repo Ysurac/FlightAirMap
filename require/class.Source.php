@@ -4,9 +4,11 @@ require_once('class.Connection.php');
 
 class Source {
 	public $db;
-	function __construct() {
-                $Connection = new Connection();
-                $this->db = $Connection->db;
+	function __construct($dbc = null) {
+		if ($dbc === null) {
+			$Connection = new Connection();
+			$this->db = $Connection->db;
+		} else $this->db = $dbc;
         }
        public function getAllLocationInfo() {
                 $query = "SELECT * FROM source_location";

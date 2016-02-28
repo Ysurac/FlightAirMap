@@ -21,7 +21,7 @@ class SpotterLive {
 	public function getLiveSpotterData($limit = '', $sort = '', $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
-		$Spotter = new Spotter();
+		$Spotter = new Spotter($this->db);
 		date_default_timezone_set('UTC');
 
 		$filter_query = '';
@@ -151,7 +151,7 @@ class SpotterLive {
 	public function getLiveSpotterDatabyCoord($coord, $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
-		$Spotter = new Spotter();
+		$Spotter = new Spotter($this->db);
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		$filter_query = '';
 		if (isset($filter['source'])) {
@@ -184,7 +184,7 @@ class SpotterLive {
         */
         public function getLatestSpotterForLayar($lat, $lng, $radius, $interval)
         {
-    		$Spotter = new Spotter();
+    		$Spotter = new Spotter($this->db);
                 date_default_timezone_set('UTC');
 
         if ($lat != '')
@@ -250,7 +250,7 @@ class SpotterLive {
 	*/
 	public function getLastLiveSpotterDataByIdent($ident)
 	{
-		$Spotter = new Spotter();
+		$Spotter = new Spotter($this->db);
 		date_default_timezone_set('UTC');
 
 		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
@@ -269,7 +269,7 @@ class SpotterLive {
 	*/
 	public function getLastLiveSpotterDataById($id)
 	{
-		$Spotter = new Spotter();
+		$Spotter = new Spotter($this->db);
 		date_default_timezone_set('UTC');
 
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
@@ -637,7 +637,7 @@ class SpotterLive {
 	{
 		global $globalURL, $globalArchive, $globalDebug;
 		$Common = new Common();
-		$SpotterArchive = new SpotterArchive();
+		$SpotterArchive = new SpotterArchive($this->db);
 		date_default_timezone_set('UTC');
 
 		$registration = '';

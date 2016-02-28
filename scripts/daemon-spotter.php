@@ -17,8 +17,8 @@ require_once(dirname(__FILE__).'/../require/class.Common.php');
 if (!isset($globalDebug)) $globalDebug = FALSE;
 
 // Check if schema is at latest version
-$schema = new Connection();
-if ($schema->latest() === false) {
+$Connection = new Connection();
+if ($Connection->latest() === false) {
     echo "You MUST update to latest schema. Run install/index.php";
     exit();
 }
@@ -47,9 +47,9 @@ else $id_source = 1;
 if (isset($globalServer) && $globalServer) {
     if ($globalDebug) echo "Using Server Mode\n";
     $SI=new SpotterServer();
-} else $SI=new SpotterImport();
-$APRS=new APRS();
-$SBS=new SBS();
+} else $SI=new SpotterImport($Connection->db);
+$APRS=new APRS($Connection->db);
+$SBS=new SBS($Connection->db);
 $Common=new Common();
 date_default_timezone_set('UTC');
 // signal handler - playing nice with sockets and dump1090
@@ -224,7 +224,7 @@ $tt = 0;
 
 // Delete all ATC
 if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
-	$ATC=new ATC();
+	$ATC=new ATC($Connection->db);
 }
 if (!$globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
 	$ATC->deleteAll();

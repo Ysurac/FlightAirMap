@@ -25,9 +25,9 @@ class Spotter{
 	public function getDataFromDB($query, $params = array(), $limitQuery = '')
 	{
 		global $globalSquawkCountry, $globalIVAO, $globalVATSIM;
-		$Image = new Image();
-		$Schedule = new Schedule();
-		$ACARS = new ACARS();
+		$Image = new Image($this->db);
+		$Schedule = new Schedule($this->db);
+		$ACARS = new ACARS($this->db);
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		if (!isset($globalVATSIM)) $globalVATSIM = FALSE;
 		date_default_timezone_set('UTC');
@@ -2626,7 +2626,7 @@ class Spotter{
 	{
 		global $globalURL, $globalIVAO, $globalVATSIM;
 		
-		$Image = new Image();
+		$Image = new Image($this->db);
 		$Common = new Common();
 		
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
@@ -2966,12 +2966,13 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public function countAllAirlines($limit = true, $olderthanmonths = 0)
+	public function countAllAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
 	{
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
 					WHERE spotter_output.airline_name <> '' AND spotter_output.airline_icao <> 'NA' ";
                 if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
         	$query .= "GROUP BY spotter_output.airline_name,spotter_output.airline_icao, spotter_output.airline_country ORDER BY airline_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -3001,12 +3002,13 @@ class Spotter{
 	* @return Array the pilots list
 	*
 	*/
-	public function countAllPilots($limit = true, $olderthanmonths = 0)
+	public function countAllPilots($limit = true, $olderthanmonths = 0, $sincedate = '')
 	{
 		$query  = "SELECT DISTINCT spotter_output.pilot_id, spotter_output.pilot_name, COUNT(spotter_output.pilot_id) AS pilot_count
 		 			FROM spotter_output
 					WHERE spotter_output.pilot_id <> '' ";
                 if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
 		$query .= "GROUP BY spotter_output.pilot_id,spotter_output.pilot_name ORDER BY pilot_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -3033,12 +3035,13 @@ class Spotter{
 	* @return Array the pilots list
 	*
 	*/
-	public function countAllOwners($limit = true, $olderthanmonths = 0)
+	public function countAllOwners($limit = true, $olderthanmonths = 0, $sincedate = '')
 	{
 		$query  = "SELECT DISTINCT spotter_output.owner_name, COUNT(spotter_output.owner_name) AS owner_count
 		 			FROM spotter_output
 					WHERE spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL ";
                 if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
 		$query .= "GROUP BY spotter_output.owner_name ORDER BY owner_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -3604,12 +3607,13 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypes($limit = true,$olderthanmonths = 0)
+	public function countAllAircraftTypes($limit = true,$olderthanmonths = 0,$sincedate = '')
 	{
 		$query  = "SELECT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
                     WHERE spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' ";
                 if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
                 $query .= "GROUP BY spotter_output.aircraft_icao ORDER BY aircraft_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -4575,12 +4579,13 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirports($limit = true, $olderthanmonths = 0)
+	public function countAllDepartureAirports($limit = true, $olderthanmonths = 0, $sincedate = '')
 	{
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
                     WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' ";
             	if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
                 $query .= "GROUP BY spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
 					ORDER BY airport_departure_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10";
@@ -5218,12 +5223,13 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirports($limit = true, $olderthanmonths = 0)
+	public function countAllArrivalAirports($limit = true, $olderthanmonths = 0, $sincedate = '')
 	{
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
                     WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' ";
             	if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
                 $query .= "GROUP BY spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10";
@@ -7905,8 +7911,8 @@ class Spotter{
     public function importFromFlightAware()
     {
        global $globalFlightAwareUsername, $globalFlightAwarePassword, $globalLatitudeMax, $globalLatitudeMin, $globalLongitudeMax, $globalLongitudeMin, $globalAirportIgnore;
-	$Spotter = new Spotter();
-	$SPotterLive = new SpotterLive();
+	$Spotter = new Spotter($this->db);
+	$SPotterLive = new SpotterLive($this->db);
         $options = array(
             'trace' => true,
             'exceptions' => 0,
@@ -8032,7 +8038,7 @@ class Spotter{
 	public function updateFieldsFromOtherTables()
 	{
 		global $globalDebug, $globalDBdriver;
-		$Image = new Image();
+		$Image = new Image($this->db);
 		
 
 		// routes
