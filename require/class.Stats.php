@@ -538,6 +538,7 @@ class Stats {
 			}
 		}
 		} else {
+			/*
 			$last_update_day = $last_update[];
 
 			$alldata = $Spotter->countAllAircraftTypes(false,0,$last_update_day);
@@ -584,7 +585,7 @@ class Stats {
 			}
 			
 			// Add by month using getstat if month finish...
-			
+			*/
 		}
 	}
 }
