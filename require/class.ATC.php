@@ -5,10 +5,8 @@ require_once('class.Connection.php');
 class ATC {
 	public $db;
         function __construct($dbc = null) {
-	    if ($dbc === null) {
-    		$Connection = new Connection();
+    		$Connection = new Connection($dbc);
     		$this->db = $Connection->db;
-            } else $this->db = $dbc;
 	}
 
        public function getAll() {

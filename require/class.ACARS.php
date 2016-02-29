@@ -9,10 +9,8 @@ class ACARS {
     public $db;
 
     function __construct($dbc = null) {
-	if ($dbc === null) {
-	    $Connection = new Connection();
-	    $this->db = $Connection->db;
-	} else $this->db = $dbc;
+	$Connection = new Connection($dbc);
+	$this->db = $Connection->db;
     }
     /**
     * Change IATA to ICAO value for ident

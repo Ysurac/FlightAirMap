@@ -15,8 +15,10 @@ class Connection{
 		    $this->createDBConnection($dbname);
 		}
 	    } elseif ($dbname === null || $dbname === 'default') {
-		if ($globalDBdriver == 'mysql') $this->connectionExists();
 		$this->db = $dbc;
+		if ($this->connectionExists() === false) {
+			$this->createDBConnection();
+		}
 	    } else {
 		//$this->connectionExists();
 		$this->dbs[$dbname] = $dbc;
@@ -33,7 +35,7 @@ class Connection{
 
 	public function createDBConnection($DBname = null)
 	{
-		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB, $globalDBport, $globalDBTimeOut, $globalDBretry;
+		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB, $globalDBport, $globalDBTimeOut, $globalDBretry, $globalDBPersistent;
 		if ($DBname === null) {
 			$DBname = 'default';
 			$globalDBSdriver = $globalDBdriver;
@@ -62,8 +64,8 @@ class Connection{
 				$this->dbs[$DBname]->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
 				if (!isset($globalDBTimeOut)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,200);
 				else $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
-				//$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,false);
-				$this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
+				if (!isset($globalDBPersistent)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
+				else $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,$globalDBPersistent);
 				$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 			} catch(PDOException $e) {
 				$i++;
@@ -100,24 +102,22 @@ class Connection{
 
 	public function connectionExists()
 	{
-		global $globalDBdriver;
-		if ($globalDBdriver == 'mysql') {
-			$query = "SHOW STATUS";
-		}
-		/*
-		 elseif ($globalDBdriver == 'pgsql') {
-			$query = "SELECT * FROM pg_catalog.pg_tables WHERE tablename = '".$table."'";
-		}
-		*/
+		global $globalDBdriver, $globalDBCheckConnection;
+		if (isset($globalDBCheckConnection) && $globalDBCheckConnection === FALSE) return true;
+		$query = "SELECT 1 + 1";
 		if ($this->db == NULL) return false;
 		try {
-			//$Connection = new Connection();
-			$this->db->query($query)->execute();
+			$sum = @$this->db->query($query);
+			if ($sum instanceof \PDOStatement) {
+				$sum = $sum->fetchColumn(0);
+			} else $sum = 0;
+			if (intval($sum) !== 2) return false;
+			
 		} catch(PDOException $e) {
 			if($e->getCode() != 'HY000' || !stristr($e->getMessage(), 'server has gone away')) {
             			throw $e;
 	                }
-			$this->createDBConnection();
+			return false;
 		}
 		return true; 
 	}

@@ -5,10 +5,8 @@ require_once('class.Connection.php');
 class NOTAM {
 	public $db;
 	function __construct($dbc = null) {
-		if ($dbc === null) {
-			$Connection = new Connection();
-			$this->db = $Connection->db;
-		} else $this->db = $dbc;
+		$Connection = new Connection($dbc);
+		$this->db = $Connection->db;
         }
        public function getAllNOTAM() {
                 $query = "SELECT * FROM notam";

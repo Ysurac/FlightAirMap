@@ -7,10 +7,8 @@ class Image {
     public $db;
 
     function __construct($dbc = null) {
-	if ($dbc === null) {
-                $Connection = new Connection();
-                $this->db = $Connection->db;
-        } else $this->db = $dbc;
+	    $Connection = new Connection($dbc);
+            $this->db = $Connection->db;
     }
     /**
     * Gets the images based on the aircraft registration
