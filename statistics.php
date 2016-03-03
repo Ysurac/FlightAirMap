@@ -25,19 +25,24 @@ require('header.php');
     <?php include('statistics-sub-menu.php'); ?>
     <div class="row global-stats">
         <div class="col-md-2"><span class="type">Flights</span><span><?php print number_format($Stats->countOverallFlights()); ?></span></div> 
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <div class="col-md-2"><span class="type">Arrivals seen</span><span><?php print number_format($Stats->countOverallArrival()); ?></span></div> 
+        <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
 	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
 	?>
     	    <div class="col-md-2"><span class="type">Pilots</span><span><?php print number_format($Stats->countOverallPilots()); ?></span></div> 
+	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     	    } else {
     	?>
     	    <div class="col-md-2"><span class="type">Owners</span><span><?php print number_format($Stats->countOverallOwners()); ?></span></div> 
+	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
     	<?php
     	    }
     	?>
         <div class="col-md-2"><span class="type">Aircrafts</span><span><?php print number_format($Stats->countOverallAircrafts()); ?></span></div> 
+        <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <div class="col-md-2"><span class="type">Airlines</span><span><?php print number_format($Stats->countOverallAirlines()); ?></span></div>
     </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
