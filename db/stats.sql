@@ -2,7 +2,7 @@ CREATE TABLE `stats` (
   `stats_id` int(11) NOT NULL,
   `type` varchar(255) NOT NULL,
   `cnt` int(11) NOT NULL,
-  `stats_date` timestamp NOT NULL
+  `stats_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `stats`

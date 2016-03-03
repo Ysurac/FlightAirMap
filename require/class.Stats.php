@@ -663,27 +663,27 @@ class Stats {
 			$lastyear = false;
 			foreach ($alldata as $number) {
 				if ($number['year_name'] != date('Y')) $lastyear = true;
-				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsOwners();
 			foreach ($alldata as $number) {
-				$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsPilots();
 			foreach ($alldata as $number) {
-				$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsAirlines();
 			foreach ($alldata as $number) {
-				$this->addStat('airlines_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('airlines_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsAircrafts();
 			foreach ($alldata as $number) {
-				$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsRealArrivals();
 			foreach ($alldata as $number) {
-				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			if ($lastyear) {
 				$monthsSinceLastYear = date('n');
@@ -822,27 +822,27 @@ class Stats {
 			$lastyear = false;
 			foreach ($alldata as $number) {
 				if ($number['year_name'] != date('Y')) $lastyear = true;
-				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsOwners();
 			foreach ($alldata as $number) {
-				$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsPilots();
 			foreach ($alldata as $number) {
-				$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsAirlines();
 			foreach ($alldata as $number) {
-				$this->addStat('airlines_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('airlines_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsAircrafts();
 			foreach ($alldata as $number) {
-				$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsRealArrivals();
 			foreach ($alldata as $number) {
-				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',strtotime('1 '.$number['month_name'].' '.$number['year_name'].' 00:00:00')));
+				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			echo 'Flights data...'."\n";
 			$this->deleteStatFlight('month');

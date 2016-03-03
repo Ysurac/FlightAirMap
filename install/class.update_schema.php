@@ -530,6 +530,29 @@ class update_schema {
 	}
 
 
+	private static function update_from_15() {
+    		$Connection = new Connection();
+		$error = '';
+    		// Add tables
+    		$query="ALTER TABLE `stats` CHANGE `stats_date` `stats_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update stats) : ".$e->getMessage()."\n";
+    		}
+		if ($error != '') return $error;
+		$query = "UPDATE `config` SET `value` = '16' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
+
     	public static function check_version($update = false) {
     	    global $globalDBname;
     	    $version = 0;
@@ -600,6 +623,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '14') {
     			    $error = self::update_from_14();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '15') {
+    			    $error = self::update_from_15();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';
