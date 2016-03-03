@@ -404,7 +404,7 @@ class Stats {
 	}
 	
 	public function countOverallFlights() {
-		$all = $this->getSumStats('flights_bymonth',date('%Y'));
+		$all = $this->getSumStats('flights_bymonth',date('Y'));
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countOverallFlights();
@@ -412,7 +412,7 @@ class Stats {
 		return $all;
 	}
 	public function countOverallArrival() {
-		$all = $this->getSumStats('realarrivals_bymonth',date('%Y'));
+		$all = $this->getSumStats('realarrivals_bymonth',date('Y'));
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countOverallArrival();
@@ -420,7 +420,7 @@ class Stats {
 		return $all;
 	}
 	public function countOverallAircrafts() {
-		$all = $this->getSumStats('aircrafts_bymonth',date('%Y'));
+		$all = $this->getSumStats('aircrafts_bymonth',date('Y'));
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countOverallAircrafts();
@@ -428,7 +428,7 @@ class Stats {
 		return $all;
 	}
 	public function countOverallAirlines() {
-		$all = $this->getSumStats('airlines_bymonth',date('%Y'));
+		$all = $this->getSumStats('airlines_bymonth',date('Y'));
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countOverallAirlines();
@@ -436,7 +436,7 @@ class Stats {
 		return $all;
 	}
 	public function countOverallOwners() {
-		$all = $this->getSumStats('owner_bymonth',date('%Y'));
+		$all = $this->getSumStats('owner_bymonth',date('Y'));
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countOverallOwners();
@@ -444,7 +444,7 @@ class Stats {
 		return $all;
 	}
 	public function countOverallPilots() {
-		$all = $this->getSumStats('pilot_bymonth',date('%Y'));
+		$all = $this->getSumStats('pilot_bymonth',date('Y'));
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countOverallPilots();
