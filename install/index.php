@@ -486,6 +486,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">0 to disable, delete old flight if <i>Archive all flights data</i> is disabled</p>
 			</p>
 			<p>
+				<label for="archiveyear">Generate statistics, delete or put in archive flights from previous year</label>
+				<input type="checkbox" name="archiveyear" id="archiveyear" value="archiveyear"<?php if (isset($globalArchiveYear) && $globalArchiveYear) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">delete old flight if <i>Archive all flights data</i> is disabled</p>
+			</p>
+			<p>
 				<label for="archivekeepmonths">Keep flights data for xx months in archive</label>
 				<input type="number" name="archivekeepmonths" id="archivekeepmonths" value="<?php if (isset($globalArchiveKeepMonths)) print $globalArchiveKeepMonths; else echo '0'; ?>" />
 				<p class="help-block">0 to disable</p>
@@ -711,7 +716,7 @@ if (isset($_POST['dbtype'])) {
 	$zoilongitude = filter_input(INPUT_POST,'zoilongitude',FILTER_SANITIZE_STRING);
 	$zoidistance = filter_input(INPUT_POST,'zoidistance',FILTER_SANITIZE_NUMBER_INT);
 	if ($zoilatitude != '' && $zoilongitude != '' && $zoidistance != '') {
-	$settings = array_merge($settings,array('globalDistanceIgnore' => array('latitude' => $zoilatitude,'longitude' => $zoilongitude,'distance' => $zoidistance)));
+		$settings = array_merge($settings,array('globalDistanceIgnore' => array('latitude' => $zoilatitude,'longitude' => $zoilongitude,'distance' => $zoidistance)));
 	} else $settings = array_merge($settings,array('globalDistanceIgnore' => array()));
 
 	$refresh = filter_input(INPUT_POST,'refresh',FILTER_SANITIZE_NUMBER_INT);
@@ -728,6 +733,13 @@ if (isset($_POST['dbtype'])) {
 
 	$archivemonths = filter_input(INPUT_POST,'archivemonths',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalArchiveMonths' => $archivemonths));
+	
+	$archiveyear = filter_input(INPUT_POST,'archiveyear',FILTER_SANITIZE_STRING);
+	if ($archiveyear == "archiveyear") {
+		$settings = array_merge($settings,array('globalArchiveYear' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalArchiveYear' => 'FALSE'));
+	}
 	$archivekeepmonths = filter_input(INPUT_POST,'archivekeepmonths',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalArchiveKeepMonths' => $archivekeepmonths));
 	$archivekeeptrackmonths = filter_input(INPUT_POST,'archivekeeptrackmonths',FILTER_SANITIZE_NUMBER_INT);

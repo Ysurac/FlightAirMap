@@ -141,8 +141,11 @@ $globalPilotIdAccept = array();
 //Archive all data
 $globalArchive = FALSE;
 
-//Archive data olders than xx months (0 to disable)
+//Archive data olders than xx months (if globalArchive enabled, else delete) (0 to disable)
 $globalArchiveMonths = '0';
+
+//Archive previous year (if globalArchive enabled, else delete)
+$globalArchiveYear = FALSE;
 
 //Keep Archive track of flight for xx months (0 to disable)
 $globalArchiveKeepTrackMonths = '0';

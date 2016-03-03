@@ -42,6 +42,34 @@ class METAR {
                 $Connection = new Connection($dbc);
                 $this->db = $Connection->db;
         }
+
+       public static function check_last_update() {
+                $query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value > DATE_SUB(DATE(NOW()), INTERVAL 1 HOUR)";
+                try {
+                        $Connection = new Connection();
+                        $sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return false;
+                else return true;
+        }
+
+        public static function insert_last_update() {
+                $query = "DELETE FROM config WHERE name = 'last_update_metar';
+                        INSERT INTO config (name,value) VALUES ('last_update_metar',NOW());";
+                try {
+                        $Connection = new Connection();
+                        $sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+        }
+
+
         
         public function parse($data) {
     		//$data = str_replace(array('\n','\r','\r','\n'),'',$data);

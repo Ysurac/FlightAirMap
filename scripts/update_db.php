@@ -22,25 +22,31 @@ if ($update_db->check_last_update() && (!isset($globalIVAO) || !$globalIVAO) && 
 	$update_db->insert_last_update();
 } elseif (isset($globalDebug) && $globalDebug && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM)) echo "DB are populated with external data only every 15 days ! Files are not updated more often.\n";
 
+
 if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalMETARcycle) {
 	echo "updating METAR...";
 	require_once('../require/class.METAR.php');
 	$METAR = new METAR();
-	$METAR->addMETARCycle();
+	if ($METAR->check_last_update()) {
+		$METAR->addMETARCycle();
+		$METAR->insert_last_update();
+	} else echo "METAR are only updated every hours.\n";
 }
+
+
 if (isset($globalOwner) && $globalOwner && $update_db->check_last_owner_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM)) {
 	echo "Updating private aircraft's owners...";
 	$update_db->update_owner();
 	$update_db->insert_last_owner_update();
 } elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalIVAO) || !$globalIVAO)) echo "Owner are only updated every 15 days.\n";
-/*
+
 if (isset($globalArchiveMonths) && $globalArchiveMonths > 0) {
 	echo "Updating statistics and archive old data...";
 	require_once(dirname(__FILE__).'/../require/class.Stats.php');
 	$Stats = new Stats();
-	$Stats->addOldStats();
+	echo $Stats->addOldStats();
 }
-*/
+
 if (isset($globalArchive) && $globalArchive) {
 	if (isset($globalArchiveKeepMonths) && $globalArchiveKeepMonths > 0) {
 		echo "Deleting archive old data...";

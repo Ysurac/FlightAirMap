@@ -1,9 +1,7 @@
 <?php
 require('require/class.Connection.php');
-require('require/class.Spotter.php');
 require('require/class.Stats.php');
 $beginpage = microtime(true);
-$Spotter = new Spotter();
 $Stats = new Stats();
 $title = "Statistic";
 require('header.php');
@@ -12,26 +10,35 @@ require('header.php');
 <div class="column">
     <div class="info">
             <h1>Statistics</h1>
+    <?php 
+	$last_update = $Stats->getLastStatsUpdate();
+	//if (isset($last_update[0]['value'])) print '<!-- Last update : '.$last_update[0]['value'].' -->';
+	if (isset($last_update[0]['value'])) {
+		date_default_timezone_set('UTC');
+		$lastupdate = strtotime($last_update[0]['value']);
+		if (isset($globalTimezone) && $globalTimezone != '') date_default_timezone_set($globalTimezone);
+		print '<i>Last update: '.date('Y-m-d G:i:s',$lastupdate).'</i>';
+	}
+    ?>
     </div>
 
     <?php include('statistics-sub-menu.php'); ?>
-
     <div class="row global-stats">
-        <div class="col-md-2"><span class="type">Flights</span><span><?php print number_format($Stats->getStatsTotal('flights_bymonth')+$Spotter->countOverallFlights()); ?></span></div> 
-        <div class="col-md-2"><span class="type">Arrivals seen</span><span><?php print number_format($Stats->getStatsTotal('realarrivals_bymonth')+$Spotter->countOverallArrival()); ?></span></div> 
+        <div class="col-md-2"><span class="type">Flights</span><span><?php print number_format($Stats->countOverallFlights()); ?></span></div> 
+        <div class="col-md-2"><span class="type">Arrivals seen</span><span><?php print number_format($Stats->countOverallArrival()); ?></span></div> 
 	<?php
 	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
 	?>
-    	    <div class="col-md-2"><span class="type">Pilots</span><span><?php print number_format($Stats->getStatsTotal('pilots_bymonth')+$Spotter->countOverallPilots()); ?></span></div> 
+    	    <div class="col-md-2"><span class="type">Pilots</span><span><?php print number_format($Stats->countOverallPilots()); ?></span></div> 
         <?php
     	    } else {
     	?>
-    	    <div class="col-md-2"><span class="type">Owners</span><span><?php print number_format($Stats->getStatsTotal('owners_bymonth')+$Spotter->countOverallOwners()); ?></span></div> 
+    	    <div class="col-md-2"><span class="type">Owners</span><span><?php print number_format($Stats->countOverallOwners()); ?></span></div> 
     	<?php
     	    }
     	?>
-        <div class="col-md-2"><span class="type">Aircrafts</span><span><?php print number_format($Stats->getStatsTotal('aircrafts_bymonth')+$Spotter->countOverallAircrafts()); ?></span></div> 
-        <div class="col-md-2"><span class="type">Airlines</span><span><?php print number_format($Stats->getStatsTotal('airlines_bymonth')+$Spotter->countOverallAirlines()); ?></span></div>
+        <div class="col-md-2"><span class="type">Aircrafts</span><span><?php print number_format($Stats->countOverallAircrafts()); ?></span></div> 
+        <div class="col-md-2"><span class="type">Airlines</span><span><?php print number_format($Stats->countOverallAirlines()); ?></span></div>
     </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
     <div class="specific-stats">
@@ -376,7 +383,7 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Busiest Day in the last Month</h2>
                 <?php
-                  $month_array = $Spotter->countAllDatesLastMonth();
+                  $month_array = $Stats->countAllDatesLastMonth();
 		    if (count($month_array) == 0) print 'No data available';
 		    else {
                   print '<div id="chart9" class="chart" width="100%"></div>
@@ -422,7 +429,7 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Busiest Day in the last 7 Days</h2>
                 <?php
-                    $date_array = $Spotter->countAllDatesLast7Days();
+                    $date_array = $Stats->countAllDatesLast7Days();
 		    if (count($date_array) == 0) print 'No data available';
 		    else {
                   print '<div id="chart5" class="chart" width="100%"></div>
@@ -469,7 +476,7 @@ require('header.php');
             <div class="col-md-6">
                 <h2>Busiest Time of the Day</h2>
                 <?php
-                  $hour_array = $Spotter->countAllHours('hour');
+                  $hour_array = $Stats->countAllHours('hour');
 		    if (count($hour_array) == 0) print 'No data available';
 		    else {
 
