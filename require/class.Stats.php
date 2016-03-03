@@ -580,7 +580,7 @@ class Stats {
                 }
         }
 	public function addStatAirline($airline_icao,$cnt,$airline_name = '') {
-                $query = "INSERT INTO stats_airline (airline_icao,airline_name,cnt) VALUES (:airline_icao,:airline_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+                $query = "INSERT INTO stats_airline (airline_icao,airline_name,cnt) VALUES (:airline_icao,:airline_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt,airline_name = :airline_name";
                 $query_values = array(':airline_icao' => $airline_icao,':airline_name' => $airline_name,':cnt' => $cnt);
                  try {
                         $sth = $this->db->prepare($query);
@@ -693,7 +693,7 @@ class Stats {
 				}
 				$alldata = $Spotter->countAllAirlines(false,$monthsSinceLastYear);
 				foreach ($alldata as $number) {
-					$this->addStatAirline($number['airline_icao'],$number['airline_count']);
+					$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name']);
 				}
 				$alldata = $Spotter->countAllOwners(false,$monthsSinceLastYear);
 				foreach ($alldata as $number) {
@@ -738,7 +738,7 @@ class Stats {
 				}
 				$alldata = $Spotter->countAllAirlines(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
-					$this->addStatAirline($number['airline_icao'],$number['airline_count']);
+					$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name']);
 				}
 				$alldata = $Spotter->countAllOwners(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
