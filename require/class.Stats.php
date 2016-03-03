@@ -37,8 +37,8 @@ class Stats {
 
 
 	public function countAllAircraftTypes($limit = true) {
-		if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' LIMIT 0,10";
-		else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> ''";
+		if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' ORDER BY aircraft_icao DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' ORDER BY aircraft_icao DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -178,8 +178,8 @@ class Stats {
 	}
 
 	public function countAllAirlines($limit = true) {
-		if ($limit) $query = "SELECT airline_icao, cnt AS airline_count, airline_name FROM stats_airline WHERE airline_name <> '' AND airline_icao <> '' LIMIT 0,10";
-		else $query = "SELECT airline_icao, cnt AS airline_count, airline_name FROM stats_airline WHERE airline_name <> '' AND airline_icao <> ''";
+		if ($limit) $query = "SELECT airline_icao, cnt AS airline_count, airline_name FROM stats_airline WHERE airline_name <> '' AND airline_icao <> '' ORDER BY airline_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT airline_icao, cnt AS airline_count, airline_name FROM stats_airline WHERE airline_name <> '' AND airline_icao <> '' ORDER BY airline_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -436,7 +436,7 @@ class Stats {
 		return $all;
 	}
 	public function countOverallOwners() {
-		$all = $this->getSumStats('owner_bymonth',date('Y'));
+		$all = $this->getSumStats('owners_bymonth',date('Y'));
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countOverallOwners();
@@ -444,7 +444,7 @@ class Stats {
 		return $all;
 	}
 	public function countOverallPilots() {
-		$all = $this->getSumStats('pilot_bymonth',date('Y'));
+		$all = $this->getSumStats('pilots_bymonth',date('Y'));
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countOverallPilots();
@@ -794,7 +794,7 @@ class Stats {
 			}
 			$alldata = $Spotter->countAllAirlines(false,0,$last_update_day);
 			foreach ($alldata as $number) {
-				$this->addStatAirline($number['airline_icao'],$number['airline_count']);
+				$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name']);
 			}
 			$alldata = $Spotter->countAllOwners(false,0,$last_update_day);
 			foreach ($alldata as $number) {
