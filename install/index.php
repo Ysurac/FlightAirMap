@@ -33,6 +33,9 @@ if (!is_writable('tmp')) {
 	require('../footer.php');
 	exit;
 }
+if (!is_writable('../images/airlines')) {
+	print '<div class="info column"><p><strong>The directory <i>images/airlines</i> must be writable for IVAO.</strong></p></div>';
+}
 if (!set_time_limit(0)) {
 	print '<div class="info column"><p><strong>You may need to update the maximum execution time.</strong></p></div>';
 }

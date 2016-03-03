@@ -319,8 +319,8 @@ class Stats {
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
-		if ($limit) $query = "SELECT MONTH(CONVERT_TZ(stats_date,'+00:00',:offset)) as month_name, YEAR(CONVERT_TZ(stats_date,'+00:00',:offset)) as year_name, cnt as date_count FROM stats WHERE type = 'flights_by_month' LIMIT 0,10";
-		else $query = "SELECT MONTH(CONVERT_TZ(stats_date,'+00:00',:offset)) as month_name, YEAR(CONVERT_TZ(stats_date,'+00:00',:offset)) as year_name, cnt as date_count FROM stats WHERE type = 'flights_by_month'";
+		if ($limit) $query = "SELECT MONTH(CONVERT_TZ(stats_date,'+00:00',:offset)) as month_name, YEAR(CONVERT_TZ(stats_date,'+00:00',:offset)) as year_name, cnt as date_count FROM stats WHERE type = 'flights_bymonth' LIMIT 0,12";
+		else $query = "SELECT MONTH(CONVERT_TZ(stats_date,'+00:00',:offset)) as month_name, YEAR(CONVERT_TZ(stats_date,'+00:00',:offset)) as year_name, cnt as date_count FROM stats WHERE type = 'flights_bymonth'";
 		$query_data = array(':offset' => $offset);
                  try {
                         $sth = $this->db->prepare($query);
