@@ -108,7 +108,7 @@ class Schedule {
 
 	public function getSchedule($ident) {
 	        //$query = "SELECT * FROM schedule WHERE ident = :ident LIMIT 1";
-	        $Translation = new Translation();
+	        $Translation = new Translation($this->db);
 	        $operator = $Translation->checkTranslation($ident,false);
 	        if ($ident != $operator) {
 	    		$query = "SELECT FromAirport_ICAO as departure_airport_icao, ToAirport_ICAO as arrival_airport_icao, FromAirport_Time as departure_airport_time, ToAirport_Time as arrival_airport_time FROM routes WHERE CallSign = :operator OR CallSign = :ident LIMIT 1";

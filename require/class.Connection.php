@@ -17,6 +17,9 @@ class Connection{
 	    } elseif ($dbname === null || $dbname === 'default') {
 		$this->db = $dbc;
 		if ($this->connectionExists() === false) {
+			echo 'Restart Connection !!!'."\n";
+			$e = new \Exception;
+			var_dump($e->getTraceAsString());
 			$this->createDBConnection();
 		}
 	    } else {
@@ -56,7 +59,7 @@ class Connection{
                 }
                 if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry == null) $globalDBretry = 5;
 		$i = 0;
-//		while (true) {
+		while (true) {
 			try {
 				$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;port=$globalDBSport;dbname=$globalDBSname;charset=utf8", $globalDBSuser,  $globalDBSpass);
 				$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
@@ -67,14 +70,16 @@ class Connection{
 				if (!isset($globalDBPersistent)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
 				else $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,$globalDBPersistent);
 				$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+				$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+				break;
 			} catch(PDOException $e) {
 				$i++;
-				if (isset($globalDebug) && $globalDebug) echo $e->getMessage();
+				if (isset($globalDebug) && $globalDebug) echo $e->getMessage()."\n";
 				//exit;
-//				if ($i > $globalDBretry) return false;
-				return false;
+				if ($i > $globalDBretry) return false;
+				//return false;
 			}
-//		}
+		}
 		if ($DBname === 'default') $this->db = $this->dbs['default'];
 		return true;
 	}
@@ -111,12 +116,15 @@ class Connection{
 			if ($sum instanceof \PDOStatement) {
 				$sum = $sum->fetchColumn(0);
 			} else $sum = 0;
-			if (intval($sum) !== 2) return false;
+			if (intval($sum) !== 2) {
+			     return false;
+			}
 			
 		} catch(PDOException $e) {
 			if($e->getCode() != 'HY000' || !stristr($e->getMessage(), 'server has gone away')) {
             			throw $e;
 	                }
+	                //echo 'error ! '.$e->getMessage();
 			return false;
 		}
 		return true; 

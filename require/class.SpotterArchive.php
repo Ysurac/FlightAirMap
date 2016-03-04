@@ -35,7 +35,7 @@ class SpotterArchive {
         */
         public function getLastArchiveSpotterDataByIdent($ident)
         {
-		$Spotter = new Spotter();
+		$Spotter = new Spotter($this->db);
                 date_default_timezone_set('UTC');
 
                 $ident = filter_var($ident, FILTER_SANITIZE_STRING);
@@ -55,7 +55,7 @@ class SpotterArchive {
         */
         public function getLastArchiveSpotterDataById($id)
         {
-    		$Spotter = new Spotter();
+    		$Spotter = new Spotter($this->db);
                 date_default_timezone_set('UTC');
                 $id = filter_var($id, FILTER_SANITIZE_STRING);
                 //$query  = SpotterArchive->$global_query." WHERE spotter_archive.flightaware_id = :id";
@@ -215,7 +215,7 @@ class SpotterArchive {
         */
         public function getSpotterArchiveData($ident,$flightaware_id,$date)
         {
-    		$Spotter = new Spotter();
+    		$Spotter = new Spotter($this->db);
                 $ident = filter_var($ident, FILTER_SANITIZE_STRING);
                 $query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE l.ident = :ident AND l.flightaware_id = :flightaware_id AND l.date LIKE :date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate";
 
@@ -529,7 +529,7 @@ class SpotterArchive {
 		    ".$additional_query."
 		    ".$orderby_query;
 
-	$Spotter = new Spotter();
+	$Spotter = new Spotter($this->db);
 	$spotter_array = $Spotter->getDataFromDB($query, array(),$limit_query);
 
 	return $spotter_array;

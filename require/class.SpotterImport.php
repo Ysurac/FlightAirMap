@@ -19,13 +19,17 @@ class SpotterImport {
     }
 
     function get_Schedule($id,$ident) {
-	global $globalDebug;
+	global $globalDebug, $globalFork;
 	// Get schedule here, so it's done only one time
 	
-	$Connection = new Connection();
-	$dbc = $Connection->db;
-        
-	//$dbc = $this->db;
+	/*
+	if ($globalFork) {
+		$Connection = new Connection();
+		$dbc = $Connection->db;
+	} else $dbc = $this->db;
+	*/
+	$dbc = $this->db;
+
 	$Spotter = new Spotter($dbc);
 	$Schedule = new Schedule($dbc);
 	$Translation = new Translation($dbc);
@@ -61,10 +65,22 @@ class SpotterImport {
 		}
 	    }
 	}
+	// close connection, at least one way will work ?
+       
 	$Spotter->db = null;
 	$Schedule->db = null;
 	$Translation->db = null;
-	$Connection->db = null;
+	unset($Spotter->db);
+	unset($Schedule->db);
+	unset($Translation->db);
+
+	/*
+	if ($globalFork) {
+	    $Connection->db = null;
+	    unset($Connection->db);
+	}
+	  */
+	
     }
 
     public function checkAll() {
@@ -130,7 +146,7 @@ class SpotterImport {
             		$result = $Spotter->updateLatestSpotterData($this->all_flights[$key]['id'],$this->all_flights[$key]['ident'],$this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$this->all_flights[$key]['altitude'],$this->all_flights[$key]['ground'],$this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'],$real_arrival['airport_icao'],$real_arrival['airport_time']);
 			if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
 			// Put in archive
-			$Spotter->db = null;
+//			$Spotter->db = null;
             	    }
             	    unset($this->all_flights[$key]);
     	        }
@@ -277,14 +293,20 @@ class SpotterImport {
 		    	    }
 			}
 			if (!isset($globalFork)) $globalFork = TRUE;
-			if (function_exists('pcntl_fork') && $globalFork && !$globalIVAO && !$globalVATSIM) {
-			    $this->nb++;
-			    $pids[$id] = pcntl_fork();
-			    if (!$pids[$id]) {
-				$sid = posix_setsid();
+			if (!$globalIVAO && !$globalVATSIM) {
+			  /*
+			    if (function_exists('pcntl_fork') && $globalFork) {
+				$this->nb++;
+				$pids[$id] = pcntl_fork();
+				if (!$pids[$id]) {
+				    $sid = posix_setsid();
+				    $this->get_Schedule($id,trim($line['ident']));
+		    		    exit(0);
+				}
+			    } else {
+			    */
 				$this->get_Schedule($id,trim($line['ident']));
-		    		exit(0);
-			    }
+			//    }
 			}
 		    }
 		}
@@ -622,7 +644,7 @@ class SpotterImport {
 				if ($globalDebug) echo "\o/ Add ".$this->all_flights[$id]['ident']." from ".$this->all_flights[$id]['format_source']." in Live DB : ";
 				$SpotterLive = new SpotterLive($this->db);
 				$result = $SpotterLive->addLiveSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'], $this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$this->all_flights[$id]['hex'],$this->all_flights[$id]['putinarchive'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'], $this->all_flights[$id]['verticalrate'], $this->all_flights[$id]['noarchive'], $this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source']);
-				$SpotterLive->db = null;
+//				$SpotterLive->db = null;
 				$this->all_flights[$id]['lastupdate'] = time();
 				if ($this->all_flights[$id]['putinarchive']) $send = true;
 				//if ($globalDebug) echo "Distance : ".Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";

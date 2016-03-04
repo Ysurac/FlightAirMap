@@ -2003,7 +2003,7 @@ class Spotter{
 	public function getAircraftOwnerByRegistration($registration)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
-		$Connection = new Connection();
+		$Connection = new Connection($this->db);
 		if ($Connection->tableExists('aircraft_owner')) {
 			$query  = "SELECT * FROM aircraft_owner WHERE registration = :registration LIMIT 1";
 			$sth = $this->db->prepare($query);
@@ -2346,7 +2346,7 @@ class Spotter{
 	*/
 	public function getAllCountries()
 	{
-		$Connection= new Connection();
+		$Connection= new Connection($this->db);
 		if ($Connection->tableExists('countries')) {
 		
 		$country_array = array();
@@ -3643,7 +3643,7 @@ class Spotter{
 	*/
 	public function countAllAircraftRegistrationByAircraft($aircraft_icao)
 	{
-		$Image = new Image();
+		$Image = new Image($this->db);
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
@@ -3726,7 +3726,7 @@ class Spotter{
 	*/
 	public function countAllAircraftRegistrationByAirline($airline_icao)
 	{
-		$Image = new Image();
+		$Image = new Image($this->db);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
@@ -3843,7 +3843,7 @@ class Spotter{
 	*/
 	public function countAllAircraftRegistrationByAirport($airport_icao)
 	{
-		$Image = new Image();
+		$Image = new Image($this->db);
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
@@ -3960,7 +3960,7 @@ class Spotter{
 	*/
 	public function countAllAircraftRegistrationByManufacturer($aircraft_manufacturer)
 	{
-		$Image = new Image();
+		$Image = new Image($this->db);
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
@@ -4049,7 +4049,7 @@ class Spotter{
 	public function countAllAircraftRegistrationByDate($date)
 	{
 		global $globalTimezone;
-		$Image = new Image();
+		$Image = new Image($this->db);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -4180,7 +4180,7 @@ class Spotter{
 	*/
 	public function countAllAircraftRegistrationByIdent($ident)
 	{
-		$Image = new Image();
+		$Image = new Image($this->db);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
@@ -4297,7 +4297,7 @@ class Spotter{
 	*/
 	public function countAllAircraftRegistrationByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
-		$Image = new Image();
+		$Image = new Image($this->db);
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
@@ -4417,7 +4417,7 @@ class Spotter{
 	*/
 	public function countAllAircraftRegistrationByCountry($country)
 	{
-		$Image = new Image();
+		$Image = new Image($this->db);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name 
@@ -4533,7 +4533,7 @@ class Spotter{
 	*/
 	public function countAllAircraftRegistrations($limit = true,$olderthanmonths = 0,$sincedate = '')
 	{
-		$Image = new Image();
+		$Image = new Image($this->db);
 		$query  = "SELECT DISTINCT spotter_output.registration, COUNT(spotter_output.registration) AS aircraft_registration_count, spotter_output.aircraft_icao,  spotter_output.aircraft_name, spotter_output.airline_name    
                     FROM spotter_output 
                     WHERE spotter_output.registration <> '' AND spotter_output.registration <> 'NA' ";
