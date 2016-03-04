@@ -75,7 +75,7 @@ class Image {
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration,':image' => $image_url['original'],':image_thumbnail' => $image_url['thumbnail'], ':copyright' => $image_url['copyright'],':source' => $image_url['source'],':source_website' => $image_url['source_website']));
 	    } catch(PDOException $e) {
-		echo $e->message;
+		echo $e->getMessage;
 		return "error";
 	    }
 	}
