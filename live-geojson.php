@@ -1,8 +1,8 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-require('require/class.SpotterLive.php');
-require('require/class.SpotterArchive.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
+require_once('require/class.SpotterLive.php');
+require_once('require/class.SpotterArchive.php');
 $begintime = microtime(true);
 $SpotterLive = new SpotterLive();
 $Spotter = new Spotter();
