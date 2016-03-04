@@ -772,7 +772,8 @@ class Stats {
     		date_default_timezone_set('UTC');
     		$last_update = $this->getLastStatsUpdate('last_update_stats');
 		//print_r($last_update);
-    		if (empty($last_update) && empty($this->getStats('flights_by_month'))) {
+		$flightsbymonth = $this->getStats('flights_by_month');
+    		if (empty($last_update) && empty($flightsbymonth)) {
 			// Initial update
 			$Spotter = new Spotter($this->db);
 			$alldata = $Spotter->countAllMonths();
