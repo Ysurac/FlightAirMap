@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
 $sort=filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $registration = filter_input(INPUT_GET,'registration',FILTER_SANITIZE_STRING);
@@ -13,7 +13,7 @@ if ($registration != '') {
 if (!empty($spotter_array))
 {
   $title = 'Most Common Arrival Airports of aircraft with registration '.$_GET['registration'];
-	require('header.php');
+	require_once('header.php');
   
   
   
@@ -111,7 +111,7 @@ if (!empty($spotter_array))
 } else {
 
 	$title = "Registration";
-	require('header.php');
+	require_once('header.php');
 	
 	print '<h1>Error</h1>';
 
@@ -122,5 +122,5 @@ if (!empty($spotter_array))
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

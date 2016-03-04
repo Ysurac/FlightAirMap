@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 
 $title = "Home";
-require('header.php');
+require_once('header.php');
 ?>
 
 <div id="live-map"></div>
@@ -149,5 +149,5 @@ require('header.php');
     if (getCookie('maproute') == 'true') $(".flightroute").addClass("active");
 </script>
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

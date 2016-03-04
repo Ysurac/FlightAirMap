@@ -1,8 +1,8 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-require('require/class.SpotterLive.php');
-require('require/class.SpotterArchive.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
+require_once('require/class.SpotterLive.php');
+require_once('require/class.SpotterArchive.php');
 
 if (!isset($_GET['ident'])){
 	header('Location: '.$globalURL.'');
@@ -41,7 +41,7 @@ if (!isset($_GET['ident'])){
 		$ident = $spotter_array[0]['ident'];
 		if (isset($spotter_array[0]['latitude'])) $latitude = $spotter_array[0]['latitude'];
 		if (isset($spotter_array[0]['longitude'])) $longitude = $spotter_array[0]['longitude'];
-		require('header.php');
+		require_once('header.php');
 		if (isset($globalArchive) && $globalArchive) {
 			// Requirement for altitude graph
 			print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
@@ -116,10 +116,10 @@ if (!isset($_GET['ident'])){
 		print '</div>';
 	} else {
 		$title = "Ident";
-		require('header.php');
+		require_once('header.php');
 		print '<h1>Error</h1>';
 		print '<p>Sorry, this ident/callsign is not in the database. :(</p>'; 
 	}
 }
-require('footer.php');
+require_once('footer.php');
 ?>

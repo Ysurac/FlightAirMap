@@ -1,10 +1,10 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Stats.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Stats.php');
 $beginpage = microtime(true);
 $Stats = new Stats();
 $title = "Statistic";
-require('header.php');
+require_once('header.php');
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <div class="column">
@@ -529,5 +529,5 @@ require('header.php');
 </div>  
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

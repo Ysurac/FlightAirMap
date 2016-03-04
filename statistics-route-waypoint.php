@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
 $title = "Statistic - Most common Route by Waypoint";
-require('header.php');
+require_once('header.php');
 include('statistics-sub-menu.php'); 
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -51,5 +51,5 @@ if (!empty($route_array))
 	print '</div>';
 }
 
-require('footer.php');
+require_once('footer.php');
 ?>

@@ -1,7 +1,7 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-require('require/class.SpotterArchive.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
+require_once('require/class.SpotterArchive.php');
 $Spotter = new Spotter();
 $orderby = $Spotter->getOrderBy();
 
@@ -10,7 +10,7 @@ $title = "Search";
 $page_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 
 //$title = "Search";
-require('header.php');
+require_once('header.php');
 
 if (isset($_GET['start_date'])) {
 	//for the date manipulation into the query
@@ -559,5 +559,5 @@ if (!empty($_GET)){
 </div>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

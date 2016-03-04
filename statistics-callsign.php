@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-$Spotter = new Spotter();
+require_once('require/class.Connection.php');
+require_once('require/class.Stats.php');
+$Stats = new Stats();
 $title = "Statistic - Most common Callsign";
-require('header.php');
+require_once('header.php');
 include('statistics-sub-menu.php'); 
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -14,7 +14,7 @@ include('statistics-sub-menu.php');
     	<p>Below are the <strong>Top 10</strong> most common ident/callsigns of all airlines.</p>
           	
 <?php
-$callsign_array = $Spotter->countAllCallsigns();
+$callsign_array = $Stats->countAllCallsigns();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});
@@ -76,5 +76,5 @@ if (!empty($callsign_array))
 	print '</div>';
 }
 
-require('footer.php');
+require_once('footer.php');
 ?>

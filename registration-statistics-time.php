@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], "0,1", $sort);
@@ -9,7 +9,7 @@ $aircraft_array = $Spotter->getAircraftInfoByRegistration($_GET['registration'])
 if (!empty($spotter_array))
 {
 	$title = 'Most Common Time of Day of aircraft with registration '.$_GET['registration'];
-	require('header.php');
+	require_once('header.php');
   
 	print '<div class="info column">';
 		print '<h1>'.$_GET['registration'].' - '.$aircraft_array[0]['aircraft_name'].' ('.$aircraft_array[0]['aircraft_icao'].')</h1>';
@@ -64,7 +64,7 @@ if (!empty($spotter_array))
 } else {
 
 	$title = "Registration";
-	require('header.php');
+	require_once('header.php');
 	
 	print '<h1>Error</h1>';
 
@@ -72,5 +72,5 @@ if (!empty($spotter_array))
 }
 
 
-require('footer.php');
+require_once('footer.php');
 ?>

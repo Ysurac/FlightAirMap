@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 
 if (isset($_POST['aircraft_type']))
 {
@@ -8,7 +8,7 @@ if (isset($_POST['aircraft_type']))
 } else {
 	$Spotter = new Spotter();
 	$title = "Aircraft Types";
-	require('header.php');
+	require_once('header.php');
 	print '<div class="column">';
 	print '<h1>Aircraft Types</h1>';
 
@@ -45,6 +45,6 @@ if (isset($_POST['aircraft_type']))
 	}
 
 	print '</div>';
-	require('footer.php');
+	require_once('footer.php');
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 if (!isset($_GET['ident'])) {
         header('Location: '.$globalURL.'/ident');
         die();
@@ -13,7 +13,7 @@ $spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],"0,1", $sort);
 if (!empty($spotter_array))
 {
     $title = 'Most Common Arrival Airports of '.$spotter_array[0]['ident'];
-	require('header.php');
+	require_once('header.php');
     
     
     
@@ -113,7 +113,7 @@ if (!empty($spotter_array))
 } else {
 
 	$title = "Ident";
-	require('header.php');
+	require_once('header.php');
 	
 	print '<h1>Error</h1>';
 
@@ -124,5 +124,5 @@ if (!empty($spotter_array))
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

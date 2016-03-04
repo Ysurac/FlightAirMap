@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-$Spotter = new Spotter();
+require_once('require/class.Connection.php');
+require_once('require/class.Stats.php');
+$Stats = new Stats();
 $title = "Statistic - Most Busiest Month of Last Year";
-require('header.php');
+require_once('header.php');
 include('statistics-sub-menu.php'); 
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -15,7 +15,7 @@ include('statistics-sub-menu.php');
       
 <?php
 
-$date_array = $Spotter->countAllDatesLastMonth();
+$date_array = $Stats->countAllDatesLastMonth();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});
@@ -53,7 +53,7 @@ print ']);
       
 
 <?php
-$date_array = $Spotter->countAllDates();
+//$date_array = $Stats->countAllDates();
 if (!empty($date_array))
 {
 	print '<div class="table-responsive">';
@@ -83,5 +83,5 @@ if (!empty($date_array))
 	print '</div>';
 }
 
-require('footer.php');
+require_once('footer.php');
 ?>

@@ -1,11 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-require('require/class.Stats.php');
-$Spotter = new Spotter();
+require_once('require/class.Connection.php');
+require_once('require/class.Stats.php');
 $Stats = new Stats();
 $title = "Statistic - Most common Pilots";
-require('header.php');
+require_once('header.php');
 ?>
 
 <?php include('statistics-sub-menu.php'); ?>
@@ -79,5 +77,5 @@ require('header.php');
 		print '</table>';
 		print '</div>';
 	}
-require('footer.php');
+require_once('footer.php');
 ?>

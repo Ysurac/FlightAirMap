@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 if (!isset($_GET['aircraft_type'])) {
         header('Location: '.$globalURL.'/aircraft');
         die();
@@ -12,7 +12,7 @@ $spotter_array = $Spotter->getSpotterDataByAircraft($_GET['aircraft_type'],"0,1"
 if (!empty($spotter_array))
 {
 	$title = 'Most Common Time of Day from '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
-	require('header.php');
+	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/aircraft" method="post">';
 	print '<select name="aircraft_type" class="selectpicker" data-live-search="true">';
@@ -85,9 +85,9 @@ if (!empty($spotter_array))
 	print '</div>';
 } else {
 	$title = "Aircraft Type";
-	require('header.php');
+	require_once('header.php');
 	print '<h1>Error</h1>';
 	print '<p>Sorry, the aircraft type does not exist in this database. :(</p>'; 
 }
-require('footer.php');
+require_once('footer.php');
 ?>

@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 if (isset($_GET['registration'])) {
@@ -12,7 +12,7 @@ if (isset($_GET['registration'])) {
 if (!empty($spotter_array))
 {
 	$title = 'Most Common Departure Airports by Country of aircraft with registration '.$_GET['registration'];
-	require('header.php');
+	require_once('header.php');
 	print '<div class="info column">';
 	print '<h1>'.$_GET['registration'].' - '.$aircraft_array[0]['aircraft_name'].' ('.$aircraft_array[0]['aircraft_icao'].')</h1>';
 	print '<div><span class="label">Name</span><a href="'.$globalURL.'/aircraft/'.$aircraft_array[0]['aircraft_icao'].'">'.$aircraft_array[0]['aircraft_name'].'</a></div>';
@@ -92,12 +92,12 @@ if (!empty($spotter_array))
 } else {
 
 	$title = "Registration";
-	require('header.php');
+	require_once('header.php');
 	
 	print '<h1>Error</h1>';
 
   print '<p>Sorry, this registration does not exist in this database. :(</p>';  
 }
 
-require('footer.php');
+require_once('footer.php');
 ?>

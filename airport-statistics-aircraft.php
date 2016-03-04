@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 if (!isset($_GET['airport'])) {
         header('Location: '.$globalURL.'/airport');
         die();
@@ -13,7 +13,7 @@ $airport_array = $Spotter->getAllAirportInfo($_GET['airport']);
 if (!empty($airport_array))
 {
   $title = 'Most Common Aircraft to/from '.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
-	require('header.php');
+	require_once('header.php');
   
   
   
@@ -97,7 +97,7 @@ if (!empty($airport_array))
 } else {
 
 	$title = "Airport";
-	require('header.php');
+	require_once('header.php');
 	
 	print '<h1>Error</h1>';
 
@@ -108,5 +108,5 @@ if (!empty($airport_array))
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

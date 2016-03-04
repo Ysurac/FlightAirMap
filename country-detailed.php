@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 
 if (!isset($_GET['country'])){
 	header('Location: '.$globalURL.'');
@@ -36,7 +36,7 @@ if (!isset($_GET['country'])){
 	if (!empty($spotter_array))
 	{
 	  $title = 'Detailed View for Airports &amp; Airlines from '.$country;
-		require('header.php');
+		require_once('header.php');
 	  
 	  
 	  
@@ -93,7 +93,7 @@ if (!isset($_GET['country'])){
 	} else {
 	
 		$title = "Country";
-		require('header.php');
+		require_once('header.php');
 		
 		print '<h1>Error</h1>';
 	
@@ -101,5 +101,5 @@ if (!isset($_GET['country'])){
 	}
 }
 
-require('footer.php');
+require_once('footer.php');
 ?>

@@ -1,13 +1,13 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 
 if (isset($_POST['airline']))
 {
 	header('Location: '.$globalURL.'/airline/'.$_POST['airline']);
 } else {
 	$title = "Airlines";
-	require('header.php');
+	require_once('header.php');
 	$Spotter = new Spotter();
 	print '<div class="column">';
 	print '<h1>Airlines</h1>';
@@ -78,6 +78,6 @@ if (isset($_POST['airline']))
 		}
 	}
 	print '</div>';
-	require('footer.php');
+	require_once('footer.php');
 }
 ?>

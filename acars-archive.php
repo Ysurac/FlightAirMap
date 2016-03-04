@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.ACARS.php');
+require_once('require/class.Connection.php');
+require_once('require/class.ACARS.php');
 $ACARS = new ACARS();
 $title = "Latest ACARS messages";
-require('header.php');
+require_once('header.php');
 
 $page_url = $globalURL.'/acars-archive';
 
@@ -38,5 +38,5 @@ if (!empty($spotter_array)) {
 }
 print '</div>';
 
-require('footer.php');
+require_once('footer.php');
 ?>

@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
 
 if (isset($_POST['category']))
@@ -9,7 +9,7 @@ if (isset($_POST['category']))
 }
 
 $title = "Newest";
-require('header.php');
+require_once('header.php');
 
 //calculuation for the pagination
 if(!isset($_GET['limit']))
@@ -160,5 +160,5 @@ $page_url = $globalURL.'/newest/'.$category;
   ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

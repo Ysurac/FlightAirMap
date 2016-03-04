@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
 
 if (!isset($_GET['aircraft_type'])){
@@ -30,7 +30,7 @@ if (!isset($_GET['aircraft_type'])){
 	if (!empty($spotter_array))
 	{
 		$title = 'Detailed View for '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
-		require('header.php');
+		require_once('header.php');
 	    
 		print '<div class="select-item">';
 		print '<form action="'.$globalURL.'/aircraft" method="post">';
@@ -84,7 +84,7 @@ if (!isset($_GET['aircraft_type'])){
 	  
 	} else {
 		$title = "Aircraft";
-		require('header.php');
+		require_once('header.php');
 		
 		print '<h1>Errors</h1>';
 		
@@ -94,5 +94,5 @@ if (!isset($_GET['aircraft_type'])){
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 
 if (isset($_POST['airport']))
 {
@@ -31,7 +31,7 @@ if (isset($_POST['airport']))
 	if (!empty($airport_array))
 	{
 	  $title = $airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
-		require('header.php');
+		require_once('header.php');
 	  
 	  
 	  
@@ -99,7 +99,7 @@ if (isset($_POST['airport']))
 	} else {
 	
 		$title = "Airport";
-		require('header.php');
+		require_once('header.php');
 		
 		print '<h1>Error</h1>';
 	
@@ -109,7 +109,7 @@ if (isset($_POST['airport']))
 } else {
 	$Spotter= new Spotter();
 	$title = "Airports";
-	require('header.php');
+	require_once('header.php');
 	
 	print '<div class="column">';
 		
@@ -159,5 +159,5 @@ if (isset($_POST['airport']))
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

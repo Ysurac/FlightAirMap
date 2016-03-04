@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 if (!isset($_GET['aircraft_manufacturer'])) {
         header('Location: '.$globalURL.'/manufacturer');
         die();
@@ -13,7 +13,7 @@ $spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,"0,1", $_G
 if (!empty($spotter_array))
 {
   $title = 'Most Common Airlines from '.$manufacturer;
-	require('header.php');
+	require_once('header.php');
   
   
   
@@ -102,7 +102,7 @@ if (!empty($spotter_array))
 } else {
 
 	$title = "Manufacturer";
-	require('header.php');
+	require_once('header.php');
 	
 	print '<h1>Error</h1>';
 
@@ -113,5 +113,5 @@ if (!empty($spotter_array))
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

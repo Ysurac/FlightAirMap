@@ -1,7 +1,7 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-require('require/class.METAR.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
+require_once('require/class.METAR.php');
 $Spotter = new Spotter();
 
 if (isset($_GET['airport_icao'])) {

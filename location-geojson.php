@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Source.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Source.php');
 $Source = new Source();
 
 if (isset($_GET['download']))

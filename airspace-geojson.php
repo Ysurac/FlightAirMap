@@ -1,5 +1,5 @@
 <?php
-require('require/class.Connection.php');
+require_once('require/class.Connection.php');
 include_once('require/libs/geoPHP/geoPHP.inc');
 
 if (isset($_GET['download']))

@@ -1,7 +1,7 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-require('require/class.METAR.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
+require_once('require/class.METAR.php');
 
 if (!isset($_GET['airport'])){
 	header('Location: '.$globalURL.'/airport');
@@ -44,7 +44,7 @@ if (!isset($_GET['airport'])){
 		}
 		
 		$title = 'Detailed View for '.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
-		require('header.php');
+		require_once('header.php');
 	  
 	  
 	  print '<div class="select-item">';
@@ -151,7 +151,7 @@ if (!isset($_GET['airport'])){
 	} else {
 	
 		$title = "Airport";
-		require('header.php');
+		require_once('header.php');
 		
 		print '<h1>Error</h1>';
 	
@@ -162,5 +162,5 @@ if (!isset($_GET['airport'])){
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

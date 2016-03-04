@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.NOTAM.php');
+require_once('require/class.Connection.php');
+require_once('require/class.NOTAM.php');
 $NOTAM = new NOTAM();
 if (isset($_GET['download']))
 {

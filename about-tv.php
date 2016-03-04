@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 
 $title = "Spotter TV";
-require('header.php');
+require_once('header.php');
 ?>
 
 <div class="info column">
@@ -22,5 +22,5 @@ require('header.php');
 </div>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

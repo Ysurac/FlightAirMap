@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 
 if (!isset($_GET['date'])){
 	header('Location: '.$globalURL.'');
@@ -39,7 +39,7 @@ if (!isset($_GET['date'])){
 	    date_default_timezone_set($globalTimezone);
 	    
 	    $title = 'Detailed View for flights from '.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']));
-			require('header.php');
+			require_once('header.php');
 			
 		print '<div class="select-item">';
 	  		print '<form action="'.$globalURL.'/date" method="post">';
@@ -78,7 +78,7 @@ if (!isset($_GET['date'])){
 	} else {
 	
 		$title = "Unknown Date";
-		require('header.php');
+		require_once('header.php');
 		
 		print '<h1>Error</h1>';
 	
@@ -89,5 +89,5 @@ if (!isset($_GET['date'])){
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

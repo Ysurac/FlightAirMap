@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 if (!isset($_GET['country'])) {
         header('Location: '.$globalURL.'/country');
         die();
@@ -14,7 +14,7 @@ $spotter_array = $Spotter->getSpotterDataByCountry($country, "0,1", $_GET['sort'
 if (!empty($spotter_array))
 {
   $title = 'Most Common Time of Day from '.$country;
-	require('header.php');
+	require_once('header.php');
   
   
   
@@ -92,7 +92,7 @@ if (!empty($spotter_array))
 } else {
 
 	$title = "Country";
-	require('header.php');
+	require_once('header.php');
 	
 	print '<h1>Error</h1>';
 
@@ -103,5 +103,5 @@ if (!empty($spotter_array))
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

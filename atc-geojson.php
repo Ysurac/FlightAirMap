@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.ATC.php');
+require_once('require/class.Connection.php');
+require_once('require/class.ATC.php');
 
 if (isset($_GET['download']))
 {

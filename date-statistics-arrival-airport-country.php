@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $sort);
@@ -9,7 +9,7 @@ if (!empty($spotter_array))
 {
   
   $title = 'Most Common Arrival Airports by Country on '.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']));
-	require('header.php');
+	require_once('header.php');
 
   print '<div class="select-item">';
   		print '<form action="'.$globalURL.'/date" method="post">';
@@ -98,7 +98,7 @@ if (!empty($spotter_array))
 } else {
 
 	$title = "Unknown Date";
-	require('header.php');
+	require_once('header.php');
 	
 	print '<h1>Error</h1>';
 
@@ -109,5 +109,5 @@ if (!empty($spotter_array))
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

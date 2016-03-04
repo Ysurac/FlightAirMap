@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-$Spotter = new Spotter();
+require_once('require/class.Connection.php');
+require_once('require/class.Stats.php');
+$Stats = new Stats();
 $title = "Statistic - Most busiest Time of the Day";
-require('header.php');
+require_once('header.php');
 include('statistics-sub-menu.php'); 
 ?>
 
@@ -16,7 +16,7 @@ include('statistics-sub-menu.php');
       
 <?php
 
-$hour_array = $Spotter->countAllHours('hour');
+$hour_array = $Stats->countAllHours('hour');
 print '<div id="chartHour" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});
@@ -57,7 +57,7 @@ print ']);
     			});
       </script>';
 
-$hour_array = $Spotter->countAllHours('count');
+$hour_array = $Stats->countAllHours('count');
 if (!empty($hour_array))
 {
 	print '<div class="table-responsive">';
@@ -83,5 +83,5 @@ if (!empty($hour_array))
 	print '</div>';
 }
 
-require('footer.php');
+require_once('footer.php');
 ?>

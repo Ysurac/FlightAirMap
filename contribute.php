@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
+require_once('require/class.Connection.php');
 
 $title = "Contribute";
 $top_header = "contrail.jpg";
-require('header.php');
+require_once('header.php');
 ?>
 
 <div class="info column">
@@ -18,5 +18,5 @@ require('header.php');
     </ul>
 </div>
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
 $title = "Special Highlights";
-require('header.php');
+require_once('header.php');
 
 //calculuation for the pagination
 if(!isset($_GET['limit']))
@@ -74,5 +74,5 @@ if (!empty($spotter_array))
 	print '</div>';
 }
 
-require('footer.php');
+require_once('footer.php');
 ?>

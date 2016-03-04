@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-$Spotter = new Spotter();
+require_once('require/class.Connection.php');
+require_once('require/class.Stats.php');
+$Stats = new Stats();
 $title = "Statistic - Most common Aircraft Registrations";
-require('header.php');
+require_once('header.php');
 include('statistics-sub-menu.php'); 
 ?>
 
@@ -15,7 +15,7 @@ include('statistics-sub-menu.php');
     	<p>Below are the <strong>Top 10</strong> most common aircraft registrations.</p>
       
 <?php
-$registration_array = $Spotter->countAllAircraftRegistrations();
+$registration_array = $Stats->countAllAircraftRegistrations();
 print '<div id="chart" class="chart" width="100%"></div>
       	    <script> 
       		google.load("visualization", "1", {packages:["corechart"]});
@@ -87,5 +87,5 @@ if (!empty($registration_array))
 	print '</table>';
 	print '</div>';
 }
-require('footer.php');
+require_once('footer.php');
 ?>

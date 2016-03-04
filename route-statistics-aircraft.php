@@ -4,8 +4,8 @@ if ($_GET['departure_airport'] == "" || $_GET['arrival_airport'] == "")
 	header('Location: /');
 }
 
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $Spotter = new Spotter();
 $spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $sort);
@@ -14,7 +14,7 @@ $spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_G
   {
   
 	  $title = 'Most Common Aircraft between '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'];
-		require('header.php');
+		require_once('header.php');
 	  
 			print '<div class="info column">';
 				print '<h1>Flights between '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</h1>';
@@ -66,7 +66,7 @@ $spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_G
 } else {
 
 	$title = "Unknown Route";
-	require('header.php');
+	require_once('header.php');
 	
 	print '<h1>Error</h1>';
 
@@ -77,5 +77,5 @@ $spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_G
 ?>
 
 <?php
-require('footer.php');
+require_once('footer.php');
 ?>

@@ -4,9 +4,9 @@ if ($_GET['id'] == "")
 	header('Location: /');
 }
 
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-require('require/class.SpotterArchive.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
+require_once('require/class.SpotterArchive.php');
 $Spotter = new Spotter();
 $SpotterArchive = new SpotterArchive();
 $spotter_array = $Spotter->getSpotterDataByID($_GET['id']);
@@ -41,7 +41,7 @@ if (!empty($spotter_array))
 		$title .= ' - '.$spotter_array[0]['registration'];
 	}
 	//$facebook_meta_image = $spotter_array[0]['image'];
-	require('header.php');
+	require_once('header.php');
 
 	if (isset($globalArchive) && $globalArchive) {
 		// Requirement for altitude graph
@@ -548,10 +548,10 @@ if (!empty($spotter_array))
 */
 } else {
 	$title = "ID";
-	require('header.php');
+	require_once('header.php');
 	print '<h1>Error</h1>';
 	print '<p>Sorry, this flight is not in the database. :(</p>'; 
 }
 
-	require('footer.php');
+	require_once('footer.php');
 ?>

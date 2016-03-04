@@ -1,9 +1,9 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
-$Spotter = new Spotter();
+require_once('require/class.Connection.php');
+require_once('require/class.Stats.php');
+$Stats = new Stats();
 $title = "Statistic - Most Busiest Day";
-require('header.php');
+require_once('header.php');
 include('statistics-sub-menu.php'); 
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -15,7 +15,7 @@ include('statistics-sub-menu.php');
       
 <?php
 
-$date_array = $Spotter->countAllDatesLast7Days();
+$date_array = $Stats->countAllDatesLast7Days();
 if (count($date_array) == 0) {
     print 'Not data available';
 } else {
@@ -65,7 +65,7 @@ if (isset($globalDBArchiveMonths) && $globalDBArchiveMonths > 0) {
 
 <?php
 }
-$date_array = $Spotter->countAllDates();
+$date_array = $Stats->countAllDates();
 if (!empty($date_array))
 {
 	print '<div class="table-responsive">';
@@ -95,5 +95,5 @@ if (!empty($date_array))
 	print '</div>';
 }
 
-require('footer.php');
+require_once('footer.php');
 ?>

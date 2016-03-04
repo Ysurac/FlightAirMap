@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 if (!isset($_GET['ident'])) {
         header('Location: '.$globalURL.'/ident');
         die();
@@ -13,7 +13,7 @@ $spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],"0,1", $sort);
 if (!empty($spotter_array))
 {
 	$title = 'Most Common Routes of '.$spotter_array[0]['ident'];
-	require('header.php');
+	require_once('header.php');
 	print '<div class="info column">';
 	print '<h1>'.$spotter_array[0]['ident'].'</h1>';
 	print '<div><span class="label">Ident</span>'.$spotter_array[0]['ident'].'</div>';
@@ -70,10 +70,10 @@ if (!empty($spotter_array))
 	print '</div>';
 } else {
 	$title = "Ident";
-	require('header.php');
+	require_once('header.php');
 	print '<h1>Error</h1>';
 	print '<p>Sorry, this ident/callsign is not in the database. :(</p>';
 }
 
-require('footer.php');
+require_once('footer.php');
 ?>

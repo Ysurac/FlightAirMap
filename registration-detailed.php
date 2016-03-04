@@ -1,6 +1,6 @@
 <?php
-require('require/class.Connection.php');
-require('require/class.Spotter.php');
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
 
 if (!isset($_GET['registration'])){
 	header('Location: '.$globalURL.'');
@@ -34,7 +34,7 @@ if (!isset($_GET['registration'])){
 	if (!empty($spotter_array))
 	{
 	  $title = 'Detailed View of aircraft with registration '.$_GET['registration'];
-		require('header.php');
+		require_once('header.php');
 	  
 	  
 	  
@@ -70,7 +70,7 @@ if (!isset($_GET['registration'])){
 	} else {
 	
 		$title = "Registration";
-		require('header.php');
+		require_once('header.php');
 		
 		print '<h1>Error</h1>';
 	
@@ -78,5 +78,5 @@ if (!isset($_GET['registration'])){
 	}
 }
 
-require('footer.php');
+require_once('footer.php');
 ?>
