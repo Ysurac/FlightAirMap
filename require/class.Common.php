@@ -247,5 +247,16 @@ class Common {
 		if ($d > -$approx && $d < $approx) return true;
 		else return false;
 	}
+	
+	function array_merge_noappend() {
+		$output = array();
+		foreach(func_get_args() as $array) {
+			foreach($array as $key => $value) {
+				$output[$key] = isset($output[$key]) ?
+				array_merge($output[$key], $value) : $value;
+			}
+		}
+		return $output;
+	}
 }
 ?>

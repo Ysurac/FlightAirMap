@@ -4,6 +4,7 @@
 */
 
 require_once(dirname(__FILE__).'/class.Spotter.php');
+require_once(dirname(__FILE__).'/class.Common.php');
 class Stats {
 	public $db;
         function __construct($dbc = null) {
@@ -204,9 +205,63 @@ class Stats {
                 */
                 return $all;
 	}
+	public function countAllAircraftRegistrations($limit = true) {
+		if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                if (empty($all)) {
+	                $Spotter = new Spotter($this->db);
+    		        $all = $Spotter->countAllAircraftRegistrations($limit);
+                }
+                /*
+                $Spotter = new Spotter();
+                $all_result = array_merge($all,$Spotter->countAllAirlines(false));
+                $values = array();
+                foreach ($all_result as $cnt) {
+                    $values[] = $cnt['airline_count'];
+                }
+                array_multisort($values,SORT_DESC,$all_result);
+                if ($limit) array_splice($all_result,11);
+                return $all_result;
+                */
+                return $all;
+	}
+	public function countAllCallsigns($limit = true) {
+		if ($limit) $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao ORDER BY callsign_icao_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao ORDER BY callsign_icao_count DESC";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                if (empty($all)) {
+	                $Spotter = new Spotter($this->db);
+    		        $all = $Spotter->countAllCallsigns($limit);
+                }
+                /*
+                $Spotter = new Spotter();
+                $all_result = array_merge($all,$Spotter->countAllAirlines(false));
+                $values = array();
+                foreach ($all_result as $cnt) {
+                    $values[] = $cnt['airline_count'];
+                }
+                array_multisort($values,SORT_DESC,$all_result);
+                if ($limit) array_splice($all_result,11);
+                return $all_result;
+                */
+                return $all;
+	}
 	public function countAllPilots($limit = true) {
-		if ($limit) $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot LIMIT 0,10";
-		else $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot";
+		if ($limit) $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot ORDER BY pilot_count DESC LIMIT 0,10";
+		else $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot ORDER BY pilot_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -232,8 +287,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllOwners($limit = true) {
-		if ($limit) $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner LIMIT 0,10";
-		else $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner";
+		if ($limit) $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner ORDER BY owner_count DESC LIMIT 0,10";
+		else $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner ORDER BY owner_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -379,7 +434,45 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllHours($limit = true) {
+	public function countAllDates() {
+		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE type = 'date'";
+		$query_data = array();
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_data);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                if (empty($all)) {
+            		$Spotter = new Spotter($this->db);
+            		$all = $Spotter->countAllDates();
+                }
+                return $all;
+	}
+	public function countAllMonths() {
+		global $globalTimezone;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+	    	$query = "SELECT YEAR(CONVERT_TZ(stats_date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(stats_date,'+00:00', :offset)) AS month_name, cnt as date_count FROM stats WHERE type = 'flights_bymonth'";
+		$query_data = array(':offset' => $offset);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_data);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                if (empty($all)) {
+            		$Spotter = new Spotter($this->db);
+            		$all = $Spotter->countAllMonths();
+                }
+                return $all;
+	}
+	public function countAllHours($orderby = 'hour',$limit = true) {
 		global $globalTimezone;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -388,6 +481,8 @@ class Stats {
 		} else $offset = '+00:00';
 		if ($limit) $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE type = 'hour'";
 		else $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE type = 'hour'";
+		if ($orderby == 'hour') $query .= " ORDER BY hour_name ASC";
+		if ($orderby == 'count') $query .= " ORDER BY hour_count DESC";
 		$query_data = array(':offset' => $offset);
                  try {
                         $sth = $this->db->prepare($query);
@@ -569,6 +664,26 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
+	public function addStatAircraftRegistration($registration,$cnt,$aircraft_icao = '') {
+                $query = "INSERT INTO stats_registration (aircraft_icao,registration,cnt) VALUES (:aircraft_icao,:registration,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+                $query_values = array(':aircraft_icao' => $aircraft_icao,':registration' => $registration,':cnt' => $cnt);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+        }
+	public function addStatCallsign($callsign_icao,$cnt,$airline_icao = '') {
+                $query = "INSERT INTO stats_callsign (callsign_icao,airline_icao,cnt) VALUES (:callsign_icao,:airline_icao,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+                $query_values = array(':callsign_icao' => $callsign_icao,':airline_icao' => $airline_icao,':cnt' => $cnt);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+        }
 	public function addStatAircraft($aircraft_icao,$cnt,$aircraft_name = '') {
                 $query = "INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,cnt) VALUES (:aircraft_icao,:aircraft_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
                 $query_values = array(':aircraft_icao' => $aircraft_icao,':aircraft_name' => $aircraft_name,':cnt' => $cnt);
@@ -653,6 +768,7 @@ class Stats {
         
         public function addOldStats() {
     		global $globalArchiveMonths, $globalArchive, $globalArchiveYear;
+    		$Common = new Common();
     		date_default_timezone_set('UTC');
     		$last_update = $this->getLastStatsUpdate('last_update_stats');
 		//print_r($last_update);
@@ -684,6 +800,28 @@ class Stats {
 			$alldata = $Spotter->countAllMonthsRealArrivals();
 			foreach ($alldata as $number) {
 				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+			}
+			$this->deleteStatFlight('month');
+			$alldata = $Spotter->countAllDatesLastMonth();
+			foreach ($alldata as $number) {
+				$this->addStatFlight('month',$number['date_name'],$number['date_count']);
+			}
+			$previousdata = $this->countAllDates();
+			$this->deleteStatFlight('date');
+			$alldata = $Common->array_merge_noappend($previousdata,$Spotter->countAllDates());
+			$values = array();
+			foreach ($alldata as $cnt) {
+				$values[] = $cnt['date_count'];
+			}
+			array_multisort($values,SORT_DESC,$alldata);
+			array_splice($alldata,11);
+			foreach ($alldata as $number) {
+				$this->addStatFlight('date',$number['date_name'],$number['date_count']);
+			}
+			$this->deleteStatFlight('hour');
+			$alldata = $Spotter->countAllHours('hour');
+			foreach ($alldata as $number) {
+				$this->addStatFlight('hour',$number['hour_name'],$number['hour_count']);
 			}
 			if ($lastyear) {
 				$monthsSinceLastYear = date('n');
@@ -739,6 +877,14 @@ class Stats {
 				$alldata = $Spotter->countAllAirlines(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
 					$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name']);
+				}
+				$alldata = $Spotter->countAllAircraftRegistration(false,0,$last_update_day);
+				foreach ($alldata as $number) {
+					$this->addStatAircraftRegistration($number['registration'],$number['aircraft_registration_count'],$number['aircraft_icao']);
+				}
+				$alldata = $Spotter->countAllCallsigns(false,0,$last_update_day);
+				foreach ($alldata as $number) {
+					$this->addStatCallsign($number['callsign_icao'],$number['callsign_icao_count'],$number['airline_icao']);
 				}
 				$alldata = $Spotter->countAllOwners(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
@@ -796,6 +942,14 @@ class Stats {
 			foreach ($alldata as $number) {
 				$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name']);
 			}
+			$alldata = $Spotter->countAllAircraftRegistrations(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatAircraftRegistration($number['registration'],$number['aircraft_registration_count'],$number['aircraft_icao']);
+			}
+			$alldata = $Spotter->countAllCallsigns(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatCallsign($number['callsign_icao'],$number['callsign_icao_count'],$number['airline_icao']);
+			}
 			$alldata = $Spotter->countAllOwners(false,0,$last_update_day);
 			foreach ($alldata as $number) {
 				$this->addStatOwner($number['owner_name'],$number['owner_count']);
@@ -850,6 +1004,20 @@ class Stats {
 			foreach ($alldata as $number) {
 				$this->addStatFlight('month',$number['date_name'],$number['date_count']);
 			}
+			
+			$previousdata = $this->countAllDates();
+			$this->deleteStatFlight('date');
+			$alldata = $Common->array_merge_noappend($previousdata,$Spotter->countAllDates());
+			$values = array();
+			foreach ($alldata as $cnt) {
+				$values[] = $cnt['date_count'];
+			}
+			array_multisort($values,SORT_DESC,$alldata);
+			array_splice($alldata,11);
+			foreach ($alldata as $number) {
+				$this->addStatFlight('date',$number['date_name'],$number['date_count']);
+			}
+			
 			$this->deleteStatFlight('hour');
 			$alldata = $Spotter->countAllHours('hour');
 			foreach ($alldata as $number) {
