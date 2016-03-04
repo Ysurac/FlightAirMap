@@ -17,9 +17,11 @@ class Connection{
 	    } elseif ($dbname === null || $dbname === 'default') {
 		$this->db = $dbc;
 		if ($this->connectionExists() === false) {
+			/*
 			echo 'Restart Connection !!!'."\n";
 			$e = new \Exception;
 			var_dump($e->getTraceAsString());
+			*/
 			$this->createDBConnection();
 		}
 	    } else {
