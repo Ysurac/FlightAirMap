@@ -1,8 +1,8 @@
 <?php
 //require_once('libs/simple_html_dom.php');
-require('../require/settings.php');
-require_once('../require/class.Common.php');
-require_once('../require/class.Connection.php');
+require(dirname(__FILE__).'/../require/settings.php');
+require_once(dirname(__FILE__).'/../require/class.Common.php');
+require_once(dirname(__FILE__).'/../require/class.Connection.php');
 
 $tmp_dir = dirname(__FILE__).'/tmp/';
 //$globalDebug = true;
@@ -433,7 +433,7 @@ class update_db {
 	public static function update_airports() {
 		global $tmp_dir, $globalTransaction;
 
-		require_once('libs/sparqllib.php');
+		require_once(dirname(__FILE__).'/libs/sparqllib.php');
 		$db = sparql_connect('http://dbpedia.org/sparql');
 		$query = '
 		    PREFIX dbo: <http://dbpedia.org/ontology/>
@@ -747,7 +747,7 @@ class update_db {
 	}
 	
 	public static function translation() {
-		require_once('../require/class.Spotter.php');
+		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
 		$Spotter = new Spotter();
 		//$out_file = $tmp_dir.'translation.zip';
@@ -812,7 +812,7 @@ class update_db {
         }
 	
 	public static function translation_fam() {
-		require_once('../require/class.Spotter.php');
+		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
 		$Spotter = new Spotter();
 		$query = "DELETE FROM translation WHERE Source = '' OR Source = :source";
@@ -937,7 +937,7 @@ class update_db {
 	}
 */
 	public static function waypoints($filename) {
-		//require_once('../require/class.Spotter.php');
+		//require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
 		//$Spotter = new Spotter();
 		//$out_file = $tmp_dir.'translation.zip';
@@ -992,7 +992,7 @@ class update_db {
         }
 
 	public static function ivao_airlines($filename) {
-		//require_once('../require/class.Spotter.php');
+		//require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
 		$query = 'TRUNCATE TABLE airlines';
 		try {
@@ -1412,7 +1412,7 @@ class update_db {
 	
 	public static function update_notam() {
 		global $tmp_dir, $globalDebug, $globalNOTAMSource;
-		require('../require/class.NOTAM.php');
+		require(dirname(__FILE__).'/../require/class.NOTAM.php');
 		$Common = new Common();
 		date_default_timezone_set('UTC');
 		$query = 'TRUNCATE TABLE notam';

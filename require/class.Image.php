@@ -1,7 +1,7 @@
 <?php
-require_once('class.Spotter.php');
-require_once('class.Common.php');
-require_once('settings.php');
+require_once(dirname(__FILE__).'/class.Spotter.php');
+require_once(dirname(__FILE__).'/class.Common.php');
+require_once(dirname(__FILE__).'/settings.php');
 
 class Image {
     public $db;

@@ -1,10 +1,10 @@
 <?php
 @session_start();
 header('Content-Encoding: none;');
-require_once('class.create_db.php');
-require_once('class.update_schema.php');
-require_once('class.settings.php');
-require('../require/settings.php');
+require_once(dirname(__FILE__).'/class.create_db.php');
+require_once(dirname(__FILE__).'/class.update_schema.php');
+require_once(dirname(__FILE__).'/class.settings.php');
+require(dirname(__FILE__).'/../require/settings.php');
 
 /*
 if ($globalInstalled && !isset($_SESSION['install'])) {

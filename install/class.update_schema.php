@@ -1,9 +1,9 @@
 <?php
-require_once('../require/settings.php');
-require_once('../require/class.Connection.php');
-require_once('../require/class.Scheduler.php');
-require_once('class.create_db.php');
-require_once('class.update_db.php');
+require_once(dirname(__FILE__).'/../require/settings.php');
+require_once(dirname(__FILE__).'/../require/class.Connection.php');
+require_once(dirname(__FILE__).'/../require/class.Scheduler.php');
+require_once(dirname(__FILE__).'/class.create_db.php');
+require_once(dirname(__FILE__).'/class.update_db.php');
 
 class update_schema {
 

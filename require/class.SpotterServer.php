@@ -1,10 +1,10 @@
 <?php
-require_once('class.Connection.php');
-require_once('class.Spotter.php');
-require_once('class.SpotterLive.php');
-require_once('class.SpotterArchive.php');
-require_once('class.Scheduler.php');
-require_once('class.Translation.php');
+require_once(dirname(__FILE__).'/class.Connection.php');
+require_once(dirname(__FILE__).'/class.Spotter.php');
+require_once(dirname(__FILE__).'/class.SpotterLive.php');
+require_once(dirname(__FILE__).'/class.SpotterArchive.php');
+require_once(dirname(__FILE__).'/class.Scheduler.php');
+require_once(dirname(__FILE__).'/class.Translation.php');
 
 class SpotterServer {
     public $dbs = null;

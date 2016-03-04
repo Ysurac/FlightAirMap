@@ -1,5 +1,5 @@
 <?php
-require_once("settings.php");
+require_once(dirname(__FILE__).'/settings.php');
 
 class Connection{
 	public $db = null;

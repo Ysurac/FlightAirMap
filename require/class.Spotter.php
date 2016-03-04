@@ -1,7 +1,7 @@
 <?php
-require_once('class.Scheduler.php');
-require_once('class.ACARS.php');
-require_once('class.Image.php');
+require_once(dirname(__FILE__).'/class.Scheduler.php');
+require_once(dirname(__FILE__).'/class.ACARS.php');
+require_once(dirname(__FILE__).'/class.Image.php');
 $global_query = "SELECT spotter_output.* FROM spotter_output";
 
 class Spotter{

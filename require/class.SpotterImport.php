@@ -1,10 +1,10 @@
 <?php
-require_once('class.Connection.php');
-require_once('class.Spotter.php');
-require_once('class.SpotterLive.php');
-require_once('class.SpotterArchive.php');
-require_once('class.Scheduler.php');
-require_once('class.Translation.php');
+require_once(dirname(__FILE__).'/class.Connection.php');
+require_once(dirname(__FILE__).'/class.Spotter.php');
+require_once(dirname(__FILE__).'/class.SpotterLive.php');
+require_once(dirname(__FILE__).'/class.SpotterArchive.php');
+require_once(dirname(__FILE__).'/class.Scheduler.php');
+require_once(dirname(__FILE__).'/class.Translation.php');
 
 class SpotterImport {
     private $all_flights = array();
@@ -182,7 +182,7 @@ class SpotterImport {
 		if (!isset($this->all_flights[$id]['hex'])) {
 		    $this->all_flights[$id] = array('hex' => $hex);
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('addedSpotter' => 0));
-		    if (preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
+		    if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
 		    } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
 		    if (!isset($line['aircraft_icao']) || $line['aircraft_icao'] == '????') {
@@ -441,6 +441,9 @@ class SpotterImport {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => round($heading)));
 		    if (abs($this->all_flights[$id]['heading']-round($heading)) > 2) $this->all_flights[$id]['putinarchive'] = true;
   		    if ($globalDebug) echo "ø Calculated Heading for ".$this->all_flights[$id]['hex']." : ".$heading."\n";
+  		} elseif (isset($this->all_flights[$id]['format_source']) && $this->all_flights[$id]['format_source'] == 'ACARS') {
+  		    // If not enough messages and ACARS set heading to 0
+  		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => 0));
   		}
 		if (isset($globalSBS1update) && $globalSBS1update != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSBS1update) $dataFound = false;
 

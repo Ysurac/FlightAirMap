@@ -3,7 +3,7 @@
 * This class save stats older than a year and $globalArchiveMonths
 */
 
-require_once('class.Spotter.php');
+require_once(dirname(__FILE__).'/class.Spotter.php');
 class Stats {
 	public $db;
         function __construct($dbc = null) {
@@ -37,8 +37,8 @@ class Stats {
 
 
 	public function countAllAircraftTypes($limit = true) {
-		if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' ORDER BY aircraft_icao DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' ORDER BY aircraft_icao DESC";
+		if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' ORDER BY aircraft_icao_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' ORDER BY aircraft_icao_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();

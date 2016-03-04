@@ -9,12 +9,12 @@ if (isset($_SESSION['error'])) {
 #if (ob_get_level() == 0) ob_start();
 #ob_implicit_flush(true);
 #ob_end_flush();
-require_once('class.create_db.php');
-require_once('class.update_schema.php');
-require_once('class.settings.php');
+require_once(dirname(__FILE__).'/class.create_db.php');
+require_once(dirname(__FILE__).'/class.update_schema.php');
+require_once(dirname(__FILE__).'/class.settings.php');
 $title="Install";
-require('header.php');
-require('../require/settings.php');
+require(dirname(__FILE__).'/header.php');
+require(dirname(__FILE__).'/../require/settings.php');
 
 if ($globalInstalled && !isset($_SESSION['install'])) {
 	print '<div class="info column"><p>You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</p></div>';
@@ -237,11 +237,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<th>Country</th>
 				</tr>
 		<?php
-		    require_once('../require/class.Connection.php');
+		    require_once(dirname(__FILE__).'/../require/class.Connection.php');
 		    $Connection = new Connection();
 		    if ($Connection->db != NULL) {
 			if ($Connection->tableExists('source_location')) {
-			    require_once('../require/class.Source.php');
+			    require_once(dirname(__FILE__).'/../require/class.Source.php');
 			    $Source = new Source();
 			    $alllocations = $Source->getAllLocationInfo();
 			    foreach ($alllocations as $location) {

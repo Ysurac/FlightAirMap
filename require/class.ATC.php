@@ -1,6 +1,6 @@
 <?php
-require_once('settings.php');
-require_once('class.Connection.php');
+require_once(dirname(__FILE__).'/settings.php');
+require_once(dirname(__FILE__).'/class.Connection.php');
 
 class ATC {
 	public $db;

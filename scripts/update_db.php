@@ -16,7 +16,7 @@ if (isset($globalNOTAM) && $globalNOTAM && $globalNOTAMSource != '' && $update_d
 
 if ($update_db->check_last_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM)) {
 	$update_db->update_all();
-	require_once('../require/class.Spotter.php');
+	require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 	$Spotter = new Spotter();
 	$Spotter->updateFieldsFromOtherTables();
 	$update_db->insert_last_update();
@@ -25,7 +25,7 @@ if ($update_db->check_last_update() && (!isset($globalIVAO) || !$globalIVAO) && 
 
 if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalMETARcycle) {
 	echo "updating METAR...";
-	require_once('../require/class.METAR.php');
+	require_once(dirname(__FILE__).'/../require/class.METAR.php');
 	$METAR = new METAR();
 	if ($METAR->check_last_update()) {
 		$METAR->addMETARCycle();

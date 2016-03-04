@@ -1,6 +1,6 @@
 <?php
-require_once('libs/simple_html_dom.php');
-require_once('libs/uagent/uagent.php');
+require_once(dirname(__FILE__).'/libs/simple_html_dom.php');
+require_once(dirname(__FILE__).'/libs/uagent/uagent.php');
 
 class Common {
 	protected $cookies = array();
@@ -60,7 +60,7 @@ class Common {
 		curl_close($ch);
 		if ($info['http_code'] == '503' && strstr($result,'DDoS protection by CloudFlare')) {
 			echo "Cloudflare Detected\n";
-			require_once 'libs/cloudflare-bypass/libraries/cloudflareClass.php';
+			require_once(dirname(__FILE__).'/libs/cloudflare-bypass/libraries/cloudflareClass.php');
 			$useragent = UAgent::random();
 			cloudflare::useUserAgent($useragent);
 			if ($clearanceCookie = cloudflare::bypass($url)) {

@@ -1,9 +1,9 @@
 <?php
-require_once('settings.php');
-require_once('class.Connection.php');
-require_once('class.Spotter.php');
-require_once('class.Common.php');
-require_once('libs/uagent/uagent.php');
+require_once(dirname(__FILE__).'/settings.php');
+require_once(dirname(__FILE__).'/class.Connection.php');
+require_once(dirname(__FILE__).'/class.Spotter.php');
+require_once(dirname(__FILE__).'/class.Common.php');
+require_once(dirname(__FILE__).'/libs/uagent/uagent.php');
 
 
 class Translation {

@@ -1,16 +1,19 @@
 <?php
-require_once('class.Connection.php');
-require_once('class.Spotter.php');
-require_once('class.Image.php');
-require_once('class.Scheduler.php');
-require_once('class.Translation.php');
+require_once(dirname(__FILE__).'/class.Connection.php');
+require_once(dirname(__FILE__).'/class.Spotter.php');
+require_once(dirname(__FILE__).'/class.SpotterImport.php');
+require_once(dirname(__FILE__).'/class.Image.php');
+require_once(dirname(__FILE__).'/class.Scheduler.php');
+require_once(dirname(__FILE__).'/class.Translation.php');
 
 class ACARS {
     public $db;
+    public $SI;
 
     function __construct($dbc = null) {
 	$Connection = new Connection($dbc);
 	$this->db = $Connection->db;
+    	$this->SI = new SpotterImport($this->db);
     }
     /**
     * Change IATA to ICAO value for ident
@@ -23,7 +26,7 @@ class ACARS {
 	    if (filter_var(substr($ident,2),FILTER_VALIDATE_INT,array("flags"=>FILTER_FLAG_ALLOW_OCTAL))) $icao = $ident;
 	    else $icao = 'AFR'.ltrim(substr($ident,2),'0');
 	} else {
-	    $Spotter = new Spotter();
+	    $Spotter = new Spotter($this->db);
     	    $identicao = $Spotter->getAllAirlineInfo(substr($ident,0,2));
     	    if (isset($identicao[0])) {
         	$icao = $identicao[0]['icao'].ltrim(substr($ident,2),'0');
@@ -59,10 +62,10 @@ class ACARS {
     *
     */
     function add($data) {
-	global $globalDebug;
-	$Image = new Image();
-	$Schedule = new Schedule();
-	$Translation = new Translation();
+	global $globalDebug, $globalACARSArchive;
+	$Image = new Image($this->db);
+	$Schedule = new Schedule($this->db);
+	$Translation = new Translation($this->db);
 	
 //  (null) 4 09/03/2015 08:11:14 0 -41 2         ! SQ   02XA LYSLFL L104544N00505BV136975/ARINC
 //  (null) 1 09/03/2015 08:10:08 0 -36 R .F-GPMD T _d 8 S65A AF6202
@@ -609,9 +612,13 @@ RMK/FUEL   2.6 M0.79)
 	
 	    $title = $this->getTitlefromLabel($label);
 	    if ($title != '') $decode = array_merge(array('Message title' => $title),$decode);
-	
+
+	    if (isset($decode['latitude'])) $latitude = $latitude;
+	    else $latitude = '';
+	    if (isset($decode['longitude'])) $longitude = $longitude;
+	    else $longitude = '';
 	    // Business jets always use GS0001
-	    if ($ident != 'GS0001') $info = $this->addModeSData($ident,$registration,$icao,$airicao);
+	    if ($ident != 'GS0001') $info = $this->addModeSData($ident,$registration,$icao,$airicao,$latitude,$longitude);
 	    if ($globalDebug && isset($info) && $info != '') echo $info;
 	    
     	    $image_array = $Image->getSpotterImage($registration);
@@ -622,8 +629,10 @@ RMK/FUEL   2.6 M0.79)
         if (count($decode) > 0) $decode_json = json_encode($decode);
         else $decode_json = '';
 	$result = $this->addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	if (!isset($globalACARSArchive)) $globalACARSArchive = array('10','80','81','82','3F');
 	//if ((is_numeric($label) && (($label > 9 && $label < 50) || ($label > 79 && $label < 90))) || $label == '3F') ACARS->addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
-	if ($result && ($label == '10' || $label == '80' || $label == '81' || $label == '82' || $label == '3F')) $this->addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	//if ($result && ($label == '10' || $label == '80' || $label == '81' || $label == '82' || $label == '3F')) $this->addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
+	if ($result && in_array($label,$globalACARSArchive)) $this->addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode_json);
 	
 	if ($globalDebug && count($decode) > 0) {
 	     echo "Human readable data : ".implode(' - ',$decode)."\n";
@@ -644,7 +653,7 @@ RMK/FUEL   2.6 M0.79)
 	global $globalDebug;
 	date_default_timezone_set('UTC');
 	if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
-	    $Connection = new Connection();
+	    $Connection = new Connection($this->db);
 	    $this->db = $Connection->db;
 
 	    if ($globalDebug) echo "Test if not already in Live ACARS table...";
@@ -725,7 +734,7 @@ RMK/FUEL   2.6 M0.79)
     * @return Array Return ACARS data in array
     */
     public function getTitlefromLabel($label) {
-	$Connection = new Connection();
+	$Connection = new Connection($this->db);
 	$this->db = $Connection->db;
     	$query = "SELECT * FROM acars_label WHERE label = :label";
     	$query_values = array(':label' => $label);
@@ -789,9 +798,9 @@ RMK/FUEL   2.6 M0.79)
     */
     public function getLatestAcarsData($limit = '',$label = '') {
 	global $globalURL, $globalDBdriver;
-	$Image = new Image();
-	$Spotter = new Spotter();
-	$Translation = new Translation();
+	$Image = new Image($this->db);
+	$Spotter = new Spotter($this->db);
+	$Translation = new Translation($this->db);
 	date_default_timezone_set('UTC');
 	
 	$limit_query = '';
@@ -889,9 +898,9 @@ RMK/FUEL   2.6 M0.79)
     */
     public function getArchiveAcarsData($limit = '',$label = '') {
 	global $globalURL, $globalDBdriver;
-	$Image = new Image();
-	$Spotter = new Spotter();
-	$Translation = new Translation();
+	$Image = new Image($this->db);
+	$Spotter = new Spotter($this->db);
+	$Translation = new Translation($this->db);
 	date_default_timezone_set('UTC');
 
 	$limit_query = '';
@@ -994,11 +1003,11 @@ RMK/FUEL   2.6 M0.79)
     * @param String $icao
     * @param String $ICAOTypeCode
     */
-    public function addModeSData($ident,$registration,$icao = '',$ICAOTypeCode = '') {
+    public function addModeSData($ident,$registration,$icao = '',$ICAOTypeCode = '',$latitude = '', $longitude = '') {
 	global $globalDebug, $globalDBdriver;
 	$ident = trim($ident);
-	$Translation = new Translation();
-	$Spotter = new Spotter();
+	$Translation = new Translation($this->db);
+	$Spotter = new Spotter($this->db);
 	if ($globalDebug) echo "Test if we add ModeS data...";
 	//if ($icao == '') $icao = ACARS->ident2icao($ident);
         if ($icao == '') $icao = $Translation->checkTranslation($ident);
@@ -1012,7 +1021,7 @@ RMK/FUEL   2.6 M0.79)
 	$ident = $Translation->ident2icao($ident);
 	// Check if a flight with same registration is flying now, if ok check if callsign = name in ACARS, else add it to translation
 	if ($globalDebug) echo "Check if needed to add translation ".$ident.'... ';
-	$querysi = "SELECT ident FROM spotter_live s,aircraft_modes a WHERE a.ModeS = s.ModeS AND a.Registration = :registration LIMIT 1";
+	$querysi = "SELECT ident FROM spotter_live s,aircraft_modes a WHERE a.ModeS = s.ModeS AND a.Registration = :registration AND s.format_source <> 'ACARS' LIMIT 1";
     	$querysi_values = array(':registration' => $registration);
     	try {
     	    
@@ -1025,15 +1034,32 @@ RMK/FUEL   2.6 M0.79)
     	$resultsi = $sthsi->fetch(PDO::FETCH_ASSOC);
     	//print_r($resultsi);
     	if (count($resultsi) > 0 && $resultsi['ident'] != $ident && $resultsi['ident'] != '') {
-    	    $Translation = new Translation();
+    	    $Translation = new Translation($this->db);
     	    $trans_ident = $Translation->getOperator($resultsi['ident']);
     	    if ($globalDebug) echo 'Add translation to table : '.$ident.' -> '.$resultsi['ident'].' ';
     	    if ($ident != $trans_ident) $Translation->addOperator($resultsi['ident'],$ident,'ACARS');
     	    elseif ($trans_ident == $ident) $Translation->updateOperator($resultsi['ident'],$ident,'ACARS');
+    	} else {
+    	    if ($registration != '' && $latitude != '' && $longitude != '') {
+        	$query = "SELECT ModeS FROM aircraft_modes WHERE Registration = :registration LIMIT 1";
+		$query_values = array(':registration' => $registration);
+    		try {
+	    	    $sth = $this->db->prepare($query);
+        	    $sth->execute($query_values);
+	    	} catch(PDOException $e) {
+    		    if ($globalDebug) echo $e->getMessage();
+	            return "error : ".$e->getMessage();
+		}
+		$result = $sth->fetch(PDO::FETCH_ASSOC);
+		if (isset($result['modes'])) $hex = $result['modes'];
+		else $hex = '';
+	        $SI_data = array('hex' => $hex,'ident' => $ident,'aircraft_icao' => $ICAOTypeCode,'registration' => $registration,'latitude' => $latitude,'$longitude' => $longitude,'format_source' => 'ACARS');
+    		$this->SI->add($SI_data);
+    	    }
     	}
     	if ($globalDebug) echo 'Done'."\n";
 
-    	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE ident =  :ident ORDER BY spotter_id DESC LIMIT 1";
+    	$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE ident = :ident AND format_source <> 'ACARS' ORDER BY spotter_id DESC LIMIT 1";
     	$query_values = array(':ident' => $icao);
     	try {
     	    

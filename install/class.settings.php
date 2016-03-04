@@ -1,6 +1,6 @@
 <?php
-require_once('../require/settings.php');
-require_once('../require/class.Common.php');
+require_once(dirname(__FILE__).'/../require/settings.php');
+require_once(dirname(__FILE__).'/../require/class.Common.php');
 
 class settings {
 	public static function modify_settings($settings) {
