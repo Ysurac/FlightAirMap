@@ -8,7 +8,7 @@
 
 require_once(dirname(__FILE__).'/../require/class.SpotterImport.php');
 require_once(dirname(__FILE__).'/../require/class.SpotterServer.php');
-require_once(dirname(__FILE__).'/../require/class.APRS.php');
+//require_once(dirname(__FILE__).'/../require/class.APRS.php');
 require_once(dirname(__FILE__).'/../require/class.ATC.php');
 require_once(dirname(__FILE__).'/../require/class.SBS.php');
 require_once(dirname(__FILE__).'/../require/class.Connection.php');
@@ -48,7 +48,7 @@ if (isset($globalServer) && $globalServer) {
     if ($globalDebug) echo "Using Server Mode\n";
     $SI=new SpotterServer();
 } else $SI=new SpotterImport($Connection->db);
-$APRS=new APRS($Connection->db);
+//$APRS=new APRS($Connection->db);
 $SBS=new SBS($Connection->db);
 $Common=new Common();
 date_default_timezone_set('UTC');
@@ -64,6 +64,7 @@ if (function_exists('pcntl_fork')) {
 
 // let's try and connect
 if ($globalDebug) echo "Connecting...\n";
+$use_aprs = false;
 
 function create_socket($host, $port, &$errno, &$errstr) {
     $ip = gethostbyname($host);
@@ -81,7 +82,7 @@ function create_socket($host, $port, &$errno, &$errstr) {
 }
 
 function connect_all($hosts) {
-    global $sockets, $formats, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights;
+    global $sockets, $formats, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights, $use_aprs;
     foreach ($hosts as $id => $host) {
 	// Here we check type of source(s)
 	if (filter_var($host,FILTER_VALIDATE_URL)) {
@@ -145,6 +146,7 @@ function connect_all($hosts) {
 		if (preg_match('/aprs/',$hostport[0])) {
 			$formats[$id] = 'aprs';
 			$aprs_connect = 0;
+			$use_aprs = true;
     	        } elseif ($hostport[1] == '10001') {
         	    $formats[$id] = 'tsv';
 		} elseif ($hostport[1] == '30002') {
@@ -194,6 +196,10 @@ $errno = '';
 $errstr='';
 
 // APRS Configuration
+if ($use_aprs) {
+	require_once(dirname(__FILE__).'/../require/class.APRS.php');
+	$APRS=new APRS($Connection->db);
+}
 $aprs_connect = 0;
 $aprs_keep = 240;
 $aprs_last_tx = time();
@@ -613,7 +619,7 @@ while ($i > 0) {
     				unset($lined);
     				unset($data);
     			    } else $error = true;
-			} elseif ($value == 'aprs') {
+			} elseif ($value == 'aprs' && $use_aprs) {
 			    if ($aprs_connect == 0) {
 				$send = @ socket_send( $r  , $aprs_login , strlen($aprs_login) , 0 );
 				$aprs_connect = 1;
