@@ -155,7 +155,7 @@ class aprs {
 			elseif ($addressType == 1) $result['addresstype'] = "ICAO";
 			elseif ($addressType == 2) $result['addresstype'] = "FLARM";
 			elseif ($addressType == 3) $result['addresstype'] = "OGN";
-			$aircraftType = $this->urshift(((intval(substr($id,0,2),16)) & 0b1111100),2);
+			$aircraftType = $this->urshift(((intval(substr($id,0,2),16))&0b1111100),2);
 			$result['aircrafttype_code'] = $aircraftType;
 			if ($aircraftType == 0) $result['aircrafttype'] = "UNKNOWN";
 			elseif ($aircraftType == 1) $result['aircrafttype'] = "GLIDER";
@@ -172,7 +172,7 @@ class aprs {
 			elseif ($aircraftType == 12) $result['aircrafttype'] = "AIRSHIP";
 			elseif ($aircraftType == 13) $result['aircrafttype'] = "UAV";
 			elseif ($aircraftType == 15) $result['aircrafttype'] = "STATIC_OBJECT";
-			$stealth = (intval(substr($id,0,2), 16) & 0b10000000);
+			$stealth = (intval(substr($id,0,2), 16)&0b10000000);
 			$result['stealth'] = $stealth;
 			$result['address'] = $address;
 		    }
