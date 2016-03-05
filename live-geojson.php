@@ -19,7 +19,7 @@ header('Content-Type: text/javascript');
 $from_archive = false;
 $min = false;
 $allhistory = false;
-$filter= array();
+$filter['source'] = array();
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM']) $filter['source'] = array_merge($filter['source'],array('vatsimtxt'));
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalIVAO) && $globalIVAO && isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO']) $filter['source'] = array_merge($filter['source'],array('whazzup'));
 if (isset($_COOKIE['Airlines']) && $_COOKIE['Airlines'] != '') $filter['airlines'] = explode(',',$_COOKIE['Airlines']);
