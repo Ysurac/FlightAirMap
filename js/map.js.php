@@ -284,11 +284,16 @@ bounds = L.latLngBounds(southWest,northEast);
                     }).on('click', function() {
 			$(".showdetails").load("airport-data.php?"+Math.random()+"&airport_icao="+feature.properties.icao);
 		    });
+		    }
+		<?php
+		    } else {
+		?>
+		
+		})
+		}
 		<?php
 		    }
 		?>
-		
-		}
 	    }).addTo(map);
 	    
 	    //}
