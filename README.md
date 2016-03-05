@@ -18,7 +18,7 @@ It also support glidernet APRS source.
 
 To install the web app, you need to have meet the following requirements:
 
-* PHP version 5.2.3 or greater (5.3 or greater is recommended)
+* PHP version 5.4 or greater
 * MySQL version 5.6 or greater (or MariaDB)
 * SQLite 3 (if you use ADS-B as datasource)
 * An HTTP Server such as:
