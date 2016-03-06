@@ -631,7 +631,7 @@ class SpotterLive {
 	* @return String success or false
 	*
 	*/
-	public function addLiveSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $departure_airport_time = '', $arrival_airport_time = '', $squawk = '', $route_stop = '', $ModeS = '', $putinarchive = false,$registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $noarchive = false, $ground = false,$format_source = '')
+	public function addLiveSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '',$departure_airport_time = '', $arrival_airport_time = '', $squawk = '', $route_stop = '', $ModeS = '', $putinarchive = false,$registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $noarchive = false, $ground = false,$format_source = '')
 	{
 		global $globalURL, $globalArchive, $globalDebug;
 		$Common = new Common();
@@ -775,8 +775,7 @@ class SpotterLive {
 			}
 		}
 		date_default_timezone_set('UTC');
-
-		$date = date("Y-m-d H:i:s", time());
+		if ($date = '') $date = date("Y-m-d H:i:s", time());
 
 /*
 		//getting the aircraft image
