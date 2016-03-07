@@ -616,7 +616,8 @@ while ($i > 0) {
 			    }
     			    if (count($lined) > 3) {
     				$data['hex'] = $lined['hexid'];
-    				$data['datetime'] = date('Y-m-d H:i:s',strtotime($lined['clock']));;
+    				//$data['datetime'] = date('Y-m-d H:i:s',strtotime($lined['clock']));;
+    				$data['datetime'] = date('Y-m-d H:i:s');;
     				if (isset($lined['ident'])) $data['ident'] = $lined['ident'];
     				if (isset($lined['lat']))$data['latitude'] = $lined['lat'];
     				if (isset($lined['lon']))$data['longitude'] = $lined['lon'];
