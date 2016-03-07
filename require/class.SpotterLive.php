@@ -23,10 +23,10 @@ class SpotterLive {
 		date_default_timezone_set('UTC');
 
 		$filter_query = '';
-		if (isset($filter['source'])) {
+		if (isset($filter['source']) && !empty($filter['source'])) {
 			$filter_query = " AND format_source IN ('".implode("','",$filter['source'])."')";
 		}
-		if (isset($filter['airlines'])) {
+		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
 		}
 		
@@ -73,10 +73,10 @@ class SpotterLive {
 		date_default_timezone_set('UTC');
 
 		$filter_query = '';
-		if (isset($filter['source'])) {
+		if (isset($filter['source']) && !empty($filter['source'])) {
 			$filter_query .= " AND format_source IN ('".implode("','",$filter['source'])."') ";
 		}
-		if (isset($filter['airlines'])) {
+		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_live.flightaware_id ";
 		}
 

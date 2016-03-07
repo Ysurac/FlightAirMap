@@ -5,7 +5,6 @@
 * This script can be used as cron job with $globalDaemon = FALSE
 */
 
-
 require_once(dirname(__FILE__).'/../require/class.SpotterImport.php');
 require_once(dirname(__FILE__).'/../require/class.SpotterServer.php');
 //require_once(dirname(__FILE__).'/../require/class.APRS.php');
@@ -52,6 +51,7 @@ if (isset($globalServer) && $globalServer) {
 $SBS=new SBS($Connection->db);
 $Common=new Common();
 date_default_timezone_set('UTC');
+//$servertz = system('date +%Z');
 // signal handler - playing nice with sockets and dump1090
 if (function_exists('pcntl_fork')) {
     pcntl_signal(SIGINT,  function($signo) {
@@ -671,7 +671,16 @@ while ($i > 0) {
 			    $line = explode(',', $buffer);
     			    if (count($line) > 20) {
     			    	$data['hex'] = $line[4];
+    				/*
     				$data['datetime'] = $line[6].' '.$line[7];
+    					date_default_timezone_set($globalTimezone);
+    					$datetime = new DateTime($data['datetime']);
+    					$datetime->setTimezone(new DateTimeZone('UTC'));
+    					$data['datetime'] = $datetime->format('Y-m-d H:i:s');
+    					date_default_timezone_set('UTC');
+    				*/
+    				// Force datetime to current UTC datetime
+    				$data['datetime'] = date('Y-m-d H:i:s');
     				$data['ident'] = trim($line[10]);
     				$data['latitude'] = $line[14];
     				$data['longitude'] = $line[15];
