@@ -127,6 +127,20 @@ require_once('header.php');
 			    ?>
 			</select>
 		    </li>
+		    <?php
+			if (!(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalphpVMS) && $globalphpVMS)) {
+		    ?>
+		    <li>Display airlines of type :
+			<select class="selectpicker" onchange="airlinestype(this);">
+			    <option value="all"<?php if (!isset($_COOKIE['airlinestype']) || $_COOKIE['airlinestype'] == 'all' || $_COOKIE['airlinestype'] == '') echo ' selected'; ?>>All</option>
+			    <option value="passenger"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'passenger') echo ' selected'; ?>>Passenger</option>
+			    <option value="cargo"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'cargo') echo ' selected'; ?>>Cargo</option>
+			    <option value="military"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'military') echo ' selected'; ?>>Military</option>
+			</select>
+		    </li>
+		    <?php
+			}
+		    ?>
 		</ul>
 	    </form>
 	    <p>Any change in settings reload page</p>

@@ -24,6 +24,7 @@ if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalVATSIM) &
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalIVAO) && $globalIVAO && isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO'] == 'true') $filter['source'] = array_merge($filter['source'],array('whazzup'));
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalphpVMS) && $globalphpVMS && isset($_COOKIE['ShowVMS']) && $_COOKIE['ShowVMS'] == 'true') $filter['source'] = array_merge($filter['source'],array('phpvmacars'));
 if (isset($_COOKIE['Airlines']) && $_COOKIE['Airlines'] != '') $filter['airlines'] = explode(',',$_COOKIE['Airlines']);
+if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] != 'all') $filter['airlinestype'] = $_COOKIE['airlinestype'];
 
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) $min = true;
 
