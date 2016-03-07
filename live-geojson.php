@@ -64,6 +64,8 @@ if (!empty($spotter_array)) {
 
 $sqltime = round(microtime(true)-$begintime,2);
 
+$j = 0;
+
 $output = '{';
 	$output .= '"type": "FeatureCollection",';
 		if ($min) $output .= '"minimal": "true",';
@@ -74,6 +76,7 @@ $output = '{';
 			$output .= '"features": [';
 			foreach($spotter_array as $spotter_item)
 			{
+				$j++;
 				date_default_timezone_set('UTC');
 
 				if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
@@ -341,7 +344,8 @@ $output = '{';
 			$output  = substr($output, 0, -1);
 			$output .= ']';
 			$output .= ',"initial_sqltime": "'.$sqltime.'",';
-			$output .= '"totaltime": "'.round(microtime(true)-$begintime,2).'"';
+			$output .= '"totaltime": "'.round(microtime(true)-$begintime,2).'",';
+			$output .= '"flight_cnt": "'.$j.'"';
 		} else {
 			$output .= '"features": ';
 			$output .= '{';

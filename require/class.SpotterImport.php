@@ -156,7 +156,8 @@ class SpotterImport {
     }
 
     function add($line) {
-	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS;
+	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange;
+	if (!isset($globalCoordMinChange) || $globalCoordMinChange) $globalCoordMinChange = '0.02';
 /*
 	$Spotter = new Spotter();
 	$dbc = $Spotter->db;
@@ -347,7 +348,7 @@ class SpotterImport {
 			if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
 			    //if (!isset($this->all_flights[$id]['latitude']) || $this->all_flights[$id]['latitude'] == '' || abs($this->all_flights[$id]['latitude']-$line['latitude']) < 3 || $line['format_source'] != 'sbs' || time() - $this->all_flights[$id]['lastupdate'] > 30) {
 				if (!isset($this->all_flights[$id]['archive_latitude'])) $this->all_flights[$id]['archive_latitude'] = $line['latitude'];
-				if (!isset($this->all_flights[$id]['livedb_latitude']) || abs($this->all_flights[$id]['livedb_latitude']-$line['latitude']) > 0.02) {
+				if (!isset($this->all_flights[$id]['livedb_latitude']) || abs($this->all_flights[$id]['livedb_latitude']-$line['latitude']) > $globalCoordMinChange) {
 				    $this->all_flights[$id]['livedb_latitude'] = $line['latitude'];
 				    $dataFound = true;
 				    $this->all_flights[$id]['time_last_coord'] = time();
@@ -371,7 +372,7 @@ class SpotterImport {
 			    if ($line['longitude'] > 180) $line['longitude'] = $line['longitude'] - 360;
 			    //if (!isset($this->all_flights[$id]['longitude']) || $this->all_flights[$id]['longitude'] == ''  || abs($this->all_flights[$id]['longitude']-$line['longitude']) < 2 || $line['format_source'] != 'sbs' || time() - $this->all_flights[$id]['lastupdate'] > 30) {
 				if (!isset($this->all_flights[$id]['archive_longitude'])) $this->all_flights[$id]['archive_longitude'] = $line['longitude'];
-				if (!isset($this->all_flights[$id]['livedb_longitude']) || abs($this->all_flights[$id]['livedb_longitude']-$line['longitude']) > 0.02) {
+				if (!isset($this->all_flights[$id]['livedb_longitude']) || abs($this->all_flights[$id]['livedb_longitude']-$line['longitude']) > $globalCoordMinChange) {
 				    $this->all_flights[$id]['livedb_longitude'] = $line['longitude'];
 				    $dataFound = true;
 				    $this->all_flights[$id]['time_last_coord'] = time();

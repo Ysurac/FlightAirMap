@@ -67,6 +67,9 @@ $globalMinFetch = '50';
 // DISPLAY FLIGHT INTERVAL ON MAP (in seconds)
 $globalLiveInterval = '200';
 
+// MINIMAL CHANGE TO PUT IN DB
+$globalCoordMinChange = '0.02'; // minimal change since last message for latitude/longitude (limit write to DB)
+
 // LIVE MAP REFRESH (in seconds)
 $globalMapRefresh = '30';
 
@@ -85,14 +88,19 @@ $globalMapHistory = FALSE;
 // WRAP MAP OR REPEAT
 $globalMapWrap = TRUE;
 
+// *** Virtual flights ***
 //IVAO
 $globalIVAO = FALSE;
 
 //VATSIM
 $globalVATSIM = FALSE;
 
-//User can choose between IVAO or VATSIM
-$globalMapVAchoose = TRUE;
+//phpVMS
+$globalphpVMS = FALSE;
+
+//User can choose between IVAO, VATSIM or phpVMS
+$globalMapVAchoose = FALSE;
+// ************************
 
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
@@ -105,6 +113,8 @@ $globalSBS1update = '10'; //Put data in DB after xx seconds/flight
 $globalACARS = FALSE;
 $globalACARSHost = '0.0.0.0'; // Local IP to listen
 $globalACARSPort = '9999';
+$globalACARSArchive = array('10','80','81','82','3F'); // labels of messages to archive
+
 
 //Minimal distance to tell if a flight is arrived to airport (in km)
 $globalClosestMinDist = '10';
