@@ -296,7 +296,7 @@ if (!empty($spotter_array))
 			print $spotter_item['aircraft_owner'];
 			print '</div>';
 			print '</div>';
-		} elseif ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+		} elseif ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 			print '<div class="detail fa-user">';
 			print '<div class="title">Pilot Name</div>';
 			print '<div>';

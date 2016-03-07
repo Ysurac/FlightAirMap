@@ -558,8 +558,19 @@ while ($i > 0) {
 	        $data['arrival_airport_icao'] = $line['arricao'];
     		$data['arrival_airport_time'] = $line['arrtime'];
     		$data['registration'] = $line['aircraft'];
-	    	$aircraft_data = explode('-',$line['aircraftname']);
-	    	$data['aircraft_icao'] = $aircraft_data[0];
+		if (isset($line['route'])) $data['waypoints'] = $line['route']; // route
+		if (isset($line['aircraftname'])) {
+		    $line['aircraftname'] = strtoupper($line['aircraftname']);
+		    $line['aircraftname'] = str_replace('BOEING ','B',$line['aircraftname']);
+	    	    $aircraft_data = explode('-',$line['aircraftname']);
+	    	    if (isset($aircraft_data[1]) && strlen($aircraft_data[0]) < 5) $data['aircraft_icao'] = $aircraft_data[0];
+	    	    elseif (isset($aircraft_data[1]) && strlen($aircraft_data[1]) < 5) $data['aircraft_icao'] = $aircraft_data[1];
+	    	    else {
+	    		$aircraft_data = explode(' ',$line['aircraftname']);
+	    		if (isset($aircraft_data[1])) $data['aircraft_icao'] = $aircraft_data[1];
+	    		else $data['aircraft_icao'] = $line['aircraftname'];
+	    	    }
+	    	}
     		if (isset($line['route'])) $data['waypoints'] = $line['route'];
     		$data['id_source'] = $id_source;
 	        $data['format_source'] = 'phpvmacars';
@@ -629,6 +640,7 @@ while ($i > 0) {
 				$data_aprs = "# Keep alive";
 				$send = @ socket_send( $r  , $data_aprs , strlen($data_aprs) , 0 );
 			    }
+			    //echo 'Connect : '.$aprs_connect.' '.$buffer."\n";
 			    if (substr($buffer,0,1) != '#') {
 				$line = $APRS->parse($buffer);
 				if (is_array($line) && isset($line['address']) && $line['address'] != '' && isset($line['ident'])) {

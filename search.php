@@ -321,7 +321,7 @@ if (!empty($_GET)){
     		  	<input type="text" name="registration" value="<?php if (isset($_GET['registration'])) print $_GET['registration']; ?>" size="8" />
     		    </div>
     		<?php
-    		    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+    		    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
     		?>
     		   <div class="form-group">
     		  	<label>Pilot id</label> 

@@ -29,7 +29,7 @@ require_once('header.php');
         <div class="col-md-2"><span class="type">Arrivals seen</span><span><?php print number_format($Stats->countOverallArrival()); ?></span></div> 
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
-	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 	?>
     	    <div class="col-md-2"><span class="type">Pilots</span><span><?php print number_format($Stats->countOverallPilots()); ?></span></div> 
 	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
@@ -139,7 +139,7 @@ require_once('header.php');
         <div class="row column">
 
 	    <?php
-		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 	    ?>
             <div class="col-md-12">
                 <h2>Top 10 Most Common Pilots</h2>

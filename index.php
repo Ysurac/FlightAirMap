@@ -103,16 +103,18 @@ require_once('header.php');
 			</div>
 		    </li>
 		    <?php
-			if (isset($globalVATSIM) && $globalVATSIM && isset($globalIVAO) && $globalIVAO && (!isset($globalMapVAchoose) || $globalMapVAchoose)) {
-			    if (isset($_COOKIE['ShowIVAO']) || isset($_COOKIE['ShowVATSIM'])) {
+			if (((isset($globalVATSIM) && $globalVATSIM) || isset($globalIVAO) && $globalIVAO || isset($globalphpVMS) && $globalphpVMS) && (!isset($globalMapVAchoose) || $globalMapVAchoose)) {
+			    if (isset($_COOKIE['ShowIVAO']) || isset($_COOKIE['ShowVATSIM']) || isset($_COOKIE['ShowVMS'])) {
 		    ?>
-			<li><input type="checkbox" name="vatsim" value="1" onclick="clickVATSIM(this)" <?php if (isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM']) print 'checked'; ?> >Display VATSIM data</li>
-			<li><input type="checkbox" name="ivao" value="1" onclick="clickIVAO(this)" <?php if (isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO']) print 'checked'; ?> >Display IVAO data</li>
+			<?php if (isset($globalVATSIM) && $globalVATSIM) { ?><li><input type="checkbox" name="vatsim" value="1" onclick="clickVATSIM(this)" <?php if (isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM']) print 'checked'; ?> >Display VATSIM data</li><?php } ?>
+			<?php if (isset($globalIVAO) && $globalIVAO) { ?><li><input type="checkbox" name="ivao" value="1" onclick="clickIVAO(this)" <?php if (isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO']) print 'checked'; ?> >Display IVAO data</li><?php } ?>
+			<?php if (isset($globalphpVMS) && $globalphpVMS) { ?><li><input type="checkbox" name="phpvms" value="1" onclick="clickphpVMS(this)" <?php if (isset($_COOKIE['ShowVMS']) && $_COOKIE['ShowVMS']) print 'checked'; ?> >Display phpVMS data</li><?php } ?>
 		    <?php
 			    } else {
 		    ?>
-			<li><input type="checkbox" name="vatsim" value="1" onclick="clickVATSIM(this)" checked>Display VATSIM data</li>
-			<li><input type="checkbox" name="ivao" value="1" onclick="clickIVAO(this)" checked>Display IVAO data</li>
+			<?php if (isset($globalVATSIM) && $globalVATIM) { ?><li><input type="checkbox" name="vatsim" value="1" onclick="clickVATSIM(this)" checked>Display VATSIM data</li><?php } ?>
+			<?php if (isset($globalIVAO) && $globalIVAO) { ?><li><input type="checkbox" name="ivao" value="1" onclick="clickIVAO(this)" checked>Display IVAO data</li><?php } ?>
+			<?php if (isset($globalphpVMS) && $globalphpVMS) { ?><li><input type="checkbox" name="phpvms" value="1" onclick="clickphpVMS(this)" checked>Display phpVMS data</li><?php } ?>
 		    <?php
 			    }
 			}

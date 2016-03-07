@@ -76,7 +76,7 @@ if (isset($_GET['reset'])) {
                         $_SESSION['error'] = $error;
 		}
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Create and import tables'));
-		if ($globalSBS1 && !$globalIVAO && !$globalVATSIM) {
+		if ($globalSBS1 && !$globalIVAO && !$globalVATSIM && !$globalphpVMS) {
 			$_SESSION['install'] = 'populate';
 			$_SESSION['next'] = 'Populate aircraft_modes table with externals data for ADS-B';
 		} else {
@@ -173,6 +173,9 @@ if (isset($_GET['reset'])) {
 			$_SESSION['install'] = 'vatsim';
 			if (file_exists('tmp/ivae_feb2013.zip')) $_SESSION['next'] = 'Insert IVAO data';
 			else $_SESSION['next'] = 'Insert VATSIM data (IVAO not found)';
+		} elseif (isset($globalphpVMS) && $globalphpVMS) {
+			$_SESSION['install'] = 'vatsim';
+			$_SESSION['next'] = 'Insert phpVMS data';
 		} else {
 			$_SESSION['install'] = 'routes';
 			$_SESSION['next'] = 'Populate routes table with externals data';
@@ -247,9 +250,13 @@ if (isset($_GET['reset'])) {
 	} else {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
-		update_db::update_notam();
-		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate notam table with externals data'));
-		if ($_SESSION['owner'] == 1) {
+		if (isset($globalNOTAMSource) && $globalNOTAMSource != '') {
+			update_db::update_notam();
+			$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate notam table with externals data'));
+		} else {
+			$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate notam table with externals data (no source defined)'));
+		}
+		if (isset($_SESSION['owner']) && $_SESSION['owner'] == 1) {
 			$_SESSION['install'] = 'owner';
 			$_SESSION['next'] = 'Populate owner table';
 			unset($_SESSION['owner']);
@@ -316,6 +323,9 @@ if (isset($_GET['reset'])) {
 		$_SESSION['install'] = 'vatsim';
 		if (file_exists('tmp/ivae_feb2013.zip')) $_SESSION['next'] = 'Insert IVAO data';
 		else $_SESSION['next'] = 'Insert VATSIM data (IVAO not found)';
+	} elseif (isset($globalphpVMS) && $globalphpVMS) {
+		$_SESSION['install'] = 'vatsim';
+		$_SESSION['next'] = 'Insert phpVMS data';
 	} else {
 		$_SESSION['install'] = 'finish';
 		$_SESSION['next'] = 'finish';
@@ -346,9 +356,13 @@ if (isset($_GET['reset'])) {
 			update_db::update_vatsim();
 			$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM data (IVAO not found)'));
 		}
+	} elseif (isset($globalphpVMS) && $globalphpVMS) {
+		$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert phpVMS data'));
 	}
-	$_SESSION['install'] = 'routes';
-	$_SESSION['next'] = 'Populate routes table with externals data';
+	//$_SESSION['install'] = 'routes';
+	//$_SESSION['next'] = 'Populate routes table with externals data';
+	$_SESSION['install'] = 'finish';
+	$_SESSION['next'] = 'finish';
 
 	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	print json_encode($result);

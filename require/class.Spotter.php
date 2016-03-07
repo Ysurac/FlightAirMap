@@ -22,12 +22,13 @@ class Spotter{
 	*/
 	public function getDataFromDB($query, $params = array(), $limitQuery = '')
 	{
-		global $globalSquawkCountry, $globalIVAO, $globalVATSIM;
+		global $globalSquawkCountry, $globalIVAO, $globalVATSIM, $globalphpVMS;
 		$Image = new Image($this->db);
 		$Schedule = new Schedule($this->db);
 		$ACARS = new ACARS($this->db);
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		if (!isset($globalVATSIM)) $globalVATSIM = FALSE;
+		if (!isset($globalphpVMS)) $globalphpVMS = FALSE;
 		date_default_timezone_set('UTC');
 		
 		if (!is_string($query))
@@ -221,7 +222,7 @@ class Spotter{
 			if (isset($row['owner_name']) && $row['owner_name'] != '' && $row['owner_name'] != NULL) {
 				$temp_array['aircraft_owner'] = $row['owner_name'];
 			}
-			if ($temp_array['registration'] != "" && !$globalIVAO && !$globalVATSIM && !isset($temp_array['aircraft_owner'])) {
+			if ($temp_array['registration'] != "" && !$globalIVAO && !$globalVATSIM && !$globalphpVMS && !isset($temp_array['aircraft_owner'])) {
 				$owner_info = $this->getAircraftOwnerByRegistration($temp_array['registration']);
 				if ($owner_info['owner'] != '') $temp_array['aircraft_owner'] = ucwords(strtolower($owner_info['owner']));
 				$temp_array['aircraft_base'] = $owner_info['base'];
@@ -255,7 +256,7 @@ class Spotter{
 			if (isset($row['arrival_airport_time']) && $row['arrival_airport_time'] != '') {
 				$temp_array['arrival_airport_time'] = $row['arrival_airport_time'];
 			}
-			if ((!isset($globalIVAO) || ! $globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM)) {
+			if ((!isset($globalIVAO) || ! $globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
 				$schedule_array = $Schedule->getSchedule($temp_array['ident']);
 				//print_r($schedule_array);
 				if (count($schedule_array) > 0) {
@@ -2622,13 +2623,14 @@ class Spotter{
 	*/	
 	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '')
 	{
-		global $globalURL, $globalIVAO, $globalVATSIM;
+		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS;
 		
 		$Image = new Image($this->db);
 		$Common = new Common();
 		
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		if (!isset($globalVATSIM)) $globalVATSIM = FALSE;
+		if (!isset($globalphpVMS)) $globalphpVMS = FALSE;
 		date_default_timezone_set('UTC');
 		
 		//getting the registration
@@ -2783,7 +2785,7 @@ class Spotter{
 		}
 
 		//getting the aircraft image
-		if (($registration != "" || $registration != 'NA') && !$globalIVAO && !$globalVATSIM)
+		if (($registration != "" || $registration != 'NA') && !$globalIVAO && !$globalVATSIM && !$globalphpVMS)
 		{
 			$image_array = $Image->getSpotterImage($registration);
 			if (!isset($image_array[0]['registration']))

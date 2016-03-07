@@ -961,7 +961,7 @@ function getLiveData()
   $('.button').tooltip({ placement: 'right' });
 
 <?php
-    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) ) {
 ?>
     update_atcLayer();
     setInterval(function(){map.removeLayer(atcLayer);update_atcLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
@@ -1738,4 +1738,7 @@ function clickVATSIM(cb) {
 }
 function clickIVAO(cb) {
     document.cookie =  'ShowIVAO='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+function clickphpVMS(cb) {
+    document.cookie =  'ShowVMS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 }
