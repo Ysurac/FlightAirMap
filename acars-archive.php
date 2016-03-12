@@ -2,7 +2,7 @@
 require_once('require/class.Connection.php');
 require_once('require/class.ACARS.php');
 $ACARS = new ACARS();
-$title = "Latest ACARS messages";
+$title = "Archived ACARS messages";
 require_once('header.php');
 
 $page_url = $globalURL.'/acars-archive';
@@ -23,11 +23,11 @@ $limit_previous_1 = $limit_start - $absolute_difference;
 $limit_previous_2 = $limit_end - $absolute_difference;
 
 print '<div class="info column">';
-print '<h1>Archive ACARS messages</h1>';
+print '<h1>Archived ACARS messages</h1>';
 print '</div>';
 
 print '<div class="table column">';	
-print '<p>The table below shows the latest ACARS messages.</p>';
+print '<p>The table below shows the archived ACARS messages.</p>';
 $spotter_array = $ACARS->getArchiveAcarsData($limit_start.",".$absolute_difference);
 if (!empty($spotter_array)) {
     include('table-output.php');
