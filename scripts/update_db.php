@@ -61,5 +61,10 @@ if (isset($globalArchive) && $globalArchive) {
 		$SpotterArchive->deleteSpotterArchiveTrackData();
 	}
 }
-
+if (isset($globalACARSArchiveKeepMonths) && $globalACARSArchiveKeepMonths > 0) {
+	echo "Deleting ACARS old data...";
+	require_once(dirname(__FILE__).'/../require/class.ACARS.php');
+	$ACARS = new ACARS();
+	$ACARS->deleteArchiveAcarsData();
+}
 ?>

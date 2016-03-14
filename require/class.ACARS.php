@@ -36,14 +36,35 @@ class ACARS {
     }
 
     /**
-    * Deletes all info in the table
+    * Deletes all info in the live table
     *
     * @return String success or false
     *
     */
     public function deleteLiveAcarsData()
     {
-        $query  = "DELETE FROM acars_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) >= acars_live.date";
+        $query  = "DELETE FROM acars_live WHERE acars_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE)";
+        try {
+            
+            $sth = $this->db->prepare($query);
+            $sth->execute();
+        } catch(PDOException $e) {
+            return "error";
+        }
+        return "success";
+    }
+
+    /**
+    * Deletes all info in the archive table
+    *
+    * @return String success or false
+    *
+    */
+    public function deleteArchiveAcarsData()
+    {
+	global $globalACARSArchiveKeepMonths;
+        $query  = "DELETE FROM acars_archive WHERE acars_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL ".$globalACARSArchiveKeepMonths." MONTH)";
+
         try {
             
             $sth = $this->db->prepare($query);
