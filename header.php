@@ -28,7 +28,7 @@ date_default_timezone_set($globalTimezone);
 <script src="<?php print $globalURL; ?>/js/bootstrap-select.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery-ui-timepicker-addon.js"></script>
 <script src="<?php print $globalURL; ?>/js/script.js"></script>
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/font-awesome-4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet">
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css" />
