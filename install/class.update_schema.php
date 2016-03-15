@@ -569,6 +569,22 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_17() {
+    		$Connection = new Connection();
+		$error = '';
+    		// Add tables
+		$error .= create_db::import_file('../db/stats_country.sql');
+		if ($error != '') return $error;
+		$query = "UPDATE `config` SET `value` = '18' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
     	public static function check_version($update = false) {
     	    global $globalDBname;
     	    $version = 0;
@@ -647,6 +663,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '16') {
     			    $error = self::update_from_16();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '17') {
+    			    $error = self::update_from_17();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

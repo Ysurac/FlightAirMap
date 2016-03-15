@@ -139,9 +139,19 @@ require_once('header.php');
         <div class="row column">
 
 	    <?php
+                 $flightover_array = $Stats->countAllFlightOverCountries();
+
 		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+		    if (empty($flightover_array)) {
 	    ?>
             <div class="col-md-12">
+            <?php
+        	    } else {
+            ?>
+            <div class="col-md-6">
+            <?php
+            	    }
+            ?>
                 <h2>Top 10 Most Common Pilots</h2>
                  <?php
                   $pilot_array = $Stats->countAllPilots();
@@ -183,12 +193,12 @@ require_once('header.php');
                     <a href="<?php print $globalURL; ?>/statistics/pilot" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
                 </div>
             </div>
-        </div>
+        
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     	    } else {
     	?>
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <h2>Top 10 Most Common Owners</h2>
                  <?php
                   $owner_array = $Stats->countAllOwners();
@@ -230,11 +240,64 @@ require_once('header.php');
                     <a href="<?php print $globalURL; ?>/statistics/owner" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
                 </div>
             </div>
-        </div>
+        
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     	    }
+    	    if (!empty($flightover_array)) {
     	?>
+    	
+            <div class="col-md-6">
+                <h2>Top 10 Most Common Country a Flight was Over</h2>
+                 <?php
+                  //$flightover_array = $Stats->countAllFlightOverCountries();
+		    if (count($flightover_array) == 0) print 'No data available';
+		    else {
+
+                  print '<div id="chart10" class="chart" width="100%"></div>
+                    <script> 
+                        google.load("visualization", "1", {packages:["corechart"]});
+                      google.setOnLoadCallback(drawChart10);
+                      function drawChart10() {
+                        var data = google.visualization.arrayToDataTable([
+                            ["Country", "# of Times"], ';
+                            $flightover_data = '';
+                          foreach($flightover_array as $flightover_item)
+                                    {
+                                            $flightover_data .= '[ "'.$flightover_item['flight_country'].' ('.$flightover_item['flight_country_iso2'].')",'.$flightover_item['flight_count'].'],';
+                                    }
+                                    $flightover_data = substr($flightover_data, 0, -1);
+                                    print $flightover_data;
+                        print ']);
+
+                        var options = {
+                            chartArea: {"width": "80%", "height": "60%"},
+                            height:300,
+                             is3D: true,
+	                    colors: ["#8BA9D0","#1a3151"]
+                        };
+
+                        //var chart = new google.visualization.PieChart(document.getElementById("chart10"));
+            		var chart = new google.visualization.GeoChart(document.getElementById("chart10"));
+                        chart.draw(data, options);
+                      }
+                      $(window).resize(function(){
+                              drawChart10();
+                            });
+                  </script>';
+                  }
+                  ?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/statistics/country" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                </div>
+            </div>
+        <?php
+            }
+        ?>
+        </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+
+    	
         </div>
         <div class="row column">
             <div class="col-md-6">

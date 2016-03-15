@@ -8,9 +8,10 @@
 		      Aircraft <span class="caret"></span>
 		    </a>
 		    <ul class="dropdown-menu">
-		      <li><a href="<?php print $globalURL; ?>/statistics/aircraft">Aircraft</a></li>
-		      <li><a href="<?php print $globalURL; ?>/statistics/registration">Registration</a></li>
-			  <li><a href="<?php print $globalURL; ?>/statistics/manufacturer">Manufacturer</a></li>
+			<li><a href="<?php print $globalURL; ?>/statistics/aircraft">Aircraft</a></li>
+			<li><a href="<?php print $globalURL; ?>/statistics/registration">Registration</a></li>
+			<li><a href="<?php print $globalURL; ?>/statistics/manufacturer">Manufacturer</a></li>
+			<li><a href="<?php print $globalURL; ?>/statistics/country">Country</a></li>
 		    </ul>
 		</li>
 		<li class="dropdown">

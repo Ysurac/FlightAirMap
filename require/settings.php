@@ -114,7 +114,7 @@ $globalACARS = FALSE;
 $globalACARSHost = '0.0.0.0'; // Local IP to listen
 $globalACARSPort = '9999';
 $globalACARSArchive = array('10','80','81','82','3F'); // labels of messages to archive
-
+$globalACARSArchiveKeepMonths = '0';
 
 //Minimal distance to tell if a flight is arrived to airport (in km)
 $globalClosestMinDist = '10';

@@ -89,7 +89,7 @@ class Spotter{
 			$temp_array['longitude'] = $row['longitude'];
 			/*
 			if (Connection->tableExists('countries')) {
-				$country_info = Spotter->getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
+				$country_info = $this->getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
 				if (is_array($country_info) && isset($country_info['name']) && isset($country_info['iso2'])) {
 				    $temp_array['country'] = $country_info['name'];
 				    $temp_array['country_iso2'] = $country_info['iso2'];
@@ -3598,6 +3598,41 @@ class Spotter{
 		}
 
 		return $airline_array;
+	}
+	
+	/**
+	* Gets all number of flight over countries
+	*
+	* @return Array the airline country list
+	*
+	*/
+	public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '')
+	{
+		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb 
+					FROM countries c, spotter_output s
+					WHERE Within(GeomFromText(CONCAT('POINT(',s.longitude,' ',s.latitude,')')), ogc_geom) ";
+                if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+		$query .= "GROUP BY c.name ORDER BY nb DESC";
+		if ($limit) $query .= " LIMIT 0,10";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+ 
+		$flight_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['flight_count'] = $row['nb'];
+			$temp_array['flight_country'] = $row['name'];
+			$temp_array['flight_country_iso3'] = $row['iso3'];
+			$temp_array['flight_country_iso2'] = $row['iso2'];
+			$flight_array[] = $temp_array;
+		}
+
+		return $flight_array;
 	}
 	
 	

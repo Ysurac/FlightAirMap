@@ -51,19 +51,6 @@ class Stats {
             	    $Spotter = new Spotter($this->db);
             	    $all = $Spotter->countAllAircraftTypes($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $spotterall = $Spotter->countAllAircraftTypes(false);
-                $all_result = array_merge($all,$spotterall);
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['aircraft_icao_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                
-                return $all_result;
-                */
                 return $all;
 	}
 	public function countAllAirlineCountries($limit = true) {
@@ -81,17 +68,6 @@ class Stats {
             		$all = $Spotter->countAllAirlineCountries($limit);
                 
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllAirlineCountries(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['airline_country_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 	public function countAllAircraftManufacturers($limit = true) {
@@ -108,18 +84,6 @@ class Stats {
             		$Spotter = new Spotter($this->db);
 			$all = $Spotter->countAllAircraftManufacturers($limit);
                 }
-                /*
-                
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllAircraftManufacturers(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['aircraft_manufacturer_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 
@@ -137,17 +101,6 @@ class Stats {
 	                $Spotter = new Spotter($this->db);
             		$all = $Spotter->countAllArrivalCountries($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllArrivalCountries(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['airport_arrival_country_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 	public function countAllDepartureCountries($limit = true) {
@@ -164,17 +117,6 @@ class Stats {
 		        $Spotter = new Spotter($this->db);
     	    	        $all = $Spotter->countAllDepartureCountries($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllDepartureCountries(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['airport_departure_country_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 
@@ -192,17 +134,6 @@ class Stats {
 	                $Spotter = new Spotter($this->db);
     		        $all = $Spotter->countAllAirlines($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllAirlines(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['airline_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 	public function countAllAircraftRegistrations($limit = true) {
@@ -219,17 +150,6 @@ class Stats {
 	                $Spotter = new Spotter($this->db);
     		        $all = $Spotter->countAllAircraftRegistrations($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllAirlines(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['airline_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 	public function countAllCallsigns($limit = true) {
@@ -246,16 +166,23 @@ class Stats {
 	                $Spotter = new Spotter($this->db);
     		        $all = $Spotter->countAllCallsigns($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllAirlines(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['airline_count'];
+                return $all;
+	}
+	public function countAllFlightOverCountries($limit = true) {
+		if ($limit) $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
                 }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                /*
+                if (empty($all)) {
+	                $Spotter = new Spotter($this->db);
+    		        $all = $Spotter->countAllFlightOverCountries($limit);
+                }
                 */
                 return $all;
 	}
@@ -273,17 +200,6 @@ class Stats {
             		$Spotter = new Spotter($this->db);
             		$all = $Spotter->countAllPilots($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllPilots(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['pilot_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 	public function countAllOwners($limit = true) {
@@ -300,17 +216,6 @@ class Stats {
             		$Spotter = new Spotter($this->db);
             		$all = $Spotter->countAllOwners($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllOwners(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['owner_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 	public function countAllDepartureAirports($limit = true) {
@@ -327,17 +232,6 @@ class Stats {
             		$Spotter = new Spotter($this->db);
             		$all = $Spotter->countAllDepartureAirports($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllDepartureAirports(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['airport_departure_icao_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 	public function countAllArrivalAirports($limit = true) {
@@ -354,17 +248,6 @@ class Stats {
             		$Spotter = new Spotter($this->db);
         		$all = $Spotter->countAllArrivalAirports($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllArrivalAirports(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['airport_arrival_icao_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 	public function countAllMonthsLastYear($limit = true) {
@@ -388,17 +271,6 @@ class Stats {
             		$Spotter = new Spotter($this->db);
             		$all = $Spotter->countAllMonthsLastYear($limit);
                 }
-                /*
-                $Spotter = new Spotter();
-                $all_result = array_merge($all,$Spotter->countAllMonthsLastYear(false));
-                $values = array();
-                foreach ($all_result as $cnt) {
-                    $values[] = $cnt['date_count'];
-                }
-                array_multisort($values,SORT_DESC,$all_result);
-                if ($limit) array_splice($all_result,11);
-                return $all_result;
-                */
                 return $all;
 	}
 	
@@ -684,6 +556,16 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
+	public function addStatCountry($iso2,$iso3,$name,$cnt) {
+                $query = "INSERT INTO stats_country (iso2,iso3,name,cnt) VALUES (:iso2,:iso3,:name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+                $query_values = array(':iso2' => $iso2,':iso3' => $iso3,':name' => $name,':cnt' => $cnt);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+        }
 	public function addStatAircraft($aircraft_icao,$cnt,$aircraft_name = '') {
                 $query = "INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,cnt) VALUES (:aircraft_icao,:aircraft_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
                 $query_values = array(':aircraft_icao' => $aircraft_icao,':aircraft_name' => $aircraft_name,':cnt' => $cnt);
@@ -834,6 +716,10 @@ class Stats {
 				foreach ($alldata as $number) {
 					$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name']);
 				}
+				$alldata = $Spotter->countAllFlightOverCountries(false,$monthsSinceLastYear);
+				foreach ($alldata as $number) {
+					$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count']);
+				}
 				$alldata = $Spotter->countAllOwners(false,$monthsSinceLastYear);
 				foreach ($alldata as $number) {
 					$this->addStatOwner($number['owner_name'],$number['owner_count']);
@@ -879,17 +765,21 @@ class Stats {
 				foreach ($alldata as $number) {
 					$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name']);
 				}
-				$alldata = $Spotter->countAllAircraftRegistration(false,0,$last_update_day);
+				$alldata = $Spotter->countAllAircraftRegistration(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
 					$this->addStatAircraftRegistration($number['registration'],$number['aircraft_registration_count'],$number['aircraft_icao']);
 				}
-				$alldata = $Spotter->countAllCallsigns(false,0,$last_update_day);
+				$alldata = $Spotter->countAllCallsigns(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
 					$this->addStatCallsign($number['callsign_icao'],$number['callsign_icao_count'],$number['airline_icao']);
 				}
 				$alldata = $Spotter->countAllOwners(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
 					$this->addStatOwner($number['owner_name'],$number['owner_count']);
+				}
+				$alldata = $Spotter->countAllFlightOverCountries(false,$globalArchiveMonths);
+				foreach ($alldata as $number) {
+					$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count']);
 				}
 				$alldata = $Spotter->countAllPilots(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
@@ -966,6 +856,10 @@ class Stats {
 			$alldata = $Spotter->countAllArrivalAirports(false,0,$last_update_day);
 			foreach ($alldata as $number) {
 				$this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count']);
+			}
+			$alldata = $Spotter->countAllFlightOverCountries(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count']);
 			}
 			
 
