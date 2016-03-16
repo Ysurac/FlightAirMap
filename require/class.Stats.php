@@ -353,7 +353,7 @@ class Stats {
 		} else $offset = '+00:00';
 		if ($limit) $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE type = 'hour'";
 		else $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE type = 'hour'";
-		if ($orderby == 'hour') $query .= " ORDER BY hour_name ASC";
+		if ($orderby == 'hour') $query .= " ORDER BY CAST(hour_name AS integer) ASC";
 		if ($orderby == 'count') $query .= " ORDER BY hour_count DESC";
 		$query_data = array(':offset' => $offset);
                  try {
