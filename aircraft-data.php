@@ -74,7 +74,8 @@ print '<span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['arriv
 print '</div></div><div>';
 print '<span>Aircraft</span>';
 if (isset($spotter_item['aircraft_wiki'])) print '<a href="'.$spotter_item['aircraft_wiki'].'">'.$spotter_item['aircraft_name'].'</a>';
-print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
+if (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].'</a>';
+else print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
 print '</div>';
 print '<div><span>Altitude</span>';
 print $spotter_item['altitude'].'00 feet - '.round($spotter_item['altitude']*30.48).' m (FL'.$spotter_item['altitude'].')';

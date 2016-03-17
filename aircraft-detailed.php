@@ -41,9 +41,9 @@ if (!isset($_GET['aircraft_type'])){
     		{
     			if($_GET['aircraft_type'] == $aircraft_type['aircraft_icao'])
     		    	{
-    		    		print '<option value="'.$aircraft_type['aircraft_icao'].'" selected="selected">'.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
+    		    		print '<option value="'.$aircraft_type['aircraft_icao'].'" selected="selected">'.$aircraft_type['aircraft_manufacturer'].' '.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
     			} else {
-    		    	        print '<option value="'.$aircraft_type['aircraft_icao'].'">'.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
+    		    	        print '<option value="'.$aircraft_type['aircraft_icao'].'">'.$aircraft_type['aircraft_manufacturer'].' '.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
     		    	}
     		}
     		print '</select>';

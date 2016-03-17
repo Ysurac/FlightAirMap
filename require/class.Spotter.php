@@ -2096,7 +2096,7 @@ class Spotter{
 								ORDER BY spotter_output.aircraft_name ASC";
 								
 		*/
-		$query = "SELECT DISTINCT icao AS aircraft_icao, type AS aircraft_name FROM aircraft WHERE icao <> '' ORDER BY icao ASC";
+		$query = "SELECT DISTINCT icao AS aircraft_icao, type AS aircraft_name, manufacturer AS aircraft_manufacturer FROM aircraft WHERE icao <> '' ORDER BY icao ASC";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute();
@@ -2107,6 +2107,7 @@ class Spotter{
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
+			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 
 			$aircraft_array[] = $temp_array;
