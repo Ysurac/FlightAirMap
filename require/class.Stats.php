@@ -169,7 +169,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllFlightOverCountries($limit = true) {
-		if ($limit) $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC LIMIT 10 OFFSET 0";
+		if ($limit) $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC LIMIT 20 OFFSET 0";
 		else $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC";
                  try {
                         $sth = $this->db->prepare($query);

@@ -257,7 +257,7 @@ require_once('header.php');
     	?>
     	
             <div class="col-md-6">
-                <h2>Top 10 Most Common Country a Flight was Over</h2>
+                <h2>Top 20 Most Common Country a Flight was Over</h2>
                  <?php
                   //$flightover_array = $Stats->countAllFlightOverCountries();
 		    if (count($flightover_array) == 0) print 'No data available';
