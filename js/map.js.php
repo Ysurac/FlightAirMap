@@ -1747,3 +1747,9 @@ function clickIVAO(cb) {
 function clickphpVMS(cb) {
     document.cookie =  'ShowVMS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 }
+function clickSBS1(cb) {
+    document.cookie =  'ShowSBS1='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+function clickAPRS(cb) {
+    document.cookie =  'ShowAPRS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}

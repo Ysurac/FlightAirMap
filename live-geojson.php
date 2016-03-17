@@ -23,6 +23,8 @@ $filter['source'] = array();
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM'] == 'true') $filter['source'] = array_merge($filter['source'],array('vatsimtxt'));
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalIVAO) && $globalIVAO && isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO'] == 'true') $filter['source'] = array_merge($filter['source'],array('whazzup'));
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalphpVMS) && $globalphpVMS && isset($_COOKIE['ShowVMS']) && $_COOKIE['ShowVMS'] == 'true') $filter['source'] = array_merge($filter['source'],array('phpvmacars'));
+if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalSBS1) && $globalSBS1 && isset($_COOKIE['ShowSBS1']) && $_COOKIE['ShowSBS1'] == 'true') $filter['source'] = array_merge($filter['source'],array('sbs'));
+if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalAPRS) && $globalAPRS && isset($_COOKIE['ShowAPRS']) && $_COOKIE['ShowAPRS'] == 'true') $filter['source'] = array_merge($filter['source'],array('aprs'));
 if (isset($_COOKIE['Airlines']) && $_COOKIE['Airlines'] != '') $filter['airlines'] = explode(',',$_COOKIE['Airlines']);
 if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] != 'all') $filter['airlinestype'] = $_COOKIE['airlinestype'];
 

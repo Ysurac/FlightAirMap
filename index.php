@@ -21,8 +21,8 @@ require_once('header.php');
 	<li><a href="#" onclick="getUserLocation(); return false;" title="Plot your Location"><i class="fa fa-map-marker"></i></a></li>
 	<li><a href="#" onclick="getCompassDirection(); return false;" title="Compass Mode"><i class="fa fa-compass"></i></a></li>
 
-	<li><a href="#home" role="tab" title="Layers"><i class="fa fa-bars"></i></a></li>
-	<li><a href="#settings" role="tab" title="Settings"><i class="fa fa-gear"></i></a></li>
+	<li><a href="#home" role="tab" title="Layers"><i class="fa fa-map"></i></a></li>
+	<li><a href="#settings" role="tab" title="Settings"><i class="fa fa-gears"></i></a></li>
     </ul>
 
     <!-- Tab panes -->
@@ -108,6 +108,16 @@ require_once('header.php');
 			<?php if (isset($globalVATSIM) && $globalVATSIM) { ?><li><input type="checkbox" name="vatsim" value="1" onclick="clickVATSIM(this)" <?php if ((isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM'] == 'true') || !isset($_COOKIE['ShowVATSIM'])) print 'checked'; ?> >Display VATSIM data</li><?php } ?>
 			<?php if (isset($globalIVAO) && $globalIVAO) { ?><li><input type="checkbox" name="ivao" value="1" onclick="clickIVAO(this)" <?php if ((isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO'] == 'true') || !isset($_COOKIE['ShowIVAO'])) print 'checked'; ?> >Display IVAO data</li><?php } ?>
 			<?php if (isset($globalphpVMS) && $globalphpVMS) { ?><li><input type="checkbox" name="phpvms" value="1" onclick="clickphpVMS(this)" <?php if ((isset($_COOKIE['ShowVMS']) && $_COOKIE['ShowVMS'] == 'true') || !isset($_COOKIE['ShowVMS'])) print 'checked'; ?> >Display phpVMS data</li><?php } ?>
+		    <?php
+			}
+		    ?>
+		    <?php
+			if (isset($globalSBS1) && $globalSBS1 && isset($globalAPRS) && $globalAPRS && (!isset($globalMapchoose) || $globalMapchoose)) {
+		    ?>
+			<?php if (isset($globalSBS1) && $globalSBS1) { ?>
+			    <li><div class="checkbox"><label><input type="checkbox" name="sbs" value="1" onclick="clickSBS1(this)" <?php if ((isset($_COOKIE['ShowSBS1']) && $_COOKIE['ShowSBS1'] == 'true') || !isset($_COOKIE['ShowSBS1'])) print 'checked'; ?> >Display ADS-B data</label></div></li>
+			<?php } ?>
+			<?php if (isset($globalAPRS) && $globalAPRS) { ?><li><input type="checkbox" name="aprs" value="1" onclick="clickAPRS(this)" <?php if ((isset($_COOKIE['ShowAPRS']) && $_COOKIE['ShowAPRS'] == 'true') || !isset($_COOKIE['ShowAPRS'])) print 'checked'; ?> >Display APRS data</li><?php } ?>
 		    <?php
 			}
 		    ?>

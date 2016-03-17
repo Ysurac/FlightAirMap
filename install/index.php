@@ -297,7 +297,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<label for="flightaware">FlightAware (not tested, no more supported no data feed available for test)</label>
 -->
 				<input type="checkbox" name="globalsbs" id="sbs" value="sbs" onClick="datasource_js()" <?php if (isset($globalSBS1) && $globalSBS1) { ?>checked="checked" <?php } ?> />
-				<label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format), APRS from glidernet,...</label>
+				<label for="sbs">ADS-B, SBS-1 format (dump1090 or SBS-1 compatible format)</label>
+				<input type="checkbox" name="globalaprs" id="aprs" value="aprs" onClick="datasource_js()" <?php if (isset($globalAPRS) && $globalAPRS) { ?>checked="checked" <?php } ?> />
+				<label for="sbs">APRS from glidernet</label>
 				<input type="checkbox" name="acars" id="acars" value="acars" onClick="datasource_js()" <?php if (isset($globalACARS) && $globalACARS) { ?>checked="checked" <?php } ?> />
 				<label for="acars">ACARS</label>
 				</p>
@@ -696,6 +698,7 @@ if (isset($_POST['dbtype'])) {
 	$globalivao = filter_input(INPUT_POST,'globalivao',FILTER_SANITIZE_STRING);
 	$globalphpvms = filter_input(INPUT_POST,'globalphpvms',FILTER_SANITIZE_STRING);
 	$globalsbs = filter_input(INPUT_POST,'globalsbs',FILTER_SANITIZE_STRING);
+	$globalaprs = filter_input(INPUT_POST,'globalaprs',FILTER_SANITIZE_STRING);
 	$datasource = filter_input(INPUT_POST,'datasource',FILTER_SANITIZE_STRING);
 
 	
@@ -803,6 +806,8 @@ if (isset($_POST['dbtype'])) {
 	$settings = array_merge($settings,array('globalFlightAware' => 'FALSE'));
 	if ($globalsbs == 'sbs') $settings = array_merge($settings,array('globalSBS1' => 'TRUE'));
 	else $settings = array_merge($settings,array('globalSBS1' => 'FALSE'));
+	if ($globalaprs == 'aprs') $settings = array_merge($settings,array('globalAPRS' => 'TRUE'));
+	else $settings = array_merge($settings,array('globalAPRS' => 'FALSE'));
 	if ($globalivao == 'ivao') {
 		//$settings = array_merge($settings,array('globalIVAO' => 'TRUE','globalVATSIM' => 'FALSE'));
 		$settings = array_merge($settings,array('globalIVAO' => 'TRUE'));
