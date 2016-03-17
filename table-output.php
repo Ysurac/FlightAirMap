@@ -500,6 +500,10 @@ foreach($spotter_array as $spotter_item)
 		}
 		print '<br /><span class="airport_time">'.$departure_airport_time.'</span>'."\n";
 	}
+	if ($spotter_item['departure_airport'] != 'NA') {
+		$distance = $Spotter->getAirportDistance($spotter_item['departure_airport'],$spotter_item['latitude'],$spotter_item['longitude']);
+		if ($distance != '') echo '<br/><i>'.$distance.'km</i>';
+	}
 	print '</td>'."\n";
 	// Arrival Airport
 	print '<td class="arrival_airport">'."\n";
@@ -543,8 +547,10 @@ foreach($spotter_array as $spotter_item)
 		} else $arrival_airport_time = $spotter_item['arrival_airport_time'];
 		print '<br /><span class="airport_time">'.$arrival_airport_time.'</span>'."\n";
 	}
-
-
+	if (!isset($spotter_item['real_arrival_airport']) && $spotter_item['arrival_airport'] != 'NA') {
+		$distance = $Spotter->getAirportDistance($spotter_item['arrival_airport'],$spotter_item['latitude'],$spotter_item['longitude']);
+		if ($distance != '') echo '<br/><i>'.$distance.'km</i>';
+	}
 	print '</td>'."\n";
 	// Route stop
 	if(strtolower($current_page) != "upcoming"){

@@ -1655,6 +1655,35 @@ class Spotter{
 			return $row['icao'];
 		} else return '';
 	}
+
+	/**
+	* Gets the airport distance
+	*
+	* @param String $airport_icao the icao code of the airport
+	* @param Float $latitude the latitude
+	* @param Float $longitude the longitude
+	* @return Float distance to the airport
+	*
+	*/
+	public function getAirportDistance($airport_icao,$latitude,$longitude)
+	{
+		
+		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
+
+		$query_values = array();
+
+		$query  = "SELECT airport.latitude, airport.longitude FROM airport WHERE airport.icao = :airport LIMIT 1";
+		$query_values = array(':airport' => $airport_icao);
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if (count($row) > 0) {
+			$airport_latitude = $row['latitude'];
+			$airport_longitude = $row['longitude'];
+			$Common = new Common();
+			return $Common->distance($latitude,$longitude,$airport_latitude,$airport_longitude);
+		} else return '';
+	}
 	
 	/**
 	* Gets the airport info based on the icao
