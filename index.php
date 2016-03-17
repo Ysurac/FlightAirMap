@@ -112,7 +112,7 @@ require_once('header.php');
 			}
 		    ?>
 		    <?php
-			if (isset($globalSBS1) && $globalSBS1 && isset($globalAPRS) && $globalAPRS && (!isset($globalMapchoose) || $globalMapchoose)) {
+			if (!(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalphpVMS) && $globalphpVMS) && isset($globalSBS1) && $globalSBS1 && isset($globalAPRS) && $globalAPRS && (!isset($globalMapchoose) || $globalMapchoose)) {
 		    ?>
 			<?php if (isset($globalSBS1) && $globalSBS1) { ?>
 			    <li><div class="checkbox"><label><input type="checkbox" name="sbs" value="1" onclick="clickSBS1(this)" <?php if ((isset($_COOKIE['ShowSBS1']) && $_COOKIE['ShowSBS1'] == 'true') || !isset($_COOKIE['ShowSBS1'])) print 'checked'; ?> >Display ADS-B data</label></div></li>
