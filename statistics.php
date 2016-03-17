@@ -44,6 +44,15 @@ require_once('header.php');
         <div class="col-md-2"><span class="type">Aircrafts</span><span><?php print number_format($Stats->countOverallAircrafts()); ?></span></div> 
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <div class="col-md-2"><span class="type">Airlines</span><span><?php print number_format($Stats->countOverallAirlines()); ?></span></div>
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+	<?php
+		if (!(isset($globalIVAO) && $globalIVAO) && !(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalphpVMS) && $globalphpVMS)) {
+	?>
+        <div class="col-md-2"><span class="type">Military</span><span><?php print number_format($Stats->countOverallMilitaryFlights()); ?></span></div> 
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+	<?php
+		}
+	?>
     </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
     <div class="specific-stats">

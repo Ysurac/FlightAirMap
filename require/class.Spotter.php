@@ -6616,6 +6616,46 @@ class Spotter{
 
 		return $date_array;
 	}
+
+	/**
+	* Counts all military month
+	*
+	* @return Array the month list
+	*
+	*/
+	public function countAllMilitaryMonths()
+	{
+		global $globalTimezone;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
+		$query  = "SELECT YEAR(CONVERT_TZ(s.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(s.date,'+00:00', :offset)) AS month_name, count(*) as date_count
+								FROM spotter_output s, airlines a
+								WHERE s.airline_icao = a.icao AND a.type = 'military'
+								GROUP BY year_name, month_name 
+								ORDER BY date_count DESC";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':offset' => $offset));
+      
+		$date_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['month_name'] = $row['month_name'];
+			$temp_array['year_name'] = $row['year_name'];
+			$temp_array['date_count'] = $row['date_count'];
+
+			$date_array[] = $temp_array;
+		}
+
+		return $date_array;
+	}
 	
 	/**
 	* Counts all month owners
@@ -7400,6 +7440,23 @@ class Spotter{
 	{
 		$query  = "SELECT COUNT(DISTINCT spotter_output.spotter_id) AS flight_count  
                     FROM spotter_output";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+		return $sth->fetchColumn();
+	}
+	
+	/**
+	* Counts all military flights that have flown over
+	*
+	* @return Integer the number of flights
+	*
+	*/
+	public function countOverallMilitaryFlights()
+	{
+		$query  = "SELECT COUNT(DISTINCT s.spotter_id) AS flight_count  
+                    FROM spotter_output s, airlines a WHERE s.airline_icao = a.icao AND a.type = 'military'";
       
 		
 		$sth = $this->db->prepare($query);

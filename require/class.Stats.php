@@ -344,6 +344,28 @@ class Stats {
                 }
                 return $all;
 	}
+	public function countAllMilitaryMonths() {
+		global $globalTimezone;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+	    	$query = "SELECT YEAR(CONVERT_TZ(stats_date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(stats_date,'+00:00', :offset)) AS month_name, cnt as date_count FROM stats WHERE type = 'military_flights_bymonth'";
+		$query_data = array(':offset' => $offset);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_data);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                if (empty($all)) {
+            		$Spotter = new Spotter($this->db);
+            		$all = $Spotter->countAllMilitaryMonths();
+                }
+                return $all;
+	}
 	public function countAllHours($orderby = 'hour',$limit = true) {
 		global $globalTimezone;
 		if ($globalTimezone != '') {
@@ -375,6 +397,14 @@ class Stats {
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countOverallFlights();
+		}
+		return $all;
+	}
+	public function countOverallMilitaryFlights() {
+		$all = $this->getSumStats('military_flights_bymonth',date('Y'));
+		if (empty($all)) {
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->countOverallMilitaryFlights();
 		}
 		return $all;
 	}
@@ -664,6 +694,12 @@ class Stats {
 				if ($number['year_name'] != date('Y')) $lastyear = true;
 				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
+			$alldata = $Spotter->countAllMilitaryMonths();
+			$lastyear = false;
+			foreach ($alldata as $number) {
+				if ($number['year_name'] != date('Y')) $lastyear = true;
+				$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+			}
 			$alldata = $Spotter->countAllMonthsOwners();
 			foreach ($alldata as $number) {
 				$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
@@ -872,6 +908,10 @@ class Stats {
 			foreach ($alldata as $number) {
 				if ($number['year_name'] != date('Y')) $lastyear = true;
 				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+			}
+			$alldata = $Spotter->countAllMilitaryMonths();
+			foreach ($alldata as $number) {
+				$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsOwners();
 			foreach ($alldata as $number) {
