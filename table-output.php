@@ -501,6 +501,8 @@ foreach($spotter_array as $spotter_item)
 		print '<br /><span class="airport_time">'.$departure_airport_time.'</span>'."\n";
 	}
 	if ($spotter_item['departure_airport'] != 'NA') {
+		require_once(dirname(__FILE__).'/require/class.Spotter.php');
+		$Spotter = new Spotter();
 		$distance = $Spotter->getAirportDistance($spotter_item['departure_airport'],$spotter_item['latitude'],$spotter_item['longitude']);
 		if ($distance != '') echo '<br/><i>'.$distance.'km</i>';
 	}
