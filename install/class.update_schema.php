@@ -588,7 +588,7 @@ class update_schema {
     		$Connection = new Connection();
 		$error = '';
     		// Modify stats_airport table
-    		$query = "ALTER TABLE `airradar`.`stats_airport` ADD `type` VARCHAR(50) NOT NULL DEFAULT 'yearly', ADD `airport_name` VARCHAR(255) NOT NULL, ADD `date` DATE NULL DEFAULT NULL; ALTER TABLE `airradar`.`stats_airport` DROP INDEX `airport_icao`, ADD UNIQUE `airport_icao` (`airport_icao`, `type`, `date`);";
+    		$query = "ALTER TABLE `stats_airport` ADD `type` VARCHAR(50) NOT NULL DEFAULT 'yearly', ADD `airport_name` VARCHAR(255) NOT NULL, ADD `date` DATE NULL DEFAULT NULL, DROP INDEX `airport_icao`, ADD UNIQUE `airport_icao` (`airport_icao`, `type`, `date`)";
         	try {
             	    $sth = $Connection->db->prepare($query);
 		    $sth->execute();
