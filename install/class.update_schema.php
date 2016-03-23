@@ -584,6 +584,27 @@ class update_schema {
     		}
 		return $error;
 	}
+	private static function update_from_18() {
+    		$Connection = new Connection();
+		$error = '';
+    		// Modify stats_airport table
+    		$query = "ALTER TABLE `airradar`.`stats_airport` ADD `type` VARCHAR(50) NOT NULL DEFAULT 'yearly', ADD `airport_name` VARCHAR(255) NOT NULL, ADD `date` DATE NULL DEFAULT NULL; ALTER TABLE `airradar`.`stats_airport` DROP INDEX `airport_icao`, ADD UNIQUE `airport_icao` (`airport_icao`, `type`, `date`);";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update stats) : ".$e->getMessage()."\n";
+    		}
+		if ($error != '') return $error;
+		$query = "UPDATE `config` SET `value` = '19' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
 
     	public static function check_version($update = false) {
     	    global $globalDBname;
@@ -667,6 +688,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '17') {
     			    $error = self::update_from_17();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '18') {
+    			    $error = self::update_from_18();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

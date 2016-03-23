@@ -74,6 +74,7 @@ if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($gl
 <script src="<?php print $globalURL; ?>/js/map.js.php?ident=<?php print $ident; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
 <?php
 }
+
 if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) && $globalArchive && isset($flightaware_id))
 {
 ?>

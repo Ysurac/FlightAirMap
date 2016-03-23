@@ -2489,6 +2489,54 @@ class Spotter{
 		return $ident_array;
 	}
 
+	/**
+	* Get a list of flights from airport since 7 days
+	* @return Array number, icao, name and city of airports
+	*/
+
+	public function getLast7DaysAirportsDeparture($airport_icao = '') {
+		global $globalTimezone;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		if ($airport_icao == '') {
+			$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao <> 'NA' GROUP BY departure_airport_icao, day(date) ORDER BY departure_airport_count DESC";
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset));
+		} else {
+			$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao = :airport_icao GROUP BY departure_airport_icao, day(date) ORDER BY departure_airport_count DESC";
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
+		}
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	/**
+	* Get a list of flights to airport since 7 days
+	* @return Array number, icao, name and city of airports
+	*/
+
+	public function getLast7DaysAirportsArrival($airport_icao = '') {
+		global $globalTimezone;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		if ($airport_icao == '') {
+			$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' GROUP BY arrival_airport_icao, day(date) ORDER BY arrival_airport_count DESC";
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset));
+		} else {
+			$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao = :airport_icao GROUP BY arrival_airport_icao, day(date) ORDER BY arrival_airport_count DESC";
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
+		}
+		
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
 
 
 	/**

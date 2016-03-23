@@ -66,8 +66,9 @@ class update_db {
 		//$query = 'TRUNCATE TABLE routes';
 		if ($globalDebug) echo " - Delete previous routes from DB -";
 		$query = "DELETE FROM routes WHERE Source = '' OR Source = :source";
+		$Connection = new Connection();
 		try {
-			$Connection = new Connection();
+			//$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
                         $sth->execute(array(':source' => $database_file));
                 } catch(PDOException $e) {
