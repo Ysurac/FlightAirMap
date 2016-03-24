@@ -819,7 +819,7 @@ if (isset($_POST['dbtype'])) {
 	if ($globalphpvms == 'phpvms') {
 		$settings = array_merge($settings,array('globalphpVMS' => 'TRUE'));
 	} else $settings = array_merge($settings,array('globalphpVMS' => 'FALSE'));
-	if ($globalvatsim == 'vatsim' || $globalivao == 'ivao' || $globbalphpvms == 'phpvms') {
+	if ($globalvatsim == 'vatsim' || $globalivao == 'ivao' || $globalphpvms == 'phpvms') {
 		$settings = array_merge($settings,array('globalSchedulesFetch' => 'FALSE','globalTranslationFetch' => 'FALSE'));
 	} else $settings = array_merge($settings,array('globalSchedulesFetch' => 'TRUE','globalTranslationFetch' => 'TRUE'));
 	
