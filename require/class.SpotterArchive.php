@@ -16,7 +16,8 @@ class SpotterArchive {
         if ($over_country == '') {
 	        $Spotter = new Spotter($this->db);
 	        $data_country = $Spotter->getCountryFromLatitudeLongitude($latitude,$longitude);
-		$country = $data_country['iso2'];
+		if (!empty($data_country)) $country = $data_country['iso2'];
+		else $country = '';
 	} else $country = $over_country;
 
 	// Route is not added in spotter_archive

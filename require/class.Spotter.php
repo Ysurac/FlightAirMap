@@ -331,6 +331,8 @@ class Spotter{
 			*/
 			if (isset($row['pilot_id']) && $row['pilot_id'] != '') $temp_array['pilot_id'] = $row['pilot_id'];
 			if (isset($row['pilot_name']) && $row['pilot_name'] != '') $temp_array['pilot_name'] = $row['pilot_name'];
+			if (isset($row['source_name']) && $row['source_name'] != '') $temp_array['source_name'] = $row['source_name'];
+			if (isset($row['over_country']) && $row['over_country'] != '') $temp_array['over_country'] = $row['over_country'];
 			if (isset($row['squawk'])) {
 				$temp_array['squawk'] = $row['squawk'];
 				if ($row['squawk'] != '' && isset($temp_array['country_iso2'])) {

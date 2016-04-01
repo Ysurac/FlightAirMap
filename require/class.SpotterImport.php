@@ -342,18 +342,26 @@ class SpotterImport {
 				$this->all_flights[$id]['archive_longitude'] = $line['longitude'];
 				$this->all_flights[$id]['putinarchive'] = true;
 				
+				
+				//echo "\n".' ------- Check Country.... ';
 				$Spotter = new Spotter($this->db);
 				$all_country = $Spotter->getCountryFromLatitudeLongitude($line['latitude'],$line['longitude']);
-				$this->all_flights[$id]['over_country'] = $all_country['iso2'];
+				if (!empty($all_country)) $this->all_flights[$id]['over_country'] = $all_country['iso2'];
 				$Spotter->db = null;
+				//echo 'FOUND : '.$this->all_flights[$id]['over_country'].' ---------------'."\n";
 				//$putinarchive = true;
+			    } else {
+			    /*
+				echo '//////// checkLine FALSE'."\n";
+				echo 'Check DATA : '.$this->all_flights[$id]['archive_latitude'].' '.$this->all_flights[$id]['archive_longitude'].' '.$this->all_flights[$id]['livedb_latitude'].' '.$this->all_flights[$id]['livedb_longitude'].' '.$line['latitude'].' '.$line['longitude']."\n";
+			    */
 			    }
 			}
 
 			if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
 			    //if (!isset($this->all_flights[$id]['latitude']) || $this->all_flights[$id]['latitude'] == '' || abs($this->all_flights[$id]['latitude']-$line['latitude']) < 3 || $line['format_source'] != 'sbs' || time() - $this->all_flights[$id]['lastupdate'] > 30) {
 				if (!isset($this->all_flights[$id]['archive_latitude'])) $this->all_flights[$id]['archive_latitude'] = $line['latitude'];
-				if (!isset($this->all_flights[$id]['livedb_latitude']) || abs($this->all_flights[$id]['livedb_latitude']-$line['latitude']) > $globalCoordMinChange) {
+				if (!isset($this->all_flights[$id]['livedb_latitude']) || abs($this->all_flights[$id]['livedb_latitude']-$line['latitude']) > $globalCoordMinChange || $this->all_flights[$id]['format_source'] == 'aprs') {
 				    $this->all_flights[$id]['livedb_latitude'] = $line['latitude'];
 				    $dataFound = true;
 				    $this->all_flights[$id]['time_last_coord'] = time();
@@ -377,7 +385,7 @@ class SpotterImport {
 			    if ($line['longitude'] > 180) $line['longitude'] = $line['longitude'] - 360;
 			    //if (!isset($this->all_flights[$id]['longitude']) || $this->all_flights[$id]['longitude'] == ''  || abs($this->all_flights[$id]['longitude']-$line['longitude']) < 2 || $line['format_source'] != 'sbs' || time() - $this->all_flights[$id]['lastupdate'] > 30) {
 				if (!isset($this->all_flights[$id]['archive_longitude'])) $this->all_flights[$id]['archive_longitude'] = $line['longitude'];
-				if (!isset($this->all_flights[$id]['livedb_longitude']) || abs($this->all_flights[$id]['livedb_longitude']-$line['longitude']) > $globalCoordMinChange) {
+				if (!isset($this->all_flights[$id]['livedb_longitude']) || abs($this->all_flights[$id]['livedb_longitude']-$line['longitude']) > $globalCoordMinChange || $this->all_flights[$id]['format_source'] == 'aprs') {
 				    $this->all_flights[$id]['livedb_longitude'] = $line['longitude'];
 				    $dataFound = true;
 				    $this->all_flights[$id]['time_last_coord'] = time();

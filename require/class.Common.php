@@ -135,6 +135,7 @@ class Common {
 	* @return Float Distance in $unit
 	*/
 	public function distance($lat, $lon, $latc, $lonc, $unit = 'km') {
+		if ($lat == $latc && $lon == $lonc) return 0;
 		$dist = rad2deg(acos(sin(deg2rad(floatval($lat)))*sin(deg2rad(floatval($latc)))+ cos(deg2rad(floatval($lat)))*cos(deg2rad(floatval($latc)))*cos(deg2rad(floatval($lon)-floatval($lonc)))))*60*1.1515;
 		if ($unit == "km") {
 			return round($dist * 1.609344);
