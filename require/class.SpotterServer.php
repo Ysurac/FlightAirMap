@@ -96,10 +96,10 @@ class SpotterServer {
 		    $data['heading'] = round($line['heading']);
   		} else $data['heading'] = null;
 		if (isset($line['source_name']) && $line['source_name'] != '') {
-		    $data['source_name'] = $line['source_name']);
+		    $data['source_name'] = $line['source_name'];
   		} else $data['source_name'] = null;
 		if (isset($line['over_country']) && $line['over_country'] != '') {
-		    $data['over_country'] = $line['over_country']);
+		    $data['over_country'] = $line['over_country'];
   		} else $data['over_country'] = null;
   		if (isset($line['noarchive']) && $line['noarchive']) {
   		    $data['noarchive'] = true;
