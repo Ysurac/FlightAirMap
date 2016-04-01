@@ -101,7 +101,7 @@ class update_db {
 			if ($globalTransaction) $Connection->db->rollBack(); 
 			return "error : ".$e->getMessage();
 		}
-//                return true;
+                return '';
 	}
 	public static function retrieve_modes_sqlite_to_dest($database_file) {
 		global $globalTransaction;
@@ -163,8 +163,7 @@ class update_db {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
-
-//                return true;
+		return '';
 	}
 
 	public static function retrieve_modes_flarmnet($database_file) {
@@ -233,8 +232,7 @@ class update_db {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
-
-//                return true;
+		return '';
 	}
 
 	public static function retrieve_modes_ogn($database_file) {
@@ -302,8 +300,7 @@ class update_db {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
-
-//                return true;
+		return '';
 	}
 
 	public static function retrieve_owner($database_file,$country = 'F') {
@@ -426,6 +423,7 @@ class update_db {
 				return "error : ".$e->getMessage();
 			}
 		}
+		return '';
 	}
 
 	/*
@@ -809,7 +807,7 @@ class update_db {
 			fclose($handle);
 			//$Connection->db->commit();
 		}
-//		return true;
+		return '';
         }
 	
 	public static function translation_fam() {
@@ -851,9 +849,9 @@ class update_db {
 			fclose($handle);
 			//$Connection->db->commit();
 		}
-//		return true;
+		return '';
         }
-	
+
 	/**
         * Convert a HTML table to an array
         * @param String $data HTML page
@@ -990,6 +988,7 @@ class update_db {
 			fclose($handle);
 			if ($globalTransaction) $Connection->db->commit();
 		}
+		return '';
         }
 
 	public static function ivao_airlines($filename) {
@@ -1025,26 +1024,30 @@ class update_db {
 			fclose($handle);
 			if ($globalTransaction) $Connection->db->commit();
 		}
+		return '';
         }
 	
 	public static function update_airspace() {
 		global $tmp_dir;
 		include_once('class.create_db.php');
 		update_db::gunzip('../db/airspace.sql.gz',$tmp_dir.'airspace.sql');
-		create_db::import_file($tmp_dir.'airspace.sql');
+		$error = create_db::import_file($tmp_dir.'airspace.sql');
+		return $error;
 	}
 
 	public static function update_vatsim() {
 		global $tmp_dir;
 		include_once('class.create_db.php');
-		create_db::import_file('../db/vatsim/airlines.sql');
+		$error = create_db::import_file('../db/vatsim/airlines.sql');
+		return $error;
 	}
 	
 	public static function update_countries() {
 		global $tmp_dir;
 		include_once('class.create_db.php');
 		update_db::gunzip('../db/countries.sql.gz',$tmp_dir.'countries.sql');
-		create_db::import_file($tmp_dir.'countries.sql');
+		$error = create_db::import_file($tmp_dir.'countries.sql');
+		return $error;
 	}
 
 	
@@ -1056,7 +1059,8 @@ class update_db {
 //		update_db::download('http://sourceforge.net/p/flightgear/fgdata/ci/next/tree/Navaids/awy.dat.gz?format=raw',$tmp_dir.'awy.dat.gz','http://sourceforge.net');
 		update_db::download('http://pkgs.fedoraproject.org/repo/extras/FlightGear-Atlas/awy.dat.gz/f530c9d1c4b31a288ba88dcc8224268b/awy.dat.gz',$tmp_dir.'awy.dat.gz','http://sourceforge.net');
 		update_db::gunzip($tmp_dir.'awy.dat.gz');
-		update_db::waypoints($tmp_dir.'awy.dat');
+		$error = update_db::waypoints($tmp_dir.'awy.dat');
+		return $error;
 	}
 
 	public static function update_ivao() {
@@ -1077,9 +1081,9 @@ class update_db {
 			} else $error = "The directory ".dirname(__FILE__).'/../images/airlines'." must be writable";
 		} else $error = "File ".$tmp_dir.'ivao.zip'." doesn't exist. Download failed.";
 		if ($error != '') {
-			echo $error;
-			exit;
+			return $error;
 		} elseif ($globalDebug) echo "Done\n";
+		return '';
 	}
 
 	public static function update_routes() {
@@ -1094,10 +1098,9 @@ class update_db {
 			$error = update_db::retrieve_route_sqlite_to_dest($tmp_dir.'StandingData.sqb');
 		} else $error = "File ".$tmp_dir.'StandingData.sqb.gz'." doesn't exist. Download failed.";
 		if ($error != '') {
-			echo $error;
-			exit;
+			return $error;
 		} elseif ($globalDebug) echo "Done\n";
-		
+		return '';
 	}
 	public static function update_ModeS() {
 		global $tmp_dir, $globalDebug;
@@ -1122,9 +1125,9 @@ class update_db {
 			$error = update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'BaseStation.sqb');
 		} else $error = "File ".$tmp_dir.'basestation_latest.zip'." doesn't exist. Download failed.";
 		if ($error != '') {
-			echo $error;
-			exit;
+			return $error;
 		} elseif ($globalDebug) echo "Done\n";
+		return '';
 	}
 
 	public static function update_ModeS_flarm() {
@@ -1136,9 +1139,9 @@ class update_db {
 			$error = update_db::retrieve_modes_flarmnet($tmp_dir.'data.fln');
 		} else $error = "File ".$tmp_dir.'data.fln'." doesn't exist. Download failed.";
 		if ($error != '') {
-			echo $error;
-			exit;
+			return $error;
 		} elseif ($globalDebug) echo "Done\n";
+		return '';
 	}
 
 	public static function update_ModeS_ogn() {
@@ -1150,9 +1153,9 @@ class update_db {
 			$error = update_db::retrieve_modes_ogn($tmp_dir.'ogn.csv');
 		} else $error = "File ".$tmp_dir.'ogn.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
-			echo $error;
-			exit;
+			return $error;
 		} elseif ($globalDebug) echo "Done\n";
+		return '';
 	}
 
 	public static function update_owner() {
@@ -1166,7 +1169,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_f.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		
 		if ($globalDebug) echo "Owner Ireland: Download...";
@@ -1177,7 +1179,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_ei.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Switzerland: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Switzerland.txt',$tmp_dir.'owner_hb.csv');
@@ -1187,7 +1188,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_hb.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Czech Republic: Download...";
 		update_db::download('http://antonakis.co.uk/registers/CzechRepublic.txt',$tmp_dir.'owner_ok.csv');
@@ -1197,7 +1197,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_ok.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Australia: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Australia.txt',$tmp_dir.'owner_vh.csv');
@@ -1207,7 +1206,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_vh.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Austria: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Austria.txt',$tmp_dir.'owner_oe.csv');
@@ -1217,7 +1215,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_oe.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Chile: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Chile.txt',$tmp_dir.'owner_cc.csv');
@@ -1227,7 +1224,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_cc.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Colombia: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Colombia.txt',$tmp_dir.'owner_hj.csv');
@@ -1237,7 +1233,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_hj.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Bosnia Herzegobina: Download...";
 		update_db::download('http://antonakis.co.uk/registers/BosniaHerzegovina.txt',$tmp_dir.'owner_e7.csv');
@@ -1247,7 +1242,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_e7.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Brazil: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Brazil.txt',$tmp_dir.'owner_pp.csv');
@@ -1257,7 +1251,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_pp.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Cayman Islands: Download...";
 		update_db::download('http://antonakis.co.uk/registers/CaymanIslands.txt',$tmp_dir.'owner_vp.csv');
@@ -1267,7 +1260,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_vp.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Croatia: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Croatia.txt',$tmp_dir.'owner_9a.csv');
@@ -1277,7 +1269,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_9a.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Luxembourg: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Luxembourg.txt',$tmp_dir.'owner_lx.csv');
@@ -1287,7 +1278,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_lx.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Maldives: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Maldives.txt',$tmp_dir.'owner_8q.csv');
@@ -1297,7 +1287,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_8q.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner New Zealand: Download...";
 		update_db::download('http://antonakis.co.uk/registers/NewZealand.txt',$tmp_dir.'owner_zk.csv');
@@ -1307,7 +1296,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_zk.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Papua New Guinea: Download...";
 		update_db::download('http://antonakis.co.uk/registers/PapuaNewGuinea.txt',$tmp_dir.'owner_p2.csv');
@@ -1317,7 +1305,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_p2.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Slovakia: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Slovakia.txt',$tmp_dir.'owner_om.csv');
@@ -1327,7 +1314,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_om.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Ecuador: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Ecuador.txt',$tmp_dir.'owner_hc.csv');
@@ -1337,7 +1323,6 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_hc.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
 		if ($globalDebug) echo "Owner Iceland: Download...";
 		update_db::download('http://antonakis.co.uk/registers/Iceland.txt',$tmp_dir.'owner_tf.csv');
@@ -1347,8 +1332,8 @@ class update_db {
 		} else $error = "File ".$tmp_dir.'owner_tf.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
-			exit;
 		} elseif ($globalDebug) echo "Done\n";
+		return '';
 	}
 
 	public static function update_translation() {
@@ -1363,10 +1348,9 @@ class update_db {
 			$error = update_db::translation();
 		} else $error = "File ".$tmp_dir.'translation.zip'." doesn't exist. Download failed.";
 		if ($error != '') {
-			echo $error;
-			exit;
+			return $error;
 		} elseif ($globalDebug) echo "Done\n";
-
+		return '';
 	}
 
 	public static function update_translation_fam() {
@@ -1381,10 +1365,9 @@ class update_db {
 			$error = update_db::translation_fam();
 		} else $error = "File ".$tmp_dir.'translation.tsv.gz'." doesn't exist. Download failed.";
 		if ($error != '') {
-			echo $error;
-			exit;
+			return $error;
 		} elseif ($globalDebug) echo "Done\n";
-
+		return '';
 	}
 
 	public static function update_aircraft() {
@@ -1489,10 +1472,9 @@ class update_db {
 			} 
 		} else $error = "File ".$tmp_dir.'notam.rss'." doesn't exist. Download failed.";
 		if ($error != '') {
-			echo $error;
-			exit;
+			return $error;
 		} elseif ($globalDebug) echo "Done\n";
-	
+		return '';
 	}
 	
 	public static function check_last_update() {

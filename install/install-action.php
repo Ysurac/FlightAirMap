@@ -98,7 +98,7 @@ if (isset($_GET['reset'])) {
 	}
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'waypoints') {
 	include_once('class.update_db.php');
-	update_db::update_waypoints();
+	$error .= update_db::update_waypoints();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate waypoints database'));
 
 	$_SESSION['install'] = 'airspace';
@@ -107,7 +107,7 @@ if (isset($_GET['reset'])) {
 	print json_encode($result);
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'airspace') {
 	include_once('class.update_db.php');
-	update_db::update_airspace();
+	$error .= update_db::update_airspace();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate airspace database'));
 	$_SESSION['install'] = 'countries';
 	$_SESSION['next'] = 'Populate countries table';
@@ -115,7 +115,7 @@ if (isset($_GET['reset'])) {
 	print json_encode($result);
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'countries') {
 	include_once('class.update_db.php');
-	update_db::update_countries();
+	$error .= update_db::update_countries();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate countries database'));
 	if (isset($globalNOTAM) && $globalNOTAM && isset($globalNOTAMSource) && $globalNOTAMSource != '') {
 	    $_SESSION['install'] = 'notam';
@@ -142,7 +142,7 @@ if (isset($_GET['reset'])) {
 	} else {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
-		update_db::update_ModeS();
+		$error .= update_db::update_ModeS();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data for ADS-B'));
 
 		$_SESSION['install'] = 'populate_flarm';
@@ -158,8 +158,8 @@ if (isset($_GET['reset'])) {
 	} else {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
-		update_db::update_ModeS_flarm();
-		update_db::update_ModeS_ogn();
+		$error .= update_db::update_ModeS_flarm();
+		$error .= update_db::update_ModeS_ogn();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data for FLARM'));
 
 		if ((isset($globalVATSIM) && $globalVATSIM) && (isset($globalIVAO) && $globalIVAO)) {
@@ -191,7 +191,7 @@ if (isset($_GET['reset'])) {
 	} else {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
-		update_db::update_routes();
+		$error .= update_db::update_routes();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate routes table with externals data'));
 		$_SESSION['install'] = 'translation';
 		$_SESSION['next'] = 'Populate translation table with externals data';
@@ -206,7 +206,7 @@ if (isset($_GET['reset'])) {
 	} else {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
-		update_db::update_translation();
+		$error .= update_db::update_translation();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate translation table with externals data'));
 
 		if ($_SESSION['waypoints'] == 1) {
@@ -251,7 +251,7 @@ if (isset($_GET['reset'])) {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
 		if (isset($globalNOTAMSource) && $globalNOTAMSource != '') {
-			update_db::update_notam();
+			$error .= update_db::update_notam();
 			$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate notam table with externals data'));
 		} else {
 			$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate notam table with externals data (no source defined)'));
@@ -339,21 +339,21 @@ if (isset($_GET['reset'])) {
 
 	if ((isset($globalVATSIM) && $globalVATSIM) && (isset($globalIVAO) && $globalIVAO)) {
 		if (file_exists('tmp/ivae_feb2013.zip')) {
-			update_db::update_IVAO();
+			$error .= update_db::update_IVAO();
 			$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert IVAO data'));
 		} else {
-			update_db::update_vatsim();
+			$error .= update_db::update_vatsim();
 			$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM data'));
 		}
 	} elseif (isset($globalVATSIM) && $globalVATSIM) {
-		update_db::update_vatsim();
+		$error .= update_db::update_vatsim();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM data'));
 	} elseif (isset($globalIVAO) && $globalIVAO) {
 		if (file_exists('tmp/ivae_feb2013.zip')) {
-			update_db::update_IVAO();
+			$error .= update_db::update_IVAO();
 			$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert IVAO data'));
 		} else {
-			update_db::update_vatsim();
+			$error .= update_db::update_vatsim();
 			$_SESSION['done'] = array_merge($_SESSION['done'],array('Insert VATSIM data (IVAO not found)'));
 		}
 	} elseif (isset($globalphpVMS) && $globalphpVMS) {
