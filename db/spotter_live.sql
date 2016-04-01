@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS `spotter_live` (
   `pilot_name`varchar(255),
   `verticalrate` int(11),
   `format_source` varchar(255) DEFAULT NULL,
+  `source_name` varchar(255) DEFAULT NULL,
+  `over_country` varchar(5) DEFAULT NULL,
   `ground` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`spotter_live_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;

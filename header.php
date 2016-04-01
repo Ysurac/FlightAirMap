@@ -13,7 +13,7 @@ date_default_timezone_set($globalTimezone);
 <meta name="keywords" content="<?php print $title; ?> spotter live flight tracking tracker map aircraft airline airport history database ads-b acars" />
 <meta name="description" content="<?php print $title; ?> | <?php print $globalName; ?> use FlightAirMap to display flight in his area" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="shortcut icon" type="image/x-icon" href="<?php print $globalURL; ?>/favicon.ico">
 <link rel="apple-touch-icon" href="<?php print $globalURL; ?>/images/touch-icon.png">
 <!--[if lt IE 9]>
   <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -173,11 +173,7 @@ if ($facebook_meta_image != "")
                 <li><a href="<?php print $globalURL; ?>/contribute">Contribute</a></li>
                 <li><hr /></li>
 	    <?php } ?>
-            <?php if ($globalURL == "http://barriespotter.com") { ?>
-	        <li><hr /></li>
-          	<li><a href="https://github.com/barriespotter/Web_App/issues" target="_blank">Report any Issues</a></li>
-          	<li><a href="https://www.facebook.com/barriespotter" target="_blank">Contact</a></li>
-            <?php } elseif ($globalName == 'FlightAirMap') { ?>
+            <?php if ($globalName == 'FlightAirMap') { ?>
                 <li><hr /></li>
         	<li><a href="https://github.com/Ysurac/FlightAirMap/issues" target="_blank">Report any Issues</a></li>
             <?php } ?>
@@ -188,11 +184,7 @@ if ($facebook_meta_image != "")
   			<input type="text" name="q" value="<?php if (isset($GET['q'])) { if ($_GET['q'] != ""){ print $_GET['q']; } else { print 'search'; } } else { print 'search'; } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>
   		</form>
   		<div class="social">
-            <?php if ($globalURL == "http://barriespotter.com") { ?>
-  			<a href="http://www.facebook.com/barriespotter" target="_blank" title="Like us on Facebook"><i class="fa fa-facebook"></i></a>
-  			<a href="http://www.twitter.com/barriespotter" target="_blank" title="Follow us on Twitter"><i class="fa fa-twitter"></i></a>
-  			<a href="http://barriespotter.github.io" target="_blank" title="Fork us on Github"><i class="fa fa-github"></i></a>
-  		<?php } ?>
+  			<!-- I'm not sociable -->
   		</div>
     </div><!--/.nav-collapse -->
   </div>

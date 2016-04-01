@@ -49,7 +49,7 @@ if (!empty($spotter_array))
 	print '<p>The statistic below shows the most common time of day from <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
 
 	$hour_array = $Spotter->countAllHoursByAircraft($_GET['aircraft_type']);
-
+	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartHour" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});

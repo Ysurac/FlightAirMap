@@ -4,6 +4,7 @@
 */
 
 require_once(dirname(__FILE__).'/class.Spotter.php');
+require_once(dirname(__FILE__).'/class.SpotterArchive.php');
 require_once(dirname(__FILE__).'/class.Common.php');
 class Stats {
 	public $db;
@@ -935,7 +936,8 @@ class Stats {
 			foreach ($alldata as $number) {
 				$this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_name'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count']);
 			}
-			$alldata = $Spotter->countAllFlightOverCountries(false,0,$last_update_day);
+			$SpotterArchive = new SpotterArchive();
+			$alldata = $SpotterArchive->countAllFlightOverCountries(false,0,$last_update_day);
 			foreach ($alldata as $number) {
 				$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count']);
 			}

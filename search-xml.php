@@ -61,7 +61,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
 if ($_GET['download'] == "true")
 {
-	header('Content-disposition: attachment; filename="barriespotter.xml"');
+	header('Content-disposition: attachment; filename="flightairmap.xml"');
 }
 
 header('Content-Type: application/xml');
@@ -87,9 +87,9 @@ $arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_S
 $spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
        
 $output = '<?xml version="1.0" encoding="UTF-8" ?>';
-  $output .= '<barriespotter>';
-    $output .= '<title>Barrie Spotter XML Feed</title>';
-    $output .= '<link>http://www.barriespotter.com</link>';
+  $output .= '<flightairmap>';
+    $output .= '<title>'.$globalName.' XML Feed</title>';
+    $output .= '<link>http://'.$_SERVER['HTTP_HOST'].$globalURL.'</link>';
     $output .= '<aircrafts>';
     
     if (!empty($spotter_array))
@@ -140,7 +140,7 @@ $output = '<?xml version="1.0" encoding="UTF-8" ?>';
 	    }
 	   }
 		 $output .= '</aircrafts>';
-$output .= '</barriespotter>';
+$output .= '</flightairmap>';
 
 print $output;
 

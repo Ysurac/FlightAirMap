@@ -606,6 +606,40 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_19() {
+    		$Connection = new Connection();
+		$error = '';
+    		// Update airport table
+		$error .= create_db::import_file('../db/airport.sql');
+		if ($error != '') return $error;
+
+    		// Modify stats_airport table
+    		$query = "ALTER TABLE `spotter_archive` ADD `over_country` VARCHAR(5) NULL DEFAULT NULL;ALTER TABLE `spotter_live` ADD `over_country` VARCHAR(5) NULL DEFAULT NULL";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add over_country) : ".$e->getMessage()."\n";
+    		}
+    		// Add source_name to spotter_output, spotter_live, spotter_archive, spotter_archive_output
+    		$query = "ALTER TABLE `spotter_output` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;ALTER TABLE `spotter_live` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;ALTER TABLE `spotter_archive_output` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;ALTER TABLE `spotter_archive` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add source_name column) : ".$e->getMessage()."\n";
+    		}
+		if ($error != '') return $error;
+		$query = "UPDATE `config` SET `value` = '20' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
     	public static function check_version($update = false) {
     	    global $globalDBname;
     	    $version = 0;
@@ -692,6 +726,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '18') {
     			    $error = self::update_from_18();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '19') {
+    			    $error = self::update_from_19();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

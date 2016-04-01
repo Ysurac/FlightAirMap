@@ -36,7 +36,9 @@ CREATE TABLE IF NOT EXISTS `spotter_archive` (
   `owner_name` varchar(255),
   `verticalrate` int(11),
   `format_source` varchar(255) DEFAULT NULL,
+  `source_name` varchar(255) DEFAULT NULL,
   `ground` tinyint(1) NOT NULL DEFAULT '0',
+  `over_country` varchar(5) DEFAULT NULL,
   PRIMARY KEY (`spotter_archive_id`)
 ) ENGINE=Archive  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 

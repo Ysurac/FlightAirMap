@@ -136,9 +136,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="text" name="sitename" id="sitename" value="<?php if (isset($globalName)) print $globalName; ?>" />
 			</p>
 			<p>
-				<label for="siteurl">Site URL</label>
+				<label for="siteurl">Site directory</label>
 				<input type="text" name="siteurl" id="siteurl" value="<?php if (isset($globalURL)) print $globalURL; ?>" />
-				<p class="help-block">Can be null. ex : <i>flightairmap</i> if complete URL is <i>http://toto/flightairmap</i></p>
+				<p class="help-block">Can be null. ex : <i>flightairmap</i> if complete URL is <i>http://toto.com/flightairmap</i></p>
 			</p>
 			<p>
 				<label for="timezone">Timezone</label>

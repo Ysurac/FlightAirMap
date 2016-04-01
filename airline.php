@@ -42,7 +42,7 @@ if (isset($_POST['airline']))
 	print '<div class="alphabet-legend">';
 	foreach($airline_names as $value) 
 	{
-		$firstLetter = substr($value['airline_name'], 0, 1);
+		$firstLetter = strtoupper(substr($value['airline_name'], 0, 1));
 		if($previous !== $firstLetter)
 		{
 			if ($previous != null) print ' | ';
@@ -53,7 +53,7 @@ if (isset($_POST['airline']))
 	print '</div>';
 	$previous = null;
 	foreach($airline_names as $value) {
-		$firstLetter = substr($value['airline_name'], 0, 1);
+		$firstLetter = strtoupper(substr($value['airline_name'], 0, 1));
 		if ($firstLetter != "")
 		{
 			if($previous !== $firstLetter)

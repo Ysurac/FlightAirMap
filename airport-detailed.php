@@ -157,8 +157,6 @@ if (!isset($_GET['airport'])){
 				print '</div>';
 			}
 			print '</div>';
-
-			
 		} else {
 			print '<div class="alert alert-warning">This special airport profile shows all flights that do <u>not</u> have a departure and/or arrival airport associated with them.</div>';
 		}
@@ -174,7 +172,7 @@ if (!isset($_GET['airport'])){
 		{
 			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
 		}
-		if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
+		if (isset($spotter_array[0]['query_number_rows']) && $spotter_array[0]['query_number_rows'] == $absolute_difference)
 		{
 			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
 		}

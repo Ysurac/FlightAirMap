@@ -33,7 +33,7 @@ if (!empty($spotter_array))
   	<p>The statistic below shows all departure airports by Country of origin of flights on <strong><?php print date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])); ?></strong>.</p>
   	<?php
     	 $airport_country_array = $Spotter->countAllDepartureAirportCountriesByDate($_GET['date']);
-      
+	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
       print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["geochart"]});

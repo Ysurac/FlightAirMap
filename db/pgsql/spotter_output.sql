@@ -36,6 +36,7 @@ CREATE TABLE spotter_output (
   owner_name varchar(255),
   verticalrate integer,
   format_source varchar(255),
+  source_name varchar(255) DEFAULT NULL,
   ground integer NOT NULL DEFAULT '0',
   last_ground integer NOT NULL DEFAULT '0',
   last_seen timestamp,

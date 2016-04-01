@@ -281,7 +281,7 @@ $output = '{';
                 
 			}
 */
-				if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || (!isset($_COOKIE['flightpath']) && (!isset($globalMapHistory) || $globalMapHistory || $allhistory) || (isset($_GET['history']) && $_GET['history'] != '' && ($_GET['history'] == $spotter_item['ident'] || $_GET['history'] == $spotter_item['flightaware_id'])))) {
+				if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || (!isset($_COOKIE['flightpath']) && (!isset($globalMapHistory) || $globalMapHistory || $allhistory) || (isset($_GET['history']) && $_GET['history'] != '' && $_GET['history'] != 'NA' && ($_GET['history'] == $spotter_item['ident'] || $_GET['history'] == $spotter_item['flightaware_id'])))) {
                                     if ($from_archive) {
 					    $spotter_history_array = $SpotterArchive->getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
                                     } else {

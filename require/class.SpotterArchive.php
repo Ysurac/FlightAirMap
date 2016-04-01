@@ -11,12 +11,19 @@ class SpotterArchive {
 
     // Spotter_archive
     
-    function addSpotterArchiveData($flightaware_id = '', $ident = '', $registration = '', $airline_name = '', $airline_icao = '', $airline_country = '', $airline_type = '', $aircraft_icao = '', $aircraft_shadow = '', $aircraft_name = '', $aircraft_manufacturer = '', $departure_airport_icao = '', $departure_airport_name = '', $departure_airport_city = '', $departure_airport_country = '', $departure_airport_time = '',$arrival_airport_icao = '', $arrival_airport_name = '', $arrival_airport_city ='', $arrival_airport_country = '', $arrival_airport_time = '', $route_stop = '', $date = '',$latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $ground_speed = '', $squawk = '', $ModeS = '', $pilot_id = '', $pilot_name = '',$verticalrate = '',$format_source = '') {
-	// Route is not added in spotter_archive
-	$query  = "INSERT INTO spotter_archive (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_shadow, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, departure_airport_time,arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, arrival_airport_time, route_stop, date,latitude, longitude, waypoints, altitude, heading, ground_speed, squawk, ModeS, pilot_id, pilot_name, verticalrate,format_source)
-                VALUES (:flightaware_id, :ident, :registration, :airline_name, :airline_icao, :airline_country, :airline_type, :aircraft_icao, :aircraft_shadow, :aircraft_name, :aircraft_manufacturer, :departure_airport_icao, :departure_airport_name, :departure_airport_city, :departure_airport_country, :departure_airport_time,:arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :arrival_airport_time, :route_stop, :date,:latitude, :longitude, :waypoints, :altitude, :heading, :ground_speed, :squawk, :ModeS, :pilot_id, :pilot_name, :verticalrate, :format_source)";
+    function addSpotterArchiveData($flightaware_id = '', $ident = '', $registration = '', $airline_name = '', $airline_icao = '', $airline_country = '', $airline_type = '', $aircraft_icao = '', $aircraft_shadow = '', $aircraft_name = '', $aircraft_manufacturer = '', $departure_airport_icao = '', $departure_airport_name = '', $departure_airport_city = '', $departure_airport_country = '', $departure_airport_time = '',$arrival_airport_icao = '', $arrival_airport_name = '', $arrival_airport_city ='', $arrival_airport_country = '', $arrival_airport_time = '', $route_stop = '', $date = '',$latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $ground_speed = '', $squawk = '', $ModeS = '', $pilot_id = '', $pilot_name = '',$verticalrate = '',$format_source = '', $source_name = '', $over_country = '') {
+	require_once(dirname(__FILE__).'/class.Spotter.php');
+        if ($over_country == '') {
+	        $Spotter = new Spotter($this->db);
+	        $data_country = $Spotter->getCountryFromLatitudeLongitude($latitude,$longitude);
+		$country = $data_country['iso2'];
+	} else $country = $over_country;
 
-        $query_values = array(':flightaware_id' => $flightaware_id, ':ident' => $ident, ':registration' => $registration, ':airline_name' => $airline_name, ':airline_icao' => $airline_icao, ':airline_country' => $airline_country, ':airline_type' => $airline_type, ':aircraft_icao' => $aircraft_icao, ':aircraft_shadow' => $aircraft_shadow, ':aircraft_name' => $aircraft_name, ':aircraft_manufacturer' => $aircraft_manufacturer, ':departure_airport_icao' => $departure_airport_icao, ':departure_airport_name' => $departure_airport_name, ':departure_airport_city' => $departure_airport_city, ':departure_airport_country' => $departure_airport_country, ':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao, ':arrival_airport_name' => $arrival_airport_name, ':arrival_airport_city' => $arrival_airport_city, ':arrival_airport_country' => $arrival_airport_country, ':arrival_airport_time' => $arrival_airport_time, ':route_stop' => $route_stop, ':date' => $date,':latitude' => $latitude, ':longitude' => $longitude, ':waypoints' => $waypoints, ':altitude' => $altitude, ':heading' => $heading, ':ground_speed' => $ground_speed, ':squawk' => $squawk, ':ModeS' => $ModeS, ':pilot_id' => $pilot_id, ':pilot_name' => $pilot_name, ':verticalrate' => $verticalrate, ':format_source' => $format_source);
+	// Route is not added in spotter_archive
+	$query  = "INSERT INTO spotter_archive (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_shadow, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, departure_airport_time,arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, arrival_airport_time, route_stop, date,latitude, longitude, waypoints, altitude, heading, ground_speed, squawk, ModeS, pilot_id, pilot_name, verticalrate,format_source,over_country,source_name)
+                VALUES (:flightaware_id, :ident, :registration, :airline_name, :airline_icao, :airline_country, :airline_type, :aircraft_icao, :aircraft_shadow, :aircraft_name, :aircraft_manufacturer, :departure_airport_icao, :departure_airport_name, :departure_airport_city, :departure_airport_country, :departure_airport_time,:arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :arrival_airport_time, :route_stop, :date,:latitude, :longitude, :waypoints, :altitude, :heading, :ground_speed, :squawk, :ModeS, :pilot_id, :pilot_name, :verticalrate, :format_source, :over_country, :source_name)";
+
+        $query_values = array(':flightaware_id' => $flightaware_id, ':ident' => $ident, ':registration' => $registration, ':airline_name' => $airline_name, ':airline_icao' => $airline_icao, ':airline_country' => $airline_country, ':airline_type' => $airline_type, ':aircraft_icao' => $aircraft_icao, ':aircraft_shadow' => $aircraft_shadow, ':aircraft_name' => $aircraft_name, ':aircraft_manufacturer' => $aircraft_manufacturer, ':departure_airport_icao' => $departure_airport_icao, ':departure_airport_name' => $departure_airport_name, ':departure_airport_city' => $departure_airport_city, ':departure_airport_country' => $departure_airport_country, ':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao, ':arrival_airport_name' => $arrival_airport_name, ':arrival_airport_city' => $arrival_airport_city, ':arrival_airport_country' => $arrival_airport_country, ':arrival_airport_time' => $arrival_airport_time, ':route_stop' => $route_stop, ':date' => $date,':latitude' => $latitude, ':longitude' => $longitude, ':waypoints' => $waypoints, ':altitude' => $altitude, ':heading' => $heading, ':ground_speed' => $ground_speed, ':squawk' => $squawk, ':ModeS' => $ModeS, ':pilot_id' => $pilot_id, ':pilot_name' => $pilot_name, ':verticalrate' => $verticalrate, ':format_source' => $format_source, ':over_country' => $country, ':source_name' => $source_name);
         try {
             $sth = $this->db->prepare($query);
             $sth->execute($query_values);
@@ -39,7 +46,8 @@ class SpotterArchive {
                 date_default_timezone_set('UTC');
 
                 $ident = filter_var($ident, FILTER_SANITIZE_STRING);
-                $query  = "SELECT spotter_archive.* FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE l.ident = :ident GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate LIMIT 1";
+                //$query  = "SELECT spotter_archive.* FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE l.ident = :ident GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate LIMIT 1";
+                $query  = "SELECT spotter_archive.* FROM spotter_archive WHERE ident = :ident ORDER BY date DESC LIMIT 1";
 
                 $spotter_array = $Spotter->getDataFromDB($query,array(':ident' => $ident));
 
@@ -59,7 +67,8 @@ class SpotterArchive {
                 date_default_timezone_set('UTC');
                 $id = filter_var($id, FILTER_SANITIZE_STRING);
                 //$query  = SpotterArchive->$global_query." WHERE spotter_archive.flightaware_id = :id";
-                $query  = "SELECT spotter_archive.* FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE l.flightaware_id = :id GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate LIMIT 1";
+                //$query  = "SELECT spotter_archive.* FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE l.flightaware_id = :id GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate LIMIT 1";
+                $query  = "SELECT spotter_archive.* FROM spotter_archive WHERE l.flightaware_id = :id ORDER BY date DESC LIMIT 1";
 
 //              $spotter_array = Spotter->getDataFromDB($query,array(':id' => $id));
                   /*
@@ -548,6 +557,94 @@ class SpotterArchive {
                 }
 	}
 
-}
+    /**
+    * Gets all the spotter information based on the callsign
+    *
+    * @return Array the spotter information
+    *
+    */
+    public function getSpotterDataByIdent($ident = '', $limit = '', $sort = '')
+    {
+	$global_query = "SELECT spotter_archive_output.* FROM spotter_archive_output";
+	
+	date_default_timezone_set('UTC');
+	
+	$query_values = array();
+	
+	if ($ident != "")
+	{
+	    if (!is_string($ident))
+	    {
+		return false;
+	    } else {
+		$additional_query = " AND (spotter_archive_output.ident = :ident)";
+		$query_values = array(':ident' => $ident);
+	    }
+	}
+	
+	if ($limit != "")
+	{
+	    $limit_array = explode(",", $limit);
+	    
+	    $limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+	    $limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+	    
+	    if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+	    {
+		//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+		$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+	    }
+	}
 
+	if ($sort != "")
+	{
+	    $search_orderby_array = $this->getOrderBy();
+	    $orderby_query = $search_orderby_array[$sort]['sql'];
+	} else {
+	    $orderby_query = " ORDER BY spotter_archive_output.date DESC";
+	}
+
+	$query = $global_query." WHERE spotter_archive_output.ident <> '' ".$additional_query." ".$orderby_query;
+
+	$Spotter = new Spotter($this->db);
+	$spotter_array = $Spotter->getDataFromDB($query, $query_values, $limit_query);
+
+	return $spotter_array;
+    }
+
+    /**
+    * Gets all number of flight over countries
+    *
+    * @return Array the airline country list
+    *
+    */
+    public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '')
+    {
+	$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb 
+		    FROM countries c, spotter_archive s
+		    WHERE Within(GeomFromText(CONCAT('POINT(',s.longitude,' ',s.latitude,')')), ogc_geom) ";
+                if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+	$query .= "GROUP BY c.name ORDER BY nb DESC";
+	if ($limit) $query .= " LIMIT 0,10";
+      
+	
+	$sth = $this->db->prepare($query);
+	$sth->execute();
+ 
+	$flight_array = array();
+	$temp_array = array();
+        
+	while($row = $sth->fetch(PDO::FETCH_ASSOC))
+	{
+	    $temp_array['flight_count'] = $row['nb'];
+	    $temp_array['flight_country'] = $row['name'];
+	    $temp_array['flight_country_iso3'] = $row['iso3'];
+	    $temp_array['flight_country_iso2'] = $row['iso2'];
+	    $flight_array[] = $temp_array;
+	}
+	return $flight_array;
+    }
+
+}
 ?>

@@ -27,6 +27,7 @@ if (!empty($spotter_array))
   	<p>The statistic below shows all departure airports by Country of origin of flights with aircraft registration <strong><?php print $_GET['registration']; ?></strong>.</p>
 	<?php
 	$airport_country_array = $Spotter->countAllDepartureAirportCountriesByRegistration($_GET['registration']);
+	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>
 		<script> 
 		    google.load("visualization", "1", {packages:["geochart"]});

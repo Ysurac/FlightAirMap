@@ -8,47 +8,44 @@ if (!isset($_GET['aircraft_manufacturer'])) {
 $Spotter = new Spotter();
 $manufacturer = ucwords(str_replace("-", " ", $_GET['aircraft_manufacturer']));
 
-$spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,"0,1", $_GET['sort']);
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,"0,1", $sort);
 
 if (!empty($spotter_array))
 {
-  $title = 'Most Common Time of Day from '.$manufacturer;
+	$title = 'Most Common Time of Day from '.$manufacturer;
 	require_once('header.php');
-  
-  
-  
-  print '<div class="select-item">';
+	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/manufacturer" method="post">';
-		print '<select name="aircraft_manufacturer" class="selectpicker" data-live-search="true">';
-      print '<option></option>';
-      $all_manufacturers = $Spotter->getAllManufacturers();
-      foreach($all_manufacturers as $all_manufacturer)
-      {
-        if($_GET['aircraft_manufacturer'] == strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])))
-        {
-          print '<option value="'.strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])).'" selected="selected">'.$all_manufacturer['aircraft_manufacturer'].'</option>';
-        } else {
-          print '<option value="'.strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])).'">'.$all_manufacturer['aircraft_manufacturer'].'</option>';
-        }
-      }
-    print '</select>';
+	print '<select name="aircraft_manufacturer" class="selectpicker" data-live-search="true">';
+	print '<option></option>';
+	$all_manufacturers = $Spotter->getAllManufacturers();
+	foreach($all_manufacturers as $all_manufacturer)
+	{
+		if($_GET['aircraft_manufacturer'] == strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])))
+		{
+			print '<option value="'.strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])).'" selected="selected">'.$all_manufacturer['aircraft_manufacturer'].'</option>';
+		} else {
+			print '<option value="'.strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])).'">'.$all_manufacturer['aircraft_manufacturer'].'</option>';
+		}
+	}
+	print '</select>';
 	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
 	print '</form>';
-  print '</div>';
-	
-	print '<div class="info column">';
-  	print '<h1>'.$manufacturer.'</h1>';
-  print '</div>';
+	print '</div>';
 
-  include('manufacturer-sub-menu.php');
-  
-  print '<div class="column">';
-  	print '<h2>Most Common Time of Day</h2>';
-  	print '<p>The statistic below shows the most common time of day from <strong>'.$manufacturer.'</strong>.</p>';
-  	
-      $hour_array = $Spotter->countAllHoursByManufacturer($manufacturer);
-      
-      print '<div id="chartHour" class="chart" width="100%"></div>
+	print '<div class="info column">';
+	print '<h1>'.$manufacturer.'</h1>';
+	print '</div>';
+
+	include('manufacturer-sub-menu.php');
+	print '<div class="column">';
+	print '<h2>Most Common Time of Day</h2>';
+	print '<p>The statistic below shows the most common time of day from <strong>'.$manufacturer.'</strong>.</p>';
+
+	$hour_array = $Spotter->countAllHoursByManufacturer($manufacturer);
+	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+	print '<div id="chartHour" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});
           google.setOnLoadCallback(drawChart);
@@ -56,13 +53,13 @@ if (!empty($spotter_array))
             var data = google.visualization.arrayToDataTable([
             	["Hour", "# of Flights"], ';
             	$hour_data = '';
-              foreach($hour_array as $hour_item)
-    					{
-    						$hour_data .= '[ "'.date("ga", strtotime($hour_item['hour_name'].":00")).'",'.$hour_item['hour_count'].'],';
-    					}
-    					$hour_data = substr($hour_data, 0, -1);
-    					print $hour_data;
-            print ']);
+	foreach($hour_array as $hour_item)
+	{
+		$hour_data .= '[ "'.date("ga", strtotime($hour_item['hour_name'].":00")).'",'.$hour_item['hour_count'].'],';
+	}
+	$hour_data = substr($hour_data, 0, -1);
+	print $hour_data;
+	print ']);
     
             var options = {
             	legend: {position: "none"},
@@ -80,22 +77,13 @@ if (!empty($spotter_array))
     			  drawChart();
     			});
       </script>';
-  print '</div>';
-  
-  
+	print '</div>';
 } else {
-
 	$title = "Manufacturer";
 	require_once('header.php');
-	
 	print '<h1>Error</h1>';
-
-   print '<p>Sorry, the aircraft manufacturer does not exist in this database. :(</p>';
+	print '<p>Sorry, the aircraft manufacturer does not exist in this database. :(</p>';
 }
 
-
-?>
-
-<?php
 require_once('footer.php');
 ?>

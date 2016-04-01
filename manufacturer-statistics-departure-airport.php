@@ -50,6 +50,7 @@ if (!empty($spotter_array))
   	<?php
     	 $airport_airport_array = $Spotter->countAllDepartureAirportsByManufacturer($manufacturer);
     	?>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
     	<script>
     	google.load("visualization", "1", {packages:["geochart"]});
     	google.setOnLoadCallback(drawCharts);

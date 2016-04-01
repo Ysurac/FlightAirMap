@@ -30,6 +30,7 @@ if (!empty($spotter_array))
 	print '<p>The statistic below shows the most common airlines by Country of origin of flights on <strong>'.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])).'</strong>.</p>';
 
 	$airline_array = $Spotter->countAllAirlineCountriesByDate($_GET['date']);
+	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>
 	<script> 
       		google.load("visualization", "1", {packages:["geochart"]});

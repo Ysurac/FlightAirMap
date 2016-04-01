@@ -37,6 +37,8 @@ class aprs {
 	    $result['ident'] = $ident;
 	} else return false;
 	$elements = explode(',',$all_elements);
+	$source = end($elements);
+	$result['source'] = $source;
 	foreach ($elements as $element) {
 	    if (preg_match('/^([a-zA-Z0-9-]{1,9})([*]?)$/',$element)) {
 	        //echo "ok";
@@ -145,7 +147,7 @@ class aprs {
 		    
 		    // OGN comment
 		   // echo "Before OGN : ".$body_parse."\n";
-		    if (preg_match('/^id([0-9A-F]{8}) ([+-])([0-9]{3,4})fpm ([+-])([0-9.]{3})rot (.*)$/',$body_parse,$matches)) {
+		    if (preg_match('/^id([0-9A-F]{8}) ([+-])([0-9]{3,4})fpm ([+-])([0-9.]{3,4})rot (.*)$/',$body_parse,$matches)) {
 			$id = $matches[1];
 			$mode = substr($id,0,2);
 			$address = substr($id,2);
@@ -221,6 +223,6 @@ class aprs {
 }
 /*
 $aprs = new aprs();
-$aprs->flarmnet();
+print_r($aprs->parse('ICA400EE9>APRS,qAS,UKHUN:/083216h5138.51N\00121.61W^279/050/A=003949 !W25! id21400EE9 -8988fpm -10.2rot 10.8dB 0e -6.9kHz gps5x7'));
   */
 ?>

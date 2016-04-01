@@ -4,7 +4,7 @@ require_once(dirname(__FILE__).'/settings.php');
 class Connection{
 	public $db = null;
 	public $dbs = array();
-	public $latest_schema = 19;
+	public $latest_schema = 20;
 	
 	public function __construct($dbc = null,$dbname = null) {
 	    global $globalDBdriver;
@@ -58,8 +58,9 @@ class Connection{
 			$globalDBSpass = $globalDB[$DBname]['pass'];
 			if (isset($globalDB[$DBname]['port'])) $globalDBSport = $globalDB[$DBname]['port'];
 			else $globalDBSport = 3306;
-                }
-                if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry == null) $globalDBretry = 5;
+		}
+		// Set number of try to connect to DB
+		if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry == null) $globalDBretry = 5;
 		$i = 0;
 		while (true) {
 			try {

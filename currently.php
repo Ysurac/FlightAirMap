@@ -9,9 +9,9 @@ $SpotterLive=new SpotterLive();
 //calculuation for the pagination
 if(!isset($_GET['limit']))
 {
-  $limit_start = 0;
-  $limit_end = 25;
-  $absolute_difference = 25;
+	$limit_start = 0;
+	$limit_end = 25;
+	$absolute_difference = 25;
 }  else {
 	$limit_explode = explode(",", $_GET['limit']);
 	$limit_start = $limit_explode[0];

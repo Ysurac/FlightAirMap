@@ -61,6 +61,7 @@ if (!empty($spotter_array))
   	<p>The statistic below shows all arrival airports by Country of origin of flights from <strong><?php print $spotter_array[0]['airline_name']; ?></strong>.</p>
   	<?php
 	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByAirline($_GET['airline']);
+	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["geochart"]});

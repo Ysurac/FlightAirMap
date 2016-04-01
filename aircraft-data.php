@@ -84,16 +84,26 @@ if (isset($spotter_item['registration']) && $spotter_item['registration'] != '')
 print '<div><span>Speed</span>'.$spotter_item['ground_speed'].' knots - '.round($spotter_item['ground_speed']*1.852).' km/h</div>';
 print '<div><span>Coordinates</span>'.$spotter_item['latitude'].', '.$spotter_item['longitude'].'</div>';
 print '<div><span>Heading</span>'.$spotter_item['heading'].'</div>';
-if (isset($spotter_item['pilot_name'])) {
+if (isset($spotter_item['pilot_name']) && $spotter_item['pilot_name'] != '') {
 	print '<div><span>Pilot</span>';
 	if (isset($spotter_item['pilot_id'])) print $spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')';
 	else print $spotter_item['pilot_name'];
 	print '</div>';
 }
 
-if (isset($spotter_item['aircraft_owner'])) {
+if (isset($spotter_item['aircraft_owner']) && $spotter_item['aircraft_owner'] != '') {
 	print '<div><span>Owner</span>';
 	print $spotter_item['aircraft_owner'];
+	print '</div>';
+}
+if (isset($spotter_item['over_country']) && $spotter_item['over_country'] != '') {
+	print '<div><span>Over country</span>';
+	print $spotter_item['over_country'];
+	print '</div>';
+}
+if (isset($spotter_item['source_name']) && $spotter_item['source_name'] != '') {
+	print '<div><span>Source</span>';
+	print $spotter_item['source_name'];
 	print '</div>';
 }
 print '</div>';
@@ -105,10 +115,3 @@ if (isset($spotter_item['squawk']) && $spotter_item['squawk'] != '' && $spotter_
 print '</div>';
 ?>
 </div>
-
-<?php
-/*
-</body>
-</html>
-*/
-?>

@@ -359,7 +359,7 @@ class Spotter{
 	{
 		global $globalTimezone;
 		date_default_timezone_set('UTC');
-		
+
 		$query_values = array();
 		$additional_query = '';
 		if ($q != "")
@@ -368,10 +368,9 @@ class Spotter{
 			{
 				return false;
 			} else {
-			    
 				$q_array = explode(" ", $q);
-		    	
 				foreach ($q_array as $q_item){
+					$q_item = filter_var($q_item,FILTER_SANITIZE_STRING);
 					$additional_query .= " AND (";
 					$additional_query .= "(spotter_output.spotter_id like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.aircraft_icao like '%".$q_item."%') OR ";
@@ -398,37 +397,43 @@ class Spotter{
 				}
 			}
 		}
-		
+
 		if ($registration != "")
 		{
+			$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 			if (!is_string($registration))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.registration = '".$registration."')";
+				$additional_query .= " AND spotter_output.registration = :registration";
+				$query_values = array_merge($query_values,array(':registration' => $registration));
 			}
 		}
-		
+
 		if ($aircraft_icao != "")
 		{
+			$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 			if (!is_string($aircraft_icao))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.aircraft_icao = '".$aircraft_icao."')";
+				$additional_query .= " AND spotter_output.aircraft_icao = :aircraft_icao";
+				$query_values = array_merge($query_values,array(':aircraft_icao' => $aircraft_icao));
 			}
 		}
-		
+
 		if ($aircraft_manufacturer != "")
 		{
+			$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 			if (!is_string($aircraft_manufacturer))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.aircraft_manufacturer = '".$aircraft_manufacturer."')";
+				$additional_query .= " AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer";
+				$query_values = array_merge($query_values,array(':aircraft_manufacturer' => $aircraft_manufacturer));
 			}
 		}
-		
+
 		if ($highlights == "true")
 		{
 			if (!is_string($highlights))
@@ -438,27 +443,31 @@ class Spotter{
 				$additional_query .= " AND (spotter_output.highlight <> '')";
 			}
 		}
-		
+
 		if ($airline_icao != "")
 		{
+			$registration = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 			if (!is_string($airline_icao))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.airline_icao = '".$airline_icao."')";
+				$additional_query .= " AND spotter_output.airline_icao = :airline_icao";
+				$query_values = array_merge($query_values,array(':airline_icao' => $airline_icao));
 			}
 		}
-		
+
 		if ($airline_country != "")
 		{
+			$airline_country = filter_var($airline_country,FILTER_SANITIZE_STRING);
 			if (!is_string($airline_country))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.airline_country = '".$airline_country."')";
+				$additional_query .= " AND spotter_output.airline_country = :airline_country";
+				$query_values = array_merge($query_values,array(':airline_country' => $airline_country));
 			}
 		}
-		
+
 		if ($airline_type != "")
 		{
 			if (!is_string($airline_type))
@@ -479,94 +488,108 @@ class Spotter{
 				}
 			}
 		}
-		
+
 		if ($airport != "")
 		{
+			$airport = filter_var($airport,FILTER_SANITIZE_STRING);
 			if (!is_string($airport))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND ((spotter_output.departure_airport_icao = '".$airport."') OR (spotter_output.arrival_airport_icao = '".$airport."'))";
+				$additional_query .= " AND (spotter_output.departure_airport_icao = :airport OR spotter_output.arrival_airport_icao = :airport)";
+				$query_values = array_merge($query_values,array(':airport' => $airport));
 			}
 		}
-		
+
 		if ($airport_country != "")
 		{
+			$airport_country = filter_var($airport_country,FILTER_SANITIZE_STRING);
 			if (!is_string($airport_country))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND ((spotter_output.departure_airport_country = '".$airport_country."') OR (spotter_output.arrival_airport_country = '".$airport_country."'))";
+				$additional_query .= " AND (spotter_output.departure_airport_country = :airport_country OR spotter_output.arrival_airport_country = :airport_country)";
+				$query_values = array_merge($query_values,array(':airport_country' => $airport_country));
 			}
 		}
     
 		if ($callsign != "")
 		{
+			$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 			if (!is_string($callsign))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.ident = '".$callsign."')";
+				$additional_query .= " AND spotter_output.ident = :callsign";
+				$query_values = array_merge($query_values,array(':callsign' => $callsign));
 			}
 		}
 
 		if ($owner != "")
 		{
+			$owner = filter_var($owner,FILTER_SANITIZE_STRING);
 			if (!is_string($owner))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.owner_name = '".$owner."')";
+				$additional_query .= " AND spotter_output.owner_name = :owner";
+				$query_values = array_merge($query_values,array(':owner' => $owner));
 			}
 		}
 
 		if ($pilot_name != "")
 		{
+			$pilot_name = filter_var($pilot_name,FILTER_SANITIZE_STRING);
 			if (!is_string($pilot_name))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.pilot_name = '".$pilot_name."')";
+				$additional_query .= " AND spotter_output.pilot_name = :pilot_name";
+				$query_values = array_merge($query_values,array(':pilot_name' => $pilot_name));
 			}
 		}
-		
+
 		if ($pilot_id != "")
 		{
+			$pilot_id = filter_var($pilot_id,FILTER_SANITIZE_NUMBER_INT);
 			if (!is_string($pilot_id))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.pilot_id = '".$pilot_id."')";
+				$additional_query .= " AND spotter_output.pilot_id = :pilot_id";
+				$query_values = array_merge($query_values,array(':pilot_id' => $pilot_id));
 			}
 		}
-		
+
 		if ($departure_airport_route != "")
 		{
+			$departure_airport_route = filter_var($departure_airport_route,FILTER_SANITIZE_STRING);
 			if (!is_string($departure_airport_route))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.departure_airport_icao = '".$departure_airport_route."')";
+				$additional_query .= " AND spotter_output.departure_airport_icao = :departure_airport_route";
+				$query_values = array_merge($query_values,array(':departure_airport_route' => $departure_airport_route));
 			}
 		}
-		
+
 		if ($arrival_airport_route != "")
 		{
+			$arrival_airport_route = filter_var($arrival_airport_route,FILTER_SANITIZE_STRING);
 			if (!is_string($arrival_airport_route))
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.arrival_airport_icao = '".$arrival_airport_route."')";
+				$additional_query .= " AND spotter_output.arrival_airport_icao = :arrival_airport_route";
+				$query_values = array_merge($query_values,array(':arrival_airport_route' => $arrival_airport_route));
 			}
 		}
-		
+
 		if ($altitude != "")
 		{
 			$altitude_array = explode(",", $altitude);
-			
 			$altitude_array[0] = filter_var($altitude_array[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$altitude_array[1] = filter_var($altitude_array[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
-			
 
 			if ($altitude_array[1] != "")
 			{                
@@ -578,34 +601,30 @@ class Spotter{
 				$additional_query .= " AND altitude <= '".$altitude_array[0]."' ";
 			}
 		}
-		
+
 		if ($date_posted != "")
 		{
 			$date_array = explode(",", $date_posted);
-			
 			$date_array[0] = filter_var($date_array[0],FILTER_SANITIZE_STRING);
 			$date_array[1] = filter_var($date_array[1],FILTER_SANITIZE_STRING);
-			
+
 			if ($globalTimezone != '') {
 				date_default_timezone_set($globalTimezone);
 				$datetime = new DateTime();
 				$offset = $datetime->format('P');
 			} else $offset = '+00:00';
 
-
 			if ($date_array[1] != "")
-			{                
+			{
 				$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
 				$date_array[1] = date("Y-m-d H:i:s", strtotime($date_array[1]));
 				$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' AND TIMESTAMP(CONVERT_TZ(spotter_output.date,'+00:00', '".$offset."')) <= '".$date_array[1]."' ";
 			} else {
 				$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
-              
 				$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' ";
-              
 			}
 		}
-		
+
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
@@ -618,8 +637,8 @@ class Spotter{
 				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
 				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
-		}
-		
+		} else $limit_query = "";
+
 		if ($sort != "")
 		{
 			$search_orderby_array = $this->getOrderBy();
@@ -627,10 +646,10 @@ class Spotter{
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
-		
+
 		if ($includegeodata == "true")
 		{
-			$additional_query .= " AND (spotter_output.waypoints <> '')";
+			$additional_query .= " AND spotter_output.waypoints <> ''";
 		}
 
 		$query  = "SELECT spotter_output.* FROM spotter_output 
@@ -638,8 +657,7 @@ class Spotter{
 					".$additional_query."
 					".$orderby_query;
 
-		$spotter_array = $this->getDataFromDB($query, array(),$limit_query);
-
+		$spotter_array = $this->getDataFromDB($query, $query_values,$limit_query);
 		return $spotter_array;
 	}
 	
@@ -2125,7 +2143,7 @@ class Spotter{
 								ORDER BY spotter_output.aircraft_name ASC";
 								
 		*/
-		$query = "SELECT DISTINCT icao AS aircraft_icao, type AS aircraft_name, manufacturer AS aircraft_manufacturer FROM aircraft WHERE icao <> '' ORDER BY icao ASC";
+		$query = "SELECT DISTINCT icao AS aircraft_icao, type AS aircraft_name, manufacturer AS aircraft_manufacturer FROM aircraft WHERE icao <> '' ORDER BY aircraft_name ASC";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute();
@@ -2200,7 +2218,7 @@ class Spotter{
 								FROM spotter_output
 								WHERE spotter_output.airline_icao <> '' 
 								AND spotter_output.airline_type = :airline_type 
-								ORDER BY spotter_output.airline_name ASC";
+								ORDER BY spotter_output.airline_icao ASC";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -2239,7 +2257,7 @@ class Spotter{
 								WHERE spotter_output.airline_country <> '' 
 								ORDER BY spotter_output.airline_country ASC";						
 		*/
-		$query = "SELECT DISTINCT country AS airline_country FROM airlines WHERE country <> '' ORDER BY country ASC";
+		$query = "SELECT DISTINCT country AS airline_country FROM airlines WHERE country <> '' AND active = 'Y' ORDER BY country ASC";
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 
@@ -2699,7 +2717,7 @@ class Spotter{
 	* @return String success or false
 	*
 	*/	
-	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '')
+	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '', $source_name = '')
 	{
 		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS;
 		
@@ -2929,8 +2947,8 @@ class Spotter{
                 if ($heading == '' || $Common->isInteger($heading) == false) $heading = 0;
                 if ($groundspeed == '' || $Common->isInteger($groundspeed) == false) $groundspeed = 0;
                 if (!isset($aircraft_owner)) $aircraft_owner = NULL;
-                $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop,highlight,ModeS, pilot_id, pilot_name, verticalrate, owner_name, ground, format_source) 
-                VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time, :squawk, :route_stop, :highlight, :ModeS, :pilot_id, :pilot_name, :verticalrate, :owner_name,:ground, :format_source)";
+                $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop,highlight,ModeS, pilot_id, pilot_name, verticalrate, owner_name, ground, format_source, source_name) 
+                VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time, :squawk, :route_stop, :highlight, :ModeS, :pilot_id, :pilot_name, :verticalrate, :owner_name,:ground, :format_source, :source_name)";
 
                 $airline_name = $airline_array[0]['name'];
                 $airline_icao = $airline_array[0]['icao'];
@@ -2945,7 +2963,7 @@ class Spotter{
                 $arrival_airport_name = $arrival_airport_array[0]['name'];
                 $arrival_airport_city = $arrival_airport_array[0]['city'];
                 $arrival_airport_country = $arrival_airport_array[0]['country'];
-                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_name,':airline_icao' => $airline_icao,':airline_country' => $airline_country,':airline_type' => $airline_type,':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_type,':aircraft_manufacturer' => $aircraft_manufacturer,':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_name,':departure_airport_city' => $departure_airport_city,':departure_airport_country' => $departure_airport_country,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_name,':arrival_airport_city' => $arrival_airport_city,':arrival_airport_country' => $arrival_airport_country,':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date,':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk, ':route_stop' => $route_stop, ':highlight' => $highlight, ':ModeS' => $ModeS, ':pilot_id' => $pilot_id, ':pilot_name' => $pilot_name, ':verticalrate' => $verticalrate, ':owner_name' => $aircraft_owner, ':format_source' => $format_source, ':ground' => $ground);
+                $query_values = array(':flightaware_id' => $flightaware_id,':ident' => $ident, ':registration' => $registration,':airline_name' => $airline_name,':airline_icao' => $airline_icao,':airline_country' => $airline_country,':airline_type' => $airline_type,':aircraft_icao' => $aircraft_icao,':aircraft_type' => $aircraft_type,':aircraft_manufacturer' => $aircraft_manufacturer,':departure_airport_icao' => $departure_airport_icao,':departure_airport_name' => $departure_airport_name,':departure_airport_city' => $departure_airport_city,':departure_airport_country' => $departure_airport_country,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_name' => $arrival_airport_name,':arrival_airport_city' => $arrival_airport_city,':arrival_airport_country' => $arrival_airport_country,':latitude' => $latitude,':longitude' => $longitude, ':waypoints' => $waypoints,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date,':departure_airport_time' => $departure_airport_time,':arrival_airport_time' => $arrival_airport_time, ':squawk' => $squawk, ':route_stop' => $route_stop, ':highlight' => $highlight, ':ModeS' => $ModeS, ':pilot_id' => $pilot_id, ':pilot_name' => $pilot_name, ':verticalrate' => $verticalrate, ':owner_name' => $aircraft_owner, ':format_source' => $format_source, ':ground' => $ground, ':source_name' => $source_name);
 
 		try {
 		        
@@ -3013,23 +3031,24 @@ class Spotter{
 			} else {
 		    	$q_array = explode(" ", $q);
 		    	foreach ($q_array as $q_item){
-		    		$additional_query .= " AND (";
-						$additional_query .= "(spotter_output.aircraft_icao like '%".$q_item."%') OR ";
-		        		$additional_query .= "(spotter_output.aircraft_name like '%".$q_item."%') OR ";
-		        		$additional_query .= "(spotter_output.aircraft_manufacturer like '%".$q_item."%') OR ";
-		        		$additional_query .= "(spotter_output.airline_icao like '%".$q_item."%') OR ";
-		        		$additional_query .= "(spotter_output.departure_airport_icao like '%".$q_item."%') OR ";
-		        		$additional_query .= "(spotter_output.arrival_airport_icao like '%".$q_item."%') OR ";
-		        		$additional_query .= "(spotter_output.registration like '%".$q_item."%') OR ";
-		        		$additional_query .= "(spotter_output.ident like '%".$q_item."%')";
-	        		$additional_query .= ")";
-	      		}
+		    		$q_item = filter_var($q_item,FILTER_SANITIZE_STRING);
+				$additional_query .= " AND (";
+				$additional_query .= "(spotter_output.aircraft_icao like '%".$q_item."%') OR ";
+				$additional_query .= "(spotter_output.aircraft_name like '%".$q_item."%') OR ";
+				$additional_query .= "(spotter_output.aircraft_manufacturer like '%".$q_item."%') OR ";
+				$additional_query .= "(spotter_output.airline_icao like '%".$q_item."%') OR ";
+				$additional_query .= "(spotter_output.departure_airport_icao like '%".$q_item."%') OR ";
+				$additional_query .= "(spotter_output.arrival_airport_icao like '%".$q_item."%') OR ";
+				$additional_query .= "(spotter_output.registration like '%".$q_item."%') OR ";
+				$additional_query .= "(spotter_output.ident like '%".$q_item."%')";
+				$additional_query .= ")";
+			}
 			}
 		}
 
 		$query  = "SELECT spotter_output.* FROM spotter_output 
-								WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 20 SECOND) ".$additional_query." 
-								AND spotter_output.date < UTC_TIMESTAMP()";
+				WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 20 SECOND) ".$additional_query." 
+				AND spotter_output.date < UTC_TIMESTAMP()";
       
 		$spotter_array = $this->getDataFromDB($query, array());
 
@@ -3709,7 +3728,6 @@ class Spotter{
 			$temp_array['flight_country_iso2'] = $row['iso2'];
 			$flight_array[] = $temp_array;
 		}
-
 		return $flight_array;
 	}
 	

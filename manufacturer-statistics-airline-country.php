@@ -47,7 +47,7 @@ if (!empty($spotter_array))
   	print '<p>The statistic below shows the most common airlines by Country of origin of flights from <strong>'.$manufacturer.'</strong>.</p>';
 
 	  $airline_array = $Spotter->countAllAirlineCountriesByManufacturer($manufacturer);
-      
+	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
       print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["geochart"]});

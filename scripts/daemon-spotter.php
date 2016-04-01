@@ -661,6 +661,7 @@ while ($i > 0) {
 				    $data['noarchive'] = true;
     				    $data['id_source'] = $id_source;
 				    $data['format_source'] = 'aprs';
+				    $data['source_name'] = $line['source'];
 				    //print_r($data);
 				    if ($line['stealth'] == 0) $send = $SI->add($data);
 				    unset($data);

@@ -8,54 +8,52 @@ if (!isset($_GET['country'])) {
 $Spotter = new Spotter();
 $country = ucwords(str_replace("-", " ", $_GET['country']));
 
-$spotter_array = $Spotter->getSpotterDataByCountry($country, "0,1", $_GET['sort']);
-
+if (isset($_GET['sort'])) {
+	$spotter_array = $Spotter->getSpotterDataByCountry($country, "0,1", $_GET['sort']);
+} else {
+	$spotter_array = $Spotter->getSpotterDataByCountry($country, "0,1", '');
+}
 
 if (!empty($spotter_array))
 {
-  $title = 'Most Common Departure Airports from '.$country;
+	$title = 'Most Common Departure Airports from '.$country;
 	require_once('header.php');
-  
-  
-  
-  print '<div class="select-item">';
+	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/country" method="post">';
-		print '<select name="country" class="selectpicker" data-live-search="true">';
-      print '<option></option>';
-      $all_countries = $Spotter->getAllCountries();
-      foreach($all_countries as $all_country)
-      {
-        if($country == $all_country['country'])
-        {
-          print '<option value="'.strtolower(str_replace(" ", "-", $all_country['country'])).'" selected="selected">'.$all_country['country'].'</option>';
-        } else {
-          print '<option value="'.strtolower(str_replace(" ", "-", $all_country['country'])).'">'.$all_country['country'].'</option>';
-        }
-      }
-    print '</select>';
+	print '<select name="country" class="selectpicker" data-live-search="true">';
+	print '<option></option>';
+	$all_countries = $Spotter->getAllCountries();
+	foreach($all_countries as $all_country)
+	{
+		if($country == $all_country['country'])
+		{
+			print '<option value="'.strtolower(str_replace(" ", "-", $all_country['country'])).'" selected="selected">'.$all_country['country'].'</option>';
+		} else {
+			print '<option value="'.strtolower(str_replace(" ", "-", $all_country['country'])).'">'.$all_country['country'].'</option>';
+		}
+	}
+	print '</select>';
 	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
 	print '</form>';
-  print '</div>';
-  
-  if ($_GET['country'] != "NA")
-  {
-	print '<div class="info column">';
-		print '<h1>Airports &amp; Airlines from '.$country.'</h1>';
 	print '</div>';
-  } else {
-	  print '<div class="alert alert-warning">This special country profile shows all flights that do <u>not</u> have a country of a airline or departure/arrival airport associated with them.</div>';
-  }
-	
+	if ($_GET['country'] != "NA")
+	{
+		print '<div class="info column">';
+		print '<h1>Airports &amp; Airlines from '.$country.'</h1>';
+		print '</div>';
+	} else {
+		print '<div class="alert alert-warning">This special country profile shows all flights that do <u>not</u> have a country of a airline or departure/arrival airport associated with them.</div>';
+	}
+
 	include('country-sub-menu.php');
-  
-  print '<div class="column">';
-  	print '<h2>Most Common Departure Airports</h2>';
-  	
-  	?>
-  	<p>The statistic below shows all departure airports of flights of airports &amp; airlines from <strong><?php print $country; ?></strong>.</p>
-  	<?php
-    	 $airport_airport_array = $Spotter->countAllDepartureAirportsByCountry($country);
-    	?>
+	print '<div class="column">';
+	print '<h2>Most Common Departure Airports</h2>';
+?>
+	<p>The statistic below shows all departure airports of flights of airports &amp; airlines from <strong><?php print $country; ?></strong>.</p>
+<?php
+	$airport_airport_array = $Spotter->countAllDepartureAirportsByCountry($country);
+?>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
     	<script>
     	google.load("visualization", "1", {packages:["geochart"]});
     	google.setOnLoadCallback(drawCharts);
@@ -66,18 +64,18 @@ if (!empty($spotter_array))
     
         var data = google.visualization.arrayToDataTable([ 
         	["Airport", "# of Times"],
-        	<?php
-        $airport_data = '';
-          foreach($airport_airport_array as $airport_item)
-    			{
-    				$name = $airport_item['airport_departure_city'].', '.$airport_item['airport_departure_country'].' ('.$airport_item['airport_departure_icao'].')';
-    				$name = str_replace("'", "", $name);
-    				$name = str_replace('"', "", $name);
-    				$airport_data .= '[ "'.$name.'",'.$airport_item['airport_departure_icao_count'].'],';
-    			}
-    			$airport_data = substr($airport_data, 0, -1);
-    			print $airport_data;
-    			?>
+<?php
+	$airport_data = '';
+	foreach($airport_airport_array as $airport_item)
+	{
+		$name = $airport_item['airport_departure_city'].', '.$airport_item['airport_departure_country'].' ('.$airport_item['airport_departure_icao'].')';
+		$name = str_replace("'", "", $name);
+		$name = str_replace('"', "", $name);
+		$airport_data .= '[ "'.$name.'",'.$airport_item['airport_departure_icao_count'].'],';
+	}
+	$airport_data = substr($airport_data, 0, -1);
+	print $airport_data;
+?>
         ]);
     
         var options = {
@@ -95,54 +93,42 @@ if (!empty($spotter_array))
       
     	<div id="chartAirport" class="chart" width="100%"></div>
 
-    	<?php
-       print '<div class="table-responsive">';
-           print '<table class="common-airport table-striped">';
-            print '<thead>';
-              print '<th></th>';
-              print '<th>Airport</th>';
-              print '<th>Country</th>';
-              print '<th># of times</th>';
-            print '</thead>';
-            print '<tbody>';
-            $i = 1;
-              foreach($airport_airport_array as $airport_item)
-              {
-                print '<tr>';
-                	print '<td><strong>'.$i.'</strong></td>';
-                  print '<td>';
-                    print '<a href="'.$globalURL.'/airport/'.$airport_item['airport_departure_icao'].'">'.$airport_item['airport_departure_city'].', '.$airport_item['airport_departure_country'].' ('.$airport_item['airport_departure_icao'].')</a>';
-                  print '</td>';
-                  print '<td>';
-                    print '<a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $airport_item['airport_departure_country'])).'">'.$airport_item['airport_departure_country'].'</a>';
-                  print '</td>';
-                  print '<td>';
-                    print $airport_item['airport_departure_icao_count'];
-                  print '</td>';
-                print '</tr>';
-                $i++;
-              }
-            print '<tbody>';
-          print '</table>';
-      print '</div>';
-      ?>
-  	<?php
-  print '</div>';
-  
-  
+<?php
+	print '<div class="table-responsive">';
+	print '<table class="common-airport table-striped">';
+	print '<thead>';
+	print '<th></th>';
+	print '<th>Airport</th>';
+	print '<th>Country</th>';
+	print '<th># of times</th>';
+	print '</thead>';
+	print '<tbody>';
+	$i = 1;
+	foreach($airport_airport_array as $airport_item)
+	{
+		print '<tr>';
+		print '<td><strong>'.$i.'</strong></td>';
+		print '<td>';
+		print '<a href="'.$globalURL.'/airport/'.$airport_item['airport_departure_icao'].'">'.$airport_item['airport_departure_city'].', '.$airport_item['airport_departure_country'].' ('.$airport_item['airport_departure_icao'].')</a>';
+		print '</td>';
+		print '<td>';
+		print '<a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $airport_item['airport_departure_country'])).'">'.$airport_item['airport_departure_country'].'</a>';
+		print '</td>';
+		print '<td>';
+		print $airport_item['airport_departure_icao_count'];
+		print '</td>';
+		print '</tr>';
+		$i++;
+	}
+	print '<tbody>';
+	print '</table>';
+	print '</div>';
+	print '</div>';
 } else {
-
 	$title = "Country";
 	require_once('header.php');
-	
 	print '<h1>Error</h1>';
-
-  print '<p>Sorry, the country does not exist in this database. :(</p>';  
+	print '<p>Sorry, the country does not exist in this database. :(</p>';  
 }
-
-
-?>
-
-<?php
 require_once('footer.php');
 ?>

@@ -51,6 +51,7 @@ if (!empty($spotter_array))
 	print '<p>The statistic below shows the most common airlines by Country of origin of flights from <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
 
 	$airline_array = $Spotter->countAllAirlineCountriesByAircraft($_GET['aircraft_type']);
+	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>
 	    <script> 
 		google.load("visualization", "1", {packages:["geochart"]});
@@ -59,13 +60,13 @@ if (!empty($spotter_array))
         	    var data = google.visualization.arrayToDataTable([
             		["Country", "# of Times"], ';
             		$country_data = '';
-            		foreach($airline_array as $airline_item)
-    			{
-    				$country_data .= '[ "'.$airline_item['airline_country'].'",'.$airline_item['airline_country_count'].'],';
-    			}
-    			$country_data = substr($country_data, 0, -1);
-    			print $country_data;
-        		print ']);
+	foreach($airline_array as $airline_item)
+	{
+		$country_data .= '[ "'.$airline_item['airline_country'].'",'.$airline_item['airline_country_count'].'],';
+	}
+	$country_data = substr($country_data, 0, -1);
+	print $country_data;
+	print ']);
 		    var options = {
             		legend: {position: "none"},
             		chartArea: {"width": "80%", "height": "60%"},
@@ -82,25 +83,25 @@ if (!empty($spotter_array))
 	if (!empty($airline_array))
 	{
 		print '<div class="table-responsive">';
-            print '<table class="common-country">';
-              print '<thead>';
-              	print '<th></th>';
-                print '<th>Country</th>';
-                print '<th># of times</th>';
-              print '</thead>';
-              print '<tbody>';
-              $i = 1;
-                foreach($airline_array as $airline_item)
-                {
-                  print '<tr>';
-                  	print '<td><strong>'.$i.'</strong></td>';
-                    print '<td>';
-                      print '<a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $airline_item['airline_country'])).'">'.$airline_item['airline_country'].'</a>';
-                    print '</td>';
-                    print '<td>';
-                      print $airline_item['airline_country_count'];
-                    print '</td>';
-                  print '</tr>';
+		print '<table class="common-country">';
+		print '<thead>';
+		print '<th></th>';
+		print '<th>Country</th>';
+		print '<th># of times</th>';
+		print '</thead>';
+		print '<tbody>';
+		$i = 1;
+		foreach($airline_array as $airline_item)
+		{
+			print '<tr>';
+			print '<td><strong>'.$i.'</strong></td>';
+			print '<td>';
+			print '<a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $airline_item['airline_country'])).'">'.$airline_item['airline_country'].'</a>';
+			print '</td>';
+			print '<td>';
+			print $airline_item['airline_country_count'];
+			print '</td>';
+			print '</tr>';
 			$i++;
 		}
 		print '<tbody>';

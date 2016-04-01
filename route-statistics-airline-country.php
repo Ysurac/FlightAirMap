@@ -29,7 +29,8 @@ $spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_G
   	print '<p>The statistic below shows the most common airlines by Country of origin of flights between <strong>'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</strong> and <strong>'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</strong>.</p>';
 
 	 $airline_array = $Spotter->countAllAirlineCountriesByRoute($_GET['departure_airport'], $_GET['arrival_airport']);
-      
+
+	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
       print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["geochart"]});

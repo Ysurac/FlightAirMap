@@ -35,6 +35,8 @@ CREATE TABLE spotter_live (
   pilot_name varchar(255),
   verticalrate integer,
   format_source varchar(255),
+  source_name varchar(255) DEFAULT NULL,
+  over_country varchar(5) DEFAULT NULL,
   ground integer NOT NULL DEFAULT '0',
   PRIMARY KEY (spotter_live_id)
 );

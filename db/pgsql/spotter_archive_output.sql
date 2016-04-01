@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS spotter_archive_output (
   verticalrate integer DEFAULT NULL,
   owner_name varchar(255) DEFAULT NULL,
   format_source varchar(255) DEFAULT NULL,
+  source_name varchar(255) DEFAULT NULL,
   ground integer NOT NULL DEFAULT '0',
   last_ground integer NOT NULL DEFAULT '0',
   last_seen timestamp DEFAULT NULL,

@@ -30,8 +30,14 @@ if (!isset($_GET['ident'])){
 	if (isset($_GET['sort'])) 
 	{
 		$spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference, $_GET['sort']);
+		if (empty($spotter_array)) {
+			$spotter_array = $SpotterArchive->getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference, $_GET['sort']);
+		}
 	} else {
 		$spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference);
+		if (empty($spotter_array)) {
+			$spotter_array = $SpotterArchive->getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference);
+		}
 	}
 	
 	

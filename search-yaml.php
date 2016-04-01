@@ -61,7 +61,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 
 if ($_GET['download'] == "true")
 {
-	header('Content-disposition: attachment; filename="barriespotter.yaml"');
+	header('Content-disposition: attachment; filename="flightairmap.yaml"');
 }
 
 header("Content-type: text/yaml");
