@@ -612,8 +612,16 @@ class update_schema {
     		// Update airport table
 		$error .= create_db::import_file('../db/airport.sql');
 		if ($error != '') return $error;
+		// Remove primary key on Spotter_Archive
+		$query = "alter table spotter_archive drop column spotter_archive_id, add spotter_archive_id INT(11)";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (remove primary key on spotter_archive) : ".$e->getMessage()."\n";
+    		}
 
-    		// Modify stats_airport table
+    		// Add column over_country
     		$query = "ALTER TABLE `spotter_archive` ADD `over_country` VARCHAR(5) NULL DEFAULT NULL;ALTER TABLE `spotter_live` ADD `over_country` VARCHAR(5) NULL DEFAULT NULL";
         	try {
             	    $sth = $Connection->db->prepare($query);

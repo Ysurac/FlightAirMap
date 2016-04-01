@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `aircraft_registration` (
   `aircraft_registration_id` int(11) NOT NULL AUTO_INCREMENT,
-  `country` varchar(999) NOT NULL,
-  `registration_prefix` varchar(999) NOT NULL,
+  `country` varchar(255) NOT NULL,
+  `registration_prefix` varchar(10) NOT NULL,
   PRIMARY KEY (`aircraft_registration_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=242 ;
 
