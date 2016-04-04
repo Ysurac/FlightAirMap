@@ -7,7 +7,7 @@ $orderby = $Spotter->getOrderBy();
 
 $title = "Search";
 
-$page_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+//$page_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 
 //$title = "Search";
 require_once('header.php');
@@ -281,41 +281,18 @@ if (!empty($_GET)){
         	<legend>Aircraft</legend>
         	<div class="form-group">
     	    	<label>Manufacturer</label> 
-    		    <select name="manufacturer" class="selectpicker" data-live-search="true">
+    		    <select name="manufacturer" id="manufacturer" class="selectpicker" data-live-search="true">
     		      <option></option>
-    		      <?php
-    		      
-    		      $manufacturers = $Spotter->getAllManufacturers();
-    		      foreach($manufacturers as $manufacturer)
-    		      {
-    		        if(isset($_GET['manufacturer']) && $_GET['manufacturer'] == strtolower(str_replace(" ", "-", $manufacturer['aircraft_manufacturer'])))
-    		        {
-    		          print '<option value="'.strtolower(str_replace(" ", "-", $manufacturer['aircraft_manufacturer'])).'" selected="selected">'.$manufacturer['aircraft_manufacturer'].'</option>';
-    		        } else {
-    		          print '<option value="'.strtolower(str_replace(" ", "-", $manufacturer['aircraft_manufacturer'])).'">'.$manufacturer['aircraft_manufacturer'].'</option>';
-    		        }
-    		      }
-    		      ?>
     		    </select>
     		  </div>
+		  <script type="text/javascript">getSelect('manufacturer','<?php if(isset($_GET['manufacturer'])) print $_GET['manufacturer']; ?>')</script>
 		<div class="form-group">
     	    	<label>Type</label> 
-    		    <select name="aircraft" class="selectpicker" data-live-search="true">
+    		    <select name="aircraft" id="aircrafttypes" class="selectpicker" data-live-search="true">
     		      <option></option>
-    		      <?php
-    		      $aircraft_types = $Spotter->getAllAircraftTypes();
-    		      foreach($aircraft_types as $aircraft_type)
-    		      {
-    		        if(isset($_GET['aircraft']) && $_GET['aircraft'] == $aircraft_type['aircraft_icao'])
-    		        {
-    		          print '<option value="'.$aircraft_type['aircraft_icao'].'" selected="selected">'.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
-    		        } else {
-    		          print '<option value="'.$aircraft_type['aircraft_icao'].'">'.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
-    		        }
-    		      }
-    		      ?>
     		    </select>
     		  </div>
+		  <script type="text/javascript">getSelect('aircrafttypes','<?php if(isset($_GET['aircraft_icao'])) print $_GET['aircraft_icao']; ?>');</script>
     		   <div class="form-group">
     		  	<label>Registration</label> 
     		  	<input type="text" name="registration" value="<?php if (isset($_GET['registration'])) print $_GET['registration']; ?>" size="8" />
@@ -350,40 +327,18 @@ if (!empty($_GET)){
         	<legend>Airline</legend>
     		  <div class="form-group">
     		  	<label>Name</label> 
-    		    <select name="airline" class="selectpicker" data-live-search="true">
+    		    <select name="airline" id="airlinenames" class="selectpicker" data-live-search="true">
     		      <option></option>
-    		      <?php
-    		      $airline_names = $Spotter->getAllAirlineNames();
-    		      foreach($airline_names as $airline_name)
-    		      {
-    		        if(isset($_GET['airline']) && $_GET['airline'] == $airline_name['airline_icao'])
-    		        {
-    		          print '<option value="'.$airline_name['airline_icao'].'" selected="selected">'.$airline_name['airline_name'].' ('.$airline_name['airline_icao'].')</option>';
-    		        } else {
-    		          print '<option value="'.$airline_name['airline_icao'].'">'.$airline_name['airline_name'].' ('.$airline_name['airline_icao'].')</option>';
-    		        }
-    		      }
-    		      ?>
     		    </select>
     		  </div>
+		  <script type="text/javascript">getSelect('airlinenames','<?php if(isset($_GET['airline'])) print $_GET['airline']; ?>');</script>
     		  <div class="form-group">
     		  	<label>Country</label> 
-    		    <select name="airline_country" class="selectpicker" data-live-search="true">
+    		    <select name="airline_country" id="airlinecountries" class="selectpicker" data-live-search="true">
     		      <option></option>
-    		      <?php
-    		      $airline_countries = $Spotter->getAllAirlineCountries();
-    		      foreach($airline_countries as $airline_country)
-    		      {
-    		        if(isset($_GET['airline_country']) && $_GET['airline_country'] == $airline_country['airline_country'])
-    		        {
-    		          print '<option value="'.$airline_country['airline_country'].'" selected="selected">'.$airline_country['airline_country'].'</option>';
-    		        } else {
-    		          print '<option value="'.$airline_country['airline_country'].'">'.$airline_country['airline_country'].'</option>';
-    		        }
-    		      }
-    		      ?>
     		    </select>
     		  </div>
+		  <script type="text/javascript">getSelect('airlinecountries','<?php if(isset($_GET['airline_country'])) print $_GET['airline_country']; ?>');</script>
     		  <div class="form-group">
     		  	<label>Callsign</label> 
     		  	<input type="text" name="callsign" value="<?php if (isset($_GET['callsign'])) print $_GET['callsign']; ?>" size="8" />
@@ -399,76 +354,36 @@ if (!empty($_GET)){
         	<legend>Airport</legend>
     		  <div class="form-group">
     		  	<label>Name</label> 
-    		    <select name="airport" class="selectpicker" data-live-search="true">
+    		    <select name="airport" id="airportnames" class="selectpicker" data-live-search="true">
     		      <option></option>
-    		      <?php
-    		      $airport_names = $Spotter->getAllAirportNames();
-    		      ksort($airport_names);
-    		      foreach($airport_names as $airport_name)
-    		      {
-    		        if(isset($_GET['airport']) && $_GET['airport'] == $airport_name['airport_icao'])
-    		        {
-    		          print '<option value="'.$airport_name['airport_icao'].'" selected="selected">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
-    		        } else {
-    		          print '<option value="'.$airport_name['airport_icao'].'">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
-    		        }
-    		      }
-    		      ?></select>
+    		     </select>
     		  </div>
+		  <script type="text/javascript">getSelect('airportnames','<?php if(isset($_GET['airport_icao'])) print $_GET['airport_icao']; ?>');</script>
     		  <div class="form-group">
     		  	<label>Country</label> 
-    		    <select name="airport_country" class="selectpicker" data-live-search="true">
+    		    <select name="airport_country" id="airportcountries" class="selectpicker" data-live-search="true">
     		      <option></option>
-    		      <?php
-    		      $airport_countries = $Spotter->getAllAirportCountries();
-    		      foreach($airport_countries as $airport_country)
-    		      {
-    		        if(isset($_GET['airport_country']) && $_GET['airport_country'] == $airport_country['airport_country'])
-    		        {
-    		          print '<option value="'.$airport_country['airport_country'].'" selected="selected">'.$airport_country['airport_country'].'</option>';
-    		        } else {
-    		          print '<option value="'.$airport_country['airport_country'].'">'.$airport_country['airport_country'].'</option>';
-    		        }
-    		      }
-    		      ?>
     		    </select>
     		  </div>
+		  <script type="text/javascript">getSelect('airportcountries','<?php if(isset($_GET['airport_country'])) print $_GET['airport_country']; ?>');</script>
         </fieldset>
         
          <fieldset>
         	<legend>Route</legend>
     		  <div class="form-group">
     		  	<label>Departure Airport</label> 
-    		    <select name="departure_airport_route" class="selectpicker" data-live-search="true">
+    		    <select name="departure_airport_route" id="departureairportnames" class="selectpicker" data-live-search="true">
     		      <option></option>
-    		      <?php
-    		      foreach($airport_names as $airport_name)
-    		      {
-    		        if(isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] == $airport_name['airport_icao'])
-    		        {
-    		          print '<option value="'.$airport_name['airport_icao'].'" selected="selected">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
-    		        } else {
-    		          print '<option value="'.$airport_name['airport_icao'].'">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
-    		        }
-    		      }
-    		      ?></select>
+    		      </select>
     		  </div>
+		  <script type="text/javascript">getSelect('departureairportnames','<?php if(isset($_GET['departure_airport_route'])) print $_GET['departure_airport_route']; ?>');</script>
     		  <div class="form-group">
     		  	<label>Arrival Airport</label> 
-    		    <select name="arrival_airport_route" class="selectpicker" data-live-search="true">
+    		    <select name="arrival_airport_route" id="arrivalairportnames" class="selectpicker" data-live-search="true">
     		      <option></option>
-    		      <?php
-    		      foreach($airport_names as $airport_name)
-    		      {
-    		        if(isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] == $airport_name['airport_icao'])
-    		        {
-    		          print '<option value="'.$airport_name['airport_icao'].'" selected="selected">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
-    		        } else {
-    		          print '<option value="'.$airport_name['airport_icao'].'">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
-    		        }
-    		      }
-    		      ?></select>
+    		      </select>
     		  </div>
+		  <script type="text/javascript">getSelect('arrivalairportnames','<?php if(isset($_GET['arrival_airport_route'])) print $_GET['arrival_airport_route']; ?>');</script>
         </fieldset>
     
     		<fieldset>

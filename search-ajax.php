@@ -1,0 +1,59 @@
+<?php
+require_once('require/class.Connection.php');
+require_once('require/class.Spotter.php');
+require_once('require/class.SpotterArchive.php');
+$Spotter = new Spotter();
+$orderby = $Spotter->getOrderBy();
+
+$ask = filter_input(INPUT_GET,'ask',FILTER_SANITIZE_STRING);
+if ($ask == 'manufacturer') {
+	$manufacturers = $Spotter->getAllManufacturers();
+	$all_manufacturers = array();
+	foreach($manufacturers as $manufacturer)
+	{
+		$all_manufacturers[] = array('value' => $manufacturer['aircraft_manufacturer'], 'id' => strtolower(str_replace(' ','-',$manufacturer['aircraft_manufacturer'])));
+	}
+	echo json_encode($all_manufacturers);
+} elseif ($ask == 'aircrafttypes') {
+	$aircraft_types = $Spotter->getAllAircraftTypes();
+	$all_aircraft_types = array();
+	foreach($aircraft_types as $aircraft_type)
+	{
+		$all_aircraft_types[] = array('id' => $aircraft_type['aircraft_icao'], 'value' => $aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')');
+	}
+	echo json_encode($all_aircraft_types);
+} elseif ($ask == 'airlinenames') {
+	$airline_names = $Spotter->getAllAirlineNames();
+	$all_airline_names = array();
+	foreach($airline_names as $airline_name)
+	{
+		$all_airline_names[] = array('id' => $airline_name['airline_icao'], 'value' => $airline_name['airline_name'].' ('.$airline_name['airline_icao'].')');
+	}
+	echo json_encode($all_airline_names);
+} elseif ($ask == 'airlinecountries') {
+	$airline_countries = $Spotter->getAllAirlineCountries();
+	$all_airline_countries = array();
+	foreach($airline_countries as $airline_country)
+	{
+		$all_airline_countries[] = array('id' => $airline_country['airline_country'], 'value' => $airline_country['airline_country']);
+	}
+	echo json_encode($all_airline_countries);
+} elseif ($ask == 'airportnames' || $ask == 'departureairportnames' || $ask == 'arrivalairportnames') {
+	$airport_names = $Spotter->getAllAirportNames();
+	ksort($airport_names);
+	$all_airport_names = array();
+	foreach($airport_names as $airport_name)
+	{
+		$all_airport_names[] = array('id' => $airport_name['airport_icao'], 'value' => $airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')');
+	}
+	echo json_encode($all_airport_names);
+} elseif ($ask == 'airportcountries') {
+	$airport_countries = $Spotter->getAllAirportCountries();
+	$all_airport_countries = array();
+	foreach($airport_countries as $airport_country)
+	{
+		$all_airport_countries[] = array('id' => $airport_country['airport_country'], 'value' => $airport_country['airport_country']);
+	}
+	echo json_encode($all_airport_countries);
+}
+?>
