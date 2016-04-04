@@ -42,6 +42,14 @@ if (strtolower($current_page) == "about")
 }
 ?>
 <?php
+if (strtolower($current_page) == "search")
+{
+?>
+<script src="<?php print $globalURL; ?>/js/search.js"></script>
+<?php
+}
+?>
+<?php
 if (strtolower($current_page) == "index")
 {
 ?>
