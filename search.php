@@ -8,6 +8,7 @@ $orderby = $Spotter->getOrderBy();
 $title = "Search";
 
 //$page_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+$page_url = $_SERVER['REQUEST_URI'];
 
 //$title = "Search";
 require_once('header.php');
