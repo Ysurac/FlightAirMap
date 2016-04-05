@@ -1194,7 +1194,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (1175, 1176, 'Air Charters Eelde', 'N', '', 'RCC', 'RACER', 'Netherlands', 'N', 'passenger'),
 (1176, 1177, 'Aerocer', 'N', '', 'RCE', 'AEROCER', 'Mexico', 'N', 'passenger'),
 (1177, 1178, 'Aeroflot-Cargo', 'N', '', 'RCF', 'AEROFLOT-CARGO', 'Russia', 'N', 'cargo'),
-(1178, 1179, 'Air Mobility Command', 'N', 'MC', 'RCH', 'REACH', 'United States', 'N', 'passenger'),
+(1178, 1179, 'Air Mobility Command', 'N', 'MC', 'RCH', 'REACH', 'United States', 'Y', 'military'),
 (1179, 1180, 'Air Cassai', 'N', '', 'RCI', 'AIR CASSAI', 'Angola', 'N', 'passenger'),
 (1180, 1181, 'Aero Renta De Coahuila', 'N', '', 'RCO', 'AEROCOAHUILA', 'Mexico', 'N', 'passenger'),
 (1181, 1182, 'Aerocorp', 'N', '', 'RCP', 'AEROCORPSA', 'Mexico', 'N', 'passenger'),
