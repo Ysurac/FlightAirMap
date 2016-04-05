@@ -2110,8 +2110,8 @@ class Spotter{
 								FROM spotter_output
 								WHERE spotter_output.aircraft_manufacturer <> '' 
 								ORDER BY spotter_output.aircraft_manufacturer ASC";
+		  */
 		
-		*/
 		$query = "SELECT DISTINCT manufacturer AS aircraft_manufacturer FROM aircraft WHERE manufacturer <> '' ORDER BY manufacturer ASC";
 		$sth = $this->db->prepare($query);
 		$sth->execute();
@@ -2196,6 +2196,40 @@ class Spotter{
 		return $aircraft_array;
 	}
 
+	/**
+	* Gets all source name
+	*
+	* @param String type format of source
+	* @return Array list of source name
+	*
+	*/
+	public function getAllSourceName($type = '')
+	{
+		$query_values = array();
+		$query  = "SELECT DISTINCT spotter_output.source_name 
+								FROM spotter_output  
+								WHERE spotter_output.source_name <> ''";
+		if ($type != '') {
+			$query_values = array(':type' => $type);
+			$query .= " AND format_source = :type";
+		}
+		$query .= " ORDER BY spotter_output.source_name ASC";
+
+		$sth = $this->db->prepare($query);
+		if (!empty($query_values)) $sth->execute($query_values);
+		else $sth->execute();
+
+		$source_array = array();
+		$temp_array = array();
+		
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['source_name'] = $row['source_name'];
+			$source_array[] = $temp_array;
+		}
+		return $source_array;
+	}
+
 
 
 	/**
@@ -2253,13 +2287,13 @@ class Spotter{
 	*/
 	public function getAllAirlineCountries()
 	{
-		/*
+		
 		$query  = "SELECT DISTINCT spotter_output.airline_country AS airline_country
 								FROM spotter_output  
 								WHERE spotter_output.airline_country <> '' 
 								ORDER BY spotter_output.airline_country ASC";						
-		*/
-		$query = "SELECT DISTINCT country AS airline_country FROM airlines WHERE country <> '' AND active = 'Y' ORDER BY country ASC";
+		
+		//$query = "SELECT DISTINCT country AS airline_country FROM airlines WHERE country <> '' AND active = 'Y' ORDER BY country ASC";
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 
@@ -2288,13 +2322,13 @@ class Spotter{
 	{
 		$airport_array = array();
 								
-		/*
+		
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao AS airport_icao, spotter_output.departure_airport_name AS airport_name, spotter_output.departure_airport_city AS airport_city, spotter_output.departure_airport_country AS airport_country
 								FROM spotter_output 
 								WHERE spotter_output.departure_airport_icao <> '' AND spotter_output.departure_airport_icao <> 'NA' 
 								ORDER BY spotter_output.departure_airport_city ASC";
-		*/
-		$query = "SELECT DISTINCT icao AS airport_icao, name AS airport_name, city AS airport_city, country AS airport_country FROM airport ORDER BY city ASC";
+		
+		//$query = "SELECT DISTINCT icao AS airport_icao, name AS airport_name, city AS airport_city, country AS airport_country FROM airport ORDER BY city ASC";
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 
@@ -2345,7 +2379,7 @@ class Spotter{
 	{
 		$airport_array = array();
 					
-		/*
+		  /*
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country AS airport_country
 								FROM spotter_output
 								WHERE spotter_output.departure_airport_country <> '' 

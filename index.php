@@ -138,6 +138,26 @@ require_once('header.php');
 			</select>
 		    </li>
 		    <?php
+			if (isset($globalAPRS) && $globalAPRS) {
+		    ?>
+		    <li>Display APRS sources name :
+			<select class="selectpicker" multiple onchange="sources(this);">
+			    <?php
+				$Spotter = new Spotter();
+				foreach($Spotter->getAllSourceName('aprs') as $source) {
+					if (isset($_COOKIE['Sources']) && in_array($source['source_name'],explode(',',$_COOKIE['Sources']))) {
+						echo '<option value="'.$source['source_name'].'" selected>'.$source['source_name'].'</option>';
+					} else {
+						echo '<option value="'.$source['source_name'].'">'.$source['source_name'].'</option>';
+					}
+				}
+			    ?>
+			</select>
+		    </li>
+		    <?php
+			}
+		    ?>
+		    <?php
 			if (!(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalphpVMS) && $globalphpVMS)) {
 		    ?>
 		    <li>Display airlines of type :

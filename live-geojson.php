@@ -26,6 +26,7 @@ if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalphpVMS) &
 if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalSBS1) && $globalSBS1 && isset($_COOKIE['ShowSBS1']) && $_COOKIE['ShowSBS1'] == 'true') $filter['source'] = array_merge($filter['source'],array('sbs'));
 if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalAPRS) && $globalAPRS && isset($_COOKIE['ShowAPRS']) && $_COOKIE['ShowAPRS'] == 'true') $filter['source'] = array_merge($filter['source'],array('aprs'));
 if (isset($_COOKIE['Airlines']) && $_COOKIE['Airlines'] != '') $filter['airlines'] = explode(',',$_COOKIE['Airlines']);
+if (isset($_COOKIE['Sources']) && $_COOKIE['Sources'] != '') $filter['source_aprs'] = explode(',',$_COOKIE['Sources']);
 if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] != 'all') $filter['airlinestype'] = $_COOKIE['airlinestype'];
 
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) $min = true;

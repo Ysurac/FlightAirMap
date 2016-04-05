@@ -32,6 +32,9 @@ class SpotterLive {
 		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
 		}
+		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+		}
 		
 		$limit_query = '';
 		if ($limit != '')
@@ -85,6 +88,9 @@ class SpotterLive {
 		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
 		}
+		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+		}
 
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		if ($globalDBdriver == 'mysql') {
@@ -135,6 +141,9 @@ class SpotterLive {
 		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
 		}
+		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+		}
 
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		if ($globalDBdriver == 'mysql') {
@@ -175,6 +184,10 @@ class SpotterLive {
 		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
 		}
+		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+		}
+
 		if (is_array($coord)) {
                         $minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
                         $minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);

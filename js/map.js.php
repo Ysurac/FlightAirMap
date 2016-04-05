@@ -1711,6 +1711,16 @@ function airlinestype(selectObj) {
     var airtype = selectObj.options[idx].value;
     document.cookie =  'airlinestype='+airtype+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 }
+function sources(selectObj) {
+    var sources = [], source;
+    for (var i=0, len=selectObj.options.length; i< len;i++) {
+	source = selectObj.options[i];
+	if (source.selected) {
+	    sources.push(source.value);
+	}
+    }
+    document.cookie =  'Sources='+sources.join()+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
 
 function iconColor(color) {
     document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
