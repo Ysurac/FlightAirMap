@@ -648,6 +648,39 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_20() {
+		global $globalIVAO, $globalVATSIM, $globalphpVMS;
+    		$Connection = new Connection();
+		$error = '';
+    		// Update airline table
+    		if (!$globalIVAO && !$globalVATSIM && !$globalphpVMS) {
+			$error .= create_db::import_file('../db/airlines.sql');
+			if ($error != '') return 'Import airlinesport.sql : '.$error;
+		}
+    		// Add column over_country
+    		$query = "ALTER TABLE `aircraft_modes` ADD `type_flight` VARCHAR(50) NULL DEFAULT NULL;";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add over_country) : ".$e->getMessage()."\n";
+    		}
+		if ($error != '') return $error;
+    		if (!$globalIVAO && !$globalVATSIM && !$globalphpVMS) {
+			// Force update ModeS (this will put type_flight data
+			$error .= update_db::update_ModeS;
+			if ($error != '') return "error (update ModeS) : ".$error;
+		}
+		$query = "UPDATE `config` SET `value` = '21' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
     	public static function check_version($update = false) {
     	    global $globalDBname;
     	    $version = 0;
@@ -738,6 +771,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '19') {
     			    $error = self::update_from_19();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '20') {
+    			    $error = self::update_from_20();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

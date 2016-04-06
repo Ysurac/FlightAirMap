@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `aircraft_modes` (
   `ModeSCountry` varchar(24),
   `Registration` varchar(20),
   `ICAOTypeCode` varchar(4),
+  `type_flight` varchar(50),
   `Source` varchar(255),
   PRIMARY KEY (`AircraftID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;

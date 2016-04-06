@@ -621,9 +621,14 @@ class SpotterArchive {
     */
     public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '')
     {
+	/*
 	$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb 
 		    FROM countries c, spotter_archive s
 		    WHERE Within(GeomFromText(CONCAT('POINT(',s.longitude,' ',s.latitude,')')), ogc_geom) ";
+	*/
+	$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb
+		    FROM countries c, spotter_archive s
+		    WHERE c.iso2 = s.over_country ";
                 if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
                 if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
 	$query .= "GROUP BY c.name ORDER BY nb DESC";
