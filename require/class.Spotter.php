@@ -7955,7 +7955,7 @@ class Spotter{
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
 		    //return $row['Registration'];
-		    return $row['type'];
+		    return $row['type_flight'];
 		} else return '';
 	
 	}
