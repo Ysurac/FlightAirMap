@@ -7947,7 +7947,7 @@ class Spotter{
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
 	
-		$query  = "SELECT aircraft_modes.type FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes LIMIT 1";
+		$query  = "SELECT aircraft_modes.type_flight FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes LIMIT 1";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
