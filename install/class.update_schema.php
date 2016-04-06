@@ -666,11 +666,13 @@ class update_schema {
 		    return "error (add over_country) : ".$e->getMessage()."\n";
     		}
 		if ($error != '') return $error;
+		/*
     		if (!$globalIVAO && !$globalVATSIM && !$globalphpVMS) {
 			// Force update ModeS (this will put type_flight data
 			$error .= update_db::update_ModeS;
 			if ($error != '') return "error (update ModeS) : ".$error;
 		}
+		*/
 		$query = "UPDATE `config` SET `value` = '21' WHERE `name` = 'schema_version'";
         	try {
             	    $sth = $Connection->db->prepare($query);
