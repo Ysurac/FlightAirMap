@@ -19,6 +19,7 @@ class SpotterArchive {
 		if (!empty($data_country)) $country = $data_country['iso2'];
 		else $country = '';
 	} else $country = $over_country;
+	if ($airline_type == null) $airline_type ='';
 
 	// Route is not added in spotter_archive
 	$query  = "INSERT INTO spotter_archive (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_shadow, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, departure_airport_time,arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, arrival_airport_time, route_stop, date,latitude, longitude, waypoints, altitude, heading, ground_speed, squawk, ModeS, pilot_id, pilot_name, verticalrate,format_source,over_country,source_name)

@@ -2991,6 +2991,7 @@ class Spotter{
                 $airline_country = $airline_array[0]['country'];
                 $airline_type = $airline_array[0]['type'];
 		if ($airline_type == '') $airline_type = $this->getAircraftTypeBymodeS($ModeS);
+		if ($airline_type == null) $airline_type = '';
                 $aircraft_type = $aircraft_array[0]['type'];
                 $aircraft_manufacturer = $aircraft_array[0]['manufacturer'];
                 $departure_airport_name = $departure_airport_array[0]['name'];
