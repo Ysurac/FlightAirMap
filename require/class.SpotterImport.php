@@ -117,7 +117,7 @@ class SpotterImport {
         		    break;
         		}
         	    }
-        	} elseif ($closestAirports[0]['altitude'] < $this->all_flights[$key]['altitude'] && $closestAirports[0]['altitude'] < $this->all_flights[$key]['altitude']+100) {
+        	} elseif ($closestAirports[0]['altitude'] < round($this->all_flights[$key]['altitude']*100) && $closestAirports[0]['altitude'] < round($this->all_flights[$key]['altitude']*100)+100) {
         		$airport_icao = $closestAirports[0]['icao'];
         		$airport_time = $this->all_flights[$key]['datetime'];
         	}
