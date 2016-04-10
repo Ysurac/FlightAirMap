@@ -688,8 +688,8 @@ RMK/FUEL   2.6 M0.79)
     	    }
 	    if ($stht->fetchColumn() == 0) {
 		if ($globalDebug) echo "Add Live ACARS data...";
-    		$query = "INSERT INTO acars_live (ident,registration,label,block_id,msg_no,message,decode) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
-    		$query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
+    		$query = "INSERT INTO acars_live (ident,registration,label,block_id,msg_no,message,decode,date) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode,:date)";
+    		$query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode,':date' => date("Y-m-d H:i:s"));
     		try {
         	    
         	    $sth = $this->db->prepare($query);
