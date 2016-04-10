@@ -6772,8 +6772,8 @@ class Spotter{
 		} else $offset = '+00:00';
 
 		$query  = "SELECT YEAR(CONVERT_TZ(s.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(s.date,'+00:00', :offset)) AS month_name, count(*) as date_count
-								FROM spotter_output s, airlines a
-								WHERE s.airline_icao = a.icao AND a.type = 'military'
+								FROM spotter_output s
+								WHERE s.airline_type = 'military'
 								GROUP BY year_name, month_name 
 								ORDER BY date_count DESC";
       
