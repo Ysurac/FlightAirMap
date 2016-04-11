@@ -102,7 +102,7 @@ class SpotterImport {
 	$Spotter = new Spotter($this->db);
         $airport_icao = '';
         $airport_time = '';
-        if (!isset($globalClosestMinDist) || $globalClosestMinDist == '') $globalClosestMinDist = 10;
+        if (!isset($globalClosestMinDist) || $globalClosestMinDist == '') $globalClosestMinDist = 50;
 	if ($this->all_flights[$key]['latitude'] != '' && $this->all_flights[$key]['longitude'] != '') {
 	    $closestAirports = $Spotter->closestAirports($this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$globalClosestMinDist);
     	    if (isset($closestAirports[0])) {

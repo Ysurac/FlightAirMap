@@ -86,7 +86,6 @@ class Common {
 	public function table2array($data) {
 		if (!is_string($data)) return array();
 		if ($data == '') return array();
-		
 		$html = str_get_html($data);
 		$tabledata=array();
 		foreach($html->find('tr') as $element)

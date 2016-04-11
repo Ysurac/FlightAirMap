@@ -47,6 +47,7 @@ print $spotter_item['city'];
 print '</div>';
 print '<div><span>Altitude</span>';
 print round($spotter_item['altitude']*3.2809).' feet - '.$spotter_item['altitude'].' m';
+print $spotter_item['altitude'].' feet - '.round($spotter_item['altitude']*0.3048).' m';
 print '</div>';
 print '<div><span>Country</span>'.$spotter_item['country'].'</div>';
 print '<div><span>Coordinates</span>'.round($spotter_item['latitude'],3).', '.round($spotter_item['longitude'],3).'</div>';

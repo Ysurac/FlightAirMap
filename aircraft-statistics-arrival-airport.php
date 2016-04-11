@@ -6,8 +6,11 @@ if (!isset($_GET['aircraft_type'])) {
         header('Location: '.$globalURL.'/aircraft');
         die();
 }
+
+$aircraft_type = filter_input(INPUT_GET,'aircraft_type',FILTER_SANITIZE_STRING);
+
 $Spotter = new Spotter();
-$spotter_array = $Spotter->getSpotterDataByAircraft($_GET['aircraft_type'],"0,1","");
+$spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,"0,1","");
 
 
 if (!empty($spotter_array))
@@ -21,11 +24,11 @@ if (!empty($spotter_array))
 	$aircraft_types = $Spotter->getAllAircraftTypes();
 	foreach($aircraft_types as $aircraft_type)
 	{
-		if($_GET['aircraft_type'] == $aircraft_type['aircraft_icao'])
+		if($aircraft_type == $aircrafttype['aircraft_icao'])
 		{
-			print '<option value="'.$aircraft_type['aircraft_icao'].'" selected="selected">'.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
+			print '<option value="'.$aircrafttype['aircraft_icao'].'" selected="selected">'.$aircrafttype['aircraft_name'].' ('.$aircrafttype['aircraft_icao'].')</option>';
 		} else {
-			print '<option value="'.$aircraft_type['aircraft_icao'].'">'.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
+			print '<option value="'.$aircrafttype['aircraft_icao'].'">'.$aircrafttype['aircraft_name'].' ('.$aircrafttype['aircraft_icao'].')</option>';
 		}
 	}
 	print '</select>';
@@ -33,7 +36,7 @@ if (!empty($spotter_array))
 	print '</form>';
 	print '</div>';
 
-	if ($_GET['aircraft_type'] != "NA")
+	if ($aircraft_type != "NA")
 	{
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</h1>';
@@ -51,7 +54,7 @@ if (!empty($spotter_array))
 	?>
   	 <p>The statistic below shows all arrival airports of flights from <strong><?php print $spotter_array[0]['aircraft_name']; ?> (<?php print $spotter_array[0]['aircraft_type']; ?>)</strong>.</p>
 	<?php
-	 $airport_airport_array = $Spotter->countAllArrivalAirportsByAircraft($_GET['aircraft_type']);
+	 $airport_airport_array = $Spotter->countAllArrivalAirportsByAircraft($aircraft_type);
     	?>
     	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
     	<script>
@@ -118,7 +121,7 @@ if (!empty($spotter_array))
 		print '<td>';
 		print $airport_item['airport_arrival_icao_count'];
 		print '</td>';
-		print '<td><a href="'.$globalURL.'/search?arrival_airport_route='.$airport_item['airport_arrival_icao'].'&aircraft='.$_GET['aircraft_type'].'">Search flights</a></td>';
+		print '<td><a href="'.$globalURL.'/search?arrival_airport_route='.$airport_item['airport_arrival_icao'].'&aircraft='.$aircraft_type.'">Search flights</a></td>';
 		print '</tr>';
 		$i++;
 	}

@@ -16,6 +16,10 @@ if (!isset($_GET['airline'])){
 		$limit_explode = explode(",", $_GET['limit']);
 		$limit_start = $limit_explode[0];
 		$limit_end = $limit_explode[1];
+		if (!ctype_digit(strval($limit_start)) || !ctype_digit(strval($limit_end))) {
+			$limit_start = 0;
+			$limit_end = 25;
+		}
 	}
 	$absolute_difference = abs($limit_start - $limit_end);
 	$limit_next = $limit_end + $absolute_difference;

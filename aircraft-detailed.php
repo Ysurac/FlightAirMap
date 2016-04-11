@@ -16,16 +16,21 @@ if (!isset($_GET['aircraft_type'])){
 		$limit_explode = explode(",", $_GET['limit']);
 		$limit_start = $limit_explode[0];
 		$limit_end = $limit_explode[1];
+		if (!ctype_digit(strval($limit_start)) || !ctype_digit(strval($limit_end))) {
+			$limit_start = 0;
+			$limit_end = 25;
+		}
 	}
 	$absolute_difference = abs($limit_start - $limit_end);
 	$limit_next = $limit_end + $absolute_difference;
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/aircraft/'.$_GET['aircraft_type'];
+	$aircraft_type = filter_input(INPUT_GET,'aircraft_type',FILTER_SANITIZE_STRING);
+	$page_url = $globalURL.'/aircraft/'.$aircraft_type;
 	
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-	$spotter_array = $Spotter->getSpotterDataByAircraft($_GET['aircraft_type'],$limit_start.",".$absolute_difference, $sort);
+	$spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,$limit_start.",".$absolute_difference, $sort);
 	
 	if (!empty($spotter_array))
 	{
@@ -36,22 +41,22 @@ if (!isset($_GET['aircraft_type'])){
 		print '<form action="'.$globalURL.'/aircraft" method="post">';
 		print '<select name="aircraft_type" class="selectpicker" data-live-search="true">';
     		print '<option></option>';
-    		$aircraft_types = $Spotter->getAllAircraftTypes();
-    		foreach($aircraft_types as $aircraft_type)
-    		{
-    			if($_GET['aircraft_type'] == $aircraft_type['aircraft_icao'])
-    		    	{
-    		    		print '<option value="'.$aircraft_type['aircraft_icao'].'" selected="selected">'.$aircraft_type['aircraft_manufacturer'].' '.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
-    			} else {
-    		    	        print '<option value="'.$aircraft_type['aircraft_icao'].'">'.$aircraft_type['aircraft_manufacturer'].' '.$aircraft_type['aircraft_name'].' ('.$aircraft_type['aircraft_icao'].')</option>';
-    		    	}
+		$aircraft_types = $Spotter->getAllAircraftTypes();
+		foreach($aircraft_types as $aircrafttype)
+		{
+			if($aircraft_type == $aircrafttype['aircraft_icao'])
+			{
+				print '<option value="'.$aircrafttype['aircraft_icao'].'" selected="selected">'.$aircrafttype['aircraft_manufacturer'].' '.$aircrafttype['aircraft_name'].' ('.$aircrafttype['aircraft_icao'].')</option>';
+			} else {
+				print '<option value="'.$aircrafttype['aircraft_icao'].'">'.$aircrafttype['aircraft_manufacturer'].' '.$aircrafttype['aircraft_name'].' ('.$aircrafttype['aircraft_icao'].')</option>';
+			}
     		}
     		print '</select>';
 	    	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
 	  	print '</form>';
 	  	print '</div>';
 	    
-		if ($_GET['aircraft_type'] != "NA")
+		if ($aircraft_type != "NA")
 		{
 	    		print '<div class="info column">';
 	      		print '<h1>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</h1>';
@@ -73,11 +78,11 @@ if (!isset($_GET['aircraft_type'])){
 		print '<div class="pagination">';
 		if ($limit_previous_1 >= 0)
 		{
-			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
+			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$sort.'">&laquo;Previous Page</a>';
 		}
 		if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 		{
-			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
+			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$sort.'">Next Page&raquo;</a>';
 		}
 		print '</div>';
 		print '</div>';
@@ -85,14 +90,9 @@ if (!isset($_GET['aircraft_type'])){
 	} else {
 		$title = "Aircraft";
 		require_once('header.php');
-		
 		print '<h1>Errors</h1>';
-		
 		print '<p>Sorry, the aircraft type does not exist in this database. :(</p>'; 
 	}
 }
-?>
-
-<?php
 require_once('footer.php');
 ?>

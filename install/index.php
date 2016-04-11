@@ -566,7 +566,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<p>
 				<label for="closestmindist">Distance to airport set as arrival (in km)</label>
-				<input type="number" name="closestmindist" id="closestmindist" value="<?php if (isset($globalClosestMinDist)) echo $globalClosestMinDist; else echo '10'; ?>" />
+				<input type="number" name="closestmindist" id="closestmindist" value="<?php if (isset($globalClosestMinDist)) echo $globalClosestMinDist; else echo '50'; ?>" />
 			</p>
 			<p>
 				<label for="aircraftsize">Size of aircraft icon on map (default to 30px if zoom > 7 else 15px), empty to default</label>

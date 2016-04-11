@@ -8,7 +8,7 @@ $SpotterArchive = new SpotterArchive();
 
 $from_archive = false;
 if (isset($_GET['ident'])) {
-	$ident = $_GET['ident'];
+	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
 	$spotter_array = $SpotterLive->getLastLiveSpotterDataByIdent($ident);
 	if (empty($spotter_array)) {
 		$from_archive = true;
@@ -16,7 +16,7 @@ if (isset($_GET['ident'])) {
 	}
 }
 if (isset($_GET['flightaware_id'])) {
-	$flightaware_id = $_GET['flightaware_id'];
+	$flightaware_id = filter_input(INPUT_GET,'flightaware_id'],FILTER_SANITIZE_STRING);
 	$spotter_array = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
 	if (empty($spotter_array)) {
 		$from_archive = true;
@@ -32,7 +32,7 @@ date_default_timezone_set('UTC');
 if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
 {
 	if ($spotter_item['image_source'] == 'flickr' || $spotter_item['image_source'] == 'wikimedia' || $spotter_item['image_source'] == 'devianart') {
-	    $image = preg_replace("/^http:/i","https:",$spotter_item['image_thumbnail']);
+		$image = preg_replace("/^http:/i","https:",$spotter_item['image_thumbnail']);
 	} else $image = $spotter_item['image_thumbnail'];
 
 }
@@ -42,27 +42,27 @@ if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] 
 
 print '<div class="top">';
 if (isset($image)) {
-    print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].'" title="'.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' Image &copy; '.$spotter_item['image_copyright'].'"/><br />Image &copy; '.$spotter_item['image_copyright'].'</div>';
+	print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].'" title="'.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' Image &copy; '.$spotter_item['image_copyright'].'"/><br />Image &copy; '.$spotter_item['image_copyright'].'</div>';
 }
 print '<div class="right"><div class="callsign-details"><div class="callsign"><a href="'.$globalURL.'/redirect/'.$spotter_item['flightaware_id'].'" target="_blank">'.$spotter_item['ident'].'</a></div>';
 if (isset($spotter_item['airline_name'])) print '<div class="airline">'.$spotter_item['airline_name'].'</div>';
 print '</div>';
 print '<div class="nomobile airports"><div class="airport"><span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'" target="_blank">'.$spotter_item['departure_airport'].'</a></span>'.$spotter_item['departure_airport_city'].' '.$spotter_item['departure_airport_country'];
 if (isset($spotter_item['departure_airport_time'])) {
-    if ($spotter_item['departure_airport_time'] > 2460) {
-	print '<br /><span class="time">'.date('H:m',$spotter_item['departure_airport_time']).'</span>';
-    } else {
-	print '<br /><span class="time">'.$spotter_item['departure_airport_time'].'</span>';
-    }
+	if ($spotter_item['departure_airport_time'] > 2460) {
+		print '<br /><span class="time">'.date('H:m',$spotter_item['departure_airport_time']).'</span>';
+	} else {
+		print '<br /><span class="time">'.$spotter_item['departure_airport_time'].'</span>';
+	}
 }
 print '</div><i class="fa fa-long-arrow-right"></i><div class="airport">';
 print '<span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'" target="_blank">'.$spotter_item['arrival_airport'].'</a></span>'.$spotter_item['arrival_airport_city'].' '.$spotter_item['arrival_airport_country'];
 if (isset($spotter_item['arrival_airport_time'])) {
-    if ($spotter_item['arrival_airport_time'] > 2460) {
-	print '<br /><span class="time">'.date('H:m',$spotter_item['arrival_airport_time']).'</span>';
-    } else {
-        print '<br /><span class="time">'.$spotter_item['arrival_airport_time'].'</span>';
-    }
+	if ($spotter_item['arrival_airport_time'] > 2460) {
+		print '<br /><span class="time">'.date('H:m',$spotter_item['arrival_airport_time']).'</span>';
+	} else {
+		print '<br /><span class="time">'.$spotter_item['arrival_airport_time'].'</span>';
+	}
 }
 print '</div></div>';
 //if (isset($spotter_item['route_stop'])) print 'Route stop : '.$spotter_item['route_stop'];
