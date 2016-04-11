@@ -109,8 +109,8 @@ class ACARS {
 	$airicao = '';
 	$decode = array();
 	$found = false;
+	$registration = str_replace('.','',$registration);
 	if ($globalDebug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
-	
 	if ($registration != '' && $ident != '' && $registration != '!') {
 	/*
 Messages not yet parsed :
