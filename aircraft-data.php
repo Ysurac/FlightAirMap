@@ -16,7 +16,7 @@ if (isset($_GET['ident'])) {
 	}
 }
 if (isset($_GET['flightaware_id'])) {
-	$flightaware_id = filter_input(INPUT_GET,'flightaware_id'],FILTER_SANITIZE_STRING);
+	$flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
 	$spotter_array = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
 	if (empty($spotter_array)) {
 		$from_archive = true;
