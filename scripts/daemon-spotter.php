@@ -355,8 +355,11 @@ while ($i > 0) {
 		    if (isset($line['Sqk'])) $data['squawk'] = $line['Sqk']; // squawk
 		    $data['emergency'] = ''; // emergency
 		    if (isset($line['Reg'])) $data['registration'] = $line['Reg'];
+		    /*
 		    if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',$line['PosTime']/1000);
 		    else $data['datetime'] = date('Y-m-d H:i:s');
+		    */
+		    $data['datetime'] = date('Y-m-d H:i:s');
 		    if (isset($line['Type'])) $data['aircraft_icao'] = $line['Type'];
 	    	    $data['format_source'] = 'aircraftlistjson';
 		    $data['id_source'] = $id_source;
@@ -648,6 +651,7 @@ while ($i > 0) {
 				    $data = array();
 				    $data['hex'] = $line['address'];
 				    $data['datetime'] = date('Y-m-d H:i:s',$line['timestamp']);
+				    //$data['datetime'] = date('Y-m-d H:i:s');
 				    $data['ident'] = $line['ident'];
 				    $data['latitude'] = $line['latitude'];
 				    $data['longitude'] = $line['longitude'];
@@ -663,7 +667,11 @@ while ($i > 0) {
 				    $data['format_source'] = 'aprs';
 				    $data['source_name'] = $line['source'];
 				    //print_r($data);
-				    if ($line['stealth'] == 0) $send = $SI->add($data);
+				    if ($line['stealth'] == 0 && $data['datetime'] <= date('Y-m-d H:i:s')) $send = $SI->add($data);
+				    else {
+					if ($line['stealth'] == 1) echo 'APRS STEALTH !!!'."\n";
+					if ($data['datetime'] < date('Y-m-d H:i:s')) echo 'Date APRS : '.$data['datetime']."\n";
+				    }
 				    unset($data);
 				} 
 				//elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
