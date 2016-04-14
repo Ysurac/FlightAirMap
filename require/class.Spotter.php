@@ -2782,9 +2782,8 @@ class Spotter{
 				}
 			}
 		}
-    	
-    	
-    	//getting the airline information
+
+		//getting the airline information
 		if ($ident != "")
 		{
 			if (!is_string($ident))
@@ -7955,8 +7954,8 @@ class Spotter{
     
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
-		    //return $row['Registration'];
-		    return $row['type_flight'];
+		    if ($row['type_flight'] == null) return '';
+		    else return $row['type_flight'];
 		} else return '';
 	
 	}

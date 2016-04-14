@@ -88,9 +88,6 @@ if (!empty($spotter_array))
                               drawChart6();
                             });
                   </script>';
-
-
-
 		}
 	}
 
@@ -133,25 +130,25 @@ if (!empty($spotter_array))
 	print '<div class="clear column">';
 	print '<div class="image">';
 	if ($spotter_array[0]['image'] != "")
-		    {	 
-			if ($spotter_array[0]['image_source'] == 'planespotters') {
-			    $planespotter_url_array = explode("_", $spotter_array[0]['image']);
-			    $planespotter_id = str_replace(".jpg", "", $planespotter_url_array[1]);
-			    print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$spotter_array[0]['image_thumbnail'].'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" width="100%" /></a>';
-			    print '<div class="note">Disclaimer: The images are courtesy of Planespotters.net and their respective uploaders. This system may not always 100% accuratly show the actual aircraft.</div>';
-			    print '<div class="note">Planespotters.net didn\'t allow us to show full size pics here. This pic is copyright '.$spotter_array[0]['image_copyright'].'</div>';
-			} else {
-			    if (isset($spotter_array[0]['image_source_website']) && $spotter_array[0]['image_source_website'] != '') {
+	{
+		if ($spotter_array[0]['image_source'] == 'planespotters') {
+			$planespotter_url_array = explode("_", $spotter_array[0]['image']);
+			$planespotter_id = str_replace(".jpg", "", $planespotter_url_array[1]);
+			print '<a href="http://www.planespotters.net/Aviation_Photos/photo.show?id='.$planespotter_id.'" target="_blank"><img src="'.$spotter_array[0]['image_thumbnail'].'" alt="Click image to view on Planespotters.net" title="Click image to view on Planespotters.net" width="100%" /></a>';
+			print '<div class="note">Disclaimer: The images are courtesy of Planespotters.net and their respective uploaders. This system may not always 100% accuratly show the actual aircraft.</div>';
+			print '<div class="note">Planespotters.net didn\'t allow us to show full size pics here. This pic is copyright '.$spotter_array[0]['image_copyright'].'</div>';
+		} else {
+			if (isset($spotter_array[0]['image_source_website']) && $spotter_array[0]['image_source_website'] != '') {
 				print '<a href="'.$spotter_array[0]['image_source_website'].'"><img src="'.$spotter_array[0]['image'].'" width="100%" /></a>';
-			    } else {
+			} else {
 				print '<img src="'.$spotter_array[0]['image'].'" width="100%" />';
-			    }
-			    print '<div class="note">Disclaimer: The image come from '.$spotter_array[0]['image_source'].' and is copyright '.$spotter_array[0]['image_copyright'].'. This system may not always 100% accuratly show the actual aircraft.</div>';
 			}
-		    } else {
-			//print '<img src="'.$globalURL.'/images/placeholder.png" alt="No image found!" title="No image found!" />';
-		    }
-		    print '</div>';
+			print '<div class="note">Disclaimer: The image come from '.$spotter_array[0]['image_source'].' and is copyright '.$spotter_array[0]['image_copyright'].'. This system may not always 100% accuratly show the actual aircraft.</div>';
+		}
+	} else {
+		//print '<img src="'.$globalURL.'/images/placeholder.png" alt="No image found!" title="No image found!" />';
+	}
+	print '</div>';
 		
 /*			print '<div class="col-sm-4 details">';
 		 
@@ -269,24 +266,21 @@ if (!empty($spotter_array))
 	 print '</div>';
 */
 
-	    foreach($spotter_array as $spotter_item)
-	    {
-                
-                print '<div class="details">';
-                    
-                print '<h3>Flight Information</h3>';
-
-                print '<div class="detail callsign">';
-                    print '<div class="title">Ident/Callsign</div>';
-                    print '<div>';
-                    if ($spotter_item['ident'] != "")
-                    {
-                        print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'.$spotter_item['ident'].'</a>';
-                    } else {
-                        print 'N/A';
-                    }
-                    print '</div>';
-                print '</div>';
+	foreach($spotter_array as $spotter_item)
+	{
+		print '<div class="details">';
+		print '<h3>Flight Information</h3>';
+		print '<div class="detail callsign">';
+		print '<div class="title">Ident/Callsign</div>';
+		print '<div>';
+		if ($spotter_item['ident'] != "")
+		{
+			print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'.$spotter_item['ident'].'</a>';
+		} else {
+			print 'N/A';
+		}
+		print '</div>';
+		print '</div>';
 
 		if (isset($spotter_item['aircraft_owner']) && $spotter_item['aircraft_owner'] != '') 
 		{
@@ -316,91 +310,91 @@ if (!empty($spotter_array))
 			print '</div>';
 			print '</div>';
 		}
-                
-                print '<div class="detail airline">';
-                    print '<div class="title">Airline</div>';
-                    print '<div>';
-                    if ($spotter_item['airline_name'] != "")
-                    {
-                        print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'">'.$spotter_item['airline_name'].'</a>';
-                    } else {
-                        print 'N/A';
-                    }
-                    print '</div>';
-                print '</div>';
 
-                print '<div class="detail aircraft">';
-                    print '<div class="title">Aircraft</div>';
-                    print '<div>';
-                        if ($spotter_item['aircraft_name'] != "")
-                        {
-                            print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
-                        } else {
-                            if ($spotter_item['aircraft_type'] != "")
-                            {
-                                print $spotter_item['aircraft_type'];
-                            } else {
-                                print 'N/A';
-                            }
-                        }
-                    print '</div>';
-                print '</div>';
+		print '<div class="detail airline">';
+		print '<div class="title">Airline</div>';
+		print '<div>';
+		if ($spotter_item['airline_name'] != "")
+		{
+			print '<a href="'.$globalURL.'/airline/'.$spotter_item['airline_icao'].'">'.$spotter_item['airline_name'].'</a>';
+		} else {
+			print 'N/A';
+		}
+		print '</div>';
+		print '</div>';
 
-                print '<div class="detail registration">';
-                    print '<div class="title">Registration</div>';
-                    print '<div>';
-                        if ($spotter_item['registration'] != "")
-                        {
-                            print '<a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'">'.$spotter_item['registration'].'</a>';
-                        } else {
-                                print 'N/A';
-                        }
-                    print '</div>';
-                print '</div>';
+		print '<div class="detail aircraft">';
+		print '<div class="title">Aircraft</div>';
+		print '<div>';
+		if ($spotter_item['aircraft_name'] != "")
+		{
+			print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
+		} else {
+			if ($spotter_item['aircraft_type'] != "")
+			{
+				print $spotter_item['aircraft_type'];
+			} else {
+				print 'N/A';
+			}
+		}
+		print '</div>';
+		print '</div>';
 
-                print '<div class="detail departure">';
-                    print '<div class="title">Departure Airport</div>';
-                    print '<div>';
-                        if ($spotter_item['departure_airport_name'] != "")
-                        {
-                            print '<a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')</a>';
-                        } else {
-                            print $spotter_item['departure_airport'];
-                        }
-                    print '</div>';
-                    if (isset($spotter_item['departure_airport_time']) && $spotter_item['departure_airport_time'] != '') {
-                	if ($spotter_item['departure_airport_time'] > 2460) {
-                	    print '<div class="time">';
-                	    print 'at '.date('H:m',$spotter_item['departure_airport_time']);
-                	    print '</div>';
-                	} else {
-                	    print '<div class="time">';
-                	    print 'at '.$spotter_item['departure_airport_time'];
-                	    print '</div>';
-                	}
-                    }
-                print '</div>';
+		print '<div class="detail registration">';
+		print '<div class="title">Registration</div>';
+		print '<div>';
+		if ($spotter_item['registration'] != "")
+		{
+			print '<a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'">'.$spotter_item['registration'].'</a>';
+		} else {
+			print 'N/A';
+		}
+		print '</div>';
+		print '</div>';
 
-                print '<div class="detail arrival">';
-                    print '<div class="title">Arrival Airport</div>';
-                    print '<div>';
-                        if ($spotter_item['arrival_airport_name'] != "")
-                        {
-                            print '<a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a>';
-                            } else {
-                                print $spotter_item['arrival_airport'];
-                            }
-                    print '</div>';
-                    if (isset($spotter_item['arrival_airport_time']) && $spotter_item['arrival_airport_time'] != '') {
-                	print '<div class="time">';
-                	print 'at '.$spotter_item['arrival_airport_time'];
-                	print '</div>';
-                    } elseif (isset($spotter_item['real_arrival_airport_time']) && $spotter_item['real_arrival_airport_time'] != '') {
-                	print '<div class="time">';
-                	print 'at '.$spotter_item['real_arrival_airport_time'];
-                	print '</div>';
-                    }
-                print '</div>';
+		print '<div class="detail departure">';
+		print '<div class="title">Departure Airport</div>';
+		print '<div>';
+		if ($spotter_item['departure_airport_name'] != "")
+		{
+			print '<a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')</a>';
+		} else {
+			print $spotter_item['departure_airport'];
+		}
+		print '</div>';
+		if (isset($spotter_item['departure_airport_time']) && $spotter_item['departure_airport_time'] != '') {
+			if ($spotter_item['departure_airport_time'] > 2460) {
+				print '<div class="time">';
+				print 'at '.date('H:m',$spotter_item['departure_airport_time']);
+				print '</div>';
+			} else {
+				print '<div class="time">';
+				print 'at '.$spotter_item['departure_airport_time'];
+				print '</div>';
+			}
+		}
+		print '</div>';
+
+		print '<div class="detail arrival">';
+		print '<div class="title">Arrival Airport</div>';
+		print '<div>';
+		if ($spotter_item['arrival_airport_name'] != "")
+		{
+			print '<a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a>';
+		} else {
+			print $spotter_item['arrival_airport'];
+		}
+		print '</div>';
+		if (isset($spotter_item['arrival_airport_time']) && $spotter_item['arrival_airport_time'] != '') {
+			print '<div class="time">';
+			print 'at '.$spotter_item['arrival_airport_time'];
+			print '</div>';
+		} elseif (isset($spotter_item['real_arrival_airport_time']) && $spotter_item['real_arrival_airport_time'] != '') {
+			print '<div class="time">';
+			print 'at '.$spotter_item['real_arrival_airport_time'];
+			print '</div>';
+		}
+		print '</div>';
 
 		if ($spotter_item['waypoints'] != "" || $spotter_item['route_stop'] != "")
 		{
@@ -417,62 +411,79 @@ if (!empty($spotter_array))
 			print '</div>';
 			print '</div>';
 		}
+		print '</div>';
 
-			print '</div>';
-
-			print '<div class="details">';
-
-                print '<h3>Additional information as it flew nearby</h3>';
-
-                print '<div class="detail speed">';
-                    print '<div class="title">Ground Speed</div>';
-                    print '<div>';
-                	if (isset($spotter_item['last_ground_speed']) && $spotter_item['last_ground_speed'] != '') {
-                    	    print $spotter_item['last_ground_speed'].' knots - '.round($spotter_item['last_ground_speed']*1.852).' km/h';
-                        } else {
-                    	    print $spotter_item['ground_speed'].' knots - '.round($spotter_item['ground_speed']*1.852).' km/h';
-                        }
-                    print '</div>';
-                print '</div>';	
-
-                print '<div class="detail heading">';
-                    print '<div class="title">Heading (degrees)</div>';
-                    print '<div>';
-                        print $spotter_item['heading'].' ('.$spotter_item['heading_name'].')';
-                    print '</div>';
-                print '</div>';
-
-                print '<div class="detail altitude">';
-                    print '<div class="title">Altitude</div>';
-                    print '<div>';
-                        if (isset($spotter_item['last_altitude']) && $spotter_item['last_altitude'] != '') {
-                                print number_format($spotter_item['last_altitude'].'00').' feet - '.round($spotter_item['last_altitude']*30.48).' m';
-                        } else {
-                                print number_format($spotter_item['altitude'].'00').' feet - '.round($spotter_item['altitude']*30.48).' m';
-                        }
-                    print '</div>';
-                print '</div>';
-                
-                 print '<div class="detail coordinates">';
-                    print '<div class="title">Coordinates</div>';
-                    print '<div>';
-                        //print '<a href="https://www.google.com/maps/place/'.$spotter_item['latitude'].','.$spotter_item['longitude'].'/@'.$spotter_item['latitude'].','.$spotter_item['longitude'].',10z" target="_blank">Lat: '.$spotter_item['latitude'].' Lng: '.$spotter_item['longitude'].'</a>';
-			if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
-                    	    print 'Lat: '.$spotter_item['last_latitude'].' Lng: '.$spotter_item['last_longitude'];
+		print '<div class="details">';
+		print '<h3>Additional information as it flew nearby</h3>';
+		print '<div class="detail speed">';
+		print '<div class="title">Ground Speed</div>';
+		print '<div>';
+		if (isset($spotter_item['last_ground_speed']) && $spotter_item['last_ground_speed'] != '') {
+			if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
+				print round($spotter_item['last_ground_speed']*1.15078).' mph';
+			} elseif ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) {
+				print $spotter_item['last_ground_speed'].' knots';
 			} else {
-                    	    print 'Lat: '.$spotter_item['latitude'].' Lng: '.$spotter_item['longitude'];
-                        }
-                    print '</div>';
-                print '</div>';
-                
-                print '<div class="detail date">';
-                    print '<div class="title">Date ('.$globalTimezone.')</div>';
-                    print '<div>';
-                        date_default_timezone_set($globalTimezone);
-                        print '<a href="'.$globalURL.'/date/'.date("Y-m-d", strtotime($spotter_item['date_iso_8601'])).'">'.date("M j, Y g:i a", strtotime($spotter_item['date_iso_8601'])).'</a>';
-                    print '</div>';
-                print '</div>';	
-                
+				print round($spotter_item['last_ground_speed']*1.852).' km/h';
+			}
+		} else {
+			if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
+				print round($spotter_item['ground_speed']*1.15078).' mph';
+			} elseif ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) {
+				print $spotter_item['ground_speed'].' knots';
+			} else {
+				print round($spotter_item['ground_speed']*1.852).' km/h';
+			}
+		}
+		print '</div>';
+		print '</div>';	
+
+		print '<div class="detail heading">';
+		print '<div class="title">Heading (degrees)</div>';
+		print '<div>';
+		print $spotter_item['heading'].' ('.$spotter_item['heading_name'].')';
+		print '</div>';
+		print '</div>';
+
+		print '<div class="detail altitude">';
+		print '<div class="title">Altitude</div>';
+		print '<div>';
+		if (isset($spotter_item['last_altitude']) && $spotter_item['last_altitude'] != '') {
+			if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
+				print number_format($spotter_item['last_altitude'].'00').' feet';
+			} else {
+				print round($spotter_item['last_altitude']*30.48).' m';
+			}
+		} else {
+			if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
+				print number_format($spotter_item['altitude'].'00').' feet';
+			} else {
+				print round($spotter_item['altitude']*30.48).' m';
+			}
+		}
+		print '</div>';
+		print '</div>';
+
+		print '<div class="detail coordinates">';
+		print '<div class="title">Coordinates</div>';
+		print '<div>';
+		//print '<a href="https://www.google.com/maps/place/'.$spotter_item['latitude'].','.$spotter_item['longitude'].'/@'.$spotter_item['latitude'].','.$spotter_item['longitude'].',10z" target="_blank">Lat: '.$spotter_item['latitude'].' Lng: '.$spotter_item['longitude'].'</a>';
+		if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
+			print 'Lat: '.$spotter_item['last_latitude'].' Lng: '.$spotter_item['last_longitude'];
+		} else {
+			print 'Lat: '.$spotter_item['latitude'].' Lng: '.$spotter_item['longitude'];
+		}
+		print '</div>';
+		print '</div>';
+
+		print '<div class="detail date">';
+		print '<div class="title">Date ('.$globalTimezone.')</div>';
+		print '<div>';
+		date_default_timezone_set($globalTimezone);
+		print '<a href="'.$globalURL.'/date/'.date("Y-m-d", strtotime($spotter_item['date_iso_8601'])).'">'.date("M j, Y g:i a", strtotime($spotter_item['date_iso_8601'])).'</a>';
+		print '</div>';
+		print '</div>';	
+
 		print '<div class="detail date">';
 		print '<div class="title">Date (UTC)</div>';
 		print '<div>';
@@ -483,28 +494,52 @@ if (!empty($spotter_array))
 
 		if (isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != '' && $spotter_item['departure_airport'] != 'NA') {
 			print '<div class="detail distance-departure">';
-			print '<div class="title">Distance from Departure Airport (km)</div>';
+			print '<div class="title">Distance from Departure Airport</div>';
 			print '<div>';
 			$Common = new Common();
 			$departure_airport_info = $Spotter->getAllAirportInfo($spotter_item['departure_airport']);
 			if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
-				print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'km');
+				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'nm').' nm';
+				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'mi').' mi';
+				} else {
+					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'km').' km';
+				}
 			} else {
-				print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'km');
+				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'nm').' nm';
+				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'mi').' mi';
+				} else {
+					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'km').' km';
+				}
 			}
 			print '</div>';
 			print '</div>';
 		}
 		if (isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != '' && $spotter_item['arrival_airport'] != 'NA') {
 			print '<div class="detail distance-arrival">';
-			print '<div class="title">Distance to Arrival Airport (km)</div>';
+			print '<div class="title">Distance to Arrival Airport</div>';
 			print '<div>';
 			$Common = new Common();
 			$arrival_airport_info = $Spotter->getAllAirportInfo($spotter_item['arrival_airport']);
 			if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
-				print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'km');
+				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'nm').' nm';
+				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'mi').' mi';
+				} else {
+					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'km').' km';
+				}
 			} else {
-				print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'km');
+				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'nm').' nm';
+				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'mi').' mi';
+				} else {
+					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'km').' km';
+				}
 			}
 			print '</div>';
 			print '</div>';

@@ -78,10 +78,22 @@ if (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircra
 else print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
 print '</div>';
 print '<div><span>Altitude</span>';
-print $spotter_item['altitude'].'00 feet - '.round($spotter_item['altitude']*30.48).' m (FL'.$spotter_item['altitude'].')';
+if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
+	print $spotter_item['altitude'].'00 feet (FL'.$spotter_item['altitude'].')';
+} else {
+	print round($spotter_item['altitude']*30.48).' m (FL'.$spotter_item['altitude'].')';
+}
 print '</div>';
 if (isset($spotter_item['registration']) && $spotter_item['registration'] != '') print '<div><span>Registration</span><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'" target="_blank">'.$spotter_item['registration'].'</a></div>';
-print '<div><span>Speed</span>'.$spotter_item['ground_speed'].' knots - '.round($spotter_item['ground_speed']*1.852).' km/h</div>';
+print '<div><span>Speed</span>';
+if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
+	print round($spotter_item['ground_speed']*1.15078).' mph';
+} elseif ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) {
+	print $spotter_item['ground_speed'].' knots';
+} else {
+	print round($spotter_item['ground_speed']*1.852).' km/h';
+}
+print '</div>';
 print '<div><span>Coordinates</span>'.$spotter_item['latitude'].', '.$spotter_item['longitude'].'</div>';
 print '<div><span>Heading</span>'.$spotter_item['heading'].'</div>';
 if (isset($spotter_item['pilot_name']) && $spotter_item['pilot_name'] != '') {

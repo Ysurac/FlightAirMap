@@ -50,9 +50,6 @@ require_once('header.php');
 	    <h1>Settings</h1>
 	    <form>
 		<ul>
-		    <li><a class="button flightpopup" onclick="flightPopup(); return false;" title="Flight info as Popup" />Display flight info as popup</a></li>
-		    <li><a class="button flightpath" onclick="flightPath(); return false;" title="Show all flights path" />Display flight path</a></li>
-		    <li><a class="button flightroute" onclick="flightRoute(); return false;" title="Show flight route on click" />Display flight route on click</a></li>
 		    <li>Type of Map :
 			<select onchange="mapType(this);">
 			    <?php
@@ -82,6 +79,10 @@ require_once('header.php');
 			    <option value="MapQuest-Aerial"<?php if ($MapType == 'MapQuest-Aerial') print ' selected'; ?>>MapQuest-Aerial</option>
 			</select>
 		    </li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="flightpopup" value="1" onclick="clickFlightPopup(this)" <?php if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true') || !isset($_COOKIE['flightpopup'])) print 'checked'; ?> >Display flight info as popup</label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="flightpath" value="1" onclick="clickFlightPath(this)" <?php if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || !isset($_COOKIE['flightpath'])) print 'checked'; ?> >Display flight path</label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="flightroute" value="1" onclick="clickFlightRoute(this)" <?php if ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == 'true') || !isset($_COOKIE['MapRoute'])) print 'checked'; ?> >Display flight route on click</label></div></li>
+
 		    <?php
 		        if (extension_loaded('gd') && function_exists('gd_info')) {
 		    ?>
@@ -117,7 +118,9 @@ require_once('header.php');
 			<?php if (isset($globalSBS1) && $globalSBS1) { ?>
 			    <li><div class="checkbox"><label><input type="checkbox" name="sbs" value="1" onclick="clickSBS1(this)" <?php if ((isset($_COOKIE['ShowSBS1']) && $_COOKIE['ShowSBS1'] == 'true') || !isset($_COOKIE['ShowSBS1'])) print 'checked'; ?> >Display ADS-B data</label></div></li>
 			<?php } ?>
-			<?php if (isset($globalAPRS) && $globalAPRS) { ?><li><input type="checkbox" name="aprs" value="1" onclick="clickAPRS(this)" <?php if ((isset($_COOKIE['ShowAPRS']) && $_COOKIE['ShowAPRS'] == 'true') || !isset($_COOKIE['ShowAPRS'])) print 'checked'; ?> >Display APRS data</li><?php } ?>
+			<?php if (isset($globalAPRS) && $globalAPRS) { ?>
+			    <li><div class="checkbox"><label><input type="checkbox" name="aprs" value="1" onclick="clickAPRS(this)" <?php if ((isset($_COOKIE['ShowAPRS']) && $_COOKIE['ShowAPRS'] == 'true') || !isset($_COOKIE['ShowAPRS'])) print 'checked'; ?> >Display APRS data</label></div></li>
+			<?php } ?>
 		    <?php
 			}
 		    ?>
@@ -171,6 +174,26 @@ require_once('header.php');
 		    <?php
 			}
 		    ?>
+		    <li>Distance unit :
+			<select class="selectpicker" onchange="unitdistance(this);">
+			    <option value="km"<?php if ((!isset($_COOKIE['unitdistance']) && (!isset($globalUnitDistance) || (isset($globalUnitDistance) && $globalUnitDistance == 'km'))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) echo ' selected'; ?>>km</option>
+			    <option value="nm"<?php if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) echo ' selected'; ?>>nm</option>
+			    <option value="mi"<?php if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) echo ' selected'; ?>>mi</option>
+		        </select>
+		    </li>
+		    <li>Altitude unit :
+			<select class="selectpicker" onchange="unitaltitude(this);">
+			    <option value="m"<?php if ((!isset($_COOKIE['unitaltitude']) && (!isset($globalUnitAltitude) || (isset($globalUnitAltitude) && $globalUnitAltitude == 'm'))) || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'm')) echo ' selected'; ?>>m</option>
+			    <option value="feet"<?php if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) echo ' selected'; ?>>feet</option>
+		        </select>
+		    </li>
+		    <li>Speed unit :
+			<select class="selectpicker" onchange="unitspeed(this);">
+			    <option value="kmh"<?php if ((!isset($_COOKIE['unitspeed']) && (!isset($globalUnitSpeed) || (isset($globalUnitSpeed) && $globalUnitSpeed == 'kmh'))) || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'kmh')) echo ' selected'; ?>>km/h</option>
+			    <option value="mph"<?php if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) echo ' selected'; ?>>mph</option>
+			    <option value="knots"<?php if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) echo ' selected'; ?>>knots</option>
+		        </select>
+		    </li>
 		</ul>
 	    </form>
 	    <p>Any change in settings reload page</p>

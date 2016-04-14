@@ -504,7 +504,15 @@ foreach($spotter_array as $spotter_item)
 		require_once(dirname(__FILE__).'/require/class.Spotter.php');
 		$Spotter = new Spotter();
 		$distance = $Spotter->getAirportDistance($spotter_item['departure_airport'],$spotter_item['latitude'],$spotter_item['longitude']);
-		if ($distance != '') echo '<br/><i>'.$distance.'km</i>';
+		if ($distance != '') {
+		    if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+			    echo '<br/><i>'.round($distance*0.539957).' nm</i>';
+		    } elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+			    echo '<br/><i>'.round($distance*0.621371).' mi</i>';
+		    } elseif ((!isset($_COOKIE['unitdistance']) && ((isset($globalUnitDistance) && $globalUnitDistance == 'km') || !isset($globalUnitDistance))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) {
+			    echo '<br/><i>'.$distance.' km</i>';
+		    }
+		}
 	}
 	print '</td>'."\n";
 	// Arrival Airport
@@ -551,7 +559,15 @@ foreach($spotter_array as $spotter_item)
 	}
 	if (!isset($spotter_item['real_arrival_airport']) && $spotter_item['arrival_airport'] != 'NA') {
 		$distance = $Spotter->getAirportDistance($spotter_item['arrival_airport'],$spotter_item['latitude'],$spotter_item['longitude']);
-		if ($distance != '') echo '<br/><i>'.$distance.'km</i>';
+		if ($distance != '') {
+		    if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+			    echo '<br/><i>'.round($distance*0.539957).' nm</i>';
+		    } elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+			    echo '<br/><i>'.round($distance*0.621371).' mi</i>';
+		    } elseif ((!isset($_COOKIE['unitdistance']) && ((isset($globalUnitDistance) && $globalUnitDistance == 'km') || !isset($globalUnitDistance))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) {
+			    echo '<br/><i>'.$distance.' km</i>';
+		    }
+		}
 	}
 	print '</td>'."\n";
 	// Route stop

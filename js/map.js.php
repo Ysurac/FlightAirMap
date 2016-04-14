@@ -1638,50 +1638,6 @@ function showNotam() {
      }
 }
 
-
-function flightPopup() {
-    if (!$(".flightpopup").hasClass("active"))
-    {
-	document.cookie =  'flightpopup=true; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	//add the active class
-	$(".flightpopup").addClass("active");
-	// FIXME : Don't reload page (for now not working without reload)
-	window.location.reload();
-    } else {
-	document.cookie =  'flightpopup=false; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	//remove the active class
-	$(".flightpopup").removeClass("active");
-	window.location.reload();
-     }
-}
-
-function flightPath() {
-    if (!$(".flightpath").hasClass("active"))
-    {
-	document.cookie =  'flightpath=true; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	//add the active class
-	$(".flightpath").addClass("active");
-	window.location.reload();
-    } else {
-	document.cookie =  'flightpath=false; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	//remove the active class
-	$(".flightpath").removeClass("active");
-	window.location.reload();
-     }
-}
-function flightRoute() {
-    if (!$(".flightroute").hasClass("active"))
-    {
-	document.cookie =  'MapRoute=true; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	//add the active class
-	$(".flightroute").addClass("active");
-    } else {
-	document.cookie =  'MapRoute=false; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	//remove the active class
-	$(".flightroute").removeClass("active");
-     }
-}
-
 function mapType(selectObj) {
     var idx = selectObj.selectedIndex;
     var atype = selectObj.options[idx].value;
@@ -1769,3 +1725,32 @@ function clickAPRS(cb) {
     //document.cookie =  'ShowAPRS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     document.cookie =  'ShowAPRS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
 }
+function clickFlightPopup(cb) {
+    document.cookie =  'flightpopup='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+function clickFlightPath(cb) {
+    document.cookie =  'flightpath='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+function clickFlightRoute(cb) {
+    document.cookie =  'MapRoute='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+function unitdistance(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var unit = selectObj.options[idx].value;
+    document.cookie =  'unitdistance='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+function unitspeed(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var unit = selectObj.options[idx].value;
+    document.cookie =  'unitspeed='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+function unitaltitude(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var unit = selectObj.options[idx].value;
+    document.cookie =  'unitaltitude='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+
+

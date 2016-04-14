@@ -424,6 +424,30 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		
 		<fieldset>
 			<legend>Optional configuration</legend>
+			<p>
+				<label for="unitdistance">Unit for distance</label>
+				<select name="unitdistance" id="unitdistance">
+					<option value="km" <?php if (isset($globalUnitDistance) && $globalUnitDistance == 'km') { ?>selected="selected" <?php } ?>>Kilometres</option>
+					<option value="nm" <?php if (isset($globalUnitDistance) && $globalUnitDistance == 'nm') { ?>selected="selected" <?php } ?>>Nautical Miles</option>
+					<option value="mi" <?php if (isset($globalUnitDistance) && $globalUnitDistance == 'mi') { ?>selected="selected" <?php } ?>>Statute Miles</option>
+				</select>
+			</p>
+			<p>
+				<label for="unitaltitude">Unit for altitude</label>
+				<select name="unitaltitude" id="unitaltitude">
+					<option value="m" <?php if (isset($globalUnitAltitude) && $globalUnitAltitude == 'm') { ?>selected="selected" <?php } ?>>Metres</option>
+					<option value="feet" <?php if (isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') { ?>selected="selected" <?php } ?>>Feet</option>
+				</select>
+			</p>
+			<p>
+				<label for="unitspeed">Unit for speed</label>
+				<select name="unitspeed" id="unitspeed">
+					<option value="kmh" <?php if (isset($globalUnitSpeed) && $globalUnitSpeed == 'kmh') { ?>selected="selected" <?php } ?>>Kilometres/Hour</option>
+					<option value="mph" <?php if (isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') { ?>selected="selected" <?php } ?>>Miles/Hour</option>
+					<option value="knots" <?php if (isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') { ?>selected="selected" <?php } ?>>Knots</option>
+				</select>
+			</p>
+
 			<div id="optional_sbs">
 			<p>
 				<label for="schedules">Retrieve schedules from external websites</label>
@@ -870,6 +894,13 @@ if (isset($_POST['dbtype'])) {
 
 	$airportzoom = filter_input(INPUT_POST,'airportzoom',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalAirportZoom' => $airportzoom));
+
+	$unitdistance = filter_input(INPUT_POST,'unitdistance',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalUnitDistance' => $unitdistance));
+	$unitaltitude = filter_input(INPUT_POST,'unitaltitude',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalUnitAltitude' => $unitaltitude));
+	$unitspeed = filter_input(INPUT_POST,'unitspeed',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalUnitSpeed' => $unitspeed));
 
 	$mappopup = filter_input(INPUT_POST,'mappopup',FILTER_SANITIZE_STRING);
 	if ($mappopup == 'mappopup') {

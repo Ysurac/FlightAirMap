@@ -143,7 +143,7 @@ class Common {
 			return round($dist * 1.609344);
 		} elseif ($unit == "m") {
 			return round($dist * 1.609344 * 1000);
-		} elseif ($unit == "mile") {
+		} elseif ($unit == "mile" || $unit == "mi") {
 			return round($dist);
 		} elseif ($unit == "nm") {
 			return round($dist*0.868976);
