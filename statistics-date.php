@@ -8,7 +8,7 @@ include('statistics-sub-menu.php');
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
-	  	<h1>Most Busiest Day</h1>
+	  	<h1>Busiest Day</h1>
 	  </div>
       
       <p>Below is a chart that plots the busiest day during the <strong>last 7 days</strong>.</p>

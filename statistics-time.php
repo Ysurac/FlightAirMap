@@ -9,7 +9,7 @@ include('statistics-sub-menu.php');
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
-	  	<h1>Most busiest Time of the Day</h1>
+	  	<h1>Busiest Time of the Day</h1>
 	  </div>
       
        <p>Below is a list of the most common <strong>time of day</strong>.</p>

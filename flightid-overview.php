@@ -143,7 +143,7 @@ if (!empty($spotter_array))
 			} else {
 				print '<img src="'.$spotter_array[0]['image'].'" width="100%" />';
 			}
-			print '<div class="note">Disclaimer: The image come from '.$spotter_array[0]['image_source'].' and is copyright '.$spotter_array[0]['image_copyright'].'. This system may not always 100% accuratly show the actual aircraft.</div>';
+			print '<div class="note">Disclaimer: The source of the above image is '.$spotter_array[0]['image_source'].' and is copyright '.$spotter_array[0]['image_copyright'].'. This system may not show the actual aircraft with 100% accuracy.</div>';
 		}
 	} else {
 		//print '<img src="'.$globalURL.'/images/placeholder.png" alt="No image found!" title="No image found!" />';

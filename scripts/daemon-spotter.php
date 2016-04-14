@@ -669,8 +669,8 @@ while ($i > 0) {
 				    //print_r($data);
 				    if ($line['stealth'] == 0 && $data['datetime'] <= date('Y-m-d H:i:s')) $send = $SI->add($data);
 				    else {
-					if ($line['stealth'] == 1) echo 'APRS STEALTH !!!'."\n";
-					if ($data['datetime'] < date('Y-m-d H:i:s')) echo 'Date APRS : '.$data['datetime']."\n";
+					if ($line['stealth'] == 1) echo '-------- APRS stealth ON => not adding'."\n";
+					if ($data['datetime'] < date('Y-m-d H:i:s')) echo '--------- Date APRS : '.$data['datetime'].' - Current date : '.date('Y-m-d H:i:s').' => not adding future event'."\n";
 				    }
 				    unset($data);
 				} 
