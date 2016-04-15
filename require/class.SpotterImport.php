@@ -295,7 +295,7 @@ class SpotterImport {
 		    	    }
 			}
 			if (!isset($globalFork)) $globalFork = TRUE;
-			if (!$globalIVAO && !$globalVATSIM && !$globalphpVMS) {
+			if (!$globalIVAO && !$globalVATSIM && !$globalphpVMS && (!isset($line['format_source']) || $line['format_source'] != 'aprs')) {
 			  /*
 			    if (function_exists('pcntl_fork') && $globalFork) {
 				$this->nb++;

@@ -669,11 +669,10 @@ while ($i > 0) {
 				    //print_r($data);
 				    $currentdate = date('Y-m-d H:i:s');
 				    $aprsdate = strtotime($data['datetime']);
-				    //if ($line['stealth'] == 0 && ($data['datetime'] <= $currentdate)) $send = $SI->add($data);
-				    if ($data['datetime'] <= $currentdate) $send = $SI->add($data);
+				    if ($line['stealth'] == 0 && ($data['datetime'] <= $currentdate)) $send = $SI->add($data);
 				    else {
-					//if ($line['stealth'] == 1) echo '-------- APRS stealth ON => not adding'."\n";
-					echo '--------- Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
+					if ($line['stealth'] != 0) echo '-------- APRS stealth ON => not adding'."\n";
+					else echo '--------- Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
 				    }
 				    unset($data);
 				} 
