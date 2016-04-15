@@ -6,14 +6,15 @@
 */
 
 // Check if script is not already running... (dirty)
-exec("ps u", $output, $result);
-$j = 0;
-foreach ($output AS $line) if(strpos($line, "update_db.php")) $j++;
-if ($j > 1) {
-	echo "Script is already runnning...";
-	die();
+if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
+	exec("ps u", $output, $result);
+	$j = 0;
+	foreach ($output AS $line) if(strpos($line, "update_db.php")) $j++;
+	if ($j > 1) {
+		echo "Script is already runnning...";
+		die();
+	}
 }
-
 require_once(dirname(__FILE__).'/../require/settings.php');
 require(dirname(__FILE__).'/../install/class.update_db.php');
 $update_db = new update_db();
