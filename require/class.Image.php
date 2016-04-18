@@ -10,6 +10,7 @@ class Image {
 	    $Connection = new Connection($dbc);
             $this->db = $Connection->db;
     }
+
     /**
     * Gets the images based on the aircraft registration
     *
@@ -52,6 +53,24 @@ class Image {
         return $images_array;
     }
 
+    /**
+    * Gets the image copyright based on the Exif data
+    *
+    * @return String image copyright
+    *
+    */
+    public function getExifCopyright($url) {
+        $exif = exif_read_data($url);
+        $copyright = '';
+        if (isset($exif['COMPUTED']['copyright'])) $copyright = $exif['COMPUTED']['copyright'];
+        elseif (isset($exif['copyright'])) $copyright = $exif['copyright'];
+        if ($copyright != '') {
+    	    $copyright = str_replace('Copyright ','',$copyright);
+    	    $copyright = str_replace('© ','',$copyright);
+    	    $copyright = str_replace('(c) ','',$copyright);
+        }
+        return $copyright;
+    }
     
     /**
     * Adds the images based on the aircraft registration
@@ -125,6 +144,7 @@ class Image {
 		if ($source == 'jetphotos' && !$globalIVAO) $images_array = $this->fromJetPhotos($aircraft_registration,$aircraft_name);
 		if ($source == 'planepictures' && !$globalIVAO) $images_array = $this->fromPlanePictures($aircraft_registration,$aircraft_name);
 		if ($source == 'airportdata' && !$globalIVAO) $images_array = $this->fromAirportData($aircraft_registration,$aircraft_name);
+		if ($source == 'customsources') $images_array = $this->fromCustomSource($aircraft_registration,$aircraft_name);
 		if (isset($images_array) && $images_array['original'] != '') return $images_array;
 	}
 	return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
@@ -307,17 +327,15 @@ class Image {
 
     public function fromIvaoMtl($aircraft_icao,$airline_icao) {
 	$Common = new Common();
-	echo "\n".'SEARCH IMAGE : http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
+	//echo "\n".'SEARCH IMAGE : http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
 	if ($Common->urlexist('http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg')) {
 	    $image_url['thumbnail'] = 'http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
 	    $image_url['original'] = 'http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
 	    $image_url['copyright'] = 'IVAO';
 	    $image_url['source_website'] = 'http://mtlcatalog.ivao.aero/';
 	    $image_url['source'] = 'ivao.aero';
-	    echo "Image found !\n";
 	    return $image_url;
 	} else {
-	    echo "\n";
 	    return false;
 	}
     
@@ -444,15 +462,43 @@ class Image {
 	return false;
     }
 
+    /**
+    * Gets the aircraft image from custom url
+    *
+    * @param String $aircraft_registration the registration of the aircraft
+    * @param String $aircraft_name type of the aircraft
+    * @return Array the aircraft thumbnail, orignal url and copyright
+    *
+    */
+    public function fromCustomSource($aircraft_registration,$aircraft_name='') {
+	global $globalAircraftCustomSources;
+	//$globalAircraftImageCustomSource[] = array('thumbnail' => '','original' => '', 'copyright' => '', 'source_website' => '', 'source' => '','exif' => true);
+	if (!empty($globalAircraftImageCustomSources)) {
+		if (!isset($globalAircraftImageCustomSources[0])) $globalAircraftImageCustomSources[] = $globalAircraftImageCustomSources;
+		foreach ($globalAircraftImageCustomSources as $source) {
+			$Common = new Common();
+			$url = str_replace('{registration}',$aircraft_registration,$source['original']);
+			$url_thumbnail = str_replace('{registration}',$aircraft_registration,$source['original']);
+			if ($Common->urlexist($url)) {
+				$image_url['thumbnail'] = $url_thumbnail;
+				$image_url['original'] = $url;
+				if ($source['exif'] && exif_imagetype($url) == IMAGETYPE_JPEG) $exifCopyright = $this->getExifCopyright($url);
+				else $exifCopyright = '';
+				if ($exifCopyright  != '') $image_url['copyright'] = $exifCopyright;
+				else $image_url['copyright'] = $source['copyright'];
+				$image_url['source_website'] = $source['source_website'];
+				$image_url['source'] = $source['source'];
+				return $image_url;
+			}
+		}
+		return false;
+	} else return false;
+    }
+
+
 
 }
 
-//print_r(Image->findAircraftImage('472/CC'));
-//print_r(Image->findAircraftImage('F-GRHG'));
-//print_r(Image->fromBing('CN-RGF'));
-//print_r(Image->fromBing('472/CC'));
-//print_r(Image->fromJetPhotos('F-GZHM'));
-//print_r(Image->fromPlanePictures('F-GZHM'));
 //$Image = new Image();
 //print_r($Image->fromAirportData('F-GZHM'));
 

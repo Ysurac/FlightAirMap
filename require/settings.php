@@ -88,6 +88,11 @@ $globalMapHistory = FALSE;
 // WRAP MAP OR REPEAT
 $globalMapWrap = TRUE;
 
+// UNITS
+$globalUnitDistance = 'km'; // km, nm or mi
+$globalUnitAltitude = 'm'; // m or feet
+$globalUnitSpeed = 'kmh'; // kmh, knots or mph
+
 // *** Virtual flights ***
 //IVAO
 $globalIVAO = FALSE;
@@ -117,7 +122,7 @@ $globalACARSArchive = array('10','80','81','82','3F'); // labels of messages to 
 $globalACARSArchiveKeepMonths = '0';
 
 //Minimal distance to tell if a flight is arrived to airport (in km)
-$globalClosestMinDist = '10';
+$globalClosestMinDist = '50';
 
 // To display Squawk usage we need Squawk country for now
 $globalSquawkCountry = 'UK';
@@ -148,6 +153,7 @@ $globalAirlineAccept = array();
 $globalPilotIdAccept = array();
 
 
+// *** Archive ***
 //Archive all data
 $globalArchive = FALSE;
 
@@ -162,6 +168,7 @@ $globalArchiveKeepTrackMonths = '0';
 
 //Keep Archive of flight for xx months (0 to disable)
 $globalArchiveKeepMonths = '0';
+// ************************
 
 
 //NOTAM
@@ -177,10 +184,14 @@ $globalMETARurl = ''; // Use {icao} to indicate where airport icao must be put i
 //Retrieve private Owner
 $globalOwner = FALSE;
 
+// *** Aircraft pics ***
 //Retrieve Image from externals sources
 $globalAircraftImageFetch = TRUE;
 //Sources for Aircraft image
-$globalAircraftImageSources = array('ivaomtl','wikimedia','airportdata','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
+$globalAircraftImageSources = array('ivaomtl','wikimedia','airportdata','deviantart','flickr','bing','jetphotos','planepictures','planespotters','customsources');
+// Custom source configuration {registration} will be replaced by aircraft registration (exif get copyright from exif data for each pic)
+// example of config : $globalAircraftImageCustomSources = array('thumbnail' => 'http://pics.myurl.com/thumbnail/{registration}.jpg','original' => 'http://myurl/original/{registration}.jpg','source_website' => 'https://www.myurl.com', 'source' => 'customsite', 'exif' => true);
+// ************************
 
 //Retrieve schedules from externals sources (set to FALSE for IVAO or if $globalFork = FALSE)
 $globalSchedulesFetch = TRUE;
