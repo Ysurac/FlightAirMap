@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Stats.php');
 
 if (isset($_POST['airline']))
 {
@@ -13,9 +14,9 @@ if (isset($_POST['airline']))
 	print '<h1>Airlines</h1>';
 	if (isset($_POST['airline_type'])) {
 		$airline_type = filter_input(INPUT_POST,'airline_type',FILTER_SANITIZE_STRING);
-		$airline_names = $Spotter->getAllAirlineNames($airline_type);
+		//$airline_names = $Spotter->getAllAirlineNames($airline_type);
 	} else {
-		$airline_names = $Spotter->getAllAirlineNames();
+		//$airline_names = $Spotter->getAllAirlineNames();
 		$airline_type = 'all';
 	}
 
@@ -36,13 +37,18 @@ if (isset($_POST['airline']))
 		$airline_type = filter_input(INPUT_POST,'airline_type',FILTER_SANITIZE_STRING);
 		$airline_names = $Spotter->getAllAirlineNames($airline_type);
 	} else {
-		$airline_names = $Spotter->getAllAirlineNames();
+		$Stats = new Stats();
+		//$airline_names = $Spotter->getAllAirlineNames();
+		$airline_names = $Stats->getAllAirlineNames();
+		if (empty($airline_names)) $airline_names = $Spotter->getAllAirlineNames();
 	}
 	$previous = null;
 	print '<div class="alphabet-legend">';
 	foreach($airline_names as $value) 
 	{
-		$firstLetter = strtoupper(substr($value['airline_name'], 0, 1));
+		//echo $value['airline_name']."\n";
+		//echo mb_substr($value['airline_name'],0,1).' - '.$value['airline_name']."\n";
+		$firstLetter = mb_strtoupper(mb_substr($value['airline_name'], 0, 1),'UTF-8');
 		if($previous !== $firstLetter)
 		{
 			if ($previous != null) print ' | ';

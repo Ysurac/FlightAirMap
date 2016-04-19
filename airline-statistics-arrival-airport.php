@@ -5,8 +5,9 @@ if (!isset($_GET['airline'])) {
         header('Location: '.$globalURL.'/airline');
         die();
 }
+$airline = filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 $Spotter = new Spotter();
-$spotter_array = $Spotter->getSpotterDataByAirline($_GET['airline'],"0,1","");
+$spotter_array = $Spotter->getSpotterDataByAirline($airline,"0,1","");
 
 if (!empty($spotter_array))
 {
@@ -31,7 +32,7 @@ if (!empty($spotter_array))
 	print '</form>';
 	print '</div>';
 
-	if ($_GET['airline'] != "NA")
+	if ($airline != "NA")
 	{
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')</h1>';
@@ -57,11 +58,11 @@ if (!empty($spotter_array))
 	include('airline-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>Most Common Arrival Airports</h2>';
-  	?>
+?>
   	<p>The statistic below shows all arrival airports of flights from <strong><?php print $spotter_array[0]['airline_name']; ?></strong>.</p>
-  	<?php
-	 $airport_airport_array = $Spotter->countAllArrivalAirportsByAirline($_GET['airline']);
-    	?>
+<?php
+	$airport_airport_array = $Spotter->countAllArrivalAirportsByAirline($airline);
+?>
     	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
     	<script>
     	google.load("visualization", "1", {packages:["geochart"]});
@@ -127,7 +128,7 @@ if (!empty($spotter_array))
 		print '<td>';
 		print $airport_item['airport_arrival_icao_count'];
 		print '</td>';
-		print '<td><a href="'.$globalURL.'/search?arrival_airport_route='.$airport_item['airport_arrival_icao'].'&airline='.$_GET['airline'].'">Search flights</a></td>';
+		print '<td><a href="'.$globalURL.'/search?arrival_airport_route='.$airport_item['airport_arrival_icao'].'&airline='.$airline.'">Search flights</a></td>';
 		print '</tr>';
 		$i++;
 	}

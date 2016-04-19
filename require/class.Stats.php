@@ -36,6 +36,39 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
         }
+	public function getAllAirlineNames($airline_type = '') {
+                $query = "SELECT * FROM stats_airline ORDER BY airline_name ASC";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
+        }
+	public function getAllAircraftTypes() {
+                $query = "SELECT * FROM stats_aircraft ORDER BY aircraft_name ASC";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
+        }
+	public function getAllAirportNames() {
+                $query = "SELECT * FROM stats_airport GROUP BY airport_icao ORDER BY airport_city ASC";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
+        }
 
 
 	public function countAllAircraftTypes($limit = true) {
@@ -650,8 +683,8 @@ class Stats {
                 }
         }
 	public function addStatDepartureAirports($airport_icao,$airport_name,$airport_city,$airport_country,$departure) {
-                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,type) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly') ON DUPLICATE KEY UPDATE departure = departure+:departure";
-                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure);
+                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date) ON DUPLICATE KEY UPDATE departure = departure+:departure";
+                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => date('Y').'-01-01 00:00:00');
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -670,8 +703,8 @@ class Stats {
                 }
         }
 	public function addStatArrivalAirports($airport_icao,$airport_name,$airport_city,$airport_country,$arrival) {
-                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,type) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly') ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
-                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival);
+                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date) ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
+                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival,':date' => date('Y').'-01-01 00:00:00');
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);

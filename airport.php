@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Stats.php');
 
 if (isset($_POST['airport']))
 {
@@ -112,6 +113,7 @@ if (isset($_POST['airport']))
 	
 } else {
 	$Spotter= new Spotter();
+	$Stats = new Stats();
 	$title = "Airports";
 	require_once('header.php');
 	
@@ -119,7 +121,8 @@ if (isset($_POST['airport']))
 		
 		print '<h1>Airports</h1>';
 		
-		$airport_names = $Spotter->getAllAirportNames();
+		$airport_names = $Stats->getAllAirportNames();
+		//if (empty($airport_names)) $airport_names = $Spotter->getAllAirportNames();
 		ksort($airport_names);
 		$previous = null;
 		print '<div class="alphabet-legend">';

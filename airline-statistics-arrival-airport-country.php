@@ -5,8 +5,9 @@ if (!isset($_GET['airline'])) {
         header('Location: '.$globalURL.'/airline');
         die();
 }
+$airline = filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 $Spotter = new Spotter();
-$spotter_array = $Spotter->getSpotterDataByAirline($_GET['airline'],"0,1","");
+$spotter_array = $Spotter->getSpotterDataByAirline($airline,"0,1","");
 
 if (!empty($spotter_array))
 {
@@ -31,7 +32,7 @@ if (!empty($spotter_array))
 	print '</form>';
 	print '</div>';
 
-	if ($_GET['airline'] != "NA")
+	if ($airline != "NA")
 	{
 		print '<div class="info column">';
 			print '<h1>'.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')</h1>';
@@ -56,11 +57,11 @@ if (!empty($spotter_array))
 
 	include('airline-sub-menu.php');
 	print '<div class="column">';
-    	print '<h2>Most Common Arrival Airports by Country</h2>';
-  	?>
-  	<p>The statistic below shows all arrival airports by Country of origin of flights from <strong><?php print $spotter_array[0]['airline_name']; ?></strong>.</p>
-  	<?php
-	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByAirline($_GET['airline']);
+	print '<h2>Most Common Arrival Airports by Country</h2>';
+?>
+	<p>The statistic below shows all arrival airports by Country of origin of flights from <strong><?php print $spotter_array[0]['airline_name']; ?></strong>.</p>
+<?php
+	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByAirline($airline);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 

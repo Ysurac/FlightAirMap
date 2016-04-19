@@ -5,8 +5,9 @@ if (!isset($_GET['airline'])) {
         header('Location: '.$globalURL.'/airline');
         die();
 }
+$airline = filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 $Spotter = new Spotter();
-$spotter_array = $Spotter->getSpotterDataByAirline($_GET['airline'],"0,1","");
+$spotter_array = $Spotter->getSpotterDataByAirline($airline,"0,1","");
 
 if (!empty($spotter_array))
 {
@@ -19,7 +20,7 @@ if (!empty($spotter_array))
 	$airline_names = $Spotter->getAllAirlineNames();
 	foreach($airline_names as $airline_name)
 	{
-		if($_GET['airline'] == $airline_name['airline_icao'])
+		if($airline == $airline_name['airline_icao'])
 		{
 			print '<option value="'.$airline_name['airline_icao'].'" selected="selected">'.$airline_name['airline_name'].' ('.$airline_name['airline_icao'].')</option>';
 		} else {
@@ -31,7 +32,7 @@ if (!empty($spotter_array))
 	print '</form>';
 	print '</div>';
 
-	if ($_GET['airline'] != "NA")
+	if ($airline != "NA")
 	{
 		print '<div class="info column">';
 			print '<h1>'.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')</h1>';
@@ -58,7 +59,7 @@ if (!empty($spotter_array))
 	 print '<div class="column">';
 	print '<h2>Most Common Routes</h2>';
 	print '<p>The statistic below shows the most common routes from <strong>'.$spotter_array[0]['airline_name'].'</strong>.</p>';
-	$route_array = $Spotter->countAllRoutesByAirline($_GET['airline']);
+	$route_array = $Spotter->countAllRoutesByAirline($airline);
 	if (!empty($route_array))
 	{
 		print '<div class="table-responsive">';
@@ -87,7 +88,7 @@ if (!empty($spotter_array))
 			print $route_item['route_count'];
 			print '</td>';
 			print '<td>';
-			print '<a href="'.$globalURL.'/search?airline='.$_GET['airline'].'&departure_airport_route='.$route_item['airport_departure_icao'].'&arrival_airport_route='.$route_item['airport_arrival_icao'].'">Search Flights</a>';
+			print '<a href="'.$globalURL.'/search?airline='.$airline.'&departure_airport_route='.$route_item['airport_departure_icao'].'&arrival_airport_route='.$route_item['airport_arrival_icao'].'">Search Flights</a>';
 			print '</td>';
 			print '<td>';
 			print '<a href="'.$globalURL.'/route/'.$route_item['airport_departure_icao'].'/'.$route_item['airport_arrival_icao'].'">Route Profile</a>';

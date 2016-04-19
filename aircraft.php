@@ -1,18 +1,21 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Stats.php');
 
 if (isset($_POST['aircraft_type']))
 {
 	header('Location: '.$globalURL.'/aircraft/'.$_POST['aircraft_type']);
 } else {
 	$Spotter = new Spotter();
+	$Stats = new Stats();
 	$title = "Aircraft Types";
 	require_once('header.php');
 	print '<div class="column">';
 	print '<h1>Aircraft Types</h1>';
 
-	$aircraft_types = $Spotter->getAllAircraftTypes();
+	$aircraft_types = $Stats->getAllAircraftTypes();
+	if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();
 	$previous = null;
 	print '<div class="alphabet-legend">';
 	foreach($aircraft_types as $value) {
