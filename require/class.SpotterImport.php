@@ -434,8 +434,8 @@ class SpotterImport {
 		        elseif (isset($line['id'])) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $line['id']));
 			elseif (isset($this->all_flights[$id]['ident'])) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.$this->all_flights[$id]['ident']));
 		    }
-		    if ($line['ground'] == 0) $line['ground'] = false;
-		    else if ($line['ground'] == 1) $line['ground'] = true;
+		    if ($line['ground'] == 1) $line['ground'] = true;
+		    else $line['ground'] = false;
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ground' => $line['ground']));
 		    //$dataFound = true;
 		}
