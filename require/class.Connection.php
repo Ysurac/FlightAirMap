@@ -74,6 +74,8 @@ class Connection{
 				else $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,$globalDBPersistent);
 				$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 				$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+				// FIXME : Workaround against "ONLY_FULL_GROUP_BY" mode
+				$this->dbs[$DBname]->exec('SET sql_mode = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_AUTO_VALUE_ON_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE"');
 				break;
 			} catch(PDOException $e) {
 				$i++;
