@@ -277,7 +277,7 @@ while ($i > 0) {
 	    foreach ($buffer as $line) {
     		if ($line != '') {
     		    $line = explode(':', $line);
-    		    if (count($line) > 40 && $line[0] != 'callsign') {
+    		    if (count($line) > 30 && $line[0] != 'callsign') {
 			$data = array();
 			$data['id'] = $line[1].'-'.$line[0];
 			$data['pilot_id'] = $line[1];
@@ -302,7 +302,7 @@ while ($i > 0) {
 			$data['frequency'] = $line[4];
 			$data['type'] = $line[18];
 			$data['range'] = $line[19];
-			$data['info'] = $line[35];
+			if (isset($line[35])) $data['info'] = $line[35];
     			$data['id_source'] = $id_source;
 	    		//$data['arrival_airport_time'] = ;
 	    		if ($line[9] != '') {
