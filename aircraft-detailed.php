@@ -34,7 +34,7 @@ if (!isset($_GET['aircraft_type'])){
 	
 	if (!empty($spotter_array))
 	{
-		$title = 'Detailed View for '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+		$title = _("Detailed View for").' '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
 		require_once('header.php');
 	    
 		print '<div class="select-item">';
@@ -60,29 +60,29 @@ if (!isset($_GET['aircraft_type'])){
 		{
 	    		print '<div class="info column">';
 	      		print '<h1>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</h1>';
-	      		print '<div><span class="label">Name</span>'.$spotter_array[0]['aircraft_name'].'</div>';
-	      		print '<div><span class="label">ICAO</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
-	      		if (isset($spotter_array[0]['aircraft_manufacturer'])) print '<div><span class="label">Manufacturer</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
+	      		print '<div><span class="label">'._("Name").'</span>'.$spotter_array[0]['aircraft_name'].'</div>';
+	      		print '<div><span class="label">'._("ICAO").'</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
+	      		if (isset($spotter_array[0]['aircraft_manufacturer'])) print '<div><span class="label">'._("Manufacturer").'</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
 	    		print '</div>';
 		} else {
-			print '<div class="alert alert-warning">This special aircraft profile shows all flights in where the aircraft type is unknown.</div>';
+			print '<div class="alert alert-warning">'._("This special aircraft profile shows all flights in where the aircraft type is unknown.").'</div>';
 		}
 	      
 		include('aircraft-sub-menu.php');
 	        
 		print '<div class="table column">';	  
-		print '<p>The table below shows the detailed information of all flights from <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
+		print '<p>'._("The table below shows the detailed information of all flights from").' <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
 		  
 		include('table-output.php');
 		  
 		print '<div class="pagination">';
 		if ($limit_previous_1 >= 0)
 		{
-			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$sort.'">&laquo;Previous Page</a>';
+			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$sort.'">&laquo;'._("Previous Page").'</a>';
 		}
 		if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 		{
-			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$sort.'">Next Page&raquo;</a>';
+			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$sort.'">'._("Next Page").'&raquo;</a>';
 		}
 		print '</div>';
 		print '</div>';
@@ -90,8 +90,8 @@ if (!isset($_GET['aircraft_type'])){
 	} else {
 		$title = "Aircraft";
 		require_once('header.php');
-		print '<h1>Errors</h1>';
-		print '<p>Sorry, the aircraft type does not exist in this database. :(</p>'; 
+		print '<h1>'._("Errors").'</h1>';
+		print '<p>'._("Sorry, the aircraft type does not exist in this database. :(").'</p>'; 
 	}
 }
 require_once('footer.php');

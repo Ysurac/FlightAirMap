@@ -9,20 +9,26 @@ require_once('header.php');
 <div id="live-map"></div>
 <div id="aircraft_ident"></div>
 
-<div id="dialog" title="Session has timed-out">
-  <p>In order to save data consumption web page times out after 30 minutes. Close this dialog to continue.</p>
+<div id="dialog" title="<?php echo _("Session has timed-out"); ?>">
+  <p><?php echo _("In order to save data consumption web page times out after 30 minutes. Close this dialog to continue."); ?></p>
 </div>
 
 <div id="sidebar" class="sidebar collapsed">
     <!-- Nav tabs -->
     <ul class="sidebar-tabs" role="tablist">
-	<li><a href="#" onclick="zoomInMap(); return false;" title="Zoom in"><i class="fa fa-plus"></i></a></li>
-	<li><a href="#" onclick="zoomOutMap(); return false;" title="Zoom out"><i class="fa fa-minus"></i></a></li>
-	<li><a href="#" onclick="getUserLocation(); return false;" title="Plot your Location"><i class="fa fa-map-marker"></i></a></li>
-	<li><a href="#" onclick="getCompassDirection(); return false;" title="Compass Mode"><i class="fa fa-compass"></i></a></li>
-
-	<li><a href="#home" role="tab" title="Layers"><i class="fa fa-map"></i></a></li>
-	<li><a href="#settings" role="tab" title="Settings"><i class="fa fa-gears"></i></a></li>
+	<li><a href="#" onclick="zoomInMap(); return false;" title="<?php echo _("Zoom in"); ?>"><i class="fa fa-plus"></i></a></li>
+	<li><a href="#" onclick="zoomOutMap(); return false;" title="<?php echo _("Zoom out"); ?>"><i class="fa fa-minus"></i></a></li>
+	<li><a href="#" onclick="getUserLocation(); return false;" title="<?php echo _("Plot your Location"); ?>"><i class="fa fa-map-marker"></i></a></li>
+	<li><a href="#" onclick="getCompassDirection(); return false;" title="<?php echo _("Compass Mode"); ?>"><i class="fa fa-compass"></i></a></li>
+<?php
+    if (isset($globalArchive) && $globalArchive == TRUE && (isset($globalBeta) && $globalBeta == TRUE)) {
+?>
+	<li><a href="#archive" role="tab" title="<?php echo _("Archive"); ?>"><i class="fa fa-archive"></i></a></li>
+<?php
+    }
+?>
+	<li><a href="#home" role="tab" title="<?php echo _("Layers"); ?>"><i class="fa fa-map"></i></a></li>
+	<li><a href="#settings" role="tab" title="<?php echo _("Settings"); ?>"><i class="fa fa-gears"></i></a></li>
     </ul>
 
     <!-- Tab panes -->
@@ -30,27 +36,80 @@ require_once('header.php');
 	<div class="sidebar-pane" id="home">
 	    <h1>Weather</h1>
 		<ul>
-		<li><a class="button weatherprecipitation" onclick="showWeatherPrecipitation(); return false;" title="Weather Precipitation">Weather Precipitation</a></li>
-		<li><a class="button weatherrain" onclick="showWeatherRain(); return false;" title="Weather Rain">Weather Rain</a></li>
-		<li><a class="button weatherclouds" onclick="showWeatherClouds(); return false;" title="Weather Clouds">Weather Clouds</a></li>
+		<li><a class="button weatherprecipitation" onclick="showWeatherPrecipitation(); return false;"><?php echo _("Weather Precipitation"); ?></a></li>
+		<li><a class="button weatherrain" onclick="showWeatherRain(); return false;"><?php echo _("Weather Rain"); ?></a></li>
+		<li><a class="button weatherclouds" onclick="showWeatherClouds(); return false;"><?php echo _("Weather Clouds"); ?></a></li>
                 </ul>
                 <br />
 		<h1>Others Layers</h1>
-		<ul><li><a class="button waypoints" onclick="showWaypoints(); return false;" title="Waypoints">Waypoints</a></li></ul>
-		<ul><li><a class="button airspace" onclick="showAirspace(); return false;" title="Airspace">Airspace</a></li></ul>
+		<ul><li><a class="button waypoints" onclick="showWaypoints(); return false;"><?php echo _("Waypoints"); ?></a></li></ul>
+		<ul><li><a class="button airspace" onclick="showAirspace(); return false;"><?php echo _("Airspace"); ?></a></li></ul>
 <?php
     if (isset($globalNOTAM) && $globalNOTAM) {
 ?>
-		<ul><li><a class="button notam" onclick="showNotam(); return false;" title="NOTAM">NOTAM</a></li></ul>
+		<ul><li><a class="button notam" onclick="showNotam(); return false;"><?php echo _("NOTAM"); ?></a></li></ul>
 <?php
     }
 ?>
         </div>
+<?php
+    if (isset($globalArchive) && $globalArchive == TRUE) {
+?>
+        <div class="sidebar-pane" id="archive">
+	    <h1><?php echo _("Archive"); ?> <i>Bêta</i></h1>
+	    <p>This feature is not finished yet.</p>
+	    <form method="post">
+		<ul>
+		    <li>
+		        <div class="form-group">
+			    <label>From (UTC) :</label>
+		            <div class='input-group date' id='datetimepicker1'>
+            			<input type='text' name="start_date" class="form-control" />
+		                <span class="input-group-addon">
+            			    <span class="glyphicon glyphicon-calendar"></span>
+		                </span>
+		            </div>
+		        </div>
+		        <div class="form-group">
+			    <label>To (UTC) :</label>
+		            <div class='input-group date' id='datetimepicker2'>
+		                <input type='text' name="end_date" class="form-control" />
+            			<span class="input-group-addon">
+		                    <span class="glyphicon glyphicon-calendar"></span>
+            			</span>
+		            </div>
+		        </div>
+			<script type="text/javascript">
+			    $(function () {
+			        $('#datetimepicker1').datetimepicker();
+			        $('#datetimepicker2').datetimepicker({
+			            useCurrent: false //Important! See issue #1075
+			        });
+			        $("#datetimepicker1").on("dp.change", function (e) {
+			            $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
+			        });
+			        $("#datetimepicker2").on("dp.change", function (e) {
+			            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+			        });
+			    });
+			</script>
+
+
+
+			<input type="hidden" name="during" value="5" />
+		    </li>
+		    <li><input type="submit" name="archive" value="Show archive" /></li>
+		</ul>
+	    </form>
+	</div>
+<?php
+    }
+?>
         <div class="sidebar-pane" id="settings">
-	    <h1>Settings</h1>
+	    <h1><?php echo _("Settings"); ?></h1>
 	    <form>
 		<ul>
-		    <li>Type of Map :
+		    <li><?php echo _("Type of Map:"); ?>
 			<select onchange="mapType(this);">
 			    <?php
 				if (!isset($_COOKIE['MapType'])) $MapType = $globalMapProvider;
@@ -79,25 +138,25 @@ require_once('header.php');
 			    <option value="MapQuest-Aerial"<?php if ($MapType == 'MapQuest-Aerial') print ' selected'; ?>>MapQuest-Aerial</option>
 			</select>
 		    </li>
-		    <li><div class="checkbox"><label><input type="checkbox" name="flightpopup" value="1" onclick="clickFlightPopup(this)" <?php if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true') || !isset($_COOKIE['flightpopup'])) print 'checked'; ?> >Display flight info as popup</label></div></li>
-		    <li><div class="checkbox"><label><input type="checkbox" name="flightpath" value="1" onclick="clickFlightPath(this)" <?php if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || !isset($_COOKIE['flightpath'])) print 'checked'; ?> >Display flight path</label></div></li>
-		    <li><div class="checkbox"><label><input type="checkbox" name="flightroute" value="1" onclick="clickFlightRoute(this)" <?php if ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == 'true') || !isset($_COOKIE['MapRoute'])) print 'checked'; ?> >Display flight route on click</label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="flightpopup" value="1" onclick="clickFlightPopup(this)" <?php if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true') || !isset($_COOKIE['flightpopup'])) print 'checked'; ?> ><?php echo _("Display flight info as popup"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="flightpath" value="1" onclick="clickFlightPath(this)" <?php if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || !isset($_COOKIE['flightpath'])) print 'checked'; ?> ><?php echo _("Display flight path"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="flightroute" value="1" onclick="clickFlightRoute(this)" <?php if ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == 'true') || !isset($_COOKIE['MapRoute'])) print 'checked'; ?> ><?php echo _("Display flight route on click"); ?></label></div></li>
 
 		    <?php
 		        if (extension_loaded('gd') && function_exists('gd_info')) {
 		    ?>
-		    <li><input type="checkbox" name="aircraftcoloraltitude" value="1" onclick="iconColorAltitude(this)" <?php if (isset($_COOKIE['IconColorAltitude']) && $_COOKIE['IconColorAltitude'] == 'true') print 'checked'; ?> >Aircraft icon color based on altitude</li>
+		    <li><input type="checkbox" name="aircraftcoloraltitude" value="1" onclick="iconColorAltitude(this)" <?php if (isset($_COOKIE['IconColorAltitude']) && $_COOKIE['IconColorAltitude'] == 'true') print 'checked'; ?> ><?php echo _("Aircraft icon color based on altitude"); ?></li>
 		    <?php 
 			if (!isset($_COOKIE['IconColorAltitude']) || $_COOKIE['IconColorAltitude'] == 'false') {
 		    ?>
-		    <li>Aircraft icon color :
+		    <li><?php echo _("Aircraft icon color:"); ?>
 			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print '1a3151'; ?>">
 		    </li>
 		    <?php
 			    }
 		        }
 		    ?>
-		    <li>Show airport icon at zoom level :
+		    <li><?php echo _("Show airport icon at zoom level:"); ?>
 			<div class="range">
 			    <input type="range" min="0" max="19" step="1" name="airportzoom" onchange="range.value=value;airportDisplayZoom(airportzoom.value);" value="<?php if (isset($_COOKIE['AirportZoom'])) print $_COOKIE['AirportZoom']; elseif (isset($globalAirportZoom)) print $globalAirportZoom; else print '7'; ?>">
 			    <output id="range"><?php if (isset($_COOKIE['AirportZoom'])) print $_COOKIE['AirportZoom']; elseif (isset($globalAirportZoom)) print $globalAirportZoom; else print '7'; ?></output>
@@ -106,9 +165,9 @@ require_once('header.php');
 		    <?php
 			if (((isset($globalVATSIM) && $globalVATSIM) || isset($globalIVAO) && $globalIVAO || isset($globalphpVMS) && $globalphpVMS) && (!isset($globalMapVAchoose) || $globalMapVAchoose)) {
 		    ?>
-			<?php if (isset($globalVATSIM) && $globalVATSIM) { ?><li><input type="checkbox" name="vatsim" value="1" onclick="clickVATSIM(this)" <?php if ((isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM'] == 'true') || !isset($_COOKIE['ShowVATSIM'])) print 'checked'; ?> >Display VATSIM data</li><?php } ?>
-			<?php if (isset($globalIVAO) && $globalIVAO) { ?><li><input type="checkbox" name="ivao" value="1" onclick="clickIVAO(this)" <?php if ((isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO'] == 'true') || !isset($_COOKIE['ShowIVAO'])) print 'checked'; ?> >Display IVAO data</li><?php } ?>
-			<?php if (isset($globalphpVMS) && $globalphpVMS) { ?><li><input type="checkbox" name="phpvms" value="1" onclick="clickphpVMS(this)" <?php if ((isset($_COOKIE['ShowVMS']) && $_COOKIE['ShowVMS'] == 'true') || !isset($_COOKIE['ShowVMS'])) print 'checked'; ?> >Display phpVMS data</li><?php } ?>
+			<?php if (isset($globalVATSIM) && $globalVATSIM) { ?><li><input type="checkbox" name="vatsim" value="1" onclick="clickVATSIM(this)" <?php if ((isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM'] == 'true') || !isset($_COOKIE['ShowVATSIM'])) print 'checked'; ?> ><?php echo _("Display VATSIM data"); ?></li><?php } ?>
+			<?php if (isset($globalIVAO) && $globalIVAO) { ?><li><input type="checkbox" name="ivao" value="1" onclick="clickIVAO(this)" <?php if ((isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO'] == 'true') || !isset($_COOKIE['ShowIVAO'])) print 'checked'; ?> ><?php echo _("Display IVAO data"); ?></li><?php } ?>
+			<?php if (isset($globalphpVMS) && $globalphpVMS) { ?><li><input type="checkbox" name="phpvms" value="1" onclick="clickphpVMS(this)" <?php if ((isset($_COOKIE['ShowVMS']) && $_COOKIE['ShowVMS'] == 'true') || !isset($_COOKIE['ShowVMS'])) print 'checked'; ?> ><?php echo _("Display phpVMS data"); ?></li><?php } ?>
 		    <?php
 			}
 		    ?>
@@ -116,15 +175,15 @@ require_once('header.php');
 			if (!(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalphpVMS) && $globalphpVMS) && isset($globalSBS1) && $globalSBS1 && isset($globalAPRS) && $globalAPRS && (!isset($globalMapchoose) || $globalMapchoose)) {
 		    ?>
 			<?php if (isset($globalSBS1) && $globalSBS1) { ?>
-			    <li><div class="checkbox"><label><input type="checkbox" name="sbs" value="1" onclick="clickSBS1(this)" <?php if ((isset($_COOKIE['ShowSBS1']) && $_COOKIE['ShowSBS1'] == 'true') || !isset($_COOKIE['ShowSBS1'])) print 'checked'; ?> >Display ADS-B data</label></div></li>
+			    <li><div class="checkbox"><label><input type="checkbox" name="sbs" value="1" onclick="clickSBS1(this)" <?php if ((isset($_COOKIE['ShowSBS1']) && $_COOKIE['ShowSBS1'] == 'true') || !isset($_COOKIE['ShowSBS1'])) print 'checked'; ?> ><?php echo _("Display ADS-B data"); ?></label></div></li>
 			<?php } ?>
 			<?php if (isset($globalAPRS) && $globalAPRS) { ?>
-			    <li><div class="checkbox"><label><input type="checkbox" name="aprs" value="1" onclick="clickAPRS(this)" <?php if ((isset($_COOKIE['ShowAPRS']) && $_COOKIE['ShowAPRS'] == 'true') || !isset($_COOKIE['ShowAPRS'])) print 'checked'; ?> >Display APRS data</label></div></li>
+			    <li><div class="checkbox"><label><input type="checkbox" name="aprs" value="1" onclick="clickAPRS(this)" <?php if ((isset($_COOKIE['ShowAPRS']) && $_COOKIE['ShowAPRS'] == 'true') || !isset($_COOKIE['ShowAPRS'])) print 'checked'; ?> ><?php echo _("Display APRS data"); ?></label></div></li>
 			<?php } ?>
 		    <?php
 			}
 		    ?>
-		    <li>Display airlines :
+		    <li><?php echo _("Display airlines:"); ?>
 			<select class="selectpicker" multiple onchange="airlines(this);">
 			    <?php
 				$Spotter = new Spotter();
@@ -143,7 +202,7 @@ require_once('header.php');
 		    <?php
 			if (isset($globalAPRS) && $globalAPRS) {
 		    ?>
-		    <li>Display APRS sources name :
+		    <li><?php echo _("Display APRS sources name:"); ?>
 			<select class="selectpicker" multiple onchange="sources(this);">
 			    <?php
 				$Spotter = new Spotter();
@@ -163,31 +222,31 @@ require_once('header.php');
 		    <?php
 			if (!(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalphpVMS) && $globalphpVMS)) {
 		    ?>
-		    <li>Display airlines of type :
+		    <li><?php echo _("Display airlines of type:"); ?>
 			<select class="selectpicker" onchange="airlinestype(this);">
-			    <option value="all"<?php if (!isset($_COOKIE['airlinestype']) || $_COOKIE['airlinestype'] == 'all' || $_COOKIE['airlinestype'] == '') echo ' selected'; ?>>All</option>
-			    <option value="passenger"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'passenger') echo ' selected'; ?>>Passenger</option>
-			    <option value="cargo"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'cargo') echo ' selected'; ?>>Cargo</option>
-			    <option value="military"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'military') echo ' selected'; ?>>Military</option>
+			    <option value="all"<?php if (!isset($_COOKIE['airlinestype']) || $_COOKIE['airlinestype'] == 'all' || $_COOKIE['airlinestype'] == '') echo ' selected'; ?>><?php echo _("All"); ?></option>
+			    <option value="passenger"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'passenger') echo ' selected'; ?>><?php echo _("Passenger"); ?></option>
+			    <option value="cargo"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'cargo') echo ' selected'; ?>><?php echo _("Cargo"); ?></option>
+			    <option value="military"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'military') echo ' selected'; ?>><?php echo _("Military"); ?></option>
 			</select>
 		    </li>
 		    <?php
 			}
 		    ?>
-		    <li>Distance unit :
+		    <li><?php echo _("Distance unit:"); ?>
 			<select class="selectpicker" onchange="unitdistance(this);">
 			    <option value="km"<?php if ((!isset($_COOKIE['unitdistance']) && (!isset($globalUnitDistance) || (isset($globalUnitDistance) && $globalUnitDistance == 'km'))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) echo ' selected'; ?>>km</option>
 			    <option value="nm"<?php if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) echo ' selected'; ?>>nm</option>
 			    <option value="mi"<?php if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) echo ' selected'; ?>>mi</option>
 		        </select>
 		    </li>
-		    <li>Altitude unit :
+		    <li><?php echo _("Altitude unit:"); ?>
 			<select class="selectpicker" onchange="unitaltitude(this);">
 			    <option value="m"<?php if ((!isset($_COOKIE['unitaltitude']) && (!isset($globalUnitAltitude) || (isset($globalUnitAltitude) && $globalUnitAltitude == 'm'))) || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'm')) echo ' selected'; ?>>m</option>
 			    <option value="feet"<?php if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) echo ' selected'; ?>>feet</option>
 		        </select>
 		    </li>
-		    <li>Speed unit :
+		    <li><?php echo _("Speed unit:"); ?>
 			<select class="selectpicker" onchange="unitspeed(this);">
 			    <option value="kmh"<?php if ((!isset($_COOKIE['unitspeed']) && (!isset($globalUnitSpeed) || (isset($globalUnitSpeed) && $globalUnitSpeed == 'kmh'))) || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'kmh')) echo ' selected'; ?>>km/h</option>
 			    <option value="mph"<?php if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) echo ' selected'; ?>>mph</option>
@@ -196,7 +255,7 @@ require_once('header.php');
 		    </li>
 		</ul>
 	    </form>
-	    <p>Any change in settings reload page</p>
+	    <p><?php echo _("Any change in settings reload page"); ?></p>
     	</div>
     </div>
 </div>

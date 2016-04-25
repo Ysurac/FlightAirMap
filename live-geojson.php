@@ -53,6 +53,15 @@ if (isset($_GET['ident'])) {
 	$spotter_array = $SpotterLive->getLiveSpotterDatabyCoord($coord,$filter);
 
 #} elseif (isset($globalMapPopup) && !$globalMapPopup) {
+} elseif (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate'])) {
+	$from_archive = true;
+//	$begindate = filter_input(INPUT_GET,'begindate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
+//	$enddate = filter_input(INPUT_GET,'enddate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
+	$begindate = filter_input(INPUT_GET,'begindate',FILTER_SANITIZE_NUMBER_INT);
+	$enddate = filter_input(INPUT_GET,'enddate',FILTER_SANITIZE_NUMBER_INT);
+	$begindate = date('Y-m-d H:i:s',$begindate);
+	$enddate = date('Y-m-d H:i:s',$enddate);
+	$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
 } elseif ($min) {
 	$spotter_array = $SpotterLive->getMinLiveSpotterData($filter);
 #	$min = true;
@@ -61,7 +70,11 @@ if (isset($_GET['ident'])) {
 }
 
 if (!empty($spotter_array)) {
-	$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
+	if (isset($_GET['archive'])) {
+		$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
+	} else {
+		$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
+	}
 	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;
 
@@ -139,6 +152,8 @@ $output = '{';
 						$output .= '"properties": {';
 							$output .= '"flightaware_id": "'.$spotter_item['flightaware_id'].'",';
 							$output .= '"flight_cnt": "'.$flightcnt.'",';
+							if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
+
 /*
 							if ($min) $output .= '"minimal": "true",';
 							else $output .= '"minimal": "false",';
@@ -351,6 +366,7 @@ $output = '{';
 			$output .= ']';
 			$output .= ',"initial_sqltime": "'.$sqltime.'",';
 			$output .= '"totaltime": "'.round(microtime(true)-$begintime,2).'",';
+			if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
 			$output .= '"flight_cnt": "'.$j.'"';
 		} else {
 			$output .= '"features": ';

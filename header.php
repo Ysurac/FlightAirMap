@@ -3,6 +3,21 @@
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
 $current_page = $file_path['filename'];
 date_default_timezone_set($globalTimezone);
+
+if (!function_exists("gettext")) {
+    function _($text) {
+        return $text;
+    }
+} else {
+/*
+putenv('LC_ALL=fr_FR');
+setlocale(LC_ALL, 'fr_FR');
+// Spécifie la localisation des tables de traduction
+bindtextdomain("General", "./locale");
+// Choisit le domaine
+textdomain("general");
+*/
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -19,19 +34,27 @@ date_default_timezone_set($globalTimezone);
   <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
   <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
-<link rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.5-dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui.min.css">
-<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-2.1.3.min.js"></script>
-<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-ui.min.js"></script>
-<script src="<?php print $globalURL; ?>/js/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
-<!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
-<script src="<?php print $globalURL; ?>/js/bootstrap-select.min.js"></script>
-<script src="<?php print $globalURL; ?>/js/jquery-ui-timepicker-addon.js"></script>
-<script src="<?php print $globalURL; ?>/js/script.js"></script>
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui.min.css">
+<!--<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui-timepicker-addon.min.css">-->
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-datetimepicker.min.css">  
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet">
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css" />
+
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-2.2.3.min.js"></script>
+
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/moment.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-datetimepicker.min.js"></script>
+<!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-select.min.js"></script>
+<!--<script src="<?php print $globalURL; ?>/js/jquery-ui-timepicker-addon.js"></script>-->
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/script.js"></script>
+
 <?php
 if (strtolower($current_page) == "about")
 {
@@ -61,8 +84,16 @@ if (strtolower($current_page) == "index")
 <script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
+<?php 
+    if (isset($_POST['archive'])) {
+?>
+<script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&during=<?php print $_POST['during']; ?>"></script>
+<?php    
+    } else {
+?>
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script>
 <?php
+    }
 }
 ?>
 <?php
@@ -134,56 +165,56 @@ if ($facebook_meta_image != "")
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
       	<li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Explore <b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="caret"></b></a>
           <ul class="dropdown-menu">
-          	<li><a href="<?php print $globalURL; ?>/aircraft">Aircraft Types</a></li>
-			<li><a href="<?php print $globalURL; ?>/airline">Airlines</a></li>
-			<li><a href="<?php print $globalURL; ?>/airport">Airports</a></li>
+          	<li><a href="<?php print $globalURL; ?>/aircraft"><?php echo _("Aircraft Types"); ?></a></li>
+			<li><a href="<?php print $globalURL; ?>/airline"><?php echo _("Airlines"); ?></a></li>
+			<li><a href="<?php print $globalURL; ?>/airport"><?php echo _("Airports"); ?></a></li>
 			<li><hr /></li>
-            <li><a href="<?php print $globalURL; ?>/currently">Current Activity</a></li>
-            <li><a href="<?php print $globalURL; ?>/latest">Latest Activity</a></li>
-            <li><a href="<?php print $globalURL; ?>/date/<?php print date("Y-m-d"); ?>">Today's Activity</a></li>
-            <li><a href="<?php print $globalURL; ?>/newest">Newest by Category</a></li>
+            <li><a href="<?php print $globalURL; ?>/currently"><?php echo _("Current Activity"); ?></a></li>
+            <li><a href="<?php print $globalURL; ?>/latest"><?php echo _("Latest Activity"); ?></a></li>
+            <li><a href="<?php print $globalURL; ?>/date/<?php print date("Y-m-d"); ?>"><?php echo _("Today's Activity"); ?></a></li>
+            <li><a href="<?php print $globalURL; ?>/newest"><?php echo _("Newest by Category"); ?></a></li>
             <?php
         	if ($globalACARS) {
         	    if (isset($globalDemo) && $globalDemo) {
     	    ?>
             <li><hr /></li>
-            <li><i>ACARS data not available publicly</i></li>
-            <li><a href="">Latest ACARS messages</a></li>
-            <li><a href="">Archive ACARS messages</a></li>
+            <li><i>_('ACARS data not available publicly'); ?></i></li>
+            <li><a href="">_('Latest ACARS messages'); ?></a></li>
+            <li><a href="">_('Archive ACARS messages'); ?></a></li>
             <?php
         	} else {
     	    ?>
             <li><hr /></li>
-            <li><a href="<?php print $globalURL; ?>/acars-latest">Latest ACARS messages</a></li>
-            <li><a href="<?php print $globalURL; ?>/acars-archive">Archive ACARS messages</a></li>
+            <li><a href="<?php print $globalURL; ?>/acars-latest"><?php echo _("Latest ACARS messages"); ?></a></li>
+            <li><a href="<?php print $globalURL; ?>/acars-archive"><?php echo _("Archive ACARS messages"); ?></a></li>
             <?php
         	}
         	}
     	    ?>
             <li><hr /></li>
-            <li><a href="<?php print $globalURL; ?>/highlights/table">Special Highlights</a></li>
-            <li><a href="<?php print $globalURL; ?>/upcoming">Upcoming Flights</a></li>
+            <li><a href="<?php print $globalURL; ?>/highlights/table"><?php echo _("Special Highlights"); ?></a></li>
+            <li><a href="<?php print $globalURL; ?>/upcoming"><?php echo _("Upcoming Flights"); ?></a></li>
           </ul>
         </li>
-      	<li><a href="<?php print $globalURL; ?>/search">Search</a></li>
-      	<li><a href="<?php print $globalURL; ?>/statistics">Statistics</a></li>
+      	<li><a href="<?php print $globalURL; ?>/search"><?php echo _("Search"); ?></a></li>
+      	<li><a href="<?php print $globalURL; ?>/statistics"><?php echo _("Statistics"); ?></a></li>
         <li class="dropdown">
-          <a href="<?php print $globalURL; ?>/about" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+          <a href="<?php print $globalURL; ?>/about" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("About"); ?> <b class="caret"></b></a>
           <ul class="dropdown-menu">
-          	<li><a href="<?php print $globalURL; ?>/about">About The Project</a></li>
-          	<li><a href="<?php print $globalURL; ?>/about/export">Exporting Data</a></li>
+          	<li><a href="<?php print $globalURL; ?>/about"><?php echo _("About The Project"); ?></a></li>
+          	<li><a href="<?php print $globalURL; ?>/about/export"><?php echo _("Exporting Data"); ?></a></li>
             <li><hr /></li>
-			<li><a href="<?php print $globalURL; ?>/about/tv">Spotter TV</a></li>
+			<li><a href="<?php print $globalURL; ?>/about/tv"><?php echo _("Spotter TV"); ?></a></li>
 	    <?php if (isset($globalContribute) && $globalContribute) { ?>
                 <li><hr /></li>
-                <li><a href="<?php print $globalURL; ?>/contribute">Contribute</a></li>
+                <li><a href="<?php print $globalURL; ?>/contribute"><?php echo _("Contribute"); ?></a></li>
                 <li><hr /></li>
 	    <?php } ?>
             <?php if ($globalName == 'FlightAirMap') { ?>
                 <li><hr /></li>
-        	<li><a href="https://github.com/Ysurac/FlightAirMap/issues" target="_blank">Report any Issues</a></li>
+        	<li><a href="https://github.com/Ysurac/FlightAirMap/issues" target="_blank"><?php echo _("Report any Issues"); ?></a></li>
             <?php } ?>
           </ul>
         </li>

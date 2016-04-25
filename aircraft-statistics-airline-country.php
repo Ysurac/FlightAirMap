@@ -13,7 +13,7 @@ $spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,"0,1","");
 
 if (!empty($spotter_array))
 {
-	$title = 'Most Common Airlines by Country from '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+	$title = _("Most Common Airlines by Country from").' '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
 	require_once('header.php');
     
 	print '<div class="select-item">';
@@ -35,7 +35,7 @@ if (!empty($spotter_array))
 	print '</form>';
 	print '</div>';
 
-	if ($aircraft_type != "NA")	
+	if ($aircraft_type != "NA")
 	{
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</h1>';
@@ -44,12 +44,12 @@ if (!empty($spotter_array))
 		print '<div><span class="label">Manufacturer</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
 		print '</div>';
 	} else {
-		print '<div class="alert alert-warning">This special aircraft profile shows all flights in where the aircraft type is unknown.</div>';
+		print '<div class="alert alert-warning">'._("This special aircraft profile shows all flights in where the aircraft type is unknown.").'</div>';
 	}
 	include('aircraft-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Airlines by Country</h2>';
-	print '<p>The statistic below shows the most common airlines by Country of origin of flights from <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
+	print '<h2>'._("Most Common Airlines by Country").'</h2>';
+	print '<p>'._("The statistic below shows the most common airlines by Country of origin of flights from").' <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
 
 	$airline_array = $Spotter->countAllAirlineCountriesByAircraft($aircraft_type);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
@@ -87,8 +87,8 @@ if (!empty($spotter_array))
 		print '<table class="common-country">';
 		print '<thead>';
 		print '<th></th>';
-		print '<th>Country</th>';
-		print '<th># of times</th>';
+		print '<th>'._("Country").'</th>';
+		print '<th>'._("# of times").'</th>';
 		print '</thead>';
 		print '<tbody>';
 		$i = 1;
@@ -111,10 +111,10 @@ if (!empty($spotter_array))
 	}
 	print '</div>';
 } else {
-	$title = "Aircraft Type";
+	$title = _("Aircraft Type");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, the aircraft type does not exist in this database. :(</p>';  
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, the aircraft type does not exist in this database. :(").'</p>';  
 }
 require_once('footer.php');
 ?>

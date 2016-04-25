@@ -662,17 +662,17 @@ while ($i > 0) {
 				    if (isset($line['course'])) $data['heading'] = $line['course'];
 				    else $data['heading'] = 0;
 				    $data['aircraft_type'] = $line['stealth'];
-				    $data['noarchive'] = true;
+				    if (!isset($globalAPRSarchive) || (isset($globalAPRSarchive) && $globalAPRSarchive == FALSE)) $data['noarchive'] = true;
     				    $data['id_source'] = $id_source;
 				    $data['format_source'] = 'aprs';
 				    $data['source_name'] = $line['source'];
-				    //print_r($data);
 				    $currentdate = date('Y-m-d H:i:s');
 				    $aprsdate = strtotime($data['datetime']);
-				    if ($line['stealth'] == 0 && ($data['datetime'] <= $currentdate)) $send = $SI->add($data);
+				    // Accept data if time <= system time + 20s
+				    if ($line['stealth'] == 0 && (strtotime($data['datetime']) <= strtotime($currentdate)+20)) $send = $SI->add($data);
 				    else {
-					if ($line['stealth'] != 0) echo '-------- APRS stealth ON => not adding'."\n";
-					else echo '--------- Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
+					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";
+					else echo '--------- '.$data['ident'].' : Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
 				    }
 				    unset($data);
 				} 

@@ -1,4 +1,21 @@
 <?php require_once('../require/settings.php'); ?>
+<?php
+	if (isset($_GET['archive'])) {
+		$begindate = $_GET['begindate'];
+		$lastupd = round(($_GET['enddate']-$_GET['begindate'])/(($_GET['during']*60)/10));
+		$enddate = $_GET['enddate'];
+		setcookie("archive_begin",$begindate);
+		setcookie("archive_end",$enddate);
+		setcookie("archive_update",$lastupd);
+?>
+
+document.cookie =  'archive_begin=<?php print $begindate; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+document.cookie =  'archive_end=<?php print $enddate; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+document.cookie =  'archive_update=<?php print $lastupd; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+<?php
+	}
+?>
+
 
 var map;
 var user = new L.FeatureGroup();
@@ -436,6 +453,29 @@ bounds = L.latLngBounds(southWest,northEast);
 	?>
 
 	<?php
+	    if (isset($_GET['archive'])) {
+	?>
+	var archive = L.control();
+	archive.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'archivebox'); // create a div with a class "info"
+		this.update();
+		return this._div;
+	};
+	archive.update = function (props) {
+		if (typeof props != 'undefined') {
+			this._div.innerHTML = '<h4>Archive Date & Time</h4>' +  '<b>' + props.archive_date + ' UTC </b>';
+		} else {
+			this._div.innerHTML = '<h4>Archive Date & Time</h4>' +  '<b>-</b>';
+		}
+
+	};
+	archive.addTo(map);
+	<?php
+	    }
+	?>
+
+
+	<?php
 	    //if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (isset($globalMapPopup) && !$globalMapPopup)) {
 	?>
 	var showdetails = L.control();
@@ -495,9 +535,26 @@ function getAltitudeColor(x) {
 
 $("#aircraft_ident").attr('class','');
 
-function getLiveData()
+function getLiveData(click)
 {
 	var bbox = map.getBounds().toBBoxString();
+	<?php
+
+	if (isset($_GET['archive'])) {
+	?>
+	var begindate = parseInt(getCookie("archive_begin"));
+	var enddate = begindate+parseInt(getCookie("archive_update"));
+	if (enddate > getCookie("archive_end")) {
+	    enddate = parseInt(getCookie("archive_end"));
+	    clearInterval(reload);
+	} else {
+	    if (click != 1) {
+		document.cookie =  'archive_begin='+enddate+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+	    }
+	}
+	<?php
+	  }
+	?>
 	layer_data_p = L.layerGroup();
 
 	$.ajax({
@@ -512,7 +569,11 @@ function getLiveData()
 	    ?>
 	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&flightaware_id=<?php print $flightaware_id; ?>&history",
 	    <?php
-		} else {
+		} elseif (isset($_GET['archive'])) {
+	    ?>
+            url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate,
+	    <?php
+	        } else {
 	    ?>
 	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className,
 	    <?php 
@@ -535,6 +596,13 @@ function getLiveData()
 			if (!isset($ident) && !isset($flightaware_id)) {
 		    ?>
 		    info.update(feature.properties);
+		    <?php
+			if (isset($_GET['archive'])) {
+		    ?>
+		    archive.update(feature.properties);
+		    <?php
+		        }
+		    ?>
 
 				//console.log(document.getElementById('aircraft_ident').className);
 			if (document.getElementById('aircraft_ident').className == feature.properties.callsign || document.getElementById('aircraft_ident').className == feature.properties.flightaware_id) {
@@ -597,7 +665,7 @@ function getLiveData()
 				    $("#aircraft_ident").attr('class',feature.properties.callsign);
 				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
 				}
-				getLiveData();
+				getLiveData(1);
 			});
 		    <?php
 		      }
@@ -633,7 +701,7 @@ function getLiveData()
 				    $("#aircraft_ident").attr('class',feature.properties.callsign);
 				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
 				}
-				getLiveData();
+				getLiveData(1);
 			});
 		    <?php
 		      }
@@ -663,7 +731,7 @@ function getLiveData()
 				    $("#aircraft_ident").attr('class',feature.properties.callsign);
 				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
 				}
-				getLiveData();
+				getLiveData(1);
 			});
 		    
 		    <?php
@@ -945,18 +1013,32 @@ function getLiveData()
 	//re-create the bootstrap tooltips on the marker 
 	//showBootstrapTooltip();
     }
+
 }).error(function() {
     map.removeLayer(layer_data);
     //info.update();
     });
+//  getLiveData(0);
 }
 
   //load the function on startup
-  getLiveData();
+  getLiveData(0);
 
+
+<?php
+    if (isset($_GET['archive'])) {
+?>    
   //then load it again every 30 seconds
-  setInterval(function(){if (noTimeout) getLiveData()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
-
+//  var reload = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
+  var reload = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
+<?php
+    } else {
+?>    
+  //then load it again every 30 seconds
+  var reload = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+<?php
+    }
+?>
   //adds the bootstrap hover to the map buttons
   $('.button').tooltip({ placement: 'right' });
 

@@ -16,14 +16,14 @@ require_once('header.php');
 if (isset($_GET['start_date'])) {
 	//for the date manipulation into the query
 	if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
-		$start_date = $_GET['start_date'].":00";
-		$end_date = $_GET['end_date'].":00";
+		$start_date = $_GET['start_date']." 00:00:00";
+		$end_date = $_GET['end_date']." 00:00:00";
 		$sql_date = $start_date.",".$end_date;
 	} else if($_GET['start_date'] != ""){
-		$start_date = $_GET['start_date'].":00";
+		$start_date = $_GET['start_date']." 00:00:00";
 		$sql_date = $start_date;
 	} else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
-		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date'].":00";
+		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date']." 00:00:00";
 		$sql_date = $end_date;
 	} else $sql_date = '';
 } else $sql_date = '';
@@ -387,16 +387,43 @@ if (!empty($_GET)){
 		  <script type="text/javascript">getSelect('arrivalairportnames','<?php if(isset($_GET['arrival_airport_route'])) print $_GET['arrival_airport_route']; ?>');</script>
         </fieldset>
     
-    		<fieldset>
+    	<fieldset>
         	<legend>Date</legend>
-    			<div class="form-group">
-    				<label>Start Date</label> 
-    				<input type="text" id="start_date" name="start_date" value="<?php if (isset($_GET['start_date'])) print $_GET['start_date']; ?>" size="10" readonly="readonly" class="datepicker" placeholder="Start Date/Time" />
-    			</div>
-    			<div class="form-group">
-    				<label>End Date</label> 
-    				<input type="text" id="end_date" name="end_date" value="<?php if (isset($_GET['end_date'])) print $_GET['end_date']; ?>" size="10" readonly="readonly" class="datepicker" placeholder="End Date/Time" />
-    			</div>
+			<div class="form-group">
+                            <label>Start Date</label>
+                            <div class='input-group date' id='datetimepicker1'>
+                                <input type='text' name="start_date" class="form-control" value="<?php if (isset($_GET['start_date'])) print $_GET['start_date']; ?>" placeholder="Start Date/Time" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <div class='input-group date' id='datetimepicker2'>
+                                <input type='text' name="end_date" class="form-control" value="<?php if (isset($_GET['end_date'])) print $_GET['end_date']; ?>" placeholder="End Date/Time" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            $(function () {
+                                $('#datetimepicker1').datetimepicker({
+                            	    format: 'YYYY-MM-DD'
+                                });
+                                $('#datetimepicker2').datetimepicker({
+                            	    format: 'YYYY-MM-DD',
+                                    useCurrent: false //Important! See issue #1075
+                                });
+                                $("#datetimepicker1").on("dp.change", function (e) {
+                                    $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
+                                });
+                                $("#datetimepicker2").on("dp.change", function (e) {
+                                    $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+                                });
+                            });
+                        </script>
     		</fieldset>
 		</div>
 		

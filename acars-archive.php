@@ -29,14 +29,14 @@ print '<div class="info column">';
 print '<h1>Archived ACARS messages</h1>';
 print '</div>';
 
-print '<div class="table column">';	
-print '<p>The table below shows the archived ACARS messages.</p>';
+print '<div class="table column">';
+print '<p>'._("The table below shows the archived ACARS messages.").'</p>';
 $spotter_array = $ACARS->getArchiveAcarsData($limit_start.",".$absolute_difference);
 if (!empty($spotter_array)) {
 	include('table-output.php');
 	print '<div class="pagination">';
-	if ($limit_previous_1 >= 0) print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
-	if ($spotter_array[0]['query_number_rows'] == $absolute_difference) print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
+	if ($limit_previous_1 >= 0) print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
+	if ($spotter_array[0]['query_number_rows'] == $absolute_difference) print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
 	print '</div>';
 }
 print '</div>';

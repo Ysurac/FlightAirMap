@@ -20,6 +20,9 @@ class SpotterArchive {
 		else $country = '';
 	} else $country = $over_country;
 	if ($airline_type == null) $airline_type ='';
+	
+	//if ($country == '') echo "\n".'************ UNKNOW COUNTRY ****************'."\n";
+	//else echo "\n".'*/*/*/*/*/*/*/ Country : '.$country.' */*/*/*/*/*/*/*/*/'."\n";
 
 	// Route is not added in spotter_archive
 	$query  = "INSERT INTO spotter_archive (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_shadow, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, departure_airport_time,arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, arrival_airport_time, route_stop, date,latitude, longitude, waypoints, altitude, heading, ground_speed, squawk, ModeS, pilot_id, pilot_name, verticalrate,format_source,over_country,source_name)
@@ -70,7 +73,7 @@ class SpotterArchive {
                 $id = filter_var($id, FILTER_SANITIZE_STRING);
                 //$query  = SpotterArchive->$global_query." WHERE spotter_archive.flightaware_id = :id";
                 //$query  = "SELECT spotter_archive.* FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE l.flightaware_id = :id GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate LIMIT 1";
-                $query  = "SELECT spotter_archive.* FROM spotter_archive WHERE l.flightaware_id = :id ORDER BY date DESC LIMIT 1";
+                $query  = "SELECT * FROM spotter_archive WHERE flightaware_id = :id ORDER BY date DESC LIMIT 1";
 
 //              $spotter_array = Spotter->getDataFromDB($query,array(':id' => $id));
                   /*
@@ -247,6 +250,108 @@ class SpotterArchive {
                         return "error";
                 }
 	}
+
+	 /**
+        * Gets Minimal Live Spotter data
+        *
+        * @return Array the spotter information
+        *
+        */
+        public function getMinLiveSpotterData($begindate,$enddate,$filter = array())
+        {
+                global $globalDBdriver, $globalLiveInterval;
+                date_default_timezone_set('UTC');
+
+                $filter_query = '';
+                if (isset($filter['source']) && !empty($filter['source'])) {
+                        $filter_query .= " AND format_source IN ('".implode("','",$filter['source'])."') ";
+                }
+                // FIXME : use spotter_output also
+                if (isset($filter['airlines']) && !empty($filter['airlines'])) {
+                        $filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_archive.flightaware_id ";
+                }
+                if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
+                        $filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_archive.flightaware_id ";
+                }
+                if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+                        $filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+                }
+
+                //if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
+                if ($globalDBdriver == 'mysql') {
+                        /*
+                        $query  = 'SELECT a.aircraft_shadow, spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk 
+                    		    FROM spotter_archive 
+                    		    INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE (l.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".') GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate '.$filter_query.'LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_archive.aircraft_icao = a.icao';
+			*/
+			$query  = 'SELECT a.aircraft_shadow, spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk 
+				    FROM spotter_archive 
+				    INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate 
+						FROM spotter_archive l 
+						WHERE (l.date BETWEEN DATE_SUB('."'".$begindate."'".',INTERVAL '.$globalLiveInterval.' SECOND) AND '."'".$begindate."'".') 
+						GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id 
+				    AND spotter_archive.date = s.maxdate '.$filter_query.'LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_archive.aircraft_icao = a.icao';
+                } else if ($globalDBdriver == 'pgsql') {
+                        $query  = 'SELECT spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, a.aircraft_shadow FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate '.$filter_query.'INNER JOIN (SELECT * FROM aircraft) a on spotter_archive.aircraft_icao = a.icao';
+                }
+                //echo $query;
+                try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error";
+                }
+                $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+                return $spotter_array;
+        }
+
+	 /**
+        * Gets count Live Spotter data
+        *
+        * @return Array the spotter information
+        *
+        */
+        public function getLiveSpotterCount($begindate,$enddate,$filter = array())
+        {
+                global $globalDBdriver, $globalLiveInterval;
+                date_default_timezone_set('UTC');
+
+                $filter_query = '';
+                if (isset($filter['source']) && !empty($filter['source'])) {
+                        $filter_query .= " AND format_source IN ('".implode("','",$filter['source'])."') ";
+                }
+                if (isset($filter['airlines']) && !empty($filter['airlines'])) {
+                        $filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_archive.flightaware_id ";
+                }
+                if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
+                        $filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_archive.flightaware_id ";
+                }
+                if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+                        $filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+                }
+
+                //if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
+                if ($globalDBdriver == 'mysql') {
+			$query = 'SELECT COUNT(DISTINCT flightaware_id) as nb 
+			FROM spotter_archive l 
+			WHERE (l.date BETWEEN DATE_SUB('."'".$begindate."'".',INTERVAL '.$globalLiveInterval.' SECOND) AND '."'".$begindate."'".')'.$filter_query;
+
+                } else if ($globalDBdriver == 'pgsql') {
+			$query = 'SELECT COUNT(DISTINCT flightaware_id) as nb FROM spotter_archive l WHERE (l.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".')'.$filter_query;
+                }
+                //echo $query;
+                try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error";
+                }
+		$result = $sth->fetch(PDO::FETCH_ASSOC);
+                return $result['nb'];
+
+        }
+
 
 
 	// Spotter_Archive_output

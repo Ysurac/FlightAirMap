@@ -114,6 +114,21 @@ body {
     margin: 0 0 5px;
     color: #777;
 }
+.archivebox {
+    top: -32px;
+    right: 200px;
+    padding: 16px 18px;
+    font: 12px/14px Arial, Helvetica, sans-serif;
+    background: #FFCA42;
+    background: rgba(255,206,66,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    text-align: center;
+}
+.archivebox h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
 
 .mobile{
     display: none !important;
