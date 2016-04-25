@@ -69,8 +69,12 @@ class Spotter{
 				$temp_array['spotter_id'] = $this->getSpotterIDBasedOnFlightAwareID($row['flightaware_id']);
 			} elseif (isset($row['spotter_archive_id'])) {
 				$temp_array['spotter_id'] = $row['spotter_archive_id'];
-			} else {
+			} elseif (isset($row['spotter_archive_output_id'])) {
+				$temp_array['spotter_id'] = $row['spotter_archive_output_id'];
+			} elseif (isset($row['spotter_id'])) {
 				$temp_array['spotter_id'] = $row['spotter_id'];
+			} else {
+				$temp_array['spotter_id'] = '';
 			}
 			$temp_array['flightaware_id'] = $row['flightaware_id'];
 			if (isset($row['modes'])) $temp_array['modes'] = $row['modes'];
@@ -813,7 +817,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.aircraft_name <> '' GROUP BY spotter_output.aircraft_icao ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.aircraft_name <> '' GROUP BY spotter_output.aircraft_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
@@ -855,7 +859,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.registration <> '' GROUP BY spotter_output.registration ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.registration <> '' GROUP BY spotter_output.registration,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
@@ -897,7 +901,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.airline_name <> '' GROUP BY spotter_output.airline_icao ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.airline_name <> '' GROUP BY spotter_output.airline_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
@@ -939,7 +943,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' GROUP BY spotter_output.departure_airport_icao ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' GROUP BY spotter_output.departure_airport_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
@@ -981,7 +985,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' GROUP BY spotter_output.arrival_airport_icao ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' GROUP BY spotter_output.arrival_airport_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
@@ -7697,10 +7701,17 @@ class Spotter{
 			} else {
 				$orderby_query = " ORDER BY HOUR(spotter_output.date) ASC";
 			}
+
 			$query = "SELECT spotter_output.*, count(spotter_output.ident) as ident_count
 			    FROM spotter_output
-			    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours'
-			    GROUP BY spotter_output.ident HAVING ident_count > 10 $orderby_query";
+			    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours' AND spotter_output.ident <> '' AND format_source <> 'aprs'
+			    GROUP BY spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time HAVING count(spotter_output.ident) > 10 $orderby_query";
+
+/*			$query = "SELECT spotter_output.ident, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time, count(spotter_output.ident) as ident_count
+			    FROM spotter_output
+			    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours' AND spotter_output.ident <> '' AND format_source <> 'aprs'
+			    GROUP BY spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time HAVING count(spotter_output.ident) > 10 $orderby_query";
+*/
 			$spotter_array = $this->getDataFromDB($query.$limit_query);
 		} else if ($globalDBdriver == 'pgsql') {
 			if ($sort != "")
@@ -7712,7 +7723,7 @@ class Spotter{
 			}
 			$query = "SELECT spotter_output.*, count(spotter_output.ident) as ident_count
 			    FROM spotter_output
-			    WHERE DATE_PART('dow', spotter_output.date) = DATE_PART('dow', date 'now' AT TIME ZONE :timezone) AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) >= '$currentHour' AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) <= '$next3Hours'
+			    WHERE DATE_PART('dow', spotter_output.date) = DATE_PART('dow', date 'now' AT TIME ZONE :timezone) AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) >= '$currentHour' AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) <= '$next3Hours' AND ident <> '' 
 			    GROUP BY spotter_output.ident, spotter_output.spotter_id HAVING count(spotter_output.ident) > 10 $orderby_query";
 		$spotter_array = $this->getDataFromDB($query.$limit_query,array(':timezone' => $globalTimezone));
 		}
@@ -7973,17 +7984,22 @@ class Spotter{
 		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
-//		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(:latitude :longitude)'), ogc_geom) LIMIT 1";
-		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(".$longitude.' '.$latitude.")'), ogc_geom) LIMIT 1";
+		try {
+	//		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(:latitude :longitude)'), ogc_geom) LIMIT 1";
+			$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(".$longitude.' '.$latitude.")'), ogc_geom) LIMIT 1";
 		
-		$sth = $this->db->prepare($query);
-		//$sth->execute(array(':latitude' => $latitude,':longitude' => $longitude));
-		$sth->execute();
+			$sth = $this->db->prepare($query);
+			//$sth->execute(array(':latitude' => $latitude,':longitude' => $longitude));
+			$sth->execute();
     
-		$row = $sth->fetch(PDO::FETCH_ASSOC);
-		if (count($row) > 0) {
-		    return $row;
-		} else return '';
+			$row = $sth->fetch(PDO::FETCH_ASSOC);
+			if (count($row) > 0) {
+				return $row;
+			} else return '';
+		} catch (PDOException $e) {
+			if (isset($globalDebug) && $globalDebug) echo 'Error : '.$e->getMessage()."\n";
+			return '';
+		}
 	
 	}
 

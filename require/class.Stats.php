@@ -59,7 +59,7 @@ class Stats {
                 return $all;
         }
 	public function getAllAirportNames() {
-                $query = "SELECT * FROM stats_airport GROUP BY airport_icao ORDER BY airport_city ASC";
+                $query = "SELECT airport_icao, airport_name,airport_city,airport_country FROM stats_airport GROUP BY airport_icao,airport_name,airport_city,airport_country ORDER BY airport_city ASC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
