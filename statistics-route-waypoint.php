@@ -2,19 +2,16 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
-$title = "Statistic - Most common Route by Waypoint";
+$title = _("Statistic - Most common Route by Waypoint");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
-?>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
-	  	<h1>Most common Route by Waypoint</h1>
+	  	<h1>'._("Most common Route by Waypoint").'</h1>
 	  </div>
-
-      <p>Below are the <strong>Top 10</strong> most common routes, based on the waypoint data (as of May 1, 2014). Theoretically, since the waypoint data is the full 'planned flight route' this statistic would show the actual most common route.</p>
+      <p>'._("Below are the <strong>Top 10</strong> most common routes, based on the waypoint data. Theoretically, since the waypoint data is the full 'planned flight route' this statistic would show the actual most common route.").'</p>';
       
-<?php
-
 $route_array = $Spotter->countAllRoutesWithWaypoints();
 if (!empty($route_array))
 {
@@ -22,9 +19,9 @@ if (!empty($route_array))
 	print '<table class="common-routes-waypoints table-striped">';
 	print '<thead>';
 	print '<th></th>';
-	print '<th>Departure Airport</th>';
-	print '<th>Arrival Airport</th>';
-	print '<th># of times</th>';
+	print '<th>'._("Departure Airport").'</th>';
+	print '<th>'._("Arrival Airport").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '<th></th>';
 	print '</thead>';
 	print '<tbody>';
@@ -41,7 +38,7 @@ if (!empty($route_array))
 		print '</td>';
 		print '<td>'.$route_item['route_count'].'</td>';
 		print '<td>';
-		print '<a href="'.$globalURL.'/flightid/'.$route_item['spotter_id'].'">Recent Flight on this route</a>';
+		print '<a href="'.$globalURL.'/flightid/'.$route_item['spotter_id'].'">'._("Recent Flight on this route").'</a>';
 		print '</td>';
 		print '</tr>';
 		$i++;

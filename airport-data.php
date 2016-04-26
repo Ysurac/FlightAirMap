@@ -30,8 +30,8 @@ if (isset($spotter_item['image_thumb']) && $spotter_item['image_thumb'] != "")
 
 print '<div class="top">';
 if (isset($image)) {
-    //print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['icao'].' '.$spotter_item['name'].'" title="'.$spotter_item['name'].'"/><br />Image &copy; '.$spotter_item['image_copyright'].'</div>';
-    print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['icao'].' '.$spotter_item['name'].'" title="'.$spotter_item['name'].'"/><br /></div>';
+	//print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['icao'].' '.$spotter_item['name'].'" title="'.$spotter_item['name'].'"/><br />Image &copy; '.$spotter_item['image_copyright'].'</div>';
+	print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['icao'].' '.$spotter_item['name'].'" title="'.$spotter_item['name'].'"/><br /></div>';
 }
 print '<div class="right"><div class="callsign-details"><div class="callsign">'.$spotter_item['name'].'</div>';
 print '</div>';
@@ -42,30 +42,30 @@ print '<div class="details"><div class="mobile airports"><div class="airport">';
 print '<span class="code"><a href="/airport/'.$spotter_item['icao'].'" target="_blank">'.$spotter_item['icao'].'</a></span>';
 print '</div></div><div>';
 
-print '<span>City</span>';
+print '<span>'._("City").'</span>';
 print $spotter_item['city'];
 print '</div>';
-print '<div><span>Altitude</span>';
+print '<div><span>'._("Altitude").'</span>';
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
         print $spotter_item['altitude'].'feet';
 } else {
         print round($spotter_item['altitude']*0.3048).' m';
 }
 print '</div>';
-print '<div><span>Country</span>'.$spotter_item['country'].'</div>';
-print '<div><span>Coordinates</span>'.round($spotter_item['latitude'],3).', '.round($spotter_item['longitude'],3).'</div>';
+print '<div><span>'._("Country").'</span>'.$spotter_item['country'].'</div>';
+print '<div><span>'._("Coordinates").'</span>'.round($spotter_item['latitude'],3).', '.round($spotter_item['longitude'],3).'</div>';
 if (isset($spotter_item['home_link']) && $spotter_item['home_link'] != '' && isset($spotter_item['wikipedia_link']) && $spotter_item['wikipedia_link'] != '') {
-    print '<div><span>Links</span>';
-    print '<a href="'.$spotter_item['home_link'].'">Homepage</a>';
+    print '<div><span>'._("Links").'</span>';
+    print '<a href="'.$spotter_item['home_link'].'">'._("Homepage").'</a>';
     print ' - ';
     print '<a href="'.$spotter_item['wikipedia_link'].'">Wikipedia</a>';
     print '</div>';
 } elseif (isset($spotter_item['home_link']) && $spotter_item['home_link'] != '') {
-    print '<div><span>Links</span>';
-    print '<a href="'.$spotter_item['home_link'].'">Homepage</a>';
+    print '<div><span>'._("Links").'</span>';
+    print '<a href="'.$spotter_item['home_link'].'">'._("Homepage").'</a>';
     print '</div>';
 } elseif (isset($spotter_item['wikipedia_link']) && $spotter_item['wikipedia_link'] != '') {
-    print '<div><span>Links</span>';
+    print '<div><span>'._("Links").'</span>';
     print '<a href="'.$spotter_item['wikipedia_link'].'">Wikipedia</a>';
     print '</div>';
 }
@@ -78,7 +78,7 @@ if (isset($metar_parse)) {
     print '<b>'.$metar_info[0]['metar_date'].'</b><br />';
 //    print_r($metar_parse);
     if (isset($metar_parse['wind'])) {
-        print 'Wind : ';
+        print _("Wind:").' ';
 	if (isset($metar_parse['wind']['direction'])) {
 	    $direction = $Spotter->parseDirection($metar_parse['wind']['direction']);
 	    print $direction[0]['direction_fullname'];
@@ -90,23 +90,23 @@ if (isset($metar_parse)) {
 	print '<br/>';
     }
     if (isset($metar_parse['visibility'])) {
-        print 'Visibility : '.$metar_parse['visibility'].' m'."<br/>";
+        print _("Visibility:").' '.$metar_parse['visibility'].' m'."<br/>";
     }
     if (isset($metar_parse['weather'])) {
-        print 'Weather : '.$metar_parse['weather']."<br/>";
+        print _("Weather:").' '.$metar_parse['weather']."<br/>";
     }
     if (isset($metar_parse['temperature'])) {
-        print 'Temperature : '.$metar_parse['temperature'].' °C'."<br/>";
+        print _("Temperature:").' '.$metar_parse['temperature'].' °C'."<br/>";
     }
     if (isset($metar_parse['dew'])) {
-        print 'Dew point : '.$metar_parse['dew'].' °C'."<br/>";
+        print _("Dew point:").' '.$metar_parse['dew'].' °C'."<br/>";
     }
     if (isset($metar_parse['temperature']) && isset($metar_parse['dew'])) {
 	$humidity = round(100 * pow((112 - (0.1 * $metar_parse['temperature']) + $metar_parse['dew']) / (112 + (0.9 * $metar_parse['temperature'])), 8),1);
-	print 'Humidity : '.$humidity.'%'."<br/>";
+	print _("Humidity:").' '.$humidity.'%'."<br/>";
     }
     if (isset($metar_parse['QNH'])) {
-        print 'Pressure : '.$metar_parse['QNH'].' hPa'."<br/>";
+        print _("Pressure:").' '.$metar_parse['QNH'].' hPa'."<br/>";
     }
 /*
 if (isset($metar_parse['QNH'])) {

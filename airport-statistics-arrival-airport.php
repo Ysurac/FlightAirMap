@@ -5,13 +5,14 @@ if (!isset($_GET['airport'])) {
         header('Location: '.$globalURL.'/airport');
         die();
 }
+$airport = filter_input(INPUT_GET,'airport',FILTER_SANITIZE_STRING);
 $Spotter = new Spotter();
-$spotter_array = $Spotter->getSpotterDataByAirport($_GET['airport'],"0,1","");
-$airport_array = $Spotter->getAllAirportInfo($_GET['airport']);
+$spotter_array = $Spotter->getSpotterDataByAirport($airport,"0,1","");
+$airport_array = $Spotter->getAllAirportInfo($airport);
 
 if (!empty($airport_array))
 {
-	$title = 'Most Common Arrival Airports from '.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
+	$title = _("Most Common Arrival Airports from").' '.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/airport" method="post">';
@@ -21,7 +22,7 @@ if (!empty($airport_array))
 	ksort($airport_names);
 	foreach($airport_names as $airport_name)
 	{
-		if($_GET['airport'] == $airport_name['airport_icao'])
+		if($airport == $airport_name['airport_icao'])
 		{
 			print '<option value="'.$airport_name['airport_icao'].'" selected="selected">'.$airport_name['airport_city'].', '.$airport_name['airport_name'].', '.$airport_name['airport_country'].' ('.$airport_name['airport_icao'].')</option>';
 		} else {
@@ -33,32 +34,29 @@ if (!empty($airport_array))
 	print '</form>';
 	print '</div>';
 
-	if ($_GET['airport'] != "NA")
+	if ($airport != "NA")
 	{
 		print '<div class="info column">';
 		print '<h1>'.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')</h1>';
-		print '<div><span class="label">Name</span>'.$airport_array[0]['name'].'</div>';
-		print '<div><span class="label">City</span>'.$airport_array[0]['city'].'</div>';
-		print '<div><span class="label">Country</span>'.$airport_array[0]['country'].'</div>';
-		print '<div><span class="label">ICAO</span>'.$airport_array[0]['icao'].'</div>';
-		print '<div><span class="label">IATA</span>'.$airport_array[0]['iata'].'</div>';
-		print '<div><span class="label">Altitude</span>'.$airport_array[0]['altitude'].'</div>';
-		print '<div><span class="label">Coordinates</span><a href="http://maps.google.ca/maps?z=10&t=k&q='.$airport_array[0]['latitude'].','.$airport_array[0]['longitude'].'" target="_blank">Google Map<i class="fa fa-angle-double-right"></i></a></div>';
+		print '<div><span class="label">'._("Name").'</span>'.$airport_array[0]['name'].'</div>';
+		print '<div><span class="label">'._("City").'</span>'.$airport_array[0]['city'].'</div>';
+		print '<div><span class="label">'._("Country").'</span>'.$airport_array[0]['country'].'</div>';
+		print '<div><span class="label">'._("ICAO").'</span>'.$airport_array[0]['icao'].'</div>';
+		print '<div><span class="label">'._("IATA").'</span>'.$airport_array[0]['iata'].'</div>';
+		print '<div><span class="label">'._("Altitude").'</span>'.$airport_array[0]['altitude'].'</div>';
+		print '<div><span class="label">'._("Coordinates").'</span><a href="http://maps.google.ca/maps?z=10&t=k&q='.$airport_array[0]['latitude'].','.$airport_array[0]['longitude'].'" target="_blank">Google Map<i class="fa fa-angle-double-right"></i></a></div>';
 		print '</div>';
 	} else {
-		print '<div class="alert alert-warning">This special airport profile shows all flights that do <u>not</u> have a departure and/or arrival airport associated with them.</div>';
+		print '<div class="alert alert-warning">'._("This special airport profile shows all flights that do <u>not</u> have a departure and/or arrival airport associated with them.").'</div>';
 	}
 
 	include('airport-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Arrival Airports</h2>';
-?>
-  	<p>The statistic below shows all arrival airports of flights from <strong><?php print $airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')'; ?></strong>.</p>
-<?php
-	$airport_airport_array = $Spotter->countAllArrivalAirportsByAirport($_GET['airport']);
+	print '<h2>'._("Most Common Arrival Airports").'</h2>';
+	print '<p>'._("The statistic below shows all arrival airports of flights from").' <strong>'.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')</strong>.</p>';
+	$airport_airport_array = $Spotter->countAllArrivalAirportsByAirport($airport);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
-?>
-    	<script>
+	print '<script>
     	google.load("visualization", "1", {packages:["geochart"]});
     	google.setOnLoadCallback(drawCharts);
     	$(window).resize(function(){
@@ -67,8 +65,7 @@ if (!empty($airport_array))
     	function drawCharts() {
     
         var data = google.visualization.arrayToDataTable([ 
-        	["Airport", "# of Times"],
-<?php
+        	["'._("Airport").'", "'._("# of Times").'"],';
 	$airport_data = '';
 	foreach($airport_airport_array as $airport_item)
 	{
@@ -102,9 +99,9 @@ if (!empty($airport_array))
 	print '<table class="common-airport table-striped">';
 	print '<thead>';
 	print '<th></th>';
-	print '<th>Airport</th>';
-	print '<th>Country</th>';
-	print '<th># of times</th>';
+	print '<th>'._("Airport").'</th>';
+	print '<th>'._("Country").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '<th></th>';
 	print '</thead>';
 	print '<tbody>';
@@ -122,7 +119,7 @@ if (!empty($airport_array))
 		print '<td>';
 		print $airport_item['airport_arrival_icao_count'];
 		print '</td>';
-		print '<td><a href="'.$globalURL.'/search?arrival_airport_route='.$airport_item['airport_arrival_icao'].'&departure_airport_route='.$_GET['airport'].'">Search flights</a></td>';
+		print '<td><a href="'.$globalURL.'/search?arrival_airport_route='.$airport_item['airport_arrival_icao'].'&departure_airport_route='.$airport.'">'._("Search flights").'</a></td>';
 		print '</tr>';
 		$i++;
 	}
@@ -131,10 +128,10 @@ if (!empty($airport_array))
 	print '</div>';
 	print '</div>';
 } else {
-	$title = "Airport";
+	$title = _("Airport");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, the airport does not exist in this database. :(</p>'; 
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, the airport does not exist in this database. :(").'</p>'; 
 }
 require_once('footer.php');
 ?>

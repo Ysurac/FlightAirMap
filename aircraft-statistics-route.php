@@ -12,7 +12,7 @@ $spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,"0,1","");
 
 if (!empty($spotter_array))
 {
-	$title = 'Most Common Routes from '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+	$title = _("Most Common Routes from").' '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/aircraft" method="post">';
@@ -37,17 +37,17 @@ if (!empty($spotter_array))
 	{
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</h1>';
-		print '<div><span class="label">Name</span>'.$spotter_array[0]['aircraft_name'].'</div>';
-		print '<div><span class="label">ICAO</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
-		print '<div><span class="label">Manufacturer</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
+		print '<div><span class="label">'._("Name").'</span>'.$spotter_array[0]['aircraft_name'].'</div>';
+		print '<div><span class="label">'._("ICAO").'</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
+		print '<div><span class="label">'._("Manufacturer").'</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
 		print '</div>';
 	} else {
-		print '<div class="alert alert-warning">This special aircraft profile shows all flights in where the aircraft type is unknown.</div>';
+		print '<div class="alert alert-warning">'._("This special aircraft profile shows all flights in where the aircraft type is unknown.").'</div>';
 	}
 	include('aircraft-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Routes</h2>';
-	print '<p>The statistic below shows the most common routes from <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
+	print '<h2>'._("Most Common Routes").'</h2>';
+	print '<p>'._("The statistic below shows the most common routes from").' <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
 
 	$route_array = $Spotter->countAllRoutesByAircraft($aircraft_type);
 	if (!empty($route_array))
@@ -56,9 +56,9 @@ if (!empty($spotter_array))
 		print '<table class="common-routes">';
 		print '<thead>';
 		print '<th></th>';
-		print '<th>Departure Airport</th>';
-		print '<th>Arrival Airport</th>';
-		print '<th># of Times</th>';
+		print '<th>'._("Departure Airport").'</th>';
+		print '<th>'._("Arrival Airport").'</th>';
+		print '<th>'._("# of Times").'</th>';
 		print '<th></th>';
 		print '<th></th>';
 		print '</thead>';
@@ -92,10 +92,10 @@ if (!empty($spotter_array))
 	}
 	print '</div>';
 } else {
-	$title = "Aircraft Type";
+	$title = _("Aircraft Type");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, the aircraft type does not exist in this database. :(</p>';  
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, the aircraft type does not exist in this database. :(").'</p>';  
 }
 
 require_once('footer.php');

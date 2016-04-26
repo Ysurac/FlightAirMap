@@ -25,48 +25,50 @@ if (!isset($_GET['registration'])){
 	$limit_next = $limit_end + $absolute_difference;
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
+	$registration = filter_input(INPUT_GET,'registration',FILTER_SANITIZE_STRING);
+	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	
-	$page_url = $globalURL.'/registration/'.$_GET['registration'];
+	$page_url = $globalURL.'/registration/'.$registration;
 	
 	if (isset($_GET['sort'])) {
-		$spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], $limit_start.",".$absolute_difference, $_GET['sort']);
+		$spotter_array = $Spotter->getSpotterDataByRegistration($registration, $limit_start.",".$absolute_difference, $sort);
 	} else {
-		$spotter_array = $Spotter->getSpotterDataByRegistration($_GET['registration'], $limit_start.",".$absolute_difference, '');
+		$spotter_array = $Spotter->getSpotterDataByRegistration($registration, $limit_start.",".$absolute_difference, '');
 	}
-	$aircraft_array = $Spotter->getAircraftInfoByRegistration($_GET['registration']);
+	$aircraft_array = $Spotter->getAircraftInfoByRegistration($registration);
 	
 	if (!empty($spotter_array))
 	{
-		$title = 'Detailed View of aircraft with registration '.$_GET['registration'];
+		$title = sprintf(_("Detailed View of aircraft with registration %s"),$registration);
 		require_once('header.php');
 		print '<div class="info column">';
-		print '<h1>'.$_GET['registration'].' - '.$aircraft_array[0]['aircraft_name'].' ('.$aircraft_array[0]['aircraft_icao'].')</h1>';
-		print '<div><span class="label">Name</span><a href="'.$globalURL.'/aircraft/'.$aircraft_array[0]['aircraft_icao'].'">'.$aircraft_array[0]['aircraft_name'].'</a></div>';
-		print '<div><span class="label">ICAO</span><a href="'.$globalURL.'/aircraft/'.$aircraft_array[0]['aircraft_icao'].'">'.$aircraft_array[0]['aircraft_icao'].'</a></div>'; 
-		print '<div><span class="label">Manufacturer</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $aircraft_array[0]['aircraft_manufacturer'])).'">'.$aircraft_array[0]['aircraft_manufacturer'].'</a></div>';
+		print '<h1>'.$registration.' - '.$aircraft_array[0]['aircraft_name'].' ('.$aircraft_array[0]['aircraft_icao'].')</h1>';
+		print '<div><span class="label">'._("Name").'</span><a href="'.$globalURL.'/aircraft/'.$aircraft_array[0]['aircraft_icao'].'">'.$aircraft_array[0]['aircraft_name'].'</a></div>';
+		print '<div><span class="label">'._("ICAO").'</span><a href="'.$globalURL.'/aircraft/'.$aircraft_array[0]['aircraft_icao'].'">'.$aircraft_array[0]['aircraft_icao'].'</a></div>'; 
+		print '<div><span class="label">'._("Manufacturer").'</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $aircraft_array[0]['aircraft_manufacturer'])).'">'.$aircraft_array[0]['aircraft_manufacturer'].'</a></div>';
 		print '</div>';
 		
 		include('registration-sub-menu.php');
 		print '<div class="table column">';
-		print '<p>The table below shows the detailed information of all flights of aircraft with the registration <strong>'.$_GET['registration'].'</strong>.</p>';
+		print '<p>'.sprintf(_("The table below shows the detailed information of all flights of aircraft with the registration <strong>%s</strong>."),$registration).'</p>';
 
 		include('table-output.php');
 		print '<div class="pagination">';
 		if ($limit_previous_1 >= 0)
 		{
-			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
+			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
 		}
 		if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 		{
-			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
+			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
 		}
 		print '</div>';
 		print '</div>';
 	} else {
-		$title = "Registration";
+		$title = _("Registration");
 		require_once('header.php');
-		print '<h1>Error</h1>';
-		print '<p>Sorry, this registration does not exist in this database. :(</p>'; 
+		print '<h1>'._("Error").'</h1>';
+		print '<p>'._("Sorry, this registration does not exist in this database. :(").'</p>'; 
 	}
 }
 

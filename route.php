@@ -4,7 +4,9 @@ require_once('require/class.Spotter.php');
 
 if ($_POST['departure_airport'] != "" || $_POST['arrival_airport'])
 {
-	header('Location: '.$globalURL.'/route/'.$_POST['departure_airport'].'/'.$_POST['arrival_airport']);
+	$departure_airport = filter_input(INPUT_POST,'departure_airport',FILTER_SANITIZE_STRING);
+	$arrival_airport = filter_input(INPUT_POST,'arrival_airport',FILTER_SANITIZE_STRING);
+	header('Location: '.$globalURL.'/route/'.$departure_airport.'/'.$arrival_airport);
 } else {
 	header('Location: '.$globalURL);
 }

@@ -12,7 +12,7 @@ $spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,"0,1","");
 
 if (!empty($spotter_array))
 {
-	$title = 'Most Common Aircraft by Registration from '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+	$title = _("Most Common Aircraft by Registration from").' '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/aircraft" method="post">';
@@ -37,17 +37,17 @@ if (!empty($spotter_array))
 	{
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</h1>';
-		print '<div><span class="label">Name</span>'.$spotter_array[0]['aircraft_name'].'</div>';
-		print '<div><span class="label">ICAO</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
-		print '<div><span class="label">Manufacturer</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
+		print '<div><span class="label">'._("Name").'</span>'.$spotter_array[0]['aircraft_name'].'</div>';
+		print '<div><span class="label">'._("ICAO").'</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
+		print '<div><span class="label">'._("Manufacturer").'</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
 		print '</div>';
 	} else {
-		print '<div class="alert alert-warning">This special aircraft profile shows all flights in where the aircraft type is unknown.</div>';
+		print '<div class="alert alert-warning">'._("This special aircraft profile shows all flights in where the aircraft type is unknown.").'</div>';
 	}
 	include('aircraft-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Aircraft by Registration</h2>';
-	print '<p>The statistic below shows the most common aircraft by registration of flights from aircraft type <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
+	print '<h2>'._("Most Common Aircraft by Registration").'</h2>';
+	print '<p>'._("The statistic below shows the most common aircraft by registration of flights from aircraft type").' <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
 
 	$aircraft_array = $Spotter->countAllAircraftRegistrationByAircraft($aircraft_type);
 	if (!empty($aircraft_array))
@@ -57,9 +57,9 @@ if (!empty($spotter_array))
 		print '<thead>';
 		print '<th></th>';
 		print '<th></th>';
-		print '<th>Registration</th>';
-		print '<th>Aircraft Type</th>';
-		print '<th># of Times</th>';
+		print '<th>'._("Registration").'</th>';
+		print '<th>'._("Aircraft Type").'</th>';
+		print '<th>'._("# of Times").'</th>';
 		print '<th></th>';
 		print '</thead>';
 		print '<tbody>';
@@ -72,17 +72,17 @@ if (!empty($spotter_array))
 			{
 				print '<td class="aircraft_thumbnail">';
 				if (isset($aircraft_item['aircraft_type'])) {
-					print '<a href="'.$globalURL.'/registration/'.$aircraft_item['registration'].'"><img src="'.$aircraft_item['image_thumbnail'].'" class="img-rounded" data-toggle="popover" title="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_icao'].' - '.$aircraft_item['airline_name'].'" alt="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_type'].' - '.$aircraft_item['airline_name'].'" data-content="Registration: '.$aircraft_item['registration'].'<br />Aircraft: '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')<br />Airline: '.$aircraft_item['airline_name'].'" data-html="true" width="100px" /></a>';
+					print '<a href="'.$globalURL.'/registration/'.$aircraft_item['registration'].'"><img src="'.$aircraft_item['image_thumbnail'].'" class="img-rounded" data-toggle="popover" title="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_icao'].' - '.$aircraft_item['airline_name'].'" alt="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_type'].' - '.$aircraft_item['airline_name'].'" data-content="'._("Registration:").' '.$aircraft_item['registration'].'<br />'._("Aircraft:").' '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')<br />'._("Airline:").' '.$aircraft_item['airline_name'].'" data-html="true" width="100px" /></a>';
 				} else {
-					print '<a href="'.$globalURL.'/registration/'.$aircraft_item['registration'].'"><img src="'.$aircraft_item['image_thumbnail'].'" class="img-rounded" data-toggle="popover" title="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_icao'].' - '.$aircraft_item['airline_name'].'" alt="'.$aircraft_item['registration'].' - '.$aircraft_item['airline_name'].'" data-content="Registration: '.$aircraft_item['registration'].'<br />Aircraft: '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')<br />Airline: '.$aircraft_item['airline_name'].'" data-html="true" width="100px" /></a>';
+					print '<a href="'.$globalURL.'/registration/'.$aircraft_item['registration'].'"><img src="'.$aircraft_item['image_thumbnail'].'" class="img-rounded" data-toggle="popover" title="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_icao'].' - '.$aircraft_item['airline_name'].'" alt="'.$aircraft_item['registration'].' - '.$aircraft_item['airline_name'].'" data-content="'._("Registration:").' '.$aircraft_item['registration'].'<br />'._("Aircraft:").' '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')<br />'._("Airline:").' '.$aircraft_item['airline_name'].'" data-html="true" width="100px" /></a>';
 				}
 				print '</td>';
 			} else {
 				print '<td class="aircraft_thumbnail">';
 				if (isset($aircraft_item['aircraft_type'])) {
-					print '<a href="'.$globalURL.'/registration/'.$aircraft_item['registration'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" class="img-rounded" data-toggle="popover" title="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_icao'].' - '.$aircraft_item['airline_name'].'" alt="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_type'].' - '.$aircraft_item['airline_name'].'" data-content="Registration: '.$aircraft_item['registration'].'<br />Aircraft: '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')<br />Airline: '.$aircraft_item['airline_name'].'" data-html="true" width="100px" /></a>';
+					print '<a href="'.$globalURL.'/registration/'.$aircraft_item['registration'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" class="img-rounded" data-toggle="popover" title="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_icao'].' - '.$aircraft_item['airline_name'].'" alt="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_type'].' - '.$aircraft_item['airline_name'].'" data-content="'._("Registration:").' '.$aircraft_item['registration'].'<br />'._("Aircraft:").' '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')<br />'._("Airline:").' '.$aircraft_item['airline_name'].'" data-html="true" width="100px" /></a>';
 				} else {
-					print '<a href="'.$globalURL.'/registration/'.$aircraft_item['registration'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" class="img-rounded" data-toggle="popover" title="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_icao'].' - '.$aircraft_item['airline_name'].'" alt="'.$aircraft_item['registration'].' - '.$aircraft_item['airline_name'].'" data-content="Registration: '.$aircraft_item['registration'].'<br />Aircraft: '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')<br />Airline: '.$aircraft_item['airline_name'].'" data-html="true" width="100px" /></a>';
+					print '<a href="'.$globalURL.'/registration/'.$aircraft_item['registration'].'"><img src="'.$globalURL.'/images/placeholder_thumb.png" class="img-rounded" data-toggle="popover" title="'.$aircraft_item['registration'].' - '.$aircraft_item['aircraft_icao'].' - '.$aircraft_item['airline_name'].'" alt="'.$aircraft_item['registration'].' - '.$aircraft_item['airline_name'].'" data-content="'._("Registration:").' '.$aircraft_item['registration'].'<br />'._("Aircraft:").' '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')<br />'._("Airline:").' '.$aircraft_item['airline_name'].'" data-html="true" width="100px" /></a>';
 				}
 				print '</td>';
 			}
@@ -95,7 +95,7 @@ if (!empty($spotter_array))
 			print '<td>';
 			print $aircraft_item['registration_count'];
 			print '</td>';
-			print '<td><a href="'.$globalURL.'/search?registration='.$aircraft_item['registration'].'&aircraft='.$aircraft_type.'">Search flights</a></td>';
+			print '<td><a href="'.$globalURL.'/search?registration='.$aircraft_item['registration'].'&aircraft='.$aircraft_type.'">'._("Search flights").'</a></td>';
 			print '</tr>';
 			$i++;
 		}
@@ -105,10 +105,10 @@ if (!empty($spotter_array))
 	}
 	print '</div>';
 } else {
-	$title = "Aircraft Type";
+	$title = _("Aircraft Type");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, the aircraft type does not exist in this database. :(</p>';  
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, the aircraft type does not exist in this database. :(").'</p>';  
 }
 
 require_once('footer.php');

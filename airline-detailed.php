@@ -35,7 +35,7 @@ if (!isset($_GET['airline'])){
 	if (!empty($spotter_array))
 	{
 		if (isset($spotter_array[0]['airline_name']) && isset($spotter_array[0]['airline_icao'])) {
-			$title = 'Detailed View for '.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')';
+			$title = _("Detailed View for").' '.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')';
 		} else $title = '';
 		require_once('header.php');
 	  
@@ -69,40 +69,40 @@ if (!isset($_GET['airline'])){
 			{
 				print '<img src="'.$globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png" alt="'.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')" title="'.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')" class="logo" />';
 			}
-			print '<div><span class="label">Name</span>'.$spotter_array[0]['airline_name'].'</div>';
-			print '<div><span class="label">Country</span>'.$spotter_array[0]['airline_country'].'</div>';
-			print '<div><span class="label">ICAO</span>'.$spotter_array[0]['airline_icao'].'</div>';
-			if (isset($spotter_array[0]['airline_iata'])) print '<div><span class="label">IATA</span>'.$spotter_array[0]['airline_iata'].'</div>';
-			if (isset($spotter_array[0]['airline_callsign'])) print '<div><span class="label">Callsign</span>'.$spotter_array[0]['airline_callsign'].'</div>'; 
-			print '<div><span class="label">Type</span>'.ucwords($spotter_array[0]['airline_type']).'</div>';
+			print '<div><span class="label">'._("Name").'</span>'.$spotter_array[0]['airline_name'].'</div>';
+			print '<div><span class="label">'._("Country").'</span>'.$spotter_array[0]['airline_country'].'</div>';
+			print '<div><span class="label">'._("ICAO").'</span>'.$spotter_array[0]['airline_icao'].'</div>';
+			if (isset($spotter_array[0]['airline_iata'])) print '<div><span class="label">'._("IATA").'</span>'.$spotter_array[0]['airline_iata'].'</div>';
+			if (isset($spotter_array[0]['airline_callsign'])) print '<div><span class="label">'._("Callsign").'</span>'.$spotter_array[0]['airline_callsign'].'</div>'; 
+			print '<div><span class="label">'._("Type").'</span>'.ucwords($spotter_array[0]['airline_type']).'</div>';
 			print '</div>';
 		} else {
-			print '<div class="alert alert-warning">This special airline profile shows all flights that do <u>not</u> have a airline associated with them.</div>';
+			print '<div class="alert alert-warning">'._("This special airline profile shows all flights that do <u>not</u> have a airline associated with them.").'</div>';
 		}
 
 		include('airline-sub-menu.php');
 		print '<div class="table column">';
 		if (isset($spotter_array[0]['airline_name'])) {
-			print '<p>The table below shows the detailed information of all flights from <strong>'.$spotter_array[0]['airline_name'].'</strong>.</p>';
+			print '<p>'._("The table below shows the detailed information of all flights from").' <strong>'.$spotter_array[0]['airline_name'].'</strong>.</p>';
 		}
 
 		include('table-output.php');  
 		print '<div class="pagination">';
 		if ($limit_previous_1 >= 0)
 		{
-			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$sort.'">&laquo;Previous Page</a>';
+			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$sort.'">&laquo;'._("Previous Page").'</a>';
 		}
 		if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 		{
-			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$sort.'">Next Page&raquo;</a>';
+			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$sort.'">'._("Next Page").'&raquo;</a>';
 		}
 		print '</div>';
 		print '</div>';
 	} else {
-		$title = "Airline";
+		$title = _("Airline");
 		require_once('header.php');
-		print '<h1>Error</h1>';
-		print '<p>Sorry, the airline does not exist in this database. :(</p>'; 
+		print '<h1>'._("Error").'</h1>';
+		print '<p>'._("Sorry, the airline does not exist in this database. :(").'</p>'; 
 	}
 }
 require_once('footer.php');

@@ -6,7 +6,7 @@ if ($_GET['departure_airport'] == "" || $_GET['arrival_airport'] == "")
 
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
-	$Spotter = new Spotter();
+$Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 if (isset($_GET['departure_airport']) && isset($_GET['arrival_airport'])) {
 	$spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $sort);
@@ -14,18 +14,18 @@ if (isset($_GET['departure_airport']) && isset($_GET['arrival_airport'])) {
   
 if (!empty($spotter_array))
 {
-	$title = 'Most Common Airlines between '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'];
+	$title = _("Most Common Airlines between").' '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'];
 	require_once('header.php');
 	print '<div class="info column">';
-	print '<h1>Flights between '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</h1>';
-	print '<div><span class="label">Coming From</span><a href="'.$globalURL.'/airport/'.$spotter_array[0]['departure_airport_icao'].'">'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</a></div>';
-	print '<div><span class="label">Flying To</span><a href="'.$globalURL.'/airport/'.$spotter_array[0]['arrival_airport_icao'].'">'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</a></div>';
+	print '<h1>'._("Flights between").' '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</h1>';
+	print '<div><span class="label">'._("Coming From").'</span><a href="'.$globalURL.'/airport/'.$spotter_array[0]['departure_airport_icao'].'">'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</a></div>';
+	print '<div><span class="label">'._("Flying To").'</span><a href="'.$globalURL.'/airport/'.$spotter_array[0]['arrival_airport_icao'].'">'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</a></div>';
 	print '</div>';
 
 	include('route-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Airlines</h2>';
-	print '<p>The statistic below shows the most common airlines of flights between <strong>'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</strong> and <strong>'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</strong>.</p>';
+	print '<h2>'._("Most Common Airlines").'</h2>';
+	print '<p>'._("The statistic below shows the most common airlines of flights between").' <strong>'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</strong> and <strong>'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</strong>.</p>';
 	$airline_array = $Spotter->countAllAirlinesByRoute($_GET['departure_airport'], $_GET['arrival_airport']);
 	if (!empty($airline_array))
 	{
@@ -34,9 +34,9 @@ if (!empty($spotter_array))
 		print '<thead>';
 		print '<th></th>';
 		print '<th></th>';
-		print '<th>Airline</th>';
-		print '<th>Country</th>';
-		print '<th># of times</th>';
+		print '<th>'._("Airline").'</th>';
+		print '<th>'._("Country").'</th>';
+		print '<th>'._("# of times").'</th>';
 		print '<th></th>';
 		print '</thead>';
 		print '<tbody>';
@@ -67,7 +67,7 @@ if (!empty($spotter_array))
 			print '<td>';
 			print $airline_item['airline_count'];
 			print '</td>';
-			print '<td><a href="'.$globalURL.'/search?airline='.$airline_item['airline_icao'].'&departure_airport_route='.$_GET['departure_airport'].'&arrival_airport_route='.$_GET['arrival_airport'].'">Search flights</a></td>';
+			print '<td><a href="'.$globalURL.'/search?airline='.$airline_item['airline_icao'].'&departure_airport_route='.$_GET['departure_airport'].'&arrival_airport_route='.$_GET['arrival_airport'].'">'._("Search flights").'</a></td>';
 			print '</tr>';
 			$i++;
 		}
@@ -77,10 +77,10 @@ if (!empty($spotter_array))
 	}
 	print '</div>';
 } else {
-	$title = "Unknown Route";
+	$title = _("Unknown Route");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, this route does not exist in this database. :(</p>'; 
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, this route does not exist in this database. :(").'</p>'; 
 }
 require_once('footer.php');
 ?>

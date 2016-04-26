@@ -24,31 +24,31 @@ require_once('header.php');
 
     <?php include('statistics-sub-menu.php'); ?>
     <div class="row global-stats">
-        <div class="col-md-2"><span class="type">Flights</span><span><?php print number_format($Stats->countOverallFlights()); ?></span></div> 
+        <div class="col-md-2"><span class="type"><?php echo _("Flights"); ?></span><span><?php print number_format($Stats->countOverallFlights()); ?></span></div> 
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-        <div class="col-md-2"><span class="type">Arrivals seen</span><span><?php print number_format($Stats->countOverallArrival()); ?></span></div> 
+        <div class="col-md-2"><span class="type"><?php echo _("Arrivals seen"); ?></span><span><?php print number_format($Stats->countOverallArrival()); ?></span></div> 
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
 	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 	?>
-    	    <div class="col-md-2"><span class="type">Pilots</span><span><?php print number_format($Stats->countOverallPilots()); ?></span></div> 
+    	    <div class="col-md-2"><span class="type"><?php echo _("Pilots"); ?></span><span><?php print number_format($Stats->countOverallPilots()); ?></span></div> 
 	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     	    } else {
     	?>
-    	    <div class="col-md-2"><span class="type">Owners</span><span><?php print number_format($Stats->countOverallOwners()); ?></span></div> 
+    	    <div class="col-md-2"><span class="type"><?php echo _("Owners"); ?></span><span><?php print number_format($Stats->countOverallOwners()); ?></span></div> 
 	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
     	<?php
     	    }
     	?>
-        <div class="col-md-2"><span class="type">Aircrafts</span><span><?php print number_format($Stats->countOverallAircrafts()); ?></span></div> 
+        <div class="col-md-2"><span class="type"><?php echo _("Aircrafts"); ?></span><span><?php print number_format($Stats->countOverallAircrafts()); ?></span></div> 
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-        <div class="col-md-2"><span class="type">Airlines</span><span><?php print number_format($Stats->countOverallAirlines()); ?></span></div>
+        <div class="col-md-2"><span class="type"><?php echo _("Airlines"); ?></span><span><?php print number_format($Stats->countOverallAirlines()); ?></span></div>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
 		if (!(isset($globalIVAO) && $globalIVAO) && !(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalphpVMS) && $globalphpVMS)) {
 	?>
-        <div class="col-md-2"><span class="type">Military</span><span><?php print number_format($Stats->countOverallMilitaryFlights()); ?></span></div> 
+        <div class="col-md-2"><span class="type"><?php echo _("Military"); ?></span><span><?php print number_format($Stats->countOverallMilitaryFlights()); ?></span></div> 
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
 		}
@@ -58,10 +58,10 @@ require_once('header.php');
     <div class="specific-stats">
         <div class="row column">
             <div class="col-md-6">
-                <h2>Top 10 Most Common Aircraft Type</h2>
+                <h2><?php echo _("Top 10 Most Common Aircraft Type"); ?></h2>
                  <?php
                   $aircraft_array = $Stats->countAllAircraftTypes();
-		    if (count($aircraft_array) == 0) print 'No data available';
+		    if (count($aircraft_array) == 0) print _("No data available");
 		    else {
 
                     print '<div id="chart1" class="chart" width="100%"></div>
@@ -70,7 +70,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart1);
                       function drawChart1() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Aircraft", "# of Times"], ';
+                            ["'._("Aircraft").'", "'._("# of Times").'"], ';
                             $aircraft_data = '';
                           foreach($aircraft_array as $aircraft_item)
                                     {
@@ -96,16 +96,16 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/aircraft" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/aircraft" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
-                <h2>Top 10 Most Common Airline</h2>
+                <h2><?php echo _("Top 10 Most Common Airline"); ?></h2>
                  <?php
                   $airline_array = $Stats->countAllAirlines();
-		    if (count($airline_array) == 0) print 'No data available';
+		    if (count($airline_array) == 0) print _("No data available");
 		    else {
 
                   print '<div id="chart2" class="chart" width="100%"></div>
@@ -114,7 +114,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart2);
                       function drawChart2() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Airline", "# of Times"], ';
+                            ["'._("Airline").'", "'._("# of Times").'"], ';
                             $airline_data = '';
                           foreach($airline_array as $airline_item)
                                     {
@@ -140,7 +140,7 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/airline" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/airline" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
         </div>
@@ -161,10 +161,10 @@ require_once('header.php');
             <?php
             	    }
             ?>
-                <h2>Top 10 Most Common Pilots</h2>
+                <h2><?php echo _("Top 10 Most Common Pilots"); ?></h2>
                  <?php
                   $pilot_array = $Stats->countAllPilots();
-		    if (count($pilot_array) == 0) print 'No data available';
+		    if (count($pilot_array) == 0) print _("No data available");
 		    else {
 
                   print '<div id="chart7" class="chart" width="100%"></div>
@@ -173,7 +173,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart7);
                       function drawChart7() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Pilots", "# of Times"], ';
+                            ["'._("Pilots").'", "'._("# of Times").'"], ';
                             $pilot_data = '';
                           foreach($pilot_array as $pilot_item)
                                     {
@@ -199,7 +199,7 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/pilot" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/pilot" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
         
@@ -208,10 +208,10 @@ require_once('header.php');
     	    } else {
     	?>
             <div class="col-md-6">
-                <h2>Top 10 Most Common Owners</h2>
+                <h2><?php echo _("Top 10 Most Common Owners"); ?></h2>
                  <?php
                   $owner_array = $Stats->countAllOwners();
-		    if (count($owner_array) == 0) print 'No data available';
+		    if (count($owner_array) == 0) print _("No data available");
 		    else {
 
                   print '<div id="chart7" class="chart" width="100%"></div>
@@ -220,7 +220,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart7);
                       function drawChart7() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Owner", "# of Times"], ';
+                            ["'._("Owner").'", "'._("# of Times").'"], ';
                             $owner_data = '';
                           foreach($owner_array as $owner_item)
                                     {
@@ -246,7 +246,7 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/owner" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/owner" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
         
@@ -257,10 +257,10 @@ require_once('header.php');
     	?>
     	
             <div class="col-md-6">
-                <h2>Top 20 Most Common Country a Flight was Over</h2>
+                <h2><?php echo _("Top 20 Most Common Country a Flight was Over"); ?></h2>
                  <?php
                   //$flightover_array = $Stats->countAllFlightOverCountries();
-		    if (count($flightover_array) == 0) print 'No data available';
+		    if (count($flightover_array) == 0) print _("No data available");
 		    else {
 
                   print '<div id="chart10" class="chart" width="100%"></div>
@@ -269,7 +269,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart10);
                       function drawChart10() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Country", "# of Times"], ';
+                            ["'._("Country").'", "'._("# of Times").'"], ';
                             $flightover_data = '';
                           foreach($flightover_array as $flightover_item)
                                     {
@@ -297,7 +297,7 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/country" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/country" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
         <?php
@@ -310,10 +310,10 @@ require_once('header.php');
         </div>
         <div class="row column">
             <div class="col-md-6">
-                <h2>Top 10 Most Common Departure Airports</h2>
+                <h2><?php echo _("Top 10 Most Common Departure Airports"); ?></h2>
                 <?php
                 $airport_airport_array = $Stats->countAllDepartureAirports();
-		    if (count($airport_airport_array) == 0) print 'No data available';
+		    if (count($airport_airport_array) == 0) print _("No data available");
 		    else {
 
                  print '<div id="chart3" class="chart" width="100%"></div>
@@ -326,7 +326,7 @@ require_once('header.php');
                 function drawCharts3() {
 
                 var data = google.visualization.arrayToDataTable([ 
-                    ["Airport", "# of Times"],';
+                    ["'._("Airport").'", "'._("# of Times").'"],';
                     $airport_data = '';
                   foreach($airport_airport_array as $airport_item)
                         {
@@ -354,16 +354,16 @@ require_once('header.php');
                 }
               ?>
               <div class="more">
-                <a href="<?php print $globalURL; ?>/statistics/airport-departure" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                <a href="<?php print $globalURL; ?>/statistics/airport-departure" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
               </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
-                <h2>Top 10 Most Common Arrival Airports</h2>
+                <h2><?php echo _("Top 10 Most Common Arrival Airports"); ?></h2>
                 <?php
                 $airport_airport_array2 = $Stats->countAllArrivalAirports();
-		    if (count($airport_airport_array2) == 0) print 'No data available';
+		    if (count($airport_airport_array2) == 0) print _("No data available");
 		    else {
 
                 print '<div id="chart4" class="chart" width="100%"></div>
@@ -376,7 +376,7 @@ require_once('header.php');
                 function drawCharts4() {
 
                 var data = google.visualization.arrayToDataTable([ 
-                    ["Airport", "# of Times"],';
+                    ["'._("Airport").'", "'._("# of Times").'"],';
                     $airport_data2 = '';
                   foreach($airport_airport_array2 as $airport_item2)
                         {
@@ -404,7 +404,7 @@ require_once('header.php');
                 }
               ?>
               <div class="more">
-                <a href="<?php print $globalURL; ?>/statistics/airport-arrival" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                <a href="<?php print $globalURL; ?>/statistics/airport-arrival" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
               </div>
             </div>
         </div>
@@ -412,10 +412,10 @@ require_once('header.php');
 
         <div class="row column">
             <div class="col-md-6">
-                <h2>Busiest Months of the last 12 Months</h2>
+                <h2><?php echo _("Busiest Months of the last 12 Months"); ?></h2>
                 <?php
                   $year_array = $Stats->countAllMonthsLastYear();
-		    if (count($year_array) == 0) print 'No data available';
+		    if (count($year_array) == 0) print _("No data available");
 		    else {
                   print '<div id="chart8" class="chart" width="100%"></div>
                     <script> 
@@ -423,7 +423,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart8);
                       function drawChart8() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Month", "# of Flights"], ';
+                            ["'._("Month").'", "'._("# of Flights").'"], ';
                             $year_data = '';
                           foreach($year_array as $year_item)
                                     {
@@ -436,7 +436,7 @@ require_once('header.php');
                         var options = {
                             legend: {position: "none"},
                             chartArea: {"width": "80%", "height": "60%"},
-                            vAxis: {title: "# of Flights"},
+                            vAxis: {title: "'._("# of Flights").'"},
                             hAxis: {showTextEvery: 2},
                             height:300,
                             colors: ["#1a3151"]
@@ -452,16 +452,16 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/year" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/year" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
-                <h2>Busiest Day in the last Month</h2>
+                <h2><?php echo _("Busiest Day in the last Month"); ?></h2>
                 <?php
                   $month_array = $Stats->countAllDatesLastMonth();
-		    if (count($month_array) == 0) print 'No data available';
+		    if (count($month_array) == 0) print _("No data available");
 		    else {
                   print '<div id="chart9" class="chart" width="100%"></div>
                     <script> 
@@ -469,7 +469,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart9);
                       function drawChart9() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Day", "# of Flights"], ';
+                            ["'._("Day").'", "'._("# of Flights").'"], ';
                             $month_data = '';
                           foreach($month_array as $month_item)
                                     {
@@ -482,7 +482,7 @@ require_once('header.php');
                         var options = {
                             legend: {position: "none"},
                             chartArea: {"width": "80%", "height": "60%"},
-                            vAxis: {title: "# of Flights"},
+                            vAxis: {title: "'._("# of Flights").'"},
                             hAxis: {showTextEvery: 2},
                             height:300,
                             colors: ["#1a3151"]
@@ -498,16 +498,16 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/month" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/month" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
-                <h2>Busiest Day in the last 7 Days</h2>
+                <h2><?php echo _("Busiest Day in the last 7 Days"); ?></h2>
                 <?php
                     $date_array = $Stats->countAllDatesLast7Days();
-		    if (count($date_array) == 0) print 'No data available';
+		    if (count($date_array) == 0) print _("No data available");
 		    else {
                   print '<div id="chart5" class="chart" width="100%"></div>
                     <script> 
@@ -515,7 +515,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart5);
                       function drawChart5() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Date", "# of Flights"], ';
+                            ["'._("Date").'", "'._("# of Flights").'"], ';
                             $date_data = '';
                         
                           foreach($date_array as $date_item)
@@ -529,7 +529,7 @@ require_once('header.php');
                         var options = {
                             legend: {position: "none"},
                             chartArea: {"width": "80%", "height": "60%"},
-                            vAxis: {title: "# of Flights"},
+                            vAxis: {title: "'._("# of Flights").'"},
                             hAxis: {showTextEvery: 2},
                             height:300,
                             colors: ["#1a3151"]
@@ -545,16 +545,16 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/date" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/date" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
-                <h2>Busiest Time of the Day</h2>
+                <h2><?php echo _("Busiest Time of the Day"); ?></h2>
                 <?php
                   $hour_array = $Stats->countAllHours('hour');
-		    if (count($hour_array) == 0) print 'No data available';
+		    if (count($hour_array) == 0) print _("No data available");
 		    else {
 
                   print '<div id="chart6" class="chart" width="100%"></div>
@@ -563,7 +563,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart6);
                       function drawChart6() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Hour", "# of Flights"], ';
+                            ["'._("Hour").'", "'._("# of Flights").'"], ';
                             $hour_data = '';
                           foreach($hour_array as $hour_item)
                                     {
@@ -576,7 +576,7 @@ require_once('header.php');
                         var options = {
                             legend: {position: "none"},
                             chartArea: {"width": "80%", "height": "60%"},
-                            vAxis: {title: "# of Flights"},
+                            vAxis: {title: "'._("# of Flights").'"},
                             hAxis: {showTextEvery: 2},
                             height:300,
                             colors: ["#1a3151"]
@@ -592,7 +592,7 @@ require_once('header.php');
                   }
                 ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/time" class="btn btn-default btn" role="button">See full statistic&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/time" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->

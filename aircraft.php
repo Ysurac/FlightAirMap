@@ -9,10 +9,10 @@ if (isset($_POST['aircraft_type']))
 } else {
 	$Spotter = new Spotter();
 	$Stats = new Stats();
-	$title = "Aircraft Types";
+	$title = _("Aircraft Types");
 	require_once('header.php');
 	print '<div class="column">';
-	print '<h1>Aircraft Types</h1>';
+	print '<h1>'._("Aircraft Types").'</h1>';
 
 	$aircraft_types = $Stats->getAllAircraftTypes();
 	if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();

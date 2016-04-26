@@ -2,19 +2,16 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = "Statistic - Most common Aircraft Manufacturer";
+$title = _("Statistic - Most common Aircraft Manufacturer");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
-?>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
- 	<div class="info">
-	  	<h1>Most common Aircraft Manufacturer</h1>
-		 </div>
-    
-    	<p>Below are the <strong>Top 10</strong> most common aircraft manufacturers.</p>
-      
-<?php
 
+print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+ 	<div class="info">
+	  	<h1>'._("Most common Aircraft Manufacturer").'</h1>
+		 </div>
+    	<p>'._("Below are the <strong>Top 10</strong> most common aircraft manufacturers.").'</p>';
+ 
 $manufacturers_array = $Stats->countAllAircraftManufacturers();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
@@ -22,7 +19,7 @@ print '<div id="chart" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Aircraft Manufacturer", "# of Times"], ';
+            	["'._("Aircraft Manufacturer").'", "'._("# of Times").'"], ';
 $manufacturer_data = '';
 foreach($manufacturers_array as $manufacturer_item)
 {
@@ -52,8 +49,8 @@ if (!empty($manufacturers_array))
 	print '<table class="common-manufacturer table-striped">';
 	print '<thead>';
 	print '<th></th>';
-	print '<th>Aircraft Manufacturer</th>';
-	print '<th># of Times</th>';
+	print '<th>'._("Aircraft Manufacturer").'</th>';
+	print '<th>'._("# of Times").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

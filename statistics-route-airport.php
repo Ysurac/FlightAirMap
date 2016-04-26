@@ -2,20 +2,16 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
-$title = "Statistic - Most common Route by Airport";
+$title = _("Statistic - Most common Route by Airport");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
-?>
 
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
-	  	<h1>Most common Route by Airport</h1>
+	  	<h1>'._("Most common Route by Airport").'</h1>
 	  </div>
-    
-    	<p>Below are the <strong>Top 10</strong> most common Departure &amp; Arrival airport combinations.</p>
+	<p>'._("Below are the <strong>Top 10</strong> most common Departure &amp; Arrival airport combinations.").'</p>';
      
-<?php
-
 $route_array = $Spotter->countAllRoutes();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
@@ -23,7 +19,7 @@ print '<div id="chart" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Aircraft", "# of Times"], ';
+            	["'._("Aircraft").'", "'._("# of Times").'"], ';
 
 $route_data = '';
 foreach($route_array as $route_item)
@@ -55,9 +51,9 @@ if (!empty($route_array))
 	print '<table class="common-routes table-striped">';
 	print '<thead>';
 	print '<th></th>';
-	print '<th>Departure Airport</th>';
-	print '<th>Arrival Airport</th>';
-	print '<th># of Times</th>';
+	print '<th>'._("Departure Airport").'</th>';
+	print '<th>'._("Arrival Airport").'</th>';
+	print '<th>'._("# of Times").'</th>';
 	print '<th></th>';
 	print '</thead>';
 	print '<tbody>';
@@ -74,7 +70,7 @@ if (!empty($route_array))
 		print '</td>';
 		print '<td>'.$route_item['route_count'].'</td>';
 		print '<td>';
-		print '<a href="'.$globalURL.'/route/'.$route_item['airport_departure_icao'].'/'.$route_item['airport_arrival_icao'].'">Route Profile</a>';
+		print '<a href="'.$globalURL.'/route/'.$route_item['airport_departure_icao'].'/'.$route_item['airport_arrival_icao'].'">'._("Route Profile").'</a>';
 		print '</td>';
 		print '</tr>';
 		$i++;

@@ -2,22 +2,19 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = "Statistic - Most common Arrival Airport by Country";
+$title = _("Statistic - Most common Arrival Airport by Country");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
-?>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
-	  	<h1>Most common Arrival Airport by Country</h1>
+	  	<h1>'._("Most common Arrival Airport by Country").'</h1>
 	  </div>
-    
-    	 <p>Below are the <strong>Top 10</strong> most common countries of all the arrival airports.</p>
-    
-<?php
-    $airport_country_array = $Stats->countAllArrivalCountries();
-?>
-    
-    	<script>
+    	 <p>'._("Below are the <strong>Top 10</strong> most common countries of all the arrival airports.").'</p>';
+
+$airport_country_array = $Stats->countAllArrivalCountries();
+
+print '<script>
     	google.load("visualization", "1", {packages:["geochart"]});
     	google.setOnLoadCallback(drawCharts);
     	$(window).resize(function(){
@@ -26,8 +23,7 @@ include('statistics-sub-menu.php');
     	function drawCharts() {
         
         var data = google.visualization.arrayToDataTable([ 
-        	["Country", "# of Times"],
-<?php
+        	["'._("Country").'", "'._("# of Times").'"],';
 
 $country_data = '';
 foreach($airport_country_array as $airport_item)
@@ -60,8 +56,8 @@ print '<div class="table-responsive">';
 print '<table class="common-country table-striped">';
 print '<thead>';
 print '<th></th>';
-print '<th>Country</th>';
-print '<th># of times</th>';
+print '<th>'._("Country").'</th>';
+print '<th>'._("# of times").'</th>';
 print '</thead>';
 print '<tbody>';
 $i = 1;

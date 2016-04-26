@@ -2,18 +2,16 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = "Statistic - Most common Airline by Country";
+$title = _("Statistic - Most common Airline by Country");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
-?>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
- 		<div class="info">
-	  	<h1>Most common Airline by Country</h1>
-	  </div>
 
-      <p>Below are the <strong>Top 10</strong> countries that an airline belongs to.</p>
-      
-<?php
+print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+ 		<div class="info">
+	  	<h1>'._("Most common Airline by Country").'</h1>
+	  </div>
+      <p>'._("Below are the <strong>Top 10</strong> countries that an airline belongs to.").'</p>';
+
 $airline_array = $Stats->countAllAirlineCountries();
 if (count($airline_array) > 0) {
 print '<div id="chartCountry" class="chart" width="100%"></div>
@@ -22,7 +20,7 @@ print '<div id="chartCountry" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Country", "# of Times"], ';
+            	["'._("Country").'", "'._("# of Times").'"], ';
 $country_data = '';
 foreach($airline_array as $airline_item)
 {
@@ -53,8 +51,8 @@ if (!empty($airline_array))
 	print '<table class="common-country table-striped">';
 	print '<thead>';
 	print '<th></th>';
-	print '<th>Country</th>';
-	print '<th># of times</th>';
+	print '<th>'._("Country").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

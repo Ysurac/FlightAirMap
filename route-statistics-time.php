@@ -18,15 +18,15 @@ if (!empty($spotter_array))
 	$title = 'Most Common Time of Day between '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'];
 	require_once('header.php');
 	print '<div class="info column">';
-	print '<h1>Flights between '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</h1>';
-	print '<div><span class="label">Coming From</span><a href="'.$globalURL.'/airport/'.$spotter_array[0]['departure_airport_icao'].'">'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</a></div>';
-	print '<div><span class="label">Flying To</span><a href="'.$globalURL.'/airport/'.$spotter_array[0]['arrival_airport_icao'].'">'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</a></div>';
+	print '<h1>'._("Flights between").' '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</h1>';
+	print '<div><span class="label">'._("Coming From").'</span><a href="'.$globalURL.'/airport/'.$spotter_array[0]['departure_airport_icao'].'">'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</a></div>';
+	print '<div><span class="label">'._("Flying To").'</span><a href="'.$globalURL.'/airport/'.$spotter_array[0]['arrival_airport_icao'].'">'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</a></div>';
 	print '</div>';
 
 	include('route-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Time of Day</h2>';
-	print '<p>The statistic below shows the most common time of day of flights between <strong>'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</strong> and <strong>'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</strong>.</p>';
+	print '<h2>'._("Most Common Time of Day").'</h2>';
+	print '<p>'._("The statistic below shows the most common time of day of flights between").' <strong>'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</strong> and <strong>'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</strong>.</p>';
 
 	$hour_array = $Spotter->countAllHoursByRoute($_GET['departure_airport'], $_GET['arrival_airport']);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
@@ -36,7 +36,7 @@ if (!empty($spotter_array))
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Hour", "# of Flights"], ';
+            	["'._("Hour").'", "'._("# of Flights").'"], ';
             	$hour_data = '';
 	foreach($hour_array as $hour_item)
 	{
@@ -49,7 +49,7 @@ if (!empty($spotter_array))
             var options = {
             	legend: {position: "none"},
             	chartArea: {"width": "80%", "height": "60%"},
-            	vAxis: {title: "# of Flights"},
+            	vAxis: {title: "'._("# of Flights").'"},
             	hAxis: {showTextEvery: 2},
             	height:300,
             	colors: ["#1a3151"]
@@ -64,10 +64,10 @@ if (!empty($spotter_array))
       </script>';
 	print '</div>';
 } else {
-	$title = "Unknown Route";
+	$title = _("Unknown Route");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, this route does not exist in this database. :(</p>'; 
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, this route does not exist in this database. :(").'</p>'; 
 }
 
 require_once('footer.php');

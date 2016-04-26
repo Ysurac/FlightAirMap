@@ -47,11 +47,11 @@ foreach($spotter_array as $spotter_item)
 		if ($spotter_item['image'] != "")
 		{
 			print '<td class="aircraft_image">';
-			print '<img src="'.$spotter_item['image'].'" alt="Click to see more information about this flight" title="Click to see more information about this flight" />';
+			print '<img src="'.$spotter_item['image'].'" alt="'._("Click to see more information about this flight").'" title="'._("Click to see more information about this flight").'" />';
 			print '</td>';
 		} else {
 			print '<td class="aircraft_image">';
-			print '<img src="'.$globalURL.'/images/placeholder.png" alt="Click to see more information about this flight" title="Click to see more information about this flight" />';
+			print '<img src="'.$globalURL.'/images/placeholder.png" alt="'._("Click to see more information about this flight").'" title="'._("Click to see more information about this flight").'" />';
 			print '</td>';
 		}
 	}

@@ -2,18 +2,16 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = "Statistic - Most common Callsign";
+$title = _("Statistic - Most common Callsign");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
-?>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
-	  	<h1>Most common Callsign</h1>
+	  	<h1>'._("Most common Callsign").'</h1>
 	  </div>
-    
-    	<p>Below are the <strong>Top 10</strong> most common ident/callsigns of all airlines.</p>
-          	
-<?php
+    	<p>'._("Below are the <strong>Top 10</strong> most common ident/callsigns of all airlines.").'</p>';
+
 $callsign_array = $Stats->countAllCallsigns();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
@@ -21,7 +19,7 @@ print '<div id="chart" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Aircraft", "# of Times"], ';
+            	["'._("Aircraft").'", "'._("# of Times").'"], ';
 $callsign_data = '';
 foreach($callsign_array as $callsign_item)
 {
@@ -51,9 +49,9 @@ if (!empty($callsign_array))
 	print '<table class="common-callsigns table-striped">';
 	print '<thead>';
 	print '<th></th>';
-	print '<th>Callsign</th>';
-	print '<th>Airline</th>';
-	print '<th># of times</th>';
+	print '<th>'._("Callsign").'</th>';
+	print '<th>'._("Airline").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

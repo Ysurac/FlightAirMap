@@ -2,18 +2,14 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = "Statistic - Most Busiest Month of Last Year";
+$title = _("Statistic - Most Busiest Month of Last Year");
 require_once('header.php');
-include('statistics-sub-menu.php'); 
-?>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<div class="info">
-	  	<h1>Most Busiest Month</h1>
-	  </div>
-      
-      <p>Below is a chart that plots the busiest month during the <strong>last year</strong>.</p>
-      
-<?php
+include('statistics-sub-menu.php');
+print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<div class="info">
+	  	<h1>'._("Most Busiest Month").'</h1>
+	</div>
+      <p>'._("Below is a chart that plots the busiest month during the <strong>last year.").'</p>';
 
 $date_array = $Stats->countAllMonthsLastYear();
 print '<div id="chart" class="chart" width="100%"></div>
@@ -22,7 +18,7 @@ print '<div id="chart" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Month", "# of Flights"], ';
+            	["'._("Month").'", "'._("# of Flights").'"], ';
 
 $date_data = '';
 foreach($date_array as $date_item)
@@ -36,7 +32,7 @@ print ']);
             var options = {
             	legend: {position: "none"},
             	chartArea: {"width": "80%", "height": "60%"},
-            	vAxis: {title: "# of Flights"},
+            	vAxis: {title: "'._("# of Flights").'"},
             	hAxis: {showTextEvery: 2},
             	height:300,
             	colors: ["#1a3151"]
@@ -49,10 +45,7 @@ print ']);
     			  drawChart();
     			});
       </script>';
-?>
-      
 
-<?php
 $date_array = $Stats->countAllMonths();
 if (!empty($date_array))
 {
@@ -60,8 +53,8 @@ if (!empty($date_array))
 	print '<table class="common-date table-striped">';
 	print '<thead>';
 	print '<th></th>';
-	print '<th>Date</th>';
-	print '<th># of Flights</th>';
+	print '<th>'._("Date").'</th>';
+	print '<th>'._("# of Flights").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

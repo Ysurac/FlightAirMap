@@ -2,18 +2,16 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = "Statistic - Most common Country a flight was over";
+$title = _("Statistic - Most common Country a flight was over");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
-?>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
-	  	<h1>Most common Country a flight was over</h1>
+	  	<h1>'._("Most common Country a flight was over").'</h1>
 	  </div>
-    
-    	<p>Below are the <strong>Top 10</strong> most common country a flight was over.</p>
-          	
-<?php
+	<p>'._("Below are the <strong>Top 10</strong> most common country a flight was over.").'</p>';
+
 $flightover_array = $Stats->countAllFlightOverCountries();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
@@ -21,7 +19,7 @@ print '<div id="chart" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Country", "# of Times"], ';
+            	["'._("Country").'", "'._("# of Times").'"], ';
 $flightover_data = '';
 foreach($flightover_array as $flightover_item)
 {
@@ -53,8 +51,8 @@ if (!empty($flightover_array))
 	print '<table class="common-countries table-striped">';
 	print '<thead>';
 	print '<th></th>';
-	print '<th>Name</th>';
-	print '<th># of times</th>';
+	print '<th>'._("Name").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

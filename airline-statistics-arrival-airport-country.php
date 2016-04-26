@@ -11,7 +11,7 @@ $spotter_array = $Spotter->getSpotterDataByAirline($airline,"0,1","");
 
 if (!empty($spotter_array))
 {
-	$title = 'Most Common Arrival Airports by Country from '.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')';
+	$title = _("Most Common Arrival Airports by Country from").' '.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')';
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/airline" method="post">';
@@ -44,23 +44,21 @@ if (!empty($spotter_array))
 			{
 				print '<img src="'.$globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png" alt="'.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')" title="'.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')" class="logo" />';
 			}
-			print '<div><span class="label">Name</span>'.$spotter_array[0]['airline_name'].'</div>';
-			print '<div><span class="label">Country</span>'.$spotter_array[0]['airline_country'].'</div>';
-			print '<div><span class="label">ICAO</span>'.$spotter_array[0]['airline_icao'].'</div>';
-			print '<div><span class="label">IATA</span>'.$spotter_array[0]['airline_iata'].'</div>';
-			print '<div><span class="label">Callsign</span>'.$spotter_array[0]['airline_callsign'].'</div>'; 
-			print '<div><span class="label">Type</span>'.ucwords($spotter_array[0]['airline_type']).'</div>';        
+			print '<div><span class="label">'._("Name").'</span>'.$spotter_array[0]['airline_name'].'</div>';
+			print '<div><span class="label">'._("Country").'</span>'.$spotter_array[0]['airline_country'].'</div>';
+			print '<div><span class="label">'._("ICAO").'</span>'.$spotter_array[0]['airline_icao'].'</div>';
+			print '<div><span class="label">'._("IATA").'</span>'.$spotter_array[0]['airline_iata'].'</div>';
+			print '<div><span class="label">'._("Callsign").'</span>'.$spotter_array[0]['airline_callsign'].'</div>'; 
+			print '<div><span class="label">'._("Type").'</span>'.ucwords($spotter_array[0]['airline_type']).'</div>';        
 		print '</div>';
 	} else {
-		print '<div class="alert alert-warning">This special airline profile shows all flights that do <u>not</u> have a airline associated with them.</div>';
+		print '<div class="alert alert-warning">'._("This special airline profile shows all flights that do <u>not</u> have a airline associated with them.").'</div>';
 	}
 
 	include('airline-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Arrival Airports by Country</h2>';
-?>
-	<p>The statistic below shows all arrival airports by Country of origin of flights from <strong><?php print $spotter_array[0]['airline_name']; ?></strong>.</p>
-<?php
+	print '<h2>'._("Most Common Arrival Airports by Country").'</h2>';
+	print '<p>'._("The statistic below shows all arrival airports by Country of origin of flights from").' <strong>'.$spotter_array[0]['airline_name'].'</strong>.</p>';
 	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByAirline($airline);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>
@@ -69,7 +67,7 @@ if (!empty($spotter_array))
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Country", "# of Times"], ';
+            	["'._("Country").'", "'._("# of Times").'"], ';
         $country_data = '';
 	foreach($airport_country_array as $airport_item)
 	{
@@ -100,8 +98,8 @@ if (!empty($spotter_array))
 		print '<table class="common-country table-striped">';
 		print '<thead>';
 		print '<th></th>';
-		print '<th>Country</th>';
-		print '<th># of times</th>';
+		print '<th>'._("Country").'</th>';
+		print '<th>'._("# of times").'</th>';
 		print '</thead>';
 		print '<tbody>';
 		$i = 1;
@@ -124,10 +122,10 @@ if (!empty($spotter_array))
 	}
 	print '</div>';
 } else {
-	$title = "Airline Statistic";
+	$title = _("Airline Statistic");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, the airline does not exist in this database. :(</p>'; 
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, the airline does not exist in this database. :(").'</p>'; 
 }
 
 require_once('footer.php');

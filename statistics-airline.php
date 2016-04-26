@@ -2,18 +2,16 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = "Statistic - Most common Airline";
+$title = _("Statistic - Most common Airline");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
-?>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
-	  	<h1>Most common Airline</h1>
+	  	<h1>'._("Most common Airline").'</h1>
 	  </div>
-    
-    	<p>Below are the <strong>Top 10</strong> most common airlines.</p>
-      
-<?php
+    	<p>'._("Below are the <strong>Top 10</strong> most common airlines.").'</p>';
+
 $airline_array = $Stats->countAllAirlines();
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
@@ -21,7 +19,7 @@ print '<div id="chart" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Airline", "# of Times"], ';
+            	["'._("Airline").'", "'._("# of Times").'"], ';
 $airline_data = '';
 foreach($airline_array as $airline_item)
 {
@@ -52,9 +50,9 @@ if (!empty($airline_array))
 	print '<thead>';
 	print '<th></th>';
 	print '<th></th>';
-	print '<th>Airline</th>';
-	print '<th>Country</th>';
-	print '<th># of times</th>';
+	print '<th>'._("Airline").'</th>';
+	print '<th>'._("Country").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

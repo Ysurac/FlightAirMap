@@ -11,7 +11,7 @@ if (isset($_POST['airline']))
 	require_once('header.php');
 	$Spotter = new Spotter();
 	print '<div class="column">';
-	print '<h1>Airlines</h1>';
+	print '<h1>'._("Airlines").'</h1>';
 	if (isset($_POST['airline_type'])) {
 		$airline_type = filter_input(INPUT_POST,'airline_type',FILTER_SANITIZE_STRING);
 		//$airline_names = $Spotter->getAllAirlineNames($airline_type);
@@ -23,13 +23,13 @@ if (isset($_POST['airline']))
 	print '<div class="select-item"><form action="'.$globalURL.'/airline" method="post"><select name="airline_type" class="selectpicker" data-live-search="true">';
 	print '<option value="all"';
 	if ($airline_type == 'all') print 'selected="selected" ';
-	print '>All</option><option value="passenger"';
+	print '>'._("All").'</option><option value="passenger"';
 	if ($airline_type == 'passenger') print 'selected="selected" ';
-	print '>Passenger</option><option value="cargo"';
+	print '>'._("Passenger").'</option><option value="cargo"';
 	if ($airline_type == 'cargo') print 'selected="selected" ';
-	print '>Cargo</option><option value="military"';
+	print '>'._("Cargo").'</option><option value="military"';
 	if ($airline_type == 'military') print 'selected="selected" ';
-	print '>Military</option></select>';
+	print '>'._("Military").'</option></select>';
 	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button></form></div>';
 
 	if (isset($_POST['airline_type'])) 
@@ -72,10 +72,10 @@ if (isset($_POST['airline']))
 			print '<a href="'.$globalURL.'/airline/'.$value['airline_icao'].'">';
 			if (isset($globalIVAO) && $globalIVAO && (@getimagesize('images/airlines/'.$value['airline_icao'].'.gif') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.gif')))
 			{
-				print '<img src="'.$globalURL.'/images/airlines/'.$value['airline_icao'].'.gif" alt="Click to see airline activity" title="Click to see airline activity" /> ';
+				print '<img src="'.$globalURL.'/images/airlines/'.$value['airline_icao'].'.gif" alt="'._("Click to see airline activity").'" title="'._("Click to see airline activity").'" /> ';
 			} elseif (@getimagesize('images/airlines/'.$value['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.png'))
 			{
-				print '<img src="'.$globalURL.'/images/airlines/'.$value['airline_icao'].'.png" alt="Click to see airline activity" title="Click to see airline activity" /> ';
+				print '<img src="'.$globalURL.'/images/airlines/'.$value['airline_icao'].'.png" alt="'._("Click to see airline activity").'" title="'._("Click to see airline activity").'" /> ';
 			} else {
 				print $value['airline_name'];
 			}

@@ -32,7 +32,7 @@ print '<h1>Upcoming Flights</h1>';
 print '</div>';
 
 print '<div class="table column">';	
-print '<p>This page shows all upcoming flights within the next 3 hours calculated using historical data, based on the number of same flights on the current day of the week &amp; current time. This does not take into account real-time delays and other factors.</p>';
+print '<p>'._("This page shows all upcoming flights within the next 3 hours calculated using historical data, based on the number of same flights on the current day of the week &amp; current time. This does not take into account real-time delays and other factors.").'</p>';
 
 if (isset($_GET['sort'])) {
 	$spotter_array = $Spotter->getUpcomingFlights($limit_start.",".$absolute_difference, $_GET['sort']);
@@ -46,11 +46,11 @@ if (!empty($spotter_array))
 	print '<div class="pagination">';
 	if ($limit_previous_1 >= 0)
 	{
-		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
+		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
 	}
 	if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 	{
-		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
+		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
 	}
 	print '</div>';
 	print '</div>';

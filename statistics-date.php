@@ -2,22 +2,19 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = "Statistic - Most Busiest Day";
+$title = _("Statistic - Most Busiest Day");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
-?>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<div class="info">
-	  	<h1>Busiest Day</h1>
+	  	<h1>'._("Busiest Day").'</h1>
 	  </div>
-      
-      <p>Below is a chart that plots the busiest day during the <strong>last 7 days</strong>.</p>
-      
-<?php
+      <p>'._("Below is a chart that plots the busiest day during the <strong>last 7 days</strong>.").'</p>';
 
 $date_array = $Stats->countAllDatesLast7Days();
 if (count($date_array) == 0) {
-    print 'Not data available';
+	print _("Not data available");
 } else {
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
@@ -25,7 +22,7 @@ print '<div id="chart" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Date", "# of Flights"], ';
+            	["'._("Date").'", "'._("# of Flights").'"], ';
 
 $date_data = '';
 foreach($date_array as $date_item)
@@ -39,7 +36,7 @@ print ']);
             var options = {
             	legend: {position: "none"},
             	chartArea: {"width": "80%", "height": "60%"},
-            	vAxis: {title: "# of Flights"},
+            	vAxis: {title: "'._("# of Flights").'"},
             	hAxis: {showTextEvery: 2},
             	height:300,
             	colors: ["#1a3151"]
@@ -54,16 +51,9 @@ print ']);
       </script>';
 }
 if (isset($globalDBArchiveMonths) && $globalDBArchiveMonths > 0) {
-?>
-      
-      <p>Below are the <strong>Top 10</strong> most busiest dates of last <?php print $globalDBArchiveMonths; ?> month(s).</p>
-
-<?php
+	print '<p>'.sprintf(_("Below are the <strong>Top 10</strong> most busiest dates of last %i month(s)."),$globalDBArchiveMonths).'</p>';
 } else {
-?>
-      <p>Below are the <strong>Top 10</strong> most busiest dates.</p>
-
-<?php
+	print '<p>'._("Below are the <strong>Top 10</strong> most busiest dates.").'</p>';
 }
 $date_array = $Stats->countAllDates();
 if (!empty($date_array))
@@ -72,8 +62,8 @@ if (!empty($date_array))
 	print '<table class="common-date table-striped">';
 	print '<thead>';
 	print '<th></th>';
-	print '<th>Date</th>';
-	print '<th># of Flights</th>';
+	print '<th>'._("Date").'</th>';
+	print '<th>'._("# of Flights").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

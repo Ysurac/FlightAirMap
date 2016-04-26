@@ -102,7 +102,7 @@ if (!empty($_GET)){
 	 	print '<div class="sub-menu sub-menu-container">';
 	 		print '<ul class="nav">';
 	 			print '<li class="dropdown">';
-		    	print '<a class="dropdown-toggle" data-toggle="dropdown" href="#" ><i class="fa fa-download"></i> Download Search Results <span class="caret"></span></a>';
+		    	print '<a class="dropdown-toggle" data-toggle="dropdown" href="#" ><i class="fa fa-download"></i> '._("Download Search Results").' <span class="caret"></span></a>';
 				    print '<ul class="dropdown-menu">';
 				      print '<li><a href="'.$globalURL.'/search/csv?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">CSV</a></li>';
 				      print '<li><a href="'.$globalURL.'/search/rss?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">RSS</a></li>';
@@ -120,21 +120,21 @@ if (!empty($_GET)){
 				      print '<li><a href="'.$globalURL.'/search/gpx?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">GPX</a></li>';
 				      print '<li><a href="'.$globalURL.'/search/wkt?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">WKT</a></li>';
 				      print '<li><hr /></li>';
-				      print '<li><a href="'.$globalURL.'/about/export" target="_blank" class="export-info">Download Info/Licence&raquo;</a></li>';
+				      print '<li><a href="'.$globalURL.'/about/export" target="_blank" class="export-info">'._("Download Info/Licence")'.&raquo;</a></li>';
 				    print '</ul>';
 				print '</li>';
                 //remove 3D=true parameter
                 $no3D = str_replace("&3D=true", "", $_SERVER['QUERY_STRING']);
                 $kmlURL = str_replace("http://", "kml://", $globalURL);
                 if (!isset($_GET['3D'])){
-                    print '<li><a href="'.$globalURL.'/search?'.$no3D.'" class="active"><i class="fa fa-table"></i> Table</a></li>';
+                    print '<li><a href="'.$globalURL.'/search?'.$no3D.'" class="active"><i class="fa fa-table"></i> '._("Table").'</a></li>';
                 } else {
-                    print '<li><span class="notablet"><a href="'.$globalURL.'/search?'.$no3D.'"><i class="fa fa-table"></i> Table</a></span></li>';
+                    print '<li><span class="notablet"><a href="'.$globalURL.'/search?'.$no3D.'"><i class="fa fa-table"></i> '._("Table").'</a></span></li>';
                 }
                 if (isset($_GET['3D'])){
-                    print '<li><a href="'.$globalURL.'/search?'.$no3D.'&3D=true" class="active"><i class="fa fa-globe"></i> 3D Map</a></li>';
+                    print '<li><a href="'.$globalURL.'/search?'.$no3D.'&3D=true" class="active"><i class="fa fa-globe"></i> '._("3D Map").'</a></li>';
                 } else {
-                    print '<li ><a href="'.$globalURL.'/search?'.$no3D.'&3D=true" class="notablet nomobile"><i class="fa fa-globe"></i> 3D Map</a><a href="'.$kmlURL.'/search/kml?'.htmlentities($_SERVER['QUERY_STRING']).'" class="tablet mobile"><i class="fa fa-globe"></i> 3D Map</a></li>';
+                    print '<li ><a href="'.$globalURL.'/search?'.$no3D.'&3D=true" class="notablet nomobile"><i class="fa fa-globe"></i> '._("3D Map").'</a><a href="'.$kmlURL.'/search/kml?'.htmlentities($_SERVER['QUERY_STRING']).'" class="tablet mobile"><i class="fa fa-globe"></i> 3D Map</a></li>';
                 }
                 //checks to see if the Bit.ly API settings are set
                 if ($globalBitlyAccessToken != "")
@@ -151,31 +151,31 @@ if (!empty($_GET)){
 	  {	  		
 	  	 print '<div class="column">';
     	  	 print '<div class="info">';
-    	  	    print '<h1>Search Results for ';
-    		  	if (isset($_GET['q']) && $_GET['q'] != ""){ print 'keyword: <span>'.$_GET['q'].'</span> '; }
-    		  	if (isset($_GET['aircraft']) && $_GET['aircraft'] != ""){ print 'aircraft: <span>'.$_GET['aircraft'].'</span> '; }
-    		  	if (isset($_GET['manufacturer']) && $_GET['manufacturer'] != ""){ print 'manufacturer: <span>'.$_GET['manufacturer'].'</span> '; }
-    		  	if (isset($_GET['registration']) && $_GET['registration'] != ""){ print 'registration: <span>'.$_GET['registration'].'</span> '; }
-    		  	if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'highlights: <span>'.$_GET['highlights'].'</span> '; }
-			if (isset($_GET['airline']) && $_GET['airline'] != ""){ print 'airline: <span>'.$_GET['airline'].'</span> '; }
-			if (isset($_GET['airline_country']) && $_GET['airline_country'] != ""){ print 'airline country: <span>'.$_GET['airline_country'].'</span> '; }
-			if (isset($_GET['airline_type']) && $_GET['airline_type'] != ""){ print 'airline type: <span>'.$_GET['airline_type'].'</span> '; }
-			if (isset($_GET['airport']) && $_GET['airport'] != ""){ print 'airport: <span>'.$_GET['airport'].'</span> '; }
-			if (isset($_GET['airport_country']) && $_GET['airport_country'] != ""){ print 'airport country: <span>'.$_GET['airport_country'].'</span> '; }
-			if (isset($_GET['callsign']) && $_GET['callsign'] != ""){ print 'callsign: <span>'.$_GET['callsign'].'</span> '; }
-			if (isset($_GET['owner']) && $_GET['owner'] != ""){ print 'owner: <span>'.$_GET['owner'].'</span> '; }
-			if (isset($_GET['pilot_id']) && $_GET['pilot_id'] != ""){ print 'pilot id: <span>'.$_GET['pilot_id'].'</span> '; }
-			if (isset($_GET['pilot_name']) && $_GET['pilot_name'] != ""){ print 'pilot name: <span>'.$_GET['pilot_name'].'</span> '; }
-			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && (!isset($_GET['arrival_airport_route']) || $_GET['arrival_airport_route'] == "")){ print 'route out of: <span>'.$_GET['departure_airport_route'].'</span> '; }
-			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] == "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print 'route into: <span>'.$_GET['arrival_airport_route'].'</span> '; }
-			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print 'route between: <span>'.$_GET['departure_airport_route'].'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
-			if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] == ""){ print 'date starting at: <span>'.$_GET['start_date'].'</span> '; }
-			if (isset($_GET['start_date']) && $_GET['start_date'] == "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print 'date ending at: <span>'.$_GET['end_date'].'</span> '; }
-			if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print 'date between: <span>'.$_GET['start_date'].'</span> and <span>'.$_GET['end_date'].'</span> '; }
-			if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] != "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] == ""){ print 'altitude starting at: <span>'.number_format($_GET['lowest_altitude']).' feet</span> '; }
-			if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] == "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] != ""){ print 'altitude ending at: <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
-			if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] != "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] != ""){ print 'altitude between: <span>'.number_format($_GET['lowest_altitude']).' feet</span> and <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
-			if (isset($_GET['number_results']) && $_GET['number_results'] != ""){ print 'limit per page: <span>'.$_GET['number_results'].'</span> '; }
+    	  	    print '<h1>'._("Search Results for").' ';
+    		  	if (isset($_GET['q']) && $_GET['q'] != ""){ print _("Keyword:").' <span>'.$_GET['q'].'</span> '; }
+    		  	if (isset($_GET['aircraft']) && $_GET['aircraft'] != ""){ print _("Aircraft:").' <span>'.$_GET['aircraft'].'</span> '; }
+    		  	if (isset($_GET['manufacturer']) && $_GET['manufacturer'] != ""){ print _("Manufacturer:").' <span>'.$_GET['manufacturer'].'</span> '; }
+    		  	if (isset($_GET['registration']) && $_GET['registration'] != ""){ print _("Registration:").' <span>'.$_GET['registration'].'</span> '; }
+    		  	if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print _("Highlights:").' <span>'.$_GET['highlights'].'</span> '; }
+			if (isset($_GET['airline']) && $_GET['airline'] != ""){ print _("Airline:").' <span>'.$_GET['airline'].'</span> '; }
+			if (isset($_GET['airline_country']) && $_GET['airline_country'] != ""){ print _("Airline country:").' <span>'.$_GET['airline_country'].'</span> '; }
+			if (isset($_GET['airline_type']) && $_GET['airline_type'] != ""){ print _("Airline type:").' <span>'.$_GET['airline_type'].'</span> '; }
+			if (isset($_GET['airport']) && $_GET['airport'] != ""){ print _("Airport:").' <span>'.$_GET['airport'].'</span> '; }
+			if (isset($_GET['airport_country']) && $_GET['airport_country'] != ""){ print _("Airport country:").' <span>'.$_GET['airport_country'].'</span> '; }
+			if (isset($_GET['callsign']) && $_GET['callsign'] != ""){ print _("Callsign:").' <span>'.$_GET['callsign'].'</span> '; }
+			if (isset($_GET['owner']) && $_GET['owner'] != ""){ print _("Owner:").' <span>'.$_GET['owner'].'</span> '; }
+			if (isset($_GET['pilot_id']) && $_GET['pilot_id'] != ""){ print _("Pilot id:").' <span>'.$_GET['pilot_id'].'</span> '; }
+			if (isset($_GET['pilot_name']) && $_GET['pilot_name'] != ""){ print _("Pilot name:").' <span>'.$_GET['pilot_name'].'</span> '; }
+			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && (!isset($_GET['arrival_airport_route']) || $_GET['arrival_airport_route'] == "")){ print _("Route out of:").' <span>'.$_GET['departure_airport_route'].'</span> '; }
+			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] == "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print _("Route into:").' <span>'.$_GET['arrival_airport_route'].'</span> '; }
+			if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print _("Route between:").' <span>'.$_GET['departure_airport_route'].'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
+			if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] == ""){ print _("Date starting at:").' <span>'.$_GET['start_date'].'</span> '; }
+			if (isset($_GET['start_date']) && $_GET['start_date'] == "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print _("Date ending at:").' <span>'.$_GET['end_date'].'</span> '; }
+			if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print _("Date between:").' <span>'.$_GET['start_date'].'</span> and <span>'.$_GET['end_date'].'</span> '; }
+			if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] != "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] == ""){ print _("Altitude starting at:").' <span>'.number_format($_GET['lowest_altitude']).' feet</span> '; }
+			if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] == "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] != ""){ print _("Altitude ending at:").' <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
+			if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] != "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] != ""){ print _("Altitude between:").' <span>'.number_format($_GET['lowest_altitude']).' feet</span> '._("and").' <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
+			if (isset($_GET['number_results']) && $_GET['number_results'] != ""){ print _("limit per page:").' <span>'.$_GET['number_results'].'</span> '; }
     		    print '</h1>';
     		  print '</div>';
     	  
@@ -239,11 +239,11 @@ if (!empty($_GET)){
     			print '<div class="pagination">';
         	if ($limit_previous_1 >= 0)
         	{
-        	print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_previous_1.','.$limit_previous_2.'">&laquo;Previous Page</a>';
+        	print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';
         	}
         	if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
         	{
-        		print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_end.','.$limit_next.'">Next Page&raquo;</a>';
+        		print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_end.','.$limit_next.'">'._("Next Page").'&raquo;</a>';
         	}
             print '</div>';
           }
@@ -255,15 +255,15 @@ if (!empty($_GET)){
 	      
 	      print '<div class="column">';
     	  	 print '<div class="info">';
-    	  	    print '<h1>Search</h1>';
+    	  	    print '<h1>'._("Search").'</h1>';
     	  	print '</div>';
-    	  	print '<p>Sorry, your search did not produce any results. :(</p>'; 
+    	  	print '<p>'._("Sorry, your search did not produce any results. :(").'</p>'; 
     	  print '</div>';
     	  	 
 	  }
   } else {
     print '<div class="info column">';
-     	print '<h1>Search</h1>';
+     	print '<h1>'._("Search").'</h1>';
      print '</div>';
   }
   ?>
@@ -273,47 +273,47 @@ if (!empty($_GET)){
   <form action="<?php print $globalURL; ?>/search" method="get" role="form" class="form-horizontal">
     <fieldset>
     	<div class="form-group">
-	    	<label>Keyword</label> 
-		    <input type="text" id="q" name="q" value="<?php if (isset($_GET['q'])) print $_GET['q']; ?>" size="10" placeholder="Keywords" />
+	    	<label><?php echo _("Keyword"); ?></label> 
+		    <input type="text" id="q" name="q" value="<?php if (isset($_GET['q'])) print $_GET['q']; ?>" size="10" placeholder="<?php echo _("Keywords"); ?>" />
 		  </div>
     </fieldset>
     <div class="advanced-form">
         <fieldset>
-        	<legend>Aircraft</legend>
+        	<legend><?php echo _("Aircraft"); ?></legend>
         	<div class="form-group">
-    	    	<label>Manufacturer</label> 
+    	    	<label><?php echo _("Manufacturer"); ?></label> 
     		    <select name="manufacturer" id="manufacturer" class="selectpicker" data-live-search="true">
     		      <option></option>
     		    </select>
     		  </div>
 		  <script type="text/javascript">getSelect('manufacturer','<?php if(isset($_GET['manufacturer'])) print $_GET['manufacturer']; ?>')</script>
 		<div class="form-group">
-    	    	<label>Type</label> 
+    	    	<label><?php echo _("Type"); ?></label> 
     		    <select name="aircraft" id="aircrafttypes" class="selectpicker" data-live-search="true">
     		      <option></option>
     		    </select>
     		  </div>
 		  <script type="text/javascript">getSelect('aircrafttypes','<?php if(isset($_GET['aircraft_icao'])) print $_GET['aircraft_icao']; ?>');</script>
     		   <div class="form-group">
-    		  	<label>Registration</label> 
+    		  	<label><?php echo _("Registration"); ?></label> 
     		  	<input type="text" name="registration" value="<?php if (isset($_GET['registration'])) print $_GET['registration']; ?>" size="8" />
     		    </div>
     		<?php
     		    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
     		?>
     		   <div class="form-group">
-    		  	<label>Pilot id</label> 
+    		  	<label><?php echo _("Pilot id"); ?></label> 
     		  	<input type="text" name="pilot_id" value="<?php if (isset($_GET['pilot_id'])) print $_GET['pilot_id']; ?>" size="15" />
     		    </div>
     		   <div class="form-group">
-    		  	<label>Pilot name</label> 
+    		  	<label><?php echo _("Pilot name"); ?></label> 
     		  	<input type="text" name="pilot_name" value="<?php if (isset($_GET['pilot_name'])) print $_GET['pilot_name']; ?>" size="15" />
     		    </div>
 		<?php
 		    } else {
 		?>
     		   <div class="form-group">
-    		  	<label>Owner name</label> 
+    		  	<label><?php echo _("Owner name"); ?></label> 
     		  	<input type="text" name="owner" value="<?php if (isset($_GET['owner'])) print $_GET['owner']; ?>" size="15" />
     		    </div>
 		<?php
@@ -321,47 +321,47 @@ if (!empty($_GET)){
 		?>
 
     		    <div class="form-group checkbox">
-    				<div><input type="checkbox" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <label for="highlights">Include only aircrafts with special highlights (unique liveries, destinations etc.)</label></div>
+    				<div><input type="checkbox" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <label for="highlights"><?php echo _("Include only aircrafts with special highlights (unique liveries, destinations etc.)"); ?></label></div>
     		    </div>
         </fieldset>
         <fieldset>
-        	<legend>Airline</legend>
+        	<legend><?php echo _("Airline"); ?></legend>
     		  <div class="form-group">
-    		  	<label>Name</label> 
+    		  	<label><?php echo _("Name"); ?></label> 
     		    <select name="airline" id="airlinenames" class="selectpicker" data-live-search="true">
     		      <option></option>
     		    </select>
     		  </div>
 		  <script type="text/javascript">getSelect('airlinenames','<?php if(isset($_GET['airline'])) print $_GET['airline']; ?>');</script>
     		  <div class="form-group">
-    		  	<label>Country</label> 
+    		  	<label><?php echo _("Country"); ?></label> 
     		    <select name="airline_country" id="airlinecountries" class="selectpicker" data-live-search="true">
     		      <option></option>
     		    </select>
     		  </div>
 		  <script type="text/javascript">getSelect('airlinecountries','<?php if(isset($_GET['airline_country'])) print $_GET['airline_country']; ?>');</script>
     		  <div class="form-group">
-    		  	<label>Callsign</label> 
+    		  	<label><?php echo _("Callsign"); ?></label> 
     		  	<input type="text" name="callsign" value="<?php if (isset($_GET['callsign'])) print $_GET['callsign']; ?>" size="8" />
     		</div>
     		<div class="form-group radio">
-    			<div><input type="radio" name="airline_type" value="all" id="airline_type_all" <?php if (!isset($_GET['airline_type']) || $_GET['airline_type'] == "all"){ print 'checked="checked"'; } ?>> <label for="airline_type_all">All airlines types</label></div>
-    			<div><input type="radio" name="airline_type" value="passenger" id="airline_type_passenger" <?php if (isset($_GET['airline_type'])) if ($_GET['airline_type'] == "passenger"){ print 'checked="checked"'; } ?>> <label for="airline_type_passenger">Only Passenger airlines</label></div>
-    			<div><input type="radio" name="airline_type" value="cargo" id="airline_type_cargo" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "cargo"){ print 'checked="checked"'; } ?>> <label for="airline_type_cargo">Only Cargo airlines</label></div>
-    			<div><input type="radio" name="airline_type" value="military" id="airline_type_military" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "military"){ print 'checked="checked"'; } ?>> <label for="airline_type_military">Only Military airlines</label></div>
+    			<div><input type="radio" name="airline_type" value="all" id="airline_type_all" <?php if (!isset($_GET['airline_type']) || $_GET['airline_type'] == "all"){ print 'checked="checked"'; } ?>> <label for="airline_type_all"><?php echo _("All airlines types"); ?></label></div>
+    			<div><input type="radio" name="airline_type" value="passenger" id="airline_type_passenger" <?php if (isset($_GET['airline_type'])) if ($_GET['airline_type'] == "passenger"){ print 'checked="checked"'; } ?>> <label for="airline_type_passenger"><?php echo _("Only Passenger airlines"); ?></label></div>
+    			<div><input type="radio" name="airline_type" value="cargo" id="airline_type_cargo" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "cargo"){ print 'checked="checked"'; } ?>> <label for="airline_type_cargo"><?php echo _("Only Cargo airlines"); ?></label></div>
+    			<div><input type="radio" name="airline_type" value="military" id="airline_type_military" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "military"){ print 'checked="checked"'; } ?>> <label for="airline_type_military"><?php echo _("Only Military airlines"); ?></label></div>
     		</div>
         </fieldset>
         <fieldset>
-        	<legend>Airport</legend>
+        	<legend><?php echo _("Airport"); ?></legend>
     		  <div class="form-group">
-    		  	<label>Name</label> 
+    		  	<label><?php echo _("Name"); ?></label> 
     		    <select name="airport" id="airportnames" class="selectpicker" data-live-search="true">
     		      <option></option>
     		     </select>
     		  </div>
 		  <script type="text/javascript">getSelect('airportnames','<?php if(isset($_GET['airport_icao'])) print $_GET['airport_icao']; ?>');</script>
     		  <div class="form-group">
-    		  	<label>Country</label> 
+    		  	<label><?php echo _("Country"); ?></label> 
     		    <select name="airport_country" id="airportcountries" class="selectpicker" data-live-search="true">
     		      <option></option>
     		    </select>
@@ -370,16 +370,16 @@ if (!empty($_GET)){
         </fieldset>
         
          <fieldset>
-        	<legend>Route</legend>
+        	<legend><?php echo _("Route"); ?></legend>
     		  <div class="form-group">
-    		  	<label>Departure Airport</label> 
+    		  	<label><?php echo _("Departure Airport"); ?></label> 
     		    <select name="departure_airport_route" id="departureairportnames" class="selectpicker" data-live-search="true">
     		      <option></option>
     		      </select>
     		  </div>
 		  <script type="text/javascript">getSelect('departureairportnames','<?php if(isset($_GET['departure_airport_route'])) print $_GET['departure_airport_route']; ?>');</script>
     		  <div class="form-group">
-    		  	<label>Arrival Airport</label> 
+    		  	<label><?php echo _("Arrival Airport"); ?></label> 
     		    <select name="arrival_airport_route" id="arrivalairportnames" class="selectpicker" data-live-search="true">
     		      <option></option>
     		      </select>
@@ -388,9 +388,9 @@ if (!empty($_GET)){
         </fieldset>
     
     	<fieldset>
-        	<legend>Date</legend>
+        	<legend><?php echo _("Date"); ?></legend>
 			<div class="form-group">
-                            <label>Start Date</label>
+                            <label><?php echo _("Start Date"); ?></label>
                             <div class='input-group date' id='datetimepicker1'>
                                 <input type='text' name="start_date" class="form-control" value="<?php if (isset($_GET['start_date'])) print $_GET['start_date']; ?>" placeholder="Start Date/Time" />
                                 <span class="input-group-addon">
@@ -399,7 +399,7 @@ if (!empty($_GET)){
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>End Date</label>
+                            <label><?php echo _("End Date"); ?></label>
                             <div class='input-group date' id='datetimepicker2'>
                                 <input type='text' name="end_date" class="form-control" value="<?php if (isset($_GET['end_date'])) print $_GET['end_date']; ?>" placeholder="End Date/Time" />
                                 <span class="input-group-addon">
@@ -430,7 +430,7 @@ if (!empty($_GET)){
 		<fieldset>
         	<legend>Altitude</legend>
     			<div class="form-group">
-    				<label>Lowest Altitude</label> 
+    				<label><?php echo _("Lowest Altitude"); ?></label> 
     				<select name="lowest_altitude" class="selectpicker" data-live-search="true">
 	    		      <option></option>
 	    		      <?php
@@ -447,7 +447,7 @@ if (!empty($_GET)){
 	    		      ?></select>
     			</div>
     			<div class="form-group">
-    				<label>Highest Altitude</label> 
+    				<label><?php echo _("Highest Altitude"); ?></label> 
     				<select name="highest_altitude" class="selectpicker" data-live-search="true">
 	    		      <option></option>
 	    		      <?php
@@ -466,9 +466,9 @@ if (!empty($_GET)){
     		</fieldset>
 		
 		 <fieldset>
-        	<legend>Limit per Page</legend>
+        	<legend><?php echo _("Limit per Page"); ?></legend>
     		  <div class="form-group">
-    		  	<label>Number of Results</label> 
+    		  	<label><?php echo _("Number of Results"); ?></label> 
     		    <select name="number_results">
     		    <?php
     		      $number_results_array = Array(25, 50, 100, 150, 200, 250, 300, 400, 500,  600, 700, 800, 900, 1000);
@@ -489,13 +489,13 @@ if (!empty($_GET)){
         
 		<fieldset>
 			<div class="form-group">
-				<label>Search in archive</label>
+				<label><?php echo _("Search in archive"); ?></label>
 				<input type="checkbox" name="archive" value="1" />
 			</div>
 		</fieldset>
 		<fieldset>
 			<div>
-				<input type="submit" value="Search" />
+				<input type="submit" value="<?php echo _("Search"); ?>" />
 			</div>
 		</fieldset>
 	 </form>

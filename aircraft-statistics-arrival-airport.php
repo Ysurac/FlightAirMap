@@ -15,7 +15,7 @@ $spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,"0,1","");
 
 if (!empty($spotter_array))
 {
-	$title = 'Most Common Arrival Airports for '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+	$title = _("Most Common Arrival Airports for").' '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/aircraft" method="post">';
@@ -40,20 +40,18 @@ if (!empty($spotter_array))
 	{
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</h1>';
-		print '<div><span class="label">Name</span>'.$spotter_array[0]['aircraft_name'].'</div>';
-		print '<div><span class="label">ICAO</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
-		print '<div><span class="label">Manufacturer</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
+		print '<div><span class="label">'._("Name").'</span>'.$spotter_array[0]['aircraft_name'].'</div>';
+		print '<div><span class="label">'._("ICAO").'</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
+		print '<div><span class="label">'._("Manufacturer").'</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
 		print '</div>';
 	} else {
-		print '<div class="alert alert-warning">This special aircraft profile shows all flights in where the aircraft type is unknown.</div>';
+		print '<div class="alert alert-warning">'._("This special aircraft profile shows all flights in where the aircraft type is unknown.").'</div>';
 	}
 
 	include('aircraft-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Arrival Airports</h2>';
-	?>
-  	 <p>The statistic below shows all arrival airports of flights from <strong><?php print $spotter_array[0]['aircraft_name']; ?> (<?php print $spotter_array[0]['aircraft_type']; ?>)</strong>.</p>
-	<?php
+	print '<h2>'._("Most Common Arrival Airports").'</h2>';
+	print '<p>'._("The statistic below shows all arrival airports of flights from").' <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
 	 $airport_airport_array = $Spotter->countAllArrivalAirportsByAircraft($aircraft_type);
     	?>
     	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -66,7 +64,7 @@ if (!empty($spotter_array))
     	function drawCharts() {
     
         var data = google.visualization.arrayToDataTable([ 
-        	["Airport", "# of Times"],
+        	["<?php echo _("Airport"); ?>", "<?php echo _("# of Times"); ?>"],
 	<?php
 	$airport_data = '';
 	foreach($airport_airport_array as $airport_item)
@@ -101,9 +99,9 @@ if (!empty($spotter_array))
 	print '<table class="common-airport">';
 	print '<thead>';
 	print '<th></th>';
-	print '<th>Airport</th>';
-	print '<th>Country</th>';
-	print '<th># of times</th>';
+	print '<th>'._("Airport").'</th>';
+	print '<th>'._("Country").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '<th></th>';
 	print '</thead>';
 	print '<tbody>';
@@ -130,10 +128,10 @@ if (!empty($spotter_array))
 	print '</div>';
 	print '</div>';
 } else {
-	$title = "Aircraft Type";
+	$title = _("Aircraft Type");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, the aircraft type does not exist in this database. :(</p>';  
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, the aircraft type does not exist in this database. :(").'</p>';  
 }
 require_once('footer.php');
 ?>
