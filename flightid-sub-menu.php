@@ -1,16 +1,16 @@
 <span class="sub-menu-statistic column mobile">
-	<a href="#" onclick="showSubMenu(); return false;">Additional Data <i class="fa fa-plus"></i></a>
+	<a href="#" onclick="showSubMenu(); return false;"><?php echo _("Additional Data"); ?> <i class="fa fa-plus"></i></a>
 </span>
 <div class="sub-menu sub-menu-container">
 	<ul class="nav nav-pills">
-		<li><a href="<?php print $globalURL; ?>/flightid/<?php print $_GET['id']; ?>" <?php if (strtolower($current_page) == "flightid-overview"){ print 'class="active"'; } ?>>Detailed</a></li>
+		<li><a href="<?php print $globalURL; ?>/flightid/<?php print $_GET['id']; ?>" <?php if (strtolower($current_page) == "flightid-overview"){ print 'class="active"'; } ?>><?php echo _("Detailed"); ?></a></li>
 		<?php if ($globalFlightAware) { ?>
-		<li><a href="http://flightaware.com/live/flight/id/<?php print $spotter_array[0]['flightaware_id']; ?>" target="_blank">Flight Status&raquo;</a></li>
-		<li><a href="http://flightaware.com/live/flight/id/<?php print $spotter_array[0]['flightaware_id']; ?>/tracklog" target="_blank">Flight Log&raquo;</a></li>
+		<li><a href="http://flightaware.com/live/flight/id/<?php print $spotter_array[0]['flightaware_id']; ?>" target="_blank"><?php echo _("Flight Status"); ?>&raquo;</a></li>
+		<li><a href="http://flightaware.com/live/flight/id/<?php print $spotter_array[0]['flightaware_id']; ?>/tracklog" target="_blank"><?php echo _("Flight Log"); ?>&raquo;</a></li>
 		<?php } ?>
 		 <li class="dropdown">
 		    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-			<i class="fa fa-download"></i> Download Flight Data <span class="caret"></span>
+			<i class="fa fa-download"></i> <?php echo _("Download Flight Data"); ?> <span class="caret"></span>
 		    </a>
 		    <ul class="dropdown-menu" role="menu">
 			<li><a href="<?php print $globalURL; ?>/search/csv?q=<?php print $spotter_array[0]['spotter_id']; ?>&download=true">CSV</a></li>

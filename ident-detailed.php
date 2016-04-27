@@ -31,23 +31,24 @@ if (!isset($_GET['ident'])){
 	
 	$page_url = $globalURL.'/ident/'.$_GET['ident'];
 	
+	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	if (isset($_GET['sort'])) 
 	{
-		$spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference, $_GET['sort']);
+		$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
 		if (empty($spotter_array)) {
-			$spotter_array = $SpotterArchive->getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference, $_GET['sort']);
+			$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
 		}
 	} else {
-		$spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference);
+		$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
 		if (empty($spotter_array)) {
-			$spotter_array = $SpotterArchive->getSpotterDataByIdent($_GET['ident'],$limit_start.",".$absolute_difference);
+			$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
 		}
 	}
-	
-	
+
 	if (!empty($spotter_array))
 	{
-		$title = 'Detailed View for '.$spotter_array[0]['ident'];
+		$title = sprintf(_("Detailed View for %s"),$spotter_array[0]['ident']);
 		$ident = $spotter_array[0]['ident'];
 		if (isset($spotter_array[0]['latitude'])) $latitude = $spotter_array[0]['latitude'];
 		if (isset($spotter_array[0]['longitude'])) $longitude = $spotter_array[0]['longitude'];
@@ -66,7 +67,7 @@ if (!isset($_GET['ident'])){
                       google.setOnLoadCallback(drawChart6);
                       function drawChart6() {
                         var data = google.visualization.arrayToDataTable([
-                            ["Hour","Altitude","Speed"], ';
+                            ["Hour","'._("Altitude").'","'._("Speed").'"], ';
                             $altitude_data = '';
 				foreach($all_data as $data)
 				{
@@ -83,8 +84,8 @@ if (!isset($_GET['ident'])){
                             },
                             axes: {
                                 y: {
-                                    Altitude: {label: "Altitude (FL)"},
-                                    Speed: {label: "Speed (knots)"},
+                                    Altitude: {label: "'._("Altitude (FL)").'"},
+                                    Speed: {label: "'._("Speed (knots)").'"},
                                 }
                             },
                             height:210
@@ -101,34 +102,34 @@ if (!isset($_GET['ident'])){
 		}
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['ident'].'</h1>';
-		print '<div><span class="label">Ident</span>'.$spotter_array[0]['ident'].'</div>';
+		print '<div><span class="label">'._("Ident").'</span>'.$spotter_array[0]['ident'].'</div>';
 		if (isset($spotter_array[0]['airline_icao'])) {
-			print '<div><span class="label">Airline</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
+			print '<div><span class="label">'._("Airline").'</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
 		}
-		print '<div><span class="label">Flight History</span><a href="http://flightaware.com/live/flight/'.$spotter_array[0]['ident'].'" target="_blank">View the Flight History of this callsign</a></div>';       
+		print '<div><span class="label">'._("Flight History").'</span><a href="http://flightaware.com/live/flight/'.$spotter_array[0]['ident'].'" target="_blank">'._("View the Flight History of this callsign").'</a></div>';
 		print '</div>';
 	
 		include('ident-sub-menu.php');
 		print '<div class="table column">';
-		print '<p>The table below shows the detailed information of all flights with the ident/callsign of <strong>'.$spotter_array[0]['ident'].'</strong>.</p>';
-		  
+		print '<p>'.sprintf(_("The table below shows the detailed information of all flights with the ident/callsign of <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
+
 		include('table-output.php'); 
 		print '<div class="pagination">';
 		if ($limit_previous_1 >= 0)
 		{
-			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
+			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
 		}
 		if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 		{
-			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
+			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
 		}
 		print '</div>';
 		print '</div>';
 	} else {
-		$title = "Ident";
+		$title = _("Ident");
 		require_once('header.php');
-		print '<h1>Error</h1>';
-		print '<p>Sorry, this ident/callsign is not in the database. :(</p>'; 
+		print '<h1>'._("Error").'</h1>';
+		print '<p>'._("Sorry, this ident/callsign is not in the database. :(").'</p>'; 
 	}
 }
 require_once('footer.php');

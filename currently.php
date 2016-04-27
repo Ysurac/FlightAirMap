@@ -29,14 +29,15 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 $page_url = $globalURL.'/currently';
  
 print '<div class="info column">';
-print '<h1>Current Activity</h1>';
+print '<h1>'._("Current Activity").'</h1>';
 print '</div>';
 
 print '<div class="table column">';
-print '<p>The table below shows the detailed information of all current flights.</p>';
+print '<p>'._("The table below shows the detailed information of all current flights.").'</p>';
 
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 if (isset($_GET['sort'])) {
-	$spotter_array = $SpotterLive->getLiveSpotterData($limit_start.",".$absolute_difference, $_GET['sort']);
+	$spotter_array = $SpotterLive->getLiveSpotterData($limit_start.",".$absolute_difference, $sort);
 } else {
 	$spotter_array = $SpotterLive->getLiveSpotterData($limit_start.",".$absolute_difference);
 }
@@ -47,11 +48,11 @@ if (!empty($spotter_array))
 	print '<div class="pagination">';
 	if ($limit_previous_1 >= 0)
 	{
-		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
+		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
 	}
 	if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 	{
-		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
+		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
 	}
 	print '</div>';
 	print '</div>';

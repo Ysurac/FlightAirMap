@@ -2,7 +2,7 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
-$title = "Special Highlights";
+$title = _("Special Highlights");
 require_once('header.php');
 
 //calculuation for the pagination
@@ -32,14 +32,15 @@ print '<div class="view-type">';
 print '<a href="'.$globalURL.'/highlights" class="active" alt="Display View" title="Display View"><i class="fa fa-th"></i></a>';
 print '<a href="'.$globalURL.'/highlights/table" alt="Table View" title="Table View"><i class="fa fa-table"></i></a>';
 print '</div>';
-print '<h1>Special Highlights</h1>';
+print '<h1>'._("Special Highlights").'</h1>';
 print '</div>';
 
 print '<div class="column">';	
-print '<p>The view below shows all aircrafts that have been selected to have some sort of special characteristic about them, such as unique liveries, destinations etc.</p>';
+print '<p>'._("The view below shows all aircrafts that have been selected to have some sort of special characteristic about them, such as unique liveries, destinations etc.").'</p>';
 
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 if (isset($_GET['sort'])) {
-	$spotter_array = $Spotter->getSpotterDataByHighlight($limit_start.",".$absolute_difference, $_GET['sort']);
+	$spotter_array = $Spotter->getSpotterDataByHighlight($limit_start.",".$absolute_difference, $sort);
 } else {
 	$spotter_array = $Spotter->getSpotterDataByHighlight($limit_start.",".$absolute_difference, '');
 }
@@ -68,11 +69,11 @@ if (!empty($spotter_array))
 	print '<div class="pagination">';
 	if ($limit_previous_1 >= 0)
 	{
-		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
+		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
 	}
 	if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 	{
-		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
+		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
 	}
 	print '</div>';
 	print '</div>';

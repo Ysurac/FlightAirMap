@@ -7,26 +7,24 @@ $spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $sort);
 
 if (!empty($spotter_array))
 {
-	$title = 'Most Common Arrival Airports by Country on '.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']));
+	$title = sprintf(_("Most Common Arrival Airports by Country on %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])));
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/date" method="post">';
-	print '<label for="date">Select a Date</label>';
+	print '<label for="date">'._("Select a Date").'</label>';
 	print '<input type="text" id="date" name="date" value="'.$_GET['date'].'" size="8" readonly="readonly" class="custom" />';
 	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
 	print '</form>';
 	print '</div>';
 	print '<div class="info column">';
-	print '<h1>Flights from '.date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])).'</h1>';
+	print '<h1>'.sprintf(_("Flights from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</h1>';
 	print '</div>';
 
 	include('date-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Arrival Airports by Country</h2>';
+	print '<h2>'._("Most Common Arrival Airports by Country").'</h2>';
+	print '<p>'.sprintf(_("The statistic below shows all arrival airports by Country of origin of flights on <strong>%s</strong>."),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
 
-?>
-	<p>The statistic below shows all arrival airports by Country of origin of flights on <strong><?php print date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])); ?></strong>.</p>
-<?php
 	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByDate($_GET['date']);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>
@@ -35,8 +33,9 @@ if (!empty($spotter_array))
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Country", "# of Times"], ';
-            	$country_data = '';
+            	["'._("Country").'", "'._("# of Times").'"], ';
+
+	$country_data = '';
 	foreach($airport_country_array as $airport_item)
 	{
 		$country_data .= '[ "'.$airport_item['arrival_airport_country'].'",'.$airport_item['airport_arrival_country_count'].'],';
@@ -66,8 +65,8 @@ if (!empty($spotter_array))
 		print '<table class="common-country table-striped">';
 		print '<thead>';
 		print '<th></th>';
-		print '<th>Country</th>';
-		print '<th># of times</th>';
+		print '<th>'._("Country").'</th>';
+		print '<th>'._("# of times").'</th>';
 		print '</thead>';
 		print '<tbody>';
 		$i = 1;
@@ -90,10 +89,10 @@ if (!empty($spotter_array))
 	}
 	print '</div>';
 } else {
-	$title = "Unknown Date";
+	$title = _("Unknown Date");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, this date does not exist in this database. :(</p>';  
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, this date does not exist in this database. :(").'</p>';  
 }
 
 require_once('footer.php');
