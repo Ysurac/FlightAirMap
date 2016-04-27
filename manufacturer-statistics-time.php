@@ -6,14 +6,14 @@ if (!isset($_GET['aircraft_manufacturer'])) {
         die();
 }
 $Spotter = new Spotter();
-$manufacturer = ucwords(str_replace("-", " ", $_GET['aircraft_manufacturer']));
+$manufacturer = ucwords(str_replace("-", " ", filter_input(INPUT_GET,'aircraft_manufacturer',FILTER_SANITIZE_STRING)));
 
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,"0,1", $sort);
 
 if (!empty($spotter_array))
 {
-	$title = 'Most Common Time of Day from '.$manufacturer;
+	$title = sprintf(_("Most Common Time of Day from %s"),$manufacturer);
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/manufacturer" method="post">';
@@ -40,8 +40,8 @@ if (!empty($spotter_array))
 
 	include('manufacturer-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Time of Day</h2>';
-	print '<p>The statistic below shows the most common time of day from <strong>'.$manufacturer.'</strong>.</p>';
+	print '<h2>'._("Most Common Time of Day").'</h2>';
+	print '<p>'.sprintf(_("The statistic below shows the most common time of day from <strong>%s</strong>."),$manufacturer).'</p>';
 
 	$hour_array = $Spotter->countAllHoursByManufacturer($manufacturer);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
@@ -51,7 +51,7 @@ if (!empty($spotter_array))
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Hour", "# of Flights"], ';
+            	["'._("Hour").'", "'._("# of Flights").'"], ';
             	$hour_data = '';
 	foreach($hour_array as $hour_item)
 	{
@@ -79,10 +79,10 @@ if (!empty($spotter_array))
       </script>';
 	print '</div>';
 } else {
-	$title = "Manufacturer";
+	$title = _("Manufacturer");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, the aircraft manufacturer does not exist in this database. :(</p>';
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, the aircraft manufacturer does not exist in this database. :(").'</p>';
 }
 
 require_once('footer.php');

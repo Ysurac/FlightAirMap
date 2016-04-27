@@ -6,17 +6,18 @@ if (!isset($_GET['country'])) {
         die();
 }
 $Spotter = new Spotter();
-$country = ucwords(str_replace("-", " ", $_GET['country']));
+$country = ucwords(str_replace("-", " ", filter_input(INPUT_GET,'country',FILTER_SANITIZE_STRING)));
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 
 if (isset($_GET['sort'])) {
-	$spotter_array = $Spotter->getSpotterDataByCountry($country, "0,1", $_GET['sort']);
+	$spotter_array = $Spotter->getSpotterDataByCountry($country, "0,1", $sort);
 } else {
 	$spotter_array = $Spotter->getSpotterDataByCountry($country, "0,1", '');
 }
 
 if (!empty($spotter_array))
 {
-	$title = 'Most Common Time of Day from '.$country;
+	$title = sprintf(_("Most Common Time of Day from %s"),$country);
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/country" method="post">';
@@ -40,16 +41,16 @@ if (!empty($spotter_array))
 	if ($_GET['country'] != "NA")
 	{
 		print '<div class="info column">';
-		print '<h1>Airports &amp; Airlines from '.$country.'</h1>';
+		print '<h1>'.sprintf(_("Airports &amp; Airlines from %s"),$country).'</h1>';
 		print '</div>';
 	} else {
-		print '<div class="alert alert-warning">This special country profile shows all flights that do <u>not</u> have a country of a airline or departure/arrival airport associated with them.</div>';
+		print '<div class="alert alert-warning">'._("This special country profile shows all flights that do <u>not</u> have a country of a airline or departure/arrival airport associated with them.").'</div>';
 	}
 
 	include('country-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Time of Day</h2>';
-	print '<p>The statistic below shows the most common time of day of airports &amp; airlines from <strong>'.$country.'</strong>.</p>';
+	print '<h2>'._("Most Common Time of Day").'</h2>';
+	print '<p>'.sprintf(_("The statistic below shows the most common time of day of airports &amp; airlines from <strong>%s</strong>."),$country).'</p>';
 	$hour_array = $Spotter->countAllHoursByCountry($country);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartHour" class="chart" width="100%"></div>
@@ -58,7 +59,7 @@ if (!empty($spotter_array))
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["Hour", "# of Flights"], ';
+            	["'._("Hour").'", "'._("# of Flights").'"], ';
             	$hour_data = '';
 	foreach($hour_array as $hour_item)
 	{
@@ -71,7 +72,7 @@ if (!empty($spotter_array))
             var options = {
             	legend: {position: "none"},
             	chartArea: {"width": "80%", "height": "60%"},
-            	vAxis: {title: "# of Flights"},
+            	vAxis: {title: "'._("# of Flights").'"},
             	hAxis: {showTextEvery: 2},
             	height:300,
             	colors: ["#1a3151"]
@@ -86,10 +87,10 @@ if (!empty($spotter_array))
       </script>';
 	print '</div>';
 } else {
-	$title = "Country";
+	$title = _("Country");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, the country does not exist in this database. :(</p>';  
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, the country does not exist in this database. :(").'</p>';
 }
 
 require_once('footer.php');

@@ -28,10 +28,10 @@ $limit_previous_2 = $limit_end - $absolute_difference;
 $page_url = $globalURL.'/latest';
 
 print '<div class="info column">';
-print '<h1>Latest Activity</h1>';
+print '<h1>'._("Latest Activity").'</h1>';
 print '</div>';
 print '<div class="table column">';
-print '<p>The table below shows the detailed information of all recent flights.</p>';
+print '<p>'._("The table below shows the detailed information of all recent flights.").'</p>';
 
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $sql_begin = microtime(true);
@@ -45,11 +45,11 @@ if (!empty($spotter_array))
 	print '<div class="pagination">';
 	if ($limit_previous_1 >= 0)
 	{
-		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;Previous Page</a>';
+		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
 	}
 	if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 	{
-		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">Next Page&raquo;</a>';
+		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
 	}
 	print '</div>';
 	print '</div>';
