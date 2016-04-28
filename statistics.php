@@ -3,13 +3,13 @@ require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $beginpage = microtime(true);
 $Stats = new Stats();
-$title = "Statistic";
+$title = _("Statistic");
 require_once('header.php');
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <div class="column">
     <div class="info">
-            <h1>Statistics</h1>
+            <h1><?php echo _("Statistics"); ?></h1>
     <?php 
 	$last_update = $Stats->getLastStatsUpdate();
 	//if (isset($last_update[0]['value'])) print '<!-- Last update : '.$last_update[0]['value'].' -->';

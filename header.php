@@ -1,23 +1,9 @@
 <?php
+require_once('require/class.Language.php');
 //gets the page file and stores it in a variable
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
 $current_page = $file_path['filename'];
 date_default_timezone_set($globalTimezone);
-
-if (!function_exists("gettext")) {
-    function _($text) {
-        return $text;
-    }
-} else {
-/*
-putenv('LC_ALL=fr_FR');
-setlocale(LC_ALL, 'fr_FR');
-// Spécifie la localisation des tables de traduction
-bindtextdomain("General", "./locale");
-// Choisit le domaine
-textdomain("general");
-*/
-}
 ?>
 <!DOCTYPE html>
 <html>

@@ -3,6 +3,7 @@ require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.SpotterLive.php');
 require_once('require/class.SpotterArchive.php');
+require_once('require/class.Language.php');
 $SpotterLive = new SpotterLive();
 $SpotterArchive = new SpotterArchive();
 
