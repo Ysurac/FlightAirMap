@@ -12,7 +12,7 @@ $spotter_array = $Spotter->getSpotterDataByAirline($airline,"0,1","");
 
 if (!empty($spotter_array))
 {
-	$title = _("Most Common Time of Day from").' '.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')';
+	$title = sprintf(_("Most Common Time of Day from %s (%s)"),$spotter_array[0]['airline_name'],$spotter_array[0]['airline_icao']);
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/airline" method="post">';
@@ -59,7 +59,7 @@ if (!empty($spotter_array))
 	include('airline-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Time of Day").'</h2>';
-	print '<p>'._("The statistic below shows the most common time of day from").' <strong>'.$spotter_array[0]['airline_name'].'</strong>.</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common time of day from <strong>%s</strong>."),$spotter_array[0]['airline_name']).'</p>';
 	$hour_array = $Spotter->countAllHoursByAirline($airline);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartHour" class="chart" width="100%"></div>

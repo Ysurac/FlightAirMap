@@ -34,7 +34,7 @@ if (!isset($_GET['aircraft_type'])){
 	
 	if (!empty($spotter_array))
 	{
-		$title = _("Detailed View for").' '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+		$title = sprintf(_("Detailed View for %s (%s)"),$spotter_array[0]['aircraft_name'],$spotter_array[0]['aircraft_type']);
 		require_once('header.php');
 	    
 		print '<div class="select-item">';
@@ -71,7 +71,7 @@ if (!isset($_GET['aircraft_type'])){
 		include('aircraft-sub-menu.php');
 	        
 		print '<div class="table column">';	  
-		print '<p>'._("The table below shows the detailed information of all flights from").' <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
+		print '<p>'.sprintf(_("The table below shows the detailed information of all flights from <strong>%s (%s)</strong>."),.$spotter_array[0]['aircraft_name'],$spotter_array[0]['aircraft_type'].'</p>';
 		  
 		include('table-output.php');
 		  

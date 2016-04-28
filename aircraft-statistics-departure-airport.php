@@ -12,7 +12,7 @@ $spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,"0,1","");
 
 if (!empty($spotter_array))
 {
-	$title = _("Most Common Departure Airports for").' '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+	$title = sprintf(_("Most Common Departure Airports for %s (%s)"),$spotter_array[0]['aircraft_name'],$spotter_array[0]['aircraft_type']);
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/aircraft" method="post">';
@@ -37,9 +37,9 @@ if (!empty($spotter_array))
 	{
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</h1>';
-		print '<div><span class="label">Name</span>'.$spotter_array[0]['aircraft_name'].'</div>';
-		print '<div><span class="label">ICAO</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
-		print '<div><span class="label">Manufacturer</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
+		print '<div><span class="label">'._("Name").'</span>'.$spotter_array[0]['aircraft_name'].'</div>';
+		print '<div><span class="label">'._("ICAO").'</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
+		print '<div><span class="label">'._("Manufacturer").'</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
 		print '</div>';
 	} else {
 		print '<div class="alert alert-warning">'._("This special aircraft profile shows all flights in where the aircraft type is unknown.").'</div>';
@@ -48,7 +48,7 @@ if (!empty($spotter_array))
 	include('aircraft-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Departure Airports").'</h2>';
-	print '<p>'._("The statistic below shows all departure airports of flights from").' <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
+	print '<p>'.sprintf(_("The statistic below shows all departure airports of flights from <strong>%s (%s)</strong>."),$spotter_array[0]['aircraft_name'],$spotter_array[0]['aircraft_type']).'</p>';
 	$airport_airport_array = $Spotter->countAllDepartureAirportsByAircraft($aircraft_type);
     	print '
     	<script type="text/javascript" src="https://www.google.com/jsapi"></script>

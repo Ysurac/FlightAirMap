@@ -17,7 +17,7 @@ if (isset($_GET['sort'])) {
 
 if (!empty($spotter_array))
 {
-	$title = sprintf(_("Most Common Departure Airports by Country from %"),$country);
+	$title = sprintf(_("Most Common Departure Airports by Country from %s"),$country);
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/country" method="post">';

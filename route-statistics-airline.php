@@ -14,7 +14,7 @@ if (isset($_GET['departure_airport']) && isset($_GET['arrival_airport'])) {
   
 if (!empty($spotter_array))
 {
-	$title = _("Most Common Airlines between").' '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'];
+	$title = sprintf(_("Most Common Airlines between %s (%s), %s - %s (%s), %s"),$spotter_array[0]['departure_airport_name'],$spotter_array[0]['departure_airport_icao'],$spotter_array[0]['departure_airport_country'],$spotter_array[0]['arrival_airport_name'],$spotter_array[0]['arrival_airport_icao'],$spotter_array[0]['arrival_airport_country']);
 	require_once('header.php');
 	print '<div class="info column">';
 	print '<h1>'._("Flights between").' '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</h1>';
@@ -25,7 +25,7 @@ if (!empty($spotter_array))
 	include('route-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Airlines").'</h2>';
-	print '<p>'._("The statistic below shows the most common airlines of flights between").' <strong>'.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].'</strong> and <strong>'.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</strong>.</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common airlines of flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."),$spotter_array[0]['departure_airport_name'],$spotter_array[0]['departure_airport_icao'],$spotter_array[0]['departure_airport_country'],$spotter_array[0]['arrival_airport_name'],$spotter_array[0]['arrival_airport_icao'],$spotter_array[0]['arrival_airport_country']).'</p>';
 	$airline_array = $Spotter->countAllAirlinesByRoute($_GET['departure_airport'], $_GET['arrival_airport']);
 	if (!empty($airline_array))
 	{

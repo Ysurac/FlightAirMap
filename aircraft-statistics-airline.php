@@ -13,7 +13,7 @@ $spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,"0,1","");
 
 if (!empty($spotter_array))
 {
-	$title = _("Most Common Airlines from").' '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+	$title = sprintf(_("Most Common Airlines from %s (%s)"),$spotter_array[0]['aircraft_name'],$spotter_array[0]['aircraft_type']);
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/aircraft" method="post">';
@@ -48,7 +48,7 @@ if (!empty($spotter_array))
 	include('aircraft-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Airlines").'</h2>';
-	print '<p>'._("The statistic below shows the most common airlines of flights from").' <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common airlines of flights from <strong>%s (%s)</strong>."),$spotter_array[0]['aircraft_name'],$spotter_array[0]['aircraft_type']).'</p>';
 
 	$airline_array = $Spotter->countAllAirlinesByAircraft($aircraft_type);
 

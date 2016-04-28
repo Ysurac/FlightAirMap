@@ -11,7 +11,7 @@ $spotter_array = $Spotter->getSpotterDataByAirline($airline,"0,1","");
 
 if (!empty($spotter_array))
 {
-	$title = _("Most Common Routes from").' '.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')';
+	$title = sprintf(_("Most Common Routes from %s (%s)"),$spotter_array[0]['airline_name'],$spotter_array[0]['airline_icao']);
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/airline" method="post">';
@@ -58,7 +58,7 @@ if (!empty($spotter_array))
 	include('airline-sub-menu.php');
 	 print '<div class="column">';
 	print '<h2>'._("Most Common Routes").'</h2>';
-	print '<p>'._("The statistic below shows the most common routes from").' <strong>'.$spotter_array[0]['airline_name'].'</strong>.</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common routes from <strong>%s</strong>."),$spotter_array[0]['airline_name']).'</p>';
 	$route_array = $Spotter->countAllRoutesByAirline($airline);
 	if (!empty($route_array))
 	{

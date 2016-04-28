@@ -13,7 +13,7 @@ $airport_array = $Spotter->getAllAirportInfo($airport);
 
 if (!empty($airport_array))
 {
-	$title = _("Most Common Aircraft to/from").' '.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
+	$title = sprintf(_("Most Common Aircraft to/from %s, %s (%s)"),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']);
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/airport" method="post">';
@@ -54,7 +54,7 @@ if (!empty($airport_array))
 	include('airport-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Aircraft").'</h2>';
- 	print '<p>'._("The statistic below shows the most common aircrafts of flights to/from").' <strong>'.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')</strong>.</p>';
+ 	print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
 	
 	$aircraft_array = $Spotter->countAllAircraftTypesByAirport($airport);
 	if (!empty($aircraft_array))

@@ -12,7 +12,7 @@ $airport_array = $Spotter->getAllAirportInfo($airport);
 
 if (!empty($airport_array))
 {
-	$title = _("Most Common Arrival Airports by Country from").' '.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
+	$title = sprintf(_("Most Common Arrival Airports by Country from %s, %s (%s)"),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']);
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/airport" method="post">';
@@ -53,7 +53,7 @@ if (!empty($airport_array))
 	include('airport-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Arrival Airports by Country").'</h2>';
-	print '<p>'._("The statistic below shows all arrival airports by Country of origin of flights from").' <strong>'.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')</strong>.</p>';
+	print '<p>'.sprintf(_("The statistic below shows all arrival airports by Country of origin of flights from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
 	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByAirport($airport);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>

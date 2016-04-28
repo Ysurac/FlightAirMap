@@ -38,7 +38,7 @@ if (!isset($_GET['departure_airport']) || !isset($_GET['arrival_airport'])){
  
 	if (!empty($spotter_array))
 	{
-		$title = _("Detailed View for flights between").' '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'];
+		$title = sprintf(_("Detailed View for flights between %s (%s), %s - %s (%s), %s"),$spotter_array[0]['departure_airport_name'],$spotter_array[0]['departure_airport_icao'],$spotter_array[0]['departure_airport_country'],$spotter_array[0]['arrival_airport_name'],$spotter_array[0]['arrival_airport_icao'],$spotter_array[0]['arrival_airport_country']);
 		require_once('header.php');
 		print '<div class="info column">';
 		print '<h1>'._("Flights between").' '.$spotter_array[0]['departure_airport_name'].' ('.$spotter_array[0]['departure_airport_icao'].'), '.$spotter_array[0]['departure_airport_country'].' - '.$spotter_array[0]['arrival_airport_name'].' ('.$spotter_array[0]['arrival_airport_icao'].'), '.$spotter_array[0]['arrival_airport_country'].'</h1>';
@@ -48,7 +48,7 @@ if (!isset($_GET['departure_airport']) || !isset($_GET['arrival_airport'])){
 
 		include('route-sub-menu.php');
 		print '<div class="table column">';
-		print '<p>'._("The table below shows the detailed information of all flights that used the route").' <strong>'.$spotter_array[0]['departure_airport_icao'].' - '.$spotter_array[0]['arrival_airport_icao'].'</strong>.</p>';
+		print '<p>'.sprintf(_("The table below shows the detailed information of all flights that used the route <strong>%s - %s</strong>."),$spotter_array[0]['departure_airport_icao'],$spotter_array[0]['arrival_airport_icao']).'</p>';
     
 		include('table-output.php'); 
 		print '<div class="pagination">';

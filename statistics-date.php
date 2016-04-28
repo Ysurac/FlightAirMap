@@ -51,7 +51,7 @@ print ']);
       </script>';
 }
 if (isset($globalDBArchiveMonths) && $globalDBArchiveMonths > 0) {
-	print '<p>'.sprintf(_("Below are the <strong>Top 10</strong> most busiest dates of last %i month(s)."),$globalDBArchiveMonths).'</p>';
+	print '<p>'.sprintf(_("Below are the <strong>Top 10</strong> most busiest dates of last %d month(s)."),$globalDBArchiveMonths).'</p>';
 } else {
 	print '<p>'._("Below are the <strong>Top 10</strong> most busiest dates.").'</p>';
 }

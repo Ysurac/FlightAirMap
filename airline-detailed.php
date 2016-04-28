@@ -35,7 +35,7 @@ if (!isset($_GET['airline'])){
 	if (!empty($spotter_array))
 	{
 		if (isset($spotter_array[0]['airline_name']) && isset($spotter_array[0]['airline_icao'])) {
-			$title = _("Detailed View for").' '.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')';
+			$title = sprintf(_("Detailed View for %s (%s)"),$spotter_array[0]['airline_name'],$spotter_array[0]['airline_icao']);
 		} else $title = '';
 		require_once('header.php');
 	  
@@ -83,7 +83,7 @@ if (!isset($_GET['airline'])){
 		include('airline-sub-menu.php');
 		print '<div class="table column">';
 		if (isset($spotter_array[0]['airline_name'])) {
-			print '<p>'._("The table below shows the detailed information of all flights from").' <strong>'.$spotter_array[0]['airline_name'].'</strong>.</p>';
+			print '<p>'.sprintf(_("The table below shows the detailed information of all flights from <strong>%s</strong>."),$spotter_array[0]['airline_name']).'</p>';
 		}
 
 		include('table-output.php');  

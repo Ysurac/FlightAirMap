@@ -13,7 +13,7 @@ $spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,"0,1","");
 
 if (!empty($spotter_array))
 {
-	$title = _("Most Common Arrival Airports by Country for").' '.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')';
+	$title = sprintf(_("Most Common Arrival Airports by Country for %s (%s)"),$spotter_array[0]['aircraft_name'],$spotter_array[0]['aircraft_type']);
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/aircraft" method="post">';
@@ -49,7 +49,7 @@ if (!empty($spotter_array))
 	include('aircraft-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Arrival Airports by Country").'</h2>';
-  	print '<p>'._("The statistic below shows all arrival airports by Country of origin of flights from").' <strong>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</strong>.</p>';
+  	print '<p>'.sprintf(_("The statistic below shows all arrival airports by Country of origin of flights from <strong>%s (%s)</strong>."),$spotter_array[0]['aircraft_name'],$spotter_array[0]['aircraft_type']).'</p>';
 	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByAircraft($aircraft_type);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>
