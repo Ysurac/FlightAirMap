@@ -6,35 +6,35 @@ if (!isset($_GET['ident'])) {
         die();
 }
 $Spotter = new Spotter();
-$sort = '';
-if (isset($_GET['sort'])) $sort = $_GET['sort'];
-$spotter_array = $Spotter->getSpotterDataByIdent($_GET['ident'],"0,1", $sort);
+$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+$spotter_array = $Spotter->getSpotterDataByIdent($ident,"0,1", $sort);
 
 if (!empty($spotter_array))
 {
-	$title = 'Most Common Routes of '.$spotter_array[0]['ident'];
+	$title = sprintf(_("Most Common Routes of %s"),$spotter_array[0]['ident']);
 	require_once('header.php');
 	print '<div class="info column">';
 	print '<h1>'.$spotter_array[0]['ident'].'</h1>';
-	print '<div><span class="label">Ident</span>'.$spotter_array[0]['ident'].'</div>';
-	print '<div><span class="label">Airline</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
+	print '<div><span class="label">'._("Ident").'</span>'.$spotter_array[0]['ident'].'</div>';
+	print '<div><span class="label">'._("Airline").'</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
 	print '</div>';
 
 	include('ident-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>Most Common Routes</h2>';
-	print '<p>The statistic below shows the most common routes from flights with the ident/callsign <strong>'.$spotter_array[0]['ident'].'</strong>.</p>';
+	print '<h2>'._("Most Common Routes").'</h2>';
+	print '<p>'._("The statistic below shows the most common routes from flights with the ident/callsign <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
 
-	$route_array = $Spotter->countAllRoutesByIdent($_GET['ident']);
+	$route_array = $Spotter->countAllRoutesByIdent($ident);
 	if (!empty($route_array))
 	{
 		print '<div class="table-responsive">';
 		print '<table class="common-routes table-striped">';
 		print '<thead>';
 		print '<th></th>';
-		print '<th>Departure Airport</th>';
-		print '<th>Arrival Airport</th>';
-		print '<th># of Times</th>';
+		print '<th>'._("Departure Airport").'</th>';
+		print '<th>'._("Arrival Airport").'</th>';
+		print '<th>'._("# of Times").'</th>';
 		print '<th></th>';
 		print '<th></th>';
 		print '</thead>';
@@ -54,10 +54,10 @@ if (!empty($spotter_array))
 			print $route_item['route_count'];
 			print '</td>';
 			print '<td>';
-			print '<a href="'.$globalURL.'/search?callsign='.$_GET['ident'].'&departure_airport_route='.$route_item['airport_departure_icao'].'&arrival_airport_route='.$route_item['airport_arrival_icao'].'">Search Flights</a>';
+			print '<a href="'.$globalURL.'/search?callsign='.$ident.'&departure_airport_route='.$route_item['airport_departure_icao'].'&arrival_airport_route='.$route_item['airport_arrival_icao'].'">Search Flights</a>';
 			print '</td>';
 			print '<td>';
-			print '<a href="'.$globalURL.'/route/'.$route_item['airport_departure_icao'].'/'.$route_item['airport_arrival_icao'].'">Route Profile</a>';
+			print '<a href="'.$globalURL.'/route/'.$route_item['airport_departure_icao'].'/'.$route_item['airport_arrival_icao'].'">'._("Route Profile").'</a>';
 			print '</td>';
 			print '</tr>';
 			$i++;
@@ -68,10 +68,10 @@ if (!empty($spotter_array))
 	}
 	print '</div>';
 } else {
-	$title = "Ident";
+	$title = _("Ident");
 	require_once('header.php');
-	print '<h1>Error</h1>';
-	print '<p>Sorry, this ident/callsign is not in the database. :(</p>';
+	print '<h1>'._("Error").'</h1>';
+	print '<p>'._("Sorry, this ident/callsign is not in the database. :(").'</p>';
 }
 
 require_once('footer.php');
