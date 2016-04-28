@@ -98,7 +98,7 @@ class SpotterImport {
     }
 
     public function arrival($key) {
-	global $globalClosestMinDist;
+	global $globalClosestMinDist, $globalDebug;
 	$Spotter = new Spotter($this->db);
         $airport_icao = '';
         $airport_time = '';
@@ -117,9 +117,11 @@ class SpotterImport {
         		    break;
         		}
         	    }
-        	} elseif ($closestAirports[0]['altitude'] < round($this->all_flights[$key]['altitude']*100) && $closestAirports[0]['altitude'] < round($this->all_flights[$key]['altitude']*100)+100) {
+        	} elseif ($this->all_flights[$key]['real_altitude'] != '' && ($closestAirports[0]['altitude'] < $this->all_flights[$key]['real_altitude'] && ($closestAirports[0]['altitude'] == 0 || $closestAirports[0]['altitude'] < $this->all_flights[$key]['real_altitude']+500))) {
         		$airport_icao = $closestAirports[0]['icao'];
         		$airport_time = $this->all_flights[$key]['datetime'];
+        	} else {
+        		if ($globalDebug) echo "----- Can't find arrival airport. Airport altitude : ".$closestAirports[0]['altitude'].' - flight altitude : '.$this->all_flights[$key]['real_altitude']."\n";
         	}
     	    }
         }
@@ -215,7 +217,7 @@ class SpotterImport {
 			}
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $aircraft_icao));
 		    } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
-		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','ground' => '0', 'format_source' => '','source_name' => '','over_country' => '','verticalrate' => '','noarchive' => false,'putinarchive' => false));
+		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '','altitude_real' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','ground' => '0', 'format_source' => '','source_name' => '','over_country' => '','verticalrate' => '','noarchive' => false,'putinarchive' => false));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('lastupdate' => time()));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
@@ -462,6 +464,7 @@ class SpotterImport {
 		    //if (!isset($this->all_flights[$id]['altitude']) || $this->all_flights[$id]['altitude'] == '' || ($this->all_flights[$id]['altitude'] > 0 && $line['altitude'] != 0)) {
 			if (abs(round($line['altitude']/100)-$this->all_flights[$id]['altitude']) > 2) $this->all_flights[$id]['putinarchive'] = true;
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('altitude' => round($line['altitude']/100)));
+			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('altitude_real' => $line['altitude']));
 			//$dataFound = true;
 		    //} elseif ($globalDebug) echo "!!! Strange altitude data... not added.\n";
   		}
