@@ -48,7 +48,7 @@ if (!isset($_GET['airport'])){
             		//print_r($metar_parse);
 		}
 		
-		$title = _("Detailed View for").' '.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
+		$title = sprintf(_("Detailed View for %s, %s (%s)"),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']);
 
 		require_once('header.php');
 		print '<div class="select-item">';
@@ -168,7 +168,7 @@ if (!isset($_GET['airport'])){
 		print '<div class="table column">';
 		 if ($airport_array[0]['iata'] != "NA")
 		{
-			print '<p>'._("The table below shows the detailed information of all flights to/from").' <strong>'.$airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')</strong>.</p>';
+			print '<p>'.sprintf(_("The table below shows the detailed information of all flights to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
 		}
 		include('table-output.php');  
 		print '<div class="pagination">';

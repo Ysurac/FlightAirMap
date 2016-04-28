@@ -120,7 +120,7 @@ if (!empty($_GET)){
 				      print '<li><a href="'.$globalURL.'/search/gpx?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">GPX</a></li>';
 				      print '<li><a href="'.$globalURL.'/search/wkt?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">WKT</a></li>';
 				      print '<li><hr /></li>';
-				      print '<li><a href="'.$globalURL.'/about/export" target="_blank" class="export-info">'._("Download Info/Licence")'.&raquo;</a></li>';
+				      print '<li><a href="'.$globalURL.'/about/export" target="_blank" class="export-info">'._("Download Info/Licence").'&raquo;</a></li>';
 				    print '</ul>';
 				print '</li>';
                 //remove 3D=true parameter

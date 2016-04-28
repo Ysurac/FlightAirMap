@@ -84,7 +84,7 @@ if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUn
 	print round($spotter_item['altitude']*30.48).' m (FL'.$spotter_item['altitude'].')';
 }
 print '</div>';
-if (isset($spotter_item['registration']) && $spotter_item['registration'] != '') print '<div>'._("<span>Registration").'</span><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'" target="_blank">'.$spotter_item['registration'].'</a></div>';
+if (isset($spotter_item['registration']) && $spotter_item['registration'] != '') print '<div><span>'._("Registration").'</span><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'" target="_blank">'.$spotter_item['registration'].'</a></div>';
 print '<div><span>'._("Speed").'</span>';
 if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
 	print round($spotter_item['ground_speed']*1.15078).' mph';
