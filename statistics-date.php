@@ -14,7 +14,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 
 $date_array = $Stats->countAllDatesLast7Days();
 if (count($date_array) == 0) {
-	print _("Not data available");
+	print _("No data available");
 } else {
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 

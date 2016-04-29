@@ -83,7 +83,7 @@ if (!isset($_GET['aircraft_manufacturer'])){
 		$title = _("Manufacturer");
 		require_once('header.php');
 		print '<h1>'._("Error").'</h1>';
-		print '<p>'._("Sorry, the manufacturer does not exist in this database. :(").'</p>'; 
+		print '<p>'._("Sorry, the aircraft manufacturer does not exist in this database. :(").'</p>'; 
 	}
 }
 

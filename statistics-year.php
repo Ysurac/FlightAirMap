@@ -9,7 +9,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 	<div class="info">
 	  	<h1>'._("Most Busiest Month").'</h1>
 	</div>
-      <p>'._("Below is a chart that plots the busiest month during the <strong>last year.").'</p>';
+      <p>'._("Below is a chart that plots the busiest month during the <strong>last year</strong>.").'</p>';
 
 $date_array = $Stats->countAllMonthsLastYear();
 print '<div id="chart" class="chart" width="100%"></div>

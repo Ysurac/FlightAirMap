@@ -273,7 +273,7 @@ if (!empty($_GET)){
   <form action="<?php print $globalURL; ?>/search" method="get" role="form" class="form-horizontal">
     <fieldset>
     	<div class="form-group">
-	    	<label><?php echo _("Keyword"); ?></label> 
+	    	<label><?php echo _("Keywords"); ?></label> 
 		    <input type="text" id="q" name="q" value="<?php if (isset($_GET['q'])) print $_GET['q']; ?>" size="10" placeholder="<?php echo _("Keywords"); ?>" />
 		  </div>
     </fieldset>
