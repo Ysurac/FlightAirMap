@@ -1,4 +1,5 @@
 <?php require_once('../require/settings.php'); ?>
+<?php require_once('../require/class.Language.php'); ?>
 <?php
 	if (isset($_GET['archive'])) {
 		$begindate = $_GET['begindate'];
@@ -239,24 +240,24 @@ bounds = L.latLngBounds(southWest,northEast);
 		output += '</div>';
 		output += '<div class="details">';
 		    output += '<div>';
-			output += '<span>City</span>';
+			output += '<span><?php echo _("City"); ?></span>';
 			output += feature.properties.city;
 		    output += '</div>';
 		    if (feature.properties.altitude != "" || feature.properties.altitude != 0)
 		    {
 			output += '<div>';
-			    output += '<span>Altitude</span>';
+			    output += '<span><?php echo _("Altitude"); ?></span>';
 			    output += Math.round(feature.properties.altitude*3,2809)+' feet - '+feature.properties.altitude+' m';
 			output += '</div>';
 		    }
 		    output += '<div>';
-			output += '<span>Country</span>';
+			output += '<span><?php echo _("Country"); ?></span>';
 			output += feature.properties.country;
 		    output += '</div>';
 		    if (feature.properties.homepage != "") {
 			output += '<div>';
-			    output += '<span>Links</span>';
-			    output += '<a href="'+feature.properties.homepage+'">Homepage</a>';
+			    output += '<span><?php echo _("Links"); ?></span>';
+			    output += '<a href="'+feature.properties.homepage+'"><?php echo _("Homepage"); ?></a>';
 			output += '</div>';
 		    }
 		output += '</div>';
@@ -336,21 +337,21 @@ bounds = L.latLngBounds(southWest,northEast);
 		    if (feature.properties.city != "")
 		    {
 			output += '<div>';
-			    output += '<span>City</span>';
+			    output += '<span><?php echo _("City"); ?></span>';
 			    output += feature.properties.city;
 			output += '</div>';
 		    }
 		    if (feature.properties.altitude != "" || feature.properties.altitude != 0)
 		    {
 			output += '<div>';
-			    output += '<span>Altitude</span>';
+			    output += '<span><?php echo _("Altitude"); ?></span>';
 			    output += Math.round(feature.properties.altitude*3,2809)+' feet - '+feature.properties.altitude+' m';
 			output += '</div>';
 		    }
 		    if (feature.properties.country != "")
 		    {
 			output += '<div>';
-			    output += '<span>Country</span>';
+			    output += '<span><?php echo _("Country"); ?></span>';
 			    output += feature.properties.country;
 			output += '</div>';
 		    }
@@ -439,9 +440,9 @@ bounds = L.latLngBounds(southWest,northEast);
 	};
 	info.update = function (props) {
 		if (typeof props != 'undefined') {
-			this._div.innerHTML = '<h4>Aircrafts detected</h4>' +  '<b>' + props.flight_cnt + '</b>';
+			this._div.innerHTML = '<h4><?php echo _("Aircrafts detected"); ?></h4>' +  '<b>' + props.flight_cnt + '</b>';
 		} else {
-			this._div.innerHTML = '<h4>Aircrafts detected</h4>' +  '<b>0</b>';
+			this._div.innerHTML = '<h4><?php echo _("Aircrafts detected"); ?></h4>' +  '<b>0</b>';
 		}
 
 	};
@@ -463,9 +464,9 @@ bounds = L.latLngBounds(southWest,northEast);
 	};
 	archive.update = function (props) {
 		if (typeof props != 'undefined') {
-			this._div.innerHTML = '<h4>Archive Date & Time</h4>' +  '<b>' + props.archive_date + ' UTC </b>';
+			this._div.innerHTML = '<h4><?php echo _("Archive Date & Time"); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>';
 		} else {
-			this._div.innerHTML = '<h4>Archive Date & Time</h4>' +  '<b>-</b>';
+			this._div.innerHTML = '<h4><?php echo _("Archive Date & Time"); ?></h4>' +  '<b>-</b>';
 		}
 
 	};
@@ -782,7 +783,7 @@ function getLiveData(click)
 		    output += '</div>';
                     output += '</div>';
                     if (typeof feature.properties.route_stop != 'undefined') {
-                	output += 'Route stop : '+feature.properties.route_stop;
+                	output += '<?php echo _("Route stop:"); ?> '+feature.properties.route_stop;
                     }
                     output += '</div>';
                     output += '</div>';
@@ -797,7 +798,7 @@ function getLiveData(click)
                     output += '</div>';
                     output += '</div>';
                     output += '<div>';
-                    output += '<span>Aircraft</span>';
+                    output += '<span><?php echo _("Aircraft"); ?></span>';
                     if (feature.properties.aircraft_wiki != 'undefined') {
                         output += '<a href="'+feature.properties.aircraft_wiki+'">';
                         output += feature.properties.aircraft_name;
@@ -809,32 +810,32 @@ function getLiveData(click)
                     if (feature.properties.altitude != "" || feature.properties.altitude != 0)
                     {
                         output += '<div>';
-                	output += '<span>Altitude</span>';
+                	output += '<span><?php echo _("Altitude"); ?></span>';
                         output += feature.properties.altitude+'00 feet - '+Math.round(feature.properties.altitude*30.48)+' m (FL'+feature.properties.altitude+')';
                         output += '</div>';
                     }
                     if (feature.properties.registration != "")
                     {
                 	output += '<div>';
-                        output += '<span>Registration</span>';
+                        output += '<span><?php echo _("Registration"); ?></span>';
                         output += '<a href="/registration/'+feature.properties.registration+'" target="_blank">'+feature.properties.registration+'</a>';
                         output += '</div>';
                     }
                     output += '<div>';
-                    output += '<span>Speed</span>';
+                    output += '<span><?php echo _("Speed"); ?></span>';
                     output += feature.properties.ground_speed+' knots - '+Math.round(feature.properties.ground_speed*1.852)+' km/h';
                     output += '</div>';
                     output += '<div>';
-                    output += '<span>Coordinates</span>';
+                    output += '<span><?php echo _("Coordinates"); ?></span>';
                     output += feature.properties.latitude+", "+feature.properties.longitude;
                     output += '</div>';
                     output += '<div>';
-                    output += '<span>Heading</span>';
+                    output += '<span><?php echo _("Heading"); ?></span>';
                     output += feature.properties.heading;
                     output += '</div>';
             	    if (typeof feature.properties.pilot_name != 'undefined') {
                 	output += '<div>';
-                        output += '<span>Pilot</span>';
+                        output += '<span><?php echo _("Pilot"); ?></span>';
             		if (typeof feature.properties.pilot_id != 'undefined') {
                     	    output += feature.properties.pilot_name+" ("+feature.properties.pilot_id+")";
                         } else {
@@ -844,18 +845,18 @@ function getLiveData(click)
                     }
             	    output += '</div>';
             	    if (typeof feature.properties.waypoints != 'undefined') {
-            		output += '<div class="waypoints"><span>Route</span>';
+            		output += '<div class="waypoints"><span><?php echo _("Route"); ?></span>';
             		output += feature.properties.waypoints;
             		output += '</div>';
             	    }
                     if (typeof feature.properties.acars != 'undefined') {
-            		output += '<div class="acars"><span>Latest ACARS message</span>';
+            		output += '<div class="acars"><span><?php echo _("Latest ACARS message"); ?></span>';
             		output += feature.properties.acars;
             		output += '</div>';
             	    }
             	    if (typeof feature.properties.squawk != 'undefined') {
                 	output += '<div class="bottom">';
-                	output += 'Squawk : ';
+                	output += '<?php echo _("Squawk:"); ?> ';
 			output += feature.properties.squawk;
             		if (typeof feature.properties.squawk_usage != 'undefined') {
             			output += ' - '+feature.properties.squawk_usage;
@@ -1305,8 +1306,8 @@ function getUserLocation(){
 function showPosition(position) {
     //creates a leaflet marker based on the coordinates we got from the browser and add it to the map
     var markerUser = L.marker([position.coords.latitude, position.coords.longitude], {
-        title: "Your location",
-        alt: "Your location",
+        title: "<?php echo _("Your location"); ?>",
+        alt: "<?php echo _("Your location"); ?>",
         icon: L.icon({
           iconUrl: '<?php print $globalURL; ?>/images/map-user.png',
           iconRetinaUrl: '<?php print $globalURL; ?>/images/map-user@2x.png',
@@ -1350,7 +1351,7 @@ function getCompassDirection(){
       window.addEventListener('deviceorientation', capture_orientation, false);
     } else {
       //if the browser is not capable for device orientation let the user know
-      alert("Compass is not supported by this browser.");
+      alert("<?php echo _("Compass is not supported by this browser."); ?>");
       //remove the active class
       $(".compass").removeClass("active");
     }
@@ -1407,21 +1408,21 @@ function waypointsPopup (feature, layer) {
 	var output = '';
 	output += '<div class="top">';
 	    if (typeof feature.properties.segment_name != 'undefined') {
-		output += '&nbsp;Segment name : '+feature.properties.segment_name+'<br /> ';
-		output += '&nbsp;From : '+feature.properties.name_begin+' To : '+feature.properties.name_end+'<br /> ';
+		output += '&nbsp;<?php echo _("Segment name:"); ?> '+feature.properties.segment_name+'<br /> ';
+		output += '&nbsp;<?php echo _("From:"); ?> '+feature.properties.name_begin+' To : '+feature.properties.name_end+'<br /> ';
 	    }
 	    if (typeof feature.properties.ident != 'undefined') {
-		output += '&nbsp;Ident : '+feature.properties.ident+'<br /> ';
+		output += '&nbsp;<?php echo _("Ident:"); ?> '+feature.properties.ident+'<br /> ';
 	    }
 	    if (typeof feature.properties.alt != 'undefined') {
-		output += '&nbsp;Altitude : '+feature.properties.alt*100+' feet - ';
+		output += '&nbsp;<?php echo _("Altitude:"); ?> '+feature.properties.alt*100+' feet - ';
 		output += Math.round(feature.properties.alt*30,48)+' m (FL'+feature.properties.alt+')<br />';
 
 	    }
 	    if (typeof feature.properties.base != 'undefined') {
-		output += '&nbsp;Base Altitude: '+feature.properties.base*100+' feet - ';
+		output += '&nbsp;<?php echo _("Base Altitude:"); ?> '+feature.properties.base*100+' feet - ';
 		output += Math.round(feature.properties.base*30,48)+' m (FL'+feature.properties.base+')<br />';
-		output += '&nbsp;Top Altitude: '+feature.properties.top*100+' feet - ';
+		output += '&nbsp;<?php echo _("Top Altitude:"); ?> '+feature.properties.top*100+' feet - ';
 		output += Math.round(feature.properties.top*30,48)+' m (FL'+feature.properties.top+')<br />';
 	    }
 //	    output += '&nbsp;Control : '+feature.properties.control+'<br />&nbsp;Usage : '+feature.properties.usage;
@@ -1472,16 +1473,16 @@ function airspacePopup (feature, layer) {
 	var output = '';
 	output += '<div class="top">';
 	    if (typeof feature.properties.title != 'undefined') {
-		output += '&nbsp;Title : '+feature.properties.title+'<br /> ';
+		output += '&nbsp;<?php echo _("Title:"); ?> '+feature.properties.title+'<br /> ';
 	    }
 	    if (typeof feature.properties.type != 'undefined') {
-		output += '&nbsp;Type : '+feature.properties.type+'<br /> ';
+		output += '&nbsp;<?php echo _("Type:"); ?> '+feature.properties.type+'<br /> ';
 	    }
 	    if (typeof feature.properties.tops != 'undefined') {
-		output += '&nbsp;Tops : '+feature.properties.tops+'<br /> ';
+		output += '&nbsp;<?php echo _("Tops:"); ?> '+feature.properties.tops+'<br /> ';
 	    }
 	    if (typeof feature.properties.base != 'undefined') {
-		output += '&nbsp;Base : '+feature.properties.base+'<br /> ';
+		output += '&nbsp;<?php echo _("Base:"); ?> '+feature.properties.base+'<br /> ';
 	    }
 	output += '</div>';
 	layer.bindPopup(output);

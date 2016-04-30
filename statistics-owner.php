@@ -2,7 +2,7 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = "Statistic - Most common owners";
+$title = _("Statistics").' - '._("Most common owners");
 require_once('header.php');
 
 include('statistics-sub-menu.php');

@@ -2,7 +2,7 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
-$title = _("Statistic - Most common Route by Airport");
+$title = _("Statistics").' - '._("Most common Route by Airport");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
 

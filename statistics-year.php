@@ -2,7 +2,7 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = _("Statistic - Most Busiest Month of Last Year");
+$title = _("Statistics").' - '._("Most Busiest Month of Last Year");
 require_once('header.php');
 include('statistics-sub-menu.php');
 print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>

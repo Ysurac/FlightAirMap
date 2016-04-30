@@ -2,7 +2,7 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = _("Statistic - Most busiest Time of the Day");
+$title = _("Statistics").' - '._("Most busiest Time of the Day");
 require_once('header.php');
 include('statistics-sub-menu.php');
 

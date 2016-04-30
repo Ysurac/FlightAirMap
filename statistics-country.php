@@ -2,7 +2,7 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = _("Statistic - Most common Country a flight was over");
+$title = _("Statistics").' - '._("Most common Country a flight was over");
 require_once('header.php');
 include('statistics-sub-menu.php'); 
 

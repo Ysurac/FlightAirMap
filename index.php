@@ -110,7 +110,7 @@ require_once('header.php');
 	    <form>
 		<ul>
 		    <li><?php echo _("Type of Map:"); ?>
-			<select onchange="mapType(this);">
+			<select  class="selectpicker" onchange="mapType(this);">
 			    <?php
 				if (!isset($_COOKIE['MapType'])) $MapType = $globalMapProvider;
 				else $MapType = $_COOKIE['MapType'];
