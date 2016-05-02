@@ -101,7 +101,6 @@ class Language {
 	{
 		$available = $this->listLocaleDir();
 		$allAvailableLanguages = array();
-		print_r($this->all_languages);
 		foreach ($available as $lang) {
 			if (isset($this->all_languages[$lang])) $allAvailableLanguages[$lang] = $this->all_languages[$lang];
 		}
