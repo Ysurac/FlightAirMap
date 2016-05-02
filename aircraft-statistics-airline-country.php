@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 $Spotter = new Spotter();
 
 if (!isset($_GET['aircraft_type'])) {
@@ -59,7 +60,7 @@ if (!empty($spotter_array))
         	google.setOnLoadCallback(drawChart);
         	function drawChart() {
         	    var data = google.visualization.arrayToDataTable([
-            		["Country", "# of Times"], ';
+            		["Country", "# of times"], ';
             		$country_data = '';
 	foreach($airline_array as $airline_item)
 	{

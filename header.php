@@ -1,5 +1,5 @@
 <?php
-require_once('require/class.Language.php');
+//require_once('require/class.Language.php');
 //gets the page file and stores it in a variable
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
 $current_page = $file_path['filename'];
@@ -137,7 +137,6 @@ if ($facebook_meta_image != "")
 <body class="page-<?php print strtolower($current_page); ?>">
 <div class="navbar navbar-fixed-top" role="navigation">
   <div class="container">
-
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
         <span class="sr-only">Toggle navigation</span>
@@ -153,7 +152,7 @@ if ($facebook_meta_image != "")
       	<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="caret"></b></a>
           <ul class="dropdown-menu">
-          	<li><a href="<?php print $globalURL; ?>/aircraft"><?php echo _("Aircraft Types"); ?></a></li>
+          	<li><a href="<?php print $globalURL; ?>/aircraft"><?php echo _("Aircrafts Types"); ?></a></li>
 			<li><a href="<?php print $globalURL; ?>/airline"><?php echo _("Airlines"); ?></a></li>
 			<li><a href="<?php print $globalURL; ?>/airport"><?php echo _("Airports"); ?></a></li>
 			<li><hr /></li>
@@ -205,12 +204,29 @@ if ($facebook_meta_image != "")
           </ul>
         </li>
       </ul>
+  	<div class="language">
+  	    <form>
+  		<select class="selectpicker" data-width="120px" onchange="language(this);">
+  		    <?php
+  		        $Language = new Language();
+  		        $alllang = $Language->getLanguages();
+  		        foreach ($alllang as $key => $lang) {
+  		            print '<option value="'.$key.'"';
+  		            if (isset($_COOKIE['language']) && $_COOKIE['language'] == $key) print ' selected ';
+  		            print '>'.$lang[0].'</option>';
+  		        }
+  		    ?>
+  		</select>
+  	    </form>
+  	</div>
+      <div class="search">
       <form action="<?php print $globalURL; ?>/search" method="get">
-  			<input type="text" name="q" value="<?php if (isset($GET['q'])) { if ($_GET['q'] != ""){ print $_GET['q']; } else { print 'search'; } } else { print 'search'; } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>
-  		</form>
-  		<div class="social">
-  			<!-- I'm not sociable -->
-  		</div>
+		<input type="text" name="q" value="<?php if (isset($GET['q'])) { if ($_GET['q'] != ""){ print $_GET['q']; } else { print _("Search"); } } else { print _("Search"); } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>
+	</form>
+	</div>
+  	<div class="social">
+  		<!-- I'm not sociable -->
+  	</div>
     </div><!--/.nav-collapse -->
   </div>
 </div>

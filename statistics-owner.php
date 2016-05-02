@@ -19,7 +19,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["'._("Owner").'", "'._("# of Times").'"], ';
+            	["'._("Owner").'", "'._("# of times").'"], ';
             	$owner_data = '';
 		foreach($owner_array as $owner_item)
 		{
@@ -50,7 +50,7 @@ if (!empty($owner_array))
 	print '<thead>';
 	print '<th></th>';
 	print '<th>'._("Owner Name").'</th>';
-	print '<th>'._("# of Times").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

@@ -6,6 +6,7 @@ if ($_GET['departure_airport'] == "" || $_GET['arrival_airport'] == "")
 
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 if (isset($_GET['departure_airport']) && isset($_GET['arrival_airport'])) {

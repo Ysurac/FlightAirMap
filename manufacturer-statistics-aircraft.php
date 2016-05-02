@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 if (!isset($_GET['aircraft_manufacturer'])) {
         header('Location: '.$globalURL.'/manufacturer');
         die();
@@ -51,7 +52,7 @@ if (!empty($spotter_array))
 		print '<thead>';
 		print '<th></th>';
 		print '<th>'._("Aircraft Type").'</th>';
-		print '<th>'._("# of Times").'</th>';
+		print '<th>'._("# of times").'</th>';
 		print '<th></th>';
 		print '</thead>';
 		print '<tbody>';

@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 $Spotter = new Spotter();
 $title = _("Statistics").' - '._("Most common Route by Airport");
 require_once('header.php');
@@ -19,7 +20,7 @@ print '<div id="chart" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["'._("Aircraft").'", "'._("# of Times").'"], ';
+            	["'._("Aircraft").'", "'._("# of times").'"], ';
 
 $route_data = '';
 foreach($route_array as $route_item)
@@ -53,7 +54,7 @@ if (!empty($route_array))
 	print '<th></th>';
 	print '<th>'._("Departure Airport").'</th>';
 	print '<th>'._("Arrival Airport").'</th>';
-	print '<th>'._("# of Times").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '<th></th>';
 	print '</thead>';
 	print '<tbody>';

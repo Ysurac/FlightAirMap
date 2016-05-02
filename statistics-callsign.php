@@ -19,7 +19,7 @@ print '<div id="chart" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["'._("Aircraft").'", "'._("# of Times").'"], ';
+            	["'._("Aircraft").'", "'._("# of times").'"], ';
 $callsign_data = '';
 foreach($callsign_array as $callsign_item)
 {

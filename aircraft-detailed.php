@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 $Spotter = new Spotter();
 
 if (!isset($_GET['aircraft_type'])){

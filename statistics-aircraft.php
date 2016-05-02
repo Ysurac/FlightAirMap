@@ -19,7 +19,7 @@ print '<div id="chart" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["'._("Aircraft").'", "'._("# of Times").'"], ';
+            	["'._("Aircraft").'", "'._("# of times").'"], ';
 $aircraft_data = '';
 foreach($aircraft_array as $aircraft_item)
 {
@@ -50,7 +50,7 @@ if (!empty($aircraft_array))
 	print '<thead>';
 	print '<th></th>';
 	print '<th>'._("Aircraft Type").'</th>';
-	print '<th>'._("# of Times").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

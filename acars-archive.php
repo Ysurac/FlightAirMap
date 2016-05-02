@@ -1,8 +1,9 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.ACARS.php');
+require_once('require/class.Language.php');
 $ACARS = new ACARS();
-$title = "Archived ACARS messages";
+$title = _("Archived ACARS messages");
 require_once('header.php');
 
 $page_url = $globalURL.'/acars-archive';
@@ -26,7 +27,7 @@ $limit_previous_1 = $limit_start - $absolute_difference;
 $limit_previous_2 = $limit_end - $absolute_difference;
 
 print '<div class="info column">';
-print '<h1>Archived ACARS messages</h1>';
+print '<h1>'._("Archived ACARS messages").'</h1>';
 print '</div>';
 
 print '<div class="table column">';

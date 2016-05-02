@@ -6,6 +6,7 @@ if ($_GET['departure_airport'] == "" || $_GET['arrival_airport'] == "")
 
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
@@ -36,7 +37,7 @@ if (!empty($spotter_array))
 		print '<thead>';
 		print '<th></th>';
 		print '<th>'._("Aircraft Manufacturer").'</th>';
-		print '<th>'._("# of Times").'</th>';
+		print '<th>'._("# of times").'</th>';
 		print '<th></th>';
 		print '</thead>';
 		print '<tbody>';

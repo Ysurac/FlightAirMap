@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 require_once('require/class.Stats.php');
 
 if (isset($_POST['aircraft_type']))
@@ -9,10 +10,10 @@ if (isset($_POST['aircraft_type']))
 } else {
 	$Spotter = new Spotter();
 	$Stats = new Stats();
-	$title = _("Aircraft Types");
+	$title = _("Aircrafts Types");
 	require_once('header.php');
 	print '<div class="column">';
-	print '<h1>'._("Aircraft Types").'</h1>';
+	print '<h1>'._("Aircrafts Types").'</h1>';
 
 	$aircraft_types = $Stats->getAllAircraftTypes();
 	if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();

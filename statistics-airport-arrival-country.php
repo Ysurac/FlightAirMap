@@ -23,7 +23,7 @@ print '<script>
     	function drawCharts() {
         
         var data = google.visualization.arrayToDataTable([ 
-        	["'._("Country").'", "'._("# of Times").'"],';
+        	["'._("Country").'", "'._("# of times").'"],';
 
 $country_data = '';
 foreach($airport_country_array as $airport_item)

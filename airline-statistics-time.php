@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 if (!isset($_GET['airline'])) {
         header('Location: '.$globalURL.'/airline');
         die();

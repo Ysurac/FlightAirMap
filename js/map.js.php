@@ -1835,5 +1835,11 @@ function unitaltitude(selectObj) {
     var unit = selectObj.options[idx].value;
     document.cookie =  'unitaltitude='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 }
+function language(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var lang = selectObj.options[idx].value;
+    document.cookie =  'language='+lang+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
 
 

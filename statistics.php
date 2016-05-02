@@ -3,7 +3,7 @@ require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $beginpage = microtime(true);
 $Stats = new Stats();
-$title = _("Statistic");
+$title = _("Statistics");
 require_once('header.php');
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -70,7 +70,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart1);
                       function drawChart1() {
                         var data = google.visualization.arrayToDataTable([
-                            ["'._("Aircraft").'", "'._("# of Times").'"], ';
+                            ["'._("Aircraft").'", "'._("# of times").'"], ';
                             $aircraft_data = '';
                           foreach($aircraft_array as $aircraft_item)
                                     {
@@ -114,7 +114,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart2);
                       function drawChart2() {
                         var data = google.visualization.arrayToDataTable([
-                            ["'._("Airline").'", "'._("# of Times").'"], ';
+                            ["'._("Airline").'", "'._("# of times").'"], ';
                             $airline_data = '';
                           foreach($airline_array as $airline_item)
                                     {
@@ -173,7 +173,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart7);
                       function drawChart7() {
                         var data = google.visualization.arrayToDataTable([
-                            ["'._("Pilots").'", "'._("# of Times").'"], ';
+                            ["'._("Pilots").'", "'._("# of times").'"], ';
                             $pilot_data = '';
                           foreach($pilot_array as $pilot_item)
                                     {
@@ -220,7 +220,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart7);
                       function drawChart7() {
                         var data = google.visualization.arrayToDataTable([
-                            ["'._("Owner").'", "'._("# of Times").'"], ';
+                            ["'._("Owner").'", "'._("# of times").'"], ';
                             $owner_data = '';
                           foreach($owner_array as $owner_item)
                                     {
@@ -269,7 +269,7 @@ require_once('header.php');
                       google.setOnLoadCallback(drawChart10);
                       function drawChart10() {
                         var data = google.visualization.arrayToDataTable([
-                            ["'._("Country").'", "'._("# of Times").'"], ';
+                            ["'._("Country").'", "'._("# of times").'"], ';
                             $flightover_data = '';
                           foreach($flightover_array as $flightover_item)
                                     {
@@ -326,7 +326,7 @@ require_once('header.php');
                 function drawCharts3() {
 
                 var data = google.visualization.arrayToDataTable([ 
-                    ["'._("Airport").'", "'._("# of Times").'"],';
+                    ["'._("Airport").'", "'._("# of times").'"],';
                     $airport_data = '';
                   foreach($airport_airport_array as $airport_item)
                         {
@@ -376,7 +376,7 @@ require_once('header.php');
                 function drawCharts4() {
 
                 var data = google.visualization.arrayToDataTable([ 
-                    ["'._("Airport").'", "'._("# of Times").'"],';
+                    ["'._("Airport").'", "'._("# of times").'"],';
                     $airport_data2 = '';
                   foreach($airport_airport_array2 as $airport_item2)
                         {

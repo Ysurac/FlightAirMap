@@ -2,7 +2,7 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 $Stats = new Stats();
-$title = _("Statistics").' - '._("Most busiest Time of the Day");
+$title = _("Statistics").' - '._("Busiest Time of the Day");
 require_once('header.php');
 include('statistics-sub-menu.php');
 
@@ -10,7 +10,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 	<div class="info">
 	    <h1>'._("Busiest Time of the Day").'</h1>
 	</div>
-	<p>'._("Below is a list of the most common <strong>time of day.").'</p>';
+	<p>'._("Below is a list of the most common <strong>time of day</strong>.").'</p>';
 
 $hour_array = $Stats->countAllHours('hour');
 print '<div id="chartHour" class="chart" width="100%"></div>

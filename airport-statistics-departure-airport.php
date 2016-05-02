@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 if (!isset($_GET['airport'])) {
         header('Location: '.$globalURL.'/airport');
         die();
@@ -64,7 +65,7 @@ if (!empty($airport_array))
     	function drawCharts() {
     
         var data = google.visualization.arrayToDataTable([ 
-        	["'._("Airport").'", "'._("# of Times").'"],';
+        	["'._("Airport").'", "'._("# of times").'"],';
 	$airport_data = '';
 	foreach($airport_airport_array as $airport_item)
 	{

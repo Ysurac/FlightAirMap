@@ -1,13 +1,14 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $sort);
 
 if (!empty($spotter_array))
 {
-	$title = sprintf(_("'Most Common Aircraft Manufacturer on %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])));
+	$title = sprintf(_("Most Common Aircraft Manufacturer on %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])));
 
 	require_once('header.php');
 	print '<div class="select-item">';
@@ -35,7 +36,7 @@ if (!empty($spotter_array))
 		print '<thead>';
 		print '<th></th>';
 		print '<th>'._("Aircraft Manufacturer").'</th>';
-		print '<th>'._("# of Times").'</th>';
+		print '<th>'._("# of times").'</th>';
 		print '<th></th>';
 		print '</thead>';
 		print '<tbody>';

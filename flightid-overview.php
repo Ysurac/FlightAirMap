@@ -6,6 +6,7 @@ if ($_GET['id'] == "")
 
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 require_once('require/class.SpotterArchive.php');
 $Spotter = new Spotter();
 $SpotterArchive = new SpotterArchive();

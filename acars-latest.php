@@ -1,8 +1,9 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.ACARS.php');
+require_once('require/class.Language.php');
 $ACARS = new ACARS();
-$title = "Latest ACARS messages";
+$title = _("Latest ACARS messages");
 require_once('header.php');
 
 $page_url = $globalURL.'/acars-latest';

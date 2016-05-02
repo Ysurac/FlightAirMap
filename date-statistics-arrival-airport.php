@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $sort);
@@ -37,7 +38,7 @@ if (!empty($spotter_array))
     	function drawCharts() {
     
         var data = google.visualization.arrayToDataTable([ 
-        	["'._("Airport").'", "'._("# of Times").'"],';
+        	["'._("Airport").'", "'._("# of times").'"],';
 
 	$airport_data = '';
 	foreach($airport_airport_array as $airport_item)

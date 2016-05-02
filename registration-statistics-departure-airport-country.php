@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 if (isset($_GET['registration'])) {
@@ -32,7 +33,7 @@ if (!empty($spotter_array))
 		    google.setOnLoadCallback(drawChart);
 		    function drawChart() {
 			var data = google.visualization.arrayToDataTable([
-			    ["'._("Country").'", "'._("# of Times").'"], ';
+			    ["'._("Country").'", "'._("# of times").'"], ';
 	$country_data = '';
 	foreach($airport_country_array as $airport_item)
 	{

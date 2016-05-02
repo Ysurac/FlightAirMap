@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 if (!isset($_GET['aircraft_manufacturer'])) {
         header('Location: '.$globalURL.'/manufacturer');
         die();
@@ -50,7 +51,7 @@ if (!empty($spotter_array))
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["'._("Country").'", "'._("# of Times").'"], ';
+            	["'._("Country").'", "'._("# of times").'"], ';
 
 	$country_data = '';
 	foreach($airline_array as $airline_item)

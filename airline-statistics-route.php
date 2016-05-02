@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Language.php');
 if (!isset($_GET['airline'])) {
         header('Location: '.$globalURL.'/airline');
         die();
@@ -68,7 +69,7 @@ if (!empty($spotter_array))
 		print '<th></th>';
 		print '<th>'._("Departure Airport").'</th>';
 		print '<th>'._("Arrival Airport").'</th>';
-		print '<th>'._("# of Times").'</th>';
+		print '<th>'._("# of times").'</th>';
 		print '<th></th>';
 		print '<th></th>';
 		print '</thead>';

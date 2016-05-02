@@ -20,7 +20,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["'._("Pilot").'", "'._("# of Times").'"], ';
+            	["'._("Pilot").'", "'._("# of times").'"], ';
             	$pilot_data = '';
 		foreach($pilot_array as $pilot_item)
 		{
@@ -51,7 +51,7 @@ if (!empty($pilot_array))
 	print '<thead>';
 	print '<th></th>';
 	print '<th>'._("Pilot Name").'</th>';
-	print '<th>'._("# of Times").'</th>';
+	print '<th>'._("# of times").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

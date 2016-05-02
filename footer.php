@@ -4,7 +4,7 @@
 	<?php
 	    if (isset($sql_time)) {
 	?>
-	<i>Page generated in <?php print round($sql_time+$page_time,2); ?>s (<?php print round($page_time,2); ?>ms PHP - <?php print round($sql_time,2); ?>ms SQL)</i>
+	<i><?php echo _("Page generated in").' '.round($sql_time+$page_time,2); ?>s (<?php print round($page_time,2); ?>ms PHP - <?php print round($sql_time,2); ?>ms SQL)</i>
 	<br />
 	<?php
 	    }

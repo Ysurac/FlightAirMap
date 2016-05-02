@@ -20,7 +20,7 @@ print '<div id="chartCountry" class="chart" width="100%"></div>
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-            	["'._("Country").'", "'._("# of Times").'"], ';
+            	["'._("Country").'", "'._("# of times").'"], ';
 $country_data = '';
 foreach($airline_array as $airline_item)
 {
