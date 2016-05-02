@@ -13,13 +13,13 @@ $current_page = $file_path['filename'];
 <meta name="description" content="<?php print $title; ?> | <?php print $globalName; ?> is an open source project documenting most of the aircrafts that have flown near the Barrie area." />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-<link rel="apple-touch-icon" href="<?php print $globalURL; ?>/images/touch-icon.png">
+<link rel="apple-touch-icon" href="../images/touch-icon.png">
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css?<?php print time(); ?>" />
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css?<?php print time(); ?>" />
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css?<?php print time(); ?>" />
-<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-2.1.3.min.js"></script>
+<link type="text/css" rel="stylesheet" href="../css/bootstrap-select.min.css?<?php print time(); ?>" />
+<link type="text/css" rel="stylesheet" href="../css/style.css?<?php print time(); ?>" />
+<link type="text/css" rel="stylesheet" href="../css/print.css?<?php print time(); ?>" />
+<script type="text/javascript" src="../js/jquery-2.1.3.min.js"></script>
 <?php
 /*
 if ($facebook_meta_image != "")
@@ -125,8 +125,7 @@ if ($facebook_meta_image != "")
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a href="<?php print $globalURL; ?>/search" class="navbar-toggle navbar-toggle-search"><i class="fa fa-search"></i></a>
-      <a class="navbar-brand" href="<?php print $globalURL; ?>"><img src="<?php print $globalURL.$logoURL; ?>" height="30px" /></a>
+      <a class="navbar-brand" href="../"><img src="<?php print '../'.$logoURL; ?>" height="30px" /></a>
     </div>
   </div>
 </div>
@@ -136,7 +135,7 @@ if (isset($top_header)) {
     if ($top_header != "")
     {
 	print '<div class="top-header container clear" role="main">';
-		print '<img src="'.$globalURL.'/images/'.$top_header.'" alt="'.$title.'" title="'.$title.'" />';
+		print '<img src="../images/'.$top_header.'" alt="'.$title.'" title="'.$title.'" />';
 	print '</div>';
     }
 }
