@@ -464,9 +464,9 @@ bounds = L.latLngBounds(southWest,northEast);
 	};
 	archive.update = function (props) {
 		if (typeof props != 'undefined') {
-			this._div.innerHTML = '<h4><?php echo _("Archive Date & Time"); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>';
+			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><i class="fa fa-fast-backward"> <i class="fa fa-backward">  <i class="fa fa-pause"> <i class="fa fa-play">  <i class="fa fa-forward"> <i class="fa fa-fast-forward">';
 		} else {
-			this._div.innerHTML = '<h4><?php echo _("Archive Date & Time"); ?></h4>' +  '<b>-</b>';
+			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i></b>';
 		}
 
 	};

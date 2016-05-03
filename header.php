@@ -1,4 +1,5 @@
 <?php
+
 //require_once('require/class.Language.php');
 //gets the page file and stores it in a variable
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
