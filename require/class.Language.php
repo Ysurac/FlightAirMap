@@ -5,7 +5,7 @@ if (!function_exists("gettext")) {
                 return $text;
         }
 } else {
-	if (isset($_COOKIE['language']) && $_COOKIE['language'] != 'en_GB') {
+	if (isset($_COOKIE['language']) && $_COOKIE['language'] != 'en_GB' && (isset($globalTranslate) && $globalTranslate)) {
 		$Language = new Language();
 		$lang = $_COOKIE['language'];
 		//setlocale(LC_MESSAGES, $_COOKIE['language']);

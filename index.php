@@ -3,7 +3,7 @@ require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 
-$title = "Home";
+$title = _("Home");
 require_once('header.php');
 ?>
 
@@ -95,9 +95,15 @@ require_once('header.php');
 			    });
 			</script>
 
+		    <li><?php echo _("Show airport icon at zoom level:"); ?>
+			<div class="range">
+			    <input type="range" min="0" max="19" step="1" name="archivespeed" onchange="archivespeedrange.value=value;archiveSpeed(archivespeed.value);" value="">
+			    <output id="archivespeedrange"></output>
+			</div>
+		    </li>
 
 
-			<input type="hidden" name="during" value="5" />
+			<input type="hidden" name="during" value="60" />
 		    </li>
 		    <li><input type="submit" name="archive" value="Show archive" /></li>
 		</ul>

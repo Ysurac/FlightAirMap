@@ -205,6 +205,9 @@ if ($facebook_meta_image != "")
           </ul>
         </li>
       </ul>
+<?php
+	if (isset($globalTranslate) && $globalTranslate) {
+?>
   	<div class="language">
   	    <form>
   		<select class="selectpicker" data-width="120px" onchange="language(this);">
@@ -220,6 +223,9 @@ if ($facebook_meta_image != "")
   		</select>
   	    </form>
   	</div>
+<?php
+	}
+?>
       <div class="search">
       <form action="<?php print $globalURL; ?>/search" method="get">
 		<input type="text" name="q" value="<?php if (isset($GET['q'])) { if ($_GET['q'] != ""){ print $_GET['q']; } else { print _("Search"); } } else { print _("Search"); } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>

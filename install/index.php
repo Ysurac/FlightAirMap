@@ -425,6 +425,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		<fieldset>
 			<legend>Optional configuration</legend>
 			<p>
+				<label for="translate">Allow site translation</label>
+				<input type="checkbox" name="translate" id="translate" value="translate"<?php if (isset($globalTranslate) && $globalTranslate) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
 				<label for="unitdistance">Unit for distance</label>
 				<select name="unitdistance" id="unitdistance">
 					<option value="km" <?php if (isset($globalUnitDistance) && $globalUnitDistance == 'km') { ?>selected="selected" <?php } ?>>Kilometres</option>
@@ -860,6 +864,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalOwner' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalOwner' => 'FALSE'));
+	}
+	$translate = filter_input(INPUT_POST,'translate',FILTER_SANITIZE_STRING);
+	if ($translate == 'translate') {
+		$settings = array_merge($settings,array('globalTranslate' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalTranslate' => 'FALSE'));
 	}
 	$metar = filter_input(INPUT_POST,'metar',FILTER_SANITIZE_STRING);
 	if ($metar == 'metar') {
