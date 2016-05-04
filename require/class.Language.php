@@ -9,9 +9,14 @@ if (!function_exists("gettext")) {
 		$Language = new Language();
 		$lang = $_COOKIE['language'];
 		//setlocale(LC_MESSAGES, $_COOKIE['language']);
+
 		putenv("LC_ALL=$lang");
+/*
 		setlocale(LC_MESSAGES, $lang);
 		setlocale(LC_ALL, $lang);
+		setlocale(LC_TIME, "");
+		*/
+		setlocale(LC_ALL, $Language->getLocale($lang));
 		bindtextdomain("fam", dirname(__FILE__).'/../locale');
 		textdomain("fam");
 		bind_textdomain_codeset("fam", 'UTF-8');
@@ -90,6 +95,11 @@ class Language {
 		}
 		closedir($handle);
 		return $result;
+	}
+
+	public function getLocale($locale)
+	{
+		return array($locale,$this->all_languages[$locale][1],$this->all_languages[$locale][2]);
 	}
 
 	/**

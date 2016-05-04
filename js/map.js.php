@@ -4,6 +4,7 @@
 	if (isset($_GET['archive'])) {
 		$begindate = $_GET['begindate'];
 		$lastupd = round(($_GET['enddate']-$_GET['begindate'])/(($_GET['during']*60)/10));
+		$lastupd = 20;
 		$enddate = $_GET['enddate'];
 		setcookie("archive_begin",$begindate);
 		setcookie("archive_end",$enddate);
@@ -37,186 +38,184 @@ var weathersatelliterefresh;
 var noTimeout = true;
 
 <?php
-if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0) {
+	if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0) {
 ?>
 $(document).idle({
-  onIdle: function(){
-    noTimeout = false;
-    $( "#dialog" ).dialog({
-	modal: true,
-	buttons: {
-	    Close: function() {
-		//noTimeout = true;
-		$( this ).dialog( "close" );
-	    }
+	onIdle: function(){
+		noTimeout = false;
+		$( "#dialog" ).dialog({
+			modal: true,
+			buttons: {
+				Close: function() {
+					//noTimeout = true;
+					$( this ).dialog( "close" );
+				}
+			},
+			 close: function() {
+				noTimeout = true;
+		        }
+		});
 	},
-	 close: function() {
-		noTimeout = true;
-        }
-    });
-  },
-  idle: <?php print $globalMapIdleTimeout*60000; ?>
+	idle: <?php print $globalMapIdleTimeout*60000; ?>
 })
 <?php
-}
-if (isset($_GET['ident'])) {
-    $ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
-}
-if (isset($_GET['flightaware_id'])) {
-    $flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
-}
-if (isset($_GET['latitude'])) {
-    $latitude = filter_input(INPUT_GET,'latitude',FILTER_SANITIZE_STRING);
-}
-if (isset($_GET['longitude'])) {
-    $longitude = filter_input(INPUT_GET,'longitude',FILTER_SANITIZE_STRING);
-}
+	}
+	if (isset($_GET['ident'])) {
+		$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+	}
+	if (isset($_GET['flightaware_id'])) {
+		$flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
+	}
+	if (isset($_GET['latitude'])) {
+		$latitude = filter_input(INPUT_GET,'latitude',FILTER_SANITIZE_STRING);
+	}
+	if (isset($_GET['longitude'])) {
+		$longitude = filter_input(INPUT_GET,'longitude',FILTER_SANITIZE_STRING);
+	}
 ?>
 
 <?php
-    if (isset($ident) || isset($flightaware_id)) {
+	if (isset($ident) || isset($flightaware_id)) {
 ?>
 $( document ).ready(function() {
-  //setting the zoom functionality for either mobile or desktop
-  if( navigator.userAgent.match(/Android/i)
-     || navigator.userAgent.match(/webOS/i)
-     || navigator.userAgent.match(/iPhone/i)
-     || navigator.userAgent.match(/iPod/i)
-     || navigator.userAgent.match(/BlackBerry/i)
-     || navigator.userAgent.match(/Windows Phone/i))
-  {
-    var zoom = 8;
-  } else {
-    var zoom = 8;
-  }
+	//setting the zoom functionality for either mobile or desktop
+	if( navigator.userAgent.match(/Android/i)
+	     || navigator.userAgent.match(/webOS/i)
+	     || navigator.userAgent.match(/iPhone/i)
+	     || navigator.userAgent.match(/iPod/i)
+	     || navigator.userAgent.match(/BlackBerry/i)
+	     || navigator.userAgent.match(/Windows Phone/i))
+	{
+		var zoom = 8;
+	} else {
+		var zoom = 8;
+	}
 
-  //create the map
-  map = L.map('archive-map', { zoomControl:false }).setView([<?php if (isset($latitude)) print $latitude; else print $globalCenterLatitude; ?>,<?php if (isset($longitude)) print $longitude; else print $globalCenterLongitude; ?>], zoom);
-<?php
-    } else {
-?>
-$( document ).ready(function() {
-  //setting the zoom functionality for either mobile or desktop
-  if( navigator.userAgent.match(/Android/i)
-     || navigator.userAgent.match(/webOS/i)
-     || navigator.userAgent.match(/iPhone/i)
-     || navigator.userAgent.match(/iPod/i)
-     || navigator.userAgent.match(/BlackBerry/i)
-     || navigator.userAgent.match(/Windows Phone/i))
-  {
-    var zoom = <?php if (isset($globalLiveZoom)) print $globalLiveZoom-1; else print '8'; ?>;
-  } else {
-    var zoom = <?php if (isset($globalLiveZoom)) print $globalLiveZoom; else print '9'; ?>;
-  }
-
-  //create the map
-<?php
-	if (isset($globalCenterLatitude) && $globalCenterLatitude != '' && isset($globalCenterLongitude) && $globalCenterLongitude != '') {
-?>
-	map = L.map('live-map', { zoomControl:false }).setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], zoom);
+	//create the map
+	map = L.map('archive-map', { zoomControl:false }).setView([<?php if (isset($latitude)) print $latitude; else print $globalCenterLatitude; ?>,<?php if (isset($longitude)) print $longitude; else print $globalCenterLongitude; ?>], zoom);
 <?php
 	} else {
 ?>
+$( document ).ready(function() {
+	//setting the zoom functionality for either mobile or desktop
+	if( navigator.userAgent.match(/Android/i)
+	     || navigator.userAgent.match(/webOS/i)
+	     || navigator.userAgent.match(/iPhone/i)
+	     || navigator.userAgent.match(/iPod/i)
+	     || navigator.userAgent.match(/BlackBerry/i)
+	     || navigator.userAgent.match(/Windows Phone/i))
+	{
+		var zoom = <?php if (isset($globalLiveZoom)) print $globalLiveZoom-1; else print '8'; ?>;
+	} else {
+		var zoom = <?php if (isset($globalLiveZoom)) print $globalLiveZoom; else print '9'; ?>;
+	}
+
+	//create the map
+<?php
+		if (isset($globalCenterLatitude) && $globalCenterLatitude != '' && isset($globalCenterLongitude) && $globalCenterLongitude != '') {
+?>
+	map = L.map('live-map', { zoomControl:false }).setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], zoom);
+<?php
+		} else {
+?>
 	map = L.map('live-map', { zoomControl:false }).setView([0,0], zoom);
 <?php
-        }
-    }
-?>
-  //initialize the layer group for the aircrft markers
-  var layer_data = L.layerGroup();
-
-var southWest = L.latLng(-90,-180),
-    northEast = L.latLng(90,180);
-bounds = L.latLngBounds(southWest,northEast);
-  //a few title layers
-<?php
-    if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
-    else $MapType = $globalMapProvider;
-
-    if ($MapType == 'Mapbox') {
-	if ($_COOKIE['MapTypeId'] == 'default') $MapBoxId = $globalMapboxId;
-	else $MapBoxId = $_COOKIE['MapTypeId'];
-?>
-  L.tileLayer('https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={token}', {
-    maxZoom: 18,
-    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-      'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    id: '<?php print $MapBoxId; ?>',
-    token: '<?php print $globalMapboxToken; ?>'
-  }).addTo(map);
-<?php
-    } elseif ($MapType == 'OpenStreetMap') {
-?>
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>'
-  }).addTo(map);
-<?php
-    } elseif ($MapType == 'MapQuest-OSM') {
-?>
-  L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    subdomains: "1234",
-    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
-      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>'
-  }).addTo(map);
-<?php
-    } elseif ($MapType == 'MapQuest-Aerial') {
-?>
-  L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    subdomains: "1234",
-    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
-      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>, Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency"'
-  }).addTo(map);
-<?php
-    }
-?>
-
-<?php
-    if (!isset($globalBounding) || $globalBounding == 'polygon') {
-	if ($globalLatitudeMin != '' && $globalLatitudeMax != '' && $globalLongitudeMin != '' && $globalLongitudeMax != '') 
-	{ 
-
-    ?>
-
-  //create the bounding box to show the coverage area
-  var polygon = L.polygon(
-   [ [[90, -180],
-    [90, 180],
-    [-90, 180],
-    [-90, -180]], // outer ring
-    [[<?php print $globalLatitudeMin; ?>, <?php print $globalLongitudeMax; ?>],
-    [<?php print $globalLatitudeMin; ?>, <?php print $globalLongitudeMin; ?>],
-    [<?php print $globalLatitudeMax; ?>, <?php print $globalLongitudeMin; ?>],
-    [<?php print $globalLatitudeMax; ?>, <?php print $globalLongitudeMax; ?>]] // actual cutout polygon
-    ],{
-    color: '#000',
-    fillColor: '#000',
-    fillOpacity: 0.1,
-    stroke: false
-    }).addTo(map);
-<?php
-
+		}
 	}
-    } elseif ($globalBounding == 'circle') {
 ?>
-    var circle = L.circle([<?php print $globalCenterLatitude; ?>, <?php print $globalCenterLongitude; ?>],<?php if (isset($globalBoundingCircleSize)) print $globalBoundingCircleSize; else print '70000'; ?>,{
-    color: '#92C7D1',
-    fillColor: '#92C7D1',
-    fillOpacity: 0.3,
-    stroke: false
-    }).addTo(map);
+	//initialize the layer group for the aircrft markers
+	layer_data = L.layerGroup();
+
+	var southWest = L.latLng(-90,-180),
+	    northEast = L.latLng(90,180);
+	bounds = L.latLngBounds(southWest,northEast);
+	//a few title layers
 <?php
-    }
+	if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
+	else $MapType = $globalMapProvider;
+
+	if ($MapType == 'Mapbox') {
+		if ($_COOKIE['MapTypeId'] == 'default') $MapBoxId = $globalMapboxId;
+		else $MapBoxId = $_COOKIE['MapTypeId'];
+?>
+	L.tileLayer('https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={token}', {
+	    maxZoom: 18,
+	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+	      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+	      'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	    id: '<?php print $MapBoxId; ?>',
+	    token: '<?php print $globalMapboxToken; ?>'
+	}).addTo(map);
+<?php
+	} elseif ($MapType == 'OpenStreetMap') {
+?>
+	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	    maxZoom: 18,
+	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+	      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>'
+	}).addTo(map);
+<?php
+	} elseif ($MapType == 'MapQuest-OSM') {
+?>
+	L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+	    maxZoom: 18,
+	    subdomains: "1234",
+	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+	      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
+	      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>'
+	}).addTo(map);
+<?php
+	} elseif ($MapType == 'MapQuest-Aerial') {
+?>
+	L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
+	    maxZoom: 18,
+	    subdomains: "1234",
+	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+	      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
+	      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>, Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency"'
+	}).addTo(map);
+<?php
+	}
+?>
+
+<?php
+	if (!isset($globalBounding) || $globalBounding == 'polygon') {
+		if ($globalLatitudeMin != '' && $globalLatitudeMax != '' && $globalLongitudeMin != '' && $globalLongitudeMax != '') 
+		{ 
+?>
+
+	//create the bounding box to show the coverage area
+	var polygon = L.polygon(
+	   [ [[90, -180],
+	    [90, 180],
+	    [-90, 180],
+	    [-90, -180]], // outer ring
+	    [[<?php print $globalLatitudeMin; ?>, <?php print $globalLongitudeMax; ?>],
+	    [<?php print $globalLatitudeMin; ?>, <?php print $globalLongitudeMin; ?>],
+	    [<?php print $globalLatitudeMax; ?>, <?php print $globalLongitudeMin; ?>],
+	    [<?php print $globalLatitudeMax; ?>, <?php print $globalLongitudeMax; ?>]] // actual cutout polygon
+        ],{
+	    color: '#000',
+	    fillColor: '#000',
+	    fillOpacity: 0.1,
+	    stroke: false
+	}).addTo(map);
+<?php
+		}
+	} elseif ($globalBounding == 'circle') {
+?>
+	var circle = L.circle([<?php print $globalCenterLatitude; ?>, <?php print $globalCenterLongitude; ?>],<?php if (isset($globalBoundingCircleSize)) print $globalBoundingCircleSize; else print '70000'; ?>,{
+	    color: '#92C7D1',
+	    fillColor: '#92C7D1',
+	    fillOpacity: 0.3,
+	    stroke: false
+	}).addTo(map);
+<?php
+	}
 ?>
 	// Show airports on map
 	function airportPopup (feature, layer) {
@@ -273,49 +272,47 @@ bounds = L.latLngBounds(southWest,northEast);
 	    ?>
 	    //if (map.getZoom() <= <?php print $getZoom; ?>) {
 		if (typeof airportsLayer != 'undefined') {
-	    	    if (map.hasLayer(airportsLayer) == true) {
-			map.removeLayer(airportsLayer);
-		    }
+			if (map.hasLayer(airportsLayer) == true) {
+				map.removeLayer(airportsLayer);
+			}
 		}
 	    //}
-	    if (map.getZoom() > <?php print $getZoom; ?>) {
-		//if (typeof airportsLayer == 'undefined' || map.hasLayer(airportsLayer) == false) {
-	    var bbox = map.getBounds().toBBoxString();
-	    airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
-	    <?php
+		if (map.getZoom() > <?php print $getZoom; ?>) {
+			//if (typeof airportsLayer == 'undefined' || map.hasLayer(airportsLayer) == false) {
+			var bbox = map.getBounds().toBBoxString();
+			airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
+<?php
 		if (isset($globalAirportPopup) && $globalAirportPopup) {
-	    ?>
-	    onEachFeature: airportPopup,
-	    <?php
+?>
+				onEachFeature: airportPopup,
+<?php
 		}
-	    ?>
-		pointToLayer: function (feature, latlng) {
-		    return L.marker(latlng, {
-			icon: L.icon({
-			    iconUrl: feature.properties.icon,
-			    iconSize: [16, 18]
-			//popupAnchor: [0, -28]
-			})
-		<?php
-		    if (!isset($globalAirportPopup) || $globalAirportPopup == FALSE) {
-		?>
-                    }).on('click', function() {
-			$(".showdetails").load("airport-data.php?"+Math.random()+"&airport_icao="+feature.properties.icao);
-		    });
-		    }
-		<?php
-		    } else {
-		?>
-		
-		})
+?>
+				pointToLayer: function (feature, latlng) {
+					return L.marker(latlng, {
+						icon: L.icon({
+							iconUrl: feature.properties.icon,
+							iconSize: [16, 18]
+							//popupAnchor: [0, -28]
+						})
+<?php
+		if (!isset($globalAirportPopup) || $globalAirportPopup == FALSE) {
+?>
+					}).on('click', function() {
+						$(".showdetails").load("airport-data.php?"+Math.random()+"&airport_icao="+feature.properties.icao);
+					});
+				}
+<?php
+		} else {
+?>
+					})
+				}
+<?php
 		}
-		<?php
-		    }
-		?>
-	    }).addTo(map);
-	    
+?>              
+			}).addTo(map);
 	    //}
-	    }
+		}
 	};
 
 	// Show airports on map
@@ -360,9 +357,6 @@ bounds = L.latLngBounds(southWest,northEast);
 		layer.bindPopup(output);
 	};
 
-
-
-
 	function update_locationsLayer() {
 		//var bbox = map.getBounds().toBBoxString();
 		//locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox,{
@@ -382,55 +376,54 @@ bounds = L.latLngBounds(southWest,northEast);
 	};
 
 	map.on('moveend', function() {
-	    if (map.getZoom() > 7) {
-		//if (typeof airportsLayer != 'undefined') {
-		//    if (map.hasLayer(airportsLayer) == true) {
-		//	map.removeLayer(airportsLayer);
-		//    }
-		//}
-		update_airportsLayer();
-		map.removeLayer(locationsLayer);
-		update_locationsLayer();
-		if ($(".airspace").hasClass("active"))
-		{
-		    map.removeLayer(airspaceLayer);
-		    update_airspaceLayer();
+		if (map.getZoom() > 7) {
+			//if (typeof airportsLayer != 'undefined') {
+			//    if (map.hasLayer(airportsLayer) == true) {
+			//	map.removeLayer(airportsLayer);
+			//    }
+			//}
+			update_airportsLayer();
+			map.removeLayer(locationsLayer);
+			update_locationsLayer();
+			if ($(".airspace").hasClass("active"))
+			{
+				map.removeLayer(airspaceLayer);
+				update_airspaceLayer();
+			}
+			if ($(".waypoints").hasClass("active"))
+			{
+				map.removeLayer(waypointsLayer);
+				update_waypointsLayer();
+				//map.removeLayer(waypointsLayer);
+			}
+		} else {
+			//if (typeof airportsLayer != 'undefined') {
+			//    if (map.hasLayer(airportsLayer) == true) {
+			//	map.removeLayer(airportsLayer);
+			//    }
+			//}
+			update_airportsLayer();
+			map.removeLayer(locationsLayer);
+			update_locationsLayer();
+			if ($(".airspace").hasClass("active"))
+			{
+				map.removeLayer(airspaceLayer);
+			}
+			if ($(".waypoints").hasClass("active"))
+			{
+				map.removeLayer(waypointsLayer);
+			}
 		}
-		if ($(".waypoints").hasClass("active"))
-		{
-		    map.removeLayer(waypointsLayer);
-		    update_waypointsLayer();
-		    //map.removeLayer(waypointsLayer);
-		}
-	    } else {
-		//if (typeof airportsLayer != 'undefined') {
-		//    if (map.hasLayer(airportsLayer) == true) {
-		//	map.removeLayer(airportsLayer);
-		//    }
-		//}
-		update_airportsLayer();
-		map.removeLayer(locationsLayer);
-		update_locationsLayer();
-		if ($(".airspace").hasClass("active"))
-		{
-		    map.removeLayer(airspaceLayer);
-		}
-		if ($(".waypoints").hasClass("active"))
-		{
-		    map.removeLayer(waypointsLayer);
-		}
-	    }
-	    getLiveData();
+		getLiveData(1);
 	});
 
-	
 	//update_waypointsLayer();
 	update_airportsLayer();
 	update_locationsLayer();
 	
-	<?php
+<?php
 	    if (!isset($ident) && !isset($flightaware_id)) {
-	?>
+?>
 	
 	var info = L.control();
 	info.onAdd = function (map) {
@@ -442,7 +435,7 @@ bounds = L.latLngBounds(southWest,northEast);
 		if (typeof props != 'undefined') {
 			this._div.innerHTML = '<h4><?php echo _("Aircrafts detected"); ?></h4>' +  '<b>' + props.flight_cnt + '</b>';
 		} else {
-			this._div.innerHTML = '<h4><?php echo _("Aircrafts detected"); ?></h4>' +  '<b>0</b>';
+			this._div.innerHTML = '<h4><?php echo _("Aircrafts detected"); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-fw margin-bottom"></i></b>';
 		}
 
 	};
@@ -464,7 +457,7 @@ bounds = L.latLngBounds(southWest,northEast);
 	};
 	archive.update = function (props) {
 		if (typeof props != 'undefined') {
-			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><i class="fa fa-fast-backward"> <i class="fa fa-backward">  <i class="fa fa-pause"> <i class="fa fa-play">  <i class="fa fa-forward"> <i class="fa fa-fast-forward">';
+			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><i class="fa fa-fast-backward" aria-hidden="true"></i> <i class="fa fa-backward" aria-hidden="true"></i>  <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>  <i class="fa fa-forward" aria-hidden="true"></i> <i class="fa fa-fast-forward" aria-hidden="true"></i>';
 		} else {
 			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i></b>';
 		}
@@ -490,7 +483,7 @@ bounds = L.latLngBounds(southWest,northEast);
 	$(".showdetails").on("click",".close",function(){
     	    $(".showdetails").empty();
 	    $("#aircraft_ident").attr('class','');
-	    getLiveData();
+	    getLiveData(1);
             return false;
 	})
 	<?php
@@ -547,7 +540,7 @@ function getLiveData(click)
 	var enddate = begindate+parseInt(getCookie("archive_update"));
 	if (enddate > getCookie("archive_end")) {
 	    enddate = parseInt(getCookie("archive_end"));
-	    clearInterval(reload);
+	    clearInterval(reloadPage);
 	} else {
 	    if (click != 1) {
 		document.cookie =  'archive_begin='+enddate+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
@@ -1022,21 +1015,22 @@ function getLiveData(click)
 //  getLiveData(0);
 }
 
+
   //load the function on startup
   getLiveData(0);
 
 
 <?php
     if (isset($_GET['archive'])) {
-?>    
-  //then load it again every 30 seconds
+?>
+    //then load it again every 30 seconds
 //  var reload = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
-  var reload = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
+    reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
 <?php
     } else {
-?>    
-  //then load it again every 30 seconds
-  var reload = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+?>
+    //then load it again every 30 seconds
+    reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 <?php
     }
 ?>
@@ -1076,7 +1070,7 @@ setInterval(function(){update_genLayer('<?php print $json['url']; ?>')}, <?php p
 
 
   
-});
+//});
 
 //adds the bootstrap tooltip to the map icons
 function showBootstrapTooltip(){
@@ -1705,7 +1699,7 @@ function update_atcLayer() {
 	}
     }).addTo(map);
 };
-
+});
 function showNotam() {
     if (!$(".notam").hasClass("active"))
     {
@@ -1776,18 +1770,6 @@ function airportDisplayZoom(zoom) {
     window.location.reload();
 }
 
-
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-    }
-    return "";
-}
-
 function clickVATSIM(cb) {
     //document.cookie =  'ShowVATSIM='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     document.cookie =  'ShowVATSIM='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
@@ -1835,11 +1817,23 @@ function unitaltitude(selectObj) {
     var unit = selectObj.options[idx].value;
     document.cookie =  'unitaltitude='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 }
-function language(selectObj) {
-    var idx = selectObj.selectedIndex;
-    var lang = selectObj.options[idx].value;
-    document.cookie =  'language='+lang+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+function archivePause() {
+    clearInterval(reloadPage);
+    console.log('Pause');
+}
+function archivePlay() {
+    reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
+    console.log('Play');
 }
 
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
 
