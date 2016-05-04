@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-05-02 16:36+0200\n"
-"PO-Revision-Date: 2016-05-02 21:05+0200\n"
+"PO-Revision-Date: 2016-05-04 09:31+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -1357,7 +1357,7 @@ msgstr "Recherche Vols"
 #: registration-statistics-route.php:57 statistics-route-airport.php:74
 #: table-output.php:699
 msgid "Route Profile"
-msgstr "Profile de la route"
+msgstr "Profil de la route"
 
 #: airline-sub-menu.php:29 airport-sub-menu.php:38 country-sub-menu.php:38
 #: date-sub-menu.php:38 ident-sub-menu.php:29 manufacturer-sub-menu.php:37

@@ -99,7 +99,7 @@ class Language {
 
 	public function getLocale($locale)
 	{
-		return array($locale,$this->all_languages[$locale][1],$this->all_languages[$locale][2]);
+		return array($locale,$this->all_languages[$locale][1],$this->all_languages[$locale][2],$locale.'.utf8',$locale.'.UTF8');
 	}
 
 	/**
