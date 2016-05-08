@@ -2,10 +2,12 @@
 <?php require_once('../require/class.Language.php'); ?>
 <?php
 	if (isset($_GET['archive'])) {
+		date_default_timezone_set('UTC');
 		$begindate = $_GET['begindate'];
 		$lastupd = round(($_GET['enddate']-$_GET['begindate'])/(($_GET['during']*60)/10));
 		$lastupd = 20;
-		$enddate = $_GET['enddate'];
+		if (isset($_GET['enddate']) && $_GET['enddate'] != '') $enddate = $_GET['enddate'];
+		else $enddate = time();
 		setcookie("archive_begin",$begindate);
 		setcookie("archive_end",$enddate);
 		setcookie("archive_update",$lastupd);

@@ -57,24 +57,24 @@ require_once('header.php');
     if (isset($globalArchive) && $globalArchive == TRUE) {
 ?>
         <div class="sidebar-pane" id="archive">
-	    <h1><?php echo _("Archive"); ?> <i>Bêta</i></h1>
+	    <h1><?php echo _("Playback"); ?> <i>Bêta</i></h1>
 	    <p>This feature is not finished yet.</p>
 	    <form method="post">
 		<ul>
 		    <li>
 		        <div class="form-group">
-			    <label>From (UTC) :</label>
+			    <label>From (UTC):</label>
 		            <div class='input-group date' id='datetimepicker1'>
-            			<input type='text' name="start_date" class="form-control" />
+            			<input type='text' name="start_date" class="form-control" value="<?php if (isset($_COOKIE['archive_begin'])) print date("d/m/Y h:i a",$_COOKIE['archive_begin']); ?>" required />
 		                <span class="input-group-addon">
             			    <span class="glyphicon glyphicon-calendar"></span>
 		                </span>
 		            </div>
 		        </div>
 		        <div class="form-group">
-			    <label>To (UTC) :</label>
+			    <label>To (UTC):</label>
 		            <div class='input-group date' id='datetimepicker2'>
-		                <input type='text' name="end_date" class="form-control" />
+		                <input type='text' name="end_date" class="form-control" value="<?php if (isset($_COOKIE['archive_end'])) print date("d/m/Y h:i a",$_COOKIE['archive_end']); ?>" />
             			<span class="input-group-addon">
 		                    <span class="glyphicon glyphicon-calendar"></span>
             			</span>
@@ -95,9 +95,9 @@ require_once('header.php');
 			    });
 			</script>
 
-		    <li><?php echo _("Show airport icon at zoom level:"); ?>
+		    <li><?php echo _("Playback speed:"); ?>
 			<div class="range">
-			    <input type="range" min="0" max="19" step="1" name="archivespeed" onchange="archivespeedrange.value=value;archiveSpeed(archivespeed.value);" value="">
+			    <input type="range" min="0" max="50" step="1" name="archivespeed" value="1">
 			    <output id="archivespeedrange"></output>
 			</div>
 		    </li>
