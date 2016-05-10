@@ -255,7 +255,7 @@ class Common {
 		else return false;
 	}
 	
-	function array_merge_noappend() {
+	public function array_merge_noappend() {
 		$output = array();
 		foreach(func_get_args() as $array) {
 			foreach($array as $key => $value) {
@@ -264,6 +264,41 @@ class Common {
 			}
 		}
 		return $output;
+	}
+	
+	/**
+	* Returns list of available locales
+	*
+	* @return array
+	 */
+	public function listLocaleDir()
+	{
+		$result = array('en');
+		if (!is_dir('./locale')) {
+			return $result;
+		}
+		$handle = @opendir('./locale');
+		if ($handle === false) return $result;
+		while (false !== ($file = readdir($handle))) {
+			$path = './locale'.'/'.$file.'/LC_MESSAGES/fam.mo';
+			if ($file != "." && $file != ".." && @file_exists($path)) {
+				$result[] = $file;
+			}
+		}
+		closedir($handle);
+		return $result;
+	}
+
+	function nextcoord($latitude, $longitude, $speed, $heading){
+		global $globalMapRefresh;
+		$distance = ($speed*0.514444*$globalMapRefresh)/1000;
+		$r = 6378;
+		$latitude = deg2rad($latitude);
+		$longitude = deg2rad($longitude);
+		$bearing = deg2rad($heading); 
+		$latitude2 =  asin( (sin($latitude) * cos($distance/$r)) + (cos($latitude) * sin($distance/$r) * cos($bearing)) );
+		$longitude2 = $longitude + atan2( sin($bearing)*sin($distance/$r)*cos($latitude), cos($distance/$r)-(sin($latitude)*sin($latitude2)) );
+		return array('latitude' => number_format(rad2deg($latitude2),5,'.',''),'longitude' => number_format(rad2deg($longitude2),5,'.',''));
 	}
 }
 ?>

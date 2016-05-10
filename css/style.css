@@ -170,6 +170,22 @@ ul{
 	margin-top:0.5em;
 	margin-bottom:0.5em;
 }
+.navbar .language form{
+	border-bottom:0px;
+	margin-top:10px;
+/*	margin-right: 0px;*/
+	margin-left: 50px;
+	margin-bottom:0px;
+	padding:0px;
+	float:right;
+	display:inline-block;
+/*	width:40px;*/
+/*	background-color:#fff;
+	border:1px solid #ddd;
+	-webkit-border-radius: 50px;
+	-moz-border-radius: 50px;
+	border-radius: 50px;  */
+}
 .navbar .social{
 	float:right;
 	margin-right:1.5em;
@@ -184,7 +200,7 @@ ul{
 .navbar .social a:hover{
 	opacity:0.75;
 }
-.navbar form{
+.navbar .search form{
 	border-bottom:0px;
 	margin-top:10px;
 	margin-bottom:0px;
@@ -198,7 +214,7 @@ ul{
 	-moz-border-radius: 50px;
 	border-radius: 50px;
 }
-.navbar form input[type="text"]{
+.navbar .search form input[type="text"]{
 	width:80%;
 	padding-left:10px;
 	border:0px;
@@ -210,7 +226,7 @@ ul{
 	-moz-border-radius: 50px;
 	border-radius: 50px;
 }
-.navbar form button{
+.navbar .search form button{
 	color:#aaa;
 	background-color:#fff;
 	border:0px;
@@ -224,8 +240,8 @@ ul{
 .container{
   padding-top:10px;
   padding-bottom: 15px;
-  padding-left:0px;
-  padding-right:0px;
+  padding-left:50px;
+  padding-right:50px;
 }
 .navbar{
 	margin-bottom:0px;
@@ -1051,7 +1067,9 @@ body.page-upcoming table tr td.logo img{
     body.page-highlights-display .dispay-view div img{
         width:220px;
     }
-
+    .container {
+	width: auto;
+    }
 }
 
 /* Tablet (Landscape) */

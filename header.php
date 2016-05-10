@@ -70,6 +70,7 @@ if (strtolower($current_page) == "index")
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
+<script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
 <?php 
     if (isset($_POST['archive'])) {

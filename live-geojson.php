@@ -1,5 +1,6 @@
 <?php
 require_once('require/class.Connection.php');
+require_once('require/class.Common.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.SpotterLive.php');
 require_once('require/class.SpotterArchive.php');
@@ -7,6 +8,7 @@ $begintime = microtime(true);
 $SpotterLive = new SpotterLive();
 $Spotter = new Spotter();
 $SpotterArchive = new SpotterArchive();
+$Common = new Common();
 
 if (isset($_GET['download'])) {
     if ($_GET['download'] == "true")
@@ -152,6 +154,7 @@ $output = '{';
 						$output .= '"properties": {';
 							$output .= '"flightaware_id": "'.$spotter_item['flightaware_id'].'",';
 							$output .= '"flight_cnt": "'.$flightcnt.'",';
+							$output .= '"sqltime": "'.$sqltime.'",';
 							if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
 
 /*
@@ -214,11 +217,16 @@ $output = '{';
 						if (isset($spotter_item['date_iso_8601'])) {
 							$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
 						}
-							$output .= '"latitude": "'.$spotter_item['latitude'].'",';
-							$output .= '"longitude": "'.$spotter_item['longitude'].'",';
-							$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
-							$output .= '"altitude": "'.$spotter_item['altitude'].'",';
-							$output .= '"heading": "'.$spotter_item['heading'].'",';
+						$output .= '"latitude": "'.$spotter_item['latitude'].'",';
+						$output .= '"longitude": "'.$spotter_item['longitude'].'",';
+						$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
+						$output .= '"altitude": "'.$spotter_item['altitude'].'",';
+						$output .= '"heading": "'.$spotter_item['heading'].'",';
+						$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading']);
+						$output .= '"nextlatitude": "'.$nextcoord['latitude'].'",';
+						$output .= '"nextlongitude": "'.$nextcoord['longitude'].'",';
+						$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+
 						if (!$min) $output .= '"image": "'.$image.'",';
 						if (isset($spotter_item['image_copyright']) && $spotter_item['image_copyright'] != '') {
 							$output .= '"image_copyright": "'.str_replace('"',"'",trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$spotter_item['image_copyright']))).'",';

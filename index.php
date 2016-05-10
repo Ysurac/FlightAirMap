@@ -148,6 +148,7 @@ require_once('header.php');
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightpopup" value="1" onclick="clickFlightPopup(this)" <?php if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true') || !isset($_COOKIE['flightpopup'])) print 'checked'; ?> ><?php echo _("Display flight info as popup"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightpath" value="1" onclick="clickFlightPath(this)" <?php if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || !isset($_COOKIE['flightpath'])) print 'checked'; ?> ><?php echo _("Display flight path"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightroute" value="1" onclick="clickFlightRoute(this)" <?php if ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == 'true') || !isset($_COOKIE['MapRoute'])) print 'checked'; ?> ><?php echo _("Display flight route on click"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="flightestimation" value="1" onclick="clickFlightEstimation(this)" <?php if ((isset($_COOKIE['FlightEstimation']) && $_COOKIE['FlightEstimation'] == 'true') || (!isset($_COOKIE['FlightEstimation']) && !isset($globalMapEstimation)) || (!isset($_COOKIE['FlightEstimation']) && isset($globalMapEstimation) && $globalMapEstimation)) print 'checked'; ?> ><?php echo _("Planes animate between updates"); ?></label></div></li>
 
 		    <?php
 		        if (extension_loaded('gd') && function_exists('gd_info')) {

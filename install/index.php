@@ -75,6 +75,9 @@ if(function_exists('apache_get_modules') ){
 	}
 }
 
+if (!function_exists("gettext")) {
+	print '<div class="info column"><p><strong>gettext doesn\'t exist. Site translation not available.</strong></p></div>';
+}
 if (count($error) > 0) {
 	print '<div class="info column"><ul>';
 	foreach ($error as $err) {
@@ -427,6 +430,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="translate">Allow site translation</label>
 				<input type="checkbox" name="translate" id="translate" value="translate"<?php if (isset($globalTranslate) && $globalTranslate) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="estimation">Planes animate between updates</label>
+				<input type="checkbox" name="estimation" id="estimation" value="estimation"<?php if (isset($globalMapEstimation) && $globalMapEstimation) { ?> checked="checked"<?php } ?> />
 			</p>
 			<p>
 				<label for="unitdistance">Unit for distance</label>
@@ -870,6 +877,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalTranslate' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalTranslate' => 'FALSE'));
+	}
+	$estimation = filter_input(INPUT_POST,'estimation',FILTER_SANITIZE_STRING);
+	if ($estimation == 'estimation') {
+		$settings = array_merge($settings,array('globalMapEstimation' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMapEstimation' => 'FALSE'));
 	}
 	$metar = filter_input(INPUT_POST,'metar',FILTER_SANITIZE_STRING);
 	if ($metar == 'metar') {
