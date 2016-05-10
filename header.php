@@ -75,7 +75,7 @@ if (strtolower($current_page) == "index")
 <?php 
     if (isset($_POST['archive'])) {
 ?>
-<script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&during=<?php print $_POST['during']; ?>"></script>
+<script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
 <?php    
     } else {
 ?>

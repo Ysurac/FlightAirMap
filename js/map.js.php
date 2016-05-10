@@ -1055,7 +1055,7 @@ getLiveData(0);
 ?>
 //then load it again every 30 seconds
 //  var reload = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
-reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},$archiveupdatetime*1000);
+reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php print $archiveupdatetime; ?>*1000);
 <?php
 	} else {
 ?>
