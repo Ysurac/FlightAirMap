@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
+require_once('require/class.Language.php');
 $beginpage = microtime(true);
 $Stats = new Stats();
 $title = _("Statistics");

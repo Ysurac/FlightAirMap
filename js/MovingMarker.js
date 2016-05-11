@@ -6,6 +6,23 @@ L.interpolatePosition = function(p1, p2, duration, t) {
         p1.lng + k * (p2.lng - p1.lng));
 };
 
+L.interpolateAngle = function(a1, a2, duration, t) {
+    var k = t/duration;
+    k = (k > 0) ? k : 0;
+    k = (k > 1) ? 1 : k;
+    
+    if (a2 > a1 && a2 - a1 > 180) {
+        a2 = 360 - a2;
+    }
+
+    if (a1 > a2 && a1 - a2 > 180) {
+        a2 = 360 + a2;
+    }
+    
+    // use ease in expo formula
+    return Math.floor((a2 - a1) * Math.pow(2, 10 * (k - 1)) + a1);
+};
+
 L.Marker.MovingMarker = L.Marker.extend({
 
     //state constants
@@ -28,6 +45,8 @@ L.Marker.MovingMarker = L.Marker.extend({
             return L.latLng(e);
         });
 
+        this._angles = [this.options.rotationAngle];
+
         if (durations instanceof Array) {
             this._durations = durations;
         } else {
@@ -44,6 +63,7 @@ L.Marker.MovingMarker = L.Marker.extend({
         this._animId = 0;
         this._animRequested = false;
         this._currentLine = [];
+        this._currentAngle = [];
         this._stations = {};
     },
 
@@ -83,6 +103,7 @@ L.Marker.MovingMarker = L.Marker.extend({
         }
         // update the current line
         this._currentLine[0] = this.getLatLng();
+        this._currentAngle[0] = this.options.rotationAngle;
         this._currentDuration -= (this._pauseStartTime - this._startTime);
         this._startAnimation();
     },
@@ -115,18 +136,28 @@ L.Marker.MovingMarker = L.Marker.extend({
         this.fire('end', {elapsedTime: elapsedTime});
     },
 
-    addLatLng: function(latlng, duration) {
+    addLatLng: function(latlng, angle, duration) {
         this._latlngs.push(L.latLng(latlng));
+        this._angles.push(angle);
         this._durations.push(duration);
     },
 
-    moveTo: function(latlng, duration) {
+    moveTo: function(latlng, angle, duration) {
         this._stopAnimation();
         this._latlngs = [this.getLatLng(), L.latLng(latlng)];
+        this._angles = [this.options.rotationAngle, angle];
         this._durations = [duration];
         this._state = L.Marker.MovingMarker.notStartedState;
         this.start();
         this.options.loop = false;
+    },
+    
+    panTo: function(latlng, angle, duration) {
+        if (this._state === L.Marker.MovingMarker.runState && this._durations.length < 5) {
+            this.addLatLng(latlng, angle, duration);
+        } else {
+            this.moveTo(latlng, angle, duration);
+        }
     },
 
     addStation: function(pointIndex, duration) {
@@ -212,6 +243,8 @@ L.Marker.MovingMarker = L.Marker.extend({
         this._currentIndex = index;
         this._currentDuration = this._durations[index];
         this._currentLine = this._latlngs.slice(index, index + 2);
+        this._currentAngle = this._angles.slice(index, index + 2);
+        // this.options.rotationAngle = this._angles[index + 1];
     },
 
     /**
@@ -241,6 +274,7 @@ L.Marker.MovingMarker = L.Marker.extend({
             // test if there is a station at the end of the line
             if (stationDuration !== undefined) {
                 if (elapsedTime < stationDuration) {
+                    this.options.rotationAngle = this._angles[lineIndex + 1];
                     this.setLatLng(this._latlngs[lineIndex + 1]);
                     return null;
                 }
@@ -256,6 +290,7 @@ L.Marker.MovingMarker = L.Marker.extend({
                     lineIndex = 0;
                     this.fire('loop', {elapsedTime: elapsedTime});
                 } else {
+                    this.options.rotationAngle = this._angles[this._latlngs.length - 1];
                     // place the marker at the end, else it would be at
                     // the last position
                     this.setLatLng(this._latlngs[this._latlngs.length - 1]);
@@ -289,6 +324,12 @@ L.Marker.MovingMarker = L.Marker.extend({
                 this._currentLine[1],
                 this._currentDuration,
                 elapsedTime);
+
+            this.options.rotationAngle = L.interpolateAngle(this._currentAngle[0],
+                this._currentAngle[1],
+                this._currentDuration,
+                elapsedTime);
+
             this.setLatLng(p);
         }
 

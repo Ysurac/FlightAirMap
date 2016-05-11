@@ -647,11 +647,12 @@ function getLiveData(click)
 <?php
 		} else {
 ?>
-		    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+10000; ?>+feature.properties.sqltime*1000);
+		    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+20000; ?>+feature.properties.sqltime*1000);
 		    return new L.Marker.movingMarker([latLng, feature.properties.nextlatlon],[movingtime],{
 <?php
 		}
 ?>
+			rotationAngle: feature.properties.heading,
 			iconAngle: feature.properties.heading,
 			title: markerLabel,
 			alt: feature.properties.callsign,
@@ -691,11 +692,12 @@ function getLiveData(click)
 <?php
 		} else {
 ?>
-			    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+10000; ?>+feature.properties.sqltime*1000);
+			    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+20000; ?>+feature.properties.sqltime*1000);
 			    return new L.Marker.movingMarker([latLng, feature.properties.nextlatlon],[movingtime],{
 <?php
 		}
 ?>
+				rotationAngle: feature.properties.heading,
 				autostart: true,
 			        iconAngle: feature.properties.heading,
 				title: markerLabel,
@@ -734,11 +736,12 @@ function getLiveData(click)
 <?php
 		} else {
 ?>
-			    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+10000; ?>+feature.properties.sqltime*1000);
+			    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+20000; ?>+feature.properties.sqltime*1000);
 			    return new L.Marker.movingMarker([latLng, feature.properties.nextlatlon],[movingtime],{
 <?php
 		}
 ?>
+				rotationAngle: feature.properties.heading,
 				autostart: true,
 				iconAngle: feature.properties.heading,
 				title: markerLabel,
