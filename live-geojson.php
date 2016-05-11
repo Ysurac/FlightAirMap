@@ -55,12 +55,13 @@ if (isset($_GET['ident'])) {
 	$spotter_array = $SpotterLive->getLiveSpotterDatabyCoord($coord,$filter);
 
 #} elseif (isset($globalMapPopup) && !$globalMapPopup) {
-} elseif (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate'])) {
+} elseif (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate']) && isset($_GET['speed'])) {
 	$from_archive = true;
 //	$begindate = filter_input(INPUT_GET,'begindate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
 //	$enddate = filter_input(INPUT_GET,'enddate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
 	$begindate = filter_input(INPUT_GET,'begindate',FILTER_SANITIZE_NUMBER_INT);
 	$enddate = filter_input(INPUT_GET,'enddate',FILTER_SANITIZE_NUMBER_INT);
+	$archivespeed = filter_input(INPUT_GET,'speed',FILTER_SANITIZE_NUMBER_INT);
 	$begindate = date('Y-m-d H:i:s',$begindate);
 	$enddate = date('Y-m-d H:i:s',$enddate);
 	$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
@@ -222,7 +223,8 @@ $output = '{';
 						$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
 						$output .= '"altitude": "'.$spotter_item['altitude'].'",';
 						$output .= '"heading": "'.$spotter_item['heading'].'",';
-						$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading']);
+						if (isset($archivespeed)) $nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],$archivespeed);
+						else $nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading']);
 						$output .= '"nextlatitude": "'.$nextcoord['latitude'].'",';
 						$output .= '"nextlongitude": "'.$nextcoord['longitude'].'",';
 						$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';

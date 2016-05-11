@@ -4,7 +4,8 @@ require_once('../require/class.Language.php');
 ?>
 <?php
 	if (isset($_GET['archive'])) {
-		$archiveupdatetime = 10;
+		//$archiveupdatetime = 50;
+		$archiveupdatetime = $globalMapRefresh;
 		date_default_timezone_set('UTC');
 		$archivespeed = $_GET['archivespeed'];
 		$begindate = $_GET['begindate'];
@@ -573,7 +574,7 @@ function getLiveData(click)
 <?php
 	} elseif (isset($_GET['archive'])) {
 ?>
-            url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate,
+            url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
 <?php
 	} else {
 ?>
@@ -647,7 +648,7 @@ function getLiveData(click)
 <?php
 		} else {
 ?>
-		    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+20000; ?>+feature.properties.sqltime*1000);
+		    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*1000; else print $globalMapRefresh*1000+20000; ?>+feature.properties.sqltime*1000);
 		    return new L.Marker.movingMarker([latLng, feature.properties.nextlatlon],[movingtime],{
 <?php
 		}
@@ -692,7 +693,7 @@ function getLiveData(click)
 <?php
 		} else {
 ?>
-			    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+20000; ?>+feature.properties.sqltime*1000);
+			    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*1000; else print $globalMapRefresh*1000+20000; ?>+feature.properties.sqltime*1000);
 			    return new L.Marker.movingMarker([latLng, feature.properties.nextlatlon],[movingtime],{
 <?php
 		}
@@ -736,7 +737,7 @@ function getLiveData(click)
 <?php
 		} else {
 ?>
-			    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+20000; ?>+feature.properties.sqltime*1000);
+			    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*1000; else print $globalMapRefresh*1000+20000; ?>+feature.properties.sqltime*1000);
 			    return new L.Marker.movingMarker([latLng, feature.properties.nextlatlon],[movingtime],{
 <?php
 		}
