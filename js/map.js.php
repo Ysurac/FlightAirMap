@@ -1,9 +1,12 @@
-<?php require_once('../require/settings.php'); ?>
-<?php require_once('../require/class.Language.php'); ?>
+<?php 
+require_once('../require/settings.php');
+require_once('../require/class.Language.php'); 
+?>
 <?php
 	if (isset($_GET['archive'])) {
 		$archiveupdatetime = 10;
 		date_default_timezone_set('UTC');
+		$archivespeed = $_GET['archivespeed'];
 		$begindate = $_GET['begindate'];
 		//$lastupd = round(($_GET['enddate']-$_GET['begindate'])/(($_GET['during']*60)/10));
 		//$lastupd = 20;
@@ -13,11 +16,13 @@
 		setcookie("archive_begin",$begindate);
 		setcookie("archive_end",$enddate);
 		setcookie("archive_update",$lastupd);
+		setcookie("archive_speed",$archivespeed);
 ?>
 
 document.cookie =  'archive_begin=<?php print $begindate; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
 document.cookie =  'archive_end=<?php print $enddate; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
 document.cookie =  'archive_update=<?php print $lastupd; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+document.cookie =  'archive_speed=<?php print $archivespeed; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
 <?php
 	}
 ?>
@@ -461,7 +466,8 @@ $( document ).ready(function() {
 	};
 	archive.update = function (props) {
 		if (typeof props != 'undefined') {
-			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><i class="fa fa-fast-backward" aria-hidden="true"></i> <i class="fa fa-backward" aria-hidden="true"></i>  <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>  <i class="fa fa-forward" aria-hidden="true"></i> <i class="fa fa-fast-forward" aria-hidden="true"></i>';
+			//this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><i class="fa fa-fast-backward" aria-hidden="true"></i> <i class="fa fa-backward" aria-hidden="true"></i>  <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>  <i class="fa fa-forward" aria-hidden="true"></i> <i class="fa fa-fast-forward" aria-hidden="true"></i>';
+			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>';
 		} else {
 			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i></b>';
 		}
@@ -641,7 +647,7 @@ function getLiveData(click)
 <?php
 		} else {
 ?>
-		    var movingtime = Math.round(<?php print $globalMapRefresh*1000; ?>+feature.properties.sqltime*1000+10000);
+		    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+10000; ?>+feature.properties.sqltime*1000);
 		    return new L.Marker.movingMarker([latLng, feature.properties.nextlatlon],[movingtime],{
 <?php
 		}
@@ -685,7 +691,7 @@ function getLiveData(click)
 <?php
 		} else {
 ?>
-			    var movingtime = Math.round(<?php print $globalMapRefresh*1000; ?>+feature.properties.sqltime*1000+10000);
+			    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+10000; ?>+feature.properties.sqltime*1000);
 			    return new L.Marker.movingMarker([latLng, feature.properties.nextlatlon],[movingtime],{
 <?php
 		}
@@ -728,7 +734,7 @@ function getLiveData(click)
 <?php
 		} else {
 ?>
-			    var movingtime = Math.round(<?php print $globalMapRefresh*1000; ?>+feature.properties.sqltime*1000+10000);
+			    var movingtime = Math.round(<?php if (isset($archiveupdatetime)) print $archiveupdatetime*$archivespeed*1000; else print $globalMapRefresh*1000+10000; ?>+feature.properties.sqltime*1000);
 			    return new L.Marker.movingMarker([latLng, feature.properties.nextlatlon],[movingtime],{
 <?php
 		}
@@ -1046,7 +1052,7 @@ function getLiveData(click)
 }
 
 
-  //load the function on startup
+ //load the function on startup
 getLiveData(0);
 
 
@@ -1055,7 +1061,7 @@ getLiveData(0);
 ?>
 //then load it again every 30 seconds
 //  var reload = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
-reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php print $archiveupdatetime; ?>*1000);
+reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php print $archiveupdatetime*1000; ?>);
 <?php
 	} else {
 ?>
