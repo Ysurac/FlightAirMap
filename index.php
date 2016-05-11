@@ -97,8 +97,8 @@ require_once('header.php');
 
 		    <li><?php echo _("Playback speed:"); ?>
 			<div class="range">
-			    <input type="range" min="0" max="50" step="1" name="archivespeed" value="1">
-			    <output id="archivespeedrange"></output>
+			    <input type="range" min="0" max="50" step="1" name="archivespeed" onChange="archivespeedrange.value=value;" value="<?php  if (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?>">
+			    <output id="archivespeedrange"><?php  if (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?></output>
 			</div>
 		    </li>
 

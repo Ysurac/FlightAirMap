@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
+require_once('require/class.Language.php');
 $Stats = new Stats();
 $title = _("Statistics").' - '._("Busiest Month of Last Year");
 require_once('header.php');
