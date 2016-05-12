@@ -737,7 +737,7 @@ class SpotterArchive {
 		    WHERE c.iso2 = s.over_country ";
                 if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
                 if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
-	$query .= "GROUP BY c.name ORDER BY nb DESC";
+	$query .= "GROUP BY c.name, c.iso3, c.iso2 ORDER BY nb DESC";
 	if ($limit) $query .= " LIMIT 0,10";
       
 	

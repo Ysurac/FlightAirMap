@@ -289,9 +289,9 @@ class Common {
 		return $result;
 	}
 
-	function nextcoord($latitude, $longitude, $speed, $heading){
+	function nextcoord($latitude, $longitude, $speed, $heading, $archivespeed = 1){
 		global $globalMapRefresh;
-		$distance = ($speed*0.514444*$globalMapRefresh)/1000;
+		$distance = ($speed*0.514444*$globalMapRefresh*$archivespeed)/1000;
 		$r = 6378;
 		$latitude = deg2rad($latitude);
 		$longitude = deg2rad($longitude);

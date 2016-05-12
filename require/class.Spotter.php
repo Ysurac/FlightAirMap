@@ -2560,11 +2560,11 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 		if ($airport_icao == '') {
-			$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao <> 'NA' GROUP BY departure_airport_icao, day(date) ORDER BY departure_airport_count DESC";
+			$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao <> 'NA' GROUP BY departure_airport_icao, day(date),spotter_output.date, departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset));
 		} else {
-			$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao = :airport_icao GROUP BY departure_airport_icao, day(date) ORDER BY departure_airport_count DESC";
+			$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao = :airport_icao GROUP BY departure_airport_icao, day(date), spotter_output.date, departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
 		}
@@ -2584,11 +2584,11 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 		if ($airport_icao == '') {
-			$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' GROUP BY arrival_airport_icao, day(date) ORDER BY arrival_airport_count DESC";
+			$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' GROUP BY arrival_airport_icao, day(date), spotter_output.date, arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset));
 		} else {
-			$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao = :airport_icao GROUP BY arrival_airport_icao, day(date) ORDER BY arrival_airport_count DESC";
+			$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao = :airport_icao GROUP BY arrival_airport_icao, day(date), spotter_output.date,arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
 		}
@@ -3791,7 +3791,7 @@ class Spotter{
                     WHERE spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' ";
                 if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
                 if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
-                $query .= "GROUP BY spotter_output.aircraft_icao ORDER BY aircraft_icao_count DESC";
+                $query .= "GROUP BY spotter_output.aircraft_icao, spotter_output.aircraft_name ORDER BY aircraft_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
@@ -4718,7 +4718,7 @@ class Spotter{
                     WHERE spotter_output.registration <> '' AND spotter_output.registration <> 'NA' ";
 		if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
 		if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
-                $query .= "GROUP BY spotter_output.registration ORDER BY aircraft_registration_count DESC";
+                $query .= "GROUP BY spotter_output.registration, spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.airline_name ORDER BY aircraft_registration_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
 		
 		$sth = $this->db->prepare($query);
@@ -6556,7 +6556,7 @@ class Spotter{
                     WHERE spotter_output.ident <> ''  ";
 		 if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
                 if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
-		$query .= "GROUP BY spotter_output.ident ORDER BY callsign_icao_count DESC";
+		$query .= "GROUP BY spotter_output.ident, spotter_output.airline_name, spotter_output.airline_icao ORDER BY callsign_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       		
 		$sth = $this->db->prepare($query);

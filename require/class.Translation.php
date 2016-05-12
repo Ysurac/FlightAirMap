@@ -90,7 +90,8 @@ class Translation {
     	    if ($correct != '' && $correct != $ident) {
     		//echo "Found in DB !\n";
     		 return $correct;
-    	    } elseif ($web && $globalTranslationFetch) {
+    	    } /*
+    	    elseif ($web && $globalTranslationFetch) {
     		if (! is_numeric(substr($ident,-4))) {
     		    if (count($globalTranslationSources) > 0) {
     			$correct = $this->fromPlanefinder($ident);
@@ -105,10 +106,11 @@ class Translation {
     		    }
     		}
     	    }
+    	    */
     	    return $this->ident2icao($ident);
         }
 
-    
+/*  
     function fromPlanefinder($icao) {
 	$url = 'http://planefinder.net/data/endpoints/search_ajax.php?searchText='.$icao;
 	$Common = new Common();
@@ -117,6 +119,7 @@ class Translation {
 	if (isset($parsed_json->flights[0]->title) && isset($parsed_json->flights[0]->subtitle) && $parsed_json->flights[0]->subtitle == $icao) return $parsed_json->flights[0]->title;
 	else return '';
     }
+*/
 }
 //echo Translation->checkTranslation('EZY268X');
 //Translation->fromPlanefinder('EZY268X');
