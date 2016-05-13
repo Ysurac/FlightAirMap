@@ -287,7 +287,7 @@ class Stats {
 	public function countAllMonthsLastYear($limit = true) {
 		if ($limit) $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 MONTH)";
 		else $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth'";
-		$query_data = array(':offset' => $offset);
+		$query_data = array();
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_data);
@@ -352,10 +352,9 @@ class Stats {
 	}
 	public function countAllMonths() {
 	    	$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth'";
-		$query_data = array(':offset' => $offset);
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute($query_data);
+                        $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
@@ -368,10 +367,9 @@ class Stats {
 	}
 	public function countAllMilitaryMonths() {
 	    	$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'military_flights_bymonth'";
-		$query_data = array(':offset' => $offset);
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute($query_data);
+                        $sth->execute();
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
