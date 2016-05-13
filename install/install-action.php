@@ -101,8 +101,13 @@ if (isset($_GET['reset'])) {
 	$error .= update_db::update_waypoints();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate waypoints database'));
 
-	$_SESSION['install'] = 'airspace';
-	$_SESSION['next'] = 'Populate airspace table';
+	if ($globalDBdriver == 'mysql') {
+		$_SESSION['install'] = 'airspace';
+		$_SESSION['next'] = 'Populate airspace table';
+	} else {
+		$_SESSION['install'] = 'countries';
+		$_SESSION['next'] = 'Populate countries table';
+	}
 	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	print json_encode($result);
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'airspace') {

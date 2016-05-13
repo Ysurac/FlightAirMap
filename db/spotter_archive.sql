@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS `spotter_archive` (
+DROP TABLE IF EXISTS `spotter_archive`;
+CREATE TABLE `spotter_archive` (
   `spotter_archive_id` int(11)  NULL,
   `flightaware_id` varchar(25) NOT NULL,
   `ident` varchar(25) NOT NULL,

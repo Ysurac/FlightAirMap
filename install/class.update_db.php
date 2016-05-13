@@ -977,7 +977,7 @@ class update_db {
 					}
 					//print_r($data);
 					if (count($data) > 9) {
-						$query = 'INSERT INTO `waypoints` (`name_begin`,`latitude_begin`,`longitude_begin`,`name_end`,`latitude_end`,`longitude_end`,`high`,`base`,`top`,`segment_name`) VALUES (:name_begin, :latitude_begin, :longitude_begin, :name_end, :latitude_end, :longitude_end, :high, :base, :top, :segment_name)';
+						$query = 'INSERT INTO waypoints (name_begin,latitude_begin,longitude_begin,name_end,latitude_end,longitude_end,high,base,top,segment_name) VALUES (:name_begin, :latitude_begin, :longitude_begin, :name_end, :latitude_end, :longitude_end, :high, :base, :top, :segment_name)';
 						try {
 							$sth = $Connection->db->prepare($query);
 							$sth->execute(array(':name_begin' => $data[0],':latitude_begin' => $data[1],':longitude_begin' => $data[2],':name_end' => $data[3], ':latitude_end' => $data[4], ':longitude_end' => $data[5], ':high' => $data[6], ':base' => $data[7], ':top' => $data[8], ':segment_name' => $data[9]));
@@ -1045,9 +1045,13 @@ class update_db {
 	}
 	
 	public static function update_countries() {
-		global $tmp_dir;
+		global $tmp_dir, $globalDBdriver;
 		include_once('class.create_db.php');
-		update_db::gunzip('../db/countries.sql.gz',$tmp_dir.'countries.sql');
+		if ($globalDBdriver == 'mysql') {
+			update_db::gunzip('../db/countries.sql.gz',$tmp_dir.'countries.sql');
+		} else {
+			update_db::gunzip('../db/pgsql/countries.sql.gz',$tmp_dir.'countries.sql');
+		}
 		$error = create_db::import_file($tmp_dir.'countries.sql');
 		return $error;
 	}

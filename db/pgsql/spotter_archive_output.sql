@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS spotter_archive_output (
   date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   latitude float NOT NULL,
   longitude float NOT NULL,
-  waypoints longtext NOT NULL,
+  waypoints text NOT NULL,
   altitude integer NOT NULL,
   heading integer NOT NULL,
   ground_speed integer DEFAULT NULL,

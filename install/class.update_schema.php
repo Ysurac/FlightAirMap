@@ -683,6 +683,30 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_21() {
+    		$Connection = new Connection();
+		$error = '';
+		// Rename type to stats_type
+		$query = "ALTER TABLE `stats_airport` CHANGE `type` `stats_type` VARCHAR(50);ALTER TABLE `stats` CHANGE `type` `stats_type` VARCHAR(50);ALTER TABLE `stats_flight` CHANGE `type` `stats_type` VARCHAR(50);";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (rename type to stats_type on stats*) : ".$e->getMessage()."\n";
+    		}
+		if ($error != '') return $error;
+		$query = "UPDATE `config` SET `value` = '22' WHERE `name` = 'schema_version'";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
+
+
     	public static function check_version($update = false) {
     	    global $globalDBname;
     	    $version = 0;
@@ -777,6 +801,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '20') {
     			    $error = self::update_from_20();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '21') {
+    			    $error = self::update_from_21();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

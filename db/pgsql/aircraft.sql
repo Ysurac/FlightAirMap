@@ -1,4 +1,4 @@
-DROP TABLE aircraft;
+DROP TABLE IF EXISTS aircraft;
 CREATE TABLE aircraft (
   aircraft_id serial,
   icao varchar(999) NOT NULL,
@@ -2616,5 +2616,4 @@ INSERT INTO aircraft (aircraft_id, icao, type, manufacturer, official_page, airc
 (2603, 'EDGE', 'Edge 540', 'ZIVKO', '', 'generic_P1L.png', 'Landplane', 'Piston', 1, 'L'),
 (2604, 'EDGT', 'Edge 540 T', 'ZIVKO', '', 'generic_P1L.png', 'Landplane', 'Piston', 1, 'L');
 
-ALTER TABLE aircraft
-  ADD PRIMARY KEY (aircraft_id), ADD UNIQUE KEY icao (icao);
+ALTER TABLE aircraft ADD PRIMARY KEY (aircraft_id), ADD UNIQUE (icao);

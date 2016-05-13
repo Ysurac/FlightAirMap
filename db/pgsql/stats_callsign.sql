@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS stats_callsign (
   airline_icao varchar(10) DEFAULT NULL
 );
 
-ALTER TABLE stats_callsign ADD PRIMARY KEY (stats_callsign_id), ADD UNIQUE KEY callsign_icao (callsign_icao);
+ALTER TABLE stats_callsign ADD PRIMARY KEY (stats_callsign_id), ADD UNIQUE (callsign_icao);
 

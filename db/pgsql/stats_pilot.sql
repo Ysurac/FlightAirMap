@@ -6,4 +6,4 @@ CREATE TABLE stats_pilot (
 );
 
 ALTER TABLE stats_pilot
-  ADD PRIMARY KEY (stats_pilot_id), ADD UNIQUE KEY pilot_id (pilot_id);
+  ADD PRIMARY KEY (stats_pilot_id), ADD UNIQUE (pilot_id);

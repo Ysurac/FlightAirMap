@@ -6,4 +6,4 @@ CREATE TABLE stats_aircraft (
 );
 
 ALTER TABLE stats_aircraft
-  ADD PRIMARY KEY (stats_aircraft_id), ADD UNIQUE KEY aircraft_icao (aircraft_icao);
+  ADD PRIMARY KEY (stats_aircraft_id), ADD UNIQUE (aircraft_icao);

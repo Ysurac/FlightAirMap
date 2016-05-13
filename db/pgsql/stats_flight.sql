@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS stats_flight (
   stats_flight_id serial,
-  type varchar(255) NOT NULL,
+  stats_type varchar(255) NOT NULL,
   cnt integer NOT NULL,
   flight_date varchar(255) NOT NULL
 );

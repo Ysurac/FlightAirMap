@@ -4,7 +4,7 @@ require_once(dirname(__FILE__).'/settings.php');
 class Connection{
 	public $db = null;
 	public $dbs = array();
-	public $latest_schema = 21;
+	public $latest_schema = 22;
 	
 	public function __construct($dbc = null,$dbname = null) {
 	    global $globalDBdriver;
@@ -64,18 +64,34 @@ class Connection{
 		$i = 0;
 		while (true) {
 			try {
-				$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;port=$globalDBSport;dbname=$globalDBSname;charset=utf8", $globalDBSuser,  $globalDBSpass);
-				$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
-				$this->dbs[$DBname]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$this->dbs[$DBname]->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
-				if (!isset($globalDBTimeOut)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,200);
-				else $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
-				if (!isset($globalDBPersistent)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
-				else $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,$globalDBPersistent);
-				$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
-				$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-				// FIXME : Workaround against "ONLY_FULL_GROUP_BY" mode
-				$this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"');
+				if ($globalDBSdriver == 'mysql') {
+					$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;port=$globalDBSport;dbname=$globalDBSname;charset=utf8", $globalDBSuser,  $globalDBSpass);
+					$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
+					$this->dbs[$DBname]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+					$this->dbs[$DBname]->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
+					if (!isset($globalDBTimeOut)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,200);
+					else $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
+					if (!isset($globalDBPersistent)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
+					else $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,$globalDBPersistent);
+					$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+					$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+					// FIXME : Workaround against "ONLY_FULL_GROUP_BY" mode
+					//$this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY"');
+					$this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"');
+				} else {
+					$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;port=$globalDBSport;dbname=$globalDBSname;options='--client_encoding=utf8'", $globalDBSuser,  $globalDBSpass);
+					//$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
+					$this->dbs[$DBname]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+					$this->dbs[$DBname]->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
+					if (!isset($globalDBTimeOut)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,200);
+					else $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
+					if (!isset($globalDBPersistent)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
+					else $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,$globalDBPersistent);
+					$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+					//$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+					// FIXME : Workaround against "ONLY_FULL_GROUP_BY" mode
+					//$this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY"');
+				}
 				break;
 			} catch(PDOException $e) {
 				$i++;

@@ -7,5 +7,4 @@ CREATE TABLE taf (
 );
 
 
-ALTER TABLE taf
-  ADD PRIMARY KEY (taf_id), ADD UNIQUE KEY location (taf_location);
+ALTER TABLE taf ADD PRIMARY KEY (taf_id), ADD UNIQUE (taf_location);

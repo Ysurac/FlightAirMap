@@ -7,6 +7,5 @@ CREATE TABLE metar (
 );
 
 
-ALTER TABLE metar
-  ADD PRIMARY KEY (metar_id), ADD UNIQUE KEY location (metar_location);
+ALTER TABLE metar ADD PRIMARY KEY (metar_id), ADD UNIQUE (metar_location);
 

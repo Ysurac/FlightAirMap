@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS stats_registration (
   aircraft_icao varchar(10) DEFAULT NULL
 );
 
-ALTER TABLE stats_registration ADD PRIMARY KEY (stats_registration_id), ADD UNIQUE KEY registration (registration);
+ALTER TABLE stats_registration ADD PRIMARY KEY (stats_registration_id), ADD UNIQUE (registration);
 

@@ -31,7 +31,6 @@ if (!isset($_GET['date'])){
 	$page_url = $globalURL.'/date/'.$_GET['date'];
 	
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-	
 	if (isset($_GET['sort'])) 
 	{
 		$spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],$limit_start.",".$absolute_difference, $sort);

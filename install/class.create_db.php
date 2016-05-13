@@ -59,8 +59,8 @@ class create_db {
 				$dbh->exec('CREATE DATABASE IF NOT EXISTS `'.$db.'`;GRANT ALL ON `'.$db."`.* TO '".$user."'@'".$grantright."' IDENTIFIED BY '".$password."';FLUSH PRIVILEGES;");
 				if ($grantright == 'localhost') $dbh->exec('GRANT ALL ON `'.$db."`.* TO '".$user."'@'127.0.0.1' IDENTIFIED BY '".$password."';FLUSH PRIVILEGES;");
 			} else if ($db_type == 'pgsql') {
-				$dbh->exec("CREATE DATABASE ".$db.";
-					CREATE USER ".$user." WITH PASSWORD '".$password."';
+				$dbh->exec("CREATE DATABASE ".$db.";");
+				$dbh->exec("CREATE USER ".$user." WITH PASSWORD '".$password."';
 					GRANT ALL PRIVILEGES ON DATABASE ".$db." TO ".$user.";");
 			}
 		} catch(PDOException $e) {

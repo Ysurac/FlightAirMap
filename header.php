@@ -21,11 +21,11 @@ date_default_timezone_set($globalTimezone);
   <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
   <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.5-dist/css/bootstrap.min.css">
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui.min.css">
-<!--<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui-timepicker-addon.min.css">-->
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-datetimepicker.min.css">  
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet">
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.5-dist/css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui.min.css" />
+<!--<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui-timepicker-addon.min.css" />-->
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-datetimepicker.min.css" />  
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/font-awesome-4.5.0/css/font-awesome.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css" />

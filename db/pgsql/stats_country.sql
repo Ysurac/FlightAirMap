@@ -6,4 +6,4 @@ CREATE TABLE IF NOT EXISTS stats_country (
   name varchar(255) DEFAULT NULL
 );
 
-ALTER TABLE stats_country ADD PRIMARY KEY (stats_country_id), ADD UNIQUE KEY iso2 (iso2);
+ALTER TABLE stats_country ADD PRIMARY KEY (stats_country_id), ADD UNIQUE (iso2);

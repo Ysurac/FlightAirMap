@@ -122,8 +122,8 @@ class Stats {
 	}
 
 	public function countAllArrivalCountries($limit = true) {
-		if ($limit) $query = "SELECT airport_country AS arrival_airport_country, arrival as airport_arrival_country_count FROM stats_airport WHERE type = 'yearly' LIMIT 0,10";
-		else $query = "SELECT airport_country AS arrival_airport_country, arrival as airport_arrival_country_count FROM stats_airport WHERE type = 'yearly'";
+		if ($limit) $query = "SELECT airport_country AS arrival_airport_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 0,10";
+		else $query = "SELECT airport_country AS arrival_airport_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly'";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -138,8 +138,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllDepartureCountries($limit = true) {
-		if ($limit) $query = "SELECT airport_country AS departure_airport_country, departure as airport_departure_country_count FROM stats_airport WHERE type = 'yearly' LIMIT 0,10";
-		else $query = "SELECT airport_country AS departure_airport_country, departure as airport_departure_country_count FROM stats_airport WHERE type = 'yearly'";
+		if ($limit) $query = "SELECT airport_country AS departure_airport_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 0,10";
+		else $query = "SELECT airport_country AS departure_airport_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly'";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -171,8 +171,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllAircraftRegistrations($limit = true) {
-		if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC";
+		if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.stats_type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.stats_type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -253,8 +253,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllDepartureAirports($limit = true) {
-		if ($limit) $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE type = 'yearly' LIMIT 0,10";
-		else $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE type = 'yearly'";
+		if ($limit) $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 0,10";
+		else $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly'";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -269,8 +269,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllArrivalAirports($limit = true) {
-		if ($limit) $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE type = 'yearly' LIMIT 0,10";
-		else $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE type = 'yearly'";
+		if ($limit) $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 0,10";
+		else $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly'";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -285,14 +285,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllMonthsLastYear($limit = true) {
-		global $globalTimezone;
-		if ($globalTimezone != '') {
-			date_default_timezone_set($globalTimezone);
-			$datetime = new DateTime();
-			$offset = $datetime->format('P');
-		} else $offset = '+00:00';
-		if ($limit) $query = "SELECT MONTH(CONVERT_TZ(stats_date,'+00:00',:offset)) as month_name, YEAR(CONVERT_TZ(stats_date,'+00:00',:offset)) as year_name, cnt as date_count FROM stats WHERE type = 'flights_bymonth' AND stats_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 MONTH)";
-		else $query = "SELECT MONTH(CONVERT_TZ(stats_date,'+00:00',:offset)) as month_name, YEAR(CONVERT_TZ(stats_date,'+00:00',:offset)) as year_name, cnt as date_count FROM stats WHERE type = 'flights_bymonth'";
+		if ($limit) $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 MONTH)";
+		else $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth'";
 		$query_data = array(':offset' => $offset);
                  try {
                         $sth = $this->db->prepare($query);
@@ -309,7 +303,7 @@ class Stats {
 	}
 	
 	public function countAllDatesLastMonth() {
-		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE type = 'month'";
+		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month'";
 		$query_data = array();
                  try {
                         $sth = $this->db->prepare($query);
@@ -325,7 +319,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllDatesLast7Days() {
-		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE type = 'month' AND flight_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY)";
+		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY)";
 		$query_data = array();
                  try {
                         $sth = $this->db->prepare($query);
@@ -341,7 +335,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllDates() {
-		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE type = 'date'";
+		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'date'";
 		$query_data = array();
                  try {
                         $sth = $this->db->prepare($query);
@@ -357,13 +351,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllMonths() {
-		global $globalTimezone;
-		if ($globalTimezone != '') {
-			date_default_timezone_set($globalTimezone);
-			$datetime = new DateTime();
-			$offset = $datetime->format('P');
-		} else $offset = '+00:00';
-	    	$query = "SELECT YEAR(CONVERT_TZ(stats_date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(stats_date,'+00:00', :offset)) AS month_name, cnt as date_count FROM stats WHERE type = 'flights_bymonth'";
+	    	$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth'";
 		$query_data = array(':offset' => $offset);
                  try {
                         $sth = $this->db->prepare($query);
@@ -379,13 +367,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllMilitaryMonths() {
-		global $globalTimezone;
-		if ($globalTimezone != '') {
-			date_default_timezone_set($globalTimezone);
-			$datetime = new DateTime();
-			$offset = $datetime->format('P');
-		} else $offset = '+00:00';
-	    	$query = "SELECT YEAR(CONVERT_TZ(stats_date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(stats_date,'+00:00', :offset)) AS month_name, cnt as date_count FROM stats WHERE type = 'military_flights_bymonth'";
+	    	$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'military_flights_bymonth'";
 		$query_data = array(':offset' => $offset);
                  try {
                         $sth = $this->db->prepare($query);
@@ -407,8 +389,8 @@ class Stats {
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
-		if ($limit) $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE type = 'hour'";
-		else $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE type = 'hour'";
+		if ($limit) $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour'";
+		else $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour'";
 		if ($orderby == 'hour') $query .= " ORDER BY CAST(hour_name AS integer) ASC";
 		if ($orderby == 'count') $query .= " ORDER BY hour_count DESC";
 		$query_data = array(':offset' => $offset);
@@ -484,7 +466,7 @@ class Stats {
 	}
 
 	public function getLast7DaysAirports($airport_icao = '') {
-		$query = "SELECT * FROM stats_airport WHERE type = 'daily' AND airport_icao = :airport_icao ORDER BY date";
+		$query = "SELECT * FROM stats_airport WHERE stats_type = 'daily' AND airport_icao = :airport_icao ORDER BY date";
 		$query_values = array(':airport_icao' => $airport_icao);
                  try {
                         $sth = $this->db->prepare($query);
@@ -496,7 +478,7 @@ class Stats {
                 return $all;
 	}
 	public function getStats($type) {
-                $query = "SELECT * FROM stats WHERE type = :type ORDER BY stat_date";
+                $query = "SELECT * FROM stats WHERE stats_type = :type ORDER BY stat_date";
                 $query_values = array(':type' => $type);
                  try {
                         $sth = $this->db->prepare($query);
@@ -509,7 +491,7 @@ class Stats {
         }
 	public function getSumStats($type,$year) {
     		global $globalArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats WHERE type = :type AND YEAR(stats_date) = :year";
+                $query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year";
                 $query_values = array(':type' => $type, ':year' => $year);
                  try {
                         $sth = $this->db->prepare($query);
@@ -522,7 +504,7 @@ class Stats {
         }
 	public function getStatsTotal($type) {
     		global $globalArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats WHERE type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
+                $query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
                 $query_values = array(':type' => $type);
                  try {
                         $sth = $this->db->prepare($query);
@@ -583,7 +565,7 @@ class Stats {
         }
 
 	public function addStat($type,$cnt,$stats_date) {
-                $query = "INSERT INTO stats (type,cnt,stats_date) VALUES (:type,:cnt,:stats_date) ON DUPLICATE KEY UPDATE cnt = :cnt";
+                $query = "INSERT INTO stats (stats_type,cnt,stats_date) VALUES (:type,:cnt,:stats_date) ON DUPLICATE KEY UPDATE cnt = :cnt";
                 $query_values = array(':type' => $type,':cnt' => $cnt,':stats_date' => $stats_date);
                  try {
                         $sth = $this->db->prepare($query);
@@ -593,7 +575,7 @@ class Stats {
                 }
         }
 	public function updateStat($type,$cnt,$stats_date) {
-                $query = "INSERT INTO stats (type,cnt,stats_date) VALUES (:type,:cnt,:stats_date) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, stats_date = :date";
+                $query = "INSERT INTO stats (stats_type,cnt,stats_date) VALUES (:type,:cnt,:stats_date) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, stats_date = :date";
                 $query_values = array(':type' => $type,':cnt' => $cnt,':stats_date' => $stats_date);
                  try {
                         $sth = $this->db->prepare($query);
@@ -603,7 +585,7 @@ class Stats {
                 }
         }
 	public function addStatFlight($type,$date_name,$cnt) {
-                $query = "INSERT INTO stats_flight (type,flight_date,cnt) VALUES (:type,:flight_date,:cnt)";
+                $query = "INSERT INTO stats_flight (stats_type,flight_date,cnt) VALUES (:type,:flight_date,:cnt)";
                 $query_values = array(':type' => $type,':flight_date' => $date_name,':cnt' => $cnt);
                  try {
                         $sth = $this->db->prepare($query);
@@ -683,7 +665,7 @@ class Stats {
                 }
         }
 	public function addStatDepartureAirports($airport_icao,$airport_name,$airport_city,$airport_country,$departure) {
-                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date) ON DUPLICATE KEY UPDATE departure = departure+:departure";
+                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date) ON DUPLICATE KEY UPDATE departure = departure+:departure";
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => date('Y').'-01-01 00:00:00');
                  try {
                         $sth = $this->db->prepare($query);
@@ -693,7 +675,7 @@ class Stats {
                 }
         }
 	public function addStatDepartureAirportsDaily($date,$airport_icao,$airport_name,$airport_city,$airport_country,$departure) {
-                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date) ON DUPLICATE KEY UPDATE departure = :departure";
+                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date) ON DUPLICATE KEY UPDATE departure = :departure";
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => $date);
                  try {
                         $sth = $this->db->prepare($query);
@@ -703,7 +685,7 @@ class Stats {
                 }
         }
 	public function addStatArrivalAirports($airport_icao,$airport_name,$airport_city,$airport_country,$arrival) {
-                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date) ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
+                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date) ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival,':date' => date('Y').'-01-01 00:00:00');
                  try {
                         $sth = $this->db->prepare($query);
@@ -713,7 +695,7 @@ class Stats {
                 }
         }
 	public function addStatArrivalAirportsDaily($date,$airport_icao,$airport_name,$airport_city,$airport_country,$arrival) {
-                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date) ON DUPLICATE KEY UPDATE arrival = :arrival";
+                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date) ON DUPLICATE KEY UPDATE arrival = :arrival";
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival, ':date' => $date);
                  try {
                         $sth = $this->db->prepare($query);
@@ -734,7 +716,7 @@ class Stats {
                 }
         }
 	public function deleteStatFlight($type) {
-                $query = "DELETE FROM stats_flight WHERE type = :type";
+                $query = "DELETE FROM stats_flight WHERE stats_type = :type";
                 $query_values = array(':type' => $type);
                  try {
                         $sth = $this->db->prepare($query);
@@ -744,7 +726,7 @@ class Stats {
                 }
         }
 	public function deleteStatAirport($type) {
-                $query = "DELETE FROM stats_airport WHERE type = :type";
+                $query = "DELETE FROM stats_airport WHERE stats_type = :type";
                 $query_values = array(':type' => $type);
                  try {
                         $sth = $this->db->prepare($query);
@@ -768,33 +750,33 @@ class Stats {
 			$lastyear = false;
 			foreach ($alldata as $number) {
 				if ($number['year_name'] != date('Y')) $lastyear = true;
-				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMilitaryMonths();
 			$lastyear = false;
 			foreach ($alldata as $number) {
 				if ($number['year_name'] != date('Y')) $lastyear = true;
-				$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsOwners();
 			foreach ($alldata as $number) {
-				$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsPilots();
 			foreach ($alldata as $number) {
-				$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsAirlines();
 			foreach ($alldata as $number) {
-				$this->addStat('airlines_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('airlines_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsAircrafts();
 			foreach ($alldata as $number) {
-				$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsRealArrivals();
 			foreach ($alldata as $number) {
-				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$this->deleteStatFlight('month');
 			$alldata = $Spotter->countAllDatesLastMonth();
@@ -984,31 +966,31 @@ class Stats {
 			$lastyear = false;
 			foreach ($alldata as $number) {
 				if ($number['year_name'] != date('Y')) $lastyear = true;
-				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMilitaryMonths();
 			foreach ($alldata as $number) {
-				$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsOwners();
 			foreach ($alldata as $number) {
-				$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsPilots();
 			foreach ($alldata as $number) {
-				$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsAirlines();
 			foreach ($alldata as $number) {
-				$this->addStat('airlines_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('airlines_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsAircrafts();
 			foreach ($alldata as $number) {
-				$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMonthsRealArrivals();
 			foreach ($alldata as $number) {
-				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',gmmktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			echo 'Airports data...'."\n";
 			$this->deleteStatAirport('daily');

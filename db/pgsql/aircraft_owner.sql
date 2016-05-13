@@ -7,5 +7,4 @@ CREATE TABLE aircraft_owner (
   Source varchar(255) NOT NULL
 );
 
-ALTER TABLE `aircraft_owner`
-  ADD PRIMARY KEY (`owner_id`);
+ALTER TABLE aircraft_owner ADD PRIMARY KEY (owner_id);

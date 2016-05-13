@@ -5,11 +5,9 @@ CREATE TABLE stats_airport (
   airport_city varchar(255) DEFAULT NULL,
   airport_country varchar(255) DEFAULT NULL,
   departure integer NOT NULL DEFAULT '0',
-  arrival integer NOT NULL DEFAULT '0'
-  type varchar(50) NOT NULL DEFAULT 'yearly',
+  arrival integer NOT NULL DEFAULT '0',
+  stats_type varchar(50) NOT NULL DEFAULT 'yearly',
   date date DEFAULT NULL
 );
 
-ALTER TABLE stats_airport ADD PRIMARY KEY (stats_airport_id), ADD UNIQUE KEY airport_icao (airport_icao,type,date);
-
-ALTER TABLE stats_airport MODIFY stats_airport_id integer NOT NULL AUTO_INCREMENT;
+ALTER TABLE stats_airport ADD PRIMARY KEY (stats_airport_id), ADD UNIQUE (airport_icao,stats_type,date);
