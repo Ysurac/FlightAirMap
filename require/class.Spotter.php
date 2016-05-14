@@ -6119,11 +6119,11 @@ class Spotter{
 	{
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-								FROM spotter_output
+		    FROM spotter_output
                     WHERE spotter_output.ident <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> 'NA'
-                    GROUP BY route
+                    GROUP BY route,spotter_output.departure_airport_icao, spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
                     ORDER BY route_count DESC
-					LIMIT 10 OFFSET 0";
+		    LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -6508,11 +6508,11 @@ class Spotter{
 	public function countAllRoutesWithWaypoints()
 	{
 		$query  = "SELECT DISTINCT spotter_output.waypoints AS route, count(spotter_output.waypoints) AS route_count, spotter_output.spotter_id, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-								FROM spotter_output
+		    FROM spotter_output
                     WHERE spotter_output.ident <> '' AND spotter_output.waypoints <> '' 
-                    GROUP BY route
+                    GROUP BY route, spotter_output.spotter_id, spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
                     ORDER BY route_count DESC
-					LIMIT 10 OFFSET 0";
+		    LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -6589,18 +6589,26 @@ class Spotter{
 	*/
 	public function countAllDates()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS date_name, count(*) as date_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS date_name, count(*) as date_count
 								FROM spotter_output 
 								GROUP BY date_name 
 								ORDER BY date_count DESC
 								LIMIT 10 OFFSET 0";
+		} else {
+			$query  = "SELECT spotter_output.date AT TIME ZONE INTERVAL :offset AS date_name, count(*) as date_count
+								FROM spotter_output 
+								GROUP BY date_name 
+								ORDER BY date_count DESC
+								LIMIT 10 OFFSET 0";
+		}
       
 		
 		$sth = $this->db->prepare($query);

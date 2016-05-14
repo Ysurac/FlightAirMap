@@ -138,7 +138,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllDepartureCountries($limit = true) {
-		if ($limit) $query = "SELECT airport_country AS departure_airport_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 0,10";
+		if ($limit) $query = "SELECT airport_country AS departure_airport_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
 		else $query = "SELECT airport_country AS departure_airport_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly'";
                  try {
                         $sth = $this->db->prepare($query);
