@@ -3252,7 +3252,7 @@ class Spotter{
 					WHERE spotter_output.airline_country <> '' AND spotter_output.aircraft_icao = :aircraft_icao
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
-					LIMIT 0,10";
+					LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -3328,7 +3328,7 @@ class Spotter{
 					WHERE spotter_output.airline_country <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao )
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
-					LIMIT 0,10";
+					LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -3403,7 +3403,7 @@ class Spotter{
 					WHERE spotter_output.airline_country <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
-					LIMIT 0,10";
+					LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -3492,7 +3492,7 @@ class Spotter{
 					WHERE spotter_output.airline_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
-					LIMIT 0,10";
+					LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -3608,7 +3608,7 @@ class Spotter{
 					WHERE spotter_output.airline_country <> '' AND (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao) 
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
-					LIMIT 0,10";
+					LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -3682,7 +3682,7 @@ class Spotter{
 					WHERE spotter_output.airline_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
-					LIMIT 0,10";
+					LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -3718,7 +3718,7 @@ class Spotter{
 					WHERE spotter_output.airline_country <> '' AND spotter_output.airline_country <> 'NA' 
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC";
-		if ($limit) $query .= " LIMIT 0,10";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -3757,7 +3757,7 @@ class Spotter{
                 if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
                 if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
 		$query .= "GROUP BY c.name ORDER BY nb DESC";
-		if ($limit) $query .= " LIMIT 0,10";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -6051,7 +6051,7 @@ class Spotter{
                     WHERE spotter_output.departure_airport_country <> '' AND spotter_output.departure_airport_icao <> 'NA' 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC
-					LIMIT 0,10";
+					LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -6085,7 +6085,7 @@ class Spotter{
                     WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.arrival_airport_icao <> 'NA' 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
-		if ($limit) $query .= " LIMIT 0,10";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -6123,7 +6123,7 @@ class Spotter{
                     WHERE spotter_output.ident <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> 'NA'
                     GROUP BY route
                     ORDER BY route_count DESC
-					LIMIT 0,10";
+					LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -6512,7 +6512,7 @@ class Spotter{
                     WHERE spotter_output.ident <> '' AND spotter_output.waypoints <> '' 
                     GROUP BY route
                     ORDER BY route_count DESC
-					LIMIT 0,10";
+					LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -6600,7 +6600,7 @@ class Spotter{
 								FROM spotter_output 
 								GROUP BY date_name 
 								ORDER BY date_count DESC
-								LIMIT 0,10";
+								LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
@@ -7082,13 +7082,13 @@ class Spotter{
 								FROM spotter_output 
 								GROUP BY hour_name 
 								".$orderby_sql."
-								LIMIT 0,100";
+								LIMIT 10 OFFSET 00";
 
 /*		$query  = "SELECT HOUR(spotter_output.date) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								GROUP BY hour_name 
 								".$orderby_sql."
-								LIMIT 0,100";
+								LIMIT 10 OFFSET 00";
   */    
 		$query_data = array(':offset' => $offset);
 		} elseif ($globalDBdriver == 'pgsql') {

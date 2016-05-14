@@ -28,7 +28,7 @@ foreach($aircraft_array as $aircraft_item)
 }
 $aircraft_data = substr($aircraft_data, 0, -1);
 print $aircraft_data;
-rint ']);
+print ']);
     
             var options = {
             	chartArea: {"width": "80%", "height": "60%"},

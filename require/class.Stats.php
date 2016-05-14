@@ -88,7 +88,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllAirlineCountries($limit = true) {
-		if ($limit) $query = "SELECT airlines.country AS airline_country, stats_airline.cnt as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao LIMIT 0,10";
+		if ($limit) $query = "SELECT airlines.country AS airline_country, stats_airline.cnt as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao LIMIT 10 OFFSET 0";
 		else $query = "SELECT airlines.country AS airline_country, stats_airline.cnt as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao";
                  try {
                         $sth = $this->db->prepare($query);
@@ -105,8 +105,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllAircraftManufacturers($limit = true) {
-		if ($limit) $query = "SELECT aircraft.manufacturer AS aircraft_manufacturer, stats_aircraft.cnt as aircraft_manufacturer_count FROM stats_aircraft,aircraft WHERE stats_aircraft.aircraft_icao=aircraft.icao GROUP BY aircraft.manufacturer LIMIT 0,10";
-		else $query = "SELECT aircraft.manufacturer AS aircraft_manufacturer, stats_aircraft.cnt as aircraft_manufacturer_count FROM stats_aircraft,aircraft WHERE stats_aircraft.aircraft_icao=aircraft.icao GROUP BY aircraft.manufacturer";
+		if ($limit) $query = "SELECT aircraft.manufacturer AS aircraft_manufacturer, stats_aircraft.cnt as aircraft_manufacturer_count FROM stats_aircraft,aircraft WHERE stats_aircraft.aircraft_icao=aircraft.icao GROUP BY aircraft.manufacturer, stats_aircraft.cnt LIMIT 10 OFFSET 0";
+		else $query = "SELECT aircraft.manufacturer AS aircraft_manufacturer, stats_aircraft.cnt as aircraft_manufacturer_count FROM stats_aircraft,aircraft WHERE stats_aircraft.aircraft_icao=aircraft.icao GROUP BY aircraft.manufacturer, stats_aircraft.cnt";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -122,7 +122,7 @@ class Stats {
 	}
 
 	public function countAllArrivalCountries($limit = true) {
-		if ($limit) $query = "SELECT airport_country AS arrival_airport_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 0,10";
+		if ($limit) $query = "SELECT airport_country AS arrival_airport_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
 		else $query = "SELECT airport_country AS arrival_airport_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly'";
                  try {
                         $sth = $this->db->prepare($query);
@@ -171,8 +171,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllAircraftRegistrations($limit = true) {
-		if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.stats_type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.stats_type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC";
+		if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -221,7 +221,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllPilots($limit = true) {
-		if ($limit) $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot ORDER BY pilot_count DESC LIMIT 0,10";
+		if ($limit) $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot ORDER BY pilot_count DESC LIMIT 10 OFFSET 0";
 		else $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot ORDER BY pilot_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
@@ -237,7 +237,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllOwners($limit = true) {
-		if ($limit) $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner ORDER BY owner_count DESC LIMIT 0,10";
+		if ($limit) $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner ORDER BY owner_count DESC LIMIT 10 OFFSET 0";
 		else $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner ORDER BY owner_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
@@ -253,7 +253,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllDepartureAirports($limit = true) {
-		if ($limit) $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 0,10";
+		if ($limit) $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
 		else $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly'";
                  try {
                         $sth = $this->db->prepare($query);
@@ -269,7 +269,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllArrivalAirports($limit = true) {
-		if ($limit) $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 0,10";
+		if ($limit) $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
 		else $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly'";
                  try {
                         $sth = $this->db->prepare($query);
