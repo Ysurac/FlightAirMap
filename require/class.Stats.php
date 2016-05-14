@@ -488,8 +488,12 @@ class Stats {
                 return $all;
         }
 	public function getSumStats($type,$year) {
-    		global $globalArchiveMonths;
-                $query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year";
+    		global $globalArchiveMonths, $globalDBdriver;
+    		if ($globalDBdriver == 'mysql') {
+	                $query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year";
+	        } else {
+            		$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND EXTRACT(YEAR FROM stats_date) = :year";
+                }
                 $query_values = array(':type' => $type, ':year' => $year);
                  try {
                         $sth = $this->db->prepare($query);

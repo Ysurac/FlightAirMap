@@ -6645,13 +6645,12 @@ class Spotter{
 								ORDER BY spotter_output.date ASC";
 			$query_data = array(':offset' => $offset);
 		} elseif ($globalDBdriver == 'pgsql') {
-			// FIXME : not working
-			$query  = "SELECT spotter_output.date AT TIME ZONE :timezone AS date_name, count(*) as date_count
+			$query  = "SELECT spotter_output.date AT TIME ZONE INTERVAL :offset AS date_name, count(*) as date_count
 								FROM spotter_output 
-								WHERE spotter_output.date >= NOW() AT TIME ZONE :timezone - '7 DAYS'->INTERVAL
+								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '7 DAYS'
 								GROUP BY date_name 
 								ORDER BY date_name ASC";
-			$query_data = array(':timezone' => $globalTimezone);
+			$query_data = array(':offset' => $offset);
     		}
 		
 		$sth = $this->db->prepare($query);
@@ -6694,13 +6693,12 @@ class Spotter{
 								ORDER BY spotter_output.date ASC";
 			$query_data = array(':offset' => $offset);
 		} elseif ($globalDBdriver == 'pgsql') {
-			// FIXME : not working
-			$query  = "SELECT spotter_output.date AT TIME ZONE :timezone AS date_name, count(*) as date_count
+			$query  = "SELECT spotter_output.date AT TIME ZONE INTERVAL :offset AS date_name, count(*) as date_count
 								FROM spotter_output 
-								WHERE spotter_output.date >= NOW() AT TIME ZONE :timezone - '1 MONTHS'->INTERVAL
+								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 MONTHS'
 								GROUP BY date_name 
 								ORDER BY date_name ASC";
-			$query_data = array(':timezone' => $globalTimezone);
+			$query_data = array(':offset' => $offset);
     		}
 		
 		$sth = $this->db->prepare($query);
