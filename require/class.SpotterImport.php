@@ -146,8 +146,10 @@ class SpotterImport {
             		// FIXME : Add check on ground if available
             		$real_arrival = $this->arrival($key);
             		$Spotter = new Spotter($this->db);
-            		$result = $Spotter->updateLatestSpotterData($this->all_flights[$key]['id'],$this->all_flights[$key]['ident'],$this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$this->all_flights[$key]['altitude'],$this->all_flights[$key]['ground'],$this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'],$real_arrival['airport_icao'],$real_arrival['airport_time']);
-			if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
+            		if ($this->all_flights[$key]['latitude'] != '' && $this->all_flights[$key]['longitude'] != '') {
+				$result = $Spotter->updateLatestSpotterData($this->all_flights[$key]['id'],$this->all_flights[$key]['ident'],$this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$this->all_flights[$key]['altitude'],$this->all_flights[$key]['ground'],$this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'],$real_arrival['airport_icao'],$real_arrival['airport_time']);
+				if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
+			}
 			// Put in archive
 //			$Spotter->db = null;
             	    }

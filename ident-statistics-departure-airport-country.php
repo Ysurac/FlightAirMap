@@ -23,7 +23,7 @@ if (!empty($spotter_array))
 	include('ident-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Departure Airports by Country").'</h2>';
-	print '<p>'.sprintf(_("The statistic below shows all departure airports by Country of origin of flights with the ident/callsign <strong>%s</strong>."),$spotter_array[0]['ident'].'</p>';
+	print '<p>'.sprintf(_("The statistic below shows all departure airports by Country of origin of flights with the ident/callsign <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
 
 	$airport_country_array = $Spotter->countAllDepartureAirportCountriesByIdent($ident);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';

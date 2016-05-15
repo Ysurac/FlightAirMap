@@ -24,7 +24,7 @@ if (!empty($spotter_array))
 	include('ident-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Aircraft by Registration").'</h2>';
-	print '<p>'.sprintf(_("The statistic below shows the most common aircraft by Registration of flights using the ident/callsign <strong>%s</strong>."),$spotter_array[0]['ident'].'</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common aircraft by Registration of flights using the ident/callsign <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
 
 	$aircraft_array = $Spotter->countAllAircraftRegistrationByIdent($_GET['ident']);
 	

@@ -24,7 +24,7 @@ if (!empty($spotter_array))
 	include('ident-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Routes").'</h2>';
-	print '<p>'._("The statistic below shows the most common routes from flights with the ident/callsign <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common routes from flights with the ident/callsign <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
 
 	$route_array = $Spotter->countAllRoutesByIdent($ident);
 	if (!empty($route_array))

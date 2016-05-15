@@ -4328,7 +4328,7 @@ class Spotter{
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
                     WHERE spotter_output.ident = :ident 
-                    GROUP BY spotter_output.aircraft_name 
+                    GROUP BY spotter_output.aircraft_name, spotter_output.aircraft_icao
 					ORDER BY aircraft_icao_count DESC";
  
 		
@@ -4365,8 +4365,8 @@ class Spotter{
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
                     FROM spotter_output
                     WHERE spotter_output.registration <> '' AND spotter_output.ident = :ident   
-                    GROUP BY spotter_output.registration 
-					ORDER BY registration_count DESC";
+                    GROUP BY spotter_output.registration,spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.airline_name
+		    ORDER BY registration_count DESC";
 
 		
 		$sth = $this->db->prepare($query);
@@ -5257,10 +5257,10 @@ class Spotter{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-								FROM spotter_output
+		    FROM spotter_output
                     WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.ident = :ident 
-                    GROUP BY spotter_output.departure_airport_icao
-					ORDER BY airport_departure_icao_count DESC";
+                    GROUP BY spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
+		    ORDER BY airport_departure_icao_count DESC";
       
 		
 		$sth = $this->db->prepare($query);
@@ -5901,10 +5901,10 @@ class Spotter{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-								FROM spotter_output 
+		    FROM spotter_output 
                     WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.ident = :ident  
-                    GROUP BY spotter_output.arrival_airport_icao
-					ORDER BY airport_arrival_icao_count DESC";
+                    GROUP BY spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
+		    ORDER BY airport_arrival_icao_count DESC";
       
 		
 		$sth = $this->db->prepare($query);
@@ -6425,9 +6425,9 @@ class Spotter{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-								FROM spotter_output
+		    FROM spotter_output
                     WHERE spotter_output.ident <> '' AND spotter_output.ident = :ident   
-                    GROUP BY route
+                    GROUP BY route, spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
                     ORDER BY route_count DESC";
       
 		
@@ -7387,7 +7387,7 @@ class Spotter{
 	*/
 	public function countAllHoursByIdent($ident)
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -7395,11 +7395,19 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE spotter_output.ident = :ident 
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE spotter_output.ident = :ident 
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
       
 		
 		$sth = $this->db->prepare($query);
@@ -8409,7 +8417,7 @@ class Spotter{
 	                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2)))) < $dist ORDER BY distance limit 100;";
                 } else {
 			$query="SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(longitude as double precision))*pi()/180/2),2))) as distance 
-	                      FROM airport WHERE longitude between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+	                      FROM airport WHERE CAST(longitude as double precision) between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and CAST(latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
 	                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(longitude as double precision))*pi()/180/2),2)))) < $dist ORDER BY distance limit 100;";
     		}
 		$sth = $this->db->prepare($query);
