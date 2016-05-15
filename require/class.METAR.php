@@ -277,8 +277,13 @@ class METAR {
         }
 
        public function addMETAR($location,$metar,$date) {
+		global $globalDBdriver;
 		$date = date('Y-m-d H:i:s',strtotime($date));
-                $query = "INSERT INTO metar (metar_location,metar_date,metar) VALUES (:location,:date,:metar) ON DUPLICATE KEY UPDATE metar_date = :date, metar = :metar";
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO metar (metar_location,metar_date,metar) VALUES (:location,:date,:metar) ON DUPLICATE KEY UPDATE metar_date = :date, metar = :metar";
+		} else {
+			$query = "UPDATE metar SET metar_date = :date, metar = metar WHERE metar_location = :location;INSERT INTO metar (metar_location,metar_date,metar) SELECT :location,:date,:metar WHERE NOT EXISTS (SELECT 1 FROM metar WHERE metar_location = :location);";
+		}
                 $query_values = array(':location' => $location,':date' => $date,':metar' => $metar);
                  try {
                         $sth = $this->db->prepare($query);

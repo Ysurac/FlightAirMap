@@ -592,7 +592,12 @@ class Stats {
         }
 
 	public function addStat($type,$cnt,$stats_date) {
-                $query = "INSERT INTO stats (stats_type,cnt,stats_date) VALUES (:type,:cnt,:stats_date) ON DUPLICATE KEY UPDATE cnt = :cnt";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats (stats_type,cnt,stats_date) VALUES (:type,:cnt,:stats_date) ON DUPLICATE KEY UPDATE cnt = :cnt";
+                } else {
+			$query = "UPDATE stats SET cnt = :cnt WHERE stats_type = :type AND stats_date = :stats_date; INSERT INTO stats (stats_type,cnt,stats_date) SELECT :type,:cnt,:stats_date WHERE NOT EXISTS (SELECT 1 FROM stats WHERE  stats_type = :type AND stats_date = :stats_date);"; 
+		}
                 $query_values = array(':type' => $type,':cnt' => $cnt,':stats_date' => $stats_date);
                  try {
                         $sth = $this->db->prepare($query);
@@ -602,7 +607,13 @@ class Stats {
                 }
         }
 	public function updateStat($type,$cnt,$stats_date) {
-                $query = "INSERT INTO stats (stats_type,cnt,stats_date) VALUES (:type,:cnt,:stats_date) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, stats_date = :date";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats (stats_type,cnt,stats_date) VALUES (:type,:cnt,:stats_date) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, stats_date = :date";
+		} else {
+            		//$query = "INSERT INTO stats (stats_type,cnt,stats_date) VALUES (:type,:cnt,:stats_date) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, stats_date = :date";
+			$query = "UPDATE stats SET cnt = cnt+:cnt WHERE stats_type = :type AND stats_date = :stats_date; INSERT INTO stats (stats_type,cnt,stats_date) SELECT :type,:cnt,:stats_date WHERE NOT EXISTS (SELECT 1 FROM stats WHERE  stats_type = :type AND stats_date = :stats_date);"; 
+                }
                 $query_values = array(':type' => $type,':cnt' => $cnt,':stats_date' => $stats_date);
                  try {
                         $sth = $this->db->prepare($query);
@@ -622,7 +633,12 @@ class Stats {
                 }
         }
 	public function addStatAircraftRegistration($registration,$cnt,$aircraft_icao = '') {
-                $query = "INSERT INTO stats_registration (aircraft_icao,registration,cnt) VALUES (:aircraft_icao,:registration,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_registration (aircraft_icao,registration,cnt) VALUES (:aircraft_icao,:registration,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		} else {
+			$query = "UPDATE stats_registration SET cnt = cnt+:cnt WHERE registration = :registration; INSERT INTO stats_registration (aircraft_icao,registration,cnt) SELECT :aircraft_icao,:registration,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_registration WHERE registration = :registration);"; 
+		}
                 $query_values = array(':aircraft_icao' => $aircraft_icao,':registration' => $registration,':cnt' => $cnt);
                  try {
                         $sth = $this->db->prepare($query);
@@ -632,7 +648,12 @@ class Stats {
                 }
         }
 	public function addStatCallsign($callsign_icao,$cnt,$airline_icao = '') {
-                $query = "INSERT INTO stats_callsign (callsign_icao,airline_icao,cnt) VALUES (:callsign_icao,:airline_icao,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_callsign (callsign_icao,airline_icao,cnt) VALUES (:callsign_icao,:airline_icao,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		} else {
+			$query = "UPDATE stats_callsign SET cnt = cnt+:cnt WHERE callsign_icao = :callsign_icao; INSERT INTO stats_callsign (callsign_icao,airline_icao,cnt) SELECT :callsign_icao,:airline_icao,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_callsign WHERE callsign_icao = :callsign_icao);"; 
+		}
                 $query_values = array(':callsign_icao' => $callsign_icao,':airline_icao' => $airline_icao,':cnt' => $cnt);
                  try {
                         $sth = $this->db->prepare($query);
@@ -642,7 +663,12 @@ class Stats {
                 }
         }
 	public function addStatCountry($iso2,$iso3,$name,$cnt) {
-                $query = "INSERT INTO stats_country (iso2,iso3,name,cnt) VALUES (:iso2,:iso3,:name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_country (iso2,iso3,name,cnt) VALUES (:iso2,:iso3,:name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		} else {
+			$query = "UPDATE stats_country SET cnt = cnt+:cnt WHERE iso2 = :iso2; INSERT INTO stats_country (iso2,iso3,name,cnt) SELECT :iso2,:iso3,:name,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2);"; 
+		}
                 $query_values = array(':iso2' => $iso2,':iso3' => $iso3,':name' => $name,':cnt' => $cnt);
                  try {
                         $sth = $this->db->prepare($query);
@@ -652,7 +678,12 @@ class Stats {
                 }
         }
 	public function addStatAircraft($aircraft_icao,$cnt,$aircraft_name = '') {
-                $query = "INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,cnt) VALUES (:aircraft_icao,:aircraft_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,cnt) VALUES (:aircraft_icao,:aircraft_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		} else {
+			$query = "UPDATE stats_aircraft SET cnt = cnt+:cnt WHERE aircraft_icao = :aircraft_icao; INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,cnt) SELECT :aircraft_icao,:aircraft_name,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_aircraft WHERE aircraft_icao = :aircraft_icao);"; 
+		}
                 $query_values = array(':aircraft_icao' => $aircraft_icao,':aircraft_name' => $aircraft_name,':cnt' => $cnt);
                  try {
                         $sth = $this->db->prepare($query);
@@ -662,7 +693,12 @@ class Stats {
                 }
         }
 	public function addStatAirline($airline_icao,$cnt,$airline_name = '') {
-                $query = "INSERT INTO stats_airline (airline_icao,airline_name,cnt) VALUES (:airline_icao,:airline_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt,airline_name = :airline_name";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_airline (airline_icao,airline_name,cnt) VALUES (:airline_icao,:airline_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt,airline_name = :airline_name";
+		} else {
+			$query = "UPDATE stats_airline SET cnt = cnt+:cnt WHERE airline_icao = :airline_icao; INSERT INTO stats_airline (airline_icao,airline_name,cnt) SELECT :airline_icao,:airline_name,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_airline WHERE airline_icao = :airline_icao);"; 
+		}
                 $query_values = array(':airline_icao' => $airline_icao,':airline_name' => $airline_name,':cnt' => $cnt);
                  try {
                         $sth = $this->db->prepare($query);
@@ -672,7 +708,12 @@ class Stats {
                 }
         }
 	public function addStatOwner($owner_name,$cnt) {
-                $query = "INSERT INTO stats_owner (owner_name,cnt) VALUES (:owner_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_owner (owner_name,cnt) VALUES (:owner_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		} else {
+			$query = "UPDATE stats_owner SET cnt = cnt+:cnt WHERE owner_name = :owner_name; INSERT INTO stats_owner (owner_name,cnt) SELECT :owner_name,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_owner WHERE owner_name = :owner_name);"; 
+		}
                 $query_values = array(':owner_name' => $owner_name,':cnt' => $cnt);
                  try {
                         $sth = $this->db->prepare($query);
@@ -682,7 +723,12 @@ class Stats {
                 }
         }
 	public function addStatPilot($pilot_id,$cnt) {
-                $query = "INSERT INTO stats_pilot (pilot_id,cnt) VALUES (:owner_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_pilot (pilot_id,cnt) VALUES (:pilot_id,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+		} else {
+			$query = "UPDATE stats_pilot SET cnt = cnt+:cnt WHERE pilot_id = :pilot_id; INSERT INTO stats_pilot (pilot_id,cnt) SELECT :pilot_id,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_pilot WHERE pilot_id = :pilot_id);"; 
+		}
                 $query_values = array(':pilot_id' => $pilot_id,':cnt' => $cnt);
                  try {
                         $sth = $this->db->prepare($query);
@@ -692,7 +738,12 @@ class Stats {
                 }
         }
 	public function addStatDepartureAirports($airport_icao,$airport_name,$airport_city,$airport_country,$departure) {
-                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date) ON DUPLICATE KEY UPDATE departure = departure+:departure";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date) ON DUPLICATE KEY UPDATE departure = departure+:departure";
+		} else {
+			$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'yearly'; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date WHERE NOT EXISTS (SELECT 1 FROM stats_airline WHERE airport_icao = :airport_icao AND stats_type = 'yearly');"; 
+		}
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => date('Y').'-01-01 00:00:00');
                  try {
                         $sth = $this->db->prepare($query);
@@ -702,7 +753,12 @@ class Stats {
                 }
         }
 	public function addStatDepartureAirportsDaily($date,$airport_icao,$airport_name,$airport_city,$airport_country,$departure) {
-                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date) ON DUPLICATE KEY UPDATE departure = :departure";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date) ON DUPLICATE KEY UPDATE departure = :departure";
+		} else {
+			$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'daily'; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date WHERE NOT EXISTS (SELECT 1 FROM stats_airline WHERE airport_icao = :airport_icao AND stats_type = 'daily');"; 
+		}
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => $date);
                  try {
                         $sth = $this->db->prepare($query);
@@ -712,7 +768,12 @@ class Stats {
                 }
         }
 	public function addStatArrivalAirports($airport_icao,$airport_name,$airport_city,$airport_country,$arrival) {
-                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date) ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date) ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
+		} else {
+			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'yearly'; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date WHERE NOT EXISTS (SELECT 1 FROM stats_airline WHERE airport_icao = :airport_icao AND stats_type = 'yearly');"; 
+		}
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival,':date' => date('Y').'-01-01 00:00:00');
                  try {
                         $sth = $this->db->prepare($query);
@@ -722,7 +783,12 @@ class Stats {
                 }
         }
 	public function addStatArrivalAirportsDaily($date,$airport_icao,$airport_name,$airport_city,$airport_country,$arrival) {
-                $query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date) ON DUPLICATE KEY UPDATE arrival = :arrival";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date) ON DUPLICATE KEY UPDATE arrival = :arrival";
+		} else {
+			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'daily'; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date WHERE NOT EXISTS (SELECT 1 FROM stats_airline WHERE airport_icao = :airport_icao AND stats_type = 'daily');"; 
+		}
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival, ':date' => $date);
                  try {
                         $sth = $this->db->prepare($query);
