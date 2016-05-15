@@ -6653,7 +6653,7 @@ class Spotter{
 								ORDER BY spotter_output.date ASC";
 			$query_data = array(':offset' => $offset);
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "SELECT spotter_output.date AT TIME ZONE INTERVAL :offset AS date_name, count(*) as date_count
+			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'dd-mm-YYYY') AS date_name, count(*) as date_count
 								FROM spotter_output 
 								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '7 DAYS'
 								GROUP BY date_name 
@@ -6701,7 +6701,7 @@ class Spotter{
 								ORDER BY spotter_output.date ASC";
 			$query_data = array(':offset' => $offset);
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "SELECT spotter_output.date AT TIME ZONE INTERVAL :offset AS date_name, count(*) as date_count
+			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'dd-mm-YYYY') AS date_name, count(*) as date_count
 								FROM spotter_output 
 								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 MONTHS'
 								GROUP BY date_name 
@@ -7033,12 +7033,13 @@ class Spotter{
 			$query_data = array(':offset' => $offset);
 		} elseif ($globalDBdriver == 'pgsql') {
 			// FIXME : not working
-			$query  = "SELECT spotter_output.date AT TIME ZONE :timezone AS date_name, count(*) as date_count
+			//$query  = "SELECT spotter_output.date AT TIME ZONE INTERVAL :offset AS date_name, count(*) as date_count
+			$query  = "SELECT EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name, count(*) as date_count
 								FROM spotter_output 
-								WHERE spotter_output.date >= NOW() AT TIME ZONE :timezone - '1 YEARS'->INTERVAL
-								GROUP BY date_name 
-								ORDER BY date_name ASC";
-			$query_data = array(':timezone' => $globalTimezone);
+								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 YEARS'
+								GROUP BY year_name, month_name
+								ORDER BY year_name, month_name ASC";
+			$query_data = array(':offset' => $offset);
     		}
 		
 		$sth = $this->db->prepare($query);
@@ -8395,15 +8396,22 @@ class Spotter{
 	}	
 	
 	public function closestAirports($origLat,$origLon,$dist = 10) {
+		global $globalDBdriver;
 		$dist = $dist*0.621371; // convert km to mile
 /*
 		$query="SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - abs(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(abs(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2))) as distance 
                       FROM airport WHERE longitude between ($origLon-$dist/abs(cos(radians($origLat))*69)) and ($origLon+$dist/abs(cos(radians($origLat))*69)) and latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
                       having distance < $dist ORDER BY distance limit 100;";
 */
-		$query="SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - abs(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(abs(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2))) as distance 
-                      FROM airport WHERE longitude between ($origLon-$dist/abs(cos(radians($origLat))*69)) and ($origLon+$dist/abs(cos(radians($origLat))*69)) and latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
-                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - abs(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(abs(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2)))) < $dist ORDER BY distance limit 100;";
+		if ($globalDBdriver == 'mysql') {
+			$query="SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2))) as distance 
+	                      FROM airport WHERE longitude between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+	                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2)))) < $dist ORDER BY distance limit 100;";
+                } else {
+			$query="SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(longitude as double precision))*pi()/180/2),2))) as distance 
+	                      FROM airport WHERE longitude between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+	                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(longitude as double precision))*pi()/180/2),2)))) < $dist ORDER BY distance limit 100;";
+    		}
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 		return $sth->fetchAll(PDO::FETCH_ASSOC);

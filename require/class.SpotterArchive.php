@@ -338,7 +338,7 @@ class SpotterArchive {
 			WHERE (l.date BETWEEN DATE_SUB('."'".$begindate."'".',INTERVAL '.$globalLiveInterval.' SECOND) AND '."'".$begindate."'".')'.$filter_query;
 
                 } else if ($globalDBdriver == 'pgsql') {
-			$query = 'SELECT COUNT(DISTINCT flightaware_id) as nb FROM spotter_archive l WHERE (l.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".')'.$filter_query;
+			$query = 'SELECT COUNT(DISTINCT flightaware_id) as nb FROM spotter_archive l WHERE (l.date BETWEEN '."'".$begindate."' - INTERVAL '".$globalLiveInterval." SECONDS' AND "."'".$enddate."'".')'.$filter_query;
                 }
                 //echo $query;
                 try {
@@ -653,9 +653,13 @@ class SpotterArchive {
 
     public function deleteSpotterArchiveData()
     {
-		global $globalArchiveKeepMonths;
+		global $globalArchiveKeepMonths, $globalDBdriver;
                 date_default_timezone_set('UTC');
-		$query = 'DELETE FROM spotter_archive_output WHERE spotter_archive_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepMonths.' MONTH)';
+                if ($globalDBdriver == 'mysql') {
+			$query = 'DELETE FROM spotter_archive_output WHERE spotter_archive_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepMonths.' MONTH)';
+		} else {
+			$query = "DELETE FROM spotter_archive_output WHERE spotter_archive_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveKeepMonths." MONTH'";
+		}
                 try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -727,6 +731,7 @@ class SpotterArchive {
     */
     public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '')
     {
+	global $globalDBdriver;
 	/*
 	$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb 
 		    FROM countries c, spotter_archive s
@@ -735,7 +740,13 @@ class SpotterArchive {
 	$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb
 		    FROM countries c, spotter_archive s
 		    WHERE c.iso2 = s.over_country ";
-                if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+			}
+		}
                 if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
 	$query .= "GROUP BY c.name, c.iso3, c.iso2 ORDER BY nb DESC";
 	if ($limit) $query .= " LIMIT 0,10";

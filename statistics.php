@@ -508,7 +508,7 @@ require_once('header.php');
                 <h2><?php echo _("Busiest Day in the last 7 Days"); ?></h2>
                 <?php
                     $date_array = $Stats->countAllDatesLast7Days();
-		    if (count($date_array) == 0) print _("No data available");
+		    if (empty($date_array)) print _("No data available");
 		    else {
                   print '<div id="chart5" class="chart" width="100%"></div>
                     <script> 
@@ -555,7 +555,7 @@ require_once('header.php');
                 <h2><?php echo _("Busiest Time of the Day"); ?></h2>
                 <?php
                   $hour_array = $Stats->countAllHours('hour');
-		    if (count($hour_array) == 0) print _("No data available");
+		    if (empty($hour_array)) print _("No data available");
 		    else {
 
                   print '<div id="chart6" class="chart" width="100%"></div>
