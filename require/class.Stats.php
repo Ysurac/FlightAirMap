@@ -12,7 +12,7 @@ class Stats {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db;
         }
-
+              
 	public function addLastStatsUpdate($type,$stats_date) {
                 $query = "DELETE FROM config WHERE name = :type;
             		INSERT INTO config (name,value) VALUES (:type,:stats_date);";
@@ -203,22 +203,27 @@ class Stats {
                 return $all;
 	}
 	public function countAllFlightOverCountries($limit = true) {
-		if ($limit) $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC LIMIT 20 OFFSET 0";
-		else $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		$Connection = new Connection();
+		if ($Connection->tableExists('countries')) {
+			if ($limit) $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC LIMIT 20 OFFSET 0";
+			else $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC";
+			 try {
+				$sth = $this->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 /*
                 if (empty($all)) {
 	                $Spotter = new Spotter($this->db);
     		        $all = $Spotter->countAllFlightOverCountries($limit);
                 }
                 */
-                return $all;
+			return $all;
+		} else {
+			return array();
+		}
 	}
 	public function countAllPilots($limit = true) {
 		if ($limit) $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot ORDER BY pilot_count DESC LIMIT 10 OFFSET 0";
@@ -832,6 +837,7 @@ class Stats {
         public function addOldStats() {
     		global $globalArchiveMonths, $globalArchive, $globalArchiveYear, $globalDBdriver;
     		$Common = new Common();
+    		$Connection = new Connection();
     		date_default_timezone_set('UTC');
     		$last_update = $this->getLastStatsUpdate('last_update_stats');
 		//print_r($last_update);
@@ -903,9 +909,11 @@ class Stats {
 				foreach ($alldata as $number) {
 					$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name']);
 				}
-				$alldata = $Spotter->countAllFlightOverCountries(false,$monthsSinceLastYear);
-				foreach ($alldata as $number) {
-					$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count']);
+				if ($Connection->tableExists('countries')) {
+					$alldata = $Spotter->countAllFlightOverCountries(false,$monthsSinceLastYear);
+					foreach ($alldata as $number) {
+						$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count']);
+					}
 				}
 				$alldata = $Spotter->countAllOwners(false,$monthsSinceLastYear);
 				foreach ($alldata as $number) {
@@ -964,9 +972,11 @@ class Stats {
 				foreach ($alldata as $number) {
 					$this->addStatOwner($number['owner_name'],$number['owner_count']);
 				}
-				$alldata = $Spotter->countAllFlightOverCountries(false,$globalArchiveMonths);
-				foreach ($alldata as $number) {
-					$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count']);
+				if ($Connection->tableExists('countries')) {
+					$alldata = $Spotter->countAllFlightOverCountries(false,$globalArchiveMonths);
+					foreach ($alldata as $number) {
+						$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count']);
+					}
 				}
 				$alldata = $Spotter->countAllPilots(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
@@ -987,7 +997,11 @@ class Stats {
 				$this->addStat('pilot_byyear',$this->getStatsPilotTotal(),date('Y').'-01-01 00:00:00');
 			
 				if ($globalArchive) {
-					$query = "INSERT INTO spotter_archive_output SELECT * FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
+					if ($globalDBdriver == 'mysql') {
+						$query = "INSERT INTO spotter_archive_output SELECT * FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
+					} else {
+						$query = "INSERT INTO spotter_archive_output SELECT * FROM spotter_output WHERE spotter_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP)";
+					}
 					try {
 						$sth = $this->db->prepare($query);
 						$sth->execute();
@@ -1000,7 +1014,7 @@ class Stats {
 				if ($globalDBdriver == 'mysql') {
 					$query = "DELETE FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
 				} else {
-					$query = "DELETE FROM spotter_output WHERE spotter_output.date < to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS, 'YYYY/mm/01')";
+					$query = "DELETE FROM spotter_output WHERE spotter_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS, 'YYYY/mm/01') AS TIMESTAMP)";
 				}
 				try {
 					$sth = $this->db->prepare($query);
@@ -1048,10 +1062,12 @@ class Stats {
 			foreach ($alldata as $number) {
 				$this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_name'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count']);
 			}
-			$SpotterArchive = new SpotterArchive();
-			$alldata = $SpotterArchive->countAllFlightOverCountries(false,0,$last_update_day);
-			foreach ($alldata as $number) {
-				$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count']);
+			if ($Connection->tableExists('countries')) {
+				$SpotterArchive = new SpotterArchive();
+				$alldata = $SpotterArchive->countAllFlightOverCountries(false,0,$last_update_day);
+				foreach ($alldata as $number) {
+					$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count']);
+				}
 			}
 			
 
@@ -1157,7 +1173,17 @@ class Stats {
 			}
 			if ($globalArchiveMonths > 0) {
 				if ($globalArchive) {
-					$query = "INSERT INTO spotter_archive_output SELECT * FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
+					if ($globalDBdriver == 'mysql') {
+						//$query = "INSERT INTO spotter_archive_output SELECT * FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
+						$query = "INSERT INTO spotter_archive_output (spotter_id,flightaware_id,ident,registration,airline_name,airline_icao,airline_country,airline_type,aircraft_icao,aircraft_name,aircraft_manufacturer,departure_airport_icao,departure_airport_name,departure_airport_city,departure_airport_country,departure_airport_time,arrival_airport_icao,arrival_airport_name,arrival_airport_city,arrival_airport_country,arrival_airport_time,route_stop,date,latitude,longitude,waypoints,altitude,heading,ground_speed,highlight,squawk,ModeS,pilot_id,pilot_name,owner_name,verticalrate,format_source,source_name,ground,last_ground,last_seen,last_latitude,last_longitude,last_altitude,last_ground_speed,real_arrival_airport_icao,real_arrival_airport_time,real_departure_airport_icao,real_departure_airport_time)
+							    SELECT spotter_id,flightaware_id,ident,registration,airline_name,airline_icao,airline_country,airline_type,aircraft_icao,aircraft_name,aircraft_manufacturer,departure_airport_icao,departure_airport_name,departure_airport_city,departure_airport_country,departure_airport_time,arrival_airport_icao,arrival_airport_name,arrival_airport_city,arrival_airport_country,arrival_airport_time,route_stop,date,latitude,longitude,waypoints,altitude,heading,ground_speed,highlight,squawk,ModeS,pilot_id,pilot_name,owner_name,verticalrate,format_source,source_name,ground,last_ground,last_seen,last_latitude,last_longitude,last_altitude,last_ground_speed,real_arrival_airport_icao,real_arrival_airport_time,real_departure_airport_icao,real_departure_airport_time
+	    						     FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
+					} else {
+						$query = "INSERT INTO spotter_archive_output (spotter_id,flightaware_id,ident,registration,airline_name,airline_icao,airline_country,airline_type,aircraft_icao,aircraft_name,aircraft_manufacturer,departure_airport_icao,departure_airport_name,departure_airport_city,departure_airport_country,departure_airport_time,arrival_airport_icao,arrival_airport_name,arrival_airport_city,arrival_airport_country,arrival_airport_time,route_stop,date,latitude,longitude,waypoints,altitude,heading,ground_speed,highlight,squawk,ModeS,pilot_id,pilot_name,owner_name,verticalrate,format_source,source_name,ground,last_ground,last_seen,last_latitude,last_longitude,last_altitude,last_ground_speed,real_arrival_airport_icao,real_arrival_airport_time,real_departure_airport_icao,real_departure_airport_time)
+							     SELECT 
+								spotter_id,flightaware_id,ident,registration,airline_name,airline_icao,airline_country,airline_type,aircraft_icao,aircraft_name,aircraft_manufacturer,departure_airport_icao,departure_airport_name,departure_airport_city,departure_airport_country,departure_airport_time,arrival_airport_icao,arrival_airport_name,arrival_airport_city,arrival_airport_country,arrival_airport_time,route_stop,date,latitude,longitude,waypoints,altitude,heading,ground_speed,highlight,squawk,ModeS,pilot_id,pilot_name,owner_name,verticalrate,format_source,source_name,ground,last_ground,last_seen,last_latitude,last_longitude,last_altitude,last_ground_speed,real_arrival_airport_icao,real_arrival_airport_time,real_departure_airport_icao,real_departure_airport_time
+							    FROM spotter_output WHERE spotter_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP)";
+					}
 					try {
 						$sth = $this->db->prepare($query);
 						$sth->execute();
@@ -1170,7 +1196,7 @@ class Stats {
 				if ($globalDBdriver == 'mysql') {
 					$query = "DELETE FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
 				} else {
-					$query = "DELETE FROM spotter_output WHERE spotter_output.date < to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS, 'YYYY/mm/01')";
+					$query = "DELETE FROM spotter_output WHERE spotter_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP)";
 				}
 				try {
 					$sth = $this->db->prepare($query);

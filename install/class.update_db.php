@@ -1484,7 +1484,12 @@ class update_db {
 	}
 	
 	public static function check_last_update() {
-		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '15 DAYS'";
+		}
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
@@ -1510,7 +1515,12 @@ class update_db {
 	}
 
 	public static function check_last_notam_update() {
-		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_notam_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 1 DAY)";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_notam_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 1 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_notam_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '1 DAYS'";
+		}
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
@@ -1536,7 +1546,12 @@ class update_db {
 	}
 
 	public static function check_last_owner_update() {
-		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_owner_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_owner_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_owner_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '15 DAYS'";
+		}
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);

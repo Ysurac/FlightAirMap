@@ -45,5 +45,7 @@ CREATE TABLE IF NOT EXISTS spotter_archive_output (
   last_altitude integer DEFAULT NULL,
   last_ground_speed integer DEFAULT NULL,
   real_arrival_airport_icao varchar(10) DEFAULT NULL,
-  real_arrival_airport_time varchar(20) DEFAULT NULL
+  real_arrival_airport_time varchar(20) DEFAULT NULL,
+  real_departure_airport_icao varchar(10) DEFAULT NULL,
+  real_departure_airport_time varchar(20) DEFAULT NULL
 );

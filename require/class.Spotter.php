@@ -2553,18 +2553,26 @@ class Spotter{
 	*/
 
 	public function getLast7DaysAirportsDeparture($airport_icao = '') {
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 		if ($airport_icao == '') {
-			$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao <> 'NA' GROUP BY departure_airport_icao, day(date),spotter_output.date, departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao <> 'NA' GROUP BY departure_airport_icao, day(date),spotter_output.date, departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+			} else {
+				$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND departure_airport_icao <> 'NA' GROUP BY departure_airport_icao, EXTRACT(day FROM date),spotter_output.date, departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+			}
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset));
 		} else {
-			$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao = :airport_icao GROUP BY departure_airport_icao, day(date), spotter_output.date, departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao = :airport_icao GROUP BY departure_airport_icao, day(date), spotter_output.date, departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+			} else {
+				$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND departure_airport_icao = :airport_icao GROUP BY departure_airport_icao, EXTRACT(day FROM date), spotter_output.date, departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+			}
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
 		}
@@ -2577,18 +2585,26 @@ class Spotter{
 	*/
 
 	public function getLast7DaysAirportsArrival($airport_icao = '') {
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 		if ($airport_icao == '') {
-			$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' GROUP BY arrival_airport_icao, day(date), spotter_output.date, arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' GROUP BY arrival_airport_icao, day(date), spotter_output.date, arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+			} else {
+				$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' GROUP BY arrival_airport_icao, EXTRACT(day FROM date), spotter_output.date, arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+			}
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset));
 		} else {
-			$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao = :airport_icao GROUP BY arrival_airport_icao, day(date), spotter_output.date,arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao = :airport_icao GROUP BY arrival_airport_icao, day(date), spotter_output.date,arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+			} else {
+				$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao = :airport_icao GROUP BY arrival_airport_icao, EXTRACT(day FROM date), spotter_output.date,arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+			}
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
 		}
@@ -2605,18 +2621,24 @@ class Spotter{
 	*/
 	public function getAllDates()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT DISTINCT DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) as date
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT DISTINCT DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) as date
 								FROM spotter_output
 								WHERE spotter_output.date <> '' 
 								ORDER BY spotter_output.date ASC LIMIT 0,200";
-								
+		} else {
+			$query  = "SELECT DISTINCT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date
+								FROM spotter_output
+								WHERE spotter_output.date <> '' 
+								ORDER BY spotter_output.date ASC LIMIT 0,200";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
@@ -3746,6 +3768,7 @@ class Spotter{
 	*/
 	public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '')
 	{
+		global $globalDBdriver;
 		/*
 		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb 
 					FROM countries c, spotter_output s
@@ -3754,7 +3777,13 @@ class Spotter{
 		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb 
 					FROM countries c, spotter_output s
 					WHERE c.iso2 = s.over_country ";
-                if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                if ($olderthanmonths > 0) {
+			if ($globalDBdriver == 'mysql') {
+				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+			}
+		}
                 if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
 		$query .= "GROUP BY c.name ORDER BY nb DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
@@ -6603,7 +6632,7 @@ class Spotter{
 								ORDER BY date_count DESC
 								LIMIT 10 OFFSET 0";
 		} else {
-			$query  = "SELECT spotter_output.date AT TIME ZONE INTERVAL :offset AS date_name, count(*) as date_count
+			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'dd-mm-YYYY') AS date_name, count(*) as date_count
 								FROM spotter_output 
 								GROUP BY date_name 
 								ORDER BY date_count DESC
@@ -6734,17 +6763,24 @@ class Spotter{
 	*/
 	public function countAllMonths()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(*) as date_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(*) as date_count
 								FROM spotter_output 
 								GROUP BY year_name, month_name 
 								ORDER BY date_count DESC";
+		} else {
+			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(*) as date_count
+								FROM spotter_output 
+								GROUP BY year_name, month_name 
+								ORDER BY date_count DESC";
+		}
       
 		
 		$sth = $this->db->prepare($query);
@@ -6773,19 +6809,26 @@ class Spotter{
 	*/
 	public function countAllMilitaryMonths()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT YEAR(CONVERT_TZ(s.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(s.date,'+00:00', :offset)) AS month_name, count(*) as date_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT YEAR(CONVERT_TZ(s.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(s.date,'+00:00', :offset)) AS month_name, count(*) as date_count
 								FROM spotter_output s
 								WHERE s.airline_type = 'military'
 								GROUP BY year_name, month_name 
 								ORDER BY date_count DESC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(YEAR FROM s.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM s.date AT TIME ZONE INTERVAL :offset) AS month_name, count(*) as date_count
+								FROM spotter_output s
+								WHERE s.airline_type = 'military'
+								GROUP BY year_name, month_name 
+								ORDER BY date_count DESC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
@@ -6813,19 +6856,26 @@ class Spotter{
 	*/
 	public function countAllMonthsOwners()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct owner_name) as date_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct owner_name) as date_count
 								FROM spotter_output 
 								WHERE owner_name <> ''
 								GROUP BY year_name, month_name
 								ORDER BY date_count DESC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct owner_name) as date_count
+								FROM spotter_output 
+								WHERE owner_name <> ''
+								GROUP BY year_name, month_name
+								ORDER BY date_count DESC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
@@ -6853,19 +6903,26 @@ class Spotter{
 	*/
 	public function countAllMonthsPilots()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct pilot_id) as date_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct pilot_id) as date_count
 								FROM spotter_output 
 								WHERE pilot_id <> '' AND pilot_id IS NOT NULL
 								GROUP BY year_name, month_name
 								ORDER BY date_count DESC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct pilot_id) as date_count
+								FROM spotter_output 
+								WHERE pilot_id <> '' AND pilot_id IS NOT NULL
+								GROUP BY year_name, month_name
+								ORDER BY date_count DESC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
@@ -6894,19 +6951,26 @@ class Spotter{
 	*/
 	public function countAllMonthsAirlines()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct airline_icao) as date_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct airline_icao) as date_count
 								FROM spotter_output 
 								WHERE airline_icao <> '' 
 								GROUP BY year_name, month_name
 								ORDER BY date_count DESC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct airline_icao) as date_count
+								FROM spotter_output 
+								WHERE airline_icao <> '' 
+								GROUP BY year_name, month_name
+								ORDER BY date_count DESC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
@@ -6934,19 +6998,26 @@ class Spotter{
 	*/
 	public function countAllMonthsAircrafts()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct aircraft_icao) as date_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct aircraft_icao) as date_count
 								FROM spotter_output 
 								WHERE aircraft_icao <> '' 
 								GROUP BY year_name, month_name
 								ORDER BY date_count DESC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct aircraft_icao) as date_count
+								FROM spotter_output 
+								WHERE aircraft_icao <> '' 
+								GROUP BY year_name, month_name
+								ORDER BY date_count DESC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
@@ -6975,19 +7046,26 @@ class Spotter{
 	*/
 	public function countAllMonthsRealArrivals()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(real_arrival_airport_icao) as date_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(real_arrival_airport_icao) as date_count
 								FROM spotter_output 
 								WHERE real_arrival_airport_icao <> '' 
 								GROUP BY year_name, month_name
 								ORDER BY date_count DESC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(real_arrival_airport_icao) as date_count
+								FROM spotter_output 
+								WHERE real_arrival_airport_icao <> '' 
+								GROUP BY year_name, month_name
+								ORDER BY date_count DESC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
@@ -7101,12 +7179,12 @@ class Spotter{
   */    
 		$query_data = array(':offset' => $offset);
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "SELECT EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) AS hour_name, count(*) as hour_count
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								GROUP BY hour_name 
 								".$orderby_sql."
 								LIMIT 100";
-		$query_data = array(':timezone' => $globalTimezone);
+		$query_data = array(':offset' => $offset);
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -7135,7 +7213,7 @@ class Spotter{
 	*/
 	public function countAllHoursByAirline($airline_icao)
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -7144,12 +7222,19 @@ class Spotter{
 
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE spotter_output.airline_icao = :airline_icao
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao = :airline_icao
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao,':offset' => $offset));
@@ -7179,7 +7264,7 @@ class Spotter{
 	*/
 	public function countAllHoursByAircraft($aircraft_icao)
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -7187,12 +7272,19 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE spotter_output.aircraft_icao = :aircraft_icao
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE spotter_output.aircraft_icao = :aircraft_icao
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao,':offset' => $offset));
@@ -7220,7 +7312,7 @@ class Spotter{
 	*/
 	public function countAllHoursByRegistration($registration)
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -7228,12 +7320,19 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE spotter_output.registration = :registration
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE spotter_output.registration = :registration
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration,':offset' => $offset));
@@ -7261,7 +7360,7 @@ class Spotter{
 	*/
 	public function countAllHoursByAirport($airport_icao)
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -7269,12 +7368,19 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao,':offset' => $offset));
@@ -7303,7 +7409,7 @@ class Spotter{
 	*/
 	public function countAllHoursByManufacturer($aircraft_manufacturer)
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -7311,12 +7417,19 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE spotter_output.aircraft_manufacturer = :aircraft_manufacturer
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE spotter_output.aircraft_manufacturer = :aircraft_manufacturer
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer,':offset' => $offset));
@@ -7345,7 +7458,7 @@ class Spotter{
 	*/
 	public function countAllHoursByDate($date)
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -7353,12 +7466,19 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE to_char(spotter_output.date AT TIME ZONE INTERVAL :offset, 'dd-mm-YYYY') = :date
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':date' => $date, ':offset' => $offset));
@@ -7437,7 +7557,7 @@ class Spotter{
 	*/
 	public function countAllHoursByRoute($departure_airport_icao, $arrival_airport_icao)
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
@@ -7446,12 +7566,19 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao,':offset' => $offset));
@@ -7479,7 +7606,7 @@ class Spotter{
 	*/
 	public function countAllHoursByCountry($country)
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -7487,12 +7614,19 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country,':offset' => $offset));
@@ -7649,19 +7783,26 @@ class Spotter{
 	*/
 	public function countAllHoursFromToday()
 	{
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
-		$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = CURDATE()
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
-      
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'dd-mm-YYYY') = CAST(NOW() AS date)
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':offset' => $offset));
