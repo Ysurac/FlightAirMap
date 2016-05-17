@@ -48,7 +48,7 @@ class METAR {
     		if ($globalDBdriver == 'mysql') {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value > DATE_SUB(DATE(NOW()), INTERVAL 1 HOUR)";
 		} else {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value::timestamp > CURRENT_TIMESTAMP -  INTERVAL '1 HOURS'";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '1 HOURS'";
 		}
                 try {
                         $Connection = new Connection();

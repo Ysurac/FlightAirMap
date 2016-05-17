@@ -43,7 +43,12 @@ class ACARS {
     */
     public function deleteLiveAcarsData()
     {
-        $query  = "DELETE FROM acars_live WHERE acars_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE)";
+	global $globalDBdriver;
+	if ($globalDBdriver == 'mysql') {
+		$query  = "DELETE FROM acars_live WHERE acars_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE)";
+	} else {
+		$query  = "DELETE FROM acars_live WHERE acars_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '30 MINUTES'";
+	}
         try {
             
             $sth = $this->db->prepare($query);
@@ -62,9 +67,12 @@ class ACARS {
     */
     public function deleteArchiveAcarsData()
     {
-	global $globalACARSArchiveKeepMonths;
-        $query  = "DELETE FROM acars_archive WHERE acars_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL ".$globalACARSArchiveKeepMonths." MONTH)";
-
+	global $globalACARSArchiveKeepMonths, $globalDBdriver;
+	if ($globalDBdriver == 'mysql') {
+		$query  = "DELETE FROM acars_archive WHERE acars_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL ".$globalACARSArchiveKeepMonths." MONTH)";
+	} else {
+		$query  = "DELETE FROM acars_archive WHERE acars_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalACARSArchiveKeepMonths." MONTHS'";
+	}
         try {
             
             $sth = $this->db->prepare($query);
@@ -1168,14 +1176,14 @@ RMK/FUEL   2.6 M0.79)
     		    if ($globalDBdriver == 'mysql') {
     			$queryi = "UPDATE spotter_output SET registration = :Registration,aircraft_icao = :ICAOTypeCode WHERE ident = :ident AND date >= date_sub(UTC_TIMESTAMP(), INTERVAL 1 HOUR)";
     		    } else if ($globalDBdriver == 'pgsql') {
-    			$queryi = "UPDATE spotter_output SET registration = :Registration,aircraft_icao = :ICAOTypeCode WHERE ident = :ident AND date >= NOW() AT TIME ZONE 'UTC' - '1 HOUR'->INTERVAL";
+    			$queryi = "UPDATE spotter_output SET registration = :Registration,aircraft_icao = :ICAOTypeCode WHERE ident = :ident AND date >= NOW() AT TIME ZONE 'UTC' - INTERVAL '1 HOUR'";
     		    }
     		    $queryi_values = array(':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode, ':ident' => $icao);
     		} else {
     		    if ($globalDBdriver == 'mysql') {
     			$queryi = "UPDATE spotter_output SET registration = :Registration WHERE ident = :ident AND date >= date_sub(UTC_TIMESTAMP(), INTERVAL 1 HOUR)";
     		    } elseif ($globalDBdriver == 'pgsql') {
-    			$queryi = "UPDATE spotter_output SET registration = :Registration WHERE ident = :ident AND date >= NOW() AT TIME ZONE 'UTC' - '1 HOUR'->INTERVAL";
+    			$queryi = "UPDATE spotter_output SET registration = :Registration WHERE ident = :ident AND date >= NOW() AT TIME ZONE 'UTC' - INTERVAL '1 HOUR'";
     		    }
     		    $queryi_values = array(':Registration' => $registration,':ident' => $icao);
     		}

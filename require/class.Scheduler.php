@@ -130,9 +130,15 @@ class Schedule {
 	}
 
 	public function checkSchedule($ident) {
-	
+		global $globalDBdriver;
 	        //$query = "SELECT COUNT(*) as nb FROM schedule WHERE ident = :ident AND date_added > DATE_SUB(CURDATE(), INTERVAL 8 DAY) - 8 LIMIT 1";
-	        $query = "SELECT COUNT(*) as nb FROM routes WHERE CallSign = :ident AND ((date_added BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 15 DAY)) AND DATE(NOW()) and date_modified IS NULL) OR (date_modified BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 15 DAY)) AND DATE(NOW()))) LIMIT 1";
+	        if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM routes WHERE CallSign = :ident AND ((date_added BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 15 DAY)) AND DATE(NOW()) and date_modified IS NULL) OR (date_modified BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 15 DAY)) AND DATE(NOW()))) LIMIT 1";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM routes WHERE CallSign = :ident 
+			AND ((date_added::timestamp BETWEEN CURRENT_TIMESTAMP - INTERVAL '15 DAYS' AND CURRENT_TIMESTAMP) and date_modified::timestamp IS NULL)
+			     OR (date_modified::timestamp BETWEEN CURRENT_TIMESTAMP - INTERVAL '15 DAYS' AND CURRENT_TIMESTAMP) LIMIT 1";
+		}
 	        $query_values = array(':ident' => $ident);
 		 try {
 			$sth = $this->db->prepare($query);

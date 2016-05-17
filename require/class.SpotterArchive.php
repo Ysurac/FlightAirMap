@@ -364,7 +364,7 @@ class SpotterArchive {
     */
     public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '')
     {
-	global $globalTimezone;
+	global $globalTimezone, $globalDbdriver;
 	date_default_timezone_set('UTC');
 	
 	$query_values = array();
@@ -604,12 +604,18 @@ class SpotterArchive {
 	    {                
 		$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
 		$date_array[1] = date("Y-m-d H:i:s", strtotime($date_array[1]));
-		$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) <= '".$date_array[1]."' ";
+		if ($globalDBdriver == 'mysql') {
+			$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) <= '".$date_array[1]."' ";
+		} else {
+			$additional_query .= " AND spotter_archive_output.date::timestamp AT TIME ZONE INTERVAL ".$offset." >= CAST('".$date_array[0]."' AS TIMESTAMP) AND spotter_archive_output.date::timestamp AT TIME ZONE INTERVAL ".$offset." <= CAST('".$date_array[1]."' AS TIMESTAMP) ";
+		}
 	    } else {
 		$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
-              
-		$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' ";
-              
+                if ($globalDBdriver == 'mysql') {
+			$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' ";
+		} else {
+			$additional_query .= " AND spotter_archive_output.date::timestamp AT TIME ZONE INTERVAL ".$offset." >= CAST('".$date_array[0]."' AS TIMESTAMP) ";
+		}
 	    }
 	}
 	

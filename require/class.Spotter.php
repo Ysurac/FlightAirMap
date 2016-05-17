@@ -3085,6 +3085,7 @@ class Spotter{
 	*/
 	public function getRealTimeData($q = '')
 	{
+		global $globalDBdriver;
 		$additional_query = '';
 		if ($q != "")
 		{
@@ -3092,27 +3093,31 @@ class Spotter{
 			{
 				return false;
 			} else {
-		    	$q_array = explode(" ", $q);
-		    	foreach ($q_array as $q_item){
-		    		$q_item = filter_var($q_item,FILTER_SANITIZE_STRING);
-				$additional_query .= " AND (";
-				$additional_query .= "(spotter_output.aircraft_icao like '%".$q_item."%') OR ";
-				$additional_query .= "(spotter_output.aircraft_name like '%".$q_item."%') OR ";
-				$additional_query .= "(spotter_output.aircraft_manufacturer like '%".$q_item."%') OR ";
-				$additional_query .= "(spotter_output.airline_icao like '%".$q_item."%') OR ";
-				$additional_query .= "(spotter_output.departure_airport_icao like '%".$q_item."%') OR ";
-				$additional_query .= "(spotter_output.arrival_airport_icao like '%".$q_item."%') OR ";
-				$additional_query .= "(spotter_output.registration like '%".$q_item."%') OR ";
-				$additional_query .= "(spotter_output.ident like '%".$q_item."%')";
-				$additional_query .= ")";
-			}
+				$q_array = explode(" ", $q);
+				foreach ($q_array as $q_item){
+					$q_item = filter_var($q_item,FILTER_SANITIZE_STRING);
+					$additional_query .= " AND (";
+					$additional_query .= "(spotter_output.aircraft_icao like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_output.aircraft_name like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_output.aircraft_manufacturer like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_output.airline_icao like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_output.departure_airport_icao like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_output.arrival_airport_icao like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_output.registration like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_output.ident like '%".$q_item."%')";
+					$additional_query .= ")";
+				}
 			}
 		}
-
-		$query  = "SELECT spotter_output.* FROM spotter_output 
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.* FROM spotter_output 
 				WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 20 SECOND) ".$additional_query." 
 				AND spotter_output.date < UTC_TIMESTAMP()";
-      
+		} else {
+			$query  = "SELECT spotter_output.* FROM spotter_output 
+				WHERE spotter_output.date::timestamp >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '20 SECONDS' ".$additional_query." 
+				AND spotter_output.date::timestamp < CURRENT_TIMESTAMP AT TIME ZONE 'UTC'";
+		}
 		$spotter_array = $this->getDataFromDB($query, array());
 
 		return $spotter_array;
@@ -3128,11 +3133,24 @@ class Spotter{
 	*/
 	public function countAllAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
 	{
+		global $globalDBdriver;
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
 					WHERE spotter_output.airline_name <> '' AND spotter_output.airline_icao <> 'NA' ";
-                if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
-                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+		}
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND date > '".$sincedate."' ";
+			} else {
+				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
         	$query .= "GROUP BY spotter_output.airline_name,spotter_output.airline_icao, spotter_output.airline_country ORDER BY airline_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -3164,11 +3182,24 @@ class Spotter{
 	*/
 	public function countAllPilots($limit = true, $olderthanmonths = 0, $sincedate = '')
 	{
+		global $globalDBdriver;
 		$query  = "SELECT DISTINCT spotter_output.pilot_id, spotter_output.pilot_name, COUNT(spotter_output.pilot_id) AS pilot_count
 		 			FROM spotter_output
 					WHERE spotter_output.pilot_id <> '' ";
-                if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+		}
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND date > '".$sincedate."' ";
+			} else {
+				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
 		$query .= "GROUP BY spotter_output.pilot_id,spotter_output.pilot_name ORDER BY pilot_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -3197,11 +3228,10 @@ class Spotter{
 	*/
 	public function countAllOwners($limit = true, $olderthanmonths = 0, $sincedate = '')
 	{
+		global $globalDBdriver;
 		$query  = "SELECT DISTINCT spotter_output.owner_name, COUNT(spotter_output.owner_name) AS owner_count
 		 			FROM spotter_output
 					WHERE spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL ";
-                if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
 		$query .= "GROUP BY spotter_output.owner_name ORDER BY owner_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -3818,8 +3848,23 @@ class Spotter{
 		$query  = "SELECT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
                     FROM spotter_output
                     WHERE spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' ";
-                if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+                }
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND date > '".$sincedate."' ";
+			} else {
+				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
+                //if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
                 $query .= "GROUP BY spotter_output.aircraft_icao, spotter_output.aircraft_name ORDER BY aircraft_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -4745,8 +4790,23 @@ class Spotter{
 		$query  = "SELECT DISTINCT spotter_output.registration, COUNT(spotter_output.registration) AS aircraft_registration_count, spotter_output.aircraft_icao,  spotter_output.aircraft_name, spotter_output.airline_name    
                     FROM spotter_output 
                     WHERE spotter_output.registration <> '' AND spotter_output.registration <> 'NA' ";
-		if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-		if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+		}
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND date > '".$sincedate."' ";
+			} else {
+				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
+		// if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+		//if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
                 $query .= "GROUP BY spotter_output.registration, spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.airline_name ORDER BY aircraft_registration_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
 		
@@ -4790,8 +4850,23 @@ class Spotter{
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
                     WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' ";
-            	if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+                }
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND date > '".$sincedate."' ";
+			} else {
+				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
+            	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
                 $query .= "GROUP BY spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
 					ORDER BY airport_departure_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
@@ -5434,8 +5509,28 @@ class Spotter{
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
                     WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' ";
-            	if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND date > '".$sincedate."' ";
+			} else {
+				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND date > '".$sincedate."' ";
+			} else {
+				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
+            	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
                 $query .= "GROUP BY spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10";
@@ -8137,12 +8232,17 @@ class Spotter{
 	
 	public function getCountryFromLatitudeLongitude($latitude,$longitude)
 	{
+		global $globalDBdriver;
 		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
 		try {
-	//		$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(:latitude :longitude)'), ogc_geom) LIMIT 1";
-			$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(".$longitude.' '.$latitude.")'), ogc_geom) LIMIT 1";
+			if ($globalDBdriver == 'mysql') {
+				//$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(:latitude :longitude)'), ogc_geom) LIMIT 1";
+				$query = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(".$longitude.' '.$latitude.")'), ogc_geom) LIMIT 1";
+			} else {
+				$query = "SELECT name,iso2,iso3 FROM countries WHERE ST_DWithin(ST_GeomFromText('POINT(".$longitude." ".$latitude.")',4326)::geography, ogc_geom::geography,100) LIMIT 1";
+			}
 		
 			$sth = $this->db->prepare($query);
 			//$sth->execute(array(':latitude' => $latitude,':longitude' => $longitude));
