@@ -48,9 +48,12 @@ if (!empty($spotter_array))
 		// Requirement for altitude graph
 		print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 		$all_data = $SpotterArchive->getAltitudeSpeedArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
+		
 		if (isset($globalTimezone)) {
 			date_default_timezone_set($globalTimezone);
 		} else date_default_timezone_set('UTC');
+		
+		//date_default_timezone_set('UTC');
 		if (is_array($all_data) && count($all_data) > 0) {
 			print '<div id="chart6" class="chart" width="100%"></div>
                     <script> 

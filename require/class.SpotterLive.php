@@ -198,7 +198,7 @@ class SpotterLive {
         		//$query  = "SELECT spotter_output.* FROM spotter_output WHERE spotter_output.flightaware_id IN (SELECT spotter_live.flightaware_id FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL ".$globalLiveInterval." SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong.")";
         		$query  = 'SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND spotter_live.longitude BETWEEN '.$minlong.' AND '.$maxlong.' GROUP BY spotter_live.flightaware_id'.$filter_query;
         	} else if ($globalDBdriver == 'pgsql') {
-            		$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE NOW() at time zone 'UTC'  - '".$globalLiveInterval." SECONDS'->INTERVAL <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong." GROUP BY spotter_live.flightaware_id".$filter_query;
+            		$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE NOW() at time zone 'UTC'  - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong." GROUP BY spotter_live.flightaware_id".$filter_query;
                 }
                 $spotter_array = $Spotter->getDataFromDB($query);
                 return $spotter_array;
@@ -397,7 +397,7 @@ class SpotterLive {
             		//$query  = "DELETE FROM spotter_live WHERE spotter_live.id IN (SELECT spotter_live.id FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) >= spotter_live.date)";
 
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "DELETE FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'->INTERVAL >= spotter_live.date";
+			$query  = "DELETE FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '9 HOURS' >= spotter_live.date";
 		}
         
     		try {
@@ -421,7 +421,7 @@ class SpotterLive {
 	{
 		global $globalDBdriver, $globalDebug;
 		if ($globalDBdriver == 'mysql') {
-			$query = 'SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) < spotter_live.date) LIMIT 0,800';
+			$query = 'SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) < spotter_live.date) LIMIT 800 OFFSET 0';
     			try {
 				
 				$sth = $this->db->prepare($query);
@@ -462,7 +462,7 @@ class SpotterLive {
 			}
 			return "success";
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query = "SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'->INTERVAL >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - '9 HOUR'->INTERVAL < spotter_live.date) LIMIT 0,800";
+			$query = "SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '9 HOURS' >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '9 HOURS' < spotter_live.date) LIMIT 800 OFFSET 0";
     			try {
 				
 				$sth = $this->db->prepare($query);
@@ -568,7 +568,7 @@ class SpotterLive {
 		} elseif ($globalDBdriver == 'pgsql') {
 			$query  = "SELECT spotter_live.ident FROM spotter_live 
 				WHERE spotter_live.ident = :ident 
-				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - '1 HOUR'->INTERVAL
+				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - INTERVAL '1 HOURS'
 				AND spotter_live.date < now() AT TIME ZONE 'UTC'";
 			$query_data = array(':ident' => $ident);
 		}
@@ -601,7 +601,7 @@ class SpotterLive {
 		} elseif ($globalDBdriver == 'pgsql') {
 			$query  = "SELECT spotter_live.ident, spotter_live.flightaware_id FROM spotter_live 
 				WHERE spotter_live.ident = :ident 
-				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - '30 MINUTE'->INTERVAL";
+				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - INTERVAL '30 MINUTES'";
 //				AND spotter_live.date < now() AT TIME ZONE 'UTC'";
 			$query_data = array(':ident' => $ident);
 		}

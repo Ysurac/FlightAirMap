@@ -487,13 +487,18 @@ if (!empty($_GET)){
     		  </div>
         </fieldset>
     	
-        
+		<?php
+		    if (isset($globalArchiveKeepMonths) && $globalArchiveKeepMonths > 0) {
+		?>
 		<fieldset>
 			<div class="form-group">
-				<label><?php echo _("Search in archive"); ?></label>
+				<label><?php echo sprintf(_("Search in archive (older than %s months)"),$globalArchiveKeepMonths); ?></label>
 				<input type="checkbox" name="archive" value="1" />
 			</div>
 		</fieldset>
+		<?php
+		    }
+		?>
 		<fieldset>
 			<div>
 				<input type="submit" value="<?php echo _("Search"); ?>" />

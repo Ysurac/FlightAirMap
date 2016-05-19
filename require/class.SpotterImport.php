@@ -160,8 +160,9 @@ class SpotterImport {
     }
 
     function add($line) {
-	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange;
-	if (!isset($globalCoordMinChange) || $globalCoordMinChange) $globalCoordMinChange = '0.02';
+	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed;
+	if (!isset($globalDebugTimeElapsed)) $globalDebugTimeElapsed = FALSE;
+	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
 /*
 	$Spotter = new Spotter();
 	$dbc = $Spotter->db;
@@ -208,9 +209,13 @@ class SpotterImport {
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
 		    } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
 		    if (!isset($line['aircraft_icao']) || $line['aircraft_icao'] == '????') {
+
+			$timeelapsed = microtime(true);
 			$Spotter = new Spotter($this->db);
 			$aircraft_icao = $Spotter->getAllAircraftType($hex);
 			$Spotter->db = null;
+			if ($globalDebugTimeElapsed) echo 'Time elapsed for update getallaircrattype : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+
 			if ($aircraft_icao == '' && isset($line['aircraft_type'])) {
 			    if ($line['aircraft_type'] == 'PARA_GLIDER') $aircraft_icao = 'GLID';
 			    elseif ($line['aircraft_type'] == 'HELICOPTER_ROTORCRAFT') $aircraft_icao = 'UHEL';
@@ -251,10 +256,12 @@ class SpotterImport {
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_flights[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9]+$/', $line['ident'])) {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => trim($line['ident'])));
 		    if ($this->all_flights[$id]['addedSpotter'] == 1) {
+			$timeelapsed = microtime(true);
             		$Spotter = new Spotter($this->db);
             		$result = $Spotter->updateIdentSpotterData($this->all_flights[$id]['id'],$this->all_flights[$id]['ident']);
 			if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
 			$Spotter->db = null;
+			if ($globalDebugTimeElapsed) echo 'Time elapsed for update identspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 		    }
 
 /*
@@ -277,11 +284,15 @@ class SpotterImport {
 		    if (isset($line['departure_airport_icao']) && isset($line['arrival_airport_icao'])) {
 		    		$this->all_flights[$id] = array_merge($this->all_flights[$id],array('departure_airport' => $line['departure_airport_icao'],'arrival_airport' => $line['arrival_airport_icao'],'route_stop' => ''));
 		    } elseif (isset($line['departure_airport_iata']) && isset($line['arrival_airport_iata'])) {
+				$timeelapsed = microtime(true);
 				$Spotter = new Spotter($this->db);
 				$line['departure_airport_icao'] = $Spotter->getAirportIcao($line['departure_airport_iata']);
 				$line['arrival_airport_icao'] = $Spotter->getAirportIcao($line['arrival_airport_iata']);
 		    		$this->all_flights[$id] = array_merge($this->all_flights[$id],array('departure_airport' => $line['departure_airport_icao'],'arrival_airport' => $line['arrival_airport_icao'],'route_stop' => ''));
+				if ($globalDebugTimeElapsed) echo 'Time elapsed for update getAirportICAO : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+
 		    } elseif (!isset($line['format_source']) || $line['format_source'] != 'aprs') {
+			$timeelapsed = microtime(true);
 			$Spotter = new Spotter($this->db);
 			$route = $Spotter->getRouteInfo(trim($line['ident']));
 			if (!isset($route['fromairport_icao']) && !isset($route['toairport_icao'])) {
@@ -291,6 +302,8 @@ class SpotterImport {
 				$Translation->db = null;
 			}
 			$Spotter->db = null;
+			if ($globalDebugTimeElapsed) echo 'Time elapsed for update getrouteinfo : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+
 			if (isset($route['fromairport_icao']) && isset($route['toairport_icao'])) {
 			    //if ($route['FromAirport_ICAO'] != $route['ToAirport_ICAO']) {
 			    if ($route['fromairport_icao'] != $route['toairport_icao']) {
@@ -338,7 +351,7 @@ class SpotterImport {
 	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '') {
 	    	    if (isset($this->all_flights[$id]['time_last_coord'])) $timediff = round(time()-$this->all_flights[$id]['time_last_coord']);
 	    	    else unset($timediff);
-	    	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || !isset($timediff) || $timediff > 50 || ($timediff > 10 && isset($this->all_flights[$id]['latitude']) && isset($this->all_flights[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')))) {
+	    	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || !isset($timediff) || $timediff > 20 || ($timediff > 10 && isset($this->all_flights[$id]['latitude']) && isset($this->all_flights[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')))) {
 			
 			if (isset($this->all_flights[$id]['archive_latitude']) && isset($this->all_flights[$id]['archive_longitude']) && isset($this->all_flights[$id]['livedb_latitude']) && isset($this->all_flights[$id]['livedb_longitude'])) {
 			    if (!$Common->checkLine($this->all_flights[$id]['archive_latitude'],$this->all_flights[$id]['archive_longitude'],$this->all_flights[$id]['livedb_latitude'],$this->all_flights[$id]['livedb_longitude'],$line['latitude'],$line['longitude'])) {
@@ -348,10 +361,13 @@ class SpotterImport {
 				
 				
 				//echo "\n".' ------- Check Country.... ';
+				$timeelapsed = microtime(true);
 				$Spotter = new Spotter($this->db);
 				$all_country = $Spotter->getCountryFromLatitudeLongitude($line['latitude'],$line['longitude']);
 				if (!empty($all_country)) $this->all_flights[$id]['over_country'] = $all_country['iso2'];
 				$Spotter->db = null;
+				if ($globalDebugTimeElapsed) echo 'Time elapsed for update getCountryFromlatitudeLongitude : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+
 				//echo 'FOUND : '.$this->all_flights[$id]['over_country'].' ---------------'."\n";
 				//$putinarchive = true;
 			    } else {
@@ -410,9 +426,11 @@ class SpotterImport {
 			    */
 			}
 
-		    } else if ($globalDebug && $timediff > 10) {
+		    } else if ($globalDebug && $timediff > 20) {
 			echo '!!! Too much distance in short time... for '.$this->all_flights[$id]['ident']."\n";
-			echo 'Time : '.$timediff.'s - Distance : '.$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')."m \n";
+			echo 'Time : '.$timediff.'s - Distance : '.$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')."m -";
+			echo 'Speed : '.(($Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')/$timediff)*3.6)." km/h - ";
+			echo 'Lat : '.$line['latitude'].' - long : '.$line['longitude'].' - prev lat : '.$this->all_flights[$id]['latitude'].' - prev long : '.$this->all_flights[$id]['longitude']." \n";
 		    }
 		}
 		if (isset($line['verticalrate']) && $line['verticalrate'] != '') {
@@ -450,9 +468,12 @@ class SpotterImport {
 			    if ($this->all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure) at '.date('Y-m-d G:i').' UTC';
 			    if ($this->all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency at '.date('Y-m-d G:i').' UTC';
 			    if ($highlight != '') {
+				$timeelapsed = microtime(true);
 				$Spotter = new Spotter($this->db);
 				$Spotter->setHighlightFlight($this->all_flights[$id]['id'],$highlight);
 				$Spotter->db = null;
+				if ($globalDebugTimeElapsed) echo 'Time elapsed for update sethighlightflight : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+
 				$this->all_flights[$id]['putinarchive'] = true;
 				//$putinarchive = true;
 				$highlight = '';
@@ -504,13 +525,19 @@ class SpotterImport {
 			    //$last_hour_ident = Spotter->getIdentFromLastHour($this->all_flights[$id]['ident']);
 			    if (!isset($this->all_flights[$id]['forcenew']) || $this->all_flights[$id]['forcenew'] == 0) {
 				if ($globalDebug) echo "Check if aircraft is already in DB...";
+				$timeelapsed = microtime(true);
 				$SpotterLive = new SpotterLive($this->db);
 				if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs' || $line['format_source'] === 'aircraftlistjson' || $line['format_source'] === 'radarvirtueljson')) {
 				    $recent_ident = $SpotterLive->checkModeSRecent($this->all_flights[$id]['hex']);
+				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update checkModeSRecent : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+
 				} elseif (isset($this->all_flights[$id]['ident']) && $this->all_flights[$id]['ident'] != '') {
 				    $recent_ident = $SpotterLive->checkIdentRecent($this->all_flights[$id]['ident']);
+				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update checkIdentRecent : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+
 				} else $recent_ident = '';
 				$SpotterLive->db=null;
+
 				if ($globalDebug && $recent_ident == '') echo " Not in DB.\n";
 				elseif ($globalDebug && $recent_ident != '') echo " Already in DB.\n";
 			    } else {
@@ -568,9 +595,12 @@ class SpotterImport {
 				    if ($this->all_flights[$id]['squawk'] == '7600') $highlight = 'Squawk 7600 : Lost Comm (radio failure)';
 				    if ($this->all_flights[$id]['squawk'] == '7700') $highlight = 'Squawk 7700 : Emergency';
 				    if (!isset($this->all_flights[$id]['id'])) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.date('YmdHi')));
+				    $timeelapsed = microtime(true);
 				    $Spotter = new Spotter($this->db);
 				    $result = $Spotter->addSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'], $this->all_flights[$id]['datetime'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'],$this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$highlight,$this->all_flights[$id]['hex'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'],$this->all_flights[$id]['verticalrate'],$this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source'],$this->all_flights[$id]['source_name']);
 				    $Spotter->db = null;
+				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update addspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+
 				} elseif ($globalDebug) echo 'Ignore data'."\n";
 				$ignoreImport = false;
 				$this->all_flights[$id]['addedSpotter'] = 1;
@@ -664,9 +694,12 @@ class SpotterImport {
 		    if (!$ignoreImport) {
 			if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 				if ($globalDebug) echo "\o/ Add ".$this->all_flights[$id]['ident']." from ".$this->all_flights[$id]['format_source']." in Live DB : ";
+				$timeelapsed = microtime(true);
 				$SpotterLive = new SpotterLive($this->db);
 				$result = $SpotterLive->addLiveSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'],$this->all_flights[$id]['datetime'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'], $this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$this->all_flights[$id]['hex'],$this->all_flights[$id]['putinarchive'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'], $this->all_flights[$id]['verticalrate'], $this->all_flights[$id]['noarchive'], $this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source'],$this->all_flights[$id]['source_name'],$this->all_flights[$id]['over_country']);
 				$SpotterLive->db = null;
+				if ($globalDebugTimeElapsed) echo 'Time elapsed for update addlivespotterdate : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+
 				$this->all_flights[$id]['lastupdate'] = time();
 				if ($this->all_flights[$id]['putinarchive']) $send = true;
 				//if ($globalDebug) echo "Distance : ".Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";

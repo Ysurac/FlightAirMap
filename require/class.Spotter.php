@@ -378,7 +378,7 @@ class Spotter{
 				foreach ($q_array as $q_item){
 					$q_item = filter_var($q_item,FILTER_SANITIZE_STRING);
 					$additional_query .= " AND (";
-					$additional_query .= "(spotter_output.spotter_id like '%".$q_item."%') OR ";
+					if (is_int($q_item)) $additional_query .= "(spotter_output.spotter_id like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.aircraft_icao like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.aircraft_name like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.aircraft_manufacturer like '%".$q_item."%') OR ";
@@ -3055,7 +3055,7 @@ class Spotter{
 		} elseif ($globalDBdriver == 'pgsql') {
 			$query  = "SELECT spotter_output.ident FROM spotter_output 
 								WHERE spotter_output.ident = :ident 
-								AND spotter_output.date >= now() AT TIME ZONE 'UTC' - '1 HOUR'->INTERVAL
+								AND spotter_output.date >= now() AT TIME ZONE 'UTC' - INTERVAL '1 HOURS'
 								AND spotter_output.date < now() AT TIME ZONE 'UTC'";
 			$query_data = array(':ident' => $ident);
     		}
@@ -8583,7 +8583,7 @@ class Spotter{
 		if ($globalDBdriver == 'mysql') {
 			$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != '' AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 DAY)";
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != '' AND spotter_output.date >= now() AT TIME ZONE 'UTC' - '15 DAY'->INTERVAL";
+			$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != '' AND spotter_output.date >= now() AT TIME ZONE 'UTC' - INTERVAL '15 DAYS'";
 		}
 		$sth = $this->db->prepare($query);
 		$sth->execute();
@@ -8603,7 +8603,7 @@ class Spotter{
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE (spotter_output.airline_name = '' OR spotter_output.airline_name = 'Not Available') AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 DAY)";
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE (spotter_output.airline_name = '' OR spotter_output.airline_name = 'Not Available') AND spotter_output.date >= now() AT TIME ZONE 'UTC' - '15 DAY'->INTERVAL";
+			$query  = "SELECT spotter_output.spotter_id, spotter_output.ident FROM spotter_output WHERE (spotter_output.airline_name = '' OR spotter_output.airline_name = 'Not Available') AND spotter_output.date >= now() AT TIME ZONE 'UTC' - INTERVAL '15 DAYS'";
 		}
 		$sth = $this->db->prepare($query);
 		$sth->execute();
@@ -8631,7 +8631,7 @@ class Spotter{
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE (spotter_output.aircraft_name = '' OR spotter_output.aircraft_name = 'Not Available') AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY)";
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE (spotter_output.aircraft_name = '' OR spotter_output.aircraft_name = 'Not Available') AND spotter_output.date >= now() AT TIME ZONE 'UTC' - '15 DAY'->INTERVAL";
+			$query  = "SELECT spotter_output.spotter_id, spotter_output.aircraft_icao, spotter_output.registration FROM spotter_output WHERE (spotter_output.aircraft_name = '' OR spotter_output.aircraft_name = 'Not Available') AND spotter_output.date >= now() AT TIME ZONE 'UTC' - INERVAL '15 DAYS'";
 		}
 		$sth = $this->db->prepare($query);
 		$sth->execute();
