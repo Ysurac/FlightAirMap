@@ -1936,11 +1936,11 @@ class Spotter{
 	{
 		$aircraft_type = filter_var($aircraft_type,FILTER_SANITIZE_STRING);
 
-		$query  = "SELECT aircraft.* FROM aircraft WHERE aircraft.icao = :aircraft_type";
+		$query  = "SELECT aircraft.icao, aircraft.type,aircraft.manufacturer,aircraft.aircraft_shadow FROM aircraft WHERE aircraft.icao = :aircraft_type";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_type' => $aircraft_type));
-
+		/*
 		$aircraft_array = array();
 		$temp_array = array();
 		
@@ -1954,8 +1954,9 @@ class Spotter{
 
 			$aircraft_array[] = $temp_array;
 		}
-
 		return $aircraft_array;
+		*/
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 	
 	/**
@@ -2067,12 +2068,11 @@ class Spotter{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		$Connection = new Connection($this->db);
 		if ($Connection->tableExists('aircraft_owner')) {
-			$query  = "SELECT * FROM aircraft_owner WHERE registration = :registration LIMIT 1";
+			$query  = "SELECT aircraft_owner.base, aircraft_owner.owner, aircraft_owner.date_first_reg FROM aircraft_owner WHERE registration = :registration LIMIT 1";
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':registration' => $registration));
 
-			$row = $sth->fetch(PDO::FETCH_ASSOC);
-			return $row;
+			return $sth->fetch(PDO::FETCH_ASSOC);
 		} else return array();
 	}
 	
