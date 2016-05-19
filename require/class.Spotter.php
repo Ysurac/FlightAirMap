@@ -2776,8 +2776,9 @@ class Spotter{
 	*/
 	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '', $source_name = '')
 	{
-		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS;
+		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalDebugTimeElapsed;
 		
+		//if (isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 		$Image = new Image($this->db);
 		$Common = new Common();
 		
@@ -2794,11 +2795,15 @@ class Spotter{
 				return false;
 			} else {
 				if ($ModeS != '') {
+					$timeelapsed = microtime(true);
 					$registration = $this->getAircraftRegistrationBymodeS($ModeS);
+					if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAircraftRegistrationBymodes : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				} else {
 					$myhex = explode('-',$flightaware_id);
 					if (count($myhex) > 0) {
+						$timeelapsed = microtime(true);
 						$registration = $this->getAircraftRegistrationBymodeS($myhex[0]);
+						if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAircraftRegistrationBymodes : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 					}
 				}
 			}
@@ -2813,6 +2818,7 @@ class Spotter{
 			} else {
 				if (!is_numeric(substr($ident, 0, 3)))
 				{
+					$timeelapsed = microtime(true);
 					if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
 						$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 2));
 					} elseif (is_numeric(substr(substr($ident, 0, 4), -1, 1))) {
@@ -2826,9 +2832,12 @@ class Spotter{
 					if (!isset($airline_array[0]['icao']) || $airline_array[0]['icao'] == ""){
 						$airline_array = $this->getAllAirlineInfo("NA");
 					}
-					
+					if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAirlineInfo : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+
 				} else {
+					$timeelapsed = microtime(true);
 					$airline_array = $this->getAllAirlineInfo("NA");
+					if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAirlineInfo(NA) : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				}
 			}
 		} else $airline_array = array();
@@ -2842,19 +2851,29 @@ class Spotter{
 			} else {
 				if ($aircraft_icao == "" || $aircraft_icao == "XXXX")
 				{
+					$timeelapsed = microtime(true);
 					$aircraft_array = $this->getAllAircraftInfo("NA");
+					if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAircraftInfo(NA) : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				} else {
+					$timeelapsed = microtime(true);
 					$aircraft_array = $this->getAllAircraftInfo($aircraft_icao);
+					if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAircraftInfo : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				}
 			}
 		} else {
 			if ($ModeS != '') {
+				$timeelapsed = microtime(true);
 				$aircraft_icao = $this->getAllAircraftType($ModeS);
+				if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAllAircraftType : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				if ($aircraft_icao == "" || $aircraft_icao == "XXXX")
 				{
+					$timeelapsed = microtime(true);
 					$aircraft_array = $this->getAllAircraftInfo("NA");
+					if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAircraftInfo(NA) : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				} else {
+					$timeelapsed = microtime(true);
 					$aircraft_array = $this->getAllAircraftInfo($aircraft_icao);
+					if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAircraftInfo : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				}
 			}
 		}
@@ -2866,7 +2885,9 @@ class Spotter{
 			{
 				return false;
 			} else {
+				$timeelapsed = microtime(true);
 				$departure_airport_array = $this->getAllAirportInfo($departure_airport_icao);
+				if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAllAirportInfo : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 			}
 		}
 		
@@ -2877,7 +2898,9 @@ class Spotter{
 			{
 				return false;
 			} else {
+				$timeelapsed = microtime(true);
 				$arrival_airport_array = $this->getAllAirportInfo($arrival_airport_icao);
+				if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAllAirportInfo : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 			}
 		}
 
@@ -2939,13 +2962,17 @@ class Spotter{
 		//getting the aircraft image
 		if (($registration != "" || $registration != 'NA') && !$globalIVAO && !$globalVATSIM && !$globalphpVMS)
 		{
+			$timeelapsed = microtime(true);
 			$image_array = $Image->getSpotterImage($registration);
+			if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getSpotterImage : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 			if (!isset($image_array[0]['registration']))
 			{
 				//echo "Add image !!!! \n";
 				$Image->addSpotterImage($registration);
 			}
+			$timeelapsed = microtime(true);
 			$owner_info = $this->getAircraftOwnerByRegistration($registration);
+			if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAircraftOwnerByRegistration : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 			if ($owner_info['owner'] != '') $aircraft_owner = ucwords(strtolower($owner_info['owner']));
 		}
     
@@ -3010,7 +3037,11 @@ class Spotter{
                 $airline_icao = $airline_array[0]['icao'];
                 $airline_country = $airline_array[0]['country'];
                 $airline_type = $airline_array[0]['type'];
-		if ($airline_type == '') $airline_type = $this->getAircraftTypeBymodeS($ModeS);
+		if ($airline_type == '') {
+			$timeelapsed = microtime(true);
+			$airline_type = $this->getAircraftTypeBymodeS($ModeS);
+			if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAircraftTypeBymodes : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+		}
 		if ($airline_type == null) $airline_type = '';
                 $aircraft_type = $aircraft_array[0]['type'];
                 $aircraft_manufacturer = $aircraft_array[0]['manufacturer'];

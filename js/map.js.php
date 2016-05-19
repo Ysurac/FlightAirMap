@@ -672,10 +672,10 @@ function getLiveData(click)
 		    .on('click', function() {
 				if (feature.properties.callsign == "NA") {
 				    $("#aircraft_ident").attr('class',feature.properties.flightaware_id);
-				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&flightaware_id="+feature.properties.flightaware_id);
+				    $(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+feature.properties.flightaware_id);
 				} else {
 				    $("#aircraft_ident").attr('class',feature.properties.callsign);
-				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
+				    $(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
 				}
 				getLiveData(1);
 			});
@@ -719,10 +719,10 @@ function getLiveData(click)
 				$("#aircraft_ident").attr('class',feature.properties.callsign);
 				if (feature.properties.callsign == "NA") {
 					$("#aircraft_ident").attr('class',feature.properties.flightaware_id);
-					$(".showdetails").load("aircraft-data.php?"+Math.random()+"&flightaware_id="+feature.properties.flightaware_id);
+					$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+feature.properties.flightaware_id);
 				} else {
 					$("#aircraft_ident").attr('class',feature.properties.callsign);
-					$(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
+					$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
 				}
 				getLiveData(1);
 			});
@@ -762,10 +762,10 @@ function getLiveData(click)
 			    .on('click', function() {
 				if (feature.properties.callsign == "NA") {
 				    $("#aircraft_ident").attr('class',feature.properties.flightaware_id);
-				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&flightaware_id="+feature.properties.flightaware_id);
+				    $(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+feature.properties.flightaware_id);
 				} else {
 				    $("#aircraft_ident").attr('class',feature.properties.callsign);
-				    $(".showdetails").load("aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
+				    $(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&ident="+feature.properties.callsign);
 				}
 				getLiveData(1);
 			    });
@@ -791,26 +791,26 @@ function getLiveData(click)
 			}
 		    } else {
 			if (typeof feature.properties.image_copyright != 'undefined') {
-			    output += '<div class="left"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a>Image &copy; '+ feature.properties.image_copyright+'</div>';
+			    output += '<div class="left"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.flightaware_id+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a>Image &copy; '+ feature.properties.image_copyright+'</div>';
 			} else {
-			    output += '<div class="left"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a></div>';
+			    output += '<div class="left"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.flightaware_id+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a></div>';
 			}
 		    }
 		    output += '<div class="right">';
                     output += '<div class="callsign-details">';
-                    output += '<div class="callsign"><a href="/redirect/'+feature.properties.flightaware_id+'" target="_blank">'+feature.properties.callsign+'</a></div>';
+                    output += '<div class="callsign"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.flightaware_id+'" target="_blank">'+feature.properties.callsign+'</a></div>';
                     output += '<div class="airline">'+feature.properties.airline_name+'</div>';
                     output += '</div>';
                     output += '<div class="nomobile airports">';
                     output += '<div class="airport">';
-                    output += '<span class="code"><a href="/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
+                    output += '<span class="code"><a href="<?php print $globalURL; ?>/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
 		    if (typeof feature.properties.departure_airport_time != 'undefined') {
 			output += '<br /><span class="time">'+feature.properties.departure_airport_time+'</span>';
 		    }
 		    output += '</div>';
 		    output += '<i class="fa fa-long-arrow-right"></i>';
 		    output += '<div class="airport">';
-                    output += '<span class="code"><a href="/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
+                    output += '<span class="code"><a href="<?php print $globalURL; ?>/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
 		    if (typeof feature.properties.arrival_airport_time != 'undefined') {
 			output += '<br /><span class="time">'+feature.properties.arrival_airport_time+'</span>';
 		    }
@@ -824,11 +824,11 @@ function getLiveData(click)
                     output += '<div class="details">';
                     output += '<div class="mobile airports">';
                     output += '<div class="airport">';
-                    output += '<span class="code"><a href="/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
+                    output += '<span class="code"><a href="<?php print $globalURL; ?>/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
                     output += '</div>';
                     output += '<i class="fa fa-long-arrow-right"></i>';
                     output += '<div class="airport">';
-                    output += '<span class="code"><a href="/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
+                    output += '<span class="code"><a href="<?php print $globalURL; ?>/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
                     output += '</div>';
                     output += '</div>';
                     output += '<div>';
@@ -852,7 +852,7 @@ function getLiveData(click)
                     {
                 	output += '<div>';
                         output += '<span><?php echo _("Registration"); ?></span>';
-                        output += '<a href="/registration/'+feature.properties.registration+'" target="_blank">'+feature.properties.registration+'</a>';
+                        output += '<a href="<?php print $globalURL; ?>/registration/'+feature.properties.registration+'" target="_blank">'+feature.properties.registration+'</a>';
                         output += '</div>';
                     }
                     output += '<div>';
