@@ -117,11 +117,11 @@ class SpotterImport {
         		    break;
         		}
         	    }
-        	} elseif ($this->all_flights[$key]['real_altitude'] != '' && ($closestAirports[0]['altitude'] < $this->all_flights[$key]['real_altitude'] && ($closestAirports[0]['altitude'] == 0 || $closestAirports[0]['altitude'] < $this->all_flights[$key]['real_altitude']+500))) {
+        	} elseif ($this->all_flights[$key]['real_altitude'] != '' && ($closestAirports[0]['altitude'] < $this->all_flights[$key]['altitude_real'] && ($closestAirports[0]['altitude'] == 0 || $closestAirports[0]['altitude'] < $this->all_flights[$key]['altitude_real']+500))) {
         		$airport_icao = $closestAirports[0]['icao'];
         		$airport_time = $this->all_flights[$key]['datetime'];
         	} else {
-        		if ($globalDebug) echo "----- Can't find arrival airport. Airport altitude : ".$closestAirports[0]['altitude'].' - flight altitude : '.$this->all_flights[$key]['real_altitude']."\n";
+        		if ($globalDebug) echo "----- Can't find arrival airport. Airport altitude : ".$closestAirports[0]['altitude'].' - flight altitude : '.$this->all_flights[$key]['altitude_real']."\n";
         	}
     	    }
         }
@@ -698,7 +698,7 @@ class SpotterImport {
 				$SpotterLive = new SpotterLive($this->db);
 				$result = $SpotterLive->addLiveSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'],$this->all_flights[$id]['datetime'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'], $this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$this->all_flights[$id]['hex'],$this->all_flights[$id]['putinarchive'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'], $this->all_flights[$id]['verticalrate'], $this->all_flights[$id]['noarchive'], $this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source'],$this->all_flights[$id]['source_name'],$this->all_flights[$id]['over_country']);
 				$SpotterLive->db = null;
-				if ($globalDebugTimeElapsed) echo 'Time elapsed for update addlivespotterdate : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+				if ($globalDebugTimeElapsed) echo 'Time elapsed for update addlivespotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 
 				$this->all_flights[$id]['lastupdate'] = time();
 				if ($this->all_flights[$id]['putinarchive']) $send = true;

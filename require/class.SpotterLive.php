@@ -421,7 +421,8 @@ class SpotterLive {
 	{
 		global $globalDBdriver, $globalDebug;
 		if ($globalDBdriver == 'mysql') {
-			$query = 'SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) < spotter_live.date) LIMIT 800 OFFSET 0';
+			//$query = 'SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) < spotter_live.date) LIMIT 800 OFFSET 0';
+    			$query = "SELECT spotter_live.flightaware_id FROM spotter_live INNER JOIN (SELECT flightaware_id,MAX(date) as max_date FROM spotter_live GROUP BY flightaware_id) s ON s.flightaware_id = spotter_live.flightaware_id AND DATE_SUB(UTC_TIMESTAMP(), INTERVAL 2 HOUR) >= s.max_date LIMIT 800 OFFSET 0";
     			try {
 				
 				$sth = $this->db->prepare($query);
@@ -437,7 +438,7 @@ class SpotterLive {
 			{
 				$i++;
 				$j++;
-				if ($j == 10) {
+				if ($j == 30) {
 					if ($globalDebug) echo ".";
 				    	try {
 						
@@ -462,7 +463,9 @@ class SpotterLive {
 			}
 			return "success";
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query = "SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '9 HOURS' >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '9 HOURS' < spotter_live.date) LIMIT 800 OFFSET 0";
+			//$query = "SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '9 HOURS' >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '9 HOURS' < spotter_live.date) LIMIT 800 OFFSET 0";
+    			//$query = "SELECT spotter_live.flightaware_id FROM spotter_live INNER JOIN (SELECT flightaware_id,MAX(date) as max_date FROM spotter_live GROUP BY flightaware_id) s ON s.flightaware_id = spotter_live.flightaware_id AND NOW() AT TIME ZONE 'UTC' - INTERVAL '2 HOURS' >= s.max_date LIMIT 800 OFFSET 0";
+    			$query = "DELETE FROM spotter_live WHERE flightaware_id IN (SELECT spotter_live.flightaware_id FROM spotter_live INNER JOIN (SELECT flightaware_id,MAX(date) as max_date FROM spotter_live GROUP BY flightaware_id) s ON s.flightaware_id = spotter_live.flightaware_id AND NOW() AT TIME ZONE 'UTC' - INTERVAL '2 HOURS' >= s.max_date LIMIT 800 OFFSET 0)";
     			try {
 				
 				$sth = $this->db->prepare($query);
@@ -470,7 +473,7 @@ class SpotterLive {
 			} catch(PDOException $e) {
 				return "error";
 			}
-			$query_delete = "DELETE FROM spotter_live WHERE flightaware_id IN (";
+/*			$query_delete = "DELETE FROM spotter_live WHERE flightaware_id IN (";
                         $i = 0;
                         $j =0;
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
@@ -478,12 +481,12 @@ class SpotterLive {
 			{
 				$i++;
 				$j++;
-				if ($j == 10) {
+				if ($j == 100) {
 					if ($globalDebug) echo ".";
 				    	try {
 						
-						$sth = $this->db->prepare(substr($query_delete,0,-1).")");
-						$sth->execute();
+						$sth = $this->db->query(substr($query_delete,0,-1).")");
+						//$sth->execute();
 					} catch(PDOException $e) {
 						return "error";
 					}
@@ -495,12 +498,13 @@ class SpotterLive {
 			if ($i > 0) {
     				try {
 					
-					$sth = $this->db->prepare(substr($query_delete,0,-1).")");
-					$sth->execute();
+					$sth = $this->db->query(substr($query_delete,0,-1).")");
+					//$sth->execute();
 				} catch(PDOException $e) {
 					return "error";
 				}
 			}
+*/
 			return "success";
 		}
 	}
@@ -787,7 +791,7 @@ class SpotterLive {
 			{
 				return false;
 			}
-		}
+		} else $altitude = 0;
 
 		if ($heading != '')
 		{

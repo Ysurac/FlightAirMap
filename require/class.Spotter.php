@@ -1898,9 +1898,9 @@ class Spotter{
 			return $airline_array;
 		} else {
 			if (strlen($airline_icao) == 2) {
-			    $query  = "SELECT airlines.* FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y'";
+			    $query  = "SELECT airlines.name, airlines.alias, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y'";
 			} else {
-			    $query  = "SELECT airlines.* FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y'";
+			    $query  = "SELECT airlines.name, airlines.alias, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y'";
 			}
 			
 			$sth = $this->db->prepare($query);
@@ -2013,7 +2013,7 @@ class Spotter{
 	{
 		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
                 if ($callsign == '') return array();
-		$query  = "SELECT * FROM routes WHERE CallSign = :callsign LIMIT 1";
+		$query  = "SELECT routes.Operator_ICAO, routes.FromAirport_ICAO, routes.ToAirport_ICAO, routes.RouteStop, routes.FromAirport_Time, routes.ToAirport_Time FROM routes WHERE CallSign = :callsign LIMIT 1";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':callsign' => $callsign));
