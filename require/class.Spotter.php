@@ -1678,9 +1678,6 @@ class Spotter{
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute($query_values);
-    
-		$airport_array = array();
-		$temp_array = array();
 		
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
@@ -1730,17 +1727,18 @@ class Spotter{
 		$airport = filter_var($airport,FILTER_SANITIZE_STRING);
 
 		$query_values = array();
-
-		if ($airport == '') {
-			$query  = "SELECT airport.* FROM airport";
+		if ($airport == 'NA') {
+			return array(array('name' => 'Not available','city' => 'N/A', 'country' => 'N/A','iata' => 'NA','icao' => 'NA','latitude' => 0,'longitude' => 0,'type' => 'NA','home_link' => '','wikipedia_link' => '','image_thumb' => '', 'image' => ''));
+		} elseif ($airport == '') {
+			$query  = "SELECT airport.name, airport.city, airport.country, airport.iata, airport.icao, airport.latitude, airport.longitude, airport.altitude, airport.type, airport.home_link, airport.wikipedia_link, airport.image_thumb, airport.image FROM airport";
 		} else {
-			$query  = "SELECT airport.* FROM airport WHERE airport.icao = :airport";
+			$query  = "SELECT airport.name, airport.city, airport.country, airport.iata, airport.icao, airport.latitude, airport.longitude, airport.altitude, airport.type, airport.home_link, airport.wikipedia_link, airport.image_thumb, airport.image FROM airport WHERE airport.icao = :airport LIMIT 1";
 			$query_values = array(':airport' => $airport);
 		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute($query_values);
-    
+		/*
 		$airport_array = array();
 		$temp_array = array();
 		
@@ -1763,6 +1761,8 @@ class Spotter{
 		}
 
 		return $airport_array;
+		*/
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 	
 	/**
@@ -1898,14 +1898,14 @@ class Spotter{
 			return $airline_array;
 		} else {
 			if (strlen($airline_icao) == 2) {
-			    $query  = "SELECT airlines.name, airlines.alias, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y'";
+				$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y' LIMIT 1";
 			} else {
-			    $query  = "SELECT airlines.name, airlines.alias, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y'";
+				$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y' LIMIT 1";
 			}
 			
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':airline_icao' => $airline_icao));
-
+                        /*
 			$airline_array = array();
 			$temp_array = array();
 		
@@ -1920,6 +1920,8 @@ class Spotter{
 				$airline_array[] = $temp_array;
 			}
 			return $airline_array;
+			*/
+			return $sth->fetchAll(PDO::FETCH_ASSOC);
 		}
 	}
 	
@@ -1936,6 +1938,9 @@ class Spotter{
 	{
 		$aircraft_type = filter_var($aircraft_type,FILTER_SANITIZE_STRING);
 
+		if ($aircraft_type == 'NA') {
+			return array(array('icao' => 'NA','type' => 'Not Available', 'manufacturer' => 'Not Available', 'aircraft_shadow' => NULL));
+		}
 		$query  = "SELECT aircraft.icao, aircraft.type,aircraft.manufacturer,aircraft.aircraft_shadow FROM aircraft WHERE aircraft.icao = :aircraft_type";
 		
 		$sth = $this->db->prepare($query);
@@ -2090,7 +2095,7 @@ class Spotter{
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute();
-
+                  /*
 		$flight_array = array();
 		$temp_array = array();
 		
@@ -2107,6 +2112,8 @@ class Spotter{
 		}
 
 		return $flight_array;
+		*/
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
   
 	/**
