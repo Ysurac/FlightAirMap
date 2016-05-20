@@ -1118,11 +1118,12 @@ class Stats {
 
 			echo 'Flights data...'."\n";
 			$this->deleteStatFlight('month');
+			echo '-> countAllDatesLastMonth...'."\n";
 			$alldata = $Spotter->countAllDatesLastMonth();
 			foreach ($alldata as $number) {
 				$this->addStatFlight('month',$number['date_name'],$number['date_count']);
 			}
-			
+			echo '-> countAllDates...'."\n";
 			$previousdata = $this->countAllDates();
 			$this->deleteStatFlight('date');
 			$alldata = $Common->array_merge_noappend($previousdata,$Spotter->countAllDates());
@@ -1137,6 +1138,7 @@ class Stats {
 			}
 			
 			$this->deleteStatFlight('hour');
+			echo '-> countAllHours...'."\n";
 			$alldata = $Spotter->countAllHours('hour');
 			foreach ($alldata as $number) {
 				$this->addStatFlight('hour',$number['hour_name'],$number['hour_count']);
@@ -1173,6 +1175,7 @@ class Stats {
 			}
 			if ($globalArchiveMonths > 0) {
 				if ($globalArchive) {
+					echo 'Archive old data...'."\n";
 					if ($globalDBdriver == 'mysql') {
 						//$query = "INSERT INTO spotter_archive_output SELECT * FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
 						$query = "INSERT INTO spotter_archive_output (spotter_id,flightaware_id,ident,registration,airline_name,airline_icao,airline_country,airline_type,aircraft_icao,aircraft_name,aircraft_manufacturer,departure_airport_icao,departure_airport_name,departure_airport_city,departure_airport_country,departure_airport_time,arrival_airport_icao,arrival_airport_name,arrival_airport_city,arrival_airport_country,arrival_airport_time,route_stop,date,latitude,longitude,waypoints,altitude,heading,ground_speed,highlight,squawk,ModeS,pilot_id,pilot_name,owner_name,verticalrate,format_source,source_name,ground,last_ground,last_seen,last_latitude,last_longitude,last_altitude,last_ground_speed,real_arrival_airport_icao,real_arrival_airport_time,real_departure_airport_icao,real_departure_airport_time)
