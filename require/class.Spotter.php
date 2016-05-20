@@ -2935,7 +2935,7 @@ class Spotter{
 			{
 				return false;
 			}
-		}
+		} else $altitude = 0;
 		
 		if ($heading != "")
 		{
