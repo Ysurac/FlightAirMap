@@ -3,7 +3,7 @@ CREATE TABLE metar (
   metar_id int(11) NOT NULL,
   metar_location varchar(10) NOT NULL,
   metar_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  metar varchar(999) NOT NULL
+  metar text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

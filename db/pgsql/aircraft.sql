@@ -1,10 +1,10 @@
 DROP TABLE IF EXISTS aircraft;
 CREATE TABLE aircraft (
   aircraft_id serial,
-  icao varchar(999) NOT NULL,
-  type varchar(999) NOT NULL,
-  manufacturer varchar(999) NOT NULL,
-  official_page varchar(999) NOT NULL,
+  icao varchar(10) NOT NULL,
+  type varchar(255) NOT NULL,
+  manufacturer varchar(255) NOT NULL,
+  official_page varchar(255) NOT NULL,
   aircraft_shadow varchar(255) DEFAULT NULL,
   aircraft_description varchar(255) DEFAULT NULL,
   engine_type varchar(255) DEFAULT NULL,

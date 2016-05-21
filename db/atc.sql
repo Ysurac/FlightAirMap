@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `atc` (
   `atc_id` int(11) NOT NULL AUTO_INCREMENT,
   `ident` varchar(255) NOT NULL,
-  `frequency` varchar(999) NOT NULL,
+  `frequency` varchar(255) NOT NULL,
   `latitude` float NOT NULL,
   `longitude` float NOT NULL,
   `atc_range` float NOT NULL,

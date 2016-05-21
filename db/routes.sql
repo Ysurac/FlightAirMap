@@ -12,6 +12,6 @@ CREATE TABLE IF NOT EXISTS `routes` (
   `date_modified` timestamp NULL,
   `date_lastseen` timestamp NULL,
   PRIMARY KEY (`RouteID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 
 ALTER TABLE `routes` ADD INDEX(`CallSign`);

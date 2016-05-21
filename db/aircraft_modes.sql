@@ -9,6 +9,6 @@ CREATE TABLE IF NOT EXISTS `aircraft_modes` (
   `type_flight` varchar(50),
   `Source` varchar(255),
   PRIMARY KEY (`AircraftID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 
 ALTER TABLE `aircraft_modes` ADD INDEX(`ModeS`);

@@ -1,7 +1,7 @@
 CREATE TABLE aircraft_registration (
   aircraft_registration_id serial,
-  country varchar(999) NOT NULL,
-  registration_prefix varchar(999) NOT NULL,
+  country varchar(255) NOT NULL,
+  registration_prefix varchar(10) NOT NULL,
   PRIMARY KEY (aircraft_registration_id)
 );
 

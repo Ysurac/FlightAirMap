@@ -8285,12 +8285,14 @@ class Spotter{
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
 		try {
+			/*
 			if ($globalDBdriver == 'mysql') {
 				//$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(:latitude :longitude)'), ogc_geom) LIMIT 1";
 				$query = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(".$longitude.' '.$latitude.")'), ogc_geom) LIMIT 1";
-			} else {
-				$query = "SELECT name,iso2,iso3 FROM countries WHERE ST_DWithin(ST_GeomFromText('POINT(".$longitude." ".$latitude.")',4326)::geography, ogc_geom::geography,100) LIMIT 1";
 			}
+			*/
+			// This query seems to work both for MariaDB and PostgreSQL
+			$query = "SELECT name,iso2,iso3 FROM countries WHERE ST_Within(ST_GeomFromText('POINT(".$longitude." ".$latitude.")',4326), ogc_geom) LIMIT 1";
 		
 			$sth = $this->db->prepare($query);
 			//$sth->execute(array(':latitude' => $latitude,':longitude' => $longitude));

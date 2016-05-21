@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `spotter_archive_output` (
   `departure_airport_country` varchar(255) DEFAULT NULL,
   `departure_airport_time` varchar(20) DEFAULT NULL,
   `arrival_airport_icao` varchar(10) DEFAULT NULL,
-  `arrival_airport_name` varchar(999) DEFAULT NULL,
+  `arrival_airport_name` varchar(255) DEFAULT NULL,
   `arrival_airport_city` varchar(255) DEFAULT NULL,
   `arrival_airport_country` varchar(255) DEFAULT NULL,
   `arrival_airport_time` varchar(20) DEFAULT NULL,

@@ -3,7 +3,7 @@ CREATE TABLE taf (
   taf_id int(11) NOT NULL,
   taf_location varchar(10) NOT NULL,
   taf_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  taf varchar(999) NOT NULL
+  taf text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
