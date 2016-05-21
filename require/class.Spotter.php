@@ -364,6 +364,9 @@ class Spotter{
 	public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '')
 	{
 		global $globalTimezone, $globalDBdriver;
+		require_once(dirname(__FILE__).'/class.Translation.php');
+		$Translation = new Translation();
+
 		date_default_timezone_set('UTC');
 
 		$query_values = array();
@@ -398,6 +401,8 @@ class Spotter{
 					$additional_query .= "(spotter_output.pilot_id like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.pilot_name like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.ident like '%".$q_item."%') OR ";
+					$translate = $Translation->ident2icao($q_item);
+					if ($translate != $q_item) $additional_query .= "(spotter_output.ident like '%".$translate."%') OR ";
 					$additional_query .= "(spotter_output.highlight like '%".$q_item."%')";
 					$additional_query .= ")";
 				}
@@ -526,8 +531,14 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query .= " AND spotter_output.ident = :callsign";
-				$query_values = array_merge($query_values,array(':callsign' => $callsign));
+				$translate = $Translation->ident2icao($callsign);
+				if ($translate != $callsign) {
+					$additional_query .= " AND (spotter_output.ident = :callsign OR spotter_output.ident = :translate)";
+					$query_values = array_merge($query_values,array(':callsign' => $callsign,':translate' => $translate));
+				} else {
+					$additional_query .= " AND spotter_output.ident = :callsign";
+					$query_values = array_merge($query_values,array(':callsign' => $callsign));
+				}
 			}
 		}
 
@@ -1728,7 +1739,7 @@ class Spotter{
 
 		$query_values = array();
 		if ($airport == 'NA') {
-			return array(array('name' => 'Not available','city' => 'N/A', 'country' => 'N/A','iata' => 'NA','icao' => 'NA','latitude' => 0,'longitude' => 0,'type' => 'NA','home_link' => '','wikipedia_link' => '','image_thumb' => '', 'image' => ''));
+			return array(array('name' => 'Not available','city' => 'N/A', 'country' => 'N/A','iata' => 'NA','icao' => 'NA','altitude' => NULL,'latitude' => 0,'longitude' => 0,'type' => 'NA','home_link' => '','wikipedia_link' => '','image_thumb' => '', 'image' => ''));
 		} elseif ($airport == '') {
 			$query  = "SELECT airport.name, airport.city, airport.country, airport.iata, airport.icao, airport.latitude, airport.longitude, airport.altitude, airport.type, airport.home_link, airport.wikipedia_link, airport.image_thumb, airport.image FROM airport";
 		} else {
@@ -1892,7 +1903,7 @@ class Spotter{
 	*/
 	public function getAllAirlineInfo($airline_icao)
 	{
-		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
+		$airline_icao = strtoupper(filter_var($airline_icao,FILTER_SANITIZE_STRING));
 		if ($airline_icao == 'NA') {
 			$airline_array[] = array('name' => 'Not Available','iata' => 'NA', 'icao' => 'NA', 'callsign' => '', 'country' => 'NA', 'type' =>'');
 			return $airline_array;
