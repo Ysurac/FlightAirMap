@@ -1158,6 +1158,515 @@ function showBootstrapTooltip(){
     $('.leaflet-marker-icon').tooltip({ html: true });
 }
 
+
+
+
+function airspacePopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	    if (typeof feature.properties.title != 'undefined') {
+		output += '&nbsp;<?php echo _("Title:"); ?> '+feature.properties.title+'<br /> ';
+	    }
+	    if (typeof feature.properties.type != 'undefined') {
+		output += '&nbsp;<?php echo _("Type:"); ?> '+feature.properties.type+'<br /> ';
+	    }
+	    if (typeof feature.properties.tops != 'undefined') {
+		output += '&nbsp;<?php echo _("Tops:"); ?> '+feature.properties.tops+'<br /> ';
+	    }
+	    if (typeof feature.properties.base != 'undefined') {
+		output += '&nbsp;<?php echo _("Base:"); ?> '+feature.properties.base+'<br /> ';
+	    }
+	output += '</div>';
+	layer.bindPopup(output);
+};
+
+function update_airspaceLayer() {
+    var bbox = map.getBounds().toBBoxString();
+    airspaceLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airspace-geojson.php?coord="+bbox,{
+    onEachFeature: airspacePopup,
+	pointToLayer: function (feature, latlng) {
+/*	    return L.marker(latlng, {icon: L.icon({
+	//	iconUrl: feature.properties.icon,
+		iconSize: [12, 13],
+		iconAnchor: [2, 13]
+//		//popupAnchor: [0, -28]
+		})
+            });
+            */
+	},
+	style: function(feature) {
+	    if (feature.properties.type == 'RESTRICTED' || feature.properties.type == 'CLASS D') {
+		return {
+		    "color": '#ff5100',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'GSEC' || feature.properties.type == 'CLASS C') {
+		return {
+		    "color": '#fff000',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'PROHIBITED') {
+		return {
+		    "color": '#ff0000',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'DANGER') {
+		return {
+		    "color": '#781212',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'OTHER' || feature.properties.type == 'CLASS A') {
+		return {
+		    "color": '#ffffff',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else {
+		return {
+		    "color": '#afffff',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    }
+	}
+    }).addTo(map);
+};
+
+
+function genLayerPopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	if (typeof feature.properties.text != 'undefined') output += '&nbsp;'+feature.properties.text+'<br /> ';
+	output += '</div>';
+	layer.bindPopup(output);
+};
+/*
+function update_genLayer(url) {
+    genLayer = new L.GeoJSON.AJAX(url,{
+	onEachFeature: genLayerPopup,
+	pointToLayer: function (feature, latlng) {
+	    return L.circle(latlng, feature.properties.radius, {
+                    fillColor: feature.properties.fillcolor,
+                    color: feature.properties.color,
+                    weight: feature.properties.weight,
+                    opacity: feature.properties.opacity,
+                    fillOpacity: feature.properties.fillOpacity
+            });
+	}
+    }).addTo(map);
+};
+*/
+
+function atcPopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	output += '&nbsp;'+feature.properties.ident+'<br /> ';
+	output += '&nbsp;'+feature.properties.info+'<br /> ';
+	output += '</div>';
+	layer.bindPopup(output);
+};
+
+
+function update_atcLayer() {
+    var bbox = map.getBounds().toBBoxString();
+    atcLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/atc-geojson.php?coord="+bbox,{
+    onEachFeature: atcPopup,
+	pointToLayer: function (feature, latlng) {
+	    if (feature.properties.atc_range > 0) {
+        	if (feature.properties.type == 'Delivery') {
+        	    var atccolor = '#781212';
+        	} else if (feature.properties.type == 'Ground') {
+        	    var atccolor = '#682213';
+        	} else if (feature.properties.type == 'Tower') {
+        	    var atccolor = '#583214';
+        	} else if (feature.properties.type == 'Approach') {
+        	    var atccolor = '#484215';
+        	} else if (feature.properties.type == 'Departure') {
+        	    var atccolor = '#385216';
+        	} else if (feature.properties.type == 'Observer') {
+        	    var atccolor = '#286217';
+        	} else if (feature.properties.type == 'Control Radar or Centre') {
+        	    var atccolor = '#187218';
+        	} else {
+        	    var atccolor = '#888219';
+		}
+		return L.circle(latlng, feature.properties.atc_range*1, {
+            	    fillColor: atccolor,
+            	    color: atccolor,
+            	    weight: 1,
+            	    opacity: 0.3,
+            	    fillOpacity: 0.3
+		});
+            } else {
+        	if (feature.properties.type == 'Delivery') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_del.png',
+			    iconSize: [15, 15],
+			    iconAnchor: [7, 7]
+			})
+		    });
+		} else if (feature.properties.type == 'Ground') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_gnd.png',
+			    iconSize: [20, 20],
+			    iconAnchor: [10, 10]
+			})
+		    });
+		} else if (feature.properties.type == 'Tower') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_twr.png',
+			    iconSize: [25, 25],
+			    iconAnchor: [12, 12]
+			})
+		    });
+		} else if (feature.properties.type == 'Approach') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_app.png',
+			    iconSize: [30, 30],
+			    iconAnchor: [15, 15]
+			})
+		    });
+		} else if (feature.properties.type == 'Departure') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_dep.png',
+			    iconSize: [35, 35],
+			    iconAnchor: [17, 17]
+			})
+		    });
+		} else if (feature.properties.type == 'Control Radar or Centre') {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc_ctr.png',
+			    iconSize: [40, 40],
+			    iconAnchor: [20, 20]
+			})
+		    });
+		} else {
+		    return L.marker(latlng, {icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/atc.png',
+			    iconSize: [30, 30],
+			    iconAnchor: [15, 30]
+			})
+		    });
+		}
+            }
+	}
+    }).addTo(map);
+};
+});
+
+
+function showNotam() {
+    if (!$(".notam").hasClass("active"))
+    {
+	//loads the function to load the waypoints
+	update_notamLayer();
+	//add the active class
+	$(".notam").addClass("active");
+    } else {
+	//remove the waypoints layer
+	map.removeLayer(notamLayer);
+	//remove the active class
+	$(".notam").removeClass("active");
+     }
+}
+
+function mapType(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var atype = selectObj.options[idx].value;
+    var type = atype.split('-');
+    document.cookie =  'MapType='+type+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    if (type[0] == 'Mapbox') {
+    document.cookie =  'MapType='+type[0]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    document.cookie =  'MapTypeId='+type[1]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    } else {
+	document.cookie =  'MapType='+atype+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    }
+    window.location.reload();
+}
+
+function airlines(selectObj) {
+    var airs = [], air;
+    for (var i=0, len=selectObj.options.length; i< len;i++) {
+	air = selectObj.options[i];
+	if (air.selected) {
+	    airs.push(air.value);
+	}
+    }
+    document.cookie =  'Airlines='+airs.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function airlinestype(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var airtype = selectObj.options[idx].value;
+    document.cookie =  'airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function sources(selectObj) {
+    var sources = [], source;
+    for (var i=0, len=selectObj.options.length; i< len;i++) {
+	source = selectObj.options[i];
+	if (source.selected) {
+	    sources.push(source.value);
+	}
+    }
+    //document.cookie =  'Sources='+sources.join()+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    document.cookie =  'Sources='+sources.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+
+function iconColor(color) {
+    document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+function iconColorAltitude(val) {
+    document.cookie =  'IconColorAltitude='+val.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+
+function airportDisplayZoom(zoom) {
+    document.cookie =  'AirportZoom='+zoom+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+
+function clickVATSIM(cb) {
+    //document.cookie =  'ShowVATSIM='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    document.cookie =  'ShowVATSIM='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function clickIVAO(cb) {
+    //document.cookie =  'ShowIVAO='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    document.cookie =  'ShowIVAO='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function clickphpVMS(cb) {
+    //document.cookie =  'ShowVMS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    document.cookie =  'ShowVMS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function clickSBS1(cb) {
+    //document.cookie =  'ShowSBS1='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    document.cookie =  'ShowSBS1='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function clickAPRS(cb) {
+    //document.cookie =  'ShowAPRS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    document.cookie =  'ShowAPRS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function clickFlightPopup(cb) {
+    document.cookie =  'flightpopup='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+function clickFlightPath(cb) {
+    document.cookie =  'flightpath='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+function clickFlightRoute(cb) {
+    document.cookie =  'MapRoute='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+function clickFlightEstimation(cb) {
+    document.cookie =  'flightestimation='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+function unitdistance(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var unit = selectObj.options[idx].value;
+    document.cookie =  'unitdistance='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+function unitspeed(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var unit = selectObj.options[idx].value;
+    document.cookie =  'unitspeed='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+function unitaltitude(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var unit = selectObj.options[idx].value;
+    document.cookie =  'unitaltitude='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+function archivePause() {
+    clearInterval(reloadPage);
+    console.log('Pause');
+}
+function archivePlay() {
+    reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
+    console.log('Play');
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
+//zooms in the map
+function zoomInMap(){
+  var zoom = map.getZoom();
+  map.setZoom(zoom + 1);
+}
+
+//zooms in the map
+function zoomOutMap(){
+  var zoom = map.getZoom();
+  map.setZoom(zoom - 1);
+}
+
+//figures out the user's location
+function getUserLocation(){
+  //if the geocode is currently active then disable it, otherwise enable it
+  if (!$(".geocode").hasClass("active"))
+  {
+    //add the active class
+    $(".geocode").addClass("active");
+    //check to see if geolocation is possible in the browser
+    if (navigator.geolocation) {
+        //gets the current position and calls a function to make use of it
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        //if the geolocation is not supported by the browser let the user know
+        alert("Geolocation is not supported by this browser.");
+        //remove the active class
+        $(".geocode").removeClass("active");
+    }
+  } else {
+    //remove the user location marker
+    removeUserPosition();
+  }
+}
+
+//plots the users location on the map
+function showPosition(position) {
+    //creates a leaflet marker based on the coordinates we got from the browser and add it to the map
+    var markerUser = L.marker([position.coords.latitude, position.coords.longitude], {
+        title: "<?php echo _("Your location"); ?>",
+        alt: "<?php echo _("Your location"); ?>",
+        icon: L.icon({
+          iconUrl: '<?php print $globalURL; ?>/images/map-user.png',
+          iconRetinaUrl: '<?php print $globalURL; ?>/images/map-user@2x.png',
+          iconSize: [40, 40],
+          iconAnchor: [20, 40]
+        })
+    });
+    user.addLayer(markerUser);
+    map.addLayer(user);
+    //pan the map to the users location
+    map.panTo([position.coords.latitude, position.coords.longitude]);
+}
+
+//removes the user postion off the map
+function removeUserPosition(){
+  //remove the marker off the map
+  map.removeLayer(user);
+  //remove the active class
+  $(".geocode").removeClass("active");
+}
+
+//determines the users heading based on the iphone
+function getCompassDirection(){
+
+  //if the compass is currently active then disable it, otherwise enable it
+  if (!$(".compass").hasClass("active"))
+  {
+    //add the active class
+    $(".compass").addClass("active");
+    //check to see if the device orietntation event is possible on the browser
+    if (window.DeviceOrientationEvent) {
+      //first lets get the user location to mak it more user friendly
+      getUserLocation();
+      //disable dragging the map
+      map.dragging.disable();
+      //disable double click zoom
+      map.doubleClickZoom.disable();
+      //disable touch zoom
+      map.touchZoom.disable();
+      //add event listener for device orientation and call the function to actually get the values
+      window.addEventListener('deviceorientation', capture_orientation, false);
+    } else {
+      //if the browser is not capable for device orientation let the user know
+      alert("<?php echo _("Compass is not supported by this browser."); ?>");
+      //remove the active class
+      $(".compass").removeClass("active");
+    }
+  } else {
+    //remove the event listener to disable the device orientation
+    window.removeEventListener('deviceorientation', capture_orientation, false);
+    //reset the orientation to be again north to south
+    $("#live-map").css({ WebkitTransform: 'rotate(360deg)'});
+    $("#live-map").css({'-moz-transform': 'rotate(360deg)'});
+    $("#live-map").css({'-ms-transform': 'rotate(360deg)'});
+    //remove the active class
+    $(".compass").removeClass("active");
+    //remove the user location marker
+    removeUserPosition();
+    //enable dragging the map
+    map.dragging.enable();
+    //enable double click zoom
+    map.doubleClickZoom.enable();
+    //enable touch zoom
+    map.touchZoom.enable();
+  }
+
+}
+
+//gets the users heading information
+function capture_orientation (event) {
+ //store the values of each of the recorded elements in a variable
+   var alpha;
+   var css;
+    //Check for iOS property
+    if(event.webkitCompassHeading) {
+      alpha = event.webkitCompassHeading;
+      //Rotation is reversed for iOS
+      css = 'rotate(-' + alpha + 'deg)';
+    }
+    //non iOS
+    else {
+      alpha = event.alpha;
+      webkitAlpha = alpha;
+      if(!window.chrome) {
+        //Assume Android stock and apply offset
+        webkitAlpha = alpha-270;
+        css = 'rotate(' + alpha + 'deg)';
+      }
+    }    
+  
+  //we use the "alpha" variable for the rotation effect
+  $("#live-map").css({ WebkitTransform: css});
+  $("#live-map").css({'-moz-transform': css});
+  $("#live-map").css({'-ms-transform': css});
+}
+function update_notamLayer() {
+    var bbox = map.getBounds().toBBoxString();
+    notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
+    onEachFeature: notamPopup,
+	pointToLayer: function (feature, latlng) {
+	    return L.circle(latlng, feature.properties.radius, {
+                    fillColor: feature.properties.color,
+                    color: feature.properties.color,
+                    weight: 1,
+                    opacity: 0.3,
+                    fillOpacity: 0.3
+            });
+	}
+    }).addTo(map);
+};
+
+function update_genLayer(url) {
+    genLayer = new L.GeoJSON.AJAX(url,{
+	onEachFeature: genLayerPopup,
+	pointToLayer: function (feature, latlng) {
+	    return L.circle(latlng, feature.properties.radius, {
+                    fillColor: feature.properties.fillcolor,
+                    color: feature.properties.color,
+                    weight: feature.properties.weight,
+                    opacity: feature.properties.opacity,
+                    fillOpacity: feature.properties.fillOpacity
+            });
+	}
+    }).addTo(map);
+};
+
 //adds a new weather radar layer on to the map
 function showWeatherPrecipitation(){
   //if the weatherradar is currently active then disable it, otherwise enable it
@@ -1340,178 +1849,14 @@ function loadWeatherSatellite()
         opacity: '0.65'
     }).addTo(map);
 }
-
-//zooms in the map
-function zoomInMap(){
-  var zoom = map.getZoom();
-  map.setZoom(zoom + 1);
-}
-
-//zooms in the map
-function zoomOutMap(){
-  var zoom = map.getZoom();
-  map.setZoom(zoom - 1);
-}
-
-//figures out the user's location
-function getUserLocation(){
-  //if the geocode is currently active then disable it, otherwise enable it
-  if (!$(".geocode").hasClass("active"))
-  {
-    //add the active class
-    $(".geocode").addClass("active");
-    //check to see if geolocation is possible in the browser
-    if (navigator.geolocation) {
-        //gets the current position and calls a function to make use of it
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-        //if the geolocation is not supported by the browser let the user know
-        alert("Geolocation is not supported by this browser.");
-        //remove the active class
-        $(".geocode").removeClass("active");
-    }
-  } else {
-    //remove the user location marker
-    removeUserPosition();
-  }
-}
-
-//plots the users location on the map
-function showPosition(position) {
-    //creates a leaflet marker based on the coordinates we got from the browser and add it to the map
-    var markerUser = L.marker([position.coords.latitude, position.coords.longitude], {
-        title: "<?php echo _("Your location"); ?>",
-        alt: "<?php echo _("Your location"); ?>",
-        icon: L.icon({
-          iconUrl: '<?php print $globalURL; ?>/images/map-user.png',
-          iconRetinaUrl: '<?php print $globalURL; ?>/images/map-user@2x.png',
-          iconSize: [40, 40],
-          iconAnchor: [20, 40]
-        })
-    });
-    user.addLayer(markerUser);
-    map.addLayer(user);
-    //pan the map to the users location
-    map.panTo([position.coords.latitude, position.coords.longitude]);
-}
-
-//removes the user postion off the map
-function removeUserPosition(){
-  //remove the marker off the map
-  map.removeLayer(user);
-  //remove the active class
-  $(".geocode").removeClass("active");
-}
-
-//determines the users heading based on the iphone
-function getCompassDirection(){
-
-  //if the compass is currently active then disable it, otherwise enable it
-  if (!$(".compass").hasClass("active"))
-  {
-    //add the active class
-    $(".compass").addClass("active");
-    //check to see if the device orietntation event is possible on the browser
-    if (window.DeviceOrientationEvent) {
-      //first lets get the user location to mak it more user friendly
-      getUserLocation();
-      //disable dragging the map
-      map.dragging.disable();
-      //disable double click zoom
-      map.doubleClickZoom.disable();
-      //disable touch zoom
-      map.touchZoom.disable();
-      //add event listener for device orientation and call the function to actually get the values
-      window.addEventListener('deviceorientation', capture_orientation, false);
-    } else {
-      //if the browser is not capable for device orientation let the user know
-      alert("<?php echo _("Compass is not supported by this browser."); ?>");
-      //remove the active class
-      $(".compass").removeClass("active");
-    }
-  } else {
-    //remove the event listener to disable the device orientation
-    window.removeEventListener('deviceorientation', capture_orientation, false);
-    //reset the orientation to be again north to south
-    $("#live-map").css({ WebkitTransform: 'rotate(360deg)'});
-    $("#live-map").css({'-moz-transform': 'rotate(360deg)'});
-    $("#live-map").css({'-ms-transform': 'rotate(360deg)'});
-    //remove the active class
-    $(".compass").removeClass("active");
-    //remove the user location marker
-    removeUserPosition();
-    //enable dragging the map
-    map.dragging.enable();
-    //enable double click zoom
-    map.doubleClickZoom.enable();
-    //enable touch zoom
-    map.touchZoom.enable();
-  }
-
-}
-
-//gets the users heading information
-function capture_orientation (event) {
- //store the values of each of the recorded elements in a variable
-   var alpha;
-   var css;
-    //Check for iOS property
-    if(event.webkitCompassHeading) {
-      alpha = event.webkitCompassHeading;
-      //Rotation is reversed for iOS
-      css = 'rotate(-' + alpha + 'deg)';
-    }
-    //non iOS
-    else {
-      alpha = event.alpha;
-      webkitAlpha = alpha;
-      if(!window.chrome) {
-        //Assume Android stock and apply offset
-        webkitAlpha = alpha-270;
-        css = 'rotate(' + alpha + 'deg)';
-      }
-    }    
-  
-  //we use the "alpha" variable for the rotation effect
-  $("#live-map").css({ WebkitTransform: css});
-  $("#live-map").css({'-moz-transform': css});
-  $("#live-map").css({'-ms-transform': css});
-}
-
-function waypointsPopup (feature, layer) {
-	var output = '';
-	output += '<div class="top">';
-	    if (typeof feature.properties.segment_name != 'undefined') {
-		output += '&nbsp;<?php echo _("Segment name:"); ?> '+feature.properties.segment_name+'<br /> ';
-		output += '&nbsp;<?php echo _("From:"); ?> '+feature.properties.name_begin+' To : '+feature.properties.name_end+'<br /> ';
-	    }
-	    if (typeof feature.properties.ident != 'undefined') {
-		output += '&nbsp;<?php echo _("Ident:"); ?> '+feature.properties.ident+'<br /> ';
-	    }
-	    if (typeof feature.properties.alt != 'undefined') {
-		output += '&nbsp;<?php echo _("Altitude:"); ?> '+feature.properties.alt*100+' feet - ';
-		output += Math.round(feature.properties.alt*30,48)+' m (FL'+feature.properties.alt+')<br />';
-
-	    }
-	    if (typeof feature.properties.base != 'undefined') {
-		output += '&nbsp;<?php echo _("Base Altitude:"); ?> '+feature.properties.base*100+' feet - ';
-		output += Math.round(feature.properties.base*30,48)+' m (FL'+feature.properties.base+')<br />';
-		output += '&nbsp;<?php echo _("Top Altitude:"); ?> '+feature.properties.top*100+' feet - ';
-		output += Math.round(feature.properties.top*30,48)+' m (FL'+feature.properties.top+')<br />';
-	    }
-//	    output += '&nbsp;Control : '+feature.properties.control+'<br />&nbsp;Usage : '+feature.properties.usage;
-	output += '</div>';
-	layer.bindPopup(output);
-};
-
-var lineStyle = {
+function update_waypointsLayer() {
+    var bbox = map.getBounds().toBBoxString();
+    var lineStyle = {
 	"color": "#ff7800",
 	"weight": 1,
 	"opacity": 0.65
-};
+    };
 
-function update_waypointsLayer() {
-    var bbox = map.getBounds().toBBoxString();
     waypointsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/waypoints-geojson.php?coord="+bbox,{
     onEachFeature: waypointsPopup,
 	pointToLayer: function (feature, latlng) {
@@ -1542,80 +1887,30 @@ function showWaypoints() {
      }
 }
 
-
-function airspacePopup (feature, layer) {
+function waypointsPopup (feature, layer) {
 	var output = '';
 	output += '<div class="top">';
-	    if (typeof feature.properties.title != 'undefined') {
-		output += '&nbsp;<?php echo _("Title:"); ?> '+feature.properties.title+'<br /> ';
+	    if (typeof feature.properties.segment_name != 'undefined') {
+		output += '&nbsp;<?php echo _("Segment name:"); ?> '+feature.properties.segment_name+'<br /> ';
+		output += '&nbsp;<?php echo _("From:"); ?> '+feature.properties.name_begin+' To : '+feature.properties.name_end+'<br /> ';
 	    }
-	    if (typeof feature.properties.type != 'undefined') {
-		output += '&nbsp;<?php echo _("Type:"); ?> '+feature.properties.type+'<br /> ';
+	    if (typeof feature.properties.ident != 'undefined') {
+		output += '&nbsp;<?php echo _("Ident:"); ?> '+feature.properties.ident+'<br /> ';
 	    }
-	    if (typeof feature.properties.tops != 'undefined') {
-		output += '&nbsp;<?php echo _("Tops:"); ?> '+feature.properties.tops+'<br /> ';
+	    if (typeof feature.properties.alt != 'undefined') {
+		output += '&nbsp;<?php echo _("Altitude:"); ?> '+feature.properties.alt*100+' feet - ';
+		output += Math.round(feature.properties.alt*30,48)+' m (FL'+feature.properties.alt+')<br />';
+
 	    }
 	    if (typeof feature.properties.base != 'undefined') {
-		output += '&nbsp;<?php echo _("Base:"); ?> '+feature.properties.base+'<br /> ';
+		output += '&nbsp;<?php echo _("Base Altitude:"); ?> '+feature.properties.base*100+' feet - ';
+		output += Math.round(feature.properties.base*30,48)+' m (FL'+feature.properties.base+')<br />';
+		output += '&nbsp;<?php echo _("Top Altitude:"); ?> '+feature.properties.top*100+' feet - ';
+		output += Math.round(feature.properties.top*30,48)+' m (FL'+feature.properties.top+')<br />';
 	    }
+//	    output += '&nbsp;Control : '+feature.properties.control+'<br />&nbsp;Usage : '+feature.properties.usage;
 	output += '</div>';
 	layer.bindPopup(output);
-};
-
-function update_airspaceLayer() {
-    var bbox = map.getBounds().toBBoxString();
-    airspaceLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airspace-geojson.php?coord="+bbox,{
-    onEachFeature: airspacePopup,
-	pointToLayer: function (feature, latlng) {
-/*	    return L.marker(latlng, {icon: L.icon({
-	//	iconUrl: feature.properties.icon,
-		iconSize: [12, 13],
-		iconAnchor: [2, 13]
-//		//popupAnchor: [0, -28]
-		})
-            });
-            */
-	},
-	style: function(feature) {
-	    if (feature.properties.type == 'RESTRICTED' || feature.properties.type == 'CLASS D') {
-		return {
-		    "color": '#ff5100',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    } else if (feature.properties.type == 'GSEC' || feature.properties.type == 'CLASS C') {
-		return {
-		    "color": '#fff000',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    } else if (feature.properties.type == 'PROHIBITED') {
-		return {
-		    "color": '#ff0000',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    } else if (feature.properties.type == 'DANGER') {
-		return {
-		    "color": '#781212',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    } else if (feature.properties.type == 'OTHER' || feature.properties.type == 'CLASS A') {
-		return {
-		    "color": '#ffffff',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    } else {
-		return {
-		    "color": '#afffff',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    }
-	}
-    }).addTo(map);
 };
 
 function showAirspace() {
@@ -1633,31 +1928,6 @@ function showAirspace() {
      }
 }
 
-function genLayerPopup (feature, layer) {
-	var output = '';
-	output += '<div class="top">';
-	if (typeof feature.properties.text != 'undefined') output += '&nbsp;'+feature.properties.text+'<br /> ';
-	output += '</div>';
-	layer.bindPopup(output);
-};
-
-function update_genLayer(url) {
-//    var bbox = map.getBounds().toBBoxString();
-//    notamLayer = new L.GeoJSON.AJAX(url+"?coord="+bbox,{
-    genLayer = new L.GeoJSON.AJAX(url,{
-	onEachFeature: genLayerPopup,
-	pointToLayer: function (feature, latlng) {
-	    return L.circle(latlng, feature.properties.radius, {
-                    fillColor: feature.properties.fillcolor,
-                    color: feature.properties.color,
-                    weight: feature.properties.weight,
-                    opacity: feature.properties.opacity,
-                    fillOpacity: feature.properties.fillOpacity
-            });
-	}
-    }).addTo(map);
-};
-
 function notamPopup (feature, layer) {
 	var output = '';
 	output += '<div class="top">';
@@ -1667,257 +1937,3 @@ function notamPopup (feature, layer) {
 	output += '</div>';
 	layer.bindPopup(output);
 };
-
-function update_notamLayer() {
-    var bbox = map.getBounds().toBBoxString();
-    notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
-    onEachFeature: notamPopup,
-	pointToLayer: function (feature, latlng) {
-	    return L.circle(latlng, feature.properties.radius, {
-                    fillColor: feature.properties.color,
-                    color: feature.properties.color,
-                    weight: 1,
-                    opacity: 0.3,
-                    fillOpacity: 0.3
-            });
-	}
-    }).addTo(map);
-};
-
-function atcPopup (feature, layer) {
-	var output = '';
-	output += '<div class="top">';
-	output += '&nbsp;'+feature.properties.ident+'<br /> ';
-	output += '&nbsp;'+feature.properties.info+'<br /> ';
-	output += '</div>';
-	layer.bindPopup(output);
-};
-
-
-function update_atcLayer() {
-    var bbox = map.getBounds().toBBoxString();
-    atcLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/atc-geojson.php?coord="+bbox,{
-    onEachFeature: atcPopup,
-	pointToLayer: function (feature, latlng) {
-	    if (feature.properties.atc_range > 0) {
-        	if (feature.properties.type == 'Delivery') {
-        	    var atccolor = '#781212';
-        	} else if (feature.properties.type == 'Ground') {
-        	    var atccolor = '#682213';
-        	} else if (feature.properties.type == 'Tower') {
-        	    var atccolor = '#583214';
-        	} else if (feature.properties.type == 'Approach') {
-        	    var atccolor = '#484215';
-        	} else if (feature.properties.type == 'Departure') {
-        	    var atccolor = '#385216';
-        	} else if (feature.properties.type == 'Observer') {
-        	    var atccolor = '#286217';
-        	} else if (feature.properties.type == 'Control Radar or Centre') {
-        	    var atccolor = '#187218';
-        	} else {
-        	    var atccolor = '#888219';
-		}
-		return L.circle(latlng, feature.properties.atc_range*1, {
-            	    fillColor: atccolor,
-            	    color: atccolor,
-            	    weight: 1,
-            	    opacity: 0.3,
-            	    fillOpacity: 0.3
-		});
-            } else {
-        	if (feature.properties.type == 'Delivery') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_del.png',
-			    iconSize: [15, 15],
-			    iconAnchor: [7, 7]
-			})
-		    });
-		} else if (feature.properties.type == 'Ground') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_gnd.png',
-			    iconSize: [20, 20],
-			    iconAnchor: [10, 10]
-			})
-		    });
-		} else if (feature.properties.type == 'Tower') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_twr.png',
-			    iconSize: [25, 25],
-			    iconAnchor: [12, 12]
-			})
-		    });
-		} else if (feature.properties.type == 'Approach') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_app.png',
-			    iconSize: [30, 30],
-			    iconAnchor: [15, 15]
-			})
-		    });
-		} else if (feature.properties.type == 'Departure') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_dep.png',
-			    iconSize: [35, 35],
-			    iconAnchor: [17, 17]
-			})
-		    });
-		} else if (feature.properties.type == 'Control Radar or Centre') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_ctr.png',
-			    iconSize: [40, 40],
-			    iconAnchor: [20, 20]
-			})
-		    });
-		} else {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc.png',
-			    iconSize: [30, 30],
-			    iconAnchor: [15, 30]
-			})
-		    });
-		}
-            }
-	}
-    }).addTo(map);
-};
-});
-function showNotam() {
-    if (!$(".notam").hasClass("active"))
-    {
-	//loads the function to load the waypoints
-	update_notamLayer();
-	//add the active class
-	$(".notam").addClass("active");
-    } else {
-	//remove the waypoints layer
-	map.removeLayer(notamLayer);
-	//remove the active class
-	$(".notam").removeClass("active");
-     }
-}
-
-function mapType(selectObj) {
-    var idx = selectObj.selectedIndex;
-    var atype = selectObj.options[idx].value;
-    var type = atype.split('-');
-    document.cookie =  'MapType='+type+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    if (type[0] == 'Mapbox') {
-    document.cookie =  'MapType='+type[0]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'MapTypeId='+type[1]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    } else {
-	document.cookie =  'MapType='+atype+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    }
-    window.location.reload();
-}
-
-function airlines(selectObj) {
-    var airs = [], air;
-    for (var i=0, len=selectObj.options.length; i< len;i++) {
-	air = selectObj.options[i];
-	if (air.selected) {
-	    airs.push(air.value);
-	}
-    }
-    document.cookie =  'Airlines='+airs.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
-}
-function airlinestype(selectObj) {
-    var idx = selectObj.selectedIndex;
-    var airtype = selectObj.options[idx].value;
-    document.cookie =  'airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
-}
-function sources(selectObj) {
-    var sources = [], source;
-    for (var i=0, len=selectObj.options.length; i< len;i++) {
-	source = selectObj.options[i];
-	if (source.selected) {
-	    sources.push(source.value);
-	}
-    }
-    //document.cookie =  'Sources='+sources.join()+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'Sources='+sources.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
-}
-
-function iconColor(color) {
-    document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
-}
-function iconColorAltitude(val) {
-    document.cookie =  'IconColorAltitude='+val.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
-}
-
-function airportDisplayZoom(zoom) {
-    document.cookie =  'AirportZoom='+zoom+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
-}
-
-function clickVATSIM(cb) {
-    //document.cookie =  'ShowVATSIM='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'ShowVATSIM='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
-}
-function clickIVAO(cb) {
-    //document.cookie =  'ShowIVAO='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'ShowIVAO='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
-}
-function clickphpVMS(cb) {
-    //document.cookie =  'ShowVMS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'ShowVMS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
-}
-function clickSBS1(cb) {
-    //document.cookie =  'ShowSBS1='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'ShowSBS1='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
-}
-function clickAPRS(cb) {
-    //document.cookie =  'ShowAPRS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'ShowAPRS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
-}
-function clickFlightPopup(cb) {
-    document.cookie =  'flightpopup='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
-}
-function clickFlightPath(cb) {
-    document.cookie =  'flightpath='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
-}
-function clickFlightRoute(cb) {
-    document.cookie =  'MapRoute='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
-}
-function clickFlightEstimation(cb) {
-    document.cookie =  'flightestimation='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
-}
-function unitdistance(selectObj) {
-    var idx = selectObj.selectedIndex;
-    var unit = selectObj.options[idx].value;
-    document.cookie =  'unitdistance='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-}
-function unitspeed(selectObj) {
-    var idx = selectObj.selectedIndex;
-    var unit = selectObj.options[idx].value;
-    document.cookie =  'unitspeed='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-}
-function unitaltitude(selectObj) {
-    var idx = selectObj.selectedIndex;
-    var unit = selectObj.options[idx].value;
-    document.cookie =  'unitaltitude='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-}
-function archivePause() {
-    clearInterval(reloadPage);
-    console.log('Pause');
-}
-function archivePlay() {
-    reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
-    console.log('Play');
-}
-
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-    }
-    return "";
-}
-
