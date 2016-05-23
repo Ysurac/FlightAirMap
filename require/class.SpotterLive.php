@@ -422,7 +422,7 @@ class SpotterLive {
 		global $globalDBdriver, $globalDebug;
 		if ($globalDBdriver == 'mysql') {
 			//$query = 'SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) >= spotter_live.date AND spotter_live.flightaware_id NOT IN (SELECT flightaware_id FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 HOUR) < spotter_live.date) LIMIT 800 OFFSET 0';
-    			$query = "SELECT spotter_live.flightaware_id FROM spotter_live INNER JOIN (SELECT flightaware_id,MAX(date) as max_date FROM spotter_live GROUP BY flightaware_id) s ON s.flightaware_id = spotter_live.flightaware_id AND DATE_SUB(UTC_TIMESTAMP(), INTERVAL 2 HOUR) >= s.max_date LIMIT 800 OFFSET 0";
+    			$query = "SELECT spotter_live.flightaware_id FROM spotter_live INNER JOIN (SELECT flightaware_id,MAX(date) as max_date FROM spotter_live GROUP BY flightaware_id) s ON s.flightaware_id = spotter_live.flightaware_id AND DATE_SUB(UTC_TIMESTAMP(), INTERVAL 2 HOUR) >= s.max_date LIMIT 1200 OFFSET 0";
     			try {
 				
 				$sth = $this->db->prepare($query);

@@ -18,6 +18,9 @@ if (isset($_GET['download'])) {
 }
 header('Content-Type: text/javascript');
 
+if (!isset($globalJsonCompress)) $compress = true;
+else $compress = $globalJsonCompress;
+
 $from_archive = false;
 $min = false;
 $allhistory = false;
@@ -31,7 +34,9 @@ if (isset($_COOKIE['Airlines']) && $_COOKIE['Airlines'] != '') $filter['airlines
 if (isset($_COOKIE['Sources']) && $_COOKIE['Sources'] != '') $filter['source_aprs'] = explode(',',$_COOKIE['Sources']);
 if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] != 'all') $filter['airlinestype'] = $_COOKIE['airlinestype'];
 
-if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) $min = true;
+if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) {
+	$min = true;
+}
 
 if (isset($_GET['ident'])) {
 	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
@@ -89,6 +94,8 @@ $output = '{';
 	$output .= '"type": "FeatureCollection",';
 		if ($min) $output .= '"minimal": "true",';
 		else $output .= '"minimal": "false",';
+		$output .= '"fc": "'.$flightcnt.'",';
+		$output .= '"sqt": "'.$sqltime.'",';
 
 		if (!empty($spotter_array) && is_array($spotter_array))
 		{
@@ -152,21 +159,26 @@ $output = '{';
 //				print_r($spotter_item);
 				$output .= '{';
 					$output .= '"type": "Feature",';
+						//$output .= '"fc": "'.$flightcnt.'",';
+						//$output .= '"sqt": "'.$sqltime.'",';
 						$output .= '"properties": {';
-							$output .= '"flightaware_id": "'.$spotter_item['flightaware_id'].'",';
-							$output .= '"flight_cnt": "'.$flightcnt.'",';
-							$output .= '"sqltime": "'.$sqltime.'",';
+							if ($compress) $output .= '"fi": "'.$spotter_item['flightaware_id'].'",';
+							else $output .= '"flightaware_id": "'.$spotter_item['flightaware_id'].'",';
+							$output .= '"fc": "'.$flightcnt.'",';
+							$output .= '"sqt": "'.$sqltime.'",';
 							if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
 
 /*
 							if ($min) $output .= '"minimal": "true",';
 							else $output .= '"minimal": "false",';
 */
-							//$output .= '"flight_cnt": "'.$spotter_item['nb'].'",';
+							//$output .= '"fc": "'.$spotter_item['nb'].'",';
 						if (isset($spotter_item['ident']) && $spotter_item['ident'] != '') {
-							$output .= '"callsign": "'.$spotter_item['ident'].'",';
+							if ($compress) $output .= '"c": "'.$spotter_item['ident'].'",';
+							else $output .= '"callsign": "'.$spotter_item['ident'].'",';
 						} else {
-							$output .= '"callsign": "NA",';
+							if ($compress) $output .= '"c": "NA",';
+							else $output .= '"callsign": "NA",';
 						}
 						if (isset($spotter_item['registration'])) $output .= '"registration": "'.$spotter_item['registration'].'",';
 						if (isset($spotter_item['aircraft_name']) && isset($spotter_item['aircraft_type'])) {
@@ -177,7 +189,7 @@ $output = '{';
 						} elseif (!$min) {
 							$output .= '"aircraft_name": "NA",';
 						}
-						if (isset($spotter_item['aircraft_icao'])) {
+						if (!$min && isset($spotter_item['aircraft_icao'])) {
 							$output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
 						}
 						if (!isset($spotter_item['aircraft_shadow'])) {
@@ -189,15 +201,20 @@ $output = '{';
 							}
 						}
 						if ($spotter_item['aircraft_shadow'] == '') {
-						    $output .= '"aircraft_shadow": "default.png",';
-						} else $output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
+							if ($compress) $output .= '"as": "default.png",';
+							else $output .= '"aircraft_shadow": "default.png",';
+						} else {
+							if ($compress) $output .= '"as": "'.$spotter_item['aircraft_shadow'].'",';
+							else $output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
+						}
 						if (isset($spotter_item['airline_name'])) {
 							$output .= '"airline_name": "'.$spotter_item['airline_name'].'",';
 						} elseif (!$min) {
 							$output .= '"airline_name": "NA",';
 						}
 						if (isset($spotter_item['departure_airport'])) {
-							$output .= '"departure_airport_code": "'.$spotter_item['departure_airport'].'",';
+							if ($compress) $output .= '"dac": "'.$spotter_item['departure_airport'].'",';
+							else $output .= '"departure_airport_code": "'.$spotter_item['departure_airport'].'",';
 						}
 						if (isset($spotter_item['departure_airport_city'])) {
 							$output .= '"departure_airport": "'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_country'].'",';
@@ -209,7 +226,8 @@ $output = '{';
 							$output .= '"arrival_airport_time": "'.$spotter_item['arrival_airport_time'].'",';
 						}
 						if (isset($spotter_item['arrival_airport'])) {
-							$output .= '"arrival_airport_code": "'.$spotter_item['arrival_airport'].'",';
+							if ($compress) $output .= '"aac": "'.$spotter_item['arrival_airport'].'",';
+							else $output .= '"arrival_airport_code": "'.$spotter_item['arrival_airport'].'",';
 						}
 						if (isset($spotter_item['arrival_airport_city'])) {
 							$output .= '"arrival_airport": "'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].'",';
@@ -218,15 +236,22 @@ $output = '{';
 						if (isset($spotter_item['date_iso_8601'])) {
 							$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
 						}
-						$output .= '"latitude": "'.$spotter_item['latitude'].'",';
-						$output .= '"longitude": "'.$spotter_item['longitude'].'",';
-						$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
-						$output .= '"altitude": "'.$spotter_item['altitude'].'",';
-						$output .= '"heading": "'.$spotter_item['heading'].'",';
+						
+						if (!$min) {
+							$output .= '"latitude": "'.$spotter_item['latitude'].'",';
+							$output .= '"longitude": "'.$spotter_item['longitude'].'",';
+							$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
+						}
+						
+						if ($compress) $output .= '"a": "'.$spotter_item['altitude'].'",';
+						else $output .= '"altitude": "'.$spotter_item['altitude'].'",';
+						if ($compress)$output .= '"h": "'.$spotter_item['heading'].'",';
+						else $output .= '"heading": "'.$spotter_item['heading'].'",';
+						
 						if (isset($archivespeed)) $nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],$archivespeed);
 						else $nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading']);
-						$output .= '"nextlatitude": "'.$nextcoord['latitude'].'",';
-						$output .= '"nextlongitude": "'.$nextcoord['longitude'].'",';
+						//$output .= '"nextlatitude": "'.$nextcoord['latitude'].'",';
+						//$output .= '"nextlongitude": "'.$nextcoord['longitude'].'",';
 						$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
 
 						if (!$min) $output .= '"image": "'.$image.'",';
@@ -237,7 +262,8 @@ $output = '{';
 							$output .= '"image_source_website": "'.urlencode($spotter_item['image_source_website']).'",';
 						}
 						if (isset($spotter_item['squawk'])) {
-							$output .= '"squawk": "'.$spotter_item['squawk'].'",';
+							if ($compress) $output .= '"sq": "'.$spotter_item['squawk'].'",';
+							else $output .= '"squawk": "'.$spotter_item['squawk'].'",';
 						}
 						if (isset($spotter_item['squawk_usage'])) {
 							$output .= '"squawk_usage": "'.$spotter_item['squawk_usage'].'",';
@@ -255,7 +281,8 @@ $output = '{';
 							$output .= '"acars": "'.trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"), '<br />',$spotter_item['acars']['message'])).'",';
 						}
 							// FIXME : type when not aircraft ?
-							$output .= '"type": "aircraft"';
+						if ($compress) $output .= '"t": "aircraft"';
+						else $output .= '"type": "aircraft"';
 						$output .= '},';
 						$output .= '"geometry": {';
 							$output .= '"type": "Point",';
@@ -378,13 +405,13 @@ $output = '{';
 			$output .= ',"initial_sqltime": "'.$sqltime.'",';
 			$output .= '"totaltime": "'.round(microtime(true)-$begintime,2).'",';
 			if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
-			$output .= '"flight_cnt": "'.$j.'"';
+			$output .= '"fc": "'.$j.'"';
 		} else {
 			$output .= '"features": ';
 			$output .= '{';
 			$output .= '"type": "Feature",';
 			$output .= '"properties": {';
-			$output .= '"flight_cnt": "'.$flightcnt.'"}}';
+			$output .= '"fc": "'.$flightcnt.'"}}';
 		}
 		
 $output .= '}';
