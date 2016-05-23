@@ -681,7 +681,7 @@ function getLiveData(click)
 		}
 ?>
 			rotationAngle: heading,
-			iconAngle: feature.properties.heading,
+			iconAngle: heading,
 			title: markerLabel,
 			alt: callsign,
 			icon: L.icon({
