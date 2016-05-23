@@ -805,7 +805,19 @@ function getLiveData(click)
 ?>
 		},
             onEachFeature: function (feature, layer) {
+<?php
+	if ($compress) {
+?>
+		var type = feature.properties.t;
+		var callsign = feature.properties.c;
+<?php
+	} else {
+?>
 		var type = feature.properties.type;
+		var callsign = feature.properties.callsign;
+<?php
+	}
+?>
                 var output = '';
 		
               //individual aircraft
