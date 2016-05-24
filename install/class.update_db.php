@@ -1030,9 +1030,10 @@ class update_db {
         }
 	
 	public static function update_airspace() {
-		global $tmp_dir;
+		global $tmp_dir, $globalDBdriver;
 		include_once('class.create_db.php');
-		update_db::gunzip('../db/airspace.sql.gz',$tmp_dir.'airspace.sql');
+		if ($globalDBdriver == 'mysql') update_db::gunzip('../db/airspace.sql.gz',$tmp_dir.'airspace.sql');
+		else update_db::gunzip('../db/pgsql/airspace.sql.gz',$tmp_dir.'airspace.sql');
 		$error = create_db::import_file($tmp_dir.'airspace.sql');
 		return $error;
 	}

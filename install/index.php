@@ -522,7 +522,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="text" name="bitly" id="bitly" value="<?php if (isset($globalBitlyAccessToken)) print $globalBitlyAccessToken; ?>" />
 			</p>
 			<p>
-				<label for="waypoints">Add Waypoints, Airspace and countries data (about 45Mio in DB) <i>Need PostGIS if you use PostgreSQL, airspace not available for PostgreSQL</i></label>
+				<label for="waypoints">Add Waypoints, Airspace and countries data (about 45Mio in DB) <i>Need PostGIS if you use PostgreSQL</i></label>
 				<input type="checkbox" name="waypoints" id="waypoints" value="waypoints" checked="checked" />
 			</p>
 			<p>

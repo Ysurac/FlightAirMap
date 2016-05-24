@@ -1161,81 +1161,6 @@ function showBootstrapTooltip(){
 
 
 
-function airspacePopup (feature, layer) {
-	var output = '';
-	output += '<div class="top">';
-	    if (typeof feature.properties.title != 'undefined') {
-		output += '&nbsp;<?php echo _("Title:"); ?> '+feature.properties.title+'<br /> ';
-	    }
-	    if (typeof feature.properties.type != 'undefined') {
-		output += '&nbsp;<?php echo _("Type:"); ?> '+feature.properties.type+'<br /> ';
-	    }
-	    if (typeof feature.properties.tops != 'undefined') {
-		output += '&nbsp;<?php echo _("Tops:"); ?> '+feature.properties.tops+'<br /> ';
-	    }
-	    if (typeof feature.properties.base != 'undefined') {
-		output += '&nbsp;<?php echo _("Base:"); ?> '+feature.properties.base+'<br /> ';
-	    }
-	output += '</div>';
-	layer.bindPopup(output);
-};
-
-function update_airspaceLayer() {
-    var bbox = map.getBounds().toBBoxString();
-    airspaceLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airspace-geojson.php?coord="+bbox,{
-    onEachFeature: airspacePopup,
-	pointToLayer: function (feature, latlng) {
-/*	    return L.marker(latlng, {icon: L.icon({
-	//	iconUrl: feature.properties.icon,
-		iconSize: [12, 13],
-		iconAnchor: [2, 13]
-//		//popupAnchor: [0, -28]
-		})
-            });
-            */
-	},
-	style: function(feature) {
-	    if (feature.properties.type == 'RESTRICTED' || feature.properties.type == 'CLASS D') {
-		return {
-		    "color": '#ff5100',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    } else if (feature.properties.type == 'GSEC' || feature.properties.type == 'CLASS C') {
-		return {
-		    "color": '#fff000',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    } else if (feature.properties.type == 'PROHIBITED') {
-		return {
-		    "color": '#ff0000',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    } else if (feature.properties.type == 'DANGER') {
-		return {
-		    "color": '#781212',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    } else if (feature.properties.type == 'OTHER' || feature.properties.type == 'CLASS A') {
-		return {
-		    "color": '#ffffff',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    } else {
-		return {
-		    "color": '#afffff',
-		    "weight": 1,
-		    "opacity": 0.55
-		};
-	    }
-	}
-    }).addTo(map);
-};
-
 
 function genLayerPopup (feature, layer) {
 	var output = '';
@@ -1937,3 +1862,79 @@ function notamPopup (feature, layer) {
 	output += '</div>';
 	layer.bindPopup(output);
 };
+
+function airspacePopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	    if (typeof feature.properties.title != 'undefined') {
+		output += '&nbsp;<?php echo _("Title:"); ?> '+feature.properties.title+'<br /> ';
+	    }
+	    if (typeof feature.properties.type != 'undefined') {
+		output += '&nbsp;<?php echo _("Type:"); ?> '+feature.properties.type+'<br /> ';
+	    }
+	    if (typeof feature.properties.tops != 'undefined') {
+		output += '&nbsp;<?php echo _("Tops:"); ?> '+feature.properties.tops+'<br /> ';
+	    }
+	    if (typeof feature.properties.base != 'undefined') {
+		output += '&nbsp;<?php echo _("Base:"); ?> '+feature.properties.base+'<br /> ';
+	    }
+	output += '</div>';
+	layer.bindPopup(output);
+};
+
+function update_airspaceLayer() {
+    var bbox = map.getBounds().toBBoxString();
+    airspaceLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airspace-geojson.php?coord="+bbox,{
+    onEachFeature: airspacePopup,
+	pointToLayer: function (feature, latlng) {
+/*	    return L.marker(latlng, {icon: L.icon({
+	//	iconUrl: feature.properties.icon,
+		iconSize: [12, 13],
+		iconAnchor: [2, 13]
+//		//popupAnchor: [0, -28]
+		})
+            });
+            */
+	},
+	style: function(feature) {
+	    if (feature.properties.type == 'RESTRICTED' || feature.properties.type == 'CLASS D') {
+		return {
+		    "color": '#ff5100',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'GSEC' || feature.properties.type == 'CLASS C') {
+		return {
+		    "color": '#fff000',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'PROHIBITED') {
+		return {
+		    "color": '#ff0000',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'DANGER') {
+		return {
+		    "color": '#781212',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else if (feature.properties.type == 'OTHER' || feature.properties.type == 'CLASS A') {
+		return {
+		    "color": '#ffffff',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    } else {
+		return {
+		    "color": '#afffff',
+		    "weight": 1,
+		    "opacity": 0.55
+		};
+	    }
+	}
+    }).addTo(map);
+};
+
