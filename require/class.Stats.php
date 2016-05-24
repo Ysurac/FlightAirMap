@@ -31,7 +31,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':type' => $type));
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
@@ -42,7 +42,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
@@ -53,7 +53,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
@@ -64,7 +64,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
@@ -78,7 +78,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -94,7 +94,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -111,7 +111,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -128,7 +128,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -144,7 +144,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -161,7 +161,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -177,7 +177,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -193,7 +193,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -211,7 +211,7 @@ class Stats {
 				$sth = $this->db->prepare($query);
 				$sth->execute();
 			} catch(PDOException $e) {
-				return "error : ".$e->getMessage();
+				echo "error : ".$e->getMessage();
 			}
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 /*
@@ -232,7 +232,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -248,7 +248,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -264,7 +264,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -280,7 +280,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -303,7 +303,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_data);
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -320,7 +320,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_data);
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -341,7 +341,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_data);
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -357,7 +357,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_data);
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -372,7 +372,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -387,7 +387,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
@@ -406,12 +406,12 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllHours('hour',$limit);
+            		$all = $Spotter->countAllHours($orderby,$limit);
                 }
                 return $all;
 	}
@@ -480,7 +480,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
@@ -492,7 +492,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
@@ -509,7 +509,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all[0]['total'];
@@ -526,7 +526,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all[0]['total'];
@@ -542,7 +542,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all[0]['total'];
@@ -558,7 +558,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all[0]['total'];
@@ -574,7 +574,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all[0]['total'];
@@ -590,7 +590,7 @@ class Stats {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+                        echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all[0]['total'];
