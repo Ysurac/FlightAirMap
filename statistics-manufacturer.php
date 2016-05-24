@@ -44,7 +44,6 @@ print ']);
     			});
       </script>';
 
-print_r($manufacturers_array);
 if (!empty($manufacturers_array))
 {
 	print '<div class="table-responsive">';
