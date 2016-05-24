@@ -337,6 +337,7 @@ class Spotter{
 			if (isset($row['pilot_name']) && $row['pilot_name'] != '') $temp_array['pilot_name'] = $row['pilot_name'];
 			if (isset($row['source_name']) && $row['source_name'] != '') $temp_array['source_name'] = $row['source_name'];
 			if (isset($row['over_country']) && $row['over_country'] != '') $temp_array['over_country'] = $row['over_country'];
+			if (isset($row['distance']) && $row['distance'] != '') $temp_array['distance'] = $row['distance'];
 			if (isset($row['squawk'])) {
 				$temp_array['squawk'] = $row['squawk'];
 				if ($row['squawk'] != '' && isset($temp_array['country_iso2'])) {
@@ -361,7 +362,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '')
+	public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		require_once(dirname(__FILE__).'/class.Translation.php');
@@ -612,7 +613,7 @@ class Spotter{
 			{                
 				$altitude_array[0] = substr($altitude_array[0], 0, -2);
 				$altitude_array[1] = substr($altitude_array[1], 0, -2);
-				$additional_query .= " AND altitude >= '".$altitude_array[0]."' AND altitude <= '".$altitude_array[1]."' ";
+				$additional_query .= " AND altitude BETWEEN '".$altitude_array[0]."' AND '".$altitude_array[1]."' ";
 			} else {
 				$altitude_array[0] = substr($altitude_array[0], 0, -2);
 				$additional_query .= " AND altitude <= '".$altitude_array[0]."' ";
@@ -664,24 +665,39 @@ class Spotter{
 			}
 		} else $limit_query = "";
 
-		if ($sort != "")
-		{
-			$search_orderby_array = $this->getOrderBy();
-			$orderby_query = $search_orderby_array[$sort]['sql'];
+		if ($origLat != "" && $origLon != "" && $dist != "") {
+			$dist = number_format($dist*0.621371,2,'.',''); // convert km to mile
+        /*
+			if ($globalDBdriver == 'mysql') {
+				$query="
+			SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2))) as distance 
+	                      FROM airport WHERE 
+	                      longitude between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+	                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2)))) < $dist";
+                } else {
+                */
+			$query="SELECT spotter_output.*, 1.60935 * 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2))) as distance 
+	                      FROM spotter_output, spotter_archive WHERE spotter_output.flightaware_id = spotter_archive.flightaware_id AND spotter_output.ident <> '' ".$additional_query."AND CAST(spotter_archive.longitude as double precision) between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and CAST(spotter_archive.latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+	                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2)))) < $dist ORDER BY distance";
 		} else {
-			$orderby_query = " ORDER BY spotter_output.date DESC";
-		}
+			if ($sort != "")
+			{
+				$search_orderby_array = $this->getOrderBy();
+				$orderby_query = $search_orderby_array[$sort]['sql'];
+			} else {
+				$orderby_query = " ORDER BY spotter_output.date DESC";
+			}
 
-		if ($includegeodata == "true")
-		{
-			$additional_query .= " AND spotter_output.waypoints <> ''";
-		}
+			if ($includegeodata == "true")
+			{
+				$additional_query .= " AND spotter_output.waypoints <> ''";
+			}
 
-		$query  = "SELECT spotter_output.* FROM spotter_output 
+			$query  = "SELECT spotter_output.* FROM spotter_output 
 					WHERE spotter_output.ident <> '' 
 					".$additional_query."
 					".$orderby_query;
-
+		}
 		$spotter_array = $this->getDataFromDB($query, $query_values,$limit_query);
 		return $spotter_array;
 	}
@@ -8707,7 +8723,7 @@ class Spotter{
 	
 	public function closestAirports($origLat,$origLon,$dist = 10) {
 		global $globalDBdriver;
-		$dist = $dist*0.621371; // convert km to mile
+		$dist = number_format($dist*0.621371,2,'.',''); // convert km to mile
 /*
 		$query="SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - abs(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(abs(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2))) as distance 
                       FROM airport WHERE longitude between ($origLon-$dist/abs(cos(radians($origLat))*69)) and ($origLon+$dist/abs(cos(radians($origLat))*69)) and latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 

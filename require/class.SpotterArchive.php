@@ -362,9 +362,12 @@ class SpotterArchive {
     * @return Array the spotter information
     *
     */
-    public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '')
+    public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '')
     {
 	global $globalTimezone, $globalDbdriver;
+	require_once(dirname(__FILE__).'/class.Translation.php');
+	$Translation = new Translation();
+
 	date_default_timezone_set('UTC');
 	
 	$query_values = array();
@@ -400,6 +403,8 @@ class SpotterArchive {
 		    $additional_query .= "(spotter_archive_output.pilot_id like '%".$q_item."%') OR ";
 		    $additional_query .= "(spotter_archive_output.pilot_name like '%".$q_item."%') OR ";
 		    $additional_query .= "(spotter_archive_output.ident like '%".$q_item."%') OR ";
+		    $translate = $Translation->ident2icao($q_item);
+		    if ($translate != $q_item) $additional_query .= "(spotter_archive_output.ident like '%".$translate."%') OR ";
 		    $additional_query .= "(spotter_archive_output.highlight like '%".$q_item."%')";
 		    $additional_query .= ")";
 		}
@@ -408,6 +413,7 @@ class SpotterArchive {
 	
 	if ($registration != "")
 	{
+	    $registration = filter_var($registration,FILTER_SANITIZE_STRING);
 	    if (!is_string($registration))
 	    {
 		return false;
@@ -418,6 +424,7 @@ class SpotterArchive {
 	
 	if ($aircraft_icao != "")
 	{
+	    $aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 	    if (!is_string($aircraft_icao))
 	    {
 		return false;
@@ -428,6 +435,7 @@ class SpotterArchive {
 	
 	if ($aircraft_manufacturer != "")
 	{
+	    $aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 	    if (!is_string($aircraft_manufacturer))
 	    {
 		return false;
@@ -448,6 +456,7 @@ class SpotterArchive {
 	
 	if ($airline_icao != "")
 	{
+	    $registration = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 	    if (!is_string($airline_icao))
 	    {
 		return false;
@@ -458,6 +467,7 @@ class SpotterArchive {
 	
 	if ($airline_country != "")
 	{
+	    $airline_country = filter_var($airline_country,FILTER_SANITIZE_STRING);
 	    if (!is_string($airline_country))
 	    {
 		return false;
@@ -468,6 +478,7 @@ class SpotterArchive {
 	
 	if ($airline_type != "")
 	{
+	    $airline_type = filter_var($airline_type,FILTER_SANITIZE_STRING);
 	    if (!is_string($airline_type))
 	    {
 		return false;
@@ -489,6 +500,7 @@ class SpotterArchive {
 	
 	if ($airport != "")
 	{
+	    $airport = filter_var($airport,FILTER_SANITIZE_STRING);
 	    if (!is_string($airport))
 	    {
 		return false;
@@ -499,6 +511,7 @@ class SpotterArchive {
 	
 	if ($airport_country != "")
 	{
+	    $airport_country = filter_var($airport_country,FILTER_SANITIZE_STRING);
 	    if (!is_string($airport_country))
 	    {
 		return false;
@@ -509,16 +522,24 @@ class SpotterArchive {
     
 	if ($callsign != "")
 	{
+	    $callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 	    if (!is_string($callsign))
 	    {
 		return false;
 	    } else {
-		$additional_query .= " AND (spotter_archive_output.ident = '".$callsign."')";
+		$translate = $Translation->ident2icao($callsign);
+		if ($translate != $callsign) {
+			$additional_query .= " AND (spotter_archive_output.ident = :callsign OR spotter_archive_output.ident = :translate)";
+			$query_values = array_merge($query_values,array(':callsign' => $callsign,':translate' => $translate));
+		} else {
+			$additional_query .= " AND (spotter_archive_output.ident = '".$callsign."')";
+		}
 	    }
 	}
 
 	if ($owner != "")
 	{
+	    $owner = filter_var($owner,FILTER_SANITIZE_STRING);
 	    if (!is_string($owner))
 	    {
 		return false;
@@ -529,6 +550,7 @@ class SpotterArchive {
 
 	if ($pilot_name != "")
 	{
+	    $pilot_name = filter_var($pilot_name,FILTER_SANITIZE_STRING);
 	    if (!is_string($pilot_name))
 	    {
 		return false;
@@ -539,6 +561,7 @@ class SpotterArchive {
 	
 	if ($pilot_id != "")
 	{
+	    $pilot_id = filter_var($pilot_id,FILTER_SANITIZE_NUMBER_INT);
 	    if (!is_string($pilot_id))
 	    {
 		return false;
@@ -549,6 +572,7 @@ class SpotterArchive {
 	
 	if ($departure_airport_route != "")
 	{
+	    $departure_airport_route = filter_var($departure_airport_route,FILTER_SANITIZE_STRING);
 	    if (!is_string($departure_airport_route))
 	    {
 		return false;
@@ -559,6 +583,7 @@ class SpotterArchive {
 	
 	if ($arrival_airport_route != "")
 	{
+	    $arrival_airport_route = filter_var($arrival_airport_route,FILTER_SANITIZE_STRING);
 	    if (!is_string($arrival_airport_route))
 	    {
 		return false;
@@ -579,7 +604,7 @@ class SpotterArchive {
 	    {                
 		$altitude_array[0] = substr($altitude_array[0], 0, -2);
 		$altitude_array[1] = substr($altitude_array[1], 0, -2);
-		$additional_query .= " AND altitude >= '".$altitude_array[0]."' AND altitude <= '".$altitude_array[1]."' ";
+		$additional_query .= " AND altitude BETWEEN '".$altitude_array[0]."' AND '".$altitude_array[1]."' ";
 	    } else {
 		$altitude_array[0] = substr($altitude_array[0], 0, -2);
 		$additional_query .= " AND altitude <= '".$altitude_array[0]."' ";
@@ -633,24 +658,31 @@ class SpotterArchive {
 	    }
 	}
 	
-	if ($sort != "")
-	{
-	    $search_orderby_array = $this->getOrderBy();
-	    $orderby_query = $search_orderby_array[$sort]['sql'];
-	} else {
-	    $orderby_query = " ORDER BY spotter_archive_output.date DESC";
-	}
-	
-	if ($includegeodata == "true")
-	{
-	    $additional_query .= " AND (spotter_archive_output.waypoints <> '')";
-	}
 
-	$query  = "SELECT spotter_archive_output.* FROM spotter_archive_output 
+	if ($origLat != "" && $origLon != "" && $dist != "") {
+		$dist = number_format($dist*0.621371,2,'.','');
+		$query="SELECT spotter_output.*, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2))) as distance 
+                          FROM spotter_output_archive, spotter_archive WHERE spotter_output_archive.flightaware_id = spotter_archive.flightaware_id AND spotter_output.ident <> '' ".$additional_query."AND CAST(spotter_archive.longitude as double precision) between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and CAST(spotter_archive.latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+                          AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2)))) < $dist ORDER BY distance";
+	} else {
+		if ($sort != "")
+		{
+			$search_orderby_array = $this->getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY spotter_archive_output.date DESC";
+		}
+	
+		if ($includegeodata == "true")
+		{
+			$additional_query .= " AND (spotter_archive_output.waypoints <> '')";
+		}
+
+		$query  = "SELECT spotter_archive_output.* FROM spotter_archive_output 
 		    WHERE spotter_archive_output.ident <> '' 
 		    ".$additional_query."
 		    ".$orderby_query;
-
+	}
 	$Spotter = new Spotter($this->db);
 	$spotter_array = $Spotter->getDataFromDB($query, array(),$limit_query);
 

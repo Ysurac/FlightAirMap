@@ -66,6 +66,7 @@ if (strtolower($current_page) == "search")
 		print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
 	}
 	print '<th class="routestop"><span class="nomobile">'._("Route stop").'</span><span class="mobile">'._("Stop").'</span></a></th>';
+	if (isset($_GET['dist']) && $_GET['dist'] != '') print '<th class="distance"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a></th>';
 	if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 		print '<th class="pilot"><span class="nomobile">'._("Pilot name").'</span><span class="mobile">'._("Pilot").'</span></a></th>';
 	} else {
@@ -585,6 +586,26 @@ foreach($spotter_array as $spotter_item)
 				print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$rst['airport_icao'].'">'.$rst['airport_icao'].'</a></span><br />'."\n";
 			}
 		}
+		print '</td>'."\n";
+	}
+	if (isset($_GET['dist']) && $_GET['dist'] != '') {
+		print '<td class="distance">'."\n";
+		if (!isset($spotter_item['distance']) || $spotter_item['distance'] == '') {
+			print '<span class="nomobile">-</span>'."\n";
+			print '<span class="mobile">-</span>'."\n";
+		} else {
+			if (!isset($globalUnitDistance) || $globalUnitDistance == 'km') {
+				print '<span class="nomobile">'.round($spotter_item['distance'],2).' km</span>'."\n";
+				print '<span class="mobile">'.round($spotter_item['distance'],2).' km</span><br />'."\n";
+			} elseif ($globalUnitDistance == 'mi') {
+				print '<span class="nomobile">'.round($spotter_item['distance']*0.621371,2).' mi</span>'."\n";
+				print '<span class="mobile">'.round($spotter_item['distance']*0.621371,2).' mi</span><br />'."\n";
+			} elseif ($globalUnitDistance == 'nm') {
+				print '<span class="nomobile">'.round($spotter_item['distance']*0.539957,2).' nm</span>'."\n";
+				print '<span class="mobile">'.round($spotter_item['distance']*0.539957,2).' nm</span><br />'."\n";
+			}
+		}
+		
 		print '</td>'."\n";
 	}
 	if(strtolower($current_page) != "upcoming"){
