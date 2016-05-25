@@ -1106,11 +1106,13 @@ class Stats {
 				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			echo 'Airports data...'."\n";
+			echo '...Departure'."\n";
 			$this->deleteStatAirport('daily');
 			$alldata = $Spotter->getLast7DaysAirportsDeparture();
 			foreach ($alldata as $number) {
 				$this->addStatDepartureAirportsDaily($number['date'],$number['departure_airport_icao'],$number['departure_airport_name'],$number['departure_airport_city'],$number['departure_airport_country'],$number['departure_airport_count']);
 			}
+			echo '...Arrival'."\n";
 			$alldata = $Spotter->getLast7DaysAirportsArrival();
 			foreach ($alldata as $number) {
 				$this->addStatArrivalAirportsDaily($number['date'],$number['arrival_airport_icao'],$number['arrival_airport_name'],$number['arrival_airport_city'],$number['arrival_airport_country'],$number['arrival_airport_count']);
