@@ -808,11 +808,13 @@ function getLiveData(click)
 <?php
 	if ($compress) {
 ?>
+		var altitude = feature.properties.a;
 		var type = feature.properties.t;
 		var callsign = feature.properties.c;
 <?php
 	} else {
 ?>
+		var altitude = feature.properties.altitude;
 		var type = feature.properties.type;
 		var callsign = feature.properties.callsign;
 <?php

@@ -355,7 +355,8 @@ $output = '{';
 						$output_history .= ']}},';
 						$output .= $output_history;
 					    }
-					    $output_history = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "history","altitude": "'.$alt.'"},"geometry": {"type": "LineString","coordinates": [';
+					    if ($compress) $output_history = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "history","a": "'.$alt.'"},"geometry": {"type": "LineString","coordinates": [';
+					    else $output_history = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "history","altitude": "'.$alt.'"},"geometry": {"type": "LineString","coordinates": [';
 					}
 					$output_history .= '[';
 					$output_history .=  $spotter_history['longitude'].', ';
