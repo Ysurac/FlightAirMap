@@ -486,7 +486,7 @@ class Stats {
                 return $all;
 	}
 	public function getStats($type) {
-                $query = "SELECT * FROM stats WHERE stats_type = :type ORDER BY stat_date";
+                $query = "SELECT * FROM stats WHERE stats_type = :type ORDER BY stats_date";
                 $query_values = array(':type' => $type);
                  try {
                         $sth = $this->db->prepare($query);

@@ -238,7 +238,12 @@ class SpotterImport {
 		}
 		
 		if (isset($line['datetime']) && $line['datetime'] != '') {
-		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
+		    if (!isset($this->all_flights[$id]['datetime']) || strtotime($line['datetime']) > $this->all_flights[$id]['datetime']) {
+			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
+		    } else {
+			if ($globalDebug) echo "!!! Date previous latest data !!!\n";
+			return '';
+		    }
 		}
 		if (isset($line['registration']) && $line['registration'] != '' && $line['registration'] != 'z.NO-REG') {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('registration' => $line['registration']));
@@ -709,7 +714,7 @@ class SpotterImport {
 			
 			
 			if ($this->last_delete_hourly == '' || time() - $this->last_delete_hourly > 900) {
-			    if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 1 hour...";
+			    if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 2 hour...";
 			    $SpotterLive = new SpotterLive($this->db);
 			    $SpotterLive->deleteLiveSpotterDataNotUpdated();
 			    $SpotterLive->db = null;
