@@ -205,9 +205,9 @@ class SpotterImport {
 		if (!isset($this->all_flights[$id]['hex'])) {
 		    $this->all_flights[$id] = array('hex' => $hex);
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('addedSpotter' => 0));
-		    if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
-			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
-		    } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
+		    //if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
+			//$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
+		    //} else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
 		    if (!isset($line['aircraft_icao']) || $line['aircraft_icao'] == '????') {
 
 			$timeelapsed = microtime(true);
@@ -237,14 +237,22 @@ class SpotterImport {
 		    if ($globalDebug) echo "*********** New aircraft hex : ".$hex." ***********\n";
 		}
 		
-		if (isset($line['datetime']) && $line['datetime'] != '') {
-		    if (!isset($this->all_flights[$id]['datetime']) || strtotime($line['datetime']) > $this->all_flights[$id]['datetime']) {
+		if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
+		    if (!isset($this->all_flights[$id]['datetime']) || strtotime($line['datetime']) > strtotime($this->all_flights[$id]['datetime'])) {
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
 		    } else {
-			if ($globalDebug) echo "!!! Date previous latest data !!!\n";
-			return '';
+			if (strtotime($line['datetime']) < strtotime($this->all_flights[$id]['datetime'])) {
+				if ($globalDebug) echo "!!! Date previous latest data !!!\n";
+				/*
+				echo strtotime($line['datetime']).' > '.strtotime($this->all_flights[$id]['datetime']);
+				print_r($this->all_flights[$id]);
+				print_r($line);
+				*/
+				return '';
+			}
 		    }
-		}
+		} else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
+
 		if (isset($line['registration']) && $line['registration'] != '' && $line['registration'] != 'z.NO-REG') {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('registration' => $line['registration']));
 		}
