@@ -238,10 +238,9 @@ class SpotterImport {
 		}
 		
 		if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
-		    if (!isset($this->all_flights[$id]['datetime']) || strtotime($line['datetime']) > strtotime($this->all_flights[$id]['datetime'])) {
+		    if (!isset($this->all_flights[$id]['datetime']) || strtotime($line['datetime']) >= strtotime($this->all_flights[$id]['datetime'])) {
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
 		    } else {
-			if (strtotime($line['datetime']) < strtotime($this->all_flights[$id]['datetime'])) {
 				if ($globalDebug) echo "!!! Date previous latest data !!!\n";
 				/*
 				echo strtotime($line['datetime']).' > '.strtotime($this->all_flights[$id]['datetime']);
@@ -249,7 +248,6 @@ class SpotterImport {
 				print_r($line);
 				*/
 				return '';
-			}
 		    }
 		} else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
 

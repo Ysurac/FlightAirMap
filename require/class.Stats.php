@@ -88,8 +88,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllAirlineCountries($limit = true) {
-		if ($limit) $query = "SELECT airlines.country AS airline_country, stats_airline.cnt as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao LIMIT 10 OFFSET 0";
-		else $query = "SELECT airlines.country AS airline_country, stats_airline.cnt as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao";
+		if ($limit) $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao GROUP BY airline_country ORDER BY airline_country_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao GROUP BY airline_country ORDER BY airline_country_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -105,8 +105,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllAircraftManufacturers($limit = true) {
-		if ($limit) $query = "SELECT aircraft.manufacturer AS aircraft_manufacturer, stats_aircraft.cnt as aircraft_manufacturer_count FROM stats_aircraft,aircraft WHERE stats_aircraft.aircraft_icao=aircraft.icao GROUP BY aircraft.manufacturer, stats_aircraft.cnt LIMIT 10 OFFSET 0";
-		else $query = "SELECT aircraft.manufacturer AS aircraft_manufacturer, stats_aircraft.cnt as aircraft_manufacturer_count FROM stats_aircraft,aircraft WHERE stats_aircraft.aircraft_icao=aircraft.icao GROUP BY aircraft.manufacturer, stats_aircraft.cnt";
+		if ($limit) $query = "SELECT aircraft.manufacturer AS aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft,aircraft WHERE stats_aircraft.aircraft_icao=aircraft.icao GROUP BY aircraft.manufacturer ORDER BY aircraft_manufacturer_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT aircraft.manufacturer AS aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft,aircraft WHERE stats_aircraft.aircraft_icao=aircraft.icao GROUP BY aircraft.manufacturer ORDER BY aircraft_manufacturer_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -155,8 +155,8 @@ class Stats {
 	}
 
 	public function countAllAirlines($limit = true) {
-		if ($limit) $query = "SELECT airline_icao, cnt AS airline_count, airline_name FROM stats_airline WHERE airline_name <> '' AND airline_icao <> '' ORDER BY airline_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT airline_icao, cnt AS airline_count, airline_name FROM stats_airline WHERE airline_name <> '' AND airline_icao <> '' ORDER BY airline_count DESC";
+		if ($limit) $query = "SELECT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = airline_icao ORDER BY airline_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = airline_icao ORDER BY airline_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -187,8 +187,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllCallsigns($limit = true) {
-		if ($limit) $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao ORDER BY callsign_icao_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao ORDER BY callsign_icao_count DESC";
+		if ($limit) $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao ORDER BY callsign_icao_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao ORDER BY callsign_icao_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
