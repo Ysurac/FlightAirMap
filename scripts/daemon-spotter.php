@@ -540,45 +540,47 @@ while ($i > 0) {
     	} elseif ($value == 'phpvmacars' && (time() - $last_exec['phpvmacars'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);
 	    $all_data = json_decode($buffer,true);
-	    foreach ($all_data as $line) {
-	        $data = array();
-	        //$data['id'] = $line['id']; // id not usable
-	        $data['hex'] = substr(str_pad(bin2hex($line['flightnum']),6,'000000',STR_PAD_LEFT),-6); // hex
-	        if (isset($line['pilotname'])) $data['pilot_name'] = $line['pilotname'];
-	        if (isset($line['pilotid'])) $data['pilot_id'] = $line['pilotid'];
-	        $data['ident'] = $line['flightnum']; // ident
-	        $data['altitude'] = $line['alt']; // altitude
-	        $data['speed'] = $line['gs']; // speed
-	        $data['heading'] = $line['heading']; // heading
-	        $data['latitude'] = $line['lat']; // lat
-	        $data['longitude'] = $line['lng']; // long
-	        $data['verticalrate'] = ''; // verticale rate
-	        $data['squawk'] = ''; // squawk
-	        $data['emergency'] = ''; // emergency
-	        $data['datetime'] = $line['lastupdate'];
-	        $data['departure_airport_icao'] = $line['depicao'];
-	        $data['departure_airport_time'] = $line['deptime'];
-	        $data['arrival_airport_icao'] = $line['arricao'];
-    		$data['arrival_airport_time'] = $line['arrtime'];
-    		$data['registration'] = $line['aircraft'];
-		if (isset($line['route'])) $data['waypoints'] = $line['route']; // route
-		if (isset($line['aircraftname'])) {
-		    $line['aircraftname'] = strtoupper($line['aircraftname']);
-		    $line['aircraftname'] = str_replace('BOEING ','B',$line['aircraftname']);
-	    	    $aircraft_data = explode('-',$line['aircraftname']);
-	    	    if (isset($aircraft_data[1]) && strlen($aircraft_data[0]) < 5) $data['aircraft_icao'] = $aircraft_data[0];
-	    	    elseif (isset($aircraft_data[1]) && strlen($aircraft_data[1]) < 5) $data['aircraft_icao'] = $aircraft_data[1];
-	    	    else {
-	    		$aircraft_data = explode(' ',$line['aircraftname']);
-	    		if (isset($aircraft_data[1])) $data['aircraft_icao'] = $aircraft_data[1];
-	    		else $data['aircraft_icao'] = $line['aircraftname'];
+	    if (is_array($all_data)) {
+		foreach ($all_data as $line) {
+	    	    $data = array();
+	    	    //$data['id'] = $line['id']; // id not usable
+	    	    $data['hex'] = substr(str_pad(bin2hex($line['flightnum']),6,'000000',STR_PAD_LEFT),-6); // hex
+	    	    if (isset($line['pilotname'])) $data['pilot_name'] = $line['pilotname'];
+	    	    if (isset($line['pilotid'])) $data['pilot_id'] = $line['pilotid'];
+	    	    $data['ident'] = $line['flightnum']; // ident
+	    	    $data['altitude'] = $line['alt']; // altitude
+	    	    $data['speed'] = $line['gs']; // speed
+	    	    $data['heading'] = $line['heading']; // heading
+	    	    $data['latitude'] = $line['lat']; // lat
+	    	    $data['longitude'] = $line['lng']; // long
+	    	    $data['verticalrate'] = ''; // verticale rate
+	    	    $data['squawk'] = ''; // squawk
+	    	    $data['emergency'] = ''; // emergency
+	    	    $data['datetime'] = $line['lastupdate'];
+	    	    $data['departure_airport_icao'] = $line['depicao'];
+	    	    $data['departure_airport_time'] = $line['deptime'];
+	    	    $data['arrival_airport_icao'] = $line['arricao'];
+    		    $data['arrival_airport_time'] = $line['arrtime'];
+    		    $data['registration'] = $line['aircraft'];
+		    if (isset($line['route'])) $data['waypoints'] = $line['route']; // route
+		    if (isset($line['aircraftname'])) {
+			$line['aircraftname'] = strtoupper($line['aircraftname']);
+			$line['aircraftname'] = str_replace('BOEING ','B',$line['aircraftname']);
+	    		$aircraft_data = explode('-',$line['aircraftname']);
+	    		if (isset($aircraft_data[1]) && strlen($aircraft_data[0]) < 5) $data['aircraft_icao'] = $aircraft_data[0];
+	    		elseif (isset($aircraft_data[1]) && strlen($aircraft_data[1]) < 5) $data['aircraft_icao'] = $aircraft_data[1];
+	    		else {
+	    		    $aircraft_data = explode(' ',$line['aircraftname']);
+	    		    if (isset($aircraft_data[1])) $data['aircraft_icao'] = $aircraft_data[1];
+	    		    else $data['aircraft_icao'] = $line['aircraftname'];
+	    		}
 	    	    }
-	    	}
-    		if (isset($line['route'])) $data['waypoints'] = $line['route'];
-    		$data['id_source'] = $id_source;
-	        $data['format_source'] = 'phpvmacars';
-		$SI->add($data);
-		unset($data);
+    		    if (isset($line['route'])) $data['waypoints'] = $line['route'];
+    		    $data['id_source'] = $id_source;
+	    	    $data['format_source'] = 'phpvmacars';
+		    $SI->add($data);
+		    unset($data);
+		}
 	    }
     	    $last_exec['phpvmacars'] = time();
 	} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
@@ -649,6 +651,7 @@ while ($i > 0) {
 				$line = $APRS->parse($buffer);
 				if (is_array($line) && isset($line['address']) && $line['address'] != '' && isset($line['ident'])) {
 				    $data = array();
+				    //print_r($line);
 				    $data['hex'] = $line['address'];
 				    $data['datetime'] = date('Y-m-d H:i:s',$line['timestamp']);
 				    //$data['datetime'] = date('Y-m-d H:i:s');
