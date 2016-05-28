@@ -7338,8 +7338,7 @@ class Spotter{
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								GROUP BY hour_name 
-								".$orderby_sql."
-								LIMIT 10 OFFSET 00";
+								".$orderby_sql;
 
 /*		$query  = "SELECT HOUR(spotter_output.date) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
@@ -7352,8 +7351,7 @@ class Spotter{
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								GROUP BY hour_name 
-								".$orderby_sql."
-								LIMIT 100";
+								".$orderby_sql;
 		$query_data = array(':offset' => $offset);
 		}
 		
