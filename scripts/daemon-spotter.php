@@ -540,7 +540,7 @@ while ($i > 0) {
     	} elseif ($value == 'phpvmacars' && (time() - $last_exec['phpvmacars'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($hosts[$id]);
 	    $all_data = json_decode($buffer,true);
-	    if (is_array($all_data)) {
+	    if ($buffer != '' && is_array($all_data)) {
 		foreach ($all_data as $line) {
 	    	    $data = array();
 	    	    //$data['id'] = $line['id']; // id not usable
@@ -556,7 +556,8 @@ while ($i > 0) {
 	    	    $data['verticalrate'] = ''; // verticale rate
 	    	    $data['squawk'] = ''; // squawk
 	    	    $data['emergency'] = ''; // emergency
-	    	    $data['datetime'] = $line['lastupdate'];
+	    	    //$data['datetime'] = $line['lastupdate'];
+		    $data['datetime'] = date('Y-m-d H:i:s');
 	    	    $data['departure_airport_icao'] = $line['depicao'];
 	    	    $data['departure_airport_time'] = $line['deptime'];
 	    	    $data['arrival_airport_icao'] = $line['arricao'];
