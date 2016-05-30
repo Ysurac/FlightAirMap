@@ -4906,10 +4906,9 @@ class Spotter{
             	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
                 //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
                 $query .= "GROUP BY spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
-					ORDER BY airport_departure_icao_count DESC";
+				ORDER BY airport_departure_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
-		
 		$sth = $this->db->prepare($query);
 		$sth->execute();
       

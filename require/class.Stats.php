@@ -954,7 +954,7 @@ class Stats {
 			if ($globalArchiveMonths > 0) {
 				$alldata = $Spotter->countAllAircraftTypes(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
-					$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count']);
+					$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name']);
 				}
 				$alldata = $Spotter->countAllAirlines(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
@@ -1032,7 +1032,7 @@ class Stats {
 			$Spotter = new Spotter($this->db);
 			$alldata = $Spotter->countAllAircraftTypes(false,0,$last_update_day);
 			foreach ($alldata as $number) {
-				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count']);
+				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name']);
 			}
 			$alldata = $Spotter->countAllAirlines(false,0,$last_update_day);
 			foreach ($alldata as $number) {

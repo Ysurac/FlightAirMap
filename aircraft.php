@@ -16,7 +16,7 @@ if (isset($_POST['aircraft_type']))
 	print '<h1>'._("Aircrafts Types").'</h1>';
 
 	$aircraft_types = $Stats->getAllAircraftTypes();
-	if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();
+	if (empty($aircraft_types) || $aircraft_types[0]['aircraft_name'] == '') $aircraft_types = $Spotter->getAllAircraftTypes();
 	$previous = null;
 	print '<div class="alphabet-legend">';
 	foreach($aircraft_types as $value) {
