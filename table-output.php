@@ -681,8 +681,8 @@ foreach($spotter_array as $spotter_item)
 	} elseif (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive")
 	{
 		print '<td class="date">'."\n";
-		print '<span class="nomobile">'.date("r", strtotime($spotter_item['date'])).'</span>'."\n";
-		print '<span class="mobile">'.date("j/n/Y g:i a", strtotime($spotter_item['date'])).'</span>'."\n";
+		print '<span class="nomobile">'.date("r", strtotime($spotter_item['date'].' UTC')).'</span>'."\n";
+		print '<span class="mobile">'.date("j/n/Y g:i a", strtotime($spotter_item['date'].' UTC')).'</span>'."\n";
 		print '</td>'."\n";
 	} else {
 		print '<td class="date">'."\n";
