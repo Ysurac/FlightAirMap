@@ -2,6 +2,7 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
+require_once('require/class.Translation.php');
 require_once('require/class.SpotterLive.php');
 require_once('require/class.SpotterArchive.php');
 
@@ -10,6 +11,7 @@ if (!isset($_GET['ident'])){
 } else {
 	$Spotter = new Spotter();
 	$SpotterArchive = new SpotterArchive();
+	$Translation = new Translation();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
@@ -44,6 +46,24 @@ if (!isset($_GET['ident'])){
 		$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
 		if (empty($spotter_array)) {
 			$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
+		}
+	}
+	if (!empty($spotter_array)) {
+		$new_ident = $Translation->checkTranslation($ident);
+		if ($new_ident != $ident) {
+			$ident = $new_ident;
+			if (isset($_GET['sort'])) 
+			{
+				$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+				if (empty($spotter_array)) {
+					$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+				}
+			} else {
+				$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
+				if (empty($spotter_array)) {
+					$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
+				}
+			}
 		}
 	}
 

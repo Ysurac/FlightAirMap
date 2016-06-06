@@ -6801,7 +6801,7 @@ class Spotter{
 								ORDER BY date_count DESC
 								LIMIT 10 OFFSET 0";
 		} else {
-			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'dd-mm-YYYY') AS date_name, count(*) as date_count
+			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') AS date_name, count(*) as date_count
 								FROM spotter_output 
 								GROUP BY date_name 
 								ORDER BY date_count DESC
@@ -6851,7 +6851,7 @@ class Spotter{
 								ORDER BY spotter_output.date ASC";
 			$query_data = array(':offset' => $offset);
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'dd-mm-YYYY') AS date_name, count(*) as date_count
+			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') AS date_name, count(*) as date_count
 								FROM spotter_output 
 								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '7 DAYS'
 								GROUP BY date_name 
@@ -6899,7 +6899,7 @@ class Spotter{
 								ORDER BY spotter_output.date ASC";
 			$query_data = array(':offset' => $offset);
 		} elseif ($globalDBdriver == 'pgsql') {
-			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'dd-mm-YYYY') AS date_name, count(*) as date_count
+			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') AS date_name, count(*) as date_count
 								FROM spotter_output 
 								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 MONTHS'
 								GROUP BY date_name 
@@ -7642,7 +7642,7 @@ class Spotter{
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE to_char(spotter_output.date AT TIME ZONE INTERVAL :offset, 'dd-mm-YYYY') = :date
+								WHERE to_char(spotter_output.date AT TIME ZONE INTERVAL :offset, 'YYYY-mm-dd') = :date
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -7966,7 +7966,7 @@ class Spotter{
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
-								WHERE to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'dd-mm-YYYY') = CAST(NOW() AS date)
+								WHERE to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = CAST(NOW() AS date)
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
