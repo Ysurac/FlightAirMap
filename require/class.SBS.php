@@ -47,12 +47,12 @@ class SBS {
 		    //  131072 is 2^17 since CPR latitude and longitude are encoded in 17 bits.
 		    $cprlat = intval(substr($bin,54,17),2)/131072.0;
 		    $cprlon = intval(substr($bin,71,17),2)/131072.0;
-		    if ($oe == 0) $this->$latlon[$icao] = array('latitude' => $cprlat,'longitude' => $cprlon,'created' => time());
-		    elseif (isset($this->$latlon[$icao]) && (time() - $this->$latlon[$icao]['created']) < 10) {
+		    if ($oe == 0) $this::$latlon[$icao] = array('latitude' => $cprlat,'longitude' => $cprlon,'created' => time());
+		    elseif (isset($this::$latlon[$icao]) && (time() - $this::$latlon[$icao]['created']) < 10) {
 			$cprlat_odd = $cprlat;
 			$cprlon_odd = $cprlon;
-			$cprlat_even = $this->$latlon[$icao]['latitude'];
-			$cprlon_even = $this->$latlon[$icao]['longitude'];
+			$cprlat_even = $this::$latlon[$icao]['latitude'];
+			$cprlon_even = $this::$latlon[$icao]['longitude'];
 		    
 			$j = 59*$cprlat_even-60*$cprlat_odd+0.5;
 			$lat_even = (360.0/60)*($j%60+$cprlat_even);
@@ -61,7 +61,7 @@ class SBS {
 			if ($lat_odd >= 270) $lat_odd = $lat_odd - 360;
 			// check latitude zone
 			if ($this->cprNL($lat_even) == $this->cprNL($lat_odd)) {
-			    if ($this->$latlon[$icao]['created'] > time()) {
+			    if ($this::$latlon[$icao]['created'] > time()) {
 				$ni = $this->cprN($lat_even,0);
 				$m = floor($cprlon_even*($this->cprNL($lat_even)-1) - $cprlon_odd * $this->cprNL($lat_even)+0.5);
 				$lon = (360.0/$ni)*($m%$ni+$cprlon_even);
@@ -85,7 +85,7 @@ class SBS {
 				}
 			    }
 			} else echo "Not cprNL";
-			unset($this->$latlon[$icao]);
+			unset($this::$latlon[$icao]);
 		    }
 		} elseif ($tc == 19) {
 		    // speed & heading
