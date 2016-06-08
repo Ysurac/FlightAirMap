@@ -4,15 +4,16 @@ class SBS {
     
     function parse($buffer) {
 	// Not yet finished, no CRC checks
+	//echo $buffer."\n";
 	$hex = substr($buffer,1,-1);
 	$bin = gmp_strval( gmp_init($hex,16), 2);
-	//if (strlen($hex) == 28 && SBS->parityCheck(substr($bin,0,-24)) == substr($bin,-24)) {
+	//if (strlen($hex) == 28 && $this->parityCheck($hex,$bin)) {
 	if (strlen($hex) == 28) {
 	    $df = intval(substr($bin,0,5),2);
 	    $ca = intval(substr($bin,5,3),2);
 	    // Only support DF17 for now
 	    //if ($df == 17 || ($df == 18 && ($ca == 0 || $ca == 1 || $ca == 6))) {
-	    if ($df == 17) {
+	    if (($df == 17 || $df == 18) && $this->parityCheck($hex,$bin)) {
 		$icao = substr($hex,2,6);
 		$data['hex'] = $icao;
 		$tc = intval(substr($bin,32,5),2);
@@ -175,15 +176,14 @@ class SBS {
     }
     
     function cprN($lat,$isodd) {
-        $nl = $this->cprNL($lat) - $isodd;
-        if ($nl > 1) return $nl;
-        else return 1;
+	$nl = $this->cprNL($lat) - $isodd;
+	if ($nl > 1) return $nl;
+	else return 1;
     }
-    
 
 
-
-    function parityCheck($msg, $bits=112) {
+//    function parityCheck($msg, $bits=112) {
+    function parityCheck($msg, $bin) {
 $modes_checksum_table = array(
 0x3935ea, 0x1c9af5, 0xf1b77e, 0x78dbbf, 0xc397db, 0x9e31e9, 0xb0e2f0, 0x587178,
 0x2c38bc, 0x161c5e, 0x0b0e2f, 0xfa7d13, 0x82c48d, 0xbe9842, 0x5f4c21, 0xd05c14,
@@ -201,35 +201,17 @@ $modes_checksum_table = array(
 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000
 );
 
-    $crc = 0;
-    if ($bits == 112) $offset = 0;
-    else $offset = 112-56;
+	$crc = 0;
+	$checksum = intval(substr($msg,22,6),16);
 
-    for($j = 0; $j < $bits; $j++) {
-        $byte = intval($j/8,10);
-        $bit = $j%8;
-        $bitmask = 1 << (7-$bit);
-
-        /* If bit is set, xor with corresponding table entry. */
-        if ($msg[$byte] & $bitmask)  $crc = decbin($crc^intval($modes_checksum_table[$j+$offset],0));
-//        echo 'msgbyte : '.$msg[$byte].' - bitmask : '.$bitmask."\n";
-//        if ($msg[$byte] & $bitmask)  $crc = $this->_xor($crc,$modes_checksum_table[$j+$offset]);
-    }
-//    echo 'crc : '.$crc;
-    return $crc; /* 24 bit checksum. */
-}
-
-    function crc($data,$bits = 112) {
-	    echo 'data : '.$data."\n";
-        $bytes = $bits/8;
-        return decbin($data[$bytes-3] << 16) | decbin($data[$bytes-2] << 8) | $data[$bytes-1];
-    }
-
-    function _xor($text,$key){
-	for($i=0; $i<strlen($text); $i++){
-	    $text[$i] = intval($text[$i])^intval($key[$i]);
+	for ($j = 0; $j < strlen($bin); $j++) {
+	    if ($bin[$j]) $crc = $crc^intval($modes_checksum_table[$j],0);
 	}
-	return $text;
+	if ($crc == $checksum) return true;
+	else {
+	    //echo "**** CRC ERROR ****\n";
+	    return false;
+	}
     }
 }
 ?>
