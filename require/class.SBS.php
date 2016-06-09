@@ -5,7 +5,10 @@ class SBS {
     function parse($buffer) {
 	// Not yet finished, no CRC checks
 	//echo $buffer."\n";
-	$hex = substr($buffer,1,-1);
+	$typehex = substr($buffer,0,1);
+	if ($typehex == '*' || $typehex == ':') $hex = substr($buffer,1,-1);
+	elseif ($typehex == '@' || $typehex == '%') $hex = substr($buffer,13,-13);
+	else $hex = substr($buffer,1,-1);
 	$bin = gmp_strval( gmp_init($hex,16), 2);
 	//if (strlen($hex) == 28 && $this->parityCheck($hex,$bin)) {
 	if (strlen($hex) == 28) {
@@ -13,7 +16,7 @@ class SBS {
 	    $ca = intval(substr($bin,5,3),2);
 	    // Only support DF17 for now
 	    //if ($df == 17 || ($df == 18 && ($ca == 0 || $ca == 1 || $ca == 6))) {
-	    if (($df == 17 || $df == 18) && $this->parityCheck($hex,$bin)) {
+	    if (($df == 17 || $df == 18) && ($this->parityCheck($hex,$bin) || $typehex == '@')) {
 		$icao = substr($hex,2,6);
 		$data['hex'] = $icao;
 		$tc = intval(substr($bin,32,5),2);
@@ -182,7 +185,6 @@ class SBS {
     }
 
 
-//    function parityCheck($msg, $bits=112) {
     function parityCheck($msg, $bin) {
 $modes_checksum_table = array(
 0x3935ea, 0x1c9af5, 0xf1b77e, 0x78dbbf, 0xc397db, 0x9e31e9, 0xb0e2f0, 0x587178,

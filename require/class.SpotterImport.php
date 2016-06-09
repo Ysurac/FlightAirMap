@@ -346,7 +346,7 @@ class SpotterImport {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('speed' => round($line['speed'])));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('speed_fromsrc' => true));
 		    //$dataFound = true;
-		} else if (!isset($this->all_flights[$id]['speed_fromsrc']) && isset($this->all_flights[$id]['time_last_coord']) && $this->all_flights[$id]['time_last_coord'] != time()) {
+		} else if (!isset($this->all_flights[$id]['speed_fromsrc']) && isset($this->all_flights[$id]['time_last_coord']) && $this->all_flights[$id]['time_last_coord'] != time() && isset($line['latitude']) && isset($line['longitude'])) {
 		    $distance = $Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m');
 		    if ($distance > 1000 && $distance < 10000) {
 		    // use datetime
@@ -521,7 +521,8 @@ class SpotterImport {
   		    // If not enough messages and ACARS set heading to 0
   		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => 0));
   		}
-		if (isset($globalSBS1update) && $globalSBS1update != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSBS1update) $dataFound = false;
+		if (isset($globalSourcesupdate) && $globalSourcesupdate != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSourcesupdate) $dataFound = false;
+		elseif (isset($globalSBS1update) && $globalSBS1update != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSBS1update) $dataFound = false;
 
 //		print_r($this->all_flights[$id]);
 		//gets the callsign from the last hour
