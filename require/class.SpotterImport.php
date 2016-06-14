@@ -117,7 +117,7 @@ class SpotterImport {
         		    break;
         		}
         	    }
-        	} elseif ($this->all_flights[$key]['altitude_real'] != '' && ($closestAirports[0]['altitude'] < $this->all_flights[$key]['altitude_real'] && ($closestAirports[0]['altitude'] == 0 || $closestAirports[0]['altitude'] < $this->all_flights[$key]['altitude_real']+500))) {
+        	} elseif ($this->all_flights[$key]['altitude_real'] != '' && ($closestAirports[0]['altitude'] < $this->all_flights[$key]['altitude_real'] && ($closestAirports[0]['altitude'] == 0 || $closestAirports[0]['altitude'] < $this->all_flights[$key]['altitude_real']+1000))) {
         		$airport_icao = $closestAirports[0]['icao'];
         		$airport_time = $this->all_flights[$key]['datetime'];
         	} else {
