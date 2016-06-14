@@ -1578,12 +1578,12 @@ class update_db {
 	}
 	
 	public static function update_all() {
-		update_db::update_routes();
-		update_db::update_ModeS();
-		update_db::update_ModeS_flarm();
-		update_db::update_ModeS_ogn();
-		update_db::update_translation();
-		update_db::update_translation_fam();
+		echo update_db::update_routes();
+		echo update_db::update_ModeS();
+		echo update_db::update_ModeS_flarm();
+		echo update_db::update_ModeS_ogn();
+		echo update_db::update_translation();
+		echo update_db::update_translation_fam();
 	}
 }
 
@@ -1599,5 +1599,6 @@ class update_db {
 //$update_db = new update_db();
 //echo $update_db->update_owner();
 //update_db::update_translation_fam();
+//echo update_db::update_routes();
 
 ?>

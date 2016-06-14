@@ -24,22 +24,27 @@ if ($Connection->latest() === false) {
 
 
 // This is to be compatible with old version of settings.php
-if (isset($globalSource)) {
-    
-} else {
+if (!isset($globalSources)) {
     if (isset($globalSBS1Hosts)) {
-	$hosts = $globalSBS1Hosts;
+        //$hosts = $globalSBS1Hosts;
+        foreach ($globalSBS1Hosts as $host) {
+	    $globalSources[] = array('host' => $host);
+    	}
     } else {
-	if (!isset($globalSBS1Host)) {
+        if (!isset($globalSBS1Host)) {
 	    echo '$globalSBS1Host MUST be defined !';
 	    die;
 	}
-	$hosts = array($globalSBS1Host.':'.$globalSBS1Port);
+	//$hosts = array($globalSBS1Host.':'.$globalSBS1Port);
+	$globalSources[] = array('host' => $globalSBS1Host.':'.$globalSBS1Port);
     }
 }
+
 $options = getopt('s::',array('source::','server','idsource::'));
-if (isset($options['s'])) $hosts = array($options['s']);
-elseif (isset($options['source'])) $hosts = array($options['source']);
+//if (isset($options['s'])) $hosts = array($options['s']);
+//elseif (isset($options['source'])) $hosts = array($options['source']);
+if (isset($options['s'])) $globalSources[] = array('host' => $options['s']);
+elseif (isset($options['source'])) $globalSources[] = array('host' => $options['source']);
 if (isset($options['server'])) $globalServer = TRUE;
 if (isset($options['idsource'])) $id_source = $options['idsource'];
 else $id_source = 1;
@@ -82,107 +87,112 @@ function create_socket($host, $port, &$errno, &$errstr) {
 }
 
 function connect_all($hosts) {
-    global $sockets, $formats, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights, $use_aprs;
-    foreach ($hosts as $id => $host) {
+    //global $sockets, $formats, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights, $use_aprs;
+    global $sockets, $globalSources, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights, $use_aprs;
+    foreach ($hosts as $id => $value) {
+	$host = $value['host'];
+	$globalSources[$id]['last_exec'] = 0;
 	// Here we check type of source(s)
-	if (filter_var($host,FILTER_VALIDATE_URL)) {
+	if (filter_var($host,FILTER_VALIDATE_URL) && (!isset($globalSources[$id]['format']) || strtolower($globalSources[$id]['format']) == 'auto')) {
             if (preg_match('/deltadb.txt$/i',$host)) {
-        	$formats[$id] = 'deltadbtxt';
-        	$last_exec['deltadbtxt'] = 0;
+        	//$formats[$id] = 'deltadbtxt';
+        	$globalSources[$id]['format'] = 'deltadbtxt';
+        	//$last_exec['deltadbtxt'] = 0;
         	if ($globalDebug) echo "Connect to deltadb source (".$host.")...\n";
             } else if (preg_match('/vatsim-data.txt$/i',$host)) {
-        	$formats[$id] = 'vatsimtxt';
-        	$last_exec['vatsimtxt'] = 0;
+        	//$formats[$id] = 'vatsimtxt';
+        	$globalSources[$id]['format'] = 'vatsimtxt';
+        	//$last_exec['vatsimtxt'] = 0;
         	if ($globalDebug) echo "Connect to vatsim source (".$host.")...\n";
     	    } else if (preg_match('/aircraftlist.json$/i',$host)) {
-        	$formats[$id] = 'aircraftlistjson';
-        	$last_exec['aircraftlistjson'] = 0;
+        	//$formats[$id] = 'aircraftlistjson';
+        	$$globalSources[$id]['format'] = 'aircraftlistjson';
+        	//$last_exec['aircraftlistjson'] = 0;
         	if ($globalDebug) echo "Connect to aircraftlist.json source (".$host.")...\n";
     	    } else if (preg_match('/radarvirtuel.com\/file.json$/i',$host)) {
-        	$formats[$id] = 'radarvirtueljson';
-        	$last_exec['radarvirtueljson'] = 0;
+        	//$formats[$id] = 'radarvirtueljson';
+        	$globalSources[$id]['format'] = 'radarvirtueljson';
+        	//$last_exec['radarvirtueljson'] = 0;
         	if ($globalDebug) echo "Connect to radarvirtuel.com/file.json source (".$host.")...\n";
         	if (!isset($globalSourcesRights) || (isset($globalSourcesRights) && !$globalSourcesRights)) {
         	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
         	    exit(0);
         	}
     	    } else if (preg_match('/planeUpdateFAA.php$/i',$host)) {
-        	$formats[$id] = 'planeupdatefaa';
-        	$last_exec['planeupdatefaa'] = 0;
+        	//$formats[$id] = 'planeupdatefaa';
+        	$globalSources[$id]['format'] = 'planeupdatefaa';
+        	//$last_exec['planeupdatefaa'] = 0;
         	if ($globalDebug) echo "Connect to planeUpdateFAA.php source (".$host.")...\n";
         	if (!isset($globalSourcesRights) || (isset($globalSourcesRights) && !$globalSourcesRights)) {
         	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
         	    exit(0);
         	}
             } else if (preg_match('/\/action.php\/acars\/data$/i',$host)) {
-        	$formats[$id] = 'phpvmacars';
-        	$last_exec['phpvmacars'] = 0;
+        	//$formats[$id] = 'phpvmacars';
+        	$globalSources[$id]['format'] = 'phpvmacars';
+        	//$last_exec['phpvmacars'] = 0;
         	if ($globalDebug) echo "Connect to phpvmacars source (".$host.")...\n";
             } else if (preg_match('/whazzup/i',$host)) {
-        	$formats[$id] = 'whazzup';
-        	$last_exec['whazzup'] = 0;
+        	//$formats[$id] = 'whazzup';
+        	$globalSources[$id]['format'] = 'whazzup';
+        	//$last_exec['whazzup'] = 0;
         	if ($globalDebug) echo "Connect to whazzup source (".$host.")...\n";
             } else if (preg_match('/recentpireps/i',$host)) {
-        	$formats[$id] = 'pirepsjson';
-        	$last_exec['pirepsjson'] = 0;
+        	//$formats[$id] = 'pirepsjson';
+        	$globalSources[$id]['format'] = 'pirepsjson';
+        	//$last_exec['pirepsjson'] = 0;
         	if ($globalDebug) echo "Connect to pirepsjson source (".$host.")...\n";
             } else if (preg_match(':data.fr24.com/zones/fcgi/feed.js:i',$host)) {
-        	$formats[$id] = 'fr24json';
-        	$last_exec['fr24json'] = 0;
+        	//$formats[$id] = 'fr24json';
+        	$globalSources[$id]['format'] = 'fr24json';
+        	//$last_exec['fr24json'] = 0;
         	if ($globalDebug) echo "Connect to fr24 source (".$host.")...\n";
         	if (!isset($globalSourcesRights) || (isset($globalSourcesRights) && !$globalSourcesRights)) {
         	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
         	    exit(0);
         	}
-            } else if (preg_match('/10001/',$host)) {
-        	$formats[$id] = 'tsv';
+            //} else if (preg_match('/10001/',$host)) {
+            } else if (preg_match('/10001/',$host) || $globalSources[$id]['port'] == '10001') {
+        	//$formats[$id] = 'tsv';
+        	$globalSources[$id]['format'] = 'tsv';
         	if ($globalDebug) echo "Connect to tsv source (".$host.")...\n";
             }
-        } else {
+        } elseif (filter_var($host,FILTER_VALIDATE_URL)) {
+        	if ($globalDebug) echo "Connect to ".$globalSources[$id]['format']." source (".$host.")...\n";
+        } elseif (!filter_var($host,FILTER_VALIDATE_URL)) {
 	    $hostport = explode(':',$host);
-    	    $s = create_socket($hostport[0],$hostport[1], $errno, $errstr);
+	    if (isset($hostport[1])) $port = $hostport[1];
+	    else $port = $globalSources[$id]['port'];
+    	    $s = create_socket($host,$port, $errno, $errstr);
 	    if ($s) {
     	        $sockets[$id] = $s;
-		if (preg_match('/aprs/',$hostport[0])) {
-			$formats[$id] = 'aprs';
-			$aprs_connect = 0;
-			$use_aprs = true;
-    	        } elseif ($hostport[1] == '10001') {
-        	    $formats[$id] = 'tsv';
-		} elseif ($hostport[1] == '30002') {
-        	    $formats[$id] = 'raw';
-		} elseif ($hostport[1] == '30005') {
-		    // Not yet supported
-        	    $formats[$id] = 'beast';
-		} else $formats[$id] = 'sbs';
-		if ($globalDebug) echo 'Connection in progress to '.$host.'('.$formats[$id].')....'."\n";
+    	        if (!isset($globalSources[$id]['format']) || strtolower($globalSources[$id]['format']) == 'auto') {
+		    if (preg_match('/aprs/',$host)) {
+			//$formats[$id] = 'aprs';
+			$globalSources[$id]['format'] = 'aprs';
+			//$aprs_connect = 0;
+			//$use_aprs = true;
+    		    } elseif ($port == '10001') {
+        		//$formats[$id] = 'tsv';
+        		$globalSources[$id]['format'] = 'tsv';
+		    } elseif ($port == '30002') {
+        		//$formats[$id] = 'raw';
+        		$globalSources[$id]['format'] = 'raw';
+		    } elseif ($port == '30005') {
+			// Not yet supported
+        		//$formats[$id] = 'beast';
+        		$globalSources[$id]['format'] = 'beast';
+		    //} else $formats[$id] = 'sbs';
+		    } else $globalSources[$id]['format'] = 'sbs';
+		    //if ($globalDebug) echo 'Connection in progress to '.$host.'('.$formats[$id].')....'."\n";
+		}
+		if ($globalDebug) echo 'Connection in progress to '.$host.'('.$globalSources[$id]['format'].')....'."\n";
             } else {
 		if ($globalDebug) echo 'Connection failed to '.$host.' : '.$errno.' '.$errstr."\n";
     	    }
         }
     }
 }
-/*
-// This is to be compatible with old version of settings.php
-if (isset($globalSource)) {
-    
-} else {
-    if (isset($globalSBS1Hosts)) {
-	$hosts = $globalSBS1Hosts;
-    } else {
-	if (!isset($globalSBS1Host)) {
-	    echo '$globalSBS1Host MUST be defined !';
-	    die;
-	}
-	$hosts = array($globalSBS1Host.':'.$globalSBS1Port);
-    }
-}
-if (isset($globalServer) && $globalServer) {
-    $options = getopt('s::',array('source::'));
-    if (isset($options['s'])) $hosts = array($options['s']);
-    elseif (isset($options['source'])) $hosts = array($options['source']);
-}
-*/
 if (!isset($globalMinFetch)) $globalMinFetch = 0;
 
 // Initialize all
@@ -191,16 +201,27 @@ $sockets = array();
 $formats = array();
 $last_exec = array();
 $time = time();
-$timeout = $globalSBS1TimeOut;
+if (isset($globalSourcesTimeout)) $timeout = $globalSourcesTimeOut;
+else if (isset($globalSBS1TimeOut)) $timeout = $globalSBS1TimeOut;
+else $timeout = 20;
 $errno = '';
 $errstr='';
 
 $_ = $_SERVER['_'];
 if (!isset($globalDaemon)) $globalDaemon = TRUE;
 /* Initiate connections to all the hosts simultaneously */
-connect_all($hosts);
+//connect_all($hosts);
+connect_all($globalSources);
 
 // APRS Configuration
+foreach ($globalSources as $source) {
+    if ($source['format'] == 'aprs') {
+	$aprs_connect = 0;
+	$use_aprs = true;
+	break;
+    }
+}
+
 if ($use_aprs) {
 	require_once(dirname(__FILE__).'/../require/class.APRS.php');
 	$APRS=new APRS($Connection->db);
@@ -243,9 +264,12 @@ while ($i > 0) {
     if ($globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
         $ATC->deleteOldATC();
     }
-    foreach ($formats as $id => $value) {
-	if ($value == 'deltadbtxt' && (time() - $last_exec['deltadbtxt'] > $globalMinFetch)) {
-	    $buffer = $Common->getData($hosts[$id]);
+    //foreach ($formats as $id => $value) {
+    foreach ($globalSources as $id => $value) {
+	//if ($value == 'deltadbtxt' && (time() - $last_exec['deltadbtxt'] > $globalMinFetch)) {
+	if ($value['format'] == 'deltadbtxt' && (time() - $value['last_exec'] > $globalMinFetch)) {
+	    //$buffer = $Common->getData($hosts[$id]);
+	    $buffer = $Common->getData($value['host']);
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 	    $buffer = explode('\n',$buffer);
 	    foreach ($buffer as $line) {
@@ -265,13 +289,16 @@ while ($i > 0) {
 		    $data['datetime'] = date('Y-m-d H:i:s');
 		    $data['format_source'] = 'deltadbtxt';
     		    $data['id_source'] = $id_source;
+		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
     		    $SI->add($data);
 		    unset($data);
     		}
     	    }
-    	    $last_exec['deltadbtxt'] = time();
-	} elseif (($value == 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value == 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {
-	    $buffer = $Common->getData($hosts[$id]);
+    	    $value['last_exec'] = time();
+	//} elseif (($value == 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value == 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {
+	} elseif (($value['format'] == 'whazzup' && (time() - $value['last_exec'] > $globalMinFetch)) || ($value['format'] == 'vatsimtxt' && (time() - $value['last_exec'] > $globalMinFetch))) {
+	    //$buffer = $Common->getData($hosts[$id]);
+	    $buffer = $Common->getData($value['host']);
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 	    $buffer = explode('\n',$buffer);
 	    foreach ($buffer as $line) {
@@ -311,8 +338,12 @@ while ($i > 0) {
 	    			$data['aircraft_icao'] = $aircraft_data[1];
 	    		    }
         		}
+	    		/*
 	    		if ($value == 'whazzup') $data['format_source'] = 'whazzup';
 	    		elseif ($value == 'vatsimtxt') $data['format_source'] = 'vatsimtxt';
+	    		*/
+	    		$data['format_source'] = $value['format'];
+			if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
     			if ($line[3] == 'PILOT') $SI->add($data);
 			elseif ($line[3] == 'ATC') {
 				//print_r($data);
@@ -335,10 +366,12 @@ while ($i > 0) {
     		    }
     		}
     	    }
-    	    if ($value == 'whazzup') $last_exec['whazzup'] = time();
-    	    elseif ($value == 'vatsimtxt') $last_exec['vatsimtxt'] = time();
-    	} elseif ($value == 'aircraftlistjson' && (time() - $last_exec['aircraftlistjson'] > $globalMinFetch)) {
-	    $buffer = $Common->getData($hosts[$id],'get','','','','','20');
+    	    //if ($value == 'whazzup') $last_exec['whazzup'] = time();
+    	    //elseif ($value == 'vatsimtxt') $last_exec['vatsimtxt'] = time();
+    	    $value['last_exec'] = time();
+    	//} elseif ($value == 'aircraftlistjson' && (time() - $last_exec['aircraftlistjson'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'aircraftlistjson' && (time() - $value['last_exec'] > $globalMinFetch)) {
+	    $buffer = $Common->getData($value['host'],'get','','','','','20');
 	    if ($buffer != '') {
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['acList'])) {
@@ -363,6 +396,7 @@ while ($i > 0) {
 		    if (isset($line['Type'])) $data['aircraft_icao'] = $line['Type'];
 	    	    $data['format_source'] = 'aircraftlistjson';
 		    $data['id_source'] = $id_source;
+		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    if (isset($data['datetime'])) $SI->add($data);
 		    unset($data);
 		}
@@ -382,14 +416,17 @@ while ($i > 0) {
 		    $data['datetime'] = date('Y-m-d H:i:s');
 	    	    $data['format_source'] = 'aircraftlistjson';
     		    $data['id_source'] = $id_source;
+		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    $SI->add($data);
 		    unset($data);
 		}
 	    }
 	    }
-    	    $last_exec['aircraftlistjson'] = time();
-    	} elseif ($value == 'planeupdatefaa' && (time() - $last_exec['planeupdatefaa'] > $globalMinFetch)) {
-	    $buffer = $Common->getData($hosts[$id]);
+    	    //$last_exec['aircraftlistjson'] = time();
+    	    $value['last_exec'] = time();
+    	//} elseif ($value == 'planeupdatefaa' && (time() - $last_exec['planeupdatefaa'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'planeupdatefaa' && (time() - $value['last_exec'] > $globalMinFetch)) {
+	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['planes'])) {
 		foreach ($all_data['planes'] as $key => $line) {
@@ -414,13 +451,17 @@ while ($i > 0) {
 		    $data['datetime'] = date('Y-m-d H:i:s',$line[9]);
 	    	    $data['format_source'] = 'planeupdatefaa';
     		    $data['id_source'] = $id_source;
+		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    $SI->add($data);
 		    unset($data);
 		}
 	    }
-    	    $last_exec['planeupdatefaa'] = time();
-    	} elseif ($value == 'fr24json' && (time() - $last_exec['fr24json'] > $globalMinFetch)) {
-	    $buffer = $Common->getData($hosts[$id]);
+    	    //$last_exec['planeupdatefaa'] = time();
+    	    $value['last_exec'] = time();
+    	//} elseif ($value == 'fr24json' && (time() - $last_exec['fr24json'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'fr24json' && (time() - $value['last_exec'] > $globalMinFetch)) {
+	    //$buffer = $Common->getData($hosts[$id]);
+	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    foreach ($all_data as $key => $line) {
 		if ($key != 'full_count' && $key != 'version' && $key != 'stats') {
@@ -442,13 +483,17 @@ while ($i > 0) {
 		    $data['datetime'] = date('Y-m-d H:i:s'); //$line[10]
 	    	    $data['format_source'] = 'fr24json';
     		    $data['id_source'] = $id_source;
+		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    $SI->add($data);
 		    unset($data);
 		}
 	    }
-    	    $last_exec['fr24json'] = time();
-    	} elseif ($value == 'radarvirtueljson' && (time() - $last_exec['radarvirtueljson'] > $globalMinFetch)) {
-	    $buffer = $Common->getData($hosts[$id],'get','','','','','150');
+    	    //$last_exec['fr24json'] = time();
+    	    $value['last_exec'] = time();
+    	//} elseif ($value == 'radarvirtueljson' && (time() - $last_exec['radarvirtueljson'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'radarvirtueljson' && (time() - $value['last_exec'] > $globalMinFetch)) {
+	    //$buffer = $Common->getData($hosts[$id],'get','','','','','150');
+	    $buffer = $Common->getData($value['host'],'get','','','','','150');
 	    //echo $buffer;
 	    $buffer = str_replace(array("\n","\r"),"",$buffer);
 	    $buffer = preg_replace('/,"num":(.+)/','}',$buffer);
@@ -477,14 +522,18 @@ while ($i > 0) {
 			$data['datetime'] = date('Y-m-d H:i:s',$line['inf']['dt']); //$line[10]
 	    		$data['format_source'] = 'radarvirtueljson';
     			$data['id_source'] = $id_source;
+			if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 			$SI->add($data);
 			unset($data);
 		    }
 		}
 	    }
-    	    $last_exec['radarvirtueljson'] = time();
-    	} elseif ($value == 'pirepsjson' && (time() - $last_exec['pirepsjson'] > $globalMinFetch)) {
-	    $buffer = $Common->getData($hosts[$id]);
+    	    //$last_exec['radarvirtueljson'] = time();
+    	    $value['last_exec'] = time();
+    	//} elseif ($value == 'pirepsjson' && (time() - $last_exec['pirepsjson'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'pirepsjson' && (time() - $value['last_exec'] > $globalMinFetch)) {
+	    //$buffer = $Common->getData($hosts[$id]);
+	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode(utf8_encode($buffer),true);
 	    
 	    if (isset($all_data['pireps'])) {
@@ -514,6 +563,7 @@ while ($i > 0) {
 		    $data['format_source'] = 'pireps';
     		    $data['id_source'] = $id_source;
 		    $data['datetime'] = date('Y-m-d H:i:s');
+		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    if ($line['icon'] == 'plane') {
 			$SI->add($data);
 		    //    print_r($data);
@@ -536,9 +586,12 @@ while ($i > 0) {
 		    unset($data);
 		}
 	    }
-    	    $last_exec['pirepsjson'] = time();
-    	} elseif ($value == 'phpvmacars' && (time() - $last_exec['phpvmacars'] > $globalMinFetch)) {
-	    $buffer = $Common->getData($hosts[$id]);
+    	    //$last_exec['pirepsjson'] = time();
+    	    $value['last_exec'] = time();
+    	//} elseif ($value == 'phpvmacars' && (time() - $last_exec['phpvmacars'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'phpvmacars' && (time() - $value['last_exec'] > $globalMinFetch)) {
+	    //$buffer = $Common->getData($hosts[$id]);
+	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if ($buffer != '' && is_array($all_data)) {
 		foreach ($all_data as $line) {
@@ -579,20 +632,24 @@ while ($i > 0) {
     		    if (isset($line['route'])) $data['waypoints'] = $line['route'];
     		    $data['id_source'] = $id_source;
 	    	    $data['format_source'] = 'phpvmacars';
+		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    $SI->add($data);
 		    unset($data);
 		}
 	    }
-    	    $last_exec['phpvmacars'] = time();
-	} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
+    	    //$last_exec['phpvmacars'] = time();
+    	    $value['last_exec'] = time();
+	//} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
+	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 
 	    //$read = array( $sockets[$id] );
 	    $read = $sockets;
-	    $n = @socket_select($read, $write = NULL, $e = NULL, $globalSBS1TimeOut);
+	    $n = @socket_select($read, $write = NULL, $e = NULL, $timeout);
 	    if ($n > 0) {
 		foreach ($read as $nb => $r) {
-			$value = $formats[$nb];
+		    //$value = $formats[$nb];
+		    $format = $globalSources[$nb]['format'];
         	    $buffer = socket_read($r, 3000,PHP_NORMAL_READ);
 		    // lets play nice and handle signals such as ctrl-c/kill properly
 		    //if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
@@ -603,18 +660,19 @@ while ($i > 0) {
 		    // SBS format is CSV format
 		    if ($buffer != '') {
 			$tt = 0;
-			if ($value == 'raw') {
+			if ($format == 'raw') {
 			    // AVR format
 			    $data = $SBS->parse($buffer);
 			    if (is_array($data)) {
 				$data['datetime'] = date('Y-m-d H:i:s');
 				$data['format_source'] = 'raw';
+				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
                                 $SI->add($data);
                             }
-			} elseif ($value == 'beast') {
+			} elseif ($format == 'beast') {
 			    echo 'Beast Binary format not yet supported. Beast AVR format is supported in alpha state'."\n";
 			    die;
-			} elseif ($value == 'tsv' || substr($buffer,0,4) == 'clock') {
+			} elseif ($format == 'tsv' || substr($buffer,0,4) == 'clock') {
 			    $line = explode("\t", $buffer);
 			    for($k = 0; $k < count($line); $k=$k+2) {
 				$key = $line[$k];
@@ -625,19 +683,20 @@ while ($i > 0) {
     				//$data['datetime'] = date('Y-m-d H:i:s',strtotime($lined['clock']));;
     				$data['datetime'] = date('Y-m-d H:i:s');;
     				if (isset($lined['ident'])) $data['ident'] = $lined['ident'];
-    				if (isset($lined['lat']))$data['latitude'] = $lined['lat'];
-    				if (isset($lined['lon']))$data['longitude'] = $lined['lon'];
-    				if (isset($lined['speed']))$data['speed'] = $lined['speed'];
-    				if (isset($lined['squawk']))$data['squawk'] = $lined['squawk'];
-    				if (isset($lined['alt']))$data['altitude'] = $lined['alt'];
-    				if (isset($lined['heading']))$data['heading'] = $lined['heading'];
+    				if (isset($lined['lat'])) $data['latitude'] = $lined['lat'];
+    				if (isset($lined['lon'])) $data['longitude'] = $lined['lon'];
+    				if (isset($lined['speed'])) $data['speed'] = $lined['speed'];
+    				if (isset($lined['squawk'])) $data['squawk'] = $lined['squawk'];
+    				if (isset($lined['alt'])) $data['altitude'] = $lined['alt'];
+    				if (isset($lined['heading'])) $data['heading'] = $lined['heading'];
     				$data['id_source'] = $id_source;
     				$data['format_source'] = 'tsv';
+    				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
     				$SI->add($data);
     				unset($lined);
     				unset($data);
     			    } else $error = true;
-			} elseif ($value == 'aprs' && $use_aprs) {
+			} elseif ($format == 'aprs' && $use_aprs) {
 			    if ($aprs_connect == 0) {
 				$send = @ socket_send( $r  , $aprs_login , strlen($aprs_login) , 0 );
 				$aprs_connect = 1;
@@ -664,7 +723,7 @@ while ($i > 0) {
 				    else $data['speed'] = 0;
 				    $data['altitude'] = $line['altitude'];
 				    if (isset($line['course'])) $data['heading'] = $line['course'];
-				    else $data['heading'] = 0;
+				    //else $data['heading'] = 0;
 				    $data['aircraft_type'] = $line['stealth'];
 				    if (!isset($globalAPRSarchive) || (isset($globalAPRSarchive) && $globalAPRSarchive == FALSE)) $data['noarchive'] = true;
     				    $data['id_source'] = $id_source;
@@ -685,6 +744,7 @@ while ($i > 0) {
 			    }
 			} else {
 			    $line = explode(',', $buffer);
+			    //print_r($line);
     			    if (count($line) > 20) {
     			    	$data['hex'] = $line[4];
     				/*
@@ -709,7 +769,9 @@ while ($i > 0) {
     				$data['ground'] = $line[21];
     				$data['emergency'] = $line[19];
     				$data['format_source'] = 'sbs';
+				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
     				$data['id_source'] = $id_source;
+    				//print_r($line);
     				$send = $SI->add($data);
     				unset($data);
     			    } else $error = true;
@@ -758,7 +820,8 @@ while ($i > 0) {
 			    if ($globalDebug) echo "Restart all connections...";
 			    sleep(2);
 			    $time = time();
-			    connect_all($hosts);
+			    //connect_all($hosts);
+			    connect_all($globalSources);
 
 		}
 	    }

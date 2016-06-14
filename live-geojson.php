@@ -236,7 +236,9 @@ $output = '{';
 						if (isset($spotter_item['date_iso_8601'])) {
 							$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
 						}
-						
+						if (isset($spotter_item['date'])) {
+							$output .= '"lu": "'.strtotime($spotter_item['date']).'",';
+						}
 						if (!$min) {
 							$output .= '"latitude": "'.$spotter_item['latitude'].'",';
 							$output .= '"longitude": "'.$spotter_item['longitude'].'",';
@@ -344,9 +346,11 @@ $output = '{';
                             	$d = false;
 				foreach ($spotter_history_array as $key => $spotter_history)
 				{
+				    /*
 				    if (abs($spotter_history['longitude']-$spotter_item['longitude']) > 200 || $d==true) {
 					if ($d == false) $d = true;
 				    } else {
+				    */
 					$alt = round($spotter_history['altitude']/10)*10;
 					if (!isset($prev_alt) || $prev_alt != $alt) {
 					    if (isset($prev_alt)) {
@@ -364,7 +368,7 @@ $output = '{';
 					//$output_history .=  $spotter_history['altitude'];
 					$output_history .= '],';
 					$prev_alt = $alt;
-				    }
+				    //}
 				}
 				if (isset($output_history)) {
 				    $output_history  = substr($output_history, 0, -1);

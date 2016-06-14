@@ -44,9 +44,9 @@ if ($facebook_meta_image != "")
 <script language="JavaScript" type="text/javascript">
     function datasource_js() {
         //document.getElementById("flightaware_data").style.display = document.getElementById("flightaware").checked ? "inline" : "none" ;
-        document.getElementById("sbs_data").style.display = (document.getElementById("sbs").checked || document.getElementById("aprs").checked) ? "inline" : "none" ;
+        //document.getElementById("sbs_data").style.display = (document.getElementById("sbs").checked || document.getElementById("aprs").checked) ? "inline" : "none" ;
         document.getElementById("optional_sbs").style.display = (document.getElementById("sbs").checked || document.getElementById("aprs").checked) ? "inline" : "none" ;
-        document.getElementById("sbs_url").style.display = (document.getElementById("ivao").checked || document.getElementById("sbs").checked || document.getElementById("vatsim").checked) ? "inline" : "none" ;
+        //document.getElementById("sbs_url").style.display = (document.getElementById("ivao").checked || document.getElementById("sbs").checked || document.getElementById("vatsim").checked) ? "inline" : "none" ;
         document.getElementById("acars_data").style.display = document.getElementById("acars").checked ? "inline" : "none" ;
     }
     function schedule_js() {
@@ -96,6 +96,32 @@ if ($facebook_meta_image != "")
 	    }
 	});
     });
+    
+    function deleteRow(el) {
+	var table = document.getElementById('SourceTable');
+	var i = el.parentNode.parentNode.rowIndex;
+	table.deleteRow(i);
+    }
+
+    function insRow() {
+        var table = document.getElementById('SourceTable'),
+	tbody = table.getElementsByTagName('tbody')[0],
+        clone = tbody.rows[0].cloneNode(true);
+	var new_row = updateRow(clone.cloneNode(true), ++tbody.rows.length, true);
+        tbody.appendChild(new_row);
+    }
+
+    function updateRow(row, i, reset) {
+        var inp1 = row.cells[0].getElementsByTagName('input')[0];
+        var inp2 = row.cells[1].getElementsByTagName('input')[0];
+        var inp3 = row.cells[2].getElementsByTagName('select')[0];
+        var inp4 = row.cells[3].getElementsByTagName('input')[0];
+        if (reset) {
+            inp1.value = inp2.value = inp4.value = '';
+            inp3.value = 'Auto';
+        }
+        return row;
+    }
 </script>
 <?php
     }

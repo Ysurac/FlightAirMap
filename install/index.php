@@ -98,7 +98,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<label for="dbtype">Database type</label>
 				<select name="dbtype" id="dbtype">
 					<option value="mysql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'mysql') { ?>selected="selected" <?php } ?>>MySQL</option>
-					<option value="pgsql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'pgsql') { ?>selected="selected" <?php } ?>>PostgreSQL (alpha support)</option>
+					<option value="pgsql" <?php if (isset($globalDBdriver) && $globalDBdriver == 'pgsql') { ?>selected="selected" <?php } ?>>PostgreSQL</option>
 				</select>
 			</p>
 			<p>
@@ -319,8 +319,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</p>
 			</div>
 -->
-			<div id="sbs_data">
+<!--			<div id="sbs_data">
+-->
 		<?php
+/*
 		    $globalSURL = array();
 		    $globalIP = array();
 		    if (isset($globalSBS1Hosts)) {
@@ -376,7 +378,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					</center>
 					<p>
 						<label for="sbstimeout">SBS-1 timeout</label>
-						<input type="number" name="sbstimeout" id="sbstimeout" value="<?php if (isset($globalSBS1TimeOut)) print $globalSBS1TimeOut; ?>" />
+						<input type="number" name="sbstimeout" id="sbstimeout" value="<?php if (isset($globalSourcesTimeOut)) print $globalSourcesTimeOut; elseif (isset($globalSBS1TimeOut)) print $globalSBS1TimeOut;?>" />
 					</p>
 				</fieldset>
 			</div>
@@ -407,7 +409,106 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 						<input type="button" value="Remove last row" class="del-row-url" />
 					</center>
 					<br />
+				</fieldset>
 				</div>
+<?php
+*/
+?>
+			
+				<fieldset>
+					<legend>Sources</legend>
+					<table id="SourceTable">
+						<thead>
+							<tr>
+								<th>Host/URL</th>
+								<th>Port</th>
+								<th>Format</th>
+								<th>Name</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+<?php
+
+		if (!isset($globalSources) && isset($globalSBS1Hosts)) {
+			if (!is_array($globalSBS1Hosts)) {
+				$globalSources[] = array('host' => $globalSBS1Hosts);
+			} else {
+				foreach ($globalSBS1Hosts as $host) {
+					$globalSources[] = array('host' => $host);
+				}
+			}
+		}
+		$i = 0;
+		if (isset($globalSources)) {
+			foreach ($globalSources as $source) {
+?>
+							<tr>
+								<?php
+								    if (filter_var($source['host'],FILTER_VALIDATE_URL)) {
+								?>
+								<td><input type="text" name="host[]" id="host" value="<?php print $source['host']; ?>" /></td>
+								<td><input type="number" name="port[]" id="port" value="<?php print $source['port']; ?>" /></td>
+								<?php
+								    } else {
+									$hostport = explode(':',$source['host']);
+									if (isset($hostport[1])) {
+										$host = $hostport[0];
+										$port = $hostport[1];
+									} else {
+										$host = $source['host'];
+										$port = $source['port'];
+									}
+								?>
+								<td><input type="text" name="host[]" id="host" value="<?php print $host; ?>" /></td>
+								<td><input type="number" name="port[]" id="port" value="<?php print $port; ?>" /></td>
+								<?php
+								    }
+								?>
+								<td>
+									<select name="format[]" id="format">
+										<option value="auto" <?php if (!isset($source['format'])) print 'selected'; ?>>Auto</option>
+										<option value="sbs" <?php if (isset($source['format']) && $source['format'] == 'sbs') print 'selected'; ?>>SBS</option>
+										<option value="tsv" <?php if (isset($source['format']) && $source['format'] == 'tsv') print 'selected'; ?>>TSV</option>
+										<option value="raw" <?php if (isset($source['format']) && $source['format'] == 'raw') print 'selected'; ?>>Raw</option>
+										<option value="aprs" <?php if (isset($source['format']) && $source['format'] == 'aprs') print 'selected'; ?>>APRS</option>
+										<option value="deltadbtxt" <?php if (isset($source['format']) && $source['format'] == 'deltadbtxt') print 'selected'; ?>>Radarcape deltadb.txt</option>
+										<option value="vatsimtxt" <?php if (isset($source['format']) && $source['format'] == 'vatsimtxt') print 'selected'; ?>>Vatsim</option>
+										<option value="aircraftlistjson" <?php if (isset($source['format']) && $source['format'] == 'aircraftlistjson') print 'selected'; ?>>Virtual Radar Server</option>
+										<option value="phpvmacars" <?php if (isset($source['format']) && $source['format'] == 'phpvmacars') print 'selected'; ?>>phpVMS</option>
+										<option value="whazzup" <?php if (isset($source['format']) && $source['format'] == 'whazzup') print 'selected'; ?>>IVAO</option>
+									</select>
+								</td>
+								<td><input type="text" name="name[]" id="name" value="<?php if (isset($source['name'])) print $source['name']; ?>" /></td>
+								<td><input type="button" id="delhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
+							</tr>
+<?php
+			}
+		}
+?>
+							<tr>
+								<td><input type="text" id="host" name="host[]" value="" /></td>
+								<td><input type="number" id="port" name="port[]" value="" /></td>
+								<td>
+									<select name="format[]" id="format">
+										<option value="auto">Auto</option>
+										<option value="sbs">SBS</option>
+										<option value="tsv">TSV</option>
+										<option value="raw">Raw</option>
+										<option value="aprs">APRS</option>
+										<option value="deltadbtxt">Radarcape deltadb.txt</option>
+										<option value="vatsimtxt">Vatsim</option>
+										<option value="aircraftlistjson">Virtual Radar Server</option>
+										<option value="phpvmacars">phpVMS</option>
+										<option value="whazzup">IVAO</option>
+									</select>
+								</td>
+								<td><input type="text" name="name[]" value="" id="name" /></td>
+								<td><input type="button" id="addhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
+							</tr>
+						</tbody>
+					</table>
+				</fieldset>
 			</fieldset>
 			<div id="acars_data">
 				<fieldset>
@@ -645,6 +746,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 }
 	
 $settings = array();
+$settings_comment = array();
 $error = '';
 
 if (isset($_POST['dbtype'])) {
@@ -736,7 +838,7 @@ if (isset($_POST['dbtype'])) {
 	$globalaprs = filter_input(INPUT_POST,'globalaprs',FILTER_SANITIZE_STRING);
 	$datasource = filter_input(INPUT_POST,'datasource',FILTER_SANITIZE_STRING);
 
-	
+/*	
 	$globalSBS1Hosts = array();
 //	if ($datasource != 'ivao' && $datasource != 'vatsim') {
 	if ($globalsbs == 'sbs') {
@@ -749,9 +851,20 @@ if (isset($_POST['dbtype'])) {
 	    $globalSBS1Hosts = array_merge($globalSBS1Hosts,$sbsurl);
 	}
 	$settings = array_merge($settings,array('globalSBS1Hosts' => $globalSBS1Hosts));
+*/
+	$settings_comment = array_merge($settings_comment,array('globalSBS1Hosts'));
+	$host = $_POST['host'];
+	$port = $_POST['port'];
+	$name = $_POST['name'];
+	$format = $_POST['format'];
+	$gSources = array();
+	foreach ($host as $key => $h) {
+		if ($h != '') $gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key]);
+	}
+	$settings = array_merge($settings,array('globalSources' => $gSources));
 
 	$sbstimeout = filter_input(INPUT_POST,'sbstimeout',FILTER_SANITIZE_NUMBER_INT);
-	$settings = array_merge($settings,array('globalSBS1TimeOut' => $sbstimeout));
+	$settings = array_merge($settings,array('globalSourcesTimeOut' => $sbstimeout));
 
 	$acarshost = filter_input(INPUT_POST,'acarshost',FILTER_SANITIZE_STRING);
 	$acarsport = filter_input(INPUT_POST,'acarsport',FILTER_SANITIZE_NUMBER_INT);
@@ -966,6 +1079,7 @@ if (isset($_POST['dbtype'])) {
 	$settings = array_merge($settings,array('globalInstalled' => 'TRUE'));
 
 	if ($error == '') settings::modify_settings($settings);
+	if ($error == '') settings::comment_settings($settings_comment);
 	if ($error != '') {
 		print '<div class="info column">'.$error.'</div>';
 		require('../footer.php');

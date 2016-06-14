@@ -6,7 +6,7 @@ $globalInstalled = FALSE;
 $globalName = '';
 
 // GLOBAL URL
-$globalURL = '';
+$globalURL = '.';
 
 // Logo URL
 $logoURL = '/images/logo2.png';
@@ -85,8 +85,14 @@ $globalMapRoute = TRUE;
 // DISPLAY FLIGHTS PATH HISTORY
 $globalMapHistory = FALSE;
 
+// FLIGHT ESTIMATION BETWEEN UPDATES
+$globalMapEstimation = TRUE;
+
 // WRAP MAP OR REPEAT
 $globalMapWrap = TRUE;
+
+// ALLOW SITE TRANSLATION
+$globalTranslate = TRUE;
 
 // UNITS
 $globalUnitDistance = 'km'; // km, nm or mi
@@ -109,10 +115,12 @@ $globalMapVAchoose = FALSE;
 
 //ADS-B, SBS1 FORMAT
 $globalSBS1 = TRUE; //set to FALSE to not use SBS1 as data import
-$globalSBS1Hosts = array('127.0.0.1:30003');
-// ^^ in the form array('host1:port1','host2:port2','http://xxxxx/whazzup.txt'); Use only sources you have the rights for.
-$globalSBS1TimeOut = '15';
-$globalSBS1update = '10'; //Put data in DB after xx seconds/flight
+$globalSourcesTimeOut = '15';
+$globalSourcesupdate = '10'; //Put data in DB after xx seconds/flight
+
+//DATA SOURCES
+$globalSources = array(array('host' => '127.0.0.1', 'port' => '30003'));
+// ^^ in the form array(array(host => 'host1', 'port' => 'port1','name' => 'first source','format' => 'sbs'),array('host' => 'host2', 'port' => 'port2','name' => 'Other source', 'format' => 'aprs'),array('host' => 'http://xxxxx/whazzup.txt')); Use only sources you have the rights for.
 
 //ACARS Listen in UDP
 $globalACARS = FALSE;
@@ -120,6 +128,11 @@ $globalACARSHost = '0.0.0.0'; // Local IP to listen
 $globalACARSPort = '9999';
 $globalACARSArchive = array('10','80','81','82','3F'); // labels of messages to archive
 $globalACARSArchiveKeepMonths = '0';
+
+//APRS configuration (for glidernet)
+$globalAPRSversion = $globalName.' using FlightAirMap';
+$globalAPRSssid = 'FAM';
+$globalAPRSfilter = 'r/'.$globalCenterLatitude.'/'.$globalCenterLongitude.'/250.0';
 
 //Minimal distance to tell if a flight is arrived to airport (in km)
 $globalClosestMinDist = '50';
