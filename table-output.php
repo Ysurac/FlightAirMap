@@ -504,7 +504,14 @@ foreach($spotter_array as $spotter_item)
 	if ($spotter_item['departure_airport'] != 'NA') {
 		require_once(dirname(__FILE__).'/require/class.Spotter.php');
 		$Spotter = new Spotter();
-		$distance = $Spotter->getAirportDistance($spotter_item['departure_airport'],$spotter_item['latitude'],$spotter_item['longitude']);
+		if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '' && isset($spotter_item['last_longitude']) && $spotter_item['last_longitude'] != '') {
+			$latitude = $spotter_item['last_latitude'];
+			$longitude = $spotter_item['last_longitude'];
+		} else {
+			$latitude = $spotter_item['latitude'];
+			$longitude = $spotter_item['longitude'];
+		}
+		$distance = $Spotter->getAirportDistance($spotter_item['departure_airport'],$latitude,$longitude);
 		if ($distance != '') {
 		    if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
 			    echo '<br/><i>'.round($distance*0.539957).' nm</i>';
@@ -562,7 +569,14 @@ foreach($spotter_array as $spotter_item)
 		print '<br /><span class="airport_time">'.$arrival_airport_time.'</span>'."\n";
 	}
 	if (!isset($spotter_item['real_arrival_airport']) && $spotter_item['arrival_airport'] != 'NA') {
-		$distance = $Spotter->getAirportDistance($spotter_item['arrival_airport'],$spotter_item['latitude'],$spotter_item['longitude']);
+		if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '' && isset($spotter_item['last_longitude']) && $spotter_item['last_longitude'] != '') {
+			$latitude = $spotter_item['last_latitude'];
+			$longitude = $spotter_item['last_longitude'];
+		} else {
+			$latitude = $spotter_item['latitude'];
+			$longitude = $spotter_item['longitude'];
+		}
+		$distance = $Spotter->getAirportDistance($spotter_item['arrival_airport'],$latitude,$longitude);
 		if ($distance != '') {
 		    if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
 			    echo '<br/><i>'.round($distance*0.539957).' nm</i>';
