@@ -84,6 +84,7 @@ class METAR {
     		$pieces = preg_split('/\s/',$data);
     		$pos = 0;
     		if ($pieces[0] == 'METAR') $pos++;
+    		elseif ($pieces[0] == 'SPECI') $pos++;
     		if (strlen($pieces[$pos]) != 4) $pos++;
     		$result['location'] = $pieces[$pos];
     		$pos++;
@@ -191,9 +192,9 @@ class METAR {
     				elseif ($type == 'OVC') $cloud['type'] = 'Overcast/Full cloud coverage';
     				elseif ($type == 'VV') $cloud['type'] = 'Vertical visibility';
     				$cloud['type_code'] = $type;
-    				$cloud['level'] = ((float)$matches[2]) * 100;
+    				$cloud['level'] = round(((float)$matches[2]) * 100 * 0.3048);
     				$cloud['significant'] = isset($matches[3]) ? $matches[3] : '';
-    				$result['cloud'] = $cloud;
+    				$result['cloud'][] = $cloud;
     			}
     			// RVR
     			 if (preg_match('#^(R.+)/([M|P])?(\d{4})(?:V(\d+)|[UDN])?(FT)?$#', $piece, $matches)) {
@@ -202,7 +203,7 @@ class METAR {
 				$rvr['rvr'] = $matches[3];
 				$rvr['rvr_max'] = array_key_exists(4,$matches) ? $matches[4] : 0;
 				$rvr['unit'] = array_key_exists(5,$matches) ? $matches[5] : '';
-				$result['rvr'] = $rvr;
+				$result['RVR'] = $rvr;
 			}
     			
     			//if (preg_match('#^(R[A-Z0-9]{2,3})/([0-9]{4})(V([0-9]{4}))?(FT)?$#', $piece, $matches)) {
@@ -216,8 +217,8 @@ class METAR {
         			$result['RVR']['friction'] = $matches[5];
     			}
     			if (preg_match('#^(R[A-Z0-9]{2,3})/([0-9]{4})(V([0-9]{4}))?(FT)?$#', $piece, $matches)) {
-    				echo $piece;
-    				print_r($matches);
+    				//echo $piece;
+    				//print_r($matches);
     				if (isset($matches[5])) $range = array('exact' => (float)$matches[2], 'unit' => $matches[5] ? 'FT' : 'M');
     				else $range = array('exact' => (float)$matches[2], 'unit' => 'M');
 				if (isset($matches[3])) {
@@ -252,7 +253,8 @@ class METAR {
 				if (isset($matches[3])) {
 					$text[] = $this->texts[$matches[3]];
 				}
-				$result['weather'] = implode(' ', $text);
+				if (!isset($result['weather'])) $result['weather'] = implode(' ', $text);
+				else $result['weather'] = $result['weather'].' / '.implode(' ', $text);
     			}
     		}
     		return $result;

@@ -242,6 +242,12 @@ location /upcoming {
     rewrite ^/upcoming(/?)$ /upcoming.php last;
 }
 
+location /tools {
+    rewrite ^/tools/acars(/?)$ /tools-acars.php last;
+    rewrite ^/tools/metar(/?)$ /tools-metar.php last;
+    rewrite ^/tools/notam(/?)$ /tools-notam.php last;
+}
+
 location /scripts {
     deny all;
 }

@@ -190,6 +190,14 @@ if ($facebook_meta_image != "")
       	<li><a href="<?php print $globalURL; ?>/search"><?php echo _("Search"); ?></a></li>
       	<li><a href="<?php print $globalURL; ?>/statistics"><?php echo _("Statistics"); ?></a></li>
         <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Tools"); ?> <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+          	<li><a href="<?php print $globalURL; ?>/tools/acars"><?php echo _("ACARS translator"); ?></a></li>
+          	<li><a href="<?php print $globalURL; ?>/tools/metar"><?php echo _("METAR translator"); ?></a></li>
+          	<li><a href="<?php print $globalURL; ?>/tools/notam"><?php echo _("NOTAM translator"); ?></a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
           <a href="<?php print $globalURL; ?>/about" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("About"); ?> <b class="caret"></b></a>
           <ul class="dropdown-menu">
           	<li><a href="<?php print $globalURL; ?>/about"><?php echo _("About The Project"); ?></a></li>

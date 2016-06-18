@@ -2781,8 +2781,9 @@ class Spotter{
 	* @return String success or false
 	*
 	*/	
-	public function updateLatestSpotterData($flightaware_id = '', $ident = '', $latitude = '', $longitude = '', $altitude = '', $ground = false, $groundspeed = '', $date = '', $arrival_airport_icao = '',$arrival_airport_time = '')
+	public function updateLatestSpotterData($flightaware_id = '', $ident = '', $latitude = '', $longitude = '', $altitude = '', $ground = false, $groundspeed = NULL, $date = '', $arrival_airport_icao = '',$arrival_airport_time = '')
 	{
+		if ($groundspeed == '') $groundspeed = NULL;
 		$query = 'UPDATE spotter_output SET ident = :ident, last_latitude = :last_latitude, last_longitude = :last_longitude, last_altitude = :last_altitude, last_ground = :last_ground, last_seen = :last_seen, real_arrival_airport_icao = :real_arrival_airport_icao, real_arrival_airport_time = :real_arrival_airport_time, last_ground_speed = :last_ground_speed WHERE flightaware_id = :flightaware_id';
                 $query_values = array(':flightaware_id' => $flightaware_id,':real_arrival_airport_icao' => $arrival_airport_icao,':last_latitude' => $latitude,':last_longitude' => $longitude, ':last_altitude' => $altitude,':last_ground_speed' => $groundspeed,':last_seen' => $date,':real_arrival_airport_time' => $arrival_airport_time, ':last_ground' => $ground, ':ident' => $ident);
 

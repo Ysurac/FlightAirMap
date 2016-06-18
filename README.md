@@ -19,7 +19,7 @@ It also support glidernet APRS source.
 To install the web app, you need to have meet the following requirements:
 
 * PHP version 5.4 or greater
-* MySQL version 5.6 or greater (or MariaDB)
+* MySQL version 5.6 or greater (or MariaDB) or PostgreSQL
 * SQLite 3 (if you use ADS-B as datasource)
 * An HTTP Server such as:
 	* Apache 2.0+
@@ -59,11 +59,11 @@ You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (Bas
 
 ### ADS-B (real flights)
 * You can use dump1090 [https://github.com/mutability/dump1090](https://github.com/mutability/dump1090) with a RTL dongle, Radarcape deltadb.txt or aircraftlist.json, or wazzup file, or /action.php/acars/data of phpvms...
-* run cron-sbs.php (The name is not really good, this should be run one time like a daemon, use a init script or screen)
+* run scripts/daemon-spotter.php
 
 ### ACARS (only messages from real flights)
 * You have to use acarsdec [http://sourceforge.net/projects/acarsdec/](http://sourceforge.net/projects/acarsdec/) : acarsdec -N 127.0.0.1:9999 -r 0 131.525 131.550 131.725
-* run cron-acars.php (also a daemon)
+* run scripts/daemon-acars.php
 
 ### APRS (real flights)
 * You can user APRS server from glidernet like aprs.glidernet.org:10152
