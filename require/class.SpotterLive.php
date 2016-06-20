@@ -348,7 +348,7 @@ class SpotterLive {
 	{
 		date_default_timezone_set('UTC');
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
-		$query  = self::$global_query.' WHERE spotter_live.flightaware_id = :id';
+		$query  = self::$global_query.' WHERE spotter_live.flightaware_id = :id ORDER BY date';
 //		$spotter_array = Spotter->getDataFromDB($query,array(':id' => $id));
 
     		try {

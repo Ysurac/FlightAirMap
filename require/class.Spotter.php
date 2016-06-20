@@ -343,6 +343,9 @@ class Spotter{
 				if ($row['squawk'] != '' && isset($temp_array['country_iso2'])) {
 					$temp_array['squawk_usage'] = $this->getSquawkUsage($row['squawk'],$temp_array['country_iso2']);
 					if ($temp_array['squawk_usage'] == '' && isset($globalSquawkCountry)) $temp_array['squawk_usage'] = $this->getSquawkUsage($row['squawk'],$globalSquawkCountry);
+				} elseif ($row['squawk'] != '' && isset($temp_array['over_country'])) {
+					$temp_array['squawk_usage'] = $this->getSquawkUsage($row['squawk'],$temp_array['over_country']);
+					if ($temp_array['squawk_usage'] == '' && isset($globalSquawkCountry)) $temp_array['squawk_usage'] = $this->getSquawkUsage($row['squawk'],$globalSquawkCountry);
 				} elseif ($row['squawk'] != '' && isset($globalSquawkCountry)) $temp_array['squawk_usage'] = $this->getSquawkUsage($row['squawk'],$globalSquawkCountry);
 			}
     			
@@ -1844,6 +1847,7 @@ class Spotter{
 	*/
 	public function getAllAirportInfobyCoord($coord)
 	{
+		global $globalDBdriver;
 		$lst_countries = '';
 		if (is_array($coord)) {
 			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
@@ -1851,8 +1855,11 @@ class Spotter{
 			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		}
-		$query  = "SELECT airport.* FROM airport WHERE airport.latitude BETWEEN ".$minlat." AND ".$maxlat." AND airport.longitude BETWEEN ".$minlong." AND ".$maxlong." AND airport.type != 'closed'";
-		
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT airport.* FROM airport WHERE airport.latitude BETWEEN ".$minlat." AND ".$maxlat." AND airport.longitude BETWEEN ".$minlong." AND ".$maxlong." AND airport.type != 'closed'";
+		} else {
+			$query  = "SELECT airport.* FROM airport WHERE CAST(airport.latitude AS FLOAT) BETWEEN ".$minlat." AND ".$maxlat." AND CAST(airport.longitude AS FLOAT) BETWEEN ".$minlong." AND ".$maxlong." AND airport.type != 'closed'";
+		}
 		$sth = $this->db->prepare($query);
 		$sth->execute();
     
