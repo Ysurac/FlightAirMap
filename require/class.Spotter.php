@@ -8735,17 +8735,22 @@ class Spotter{
                       having distance < $dist ORDER BY distance limit 100;";
 */
 		if ($globalDBdriver == 'mysql') {
-			$query="SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2))) as distance 
-	                      FROM airport WHERE longitude between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
-	                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(latitude))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(latitude)*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2)))) < $dist ORDER BY distance limit 100;";
+			$query="SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - latitude)*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(latitude*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2))) as distance 
+	                      FROM airport WHERE longitude between ($origLon-$dist/cos(radians($origLat))*69) and ($origLon+$dist/cos(radians($origLat)*69)) and latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+	                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - latitude)*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(latitude*pi()/180)*POWER(SIN(($origLon-longitude)*pi()/180/2),2)))) < $dist ORDER BY distance limit 100;";
                 } else {
-			$query="SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(longitude as double precision))*pi()/180/2),2))) as distance 
-	                      FROM airport WHERE CAST(longitude as double precision) between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and CAST(latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
-	                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(longitude as double precision))*pi()/180/2),2)))) < $dist ORDER BY distance limit 100;";
+			$query="SELECT name, icao, latitude, longitude, altitude, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(longitude as double precision))*pi()/180/2),2))) as distance 
+	                      FROM airport WHERE CAST(longitude as double precision) between ($origLon-$dist/cos(radians($origLat))*69) and ($origLon+$dist/cos(radians($origLat))*69) and CAST(latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+	                      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(longitude as double precision))*pi()/180/2),2)))) < $dist ORDER BY distance limit 100;";
     		}
+    		echo $query;
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 }
+/*
+$Spotter = new Spotter();
+print_r($Spotter->closestAirports('-21.142422','-47.771451',80));
+*/
 ?>
