@@ -6,7 +6,7 @@ $globalInstalled = FALSE;
 $globalName = '';
 
 // GLOBAL URL
-$globalURL = '.';
+$globalURL = '';
 
 // Logo URL
 $logoURL = '/images/logo2.png';
