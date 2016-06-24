@@ -786,7 +786,7 @@ while ($i > 0) {
 					}
 					socket_close($r);
 					if ($globalDebug) echo "Reconnect after an error...\n";
-					connect_all($hosts);
+					connect_all($globalSources);
 				}
 			    }
 			}
