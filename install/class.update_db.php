@@ -1048,6 +1048,16 @@ class update_db {
 	public static function update_countries() {
 		global $tmp_dir, $globalDBdriver;
 		include_once('class.create_db.php');
+		$Connection = new Connection();
+		if ($Connection->tableExists('countries')) {
+			$query = 'DROP TABLE countries';
+			try {
+				$sth = $Connection->db->prepare($query);
+            	        	$sth->execute();
+	                } catch(PDOException $e) {
+    	                	echo "error : ".$e->getMessage();
+	                }
+		}
 		if ($globalDBdriver == 'mysql') {
 			update_db::gunzip('../db/countries.sql.gz',$tmp_dir.'countries.sql');
 		} else {
