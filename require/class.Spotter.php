@@ -7849,7 +7849,7 @@ class Spotter{
 	*/
 	public function countOverallArrival()
 	{
-		$query  = "SELECT COUNT(DISTINCT spotter_output.real_arrival_airport_icao) AS arrival_count  
+		$query  = "SELECT COUNT(spotter_output.real_arrival_airport_icao) AS arrival_count  
                     FROM spotter_output
                     WHERE spotter_output.arrival_airport_icao <> ''";
       
@@ -8136,86 +8136,81 @@ class Spotter{
 	* @return Array the direction information
 	*
 	*/
-	public function parseDirection($direction)
+	public function parseDirection($direction = 0)
 	{
+		if ($direction == '') $direction = 0;
+		$direction_array = array();
+		$temp_array = array();
 
-		if ($direction != "")
+		if ($direction == 360 || ($direction >= 0 && $direction < 22.5))
 		{
-			$direction_array = array();
-			$temp_array = array();
-			
-			if ($direction == 360 || ($direction >= 0 && $direction < 22.5))
-			{
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "N";
-				$temp_array['direction_fullname'] = "North";
-			} elseif ($direction >= 22.5 && $direction < 45){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "NNE";
-				$temp_array['direction_fullname'] = "North-Northeast";
-			} elseif ($direction >= 45 && $direction < 67.5){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "NE";
-				$temp_array['direction_fullname'] = "Northeast";
-			} elseif ($direction >= 67.5 && $direction < 90){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "ENE";
-				$temp_array['direction_fullname'] = "East-Northeast";
-			} elseif ($direction >= 90 && $direction < 112.5){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "E";
-				$temp_array['direction_fullname'] = "East";
-			} elseif ($direction >= 112.5 && $direction < 135){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "ESE";
-				$temp_array['direction_fullname'] = "East-Southeast";
-			} elseif ($direction >= 135 && $direction < 157.5){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "SE";
-				$temp_array['direction_fullname'] = "Southeast";
-			} elseif ($direction >= 157.5 && $direction < 180){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "SSE";
-				$temp_array['direction_fullname'] = "South-Southeast";
-			} elseif ($direction >= 180 && $direction < 202.5){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "S";
-				$temp_array['direction_fullname'] = "South";
-			} elseif ($direction >= 202.5 && $direction < 225){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "SSW";
-				$temp_array['direction_fullname'] = "South-Southwest";
-			} elseif ($direction >= 225 && $direction < 247.5){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "SW";
-				$temp_array['direction_fullname'] = "Southwest";
-			} elseif ($direction >= 247.5 && $direction < 270){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "WSW";
-				$temp_array['direction_fullname'] = "West-Southwest";
-			} elseif ($direction >= 270 && $direction < 292.5){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "W";
-				$temp_array['direction_fullname'] = "West";
-			} elseif ($direction >= 292.5 && $direction < 315){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "WNW";
-				$temp_array['direction_fullname'] = "West-Northwest";
-			} elseif ($direction >= 315 && $direction < 337.5){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "NW";
-				$temp_array['direction_fullname'] = "Northwest";
-			} elseif ($direction >= 337.5 && $direction < 360){
-				$temp_array['direction_degree'] = $direction;
-				$temp_array['direction_shortname'] = "NNW";
-				$temp_array['direction_fullname'] = "North-Northwest";
-			}
-			
-			$direction_array[] = $temp_array;
-			
-			return $direction_array;
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "N";
+			$temp_array['direction_fullname'] = "North";
+		} elseif ($direction >= 22.5 && $direction < 45){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "NNE";
+			$temp_array['direction_fullname'] = "North-Northeast";
+		} elseif ($direction >= 45 && $direction < 67.5){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "NE";
+			$temp_array['direction_fullname'] = "Northeast";
+		} elseif ($direction >= 67.5 && $direction < 90){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "ENE";
+			$temp_array['direction_fullname'] = "East-Northeast";
+		} elseif ($direction >= 90 && $direction < 112.5){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "E";
+			$temp_array['direction_fullname'] = "East";
+		} elseif ($direction >= 112.5 && $direction < 135){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "ESE";
+			$temp_array['direction_fullname'] = "East-Southeast";
+		} elseif ($direction >= 135 && $direction < 157.5){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "SE";
+			$temp_array['direction_fullname'] = "Southeast";
+		} elseif ($direction >= 157.5 && $direction < 180){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "SSE";
+			$temp_array['direction_fullname'] = "South-Southeast";
+		} elseif ($direction >= 180 && $direction < 202.5){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "S";
+			$temp_array['direction_fullname'] = "South";
+		} elseif ($direction >= 202.5 && $direction < 225){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "SSW";
+			$temp_array['direction_fullname'] = "South-Southwest";
+		} elseif ($direction >= 225 && $direction < 247.5){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "SW";
+			$temp_array['direction_fullname'] = "Southwest";
+		} elseif ($direction >= 247.5 && $direction < 270){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "WSW";
+			$temp_array['direction_fullname'] = "West-Southwest";
+		} elseif ($direction >= 270 && $direction < 292.5){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "W";
+			$temp_array['direction_fullname'] = "West";
+		} elseif ($direction >= 292.5 && $direction < 315){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "WNW";
+			$temp_array['direction_fullname'] = "West-Northwest";
+		} elseif ($direction >= 315 && $direction < 337.5){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "NW";
+			$temp_array['direction_fullname'] = "Northwest";
+		} elseif ($direction >= 337.5 && $direction < 360){
+			$temp_array['direction_degree'] = $direction;
+			$temp_array['direction_shortname'] = "NNW";
+			$temp_array['direction_fullname'] = "North-Northwest";
 		}
-	}	
+		$direction_array[] = $temp_array;
+		return $direction_array;
+	}
 	
 	
 	/**
@@ -8750,6 +8745,6 @@ class Spotter{
 }
 /*
 $Spotter = new Spotter();
-print_r($Spotter->closestAirports('-21.142422','-47.771451',80));
+print_r($Spotter->closestAirports('-21.13767','-47.77297',80));
 */
 ?>
