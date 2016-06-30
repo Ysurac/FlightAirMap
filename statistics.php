@@ -685,7 +685,7 @@ require_once('header.php');
         		    if ($data > 500) $max = (round(($data+100)/100))*100;
         		    else $max = 500;
         	?>
-        	<div id="msg-<?php print str_replace(' ','_',strtolower($eachmsg['source_name'])); ?>" class="chart" style="width:200px; height:200px"></div>
+        	<div id="msg-<?php print str_replace(' ','_',strtolower($eachmsg['source_name'])); ?>" class="col-md-4"></div>
         	<script>
 		      var g = new JustGage({
 			    id: "msg-<?php print str_replace(' ','_',strtolower($eachmsg['source_name'])); ?>",
@@ -693,7 +693,7 @@ require_once('header.php');
 			    min: 0,
 			    max: <?php print $max; ?>,
 			    valueMinFontSize: 10,
-			    height: 220,
+			    height: 120,
 			    width: 220,
 			    symbol: ' msg/s',
 			    title: "<?php print $eachmsg['source_name']; ?>"
