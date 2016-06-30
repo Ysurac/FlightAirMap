@@ -8720,6 +8720,48 @@ class Spotter{
 			}
 		}
 	}	
+
+	// Update arrival airports for data already in DB
+	public function updateArrivalAirports()
+	{
+		global $globalDebug, $globalDBdriver, $globalClosestMinDist;
+		$query = "SELECT spotter_output.spotter_id, spotter_output.last_latitude, spotter_output.last_longitude, spotter_output.last_altitude, spotter_output.arrival_airport_icao FROM spotter_output";
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			if ($row['last_latitude'] != '' && $row['last_longitude'] != '') {
+				$closestAirports = $this->closestAirports($row['last_latitude'],$row['last_longitude'],$globalClosestMinDist);
+				$airport_icao = '';
+				 if (isset($closestAirports[0])) {
+					if ($row['arrival_airport_icao'] == $closestAirports[0]['icao']) {
+						$airport_icao = $closestAirports[0]['icao'];
+						if ($globalDebug) echo "---++ Find arrival airport. airport_icao : ".$airport_icao."\n";
+					} elseif (count($closestAirports > 1) && $row['arrival_airport_icao'] != '' && $row['arrival_airport_icao'] != 'NA') {
+						foreach ($closestAirports as $airport) {
+							if ($row['arrival_airport_icao'] == $airport['icao']) {
+								$airport_icao = $airport['icao'];
+								if ($globalDebug) echo "---++ Find arrival airport. airport_icao : ".$airport_icao."\n";
+								break;
+							}
+						}
+					} elseif ($row['last_altitude'] == 0 || ($row['last_altitude'] != '' && ($closestAirports[0]['altitude'] <= $row['last_altitude']*100+1000 && $row['last_altitude']*100 < $closestAirports[0]['altitude']+5000))) {
+						$airport_icao = $closestAirports[0]['icao'];
+					} else {
+						if ($globalDebug) echo "----- Can't find arrival airport. Airport altitude : ".$closestAirports[0]['altitude'].' - flight altitude : '.$row['last_altitude']."\n";
+					}
+				} else {
+					if ($globalDebug) echo "----- No Airport near last coord. Latitude : ".$row['last_latitude'].' - Longitude : '.$row['last_longitude'].' - MinDist : '.$globalClosestMinDist."\n";
+				}
+				if ($airport_icao != '') {
+					if ($globalDebug) echo "Updating airport to ".$airport_icao."...\n";
+					$update_query="UPDATE spotter_output SET real_arrival_airport_icao = :airport_icao WHERE spotter_id = :spotter_id";
+					$sthu = $this->db->prepare($update_query);
+					$sthu->execute(array(':airport_icao' => $airport_icao,':spotter_id' => $row['spotter_id']));
+				}
+			}
+		}
+	}
 	
 	public function closestAirports($origLat,$origLon,$dist = 10) {
 		global $globalDBdriver;

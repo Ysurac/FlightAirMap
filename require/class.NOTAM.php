@@ -756,6 +756,18 @@ class NOTAM {
 		}
 	}
 
+	public function updateNotam() {
+		global $globalNOTAMAirports;
+		if (isset($globalNOTAMAirports) && is_array($globalNOTAMAirports) && count($globalNOTAMAirports) > 0) {
+			foreach ($globalNOTAMAirports as $airport) {
+				$data = $this->downloadNOTAM($airport);
+				if (count($data) > 0) {
+					$this->addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['latitude'],$data['longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
+				}
+			}
+		}
+	}
+
 	public function downloadNOTAM($icao) {
 		date_default_timezone_set("UTC");
 		$Common = new Common();
@@ -769,10 +781,11 @@ class NOTAM {
 
 	public function parse($data) {
 		$Common = new Common();
+		$result = array();
+		$result['full_notam'] = $data;
 		$data = str_ireplace(array("\r","\n",'\r','\n'),' ',$data);
 		$data = preg_split('#(?=([A-Z]\)\s))#',$data);
 		//print_r($data);
-		$result = array();
 		foreach ($data as $line) {
 			$line = trim($line);
 			if (preg_match('#Q\) (.*)#',$line,$matches)) {
@@ -781,17 +794,38 @@ class NOTAM {
 					//print_r($matches);
 					$result['fir'] = $matches[1];
 					$result['code'] = $matches[2];
-					if ($matches[3] == 'IV') $result['rules'] = 'IFR/VFR';
-					elseif ($matches[3] == 'I') $result['rules'] = 'IFR';
-					elseif ($matches[3] == 'V') $result['rules'] = 'VFR';
-					elseif ($matches[3] == 'K') $result['rules'] = 'Checklist';
-					/*
-					$matches[4] N Immediate attention
-					B Operational significance
-					O Flight operations
-					M Misc
-					K Checklist
-					*/
+					$rules = str_split($matches[3]);
+					foreach ($rules as $rule) {
+						if ($rule == 'I') {
+							if (isset($result['rules'])) $result['rules'] = $result['rules'].'/IFR';
+							else $result['rules'] = 'IFR';
+						} elseif ($rule == 'V') {
+							if (isset($result['rules'])) $result['rules'] = $result['rules'].'/VFR';
+							else $result['rules'] = 'VFR';
+						} elseif ($rule == 'K') {
+							if (isset($result['rules'])) $result['rules'] = $result['rules'].'/Checklist';
+							else $result['rules'] = 'Checklist';
+						}
+					}
+					$attentions = str_split($matches[4]);
+					foreach ($attentions as $attention) {
+						if ($attention == 'N') {
+							if (isset($result['attention'])) $result['attention'] = $result['attention'].' / Immediate attention';
+							else $result['rules'] = 'Immediate attention';
+						} elseif ($attention == 'B') {
+							if (isset($result['attention'])) $result['attention'] = $result['attention'].' / Operational significance';
+							else $result['rules'] = 'Operational significance';
+						} elseif ($attention == 'O') {
+							if (isset($result['attention'])) $result['attention'] = $result['attention'].' / Flight operations';
+							else $result['rules'] = 'Flight operations';
+						} elseif ($attention == 'M') {
+							if (isset($result['attention'])) $result['attention'] = $result['attention'].' / Misc';
+							else $result['rules'] = 'Misc';
+						} elseif ($attention == 'K') {
+							if (isset($result['attention'])) $result['attention'] = $result['attention'].' / Checklist';
+							else $result['rules'] = 'Checklist';
+						}
+					}
 					if ($matches[5] == 'A') $result['scope'] = 'Airport warning';
 					elseif ($matches[5] == 'E') $result['scope'] = 'Enroute warning';
 					elseif ($matches[5] == 'W') $result['scope'] = 'Navigation warning';
@@ -821,7 +855,9 @@ class NOTAM {
 			elseif (preg_match('#C\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2}) (EST|PERM)$#',$line,$matches)) {
 				$result['date_finish'] = $matches[1].'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
 				if ($matches[6] == 'EST') $result['estimated'] = true;
+				else $result['estimated'] = false;
 				if ($matches[6] == 'PERM') $result['permanent'] = true;
+				else $result['permanent'] = false;
 			}
 			elseif (preg_match('#E\) (.*)#',$line,$matches)) {
 				$text = explode(' ',$matches[1]);
@@ -831,8 +867,7 @@ class NOTAM {
 					else $rtext[] = $word;
 				}
 				$result['text'] = implode(' ',$rtext);
-			}
-			elseif (preg_match('#F\) (.*)#',$line,$matches)) {
+			} elseif (preg_match('#F\) (.*)#',$line,$matches)) {
 			} elseif (preg_match('#G\) (.*)#',$line,$matches)) {
 			} elseif (preg_match('#(NOTAMN|NOTAMR|NOTAMC)$#',$line,$matches)) {
 				if ($matches[1] == 'NOTAMN') $result['type'] = 'new';
@@ -841,12 +876,6 @@ class NOTAM {
 			}
 		}
 		return $result;
-		/*
-		                                $NOTAM = new NOTAM();
-		                                $NOTAM->addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['center_latitude'],$data['center_longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
-
-		*/
-
 	}
 }
 /*

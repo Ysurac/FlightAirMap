@@ -25,12 +25,12 @@ if (!isset($_GET['filename']) || !preg_match('/^[a-z0-9-_]+\.png$/', strtolower(
     exit(0);
 }
 $filename = $_GET['filename'];
-if (file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache/'.$color.'-'.$filename)) {
+if (file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.$color.'-'.$filename)) {
     header('Content-type: image/png');
-    readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache/'.$color.'-'.$filename);
+    readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.$color.'-'.$filename);
     exit(0);
 }
-$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images/aircrafts/new/'.$filename;
+$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'aircrafts'.DIRECTORY_SEPARATOR.'new'.DIRECTORY_SEPARATOR.$filename;
 if (!file_exists($original)) {
     echo "File not found";
 }

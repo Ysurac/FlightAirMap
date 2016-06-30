@@ -4,7 +4,7 @@ require_once(dirname(__FILE__).'/settings.php');
 class Connection{
 	public $db = null;
 	public $dbs = array();
-	public $latest_schema = 22;
+	public $latest_schema = 23;
 	
 	public function __construct($dbc = null,$dbname = null) {
 	    global $globalDBdriver;
@@ -88,9 +88,6 @@ class Connection{
 					if (!isset($globalDBPersistent)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
 					else $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,$globalDBPersistent);
 					$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
-					//$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-					// FIXME : Workaround against "ONLY_FULL_GROUP_BY" mode
-					//$this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY"');
 				}
 				break;
 			} catch(PDOException $e) {
@@ -164,7 +161,7 @@ class Connection{
 		}
 		try {
 			//$Connection = new Connection();
-			$results = $Connection->$db->query($query);
+			$results = $this->db->query($query);
 		} catch(PDOException $e) {
 			return false;
 		}
@@ -172,6 +169,45 @@ class Connection{
 		    return true; 
 		}
 		else return false;
+	}
+
+	/*
+	* Get columns name of a table
+	* @return Array all column name in table
+	*/
+	public function getColumnName($table)
+	{
+		$query = "SELECT * FROM ".$table." LIMIT 0";
+		try {
+			$results = $this->db->query($query);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage()."\n";
+		}
+		$columns = array();
+		for ($i = 0; $i < $results->columnCount(); $i++) {
+			$col = $results->getColumnMeta($i);
+			$columns[] = $col['name'];
+		}
+		return $columns;
+	}
+
+	/*
+	* Check if a column name exist in a table
+	* @return Boolean column exist or not
+	*/
+	public function checkColumnName($table,$name)
+	{
+		$query = "SELECT * FROM ".$table." LIMIT 0";
+		try {
+			$results = $this->db->query($query);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage()."\n";
+		}
+		for ($i = 0; $i < $results->columnCount(); $i++) {
+			$col = $results->getColumnMeta($i);
+			if ($name == $col['name']) return true;
+		}
+		return false;
 	}
 
 	/*

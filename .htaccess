@@ -207,6 +207,10 @@ RewriteRule ^date/([^/]+)/([^/]+)(/?)$ date-detailed.php?date=$1&limit=$2 [L,NC]
 RewriteRule ^date/([^/]+)(/?)$ date-detailed.php?date=$1 [L,NC]
 RewriteRule ^date(/?)$ date.php [L,NC]
 
+########### ARCHIVE ###########
+
+RewriteRule ^archive/country/([^/]+)/([^/]+)(/?)$ archive-country.php?country=$1&date=$2 [L,NC]
+
 
 ########### FLIGHTID ###########
 
@@ -235,6 +239,14 @@ RewriteRule ^statistics/owner(/?)$ statistics-owner.php [L,NC]
 RewriteRule ^statistics/pilot(/?)$ statistics-pilot.php [L,NC]
 RewriteRule ^statistics/country(/?)$ statistics-country.php [L,NC]
 RewriteRule ^statistics(/?)$ statistics.php [L,NC]
+
+
+########### UPCOMING ###########
+
 RewriteRule ^upcoming/([^/]+)/([^/]+)(/?)$ upcoming.php?limit=$1&sort=$2 [L,NC]
 RewriteRule ^upcoming/([^/]+)(/?)$ upcoming.php?limit=$1 [L,NC]
-RewriteRule ^upcoming(/?)$ upcoming.php [L,NC]
+
+########### TOOLS ###########
+RewriteRule ^tools/acars(/?)$ tools-acars.php [L,NC]
+RewriteRule ^tools/metar(/?)$ tools-metar.php [L,NC]
+RewriteRule ^tools/notam(/?)$ tools-notam.php [L,NC]

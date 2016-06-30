@@ -22,9 +22,17 @@ class settings {
 				if ($Common->isAssoc($value)) {
 					foreach ($value as $key => $data) {
 						if (!isset($array_value)) {
-							$array_value = "'".$key."' => '".$data."'";
+							if ($data == 'TRUE' || $data == 'FALSE') {
+								$array_value = "'".$key."' => ".$data."";
+							} else {
+								$array_value = "'".$key."' => '".$data."'";
+							}
 						} else {
-							$array_value .= ",'".$key."' => '".$data."'";
+							if ($data == 'TRUE' || $data == 'FALSE') {
+								$array_value .= ",'".$key."' => ".$data."";
+							} else {
+								$array_value .= ",'".$key."' => '".$data."'";
+							}
 						}
 					}
 				} else {
@@ -32,9 +40,17 @@ class settings {
 						if ($Common->isAssoc($data)) {
 							foreach ($data as $keyd => $datad) {
 								if (!isset($arrayd_value)) {
-									$arrayd_value = "'".$keyd."' => '".$datad."'";
+									if ($datad == 'TRUE' || $datad == 'FALSE') {
+										$arrayd_value = "'".$keyd."' => ".$datad."";
+									} else {
+										$arrayd_value = "'".$keyd."' => '".$datad."'";
+									}
 								} else {
-									$arrayd_value .= ",'".$keyd."' => '".$datad."'";
+									if ($datad == 'TRUE' || $datad == 'FALSE') {
+										$arrayd_value .= ",'".$keyd."' => ".$datad."";
+									} else {
+										$arrayd_value .= ",'".$keyd."' => '".$datad."'";
+									}
 								}
 							}
 							if (!isset($array_value)) {

@@ -71,5 +71,4 @@ class create_db {
 	}
 	
 }
-
 ?>

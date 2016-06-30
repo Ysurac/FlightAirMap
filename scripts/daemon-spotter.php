@@ -290,6 +290,7 @@ while ($i > 0) {
 		    $data['format_source'] = 'deltadbtxt';
     		    $data['id_source'] = $id_source;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+		    if (isset($value['sourcestats'])) $data['sourcestats'] = $value['sourcestats'];
     		    $SI->add($data);
 		    unset($data);
     		}
@@ -667,6 +668,7 @@ while ($i > 0) {
 				$data['datetime'] = date('Y-m-d H:i:s');
 				$data['format_source'] = 'raw';
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
+    				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
                                 $SI->add($data);
                             }
 			} elseif ($format == 'beast') {
@@ -692,6 +694,7 @@ while ($i > 0) {
     				$data['id_source'] = $id_source;
     				$data['format_source'] = 'tsv';
     				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
+    				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
     				$SI->add($data);
     				unset($lined);
     				unset($data);
@@ -729,6 +732,7 @@ while ($i > 0) {
     				    $data['id_source'] = $id_source;
 				    $data['format_source'] = 'aprs';
 				    $data['source_name'] = $line['source'];
+    				    if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
 				    $currentdate = date('Y-m-d H:i:s');
 				    $aprsdate = strtotime($data['datetime']);
 				    // Accept data if time <= system time + 20s
@@ -770,6 +774,7 @@ while ($i > 0) {
     				$data['emergency'] = $line[19];
     				$data['format_source'] = 'sbs';
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
+    				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
     				$data['id_source'] = $id_source;
     				//print_r($line);
     				$send = $SI->add($data);

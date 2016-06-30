@@ -20,7 +20,19 @@ class Source {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
         }
-
+       public function getLocationInfobyName($name) {
+                $query = "SELECT * FROM source_location WHERE name = :name";
+                $query_values = array(':name' => $name);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
+        }
+  
        public function addLocation($name,$latitude,$longitude,$altitude,$city,$country,$logo = 'antenna.png') {
                 $query = "INSERT INTO source_location (name,latitude,longitude,altitude,country,city,logo) VALUES (:name,:latitude,:longitude,:altitude,:country,:city,:logo)";
                 $query_values = array(':name' => $name,':latitude' => $latitude, ':longitude' => $longitude,':altitude' => $altitude,':city' => $city,':country' => $country,':logo' => $logo);

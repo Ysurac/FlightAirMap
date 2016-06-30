@@ -208,8 +208,15 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<p>
 				<label for="squawk_country">Country for squawk usage</label>
-				<input type="text" name="squawk_country" id="squawk_country" value="<?php if (isset($globalSquawkCountry)) print $globalSquawkCountry; ?>" />
-				<p class="help-block">UK, FR or let it blank for now</p>
+				<select name="squawk_country" id="squawk_country">
+					<option value="UK"<?php if (isset($globalSquawkCountry) && $globalSquawkCountry == 'UK') print ' selected '; ?>>UK</option>
+					<option value="NZ"<?php if (isset($globalSquawkCountry) && $globalSquawkCountry == 'NZ') print ' selected '; ?>>NZ</option>
+					<option value="US"<?php if (isset($globalSquawkCountry) && $globalSquawkCountry == 'US') print ' selected '; ?>>US</option>
+					<option value="AU"<?php if (isset($globalSquawkCountry) && $globalSquawkCountry == 'AU') print ' selected '; ?>>AU</option>
+					<option value="NL"<?php if (isset($globalSquawkCountry) && $globalSquawkCountry == 'NL') print ' selected '; ?>>NL</option>
+					<option value="FR"<?php if (isset($globalSquawkCountry) && $globalSquawkCountry == 'FR') print ' selected '; ?>>FR</option>
+					<option value="TR"<?php if (isset($globalSquawkCountry) && $globalSquawkCountry == 'TR') print ' selected '; ?>>TR</option>
+				</select>
 			</p>
 		</fieldset>
 		<fieldset>
@@ -424,6 +431,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								<th>Port</th>
 								<th>Format</th>
 								<th>Name</th>
+								<th>Source Stats</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -480,6 +488,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 									</select>
 								</td>
 								<td><input type="text" name="name[]" id="name" value="<?php if (isset($source['name'])) print $source['name']; ?>" /></td>
+								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" value="1" <?php if (isset($source['sourcestats']) && $source['sourcestats']) print 'checked'; ?> /></td>
 								<td><input type="button" id="delhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
 							</tr>
 <?php
@@ -504,6 +513,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 									</select>
 								</td>
 								<td><input type="text" name="name[]" value="" id="name" /></td>
+								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" value="1" /></td>
 								<td><input type="button" id="addhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
 							</tr>
 						</tbody>
@@ -827,9 +837,11 @@ if (isset($_POST['dbtype'])) {
 	//$sbshost = filter_input(INPUT_POST,'sbshost',FILTER_SANITIZE_STRING);
 	//$sbsport = filter_input(INPUT_POST,'sbsport',FILTER_SANITIZE_NUMBER_INT);
 	//$sbsurl = filter_input(INPUT_POST,'sbsurl',FILTER_SANITIZE_URL);
+	/*
 	$sbshost = $_POST['sbshost'];
 	$sbsport = $_POST['sbsport'];
 	$sbsurl = $_POST['sbsurl'];
+	*/
 
 	$globalvatsim = filter_input(INPUT_POST,'globalvatsim',FILTER_SANITIZE_STRING);
 	$globalivao = filter_input(INPUT_POST,'globalivao',FILTER_SANITIZE_STRING);
@@ -857,9 +869,12 @@ if (isset($_POST['dbtype'])) {
 	$port = $_POST['port'];
 	$name = $_POST['name'];
 	$format = $_POST['format'];
+	$sourcestats = $_POST['sourcestats'];
 	$gSources = array();
 	foreach ($host as $key => $h) {
-		if ($h != '') $gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key]);
+		if (isset($sourcestats[$key]) && $sourcestats[$key] == 1) $cov = 'TRUE';
+		else $cov = 'FALSE';
+		if ($h != '') $gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov);
 	}
 	$settings = array_merge($settings,array('globalSources' => $gSources));
 

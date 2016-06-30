@@ -8,6 +8,16 @@ $title = _("Statistics");
 require_once('header.php');
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<?php
+    if (isset($globalBeta) && $globalBeta) {
+?>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+<script type="text/javascript" src="js/radarChart.js"></script>
+<script type="text/javascript" src="js/raphael-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/justgage.js"></script>
+<?php
+    }
+?>
 <div class="column">
     <div class="info">
             <h1><?php echo _("Statistics"); ?></h1>
@@ -598,6 +608,106 @@ require_once('header.php');
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         </div>
+        <?php 
+    	    if (isset($globalBeta) && $globalBeta) {
+        ?>
+        <div class="row column">
+        	<?php
+        	    $polar = $Stats->getStatsSource(date('Y-m-d'),'polar');
+        	    if (!empty($polar)) {
+            		print '<h2>'._("Coverage pattern").'</h2>';
+        		foreach ($polar as $eachpolar) {
+        		    unset($polar_data);
+	        	    $Spotter = new Spotter();
+        		    $data = json_decode($eachpolar['source_data']);
+        		    foreach($data as $value => $key) {
+        			$direction = $Spotter->parseDirection(($value*22.5));
+        			$distance = $key;
+        			$unit = 'km';
+				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+					$distance = round($distance*0.539957);
+					$unit = 'nm';
+				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+					$distance = round($distance*0.621371);
+					$unit = 'mi';
+				} elseif ((!isset($_COOKIE['unitdistance']) && ((isset($globalUnitDistance) && $globalUnitDistance == 'km') || !isset($globalUnitDistance))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) {
+					$distance = $distance;
+					$unit = 'km';
+				}
+        			if (!isset($polar_data)) $polar_data = '{axis:"'.$direction[0]['direction_shortname'].'",value:'.$key.'}';
+        	    		else $polar_data = $polar_data.',{axis:"'.$direction[0]['direction_shortname'].'",value:'.$key.'}';
+        		    }
+        	?>
+            <div class="col-md-6">
+                <h4><?php print $eachpolar['source_name']; ?></h4>
+        	<div id="polar-<?php print str_replace(' ','_',strtolower($eachpolar['source_name'])); ?>" class="chart" width="100%"></div>
+        	<script>
+        	    (function() {
+        	    var margin = {top: 100, right: 100, bottom: 100, left: 100},
+			width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
+			height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
+		    var data = [
+				    [
+				    <?php print $polar_data; ?>
+				    ]
+				];
+		    var color = d3.scale.ordinal()
+			.range(["#EDC951","#CC333F","#00A0B0"]);
+		
+		    var radarChartOptions = {
+		      w: width,
+		      h: height,
+		      margin: margin,
+		      maxValue: 0.5,
+		      levels: 5,
+		      roundStrokes: true,
+		      color: color,
+		      unit: '<?php echo $unit; ?>'
+		    };
+		    RadarChart("#polar-<?php print str_replace(' ','_',strtolower($eachpolar['source_name'])); ?>", data, radarChartOptions);
+		    })();
+		</script>
+            </div>
+            <?php
+        	    }
+        	}
+            ?>
+        </div>
+        <div class="row column">
+            <div class="col-md-6">
+        	<?php
+        	    $msg = $Stats->getStatsSource(date('Y-m-d'),'msg');
+        	    if (!empty($msg)) {
+            		print '<h2>'._("Messages received").'</h2>';
+        		foreach ($msg as $eachmsg) {
+        		    //$eachmsg = $msg[0];
+        		    $data = $eachmsg['source_data'];
+        		    if ($data > 500) $max = (round(($data+100)/100))*100;
+        		    else $max = 500;
+        	?>
+        	<div id="msg-<?php print str_replace(' ','_',strtolower($eachmsg['source_name'])); ?>" class="chart" style="width:200px; height:200px"></div>
+        	<script>
+		      var g = new JustGage({
+			    id: "msg-<?php print str_replace(' ','_',strtolower($eachmsg['source_name'])); ?>",
+			    value: <?php echo $data; ?>,
+			    min: 0,
+			    max: <?php print $max; ?>,
+			    valueMinFontSize: 10,
+			    height: 220,
+			    width: 220,
+			    symbol: ' msg/s',
+			    title: "<?php print $eachmsg['source_name']; ?>"
+			  });
+		</script>
+            <?php
+        	   }
+        	}
+            ?>
+            </div>
+        </div>
+        <?php
+          }
+        ?>
     </div>
 </div>  
 

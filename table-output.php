@@ -608,13 +608,16 @@ foreach($spotter_array as $spotter_item)
 			print '<span class="nomobile">-</span>'."\n";
 			print '<span class="mobile">-</span>'."\n";
 		} else {
-			if (!isset($globalUnitDistance) || $globalUnitDistance == 'km') {
+			//if (!isset($globalUnitDistance) || $globalUnitDistance == 'km') {
+			if ((!isset($_COOKIE['unitdistance']) && ((isset($globalUnitDistance) && $globalUnitDistance == 'km') || !isset($globalUnitDistance))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) {
 				print '<span class="nomobile">'.round($spotter_item['distance'],2).' km</span>'."\n";
 				print '<span class="mobile">'.round($spotter_item['distance'],2).' km</span><br />'."\n";
-			} elseif ($globalUnitDistance == 'mi') {
+			//} elseif ($globalUnitDistance == 'mi') {
+			} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
 				print '<span class="nomobile">'.round($spotter_item['distance']*0.621371,2).' mi</span>'."\n";
 				print '<span class="mobile">'.round($spotter_item['distance']*0.621371,2).' mi</span><br />'."\n";
-			} elseif ($globalUnitDistance == 'nm') {
+			//} elseif ($globalUnitDistance == 'nm') {
+			} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
 				print '<span class="nomobile">'.round($spotter_item['distance']*0.539957,2).' nm</span>'."\n";
 				print '<span class="mobile">'.round($spotter_item['distance']*0.539957,2).' nm</span><br />'."\n";
 			}

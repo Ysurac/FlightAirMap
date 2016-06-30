@@ -627,6 +627,39 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
+	public function getStatsSource($date,$stats_type = '') {
+		if ($stats_type == '') {
+			$query = "SELECT * FROM stats_source WHERE stats_date = :date ORDER BY source_name";
+			$query_values = array(':date' => $date);
+		} else {
+			$query = "SELECT * FROM stats_source WHERE stats_date = :date AND stats_type = :stats_type ORDER BY source_name";
+			$query_values = array(':date' => $date,':stats_type' => $stats_type);
+		}
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
+        }
+
+	public function addStatSource($data,$source_name,$stats_type,$date) {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "INSERT INTO stats_source (source_data,source_name,stats_type,stats_date) VALUES (:data,:source_name,:stats_type,:stats_date) ON DUPLICATE KEY UPDATE source_data = :data";
+		} else {
+			$query = "UPDATE stats_source SET source_data = :data WHERE stats_date = :stats_date AND source_name = :source_name AND stats_type = :stats_type; INSERT INTO stats_source (source_data,source_name,stats_type,stats_date) SELECT :data,:source_name,:stats_type,:stats_date WHERE NOT EXISTS (SELECT 1 FROM stats_source WHERE stats_date = :stats_date AND source_name = :source_name AND stats_type = :stats_type);"; 
+                }
+                $query_values = array(':data' => $data,':stats_date' => $date,':source_name' => $source_name,':stats_type' => $stats_type);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+        }
 	public function addStatFlight($type,$date_name,$cnt) {
                 $query = "INSERT INTO stats_flight (stats_type,flight_date,cnt) VALUES (:type,:flight_date,:cnt)";
                 $query_values = array(':type' => $type,':flight_date' => $date_name,':cnt' => $cnt);
