@@ -10,7 +10,9 @@ require_once('header.php');
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <?php
     if (isset($globalBeta) && $globalBeta) {
+//<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 ?>
+<!--<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>-->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 <script type="text/javascript" src="js/radarChart.js"></script>
 <script type="text/javascript" src="js/raphael-2.1.4.min.js"></script>
@@ -651,8 +653,8 @@ require_once('header.php');
 				    <?php print $polar_data; ?>
 				    ]
 				];
-		    var color = d3.scale.ordinal()
-			.range(["#EDC951","#CC333F","#00A0B0"]);
+		    var color = d3.scale.ordinal().range(["#EDC951","#CC333F","#00A0B0"]);
+		    //var color = d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"]);
 		
 		    var radarChartOptions = {
 		      w: width,
@@ -704,6 +706,65 @@ require_once('header.php');
         	}
             ?>
             </div>
+            <?php
+		$hist = $Stats->getStatsSource(date('Y-m-d'),'hist');
+		foreach ($hist as $hists) {
+			$hist_data = '';
+			$hist_array = json_decode($hists['source_data']);
+			foreach($hist_array as $distance => $nb)
+			{
+				$unit = 'km';
+				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+					$distance = round($distance*0.539957);
+					$unit = 'nm';
+				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+					$distance = round($distance*0.621371);
+					$unit = 'mi';
+				} elseif ((!isset($_COOKIE['unitdistance']) && ((isset($globalUnitDistance) && $globalUnitDistance == 'km') || !isset($globalUnitDistance))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) {
+					$distance = $distance;
+					$unit = 'km';
+				}
+				$hist_data .= '[ "'.$distance.'",'.$nb.'],';
+			}
+			$hist_data = substr($hist_data, 0, -1);
+            ?>
+            <div class="col-md-6">
+                <h2><?php echo _("Flights Distance"); ?></h2>
+                <?php
+                  $hist = $Stats->getStatsSource(date('Y-m-d'),'hist');
+
+                  print '<div id="chart20" class="chart" width="100%"></div>
+                    <script> 
+                        google.load("visualization", "1", {packages:["corechart"]});
+                      google.setOnLoadCallback(drawChart20);
+                      function drawChart20() {
+                        var data = google.visualization.arrayToDataTable([
+                            ["'._("Distance").'", "'._("# of Flights").'"], ';
+                            print $hist_data;
+                        print ']);
+
+                        var options = {
+                            legend: {position: "none"},
+                            chartArea: {"width": "80%", "height": "60%"},
+                            vAxis: {title: "'._("# of Flights").'"},
+                            hAxis: {showTextEvery: 2},
+                            height:300,
+                            colors: ["#1a3151"]
+                        };
+
+                        var chart = new google.visualization.AreaChart(document.getElementById("chart20"));
+                        chart.draw(data, options);
+                      }
+                      $(window).resize(function(){
+                              drawChart20();
+                            });
+                  </script>';
+                  }
+                ?>
+            </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+
+            
         </div>
         <?php
           }

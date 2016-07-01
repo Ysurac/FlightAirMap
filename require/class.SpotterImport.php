@@ -23,13 +23,15 @@ class SpotterImport {
 	    if ($globalBeta) {
 		$Stats = new Stats($dbc);
 		$currentdate = date('Y-m-d');
-		$sourcestat = $Stats->getStatsSource($currentdate,'polar');
+		$sourcestat = $Stats->getStatsSource($currentdate);
 		if (!empty($sourcestat)) {
 		    foreach($sourcestat as $srcst) {
-			$source = $srcst['source_name'];
-			$data = $srcst['source_data'];
 			$type = $srcst['stats_type'];
-			$this->stats[$currentdate][$source][$type] = json_decode($data);
+			if ($type == 'polar' || $type == 'hist') {
+			    $source = $srcst['source_name'];
+			    $data = $srcst['source_data'];
+			    $this->stats[$currentdate][$source][$type] = json_decode($data,true);
+			}
 		    }
 		}
 		//print_r($this->stats);
@@ -655,13 +657,17 @@ class SpotterImport {
 						foreach($data as $source => $sourced) {
 						    //print_r($sourced);
 				    		    if (isset($sourced['polar'])) echo $Stats->addStatSource(json_encode($sourced['polar']),$source,'polar',$date);
+				    		    if (isset($sourced['hist'])) echo $Stats->addStatSource(json_encode($sourced['hist']),$source,'hist',$date);
 				    		    if (isset($sourced['msg'])) {
 				    			if (time() - $sourced['msg']['date'] > 10) {
 				    			    $nbmsg = round($sourced['msg']['nb']/(time() - $sourced['msg']['date']));
 				    			    echo $Stats->addStatSource($nbmsg,$source,'msg',$date);
-			    				    unset($this->stats[$current_date][$source]['msg']);
+			    				    unset($this->stats[$date][$source]['msg']);
 			    				}
 			    			    }
+			    			}
+			    			if ($date != date('Y-m-d')) {
+			    				unset($this->stats[$date]);
 			    			}
 				    	    }
 				    	}
@@ -801,7 +807,19 @@ class SpotterImport {
 								$this->stats[$current_date][$source]['polar'][$stats_heading] = $stats_distance;
 							}
 						}
-
+						$distance = (round($stats_distance/10)*10);
+						//echo '$$$$$$$$$$ DISTANCE : '.$distance.' - '.$source."\n";
+						//var_dump($this->stats);
+						if (!isset($this->stats[$current_date][$source]['hist'][$distance])) {
+							if (isset($this->stats[$current_date][$source]['hist'][0])) $mini = key(end($this->stats[$current_date][$source]['hist']))+10;
+							else $mini = 0;
+							for ($i=$mini;$i<=$distance;$i+=10) {
+							    $this->stats[$current_date][$source]['hist'][$i] = 0;
+							}
+							$this->stats[$current_date][$source]['hist'][$distance] = 1;
+						} else {
+							$this->stats[$current_date][$source]['hist'][$distance] += 1;
+						}
 					}
 				}
 
