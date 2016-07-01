@@ -518,6 +518,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 							</tr>
 						</tbody>
 					</table>
+				<p class="help-block">For working source statistics, the name of the source <b>MUST</b> be the same as the name of a source location, else center coverage latitude and longitude is used as source position.</p>
 				</fieldset>
 			</fieldset>
 			<div id="acars_data">
@@ -541,11 +542,15 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="translate">Allow site translation</label>
 				<input type="checkbox" name="translate" id="translate" value="translate"<?php if (isset($globalTranslate) && $globalTranslate) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Display language available, else the site is only available in english.</p>
 			</p>
+			<br />
 			<p>
 				<label for="estimation">Planes animate between updates</label>
 				<input type="checkbox" name="estimation" id="estimation" value="estimation"<?php if (isset($globalMapEstimation) && $globalMapEstimation) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Estimate plane track between flights refresh.</p>
 			</p>
+			<br />
 			<p>
 				<label for="unitdistance">Unit for distance</label>
 				<select name="unitdistance" id="unitdistance">
@@ -569,13 +574,14 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<option value="knots" <?php if (isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') { ?>selected="selected" <?php } ?>>Knots</option>
 				</select>
 			</p>
-
+			<br />
 			<div id="optional_sbs">
 			<p>
 				<label for="schedules">Retrieve schedules from external websites</label>
 				<input type="checkbox" name="schedules" id="schedules" value="schedules"<?php if (isset($globalSchedulesFetch) && $globalSchedulesFetch || !isset($globalSchedulesFetch)) { ?> checked="checked"<?php } ?> onClick="schedule_js()" />
 				<p class="help-block">Not available for IVAO</p>
 			</p>
+			<br />
 			<div id="schedules_options">
 				<p>
 					<label for="britishairways">British Airways API Key</label>
@@ -588,7 +594,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<p class="help-block">Register an account on <a href="https://developer.transavia.com">https://developer.transavia.com</a></p>
 				</p>
 				<p>
-					<fieldset>
+					<div class="form-group">
 						<b>Lufthansa API Key</b>
 						<p>
 							<label for="lufthansakey">Key</label>
@@ -597,15 +603,18 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 							<label for="lufthansasecret">Secret</label>
 							<input type="text" name="lufthansasecret" id="lufthansasecret" value="<?php if (isset($globalLufthansaKey['secret'])) print $globalLufthansaKey['secret']; ?>" />
 						</p>
-						<p class="help-block">Register an account on <a href="https://developer.lufthansa.com/page">https://developer.lufthansa.com/page</a></p>
-					</fieldset>
+					</div>
+					<p class="help-block">Register an account on <a href="https://developer.lufthansa.com/page">https://developer.lufthansa.com/page</a></p>
 				</p>
 			</div>
+			<br />
 			<p>
 				<label for="owner">Add private owners of aircrafts</label>
 				<input type="checkbox" name="owner" id="owner" value="owner"<?php if (isset($globalOwner) && $globalOwner) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Display also private owners of aircrafts, else only commercial owners are available</p>
 			</p>
 			</div>
+			<br />
 			<p>
 				<label for="notam">Activate NOTAM support</label>
 				<input type="checkbox" name="notam" id="notam" value="notam"<?php if (isset($globalNOTAM) && $globalNOTAM) { ?> checked="checked"<?php } ?> />
@@ -614,6 +623,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<label for="notamsource">URL of your feed from notaminfo.com</label>
 				<input type="text" name="notamsource" id="notamsource" value="<?php if (isset($globalNOTAMSource)) print $globalNOTAMSource; ?>" />
 			</p>
+			<br />
 			<p>
 				<label for="metar">Activate METAR support</label>
 				<input type="checkbox" name="metar" id="metar" value="metar"<?php if (isset($globalMETAR) && $globalMETAR) { ?> checked="checked"<?php } ?> />
@@ -628,14 +638,17 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="text" name="metarsource" id="metarsource" value="<?php if (isset($globalMETARurl)) print $globalMETARurl; ?>" />
 				<p class="help-block">Use {icao} to specify where we replace by airport icao. ex : http://metar.vatsim.net/metar.php?id={icao}</p>
 			</p>
+			<br />
 			<p>
 				<label for="bitly">Bit.ly access token api (used in search page)</label>
 				<input type="text" name="bitly" id="bitly" value="<?php if (isset($globalBitlyAccessToken)) print $globalBitlyAccessToken; ?>" />
 			</p>
+			<br />
 			<p>
 				<label for="waypoints">Add Waypoints, Airspace and countries data (about 45Mio in DB) <i>Need PostGIS if you use PostgreSQL</i></label>
 				<input type="checkbox" name="waypoints" id="waypoints" value="waypoints" checked="checked" />
 			</p>
+			<br />
 			<p>
 				<label for="archive">Archive all flights data</label>
 				<input type="checkbox" name="archive" id="archive" value="archive"<?php if ((isset($globalArchive) && $globalArchive) || !isset($globalArchive)) { ?> checked="checked"<?php } ?> />
@@ -660,6 +673,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="number" name="archivekeeptrackmonths" id="archivekeeptrackmonths" value="<?php if (isset($globalArchiveKeepTrackMonths)) print $globalArchiveKeepTrackMonths; else echo '0'; ?>" />
 				<p class="help-block">0 to disable, should be less or egal to <i>Keep flights data</i> value</p>
 			</p>
+			<br />
 			<p>
 				<label for="daemon">Use daemon-spotter.php as daemon</label>
 				<input type="checkbox" name="daemon" id="daemon" value="daemon"<?php if ((isset($globalDaemon) && $globalDaemon) || !isset($globalDaemon)) { ?> checked="checked"<?php } ?> onClick="daemon_js()" />
@@ -670,11 +684,15 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</div>
 				<p class="help-block">Uncheck if the script is running as cron job</p>
 			</p>
+			<br />
+<!--
 			<p>
 				<label for="fork">Allow processes fork</label>
 				<input type="checkbox" name="fork" id="fork" value="fork"<?php if ((isset($globalFork) && $globalFork) || !isset($globalFork)) { ?> checked="checked"<?php } ?> />
 				<p class="help-block">Used for schedule</p>
 			</p>
+			<br />
+-->
 			<p>
 				<label for="colormap">Show altitudes on map with several colors</label>
 				<input type="checkbox" name="colormap" id="colormap" value="colormap"<?php if ((isset($globalMapAltitudeColor) && $globalMapAltitudeColor) || !isset($globalMapAltitudeColor)) { ?> checked="checked"<?php } ?> />
@@ -689,14 +707,17 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="checkbox" name="airportpopup" id="airportpopup" value="airportpopup"<?php if ((isset($globalAirportPopup) && $globalAirportPopup)) { ?> checked="checked"<?php } ?> />
 			</p>
 -->
+			<br />
 			<p>
 				<label for="maphistory">Always show path of flights (else only when flight is selected)</label>
 				<input type="checkbox" name="maphistory" id="maphistory" value="maphistory"<?php if ((isset($globalMapHistory) && $globalMapHistory) || !isset($globalMapHistory)) { ?> checked="checked"<?php } ?> />
 			</p>
+			<br />
 			<p>
 				<label for="flightroute">Show route of flights when selected</label>
 				<input type="checkbox" name="flightroute" id="flightroute" value="flightroute"<?php if ((isset($globalMapRoute) && $globalMapRoute) || !isset($globalMapRoute)) { ?> checked="checked"<?php } ?> />
 			</p>
+			<br />
 			<p>
 				<label for="refresh">Show flights detected since xxx seconds</label>
 				<input type="number" name="refresh" id="refresh" value="<?php if (isset($globalLiveInterval)) echo $globalLiveInterval; else echo '200'; ?>" />
@@ -710,14 +731,17 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="number" name="mapidle" id="mapidle" value="<?php if (isset($globalMapIdleTimeout)) echo $globalMapIdleTimeout; else echo '30'; ?>" />
 				<p class="help-block">0 to disable</p>
 			</p>
+			<br />
 			<p>
 				<label for="closestmindist">Distance to airport set as arrival (in km)</label>
 				<input type="number" name="closestmindist" id="closestmindist" value="<?php if (isset($globalClosestMinDist)) echo $globalClosestMinDist; else echo '50'; ?>" />
 			</p>
+			<br />
 			<p>
 				<label for="aircraftsize">Size of aircraft icon on map (default to 30px if zoom > 7 else 15px), empty to default</label>
 				<input type="number" name="aircraftsize" id="aircraftsize" value="<?php if (isset($globalAircraftSize)) echo $globalAircraftSize;?>" />
 			</p>
+			<br />
 			<p>
 			<?php 
 			    if (extension_loaded('gd') && function_exists('gd_info')) {
@@ -737,6 +761,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			    }
 			?>
 			</p>
+			<br />
 			<p>
 				<label for="airportzoom">Zoom level minimum to see airports icons</label>
 				<div class="range">
