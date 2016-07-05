@@ -158,11 +158,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<legend>Map provider</legend>
 			<p>
 				<label for="mapprovider">map Provider</label>
-				<select name="mapprovider" id="mapprovider" onClick="map_provider_js()";>
+				<select name="mapprovider" id="mapprovider">
 					<option value="OpenStreetMap" <?php if (isset($globalMapProvider) && $globalMapProvider == 'OpenStreetMap') { ?>selected="selected" <?php } ?>>OpenStreetMap</option>
 					<option value="Mapbox" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Mapbox') { ?>selected="selected" <?php } ?>>Mapbox</option>
 					<option value="MapQuest-OSM" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-OSM') { ?>selected="selected" <?php } ?>>MapQuest-OSM</option>
 					<option value="MapQuest-Aerial" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-Aerial') { ?>selected="selected" <?php } ?>>MapQuest-Aerial</option>
+					<option value="Google-Hybrid" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Google-Hybrid') { ?>selected="selected" <?php } ?>>Google Hybrid</option>
+					<option value="Yandex" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Yandex') { ?>selected="selected" <?php } ?>>Yandex</option>
 				</select>
 			</p>
 			<div id="mapbox_data">
@@ -173,6 +175,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p>
 					<label for="mapboxtoken">Mapbox token</label>
 					<input type="text" name="mapboxtoken" id="mapboxtoken" value="<?php if (isset($globalMapboxToken)) print $globalMapboxToken; ?>" />
+				</p>
+			</div>
+			<div id="google_data">
+				<p>
+					<label for="googlekey">Google API key</label>
+					<input type="text" name="googlekey" id="googlekey" value="<?php if (isset($globalGoogleAPIKey)) print $globalGoogleAPIKey; ?>" />
+					<p class="help-block">Get a key <a href="https://developers.google.com/maps/documentation/javascript/get-api-key#get-an-api-key">here</a></p>
 				</p>
 			</div>
 		</fieldset>
@@ -816,7 +825,8 @@ if (isset($_POST['dbtype'])) {
 	$mapprovider = filter_input(INPUT_POST,'mapprovider',FILTER_SANITIZE_STRING);
 	$mapboxid = filter_input(INPUT_POST,'mapboxid',FILTER_SANITIZE_STRING);
 	$mapboxtoken = filter_input(INPUT_POST,'mapboxtoken',FILTER_SANITIZE_STRING);
-	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid,'globalMapboxToken' => $mapboxtoken));
+	$googlekey = filter_input(INPUT_POST,'googlekey',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid,'globalMapboxToken' => $mapboxtoken,'globalGoogleAPIKey' => $googlekey));
 	
 	$latitudemax = filter_input(INPUT_POST,'latitudemax',FILTER_SANITIZE_STRING);
 	$latitudemin = filter_input(INPUT_POST,'latitudemin',FILTER_SANITIZE_STRING);

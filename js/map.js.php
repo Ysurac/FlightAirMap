@@ -193,6 +193,36 @@ $( document ).ready(function() {
 	      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>, Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency"'
 	}).addTo(map);
 <?php
+	} elseif ($MapType == 'Google-Roadmap') {
+?>
+	var googleLayer = new L.Google('ROADMAP');
+	map.addLayer(googleLayer);
+<?php
+	} elseif ($MapType == 'Google-Satellite') {
+?>
+	var googleLayer = new L.Google('SATELLITE');
+	map.addLayer(googleLayer);
+<?php
+	} elseif ($MapType == 'Google-Hybrid') {
+?>
+	var googleLayer = new L.Google('HYBRID');
+	map.addLayer(googleLayer);
+<?php
+	} elseif ($MapType == 'Google-Terrain') {
+?>
+	var googleLayer = new L.Google('TERRAIN');
+	map.addLayer(googleLayer);
+<?php
+	} elseif ($MapType == 'Yandex') {
+?>
+	var yandexLayer = new L.Yandex();
+	map.addLayer(yandexLayer);
+<?php
+	} elseif ($MapType == 'Bing') {
+?>
+	var bingLayer = new L.Bing("<?php print $globalBingMapKey; ?>");
+	map.addLayer(bingLayer);
+<?php
 	}
 ?>
 

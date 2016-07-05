@@ -55,13 +55,6 @@ if ($facebook_meta_image != "")
     function daemon_js() {
         document.getElementById("cronends").style.display = document.getElementById("daemon").checked ? "none" : "inline" ;
     }
-    function map_provider_js() {
-        if (document.getElementById("mapprovider").value == "Mapbox") {
-	    document.getElementById("mapbox_data").style.display = "inline";
-	} else {
-	    document.getElementById("mapbox_data").style.display = "none";
-	}
-    }   
     function create_database_js() {
         document.getElementById("createdb_data").style.display = document.getElementById("createdb").checked ? "inline" : "none" ;
     }

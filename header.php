@@ -72,6 +72,23 @@ if (strtolower($current_page) == "index")
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
+<?php
+    if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '') {
+?>
+<script src="http://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
+<?php
+    }
+?>
+<?php
+    if (isset($globalBingMapKey) && $globalBingMapKey != '') {
+?>
+<script src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
+<?php
+    }
+?>
+<script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
 <?php 
     if (isset($_POST['archive'])) {
 ?>
@@ -344,6 +361,26 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
       '<a href="http://www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
       'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>, Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency"'
   }).addTo(map);
+<?php
+    } elseif ($globalMapProvider == 'Google-Roadmap') {
+?>
+    var googleLayer = new L.Google('ROADMAP');
+    map.addLayer(googleLayer);
+<?php
+    } elseif ($globalMapProvider == 'Google-Satellite') {
+?>
+    var googleLayer = new L.Google('SATELLITE');
+    map.addLayer(googleLayer);
+<?php
+    } elseif ($globalMapProvider == 'Google-Hybrid') {
+?>
+    var googleLayer = new L.Google('HYBRID');
+    map.addLayer(googleLayer);
+<?php
+    } elseif ($globalMapProvider == 'Google-Terrain') {
+?>
+    var googleLayer = new L.Google('Terrain');
+    map.addLayer(googleLayer);
 <?php
     }
 ?>

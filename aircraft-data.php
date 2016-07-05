@@ -96,7 +96,7 @@ if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpee
 }
 print '</div>';
 print '<div><span>'._("Coordinates").'</span>'.$spotter_item['latitude'].', '.$spotter_item['longitude'].'</div>';
-print '<div><span>'._("Heading").'</span>'.$spotter_item['heading'].'</div>';
+print '<div><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
 if (isset($spotter_item['pilot_name']) && $spotter_item['pilot_name'] != '') {
 	print '<div><span>'._("Pilot").'</span>';
 	if (isset($spotter_item['pilot_id'])) print $spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')';

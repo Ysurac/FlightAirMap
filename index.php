@@ -143,6 +143,24 @@ require_once('header.php');
 			    <option value="OpenStreetMap"<?php if ($MapType == 'OpenStreetMap') print ' selected'; ?>>OpenStreetMap</option>
 			    <option value="MapQuest-OSM"<?php if ($MapType == 'MapQuest-OSM') print ' selected'; ?>>MapQuest-OSM</option>
 			    <option value="MapQuest-Aerial"<?php if ($MapType == 'MapQuest-Aerial') print ' selected'; ?>>MapQuest-Aerial</option>
+			    <?php
+				if (isset($globalBingMapKey) && $globalBingMapKey != '') {
+			    ?>
+			    <option value="Bing"<?php if ($MapType == 'Bing') print ' selected'; ?>>Bing</option>
+			    <?php
+				}
+			    ?>
+			    <?php
+				if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '') {
+			    ?>
+			    <option value="Google-Roadmap"<?php if ($MapType == 'Google-Roadmap') print ' selected'; ?>>Google Roadmap</option>
+			    <option value="Google-Satellite"<?php if ($MapType == 'Google-Satellite') print ' selected'; ?>>Google Satellite</option>
+			    <option value="Google-Hybrid"<?php if ($MapType == 'Google-Hybrid') print ' selected'; ?>>Google Hybrid</option>
+			    <option value="Google-Terrain"<?php if ($MapType == 'Google-Terrain') print ' selected'; ?>>Google Terrain</option>
+			    <?php
+				}
+			    ?>
+			    <option value="Yandex"<?php if ($MapType == 'Yandex') print ' selected'; ?>>Yandex</option>
 			</select>
 		    </li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightpopup" value="1" onclick="clickFlightPopup(this)" <?php if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true') || !isset($_COOKIE['flightpopup'])) print 'checked'; ?> ><?php echo _("Display flight info as popup"); ?></label></div></li>
