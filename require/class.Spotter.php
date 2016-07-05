@@ -7904,7 +7904,7 @@ class Spotter{
 	*/
 	public function countOverallFlights()
 	{
-		$query  = "SELECT COUNT(DISTINCT spotter_output.spotter_id) AS flight_count  
+		$query  = "SELECT COUNT(spotter_output.spotter_id) AS flight_count  
                     FROM spotter_output";
       
 		
@@ -7921,7 +7921,7 @@ class Spotter{
 	*/
 	public function countOverallMilitaryFlights()
 	{
-		$query  = "SELECT COUNT(DISTINCT s.spotter_id) AS flight_count  
+		$query  = "SELECT COUNT(s.spotter_id) AS flight_count  
                     FROM spotter_output s, airlines a WHERE s.airline_icao = a.icao AND a.type = 'military'";
       
 		
@@ -8754,7 +8754,7 @@ class Spotter{
 				} else {
 					if ($globalDebug) echo "----- No Airport near last coord. Latitude : ".$row['last_latitude'].' - Longitude : '.$row['last_longitude'].' - MinDist : '.$globalClosestMinDist."\n";
 				}
-				if ($airport_icao != '' && $row['real_arrival_airport_icao'] != $airport_icao) {
+				if ($row['real_arrival_airport_icao'] != $airport_icao) {
 					if ($globalDebug) echo "Updating airport to ".$airport_icao."...\n";
 					$update_query="UPDATE spotter_output SET real_arrival_airport_icao = :airport_icao WHERE spotter_id = :spotter_id";
 					$sthu = $this->db->prepare($update_query);
@@ -8788,6 +8788,6 @@ class Spotter{
 }
 /*
 $Spotter = new Spotter();
-print_r($Spotter->closestAirports('-21.13767','-47.77297',80));
+print_r($Spotter->closestAirports('-19.9813','-47.8286',10));
 */
 ?>
