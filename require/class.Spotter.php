@@ -8747,9 +8747,9 @@ class Spotter{
 						}
 					} elseif ($row['last_altitude'] == 0 || ($row['last_altitude'] != '' && ($closestAirports[0]['altitude'] <= $row['last_altitude']*100+1000 && $row['last_altitude']*100 < $closestAirports[0]['altitude']+5000))) {
 						$airport_icao = $closestAirports[0]['icao'];
-						if ($globalDebug) echo "\o/ NP --++ Find arrival airport. Airport ICAO : ".$airport_icao." !  Latitude : ".$row['last_latitude'].' - Longitude : '.$row['last_longitude'].' - MinDist : '.$globalClosestMinDist." - Airport altitude : ".$closestAirports[0]['altitude'].' - flight altitude : '.$row['last_altitude']."\n";
+						if ($globalDebug) echo "\o/ NP --++ Find arrival airport. Airport ICAO : ".$airport_icao." !  Latitude : ".$row['last_latitude'].' - Longitude : '.$row['last_longitude'].' - MinDist : '.$globalClosestMinDist." - Airport altitude : ".$closestAirports[0]['altitude'].' - flight altitude : '.($row['last_altitude']*100)."\n";
 					} else {
-						if ($globalDebug) echo "----- Can't find arrival airport. Latitude : ".$row['last_latitude'].' - Longitude : '.$row['last_longitude'].' - MinDist : '.$globalClosestMinDist." - Airport altitude : ".$closestAirports[0]['altitude'].' - flight altitude : '.$row['last_altitude']."\n";
+						if ($globalDebug) echo "----- Can't find arrival airport. Latitude : ".$row['last_latitude'].' - Longitude : '.$row['last_longitude'].' - MinDist : '.$globalClosestMinDist." - Airport altitude : ".$closestAirports[0]['altitude'].' - flight altitude : '.($row['last_altitude']*100)."\n";
 					}
 				} else {
 					if ($globalDebug) echo "----- No Airport near last coord. Latitude : ".$row['last_latitude'].' - Longitude : '.$row['last_longitude'].' - MinDist : '.$globalClosestMinDist."\n";
