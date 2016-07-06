@@ -218,9 +218,19 @@ $( document ).ready(function() {
 	var yandexLayer = new L.Yandex();
 	map.addLayer(yandexLayer);
 <?php
-	} elseif ($MapType == 'Bing') {
+	} elseif ($MapType == 'Bing-Aerial') {
 ?>
-	var bingLayer = new L.Bing("<?php print $globalBingMapKey; ?>");
+	var bingLayer = new L.tileLayer.bing({bingMapsKey: '<?php print $globalBingMapKey; ?>',imagerySet: 'Aerial'});
+	map.addLayer(bingLayer);
+<?php
+	} elseif ($MapType == 'Bing-Hybrid') {
+?>
+	var bingLayer = new L.tileLayer.bing({bingMapsKey: '<?php print $globalBingMapKey; ?>',imagerySet: 'AerialWithLabels'});
+	map.addLayer(bingLayer);
+<?php
+	} elseif ($MapType == 'Bing-Road') {
+?>
+	var bingLayer = new L.tileLayer.bing({bingMapsKey: '<?php print $globalBingMapKey; ?>',imagerySet: 'Road'});
 	map.addLayer(bingLayer);
 <?php
 	}

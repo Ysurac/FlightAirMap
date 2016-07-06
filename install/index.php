@@ -164,6 +164,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<option value="MapQuest-OSM" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-OSM') { ?>selected="selected" <?php } ?>>MapQuest-OSM</option>
 					<option value="MapQuest-Aerial" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-Aerial') { ?>selected="selected" <?php } ?>>MapQuest-Aerial</option>
 					<option value="Google-Hybrid" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Google-Hybrid') { ?>selected="selected" <?php } ?>>Google Hybrid</option>
+					<option value="Bing-Hybrid" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Bing-Hybrid') { ?>selected="selected" <?php } ?>>Bing Hybrid</option>
 					<option value="Yandex" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Yandex') { ?>selected="selected" <?php } ?>>Yandex</option>
 				</select>
 			</p>
@@ -182,6 +183,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<label for="googlekey">Google API key</label>
 					<input type="text" name="googlekey" id="googlekey" value="<?php if (isset($globalGoogleAPIKey)) print $globalGoogleAPIKey; ?>" />
 					<p class="help-block">Get a key <a href="https://developers.google.com/maps/documentation/javascript/get-api-key#get-an-api-key">here</a></p>
+				</p>
+			</div>
+			<div id="bing_data">
+				<p>
+					<label for="bingkey">Bing Map key</label>
+					<input type="text" name="bingkey" id="bingkey" value="<?php if (isset($globalBingMapKey)) print $globalBingMapKey; ?>" />
+					<p class="help-block">Get a key <a href="https://msdn.microsoft.com/en-us/library/ff428642.aspx">here</a></p>
 				</p>
 			</div>
 		</fieldset>
@@ -826,7 +834,8 @@ if (isset($_POST['dbtype'])) {
 	$mapboxid = filter_input(INPUT_POST,'mapboxid',FILTER_SANITIZE_STRING);
 	$mapboxtoken = filter_input(INPUT_POST,'mapboxtoken',FILTER_SANITIZE_STRING);
 	$googlekey = filter_input(INPUT_POST,'googlekey',FILTER_SANITIZE_STRING);
-	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid,'globalMapboxToken' => $mapboxtoken,'globalGoogleAPIKey' => $googlekey));
+	$bingkey = filter_input(INPUT_POST,'bingkey',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid,'globalMapboxToken' => $mapboxtoken,'globalGoogleAPIKey' => $googlekey,'globalBingMapKey' => $bingkey));
 	
 	$latitudemax = filter_input(INPUT_POST,'latitudemax',FILTER_SANITIZE_STRING);
 	$latitudemin = filter_input(INPUT_POST,'latitudemin',FILTER_SANITIZE_STRING);

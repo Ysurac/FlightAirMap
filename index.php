@@ -146,7 +146,9 @@ require_once('header.php');
 			    <?php
 				if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 			    ?>
-			    <option value="Bing"<?php if ($MapType == 'Bing') print ' selected'; ?>>Bing</option>
+			    <option value="Bing-Aerial"<?php if ($MapType == 'Bing-Aerial') print ' selected'; ?>>Bing-Aerial</option>
+			    <option value="Bing-Hybrid"<?php if ($MapType == 'Bing-Hybrid') print ' selected'; ?>>Bing-Hybrid</option>
+			    <option value="Bing-Road"<?php if ($MapType == 'Bing-Road') print ' selected'; ?>>Bing-Road</option>
 			    <?php
 				}
 			    ?>

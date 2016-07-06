@@ -83,6 +83,7 @@ if (strtolower($current_page) == "index")
 <?php
     if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 ?>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
 <?php
     }
