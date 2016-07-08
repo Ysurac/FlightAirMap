@@ -747,7 +747,7 @@ require_once('header.php');
                             legend: {position: "none"},
                             chartArea: {"width": "80%", "height": "60%"},
                             vAxis: {title: "'._("# of Flights").'"},
-                            hAxis: {showTextEvery: 2},
+                            hAxis: {showTextEvery: 2,title: "'._("Distance").' ('.$unit.')"},
                             height:300,
                             colors: ["#1a3151"]
                         };

@@ -66,7 +66,17 @@ if (strtolower($current_page) == "search")
 		print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
 	}
 	print '<th class="routestop"><span class="nomobile">'._("Route stop").'</span><span class="mobile">'._("Stop").'</span></a></th>';
-	if (isset($_GET['dist']) && $_GET['dist'] != '') print '<th class="distance"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a></th>';
+	if (isset($_GET['dist']) && $_GET['dist'] != '') {
+		if ($_GET['sort'] == "distance_asc")
+		{
+			print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-caret-up"></i></th>';
+		} elseif ($_GET['sort'] == "distance_desc")
+		{
+			print '<th class="distance"><a href="'.$page_url.'&sort=distance_asc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-caret-down"></i></th>';
+		} else {
+			print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-sort small"></i></th>';
+		}
+	}
 	if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 		print '<th class="pilot"><span class="nomobile">'._("Pilot name").'</span><span class="mobile">'._("Pilot").'</span></a></th>';
 	} else {

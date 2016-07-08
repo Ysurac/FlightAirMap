@@ -17,25 +17,24 @@ class SpotterImport {
     public $nb = 0;
 
     function __construct($dbc = null) {
-	    global $globalBeta;
-	    $Connection = new Connection($dbc);
-	    $this->db = $Connection->db;
-	    if ($globalBeta) {
-		$Stats = new Stats($dbc);
-		$currentdate = date('Y-m-d');
-		$sourcestat = $Stats->getStatsSource($currentdate);
-		if (!empty($sourcestat)) {
-		    foreach($sourcestat as $srcst) {
-			$type = $srcst['stats_type'];
-			if ($type == 'polar' || $type == 'hist') {
-			    $source = $srcst['source_name'];
-			    $data = $srcst['source_data'];
-			    $this->stats[$currentdate][$source][$type] = json_decode($data,true);
-			}
-		    }
-		}
-		//print_r($this->stats);
+	global $globalBeta;
+	$Connection = new Connection($dbc);
+	$this->db = $Connection->db;
+
+	// Get previous source stats
+	$Stats = new Stats($dbc);
+	$currentdate = date('Y-m-d');
+	$sourcestat = $Stats->getStatsSource($currentdate);
+	if (!empty($sourcestat)) {
+	    foreach($sourcestat as $srcst) {
+	    	$type = $srcst['stats_type'];
+		if ($type == 'polar' || $type == 'hist') {
+		    $source = $srcst['source_name'];
+		    $data = $srcst['source_data'];
+		    $this->stats[$currentdate][$source][$type] = json_decode($data,true);
+	        }
 	    }
+	}
     }
 
     function get_Schedule($id,$ident) {
@@ -213,17 +212,18 @@ class SpotterImport {
 	if(is_array($line) && isset($line['hex'])) {
 	    //print_r($line);
   	    if ($line['hex'] != '' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) === 6) {
-		if ($globalBeta) {
-		    if (isset($line['sourcestats']) && $line['sourcestats']) {
-			$current_date = date('Y-m-d');
-			$source = $line['source_name'];
-			if ($source == '' || $line['format_source'] == 'aprs') $source = $line['format_source'];
-			if (!isset($this->stats[$current_date][$source]['msg'])) {
-				$this->stats[$current_date][$source]['msg']['date'] = time();
-				$this->stats[$current_date][$source]['msg']['nb'] = 1;
-			} else $this->stats[$current_date][$source]['msg']['nb'] += 1;
-		    }
+
+		// Increment message number
+		if (isset($line['sourcestats']) && $line['sourcestats']) {
+		    $current_date = date('Y-m-d');
+		    $source = $line['source_name'];
+		    if ($source == '' || $line['format_source'] == 'aprs') $source = $line['format_source'];
+		    if (!isset($this->stats[$current_date][$source]['msg'])) {
+		    	$this->stats[$current_date][$source]['msg']['date'] = time();
+		    	$this->stats[$current_date][$source]['msg']['nb'] = 1;
+		    } else $this->stats[$current_date][$source]['msg']['nb'] += 1;
 		}
+		
 		/*
 		$dbc = $this->db;
 		$Connection = new Connection($dbc);
@@ -650,29 +650,28 @@ class SpotterImport {
 				    $Spotter->db = null;
 				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update addspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				    
-				    if ($globalBeta) {
-					$Stats = new Stats($this->db);
-					if (!empty($this->stats)) {
-					    foreach($this->stats as $date => $data) {
-						foreach($data as $source => $sourced) {
-						    //print_r($sourced);
-				    		    if (isset($sourced['polar'])) echo $Stats->addStatSource(json_encode($sourced['polar']),$source,'polar',$date);
-				    		    if (isset($sourced['hist'])) echo $Stats->addStatSource(json_encode($sourced['hist']),$source,'hist',$date);
-				    		    if (isset($sourced['msg'])) {
-				    			if (time() - $sourced['msg']['date'] > 10) {
-				    			    $nbmsg = round($sourced['msg']['nb']/(time() - $sourced['msg']['date']));
-				    			    echo $Stats->addStatSource($nbmsg,$source,'msg',$date);
-			    				    unset($this->stats[$date][$source]['msg']);
-			    				}
+				    // Add source stat in DB
+				    $Stats = new Stats($this->db);
+				    if (!empty($this->stats)) {
+				        foreach($this->stats as $date => $data) {
+					    foreach($data as $source => $sourced) {
+					        //print_r($sourced);
+				    	        if (isset($sourced['polar'])) echo $Stats->addStatSource(json_encode($sourced['polar']),$source,'polar',$date);
+				    	        if (isset($sourced['hist'])) echo $Stats->addStatSource(json_encode($sourced['hist']),$source,'hist',$date);
+				    		if (isset($sourced['msg'])) {
+				    		    if (time() - $sourced['msg']['date'] > 10) {
+				    		        $nbmsg = round($sourced['msg']['nb']/(time() - $sourced['msg']['date']));
+				    		        echo $Stats->addStatSource($nbmsg,$source,'msg',$date);
+			    			        unset($this->stats[$date][$source]['msg']);
 			    			    }
 			    			}
-			    			if ($date != date('Y-m-d')) {
-			    				unset($this->stats[$date]);
-			    			}
-				    	    }
+			    		    }
+			    		    if ($date != date('Y-m-d')) {
+			    			unset($this->stats[$date]);
+			    		    }
 				    	}
-				    	$Stats->db = null;
 				    }
+				    $Stats->db = null;
 				    
 				    $this->del();
 				} elseif ($globalDebug) echo 'Ignore data'."\n";
@@ -774,52 +773,49 @@ class SpotterImport {
 				$SpotterLive->db = null;
 				if ($globalDebugTimeElapsed) echo 'Time elapsed for update addlivespotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 
-				if ($globalBeta) {
-					// Put statistics in $this->stats variable
-					//if ($line['format_source'] != 'aprs') {
-					//if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt')) {
-					if (isset($line['sourcestats']) && $line['sourcestats']) {
-						$source = $this->all_flights[$id]['source_name'];
-						if ($source == '') $source = $this->all_flights[$id]['format_source'];
-						$Location = new Source();
-						$coord = $Location->getLocationInfobyName($source);
-						if (count($coord) > 0) {
-							$latitude = $coord[0]['latitude'];
-							$longitude = $coord[0]['longitude'];
-						} else {
-							$latitude = $globalCenterLatitude;
-							$longitude = $globalCenterLongitude;
+				// Put statistics in $this->stats variable
+				//if ($line['format_source'] != 'aprs') {
+				//if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt')) {
+				if (isset($line['sourcestats']) && $line['sourcestats']) {
+					$source = $this->all_flights[$id]['source_name'];
+					if ($source == '') $source = $this->all_flights[$id]['format_source'];
+					$Location = new Source();
+					$coord = $Location->getLocationInfobyName($source);
+					if (count($coord) > 0) {
+						$latitude = $coord[0]['latitude'];
+						$longitude = $coord[0]['longitude'];
+					} else {
+						$latitude = $globalCenterLatitude;
+						$longitude = $globalCenterLongitude;
+					}
+					$stats_heading = $Common->getHeading($latitude,$longitude,$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']);
+					//$stats_heading = $stats_heading%22.5;
+					$stats_heading = round($stats_heading/22.5);
+					$stats_distance = $Common->distance($latitude,$longitude,$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']);
+					$current_date = date('Y-m-d');
+					if ($stats_heading == 16) $stats_heading = 0;
+					if (!isset($this->stats[$current_date][$source]['polar'][1])) {
+						for ($i=0;$i<=15;$i++) {
+						    $this->stats[$current_date][$source]['polar'][$i] = 0;
 						}
-						$stats_heading = $Common->getHeading($latitude,$longitude,$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']);
-						//$stats_heading = $stats_heading%22.5;
-						$stats_heading = round($stats_heading/22.5);
-						$stats_distance = $Common->distance($latitude,$longitude,$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']);
-						$current_date = date('Y-m-d');
-						if ($stats_heading == 16) $stats_heading = 0;
-						if (!isset($this->stats[$current_date][$source]['polar'][1])) {
-							for ($i=0;$i<=15;$i++) {
-							    $this->stats[$current_date][$source]['polar'][$i] = 0;
-							}
+						$this->stats[$current_date][$source]['polar'][$stats_heading] = $stats_distance;
+					} else {
+						if ($this->stats[$current_date][$source]['polar'][$stats_heading] < $stats_distance) {
 							$this->stats[$current_date][$source]['polar'][$stats_heading] = $stats_distance;
 						}
-						else {
-							if ($this->stats[$current_date][$source]['polar'][$stats_heading] < $stats_distance) {
-								$this->stats[$current_date][$source]['polar'][$stats_heading] = $stats_distance;
-							}
+					}
+					$distance = (round($stats_distance/10)*10);
+					//echo '$$$$$$$$$$ DISTANCE : '.$distance.' - '.$source."\n";
+					//var_dump($this->stats);
+					if (!isset($this->stats[$current_date][$source]['hist'][$distance])) {
+						if (isset($this->stats[$current_date][$source]['hist'][0])) $mini = key(end($this->stats[$current_date][$source]['hist']))+10;
+						else $mini = 0;
+						for ($i=$mini;$i<=$distance;$i+=10) {
+						    $this->stats[$current_date][$source]['hist'][$i] = 0;
 						}
-						$distance = (round($stats_distance/10)*10);
-						//echo '$$$$$$$$$$ DISTANCE : '.$distance.' - '.$source."\n";
-						//var_dump($this->stats);
-						if (!isset($this->stats[$current_date][$source]['hist'][$distance])) {
-							if (isset($this->stats[$current_date][$source]['hist'][0])) $mini = key(end($this->stats[$current_date][$source]['hist']))+10;
-							else $mini = 0;
-							for ($i=$mini;$i<=$distance;$i+=10) {
-							    $this->stats[$current_date][$source]['hist'][$i] = 0;
-							}
-							$this->stats[$current_date][$source]['hist'][$distance] = 1;
-						} else {
-							$this->stats[$current_date][$source]['hist'][$distance] += 1;
-						}
+						$this->stats[$current_date][$source]['hist'][$distance] = 1;
+					} else {
+						$this->stats[$current_date][$source]['hist'][$distance] += 1;
 					}
 				}
 

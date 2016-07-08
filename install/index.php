@@ -505,7 +505,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 									</select>
 								</td>
 								<td><input type="text" name="name[]" id="name" value="<?php if (isset($source['name'])) print $source['name']; ?>" /></td>
-								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" value="1" <?php if (isset($source['sourcestats']) && $source['sourcestats']) print 'checked'; ?> /></td>
+								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" title="Create statistics for the source like number of messages, distance,..." value="1" <?php if (isset($source['sourcestats']) && $source['sourcestats']) print 'checked'; ?> /></td>
 								<td><input type="button" id="delhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
 							</tr>
 <?php
@@ -530,7 +530,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 									</select>
 								</td>
 								<td><input type="text" name="name[]" value="" id="name" /></td>
-								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" value="1" /></td>
+								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" title="Create statistics for the source like number of messages, distance,..." value="1" /></td>
 								<td><input type="button" id="addhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
 							</tr>
 						</tbody>
@@ -647,14 +647,16 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<p>
 				<label for="metarcycle">Activate METAR cycle support</label>
-				<input type="checkbox" name="metarcycle" id="metarcycle" value="metarcycle"<?php if (isset($globalMETARcycle) && $globalMETARcycle) { ?> checked="checked"<?php } ?> />
+				<input type="checkbox" name="metarcycle" id="metarcycle" onClick="metarcycle_js()" value="metarcycle"<?php if (isset($globalMETARcycle) && $globalMETARcycle) { ?> checked="checked"<?php } ?> />
 				<p class="help-block">Download feed from NOAA every hour. Need <i>scripts/update_db.php</i> in cron</p>
 			</p>
-			<p>
-				<label for="metarsource">URL of your METAR source</label>
-				<input type="text" name="metarsource" id="metarsource" value="<?php if (isset($globalMETARurl)) print $globalMETARurl; ?>" />
-				<p class="help-block">Use {icao} to specify where we replace by airport icao. ex : http://metar.vatsim.net/metar.php?id={icao}</p>
-			</p>
+			<div id="metarsrc">
+				<p>
+					<label for="metarsource">URL of your METAR source</label>
+					<input type="text" name="metarsource" id="metarsource" value="<?php if (isset($globalMETARurl)) print $globalMETARurl; ?>" />
+					<p class="help-block">Use {icao} to specify where we replace by airport icao. ex : http://metar.vatsim.net/metar.php?id={icao}</p>
+				</p>
+			</div>
 			<br />
 			<p>
 				<label for="bitly">Bit.ly access token api (used in search page)</label>

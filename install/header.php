@@ -58,6 +58,9 @@ if ($facebook_meta_image != "")
     function create_database_js() {
         document.getElementById("createdb_data").style.display = document.getElementById("createdb").checked ? "inline" : "none" ;
     }
+    function metarcycle_js() {
+        document.getElementById("metarsrc").style.display = document.getElementById("metarcycle").checked ? "none" : "inline" ;
+    }
 </script>
 <script type='text/javascript'>
     $(function(){
@@ -126,7 +129,7 @@ if ($facebook_meta_image != "")
     if (!isset($_SESSION['install']) && !$globalInstalled) {
 ?>
 
-<body class="page-<?php print strtolower($current_page); ?>" onload="datasource_js(); map_provider_js(); create_database_js(); daemon_js(); schedule_js()">
+<body class="page-<?php print strtolower($current_page); ?>" onload="datasource_js(); metarcycle_js(); create_database_js(); daemon_js(); schedule_js()">
 <?php
     } else {
 ?>
