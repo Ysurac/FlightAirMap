@@ -3,6 +3,8 @@
 FlightAirMap is a fork of Barrie Spotter [https://github.com/barriespotter/Web_App](https://github.com/barriespotter/Web_App) with map, airspaces, METAR, PDO and ADS-B support.
 Browse through the data based on a particular aircraft, airline or airport to search through the database. See extensive statistics such as most common aircraft type, airline, departure & arrival airport and busiest time of the day, or just explore flights.
 
+Flights are displayed on a map that can be from : OpenStreetMap, Mapbox, MapQuest, Yandex, Bing, Google,...
+
 It can be used with Dump1090 or any SBS source.
 Can also be used with IVAO sources like whazzup.txt, phpvms,...
 

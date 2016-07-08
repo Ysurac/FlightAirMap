@@ -8,18 +8,11 @@ $title = _("Statistics");
 require_once('header.php');
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<?php
-    if (isset($globalBeta) && $globalBeta) {
-//<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
-?>
 <!--<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>-->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 <script type="text/javascript" src="js/radarChart.js"></script>
 <script type="text/javascript" src="js/raphael-2.1.4.min.js"></script>
 <script type="text/javascript" src="js/justgage.js"></script>
-<?php
-    }
-?>
 <div class="column">
     <div class="info">
             <h1><?php echo _("Statistics"); ?></h1>
@@ -610,9 +603,6 @@ require_once('header.php');
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         </div>
-        <?php 
-    	    if (isset($globalBeta) && $globalBeta) {
-        ?>
         <div class="row column">
         	<?php
         	    $polar = $Stats->getStatsSource(date('Y-m-d'),'polar');
@@ -766,9 +756,6 @@ require_once('header.php');
 
             
         </div>
-        <?php
-          }
-        ?>
     </div>
 </div>  
 
