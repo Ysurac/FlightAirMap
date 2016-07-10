@@ -205,8 +205,8 @@ class Stats {
 	public function countAllFlightOverCountries($limit = true) {
 		$Connection = new Connection();
 		if ($Connection->tableExists('countries')) {
-			if ($limit) $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC LIMIT 20 OFFSET 0";
-			else $query = "SELECT iso3 as flight_country_iso3, iso2 as flight_country_iso2, name as flight_country, cnt as flight_count FROM stats_country ORDER BY flight_count DESC";
+			if ($limit) $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 ORDER BY flight_count DESC LIMIT 20 OFFSET 0";
+			else $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 ORDER BY flight_count DESC";
 			 try {
 				$sth = $this->db->prepare($query);
 				$sth->execute();
