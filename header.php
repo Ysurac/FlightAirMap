@@ -88,6 +88,14 @@ if (strtolower($current_page) == "index")
 <?php
     }
 ?>
+<?php
+    if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
+?>
+<script src="<?php print $globalURL; ?>/js/leaflet-Here.js"></script>
+<?php
+    }
+?>
+
 <script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
 <?php 

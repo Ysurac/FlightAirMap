@@ -178,6 +178,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<input type="text" name="mapboxtoken" id="mapboxtoken" value="<?php if (isset($globalMapboxToken)) print $globalMapboxToken; ?>" />
 				</p>
 			</div>
+			<br />
 			<div id="google_data">
 				<p>
 					<label for="googlekey">Google API key</label>
@@ -185,12 +186,25 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<p class="help-block">Get a key <a href="https://developers.google.com/maps/documentation/javascript/get-api-key#get-an-api-key">here</a></p>
 				</p>
 			</div>
+			<br />
 			<div id="bing_data">
 				<p>
 					<label for="bingkey">Bing Map key</label>
 					<input type="text" name="bingkey" id="bingkey" value="<?php if (isset($globalBingMapKey)) print $globalBingMapKey; ?>" />
 					<p class="help-block">Get a key <a href="https://msdn.microsoft.com/en-us/library/ff428642.aspx">here</a></p>
 				</p>
+			</div>
+			<br />
+			<div id="here_data">
+				<p>
+					<label for="hereappid">Here App_Id</label>
+					<input type="text" name="hereappid" id="hereappid" value="<?php if (isset($globalHereappId)) print $globalHereappId; ?>" />
+				</p>
+				<p>
+					<label for="hereappcode">Here App_Code</label>
+					<input type="text" name="hereappcode" id="hereappcode" value="<?php if (isset($globalHereappCode)) print $globalHereappCode; ?>" />
+				</p>
+				<p class="help-block">Get a key <a href="https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/quick-start.html">here</a></p>
 			</div>
 		</fieldset>
 		<fieldset>
@@ -837,7 +851,9 @@ if (isset($_POST['dbtype'])) {
 	$mapboxtoken = filter_input(INPUT_POST,'mapboxtoken',FILTER_SANITIZE_STRING);
 	$googlekey = filter_input(INPUT_POST,'googlekey',FILTER_SANITIZE_STRING);
 	$bingkey = filter_input(INPUT_POST,'bingkey',FILTER_SANITIZE_STRING);
-	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid,'globalMapboxToken' => $mapboxtoken,'globalGoogleAPIKey' => $googlekey,'globalBingMapKey' => $bingkey));
+	$hereappid = filter_input(INPUT_POST,'hereappid',FILTER_SANITIZE_STRING);
+	$hereappcode = filter_input(INPUT_POST,'hereappcode',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid,'globalMapboxToken' => $mapboxtoken,'globalGoogleAPIKey' => $googlekey,'globalBingMapKey' => $bingkey,'globalHereappID' => $hereappid,'globalHereappCode' => $hereappcode));
 	
 	$latitudemax = filter_input(INPUT_POST,'latitudemax',FILTER_SANITIZE_STRING);
 	$latitudemin = filter_input(INPUT_POST,'latitudemin',FILTER_SANITIZE_STRING);

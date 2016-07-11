@@ -121,6 +121,36 @@ require_once('header.php');
 			    <?php
 				if (!isset($_COOKIE['MapType'])) $MapType = $globalMapProvider;
 				else $MapType = $_COOKIE['MapType'];
+			    ?>
+			    <?php
+				if (isset($globalBingMapKey) && $globalBingMapKey != '') {
+			    ?>
+			    <option value="Bing-Aerial"<?php if ($MapType == 'Bing-Aerial') print ' selected'; ?>>Bing-Aerial</option>
+			    <option value="Bing-Hybrid"<?php if ($MapType == 'Bing-Hybrid') print ' selected'; ?>>Bing-Hybrid</option>
+			    <option value="Bing-Road"<?php if ($MapType == 'Bing-Road') print ' selected'; ?>>Bing-Road</option>
+			    <?php
+				}
+			    ?>
+			    <?php
+				if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
+			    ?>
+			    <option value="Here-Aerial"<?php if ($MapType == 'Here') print ' selected'; ?>>Here-Aerial</option>
+			    <option value="Here-Hybrid"<?php if ($MapType == 'Here') print ' selected'; ?>>Here-Hybrid</option>
+			    <option value="Here-Road"<?php if ($MapType == 'Here') print ' selected'; ?>>Here-Road</option>
+			    <?php
+				}
+			    ?>
+			    <?php
+				if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '') {
+			    ?>
+			    <option value="Google-Roadmap"<?php if ($MapType == 'Google-Roadmap') print ' selected'; ?>>Google Roadmap</option>
+			    <option value="Google-Satellite"<?php if ($MapType == 'Google-Satellite') print ' selected'; ?>>Google Satellite</option>
+			    <option value="Google-Hybrid"<?php if ($MapType == 'Google-Hybrid') print ' selected'; ?>>Google Hybrid</option>
+			    <option value="Google-Terrain"<?php if ($MapType == 'Google-Terrain') print ' selected'; ?>>Google Terrain</option>
+			    <?php
+				}
+			    ?>
+			    <?php
 				if (isset($globalMapboxToken) && $globalMapboxToken != '') {
 				    if (!isset($_COOKIE['MapTypeId'])) $MapBoxId = 'default';
 				    else $MapBoxId = $_COOKIE['MapTypeId'];
@@ -140,28 +170,9 @@ require_once('header.php');
 			    <?php
 				}
 			    ?>
-			    <option value="OpenStreetMap"<?php if ($MapType == 'OpenStreetMap') print ' selected'; ?>>OpenStreetMap</option>
 			    <option value="MapQuest-OSM"<?php if ($MapType == 'MapQuest-OSM') print ' selected'; ?>>MapQuest-OSM</option>
 			    <option value="MapQuest-Aerial"<?php if ($MapType == 'MapQuest-Aerial') print ' selected'; ?>>MapQuest-Aerial</option>
-			    <?php
-				if (isset($globalBingMapKey) && $globalBingMapKey != '') {
-			    ?>
-			    <option value="Bing-Aerial"<?php if ($MapType == 'Bing-Aerial') print ' selected'; ?>>Bing-Aerial</option>
-			    <option value="Bing-Hybrid"<?php if ($MapType == 'Bing-Hybrid') print ' selected'; ?>>Bing-Hybrid</option>
-			    <option value="Bing-Road"<?php if ($MapType == 'Bing-Road') print ' selected'; ?>>Bing-Road</option>
-			    <?php
-				}
-			    ?>
-			    <?php
-				if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '') {
-			    ?>
-			    <option value="Google-Roadmap"<?php if ($MapType == 'Google-Roadmap') print ' selected'; ?>>Google Roadmap</option>
-			    <option value="Google-Satellite"<?php if ($MapType == 'Google-Satellite') print ' selected'; ?>>Google Satellite</option>
-			    <option value="Google-Hybrid"<?php if ($MapType == 'Google-Hybrid') print ' selected'; ?>>Google Hybrid</option>
-			    <option value="Google-Terrain"<?php if ($MapType == 'Google-Terrain') print ' selected'; ?>>Google Terrain</option>
-			    <?php
-				}
-			    ?>
+			    <option value="OpenStreetMap"<?php if ($MapType == 'OpenStreetMap') print ' selected'; ?>>OpenStreetMap</option>
 			    <option value="Yandex"<?php if ($MapType == 'Yandex') print ' selected'; ?>>Yandex</option>
 			</select>
 		    </li>

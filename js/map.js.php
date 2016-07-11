@@ -233,6 +233,21 @@ $( document ).ready(function() {
 	var bingLayer = new L.tileLayer.bing({bingMapsKey: '<?php print $globalBingMapKey; ?>',imagerySet: 'Road'});
 	map.addLayer(bingLayer);
 <?php
+	} elseif ($MapType == 'Here-Roadmap') {
+?>
+	var hereLayer = new L.tileLayer.here({appId: '<?php print $globalHereappId; ?>',appcode: '<?php print $globalHereappCode; ?>',scheme: 'normal.day'});
+	map.addLayer(hereLayer);
+<?php
+	} elseif ($MapType == 'Here-Aerial') {
+?>
+	var hereLayer = new L.tileLayer.here({appId: '<?php print $globalHereappId; ?>',appcode: '<?php print $globalHereappCode; ?>',scheme: 'satellite.day'});
+	map.addLayer(hereLayer);
+<?php
+	} elseif ($MapType == 'Here-Hybrid') {
+?>
+	var hereLayer = new L.tileLayer.here({appId: '<?php print $globalHereappId; ?>',appcode: '<?php print $globalHereappCode; ?>',scheme: 'hybrid.day'});
+	map.addLayer(hereLayer);
+<?php
 	}
 ?>
 
