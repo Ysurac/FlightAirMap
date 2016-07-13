@@ -696,10 +696,14 @@ require_once('header.php');
         	}
             ?>
             </div>
+        </div>
+        <div class="row column">
+
             <?php
 		$hist = $Stats->getStatsSource(date('Y-m-d'),'hist');
 		foreach ($hist as $hists) {
 			$hist_data = '';
+			$source = $hists['source_name'];
 			$hist_array = json_decode($hists['source_data']);
 			foreach($hist_array as $distance => $nb)
 			{
@@ -719,15 +723,13 @@ require_once('header.php');
 			$hist_data = substr($hist_data, 0, -1);
             ?>
             <div class="col-md-6">
-                <h2><?php echo _("Flights Distance"); ?></h2>
+                <h2><?php echo sprintf(_("Flights Distance for %s"),$source); ?></h2>
                 <?php
-                  $hist = $Stats->getStatsSource(date('Y-m-d'),'hist');
-
-                  print '<div id="chart20" class="chart" width="100%"></div>
+                  print '<div id="charthist-'.str_replace(' ','_',strtolower($source)).'" class="chart" width="100%"></div>
                     <script> 
                         google.load("visualization", "1", {packages:["corechart"]});
-                      google.setOnLoadCallback(drawChart20);
-                      function drawChart20() {
+                      google.setOnLoadCallback(drawCharthist_'.str_replace(' ','_',strtolower($source)).');
+                      function drawCharthist_'.str_replace(' ','_',strtolower($source)).'() {
                         var data = google.visualization.arrayToDataTable([
                             ["'._("Distance").'", "'._("# of Flights").'"], ';
                             print $hist_data;
@@ -742,11 +744,11 @@ require_once('header.php');
                             colors: ["#1a3151"]
                         };
 
-                        var chart = new google.visualization.AreaChart(document.getElementById("chart20"));
+                        var chart = new google.visualization.AreaChart(document.getElementById("charthist-'.str_replace(' ','_',strtolower($source)).'"));
                         chart.draw(data, options);
                       }
                       $(window).resize(function(){
-                              drawChart20();
+                              drawCharthist_'.str_replace(' ','_',strtolower($source)).'();
                             });
                   </script>';
                   }
