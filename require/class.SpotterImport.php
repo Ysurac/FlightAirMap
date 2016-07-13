@@ -812,7 +812,9 @@ class SpotterImport {
 					//echo '$$$$$$$$$$ DISTANCE : '.$distance.' - '.$source."\n";
 					//var_dump($this->stats);
 					if (!isset($this->stats[$current_date][$source]['hist'][$distance])) {
-						if (isset($this->stats[$current_date][$source]['hist'][0])) $mini = key(end($this->stats[$current_date][$source]['hist']))+10;
+						if (isset($this->stats[$current_date][$source]['hist'][0])) {
+						    end($this->stats[$current_date][$source]['hist']);
+						    $mini = key($this->stats[$current_date][$source]['hist'])+10;
 						else $mini = 0;
 						for ($i=$mini;$i<=$distance;$i+=10) {
 						    $this->stats[$current_date][$source]['hist'][$i] = 0;
