@@ -89,6 +89,13 @@ if (strtolower($current_page) == "index")
     }
 ?>
 <?php
+    if (isset($globalMapQuestKey) && $globalMapQuestKey != '') {
+?>
+<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>
+<?php
+    }
+?>
+<?php
     if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
 ?>
 <script src="<?php print $globalURL; ?>/js/leaflet-Here.js"></script>
@@ -105,7 +112,18 @@ if (strtolower($current_page) == "index")
 <?php    
     } else {
 ?>
+<?php
+	if (isset($globalBeta) && $globalBeta) {
+?>
+<script src="<?php print $globalURL; ?>/js/leaflet-realtime.js"></script>
+<script src="<?php print $globalURL; ?>/js/map.new.js.php?<?php print time(); ?>"></script>
+<?php
+	} else {
+?>
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script>
+<?php
+	}
+?>
 <?php
     }
 }

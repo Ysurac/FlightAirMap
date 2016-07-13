@@ -173,25 +173,18 @@ $( document ).ready(function() {
 <?php
 	} elseif ($MapType == 'MapQuest-OSM') {
 ?>
-	L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
-	    maxZoom: 18,
-	    subdomains: "1234",
-	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
-	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-	      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
-	      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>'
-	}).addTo(map);
+	var mapquestLayer = new MQ.mapLayer();
+	map.addLayer(mapquestLayer);
 <?php
 	} elseif ($MapType == 'MapQuest-Aerial') {
 ?>
-	L.tileLayer('https://otile{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
-	    maxZoom: 18,
-	    subdomains: "1234",
-	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
-	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-	      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>, ' +
-	      'Tiles Courtesy of <a href="http://www.mapquest.com">MapQuest</a>, Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency"'
-	}).addTo(map);
+	var mapquestLayer = new MQ.satelliteLayer();
+	map.addLayer(mapquestLayer);
+<?php
+	} elseif ($MapType == 'MapQuest-Hybrid') {
+?>
+	var mapquestLayer = new MQ.hybridLayer();
+	map.addLayer(mapquestLayer);
 <?php
 	} elseif ($MapType == 'Google-Roadmap') {
 ?>

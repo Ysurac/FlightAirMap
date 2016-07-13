@@ -195,6 +195,14 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</p>
 			</div>
 			<br />
+			<div id="mapquest_data">
+				<p>
+					<label for="mapquestkey">MapQuest key</label>
+					<input type="text" name="mapquestkey" id="mapquestkey" value="<?php if (isset($globalMapQuestKey)) print $globalMapQuestKey; ?>" />
+					<p class="help-block">Get a key <a href="https://developer.mapquest.com/user/me/apps">here</a></p>
+				</p>
+			</div>
+			<br />
 			<div id="here_data">
 				<p>
 					<label for="hereappid">Here App_Id</label>
@@ -851,9 +859,10 @@ if (isset($_POST['dbtype'])) {
 	$mapboxtoken = filter_input(INPUT_POST,'mapboxtoken',FILTER_SANITIZE_STRING);
 	$googlekey = filter_input(INPUT_POST,'googlekey',FILTER_SANITIZE_STRING);
 	$bingkey = filter_input(INPUT_POST,'bingkey',FILTER_SANITIZE_STRING);
+	$mapquestkey = filter_input(INPUT_POST,'mapquestkey',FILTER_SANITIZE_STRING);
 	$hereappid = filter_input(INPUT_POST,'hereappid',FILTER_SANITIZE_STRING);
 	$hereappcode = filter_input(INPUT_POST,'hereappcode',FILTER_SANITIZE_STRING);
-	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid,'globalMapboxToken' => $mapboxtoken,'globalGoogleAPIKey' => $googlekey,'globalBingMapKey' => $bingkey,'globalHereappID' => $hereappid,'globalHereappCode' => $hereappcode));
+	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid,'globalMapboxToken' => $mapboxtoken,'globalGoogleAPIKey' => $googlekey,'globalBingMapKey' => $bingkey,'globalHereappID' => $hereappid,'globalHereappCode' => $hereappcode,'globalMapQuestKey' => $mapquestkey));
 	
 	$latitudemax = filter_input(INPUT_POST,'latitudemax',FILTER_SANITIZE_STRING);
 	$latitudemin = filter_input(INPUT_POST,'latitudemin',FILTER_SANITIZE_STRING);
