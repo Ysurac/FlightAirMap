@@ -815,7 +815,7 @@ class SpotterImport {
 						if (isset($this->stats[$current_date][$source]['hist'][0])) {
 						    end($this->stats[$current_date][$source]['hist']);
 						    $mini = key($this->stats[$current_date][$source]['hist'])+10;
-						else $mini = 0;
+						} else $mini = 0;
 						for ($i=$mini;$i<=$distance;$i+=10) {
 						    $this->stats[$current_date][$source]['hist'][$i] = 0;
 						}
