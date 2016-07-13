@@ -751,12 +751,12 @@ require_once('header.php');
                               drawCharthist_'.str_replace(' ','_',strtolower($source)).'();
                             });
                   </script>';
+        	?>
+    	    </div>
+	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+        	<?php
                   }
                 ?>
-            </div>
-    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-
-            
         </div>
     </div>
 </div>  
