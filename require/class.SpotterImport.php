@@ -279,7 +279,8 @@ class SpotterImport {
 		    if (!isset($this->all_flights[$id]['datetime']) || strtotime($line['datetime']) >= strtotime($this->all_flights[$id]['datetime'])) {
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
 		    } else {
-				if ($globalDebug) echo "!!! Date previous latest data !!! for ".$this->all_flights[$id]['hex']."\n";
+				if (strtotime($line['datetime']) == strtotime($this->all_flights[$id]['datetime']) && $globalDebug) echo "!!! Date is the same as previous data for ".$this->all_flights[$id]['hex']." - format : ".$line['format_source']."\n";
+				elseif (strtotime($line['datetime']) > strtotime($this->all_flights[$id]['datetime']) && $globalDebug) echo "!!! Date previous latest data (".$line['datetime']." > ".$this->all_flights[$id]['datetime'].") !!! for ".$this->all_flights[$id]['hex']." - format : ".$line['format_source']."\n";
 				/*
 				echo strtotime($line['datetime']).' > '.strtotime($this->all_flights[$id]['datetime']);
 				print_r($this->all_flights[$id]);
