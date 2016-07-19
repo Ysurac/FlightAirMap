@@ -651,11 +651,13 @@ class SpotterImport {
 				    $Spotter = new Spotter($this->db);
 				    $result = $Spotter->addSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'], $this->all_flights[$id]['datetime'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'],$this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$highlight,$this->all_flights[$id]['hex'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'],$this->all_flights[$id]['verticalrate'],$this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source'],$this->all_flights[$id]['source_name']);
 				    $Spotter->db = null;
+				    if ($globalDebug && isset($result)) echo $result."\n";
 				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update addspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				    
 				    // Add source stat in DB
 				    $Stats = new Stats($this->db);
 				    if (!empty($this->stats)) {
+					if ($globalDebug) echo 'Add source stats : ';
 				        foreach($this->stats as $date => $data) {
 					    foreach($data as $source => $sourced) {
 					        //print_r($sourced);
@@ -673,6 +675,8 @@ class SpotterImport {
 			    			unset($this->stats[$date]);
 			    		    }
 				    	}
+				    	if ($globalDebug) echo 'Done'."\n";
+
 				    }
 				    $Stats->db = null;
 				    
@@ -681,7 +685,6 @@ class SpotterImport {
 				$ignoreImport = false;
 				$this->all_flights[$id]['addedSpotter'] = 1;
 				//print_r($this->all_flights[$id]);
-				if ($globalDebug && isset($result)) echo $result."\n";
 			/*
 			if (isset($globalArchive) && $globalArchive) {
 			    $archives_ident = SpotterLive->getAllLiveSpotterDataByIdent($this->all_flights[$id]['ident']);
