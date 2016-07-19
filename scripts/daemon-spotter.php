@@ -646,12 +646,17 @@ while ($i > 0) {
 
 	    //$read = array( $sockets[$id] );
 	    $read = $sockets;
-	    $n = @socket_select($read, $write = NULL, $e = NULL, $timeout);
+	    $write = NULL;
+	    $e = NULL;
+	    $n = socket_select($read, $write, $e, $timeout);
+	    if ($e != NULL) var_dump($e);
 	    if ($n > 0) {
 		foreach ($read as $nb => $r) {
+		    //var_dump($read);
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
         	    $buffer = socket_read($r, 6000,PHP_NORMAL_READ);
+        	    //echo $buffer."\n";
 		    // lets play nice and handle signals such as ctrl-c/kill properly
 		    //if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 		    $dataFound = false;
@@ -789,7 +794,7 @@ while ($i > 0) {
 						echo $buffer;
 						print_r($line);
 					}
-					socket_close($r);
+					//socket_close($r);
 					if ($globalDebug) echo "Reconnect after an error...\n";
 					connect_all($globalSources);
 				}
@@ -799,11 +804,11 @@ while ($i > 0) {
 			if (isset($globalSBSSleep)) usleep($globalSBSSleep);
 		    } else {
 			$tt++;
-			if ($tt > 5) {
+			if ($tt > 30) {
 			    if ($globalDebug)echo "ERROR : Reconnect...";
-			    @socket_close($r);
+			    //@socket_close($r);
 			    sleep(2);
-			    connect_all($hosts);
+			    connect_all($globalSources);
 			    break;
 			    $tt = 0;
 			}
@@ -817,10 +822,12 @@ while ($i > 0) {
 			// Restart the script if possible
 			if (is_array($sockets)) {
 			    if ($globalDebug) echo "Shutdown all sockets...";
+			    
 			    foreach ($sockets as $sock) {
 				@socket_shutdown($sock,2);
 				@socket_close($sock);
 			    }
+			    
 			}
 			    if ($globalDebug) echo "Restart all connections...";
 			    sleep(2);
