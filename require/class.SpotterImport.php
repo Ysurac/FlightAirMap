@@ -13,6 +13,7 @@ class SpotterImport {
     private $last_delete_hourly = '';
     private $last_delete = '';
     private $stats = array();
+    private $tmd = 0;
     public $db = null;
     public $nb = 0;
 
@@ -401,7 +402,7 @@ class SpotterImport {
 	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '') {
 	    	    if (isset($this->all_flights[$id]['time_last_coord'])) $timediff = round(time()-$this->all_flights[$id]['time_last_coord']);
 	    	    else unset($timediff);
-	    	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || !isset($timediff) || $timediff > 800 || ($timediff > 10 && isset($this->all_flights[$id]['latitude']) && isset($this->all_flights[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')))) {
+	    	    if ($this->tmd > 5 || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || !isset($timediff) || $timediff > 800 || ($timediff > 10 && isset($this->all_flights[$id]['latitude']) && isset($this->all_flights[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')))) {
 			if (isset($this->all_flights[$id]['archive_latitude']) && isset($this->all_flights[$id]['archive_longitude']) && isset($this->all_flights[$id]['livedb_latitude']) && isset($this->all_flights[$id]['livedb_longitude'])) {
 			    if (!$Common->checkLine($this->all_flights[$id]['archive_latitude'],$this->all_flights[$id]['archive_longitude'],$this->all_flights[$id]['livedb_latitude'],$this->all_flights[$id]['livedb_longitude'],$line['latitude'],$line['longitude'])) {
 				$this->all_flights[$id]['archive_latitude'] = $line['latitude'];
@@ -416,7 +417,7 @@ class SpotterImport {
 				if (!empty($all_country)) $this->all_flights[$id]['over_country'] = $all_country['iso2'];
 				$Spotter->db = null;
 				if ($globalDebugTimeElapsed) echo 'Time elapsed for update getCountryFromlatitudeLongitude : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
-
+				$this->tmd = 0;
 				//echo 'FOUND : '.$this->all_flights[$id]['over_country'].' ---------------'."\n";
 				//$putinarchive = true;
 			    } else {
@@ -476,6 +477,7 @@ class SpotterImport {
 			}
 
 		    } else if ($globalDebug && $timediff > 20) {
+			$this->tmd = $this->tmd + 1;
 			echo '!!! Too much distance in short time... for '.$this->all_flights[$id]['ident']."\n";
 			echo 'Time : '.$timediff.'s - Distance : '.$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')."m -";
 			echo 'Speed : '.(($Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')/$timediff)*3.6)." km/h - ";

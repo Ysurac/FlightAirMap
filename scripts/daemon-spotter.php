@@ -651,7 +651,7 @@ while ($i > 0) {
 		foreach ($read as $nb => $r) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
-        	    $buffer = socket_read($r, 3000,PHP_NORMAL_READ);
+        	    $buffer = socket_read($r, 6000,PHP_NORMAL_READ);
 		    // lets play nice and handle signals such as ctrl-c/kill properly
 		    //if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 		    $dataFound = false;

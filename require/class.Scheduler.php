@@ -281,7 +281,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getBritishAirways($callsign, $date = 'NOW') {
+	public function getBritishAirways($callsign, $date = 'NOW') {
 		global $globalBritishAirwaysKey;
 		$Common = new Common();
 		$check_date = new Datetime($date);
@@ -534,6 +534,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
+/*
 	public function getFlightRadar24($callsign, $date = 'NOW') {
 		$Common = new Common();
 		$url= "http://arn.data.fr24.com/zones/fcgi/feed.js?flight=".$callsign;
@@ -559,7 +560,7 @@ class Schedule {
 		}
 		return array();
 	}
-
+  */
 	/**
 	* Get flight info from Lufthansa
 	* @param String $callsign The callsign
@@ -681,10 +682,11 @@ class Schedule {
 		if ($data != '') {
 			$table = $Common->table2array($data);
 			if (isset($table[11][0])) {
-				$departureTime = str_replace('h',':',substr($table[15][1],0,5));
-				$arrivalTime = str_replace('h',':',substr($table[15][4],0,5));
-				sscanf($table[11][1],'%*[^(] (%*4[A-Z]&nbsp;/&nbsp;%3[A-Z])',$DepartureAirportIata);
-				sscanf($table[11][0],'%*[^(] (%*4[A-Z]&nbsp;/&nbsp;%3[A-Z])',$ArrivalAirportIata);
+				$departureTime = str_replace('h',':',substr($table[5][0],0,5));
+				$arrivalTime = str_replace('h',':',substr($table[5][1],0,5));
+				echo $table[3][0];
+				sscanf($table[3][0],'%*[^(] (%3[A-Z] / %*4[A-Z])',$DepartureAirportIata);
+				sscanf($table[3][1],'%*[^(] (%3[A-Z] / %*4[A-Z])',$ArrivalAirportIata);
 				return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_flightaware');
 			}
 		}
@@ -697,7 +699,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getCostToTravel($callsign, $date = 'NOW') {
+	public function getCostToTravel($callsign, $date = 'NOW') {
 		$Common = new Common();
 		$url= "http://www.costtotravel.com/flight-number/".$callsign;
 		$check_date = new Datetime($date);
@@ -1086,7 +1088,7 @@ class Schedule {
 							$source = $globalSchedulesSources[$rand];
 							if ($source == 'flightmapper') return $this->getFlightMapper($ident,$date);
 							elseif ($source == 'costtotravel') return $this->getCostToTravel($ident,$date);
-							elseif ($source == 'flightradar24') return $this->getFlightRadar24($ident,$date);
+							//elseif ($source == 'flightradar24') return $this->getFlightRadar24($ident,$date);
 							elseif ($source == 'flightaware') return $this->getFlightAware($ident,$date);
 						}
 					}
@@ -1096,6 +1098,11 @@ class Schedule {
 	}
 }
 
-//$Schedule = new Schedule();
+/*
+$Schedule = new Schedule();
 //print_r($Schedule->fetchSchedule('HV5661'));
+//print_r($Schedule->getFlightAware('AF1179'));
+//print_r($Schedule->getBritishAirways('BAW551'));
+print_r($Schedule->getLufthansa('BAW551'));
+*/
 ?>
