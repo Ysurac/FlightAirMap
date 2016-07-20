@@ -1007,7 +1007,7 @@ class Stats {
 							$sth = $this->db->prepare($query);
 							$sth->execute();
 						} catch(PDOException $e) {
-							return "error : ".$e->getMessage();
+							return "error : ".$e->getMessage().' - query : '.$query."\n";
 						}
 					}
 					$query = 'DELETE FROM spotter_output WHERE spotter_output.date < '.date('Y').'-01-01 00:00:00';
@@ -1015,7 +1015,7 @@ class Stats {
 						$sth = $this->db->prepare($query);
 						$sth->execute();
 					} catch(PDOException $e) {
-						return "error : ".$e->getMessage();
+						return "error : ".$e->getMessage().' - query : '.$query."\n";
 					}
 				}
 			}
@@ -1110,7 +1110,7 @@ class Stats {
 						$sth = $this->db->prepare($query);
 						$sth->execute();
 					} catch(PDOException $e) {
-						return "error : ".$e->getMessage();
+						return "error : ".$e->getMessage().' - query : '.$query."\n";
 					}
 				}
 	
@@ -1124,7 +1124,7 @@ class Stats {
 					$sth = $this->db->prepare($query);
 					$sth->execute();
 				} catch(PDOException $e) {
-					return "error : ".$e->getMessage();
+					return "error : ".$e->getMessage().' - query : '.$query."\n";
 				}
 			}
 			$this->addLastStatsUpdate('last_update_stats',date('Y-m-d G:i:s'));
@@ -1336,7 +1336,7 @@ class Stats {
 							$sth = $this->db->prepare($query);
 							$sth->execute();
 						} catch(PDOException $e) {
-							return "error : ".$e->getMessage();
+							return "error : ".$e->getMessage().' - query : '.$query."\n";
 						}
 					}
 					echo 'Delete old data'."\n";
@@ -1345,7 +1345,7 @@ class Stats {
 						$sth = $this->db->prepare($query);
 						$sth->execute();
 					} catch(PDOException $e) {
-						return "error : ".$e->getMessage();
+						return "error : ".$e->getMessage().' - query : '.$query."\n";
 					}
 				}
 			}
