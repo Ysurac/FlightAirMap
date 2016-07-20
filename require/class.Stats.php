@@ -1010,7 +1010,7 @@ class Stats {
 							return "error : ".$e->getMessage().' - query : '.$query."\n";
 						}
 					}
-					$query = 'DELETE FROM spotter_output WHERE spotter_output.date < '.date('Y').'-01-01 00:00:00';
+					$query = "DELETE FROM spotter_output WHERE spotter_output.date < '".date('Y')."-01-01 00:00:00'";
 					try {
 						$sth = $this->db->prepare($query);
 						$sth->execute();
