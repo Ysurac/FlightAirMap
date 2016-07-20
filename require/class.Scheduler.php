@@ -309,7 +309,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getLufthansa($callsign, $date = 'NOW') {
+	public function getLufthansa($callsign, $date = 'NOW') {
 		global $globalLufthansaKey;
 		$Common = new Common();
 		$check_date = new Datetime($date);
@@ -320,6 +320,7 @@ class Schedule {
 		$post = array('client_id' => $globalLufthansaKey['key'],'client_secret' => $globalLufthansaKey['secret'],'grant_type' => 'client_credentials');
 		$data = $Common->getData($url,'post',$post);
 		$parsed_data = json_decode($data);
+		if (!isset($parsed_data->{'access_token'})) return array();
 		$token = $parsed_data->{'access_token'};
 		
 		$url = "https://api.lufthansa.com/v1/operations/flightstatus/LH".$numvol."/".$check_date->format('Y-m-d');
@@ -1098,11 +1099,11 @@ class Schedule {
 	}
 }
 
-/*
+  /*
 $Schedule = new Schedule();
 //print_r($Schedule->fetchSchedule('HV5661'));
 //print_r($Schedule->getFlightAware('AF1179'));
 //print_r($Schedule->getBritishAirways('BAW551'));
-print_r($Schedule->getLufthansa('BAW551'));
+print_r($Schedule->getLufthansa('LH551'));
 */
 ?>

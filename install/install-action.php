@@ -303,7 +303,7 @@ if (isset($_GET['reset'])) {
 	    $Source = new Source();
 	    $Source->deleteAllLocation();
 	    foreach ($sources as $src) {
-		if (isset($src['latitude']) && $src['latitude'] != '') $Source->addLocation($src['name'],$src['latitude'],$src['longitude'],$src['altitude'],$src['city'],$src['country'],'antenna.png');
+		if (isset($src['latitude']) && $src['latitude'] != '') $Source->addLocation($src['name'],$src['latitude'],$src['longitude'],$src['altitude'],$src['city'],$src['country'],$src['source'],'antenna.png');
 	    }
 	    $_SESSION['done'] = array_merge($_SESSION['done'],array('Insert data in source table'));
 	    unset($_SESSION['sources']);

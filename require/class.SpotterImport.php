@@ -14,6 +14,7 @@ class SpotterImport {
     private $last_delete = '';
     private $stats = array();
     private $tmd = 0;
+    private $source_locatioon = array();
     public $db = null;
     public $nb = 0;
 
@@ -789,14 +790,20 @@ class SpotterImport {
 				if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE && $line['format_source'] != 'aprs') {
 					$source = $this->all_flights[$id]['source_name'];
 					if ($source == '') $source = $this->all_flights[$id]['format_source'];
-					$Location = new Source();
-					$coord = $Location->getLocationInfobyName($source);
-					if (count($coord) > 0) {
-						$latitude = $coord[0]['latitude'];
-						$longitude = $coord[0]['longitude'];
+					if (!isset($source_location[$source])) {
+						$Location = new Source();
+						$coord = $Location->getLocationInfobySourceName($source);
+						if (count($coord) > 0) {
+							$latitude = $coord[0]['latitude'];
+							$longitude = $coord[0]['longitude'];
+						} else {
+							$latitude = $globalCenterLatitude;
+							$longitude = $globalCenterLongitude;
+						}
+						$source_location[$source] = array('latitude' => $latitude,'longitude' => $longitude);
 					} else {
-						$latitude = $globalCenterLatitude;
-						$longitude = $globalCenterLongitude;
+						$latitude = $source_location[$source]['latitude'];
+						$longitude = $source_location[$source]['longitude'];
 					}
 					$stats_heading = $Common->getHeading($latitude,$longitude,$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']);
 					//$stats_heading = $stats_heading%22.5;

@@ -284,6 +284,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<th>Altitude</th>
 					<th>City</th>
 					<th>Country</th>
+					<th>Source name</th>
 				</tr>
 		<?php
 		    require_once(dirname(__FILE__).'/../require/class.Connection.php');
@@ -303,6 +304,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<td><input type="text" name="source_altitude[]" value="<?php print $location['altitude']; ?>" /></td>
 					<td><input type="text" name="source_city[]" value="<?php print $location['city']; ?>" /></td>
 					<td><input type="text" name="source_country[]" value="<?php print $location['country']; ?>" /></td>
+					<td><input type="text" name="source_ref[]" value="<?php print $location['source']; ?>" /></td>
 				</tr>
 		
 		<?php
@@ -318,6 +320,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<td><input type="text" name="source_altitude[]" value="" /></td>
 					<td><input type="text" name="source_city[]" value="" /></td>
 					<td><input type="text" name="source_country[]" value="" /></td>
+					<td><input type="text" name="source_ref[]" value="" /></td>
 				</tr>
 			</table>
 			<center>
@@ -557,7 +560,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 							</tr>
 						</tbody>
 					</table>
-				<p class="help-block">For working source statistics, the name of the source <b>MUST</b> be the same as the name of a source location, else center coverage latitude and longitude is used as source position.</p>
+				<p class="help-block">For working source statistics, the name of the source <b>MUST</b> be the same as the source name of a source location, else center coverage latitude and longitude is used as source position.</p>
 				</fieldset>
 			</fieldset>
 			<div id="acars_data">
@@ -895,13 +898,14 @@ if (isset($_POST['dbtype'])) {
 	$source_altitude = $_POST['source_altitude'];
 	$source_city = $_POST['source_city'];
 	$source_country = $_POST['source_country'];
+	$source_ref = $_POST['source_ref'];
 	if (isset($source_id)) $source_id = $_POST['source_id'];
 	else $source_id = array();
 	
 	$sources = array();
 	foreach ($source_name as $keys => $name) {
-	    if (isset($source_id[$keys])) $sources[] = array('name' => $name,'latitude' => $source_latitude[$keys],'longitude' => $source_longitude[$keys],'altitude' => $source_altitude[$keys],'city' => $source_city[$keys],'country' => $source_country[$keys],'id' => $source_id[$keys]);
-	    else $sources[] = array('name' => $name,'latitude' => $source_latitude[$keys],'longitude' => $source_longitude[$keys],'altitude' => $source_altitude[$keys],'city' => $source_city[$keys],'country' => $source_country[$keys]);
+	    if (isset($source_id[$keys])) $sources[] = array('name' => $name,'latitude' => $source_latitude[$keys],'longitude' => $source_longitude[$keys],'altitude' => $source_altitude[$keys],'city' => $source_city[$keys],'country' => $source_country[$keys],'id' => $source_id[$keys],'source' => $source_ref[$keys]);
+	    else $sources[] = array('name' => $name,'latitude' => $source_latitude[$keys],'longitude' => $source_longitude[$keys],'altitude' => $source_altitude[$keys],'city' => $source_city[$keys],'country' => $source_country[$keys],'source' => $source_ref[$keys]);
 	}
 	if (count($sources) > 0) $_SESSION['sources'] = $sources;
 
