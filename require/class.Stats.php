@@ -1029,7 +1029,7 @@ class Stats {
 				foreach ($alldata as $number) {
 					$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name']);
 				}
-				$alldata = $Spotter->countAllAircraftRegistration(false,$globalArchiveMonths);
+				$alldata = $Spotter->countAllAircraftRegistrations(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
 					$this->addStatAircraftRegistration($number['registration'],$number['aircraft_registration_count'],$number['aircraft_icao']);
 				}
