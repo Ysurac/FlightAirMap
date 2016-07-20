@@ -3947,7 +3947,7 @@ class Spotter{
 					WHERE Within(GeomFromText(CONCAT('POINT(',s.longitude,' ',s.latitude,')')), ogc_geom) ";
 		*/
 		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb 
-					FROM countries c, spotter_output s
+					FROM countries c, spotter_live s
 					WHERE c.iso2 = s.over_country ";
                 if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
