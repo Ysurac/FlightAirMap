@@ -570,9 +570,9 @@ class Stats {
 	public function getStatsAircraftTotal() {
     		global $globalArchiveMonths, $globalDBdriver;
     		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT SUM(cnt) as total FROM stats_aircraft AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
+			$query = "SELECT SUM(cnt) as total FROM stats_aircraft WHERE stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
                 } else {
-			$query = "SELECT SUM(cnt) as total FROM stats_aircraft AND stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS'";
+			$query = "SELECT SUM(cnt) as total FROM stats_aircraft WHERE stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS'";
                 }
                  try {
                         $sth = $this->db->prepare($query);
@@ -586,9 +586,9 @@ class Stats {
 	public function getStatsAirlineTotal() {
     		global $globalArchiveMonths, $globalDBdriver;
     		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT SUM(cnt) as total FROM stats_airline AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
+			$query = "SELECT SUM(cnt) as total FROM stats_airline WHERE stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
                 } else {
-			$query = "SELECT SUM(cnt) as total FROM stats_airline AND stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS'";
+			$query = "SELECT SUM(cnt) as total FROM stats_airline WHERE stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS'";
                 }
                  try {
                         $sth = $this->db->prepare($query);
@@ -602,9 +602,9 @@ class Stats {
 	public function getStatsOwnerTotal() {
     		global $globalArchiveMonths, $globalDBdriver;
     		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT SUM(cnt) as total FROM stats_owner AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
+			$query = "SELECT SUM(cnt) as total FROM stats_owner WHERE stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
 		} else {
-			$query = "SELECT SUM(cnt) as total FROM stats_owner AND stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS'";
+			$query = "SELECT SUM(cnt) as total FROM stats_owner WHERE stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS'";
                 }
                  try {
                         $sth = $this->db->prepare($query);
@@ -618,9 +618,9 @@ class Stats {
 	public function getStatsPilotTotal() {
     		global $globalArchiveMonths, $globalDBdriver;
     		if ($globalDBdriver == 'mysql') {
-            		$query = "SELECT SUM(cnt) as total FROM stats_pilot AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
+            		$query = "SELECT SUM(cnt) as total FROM stats_pilot WHERE stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
             	} else {
-            		$query = "SELECT SUM(cnt) as total FROM stats_pilot AND stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS'";
+            		$query = "SELECT SUM(cnt) as total FROM stats_pilot WHERE stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS'";
             	}
                  try {
                         $sth = $this->db->prepare($query);
