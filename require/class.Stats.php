@@ -1077,7 +1077,7 @@ class Stats {
 				$pdata = $Spotter->countAllArrivalAirports(false,$globalArchiveMonths);
         			$dall = $Spotter->countAllDetectedArrivalAirports(false,$globalArchiveMonths);
 	        		$alldata = array();
-    				foreach ($pall as $value) {
+    				foreach ($pdata as $value) {
 	        			$icao = $value['airport_arrival_icao'];
     					$alldata[$icao] = $value;
 	        		}
