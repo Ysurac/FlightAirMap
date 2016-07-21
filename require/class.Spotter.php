@@ -5707,6 +5707,7 @@ class Spotter{
 	*/
 	public function countAllArrivalAirports($limit = true, $olderthanmonths = 0, $sincedate = '', $icaoaskey = false)
 	{
+		global $globalDBdriver;
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
 								FROM spotter_output 
                     WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' ";
@@ -5768,6 +5769,7 @@ class Spotter{
 	*/
 	public function countAllDetectedArrivalAirports($limit = true, $olderthanmonths = 0, $sincedate = '',$icaoaskey = false)
 	{
+		global $globalDBdriver;
 		$query  = "SELECT DISTINCT spotter_output.real_arrival_airport_icao as arrival_airport_icao, COUNT(spotter_output.real_arrival_airport_icao) AS airport_arrival_icao_count, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country 
 			FROM spotter_output, airport 
                     WHERE spotter_output.real_arrival_airport_icao <> '' AND spotter_output.real_arrival_airport_icao <> 'NA' AND airport.icao = spotter_output.real_arrival_airport_icao ";
