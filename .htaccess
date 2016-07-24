@@ -36,6 +36,8 @@ RewriteRule ^redirect/([^/]+)(/?)$ redirect.php?flightaware_id=$1 [L,NC]
 ########### LIVE ###########
 
 RewriteRule ^live/geojson(/?)$ live-geojson.php [L,NC]
+RewriteRule ^polar/geojson(/?)$ polar-geojson.php [L,NC]
+RewriteRule ^atc/geojson(/?)$ atc-geojson.php [L,NC]
 
 
 ########### SEARCH ###########

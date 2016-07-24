@@ -52,6 +52,12 @@ location /redirect {
 location /live {
     rewrite ^/live/geojson(/?)$ /live-geojson.php last;
 }
+location /polar {
+    rewrite ^/polar/geojson(/?)$ /polar-geojson.php last;
+}
+location /atc {
+    rewrite ^/atc/geojson(/?)$ /atc-geojson.php last;
+}
 location /search {
     rewrite ^/search/csv(/?)$ /search-csv.php last;
     rewrite ^/search/json(/?)$ /search-json.php last;

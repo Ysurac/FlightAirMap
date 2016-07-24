@@ -43,7 +43,8 @@ var weatherclouds;
 var weathercloudsrefresh;
 
 var geojsonLayer;
-
+var atcLayer;
+var polarLayer;
 var weatherradar;
 waypoints = '';
 var weatherradarrefresh;
@@ -1161,6 +1162,16 @@ reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php print $
 ?>
 //then load it again every 30 seconds
 reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+
+<?php
+		if (!((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) && (isset($_COOKIE['polar']) && $_COOKIE['polar'] == 'true')) {
+?>
+update_polarLayer();
+setInterval(function(){map.removeLayer(polarLayer);update_polarLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
+<?php
+		}
+?>
+
 <?php
 	}
 ?>
@@ -1331,6 +1342,16 @@ function update_atcLayer() {
 	}
     }).addTo(map);
 };
+
+function update_polarLayer() {
+    polarLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/polar-geojson.php",{
+	style: function(feature) {
+	    return feature.properties.style
+	}
+    }).addTo(map);
+};
+
+
 });
 
 
@@ -1438,6 +1459,10 @@ function clickFlightRoute(cb) {
 }
 function clickFlightEstimation(cb) {
     document.cookie =  'flightestimation='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
+function clickPolar(cb) {
+    document.cookie =  'polar='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
 }
 function unitdistance(selectObj) {

@@ -337,7 +337,12 @@ $output = '{';
 			}
 */
 				//if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || (!isset($_COOKIE['flightpath']) && (!isset($globalMapHistory) || $globalMapHistory || $allhistory) || (isset($_GET['history']) && $_GET['history'] != '' && $_GET['history'] != 'NA' && ($_GET['history'] == $spotter_item['ident'] || $_GET['history'] == $spotter_item['flightaware_id'])))) {
-				if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || (!isset($_COOKIE['flightpath']) && (!isset($globalMapHistory) || $globalMapHistory || $allhistory) || (isset($_GET['history']) && $_GET['history'] != '' && $_GET['history'] != 'NA' && ($_GET['history'] == $spotter_item['ident'] || $_GET['history'] == $spotter_item['flightaware_id']))) || (isset($_GET['history']) && $_GET['history'] == '' && isset($_GET['flightaware_id']) && $_GET['flightaware_id'] == $spotter_item['flightaware_id'])) {
+				//if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || (!isset($_COOKIE['flightpath']) && (!isset($globalMapHistory) || $globalMapHistory || $allhistory) || (isset($_GET['history']) && $_GET['history'] != '' && $_GET['history'] != 'NA' && ($_GET['history'] == $spotter_item['ident'] || $_GET['history'] == $spotter_item['flightaware_id']))) || (isset($_GET['history']) && $_GET['history'] == '' && isset($_GET['flightaware_id']) && $_GET['flightaware_id'] == $spotter_item['flightaware_id'])) {
+				$history = filter_input(INPUT_GET,'history',FILTER_SANITIZE_STRING);
+				if ($history == '' && isset($_COOKIE['history'])) $history = $_COOKIE['history'];
+				if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || (!isset($_COOKIE['flightpath']) && (!isset($globalMapHistory) || $globalMapHistory || $allhistory) 
+				|| (isset($history) && $history != '' && $history != 'NA' && ($history == $spotter_item['ident'] || $history == $spotter_item['flightaware_id']))) 
+				|| (isset($history) && $history == '' && isset($_GET['flightaware_id']) && $_GET['flightaware_id'] == $spotter_item['flightaware_id'])) {
                                     if ($from_archive) {
 					    $spotter_history_array = $SpotterArchive->getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
                                     } else {
@@ -379,7 +384,7 @@ $output = '{';
 				}
 				}
 				
-				if (isset($_GET['history']) && $_GET['history'] == $spotter_item['ident'] && isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != 'NA' && isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != 'NA' && ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == "true") || (!isset($_COOKIE['MapRoute']) && (!isset($globalMapRoute) || (isset($globalMapRoute) && $globalMapRoute))))) {
+				if (isset($history) && $history == $spotter_item['ident'] && isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != 'NA' && isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != 'NA' && ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == "true") || (!isset($_COOKIE['MapRoute']) && (!isset($globalMapRoute) || (isset($globalMapRoute) && $globalMapRoute))))) {
 				    $output_air = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "route"},"geometry": {"type": "LineString","coordinates": [';
 				    if (isset($spotter_item['departure_airport_latitude'])) {
 					$output_air .= '['.$spotter_item['departure_airport_longitude'].','.$spotter_item['departure_airport_latitude'].'],';

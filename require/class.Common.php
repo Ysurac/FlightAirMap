@@ -300,5 +300,32 @@ class Common {
 		$longitude2 = $longitude + atan2( sin($bearing)*sin($distance/$r)*cos($latitude), cos($distance/$r)-(sin($latitude)*sin($latitude2)) );
 		return array('latitude' => number_format(rad2deg($latitude2),5,'.',''),'longitude' => number_format(rad2deg($longitude2),5,'.',''));
 	}
+	
+	function getCoordfromDistanceBearing($latitude,$longitude,$bearing,$distance) {
+		// distance in meter
+		$R = 6378.14;
+		$latitude1 = $latitude * (M_PI/180);
+		$longitude1 = $longitude * (M_PI/180);
+		$brng = $bearing * (M_PI/180);
+		$d = $distance;
+
+		$latitude2 = asin(sin($latitude1)*cos($d/$R) + cos($latitude1)*sin($d/$R)*cos($brng));
+		$longitude2 = $longitude1 + atan2(sin($brng)*sin($d/$R)*cos($latitude1),cos($d/$R)-sin($latitude1)*sin($latitude2));
+
+		$latitude2 = $latitude2 * (180/M_PI);
+		$longitude2 = $longitude2 * (180/M_PI);
+
+		$flat = round ($latitude2,6);
+		$flong = round ($longitude2,6);
+/*
+		$dx = $distance*cos($bearing);
+		$dy = $distance*sin($bearing);
+		$dlong = $dx/(111320*cos($latitude));
+		$dlat = $dy/110540;
+		$flong = $longitude + $dlong;
+		$flat = $latitude + $dlat;
+*/
+		return array('latitude' => $flat,'longitude' => $flong);
+	}
 }
 ?>

@@ -5,6 +5,8 @@
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
 $current_page = $file_path['filename'];
 date_default_timezone_set($globalTimezone);
+if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
+else $MapType = $globalMapProvider;
 ?>
 <!DOCTYPE html>
 <html>
@@ -73,7 +75,7 @@ if (strtolower($current_page) == "index")
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
 <?php
-    if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '') {
+    if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
 ?>
 <script src="http://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
@@ -89,7 +91,7 @@ if (strtolower($current_page) == "index")
     }
 ?>
 <?php
-    if (isset($globalMapQuestKey) && $globalMapQuestKey != '') {
+    if (isset($globalMapQuestKey) && $globalMapQuestKey != '' && ($MapType == 'MapQuest-OSM' || $MapType == 'MapQuest-Roadmap' || $MapType == 'MapQuest-Aerial')) {
 ?>
 <!--<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>-->
 <script src="https://open.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>
@@ -103,13 +105,30 @@ if (strtolower($current_page) == "index")
 <?php
     }
 ?>
-
+<?php
+    if ($MapType == 'Yandex') {
+?>
 <script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
+<?php
+    }
+?>
 <?php 
     if (isset($_POST['archive'])) {
 ?>
+<?php
+	if (isset($globalBeta) && $globalBeta) {
+?>
+<script src="<?php print $globalURL; ?>/js/leaflet-playback.js"></script>
+<script src="<?php print $globalURL; ?>/js/map.new.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
+<?php
+	} else {
+?>
+
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
+<?php
+	}
+?>
 <?php    
     } else {
 ?>
