@@ -109,6 +109,8 @@ class Common {
 			$tdi=array_filter($tdi);
 			$tabledata[]=array_merge($td,$tdi);
 		}
+		$html->clear();
+		unset($html);
 		return(array_filter($tabledata));
 	}
 	
@@ -124,6 +126,8 @@ class Common {
 		{
 			$tabledata [] = trim($element->plaintext);
 		}
+		$html->clear();
+		unset($html);
 		return(array_filter($tabledata));
 	}
 
