@@ -117,7 +117,7 @@ if (isset($_POST['airport']))
 		$firstLetter = mb_strtoupper(mb_substr($value['airport_city'], 0, 1));
 		if($previous !== $firstLetter)
 		{
-			if ($previous != null){
+			if ($previous !== null){
 				print ' | ';
 			}
 			print '<a href="#'.$firstLetter.'">'.$firstLetter.'</a>';
@@ -132,7 +132,7 @@ if (isset($_POST['airport']))
 		{
 			if($previous !== $firstLetter)
 			{
-				if ($previous != null){
+				if ($previous !== null){
 					print '</div>';
 				}
 				print '<a name="'.$firstLetter.'"></a><h4 class="alphabet-header">'.$firstLetter.'</h4><div class="alphabet">';

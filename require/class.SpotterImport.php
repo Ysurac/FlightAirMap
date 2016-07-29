@@ -544,7 +544,7 @@ class SpotterImport {
 		    //} elseif ($globalDebug) echo "!!! Strange altitude data... not added.\n";
   		}
 
-		if (isset($line['noarchive']) && $line['noarchive'] == true) {
+		if (isset($line['noarchive']) && $line['noarchive'] === true) {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('noarchive' => true));
 		}
 		
@@ -569,7 +569,7 @@ class SpotterImport {
 		//gets the callsign from the last hour
 		//if (time()-$this->all_flights[$id]['lastupdate'] > 30 && $dataFound == true && $this->all_flights[$id]['ident'] != '' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
 		//if ($dataFound == true && isset($this->all_flights[$id]['hex']) && $this->all_flights[$id]['ident'] != '' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
-		if ($dataFound == true && isset($this->all_flights[$id]['hex']) && $this->all_flights[$id]['heading'] != '' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
+		if ($dataFound === true && isset($this->all_flights[$id]['hex']) && $this->all_flights[$id]['heading'] != '' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
 		    $this->all_flights[$id]['lastupdate'] = time();
 		    if ($this->all_flights[$id]['addedSpotter'] == 0) {
 		        if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {

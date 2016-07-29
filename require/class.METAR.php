@@ -277,7 +277,7 @@ class METAR {
                         return "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if ((!isset($globalMETARcyle) || $globalMETARcycle == false) && count($all) == 0) {
+                if ((!isset($globalMETARcyle) || $globalMETARcycle === false) && count($all) == 0) {
             		$all = $this->downloadMETAR($icao);
                 }
                 return $all;

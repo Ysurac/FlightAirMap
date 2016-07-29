@@ -152,7 +152,7 @@ if (strtolower($current_page) == "search")
 	print '</thead>';
 } else {
 
-	if ($hide_th_links == true){
+	if ($hide_th_links === true){
 		print '<thead>';
 		print '<th class="aircraft_thumbnail"></th>';
 		if ($_GET['sort'] == "airline_name_asc")
@@ -339,7 +339,7 @@ foreach($spotter_array as $spotter_item)
 	{
 		date_default_timezone_set($globalTimezone);
 	} else date_default_timezone_set('UTC');
-	if ($showSpecial == true)
+	if ($showSpecial === true)
 	{
 		print '<tr class="special">'."\n";
 		print '<td colspan="9"><h4>'.$spotter_item['registration'].' - '.$spotter_item['highlight'].'</h4></td>'."\n";

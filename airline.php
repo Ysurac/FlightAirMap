@@ -52,7 +52,7 @@ if (isset($_POST['airline']))
 		$firstLetter = mb_strtoupper(mb_substr($value['airline_name'], 0, 1),'UTF-8');
 		if($previous !== $firstLetter)
 		{
-			if ($previous != null) print ' | ';
+			if ($previous !== null) print ' | ';
 			print '<a href="#'.$firstLetter.'">'.$firstLetter.'</a>';
 		}
 		$previous = $firstLetter;
@@ -65,7 +65,7 @@ if (isset($_POST['airline']))
 		{
 			if($previous !== $firstLetter)
 			{
-				if ($previous != null) print '</div>';
+				if ($previous !== null) print '</div>';
 				print '<a name="'.$firstLetter.'"></a><h4 class="alphabet-header">'.$firstLetter.'</h4><div class="alphabet">';
 			}
 			$previous = $firstLetter;

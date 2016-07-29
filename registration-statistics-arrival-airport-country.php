@@ -25,7 +25,7 @@ if (!empty($spotter_array))
 	include('registration-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Arrival Airports by Country").'</h2>';
-	print '<p>'.sprintf(_("The statistic below shows all arrival airports by Country of origin of flights with aircraft registration <strong>%s</strong>."),$registration.'</p>';
+	print '<p>'.sprintf(_("The statistic below shows all arrival airports by Country of origin of flights with aircraft registration <strong>%s</strong>."),$registration).'</p>';
 	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByRegistration($registration);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>

@@ -48,7 +48,7 @@ class Connection{
 			$globalDBSname = $globalDBname;
 			$globalDBSuser = $globalDBuser;
 			$globalDBSpass = $globalDBpass;
-			if (!isset($globalDBport) || $globalDBport == NULL) $globalDBSport = 3306;
+			if (!isset($globalDBport) || $globalDBport === NULL) $globalDBSport = 3306;
 			else $globalDBSport = $globalDBport;
 		} else {
 			$globalDBSdriver = $globalDB[$DBname]['driver'];
@@ -60,7 +60,7 @@ class Connection{
 			else $globalDBSport = 3306;
 		}
 		// Set number of try to connect to DB
-		if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry == null) $globalDBretry = 5;
+		if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry === NULL) $globalDBretry = 5;
 		$i = 0;
 		while (true) {
 			try {
@@ -184,7 +184,8 @@ class Connection{
 			return "error : ".$e->getMessage()."\n";
 		}
 		$columns = array();
-		for ($i = 0; $i < $results->columnCount(); $i++) {
+		$colcnt = $results->columnCount();
+		for ($i = 0; $i < $colcnt; $i++) {
 			$col = $results->getColumnMeta($i);
 			$columns[] = $col['name'];
 		}
@@ -203,7 +204,8 @@ class Connection{
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage()."\n";
 		}
-		for ($i = 0; $i < $results->columnCount(); $i++) {
+		$colcnt = $results->columnCount();
+		for ($i = 0; $i < $colcnt; $i++) {
 			$col = $results->getColumnMeta($i);
 			if ($name == $col['name']) return true;
 		}
