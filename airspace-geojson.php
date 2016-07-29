@@ -50,12 +50,6 @@ if (isset($_GET['coord']))
 	}
 }
 
-function wkb_to_json($wkb) {
-	$geom = geoPHP::load($wkb,'wkb');
-	return $geom->out('json');
-}
-      
-
 $geojson = array(
     'type' => 'FeatureCollection',
     'features' => array()
@@ -64,23 +58,19 @@ $geojson = array(
 while ($row = $sth->fetch(PDO::FETCH_ASSOC))
 {
 		date_default_timezone_set('UTC');
-		//var_dump($row);
 		$properties = $row;
 		unset($properties['wkb']);
 		unset($properties['SHAPE']);
 		if ($globalDBdriver == 'mysql') {
-			$feature = array(
-			    'type' => 'Feature',
-			    'geometry' => json_decode(wkb_to_json($row['wkb'])),
-			    'properties' => $properties
-			);
+			$geom = geoPHP::load($row['wkb']);
 		} else {
-			$feature = array(
-			    'type' => 'Feature',
-			    'geometry' => json_decode(wkb_to_json(stream_get_contents($row['wkb']))),
-			    'properties' => $properties
-			);
+			$geom = geoPHP::load(stream_get_contents($row['wkb']));
 		}
+		$feature = array(
+		    'type' => 'Feature',
+		    'geometry' => json_decode($geom->out('json')),
+		    'properties' => $properties
+		);
 		array_push($geojson['features'], $feature);
 }
 print json_encode($geojson, JSON_NUMERIC_CHECK);

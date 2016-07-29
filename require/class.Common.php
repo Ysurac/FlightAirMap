@@ -227,7 +227,8 @@ class Common {
 	*/
 	public function hex2str($hex) {
 		$str = '';
-		for($i=0;$i<strlen($hex);$i+=2) $str .= chr(hexdec(substr($hex,$i,2)));
+		$hexln = strlen($hex);
+		for($i=0;$i<$hexln;$i+=2) $str .= chr(hexdec(substr($hex,$i,2)));
 		return $str;
 	}
 	
