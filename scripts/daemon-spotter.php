@@ -74,11 +74,10 @@ $use_aprs = false;
 function create_socket($host, $port, &$errno, &$errstr) {
     $ip = gethostbyname($host);
     $s = socket_create(AF_INET, SOCK_STREAM, 0);
-    if (socket_set_nonblock($s)) {
-        $r = @socket_connect($s, $ip, $port);
-        if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
-            return $s;
-        }
+    if (!socket_set_nonblock($s)) echo "Unable to set nonblock on socket\n";
+    $r = @socket_connect($s, $ip, $port);
+    if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
+        return $s;
     }
     $errno = socket_last_error($s);
     $errstr = socket_strerror($errno);
