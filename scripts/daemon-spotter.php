@@ -188,7 +188,7 @@ function connect_all($hosts) {
 		}
 		if ($globalDebug) echo 'Connection in progress to '.$host.'('.$globalSources[$id]['format'].')....'."\n";
             } else {
-		if ($globalDebug) echo 'Connection failed to '.$host.' : '.$errno.' '.$errstr."\n";
+		if ($globalDebug) echo 'Connection failed to '.$host.':'.$port.' : '.$errno.' '.$errstr."\n";
     	    }
         }
     }
