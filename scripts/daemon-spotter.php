@@ -207,7 +207,6 @@ else $timeout = 20;
 $errno = '';
 $errstr='';
 
-$_ = $_SERVER['_'];
 if (!isset($globalDaemon)) $globalDaemon = TRUE;
 /* Initiate connections to all the hosts simultaneously */
 //connect_all($hosts);
@@ -652,7 +651,6 @@ while ($i > 0) {
 	    if ($e != NULL) var_dump($e);
 	    if ($n > 0) {
 		foreach ($read as $nb => $r) {
-		    //var_dump($read);
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
         	    $buffer = socket_read($r, 6000,PHP_NORMAL_READ);
@@ -753,7 +751,6 @@ while ($i > 0) {
 			    }
 			} else {
 			    $line = explode(',', $buffer);
-			    //print_r($line);
     			    if (count($line) > 20) {
     			    	$data['hex'] = $line[4];
     				/*
@@ -781,7 +778,6 @@ while ($i > 0) {
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
     				$data['id_source'] = $id_source;
-    				//print_r($line);
     				$send = $SI->add($data);
     				unset($data);
     			    } else $error = true;
