@@ -74,8 +74,8 @@ $use_aprs = false;
 function create_socket($host, $port, &$errno, &$errstr) {
     $ip = gethostbyname($host);
     $s = socket_create(AF_INET, SOCK_STREAM, 0);
-    if (!socket_set_nonblock($s)) echo "Unable to set nonblock on socket\n";
     $r = @socket_connect($s, $ip, $port);
+    if (!socket_set_nonblock($s)) echo "Unable to set nonblock on socket\n";
     if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
         return $s;
     }
@@ -212,11 +212,13 @@ if (!isset($globalDaemon)) $globalDaemon = TRUE;
 connect_all($globalSources);
 
 // APRS Configuration
-foreach ($globalSources as $source) {
+foreach ($globalSources as $key => $source) {
     if (isset($source['format']) && $source['format'] == 'aprs') {
 	$aprs_connect = 0;
 	$use_aprs = true;
 	break;
+    } elseif (!isset($source['format'])) {
+        $globalSources[$key]['format'] = 'auto';
     }
 }
 
