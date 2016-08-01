@@ -213,7 +213,7 @@ connect_all($globalSources);
 
 // APRS Configuration
 foreach ($globalSources as $source) {
-    if ($source['format'] == 'aprs') {
+    if (isset($source['format']) && $source['format'] == 'aprs') {
 	$aprs_connect = 0;
 	$use_aprs = true;
 	break;
