@@ -5,7 +5,6 @@ require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.Translation.php');
 require_once(dirname(__FILE__).'/class.Common.php');
 require_once(dirname(__FILE__).'/libs/uagent/uagent.php');
-// FIXME : timezones ?!
 
 class Schedule {
 	protected $cookies = array();
@@ -92,7 +91,6 @@ class Schedule {
 				}
 			}
 		} else {
-			//$query = 'INSERT INTO  schedule (ident,departure_airport_icao, departure_airport_time, arrival_airport_icao, arrival_airport_time,date_added,source)  VALUES (:ident,:departure_airport_icao,:departure_airport_time,:arrival_airport_icao,:arrival_airport_time,:date,:source)';
 			$query = 'INSERT INTO  routes (CallSign,FromAirport_ICAO, FromAirport_Time, ToAirport_ICAO, ToAirport_Time,date_added,source)  VALUES (:ident,:departure_airport_icao,:departure_airport_time,:arrival_airport_icao,:arrival_airport_time,:date,:source)';
 			$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time, ':date' => $date, ':source' => $source);
 			 try {
@@ -101,13 +99,11 @@ class Schedule {
 			} catch(PDOException $e) {
 				return "error : ".$e->getMessage();
 			}
-			// FIXME : add to routes
 		}
         
 	}
 
 	public function getSchedule($ident) {
-	        //$query = "SELECT * FROM schedule WHERE ident = :ident LIMIT 1";
 	        $Translation = new Translation($this->db);
 	        $operator = $Translation->checkTranslation($ident,false);
 	        if ($ident != $operator) {

@@ -61,7 +61,7 @@ class aprs {
 		elseif (time() - 82500 > $timestamp) $timestamp += 86400;
 		*/
 	    } elseif ($matches[4] == 'z' || $matches[4] == '/') {
-		// FIXME : fix this...
+		// This work or not ?
 		$timestamp = strtotime($matches[1].' '.$matches[2].':'.$matches[3]);
 	    }
 	    $body_parse = substr($body_parse,7);

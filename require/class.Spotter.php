@@ -7498,8 +7498,6 @@ class Spotter{
 								ORDER BY year_name, month_name ASC";
 			$query_data = array(':offset' => $offset);
 		} elseif ($globalDBdriver == 'pgsql') {
-			// FIXME : not working
-			//$query  = "SELECT spotter_output.date AT TIME ZONE INTERVAL :offset AS date_name, count(*) as date_count
 			$query  = "SELECT EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name, count(*) as date_count
 								FROM spotter_output 
 								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 YEARS'

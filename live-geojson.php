@@ -282,7 +282,7 @@ $output = '{';
 						if (isset($spotter_item['acars'])) {
 							$output .= '"acars": "'.trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"), '<br />',$spotter_item['acars']['message'])).'",';
 						}
-							// FIXME : type when not aircraft ?
+						// type when not aircraft ?
 						if ($compress) $output .= '"t": "aircraft"';
 						else $output .= '"type": "aircraft"';
 						$output .= '},';

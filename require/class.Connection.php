@@ -75,8 +75,8 @@ class Connection{
 					else $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,$globalDBPersistent);
 					$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 					$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-					// FIXME : Workaround against "ONLY_FULL_GROUP_BY" mode
-					//$this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY"');
+					// Workaround against "ONLY_FULL_GROUP_BY" mode
+					// to enable it : $this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY"');
 					$this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"');
 				} else {
 					$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;port=$globalDBSport;dbname=$globalDBSname;options='--client_encoding=utf8'", $globalDBSuser,  $globalDBSpass);

@@ -65,7 +65,7 @@ class SpotterImport {
 		    if ($globalDebug) echo "-> Schedule info for ".$operator." (".$ident.")\n";
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('departure_airport_time' => $schedule['DepartureTime']));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('arrival_airport_time' => $schedule['ArrivalTime']));
-		    // FIXME : Check if route schedule = route from DB
+		    // Should also check if route schedule = route from DB
 		    if ($schedule['DepartureAirportIATA'] != '') {
 			if ($this->all_flights[$id]['departure_airport'] != $Spotter->getAirportIcao($schedule['DepartureAirportIATA'])) {
 			    $airport_icao = $Spotter->getAirportIcao($schedule['DepartureAirportIATA']);
@@ -172,7 +172,6 @@ class SpotterImport {
             		$SpotterLive->deleteLiveSpotterDataById($this->all_flights[$key]['id']);
 			$SpotterLive->db = null;
 			*/
-            		// FIXME : Add check on ground if available
             		$real_arrival = $this->arrival($key);
             		$Spotter = new Spotter($this->db);
             		if ($this->all_flights[$key]['latitude'] != '' && $this->all_flights[$key]['longitude'] != '') {

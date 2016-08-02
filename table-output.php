@@ -2,7 +2,6 @@
 print '<div class="table-responsive">';
 print '<table class="table-striped">';
 
-// FIXME : Dirty Hacks
 if (!isset($_GET['sort'])) 
 {
 	$_GET['sort'] = '';
