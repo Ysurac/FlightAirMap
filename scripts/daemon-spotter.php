@@ -325,7 +325,7 @@ while ($i > 0) {
 			$data['datetime'] = date('Y-m-d H:i:s');
 			//$data['datetime'] = date('Y-m-d H:i:s',strtotime($line[37]));
 		        $data['departure_airport_icao'] = $line[11];
-		        $data['departure_airport_time'] = $line[22]; // FIXME put a :
+		        $data['departure_airport_time'] = rtrim(chunk_split($line[22],2,':'),':');
 		        $data['arrival_airport_icao'] = $line[13];
 			$data['frequency'] = $line[4];
 			$data['type'] = $line[18];
