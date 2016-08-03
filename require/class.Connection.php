@@ -6,11 +6,15 @@ class Connection{
 	public $dbs = array();
 	public $latest_schema = 23;
 	
-	public function __construct($dbc = null,$dbname = null) {
+	public function __construct($dbc = null,$dbname = null,$user = null,$pass = null) {
 	    global $globalDBdriver;
 	    if ($dbc === null) {
 		if ($this->db === null && $dbname === null) {
-		    $this->createDBConnection();
+		    if ($user === null && $pass === null) {
+			$this->createDBConnection();
+		    } else {
+			$this->createDBConnection(null,$user,$pass);
+		    }
 		} else {
 		    $this->createDBConnection($dbname);
 		}
@@ -38,25 +42,36 @@ class Connection{
 	*
 	*/
 
-	public function createDBConnection($DBname = null)
+	public function createDBConnection($DBname = null, $user = null, $pass = null)
 	{
 		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB, $globalDBport, $globalDBTimeOut, $globalDBretry, $globalDBPersistent;
 		if ($DBname === null) {
-			$DBname = 'default';
-			$globalDBSdriver = $globalDBdriver;
-			$globalDBShost = $globalDBhost;
-			$globalDBSname = $globalDBname;
-			$globalDBSuser = $globalDBuser;
-			$globalDBSpass = $globalDBpass;
-			if (!isset($globalDBport) || $globalDBport === NULL || $globalDBport = '') $globalDBSport = 3306;
-			else $globalDBSport = $globalDBport;
+			if ($user === null && $pass === null) {
+				$DBname = 'default';
+				$globalDBSdriver = $globalDBdriver;
+				$globalDBShost = $globalDBhost;
+				$globalDBSname = $globalDBname;
+				$globalDBSuser = $globalDBuser;
+				$globalDBSpass = $globalDBpass;
+				if (!isset($globalDBport) || $globalDBport === NULL || $globalDBport = '') $globalDBSport = 3306;
+				else $globalDBSport = intval($globalDBport);
+			} else {
+				$DBname = 'default';
+				$globalDBSdriver = $globalDBdriver;
+				$globalDBShost = $globalDBhost;
+				$globalDBSname = $globalDBname;
+				$globalDBSuser = $user;
+				$globalDBSpass = $pass;
+				if (!isset($globalDBport) || $globalDBport === NULL || $globalDBport = '') $globalDBSport = 3306;
+				else $globalDBSport = intval($globalDBport);
+			}
 		} else {
 			$globalDBSdriver = $globalDB[$DBname]['driver'];
 			$globalDBShost = $globalDB[$DBname]['host'];
 			$globalDBSname = $globalDB[$DBname]['name'];
 			$globalDBSuser = $globalDB[$DBname]['user'];
 			$globalDBSpass = $globalDB[$DBname]['pass'];
-			if (isset($globalDB[$DBname]['port'])) $globalDBSport = $globalDB[$DBname]['port'];
+			if (isset($globalDB[$DBname]['port'])) $globalDBSport = intval($globalDB[$DBname]['port']);
 			else $globalDBSport = 3306;
 		}
 		// Set number of try to connect to DB

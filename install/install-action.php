@@ -69,6 +69,7 @@ if (isset($_GET['reset'])) {
 	$dbroot = $_SESSION['database_root'];
 	$dbrootpass = $_SESSION['database_rootpass'];
 	$error .= create_db::create_database($dbroot,$dbrootpass,$globalDBuser,$globalDBpass,$globalDBname,$globalDBdriver,$globalDBhost);
+	sleep(5);
 	if ($error != '') {
 		$_SESSION['error'] = $error;
 	}
