@@ -560,7 +560,7 @@ class update_db {
 		while($row = sparql_fetch_array($result))
 		{
 			if ($i >= 1) {
-			print_r($row);
+			//print_r($row);
 			if (!isset($row['iata'])) $row['iata'] = '';
 			if (!isset($row['icao'])) $row['icao'] = '';
 			if (!isset($row['type'])) $row['type'] = '';
@@ -968,9 +968,11 @@ class update_db {
 				$i++;
 				if($i > 3 && count($row) > 2) {
 					$data = array_values(array_filter($row));
-					if (count($data) > 10) {
+					$cntdata = count($data);
+					if ($cntdata > 10) {
 						$value = $data[9];
-						for ($i =10;$i < count($data);$i++) {
+						
+						for ($i =10;$i < $cntdata;$i++) {
 							$value .= ' '.$data[$i];
 						}
 						$data[9] = $value;
@@ -1033,7 +1035,16 @@ class update_db {
 		global $tmp_dir, $globalDBdriver;
 		include_once('class.create_db.php');
 		if ($globalDBdriver == 'mysql') update_db::gunzip('../db/airspace.sql.gz',$tmp_dir.'airspace.sql');
-		else update_db::gunzip('../db/pgsql/airspace.sql.gz',$tmp_dir.'airspace.sql');
+		else {
+			update_db::gunzip('../db/pgsql/airspace.sql.gz',$tmp_dir.'airspace.sql');
+			$query = "CREATE EXTENSION postgis";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+		}
 		$error = create_db::import_file($tmp_dir.'airspace.sql');
 		return $error;
 	}
@@ -1401,11 +1412,11 @@ class update_db {
 		echo $data;
 		*/
 		if (file_exists($tmp_dir.'aircrafts.html')) {
-		    var_dump(file_get_html($tmp_dir.'aircrafts.html'));
+		    //var_dump(file_get_html($tmp_dir.'aircrafts.html'));
 		    $fh = fopen($tmp_dir.'aircrafts.html',"r");
 		    $result = fread($fh,100000000);
 		    //echo $result;
-		    var_dump(str_get_html($result));
+		    //var_dump(str_get_html($result));
 		    //print_r(self::table2array($result));
 		}
 
