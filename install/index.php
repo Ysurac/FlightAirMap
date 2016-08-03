@@ -1218,8 +1218,12 @@ if (isset($_POST['dbtype'])) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	    if ($done == 'Create database') $pop = true;
 	    if ($_SESSION['install'] == 'database_create') $pop = true;
+	    if ($_SESSION['install'] == 'database_import') $popi = true;
 	}
 	if ($pop) {
+	    sleep(5);
+	    print '<li>Create database....<img src="../images/loading.gif" /></li>';
+	} else if ($popi) {
 	    sleep(5);
 	    print '<li>Create and import tables....<img src="../images/loading.gif" /></li>';
 	} else print '<li>Update schema if needed....<img src="../images/loading.gif" /></li>';

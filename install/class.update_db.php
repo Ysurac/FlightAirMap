@@ -333,7 +333,7 @@ class update_db {
             				    $values['registration'] = $line[0];
             				    $values['base'] = $line[4];
             				    $values['owner'] = $line[5];
-            				    if ($line[6] == '') $values['date_first_reg'] = '';
+            				    if ($line[6] == '') $values['date_first_reg'] = null;
 					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[6]));
 					    $values['cancel'] = $line[7];
 					} elseif ($country == 'EI') {
@@ -341,7 +341,7 @@ class update_db {
             				    $values['registration'] = $line[0];
             				    $values['base'] = $line[3];
             				    $values['owner'] = $line[2];
-            				    if ($line[1] == '') $values['date_first_reg'] = '';
+            				    if ($line[1] == '') $values['date_first_reg'] = null;
 					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[1]));
 					    $values['cancel'] = '';
 					} elseif ($country == 'HB') {
@@ -349,14 +349,14 @@ class update_db {
             				    $values['registration'] = $line[0];
             				    $values['base'] = null;
             				    $values['owner'] = $line[5];
-            				    $values['date_first_reg'] = '';
+            				    $values['date_first_reg'] = null;
 					    $values['cancel'] = '';
 					} elseif ($country == 'OK') {
 					    // TODO : add modeS & reg to aircraft_modes
             				    $values['registration'] = $line[3];
             				    $values['base'] = null;
             				    $values['owner'] = $line[5];
-            				    if ($line[18] == '') $values['date_first_reg'] = '';
+            				    if ($line[18] == '') $values['date_first_reg'] = null;
 					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[18]));
 					    $values['cancel'] = '';
 					} elseif ($country == 'VH') {
@@ -364,7 +364,7 @@ class update_db {
             				    $values['registration'] = $line[0];
             				    $values['base'] = null;
             				    $values['owner'] = $line[12];
-            				    if ($line[28] == '') $values['date_first_reg'] = '';
+            				    if ($line[28] == '') $values['date_first_reg'] = null;
 					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[28]));
 
 					    $values['cancel'] = $line[39];
@@ -384,35 +384,35 @@ class update_db {
             				    $values['registration'] = $line[0];
             				    $values['base'] = null;
             				    $values['owner'] = $line[8];
-            				    if ($line[7] == '') $values['date_first_reg'] = '';
+            				    if ($line[7] == '') $values['date_first_reg'] = null;
 					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[7]));
 					    $values['cancel'] = '';
 					} elseif ($country == 'PP') {
             				    $values['registration'] = $line[0];
             				    $values['base'] = null;
             				    $values['owner'] = $line[4];
-            				    if ($line[6] == '') $values['date_first_reg'] = '';
+            				    if ($line[6] == '') $values['date_first_reg'] = null;
 					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[6]));
 					    $values['cancel'] = $line[7];
 					} elseif ($country == 'E7') {
             				    $values['registration'] = $line[0];
             				    $values['base'] = null;
             				    $values['owner'] = $line[4];
-            				    if ($line[5] == '') $values['date_first_reg'] = '';
+            				    if ($line[5] == '') $values['date_first_reg'] = null;
 					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[5]));
 					    $values['cancel'] = '';
 					} elseif ($country == '8Q') {
             				    $values['registration'] = $line[0];
             				    $values['base'] = null;
             				    $values['owner'] = $line[3];
-            				    if ($line[7] == '') $values['date_first_reg'] = '';
+            				    if ($line[7] == '') $values['date_first_reg'] = null;
 					    else $values['date_first_reg'] = date("Y-m-d",strtotime($line[7]));
 					    $values['cancel'] = '';
 					} elseif ($country == 'ZK' || $country == 'OM' || $country == 'TF') {
             				    $values['registration'] = $line[0];
             				    $values['base'] = null;
             				    $values['owner'] = $line[3];
-            				    $values['date_first_reg'] = '';
+            				    $values['date_first_reg'] = null;
 					    $values['cancel'] = '';
 					}
 					if ($values['cancel'] == '' && $values['registration'] != null) {
