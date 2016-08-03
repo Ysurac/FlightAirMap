@@ -53,8 +53,8 @@ class Connection{
 				$globalDBSname = $globalDBname;
 				$globalDBSuser = $globalDBuser;
 				$globalDBSpass = $globalDBpass;
-				if (!isset($globalDBport) || $globalDBport === NULL || $globalDBport = '') $globalDBSport = 3306;
-				else $globalDBSport = intval($globalDBport);
+				if (!isset($globalDBport) || $globalDBport === NULL || $globalDBport == '') $globalDBSport = 3306;
+				else $globalDBSport = $globalDBport;
 			} else {
 				$DBname = 'default';
 				$globalDBSdriver = $globalDBdriver;
@@ -62,8 +62,8 @@ class Connection{
 				$globalDBSname = $globalDBname;
 				$globalDBSuser = $user;
 				$globalDBSpass = $pass;
-				if (!isset($globalDBport) || $globalDBport === NULL || $globalDBport = '') $globalDBSport = 3306;
-				else $globalDBSport = intval($globalDBport);
+				if (!isset($globalDBport) || $globalDBport === NULL || $globalDBport == '') $globalDBSport = 3306;
+				else $globalDBSport = $globalDBport;
 			}
 		} else {
 			$globalDBSdriver = $globalDB[$DBname]['driver'];
@@ -71,7 +71,7 @@ class Connection{
 			$globalDBSname = $globalDB[$DBname]['name'];
 			$globalDBSuser = $globalDB[$DBname]['user'];
 			$globalDBSpass = $globalDB[$DBname]['pass'];
-			if (isset($globalDB[$DBname]['port'])) $globalDBSport = intval($globalDB[$DBname]['port']);
+			if (isset($globalDB[$DBname]['port'])) $globalDBSport = $globalDB[$DBname]['port'];
 			else $globalDBSport = 3306;
 		}
 		// Set number of try to connect to DB
