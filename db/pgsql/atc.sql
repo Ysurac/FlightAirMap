@@ -10,6 +10,6 @@ CREATE TABLE atc (
   ivao_name varchar(255) NOT NULL,
   atc_lastseen timestamp NOT NULL,
   info text NOT NULL,
-  type enum('Observer','Flight Information','Delivery','Tower','Approach','ACC','Departure') DEFAULT NULL,
+  type varchar(255) DEFAULT NULL,
   PRIMARY KEY (atc_id)
 );

@@ -41,3 +41,4 @@ CREATE TABLE spotter_archive (
   ground integer NOT NULL DEFAULT '0',
   PRIMARY KEY (spotter_archive_id)
 );
+create index flightaware_id_idx ON spotter_archive USING btree(flightaware_id);

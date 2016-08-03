@@ -40,4 +40,5 @@ CREATE TABLE spotter_live (
   ground integer NOT NULL DEFAULT '0',
   PRIMARY KEY (spotter_live_id)
 );
-alter table spotter_live add index(ModeS);
+
+create index ModeS_idx ON spotter_live USING btree(ModeS);
