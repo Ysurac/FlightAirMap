@@ -1217,6 +1217,7 @@ if (isset($_POST['dbtype'])) {
 	foreach ($_SESSION['done'] as $done) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	    if ($done == 'Create database') $pop = true;
+	    if ($_SESSION['install'] == 'database_create') $pop = true;
 	}
 	if ($pop) {
 	    sleep(5);
