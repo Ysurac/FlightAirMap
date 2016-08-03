@@ -845,6 +845,9 @@ if (isset($_POST['dbtype'])) {
 	if ($dbtype == 'mysql' && !extension_loaded('pdo_mysql')) $error .= 'Mysql driver for PDO must be loaded';
 	if ($dbtype == 'pgsql' && !extension_loaded('pdo_pgsql')) $error .= 'PosgreSQL driver for PDO must be loaded';
 	
+	$_SESSION['database_root'] = $dbroot;
+	$_SESSION['database_rootpass'] = $dbrootpass;
+	/*
 	if ($error == '' && isset($_POST['createdb']) && $dbname != '' && $dbuser != '' && $dbuserpass != '') {
 		if ($dbroot != '' && $dbrootpass != '') {
 			$result = create_db::create_database($dbroot,$dbrootpass,$dbuser,$dbuserpass,$dbname,$dbtype,$dbhost);
@@ -855,6 +858,9 @@ if (isset($_POST['dbtype'])) {
 			$settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBport' => $dbport,'globalDBuser' => $dbuser,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
 		}
 	} else $settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBuser' => $dbuser,'globalDBport' => $dbport,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
+	*/
+	
+	$settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBuser' => $dbuser,'globalDBport' => $dbport,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
 
 	$sitename = filter_input(INPUT_POST,'sitename',FILTER_SANITIZE_STRING);
 	$siteurl = filter_input(INPUT_POST,'siteurl',FILTER_SANITIZE_STRING);
@@ -1182,14 +1188,20 @@ if (isset($_POST['dbtype'])) {
 	} else {
 		if (isset($_POST['waypoints']) && $_POST['waypoints'] == 'waypoints') $_SESSION['waypoints'] = 1;
 		if (isset($_POST['owner']) && $_POST['owner'] == 'owner') $_SESSION['owner'] = 1;
-		$_SESSION['install'] = 'database_import';
+		if (isset($_POST['createdb'])) {
+			$_SESSION['install'] = 'database_create';
+		} else {
+			$_SESSION['install'] = 'database_import';
+		}
 		//require('../footer.php');
 		print '<div class="info column"><ul>';
-		
+		 /*
 		if (isset($_POST['createdb'])) {
 			$_SESSION['done'] = array('Create database','Write configuration');
 			print '<li>Create database....<strong>SUCCESS</strong></li>';
 		} else $_SESSION['done'] = array('Write configuration');
+		*/
+		$_SESSION['done'] = array('Write configuration');
 		print '<li>Write configuration....<img src="../images/loading.gif" /></li></ul></div>';
 #		flush();
 #		@ob_flush();

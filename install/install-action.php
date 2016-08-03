@@ -65,6 +65,18 @@ if (isset($_GET['reset'])) {
 	print_r($_SESSION['done']);
 	unset($_SESSION['install']);
 	echo 'Reset session !!';
+} else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_create') {
+	$dbroot = $_SESSION['database_root'];
+	$dbrootpass = $_SESSION['database_rootpass'];
+	$error .= create_db::create_database($dbroot,$dbrootpass,$globalDBuser,$globalDBpass,$globalDBname,$globalDBdriver,$globalDBhost);
+	if ($error != '') {
+		$_SESSION['error'] = $error;
+	}
+	$_SESSION['done'] = array_merge($_SESSION['done'],array('Create database'));
+	$_SESSION['install'] = 'database_import';
+	$_SESSION['next'] = 'Create and import tables';
+	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	print json_encode($result);
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
 	if (update_schema::check_version(false) == '0') {
 		if ($globalDBdriver == 'mysql') {

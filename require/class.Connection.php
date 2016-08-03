@@ -48,7 +48,7 @@ class Connection{
 			$globalDBSname = $globalDBname;
 			$globalDBSuser = $globalDBuser;
 			$globalDBSpass = $globalDBpass;
-			if (!isset($globalDBport) || $globalDBport === NULL) $globalDBSport = 3306;
+			if (!isset($globalDBport) || $globalDBport === NULL || $globalDBport = '') $globalDBSport = 3306;
 			else $globalDBSport = $globalDBport;
 		} else {
 			$globalDBSdriver = $globalDB[$DBname]['driver'];
