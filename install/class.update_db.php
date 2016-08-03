@@ -1038,6 +1038,7 @@ class update_db {
 		else {
 			update_db::gunzip('../db/pgsql/airspace.sql.gz',$tmp_dir.'airspace.sql');
 			$query = "CREATE EXTENSION postgis";
+			$Connection = new Connection();
 			try {
 				$sth = $Connection->db->prepare($query);
 				$sth->execute();

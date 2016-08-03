@@ -120,6 +120,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="text" name="dbhost" id="dbhost" value="<?php if (isset($globalDBhost)) print $globalDBhost; ?>" />
 			</p>
 			<p>
+				<label for="dbport">Database port</label>
+				<input type="text" name="dbport" id="dbport" value="<?php if (isset($globalDBport)) print $globalDBport; ?>" />
+			</p>
+			<p>
 				<label for="dbname">Database name</label>
 				<input type="text" name="dbname" id="dbname" value="<?php if (isset($globalDBname)) print $globalDBname; ?>" />
 			</p>
@@ -836,6 +840,7 @@ if (isset($_POST['dbtype'])) {
 	$dbuser = filter_input(INPUT_POST,'dbuser',FILTER_SANITIZE_STRING);
 	$dbuserpass = filter_input(INPUT_POST,'dbuserpass',FILTER_SANITIZE_STRING);
 	$dbhost = filter_input(INPUT_POST,'dbhost',FILTER_SANITIZE_STRING);
+	$dbport = filter_input(INPUT_POST,'dbport',FILTER_SANITIZE_STRING);
 
 	if ($dbtype == 'mysql' && !extension_loaded('pdo_mysql')) $error .= 'Mysql driver for PDO must be loaded';
 	if ($dbtype == 'pgsql' && !extension_loaded('pdo_pgsql')) $error .= 'PosgreSQL driver for PDO must be loaded';
@@ -847,9 +852,9 @@ if (isset($_POST['dbtype'])) {
 		}
 		if ($error == '') {
 			//$error .= create_db::import_all_db('../db/');
-			$settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBuser' => $dbuser,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
+			$settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBport' => $dbport,'globalDBuser' => $dbuser,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
 		}
-	} else $settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBuser' => $dbuser,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
+	} else $settings = array_merge($settings,array('globalDBdriver' => $dbtype,'globalDBhost' => $dbhost,'globalDBuser' => $dbuser,'globalDBport' => $dbport,'globalDBpass' => $dbuserpass,'globalDBname' => $dbname));
 
 	$sitename = filter_input(INPUT_POST,'sitename',FILTER_SANITIZE_STRING);
 	$siteurl = filter_input(INPUT_POST,'siteurl',FILTER_SANITIZE_STRING);
@@ -1249,6 +1254,7 @@ if (isset($_POST['dbtype'])) {
 			},
 			error: function(XMLHttpRequest, textStatus, errorThrown) { 
 				console.log('error !');
+				console.log(XMLHttpRequest);
 				$('#error').html('<p><b>Error : </b> ' + textStatus + ' - ' + errorThrown + '</p><p><i>If the error is a time-out, you have to increase PHP script execution time-out</i></p>');
 			}
 		    });
