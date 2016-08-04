@@ -162,7 +162,7 @@ if ($facebook_meta_image != "")
 			<li><a href="#sourceloc">Sources location</a></li>
 			<li><a href="#datasource">Data source</a></li>
 			<li><a href="#sources">Sources</a></li>
-			<li><a href="#acars-data">Source ACARS</a></li>
+			<li><a href="#acars_data">Source ACARS</a></li>
 		    </ul>
 		</li>
 		<li><a href="#optional">Optional</a></li>
