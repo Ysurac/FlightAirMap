@@ -18,8 +18,8 @@ header('Content-Type: text/javascript');
 
 
 $polar = $Stats->getStatsSource(date('Y-m-d'),'polar');
+$output = '';
 if (!empty($polar)) {
-    $output = '';
     $output = '{"type": "FeatureCollection","features": [';
 
     foreach($polar as $eachpolar) {

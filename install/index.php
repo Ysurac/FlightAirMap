@@ -122,6 +122,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="dbport">Database port</label>
 				<input type="text" name="dbport" id="dbport" value="<?php if (isset($globalDBport)) print $globalDBport; ?>" />
+				<p class="help-block">Default is 3306 for MariaDB/MySQL, 5432 for PostgreSQL</p>
 			</p>
 			<p>
 				<label for="dbname">Database name</label>
@@ -181,6 +182,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<label for="mapboxtoken">Mapbox token</label>
 					<input type="text" name="mapboxtoken" id="mapboxtoken" value="<?php if (isset($globalMapboxToken)) print $globalMapboxToken; ?>" />
 				</p>
+				<p class="help-block">Get a key <a href="https://www.mapbox.com/developers/">here</a></p>
 			</div>
 			<br />
 			<div id="google_data">
