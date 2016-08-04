@@ -1292,12 +1292,12 @@ if (isset($_POST['dbtype'])) {
 	}
 	print '<li>Reloading page to check all is now ok....<strong>SUCCESS</strong></li>';
 	print '</ul></div>';
-	print '<p>All is now installed ! Thanks</p>';
+	print '<br /><p>All is now installed ! Thanks</p>';
 	if ($globalSBS1) {
-		print '<p>You need to run scripts/daemon-spotter.php as a daemon. You can use init script in the install/init directory.</p>';
+		print '<p>You need to run <b>scripts/daemon-spotter.php</b> as a daemon. You can use init script in the install/init directory.</p>';
 	}
 	if ($globalACARS) {
-		print '<p>You need to run scripts/daemon-acars.php as a daemon. You can use init script in the install/init directory.</p>';
+		print '<p>You need to run <b>scripts/daemon-acars.php</b> as a daemon. You can use init script in the install/init directory.</p>';
 	}
 	if ($globalFlightAware && ($globalFlightAwareUsername == '' || $globalFlightAwarePassword == '')) {
 		print '<p>You <strong>must</strong> have a FlightAware API account to use FlightAware source</p>';
@@ -1308,7 +1308,7 @@ if (isset($_POST['dbtype'])) {
 	if (isset($globalIVAO) && $globalIVAO) {
 		print '<p>You need to run install/populate_ivao.php if you want to have IVAO airlines</p>';
 	}
-	print '<p>If you want to keep external data updated, you have to add install/update_db.php in cron.</p>';
+	print '<p>If you want to keep external data updated, you have to add <b>scripts/update_db.php</b> in cron.</p>';
 	print '</div>';
 } else {
 	unset($_SESSION['install']);
