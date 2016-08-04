@@ -6,9 +6,6 @@ if (isset($_SESSION['error'])) {
 	unset($_SESSION['error']);
 	unset($_SESSION['install']);
 }
-#if (ob_get_level() == 0) ob_start();
-#ob_implicit_flush(true);
-#ob_end_flush();
 require_once(dirname(__FILE__).'/class.create_db.php');
 require_once(dirname(__FILE__).'/class.update_schema.php');
 require_once(dirname(__FILE__).'/class.settings.php');
@@ -92,7 +89,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 	?>
 	<div class="info column">
 	<form method="post" class="form-horizontal">
-		<fieldset>
+		<fieldset id="database">
 			<legend>Database configuration</legend>
 			<p>
 				<label for="dbtype">Database type</label>
@@ -137,7 +134,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="password" name="dbuserpass" id="dbuserpass" value="<?php if (isset($globalDBpass)) print $globalDBpass; ?>" />
 			</p>
 		</fieldset>
-		<fieldset>
+		<fieldset id="site">
 			<legend>Site configuration</legend>
 			<p>
 				<label for="sitename">Site name</label>
@@ -159,7 +156,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">Used only when link to wikipedia for now. Can be EN,DE,FR,...</p>
 			</p>
 		</fieldset>
-		<fieldset>
+		<fieldset id="map">
 			<legend>Map provider</legend>
 			<p>
 				<label for="mapprovider">map Provider</label>
@@ -221,7 +218,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">Get a key <a href="https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/quick-start.html">here</a></p>
 			</div>
 		</fieldset>
-		<fieldset>
+		<fieldset id="coverage">
 			<legend>Coverage area</legend>
 			<p>
 				<label for="latitudemax">The maximum latitude (north)</label>
@@ -264,7 +261,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</select>
 			</p>
 		</fieldset>
-		<fieldset>
+		<fieldset id="zone">
 			<legend>Zone of interest</legend>
 			<p><i>Only put in DB flights that are inside a circle</i></p>
 			<p>
@@ -280,7 +277,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="text" name="zoidistance" id="distance" value="<?php if (isset($globalDistanceIgnore['distance'])) echo $globalDistanceIgnore['distance']; ?>" />
 			</p>
 		</fieldset>
-		<fieldset>
+		<fieldset id="sourceloc">
 			<legend>Sources location</legend>
 			<table class="sources">
 				<tr>
@@ -334,7 +331,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="button" value="Remove last row" class="del-row-source" />
 			</center>
 		</fieldset>
-		<fieldset>
+		<fieldset id="datasource">
 			<legend>Data source</legend>
 			<p>
 				<b>Virtual flights</b>
@@ -376,101 +373,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 -->
 <!--			<div id="sbs_data">
 -->
-		<?php
-/*
-		    $globalSURL = array();
-		    $globalIP = array();
-		    if (isset($globalSBS1Hosts)) {
-			if (! is_array($globalSBS1Hosts)) {
-			    if (filter_var($globalSBS1Hosts,FILTER_VALIDATE_URL)) {
-                        	$globalSURL[] = $globalSBS1Hosts;
-			    } else {
-				$hostport = explode(':',$globalSBS1Hosts);
-				if (count($hostport) == 2) {
-				    $globalIP[] = array('host' => $hostport[0],'port' => $hostport[1]);
-				}
-			    }
-			} else {
-			    foreach ($globalSBS1Hosts as $sbshost) {
-				if (filter_var($sbshost,FILTER_VALIDATE_URL)) {
-			    	    $globalSURL[] = $sbshost;
-				} else {
-				    $hostport = explode(':',$sbshost);
-				    if (count($hostport) == 2) {
-					$globalIP[] = array('host' =>  $hostport[0],'port' => $hostport[1]);
-				    }
-				}
-			    }
-			}
-		    }
-		?>
-				<fieldset>
-					<legend>Source ADS-B</legend>
-					<p>In SBS-1 format (dump1090 or SBS-1 compatible format) or APRS (support glidernet)</p>
-					<table class="sbsip">
-						<tr>
-							<th>Host</th>
-							<th>Port</th>
-						</tr>
-		    <?php
-			foreach ($globalIP as $hp) {
-		    ?>
-						<tr>
-							<td><input type="text" name="sbshost[]" value="<?php print $hp['host']; ?>" /></td>
-							<td><input type="number" name="sbsport[]" value="<?php print $hp['port']; ?>" /></td>
-						</tr>
-		    <?php
-			}
-		    ?>
-						<tr>
-							<td><input type="text" name="sbshost[]" value="" /></td>
-							<td><input type="number" name="sbsport[]" value="" /></td>
-						</tr>
-					</table>
-					<center>
-						<input type="button" value="Add a row" class="add-row-ip" />
-						<input type="button" value="Remove last row" class="del-row-ip" />
-					</center>
-					<p>
-						<label for="sbstimeout">SBS-1 timeout</label>
-						<input type="number" name="sbstimeout" id="sbstimeout" value="<?php if (isset($globalSourcesTimeOut)) print $globalSourcesTimeOut; elseif (isset($globalSBS1TimeOut)) print $globalSBS1TimeOut;?>" />
-					</p>
-				</fieldset>
-			</div>
-			<div id="sbs_url">
-				<br />
-				<fieldset>
-					<legend>Source URL</legend>
-					<p>URL can be deltadb.txt or aircraftlist.json url to Radarcape, or <i>/action.php/acars/data</i> of phpvms, or wazzup file format</p>
-					<table class="sbsurl">
-						<tr>
-							<th>URL</th>
-						</tr>
-		    <?php
-			foreach ($globalSURL as $url) {
-		    ?>
-						<tr>
-							<td><input type="text" name="sbsurl[]" value="<?php print $url; ?>" placeholder="URL can be deltadb.txt or aircraftlist.json url to Radarcape, or <i>/action.php/acars/data</i> of phpvms, or wazzup file format" /></td>
-						</tr>
-		    <?php
-			}
-		    ?>
-						<tr>
-							<td><input type="text" name="sbsurl[]" value="" /></td>
-						</tr>
-					</table>
-					<center>
-						<input type="button" value="Add a row" class="add-row-url" />
-						<input type="button" value="Remove last row" class="del-row-url" />
-					</center>
-					<br />
-				</fieldset>
-				</div>
-<?php
-*/
-?>
-			
-				<fieldset>
+				<fieldset id="sources">
 					<legend>Sources</legend>
 					<table id="SourceTable">
 						<thead>
@@ -585,7 +488,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</div>
 		</fieldset>
 		
-		<fieldset>
+		<fieldset id="optional">
 			<legend>Optional configuration</legend>
 			<p>
 				<label for="translate">Allow site translation</label>

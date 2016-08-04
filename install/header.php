@@ -9,17 +9,18 @@ $current_page = $file_path['filename'];
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=10" />
 <title><?php print $title; ?> | <?php print $globalName; ?></title>
-<meta name="keywords" content="<?php print $title; ?> barrie ontario canada spotter live flight tracking tracker map aircraft airline airport history database" />
-<meta name="description" content="<?php print $title; ?> | <?php print $globalName; ?> is an open source project documenting most of the aircrafts that have flown near the Barrie area." />
+<meta name="keywords" content="<?php print $title; ?> spotter live flight tracking tracker map aircraft airline airport history database" />
+<meta name="description" content="<?php print $title; ?> | <?php print $globalName; ?> is an open source project documenting most of the aircrafts." />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="../images/touch-icon.png">
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
 <link type="text/css" rel="stylesheet" href="../css/bootstrap-select.min.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="../css/style.css?<?php print time(); ?>" />
 <link type="text/css" rel="stylesheet" href="../css/print.css?<?php print time(); ?>" />
 <script type="text/javascript" src="../js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <?php
 /*
 if ($facebook_meta_image != "")
@@ -138,18 +139,43 @@ if ($facebook_meta_image != "")
     }
 ?>
 <div class="navbar navbar-fixed-top" role="navigation">
-  <div class="container">
-
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="../"><img src="<?php print '../'.$logoURL; ?>" height="30px" /></a>
+    <div class="container">
+	<div class="navbar-header">
+	    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+	    </button>
+	    <a class="navbar-brand" href="../"><img src="<?php print '../'.$logoURL; ?>" height="30px" /></a>
+	</div>
+	<div class="collapse navbar-collapse">
+	    <ul class="nav navbar-nav">
+		<li><a href="#database">Database</a></li>
+		<li><a href="#site">Site</a></li>
+		<li><a href="#map">Map</a></li>
+		<li><a href="#coverage">Coverage</a></li>
+		<li><a href="#zone">Zone of interest</a></li>
+		<li class="dropdown">
+		    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sources <b class="caret"></b></a>
+		    <ul class="dropdown-menu">
+			<li><a href="#sourceloc">Sources location</a></li>
+			<li><a href="#datasource">Data source</a></li>
+			<li><a href="#sources">Sources</a></li>
+			<li><a href="#acars-data">Source ACARS</a></li>
+		    </ul>
+		</li>
+		<li><a href="#optional">Optional</a></li>
+		<!--
+		<li class="dropdown">
+		    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Optional <b class="caret"></b></a>
+		    <ul class="dropdown-menu">
+		    </ul>
+		</li>
+		-->
+	     </ul>
+	</div>
     </div>
-  </div>
 </div>
 
 <?php
