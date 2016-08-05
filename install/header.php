@@ -149,6 +149,9 @@ if ($facebook_meta_image != "")
 	    </button>
 	    <a class="navbar-brand" href="../"><img src="<?php print '../'.$logoURL; ?>" height="30px" /></a>
 	</div>
+<?php
+	if ($globalInstalled === FALSE) {
+?>
 	<div class="collapse navbar-collapse">
 	    <ul class="nav navbar-nav">
 		<li><a href="#database">Database</a></li>
@@ -175,6 +178,9 @@ if ($facebook_meta_image != "")
 		-->
 	     </ul>
 	</div>
+<?php
+	}
+?>
     </div>
 </div>
 

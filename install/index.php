@@ -10,8 +10,8 @@ require_once(dirname(__FILE__).'/class.create_db.php');
 require_once(dirname(__FILE__).'/class.update_schema.php');
 require_once(dirname(__FILE__).'/class.settings.php');
 $title="Install";
-require(dirname(__FILE__).'/header.php');
 require(dirname(__FILE__).'/../require/settings.php');
+require(dirname(__FILE__).'/header.php');
 
 if ($globalInstalled && !isset($_SESSION['install'])) {
 	print '<div class="info column"><p>You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</p></div>';
