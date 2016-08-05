@@ -156,7 +156,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">Used only when link to wikipedia for now. Can be EN,DE,FR,...</p>
 			</p>
 		</fieldset>
-		<fieldset id="map">
+		<fieldset id="mapprov">
 			<legend>Map provider</legend>
 			<p>
 				<label for="mapprovider">map Provider</label>
@@ -289,9 +289,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<th>Country</th>
 					<th>Source name</th>
 				</tr>
+				<!--
 		<?php
 		    require_once(dirname(__FILE__).'/../require/class.Connection.php');
 		    $Connection = new Connection();
+		?>
+				-->
+		<?php
 		    if ($Connection->db != NULL) {
 			if ($Connection->tableExists('source_location')) {
 			    require_once(dirname(__FILE__).'/../require/class.Source.php');
@@ -860,7 +864,8 @@ if (isset($_POST['dbtype'])) {
 	$port = $_POST['port'];
 	$name = $_POST['name'];
 	$format = $_POST['format'];
-	$sourcestats = $_POST['sourcestats'];
+	if (isset($_POST['sourcestats'])) $sourcestats = $_POST['sourcestats'];
+	else $sourcestats = array();
 	$gSources = array();
 	foreach ($host as $key => $h) {
 		if (isset($sourcestats[$key]) && $sourcestats[$key] == 1) $cov = 'TRUE';
