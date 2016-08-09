@@ -248,7 +248,7 @@ class SpotterImport {
 		    //if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
 			//$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
 		    //} else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
-		    if (!isset($line['aircraft_icao']) || $line['aircraft_icao'] == '????') {
+		    if (!isset($line['aircraft_name']) && (!isset($line['aircraft_icao']) || $line['aircraft_icao'] == '????')) {
 
 			$timeelapsed = microtime(true);
 			$Spotter = new Spotter($this->db);
@@ -263,6 +263,13 @@ class SpotterImport {
 			    elseif ($line['aircraft_type'] == 'POWERED_AIRCRAFT') $aircraft_icao = 'POWAIRC';
 			}
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $aircraft_icao));
+		    } else if (isset($line['aircraft_name'])) {
+			// Get aircraft ICAO from aircraft name
+			$Spotter = new Spotter($this->db);
+			$aircraft_icao = $Spotter->getAircraftIcao($line['aircraft_name']);
+			$Spotter->db = null;
+			if ($aircraft_icao != '') $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $aircraft_icao));
+			else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => 'NA'));
 		    } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '','altitude_real' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','ground' => '0', 'format_source' => '','source_name' => '','over_country' => '','verticalrate' => '','noarchive' => false,'putinarchive' => false));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('lastupdate' => time()));

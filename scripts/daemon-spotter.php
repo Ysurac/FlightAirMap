@@ -177,6 +177,9 @@ function connect_all($hosts) {
 		    } elseif ($port == '30002') {
         		//$formats[$id] = 'raw';
         		$globalSources[$id]['format'] = 'raw';
+		    } elseif ($port == '5001') {
+        		//$formats[$id] = 'raw';
+        		$globalSources[$id]['format'] = 'flightgearmp';
 		    } elseif ($port == '30005') {
 			// Not yet supported
         		//$formats[$id] = 'beast';
@@ -641,8 +644,9 @@ while ($i > 0) {
     	    //$last_exec['phpvmacars'] = time();
     	    $value['last_exec'] = time();
 	//} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
-	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast') {
+	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
+    	    $value['last_exec'] = time();
 
 	    //$read = array( $sockets[$id] );
 	    $read = $sockets;
@@ -655,10 +659,10 @@ while ($i > 0) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
         	    $buffer = socket_read($r, 6000,PHP_NORMAL_READ);
+        	    //$buffer = socket_read($r, 60000,PHP_NORMAL_READ);
         	    //echo $buffer."\n";
 		    // lets play nice and handle signals such as ctrl-c/kill properly
 		    //if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
-		    $dataFound = false;
 		    $error = false;
 		    //$SI::del();
 		    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
@@ -675,6 +679,27 @@ while ($i > 0) {
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
                                 $SI->add($data);
                             }
+			} elseif ($format == 'flightgearmp') {
+			    //
+			    if (substr($buffer,0,1) != '#') {
+				$data = array();
+				//echo $buffer."\n";
+				$line = explode(' ',$buffer);
+				if (count($line) == 11) {
+				    $userserver = explode('@',$line[0]);
+				    $data['hex'] = substr(str_pad(bin2hex($line[0]),6,'000000',STR_PAD_LEFT),0,6); // hex
+				    $data['ident'] = $userserver[0];
+				    $data['registration'] = $userserver[0];
+				    $data['latitude'] = $line[4];
+				    $data['longitude'] = $line[5];
+				    $data['altitude'] = $line[6];
+				    $data['datetime'] = date('Y-m-d H:i:s');
+				    $aircraft_type = $line[10];
+				    $aircraft_type = preg_split(':/:',$aircraft_type);
+				    $data['aircraft_name'] = substr(end($aircraft_type),0,-4);
+				    $SI->add($data);
+				}
+			    }
 			} elseif ($format == 'beast') {
 			    echo 'Beast Binary format not yet supported. Beast AVR format is supported in alpha state'."\n";
 			    die;
@@ -800,14 +825,24 @@ while ($i > 0) {
 			// Sleep for xxx microseconds
 			if (isset($globalSBSSleep)) usleep($globalSBSSleep);
 		    } else {
-			$tt++;
-			if ($tt > 30) {
-			    if ($globalDebug)echo "ERROR : Reconnect...";
-			    //@socket_close($r);
-			    sleep(2);
-			    connect_all($globalSources);
-			    break;
-			    $tt = 0;
+			if ($format == 'flightgearmp') {
+			    	if ($globalDebug) echo "Reconnect FlightGear MP...";
+				//@socket_close($r);
+				sleep($globalMinFetch);
+				$sourcefg[$nb] = $globalSources[$nb];
+				connect_all($sourcefg);
+				break;
+				
+			} else {
+			    $tt++;
+			    if ($tt > 30) {
+				if ($globalDebug)echo "ERROR : Reconnect...";
+				//@socket_close($r);
+				sleep(2);
+				connect_all($globalSources);
+				break;
+				$tt = 0;
+			    }
 			}
 		    }
 		}

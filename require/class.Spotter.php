@@ -2001,6 +2001,36 @@ class Spotter{
 		*/
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
+
+	/**
+	* Gets the aircraft icao based on the aircraft name/type
+	*
+	* @param String $aircraft_type the aircraft type
+	* @return Array aircraft information
+	*
+	*/
+	public function getAircraftIcao($aircraft_type)
+	{
+		$aircraft_type = filter_var($aircraft_type,FILTER_SANITIZE_STRING);
+		$all_aircraft = array('737-300' => 'B733',
+				'777-200' => 'B772',
+				'777-200ER' => 'B772',
+				'777-300ER' => 'B77W',
+				'c172p' => 'C172',
+				'aerostar' => 'AEST',
+				'A320-211' => 'A320',
+				'747-8i' => 'B748',
+				'A380' => 'A388');
+		if (isset($all_aircraft[$aircraft_type])) return $all_aircraft[$aircraft_type];
+
+		$query  = "SELECT aircraft.icao FROM aircraft WHERE aircraft.type LIKE :saircraft_type OR aircraft.type = :aircraft_type OR aircraft.icao = :aircraft_type LIMIT 1";
+		$aircraft_type = strtoupper($aircraft_type);
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':saircraft_type' => '%'.$aircraft_type.'%',':aircraft_type' => $aircraft_type,));
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (isset($result[0]['icao'])) return $result[0]['icao'];
+		else return '';
+	}
 	
 	/**
 	* Gets the aircraft info based on the aircraft ident
