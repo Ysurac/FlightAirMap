@@ -6,7 +6,7 @@ Browse through the data based on a particular aircraft, airline or airport to se
 Flights are displayed on a map that can be from : OpenStreetMap, Mapbox, MapQuest, Yandex, Bing, Google,...
 
 It can be used with Dump1090 or any SBS source.
-Can also be used with IVAO sources like whazzup.txt, phpvms,...
+Can also be used with virtual airlines sources like FlightGear, whazzup.txt from IVAO, VATSIM, phpvms,...
 
 It also support glidernet APRS source.
 
@@ -32,13 +32,15 @@ To install the web app, you need to have meet the following requirements:
 The follwing is a list of PHP extensions that must be installed on your server in order for this web app to run properly:
 
 * cURL [http://php.net/curl](http://php.net/curl) which is used to access remote sites.
-* PDO [http://php.net/pdo](http://php.net/pdo) with MySQL driver is required for database access (Maybe other databases work too, not tested). SQLite driver needed for SBS.
+* PDO [http://php.net/pdo](http://php.net/pdo) with MySQL or PostgreSQL driver is required for database access (Maybe other databases work too, not tested). SQLite driver needed for SBS.
 * JSON [http://php.net/json](http://php.net/json)
 * ZIP [http://php.net/zip](http://php.net/zip) needed for SBS.
 * DOM [http://php.net/dom](http://php.net/dom)
 * SimpleXML [http://php.net/simplexml](http://php.net/simplexml)
 
 ## Install ##
+Check https://github.com/Ysurac/FlightAirMap/wiki/Installation for detailed installation instruction.
+
 ### Web install/Update ###
 (This is the recommanded way to install)
 
@@ -51,15 +53,8 @@ Use install/index.php
 * run install/populate_all.php (You should go to http://www.virtualradarserver.co.uk/ and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me) or install/populate_ivao.php if you use IVAO as datasource
 
 ## Data Sources
-You can choose [FlightAware](http://www.flightaware.com) *OR* ADS-B in SBS1 (BaseStation) format AND/OR ACARS from acarsdec.
-(FlightAware is no more tested, I don't have a paid API account)
 
-### FlightAware Api Key 
-* get yourself a flightAware api key http://flightaware.com/commercial/flightxml/
-* supply require/settings.php with this key
-* run cron.php
-
-### ADS-B (real flights)
+### ADS-B in SBS1 (BaseStation) format (real flights)
 * You can use dump1090 [https://github.com/mutability/dump1090](https://github.com/mutability/dump1090) with a RTL dongle, Radarcape deltadb.txt or aircraftlist.json, or wazzup file, or /action.php/acars/data of phpvms...
 * run scripts/daemon-spotter.php
 
