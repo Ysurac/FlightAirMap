@@ -249,7 +249,7 @@ if ($use_aprs) {
 	require_once(dirname(__FILE__).'/../require/class.APRS.php');
 	$APRS=new APRS($Connection->db);
 	$aprs_connect = 0;
-	$aprs_keep = 240;
+	$aprs_keep = 120;
 	$aprs_last_tx = time();
 	if (isset($globalAPRSversion)) $aprs_version = $globalAPRSversion;
 	else $aprs_version = $globalName.' using FlightAirMap';
@@ -725,7 +725,6 @@ while ($i > 0) {
 			    socket_sendto($r, "OK " . $buffer , 100 , 0 , $remote_ip , $remote_port);
 			    $ACARS->deleteLiveAcarsData();
 			} elseif ($format == 'flightgearmp') {
-			    //
 			    if (substr($buffer,0,1) != '#') {
 				$data = array();
 				//echo $buffer."\n";
@@ -863,7 +862,10 @@ while ($i > 0) {
 					}
 					//socket_close($r);
 					if ($globalDebug) echo "Reconnect after an error...\n";
-					connect_all($globalSources);
+					if ($format == 'aprs') $aprs_connect = 0;
+					$sourceer[$nb] = $globalSources[$nb];
+					connect_all($sourceer);
+					$sourceer = array();
 				}
 			    }
 			}
@@ -876,17 +878,23 @@ while ($i > 0) {
 				sleep($globalMinFetch);
 				$sourcefg[$nb] = $globalSources[$nb];
 				connect_all($sourcefg);
+				$sourcefg = array();
 				break;
 				
 			} elseif ($format != 'acars' && $format != 'flightgearsp') {
-			    $tt++;
+			    if (isset($tt[$format])) $tt[$format]++;
+			    else $tt[$format]=0;
 			    if ($tt > 30) {
-				if ($globalDebug)echo "ERROR : Reconnect...";
+				if ($globalDebug)echo "ERROR : Reconnect ".$format."...";
 				//@socket_close($r);
 				sleep(2);
-				connect_all($globalSources);
+				$aprs_connect = 0;
+				$sourceee[$nb] = $globalSources[$nb];
+				connect_all($sourceee);
+				$sourceee = array();
+				//connect_all($globalSources);
+				$tt[$format]=0;
 				break;
-				$tt = 0;
 			    }
 			}
 		    }
@@ -910,6 +918,7 @@ while ($i > 0) {
 			    sleep(2);
 			    $time = time();
 			    //connect_all($hosts);
+			    $aprs_connect = 0;
 			    connect_all($globalSources);
 
 		}
