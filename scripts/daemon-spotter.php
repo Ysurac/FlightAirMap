@@ -9,6 +9,7 @@ require_once(dirname(__FILE__).'/../require/class.SpotterImport.php');
 require_once(dirname(__FILE__).'/../require/class.SpotterServer.php');
 //require_once(dirname(__FILE__).'/../require/class.APRS.php');
 require_once(dirname(__FILE__).'/../require/class.ATC.php');
+require_once(dirname(__FILE__).'/../require/class.ACARS.php');
 require_once(dirname(__FILE__).'/../require/class.SBS.php');
 require_once(dirname(__FILE__).'/../require/class.Connection.php');
 require_once(dirname(__FILE__).'/../require/class.Common.php');
@@ -32,7 +33,7 @@ if (!isset($globalSources)) {
     	}
     } else {
         if (!isset($globalSBS1Host)) {
-	    echo '$globalSBS1Host MUST be defined !';
+	    echo '$globalSources MUST be defined !';
 	    die;
 	}
 	//$hosts = array($globalSBS1Host.':'.$globalSBS1Port);
@@ -54,6 +55,7 @@ if (isset($globalServer) && $globalServer) {
 } else $SI=new SpotterImport($Connection->db);
 //$APRS=new APRS($Connection->db);
 $SBS=new SBS($Connection->db);
+$ACARS=new ACARS($Connection->db);
 $Common=new Common();
 date_default_timezone_set('UTC');
 //$servertz = system('date +%Z');
@@ -76,6 +78,20 @@ function create_socket($host, $port, &$errno, &$errstr) {
     $s = socket_create(AF_INET, SOCK_STREAM, 0);
     $r = @socket_connect($s, $ip, $port);
     if (!socket_set_nonblock($s)) echo "Unable to set nonblock on socket\n";
+    if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
+        return $s;
+    }
+    $errno = socket_last_error($s);
+    $errstr = socket_strerror($errno);
+    socket_close($s);
+    return false;
+}
+
+function create_socket_udp($host, $port, &$errno, &$errstr) {
+    echo "UDP !!";
+    $ip = gethostbyname($host);
+    $s = socket_create(AF_INET, SOCK_DGRAM, 0);
+    $r = @socket_bind($s, $ip, $port);
     if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
         return $s;
     }
@@ -162,7 +178,11 @@ function connect_all($hosts) {
 	    $hostport = explode(':',$host);
 	    if (isset($hostport[1])) $port = $hostport[1];
 	    else $port = $globalSources[$id]['port'];
-    	    $s = create_socket($host,$port, $errno, $errstr);
+	    if (!isset($globalSources[$id]['format']) || ($globalSources[$id]['format'] != 'acars' && $globalSources[$id]['format'] != 'flightgearsp')) {
+        	$s = create_socket($host,$port, $errno, $errstr);
+    	    } else {
+        	$s = create_socket_udp($host,$port, $errno, $errstr);
+	    }
 	    if ($s) {
     	        $sockets[$id] = $s;
     	        if (!isset($globalSources[$id]['format']) || strtolower($globalSources[$id]['format']) == 'auto') {
@@ -188,7 +208,7 @@ function connect_all($hosts) {
 		    } else $globalSources[$id]['format'] = 'sbs';
 		    //if ($globalDebug) echo 'Connection in progress to '.$host.'('.$formats[$id].')....'."\n";
 		}
-		if ($globalDebug) echo 'Connection in progress to '.$host.'('.$globalSources[$id]['format'].')....'."\n";
+		if ($globalDebug) echo 'Connection in progress to '.$host.':'.$port.' ('.$globalSources[$id]['format'].')....'."\n";
             } else {
 		if ($globalDebug) echo 'Connection failed to '.$host.':'.$port.' : '.$errno.' '.$errstr."\n";
     	    }
@@ -644,7 +664,7 @@ while ($i > 0) {
     	    //$last_exec['phpvmacars'] = time();
     	    $value['last_exec'] = time();
 	//} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
-	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp') {
+	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
     	    $value['last_exec'] = time();
 
@@ -658,7 +678,8 @@ while ($i > 0) {
 		foreach ($read as $nb => $r) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
-        	    $buffer = socket_read($r, 6000,PHP_NORMAL_READ);
+        	    //$buffer = socket_read($r, 6000,PHP_NORMAL_READ);
+        	    $az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
         	    //$buffer = socket_read($r, 60000,PHP_NORMAL_READ);
         	    //echo $buffer."\n";
 		    // lets play nice and handle signals such as ctrl-c/kill properly
@@ -679,6 +700,30 @@ while ($i > 0) {
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
                                 $SI->add($data);
                             }
+                        } elseif ($format == 'flightgearsp') {
+                    	    //echo $buffer."\n";
+                    	    if (strlen($buffer) > 5) {
+				$line = explode(',',$buffer);
+				$data = array();
+				//XGPS,2.0947,41.3093,-3047.6953,198.930,0.000,callsign,c172p
+				$data['hex'] = substr(str_pad(bin2hex($line[6].$line[7]),6,'000000',STR_PAD_LEFT),0,6);
+				$data['ident'] = $line[6];
+				$data['aircraft_name'] = $line[7];
+				$data['longitude'] = $line[1];
+				$data['latitude'] = $line[2];
+				$data['altitude'] = round($line[3]*3.28084);
+				$data['heading'] = round($line[4]);
+				$data['speed'] = round($line[5]*1.94384);
+				$data['datetime'] = date('Y-m-d H:i:s');
+				$data['format_source'] = 'flightgearsp';
+				$SI->add($data);
+				$send = @ socket_send( $r  , $data_aprs , strlen($data_aprs) , 0 );
+			    }
+                        } elseif ($format == 'acars') {
+                    	    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
+			    $ACARS->add(trim($buffer));
+			    socket_sendto($r, "OK " . $buffer , 100 , 0 , $remote_ip , $remote_port);
+			    $ACARS->deleteLiveAcarsData();
 			} elseif ($format == 'flightgearmp') {
 			    //
 			    if (substr($buffer,0,1) != '#') {
@@ -833,7 +878,7 @@ while ($i > 0) {
 				connect_all($sourcefg);
 				break;
 				
-			} else {
+			} elseif ($format != 'acars' && $format != 'flightgearsp') {
 			    $tt++;
 			    if ($tt > 30) {
 				if ($globalDebug)echo "ERROR : Reconnect...";
