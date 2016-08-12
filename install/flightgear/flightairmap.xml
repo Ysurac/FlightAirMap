@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<PropertyList>
+<comment>
+<![CDATA[
+  Usage:
+
+  fgfs --generic=socket,out,2,localhost,93745,udp,flightairmap
+]]>
+</comment>
+<generic>
+  <output>
+    <line_separator>newline</line_separator>
+    <var_separator>,</var_separator>
+
+    <chunk>
+      <name>Header</name>
+      <format>XGPS</format>
+      <node></node>
+    </chunk>
+    <chunk>
+      <node>/position/longitude-deg</node>
+      <name>longitude</name>
+      <type>float</type>
+      <format>%03.4f</format>
+    </chunk>
+    <chunk>
+      <node>/position/latitude-deg</node>
+      <name>Latitude</name>
+      <type>float</type>
+      <format>%03.4f</format>
+    </chunk>
+    <chunk>
+      <node>/position/altitude-ft</node>
+      <name>Altitude in meters MSL</name>
+      <type>float</type>
+      <format>%05.4f</format>
+      <factor>0.3048</factor>
+    </chunk>
+    <chunk>
+      <node>/orientation/heading-deg</node>
+      <name>Track-along-ground from true north</name>
+      <type>float</type>
+      <format>%03.3f</format>
+    </chunk>
+    <chunk>
+      <node>velocities/groundspeed-kt</node>
+      <name>Groundspeed in meters/sec</name>
+      <type>float</type>
+      <format>%03.3f</format>
+      <factor>0.514444</factor>
+    </chunk>
+    <chunk>
+    <name>callsign</name>
+    <type>string</type>
+    <format>%s</format>
+    <node>/sim/multiplay/callsign</node>
+    </chunk>
+    <chunk>
+    <name>model</name>
+    <type>string</type>
+    <format>%s</format>
+    <node>/sim/aero</node>
+   </chunk>
+
+  </output>
+</generic>
+</PropertyList>
