@@ -270,8 +270,7 @@ if ($globalDebug) echo "SCAN MODE \n\n";
 if (!isset($globalCronEnd)) $globalCronEnd = 60;
 $endtime = time()+$globalCronEnd;
 $i = 1;
-$tt = 0;
-
+$tt = array();
 // Delete all ATC
 if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
 	$ATC=new ATC($Connection->db);
@@ -689,7 +688,7 @@ while ($i > 0) {
 		    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
 		    // SBS format is CSV format
 		    if ($buffer != '') {
-			$tt = 0;
+			$tt['format'] = 0;
 			if ($format == 'raw') {
 			    // AVR format
 			    $data = $SBS->parse($buffer);
@@ -883,8 +882,8 @@ while ($i > 0) {
 				
 			} elseif ($format != 'acars' && $format != 'flightgearsp') {
 			    if (isset($tt[$format])) $tt[$format]++;
-			    else $tt[$format]=0;
-			    if ($tt > 30) {
+			    else $tt[$format] = 0;
+			    if ($tt[$format] > 30) {
 				if ($globalDebug)echo "ERROR : Reconnect ".$format."...";
 				//@socket_close($r);
 				sleep(2);
