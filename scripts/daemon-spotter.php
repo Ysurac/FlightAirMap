@@ -677,7 +677,7 @@ while ($i > 0) {
 		foreach ($read as $nb => $r) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
-        	    if ($format == 'sbs') {
+        	    if ($format == 'sbs' || $format == 'aprs' || $format == 'raw' || $format == 'tsv') {
         		$buffer = socket_read($r, 6000,PHP_NORMAL_READ);
         	    } else {
 	    	        $az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
@@ -785,7 +785,9 @@ while ($i > 0) {
 				$send = @ socket_send( $r  , $data_aprs , strlen($data_aprs) , 0 );
 			    }
 			    //echo 'Connect : '.$aprs_connect.' '.$buffer."\n";
-			    if (substr($buffer,0,1) != '#') {
+			    $buffer = str_replace('APRS <- ','',$buffer);
+			    $buffer = str_replace('APRS -> ','',$buffer);
+			    if (substr($buffer,0,1) != '#' && substr($buffer,0,1) != '@' && substr($buffer,0,5) != 'APRS ') {
 				$line = $APRS->parse($buffer);
 				if (is_array($line) && isset($line['address']) && $line['address'] != '' && isset($line['ident'])) {
 				    $data = array();
