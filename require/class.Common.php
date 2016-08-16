@@ -87,6 +87,7 @@ class Common {
 		if (!is_string($data)) return array();
 		if ($data == '') return array();
 		$html = str_get_html($data);
+		if ($html === false) return array();
 		$tabledata=array();
 		foreach($html->find('tr') as $element)
 		{
@@ -121,6 +122,7 @@ class Common {
 	*/
 	public function text2array($data) {
 		$html = str_get_html($data);
+		if ($html === false) return array();
 		$tabledata=array();
 		foreach($html->find('p') as $element)
 		{

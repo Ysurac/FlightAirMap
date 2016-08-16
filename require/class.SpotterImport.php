@@ -239,10 +239,11 @@ class SpotterImport {
 		//$this->db = $dbc;
 
 		$hex = trim($line['hex']);
-	        $id = trim($line['hex']);
+	        if (!isset($line['id'])) $id = trim($line['hex']);
+	        else $id = trim($line['id']);
 		
 		//print_r($this->all_flights);
-		if (!isset($this->all_flights[$id]['hex'])) {
+		if (!isset($this->all_flights[$id]['hex']) && ctype_xdigit($hex)) {
 		    $this->all_flights[$id] = array('hex' => $hex);
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('addedSpotter' => 0));
 		    //if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
@@ -407,7 +408,7 @@ class SpotterImport {
 
 
 
-	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '') {
+	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '' && is_numeric($line['latitude']) && is_numeric($line['longitude'])) {
 	    	    if (isset($this->all_flights[$id]['time_last_coord'])) $timediff = round(time()-$this->all_flights[$id]['time_last_coord']);
 	    	    else unset($timediff);
 	    	    if ($this->tmd > 5 || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || !isset($timediff) || $timediff > 800 || ($timediff > 10 && isset($this->all_flights[$id]['latitude']) && isset($this->all_flights[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')))) {

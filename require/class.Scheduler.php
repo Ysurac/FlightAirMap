@@ -366,7 +366,7 @@ class Schedule {
 	* @param String $callsign The callsign
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getTunisair($callsign) {
+	public function getTunisair($callsign) {
 		$Common = new Common();
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
@@ -386,23 +386,22 @@ class Schedule {
 	* @param String $callsign The callsign
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getVueling($callsign) {
+	public function getVueling($callsign,$date = 'NOW') {
 		$Common = new Common();
+		$check_date = new Datetime($date);
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
-		$url = "https://www.vueling.com/Base/BaseProxy/RenderMacro/?macroalias=DailyFlights&OriginSelected=&DestinationSelected=&idioma=en-GB&pageid=30694&ItemsByPage=50&FlightNumberFilter=".$numvol;
+		$final_date = str_replace('/','%2F',$check_date->format('d/m/Y'));
+		$url = "http://www.vueling.com/Base/BaseProxy/RenderMacro/?macroalias=FlightStatusResult&searchBy=bycode&date=".$final_date."&flightNumber=".$numvol."&idioma=en-GB";
 		$data = $Common->getData($url);
+		$data=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$data));
 		if ($data != '') {
-			$table = $Common->table2array($data);
-			foreach ($table as $flight) {
-				if (count($flight) > 0 && $flight[0] == "VY".$numvol && isset($flight[13])) {
-					preg_match('/flightOri=[A-Z]{3}/',$flight[13],$result);
-					$DepartureAirportIata = str_replace('flightOri=','',$result[0]);
-					preg_match('/flightDest=[A-Z]{3}/',$flight[13],$result);
-					$ArrivalAirportIata = str_replace('flightDest=','',$result[0]);
-					return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $flight[3],'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $flight[4],'Source' => 'website_vueling');
-				}
-			}
+			preg_match('/flightOri=[A-Z]{3}/',$data,$result);
+			$DepartureAirportIata = str_replace('flightOri=','',$result[0]);
+			preg_match('/flightDest=[A-Z]{3}/',$data,$result);
+			$ArrivalAirportIata = str_replace('flightDest=','',$result[0]);
+			if ($DepartureAirportIata != '' && $ArrivalAirportIata != '') return array('DepartureAirportIATA' => $DepartureAirportIata,'ArrivalAirportIATA' => $ArrivalAirportIata,'Source' => 'website_vueling');
+			else return array();
 		}
 		return array();
 	}
@@ -413,7 +412,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getIberia($callsign, $date = 'NOW') {
+	public function getIberia($callsign, $date = 'NOW') {
 		$Common = new Common();
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		$check_date = new Datetime($date);
@@ -1095,11 +1094,12 @@ class Schedule {
 	}
 }
 
-  /*
+/*
 $Schedule = new Schedule();
 //print_r($Schedule->fetchSchedule('HV5661'));
 //print_r($Schedule->getFlightAware('AF1179'));
 //print_r($Schedule->getBritishAirways('BAW551'));
-print_r($Schedule->getLufthansa('LH551'));
+//print_r($Schedule->getLufthansa('LH551'));
+print_r($Schedule->getTunisair('TU203'));
 */
 ?>

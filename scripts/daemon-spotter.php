@@ -677,8 +677,11 @@ while ($i > 0) {
 		foreach ($read as $nb => $r) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
-        	    //$buffer = socket_read($r, 6000,PHP_NORMAL_READ);
-        	    $az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
+        	    if ($format == 'sbs') {
+        		$buffer = socket_read($r, 6000,PHP_NORMAL_READ);
+        	    } else {
+	    	        $az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
+	    	    }
         	    //$buffer = socket_read($r, 60000,PHP_NORMAL_READ);
         	    //echo $buffer."\n";
 		    // lets play nice and handle signals such as ctrl-c/kill properly
@@ -688,7 +691,7 @@ while ($i > 0) {
 		    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
 		    // SBS format is CSV format
 		    if ($buffer != '') {
-			$tt['format'] = 0;
+			$tt[$format] = 0;
 			if ($format == 'raw') {
 			    // AVR format
 			    $data = $SBS->parse($buffer);
@@ -697,7 +700,7 @@ while ($i > 0) {
 				$data['format_source'] = 'raw';
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
-                                $SI->add($data);
+                                if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
                             }
                         } elseif ($format == 'flightgearsp') {
                     	    //echo $buffer."\n";
@@ -715,7 +718,7 @@ while ($i > 0) {
 				$data['speed'] = round($line[5]*1.94384);
 				$data['datetime'] = date('Y-m-d H:i:s');
 				$data['format_source'] = 'flightgearsp';
-				$SI->add($data);
+				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
 				$send = @ socket_send( $r  , $data_aprs , strlen($data_aprs) , 0 );
 			    }
                         } elseif ($format == 'acars') {
@@ -740,7 +743,7 @@ while ($i > 0) {
 				    $aircraft_type = $line[10];
 				    $aircraft_type = preg_split(':/:',$aircraft_type);
 				    $data['aircraft_name'] = substr(end($aircraft_type),0,-4);
-				    $SI->add($data);
+				    if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
 				}
 			    }
 			} elseif ($format == 'beast') {
@@ -767,7 +770,7 @@ while ($i > 0) {
     				$data['format_source'] = 'tsv';
     				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
-    				$SI->add($data);
+    				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
     				unset($lined);
     				unset($data);
     			    } else $error = true;
@@ -808,7 +811,7 @@ while ($i > 0) {
 				    $currentdate = date('Y-m-d H:i:s');
 				    $aprsdate = strtotime($data['datetime']);
 				    // Accept data if time <= system time + 20s
-				    if ($line['stealth'] == 0 && (strtotime($data['datetime']) <= strtotime($currentdate)+20)) $send = $SI->add($data);
+				    if ($line['stealth'] == 0 && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) $send = $SI->add($data);
 				    else {
 					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";
 					else echo '--------- '.$data['ident'].' : Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
@@ -847,7 +850,8 @@ while ($i > 0) {
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
     				$data['id_source'] = $id_source;
-    				$send = $SI->add($data);
+    				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $send = $SI->add($data);
+    				else $error = true;
     				unset($data);
     			    } else $error = true;
 			    if ($error) {
