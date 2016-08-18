@@ -613,7 +613,7 @@ class update_schema {
 		$error .= create_db::import_file('../db/airport.sql');
 		if ($error != '') return 'Import airport.sql : '.$error;
 		// Remove primary key on Spotter_Archive
-		$query = "alter table spotter_archive drop column spotter_archive_id, add spotter_archive_id INT(11)";
+		$query = "alter table spotter_archive drop spotter_archive_id, add spotter_archive_id INT(11)";
         	try {
             	    $sth = $Connection->db->prepare($query);
 		    $sth->execute();
@@ -717,6 +717,43 @@ class update_schema {
 		}
 		if ($error != '') return $error;
 		$query = "UPDATE config SET value = '23' WHERE name = 'schema_version'";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (update schema_version) : ".$e->getMessage()."\n";
+    		}
+		return $error;
+	}
+
+
+	private static function update_from_23() {
+		global $globalDBdriver;
+    		$Connection = new Connection();
+		$error = '';
+		// Add table stats polar
+		if ($globalDBdriver == 'mysql') {
+			//$error .= create_db::import_file('../db/stats_source.sql');
+		} else {
+			//$error .= create_db::import_file('../db/pgsql/stats_source.sql');
+			$query = "create index flightaware_id_idx ON spotter_archive USING btree(flightaware_id)";
+        		try {
+		    		$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (create index on spotter_archive) : ".$e->getMessage()."\n";
+			}
+		}
+    		$query = "";
+        	try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (create index on spotter_archive) : ".$e->getMessage()."\n";
+		}
+
+		if ($error != '') return $error;
+		$query = "UPDATE config SET value = '24' WHERE name = 'schema_version'";
         	try {
             	    $sth = $Connection->db->prepare($query);
 		    $sth->execute();
