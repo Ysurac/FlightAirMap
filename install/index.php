@@ -1129,6 +1129,7 @@ if (isset($_POST['dbtype'])) {
 	print '<div class="info column">';
 	print '<ul><div id="step">';
 	$pop = false;
+	$popi = false;
 	foreach ($_SESSION['done'] as $done) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	    if ($done == 'Create database') $pop = true;
