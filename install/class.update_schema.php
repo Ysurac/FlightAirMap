@@ -613,12 +613,19 @@ class update_schema {
 		$error .= create_db::import_file('../db/airport.sql');
 		if ($error != '') return 'Import airport.sql : '.$error;
 		// Remove primary key on Spotter_Archive
-		$query = "alter table spotter_archive drop spotter_archive_id, add spotter_archive_id INT(11)";
+		$query = "alter table spotter_archive drop spotter_archive_id";
         	try {
             	    $sth = $Connection->db->prepare($query);
 		    $sth->execute();
     		} catch(PDOException $e) {
 		    return "error (remove primary key on spotter_archive) : ".$e->getMessage()."\n";
+    		}
+		$query = "alter table spotter_archive add spotter_archive_id INT(11)";
+        	try {
+            	    $sth = $Connection->db->prepare($query);
+		    $sth->execute();
+    		} catch(PDOException $e) {
+		    return "error (add id again on spotter_archive) : ".$e->getMessage()."\n";
     		}
 
     		// Add column over_country
