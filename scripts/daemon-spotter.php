@@ -44,8 +44,13 @@ if (!isset($globalSources)) {
 $options = getopt('s::',array('source::','server','idsource::'));
 //if (isset($options['s'])) $hosts = array($options['s']);
 //elseif (isset($options['source'])) $hosts = array($options['source']);
-if (isset($options['s'])) $globalSources[] = array('host' => $options['s']);
-elseif (isset($options['source'])) $globalSources[] = array('host' => $options['source']);
+if (isset($options['s'])) {
+    $globalSources = array();
+    $globalSources[] = array('host' => $options['s']);
+} elseif (isset($options['source'])) {
+    $globalSources = array();
+    $globalSources[] = array('host' => $options['source']);
+}
 if (isset($options['server'])) $globalServer = TRUE;
 if (isset($options['idsource'])) $id_source = $options['idsource'];
 else $id_source = 1;
