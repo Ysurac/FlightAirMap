@@ -124,6 +124,11 @@ function connect_all($hosts) {
         	$$globalSources[$id]['format'] = 'aircraftlistjson';
         	//$last_exec['aircraftlistjson'] = 0;
         	if ($globalDebug) echo "Connect to aircraftlist.json source (".$host.")...\n";
+    	    } else if (preg_match('/opensky/i',$host)) {
+        	//$formats[$id] = 'aircraftlistjson';
+        	$$globalSources[$id]['format'] = 'opensky';
+        	//$last_exec['aircraftlistjson'] = 0;
+        	if ($globalDebug) echo "Connect to opensky source (".$host.")...\n";
     	    } else if (preg_match('/radarvirtuel.com\/file.json$/i',$host)) {
         	//$formats[$id] = 'radarvirtueljson';
         	$globalSources[$id]['format'] = 'radarvirtueljson';
@@ -167,7 +172,7 @@ function connect_all($hosts) {
         	    exit(0);
         	}
             //} else if (preg_match('/10001/',$host)) {
-            } else if (preg_match('/10001/',$host) || $globalSources[$id]['port'] == '10001') {
+            } else if (preg_match('/10001/',$host) || (isset($globalSources[$id]['port']) && $globalSources[$id]['port'] == '10001')) {
         	//$formats[$id] = 'tsv';
         	$globalSources[$id]['format'] = 'tsv';
         	if ($globalDebug) echo "Connect to tsv source (".$host.")...\n";
@@ -288,7 +293,6 @@ while ($i > 0) {
     }
     //foreach ($formats as $id => $value) {
     foreach ($globalSources as $id => $value) {
-	//if ($value == 'deltadbtxt' && (time() - $last_exec['deltadbtxt'] > $globalMinFetch)) {
 	if ($value['format'] == 'deltadbtxt' && (time() - $value['last_exec'] > $globalMinFetch)) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host']);
@@ -475,6 +479,33 @@ while ($i > 0) {
 	    	    $data['format_source'] = 'planeupdatefaa';
     		    $data['id_source'] = $id_source;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+		    $SI->add($data);
+		    unset($data);
+		}
+	    }
+    	    //$last_exec['planeupdatefaa'] = time();
+    	    $value['last_exec'] = time();
+    	} elseif ($value['format'] == 'opensky' && (time() - $value['last_exec'] > $globalMinFetch)) {
+	    $buffer = $Common->getData($value['host']);
+	    $all_data = json_decode($buffer,true);
+	    if (isset($all_data['states'])) {
+		foreach ($all_data['states'] as $key => $line) {
+		    $data = array();
+		    $data['hex'] = $line[0]; // hex
+		    $data['ident'] = trim($line[1]); // ident
+		    $data['altitude'] = round($line[7]*3.28084); // altitude
+		    $data['speed'] = round($line[9]*1.94384); // speed
+		    $data['heading'] = round($line[10]); // heading
+		    $data['latitude'] = $line[5]; // lat
+		    $data['longitude'] = $line[6]; // long
+		    $data['verticalrate'] = $line[11]; // verticale rate
+		    //$data['squawk'] = $line[10]; // squawk
+		    //$data['emergency'] = ''; // emergency
+		    //$data['registration'] = $line[2];
+		    //$data['aircraft_icao'] = $line[0];
+		    $data['datetime'] = date('Y-m-d H:i:s',$line[9]);
+	    	    $data['format_source'] = 'opensky';
+    		    $data['id_source'] = $id_source;
 		    $SI->add($data);
 		    unset($data);
 		}
