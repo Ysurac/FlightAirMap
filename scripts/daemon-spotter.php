@@ -121,12 +121,12 @@ function connect_all($hosts) {
         	if ($globalDebug) echo "Connect to vatsim source (".$host.")...\n";
     	    } else if (preg_match('/aircraftlist.json$/i',$host)) {
         	//$formats[$id] = 'aircraftlistjson';
-        	$$globalSources[$id]['format'] = 'aircraftlistjson';
+        	$globalSources[$id]['format'] = 'aircraftlistjson';
         	//$last_exec['aircraftlistjson'] = 0;
         	if ($globalDebug) echo "Connect to aircraftlist.json source (".$host.")...\n";
     	    } else if (preg_match('/opensky/i',$host)) {
         	//$formats[$id] = 'aircraftlistjson';
-        	$$globalSources[$id]['format'] = 'opensky';
+        	$globalSources[$id]['format'] = 'opensky';
         	//$last_exec['aircraftlistjson'] = 0;
         	if ($globalDebug) echo "Connect to opensky source (".$host.")...\n";
     	    } else if (preg_match('/radarvirtuel.com\/file.json$/i',$host)) {
