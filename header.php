@@ -91,7 +91,7 @@ if (strtolower($current_page) == "index")
     }
 ?>
 <?php
-    if (isset($globalMapQuestKey) && $globalMapQuestKey != '' && ($MapType == 'MapQuest-OSM' || $MapType == 'MapQuest-Roadmap' || $MapType == 'MapQuest-Aerial')) {
+    if (isset($globalMapQuestKey) && $globalMapQuestKey != '' && ($MapType == 'MapQuest-OSM' || $MapType == 'MapQuest-Hybrid' || $MapType == 'MapQuest-Aerial')) {
 ?>
 <!--<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>-->
 <script src="https://open.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>

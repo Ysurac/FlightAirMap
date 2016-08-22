@@ -508,7 +508,7 @@ while ($i > 0) {
 		    //$data['emergency'] = ''; // emergency
 		    //$data['registration'] = $line[2];
 		    //$data['aircraft_icao'] = $line[0];
-		    $data['datetime'] = date('Y-m-d H:i:s',$line[9]);
+		    $data['datetime'] = date('Y-m-d H:i:s',$line[3]);
 	    	    $data['format_source'] = 'opensky';
     		    $data['id_source'] = $id_source;
 		    $SI->add($data);

@@ -66,6 +66,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC))
 		} else {
 			$geom = geoPHP::load(stream_get_contents($row['wkb']));
 		}
+		if (isset($properties['type'])) $properties['type'] = trim($properties['type']);
 		$feature = array(
 		    'type' => 'Feature',
 		    'geometry' => json_decode($geom->out('json')),
