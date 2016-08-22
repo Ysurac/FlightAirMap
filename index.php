@@ -188,13 +188,24 @@ require_once('header.php');
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightroute" value="1" onclick="clickFlightRoute(this)" <?php if ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == 'true') || !isset($_COOKIE['MapRoute'])) print 'checked'; ?> ><?php echo _("Display flight route on click"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightestimation" value="1" onclick="clickFlightEstimation(this)" <?php if ((isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'true') || (!isset($_COOKIE['flightestimation']) && !isset($globalMapEstimation)) || (!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation)) print 'checked'; ?> ><?php echo _("Planes animate between updates"); ?></label></div></li>
 		    <?php
-			if (array_search(TRUE, array_column($globalSources, 'sourcestats')) !== FALSE) {
+			if (function_exists('array_column')) {
+			    if (array_search(TRUE, array_column($globalSources, 'sourcestats')) !== FALSE) {
 		    ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightpolar" value="1" onclick="clickPolar(this)" <?php if ((isset($_COOKIE['polar']) && $_COOKIE['polar'] == 'true')) print 'checked'; ?> ><?php echo _("Display polar on map"); ?></label></div></li>
 		    <?php
-			}
+			    }
+			} elseif (isset($globalSources)) {
+			    $dispolar = false;
+			    foreach ($globalSources as $testsource) {
+			        if (isset($globalSources['sourcestats']) && $globalSources['sourcestats'] !== FALSE) $dispolar = true;
+			    }
+			    if ($dispolar) {
 		    ?>
-
+		    <li><div class="checkbox"><label><input type="checkbox" name="flightpolar" value="1" onclick="clickPolar(this)" <?php if ((isset($_COOKIE['polar']) && $_COOKIE['polar'] == 'true')) print 'checked'; ?> ><?php echo _("Display polar on map"); ?></label></div></li>
+		    <?php
+			    }
+		        }
+		    ?>
 		    <?php
 		        if (extension_loaded('gd') && function_exists('gd_info')) {
 		    ?>
