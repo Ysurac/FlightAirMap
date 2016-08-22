@@ -15,7 +15,6 @@ if (isset($_GET['airport_icao'])) {
 		if (isset($metar_info[0]['metar'])) $metar_parse = $METAR->parse($metar_info[0]['metar']);
 		//print_r($metar_parse);
 	}
-}
  ?>
 <div class="alldetails">
 <button type="button" class="close">&times;</button>
@@ -70,6 +69,12 @@ if (isset($spotter_item['home_link']) && $spotter_item['home_link'] != '' && iss
     print '<a href="'.$spotter_item['wikipedia_link'].'">Wikipedia</a>';
     print '</div>';
 }
+if ($spotter_item['type'] == 'medium_airport' || $spotter_item['type'] == 'large_airport') {
+    print '<div><span>'._("Live Air Traffic").'</span>';
+    print '<a href="http://www.liveatc.net/search/?icao='.$spotter_item['icao'].'">LiveATC</a>';
+    print '</div>';
+}
+
 print '</div>';
 
 if (isset($metar_parse)) {
@@ -135,5 +140,6 @@ if (isset($spotter_item['acars']['message'])) print '<div class="acars"><span>La
 if (isset($spotter_item['squawk']) && $spotter_item['squawk'] != '' && $spotter_item['squawk'] != 0) print '<div class="bottom">Squawk : '.$spotter_item['squawk'].' - '.$spotter_item['squawk_usage'].'</div>';
 */
 print '</div>';
+}
 ?>
 </div>
