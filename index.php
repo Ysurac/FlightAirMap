@@ -6,7 +6,7 @@ require_once('require/class.Language.php');
 $title = _("Home");
 require_once('header.php');
 ?>
-
+<noscript><div class="alert alert-danger" role="alert"><?php echo _("JavaScript <b>MUST</b> be enabled"); ?></div></noscript>
 <div id="live-map"></div>
 <div id="aircraft_ident"></div>
 
