@@ -3,7 +3,7 @@ require_once(dirname(__FILE__).'/libs/simple_html_dom.php');
 require_once(dirname(__FILE__).'/libs/uagent/uagent.php');
 
 class Common {
-	protected $cookies = array();
+	//protected $cookies = array();
 	
 	/**
 	* Get data from form result
@@ -72,7 +72,7 @@ class Common {
 	}
 	
 	private function curlResponseHeaderCallback($ch, $headerLine) {
-		global $cookies;
+		//global $cookies;
 		if (preg_match('/^Set-Cookie:\s*([^;]*)/mi', $headerLine, $cookie) == 1)
 			$cookies[] = $cookie;
 		return strlen($headerLine); // Needed by curl
