@@ -328,7 +328,7 @@ class METAR {
     		if (isset($globalIVAO) && $globalIVAO) {
         		$cycle = $Common->getData('http://wx.ivao.aero/metar.php');
     		} else {
-			$cycle = $Common->getData('http://http://tgftp.nws.noaa.gov/data/observations/metar/cycles/'.date('H').'Z.TXT');
+			$cycle = $Common->getData('http://tgftp.nws.noaa.gov/data/observations/metar/cycles/'.date('H').'Z.TXT');
     		}
     		if (isset($globalDebug) && $globalDebug) echo "Done - Updating DB...";
     		$date = '';
