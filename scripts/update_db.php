@@ -78,6 +78,8 @@ if (isset($globalACARSArchiveKeepMonths) && $globalACARSArchiveKeepMonths > 0) {
 	$ACARS = new ACARS();
 	$ACARS->deleteArchiveAcarsData();
 }
-echo "Update 3D models..."
-$update_db->update_models();
+if (isset($globalMap3D) && $globalMap3D) {
+	echo "Update 3D models...";
+	$update_db->update_models();
+}
 ?>
