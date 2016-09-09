@@ -10,18 +10,30 @@ $SpotterArchive = new SpotterArchive();
 $from_archive = false;
 if (isset($_GET['ident'])) {
 	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
-	$spotter_array = $SpotterLive->getLastLiveSpotterDataByIdent($ident);
-	if (empty($spotter_array)) {
-		$from_archive = true;
-		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataByIdent($ident);
+	if (isset($_GET['currenttime'])) {
+		$currenttime = filter_input(INPUT_GET,'currenttime',FILTER_SANITIZE_NUMBER_INT);
+		$currenttime = round($currenttime/1000);
+		$spotter_array = $SpotterLive->getDateLiveSpotterDataByIdent($ident,$currenttime);
+	} else {
+		$spotter_array = $SpotterLive->getLastLiveSpotterDataByIdent($ident);
+		if (empty($spotter_array)) {
+			$from_archive = true;
+			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataByIdent($ident);
+		}
 	}
 }
 if (isset($_GET['flightaware_id'])) {
 	$flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
-	$spotter_array = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
-	if (empty($spotter_array)) {
-		$from_archive = true;
-		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
+	if (isset($_GET['currenttime'])) {
+		$currenttime = filter_input(INPUT_GET,'currenttime',FILTER_SANITIZE_NUMBER_INT);
+		$currenttime = round($currenttime/1000);
+		$spotter_array = $SpotterLive->getDateLiveSpotterDataById($flightaware_id,$currenttime);
+	} else {
+		$spotter_array = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
+		if (empty($spotter_array)) {
+			$from_archive = true;
+			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
+		}
 	}
 }
  ?>
@@ -75,7 +87,7 @@ print '<span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['arriv
 print '</div></div><div>';
 print '<span>'._("Aircraft").'</span>';
 if (isset($spotter_item['aircraft_wiki'])) print '<a href="'.$spotter_item['aircraft_wiki'].'">'.$spotter_item['aircraft_name'].'</a>';
-if (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].'</a>';
+if (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
 else print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
 print '</div>';
 print '<div><span>'._("Altitude").'</span>';

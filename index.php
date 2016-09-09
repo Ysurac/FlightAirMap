@@ -8,8 +8,19 @@ require_once('header.php');
 ?>
 <noscript><div class="alert alert-danger" role="alert"><?php echo _("JavaScript <b>MUST</b> be enabled"); ?></div></noscript>
 <div id="live-map"></div>
+<div id="loadingOverlay"><h1>Loading...</h1></div>
+<div id="toolbar"></div>
 <div id="aircraft_ident"></div>
+<div id="showdetails" class="showdetails"></div>
+<div id="infobox" class="infobox"></div>
+<?php
+    if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 
+?>
+<script src="/js/map.3d.js.php"></script>
+<?php
+    }
+?>
 <div id="dialog" title="<?php echo _("Session has timed-out"); ?>">
   <p><?php echo _("In order to save data consumption web page times out after 30 minutes. Close this dialog to continue."); ?></p>
 </div>
@@ -28,14 +39,33 @@ require_once('header.php');
 <?php
     }
 ?>
+<?php
+    if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
+?>
 	<li><a href="#home" role="tab" title="<?php echo _("Layers"); ?>"><i class="fa fa-map"></i></a></li>
+<?php
+    }
+?>
 	<li><a href="#settings" role="tab" title="<?php echo _("Settings"); ?>"><i class="fa fa-gears"></i></a></li>
+<?php
+    if ((isset($globalMap3D) && $globalMap3D) || !isset($globalMap3D)) {
+	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
+?>
+	<li><a href="#" onclick="show3D(); return false;" role="tab" title="3D"><b>3D</b></a></li>
+<?php
+        } else {
+?>
+	<li><a href="#" onclick="show2D(); return false;" role="tab" title="2D"><b>2D</b></a></li>
+<?php
+	}
+    }
+?>
     </ul>
 
     <!-- Tab panes -->
     <div class="sidebar-content active">
 	<div class="sidebar-pane" id="home">
-	    <h1>Weather</h1>
+	    <h1 class="sidebar-header">Weather<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
 		<ul>
 		<li><a class="button weatherprecipitation" onclick="showWeatherPrecipitation(); return false;"><?php echo _("Weather Precipitation"); ?></a></li>
 		<li><a class="button weatherrain" onclick="showWeatherRain(); return false;"><?php echo _("Weather Rain"); ?></a></li>
@@ -57,7 +87,7 @@ require_once('header.php');
     if (isset($globalArchive) && $globalArchive == TRUE) {
 ?>
         <div class="sidebar-pane" id="archive">
-	    <h1><?php echo _("Playback"); ?> <i>Bêta</i></h1>
+	    <h1 class="sidebar-header"><?php echo _("Playback"); ?> <i>Bêta</i><span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
 	    <p>This feature is not finished yet.</p>
 	    <form method="post">
 		<ul>
@@ -113,7 +143,7 @@ require_once('header.php');
     }
 ?>
         <div class="sidebar-pane" id="settings">
-	    <h1><?php echo _("Settings"); ?></h1>
+	    <h1 class="sidebar-header"><?php echo _("Settings"); ?><span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
 	    <form>
 		<ul>
 		    <li><?php echo _("Type of Map:"); ?>
@@ -132,28 +162,31 @@ require_once('header.php');
 				}
 			    ?>
 			    <?php
-				if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
+			        if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
+			    ?>
+			    <?php
+				    if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
 			    ?>
 			    <option value="Here-Aerial"<?php if ($MapType == 'Here') print ' selected'; ?>>Here-Aerial</option>
 			    <option value="Here-Hybrid"<?php if ($MapType == 'Here') print ' selected'; ?>>Here-Hybrid</option>
 			    <option value="Here-Road"<?php if ($MapType == 'Here') print ' selected'; ?>>Here-Road</option>
 			    <?php
-				}
+				    }
 			    ?>
 			    <?php
-				if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '') {
+				    if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '') {
 			    ?>
 			    <option value="Google-Roadmap"<?php if ($MapType == 'Google-Roadmap') print ' selected'; ?>>Google Roadmap</option>
 			    <option value="Google-Satellite"<?php if ($MapType == 'Google-Satellite') print ' selected'; ?>>Google Satellite</option>
 			    <option value="Google-Hybrid"<?php if ($MapType == 'Google-Hybrid') print ' selected'; ?>>Google Hybrid</option>
 			    <option value="Google-Terrain"<?php if ($MapType == 'Google-Terrain') print ' selected'; ?>>Google Terrain</option>
 			    <?php
-				}
+				    }
 			    ?>
 			    <?php
-				if (isset($globalMapboxToken) && $globalMapboxToken != '') {
-				    if (!isset($_COOKIE['MapTypeId'])) $MapBoxId = 'default';
-				    else $MapBoxId = $_COOKIE['MapTypeId'];
+				    if (isset($globalMapboxToken) && $globalMapboxToken != '') {
+					if (!isset($_COOKIE['MapTypeId'])) $MapBoxId = 'default';
+					else $MapBoxId = $_COOKIE['MapTypeId'];
 			    ?>
 			    <option value="Mapbox-default"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'default') print ' selected'; ?>>Mapbox default</option>
 			    <option value="Mapbox-mapbox.streets"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'mapbox.streets') print ' selected'; ?>>Mapbox streets</option>
@@ -168,25 +201,37 @@ require_once('header.php');
 			    <option value="Mapbox-mapbox.pirates"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'mapbox.pirates') print ' selected'; ?>>Mapbox pirates</option>
 			    <option value="Mapbox-mapbox.emerald"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'mapbox.emerald') print ' selected'; ?>>Mapbox emerald</option>
 			    <?php
-				}
+				    }
 			    ?>
 			    <?php
-				if (isset($globalMapQuestKey) && $globalMapQuestKey != '') {
+				    if (isset($globalMapQuestKey) && $globalMapQuestKey != '') {
 			    ?>
 			    <option value="MapQuest-OSM"<?php if ($MapType == 'MapQuest-OSM') print ' selected'; ?>>MapQuest-OSM</option>
 			    <option value="MapQuest-Aerial"<?php if ($MapType == 'MapQuest-Aerial') print ' selected'; ?>>MapQuest-Aerial</option>
 			    <option value="MapQuest-Hybrid"<?php if ($MapType == 'MapQuest-Hybrid') print ' selected'; ?>>MapQuest-Hybrid</option>
 			    <?php
+				    }
+			    ?>
+			    <option value="Yandex"<?php if ($MapType == 'Yandex') print ' selected'; ?>>Yandex</option>
+			    <?php
 				}
 			    ?>
 			    <option value="OpenStreetMap"<?php if ($MapType == 'OpenStreetMap') print ' selected'; ?>>OpenStreetMap</option>
-			    <option value="Yandex"<?php if ($MapType == 'Yandex') print ' selected'; ?>>Yandex</option>
 			</select>
 		    </li>
+<?php
+    if (!isset($_COOKIE['MapFormat']) || $_COOKIE['MapFormat'] != '3d') {
+?>
+		    
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightpopup" value="1" onclick="clickFlightPopup(this)" <?php if (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true') print 'checked'; ?> ><?php echo _("Display flight info as popup"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightpath" value="1" onclick="clickFlightPath(this)" <?php if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || !isset($_COOKIE['flightpath'])) print 'checked'; ?> ><?php echo _("Display flight path"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightroute" value="1" onclick="clickFlightRoute(this)" <?php if ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == 'true') || !isset($_COOKIE['MapRoute'])) print 'checked'; ?> ><?php echo _("Display flight route on click"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightestimation" value="1" onclick="clickFlightEstimation(this)" <?php if ((isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'true') || (!isset($_COOKIE['flightestimation']) && !isset($globalMapEstimation)) || (!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation)) print 'checked'; ?> ><?php echo _("Planes animate between updates"); ?></label></div></li>
+<?php
+    }
+?>
+		    <li><div class="checkbox"><label><input type="checkbox" name="displayairports" value="1" onclick="clickDisplayAirports(this)" <?php if (isset($_COOKIE['displayairports']) && $_COOKIE['displayairports'] == 'true') print 'checked'; ?> ><?php echo _("Display airports on map"); ?></label></div></li>
+
 		    <?php
 			if (function_exists('array_column')) {
 			    if (array_search(TRUE, array_column($globalSources, 'sourcestats')) !== FALSE) {
@@ -206,6 +251,10 @@ require_once('header.php');
 			    }
 		        }
 		    ?>
+<?php
+    if (!isset($_COOKIE['MapFormat']) || $_COOKIE['MapFormat'] != '3d') {
+?>
+
 		    <?php
 		        if (extension_loaded('gd') && function_exists('gd_info')) {
 		    ?>
@@ -226,6 +275,9 @@ require_once('header.php');
 			    <output id="range"><?php if (isset($_COOKIE['AirportZoom'])) print $_COOKIE['AirportZoom']; elseif (isset($globalAirportZoom)) print $globalAirportZoom; else print '7'; ?></output>
 			</div>
 		    </li>
+<?php
+    }
+?>
 		    <?php
 			if (((isset($globalVATSIM) && $globalVATSIM) || isset($globalIVAO) && $globalIVAO || isset($globalphpVMS) && $globalphpVMS) && (!isset($globalMapVAchoose) || $globalMapVAchoose)) {
 		    ?>
@@ -331,6 +383,7 @@ require_once('header.php');
     if (getCookie('flightpath') == 'true') $(".flightpath").addClass("active");
     if (getCookie('flightpopup') == 'true') $(".flightpopup").addClass("active");
     if (getCookie('maproute') == 'true') $(".flightroute").addClass("active");
+    var sidebar = $('#sidebar').sidebar();
 </script>
 <?php
 require_once('footer.php');

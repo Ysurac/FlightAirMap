@@ -1,0 +1,4 @@
+Aircrafts models come from https://github.com/kalmykov/fr24-3d-models and https://github.com/FGMEMBERS, Cesium_air.glb come from http://cesiumjs.org and all models are licensed under GPLv2
+Cesium_air.glb come from http://cesiumjs.org and is licensed GPLv3
+Models are aligned over X axis.
+

@@ -18,6 +18,7 @@ if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
 require_once(dirname(__FILE__).'/../require/settings.php');
 require(dirname(__FILE__).'/../install/class.update_db.php');
 $update_db = new update_db();
+
 if (isset($globalNOTAM) && $globalNOTAM && $globalNOTAMSource != '' && $update_db->check_last_notam_update()) {
 	echo "updating NOTAM...";
 	$update_db->update_notam();
@@ -77,4 +78,6 @@ if (isset($globalACARSArchiveKeepMonths) && $globalACARSArchiveKeepMonths > 0) {
 	$ACARS = new ACARS();
 	$ACARS->deleteArchiveAcarsData();
 }
+echo "Update 3D models..."
+$update_db->update_models();
 ?>

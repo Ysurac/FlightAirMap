@@ -1399,6 +1399,42 @@ class update_db {
 		return '';
 	}
 
+	public static function update_models() {
+		global $tmp_dir, $globalDebug;
+		$error = '';
+		if ($globalDebug) echo "Models from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.fr/data/models/models.md5sum',$tmp_dir.'models.md5sum');
+		if (file_exists($tmp_dir.'models.md5sum')) {
+			if ($globalDebug) echo "Check files...";
+			$newmodelsdb = array();
+			if (($handle = fopen($tmp_dir.'models.md5sum','r')) !== FALSE) {
+				while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+					$model = $row[2];
+					$newmodelsdb[$model] = $row[0];
+				}
+			}
+			if (file_exists('../models/models.md5sum')) {
+				if (($handle = fopen('../models/models.md5sum','r')) !== FALSE) {
+					while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+						$model = trim($row[2]);
+						$modelsdb[$model] = trim($row[0]);
+					}
+				}
+			} else {
+				$modelsdb = array();
+			}
+			$diff = array_diff($modelsdb,$newmodelsdb);
+			foreach ($diff as $key => $value) {
+				update_db::download('http://data.flightairmap.fr/data/models/'.$key,'../models/'.$key);
+			}
+			update_db::download('http://data.flightairmap.fr/data/models/models.md5sum','../models/models.md5sum');
+		} else $error = "File ".$tmp_dir.'models.md5sum'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+
 	public static function update_aircraft() {
 		global $tmp_dir, $globalDebug;
 		date_default_timezone_set('UTC');
@@ -1622,5 +1658,5 @@ class update_db {
 //echo $update_db->update_owner();
 //update_db::update_translation_fam();
 //echo update_db::update_routes();
-
+//update_db::update_models();
 ?>

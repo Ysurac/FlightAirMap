@@ -2,6 +2,8 @@
 require_once('../require/settings.php');
 require_once('../require/class.Language.php'); 
 
+$_COOKIE['MapFormat'] = '2d';
+
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
 else $compress = $globalJsonCompress;
@@ -130,6 +132,7 @@ $( document ).ready(function() {
 		if (isset($globalCenterLatitude) && $globalCenterLatitude != '' && isset($globalCenterLongitude) && $globalCenterLongitude != '') {
 ?>
 	map = L.map('live-map', { zoomControl:false }).setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], zoom);
+	//map = WE.map('live-map');
 <?php
 		} else {
 ?>
@@ -488,22 +491,9 @@ $( document ).ready(function() {
 	    if (!isset($ident) && !isset($flightaware_id)) {
 ?>
 	
-	var info = L.control();
-	info.onAdd = function (map) {
-		this._div = L.DomUtil.create('div', 'infobox'); // create a div with a class "info"
-		this.update();
-		return this._div;
-	};
-	info.update = function (props) {
-		if (typeof props != 'undefined') {
-			this._div.innerHTML = '<h4><?php echo _("Aircrafts detected"); ?></h4>' +  '<b>' + props + '</b>';
-		} else {
-			this._div.innerHTML = '<h4><?php echo _("Aircrafts detected"); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-fw margin-bottom"></i></b>';
-		}
-
-	};
-	info.addTo(map);
-
+	function info_update (props) {
+		$(".infobox").html('<h4><?php echo _("Aircrafts detected"); ?></h4>' +  '<b>' + props + '</b>');
+	}
 
 	<?php
 	    }
@@ -536,13 +526,6 @@ $( document ).ready(function() {
 	<?php
 	    //if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (isset($globalMapPopup) && !$globalMapPopup)) {
 	?>
-	var showdetails = L.control();
-	showdetails.onAdd = function (map) {
-		this._div = L.DomUtil.create('div', 'showdetails'); // create a div with a class "info"
-		//L.DomEvent.addListener(this._div,'dblclick',this.hide, this);
-		return this._div;
-	};
-	showdetails.addTo(map);
 
 	$(".showdetails").on("click",".close",function(){
     	    $(".showdetails").empty();
@@ -557,7 +540,7 @@ $( document ).ready(function() {
 	<?php
 	if (!isset($ident) && !isset($flightaware_id)) {
 	?>
-	var sidebar = L.control.sidebar('sidebar').addTo(map);
+	//var sidebar = L.control.sidebar('sidebar').addTo(map);
 	<?php
 	}
 	?>
@@ -679,7 +662,7 @@ function getLiveData(click)
 	else $IconColor = '1a3151';
 	if (!isset($ident) && !isset($flightaware_id)) {
 ?>
-		    info.update(feature.properties.fc);
+		    info_update(feature.properties.fc);
 <?php
 		if (isset($_GET['archive'])) {
 ?>
@@ -1411,6 +1394,10 @@ function sources(selectObj) {
     document.cookie =  'Sources='+sources.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
 }
 
+function show3D() {
+    document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
 function iconColor(color) {
     document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
@@ -1972,23 +1959,41 @@ function update_airspaceLayer() {
             */
 	},
 	style: function(feature) {
-	    if (feature.properties.type == 'RESTRICTED' || feature.properties.type == 'CLASS D') {
+	    if (feature.properties.type == 'RESTRICTED') {
 		return {
-		    "color": '#ff5100',
+		    "color": '#cf2626',
 		    "weight": 1,
-		    "opacity": 0.55
+		    "opacity": 0.2
 		};
-	    } else if (feature.properties.type == 'GSEC' || feature.properties.type == 'CLASS C') {
+	    } else if (feature.properties.type == 'CLASS D') {
 		return {
-		    "color": '#fff000',
+		    "color": '#1a74b3',
 		    "weight": 1,
-		    "opacity": 0.55
+		    "opacity": 0.2
+		};
+	    } else if (feature.properties.type == 'CLASS B') {
+		return {
+		    "color": '#1a74b3',
+		    "weight": 1,
+		    "opacity": 0.2
+		};
+	    } else if (feature.properties.type == 'GSEC') {
+		return {
+		    "color": '#1b5acf',
+		    "weight": 1,
+		    "opacity": 0.2
+		};
+	    } else if (feature.properties.type == 'CLASS C') {
+		return {
+		    "color": '#9b6c9d',
+		    "weight": 1,
+		    "opacity": 0.3
 		};
 	    } else if (feature.properties.type == 'PROHIBITED') {
 		return {
-		    "color": '#ff0000',
+		    "color": '#1b5acf',
 		    "weight": 1,
-		    "opacity": 0.55
+		    "opacity": 0.2
 		};
 	    } else if (feature.properties.type == 'DANGER') {
 		return {

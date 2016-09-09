@@ -82,14 +82,19 @@ class Image {
     */
     public function addSpotterImage($registration,$aircraft_icao = '', $airline_icao = '')
     {
-	global $globalAircraftImageFetch;
+	global $globalDebug,$globalAircraftImageFetch;
 	if (isset($globalAircraftImageFetch) && !$globalAircraftImageFetch) return '';
 	$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 	$registration = trim($registration);
 	//getting the aircraft image
+	if ($globalDebug && $registration != '') echo 'Try to find an aircraft image for '.$registration.'...';
+	elseif ($globalDebug && $aircraft_icao != '') echo 'Try to find an aircraft image for '.$aircraft_icao.'...';
+	elseif ($globalDebug && $airline_icao != '') echo 'Try to find an aircraft image for '.$airline_icao.'...';
+	else return "success";
 	$image_url = $this->findAircraftImage($registration,$aircraft_icao,$airline_icao);
 	if ($registration == '' && $aircraft_icao != '') $registration = $aircraft_icao.$airline_icao;
 	if ($image_url['original'] != '') {
+	    if ($globalDebug) echo 'Found !'."\n";
 	    $query  = "INSERT INTO spotter_image (registration, image, image_thumbnail, image_copyright, image_source,image_source_website) VALUES (:registration,:image,:image_thumbnail,:copyright,:source,:source_website)";
 	    try {
 		
@@ -99,7 +104,8 @@ class Image {
 		echo $e->getMessage."\n";
 		return "error";
 	    }
-	}
+	} elseif ($globalDebug) echo "Not found :'(\n";
+
 	return "success";
     }
     

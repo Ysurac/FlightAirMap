@@ -70,10 +70,21 @@ if (strtolower($current_page) == "index")
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>
+<!--<script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>-->
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
+<script src="<?php print $globalURL; ?>/js/jquery-sidebar.js"></script>
+<?php 
+	    if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
+?>
+<link rel="stylesheet" href="http://cesiumjs.org/releases/1.25/Build/Cesium/Widgets/widgets.css" />
+<script src="http://cesiumjs.org/releases/1.25/Build/Cesium/Cesium.js"></script>
+
+<!-- <script src="http://www.webglearth.com/v2/api.js"></script> -->
+<?php
+	}
+?>
 <?php
     if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
 ?>
@@ -140,7 +151,13 @@ if (strtolower($current_page) == "index")
 <?php
 	} else {
 ?>
+<?php 
+	    if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
+?>
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script>
+<?php
+	    }
+?>
 <?php
 	}
 ?>

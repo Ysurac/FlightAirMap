@@ -7,6 +7,7 @@ class aprs {
     }
 
     public function parse($input) {
+	global $globalDebug;
 	$debug = false;
 	$result = array();
 	$input_len = strlen($input);
@@ -17,7 +18,7 @@ class aprs {
 	
 	/* Check that end was found and body has at least one byte. */
 	if ($splitpos == 0 || $splitpos + 1 == $input_len || $splitpos === FALSE) {
-	    echo 'invalid';
+	    if ($globalDebug) echo '!!! APRS invalid : '.$input."\n";
 	    return false;
 	}
 	

@@ -51,16 +51,38 @@ if (extension_loaded('gd') && function_exists('gd_info')) {
     imagecolortransparent($image, $ig);
    */
 
-
     header('Content-type: image/png');
-    imagealphablending($image, false);
-    imagesavealpha($image, true);
-    imagepng($image);
-    if (is_writable('cache')) {
-        imagepng($image,dirname(__FILE__).DIRECTORY_SEPARATOR.'cache/'.$color.'-'.$filename);
+    if (isset($_GET['resize']) && function_exists('imagecopyresampled')) {
+	$resize = filter_input(INPUT_GET,'resize',FILTER_SANITIZE_NUMBER_INT);
+	$newimg = imagecreatetruecolor($resize,$resize);
+        imagealphablending($newimg, false);
+	imagesavealpha($newimg, true);
+	imagecopyresampled($newimg,$image,0,0,0,0,15,15,imagesx($image),imagesy($image));
+	if (isset($_GET['heading'])) {
+    	    $heading = filter_input(INPUT_GET,'heading',FILTER_SANITIZE_NUMBER_INT);
+    	    $rotation = imagerotate($newimg,$heading,imageColorAllocateAlpha($newimg,0,0,0,127));
+    	    imagealphablending($rotation, false);
+	    imagesavealpha($rotation, true);
+    	    imagepng($rotation);
+    	    imagedestroy($newimg);
+    	    imagedestroy($image);
+    	    imagedestroy($rotation);
+	
+	} else {
+    	    imagepng($newimg);
+    	    imagedestroy($newimg);
+    	    imagedestroy($image);
+        }
+    } else {
+	imagealphablending($image, false);
+        imagesavealpha($image, true);
+	imagepng($image);
+	imagepng($image);
+	if (is_writable('cache')) {
+    	    imagepng($image,dirname(__FILE__).DIRECTORY_SEPARATOR.'cache/'.$color.'-'.$filename);
+	}
+        imagedestroy($image);
     }
-    
-    imagedestroy($image);
 } else {
     header('Content-type: image/png');
     if ($color == 'FF0000') readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/aircrafts/selected/'.$filename);

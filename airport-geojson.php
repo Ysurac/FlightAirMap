@@ -14,7 +14,8 @@ if (isset($_GET['coord']))
 	$coords = explode(',',$_GET['coord']);
 	$spotter_array = $Spotter->getAllAirportInfobyCoord($coords);
 } else {
-	$spotter_array = $Spotter->getAllAirportInfobyCountry(array('France','Switzerland'));
+	$spotter_array = $Spotter->getAllAirportInfo();
+	//$spotter_array = $Spotter->getAllAirportInfobyCountry(array('France','Switzerland'));
 }
       
 $output = '{"type": "FeatureCollection","features": [';
@@ -28,10 +29,10 @@ if (!empty($spotter_array))
 		$output .= '{"type": "Feature",';
 		    $output .= '"properties": {';
 			$output .= '"name": "'.str_replace('"',"'",$spotter_item['name']).'",';
-			$output .= '"city": "'.$spotter_item['city'].'",';
+			$output .= '"city": "'.str_replace('"',"'",$spotter_item['city']).'",';
 			$output .= '"country": "'.$spotter_item['country'].'",';
 			$output .= '"altitude": "'.$spotter_item['altitude'].'",';
-			$output .= '"popupContent": "'.str_replace('"',"'",$spotter_item['name']).' : '.$spotter_item['city'].', '.$spotter_item['country'].'",';
+			$output .= '"popupContent": "'.str_replace('"',"'",$spotter_item['name']).' : '.str_replace('"',"'",$spotter_item['city']).', '.$spotter_item['country'].'",';
 			if ($spotter_item['type'] == 'large_airport') {
 				$output .= '"icon": "'.$globalURL.'/images/airport.png",';
 			} elseif ($spotter_item['type'] == 'heliport') {

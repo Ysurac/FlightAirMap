@@ -50,6 +50,7 @@ require_once('header.php');
 	<li>Font Awesome by Dave Gandy <a href="http://fontawesome.io/">fontawesome.io</a></li>
 	<li>Leaflet <a href="http://leafletjs.com/">leafletjs.com</a></li>
 	<li>Boostrap <a href="http://getbootstrap.com/">getbootstrap.com</a></li>
+	<li>Sidebar v2 <a href="https://github.com/Turbo87/sidebar-v2">https://github.com/Turbo87/sidebar-v2</a></li>
 	<li><a href="http://www.adsbhub.net/">ADSBHUB.net</a> to share ADS-B data</li>
     </ul>
 

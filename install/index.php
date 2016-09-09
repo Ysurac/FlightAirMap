@@ -500,6 +500,15 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		<fieldset id="optional">
 			<legend>Optional configuration</legend>
 			<p>
+				<label for="map3d">Enable map in 3D</label>
+				<input type="checkbox" name="map3d" id="map3d" value="map3d"<?php if ((isset($globalMap3D) && $globalMap3D) || !isset($globalMap3D)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="map3d">Default to map in 3D</label>
+				<input type="checkbox" name="map3ddefault" id="map3ddefault" value="map3ddefault"<?php if (isset($globalMap3Ddefault) && $globalMap3Ddefault) { ?> checked="checked"<?php } ?> />
+			</p>
+			<br />
+			<p>
 				<label for="translate">Allow site translation</label>
 				<input type="checkbox" name="translate" id="translate" value="translate"<?php if (isset($globalTranslate) && $globalTranslate) { ?> checked="checked"<?php } ?> />
 				<p class="help-block">Display language available, else the site is only available in english.</p>
@@ -1000,6 +1009,18 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalOwner' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalOwner' => 'FALSE'));
+	}
+	$map3d = filter_input(INPUT_POST,'map3d',FILTER_SANITIZE_STRING);
+	if ($map3d == 'map3d') {
+		$settings = array_merge($settings,array('globalMap3D' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMap3D' => 'FALSE'));
+	}
+	$map3ddefault = filter_input(INPUT_POST,'map3ddefault',FILTER_SANITIZE_STRING);
+	if ($map3ddefault == 'map3ddefault') {
+		$settings = array_merge($settings,array('globalMap3Ddefault' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMap3Ddefault' => 'FALSE'));
 	}
 	$translate = filter_input(INPUT_POST,'translate',FILTER_SANITIZE_STRING);
 	if ($translate == 'translate') {
