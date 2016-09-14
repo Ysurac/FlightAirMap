@@ -143,6 +143,13 @@ function mapType(selectObj) {
 	}
 	window.location.reload();
 }
+function terrainType(selectObj) {
+	var idx = selectObj.selectedIndex;
+	var atype = selectObj.options[idx].value;
+	var type = atype.split('-');
+	document.cookie =  'MapTerrain='+type+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	window.location.reload();
+}
 function airlines(selectObj) {
 	var airs = [], air;
 	for (var i=0, len=selectObj.options.length; i< len;i++) {
@@ -526,9 +533,11 @@ var viewer = new Cesium.Viewer('live-map', {
    navigationHelpButton: false,
     geocoder: false,
 //    scene3DOnly: true,
-    fullscreenButton: false
+    fullscreenButton: false,
+    terrainShadows: Cesium.ShadowMode.DISABLED
 //    automaticallyTrackDataSourceClocks: false
 });
+
 
 // Set initial camera position
 var camera = viewer.camera;
@@ -554,7 +563,33 @@ var cesiumTerrainProviderMeshes = new Cesium.CesiumTerrainProvider({
     requestWaterMask : true,
     requestVertexNormals : true
 });
+var ellipsoidProvider = new Cesium.EllipsoidTerrainProvider({
+    requestWaterMask : true,
+    requestVertexNormals : true
+});
+    
+var vrTheWorldProvider = new Cesium.VRTheWorldTerrainProvider({
+    url : 'http://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
+    requestWaterMask : true,
+    requestVertexNormals : true,
+    credit : 'Terrain data courtesy VT MÄK'
+});
+
+<?php
+	if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'stk') {
+?>
 viewer.terrainProvider = cesiumTerrainProviderMeshes;
+<?php
+	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'ellipsoid') {
+?>
+viewer.terrainProvider = ellipsoidProvider;
+<?php 
+	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'vrterrain') {
+?>
+viewer.terrainProvider = vrTheWorldProvider;
+<?php
+	}
+?>
 viewer.scene.globe.enableLighting = true;
 
 //var dataSource = new Cesium.CzmlDataSource.load('/live-czml.php');

@@ -80,8 +80,7 @@ if (strtolower($current_page) == "index")
 ?>
 <link rel="stylesheet" href="http://cesiumjs.org/releases/1.25/Build/Cesium/Widgets/widgets.css" />
 <script src="http://cesiumjs.org/releases/1.25/Build/Cesium/Cesium.js"></script>
-
-<!-- <script src="http://www.webglearth.com/v2/api.js"></script> -->
+<!-- <script src="<?php print $globalURL; ?>/js/Cesium/Cesium.js"></script> -->
 <?php
 	}
 ?>

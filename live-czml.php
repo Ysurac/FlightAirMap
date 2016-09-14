@@ -110,7 +110,7 @@ if (!empty($spotter_array)) {
 
 $sqltime = round(microtime(true)-$begintime,2);
 
-
+$modelsdb = array();
 if (file_exists('models/modelsdb')) {
 	if (($handle = fopen('models/modelsdb','r')) !== FALSE) {
 		while (($row = fgetcsv($handle,1000)) !== FALSE) {
@@ -122,7 +122,6 @@ if (file_exists('models/modelsdb')) {
 		fclose($handle);
 	}
 }
-
 $j = 0;
 $prev_flightaware_id = '';
 
