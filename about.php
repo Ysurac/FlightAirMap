@@ -52,6 +52,7 @@ require_once('header.php');
 	<li>Boostrap <a href="http://getbootstrap.com/">getbootstrap.com</a></li>
 	<li>Sidebar v2 <a href="https://github.com/Turbo87/sidebar-v2">https://github.com/Turbo87/sidebar-v2</a></li>
 	<li><a href="http://www.adsbhub.net/">ADSBHUB.net</a> to share ADS-B data</li>
+	<li><a href="http://www.cesiumjs.org">Cesium</a> to display flight on a WebGL virtual globe</li>
     </ul>
 
     <h3>Data License</h3>

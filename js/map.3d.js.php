@@ -591,7 +591,7 @@ viewer.terrainProvider = vrTheWorldProvider;
 	}
 ?>
 viewer.scene.globe.enableLighting = true;
-
+viewer.scene.globe.depthTestAgainstTerrain = true;
 //var dataSource = new Cesium.CzmlDataSource.load('/live-czml.php');
 //dataSource.then(function (data) { 
 //    displayData(data);

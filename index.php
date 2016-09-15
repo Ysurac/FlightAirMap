@@ -184,6 +184,19 @@ require_once('header.php');
 				    }
 			    ?>
 			    <?php
+				    if (isset($globalMapQuestKey) && $globalMapQuestKey != '') {
+			    ?>
+			    <option value="MapQuest-OSM"<?php if ($MapType == 'MapQuest-OSM') print ' selected'; ?>>MapQuest-OSM</option>
+			    <option value="MapQuest-Aerial"<?php if ($MapType == 'MapQuest-Aerial') print ' selected'; ?>>MapQuest-Aerial</option>
+			    <option value="MapQuest-Hybrid"<?php if ($MapType == 'MapQuest-Hybrid') print ' selected'; ?>>MapQuest-Hybrid</option>
+			    <?php
+				    }
+			    ?>
+			    <option value="Yandex"<?php if ($MapType == 'Yandex') print ' selected'; ?>>Yandex</option>
+			    <?php
+				}
+			    ?>
+			    <?php
 				    if (isset($globalMapboxToken) && $globalMapboxToken != '') {
 					if (!isset($_COOKIE['MapTypeId'])) $MapBoxId = 'default';
 					else $MapBoxId = $_COOKIE['MapTypeId'];
@@ -202,19 +215,6 @@ require_once('header.php');
 			    <option value="Mapbox-mapbox.emerald"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'mapbox.emerald') print ' selected'; ?>>Mapbox emerald</option>
 			    <?php
 				    }
-			    ?>
-			    <?php
-				    if (isset($globalMapQuestKey) && $globalMapQuestKey != '') {
-			    ?>
-			    <option value="MapQuest-OSM"<?php if ($MapType == 'MapQuest-OSM') print ' selected'; ?>>MapQuest-OSM</option>
-			    <option value="MapQuest-Aerial"<?php if ($MapType == 'MapQuest-Aerial') print ' selected'; ?>>MapQuest-Aerial</option>
-			    <option value="MapQuest-Hybrid"<?php if ($MapType == 'MapQuest-Hybrid') print ' selected'; ?>>MapQuest-Hybrid</option>
-			    <?php
-				    }
-			    ?>
-			    <option value="Yandex"<?php if ($MapType == 'Yandex') print ' selected'; ?>>Yandex</option>
-			    <?php
-				}
 			    ?>
 			    <option value="OpenStreetMap"<?php if ($MapType == 'OpenStreetMap') print ' selected'; ?>>OpenStreetMap</option>
 			</select>
