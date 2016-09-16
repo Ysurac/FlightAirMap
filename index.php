@@ -48,7 +48,7 @@ require_once('header.php');
 ?>
 	<li><a href="#settings" role="tab" title="<?php echo _("Settings"); ?>"><i class="fa fa-gears"></i></a></li>
 <?php
-    if ((isset($globalMap3D) && $globalMap3D) || !isset($globalMap3D)) {
+    if (isset($globalMap3D) && $globalMap3D) {
 	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
 ?>
 	<li><a href="#" onclick="show3D(); return false;" role="tab" title="3D"><b>3D</b></a></li>
