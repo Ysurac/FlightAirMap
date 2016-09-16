@@ -511,6 +511,7 @@ function updateData() {
 //    viewer.dataSources.add(dataSource);
     
 	livedata.then(function (data) { 
+//		console.log(data);
 		displayData(data);
 	});
 //    viewer.zoomTo(dataSource);
@@ -611,6 +612,7 @@ setInterval(function(){update_polarLayer()},<?php if (isset($globalMapRefresh)) 
 		
 
 		
+var lastid;
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 handler.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
@@ -622,6 +624,21 @@ handler.setInputAction(function(click) {
 		if (typeof pickedObject.id.lastupdate != 'undefined') {
 			flightaware_id = pickedObject.id.id;
 			$(".showdetails").load("/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
+			var dsn;
+			for (var i =0; i < viewer.dataSources.length; i++) {
+				if (viewer.dataSources.get(i).name == 'fam') {
+					dsn = i;
+					break;
+				}
+			}
+
+			if (typeof lastid != 'undefined') {
+				var plast = viewer.dataSources.get(dsn).entities.getById(lastid);
+				plast.path.show = false;
+			}
+			var pnew = viewer.dataSources.get(dsn).entities.getById(flightaware_id);
+			pnew.path.show = true;
+			lastid = flightaware_id;
 		} else if (typeof pickedObject.id.properties.icao != 'undefined') {
 			var icao = pickedObject.id.properties.icao;
 			$(".showdetails").load("/airport-data.php?"+Math.random()+"&airport_icao="+icao);
