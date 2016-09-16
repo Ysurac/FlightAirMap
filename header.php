@@ -78,8 +78,8 @@ if (strtolower($current_page) == "index")
 <?php 
 	    if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 ?>
-<link rel="stylesheet" href="http://cesiumjs.org/releases/1.25/Build/Cesium/Widgets/widgets.css" />
-<script src="http://cesiumjs.org/releases/1.25/Build/Cesium/Cesium.js"></script>
+<link rel="stylesheet" href="https://cesiumjs.org/releases/1.25/Build/Cesium/Widgets/widgets.css" />
+<script src="https://cesiumjs.org/releases/1.25/Build/Cesium/Cesium.js"></script>
 <!-- <script src="<?php print $globalURL; ?>/js/Cesium/Cesium.js"></script> -->
 <?php
 	}
@@ -87,7 +87,7 @@ if (strtolower($current_page) == "index")
 <?php
     if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
 ?>
-<script src="http://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
+<script src="https://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
 <?php
     }
