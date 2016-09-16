@@ -1423,7 +1423,7 @@ class update_db {
 			} else {
 				$modelsdb = array();
 			}
-			$diff = array_diff($modelsdb,$newmodelsdb);
+			$diff = array_diff($newmodelsdb,$modelsdb);
 			foreach ($diff as $key => $value) {
 				update_db::download('http://data.flightairmap.fr/data/models/'.$key,'../models/'.$key);
 			}
