@@ -1405,7 +1405,7 @@ class update_db {
 		if ($globalDebug) echo "Models from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.fr/data/models/models.md5sum',$tmp_dir.'models.md5sum');
 		if (file_exists($tmp_dir.'models.md5sum')) {
-			if ($globalDebug) echo "Check files...";
+			if ($globalDebug) echo "Check files...\n";
 			$newmodelsdb = array();
 			if (($handle = fopen($tmp_dir.'models.md5sum','r')) !== FALSE) {
 				while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
@@ -1425,7 +1425,9 @@ class update_db {
 			}
 			$diff = array_diff($newmodelsdb,$modelsdb);
 			foreach ($diff as $key => $value) {
+				if ($globalDebug) echo 'Downloading model '.$key.' ...'."\n";
 				update_db::download('http://data.flightairmap.fr/data/models/'.$key,'../models/'.$key);
+				
 			}
 			update_db::download('http://data.flightairmap.fr/data/models/models.md5sum','../models/models.md5sum');
 		} else $error = "File ".$tmp_dir.'models.md5sum'." doesn't exist. Download failed.";
