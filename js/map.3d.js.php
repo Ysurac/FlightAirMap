@@ -558,34 +558,34 @@ var layers = viewer.scene.imageryLayers;
 //	}
 //));
 
+    
+
+<?php
+	if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'stk') {
+?>
 var cesiumTerrainProviderMeshes = new Cesium.CesiumTerrainProvider({
     url : 'https://assets.agi.com/stk-terrain/world',
     requestWaterMask : true,
     requestVertexNormals : true
 });
-var ellipsoidProvider = new Cesium.EllipsoidTerrainProvider({
-    requestWaterMask : true,
-    requestVertexNormals : true
-});
-    
-var vrTheWorldProvider = new Cesium.VRTheWorldTerrainProvider({
-    url : 'http://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
-    requestWaterMask : true,
-    requestVertexNormals : true,
-    credit : 'Terrain data courtesy VT MÄK'
-});
-
-<?php
-	if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'stk') {
-?>
 viewer.terrainProvider = cesiumTerrainProviderMeshes;
 <?php
 	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'ellipsoid') {
 ?>
+var ellipsoidProvider = new Cesium.EllipsoidTerrainProvider({
+    requestWaterMask : true,
+    requestVertexNormals : true
+});
 viewer.terrainProvider = ellipsoidProvider;
 <?php 
 	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'vrterrain') {
 ?>
+var vrTheWorldProvider = new Cesium.VRTheWorldTerrainProvider({
+    url : 'https://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
+    requestWaterMask : true,
+    requestVertexNormals : true,
+    credit : 'Terrain data courtesy VT MÄK'
+});
 viewer.terrainProvider = vrTheWorldProvider;
 <?php
 	}
