@@ -1,0 +1,8 @@
+[Unit]
+Description=FlightAirMap Acars
+
+[Service]
+ExecStart=/var/www/flightairmap/Web_App/scripts/daemon-acars.php
+
+[Install]
+WantedBy=multi-user.target

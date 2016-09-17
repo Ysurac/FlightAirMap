@@ -1,0 +1,8 @@
+[Unit]
+Description=FlightAirMap
+
+[Service]
+ExecStart=/var/www/flightairmap/Web_App/scripts/daemon-spotter.php
+
+[Install]
+WantedBy=multi-user.target
