@@ -433,10 +433,17 @@ class Stats {
                 return $all;
 	}
 	public function countAllHours($orderby = 'hour',$limit = true) {
-		global $globalTimezone;
+		global $globalTimezone, $globalDBdriver;
+
 		if ($limit) $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour'";
 		else $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour'";
-		if ($orderby == 'hour') $query .= " ORDER BY CAST(flight_date AS integer) ASC";
+		if ($orderby == 'hour') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " ORDER BY flight_date ASC";
+			} else {
+				$query .= " ORDER BY CAST(flight_date AS integer) ASC";
+			}
+		}
 		if ($orderby == 'count') $query .= " ORDER BY hour_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
