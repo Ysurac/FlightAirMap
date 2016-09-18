@@ -13,7 +13,7 @@
 ## Fill in name of program here.
 PROG="daemon-acars.php"
 PROG_PATH="/var/www/flightairmap/scripts"
-PIDFILE="/var/run/flightairmap.pid"
+PIDFILE="/var/run/flightairmap-acars.pid"
 
 start() {
       if [ -e $PIDFILE ]; then
