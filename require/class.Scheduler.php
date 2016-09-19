@@ -339,7 +339,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getTransavia($callsign, $date = 'NOW') {
+	public function getTransavia($callsign, $date = 'NOW') {
 		global $globalTransaviaKey;
 		$Common = new Common();
 		$check_date = new Datetime($date);
@@ -347,8 +347,10 @@ class Schedule {
 		if (!filter_var(preg_replace('/^[A-Z]*/','',$callsign),FILTER_VALIDATE_INT)) return array();
 		if ($globalTransaviaKey == '') return array();
 		$url = "https://tst.api.transavia.com/v1/flightstatus/departuredate/".$check_date->format('Ymd').'/flightnumber/HV'.$numvol;
+		//$url = "https://api.transavia.com/v1/flightstatus/departuredate/".$check_date->format('Ymd').'/flightnumber/HV'.$numvol;
 		$headers = array('apikey: '.$globalTransaviaKey);
 		$json = $Common->getData($url,'get','',$headers);
+		//echo 'result : '.$json;
 		if ($json == '') return array();
 		$parsed_json = json_decode($json);
 		
@@ -963,11 +965,13 @@ class Schedule {
 					return $this->getSwiss($ident);
 					break;
 
+				/*
 				// TAP Portugal
 				case "TAP":
 				case "TP":
 					return $this->getFlyTap($ident,$date);
 					break;
+				*/
 /*
 				// Thai Airways International
 				case "THA":
@@ -1039,12 +1043,13 @@ class Schedule {
 				case "LH":
 					return $this->getLufthansa($ident);
 					break;
+				/*
 				// Transavia
 				case "TRA":
 				case "HV":
 					return $this->getTransavia($ident);
 					break;
-					
+				*/
 /*
 				case "DLH":
 				case "LH":
@@ -1094,12 +1099,14 @@ class Schedule {
 	}
 }
 
-/*
-$Schedule = new Schedule();
+
+//$Schedule = new Schedule();
+
 //print_r($Schedule->fetchSchedule('HV5661'));
 //print_r($Schedule->getFlightAware('AF1179'));
 //print_r($Schedule->getBritishAirways('BAW551'));
 //print_r($Schedule->getLufthansa('LH551'));
-print_r($Schedule->getTunisair('TU203'));
-*/
+//print_r($Schedule->getTunisair('TU203'));
+//print_r($Schedule->getTransavia('TRA598'));
+
 ?>
