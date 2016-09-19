@@ -183,9 +183,9 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$aircraft_shadow = $spotter_item['aircraft_shadow'];
 
 			if (isset($modelsdb[$aircraft_icao])) {
-				$output .= '"model": {"gltf" : "/models/'.$modelsdb[$aircraft_icao].'","scale" : 1.0,"minimumPixelSize": 20 },';
+				$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$aircraft_icao].'","scale" : 1.0,"minimumPixelSize": 20 },';
 			} elseif (isset($modelsdb[$aircraft_shadow])) {
-				$output .= '"model": {"gltf" : "/models/'.$modelsdb[$aircraft_shadow].'","scale" : 1.0,"minimumPixelSize": 20 },';
+				$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$aircraft_shadow].'","scale" : 1.0,"minimumPixelSize": 20 },';
 			} elseif ($spotter_item['engine_type'] == 'Jet') {
 				if ($spotter_item['engine_count'] == '1') {
 				    if ($spotter_item['wake_category'] == 'M') {
@@ -215,9 +215,9 @@ if (!empty($spotter_array) && is_array($spotter_array))
 				    }
 				}
 				if (isset($modelsdb[$model])) {
-				    $output .= '"model": {"gltf" : "/models/'.$modelsdb[$model].'","scale" : 1.0,"minimumPixelSize": 20 },';
+				    $output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$model].'","scale" : 1.0,"minimumPixelSize": 20 },';
 				} else {
-				    $output .= '"model": {"gltf" : "/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20 },';
+				    $output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20 },';
 				}
 			} elseif ($spotter_item['engine_type'] == 'Turboprop') {
 				if ($spotter_item['engine_count'] == '1') {
@@ -237,9 +237,9 @@ if (!empty($spotter_array) && is_array($spotter_array))
 				    }
 				}
 				if (isset($modelsdb[$model])) {
-				    $output .= '"model": {"gltf" : "/models/'.$modelsdb[$model].'","scale" : 1.0,"minimumPixelSize": 20 },';
+				    $output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$model].'","scale" : 1.0,"minimumPixelSize": 20 },';
 				} else {
-				    $output .= '"model": {"gltf" : "/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20 },';
+				    $output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20 },';
 				}
 			} elseif ($spotter_item['engine_type'] == 'Piston') {
 				if ($spotter_item['engine_count'] == '1') {
@@ -257,12 +257,12 @@ if (!empty($spotter_array) && is_array($spotter_array))
 				// ju52 = P3M
 				}
 				if (isset($modelsdb[$model])) {
-				    $output .= '"model": {"gltf" : "/models/'.$modelsdb[$model].'","scale" : 1.0,"minimumPixelSize": 20 },';
+				    $output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$model].'","scale" : 1.0,"minimumPixelSize": 20 },';
 				} else {
-				    $output .= '"model": {"gltf" : "/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20 },';
+				    $output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20 },';
 				}
 			} else {
-				$output .= '"model": {"gltf" : "/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20 },';
+				$output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20 },';
 				if ($spotter_item['aircraft_shadow'] != '') $output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
 				if ($spotter_item['aircraft_icao'] != '') $output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
 			}
