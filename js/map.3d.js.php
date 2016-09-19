@@ -507,7 +507,7 @@ function updateData() {
 //    var dataSource = geojsonSource.load('/live/geojson');
 //    var dataSource = new Cesium.CzmlDataSource.load('/live-czml.php');
 //     var czmlds = new Cesium.CzmlDataSource();
-	var livedata = czmlds.process('/live-czml.php?' + Date.now());
+	var livedata = czmlds.process('<?php print $globalURL; ?>/live-czml.php?' + Date.now());
 //    viewer.dataSources.add(dataSource);
     
 	livedata.then(function (data) { 
@@ -623,7 +623,7 @@ handler.setInputAction(function(click) {
 		//console.log(pickedObject.id.properties.icao);
 		if (typeof pickedObject.id.lastupdate != 'undefined') {
 			flightaware_id = pickedObject.id.id;
-			$(".showdetails").load("/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
+			$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
 			var dsn;
 			for (var i =0; i < viewer.dataSources.length; i++) {
 				if (viewer.dataSources.get(i).name == 'fam') {
@@ -641,7 +641,7 @@ handler.setInputAction(function(click) {
 			lastid = flightaware_id;
 		} else if (typeof pickedObject.id.properties.icao != 'undefined') {
 			var icao = pickedObject.id.properties.icao;
-			$(".showdetails").load("/airport-data.php?"+Math.random()+"&airport_icao="+icao);
+			$(".showdetails").load("<?php print $globalURL; ?>/airport-data.php?"+Math.random()+"&airport_icao="+icao);
 		}
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
