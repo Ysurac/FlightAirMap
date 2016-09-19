@@ -61,7 +61,7 @@ class SpotterImport {
 	    $operator = $Translation->checkTranslation($ident);
 	    if ($Schedule->checkSchedule($operator) == 0) {
 		$schedule = $Schedule->fetchSchedule($operator);
-		if (count($schedule) > 0) {
+		if (count($schedule) > 0 && isset($schedule['DepartureTime']) && isset($schedule['ArrivalTime'])) {
 		    if ($globalDebug) echo "-> Schedule info for ".$operator." (".$ident.")\n";
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('departure_airport_time' => $schedule['DepartureTime']));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('arrival_airport_time' => $schedule['ArrivalTime']));
