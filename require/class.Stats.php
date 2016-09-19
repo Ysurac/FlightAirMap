@@ -492,7 +492,16 @@ class Stats {
 		return $all;
 	}
 	public function countOverallAirlines() {
-		$all = $this->getSumStats('airlines_bymonth',date('Y'));
+		$query = "SELECT COUNT(*) AS nb_airline FROM stats_airline";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+                $all = $result[0]['nb_airline'];
+		//$all = $this->getSumStats('airlines_bymonth',date('Y'));
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countOverallAirlines();
@@ -500,6 +509,17 @@ class Stats {
 		return $all;
 	}
 	public function countOverallOwners() {
+		/*
+		$query = "SELECT COUNT(*) AS nb_owner FROM stats_owner";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+                $all = $result[0]['nb_owner'];
+                */
 		$all = $this->getSumStats('owners_bymonth',date('Y'));
 		if (empty($all)) {
 			$Spotter = new Spotter($this->db);

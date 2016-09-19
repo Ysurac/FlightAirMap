@@ -17,7 +17,7 @@ require_once('header.php');
     if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 
 ?>
-<script src="/js/map.3d.js.php"></script>
+<script src="<?php echo $globalURL; ?>/js/map.3d.js.php"></script>
 <?php
     }
 ?>
