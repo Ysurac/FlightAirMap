@@ -199,6 +199,10 @@ function clickDisplayAirports(cb) {
 	document.cookie =  'displayairports='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	window.location.reload();
 }
+function clickDisplayISS(cb) {
+	document.cookie =  'displayiss='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	window.location.reload();
+}
 
 function update_polarLayer() {
 	var polarnb;
@@ -517,9 +521,32 @@ function updateData() {
 //    viewer.zoomTo(dataSource);
 }
 
+function updateISS() {
+	var issdata = Cesium.loadJson('https://api.wheretheiss.at/v1/satellites/25544');
+	issdata.then(function (data) {
+		//console.log(data);
+		var altitude = Math.round(data.altitude*10000)/10;
+		var entity = viewer.entities.getById('iss');
+		if (typeof entity == 'undefined') {
+			entity = viewer.entities.add({
+			    id: 'iss',
+			    name: 'iss',
+			    position: Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,altitude),
+			    model : {
+		                uri : '<?php print $globalURL; ?>/models/iss.glb',
+	        		minimumPixelSize : 5000,
+	            		maximumScale : 30000
+	    		    }
+			});
+		} else {
+			entity.position = Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,altitude);
+		}
+		//viewer.trackedEntity = entity;
+	});
+}
 
 
-Cesium.BingMapsApi.defaultKey = 'AoCZHUrJ1TUMYgzeXjeB_ZwXs3e__XW05bMQYXfEXYXsIejcm_w20qbX6REDWq_b';
+Cesium.BingMapsApi.defaultKey = '<?php print $globalBingMapKey; ?>';
 
 
 var viewer = new Cesium.Viewer('live-map', {
@@ -599,6 +626,15 @@ viewer.scene.globe.depthTestAgainstTerrain = true;
 //});
  var czmlds = new Cesium.CzmlDataSource();
 
+<?php
+	if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') {
+?>
+updateISS();
+setInterval(function(){updateISS()},'10000');
+<?php
+	}
+?>
+
 updateData();
 
 <?php
@@ -639,6 +675,8 @@ handler.setInputAction(function(click) {
 			var pnew = viewer.dataSources.get(dsn).entities.getById(flightaware_id);
 			pnew.path.show = true;
 			lastid = flightaware_id;
+		} else if (pickedObject.id.name == 'iss') {
+			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString()));
 		} else if (typeof pickedObject.id.properties.icao != 'undefined') {
 			var icao = pickedObject.id.properties.icao;
 			$(".showdetails").load("<?php print $globalURL; ?>/airport-data.php?"+Math.random()+"&airport_icao="+icao);

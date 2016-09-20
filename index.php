@@ -244,6 +244,13 @@ require_once('header.php');
     }
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayairports" value="1" onclick="clickDisplayAirports(this)" <?php if (isset($_COOKIE['displayairports']) && $_COOKIE['displayairports'] == 'true') print 'checked'; ?> ><?php echo _("Display airports on map"); ?></label></div></li>
+<?php
+    if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+?>
+		    <li><div class="checkbox"><label><input type="checkbox" name="displayiss" value="1" onclick="clickDisplayISS(this)" <?php if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') print 'checked'; ?> ><?php echo _("Show ISS on map"); ?></label></div></li>
+<?php
+    }
+?>
 
 		    <?php
 			if (function_exists('array_column')) {

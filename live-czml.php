@@ -302,10 +302,10 @@ if (!empty($spotter_array) && is_array($spotter_array))
 	}
 	$output  = substr($output, 0, -1);
 	$output .= ']}}';
-	$output = str_replace('%minitime%',date("c",$minitime),$output);
 } else {
 	$output  = substr($output, 0, -1);
 }
 $output .= ']';
+$output = str_replace('%minitime%',date("c",$minitime),$output);
 print $output;
 ?>
