@@ -34,4 +34,10 @@
         update_db:update_notam();
         echo "Done !\n";
     }
+    if (isset($globalMap3D) && $globalMap3D) {
+	echo "Install 3D models...";
+	update_db::update_models();
+	echo "Done !\n";
+    }
+
 ?>
