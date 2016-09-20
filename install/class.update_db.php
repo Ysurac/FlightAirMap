@@ -1409,8 +1409,8 @@ class update_db {
 			$newmodelsdb = array();
 			if (($handle = fopen($tmp_dir.'models.md5sum','r')) !== FALSE) {
 				while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
-					$model = $row[2];
-					$newmodelsdb[$model] = $row[0];
+					$model = trim($row[2]);
+					$newmodelsdb[$model] = trim($row[0]);
 				}
 			}
 			if (file_exists('../models/models.md5sum')) {
