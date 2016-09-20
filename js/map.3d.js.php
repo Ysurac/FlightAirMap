@@ -473,15 +473,15 @@ function displayData(data) {
 		for (var i = 0; i < viewer.dataSources.get(dsn).entities.values.length; i++) {
 			var entity = viewer.dataSources.get(dsn).entities.values[i];
 			// console.log(entity);
-			if (entity.isShowing === false) {
-				console.log('Remove an entity show');
-				viewer.dataSources.get(dsn).entities.remove(entity);
-			}
+//			if (entity.isShowing === false) {
+//				console.log('Remove an entity show');
+//				viewer.dataSources.get(dsn).entities.remove(entity);
+//			}
 			//console.log(entity.isAvailable(Cesium.JulianDate.now()));
-			if (entity.isAvailable(Cesium.JulianDate.now()) === false) {
-				console.log('Remove an entity julian');
-				viewer.dataSources.get(dsn).entities.remove(entity);
-			}
+//			if (entity.isAvailable(Cesium.JulianDate.now()) === false) {
+//				console.log('Remove an entity julian');
+//				viewer.dataSources.get(dsn).entities.remove(entity);
+//			}
 			//console.log(entity.lastupdate);
 			if (parseInt(entity.lastupdate) < Math.floor(Date.now()-<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>)) {
 				console.log('Remove an entity date');
@@ -528,18 +528,36 @@ function updateISS() {
 		var altitude = Math.round(data.altitude*10000)/10;
 		var entity = viewer.entities.getById('iss');
 		if (typeof entity == 'undefined') {
+			//var time = Cesium.JulianDate.now();
+			var property = new Cesium.SampledPositionProperty();
+			var currenttime = viewer.clock.currentTime;
+			var time = currenttime;
+    			var position = Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,altitude);
+			property.addSample(time, position);
+
 			entity = viewer.entities.add({
 			    id: 'iss',
 			    name: 'iss',
-			    position: Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,altitude),
+			    position: property,
 			    model : {
 		                uri : '<?php print $globalURL; ?>/models/iss.glb',
 	        		minimumPixelSize : 5000,
 	            		maximumScale : 30000
 	    		    }
 			});
+			
+			//entity.position.setInterpolationOptions({
+			//    interpolationDegree : 30,
+			//    interpolationAlgorithm : Cesium.HermitePolynomialApproximation
+			//});
 		} else {
-			entity.position = Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,altitude);
+			var property = entity.position;
+			var currenttime = viewer.clock.currentTime;
+			var time = Cesium.JulianDate.addSeconds(currenttime, 30, new Cesium.JulianDate());
+    			var position = Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,altitude);
+			property.addSample(time, position);
+			entity.position = property;
+			//entity.position = Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,altitude);
 		}
 		//viewer.trackedEntity = entity;
 	});
@@ -626,6 +644,8 @@ viewer.scene.globe.depthTestAgainstTerrain = true;
 //});
  var czmlds = new Cesium.CzmlDataSource();
 
+
+updateData();
 <?php
 	if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') {
 ?>
@@ -634,8 +654,6 @@ setInterval(function(){updateISS()},'10000');
 <?php
 	}
 ?>
-
-updateData();
 
 <?php
 		if (!((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) && (isset($_COOKIE['polar']) && $_COOKIE['polar'] == 'true')) {
