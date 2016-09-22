@@ -76,7 +76,7 @@ if (!function_exists("gettext")) {
 	print '<div class="info column"><p><strong>gettext doesn\'t exist. Site translation not available.</strong></p></div>';
 }
 if (isset($_SERVER['REQUEST_SCHEME']) && isset($_SERVER['SERVER_NAME']) && isset($_SERVER['SERVER_PORT']) && isset($_SERVER['REQUEST_URI'])) {
-	$check_header = get_headers($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].str_replace('install/','search',$_SERVER["REQUEST_URI"]));
+	$check_header = @get_headers($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].str_replace('install/','search',$_SERVER["REQUEST_URI"]));
 	if (isset($check_header[0]) && !stripos($check_header[0],"200 OK")) {
 		print '<div class="info column"><p><strong>Check your configuration, rewrite don\'t seems to work.</strong></p></div>';
 	}
