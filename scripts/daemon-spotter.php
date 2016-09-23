@@ -187,17 +187,22 @@ function connect_all($hosts) {
         	if ($globalDebug) echo "Connect to ".$globalSources[$id]['format']." source (".$host.")...\n";
         } elseif (!filter_var($host,FILTER_VALIDATE_URL)) {
 	    $hostport = explode(':',$host);
-	    if (isset($hostport[1])) $port = $hostport[1];
-	    else $port = $globalSources[$id]['port'];
+	    if (isset($hostport[1])) {
+		$port = $hostport[1];
+		$hostn = $hostport[0];
+	    } else {
+		$port = $globalSources[$id]['port'];
+		$hostn = $globalSources[$id]['host'];
+	    }
 	    if (!isset($globalSources[$id]['format']) || ($globalSources[$id]['format'] != 'acars' && $globalSources[$id]['format'] != 'flightgearsp')) {
-        	$s = create_socket($host,$port, $errno, $errstr);
+        	$s = create_socket($hostn,$port, $errno, $errstr);
     	    } else {
-        	$s = create_socket_udp($host,$port, $errno, $errstr);
+        	$s = create_socket_udp($hostn,$port, $errno, $errstr);
 	    }
 	    if ($s) {
     	        $sockets[$id] = $s;
     	        if (!isset($globalSources[$id]['format']) || strtolower($globalSources[$id]['format']) == 'auto') {
-		    if (preg_match('/aprs/',$host)) {
+		    if (preg_match('/aprs/',$hostn)) {
 			//$formats[$id] = 'aprs';
 			$globalSources[$id]['format'] = 'aprs';
 			//$aprs_connect = 0;
@@ -219,9 +224,9 @@ function connect_all($hosts) {
 		    } else $globalSources[$id]['format'] = 'sbs';
 		    //if ($globalDebug) echo 'Connection in progress to '.$host.'('.$formats[$id].')....'."\n";
 		}
-		if ($globalDebug) echo 'Connection in progress to '.$host.':'.$port.' ('.$globalSources[$id]['format'].')....'."\n";
+		if ($globalDebug) echo 'Connection in progress to '.$hostn.':'.$port.' ('.$globalSources[$id]['format'].')....'."\n";
             } else {
-		if ($globalDebug) echo 'Connection failed to '.$host.':'.$port.' : '.$errno.' '.$errstr."\n";
+		if ($globalDebug) echo 'Connection failed to '.$hostn.':'.$port.' : '.$errno.' '.$errstr."\n";
     	    }
         }
     }
