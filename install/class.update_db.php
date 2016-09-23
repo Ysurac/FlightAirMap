@@ -944,21 +944,10 @@ class update_db {
 		//$out_file = $tmp_dir.'translation.zip';
 		//update_db::download('http://www.acarsd.org/download/translation.php',$out_file);
 		//if (!file_exists($out_file) || !is_readable($out_file)) return FALSE;
-		
-		$query = 'TRUNCATE TABLE waypoints';
-		try {
-			$Connection = new Connection();
-			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-
-		
+		$Connection = new Connection();
 		//update_db::unzip($out_file);
 		$header = NULL;
 		$delimiter = ' ';
-		$Connection = new Connection();
 		if (($handle = fopen($filename, 'r')) !== FALSE)
 		{
 			$i = 0;
@@ -1034,6 +1023,18 @@ class update_db {
 	public static function update_airspace() {
 		global $tmp_dir, $globalDBdriver;
 		include_once('class.create_db.php');
+		$Connection = new Connection();
+		if ($Connection->tableExists('airspace')) {
+			$query = 'DROP TABLE airspace';
+			try {
+				$sth = $Connection->db->prepare($query);
+                    		$sth->execute();
+	                } catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+	                }
+	        }
+
+
 		if ($globalDBdriver == 'mysql') update_db::gunzip('../db/airspace.sql.gz',$tmp_dir.'airspace.sql');
 		else {
 			update_db::gunzip('../db/pgsql/airspace.sql.gz',$tmp_dir.'airspace.sql');

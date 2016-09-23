@@ -1139,7 +1139,17 @@ if (isset($_POST['dbtype'])) {
 		if (isset($_POST['createdb'])) {
 			$_SESSION['install'] = 'database_create';
 		} else {
-			$_SESSION['install'] = 'database_import';
+			if (update_schema::check_version(false) > 0 && isset($_POST['waypoints']) && $_POST['waypoints'] == 'waypoints') {
+				require_once(dirname(__FILE__).'/../require/class.Connection.php');
+				$Connection = new Connection();
+				if ($Connection->tableExist('airspace') == false) {
+					$_SESSION['install'] = 'waypoints';
+				} else {
+					$_SESSION['install'] = 'database_import';
+				}
+			} else {
+				$_SESSION['install'] = 'database_import';
+			}
 		}
 		//require('../footer.php');
 		print '<div class="info column"><ul>';
@@ -1163,11 +1173,13 @@ if (isset($_POST['dbtype'])) {
 	print '<ul><div id="step">';
 	$pop = false;
 	$popi = false;
+	$popw = false;
 	foreach ($_SESSION['done'] as $done) {
 	    print '<li>'.$done.'....<strong>SUCCESS</strong></li>';
 	    if ($done == 'Create database') $pop = true;
 	    if ($_SESSION['install'] == 'database_create') $pop = true;
 	    if ($_SESSION['install'] == 'database_import') $popi = true;
+	    if ($_SESSION['install'] == 'waypoints') $popw = true;
 	}
 	if ($pop) {
 	    sleep(5);
@@ -1175,6 +1187,9 @@ if (isset($_POST['dbtype'])) {
 	} else if ($popi) {
 	    sleep(5);
 	    print '<li>Create and import tables....<img src="../images/loading.gif" /></li>';
+	} else if ($popw) {
+	    sleep(5);
+	    print '<li>Populate waypoints database....<img src="../images/loading.gif" /></li>';
 	} else print '<li>Update schema if needed....<img src="../images/loading.gif" /></li>';
 	print '</div></ul>';
 	print '<div id="error"></div>';
