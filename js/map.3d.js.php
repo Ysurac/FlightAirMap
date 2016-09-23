@@ -203,6 +203,10 @@ function clickDisplayISS(cb) {
 	document.cookie =  'displayiss='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	window.location.reload();
 }
+function clickDisplayMinimap(cb) {
+	document.cookie =  'displayminimap='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	window.location.reload();
+}
 
 function update_polarLayer() {
 	var polarnb;
@@ -589,11 +593,13 @@ var viewer = new Cesium.Viewer('live-map', {
 var camera = viewer.camera;
 <?php
 	if (isset($globalCenterLatitude) && isset($globalCenterLongitude)) {
+
 ?>
 camera.setView({
 	destination : Cesium.Cartesian3.fromDegrees(<?php echo $globalCenterLongitude; ?>,<?php echo $globalCenterLatitude; ?>, 5000000.0),
 });
 <?php
+
 	}
 ?>
 
@@ -604,7 +610,6 @@ var layers = viewer.scene.imageryLayers;
 //	}
 //));
 
-    
 
 <?php
 	if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'stk') {
@@ -712,4 +717,11 @@ var reloadpage = setInterval(function(){updateData()},<?php if (isset($globalMap
 update_airportsLayer();
 <?php
 		}
+?>
+<?php
+    if (!isset($_COOKIE['displayminimap']) || (isset($_COOKIE['displayminimap']) && $_COOKIE['displayminimap'] == 'true')) {
+?>
+CesiumMiniMap(viewer);
+<?php
+    }
 ?>

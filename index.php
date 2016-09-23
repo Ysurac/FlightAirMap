@@ -248,6 +248,7 @@ require_once('header.php');
     if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayiss" value="1" onclick="clickDisplayISS(this)" <?php if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') print 'checked'; ?> ><?php echo _("Show ISS on map"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="displayminimap" value="1" onclick="clickDisplayMinimap(this)" <?php if (!isset($_COOKIE['displayminimap']) || (isset($_COOKIE['displayminimap']) && $_COOKIE['displayminimap'] == 'true')) print 'checked'; ?> ><?php echo _("Show mini-map"); ?></label></div></li>
 <?php
     }
 ?>
