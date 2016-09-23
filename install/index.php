@@ -1142,7 +1142,7 @@ if (isset($_POST['dbtype'])) {
 			if (update_schema::check_version(false) > 0 && isset($_POST['waypoints']) && $_POST['waypoints'] == 'waypoints') {
 				require_once(dirname(__FILE__).'/../require/class.Connection.php');
 				$Connection = new Connection();
-				if ($Connection->tableExist('airspace') == false) {
+				if ($Connection->tableExists('airspace') == false) {
 					$_SESSION['install'] = 'waypoints';
 				} else {
 					$_SESSION['install'] = 'database_import';
