@@ -37,7 +37,7 @@ if (!isset($globalSources)) {
 	    die;
 	}
 	//$hosts = array($globalSBS1Host.':'.$globalSBS1Port);
-	$globalSources[] = array('host' => $globalSBS1Host.':'.$globalSBS1Port);
+	$globalSources[] = array('host' => $globalSBS1Host,'port' => $globalSBS1Port);
     }
 }
 
@@ -77,6 +77,7 @@ if (function_exists('pcntl_fork')) {
 // let's try and connect
 if ($globalDebug) echo "Connecting...\n";
 $use_aprs = false;
+$aprs_full = false;
 
 function create_socket($host, $port, &$errno, &$errstr) {
     $ip = gethostbyname($host);
@@ -249,6 +250,7 @@ foreach ($globalSources as $key => $source) {
     if (isset($source['format']) && $source['format'] == 'aprs') {
 	$aprs_connect = 0;
 	$use_aprs = true;
+	if (isset($source['port']) && $source['port'] == '10152') $aprs_full = true;
 	break;
     } elseif (!isset($source['format'])) {
         $globalSources[$key]['format'] = 'auto';
@@ -269,6 +271,7 @@ if ($use_aprs) {
 	//else $aprs_ssid = 'PerlEx';
 	if (isset($globalAPRSfilter)) $aprs_filter = $globalAPRSfilter;
 	else $aprs_filter =  'r/'.$globalCenterLatitude.'/'.$globalCenterLongitude.'/250.0';
+	if ($aprs_full) $aprs_filter = '';
 	if ($aprs_filter != '') $aprs_login = "user {$aprs_ssid} appid {$aprs_version} filter {$aprs_filter}\n";
 	else $aprs_login = "user {$aprs_ssid} appid {$aprs_version}\n";
 }
@@ -728,7 +731,9 @@ while ($i > 0) {
 		    // SBS format is CSV format
 		    if ($buffer != '') {
 			$tt[$format] = 0;
-			if ($format == 'raw') {
+			if ($format == 'acarssbs3') {
+			    echo $buffer."\n";
+			} elseif ($format == 'raw') {
 			    // AVR format
 			    $data = $SBS->parse($buffer);
 			    if (is_array($data)) {

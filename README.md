@@ -63,7 +63,7 @@ Use install/index.php
 * run scripts/daemon-acars.php
 
 ### APRS (real flights)
-* You can use APRS server from glidernet like aprs.glidernet.org:10152
+* You can use APRS server from glidernet like aprs.glidernet.org:14580 (or port 10152 without APRS filter)
 
 ### IVAO (virtual flights)
 * You can use as source a whazzup.txt file like : http://api.ivao.aero/getdata/whazzup/whazzup.txt
