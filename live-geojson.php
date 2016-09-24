@@ -260,10 +260,12 @@ $output = '{';
 							$output .= '"type": "Point",';
 								$output .= '"coordinates": [';
 										$output .= $spotter_item['longitude'].', ';
-										$output .= $spotter_item['latitude'].', ';
+										$output .= $spotter_item['latitude'];
+										/*
+										.', ';
 										$output .= $spotter_item['altitude']*30.48;
 										$output .= ', '.strtotime($spotter_item['date']);
-					
+										*/
 								$output .= ']';
 							$output .= '}';
 				$output .= '},';

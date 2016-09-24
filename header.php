@@ -178,11 +178,49 @@ if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($gl
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.js.php?ident=<?php print $ident; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
+<?php
+		if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
+?>
+<script src="https://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
+<?php
+		}
+?>
+<?php
+		if (isset($globalBingMapKey) && $globalBingMapKey != '') {
+?>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
+<?php
+		}
+?>
+<?php
+		if (isset($globalMapQuestKey) && $globalMapQuestKey != '' && ($MapType == 'MapQuest-OSM' || $MapType == 'MapQuest-Hybrid' || $MapType == 'MapQuest-Aerial')) {
+?>
+<!--<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>-->
+<script src="https://open.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>
+<?php
+		}
+?>
+<?php
+		if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
+?>
+<script src="<?php print $globalURL; ?>/js/leaflet-Here.js"></script>
+<?php
+		}
+?>
+<?php
+		if ($MapType == 'Yandex') {
+?>
+<script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
+<?php
+		}
+?>
 <?php
 }
 
@@ -194,11 +232,49 @@ if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) &&
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.js.php?flightaware_id=<?php print $flightaware_id; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
+<?php
+		if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
+?>
+<script src="https://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
+<?php
+		}
+?>
+<?php
+		if (isset($globalBingMapKey) && $globalBingMapKey != '') {
+?>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
+<?php
+		}
+?>
+<?php
+		if (isset($globalMapQuestKey) && $globalMapQuestKey != '' && ($MapType == 'MapQuest-OSM' || $MapType == 'MapQuest-Hybrid' || $MapType == 'MapQuest-Aerial')) {
+?>
+<!--<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>-->
+<script src="https://open.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>
+<?php
+		}
+?>
+<?php
+		if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
+?>
+<script src="<?php print $globalURL; ?>/js/leaflet-Here.js"></script>
+<?php
+		}
+?>
+<?php
+		if ($MapType == 'Yandex') {
+?>
+<script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
+<?php
+		}
+?>
 <?php
 }
 ?>
