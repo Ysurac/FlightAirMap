@@ -118,7 +118,8 @@ class update_db {
                 }
 
     		if ($globalDebug) echo " - Add routes to DB -";
-
+		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
+		$Spotter = new Spotter();
 		if ($fh = fopen($database_file,"r")) {
 			$query_dest = 'INSERT INTO routes (CallSign,Operator_ICAO,FromAirport_ICAO,FromAirport_Time,ToAirport_ICAO,ToAirport_Time,RouteStop,Source) VALUES (:CallSign, :Operator_ICAO, :FromAirport_ICAO,:FromAirport_Time, :ToAirport_ICAO, :ToAirport_Time,:routestop, :source)';
 			$Connection = new Connection();
@@ -128,7 +129,7 @@ class update_db {
 				$line = fgetcsv($fh,9999,',');
 				if ($line[0] != '') {
 					try {
-						$query_dest_values = array(':CallSign' => str_replace('*','',$line[7]),':Operator_ICAO' => '',':FromAirport_ICAO' => $line[0],':FromAirport_Time' => $line[5],':ToAirport_ICAO' => $line[1],':ToAirport_Time' => $line[6],':routestop' => '',':source' => 'oneworld');
+						$query_dest_values = array(':CallSign' => str_replace('*','',$line[7]),':Operator_ICAO' => '',':FromAirport_ICAO' => $Spotter->getAirportICAO($line[0]),':FromAirport_Time' => $line[5],':ToAirport_ICAO' => $Spotter->getAirportICAO($line[1]),':ToAirport_Time' => $line[6],':routestop' => '',':source' => 'oneworld');
 						$sth_dest->execute($query_dest_values);
 					} catch(PDOException $e) {
 						if ($globalTransaction) $Connection->db->rollBack(); 
@@ -157,6 +158,8 @@ class update_db {
 
     		if ($globalDebug) echo " - Add routes to DB -";
 
+		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
+		$Spotter = new Spotter();
 		if ($fh = fopen($database_file,"r")) {
 			$query_dest = 'INSERT INTO routes (CallSign,Operator_ICAO,FromAirport_ICAO,FromAirport_Time,ToAirport_ICAO,ToAirport_Time,RouteStop,Source) VALUES (:CallSign, :Operator_ICAO, :FromAirport_ICAO,:FromAirport_Time, :ToAirport_ICAO, :ToAirport_Time,:routestop, :source)';
 			$Connection = new Connection();
@@ -166,7 +169,7 @@ class update_db {
 				while (!feof($fh)) {
 					$line = fgetcsv($fh,9999,',');
 					if ($line[0] != '') {
-						$query_dest_values = array(':CallSign' => str_replace('*','',$line[6]),':Operator_ICAO' => '',':FromAirport_ICAO' => $line[0],':FromAirport_Time' => $line[4],':ToAirport_ICAO' => $line[1],':ToAirport_Time' => $line[5],':routestop' => '',':source' => 'skyteam');
+						$query_dest_values = array(':CallSign' => str_replace('*','',$line[6]),':Operator_ICAO' => '',':FromAirport_ICAO' => $Spotter->getAirportICAO($line[0]),':FromAirport_Time' => $line[4],':ToAirport_ICAO' => $Spotter->getAirportICAO($line[1]),':ToAirport_Time' => $line[5],':routestop' => '',':source' => 'skyteam');
 						$sth_dest->execute($query_dest_values);
 					}
 				}

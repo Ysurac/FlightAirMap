@@ -35,6 +35,9 @@ class Connection{
 	}
 
 	public function db() {
+		if ($this->db === null) {
+			__construct();
+		}
 		return $this->db;
 	}
 
