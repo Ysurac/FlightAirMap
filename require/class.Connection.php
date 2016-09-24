@@ -38,7 +38,12 @@ class Connection{
 		if ($this->db === null) {
 			__construct();
 		}
-		return $this->db;
+		if ($this->db === null) {
+			echo 'Can\'t connect to database. Check configuration and database status.';
+			die;
+		} else {
+			return $this->db;
+		}
 	}
 
 	/**
