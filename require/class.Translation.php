@@ -10,7 +10,7 @@ class Translation {
     public $db;
     function __construct($dbc = null) {
 	    $Connection = new Connection($dbc);
-	    $this->db = $Connection->db;
+	    $this->db = $Connection->db();
     }
 
     /**

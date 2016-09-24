@@ -34,6 +34,9 @@ class Connection{
 	    }
 	}
 
+	public function db() {
+		return $this->db;
+	}
 
 	/**
 	* Creates the database connection

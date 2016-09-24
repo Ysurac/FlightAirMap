@@ -12,7 +12,7 @@ class ACARS {
 
 	function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
-		$this->db = $Connection->db;
+		$this->db = $Connection->db();
 		$this->SI = new SpotterImport($this->db);
 	}
 	/**

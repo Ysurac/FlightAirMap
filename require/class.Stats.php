@@ -10,7 +10,7 @@ class Stats {
 	public $db;
         function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
-		$this->db = $Connection->db;
+		$this->db = $Connection->db();
         }
               
 	public function addLastStatsUpdate($type,$stats_date) {
@@ -122,8 +122,8 @@ class Stats {
 	}
 
 	public function countAllArrivalCountries($limit = true) {
-		if ($limit) $query = "SELECT airport_country AS arrival_airport_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_country AS arrival_airport_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly'";
+		if ($limit) $query = "SELECT airport_country AS airport_arrival_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
+		else $query = "SELECT airport_country AS airport_arrival_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly'";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -138,8 +138,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllDepartureCountries($limit = true) {
-		if ($limit) $query = "SELECT airport_country AS departure_airport_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_country AS departure_airport_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly'";
+		if ($limit) $query = "SELECT airport_country AS airport_departure_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
+		else $query = "SELECT airport_country AS airport_departure_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly'";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -279,7 +279,7 @@ class Stats {
         		
         		foreach ($dall as $value) {
         			$icao = $value['airport_departure_icao'];
-        			if (isset($all[$icao])) {                                                           
+        			if (isset($all[$icao])) {
         				$all[$icao]['airport_departure_icao_count'] = $all[$icao]['airport_departure_icao_count'] + $value['airport_departure_icao_count'];
         			} else $all[$icao] = $value;
         		}

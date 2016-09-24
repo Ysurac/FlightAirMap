@@ -21,7 +21,7 @@ class SpotterImport {
     function __construct($dbc = null) {
 	global $globalBeta;
 	$Connection = new Connection($dbc);
-	$this->db = $Connection->db;
+	$this->db = $Connection->db();
 	date_default_timezone_set('UTC');
 
 	// Get previous source stats
