@@ -169,7 +169,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		<fieldset id="mapprov">
 			<legend>Map provider</legend>
 			<p>
-				<label for="mapprovider">map Provider</label>
+				<label for="mapprovider">Default map Provider</label>
 				<select name="mapprovider" id="mapprovider">
 					<option value="OpenStreetMap" <?php if (isset($globalMapProvider) && $globalMapProvider == 'OpenStreetMap') { ?>selected="selected" <?php } ?>>OpenStreetMap</option>
 					<option value="Mapbox" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Mapbox') { ?>selected="selected" <?php } ?>>Mapbox</option>
@@ -1142,7 +1142,7 @@ if (isset($_POST['dbtype'])) {
 			if (update_schema::check_version(false) > 0 && isset($_POST['waypoints']) && $_POST['waypoints'] == 'waypoints') {
 				require_once(dirname(__FILE__).'/../require/class.Connection.php');
 				$Connection = new Connection();
-				if ($Connection->tableExists('airspace') == false) {
+				if ($Connection->tableExists('airspace') === false) {
 					$_SESSION['install'] = 'waypoints';
 				} else {
 					$_SESSION['install'] = 'database_import';

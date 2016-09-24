@@ -103,6 +103,81 @@ class update_db {
 		}
                 return '';
 	}
+	public static function retrieve_route_oneworld($database_file) {
+		global $globalDebug, $globalTransaction;
+		//$query = 'TRUNCATE TABLE routes';
+		if ($globalDebug) echo " - Delete previous routes from DB -";
+		$query = "DELETE FROM routes WHERE Source = '' OR Source = :source";
+		$Connection = new Connection();
+		try {
+			//$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => 'oneworld'));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+    		if ($globalDebug) echo " - Add routes to DB -";
+
+		if ($fh = fopen($database_file,"r")) {
+			$query_dest = 'INSERT INTO routes (CallSign,Operator_ICAO,FromAirport_ICAO,FromAirport_Time,ToAirport_ICAO,ToAirport_Time,RouteStop,Source) VALUES (:CallSign, :Operator_ICAO, :FromAirport_ICAO,:FromAirport_Time, :ToAirport_ICAO, :ToAirport_Time,:routestop, :source)';
+			$Connection = new Connection();
+			$sth_dest = $Connection->db->prepare($query_dest);
+			if ($globalTransaction) $Connection->db->beginTransaction();
+			while (!feof($fh)) {
+				$line = fgetcsv($fh,9999,',');
+				if ($line[0] != '') {
+					try {
+						$query_dest_values = array(':CallSign' => str_replace('*','',$line[7]),':Operator_ICAO' => '',':FromAirport_ICAO' => $line[0],':FromAirport_Time' => $line[5],':ToAirport_ICAO' => $line[1],':ToAirport_Time' => $line[6],':routestop' => '',':source' => 'oneworld');
+						$sth_dest->execute($query_dest_values);
+					} catch(PDOException $e) {
+						if ($globalTransaction) $Connection->db->rollBack(); 
+						return "error : ".$e->getMessage();
+					}
+				}
+			}
+			if ($globalTransaction) $Connection->db->commit();
+		}
+                return '';
+	}
+	
+	public static function retrieve_route_skyteam($database_file) {
+		global $globalDebug, $globalTransaction;
+		//$query = 'TRUNCATE TABLE routes';
+		if ($globalDebug) echo " - Delete previous routes from DB -";
+		$query = "DELETE FROM routes WHERE Source = '' OR Source = :source";
+		$Connection = new Connection();
+		try {
+			//$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => 'skyteam'));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+    		if ($globalDebug) echo " - Add routes to DB -";
+
+		if ($fh = fopen($database_file,"r")) {
+			$query_dest = 'INSERT INTO routes (CallSign,Operator_ICAO,FromAirport_ICAO,FromAirport_Time,ToAirport_ICAO,ToAirport_Time,RouteStop,Source) VALUES (:CallSign, :Operator_ICAO, :FromAirport_ICAO,:FromAirport_Time, :ToAirport_ICAO, :ToAirport_Time,:routestop, :source)';
+			$Connection = new Connection();
+			$sth_dest = $Connection->db->prepare($query_dest);
+			try {
+				if ($globalTransaction) $Connection->db->beginTransaction();
+				while (!feof($fh)) {
+					$line = fgetcsv($fh,9999,',');
+					if ($line[0] != '') {
+						$query_dest_values = array(':CallSign' => str_replace('*','',$line[6]),':Operator_ICAO' => '',':FromAirport_ICAO' => $line[0],':FromAirport_Time' => $line[4],':ToAirport_ICAO' => $line[1],':ToAirport_Time' => $line[5],':routestop' => '',':source' => 'skyteam');
+						$sth_dest->execute($query_dest_values);
+					}
+				}
+				if ($globalTransaction) $Connection->db->commit();
+			} catch(PDOException $e) {
+				if ($globalTransaction) $Connection->db->rollBack(); 
+				return "error : ".$e->getMessage();
+			}
+		}
+                return '';
+	}
 	public static function retrieve_modes_sqlite_to_dest($database_file) {
 		global $globalTransaction;
 		//$query = 'TRUNCATE TABLE aircraft_modes';
@@ -1132,6 +1207,38 @@ class update_db {
 		} elseif ($globalDebug) echo "Done\n";
 		return '';
 	}
+	public static function update_oneworld() {
+		global $tmp_dir, $globalDebug;
+		$error = '';
+		if ($globalDebug) echo "Schedules Oneworld : Download...";
+		update_db::download('http://data.flightairmap.fr/data/schedules/oneworld.csv.gz',$tmp_dir.'oneworld.csv.gz');
+		if (file_exists($tmp_dir.'oneworld.csv.gz')) {
+			if ($globalDebug) echo "Gunzip...";
+			update_db::gunzip($tmp_dir.'oneworld.csv.gz');
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_route_oneworld($tmp_dir.'oneworld.csv');
+		} else $error = "File ".$tmp_dir.'oneworld.csv.gz'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+	public static function update_skyteam() {
+		global $tmp_dir, $globalDebug;
+		$error = '';
+		if ($globalDebug) echo "Schedules Skyteam : Download...";
+		update_db::download('http://data.flightairmap.fr/data/schedules/skyteam.csv.gz',$tmp_dir.'skyteam.csv.gz');
+		if (file_exists($tmp_dir.'skyteam.csv.gz')) {
+			if ($globalDebug) echo "Gunzip...";
+			update_db::gunzip($tmp_dir.'skyteam.csv.gz');
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::retrieve_route_skyteam($tmp_dir.'skyteam.csv');
+		} else $error = "File ".$tmp_dir.'skyteam.csv.gz'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
 	public static function update_ModeS() {
 		global $tmp_dir, $globalDebug;
 /*
@@ -1414,7 +1521,7 @@ class update_db {
 					$newmodelsdb[$model] = trim($row[0]);
 				}
 			}
-			if (file_exists('../models/models.md5sum')) {
+			if (file_exists(dirname(__FILE__).'../models/models.md5sum')) {
 				if (($handle = fopen(dirname(__FILE__).'/../models/models.md5sum','r')) !== FALSE) {
 					while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
 						$model = trim($row[2]);
@@ -1637,6 +1744,36 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 	}
+	public static function check_last_schedules_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_schedules' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_owner_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '15 DAYS'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return false;
+                else return true;
+	}
+
+	public static function insert_last_schedules_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_schedules';
+			INSERT INTO config (name,value) VALUES ('last_update_schedules',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
 	
 	public static function update_all() {
 		echo update_db::update_routes();
@@ -1662,4 +1799,5 @@ class update_db {
 //update_db::update_translation_fam();
 //echo update_db::update_routes();
 //update_db::update_models();
+//echo $update_db::update_skyteam();
 ?>
