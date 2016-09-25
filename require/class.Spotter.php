@@ -3354,16 +3354,16 @@ class Spotter{
 					WHERE spotter_output.airline_name <> '' AND spotter_output.airline_icao <> 'NA' ";
 		if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
 		}
                 if ($sincedate != '') {
 			if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 		$query .= "GROUP BY spotter_output.airline_name,spotter_output.airline_icao, spotter_output.airline_country ORDER BY airline_count DESC";
@@ -3399,16 +3399,16 @@ class Spotter{
 					WHERE spotter_output.pilot_id <> '' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
 		}
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 		$query .= "GROUP BY spotter_output.pilot_id,spotter_output.pilot_name ORDER BY pilot_count DESC";
@@ -3445,16 +3445,16 @@ class Spotter{
 					WHERE spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
 		}
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 		$query .= "GROUP BY spotter_output.owner_name ORDER BY owner_count DESC";
@@ -4015,12 +4015,19 @@ class Spotter{
 					WHERE c.iso2 = s.over_country ";
                 if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
 			}
 		}
-                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
 		$query .= "GROUP BY c.name ORDER BY nb DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -4057,16 +4064,16 @@ class Spotter{
                     WHERE spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
                 }
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 
@@ -4966,16 +4973,16 @@ class Spotter{
                     WHERE spotter_output.registration <> '' AND spotter_output.registration <> 'NA' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
 		}
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 
@@ -5027,16 +5034,16 @@ class Spotter{
                     WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
                 }
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 
@@ -5079,16 +5086,16 @@ class Spotter{
                     WHERE spotter_output.real_departure_airport_icao <> '' AND spotter_output.real_departure_airport_icao <> 'NA' AND airport.icao = spotter_output.real_departure_airport_icao ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
                 }
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 
@@ -5749,21 +5756,21 @@ class Spotter{
                     WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 
@@ -5811,21 +5818,21 @@ class Spotter{
                     WHERE spotter_output.real_arrival_airport_icao <> '' AND spotter_output.real_arrival_airport_icao <> 'NA' AND airport.icao = spotter_output.real_arrival_airport_icao ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND date > '".$sincedate."' ";
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 
@@ -7003,11 +7010,11 @@ class Spotter{
                     WHERE spotter_output.ident <> ''  ";
 		 if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-			else $query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			else $query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 		}
 		if ($sincedate != '') {
-			if ($globalDBdriver == 'mysql') $query .= "AND date > '".$sincedate."' ";
-			else $query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP) ";
+			if ($globalDBdriver == 'mysql') $query .= "AND spotter_output.date > '".$sincedate."' ";
+			else $query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP) ";
 		}
 		$query .= "GROUP BY spotter_output.ident, spotter_output.airline_name, spotter_output.airline_icao ORDER BY callsign_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";

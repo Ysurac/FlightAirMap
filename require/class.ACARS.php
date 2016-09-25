@@ -109,7 +109,6 @@ class ACARS {
 			$result = array('registration' => $registration, 'ident' => $ident,'label' => $label, 'block_id' => $block_id,'msg_no' => $msg_no,'message' => $message);
 			if ($globalDebug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
 		} else $message = $data;
-		$icao = '';
 		$airicao = '';
 		$decode = array();
 		$found = false;
@@ -118,6 +117,14 @@ class ACARS {
 				// example message : "FST01EGLLLIRFN047599E0033586390  55  25- 4C 74254      487  2059194"
 				//								    FST01MMMXEGKKN376904W079449733007380380 019061 XA1237 =>  wind direction and velocity (019/061)
 				//$n = sscanf($message, "FST01%4c%4c%c%06d%c%07d%*11[0-9a-zA-Z ]-%02dC", $dair, $darr, $lac, $la, $lnc, $ln, $temp);
+				$dair = '';
+				$darr = '';
+				$lac = '';
+				$la = '';
+				$lnc = '';
+				$ln = '';
+				$alt = '';
+				$temp = '';
 				$n = sscanf($message, "FST01%4c%4c%c%06d%c%07d%03d%*8[0-9a-zA-Z ]-%02dC", $dair, $darr, $lac, $la, $lnc, $ln, $alt, $temp);
 				if ($n > 5 && ($lac == 'N' || $lac == 'S') && ($lnc == 'E' || $lnc == 'W')) {
 					$latitude = $la / 10000.0;
@@ -135,6 +142,10 @@ class ACARS {
 				}
 			}
 			if (!$found && ($label == '10')) {
+				$dair = '';
+				$dhour = '';
+				$darr = '';
+				$ahour = '';
 				$n = sscanf($message, "ARR01 %4[A-Z]%4d %4[A-Z]%4d", $dair, $dhour, $darr,$ahour);
 				if ($n == 4 && strlen($darr) == 4) {
 					if ($dhour != '') $dhour = substr(sprintf('%04d',$dhour),0,2).':'.substr(sprintf('%04d',$dhour),2);
@@ -169,7 +180,8 @@ class ACARS {
 				Reg. : OO-SSP - Ident : SN01LY - Label : 13 - Message : EBBR,LFLL,27FEB15,1624,164400
 				N 46.493,E  3.980,19810
 				*/
-
+				$dair = '';
+				$darr = '';
 				$n = sscanf($message, "%4c,%4c,%*7s,%*d", $dair, $darr);
 				if ($n == 4) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -195,6 +207,15 @@ class ACARS {
 				*/
 
 				//$n = sscanf($message, "%*[0-9A-Z]/%*3d/%4s/%*c\nSCH/%6[0-9A-Z ]/%4c/%4c/%5s/%4d\n%*3c/%4d/%4c/%[0-9A-Z ]/", $airicao,$aident,$dair, $darr, $ddate, $dhour,$ahour, $aair, $apiste);
+				$airicao = '';
+				$aident = '';
+				$dair = '';
+				$darr = '';
+				$ddate = '';
+				$dhour = '';
+				$ahour = '';
+				$aair = '';
+				$apiste = '';
 				$n = sscanf(str_replace(array("\r\n", "\n", "\r"),'',$message), "%*[0-9A-Z]/%*3d/%4s/%*cSCH/%6[0-9A-Z ]/%4c/%4c/%5s/%4d%*3c/%4d/%4c/%[0-9A-Z ]/", $airicao,$aident,$dair, $darr, $ddate, $dhour,$ahour, $aair, $apiste);
 				if ($n > 8) {
 					if ($globalDebug) echo 'airicao : '. $airicao.' - ident : '.$aident.' - departure airport : '.$dair.' - arrival airport : '. $darr.' - date depart : '.$ddate.' - departure hour : '. $dhour.' - arrival hour : '.$ahour.' - arrival airport : '.$aair.' - arrival piste : '.$apiste."\n";
@@ -214,7 +235,12 @@ class ACARS {
 			if (!$found) {
 				// example message : "221111,34985,0817,  65,N 50.056 E 13.850"
 				//Reg. : CS-TFY - Ident : CR0321 - Label : 16 - Message : 140600,34008,1440,  66,N 46.768 E  4.793
-
+				$lac = '';
+				$las = '';
+				$lass = '';
+				$lnc = '';
+				$lns = '';
+				$lnss = '';
 				$n = sscanf($message, "%*6c,%*5c,%*4c,%*4c,%c%3d.%3d %c%3d.%3d,", $lac, $las, $lass, $lnc, $lns, $lnss);
 				if ($n == 10 && ($lac == 'N' || $lac == 'S') && ($lnc == 'E' || $lnc == 'W')) {
 					$las = $las.'.'.$lass;
@@ -237,6 +263,8 @@ class ACARS {
 				/TYP 1/STA EGKK/STA EGLL/STA EGHH
 
 				*/
+				$dair = '';
+				$darr = '';
 				$n = sscanf($message, "%*[0-9A-Z ]/%*s %4c/%4c .", $dair, $darr);
 				if ($n == 4) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -248,6 +276,8 @@ class ACARS {
 			}
 			if (!$found && $label == '1L') {
 				// example message : "Reg. : TS-ION - Ident : TU0634 - Label : 1L - Message : 000442152001337,DTTJ,LFPO,1609"
+				$dair = '';
+				$darr = '';
 				$n = sscanf($message, "%*[0-9],%4c,%4c,", $dair, $darr);
 				if ($n == 4) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -259,6 +289,8 @@ class ACARS {
 			}
 			if (!$found && $label == '5U') {
 				// example message : "Reg. : OO-TAH - Ident : 3V042J - Label : 5U - Message : 002AF   EBLG EBBR                     N4621.5E  524.2195"
+				$dair = '';
+				$darr = '';
 				$n = sscanf($message, "002AF %4c %4c ", $dair, $darr);
 				if ($n == 2) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -271,6 +303,8 @@ class ACARS {
 
 			if (!$found && $label == 'H1') {
 				// example message : 'Reg. : F-GHQJ - Ident : AF6241 - Label : H1 - Message : #DFBA01/CCF-GHQJ,FEB27,205556,LFMN,LFPO,0241/C106,17404,5000,42,0010,0,0100,42,X/CEN270,36012,257,778,6106,299,B5B7G8/EC731134,42387,01439,41194,12/EE731212,44932,11870,43555,12/N10875,0875,0910,6330,1205,-----'
+				$dair = '';
+				$darr = '';
 				$n = sscanf($message, "#DFBA%*02d/%*[A-Z-],%*[0-9A-Z],%*d,%4c,%4c", $dair, $darr);
 				if ($n == 6) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -282,6 +316,8 @@ class ACARS {
 			}
 			if (!$found && $label == 'H1') {
 				// example message : 'Reg. : F-GUGP - Ident : AF1842 - Label : H1 - Message : #DFBA01/A31801,1,1/CCF-GUGP,MAR11,093856,LFPG,LSGG,1842/C106,55832,5000,37,0010,0,0100,37,X/CEN282,31018,277,750,5515,255,C11036/EC577870,02282,07070,01987,73,14/EE577871,02282,06947,01987,73/N10790,0790,0903,5'
+				$dair = '';
+				$darr = '';
 				$n = sscanf($message, "#DFBA%*02d/%*[0-9A-Z,]/%*[A-Z-],%*[0-9A-Z],%*d,%4c,%4c", $dair, $darr);
 				if ($n == 7) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -297,6 +333,14 @@ class ACARS {
 				RMK/FUEL   2.6 M0.79)
 				*/
 				//$n = sscanf($message, "#DFB(POS-%s -%4d%c%5d%c/%*d F%d\nRMK/FUEL %f M%f", $aident, $las, $lac, $lns, $lnc, $alt, $fuel, $speed);
+				$aident = '';
+				$las = '';
+				$lac = '';
+				$lns = '';
+				$lnc = '';
+				$alt = '';
+				$fuel = '';
+				$speed = '';
 				$n = sscanf(str_replace(array("\r\n", "\n", "\r"),'',$message), "#DFB(POS-%s -%4d%c%5d%c/%*d F%dRMK/FUEL %f M%f", $aident, $las, $lac, $lns, $lnc, $alt, $fuel, $speed);
 				if ($n == 9) {
 					//if (self->$debug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -315,6 +359,10 @@ class ACARS {
 				/* example message :
 				Reg. : F-HBSA - Ident : XK505F - Label : 16 - Message : LAT N 46.184/LON E  5.019
 				*/
+				$lac = '';
+				$las = '';
+				$lnc = '';
+				$lns = '';
 				$n = sscanf($message, "LAT %c %f/LON %c %f", $lac, $las, $lnc, $lns);
 				if ($n == 4) {
 					$latitude = $las;
@@ -332,6 +380,8 @@ class ACARS {
 				Reg. : EI-DSB - Ident : AZ0207 - Label : 80 - Message : 3X01 NLINFO 0207/28 EGLL/LIRF .EI-DSB
 				/AZ/1783/28/FCO/N
 				*/
+				$dair = '';
+				$darr = '';
 				$n = sscanf($message, "%*[0-9A-Z] NLINFO %*d/%*d %4c/%4c .", $dair, $darr);
 				if ($n == 5) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -350,6 +400,9 @@ class ACARS {
 				DABNK,10100,  7100,02:46, 200, 44068,52.4, 77000, 62500, 66000,3, 4,
 				*/
 //    	    $n = sscanf($message, "%*[0-9A-Z],,\n%*[0-9A-Z],%*[0-9A-Z],%4s,%4s,.%*6s,\n%*4[A-Z],\n%[0-9A-Z],", $dair, $darr, $aident);
+				$dair = '';
+				$darr = '';
+				$aident = '';
 				$n = sscanf(str_replace(array("\r\n", "\n", "\r"),'',$message), "%*[0-9A-Z],,%*[0-9A-Z],%*[0-9A-Z],%4s,%4s,.%*6s,%*4[A-Z],%[0-9A-Z],", $dair, $darr, $aident);
 				if ($n == 8) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -365,6 +418,8 @@ class ACARS {
 				Reg. : N702DN - Ident : DL0008 - Label : 80 - Message : 3401/11 KATL/OMDB .N702DN
 				ACK RDA
 				*/
+				$dair = '';
+				$darr = '';
 				$n = sscanf($message, "%*d/%*d %4s/%4s .%*6s", $dair, $darr);
 				if ($n == 5) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -379,6 +434,8 @@ class ACARS {
 				/* example message :
 				LFLLLFRS1315U2687X
 				*/
+				$dair = '';
+				$darr = '';
 				$n = sscanf($message,'%4[A-Z]%4[A-Z]%*4d',$dair,$darr);
 				if ($n == 3) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -393,6 +450,8 @@ class ACARS {
 				/* example message :
 				3J01 DSPTCH 7503/01 LFTH/LFPO .F-HMLF
 				*/
+				$dair = '';
+				$darr = '';
 				$n = sscanf($message,'3J01 DSPTCH %*d/%*d %4s/%4s .%*6s',$dair,$darr);
 				if ($n == 3) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
@@ -680,13 +739,13 @@ class ACARS {
 		$message = $this->parse($data);
 		if (isset($message['registration']) && $message['registration'] != '' && $message['ident'] != '' && $message['registration'] != '!') {
 		
-			$ident = $message['ident'];
+			$ident = (string)$message['ident'];
 			$label = $message['label'];
 			$block_id = $message['block_id'];
 			$msg_no = $message['msg_no'];
 			$msg = $message['message'];
 			$decode = $message['decode'];
-			$registration = $message['registration'];
+			$registration = (string)$message['registration'];
 		
 			if (isset($decode['latitude'])) $latitude = $decode['latitude'];
 			else $latitude = '';
