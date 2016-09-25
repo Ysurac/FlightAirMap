@@ -2525,8 +2525,6 @@ class Spotter{
 		$Connection= new Connection($this->db);
 		if ($Connection->tableExists('countries')) {
 		
-		$country_array = array();
-					
 		$query  = "SELECT countries.name AS airport_country
 				FROM countries
 				ORDER BY countries.name ASC";
@@ -3069,7 +3067,7 @@ class Spotter{
 		}
 		
 		//getting the departure airport information
-		$departure_airport = array();
+		$departure_airport_array = array();
 		if ($departure_airport_icao != "")
 		{
 			if (!is_string($departure_airport_icao))
