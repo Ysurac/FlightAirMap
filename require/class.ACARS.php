@@ -10,7 +10,7 @@ class ACARS {
 	public $db;
 	public $SI;
 
-	function __construct($dbc = null) {
+	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
 		$this->SI = new SpotterImport($this->db);
@@ -90,12 +90,18 @@ class ACARS {
 	* @param String ACARS data in acarsdec data
 	*
 	*/
-	function parse($data) {
+	public function parse($data) {
 		global $globalDebug, $globalACARSArchive;
-		$Image = new Image($this->db);
-		$Schedule = new Schedule($this->db);
-		$Translation = new Translation($this->db);
-
+		//$Image = new Image($this->db);
+		//$Schedule = new Schedule($this->db);
+		//$Translation = new Translation($this->db);
+		$registration = '';
+		$label = '';
+		$block_id = '';
+		$msg_no = '';
+		$ident = '';
+		$message = '';
+		$result = array();
 		$n = sscanf($data,'(null) %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 		if ($n == 0) $n = sscanf($data,'AC%*c %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 		if ($n != 0) {
@@ -682,9 +688,9 @@ class ACARS {
 			$decode = $message['decode'];
 			$registration = $message['registration'];
 		
-			if (isset($decode['latitude'])) $latitude = $latitude;
+			if (isset($decode['latitude'])) $latitude = $decode['latitude'];
 			else $latitude = '';
-			if (isset($decode['longitude'])) $longitude = $longitude;
+			if (isset($decode['longitude'])) $longitude = $decode['longitude'];
 			else $longitude = '';
 			if (isset($decode['airicao'])) $airicao = $decode['airicao'];
 			else $airicao = '';
@@ -777,7 +783,7 @@ class ACARS {
 	public function addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode = '') {
 		global $globalDebug;
 		date_default_timezone_set('UTC');
-		if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '' && preg_match('/^MET0/',$message) == FALSE && preg_match('/^ARR0/',$message) == FALSE && preg_match('/^ETA/',$message) == FALSE && preg_match('/^WXR/',$message) == FALSE && preg_match('/^FTX01.FIC/',$message) == FALSE) {
+		if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '' && preg_match('/^MET0/',$message) === 0 && preg_match('/^ARR0/',$message) === 0 && preg_match('/^ETA/',$message) === 0 && preg_match('/^WXR/',$message) === 0 && preg_match('/^FTX01.FIC/',$message) === 0) {
 			/*
 				    if ($globalDebug) echo "Test if not already in Archive ACARS table...";
 			    	    $query_test = "SELECT COUNT(*) as nb FROM acars_archive WHERE ident = :ident AND registration = :registration AND message = :message";
@@ -809,8 +815,8 @@ class ACARS {
 	/**
 	* Get Message title from label from DB
 	*
-	* @param String $ident
-	* @return Array Return ACARS data in array
+	* @param String $label
+	* @return String Return ACARS title
 	*/
 	public function getTitlefromLabel($label) {
 		$Connection = new Connection($this->db);
@@ -822,7 +828,8 @@ class ACARS {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
-			return "error : ".$e->getMessage();
+			echo "error : ".$e->getMessage();
+			die;
 		}
 		$row = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (count($row) > 0) return $row[0]['title'];
@@ -842,11 +849,12 @@ class ACARS {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
-			return "error : ".$e->getMessage();
+			echo "error : ".$e->getMessage();
+			die;
 		}
 		$row = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (count($row) > 0) return $row;
-		else return '';
+		else return array();
 	}
 
 	/**
@@ -863,7 +871,8 @@ class ACARS {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
-			return "error : ".$e->getMessage();
+			echo "error : ".$e->getMessage();
+			die;
 		}
 		$row = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (count($row) > 0) return $row[0];
@@ -881,7 +890,7 @@ class ACARS {
 		$Spotter = new Spotter($this->db);
 		$Translation = new Translation($this->db);
 		date_default_timezone_set('UTC');
-
+		$result = array();
 		$limit_query = '';
 		if ($limit != "")
 		{
@@ -922,7 +931,6 @@ class ACARS {
 				if (count($image_array) > 0) $data = array_merge($data,array('image' => $image_array[0]['image'],'image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright'],'image_source' => $image_array[0]['image_source'],'image_source_website' => $image_array[0]['image_source_website']));
 				else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
 			} else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
-			$icao = '';
 			if ($row['registration'] == '') $row['registration'] = 'NA';
 			if ($row['ident'] == '') $row['ident'] = 'NA';
 			$identicao = $Spotter->getAllAirlineInfo(substr($row['ident'],0,2));
