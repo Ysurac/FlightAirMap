@@ -823,14 +823,14 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatPilot($pilot_id,$cnt) {
+	public function addStatPilot($pilot_id,$cnt,$pilot_name) {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_pilot (pilot_id,cnt) VALUES (:pilot_id,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+			$query = "INSERT INTO stats_pilot (pilot_id,cnt,pilot_name) VALUES (:pilot_id,:cnt,:pilot_name) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, pilot_name = :pilot_name";
 		} else {
-			$query = "UPDATE stats_pilot SET cnt = cnt+:cnt WHERE pilot_id = :pilot_id; INSERT INTO stats_pilot (pilot_id,cnt) SELECT :pilot_id,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_pilot WHERE pilot_id = :pilot_id);"; 
+			$query = "UPDATE stats_pilot SET cnt = cnt+:cnt, pilot_name = :pilot_name WHERE pilot_id = :pilot_id; INSERT INTO stats_pilot (pilot_id,cnt,pilot_name) SELECT :pilot_id,:cnt,:pilot_name WHERE NOT EXISTS (SELECT 1 FROM stats_pilot WHERE pilot_id = :pilot_id);"; 
 		}
-                $query_values = array(':pilot_id' => $pilot_id,':cnt' => $cnt);
+                $query_values = array(':pilot_id' => $pilot_id,':cnt' => $cnt,':pilot_name' => $pilot_name);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -1017,7 +1017,7 @@ class Stats {
 				}
 				$alldata = $Spotter->countAllPilots(false,$monthsSinceLastYear);
 				foreach ($alldata as $number) {
-					$this->addStatPilot($number['pilot_id'],$number['pilot_count']);
+					$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name']);
 				}
 				$previous_year = date('Y');
 				$previous_year--;
