@@ -109,7 +109,6 @@ class ACARS {
 			$result = array('registration' => $registration, 'ident' => $ident,'label' => $label, 'block_id' => $block_id,'msg_no' => $msg_no,'message' => $message);
 			if ($globalDebug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
 		} else $message = $data;
-		$airicao = '';
 		$decode = array();
 		$found = false;
 //		if ($registration != '' && $ident != '' && $registration != '!') {

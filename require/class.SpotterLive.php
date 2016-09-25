@@ -5,7 +5,7 @@ class SpotterLive {
 	public $db;
 	static $global_query = "SELECT spotter_live.* FROM spotter_live";
 
-	function __construct($dbc = null) {
+	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
 	}
@@ -58,7 +58,7 @@ class SpotterLive {
 		if ($globalDBdriver == 'mysql') {
 			//$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate";
 			$query  = 'SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate'.$filter_query.$orderby_query;
-                } else if ($globalDBdriver == 'pgsql') {
+                } else {
 			$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate".$filter_query.$orderby_query;
 		}
 		$spotter_array = $Spotter->getDataFromDB($query.$limit_query);
@@ -104,7 +104,7 @@ class SpotterLive {
 //			$query  = 'SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= spotter_live.date ORDER BY spotter_live.date GROUP BY spotter_live.flightaware_id'.$filter_query;
 
 			//$query = 'SELECT a.aircraft_shadow, spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk  FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= date '.$filter_query.'LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_live.aircraft_icao = a.icao';
-                } else if ($globalDBdriver == 'pgsql') {
+                } else {
             		//$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE NOW() AT TIME ZONE 'UTC' - '30 SECONDS'->INTERVAL <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate";
             		//$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE NOW() AT TIME ZONE 'UTC' - '".$globalLiveInterval." SECONDS'->INTERVAL <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate$orderby_query";
 			//$query  = 'SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, a.aircraft_shadow FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate '.$filter_query.'INNER JOIN (SELECT * FROM aircraft) a on spotter_live.aircraft_icao = a.icao';
@@ -119,7 +119,8 @@ class SpotterLive {
 			$sth = $this->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
-			return "error";
+			echo $e->getMessage();
+			die;
 		}
 		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -173,7 +174,9 @@ class SpotterLive {
 			$sth = $this->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
-			return "error";
+			echo $e->getMessage();
+			die;
+
 		}
 		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -215,7 +218,8 @@ class SpotterLive {
 			$sth = $this->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
-			return "error";
+			echo $e->getMessage();
+			die;
 		}
 		$result = $sth->fetch(PDO::FETCH_ASSOC);
 		return $result['nb'];
@@ -472,7 +476,8 @@ class SpotterLive {
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':ident' => $ident));
 		} catch(PDOException $e) {
-			return "error";
+			echo $e->getMessage();
+			die;
 		}
 		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $spotter_array;
