@@ -457,7 +457,7 @@ class Image {
 	*
 	*/
 	public function fromCustomSource($aircraft_registration,$aircraft_name='') {
-		global $globalAircraftCustomSources;
+		global $globalAircraftImageCustomSources;
 		//$globalAircraftImageCustomSource[] = array('thumbnail' => '','original' => '', 'copyright' => '', 'source_website' => '', 'source' => '','exif' => true);
 		if (!empty($globalAircraftImageCustomSources)) {
 			if (!isset($globalAircraftImageCustomSources[0])) $globalAircraftImageCustomSources[] = $globalAircraftImageCustomSources;

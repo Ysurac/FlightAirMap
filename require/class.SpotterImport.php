@@ -188,7 +188,7 @@ class SpotterImport {
     }
 
     function add($line) {
-	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBSupdate, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta;
+	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate;
 	//if (!isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
 /*
@@ -798,7 +798,7 @@ class SpotterImport {
 				if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE && $line['format_source'] != 'aprs') {
 					$source = $this->all_flights[$id]['source_name'];
 					if ($source == '') $source = $this->all_flights[$id]['format_source'];
-					if (!isset($source_location[$source])) {
+					if (!isset($this->source_location[$source])) {
 						$Location = new Source();
 						$coord = $Location->getLocationInfobySourceName($source);
 						if (count($coord) > 0) {
@@ -808,10 +808,10 @@ class SpotterImport {
 							$latitude = $globalCenterLatitude;
 							$longitude = $globalCenterLongitude;
 						}
-						$source_location[$source] = array('latitude' => $latitude,'longitude' => $longitude);
+						$this->source_location[$source] = array('latitude' => $latitude,'longitude' => $longitude);
 					} else {
-						$latitude = $source_location[$source]['latitude'];
-						$longitude = $source_location[$source]['longitude'];
+						$latitude = $this->source_location[$source]['latitude'];
+						$longitude = $this->source_location[$source]['longitude'];
 					}
 					$stats_heading = $Common->getHeading($latitude,$longitude,$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']);
 					//$stats_heading = $stats_heading%22.5;
