@@ -16,7 +16,8 @@ class Spotter{
 	* Executes the SQL statements to get the spotter information
 	*
 	* @param String $query the SQL query
-	* @param String $limit the limit query
+	* @param Array $params parameter of the query
+	* @param String $limitQuery the limit query
 	* @return Array the spotter information
 	*
 	*/
@@ -665,7 +666,7 @@ class Spotter{
 			{
 				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
 				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
-			}
+			} else $limit_query = "";
 		} else $limit_query = "";
 
 
@@ -733,8 +734,8 @@ class Spotter{
 			{
 				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
 				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
-			}
-		}
+			} else $limit_query = "";
+		} else $limit_query = "";
 		
 		if ($sort != "")
 		{
@@ -761,7 +762,7 @@ class Spotter{
 	public function getLatestSpotterForLayar($lat, $lng, $radius, $interval)
 	{
 		date_default_timezone_set('UTC');
-		
+		$limit_query = '';
 		if ($lat != "")
 		{
 			if (!is_numeric($lat))
@@ -785,7 +786,7 @@ class Spotter{
 				return false;
 			}
 		}
-        
+    		$additional_query = '';
 		if ($interval != "")
 		{
 			if (!is_string($interval))
@@ -836,7 +837,7 @@ class Spotter{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
-		
+		$limit_query = '';
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
@@ -878,6 +879,7 @@ class Spotter{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+		$limit_query = '';
 		
 		if ($limit != "")
 		{
@@ -962,6 +964,7 @@ class Spotter{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+		$limit_query = '';
 		
 		if ($limit != "")
 		{
@@ -1004,6 +1007,7 @@ class Spotter{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+		$limit_query = '';
 		
 		if ($limit != "")
 		{
@@ -1046,7 +1050,6 @@ class Spotter{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
-		
 		$query_values = array();
 		$additional_query = '';
 		if ($id != "")
@@ -1083,7 +1086,8 @@ class Spotter{
 		date_default_timezone_set('UTC');
 		
 		$query_values = array();
-		
+		$limit_query = '';
+		$additional_query = '';
 		if ($ident != "")
 		{
 			if (!is_string($ident))
@@ -1139,6 +1143,8 @@ class Spotter{
 		date_default_timezone_set('UTC');
 		
 		$query_values = array();
+		$limit_query = '';
+		$additional_query = '';
 		
 		if ($aircraft_type != "")
 		{
@@ -1194,6 +1200,8 @@ class Spotter{
 		date_default_timezone_set('UTC');
 		
 		$query_values = array();
+		$limit_query = '';
+		$additional_query = '';
 		
 		if ($registration != "")
 		{
@@ -1251,6 +1259,8 @@ class Spotter{
 		date_default_timezone_set('UTC');
 
 		$query_values = array();
+		$limit_query = '';
+		$additional_query = '';
 		
 		if ($airline != "")
 		{
@@ -1303,8 +1313,9 @@ class Spotter{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
-		$additional_query = '';
 		$query_values = array();
+		$limit_query = '';
+		$additional_query = '';
 		
 		if ($airport != "")
 		{
@@ -1359,6 +1370,8 @@ class Spotter{
 		global $global_query, $globalTimezone, $globalDBdriver;
 		
 		$query_values = array();
+		$limit_query = '';
+		$additional_query = '';
 		
 		if ($date != "")
 		{
@@ -1366,7 +1379,11 @@ class Spotter{
 				date_default_timezone_set($globalTimezone);
 				$datetime = new DateTime($date);
 				$offset = $datetime->format('P');
-			} else $offset = '+00:00';
+			} else {
+				date_default_timezone_set('UTC');
+				$datetime = new DateTime($date);
+				$offset = '+00:00';
+			}
 			if ($globalDBdriver == 'mysql') {
 				$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date ";
 				$query_values = array(':date' => $datetime->format('Y-m-d'), ':offset' => $offset);
@@ -1420,6 +1437,7 @@ class Spotter{
 		date_default_timezone_set('UTC');
 		
 		$query_values = array();
+		$limit_query = '';
 		$additional_query = '';
 		if ($country != "")
 		{
@@ -1477,6 +1495,7 @@ class Spotter{
 		
 		$query_values = array();
 		$additional_query = '';
+		$limit_query = '';
 		
 		if ($aircraft_manufacturer != "")
 		{
@@ -1535,6 +1554,7 @@ class Spotter{
 		
 		$query_values = array();
 		$additional_query = '';
+		$limit_query = '';
 		if ($departure_airport_icao != "")
 		{
 			if (!is_string($departure_airport_icao))
@@ -1603,6 +1623,7 @@ class Spotter{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+		$limit_query = '';
 		
 		if ($limit != "")
 		{
@@ -3328,40 +3349,36 @@ class Spotter{
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 			FROM spotter_output
 					WHERE spotter_output.airline_name <> '' AND spotter_output.airline_icao <> 'NA' ";
-                if ($olderthanmonths > 0) {
-            		if ($globalDBdriver == 'mysql') {
+		if ($olderthanmonths > 0) {
+			if ($globalDBdriver == 'mysql') {
 				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
 				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
 		}
                 if ($sincedate != '') {
-            		if ($globalDBdriver == 'mysql') {
+			if ($globalDBdriver == 'mysql') {
 				$query .= "AND date > '".$sincedate."' ";
 			} else {
 				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-        	$query .= "GROUP BY spotter_output.airline_name,spotter_output.airline_icao, spotter_output.airline_country ORDER BY airline_count DESC";
+		$query .= "GROUP BY spotter_output.airline_name,spotter_output.airline_icao, spotter_output.airline_country ORDER BY airline_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
-      
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute();
-      
-        $airline_array = array();
+ 
+		$airline_array = array();
 		$temp_array = array();
-        
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airline_name'] = $row['airline_name'];
-            $temp_array['airline_icao'] = $row['airline_icao'];
-            $temp_array['airline_count'] = $row['airline_count'];
-            $temp_array['airline_country'] = $row['airline_country'];
-          
-            $airline_array[] = $temp_array;
+			$temp_array['airline_icao'] = $row['airline_icao'];
+			$temp_array['airline_count'] = $row['airline_count'];
+			$temp_array['airline_country'] = $row['airline_country'];
+			$airline_array[] = $temp_array;
 		}
-
 		return $airline_array;
 	}
 
@@ -4265,27 +4282,24 @@ class Spotter{
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
-      
-        $aircraft_array = array();
+
+		$aircraft_array = array();
 		$temp_array = array();
-        
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-            $temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
-            if($row['registration'] != "")
-              {
-                  $image_array = $Image->getSpotterImage($row['registration']);
-                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
-              }
-            $temp_array['registration_count'] = $row['registration_count'];
-          
-            $aircraft_array[] = $temp_array;
+			if($row['registration'] != "")
+			{
+				$image_array = $Image->getSpotterImage($row['registration']);
+				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+			}
+			$temp_array['registration_count'] = $row['registration_count'];
+			$aircraft_array[] = $temp_array;
 		}
-
 		return $aircraft_array;
 	}
 	
@@ -4309,23 +4323,18 @@ class Spotter{
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
-      
-    $aircraft_array = array();
+
+		$aircraft_array = array();
 		$temp_array = array();
-        
-    while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
-          
-      $aircraft_array[] = $temp_array;
+			$aircraft_array[] = $temp_array;
 		}
-
 		return $aircraft_array;
-	}	
+	}
 
-	
-	
 	/**
 	* Gets all aircraft types that have flown over by aircraft manufacturer
 	*
@@ -4341,27 +4350,22 @@ class Spotter{
                     WHERE spotter_output.aircraft_manufacturer = :aircraft_manufacturer
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
- 
-		
+
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
-      
-        $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
-        
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
-            $temp_array['aircraft_icao_count'] = $row['aircraft_icao_count'];
-          
-            $aircraft_array[] = $temp_array;
+			$temp_array['aircraft_icao_count'] = $row['aircraft_icao_count'];
+			$aircraft_array[] = $temp_array;
 		}
-
 		return $aircraft_array;
 	}
-	
-	
+
+
 	/**
 	* Gets all aircraft registration that have flown over by aircaft manufacturer
 	*
@@ -4382,32 +4386,26 @@ class Spotter{
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
-      
-        $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
-        
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['registration'] = $row['registration'];
-            $temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['airline_name'] = $row['airline_name'];
 			$temp_array['image_thumbnail'] = "";
-            if($row['registration'] != "")
-              {
-                  $image_array = $Image->getSpotterImage($row['registration']);
-                  $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
-              }
-            $temp_array['registration_count'] = $row['registration_count'];
-          
-            $aircraft_array[] = $temp_array;
+			if($row['registration'] != "")
+			{
+				$image_array = $Image->getSpotterImage($row['registration']);
+				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+			}
+			$temp_array['registration_count'] = $row['registration_count'];
+			$aircraft_array[] = $temp_array;
 		}
-
 		return $aircraft_array;
 	}
-	
-	
-	
+
 	/**
 	* Gets all aircraft types that have flown over by date
 	*
@@ -4655,22 +4653,18 @@ class Spotter{
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
-      
-    $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
-        
-    while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_manufacturer_count'] = $row['aircraft_manufacturer_count'];
-          
-      $aircraft_array[] = $temp_array;
+			$aircraft_array[] = $temp_array;
 		}
-
 		return $aircraft_array;
-	}	
-	
-	
+	}
+
+
 	/**
 	* Gets all aircraft types that have flown over by route
 	*
@@ -4692,23 +4686,18 @@ class Spotter{
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao));
-      
-        $aircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
-        
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
-            $temp_array['aircraft_icao_count'] = $row['aircraft_icao_count'];
-          
-            $aircraft_array[] = $temp_array;
+			$temp_array['aircraft_icao_count'] = $row['aircraft_icao_count'];
+			$aircraft_array[] = $temp_array;
 		}
-
 		return $aircraft_array;
 	}
-	
-	
+
 	/**
 	* Gets all aircraft registration that have flown over by route
 	*
@@ -8750,132 +8739,117 @@ class Spotter{
 		
 	}
     
-    
-    public function importFromFlightAware()
-    {
-       global $globalFlightAwareUsername, $globalFlightAwarePassword, $globalLatitudeMax, $globalLatitudeMin, $globalLongitudeMax, $globalLongitudeMin, $globalAirportIgnore;
-	$Spotter = new Spotter($this->db);
-	$SPotterLive = new SpotterLive($this->db);
-        $options = array(
-            'trace' => true,
-            'exceptions' => 0,
-            'login' => $globalFlightAwareUsername,
-            'password' => $globalFlightAwarePassword,
-        );
-        $client = new SoapClient('http://flightxml.flightaware.com/soap/FlightXML2/wsdl', $options);
+/*
+	public function importFromFlightAware()
+	{
+		global $globalFlightAwareUsername, $globalFlightAwarePassword, $globalLatitudeMax, $globalLatitudeMin, $globalLongitudeMax, $globalLongitudeMin, $globalAirportIgnore;
+		$Spotter = new Spotter($this->db);
+		$SpotterLive = new SpotterLive($this->db);
+		$options = array(
+		            'trace' => true,
+		            'exceptions' => 0,
+		            'login' => $globalFlightAwareUsername,
+		            'password' => $globalFlightAwarePassword,
+		);
+		$client = new SoapClient('http://flightxml.flightaware.com/soap/FlightXML2/wsdl', $options);
+		$params = array('query' => '{range lat '.$globalLatitudeMin.' '.$globalLatitudeMax.'} {range lon '.$globalLongitudeMax.' '.$globalLongitudeMin.'} {true inAir}', 'howMany' => '15', 'offset' => '0');
+		$result = $client->SearchBirdseyeInFlight($params);
+		$dataFound = false;
+		$ignoreImport = false;
+		if (isset($result->SearchBirdseyeInFlightResult))
+		{
+			if (is_array($result->SearchBirdseyeInFlightResult->aircraft))
+			{
+				foreach($result->SearchBirdseyeInFlightResult->aircraft as $aircraft)
+				{
+					if (!strstr($aircraft->origin, 'L ') && !strstr($aircraft->destination, 'L '))
+					{
+						foreach($globalAirportIgnore as $airportIgnore)
+						{
+							if ($aircraft->origin == $airportIgnore || $aircraft->destination == $airportIgnore)
+							{
+								$ignoreImport = true; 
+							}
+						}
+						if ($ignoreImport == false)
+						{
+							$flightaware_id = $aircraft->faFlightID;
+							$ident = $aircraft->ident;
+							$aircraft_type = $aircraft->type;
+							$departure_airport = $aircraft->origin;
+							$arrival_airport = $aircraft->destination;
+							$latitude = $aircraft->latitude;
+							$longitude = $aircraft->longitude;
+							$waypoints = $aircraft->waypoints;
+							$altitude = $aircraft->altitude;
+							$heading = $aircraft->heading;
+							$groundspeed = $aircraft->groundspeed;
+							$dataFound = true;
+							//gets the callsign from the last hour
+							$last_hour_ident = $this->getIdentFromLastHour($ident);
+							//change the departure/arrival airport to NA if its not available
+							if ($departure_airport == "" || $departure_airport == "---" || $departure_airport == "ZZZ" || $departure_airport == "ZZZZ") { $departure_airport = "NA"; }
+							if ($arrival_airport == "" || $arrival_airport == "---" || $arrival_airport == "ZZZ" || $arrival_airport == "ZZZZ") { $arrival_airport = "NA"; }
+							//if there was no aircraft with the same callsign within the last hour and go post it into the archive
+							if($last_hour_ident == "")
+							{
+								//adds the spotter data for the archive
+								$Spotter->addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+							}
 
-        $params = array('query' => '{range lat '.$globalLatitudeMin.' '.$globalLatitudeMax.'} {range lon '.$globalLongitudeMax.' '.$globalLongitudeMin.'} {true inAir}', 'howMany' => '15', 'offset' => '0');
-        
-        $result = $client->SearchBirdseyeInFlight($params);
-
-        $dataFound = false;
-        $ignoreImport = false;
-        
-        if (isset($result->SearchBirdseyeInFlightResult))
-        {
-            if (is_array($result->SearchBirdseyeInFlightResult->aircraft))
-            {
-                    foreach($result->SearchBirdseyeInFlightResult->aircraft as $aircraft)
-                    {
-                        if (!strstr($aircraft->origin, 'L ') && !strstr($aircraft->destination, 'L '))
-                        {
-                            foreach($globalAirportIgnore as $airportIgnore)
-                            {
-                                if ($aircraft->origin == $airportIgnore || $aircraft->destination == $airportIgnore)
-                                {
-                                   $ignoreImport = true; 
-                                }
-                            }
-                            if ($ignoreImport == false)
-                            {
-                            $flightaware_id = $aircraft->faFlightID;
-                            $ident = $aircraft->ident;
-                            $aircraft_type = $aircraft->type;
-                            $departure_airport = $aircraft->origin;
-                            $arrival_airport = $aircraft->destination;
-                            $latitude = $aircraft->latitude;
-                            $longitude = $aircraft->longitude;
-                            $waypoints = $aircraft->waypoints;
-                            $altitude = $aircraft->altitude;
-                            $heading = $aircraft->heading;
-                            $groundspeed = $aircraft->groundspeed;
-
-                            $dataFound = true;
-
-                            //gets the callsign from the last hour
-                            $last_hour_ident = $this->getIdentFromLastHour($ident);
-
-                            //change the departure/arrival airport to NA if its not available
-                                if ($departure_airport == "" || $departure_airport == "---" || $departure_airport == "ZZZ" || $departure_airport == "ZZZZ") { $departure_airport = "NA"; }
-                                if ($arrival_airport == "" || $arrival_airport == "---" || $arrival_airport == "ZZZ" || $arrival_airport == "ZZZZ") { $arrival_airport = "NA"; }
-
-
-                            //if there was no aircraft with the same callsign within the last hour and go post it into the archive
-                            if($last_hour_ident == "")
-                            {
-                                //adds the spotter data for the archive
-                                $Spotter->addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
-                            }
-
-                            //adds the spotter LIVE data
-                            $SpotterLive->addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
-                        }
-                        }
-                        $ignoreImport = false;
-                    }
-                } else {
-                    if (!strstr($result->SearchBirdseyeInFlightResult->aircraft->origin, 'L ') && !strstr($result->SearchBirdseyeInFlightResult->aircraft->destination, 'L '))
-                    {
-                        foreach($globalAirportIgnore as $airportIgnore)
-                        {
-                            foreach($globalAirportIgnore as $airportIgnore)
-                            {
-                                if ($aircraft->origin == $airportIgnore || $aircraft->destination == $airportIgnore)
-                                {
-                                   $ignoreImport = true; 
-                                }
-                            }
-                            if ($ignoreImport == false)
-                            {
-                        $flightaware_id = $result->SearchBirdseyeInFlightResult->aircraft->faFlightID;
-                        $ident = $result->SearchBirdseyeInFlightResult->aircraft->ident;
-                        $aircraft_type = $result->SearchBirdseyeInFlightResult->aircraft->type;
-                        $departure_airport = $result->SearchBirdseyeInFlightResult->aircraft->origin;
-                        $arrival_airport = $result->SearchBirdseyeInFlightResult->aircraft->destination;
-                        $latitude = $result->SearchBirdseyeInFlightResult->aircraft->latitude;
-                        $longitude = $result->SearchBirdseyeInFlightResult->aircraft->longitude;
-                        $waypoints = $result->SearchBirdseyeInFlightResult->aircraft->waypoints;
-                        $altitude = $result->SearchBirdseyeInFlightResult->aircraft->altitude;
-                        $heading = $result->SearchBirdseyeInFlightResult->aircraft->heading;
-                        $groundspeed = $result->SearchBirdseyeInFlightResult->aircraft->groundspeed;
-
-                        $dataFound = true;
-
-                        //gets the callsign from the last hour
-                        $last_hour_ident = $this->getIdentFromLastHour($ident);
-
-                        //change the departure/arrival airport to NA if its not available
-                                if ($departure_airport == "" || $departure_airport == "---" || $departure_airport == "ZZZ" || $departure_airport == "ZZZZ") { $departure_airport = "NA"; }
-                                if ($arrival_airport == "" || $arrival_airport == "---" || $arrival_airport == "ZZZ" || $arrival_airport == "ZZZZ") { $arrival_airport = "NA"; }
-
-                        //if there was no aircraft with the same callsign within the last hour and go post it into the archive
-                        if($last_hour_ident == "")
-                        {
-                            //adds the spotter data for the archive
-                            $Spotter->addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
-                        }
-
-                        //adds the spotter LIVE data
-                        $SpotterLive->addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
-                    }
-                            $ignoreImport = false;
-                        }
-                    }
-
-                }
-        } 
-    }
-
+							//adds the spotter LIVE data
+							$SpotterLive->addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+						}
+					}
+					$ignoreImport = false;
+				}
+			} else {
+				if (!strstr($result->SearchBirdseyeInFlightResult->aircraft->origin, 'L ') && !strstr($result->SearchBirdseyeInFlightResult->aircraft->destination, 'L '))
+				{
+					foreach($globalAirportIgnore as $airportIgnore)
+					{
+						foreach($globalAirportIgnore as $airportIgnore)
+						{
+							if ($aircraft->origin == $airportIgnore || $aircraft->destination == $airportIgnore)
+							{
+								$ignoreImport = true; 
+							}
+						}
+						if ($ignoreImport == false)
+						{
+							$flightaware_id = $result->SearchBirdseyeInFlightResult->aircraft->faFlightID;
+							$ident = $result->SearchBirdseyeInFlightResult->aircraft->ident;
+							$aircraft_type = $result->SearchBirdseyeInFlightResult->aircraft->type;
+							$departure_airport = $result->SearchBirdseyeInFlightResult->aircraft->origin;
+							$arrival_airport = $result->SearchBirdseyeInFlightResult->aircraft->destination;
+							$latitude = $result->SearchBirdseyeInFlightResult->aircraft->latitude;
+							$longitude = $result->SearchBirdseyeInFlightResult->aircraft->longitude;
+							$waypoints = $result->SearchBirdseyeInFlightResult->aircraft->waypoints;
+							$altitude = $result->SearchBirdseyeInFlightResult->aircraft->altitude;
+							$heading = $result->SearchBirdseyeInFlightResult->aircraft->heading;
+							$groundspeed = $result->SearchBirdseyeInFlightResult->aircraft->groundspeed;
+							$dataFound = true;
+							//gets the callsign from the last hour
+							$last_hour_ident = $this->getIdentFromLastHour($ident);
+							//change the departure/arrival airport to NA if its not available
+							if ($departure_airport == "" || $departure_airport == "---" || $departure_airport == "ZZZ" || $departure_airport == "ZZZZ") { $departure_airport = "NA"; }
+							if ($arrival_airport == "" || $arrival_airport == "---" || $arrival_airport == "ZZZ" || $arrival_airport == "ZZZZ") { $arrival_airport = "NA"; }
+							//if there was no aircraft with the same callsign within the last hour and go post it into the archive
+							if($last_hour_ident == "")
+							{
+								//adds the spotter data for the archive
+								$Spotter->addSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+							}
+							//adds the spotter LIVE data
+							$SpotterLive->addLiveSpotterData($flightaware_id, $ident, $aircraft_type, $departure_airport, $arrival_airport, $latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed);
+						}
+						$ignoreImport = false;
+					}
+				}
+			}
+		} 
+	}
+*/
 
 	// Update flights data when new data in DB
 	public function updateFieldsFromOtherTables()
