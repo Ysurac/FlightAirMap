@@ -598,7 +598,6 @@ class Schedule {
 	/**
 	* Get flight info from flytap
 	* @param String $callsign The callsign
-	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
 	private function getFlyTap($callsign) {
@@ -625,7 +624,6 @@ class Schedule {
 	/**
 	* Get flight info from flightmapper
 	* @param String $callsign The callsign
-	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
 	public function getFlightMapper($callsign) {
@@ -669,7 +667,6 @@ class Schedule {
 	/**
 	* Get flight info from flightaware
 	* @param String $callsign The callsign
-	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
 	public function getFlightAware($callsign) {
@@ -706,7 +703,6 @@ class Schedule {
 	/**
 	* Get flight info from CostToTravel
 	* @param String $callsign The callsign
-	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
 	public function getCostToTravel($callsign) {
@@ -1082,10 +1078,10 @@ class Schedule {
 						if (count($globalSchedulesSources) > 0) {
 							$rand = mt_rand(0,count($globalSchedulesSources)-1);
 							$source = $globalSchedulesSources[$rand];
-							if ($source == 'flightmapper') return $this->getFlightMapper($ident,$date);
-							elseif ($source == 'costtotravel') return $this->getCostToTravel($ident,$date);
+							if ($source == 'flightmapper') return $this->getFlightMapper($ident);
+							elseif ($source == 'costtotravel') return $this->getCostToTravel($ident);
 							//elseif ($source == 'flightradar24') return $this->getFlightRadar24($ident,$date);
-							elseif ($source == 'flightaware') return $this->getFlightAware($ident,$date);
+							elseif ($source == 'flightaware') return $this->getFlightAware($ident);
 						}
 					}
 			}
