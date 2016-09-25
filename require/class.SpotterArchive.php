@@ -1,42 +1,40 @@
 <?php
 class SpotterArchive {
-    public $global_query = "SELECT spotter_archive.* FROM spotter_archive";
-    public $db;
+	public $global_query = "SELECT spotter_archive.* FROM spotter_archive";
+	public $db;
 
-    function __construct($dbc = null) {
-            $Connection = new Connection($dbc);
-            $this->db = $Connection->db;
-    }
+	public function __construct($dbc = null) {
+		$Connection = new Connection($dbc);
+		$this->db = $Connection->db;
+	}
 
-
-    // Spotter_archive
-    
-    function addSpotterArchiveData($flightaware_id = '', $ident = '', $registration = '', $airline_name = '', $airline_icao = '', $airline_country = '', $airline_type = '', $aircraft_icao = '', $aircraft_shadow = '', $aircraft_name = '', $aircraft_manufacturer = '', $departure_airport_icao = '', $departure_airport_name = '', $departure_airport_city = '', $departure_airport_country = '', $departure_airport_time = '',$arrival_airport_icao = '', $arrival_airport_name = '', $arrival_airport_city ='', $arrival_airport_country = '', $arrival_airport_time = '', $route_stop = '', $date = '',$latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $ground_speed = '', $squawk = '', $ModeS = '', $pilot_id = '', $pilot_name = '',$verticalrate = '',$format_source = '', $source_name = '', $over_country = '') {
-	require_once(dirname(__FILE__).'/class.Spotter.php');
-        if ($over_country == '') {
-	        $Spotter = new Spotter($this->db);
-	        $data_country = $Spotter->getCountryFromLatitudeLongitude($latitude,$longitude);
-		if (!empty($data_country)) $country = $data_country['iso2'];
-		else $country = '';
-	} else $country = $over_country;
-	if ($airline_type === NULL) $airline_type ='';
+	// Spotter_archive
+	public function addSpotterArchiveData($flightaware_id = '', $ident = '', $registration = '', $airline_name = '', $airline_icao = '', $airline_country = '', $airline_type = '', $aircraft_icao = '', $aircraft_shadow = '', $aircraft_name = '', $aircraft_manufacturer = '', $departure_airport_icao = '', $departure_airport_name = '', $departure_airport_city = '', $departure_airport_country = '', $departure_airport_time = '',$arrival_airport_icao = '', $arrival_airport_name = '', $arrival_airport_city ='', $arrival_airport_country = '', $arrival_airport_time = '', $route_stop = '', $date = '',$latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $ground_speed = '', $squawk = '', $ModeS = '', $pilot_id = '', $pilot_name = '',$verticalrate = '',$format_source = '', $source_name = '', $over_country = '') {
+		require_once(dirname(__FILE__).'/class.Spotter.php');
+		if ($over_country == '') {
+			$Spotter = new Spotter($this->db);
+			$data_country = $Spotter->getCountryFromLatitudeLongitude($latitude,$longitude);
+			if (!empty($data_country)) $country = $data_country['iso2'];
+			else $country = '';
+		} else $country = $over_country;
+		if ($airline_type === NULL) $airline_type ='';
 	
-	//if ($country == '') echo "\n".'************ UNKNOW COUNTRY ****************'."\n";
-	//else echo "\n".'*/*/*/*/*/*/*/ Country : '.$country.' */*/*/*/*/*/*/*/*/'."\n";
+		//if ($country == '') echo "\n".'************ UNKNOW COUNTRY ****************'."\n";
+		//else echo "\n".'*/*/*/*/*/*/*/ Country : '.$country.' */*/*/*/*/*/*/*/*/'."\n";
 
-	// Route is not added in spotter_archive
-	$query  = "INSERT INTO spotter_archive (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_shadow, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, departure_airport_time,arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, arrival_airport_time, route_stop, date,latitude, longitude, waypoints, altitude, heading, ground_speed, squawk, ModeS, pilot_id, pilot_name, verticalrate,format_source,over_country,source_name)
-                VALUES (:flightaware_id, :ident, :registration, :airline_name, :airline_icao, :airline_country, :airline_type, :aircraft_icao, :aircraft_shadow, :aircraft_name, :aircraft_manufacturer, :departure_airport_icao, :departure_airport_name, :departure_airport_city, :departure_airport_country, :departure_airport_time,:arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :arrival_airport_time, :route_stop, :date,:latitude, :longitude, :waypoints, :altitude, :heading, :ground_speed, :squawk, :ModeS, :pilot_id, :pilot_name, :verticalrate, :format_source, :over_country, :source_name)";
+		// Route is not added in spotter_archive
+		$query  = "INSERT INTO spotter_archive (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_shadow, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, departure_airport_time,arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, arrival_airport_time, route_stop, date,latitude, longitude, waypoints, altitude, heading, ground_speed, squawk, ModeS, pilot_id, pilot_name, verticalrate,format_source,over_country,source_name)
+		        VALUES (:flightaware_id, :ident, :registration, :airline_name, :airline_icao, :airline_country, :airline_type, :aircraft_icao, :aircraft_shadow, :aircraft_name, :aircraft_manufacturer, :departure_airport_icao, :departure_airport_name, :departure_airport_city, :departure_airport_country, :departure_airport_time,:arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :arrival_airport_time, :route_stop, :date,:latitude, :longitude, :waypoints, :altitude, :heading, :ground_speed, :squawk, :ModeS, :pilot_id, :pilot_name, :verticalrate, :format_source, :over_country, :source_name)";
 
-        $query_values = array(':flightaware_id' => $flightaware_id, ':ident' => $ident, ':registration' => $registration, ':airline_name' => $airline_name, ':airline_icao' => $airline_icao, ':airline_country' => $airline_country, ':airline_type' => $airline_type, ':aircraft_icao' => $aircraft_icao, ':aircraft_shadow' => $aircraft_shadow, ':aircraft_name' => $aircraft_name, ':aircraft_manufacturer' => $aircraft_manufacturer, ':departure_airport_icao' => $departure_airport_icao, ':departure_airport_name' => $departure_airport_name, ':departure_airport_city' => $departure_airport_city, ':departure_airport_country' => $departure_airport_country, ':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao, ':arrival_airport_name' => $arrival_airport_name, ':arrival_airport_city' => $arrival_airport_city, ':arrival_airport_country' => $arrival_airport_country, ':arrival_airport_time' => $arrival_airport_time, ':route_stop' => $route_stop, ':date' => $date,':latitude' => $latitude, ':longitude' => $longitude, ':waypoints' => $waypoints, ':altitude' => $altitude, ':heading' => $heading, ':ground_speed' => $ground_speed, ':squawk' => $squawk, ':ModeS' => $ModeS, ':pilot_id' => $pilot_id, ':pilot_name' => $pilot_name, ':verticalrate' => $verticalrate, ':format_source' => $format_source, ':over_country' => $country, ':source_name' => $source_name);
-        try {
-            $sth = $this->db->prepare($query);
-            $sth->execute($query_values);
-        } catch(PDOException $e) {
-            return "error : ".$e->getMessage();
-        }
-        return "success";
-    }
+		$query_values = array(':flightaware_id' => $flightaware_id, ':ident' => $ident, ':registration' => $registration, ':airline_name' => $airline_name, ':airline_icao' => $airline_icao, ':airline_country' => $airline_country, ':airline_type' => $airline_type, ':aircraft_icao' => $aircraft_icao, ':aircraft_shadow' => $aircraft_shadow, ':aircraft_name' => $aircraft_name, ':aircraft_manufacturer' => $aircraft_manufacturer, ':departure_airport_icao' => $departure_airport_icao, ':departure_airport_name' => $departure_airport_name, ':departure_airport_city' => $departure_airport_city, ':departure_airport_country' => $departure_airport_country, ':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao, ':arrival_airport_name' => $arrival_airport_name, ':arrival_airport_city' => $arrival_airport_city, ':arrival_airport_country' => $arrival_airport_country, ':arrival_airport_time' => $arrival_airport_time, ':route_stop' => $route_stop, ':date' => $date,':latitude' => $latitude, ':longitude' => $longitude, ':waypoints' => $waypoints, ':altitude' => $altitude, ':heading' => $heading, ':ground_speed' => $ground_speed, ':squawk' => $squawk, ':ModeS' => $ModeS, ':pilot_id' => $pilot_id, ':pilot_name' => $pilot_name, ':verticalrate' => $verticalrate, ':format_source' => $format_source, ':over_country' => $country, ':source_name' => $source_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		return "success";
+	}
 
 
         /**
@@ -109,7 +107,8 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':id' => $id));
                 } catch(PDOException $e) {
-                        return "error";
+                        echo $e->getMessage();
+                        die;
                 }
                 $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -134,7 +133,8 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':id' => $id));
                 } catch(PDOException $e) {
-                        return $e->getMessage();
+                        echo $e->getMessage();
+                        die;
                 }
                 $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -160,7 +160,8 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':ident' => $ident));
                 } catch(PDOException $e) {
-                        return "error";
+                        echo $e->getMessage();
+                        die;
                 }
                 $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -185,7 +186,8 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':id' => $id));
                 } catch(PDOException $e) {
-                        return "error";
+                        echo $e->getMessage();
+                        die;
                 }
                 $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -210,7 +212,8 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':id' => $id));
                 } catch(PDOException $e) {
-		        return "error : ".$e->getMessage();
+                        echo $e->getMessage();
+                        die;
                 }
                 $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -237,7 +240,8 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':ident' => $ident));
                 } catch(PDOException $e) {
-                        return "error";
+                        echo $e->getMessage();
+                        die;
                 }
                 $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -272,7 +276,8 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error";
+                        echo $e->getMessage();
+                        die;
                 }
 	}
 
@@ -324,7 +329,8 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error";
+                        echo $e->getMessage();
+                        die;
                 }
                 $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -370,7 +376,7 @@ class SpotterArchive {
 				    WHERE (spotter_archive_output.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".') 
                         	    '.$filter_query.' GROUP BY spotter_archive_output.flightaware_id, spotter_archive_output.ident, spotter_archive_output.aircraft_icao, spotter_archive_output.departure_airport_icao, spotter_archive_output.arrival_airport_icao, spotter_archive_output.latitude, spotter_archive_output.longitude, spotter_archive_output.altitude, spotter_archive_output.heading, spotter_archive_output.ground_speed, spotter_archive_output.squawk, a.aircraft_shadow';
 
-                } else if ($globalDBdriver == 'pgsql') {
+                } else {
                         //$query  = 'SELECT spotter_archive_output.ident, spotter_archive_output.flightaware_id, spotter_archive_output.aircraft_icao, spotter_archive_output.departure_airport_icao as departure_airport, spotter_archive_output.arrival_airport_icao as arrival_airport, spotter_archive_output.latitude, spotter_archive_output.longitude, spotter_archive_output.altitude, spotter_archive_output.heading, spotter_archive_output.ground_speed, spotter_archive_output.squawk, a.aircraft_shadow FROM spotter_archive_output INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive_output l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_archive_output.flightaware_id = s.flightaware_id AND spotter_archive_output.date = s.maxdate '.$filter_query.'INNER JOIN (SELECT * FROM aircraft) a on spotter_archive_output.aircraft_icao = a.icao';
                         $query  = 'SELECT spotter_archive_output.ident, spotter_archive_output.flightaware_id, spotter_archive_output.aircraft_icao, spotter_archive_output.departure_airport_icao as departure_airport, spotter_archive_output.arrival_airport_icao as arrival_airport, spotter_archive_output.latitude, spotter_archive_output.longitude, spotter_archive_output.altitude, spotter_archive_output.heading, spotter_archive_output.ground_speed, spotter_archive_output.squawk, a.aircraft_shadow
                         	    FROM spotter_archive_output 
@@ -390,7 +396,8 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return $e->getMessage();
+                        echo $e->getMessage();
+                        die;
                 }
                 $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -427,8 +434,7 @@ class SpotterArchive {
 			$query = 'SELECT COUNT(DISTINCT flightaware_id) as nb 
 			FROM spotter_archive l 
 			WHERE (l.date BETWEEN DATE_SUB('."'".$begindate."'".',INTERVAL '.$globalLiveInterval.' SECOND) AND '."'".$begindate."'".')'.$filter_query;
-
-                } else if ($globalDBdriver == 'pgsql') {
+                } else {
 			$query = 'SELECT COUNT(DISTINCT flightaware_id) as nb FROM spotter_archive l WHERE (l.date BETWEEN '."'".$begindate."' - INTERVAL '".$globalLiveInterval." SECONDS' AND "."'".$enddate."'".')'.$filter_query;
                 }
                 //echo $query;
@@ -436,7 +442,8 @@ class SpotterArchive {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
                 } catch(PDOException $e) {
-                        return "error";
+                        echo $e->getMessage();
+                        die;
                 }
 		$result = $sth->fetch(PDO::FETCH_ASSOC);
                 return $result['nb'];

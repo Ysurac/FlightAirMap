@@ -38,7 +38,7 @@ class METAR {
 	    'DS' => 'Duststorm'
 	);
 	
-	function __construct($dbc = null) {
+	public function __construct($dbc = null) {
                 $Connection = new Connection($dbc);
                 $this->db = $Connection->db;
         }
@@ -86,6 +86,7 @@ class METAR {
     		if ($pieces[0] == 'METAR') $pos++;
     		elseif ($pieces[0] == 'SPECI') $pos++;
     		if (strlen($pieces[$pos]) != 4) $pos++;
+    		$result = array();
     		$result['location'] = $pieces[$pos];
     		$pos++;
     		$result['dayofmonth'] = substr($pieces[$pos],0,2);
@@ -183,6 +184,7 @@ class METAR {
     			if (preg_match('#^(SKC|CLR|FEW|SCT|BKN|OVC|VV)([0-9]{3})(CB|TCU|CU|CI)?$#', $piece, $matches)) {
     				//$this->addCloudCover($matches[1], ((float)$matches[2]) * 100, isset($matches[3]) ? $matches[3] : '');
     				$type = $matches[1];
+    				$cloud = array();
     				if ($type == 'SKC') $cloud['type'] = 'No cloud/Sky clear';
     				elseif ($type == 'CLR') $cloud['type'] = 'No cloud below 12,000ft (3700m)';
     				elseif ($type == 'NSC') $cloud['type'] = 'No significant cloud';
@@ -198,6 +200,7 @@ class METAR {
     			}
     			// RVR
     			 if (preg_match('#^(R.+)/([M|P])?(\d{4})(?:V(\d+)|[UDN])?(FT)?$#', $piece, $matches)) {
+    				$rvr = array();
 				$rvr['runway'] = $matches[1];
 				$rvr['assessment'] = $matches[2];
 				$rvr['rvr'] = $matches[3];
@@ -267,7 +270,7 @@ class METAR {
             		$query = "SELECT * FROM metar WHERE metar_location = :icao";
                 } else {
             		if ($globalDBdriver == 'mysql') $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 10 HOUR) LIMIT 1";
-            		elseif ($globalDBdriver == 'pgsql') $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= now() AT TIMEZONE 'UTC' - '10 HOUR'->INTERVAL LIMIT 0,1";
+            		else $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= now() AT TIMEZONE 'UTC' - '10 HOUR'->INTERVAL LIMIT 0,1";
                 }
                 $query_values = array(':icao' => $icao);
                  try {
@@ -277,7 +280,7 @@ class METAR {
                         return "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if ((!isset($globalMETARcyle) || $globalMETARcycle === false) && count($all) == 0) {
+                if ((!isset($globalMETARcycle) || $globalMETARcycle === false) && count($all) == 0) {
             		$all = $this->downloadMETAR($icao);
                 }
                 return $all;
