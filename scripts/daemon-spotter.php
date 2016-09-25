@@ -606,7 +606,8 @@ while ($i > 0) {
 	    if (isset($all_data['pireps'])) {
 	        foreach ($all_data['pireps'] as $line) {
 		    $data = array();
-		    $data['hex'] = str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT);
+		    $data['id'] = $line['id'];
+		    $data['hex'] = substr(str_pad(dechex($line['id']),6,'000000',STR_PAD_LEFT),0,6);
 		    $data['ident'] = $line['callsign']; // ident
 		    if (isset($line['pilotid'])) $data['pilot_id'] = $line['pilotid']; // pilot id
 		    if (isset($line['name'])) $data['pilot_name'] = $line['name']; // pilot name
