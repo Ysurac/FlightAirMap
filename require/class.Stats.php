@@ -1183,7 +1183,7 @@ class Stats {
 			}
 			$alldata = $Spotter->countAllPilots(false,0,$last_update_day);
 			foreach ($alldata as $number) {
-				$this->addStatPilot($number['pilot_id'],$number['pilot_count']);
+				$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name']);
 			}
 			$pall = $Spotter->countAllDepartureAirports(false,0,$last_update_day);
         		$dall = $Spotter->countAllDetectedDepartureAirports(false,0,$last_update_day);
