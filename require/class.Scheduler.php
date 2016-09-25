@@ -9,7 +9,7 @@ require_once(dirname(__FILE__).'/libs/uagent/uagent.php');
 class Schedule {
 	protected $cookies = array();
         public $db;
-	function __construct($dbc = null) {
+	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
         }
@@ -163,13 +163,13 @@ class Schedule {
 	
 		$parsed_json = json_decode($json);
 		if (property_exists($parsed_json,'errors') === false) {
-			$originLong = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'originLong'};
+			//$originLong = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'originLong'};
 			$originShort = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'originShort'};
-			$departureDateMedium = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'departureDateMedium'};
+			//$departureDateMedium = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'departureDateMedium'};
 			$departureTime = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'departureTime'};
-			$destinationLong = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'destinationLong'};
+			//$destinationLong = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'destinationLong'};
 			$destinationShort = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'destinationShort'};
-			$arrivalDateMedium = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'arrivalDateMedium'};
+			//$arrivalDateMedium = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'arrivalDateMedium'};
 			$arrivalTime = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'arrivalTime'};
 
 			preg_match('/\((.*?)\)/',$originShort,$originiata);
@@ -257,6 +257,8 @@ class Schedule {
 
 		$flights = $parsed_json->{'flights'};
 		if (count($flights) > 0) {
+			$departureTIme = '';
+			$arrivalTime = '';
 			foreach ($flights as $flight) {
 				if ($flight->{'no'} == "Vol LX ".$numvol) {
 					$DepartureAirportIata = $flight->{'from'}->{'code'}; //city
@@ -265,7 +267,7 @@ class Schedule {
 					$arrivalTime = substr($flight->{'to'}->{'hour'},0,5);
 				}
 			}
-			if (isset($DepartureAirportIata)) {
+			if (isset($DepartureAirportIata) && isset($ArrivalAirportIata)) {
 				return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_swiss');
 			} else return array();
 		} else return array();
@@ -448,6 +450,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
+
 	private function getStarAlliance($callsign, $date = 'NOW',$carrier = '') {
 		$Common = new Common();
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
@@ -475,6 +478,7 @@ class Schedule {
 		}
 		return array();
 	}
+
 
 	/**
 	* Get flight info from Alitalia
@@ -601,7 +605,7 @@ class Schedule {
 		$Common = new Common();
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		$url= "http://www.flytap.com/France/fr/PlanifierEtReserver/Outils/DepartsEtArrivees";
-		$check_date = new Datetime($date);
+		//$check_date = new Datetime($date);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$post = array('arrivalsdepartures_content' => 'number','arrivalsdepartures_tp' => $numvol,'arrivalsdepartures_trk' => 'ARR','arrivalsdepartures_date_trk' => '1','aptCode' => '','arrivalsdepartures' => 'DEP','arrivalsdepartures_date' => '1','aptCodeFrom' => '','aptCodeTo' => '','arrivalsdepartures2' => 'DEP','arrivalsdepartures_date2' => '1');
 		$data = $Common->getData($url,'post',$post);
@@ -626,6 +630,7 @@ class Schedule {
 	*/
 	public function getFlightMapper($callsign, $date = 'NOW') {
 		$Common = new Common();
+		$airline_icao = '';
 		if (!is_numeric(substr($callsign, 0, 3)))
 		{
 			if (is_numeric(substr(substr($callsign, 0, 3), -1, 1))) {
@@ -634,15 +639,20 @@ class Schedule {
 				$airline_icao = substr($callsign, 0, 3);
 			} 
 		}
+		if ($airline_icao == '') return array();
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		$url= "http://info.flightmapper.net/flight/".$airline_icao.'_'.$numvol;
-		$check_date = new Datetime($date);
+		//$check_date = new Datetime($date);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$data = $Common->getData($url);
 		if ($data != '') {
 			$table = $Common->table2array($data);
 			if (isset($table[5][0])) {
 				$sched = $table[5][0];
+				$dhour = '';
+				$darr = '';
+				$ahour = '';
+				$aarr = '';
 				$n = sscanf($sched,'%*s %5[0-9:] %*[^()] (%3[A-Z]) %5[0-9:] %*[^()] (%3[A-Z])',$dhour,$darr,$ahour,$aarr);
 				if ($n == 7) {
 				    $departureTime = $dhour;
@@ -664,6 +674,7 @@ class Schedule {
 	*/
 	public function getFlightAware($callsign, $date = 'NOW') {
 		$Common = new Common();
+		/*
 		if (!is_numeric(substr($callsign, 0, 3)))
 		{
 			if (is_numeric(substr(substr($callsign, 0, 3), -1, 1))) {
@@ -672,9 +683,10 @@ class Schedule {
 				$airline_icao = substr($callsign, 0, 3);
 			} 
 		}
+		*/
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		$url= "http://fr.flightaware.com/live/flight/".$callsign;
-		$check_date = new Datetime($date);
+		//$check_date = new Datetime($date);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$data = $Common->getData($url);
 		if ($data != '') {
@@ -700,7 +712,7 @@ class Schedule {
 	public function getCostToTravel($callsign, $date = 'NOW') {
 		$Common = new Common();
 		$url= "http://www.costtotravel.com/flight-number/".$callsign;
-		$check_date = new Datetime($date);
+		//$check_date = new Datetime($date);
 		//if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$data = $Common->getData($url);
 		if ($data != '') {
@@ -778,7 +790,7 @@ class Schedule {
 	* @param String $carrier IATA code
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getAirBerlin($callsign, $date = 'NOW', $carrier = 'AB') {
+	private function getAirBerlin($callsign, $date = 'NOW') {
 		$Common = new Common();
 		date_default_timezone_set('UTC');
 		//AB = airberlin, HG/NLY = NIKI, 4T/BHP = Belair 
@@ -799,7 +811,7 @@ class Schedule {
 			else $departureTime = '';
 			if (isset($flight[5][2])) $departureAirport = $flight[5][2];
 			else $departureAirport = '';
-		}
+		} else return array();
 		$post = array('type' => 'arrival','searchFlightNo' => '1','requestsent' => 'true', 'flightno' => $numvol,'date' => $check_date->format('Y-m-d'),'carrier' => 'AB');
 		$data = $Common->getData($url,'post',$post);
 		if ($data != '') {
@@ -812,7 +824,7 @@ class Schedule {
 			    $arrivalTime = '';
 			    $arrivalAirport = '';
 			}
-		}
+		} else return array();
 		$url = 'http://www.airberlin.com/en-US/site/json/suggestAirport.php?searchfor=departures&searchflightid=0&departures%5B%5D=&suggestsource%5B0%5D=activeairports&withcountries=0&withoutroutings=0&promotion%5Bid%5D=&promotion%5Btype%5D=&routesource%5B0%5D=airberlin&routesource%5B1%5D=partner';
 		$json = $Common->getData($url);
 		if ($json == '') return array();
@@ -837,7 +849,7 @@ class Schedule {
 	
 	public function fetchSchedule($ident,$date = 'NOW') {
 		global $globalSchedulesSources, $globalSchedulesFetch;
-		$Common = new Common();
+		//$Common = new Common();
 		if (!$globalSchedulesFetch) return array();
 		$airline_icao = '';
 		if (!is_numeric(substr($ident, 0, 3)))
@@ -905,8 +917,7 @@ class Schedule {
 				// Brussels Airlines
 				case "BEL":
 				case "SN":
-					return $this->getBrussels($ident,$date,'SN');
-					break;
+					return $this->getBrussels($ident,$date);
 /*
 				// Copa Airlines
 				case "CMP":
@@ -963,7 +974,6 @@ class Schedule {
 				case "SWR":
 				case "LX":
 					return $this->getSwiss($ident);
-					break;
 
 				/*
 				// TAP Portugal
@@ -993,56 +1003,46 @@ class Schedule {
 				case "AF":
 				case "AFR":
 					return $this->getAirFrance($ident,$date,'AF');
-					break;
 				// HOP
 				case "A5":
 				case "HOP":
 					return $this->getAirFrance($ident,$date,'A5');
-					break;
 				// EasyJet
 				case "U2":
 				case "DS":
 				case "EZY":
 				case "EZS":
 					return $this->getEasyJet($ident,$date);
-					break;
 				// Ryanair
 				case "FR":
 				case "RYR":
 					return $this->getRyanair($ident);
-					break;
 				// British Airways
 				case "BA":
 				case "SHT":
 				case "BAW":
 					return $this->getBritishAirways($ident);
-					break;
 				// Tunisair
 				case "TUI":
 				case "TAR":
 				case "TU":
 					return $this->getTunisair($ident);
-					break;
 				// Vueling
 				case "VLG":
 				case "VY":
 					return $this->getVueling($ident);
-					break;
 				// Alitalia
 				case "AZ":
 				case "AZA":
 					return $this->getAlitalia($ident);
-					break;
 				// Air Canada
 				case "ACA":
 				case "AC":
 					return $this->getAirCanada($ident);
-					break;
 				// Lufthansa
 				case "DLH":
 				case "LH":
 					return $this->getLufthansa($ident);
-					break;
 				/*
 				// Transavia
 				case "TRA":
@@ -1060,26 +1060,21 @@ class Schedule {
 				case "IBE":
 				case "IB":
 					return $this->getIberia($ident);
-					break;
 				// Vietnam Airlines
 				case "HVN":
 					return $this->getVietnamAirlines($ident,$date);
-					break;
 				// Air Berlin
 				case "AB":
 				case "BER":
 					return $this->getAirBerlin($ident,$date,'AB');
-					break;
 				// NIKI
 				case "HG":
 				case "NLY":
 					return $this->getAirBerlin($ident,$date,'HG');
-					break;
 				// BelAir
 				case "4T":
 				case "BHP":
 					return $this->getAirBerlin($ident,$date,'4T');
-					break;
 				default:
 					// Randomly use a generic function to get hours
 					if (strlen($airline_icao) == 2) {
