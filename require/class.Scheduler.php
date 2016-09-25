@@ -257,7 +257,7 @@ class Schedule {
 
 		$flights = $parsed_json->{'flights'};
 		if (count($flights) > 0) {
-			$departureTIme = '';
+			$departureTime = '';
 			$arrivalTime = '';
 			foreach ($flights as $flight) {
 				if ($flight->{'no'} == "Vol LX ".$numvol) {
@@ -601,7 +601,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getFlyTap($callsign, $date = 'NOW') {
+	private function getFlyTap($callsign) {
 		$Common = new Common();
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		$url= "http://www.flytap.com/France/fr/PlanifierEtReserver/Outils/DepartsEtArrivees";
@@ -628,7 +628,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
-	public function getFlightMapper($callsign, $date = 'NOW') {
+	public function getFlightMapper($callsign) {
 		$Common = new Common();
 		$airline_icao = '';
 		if (!is_numeric(substr($callsign, 0, 3)))
@@ -672,7 +672,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
-	public function getFlightAware($callsign, $date = 'NOW') {
+	public function getFlightAware($callsign) {
 		$Common = new Common();
 		/*
 		if (!is_numeric(substr($callsign, 0, 3)))
@@ -709,7 +709,7 @@ class Schedule {
 	* @param String $date date we want flight number info
 	* @return Flight departure and arrival airports and time
 	*/
-	public function getCostToTravel($callsign, $date = 'NOW') {
+	public function getCostToTravel($callsign) {
 		$Common = new Common();
 		$url= "http://www.costtotravel.com/flight-number/".$callsign;
 		//$check_date = new Datetime($date);
@@ -787,10 +787,10 @@ class Schedule {
 	* Get flight info from Air Berlin
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
-	* @param String $carrier IATA code
+	* @param String $carrier airline code
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getAirBerlin($callsign, $date = 'NOW') {
+	private function getAirBerlin($callsign, $date = 'NOW',$carrier = 'AB') {
 		$Common = new Common();
 		date_default_timezone_set('UTC');
 		//AB = airberlin, HG/NLY = NIKI, 4T/BHP = Belair 
@@ -798,7 +798,7 @@ class Schedule {
 		$check_date = new Datetime($date);
 		$url= "http://www.airberlin.com/en-US/site/aims.php";
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
-		$post = array('type' => 'departure','searchFlightNo' => '1','requestsent' => 'true', 'flightno' => $numvol,'date' => $check_date->format('Y-m-d'),'carrier' => 'AB');
+		$post = array('type' => 'departure','searchFlightNo' => '1','requestsent' => 'true', 'flightno' => $numvol,'date' => $check_date->format('Y-m-d'),'carrier' => $carrier);
 		$data = $Common->getData($url,'post',$post);
 		//echo $data;
 		$DepartureAirportIata = '';
