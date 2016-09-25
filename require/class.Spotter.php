@@ -7,7 +7,7 @@ $global_query = "SELECT spotter_output.* FROM spotter_output";
 class Spotter{
 	public $db;
 	
-	function __construct($dbc = null) {
+	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
 	}
@@ -58,7 +58,6 @@ class Spotter{
 		$num_rows = 0;
 
 		$spotter_array = array();
-		$temp_array = array();
 		
 
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -111,6 +110,7 @@ class Spotter{
 					foreach ($allroute as $route) {
 						$route_airport_array = $this->getAllAirportInfo($route);
 						if (isset($route_airport_array[0]['name'])) {
+							$route_stop_details = array();
 							$route_stop_details['airport_name'] = $route_airport_array[0]['name'];
 							$route_stop_details['airport_city'] = $route_airport_array[0]['city'];
 							$route_stop_details['airport_country'] = $route_airport_array[0]['country'];
@@ -186,7 +186,6 @@ class Spotter{
                             	}
 			}
 			if (!isset($row['airline_name']) || $row['airline_name'] == '') {
-				$airline_array = array();
 				if (!is_numeric(substr($row['ident'], 0, 3))) {
 					if (is_numeric(substr($row['ident'], 2, 1))) {
 						$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 2));
@@ -462,7 +461,7 @@ class Spotter{
 
 		if ($airline_icao != "")
 		{
-			$registration = filter_var($airline_icao,FILTER_SANITIZE_STRING);
+			$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 			if (!is_string($airline_icao))
 			{
 				return false;
@@ -922,7 +921,7 @@ class Spotter{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
-		
+		$limit_query = '';
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
@@ -1540,11 +1539,11 @@ class Spotter{
 
   
   
-    /**
-	* Gets a list of all aircraft with a special highlight text
+	/**
+	* Gets a list of all aircraft that take a route
 	*
-	* @param String $aircraft_registration the aircraft registration
-	* @param String $airport_departure the departure airport
+	* @param String $departure_airport_icao ICAO code of departure airport
+	* @param String $arrival_airport_icao ICAO code of arrival airport
 	* @return Array the spotter information
 	*
 	*/
@@ -1697,16 +1696,12 @@ class Spotter{
 		$squawk = filter_var($squawk,FILTER_SANITIZE_STRING);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
-		$query_values = array();
-
 		$query  = "SELECT squawk.* FROM squawk WHERE squawk.code = :squawk AND squawk.country = :country LIMIT 1";
 		$query_values = array(':squawk' => ltrim($squawk,'0'), ':country' => $country);
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute($query_values);
     
-		$temp_array = array();
-		
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
 			return $row['usage'];
@@ -1725,11 +1720,8 @@ class Spotter{
 		
 		$airport_iata = filter_var($airport_iata,FILTER_SANITIZE_STRING);
 
-		$query_values = array();
-
 		$query  = "SELECT airport.* FROM airport WHERE airport.iata = :airport LIMIT 1";
 		$query_values = array(':airport' => $airport_iata);
-		
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute($query_values);
@@ -1754,8 +1746,6 @@ class Spotter{
 		
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
-		$query_values = array();
-
 		$query  = "SELECT airport.latitude, airport.longitude FROM airport WHERE airport.icao = :airport LIMIT 1";
 		$query_values = array(':airport' => $airport_icao);
 		$sth = $this->db->prepare($query);
@@ -1772,7 +1762,7 @@ class Spotter{
 	/**
 	* Gets the airport info based on the icao
 	*
-	* @param String $airport_iata the icao code of the airport
+	* @param String $airport the icao code of the airport
 	* @return Array airport information
 	*
 	*/
@@ -1873,13 +1863,12 @@ class Spotter{
 	public function getAllAirportInfobyCoord($coord)
 	{
 		global $globalDBdriver;
-		$lst_countries = '';
 		if (is_array($coord)) {
 			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
-		}
+		} else return array();
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT airport.* FROM airport WHERE airport.latitude BETWEEN ".$minlat." AND ".$maxlat." AND airport.longitude BETWEEN ".$minlong." AND ".$maxlong." AND airport.type != 'closed'";
 		} else {
@@ -1889,7 +1878,6 @@ class Spotter{
 		$sth->execute();
     
 		$airport_array = array();
-		$temp_array = array();
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
@@ -1910,13 +1898,12 @@ class Spotter{
 	*/
 	public function getAllWaypointsInfobyCoord($coord)
 	{
-		$lst_countries = '';
 		if (is_array($coord)) {
 			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
-		}
+		} else return array();
 		//$query  = "SELECT waypoints.* FROM waypoints WHERE waypoints.latitude_begin BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude_begin BETWEEN ".$minlong." AND ".$maxlong;
 		$query  = "SELECT waypoints.* FROM waypoints WHERE (waypoints.latitude_begin BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude_begin BETWEEN ".$minlong." AND ".$maxlong.") OR (waypoints.latitude_end BETWEEN ".$minlat." AND ".$maxlat." AND waypoints.longitude_end BETWEEN ".$minlong." AND ".$maxlong.")";
 		//$query  = "SELECT waypoints.* FROM waypoints";
@@ -1929,7 +1916,6 @@ class Spotter{
 		$sth->execute();
     
 		$waypoints_array = array();
-		$temp_array = array();
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
@@ -1953,6 +1939,7 @@ class Spotter{
 	{
 		$airline_icao = strtoupper(filter_var($airline_icao,FILTER_SANITIZE_STRING));
 		if ($airline_icao == 'NA') {
+			$airline_array = array();
 			$airline_array[] = array('name' => 'Not Available','iata' => 'NA', 'icao' => 'NA', 'callsign' => '', 'country' => 'NA', 'type' =>'');
 			return $airline_array;
 		} else {
@@ -2027,7 +2014,7 @@ class Spotter{
 	* Gets the aircraft icao based on the aircraft name/type
 	*
 	* @param String $aircraft_type the aircraft type
-	* @return Array aircraft information
+	* @return String aircraft information
 	*
 	*/
 	public function getAircraftIcao($aircraft_type)
@@ -2056,7 +2043,7 @@ class Spotter{
 	/**
 	* Gets the aircraft info based on the aircraft ident
 	*
-	* @param String $aircraft_ident the aircraft ident (hex)
+	* @param String $aircraft_modes the aircraft ident (hex)
 	* @return String aircraft type
 	*
 	*/
@@ -2121,7 +2108,7 @@ class Spotter{
 	/**
 	* Gets the aircraft info based on the aircraft registration
 	*
-	* @param String $aircraft_registration the aircraft registration
+	* @param String $registration the aircraft registration
 	* @return Array aircraft information
 	*
 	*/
@@ -2153,7 +2140,7 @@ class Spotter{
 	/**
 	* Gets the aircraft owner & base based on the aircraft registration
 	*
-	* @param String $aircraft_registration the aircraft registration
+	* @param String $registration the aircraft registration
 	* @return Array aircraft information
 	*
 	*/
@@ -2517,7 +2504,6 @@ class Spotter{
 			if (isset($airport_array[$row['airport_country']]['airport_country']) && $airport_array[$row['airport_country']]['airport_country'] != $row['airport_country'])
 			{
 				$temp_array['airport_country'] = $row['airport_country'];
-				
 				$airport_array[$row['airport_country']] = $temp_array;
 			}
 		}
@@ -2548,6 +2534,7 @@ class Spotter{
 		$sth->execute();
    
 		$temp_array = array();
+		$country_array = array();
 		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
@@ -2957,8 +2944,24 @@ class Spotter{
 	* @param String $aircraft_icao the aircraft type
 	* @param String $departure_airport_icao the departure airport
 	* @param String $arrival_airport_icao the arrival airport
+	* @param String $latitude latitude of flight
+	* @param String $longitude latitude of flight
+	* @param String $waypoints waypoints of flight
+	* @param String $altitude altitude of flight
+	* @param String $heading heading of flight
+	* @param String $groundspeed speed of flight
+	* @param String $date date of flight
+	* @param String $departure_airport_time departure time of flight
+	* @param String $arrival_airport_time arrival time of flight
+	* @param String $squawk squawk code of flight
+	* @param String $route_stop route stop of flight
+	* @param String $highlight highlight or not
+	* @param String $ModeS ModesS code of flight
+	* @param String $registration registration code of flight
+	* @param String $pilot_id pilot id of flight (for virtual airlines)
+	* @param String $pilot_name pilot name of flight (for virtual airlines)
+	* @param String $verticalrate vertival rate of flight
 	* @return String success or false
-	*
 	*/
 	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '', $source_name = '')
 	{
@@ -3029,6 +3032,7 @@ class Spotter{
 		} else $airline_array = array();
 		
 		//getting the aircraft information
+		$aircraft_array = array();
 		if ($aircraft_icao != "")
 		{
 			if (!is_string($aircraft_icao))
@@ -3065,6 +3069,7 @@ class Spotter{
 		}
 		
 		//getting the departure airport information
+		$departure_airport = array();
 		if ($departure_airport_icao != "")
 		{
 			if (!is_string($departure_airport_icao))
@@ -3078,6 +3083,7 @@ class Spotter{
 		}
 		
 		//getting the arrival airport information
+		$arrival_airport_array = array();
 		if ($arrival_airport_icao != "")
 		{
 			if (!is_string($arrival_airport_icao))
@@ -3211,10 +3217,10 @@ class Spotter{
                         $arrival_airport_array = $this->getAllAirportInfo('NA');
                 }
                 if ($registration == '') $registration = 'NA';
-                if ($squawk == '' || $Common->isInteger($squawk) == false) $squawk = NULL;
-                if ($verticalrate == '' || $Common->isInteger($verticalrate) == false) $verticalrate = NULL;
+                if ($squawk == '' || $Common->isInteger($squawk) === false) $squawk = NULL;
+                if ($verticalrate == '' || $Common->isInteger($verticalrate) === false) $verticalrate = NULL;
                 if ($heading == '' || $Common->isInteger($heading) == false) $heading = 0;
-                if ($groundspeed == '' || $Common->isInteger($groundspeed) == false) $groundspeed = 0;
+                if ($groundspeed == '' || $Common->isInteger($groundspeed) === false) $groundspeed = 0;
                 if (!isset($aircraft_owner)) $aircraft_owner = NULL;
                 $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop,highlight,ModeS, pilot_id, pilot_name, verticalrate, owner_name, ground, format_source, source_name) 
                 VALUES (:flightaware_id,:ident,:registration,:airline_name,:airline_icao,:airline_country,:airline_type,:aircraft_icao,:aircraft_type,:aircraft_manufacturer,:departure_airport_icao,:departure_airport_name,:departure_airport_city,:departure_airport_country, :arrival_airport_icao, :arrival_airport_name, :arrival_airport_city, :arrival_airport_country, :latitude,:longitude,:waypoints,:altitude,:heading,:groundspeed,:date, :departure_airport_time, :arrival_airport_time, :squawk, :route_stop, :highlight, :ModeS, :pilot_id, :pilot_name, :verticalrate, :owner_name,:ground, :format_source, :source_name)";
@@ -3234,7 +3240,6 @@ class Spotter{
                 $departure_airport_name = $departure_airport_array[0]['name'];
                 $departure_airport_city = $departure_airport_array[0]['city'];
                 $departure_airport_country = $departure_airport_array[0]['country'];
-                $arrival_airport_icao = $arrival_airport_icao;
                 $arrival_airport_name = $arrival_airport_array[0]['name'];
                 $arrival_airport_city = $arrival_airport_array[0]['city'];
                 $arrival_airport_country = $arrival_airport_array[0]['country'];
@@ -3254,7 +3259,7 @@ class Spotter{
 	}
 	
   
-  /**
+	/**
 	* Gets the aircraft ident within the last hour
 	*
 	* @return String the ident
@@ -3269,7 +3274,7 @@ class Spotter{
 								AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) 
 								AND spotter_output.date < UTC_TIMESTAMP()";
 			$query_data = array(':ident' => $ident);
-		} elseif ($globalDBdriver == 'pgsql') {
+		} else {
 			$query  = "SELECT spotter_output.ident FROM spotter_output 
 								WHERE spotter_output.ident = :ident 
 								AND spotter_output.date >= now() AT TIME ZONE 'UTC' - INTERVAL '1 HOURS'
@@ -3440,6 +3445,20 @@ class Spotter{
 		$query  = "SELECT DISTINCT spotter_output.owner_name, COUNT(spotter_output.owner_name) AS owner_count
 		 			FROM spotter_output
 					WHERE spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+		}
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND date > '".$sincedate."' ";
+			} else {
+				$query .= "AND date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
 		$query .= "GROUP BY spotter_output.owner_name ORDER BY owner_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -4112,7 +4131,7 @@ class Spotter{
 				$image_array = $Image->getSpotterImage($row['registration']);
 				if (isset($image_array[0]['image_thumbnail'])) $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
 			}
-			$emp_array['registration_count'] = $row['registration_count'];
+			$temp_array['registration_count'] = $row['registration_count'];
 
 			$aircraft_array[] = $temp_array;
 		}
@@ -4139,7 +4158,7 @@ class Spotter{
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
 
-		$ircraft_array = array();
+		$aircraft_array = array();
 		$temp_array = array();
 
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -5653,7 +5672,7 @@ class Spotter{
 	*/
 	public function countAllDepartureAirportsByCountry($country)
 	{
-		$date = filter_var($date,FILTER_SANITIZE_STRING);
+		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
 								FROM spotter_output
@@ -6893,10 +6912,10 @@ class Spotter{
 	*/
 	public function countAllRoutesByManufacturer($aircraft_manufacturer)
 	{
-		$aircraft_manufacturer = filter_var($aircraft_manufactuer,FILTER_SANITIZE_STRING);
+		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-								FROM spotter_output
+		    FROM spotter_output
                     WHERE spotter_output.ident <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer   
                     GROUP BY route
                     ORDER BY route_count DESC";
@@ -7088,7 +7107,7 @@ class Spotter{
 								GROUP BY date_name 
 								ORDER BY spotter_output.date ASC";
 			$query_data = array(':offset' => $offset);
-		} elseif ($globalDBdriver == 'pgsql') {
+		} else {
 			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') AS date_name, count(*) as date_count
 								FROM spotter_output 
 								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '7 DAYS'
@@ -7136,7 +7155,7 @@ class Spotter{
 								GROUP BY date_name 
 								ORDER BY spotter_output.date ASC";
 			$query_data = array(':offset' => $offset);
-		} elseif ($globalDBdriver == 'pgsql') {
+		} else {
 			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') AS date_name, count(*) as date_count
 								FROM spotter_output 
 								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 MONTHS'
@@ -7516,7 +7535,7 @@ class Spotter{
 								GROUP BY year_name, month_name
 								ORDER BY year_name, month_name ASC";
 			$query_data = array(':offset' => $offset);
-		} elseif ($globalDBdriver == 'pgsql') {
+		} else {
 			$query  = "SELECT EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name, count(*) as date_count
 								FROM spotter_output 
 								WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 YEARS'
@@ -7560,6 +7579,7 @@ class Spotter{
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
 
+		$orderby_sql = '';
 		if ($orderby == "hour")
 		{
 			$orderby_sql = "ORDER BY hour_name ASC";
@@ -7582,12 +7602,12 @@ class Spotter{
 								LIMIT 10 OFFSET 00";
   */    
 		$query_data = array(':offset' => $offset);
-		} elseif ($globalDBdriver == 'pgsql') {
+		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
 								FROM spotter_output 
 								GROUP BY hour_name 
 								".$orderby_sql;
-		$query_data = array(':offset' => $offset);
+			$query_data = array(':offset' => $offset);
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -8233,6 +8253,7 @@ class Spotter{
 	{
 		global $global_query, $globalDBdriver, $globalTimezone;
 		date_default_timezone_set('UTC');
+		$limit_query = '';
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
@@ -8272,7 +8293,7 @@ class Spotter{
 			    GROUP BY spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time HAVING count(spotter_output.ident) > 10 $orderby_query";
 */
 			$spotter_array = $this->getDataFromDB($query.$limit_query);
-		} else if ($globalDBdriver == 'pgsql') {
+		} else {
 			if ($sort != "")
 			{
 				$search_orderby_array = $this->getOrderBy();
@@ -8284,7 +8305,7 @@ class Spotter{
 			    FROM spotter_output
 			    WHERE DATE_PART('dow', spotter_output.date) = DATE_PART('dow', date 'now' AT TIME ZONE :timezone) AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) >= '$currentHour' AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) <= '$next3Hours' AND ident <> '' 
 			    GROUP BY spotter_output.ident, spotter_output.spotter_id HAVING count(spotter_output.ident) > 10 $orderby_query";
-		$spotter_array = $this->getDataFromDB($query.$limit_query,array(':timezone' => $globalTimezone));
+			$spotter_array = $this->getDataFromDB($query.$limit_query,array(':timezone' => $globalTimezone));
 		}
 		return $spotter_array;
 	}
@@ -8453,7 +8474,7 @@ class Spotter{
 	{
 		global $globalFlightAwareUsername, $globalFlightAwarePassword;
         
-        $options = array(
+		$options = array(
 			'trace' => true,
 			'exceptions' => 0,
 			'login' => $globalFlightAwareUsername,
@@ -8467,11 +8488,11 @@ class Spotter{
 		if (isset($result->AirlineFlightInfoResult))
 		{
 			$registration = $result->AirlineFlightInfoResult->tailnumber;
-		}
+		} else return '';
 		
 		$registration = $this->convertAircraftRegistration($registration);
 		
-		return $registration;	
+		return $registration;
 	}
 
 
@@ -8482,7 +8503,6 @@ class Spotter{
 	* @return String the aircraft registration
 	*
 	*/
-	
 	public function getAircraftRegistrationBymodeS($aircraft_modes)
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
@@ -8507,7 +8527,6 @@ class Spotter{
 	* @return String the aircraft type
 	*
 	*/
-	
 	public function getAircraftTypeBymodeS($aircraft_modes)
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
@@ -8528,14 +8547,13 @@ class Spotter{
 	/**
 	* Gets Countrie from latitude/longitude
 	*
-	* @param String $aircraft_modes the flight ModeS in hex
-	* @return String the aircraft registration
-	*
+	* @param Float $latitude latitute of the flight
+	* @param Float $longitude longitute of the flight
+	* @return String the countrie
 	*/
-	
 	public function getCountryFromLatitudeLongitude($latitude,$longitude)
 	{
-		global $globalDBdriver;
+		global $globalDBdriver, $globalDebug;
 		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
@@ -8591,10 +8609,9 @@ class Spotter{
 		}
 
 		//if we didn't find a two chracter prefix lets just search the one with one character
-		if ($registration_prefix == "")
+		if ($registration_prefix == '')
 		{
 			$query  = "SELECT aircraft_registration.registration_prefix FROM aircraft_registration WHERE registration_prefix = :registration_1";
-	      
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':registration_1' => $registration_1));
 	        
@@ -8608,19 +8625,18 @@ class Spotter{
 		if (strlen($registration_prefix) == 1)
 		{
 			if (0 === strpos($registration, 'N')) {
-                $registration = preg_replace("/^(.{1})/", "$1", $registration);
-            } else {
-                $registration = preg_replace("/^(.{1})/", "$1-", $registration);
-            }
+				$registration = preg_replace("/^(.{1})/", "$1", $registration);
+			} else {
+				$registration = preg_replace("/^(.{1})/", "$1-", $registration);
+			}
 		} else if(strlen($registration_prefix) == 2){
-            if (0 === strpos($registration, 'N')) {
-                $registration = preg_replace("/^(.{2})/", "$1", $registration);
-            } else {
-                $registration = preg_replace("/^(.{2})/", "$1-", $registration);
-            }
+			if (0 === strpos($registration, 'N')) {
+				$registration = preg_replace("/^(.{2})/", "$1", $registration);
+			} else {
+				$registration = preg_replace("/^(.{2})/", "$1-", $registration);
+			}
 		}
-
-		return $registration;	
+		return $registration;
 	}
 
 	/**
@@ -8635,7 +8651,6 @@ class Spotter{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		
 		$registration_prefix = '';
-		
 		$registration_test = explode('-',$registration);
 		$country = '';
 		if ($registration_test[0] != $registration) {
@@ -8643,10 +8658,9 @@ class Spotter{
 	      
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':registration_1' => $registration_test[0]));
-	        
 			while($row = $sth->fetch(PDO::FETCH_ASSOC))
 			{
-				$registration_prefix = $row['registration_prefix'];
+				//$registration_prefix = $row['registration_prefix'];
 				$country = $row['country'];
 			}
 		} else {
@@ -8677,7 +8691,7 @@ class Spotter{
 	        
 				while($row = $sth->fetch(PDO::FETCH_ASSOC))
 				{
-					$registration_prefix = $row['registration_prefix'];
+					//$registration_prefix = $row['registration_prefix'];
 					$country = $row['country'];
 				}
 			}
@@ -8722,7 +8736,7 @@ class Spotter{
 		curl_close($ch);
 		
 		$bitly_data = json_decode($bitly_data);
-		
+		$bitly_url = '';
 		if ($bitly_data->status_txt = "OK"){
 			$bitly_url = $bitly_data->data->url;
 		}
@@ -8862,7 +8876,7 @@ class Spotter{
 		if ($globalDebug) print "Routes...\n";
 		if ($globalDBdriver == 'mysql') {
 			$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != '' AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 DAY)";
-		} elseif ($globalDBdriver == 'pgsql') {
+		} else {
 			$query = "SELECT spotter_output.spotter_id, routes.FromAirport_ICAO, routes.ToAirport_ICAO FROM spotter_output, routes WHERE spotter_output.ident = routes.CallSign AND ( spotter_output.departure_airport_icao != routes.FromAirport_ICAO OR spotter_output.arrival_airport_icao != routes.ToAirport_ICAO) AND routes.FromAirport_ICAO != '' AND spotter_output.date >= now() AT TIME ZONE 'UTC' - INTERVAL '15 DAYS'";
 		}
 		$sth = $this->db->prepare($query);
