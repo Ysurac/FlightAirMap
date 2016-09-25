@@ -36,7 +36,7 @@ class Connection{
 
 	public function db() {
 		if ($this->db === null) {
-			__construct();
+			$this->__construct();
 		}
 		if ($this->db === null) {
 			echo 'Can\'t connect to database. Check configuration and database status.';
@@ -105,7 +105,6 @@ class Connection{
 					// to enable it : $this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY"');
 					$this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"');
 					// Force usage of UTC
-					$this->dbs[$DBname]->exec('SET time_zone = "UTC"');
 					$this->dbs[$DBname]->exec('SET time_zone = "+00:00"');
 					$this->dbs[$DBname]->exec('SET @@session.time_zone = "+00:00"');
 				} else {
