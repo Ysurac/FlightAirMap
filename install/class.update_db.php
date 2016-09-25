@@ -19,8 +19,9 @@ class update_db {
 		if ($referer != '') curl_setopt($ch, CURLOPT_REFERER, $referer);
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
 		curl_setopt($ch, CURLOPT_FILE, $fp);
-		$data = curl_exec($ch);
+		curl_exec($ch);
 		curl_close($ch);
+		fclose($fp);
 	}
 
 	public static function gunzip($in_file,$out_file_name = '') {
@@ -31,6 +32,10 @@ class update_db {
 			// PHP version of Ubuntu use gzopen64 instead of gzopen
 			if (function_exists('gzopen')) $file = gzopen($in_file,'rb');
 			elseif (function_exists('gzopen64')) $file = gzopen64($in_file,'rb');
+			else {
+				echo 'gzopen not available';
+				die;
+			}
 			$out_file = fopen($out_file_name, 'wb'); 
 			while(!gzeof($file)) {
 				fwrite($out_file, gzread($file, $buffer_size));
@@ -268,6 +273,7 @@ class update_db {
 			try {
 				if ($globalTransaction) $Connection->db->beginTransaction();
             			while (!feof($fh)) {
+            				$values = array();
             				$line = $Common->hex2str(fgets($fh,9999));
 					//FFFFFF                     RIDEAU VALLEY SOARINGASW-20               C-FBKN MZ 123.400
             				$values['ModeS'] = substr($line,0,6);
@@ -406,6 +412,7 @@ class update_db {
 				$tmp = fgetcsv($fh,9999,',','"');
             			while (!feof($fh)) {
             				$line = fgetcsv($fh,9999,',','"');
+            				$values = array();
             				//print_r($line);
             				if ($country == 'F') {
             				    $values['registration'] = $line[0];
@@ -510,7 +517,7 @@ class update_db {
 	* This function is used to create a list of airports. Sources : Wikipedia, ourairports.com ans partow.net
 	*/
 	public static function update_airports() {
-		global $tmp_dir, $globalTransaction;
+		global $tmp_dir, $globalTransaction, $globalDebug;
 
 		require_once(dirname(__FILE__).'/libs/sparqllib.php');
 		$db = sparql_connect('http://dbpedia.org/sparql');
@@ -1524,6 +1531,7 @@ class update_db {
 					$newmodelsdb[$model] = trim($row[0]);
 				}
 			}
+			$modelsdb = array();
 			if (file_exists(dirname(__FILE__).'../models/models.md5sum')) {
 				if (($handle = fopen(dirname(__FILE__).'/../models/models.md5sum','r')) !== FALSE) {
 					while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
@@ -1531,8 +1539,6 @@ class update_db {
 						$modelsdb[$model] = trim($row[0]);
 					}
 				}
-			} else {
-				$modelsdb = array();
 			}
 			$diff = array_diff($newmodelsdb,$modelsdb);
 			foreach ($diff as $key => $value) {
