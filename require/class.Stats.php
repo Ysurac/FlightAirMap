@@ -8,7 +8,7 @@ require_once(dirname(__FILE__).'/class.SpotterArchive.php');
 require_once(dirname(__FILE__).'/class.Common.php');
 class Stats {
 	public $db;
-        function __construct($dbc = null) {
+	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
         }
@@ -36,7 +36,7 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
         }
-	public function getAllAirlineNames($airline_type = '') {
+	public function getAllAirlineNames() {
                 $query = "SELECT * FROM stats_airline ORDER BY airline_name ASC";
                  try {
                         $sth = $this->db->prepare($query);
@@ -116,7 +116,7 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
             		$Spotter = new Spotter($this->db);
-			$all = $Spotter->countAllAircraftManufacturers($limit);
+			$all = $Spotter->countAllAircraftManufacturers();
                 }
                 return $all;
 	}
@@ -149,7 +149,7 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
 		        $Spotter = new Spotter($this->db);
-    	    	        $all = $Spotter->countAllDepartureCountries($limit);
+    	    	        $all = $Spotter->countAllDepartureCountries();
                 }
                 return $all;
 	}
@@ -344,7 +344,7 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllMonthsLastYear($limit);
+            		$all = $Spotter->countAllMonthsLastYear();
                 }
                 return $all;
 	}
@@ -454,7 +454,7 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllHours($orderby,$limit);
+            		$all = $Spotter->countAllHours($orderby);
                 }
                 return $all;
 	}
@@ -948,7 +948,7 @@ class Stats {
 				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
 			}
 			$alldata = $Spotter->countAllMilitaryMonths();
-			$lastyear = false;
+			//$lastyear = false;
 			foreach ($alldata as $number) {
 				if ($number['year_name'] != date('Y')) $lastyear = true;
 				$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));

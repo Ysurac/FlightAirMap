@@ -11,7 +11,7 @@ class aprs {
 	$debug = false;
 	$result = array();
 	$input_len = strlen($input);
-	$split_input = str_split($input);
+	//$split_input = str_split($input);
 
 	/* Find the end of header checking for NULL bytes while doing it. */
 	$splitpos = strpos($input,':');
@@ -26,7 +26,7 @@ class aprs {
 	$body = substr($input,$splitpos+1,$input_len);
 	$body_len = strlen($body);
 	$header = substr($input,0,$splitpos);
-	$header_len = strlen($header);
+	//$header_len = strlen($header);
 	if ($debug) echo 'header : '.$header."\n";
 	
 	/* Parse source, target and path. */
@@ -44,11 +44,16 @@ class aprs {
 	    if (preg_match('/^([a-zA-Z0-9-]{1,9})([*]?)$/',$element)) {
 	        //echo "ok";
 	        if ($element == 'TCPIP*') return false;
+	    } elseif (!preg_match('/^([0-9A-F]{32})$/',$element)) {
+		return false;
+	    }
+	    /*
 	    } elseif (preg_match('/^([0-9A-F]{32})$/',$element)) {
 		//echo "ok";
 	    } else {
 	        return false;
 	    }
+	    */
 	}
 	// Check for Timestamp
 	$body_parse = substr($body,1);
@@ -72,7 +77,8 @@ class aprs {
 	    if (preg_match('/^([0-9]{2})([0-7 ][0-9 ]\\.[0-9 ]{2})([NnSs])(.)([0-9]{3})([0-7 ][0-9 ]\\.[0-9 ]{2})([EeWw])(.)/',$body_parse,$matches)) {
 		// 4658.70N/00707.78Ez
 		//print_r(str_split($body_parse));
-		$latlon = $matches[0];
+		
+		//$latlon = $matches[0];
 		$sind = strtoupper($matches[3]);
 		$wind = strtoupper($matches[7]);
 		$lat_deg = $matches[1];
@@ -80,7 +86,7 @@ class aprs {
 		$lon_deg = $matches[5];
 		$lon_min = $matches[6];
 	    
-		$symbol_table = $matches[4];
+		//$symbol_table = $matches[4];
 		$lat = intval($lat_deg);
 		$lon = intval($lon_deg);
 		if ($lat > 89 || $lon > 179) return false;
@@ -115,9 +121,12 @@ class aprs {
 		    	    $body_parse = substr($body_parse,7);
 		        }
 		        // Check PHGR, PHG, RNG
-		    } else if ($body_parse_len > 0) {
+		    } 
+		    /*
+		    else if ($body_parse_len > 0) {
 			$rest = $body_parse;
 		    }
+		    */
 		    if (strlen($body_parse) > 0) {
 		        if (preg_match('/\\/A=(-[0-9]{5}|[0-9]{6})/',$body_parse,$matches)) {
 		            $altitude = intval($matches[1]);
@@ -127,22 +136,24 @@ class aprs {
 		    }
 		    
 		    // Telemetry
+		    /*
 		    if (preg_match('/^([0-9]+),(-?)([0-9]{1,6}|[0-9]+\\.[0-9]+|\\.[0-9]+)?,(-?)([0-9]{1,6}|[0-9]+\\.[0-9]+|\\.[0-9]+)?,(-?)([0-9]{1,6}|[0-9]+\\.[0-9]+|\\.[0-9]+)?,(-?)([0-9]{1,6}|[0-9]+\\.[0-9]+|\\.[0-9]+)?,(-?)([0-9]{1,6}|[0-9]+\\.[0-9]+|\\.[0-9]+)?,([01]{0,8})/',$body_parse,$matches)) {
 		        // Nothing yet...
 		    }
+		    */
 		    // DAO
 		    if (preg_match('/^!([0-9A-Z]{3})/',$body_parse,$matches)) {
 			    $dao = $matches[1];
-			    $dao_split = str_split($dao);
 			    if (preg_match('/^([A-Z])([0-9]{2})/',$dao)) {
-			        $lat_off = (($dao[1])-48.0)*0.001/60.0;
-			        $lon_off = (($dao[2])-48.0)*0.001/60.0;
+				$dao_split = str_split($dao);
+			        $lat_off = (($dao_split[1])-48.0)*0.001/60.0;
+			        $lon_off = (($dao_split[2])-48.0)*0.001/60.0;
 			    
+				if ($result['latitude'] < 0) $result['latitude'] -= $lat_off;
+				else $result['latitude'] += $lat_off;
+				if ($result['longitude'] < 0) $result['longitude'] -= $lon_off;
+				else $result['longitude'] += $lon_off;
 			    }
-			    if ($result['latitude'] < 0) $result['latitude'] -= $lat_off;
-			    else $result['latitude'] += $lat_off;
-			    if ($result['longitude'] < 0) $result['longitude'] -= $lon_off;
-			    else $result['longitude'] += $lon_off;
 		            $body_parse = substr($body_parse,6);
 		    }
 		    
@@ -150,7 +161,7 @@ class aprs {
 		   // echo "Before OGN : ".$body_parse."\n";
 		    if (preg_match('/^id([0-9A-F]{8}) ([+-])([0-9]{3,4})fpm ([+-])([0-9.]{3,4})rot (.*)$/',$body_parse,$matches)) {
 			$id = $matches[1];
-			$mode = substr($id,0,2);
+			//$mode = substr($id,0,2);
 			$address = substr($id,2);
 			//print_r($matches);
 			$addressType = (intval(substr($id,0,2),16))&3;
@@ -185,7 +196,7 @@ class aprs {
 		} else {
 		    // parse weather
 		    $body_parse = substr($body_parse,19);
-		    $body_parse_len = strlen($body_parse);
+		    //$body_parse_len = strlen($body_parse);
 
 		    if (preg_match('/^_{0,1}([0-9 \\.\\-]{3})\\/([0-9 \\.]{3})g([0-9 \\.]+)t(-{0,1}[0-9 \\.]+)/',$body_parse,$matches)) {
 			$result['wind_dir'] = $matches[1];

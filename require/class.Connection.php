@@ -137,7 +137,7 @@ class Connection{
 		global $globalDBdriver, $globalDBname;
 		if ($globalDBdriver == 'mysql') {
 			$query = "SHOW TABLES LIKE '".$table."'";
-		} elseif ($globalDBdriver == 'pgsql') {
+		} else {
 			$query = "SELECT * FROM pg_catalog.pg_tables WHERE tablename = '".$table."'";
 		}
 		if ($this->db == NULL) return false;
@@ -158,7 +158,7 @@ class Connection{
 		global $globalDBdriver, $globalDBCheckConnection;
 		if (isset($globalDBCheckConnection) && $globalDBCheckConnection === FALSE) return true;
 		$query = "SELECT 1 + 1";
-		if ($this->db == NULL) return false;
+		if ($this->db === null) return false;
 		try {
 			$sum = @$this->db->query($query);
 			if ($sum instanceof \PDOStatement) {
@@ -186,7 +186,7 @@ class Connection{
 		global $globalDBdriver, $globalDBname;
 		if ($globalDBdriver == 'mysql') {
 			$query = "SELECT COUNT(1) IndexIsThere FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema=DATABASE() AND table_name='".$table."' AND index_name='".$index."'";
-		} elseif ($globalDBdriver == 'pgsql') {
+		} else {
 			$query = "SELECT 1 FROM   pg_class c JOIN   pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '".$index."' AND n.nspname = '".$table."'";
 		}
 		try {
@@ -253,7 +253,6 @@ class Connection{
 	    			$version = '1';
 	    			return $version;
 			} else {
-				$Connection = new Connection();
 				$query = "SELECT value FROM config WHERE name = 'schema_version' LIMIT 1";
 				try {
 					$sth = $this->db->prepare($query);
