@@ -216,16 +216,19 @@ $( document ).ready(function() {
 	map.addLayer(yandexLayer);
 <?php
 	} elseif ($MapType == 'Bing-Aerial') {
+		if (!isset($globalBingMapKey) || $globalBingMapKey == '') setcookie('MapType','OpenStreetMap');
 ?>
 	var bingLayer = new L.tileLayer.bing({bingMapsKey: '<?php print $globalBingMapKey; ?>',imagerySet: 'Aerial'});
 	map.addLayer(bingLayer);
 <?php
 	} elseif ($MapType == 'Bing-Hybrid') {
+		if (!isset($globalBingMapKey) || $globalBingMapKey == '') setcookie('MapType','OpenStreetMap');
 ?>
 	var bingLayer = new L.tileLayer.bing({bingMapsKey: '<?php print $globalBingMapKey; ?>',imagerySet: 'AerialWithLabels'});
 	map.addLayer(bingLayer);
 <?php
 	} elseif ($MapType == 'Bing-Road') {
+		if (!isset($globalBingMapKey) || $globalBingMapKey == '') setcookie('MapType','OpenStreetMap');
 ?>
 	var bingLayer = new L.tileLayer.bing({bingMapsKey: '<?php print $globalBingMapKey; ?>',imagerySet: 'Road'});
 	map.addLayer(bingLayer);

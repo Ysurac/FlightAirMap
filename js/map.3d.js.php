@@ -7,7 +7,8 @@
 
 	
 	if ($MapType != 'Mapbox' && $MapType != 'OpenStreetMap' && $MapType != 'Bing-Aerial' && $MapType != 'Bing-Hybrid' && $MapType != 'Bing-Road') {
-		$MapType = 'Bing-Aerial';
+		if (isset($globalBingMapKey) && $globalBingMapKey != '') $MapType = 'Bing-Aerial';
+		else $MapType = 'OpenStreetMap';
 	}
 	
 	if ($MapType == 'Mapbox') {

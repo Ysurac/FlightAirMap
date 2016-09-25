@@ -600,7 +600,7 @@ while ($i > 0) {
     	//} elseif ($value == 'pirepsjson' && (time() - $last_exec['pirepsjson'] > $globalMinFetch)) {
     	} elseif ($value['format'] == 'pirepsjson' && (time() - $value['last_exec'] > $globalMinFetch)) {
 	    //$buffer = $Common->getData($hosts[$id]);
-	    $buffer = $Common->getData($value['host']);
+	    $buffer = $Common->getData($value['host'].'?'.time());
 	    $all_data = json_decode(utf8_encode($buffer),true);
 	    
 	    if (isset($all_data['pireps'])) {
