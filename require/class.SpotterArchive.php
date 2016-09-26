@@ -321,7 +321,7 @@ class SpotterArchive {
 						WHERE (l.date BETWEEN DATE_SUB('."'".$begindate."'".',INTERVAL '.$globalLiveInterval.' SECOND) AND '."'".$begindate."'".') 
 						GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id 
 				    AND spotter_archive.date = s.maxdate '.$filter_query.'LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_archive.aircraft_icao = a.icao';
-                } else if ($globalDBdriver == 'pgsql') {
+                } else {
                         $query  = 'SELECT spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, a.aircraft_shadow FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate '.$filter_query.'INNER JOIN (SELECT * FROM aircraft) a on spotter_archive.aircraft_icao = a.icao';
                 }
                 //echo $query;
@@ -378,11 +378,13 @@ class SpotterArchive {
 
                 } else {
                         //$query  = 'SELECT spotter_archive_output.ident, spotter_archive_output.flightaware_id, spotter_archive_output.aircraft_icao, spotter_archive_output.departure_airport_icao as departure_airport, spotter_archive_output.arrival_airport_icao as arrival_airport, spotter_archive_output.latitude, spotter_archive_output.longitude, spotter_archive_output.altitude, spotter_archive_output.heading, spotter_archive_output.ground_speed, spotter_archive_output.squawk, a.aircraft_shadow FROM spotter_archive_output INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive_output l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_archive_output.flightaware_id = s.flightaware_id AND spotter_archive_output.date = s.maxdate '.$filter_query.'INNER JOIN (SELECT * FROM aircraft) a on spotter_archive_output.aircraft_icao = a.icao';
+                       /*
                         $query  = 'SELECT spotter_archive_output.ident, spotter_archive_output.flightaware_id, spotter_archive_output.aircraft_icao, spotter_archive_output.departure_airport_icao as departure_airport, spotter_archive_output.arrival_airport_icao as arrival_airport, spotter_archive_output.latitude, spotter_archive_output.longitude, spotter_archive_output.altitude, spotter_archive_output.heading, spotter_archive_output.ground_speed, spotter_archive_output.squawk, a.aircraft_shadow
                         	    FROM spotter_archive_output 
                         	    INNER JOIN (SELECT * FROM aircraft) a on spotter_archive_output.aircraft_icao = a.icao
                         	    WHERE spotter_archive_output.date >= '."'".$begindate."'".' AND spotter_archive_output.date <= '."'".$enddate."'".'
                         	    '.$filter_query.' GROUP BY spotter_archive_output.flightaware_id, spotter_archive_output.ident, spotter_archive_output.aircraft_icao, spotter_archive_output.departure_airport_icao, spotter_archive_output.arrival_airport_icao, spotter_archive_output.latitude, spotter_archive_output.longitude, spotter_archive_output.altitude, spotter_archive_output.heading, spotter_archive_output.ground_speed, spotter_archive_output.squawk, a.aircraft_shadow';
+                        */
                         $query  = 'SELECT DISTINCT spotter_output.flightaware_id, spotter_output.ident, spotter_output.aircraft_icao, spotter_output.departure_airport_icao as departure_airport, spotter_output.arrival_airport_icao as arrival_airport, spotter_output.latitude, spotter_output.longitude, spotter_output.altitude, spotter_output.heading, spotter_output.ground_speed, spotter_output.squawk, a.aircraft_shadow
                         	    FROM spotter_output 
                         	    INNER JOIN (SELECT * FROM aircraft) a on spotter_output.aircraft_icao = a.icao
@@ -462,14 +464,16 @@ class SpotterArchive {
     */
     public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '')
     {
-	global $globalTimezone, $globalDbdriver;
+	global $globalTimezone, $globalDBdriver;
 	require_once(dirname(__FILE__).'/class.Translation.php');
 	$Translation = new Translation();
+	$Spotter = new Spotter($this->db);
 
 	date_default_timezone_set('UTC');
 	
 	$query_values = array();
 	$additional_query = '';
+	$limit_query = '';
 	if ($q != "")
 	{
 	    if (!is_string($q))
@@ -554,7 +558,7 @@ class SpotterArchive {
 	
 	if ($airline_icao != "")
 	{
-	    $registration = filter_var($airline_icao,FILTER_SANITIZE_STRING);
+	    $airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 	    if (!is_string($airline_icao))
 	    {
 		return false;
@@ -765,7 +769,7 @@ class SpotterArchive {
 	} else {
 		if ($sort != "")
 		{
-			$search_orderby_array = $this->getOrderBy();
+			$search_orderby_array = $Spotter->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
 			$orderby_query = " ORDER BY spotter_archive_output.date DESC";
@@ -781,8 +785,7 @@ class SpotterArchive {
 		    ".$additional_query."
 		    ".$orderby_query;
 	}
-	$Spotter = new Spotter($this->db);
-	$spotter_array = $Spotter->getDataFromDB($query, array(),$limit_query);
+	$spotter_array = $Spotter->getDataFromDB($query, $query_values,$limit_query);
 
 	return $spotter_array;
     }
@@ -815,8 +818,11 @@ class SpotterArchive {
 	$global_query = "SELECT spotter_archive_output.* FROM spotter_archive_output";
 	
 	date_default_timezone_set('UTC');
+	$Spotter = new Spotter($this->db);
 	
 	$query_values = array();
+	$limit_query = '';
+	$additional_query = '';
 	
 	if ($ident != "")
 	{
@@ -845,7 +851,7 @@ class SpotterArchive {
 
 	if ($sort != "")
 	{
-	    $search_orderby_array = $this->getOrderBy();
+	    $search_orderby_array = $Spotter->getOrderBy();
 	    $orderby_query = $search_orderby_array[$sort]['sql'];
 	} else {
 	    $orderby_query = " ORDER BY spotter_archive_output.date DESC";
@@ -853,7 +859,6 @@ class SpotterArchive {
 
 	$query = $global_query." WHERE spotter_archive_output.ident <> '' ".$additional_query." ".$orderby_query;
 
-	$Spotter = new Spotter($this->db);
 	$spotter_array = $Spotter->getDataFromDB($query, $query_values, $limit_query);
 
 	return $spotter_array;
