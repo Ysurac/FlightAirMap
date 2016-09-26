@@ -4,7 +4,8 @@
 ////////////////// VisualCinnamon.com ///////////////////
 /////////// Inspired by the code of alangrafu ///////////
 /////////////////////////////////////////////////////////
-	
+/** global: d3 */
+
 function RadarChart(id, data, options) {
 	var cfg = {
 	 w: 600,				//Width of the circle
@@ -20,6 +21,7 @@ function RadarChart(id, data, options) {
 	 strokeWidth: 2, 		//The width of the stroke around each blob
 	 roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
 	 color: d3.scale.category10(),	//Color function
+	// color: d3.scaleOrdinal(d3.schemeCategory10),	//Color function
 	 format: '.2s',
 	 unit: 'km'
 	};
@@ -42,6 +44,7 @@ function RadarChart(id, data, options) {
 	
 	//Scale for the radius
 	var rScale = d3.scale.linear()
+	//var rScale = d3.scaleLinear()
 		.range([0, radius])
 		.domain([0, maxValue]);
 		
