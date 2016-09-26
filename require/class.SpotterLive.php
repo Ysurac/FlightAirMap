@@ -721,6 +721,39 @@ class SpotterLive {
         }
 
 	/**
+	* Check recent aircraft by id
+	*
+	* @return String the ident
+	*
+	*/
+	public function checkIdRecent($id)
+	{
+		global $globalDBdriver, $globalTimezone;
+		if ($globalDBdriver == 'mysql') {
+			$query  = 'SELECT spotter_live.ident, spotter_live.flightaware_id FROM spotter_live 
+				WHERE spotter_live.id = :id 
+				AND spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 10 HOURS)'; 
+//				AND spotter_live.date < UTC_TIMESTAMP()";
+			$query_data = array(':id' => $id);
+		} else {
+			$query  = "SELECT spotter_live.ident, spotter_live.flightaware_id FROM spotter_live 
+				WHERE spotter_live.id = :id 
+				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - INTERVAL '10 HOURS'";
+//				AND spotter_live.date < now() AT TIME ZONE 'UTC'";
+			$query_data = array(':id' => $id);
+		}
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_data);
+		$ident_result='';
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$ident_result = $row['flightaware_id'];
+		}
+		return $ident_result;
+        }
+
+	/**
 	* Check recent aircraft by ModeS
 	*
 	* @return String the ModeS

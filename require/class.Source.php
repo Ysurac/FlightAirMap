@@ -4,7 +4,7 @@ require_once(dirname(__FILE__).'/class.Connection.php');
 
 class Source {
 	public $db;
-	function __construct($dbc = null) {
+	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db;
         }
