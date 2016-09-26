@@ -708,7 +708,7 @@ class NOTAM {
 	                    'YR' => 'Your');
 
 
-	function __construct($dbc = null) {
+	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db;
 	}
@@ -860,6 +860,7 @@ class NOTAM {
 				else $result['permanent'] = false;
 			}
 			elseif (preg_match('#E\) (.*)#',$line,$matches)) {
+				$rtext = array();
 				$text = explode(' ',$matches[1]);
 				foreach ($text as $word) {
 					if (isset($this->abbr[$word])) $rtext[] = strtoupper($this->abbr[$word]);
@@ -867,8 +868,8 @@ class NOTAM {
 					else $rtext[] = $word;
 				}
 				$result['text'] = implode(' ',$rtext);
-			} elseif (preg_match('#F\) (.*)#',$line,$matches)) {
-			} elseif (preg_match('#G\) (.*)#',$line,$matches)) {
+			//} elseif (preg_match('#F\) (.*)#',$line,$matches)) {
+			//} elseif (preg_match('#G\) (.*)#',$line,$matches)) {
 			} elseif (preg_match('#(NOTAMN|NOTAMR|NOTAMC)$#',$line,$matches)) {
 				if ($matches[1] == 'NOTAMN') $result['type'] = 'new';
 				if ($matches[1] == 'NOTAMC') $result['type'] = 'cancel';

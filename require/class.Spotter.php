@@ -2524,41 +2524,37 @@ class Spotter{
 	{
 		$Connection= new Connection($this->db);
 		if ($Connection->tableExists('countries')) {
-		
-		$query  = "SELECT countries.name AS airport_country
+			$query  = "SELECT countries.name AS airport_country
 				FROM countries
 				ORDER BY countries.name ASC";
-		$sth = $this->db->prepare($query);
-		$sth->execute();
+			$sth = $this->db->prepare($query);
+			$sth->execute();
    
-		$temp_array = array();
-		$country_array = array();
+			$temp_array = array();
+			$country_array = array();
 		
-		while($row = $sth->fetch(PDO::FETCH_ASSOC))
-		{
-			$temp_array['country'] = $row['airport_country'];
-
-			$country_array[$row['airport_country']] = $temp_array;
-		}
+			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+			{
+				$temp_array['country'] = $row['airport_country'];
+				$country_array[$row['airport_country']] = $temp_array;
+			}
 		} else {
-
-		$query  = "SELECT DISTINCT spotter_output.departure_airport_country AS airport_country
+			$query  = "SELECT DISTINCT spotter_output.departure_airport_country AS airport_country
 								FROM spotter_output
 								WHERE spotter_output.departure_airport_country <> '' 
 								ORDER BY spotter_output.departure_airport_country ASC";
-		
-		$sth = $this->db->prepare($query);
-		$sth->execute();
-   
-		$temp_array = array();
-		
-		while($row = $sth->fetch(PDO::FETCH_ASSOC))
-		{
-			$temp_array['country'] = $row['airport_country'];
 
-			$country_array[$row['airport_country']] = $temp_array;
-		}
-								
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+   
+			$temp_array = array();
+			$country_array = array();
+			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+			{
+				$temp_array['country'] = $row['airport_country'];
+				$country_array[$row['airport_country']] = $temp_array;
+			}
+
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country AS airport_country
 								FROM spotter_output
 								WHERE spotter_output.arrival_airport_country <> '' 
@@ -2911,8 +2907,6 @@ class Spotter{
 	*
 	* @param String $flightaware_id the ID from flightaware
 	* @param String $ident the flight ident
-	* @param String $aircraft_icao the aircraft type
-	* @param String $departure_airport_icao the departure airport
 	* @param String $arrival_airport_icao the arrival airport
 	* @return String success or false
 	*
@@ -3217,7 +3211,7 @@ class Spotter{
                 if ($registration == '') $registration = 'NA';
                 if ($squawk == '' || $Common->isInteger($squawk) === false) $squawk = NULL;
                 if ($verticalrate == '' || $Common->isInteger($verticalrate) === false) $verticalrate = NULL;
-                if ($heading == '' || $Common->isInteger($heading) == false) $heading = 0;
+                if ($heading == '' || $Common->isInteger($heading) === false) $heading = 0;
                 if ($groundspeed == '' || $Common->isInteger($groundspeed) === false) $groundspeed = 0;
                 if (!isset($aircraft_owner)) $aircraft_owner = NULL;
                 $query  = "INSERT INTO spotter_output (flightaware_id, ident, registration, airline_name, airline_icao, airline_country, airline_type, aircraft_icao, aircraft_name, aircraft_manufacturer, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, latitude, longitude, waypoints, altitude, heading, ground_speed, date, departure_airport_time, arrival_airport_time, squawk, route_stop,highlight,ModeS, pilot_id, pilot_name, verticalrate, owner_name, ground, format_source, source_name) 

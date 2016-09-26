@@ -2,9 +2,10 @@
 class SBS {
     static $latlon = array();
     
-    function parse($buffer) {
+    public function parse($buffer) {
 	// Not yet finished, no CRC checks
 	//echo $buffer."\n";
+	$data = array();
 	$typehex = substr($buffer,0,1);
 	if ($typehex == '*' || $typehex == ':') $hex = substr($buffer,1,-1);
 	elseif ($typehex == '@' || $typehex == '%') $hex = substr($buffer,13,-13);
@@ -13,7 +14,7 @@ class SBS {
 	//if (strlen($hex) == 28 && $this->parityCheck($hex,$bin)) {
 	if (strlen($hex) == 28) {
 	    $df = intval(substr($bin,0,5),2);
-	    $ca = intval(substr($bin,5,3),2);
+	    //$ca = intval(substr($bin,5,3),2);
 	    // Only support DF17 for now
 	    //if ($df == 17 || ($df == 18 && ($ca == 0 || $ca == 1 || $ca == 6))) {
 	    if (($df == 17 || $df == 18) && ($this->parityCheck($hex,$bin) || $typehex == '@')) {
@@ -114,7 +115,7 @@ class SBS {
     }
 
 
-    function cprNL($lat) {
+	public function cprNL($lat) {
 	//Lookup table to convert the latitude to index.
 	if ($lat < 0) $lat = -$lat;             // Table is simmetric about the equator.
 	if ($lat < 10.47047130) return 59;
@@ -178,7 +179,7 @@ class SBS {
 	return 1;
     }
     
-    function cprN($lat,$isodd) {
+    public function cprN($lat,$isodd) {
 	$nl = $this->cprNL($lat) - $isodd;
 	if ($nl > 1) return $nl;
 	else return 1;

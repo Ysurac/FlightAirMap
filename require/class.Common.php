@@ -9,7 +9,7 @@ class Common {
 	* Get data from form result
 	* @param String $url form URL
 	* @param String $type type of submit form method (get or post)
-	* @param String or Array $data values form post method
+	* @param String|Array $data values form post method
 	* @param Array $headers header to submit with the form
 	* @return String the result
 	*/
@@ -73,6 +73,7 @@ class Common {
 	
 	private function curlResponseHeaderCallback($ch, $headerLine) {
 		//global $cookies;
+		$cookies = array();
 		if (preg_match('/^Set-Cookie:\s*([^;]*)/mi', $headerLine, $cookie) == 1)
 			$cookies[] = $cookie;
 		return strlen($headerLine); // Needed by curl
@@ -202,7 +203,7 @@ class Common {
 	* @param       string   $dest      Destination path
 	* @return      bool     Returns true on success, false on failure
 	*/
-	public function xcopy($source, $dest, $permissions = 0755)
+	public function xcopy($source, $dest)
 	{
 		$files = glob($source.'*.*');
 		foreach($files as $file){
@@ -253,7 +254,7 @@ class Common {
 	}
 	
 	public function checkLine($lat1,$lon1,$lat2,$lon2,$lat3,$lon3,$approx = 0.1) {
-		$a = ($lon2-$lon1)*$lat3+($lat2-$lat1)*$lon3+($lat1*$lon2+$lat2*$lon1);
+		//$a = ($lon2-$lon1)*$lat3+($lat2-$lat1)*$lon3+($lat1*$lon2+$lat2*$lon1);
 		$a = -($lon2-$lon1);
 		$b = $lat2 - $lat1;
 		$c = -($a*$lat1+$b*$lon1);
@@ -296,7 +297,7 @@ class Common {
 		return $result;
 	}
 
-	function nextcoord($latitude, $longitude, $speed, $heading, $archivespeed = 1){
+	public function nextcoord($latitude, $longitude, $speed, $heading, $archivespeed = 1){
 		global $globalMapRefresh;
 		$distance = ($speed*0.514444*$globalMapRefresh*$archivespeed)/1000;
 		$r = 6378;
@@ -308,7 +309,7 @@ class Common {
 		return array('latitude' => number_format(rad2deg($latitude2),5,'.',''),'longitude' => number_format(rad2deg($longitude2),5,'.',''));
 	}
 	
-	function getCoordfromDistanceBearing($latitude,$longitude,$bearing,$distance) {
+	public function getCoordfromDistanceBearing($latitude,$longitude,$bearing,$distance) {
 		// distance in meter
 		$R = 6378.14;
 		$latitude1 = $latitude * (M_PI/180);

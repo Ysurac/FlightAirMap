@@ -1076,7 +1076,7 @@ class Stats {
 				}
 				$alldata = $Spotter->countAllPilots(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
-					$this->addStatPilot($number['pilot_id'],$number['pilot_count']);
+					$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name']);
 				}
 				$pall = $Spotter->countAllDepartureAirports(false,$globalArchiveMonths);
         			$dall = $Spotter->countAllDetectedDepartureAirports(false,$globalArchiveMonths);

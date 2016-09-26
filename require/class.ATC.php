@@ -4,9 +4,9 @@ require_once(dirname(__FILE__).'/class.Connection.php');
 
 class ATC {
 	public $db;
-        function __construct($dbc = null) {
-    		$Connection = new Connection($dbc);
-    		$this->db = $Connection->db;
+	public function __construct($dbc = null) {
+		$Connection = new Connection($dbc);
+		$this->db = $Connection->db;
 	}
 
        public function getAll() {
@@ -64,7 +64,7 @@ class ATC {
                 global $globalDBdriver;
                 if ($globalDBdriver == 'mysql') {
                         $query  = "DELETE FROM atc WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) >= atc.atc_lastseen";
-                } elseif ($globalDBdriver == 'pgsql') {
+                } else {
                         $query  = "DELETE FROM atc WHERE NOW() AT TIME ZONE 'UTC' - '1 HOUR'->INTERVAL >= atc.atc_lastseen";
                 }
                 try {
