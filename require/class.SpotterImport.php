@@ -14,11 +14,11 @@ class SpotterImport {
     private $last_delete = '';
     private $stats = array();
     private $tmd = 0;
-    private $source_locatioon = array();
+    private $source_location = array();
     public $db = null;
     public $nb = 0;
 
-    function __construct($dbc = null) {
+    public function __construct($dbc = null) {
 	global $globalBeta;
 	$Connection = new Connection($dbc);
 	$this->db = $Connection->db();
@@ -40,7 +40,7 @@ class SpotterImport {
 	}
     }
 
-    function get_Schedule($id,$ident) {
+    public function get_Schedule($id,$ident) {
 	global $globalDebug, $globalFork, $globalSchedulesFetch;
 	// Get schedule here, so it's done only one time
 	
@@ -159,7 +159,7 @@ class SpotterImport {
 
 
 
-    function del() {
+    public function del() {
 	global $globalDebug;
 	// Delete old infos
 	foreach ($this->all_flights as $key => $flight) {
@@ -187,7 +187,7 @@ class SpotterImport {
         }
     }
 
-    function add($line) {
+    public function add($line) {
 	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate;
 	//if (!isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
