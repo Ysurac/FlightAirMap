@@ -5,12 +5,10 @@
 	if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
 	else $MapType = $globalMapProvider;
 
-	
 	if ($MapType != 'Mapbox' && $MapType != 'OpenStreetMap' && $MapType != 'Bing-Aerial' && $MapType != 'Bing-Hybrid' && $MapType != 'Bing-Road') {
 		if (isset($globalBingMapKey) && $globalBingMapKey != '') $MapType = 'Bing-Aerial';
 		else $MapType = 'OpenStreetMap';
 	}
-	
 	if ($MapType == 'Mapbox') {
 		if ($_COOKIE['MapTypeId'] == 'default') $MapBoxId = $globalMapboxId;
 		else $MapBoxId = $_COOKIE['MapTypeId'];
@@ -568,8 +566,13 @@ function updateISS() {
 	});
 }
 
-
+<?php
+	if (isset($globalBingMapKey) && $globalBingMapKey != '') {
+?>
 Cesium.BingMapsApi.defaultKey = '<?php print $globalBingMapKey; ?>';
+<?php
+	}
+?>
 
 
 var viewer = new Cesium.Viewer('live-map', {

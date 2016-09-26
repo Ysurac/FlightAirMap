@@ -692,7 +692,7 @@ class SpotterImport {
 				    
 				    $this->del();
 				} elseif ($globalDebug) echo 'Ignore data'."\n";
-				$ignoreImport = false;
+				//$ignoreImport = false;
 				$this->all_flights[$id]['addedSpotter'] = 1;
 				//print_r($this->all_flights[$id]);
 			/*
@@ -866,7 +866,7 @@ class SpotterImport {
 			}
 			
 		    }
-		    $ignoreImport = false;
+		    //$ignoreImport = false;
 		}
 		//if (function_exists('pcntl_fork') && $globalFork) pcntl_signal(SIGCHLD, SIG_IGN);
 		if ($send) return $this->all_flights[$id];
