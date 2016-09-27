@@ -227,18 +227,32 @@ class Connection{
 	*/
 	public function checkColumnName($table,$name)
 	{
-		$query = "SELECT * FROM ".$table." LIMIT 0";
-		try {
-			$results = $this->db->query($query);
-		} catch(PDOException $e) {
-			return "error : ".$e->getMessage()."\n";
+		global $globalDBdriver, $globalDBname;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = :database AND TABLE_NAME = :table AND COLUMN_NAME = :name";
+			try {
+				$sth = $this->db->prepare($query);
+				$sth->execute(array(':database' => $globalDBname,':table' => $table,':name' => $name));
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage()."\n";
+			}
+			$result = $sth->fetch(PDO::FETCH_ASSOC);
+			if ($result['nb'] > 0) return true;
+			else return false;
+		} else {
+			$query = "SELECT * FROM ".$table." LIMIT 0";
+			try {
+				$results = $this->db->query($query);
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage()."\n";
+			}
+			$colcnt = $results->columnCount();
+			for ($i = 0; $i < $colcnt; $i++) {
+				$col = $results->getColumnMeta($i);
+				if ($name == $col['name']) return true;
+			}
+			return false;
 		}
-		$colcnt = $results->columnCount();
-		for ($i = 0; $i < $colcnt; $i++) {
-			$col = $results->getColumnMeta($i);
-			if ($name == $col['name']) return true;
-		}
-		return false;
 	}
 
 	/*
