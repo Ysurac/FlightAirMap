@@ -495,14 +495,15 @@ class update_schema {
 
 	private static function update_from_13() {
     		$Connection = new Connection();
-    		$query="ALTER TABLE spotter_archive_output ADD real_departure_airport_icao VARCHAR(20), ADD real_departure_airport_time VARCHAR(20)";
-        	try {
-            	    $sth = $Connection->db->prepare($query);
-		    $sth->execute();
-    		} catch(PDOException $e) {
-		    return "error (update spotter_archive_output) : ".$e->getMessage()."\n";
-    		}
-	
+    		if (!$Connection->checkColumnName('spotter_archive_output','real_departure_airport_icao')) {
+    			$query="ALTER TABLE spotter_archive_output ADD real_departure_airport_icao VARCHAR(20), ADD real_departure_airport_time VARCHAR(20)";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+	    		} catch(PDOException $e) {
+				return "error (update spotter_archive_output) : ".$e->getMessage()."\n";
+    			}
+		}
     		$error = '';
 		$query = "UPDATE `config` SET `value` = '14' WHERE `name` = 'schema_version'";
         	try {
@@ -597,7 +598,7 @@ class update_schema {
     		$Connection = new Connection();
 		$error = '';
     		// Modify stats_airport table
-    		if (!$Connection->checkColumnName('stats_airport','yearly')) {
+    		if (!$Connection->checkColumnName('stats_airport','type')) {
     			$query = "ALTER TABLE `stats_airport` ADD `type` VARCHAR(50) NOT NULL DEFAULT 'yearly', ADD `airport_name` VARCHAR(255) NOT NULL, ADD `date` DATE NULL DEFAULT NULL, DROP INDEX `airport_icao`, ADD UNIQUE `airport_icao` (`airport_icao`, `type`, `date`)";
     	        	try {
 	            	    $sth = $Connection->db->prepare($query);
@@ -638,22 +639,25 @@ class update_schema {
     		} catch(PDOException $e) {
 		    return "error (add id again on spotter_archive) : ".$e->getMessage()."\n";
     		}
-
-    		// Add column over_country
-    		$query = "ALTER TABLE `spotter_archive` ADD `over_country` VARCHAR(5) NULL DEFAULT NULL;ALTER TABLE `spotter_live` ADD `over_country` VARCHAR(5) NULL DEFAULT NULL;";
-        	try {
-            	    $sth = $Connection->db->prepare($query);
-		    $sth->execute();
-    		} catch(PDOException $e) {
-		    return "error (add over_country) : ".$e->getMessage()."\n";
-    		}
-    		// Add source_name to spotter_output, spotter_live, spotter_archive, spotter_archive_output
-    		$query = "ALTER TABLE `spotter_output` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;ALTER TABLE `spotter_live` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;ALTER TABLE `spotter_archive_output` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;ALTER TABLE `spotter_archive` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;";
-        	try {
-            	    $sth = $Connection->db->prepare($query);
-		    $sth->execute();
-    		} catch(PDOException $e) {
-		    return "error (add source_name column) : ".$e->getMessage()."\n";
+		if (!$Connection->checkColumnName('spotter_archive','over_country')) {
+			// Add column over_country
+    			$query = "ALTER TABLE `spotter_archive` ADD `over_country` VARCHAR(5) NULL DEFAULT NULL;ALTER TABLE `spotter_live` ADD `over_country` VARCHAR(5) NULL DEFAULT NULL;";
+			try {
+            			$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add over_country) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('spotter_output','source_name')) {
+			// Add source_name to spotter_output, spotter_live, spotter_archive, spotter_archive_output
+    			$query = "ALTER TABLE `spotter_output` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;ALTER TABLE `spotter_live` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;ALTER TABLE `spotter_archive_output` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;ALTER TABLE `spotter_archive` ADD `source_name` VARCHAR(255) NULL AFTER `format_source`;";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add source_name column) : ".$e->getMessage()."\n";
+    			}
     		}
 		if ($error != '') return $error;
 		$query = "UPDATE `config` SET `value` = '20' WHERE `name` = 'schema_version'";
@@ -675,13 +679,15 @@ class update_schema {
 			$error .= create_db::import_file('../db/airlines.sql');
 			if ($error != '') return 'Import airlines.sql : '.$error;
 		}
-    		// Add column over_country
-    		$query = "ALTER TABLE `aircraft_modes` ADD `type_flight` VARCHAR(50) NULL DEFAULT NULL;";
-        	try {
-            	    $sth = $Connection->db->prepare($query);
-		    $sth->execute();
-    		} catch(PDOException $e) {
-		    return "error (add over_country) : ".$e->getMessage()."\n";
+		if (!$Connection->checkColumnName('aircraft_modes','type_flight')) {
+			// Add column over_country
+    			$query = "ALTER TABLE `aircraft_modes` ADD `type_flight` VARCHAR(50) NULL DEFAULT NULL;";
+        		try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add over_country) : ".$e->getMessage()."\n";
+    			}
     		}
 		if ($error != '') return $error;
 		/*
