@@ -748,17 +748,19 @@ class update_schema {
 	}
 
 	private static function update_from_21() {
-    		$Connection = new Connection();
+		$Connection = new Connection();
 		$error = '';
-		// Rename type to stats_type
-		$query = "ALTER TABLE `stats_airport` CHANGE `type` `stats_type` VARCHAR(50);ALTER TABLE `stats` CHANGE `type` `stats_type` VARCHAR(50);ALTER TABLE `stats_flight` CHANGE `type` `stats_type` VARCHAR(50);";
-        	try {
-            	    $sth = $Connection->db->prepare($query);
-		    $sth->execute();
-    		} catch(PDOException $e) {
-		    return "error (rename type to stats_type on stats*) : ".$e->getMessage()."\n";
-    		}
-		if ($error != '') return $error;
+		if (!$Connection->checkColumnName('stats_airport','stats_type')) {
+			// Rename type to stats_type
+			$query = "ALTER TABLE `stats_airport` CHANGE `type` `stats_type` VARCHAR(50);ALTER TABLE `stats` CHANGE `type` `stats_type` VARCHAR(50);ALTER TABLE `stats_flight` CHANGE `type` `stats_type` VARCHAR(50);";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (rename type to stats_type on stats*) : ".$e->getMessage()."\n";
+			}
+			if ($error != '') return $error;
+		}
 		$query = "UPDATE `config` SET `value` = '22' WHERE `name` = 'schema_version'";
         	try {
             	    $sth = $Connection->db->prepare($query);
