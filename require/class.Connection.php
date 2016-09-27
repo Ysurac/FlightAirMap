@@ -105,8 +105,8 @@ class Connection{
 					// to enable it : $this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY"');
 					$this->dbs[$DBname]->exec('SET sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"');
 					// Force usage of UTC
-					$this->dbs[$DBname]->exec('SET time_zone = "+00:00"');
-					$this->dbs[$DBname]->exec('SET @@session.time_zone = "+00:00"');
+					$this->dbs[$DBname]->exec('SET SESSION time_zone = "+00:00"');
+					//$this->dbs[$DBname]->exec('SET @@session.time_zone = "+00:00"');
 				} else {
 					$this->dbs[$DBname] = new PDO("$globalDBSdriver:host=$globalDBShost;port=$globalDBSport;dbname=$globalDBSname;options='--client_encoding=utf8'", $globalDBSuser,  $globalDBSpass);
 					//$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
