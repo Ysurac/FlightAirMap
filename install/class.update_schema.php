@@ -559,8 +559,12 @@ class update_schema {
     		$Connection = new Connection();
 		$error = '';
     		// Add tables
-		$error .= create_db::import_file('../db/stats_registration.sql');
-		$error .= create_db::import_file('../db/stats_callsign.sql');
+    		if (!$Connection->tableExists('stats_registration')) {
+			$error .= create_db::import_file('../db/stats_registration.sql');
+		}
+    		if (!$Connection->tableExists('stats_callsign')) {
+			$error .= create_db::import_file('../db/stats_callsign.sql');
+		}
 		if ($error != '') return $error;
 		$query = "UPDATE `config` SET `value` = '17' WHERE `name` = 'schema_version'";
         	try {
@@ -576,7 +580,9 @@ class update_schema {
     		$Connection = new Connection();
 		$error = '';
     		// Add tables
-		$error .= create_db::import_file('../db/stats_country.sql');
+    		if (!$Connection->tableExists('stats_country')) {
+			$error .= create_db::import_file('../db/stats_country.sql');
+		}
 		if ($error != '') return $error;
 		$query = "UPDATE `config` SET `value` = '18' WHERE `name` = 'schema_version'";
         	try {
@@ -667,7 +673,7 @@ class update_schema {
     		// Update airline table
     		if (!$globalIVAO && !$globalVATSIM && !$globalphpVMS) {
 			$error .= create_db::import_file('../db/airlines.sql');
-			if ($error != '') return 'Import airlinesport.sql : '.$error;
+			if ($error != '') return 'Import airlines.sql : '.$error;
 		}
     		// Add column over_country
     		$query = "ALTER TABLE `aircraft_modes` ADD `type_flight` VARCHAR(50) NULL DEFAULT NULL;";
@@ -722,12 +728,14 @@ class update_schema {
     		$Connection = new Connection();
 		$error = '';
 		// Add table stats polar
-		if ($globalDBdriver == 'mysql') {
-			$error .= create_db::import_file('../db/stats_source.sql');
-		} else {
-			$error .= create_db::import_file('../db/pgsql/stats_source.sql');
+    		if (!$Connection->tableExists('stats_source')) {
+			if ($globalDBdriver == 'mysql') {
+    				$error .= create_db::import_file('../db/stats_source.sql');
+			} else {
+				$error .= create_db::import_file('../db/pgsql/stats_source.sql');
+			}
+			if ($error != '') return $error;
 		}
-		if ($error != '') return $error;
 		$query = "UPDATE config SET value = '23' WHERE name = 'schema_version'";
         	try {
             	    $sth = $Connection->db->prepare($query);
