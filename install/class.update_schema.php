@@ -408,7 +408,7 @@ class update_schema {
 	}
 
 	private static function update_from_11() {
-		global $dlobalDBdriver, $globalDBname;
+		global $globalDBdriver, $globalDBname;
     		$Connection = new Connection();
     		$query="ALTER TABLE spotter_output ADD owner_name VARCHAR(255) NULL DEFAULT NULL, ADD format_source VARCHAR(255) NULL DEFAULT NULL, ADD ground BOOLEAN NOT NULL DEFAULT FALSE, ADD last_ground BOOLEAN NOT NULL DEFAULT FALSE, ADD last_seen DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, ADD last_latitude FLOAT NULL, ADD last_longitude FLOAT NULL, ADD last_altitude INT(11) NULL, ADD last_ground_speed INT(11), ADD real_arrival_airport_icao VARCHAR(999), ADD real_arrival_airport_time VARCHAR(20),ADD real_departure_airport_icao VARCHAR(999), ADD real_departure_airport_time VARCHAR(20)";
         	try {
