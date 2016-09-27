@@ -233,7 +233,7 @@ class update_schema {
 
 	private static function update_from_6() {
     		$Connection = new Connection();
-    		if (!$Connection−>indexExists('spotter_output','flightaware_id')) {
+    		if (!$Connection->indexExists('spotter_output','flightaware_id')) {
     		    $query = "ALTER TABLE spotter_output ADD INDEX(flightaware_id);
 			ALTER TABLE spotter_output ADD INDEX(date);
 			ALTER TABLE spotter_output ADD INDEX(ident);
@@ -408,6 +408,7 @@ class update_schema {
 	}
 
 	private static function update_from_11() {
+		global $dlobalDBdriver, $globalDBname;
     		$Connection = new Connection();
     		$query="ALTER TABLE spotter_output ADD owner_name VARCHAR(255) NULL DEFAULT NULL, ADD format_source VARCHAR(255) NULL DEFAULT NULL, ADD ground BOOLEAN NOT NULL DEFAULT FALSE, ADD last_ground BOOLEAN NOT NULL DEFAULT FALSE, ADD last_seen DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, ADD last_latitude FLOAT NULL, ADD last_longitude FLOAT NULL, ADD last_altitude INT(11) NULL, ADD last_ground_speed INT(11), ADD real_arrival_airport_icao VARCHAR(999), ADD real_arrival_airport_time VARCHAR(20),ADD real_departure_airport_icao VARCHAR(999), ADD real_departure_airport_time VARCHAR(20)";
         	try {
@@ -517,8 +518,10 @@ class update_schema {
     		$Connection = new Connection();
 		$error = '';
     		// Add tables
-		$error .= create_db::import_file('../db/stats_flight.sql');
-		if ($error != '') return $error;
+    		if (!$Connection->tableExists('stats_flight')) {
+			$error .= create_db::import_file('../db/stats_flight.sql');
+			if ($error != '') return $error;
+		}
 		$query = "UPDATE `config` SET `value` = '15' WHERE `name` = 'schema_version'";
         	try {
             	    $sth = $Connection->db->prepare($query);
@@ -588,12 +591,14 @@ class update_schema {
     		$Connection = new Connection();
 		$error = '';
     		// Modify stats_airport table
-    		$query = "ALTER TABLE `stats_airport` ADD `type` VARCHAR(50) NOT NULL DEFAULT 'yearly', ADD `airport_name` VARCHAR(255) NOT NULL, ADD `date` DATE NULL DEFAULT NULL, DROP INDEX `airport_icao`, ADD UNIQUE `airport_icao` (`airport_icao`, `type`, `date`)";
-        	try {
-            	    $sth = $Connection->db->prepare($query);
-		    $sth->execute();
-    		} catch(PDOException $e) {
-		    return "error (update stats) : ".$e->getMessage()."\n";
+    		if (!$Connection->checkColumnName('stats_airport','yearly')) {
+    			$query = "ALTER TABLE `stats_airport` ADD `type` VARCHAR(50) NOT NULL DEFAULT 'yearly', ADD `airport_name` VARCHAR(255) NOT NULL, ADD `date` DATE NULL DEFAULT NULL, DROP INDEX `airport_icao`, ADD UNIQUE `airport_icao` (`airport_icao`, `type`, `date`)";
+    	        	try {
+	            	    $sth = $Connection->db->prepare($query);
+			    $sth->execute();
+    			} catch(PDOException $e) {
+			    return "error (update stats) : ".$e->getMessage()."\n";
+    			}
     		}
 		if ($error != '') return $error;
 		$query = "UPDATE `config` SET `value` = '19' WHERE `name` = 'schema_version'";
