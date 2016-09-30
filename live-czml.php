@@ -281,10 +281,10 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$prevlat = $spotter_item['latitude'];
 			$output .= round($spotter_item['altitude']*30.48);
 			$prevalt = round($spotter_item['altitude']*30.48);
-			$orientation = '"orientation" : { ';
-			$orientation .= '"unitQuaternion": [';
-			$quat = quaternionrotate(deg2rad($spotter_item['heading']),deg2rad(0),deg2rad(0));
-			$orientation .= '"'.date("c",strtotime($spotter_item['date'])).'",'.$quat['x'].','.$quat['y'].','.$quat['z'].','.$quat['w'];
+			//$orientation = '"orientation" : { ';
+			//$orientation .= '"unitQuaternion": [';
+			//$quat = quaternionrotate(deg2rad($spotter_item['heading']),deg2rad(0),deg2rad(0));
+			//$orientation .= '"'.date("c",strtotime($spotter_item['date'])).'",'.$quat['x'].','.$quat['y'].','.$quat['z'].','.$quat['w'];
 		} else {
 			$output .= ',"'.date("c",strtotime($spotter_item['date'])).'", ';
 			if ($spotter_item['ground_speed'] == 0) {
@@ -294,10 +294,18 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			} else {
 				$output .= $spotter_item['longitude'].', ';
 				$output .= $spotter_item['latitude'].', ';
-				$output .= round($spotter_item['altitude']*30.48);
+				if ($spotter_item['altitude'] == '') {
+					if ($prevalt != '') {
+						$output .= $prevalt;
+					} else {
+						$output .= 0;
+					}
+				} else {
+					$output .= round($spotter_item['altitude']*30.48);
+				}
 			}
-			$quat = quaternionrotate(deg2rad($spotter_item['heading']),deg2rad(0),deg2rad(0));
-			$orientation .= ',"'.date("c",strtotime($spotter_item['date'])).'",'.$quat['x'].','.$quat['y'].','.$quat['z'].','.$quat['w'];
+			//$quat = quaternionrotate(deg2rad($spotter_item['heading']),deg2rad(0),deg2rad(0));
+			//$orientation .= ',"'.date("c",strtotime($spotter_item['date'])).'",'.$quat['x'].','.$quat['y'].','.$quat['z'].','.$quat['w'];
 		}
 	}
 	$output  = substr($output, 0, -1);
