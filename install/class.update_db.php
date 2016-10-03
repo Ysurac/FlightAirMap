@@ -1568,7 +1568,6 @@ class update_db {
 
 	public static function update_tle() {
 		global $tmp_dir, $globalDebug;
-		$error = '';
 		if ($globalDebug) echo "Download TLE : Download...";
 		$alltle = array('stations.txt','gps-ops.txt','glo-ops.txt','galileo.txt','weather.txt','noaa.txt','goes.txt','resource.txt','dmc.txt','tdrss.txt','geo.txt','intelsat.txt','gorizont.txt',
 		'raduga.txt','molniya.txt','iridium.txt','orbcomm.txt','globalstar.txt','amateur.txt','x-comm.txt','other-comm.txt','sbas.txt','nnss.txt','musson.txt','science.txt','geodetic.txt',
@@ -1664,7 +1663,7 @@ class update_db {
 	public static function update_aircraft() {
 		global $tmp_dir, $globalDebug;
 		date_default_timezone_set('UTC');
-		$error = '';
+		//$error = '';
 		/*
 		if ($globalDebug) echo "Aircrafts : Download...";
 		$data_req_array = array('Mnfctrer' => '','Model' => '','Dscrptn'=> '','EngCount' =>'' ,'EngType'=> '','TDesig' => '*','WTC' => '','Button' => 'Search');

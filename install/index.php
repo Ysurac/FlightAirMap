@@ -515,8 +515,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">Bing map key is needed.</p>
 			</p>
 			<p>
-				<label for="map3d">Default to map in 3D</label>
+				<label for="map3ddefault">Default to map in 3D</label>
 				<input type="checkbox" name="map3ddefault" id="map3ddefault" value="map3ddefault"<?php if (isset($globalMap3Ddefault) && $globalMap3Ddefault) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="mapsatellites">Enable satellites in 3D map</label>
+				<input type="checkbox" name="mapsatellites" id="mapsatellites" value="mapsatellites"<?php if ((isset($globalMapSatellites) && $globalMapSatellites) || !isset($globalMapSatellites)) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Bing map key is needed.</p>
 			</p>
 			<br />
 			<p>
@@ -1028,6 +1033,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMap3D' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMap3D' => 'FALSE'));
+	}
+	$mapsatellites = filter_input(INPUT_POST,'mapsatellites',FILTER_SANITIZE_STRING);
+	if ($mapsatellites == 'mapsatellites') {
+		$settings = array_merge($settings,array('globalMapSatellites' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMapSatellites' => 'FALSE'));
 	}
 	$map3ddefault = filter_input(INPUT_POST,'map3ddefault',FILTER_SANITIZE_STRING);
 	if ($map3ddefault == 'map3ddefault') {
