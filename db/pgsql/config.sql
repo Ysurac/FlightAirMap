@@ -7,4 +7,4 @@ CREATE TABLE config (
 
 TRUNCATE TABLE config;
 
-INSERT INTO config (id, name, value) VALUES (1, 'schema_version', '23');
+INSERT INTO config (id, name, value) VALUES (1, 'schema_version', '24');

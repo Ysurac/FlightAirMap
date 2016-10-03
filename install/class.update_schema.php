@@ -946,6 +946,10 @@ class update_schema {
     			    $error = self::update_from_22();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
+    			} elseif ($result['value'] == '23') {
+    			    $error = self::update_from_23();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
     			} else return '';
     		    }
     		    else return $result['value'];
