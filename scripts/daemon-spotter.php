@@ -59,14 +59,14 @@ if (isset($globalServer) && $globalServer) {
     $SI=new SpotterServer();
 } else $SI=new SpotterImport($Connection->db);
 //$APRS=new APRS($Connection->db);
-$SBS=new SBS($Connection->db);
+$SBS=new SBS();
 $ACARS=new ACARS($Connection->db);
 $Common=new Common();
 date_default_timezone_set('UTC');
 //$servertz = system('date +%Z');
 // signal handler - playing nice with sockets and dump1090
 if (function_exists('pcntl_fork')) {
-    pcntl_signal(SIGINT,  function($signo) {
+    pcntl_signal(SIGINT,  function() {
         global $sockets;
         echo "\n\nctrl-c or kill signal received. Tidying up ... ";
         die("Bye!\n");
@@ -251,6 +251,10 @@ if (!isset($globalDaemon)) $globalDaemon = TRUE;
 connect_all($globalSources);
 
 // APRS Configuration
+if (!is_array($globalSources)) {
+	echo '$globalSources in require/settings.php MUST be an array';
+	die;
+}
 foreach ($globalSources as $key => $source) {
     if (isset($source['format']) && $source['format'] == 'aprs') {
 	$aprs_connect = 0;
@@ -264,7 +268,7 @@ foreach ($globalSources as $key => $source) {
 
 if ($use_aprs) {
 	require_once(dirname(__FILE__).'/../require/class.APRS.php');
-	$APRS=new APRS($Connection->db);
+	$APRS=new APRS();
 	$aprs_connect = 0;
 	$aprs_keep = 120;
 	$aprs_last_tx = time();
@@ -976,7 +980,7 @@ while ($i > 0) {
 		}
 	    }
 	}
-	if ($globalDaemon == false) {
+	if ($globalDaemon === false) {
 	    $SI->checkAll();
 	}
     }

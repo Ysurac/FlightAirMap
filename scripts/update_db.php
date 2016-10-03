@@ -9,7 +9,7 @@
 if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
 	exec("ps u", $output, $result);
 	$j = 0;
-	foreach ($output AS $line) if(strpos($line, "update_db.php")) $j++;
+	foreach ($output as $line) if(strpos($line, "update_db.php")) $j++;
 	if ($j > 1) {
 		echo "Script is already runnning...";
 		die();
@@ -51,6 +51,13 @@ if (isset($globalOwner) && $globalOwner && $update_db->check_last_owner_update()
 	$update_db->insert_last_owner_update();
 } elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Owner are only updated every 15 days.\n";
 
+if (isset($globalSchedules) && $globalSchedules && $update_db->check_last_schedules_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+	echo "Updating schedules...";
+	$update_db->update_oneworld();
+	$update_db->update_skyteam();
+	$update_db->insert_last_schedules_update();
+} elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Schedules are only updated every 15 days.\n";
+
 if (isset($globalArchiveMonths) && $globalArchiveMonths > 0) {
 	echo "Updating statistics and archive old data...";
 	require_once(dirname(__FILE__).'/../require/class.Stats.php');
@@ -78,8 +85,15 @@ if (isset($globalACARSArchiveKeepMonths) && $globalACARSArchiveKeepMonths > 0) {
 	$ACARS = new ACARS();
 	$ACARS->deleteArchiveAcarsData();
 }
+
 if (isset($globalMap3D) && $globalMap3D) {
+	if (isset($globalMapSatellites) && $globalMapSatellites && $update_db->check_last_tle_update()) {
+		echo "Updating tle for satellites position...";
+		$update_db->update_tle();
+		$update_db->insert_last_tle_update();
+	}
 	echo "Update 3D models...";
 	$update_db->update_models();
+	$update_db->update_space_models();
 }
 ?>

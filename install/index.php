@@ -204,7 +204,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p>
 					<label for="bingkey">Bing Map key</label>
 					<input type="text" name="bingkey" id="bingkey" value="<?php if (isset($globalBingMapKey)) print $globalBingMapKey; ?>" />
-					<p class="help-block">Get a key <a href="https://msdn.microsoft.com/en-us/library/ff428642.aspx">here</a></p>
+					<p class="help-block">Get a key <a href="https://www.bingmapsportal.com/">here</a></p>
 				</p>
 			</div>
 			<br />
@@ -512,6 +512,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="map3d">Enable map in 3D</label>
 				<input type="checkbox" name="map3d" id="map3d" value="map3d"<?php if ((isset($globalMap3D) && $globalMap3D) || !isset($globalMap3D)) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Bing map key is needed.</p>
 			</p>
 			<p>
 				<label for="map3d">Default to map in 3D</label>
@@ -660,12 +661,12 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="daemon">Use daemon-spotter.php as daemon</label>
 				<input type="checkbox" name="daemon" id="daemon" value="daemon"<?php if ((isset($globalDaemon) && $globalDaemon) || !isset($globalDaemon)) { ?> checked="checked"<?php } ?> onClick="daemon_js()" />
+				<p class="help-block">Uncheck if the script is running as cron job</p>
 				<div id="cronends"> 
 					<label for="cronend">Run script for xx seconds</label>
 					<input type="number" name="cronend" id="cronend" value="<?php if (isset($globalCronEnd)) print $globalCronEnd; else print '0'; ?>" />
 					<p class="help-block">Set to 0 to disable. Should be disabled if source is URL.</p>
 				</div>
-				<p class="help-block">Uncheck if the script is running as cron job</p>
 			</p>
 			<br />
 <!--
@@ -1275,7 +1276,7 @@ if (isset($_POST['dbtype'])) {
 	if (isset($globalMap3D) && $globalMap3D) {
 		print '<p>You need to run <b>scripts/update_db.php</b> first time manually, this will update all and download 3D models.</p>';
 	}
-	print '<p>If you want to keep external data updated, you have to add <b>scripts/update_db.php</b> in cron.</p>';
+	print '<p>If you want to keep external data updated, you have to add <b>scripts/update_db.php</b> in cron (every hour or 30 minutes if computer is fast enough).</p>';
 	print '</div>';
 } else {
 	unset($_SESSION['install']);

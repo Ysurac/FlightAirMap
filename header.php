@@ -5,7 +5,7 @@
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
 $current_page = $file_path['filename'];
 date_default_timezone_set($globalTimezone);
-if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
+if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] != '') $MapType = $_COOKIE['MapType'];
 else $MapType = $globalMapProvider;
 ?>
 <!DOCTYPE html>

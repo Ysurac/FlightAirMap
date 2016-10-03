@@ -52,7 +52,7 @@ require_once('header.php');
 	<li>Boostrap <a href="http://getbootstrap.com/">getbootstrap.com</a></li>
 	<li>Sidebar v2 <a href="https://github.com/Turbo87/sidebar-v2">https://github.com/Turbo87/sidebar-v2</a></li>
 	<li><a href="http://www.adsbhub.net/">ADSBHUB.net</a> to share ADS-B data</li>
-	<li><a href="http://www.cesiumjs.org">Cesium</a> to display flight on a WebGL virtual globe</li>
+	<li><a href="http://www.cesiumjs.org">Cesium</a> used to display flights on a WebGL virtual globe</li>
     </ul>
 
     <h3>Data License</h3>
@@ -63,6 +63,7 @@ require_once('header.php');
     <ul>
 	<li>Airports and location icons from <a href="http://mapicons.nicolasmollet.com/">http://mapicons.nicolasmollet.com/</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 3.0 BY-SA</a>.</li>
 	<li>Waypoints icons from <a href="http://www.fatcow.com/free-icons/">http://www.fatcow.com/free-icons/</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 3.0 BY-SA</a>.</li>
+	<li><a href="https://www.iconfinder.com/icons/1031459/antenna_communication_gps_satelite_space_icon">Satellite icon</a> by Nazarrudin Ansyari</li>
     </ul>
 
 </div>

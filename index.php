@@ -2,6 +2,7 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
+require_once('require/class.Satellite.php');
 
 $title = _("Home");
 require_once('header.php');
@@ -54,6 +55,11 @@ require_once('header.php');
 	<li><a href="#" onclick="show3D(); return false;" role="tab" title="3D"><b>3D</b></a></li>
 <?php
         } else {
+    	    if (isset($globalMapSatellites) && $globalMapSatellites) {
+?>
+	<li><a href="#satellites" role="tab" title="<?php echo _("Satellites"); ?>"><i class="satellite"></i></a></li>
+<?php
+	    }
 ?>
 	<li><a href="#" onclick="show2D(); return false;" role="tab" title="2D"><b>2D</b></a></li>
 <?php
@@ -149,7 +155,7 @@ require_once('header.php');
 		    <li><?php echo _("Type of Map:"); ?>
 			<select  class="selectpicker" onchange="mapType(this);">
 			    <?php
-				if (!isset($_COOKIE['MapType'])) $MapType = $globalMapProvider;
+				if (!isset($_COOKIE['MapType']) || $_COOKIE['MapType'] == '') $MapType = $globalMapProvider;
 				else $MapType = $_COOKIE['MapType'];
 			    ?>
 			    <?php
@@ -247,7 +253,6 @@ require_once('header.php');
 <?php
     if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 ?>
-		    <li><div class="checkbox"><label><input type="checkbox" name="displayiss" value="1" onclick="clickDisplayISS(this)" <?php if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') print 'checked'; ?> ><?php echo _("Show ISS on map"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayminimap" value="1" onclick="clickDisplayMinimap(this)" <?php if (!isset($_COOKIE['displayminimap']) || (isset($_COOKIE['displayminimap']) && $_COOKIE['displayminimap'] == 'true')) print 'checked'; ?> ><?php echo _("Show mini-map"); ?></label></div></li>
 <?php
     }
@@ -394,6 +399,55 @@ require_once('header.php');
 	    </form>
 	    <p><?php echo _("Any change in settings reload page"); ?></p>
     	</div>
+<?php
+    if (isset($globalMapSatellites) && $globalMapSatellites && isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+?>
+        <div class="sidebar-pane" id="satellites">
+	    <h1 class="sidebar-header"><?php echo _("Satellites"); ?><span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+	    <form>
+		<ul>
+		    <li><div class="checkbox"><label><input type="checkbox" name="displayiss" value="1" onclick="clickDisplayISS(this)" <?php if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') print 'checked'; ?> ><?php echo _("Show ISS, Tiangong-1 and Tiangong-2 on map"); ?></label></div></li>
+		    <li><?php echo _("Type:"); ?>
+			<select class="selectpicker" multiple onchange="sattypes(this);">
+			    <?php
+				$Satellite = new Satellite();
+				$types = $Satellite->get_tle_types();
+				foreach ($types as $type) {
+					$type_name = $type['tle_type'];
+					if ($type_name == 'musson') $type_name = 'Russian LEO Navigation';
+					else if ($type_name == 'nnss') $type_name = 'Navi Navigation Satellite System';
+					else if ($type_name == 'sbas') $type_name = 'Satellite-Based Augmentation System';
+					else if ($type_name == 'glo-ops') $type_name = 'Glonass Operational';
+					else if ($type_name == 'gps-ops') $type_name = 'GPS Operational';
+					else if ($type_name == 'argos') $type_name = 'ARGOS Data Collection System';
+					else if ($type_name == 'tdrss') $type_name = 'Tracking and Data Relay Satellite System';
+					else if ($type_name == 'sarsat') $type_name = 'Search & Rescue';
+					else if ($type_name == 'dmc') $type_name = 'Disaster Monitoring';
+					else if ($type_name == 'resource') $type_name = 'Earth Resources';
+					else if ($type_name == 'stations') $type_name = 'Space Stations';
+					else if ($type_name == 'geo') $type_name = 'Geostationary';
+					else if ($type_name == 'amateur') $type_name = 'Amateur Radio';
+					else if ($type_name == 'x-comm') $type_name = 'Experimental';
+					else if ($type_name == 'other-comm') $type_name = 'Other Comm';
+					else if ($type_name == 'science') $type_name = 'Space & Earth Science';
+					else if ($type_name == 'military') $type_name = 'Miscellaneous Military';
+					else if ($type_name == 'radar') $type_name = 'Radar Calibration';
+					
+					if (isset($_COOKIE['sattypes']) && in_array($type['tle_type'],explode(',',$_COOKIE['sattypes']))) {
+						print '<option value="'.$type['tle_type'].'" selected>'.$type_name.'</option>';
+					} else {
+						print '<option value="'.$type['tle_type'].'">'.$type_name.'</option>';
+					}
+				}
+			    ?>
+			</select>
+		    </li>
+		</ul>
+	    </form>
+	</div>
+<?php
+    }
+?>
     </div>
 </div>
 <!--

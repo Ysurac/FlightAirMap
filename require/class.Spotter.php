@@ -4053,7 +4053,7 @@ class Spotter{
 	public function countAllAircraftTypes($limit = true,$olderthanmonths = 0,$sincedate = '')
 	{
 		global $globalDBdriver;
-		$query  = "SELECT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
+		$query  = "SELECT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer 
                     FROM spotter_output
                     WHERE spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' ";
                 if ($olderthanmonths > 0) {
@@ -4073,7 +4073,7 @@ class Spotter{
 
                 //if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
                 //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
-                $query .= "GROUP BY spotter_output.aircraft_icao, spotter_output.aircraft_name ORDER BY aircraft_icao_count DESC";
+                $query .= "GROUP BY spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer ORDER BY aircraft_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
@@ -4087,6 +4087,7 @@ class Spotter{
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
+			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_icao_count'] = $row['aircraft_icao_count'];
 
 			$aircraft_array[] = $temp_array;

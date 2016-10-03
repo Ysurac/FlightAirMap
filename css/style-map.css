@@ -145,6 +145,11 @@ body {
     opacity:0.7 !important;
 }
 
+.satellite {
+    display: inline-block;
+    content:url(../images/satellite.png);
+}
+
 body.page-index .leaflet-popup-content-wrapper{
   width:400px;
 }

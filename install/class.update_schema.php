@@ -797,37 +797,46 @@ class update_schema {
 
 	private static function update_from_23() {
 		global $globalDBdriver;
-    		$Connection = new Connection();
+		$Connection = new Connection();
 		$error = '';
-		// Add table stats polar
+		$query = "";
+		// Add table tle for satellites
 		if ($globalDBdriver == 'mysql') {
-			//$error .= create_db::import_file('../db/stats_source.sql');
+			if (!$Connection->tableExists('tle')) {
+				$error .= create_db::import_file('../db/tle.sql');
+				if ($error != '') return $error;
+			}
 		} else {
-			//$error .= create_db::import_file('../db/pgsql/stats_source.sql');
+			if (!$Connection->tableExists('tle')) {
+				$error .= create_db::import_file('../db/pgsql/tle.sql');
+				if ($error != '') return $error;
+			}
 			$query = "create index flightaware_id_idx ON spotter_archive USING btree(flightaware_id)";
-        		try {
-		    		$sth = $Connection->db->prepare($query);
+			try {
+				$sth = $Connection->db->prepare($query);
 				$sth->execute();
 			} catch(PDOException $e) {
 				return "error (create index on spotter_archive) : ".$e->getMessage()."\n";
 			}
 		}
-    		$query = "";
-        	try {
+		if (!$Connection->checkColumnName('stats_aircraft','aircraft_manufacturer')) {
+			// Add aircraft_manufacturer to stats_aircraft
+    			$query = "ALTER TABLE stats_aircraft ADD aircraft_manufacturer VARCHAR(255) NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add aircraft_manufacturer column) : ".$e->getMessage()."\n";
+    			}
+    		}
+		
+		$query = "UPDATE config SET value = '24' WHERE name = 'schema_version'";
+		try {
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
-			return "error (create index on spotter_archive) : ".$e->getMessage()."\n";
+			return "error (update schema_version) : ".$e->getMessage()."\n";
 		}
-
-		if ($error != '') return $error;
-		$query = "UPDATE config SET value = '24' WHERE name = 'schema_version'";
-        	try {
-            	    $sth = $Connection->db->prepare($query);
-		    $sth->execute();
-    		} catch(PDOException $e) {
-		    return "error (update schema_version) : ".$e->getMessage()."\n";
-    		}
 		return $error;
 	}
 

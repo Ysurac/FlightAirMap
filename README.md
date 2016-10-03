@@ -15,6 +15,9 @@ It also support glidernet APRS source.
 * From IVAO : [https://ivao.flightairmap.fr/](https://ivao.flightairmap.fr/)
 * From VATSIM : [https://vatsim.flightairmap.fr/](https://vatsim.flightairmap.fr/)
 
+## Documentation
+
+A wiki is available here: https://github.com/Ysurac/FlightAirMap/wiki
 
 ## System Requirements
 

@@ -99,7 +99,7 @@
   left: 0;
   right: 0;
   box-sizing: border-box;
-  padding: 10px 20px; }
+  padding: 10px 10px; }
   .sidebar-pane.active {
     display: block; }
   @media (min-width: 768px) and (max-width: 991px) {
@@ -111,7 +111,9 @@
   @media (min-width: 1200px) {
     .sidebar-pane {
       min-width: 420px; } }
-
+.sidebar-pane form {
+    padding: 5px;
+}
 .sidebar-header {
   margin: -10px -20px 0;
   height: 40px;

@@ -176,6 +176,7 @@ if ($facebook_meta_image != "")
 		    </ul>
 		</li>
 		-->
+		<li><a href="https://github.com/Ysurac/FlightAirMap/wiki" target="_blank">Documentation</a></li>
 	     </ul>
 	</div>
 <?php

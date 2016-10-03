@@ -105,8 +105,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllAircraftManufacturers($limit = true) {
-		if ($limit) $query = "SELECT aircraft.manufacturer AS aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft,aircraft WHERE stats_aircraft.aircraft_icao=aircraft.icao GROUP BY aircraft.manufacturer ORDER BY aircraft_manufacturer_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT aircraft.manufacturer AS aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft,aircraft WHERE stats_aircraft.aircraft_icao=aircraft.icao GROUP BY aircraft.manufacturer ORDER BY aircraft_manufacturer_count DESC";
+		if ($limit) $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -778,14 +778,14 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatAircraft($aircraft_icao,$cnt,$aircraft_name = '') {
+	public function addStatAircraft($aircraft_icao,$cnt,$aircraft_name = '',$aircraft_manufacturer = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,cnt) VALUES (:aircraft_icao,:aircraft_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+			$query = "INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,aircraft_manufacturer,cnt) VALUES (:aircraft_icao,:aircraft_name,:aircraft_manufacturer,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, aircraft_manufacturer = :aircraft_manufacturer";
 		} else {
-			$query = "UPDATE stats_aircraft SET cnt = cnt+:cnt WHERE aircraft_icao = :aircraft_icao; INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,cnt) SELECT :aircraft_icao,:aircraft_name,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_aircraft WHERE aircraft_icao = :aircraft_icao);"; 
+			$query = "UPDATE stats_aircraft SET cnt = cnt+:cnt, aircraft_manufacturer = :aircraft_manufacturer WHERE aircraft_icao = :aircraft_icao; INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,aircraft_manufacturer,cnt) SELECT :aircraft_icao,:aircraft_name,:aircraft_manufacturer,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_aircraft WHERE aircraft_icao = :aircraft_icao);"; 
 		}
-                $query_values = array(':aircraft_icao' => $aircraft_icao,':aircraft_name' => $aircraft_name,':cnt' => $cnt);
+                $query_values = array(':aircraft_icao' => $aircraft_icao,':aircraft_name' => $aircraft_name,':cnt' => $cnt, ':aircraft_manufacturer' => $aircraft_manufacturer);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -999,7 +999,7 @@ class Stats {
 				$monthsSinceLastYear = date('n');
 				$alldata = $Spotter->countAllAircraftTypes(false,$monthsSinceLastYear);
 				foreach ($alldata as $number) {
-					$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name']);
+					$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name'],$number['aircraft_manufacturer']);
 				}
 				$alldata = $Spotter->countAllAirlines(false,$monthsSinceLastYear);
 				foreach ($alldata as $number) {
@@ -1050,7 +1050,7 @@ class Stats {
 			if ($globalArchiveMonths > 0) {
 				$alldata = $Spotter->countAllAircraftTypes(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
-					$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name']);
+					$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name'],$number['aircraft_manufacturer']);
 				}
 				$alldata = $Spotter->countAllAirlines(false,$globalArchiveMonths);
 				foreach ($alldata as $number) {
@@ -1163,7 +1163,7 @@ class Stats {
 			$Spotter = new Spotter($this->db);
 			$alldata = $Spotter->countAllAircraftTypes(false,0,$last_update_day);
 			foreach ($alldata as $number) {
-				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name']);
+				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name'],$number['aircraft_manufacturer']);
 			}
 			$alldata = $Spotter->countAllAirlines(false,0,$last_update_day);
 			foreach ($alldata as $number) {

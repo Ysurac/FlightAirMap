@@ -38,6 +38,11 @@
 	echo "Install 3D models...";
 	update_db::update_models();
 	echo "Done !\n";
+	if (isset($globalMapSatellites) && $globalMapSatellites) {
+	    echo "Install Space 3D models...";
+	    update_db::update_space_models();
+	    echo "Done !\n";
+        }
     }
 
 ?>

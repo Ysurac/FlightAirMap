@@ -939,6 +939,55 @@ class update_db {
 		return '';
         }
 
+	public static function tle($filename,$tletype) {
+		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
+		global $tmp_dir, $globalTransaction;
+		//$Spotter = new Spotter();
+		
+		$query = "DELETE FROM tle WHERE tle_source = '' OR tle_source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => $filename));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+		
+		$Connection = new Connection();
+		if (($handle = fopen($filename, 'r')) !== FALSE)
+		{
+			$i = 0;
+			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
+			//$Connection->db->beginTransaction();
+			$dbdata = array();
+			while (($data = fgets($handle, 1000)) !== FALSE)
+			{
+				if ($i == 0) {
+					$dbdata['name'] = trim($data);
+					$i++;
+				} elseif ($i == 1) {
+					$dbdata['tle1'] = trim($data);
+					$i++;
+				} elseif ($i == 2) {
+					$dbdata['tle2'] = trim($data);
+					//print_r($dbdata);
+					$query = 'INSERT INTO tle (tle_name,tle_tle1,tle_tle2,tle_type,tle_source) VALUES (:name, :tle1, :tle2, :type, :source)';
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':name' => $dbdata['name'],':tle1' => $dbdata['tle1'],':tle2' => $dbdata['tle2'], ':type' => $tletype,':source' => $filename));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+
+					$i = 0;
+				}
+			}
+			fclose($handle);
+			//$Connection->db->commit();
+		}
+		return '';
+        }
+
 	/**
         * Convert a HTML table to an array
         * @param String $data HTML page
@@ -1517,6 +1566,27 @@ class update_db {
 		return '';
 	}
 
+	public static function update_tle() {
+		global $tmp_dir, $globalDebug;
+		$error = '';
+		if ($globalDebug) echo "Download TLE : Download...";
+		$alltle = array('stations.txt','gps-ops.txt','glo-ops.txt','galileo.txt','weather.txt','noaa.txt','goes.txt','resource.txt','dmc.txt','tdrss.txt','geo.txt','intelsat.txt','gorizont.txt',
+		'raduga.txt','molniya.txt','iridium.txt','orbcomm.txt','globalstar.txt','amateur.txt','x-comm.txt','other-comm.txt','sbas.txt','nnss.txt','musson.txt','science.txt','geodetic.txt',
+		'engineering.txt','education.txt','military.txt','radar.txt','cubesat.txt','other.txt','tle-new.txt');
+		foreach ($alltle as $filename) {
+			if ($globalDebug) echo "downloading ".$filename.'...';
+			update_db::download('http://celestrak.com/NORAD/elements/'.$filename,$tmp_dir.$filename);
+			if (file_exists($tmp_dir.$filename)) {
+				if ($globalDebug) echo "Add to DB ".$filename."...";
+				$error = update_db::tle($tmp_dir.$filename,str_replace('.txt','',$filename));
+			} else $error = "File ".$tmp_dir.$filename." doesn't exist. Download failed.";
+			if ($error != '') {
+				echo $error."\n";
+			} elseif ($globalDebug) echo "Done\n";
+		}
+		return '';
+	}
+
 	public static function update_models() {
 		global $tmp_dir, $globalDebug;
 		$error = '';
@@ -1532,7 +1602,7 @@ class update_db {
 				}
 			}
 			$modelsdb = array();
-			if (file_exists(dirname(__FILE__).'../models/models.md5sum')) {
+			if (file_exists(dirname(__FILE__).'/../models/models.md5sum')) {
 				if (($handle = fopen(dirname(__FILE__).'/../models/models.md5sum','r')) !== FALSE) {
 					while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
 						$model = trim($row[2]);
@@ -1547,6 +1617,43 @@ class update_db {
 				
 			}
 			update_db::download('http://data.flightairmap.fr/data/models/models.md5sum',dirname(__FILE__).'/../models/models.md5sum');
+		} else $error = "File ".$tmp_dir.'models.md5sum'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+
+	public static function update_space_models() {
+		global $tmp_dir, $globalDebug;
+		$error = '';
+		if ($globalDebug) echo "Space models from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.fr/data/models/space/space_models.md5sum',$tmp_dir.'space_models.md5sum');
+		if (file_exists($tmp_dir.'space_models.md5sum')) {
+			if ($globalDebug) echo "Check files...\n";
+			$newmodelsdb = array();
+			if (($handle = fopen($tmp_dir.'space_models.md5sum','r')) !== FALSE) {
+				while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+					$model = trim($row[2]);
+					$newmodelsdb[$model] = trim($row[0]);
+				}
+			}
+			$modelsdb = array();
+			if (file_exists(dirname(__FILE__).'/../models/space/space_models.md5sum')) {
+				if (($handle = fopen(dirname(__FILE__).'/../models/space/space_models.md5sum','r')) !== FALSE) {
+					while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+						$model = trim($row[2]);
+						$modelsdb[$model] = trim($row[0]);
+					}
+				}
+			}
+			$diff = array_diff($newmodelsdb,$modelsdb);
+			foreach ($diff as $key => $value) {
+				if ($globalDebug) echo 'Downloading space model '.$key.' ...'."\n";
+				update_db::download('http://data.flightairmap.fr/data/models/space/'.$key,dirname(__FILE__).'/../models/space/'.$key);
+				
+			}
+			update_db::download('http://data.flightairmap.fr/data/models/space/space_models.md5sum',dirname(__FILE__).'/../models/space/space_models.md5sum');
 		} else $error = "File ".$tmp_dir.'models.md5sum'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
@@ -1758,7 +1865,7 @@ class update_db {
 		if ($globalDBdriver == 'mysql') {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_schedules' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
 		} else {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_owner_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '15 DAYS'";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_schedules' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '15 DAYS'";
 		}
 		try {
 			$Connection = new Connection();
@@ -1775,6 +1882,36 @@ class update_db {
 	public static function insert_last_schedules_update() {
 		$query = "DELETE FROM config WHERE name = 'last_update_schedules';
 			INSERT INTO config (name,value) VALUES ('last_update_schedules',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
+	public static function check_last_tle_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_tle' AND value > DATE_SUB(DATE(NOW()), INTERVAL 7 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_tle' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '7 DAYS'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return false;
+                else return true;
+	}
+
+	public static function insert_last_tle_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_tle';
+			INSERT INTO config (name,value) VALUES ('last_update_tle',NOW());";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
@@ -1809,4 +1946,5 @@ class update_db {
 //echo update_db::update_routes();
 //update_db::update_models();
 //echo $update_db::update_skyteam();
+//echo $update_db::update_tle();
 ?>
