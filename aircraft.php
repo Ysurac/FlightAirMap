@@ -16,11 +16,12 @@ if (isset($_POST['aircraft_type']))
 	print '<h1>'._("Aircrafts Types").'</h1>';
 
 	$aircraft_types = $Stats->getAllAircraftTypes();
-	if (empty($aircraft_types) || $aircraft_types[0]['aircraft_name'] == '') $aircraft_types = $Spotter->getAllAircraftTypes();
+	if (empty($aircraft_types) || $aircraft_types[0]['aircraft_manufacturer'] == '') $aircraft_types = $Spotter->getAllAircraftTypes();
 	$previous = null;
 	print '<div class="alphabet-legend">';
 	foreach($aircraft_types as $value) {
-		$firstLetter = substr($value['aircraft_name'], 0, 1);
+		//$firstLetter = substr($value['aircraft_name'], 0, 1);
+		$firstLetter = substr($value['aircraft_manufacturer'], 0, 1);
 		if($previous !== $firstLetter)
 		{
 			if ($previous !== null) print ' | ';
@@ -31,7 +32,8 @@ if (isset($_POST['aircraft_type']))
 	print '</div>';
 	$previous = null;
 	foreach($aircraft_types as $value) {
-		$firstLetter = substr($value['aircraft_name'], 0, 1);
+		//$firstLetter = substr($value['aircraft_name'], 0, 1);
+		$firstLetter = substr($value['aircraft_manufacturer'], 0, 1);
 		if ($firstLetter != "")
 		{
 			if($previous !== $firstLetter)
@@ -42,7 +44,11 @@ if (isset($_POST['aircraft_type']))
 			$previous = $firstLetter;
 			print '<div class="alphabet-item">';
 			print '<a href="'.$globalURL.'/aircraft/'.$value['aircraft_icao'].'">';
-			print $value['aircraft_name'];
+			if ($value['aircraft_name'] == '') {
+				print $value['aircraft_manufacturer'].' '.$value['aircraft_icao'];
+			} else {
+				print $value['aircraft_manufacturer'].' '.$value['aircraft_name'];
+			}
 			print '</a>';
 			print '</div>';
 		}

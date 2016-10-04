@@ -48,7 +48,7 @@ class Stats {
                 return $all;
         }
 	public function getAllAircraftTypes() {
-                $query = "SELECT * FROM stats_aircraft ORDER BY aircraft_name ASC";
+                $query = "SELECT * FROM stats_aircraft ORDER BY aircraft_manufacturer ASC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -781,9 +781,9 @@ class Stats {
 	public function addStatAircraft($aircraft_icao,$cnt,$aircraft_name = '',$aircraft_manufacturer = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,aircraft_manufacturer,cnt) VALUES (:aircraft_icao,:aircraft_name,:aircraft_manufacturer,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, aircraft_manufacturer = :aircraft_manufacturer";
+			$query = "INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,aircraft_manufacturer,cnt) VALUES (:aircraft_icao,:aircraft_name,:aircraft_manufacturer,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, aircraft_name = :aircraft_name, aircraft_manufacturer = :aircraft_manufacturer";
 		} else {
-			$query = "UPDATE stats_aircraft SET cnt = cnt+:cnt, aircraft_manufacturer = :aircraft_manufacturer WHERE aircraft_icao = :aircraft_icao; INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,aircraft_manufacturer,cnt) SELECT :aircraft_icao,:aircraft_name,:aircraft_manufacturer,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_aircraft WHERE aircraft_icao = :aircraft_icao);"; 
+			$query = "UPDATE stats_aircraft SET cnt = cnt+:cnt, aircraft_name = :aircraft_name, aircraft_manufacturer = :aircraft_manufacturer WHERE aircraft_icao = :aircraft_icao; INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,aircraft_manufacturer,cnt) SELECT :aircraft_icao,:aircraft_name,:aircraft_manufacturer,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_aircraft WHERE aircraft_icao = :aircraft_icao);"; 
 		}
                 $query_values = array(':aircraft_icao' => $aircraft_icao,':aircraft_name' => $aircraft_name,':cnt' => $cnt, ':aircraft_manufacturer' => $aircraft_manufacturer);
                  try {
