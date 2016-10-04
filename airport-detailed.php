@@ -80,7 +80,13 @@ if (!isset($_GET['airport'])){
 			print '<div><span class="label">'._("Country").'</span>'.$airport_array[0]['country'].'</div>';
 			print '<div><span class="label">'._("ICAO").'</span>'.$airport_array[0]['icao'].'</div>';
 			print '<div><span class="label">'._("IATA").'</span>'.$airport_array[0]['iata'].'</div>';
-			print '<div><span class="label">'._("Altitude").'</span>'.$airport_array[0]['altitude'].'</div>';
+			print '<div><span class="label">'._("Altitude").'</span>';
+			if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
+				print $airport_array[0]['altitude'].' feet';
+			} else {
+				print round($airport_array[0]['altitude']*0.3048).' m';
+			}
+			print '</div>';
 			print '<div><span class="label">'._("Coordinates").'</span><a href="http://maps.google.ca/maps?z=10&t=k&q='.$airport_array[0]['latitude'].','.$airport_array[0]['longitude'].'" target="_blank">Google Map<i class="fa fa-angle-double-right"></i></a></div>';
 			print '</div>';
 			
