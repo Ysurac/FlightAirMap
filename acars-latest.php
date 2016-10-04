@@ -35,7 +35,7 @@ print '</div>';
 print '<div class="table column">';	
 print '<p>'._("The table below shows the latest ACARS messages.").'</p>';
 $spotter_array = $ACARS->getLatestAcarsData($limit_start.",".$absolute_difference);
-if (!empty($spotter_array)) {
+if (!empty($spotter_array) && $spotter_array[0]['query_number_rows'] != 0) {
 	include('table-output.php');
 	print '<div class="pagination">';
 	if ($limit_previous_1 >= 0) print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
