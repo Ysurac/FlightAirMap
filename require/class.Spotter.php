@@ -2240,7 +2240,7 @@ class Spotter{
 								ORDER BY spotter_output.aircraft_name ASC";
 								
 		*/
-		$query = "SELECT DISTINCT icao AS aircraft_icao, type AS aircraft_name, manufacturer AS aircraft_manufacturer FROM aircraft WHERE icao <> '' ORDER BY aircraft_name ASC";
+		$query = "SELECT DISTINCT icao AS aircraft_icao, type AS aircraft_name, manufacturer AS aircraft_manufacturer FROM aircraft WHERE icao <> '' ORDER BY aircraft_manufacturer ASC";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute();

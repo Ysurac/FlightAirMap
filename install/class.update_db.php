@@ -1556,7 +1556,6 @@ class update_db {
 
 	public static function update_translation_fam() {
 		global $tmp_dir, $globalDebug;
-		$error = '';
 		if ($globalDebug) echo "Translation from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.fr/data/translation.tsv.gz',$tmp_dir.'translation.tsv.gz');
 		if (file_exists($tmp_dir.'translation.tsv.gz')) {

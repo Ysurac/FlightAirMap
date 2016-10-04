@@ -507,7 +507,7 @@ function displayData(data) {
 //				viewer.dataSources.get(dsn).entities.remove(entity);
 //			}
 			//console.log(entity.lastupdate);
-			if (parseInt(entity.lastupdate) < Math.floor(Date.now()-<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>)) {
+			if (parseInt(entity.lastupdate) < Math.floor(Date.now()-<?php if (isset($globalMapRefresh)) print $globalMapRefresh*2000; else print '60000'; ?>)) {
 //				console.log('Remove an entity date');
 				viewer.dataSources.get(dsn).entities.remove(entity);
 			} else {
@@ -548,20 +548,22 @@ function displayDataSat(data) {
 		if (typeof existing != 'undefined') {
 			var last = viewer.dataSources.get(dsn).entities.getById(entity.id);
 			if (typeof last == 'undefined') {
-				entity.addProperty('lastupdatesat');
-				entity.lastupdatesat = Date.now();
 				entity.addProperty('type');
 				entity.type = 'sat';
+				entity.addProperty('lastupdatesat');
+				entity.lastupdatesat = Date.now();
 				viewer.dataSources.get(dsn).entities.add(entity);
 			} else {
 				last.lastupdatesat = Date.now();
+				last.addProperty('type');
+				last.type = 'sat';
 			}
 		} else {
 			//console.log('First time');
-			entity.addProperty('lastupdatesat');
-			entity.lastupdatesat = Date.now();
 			entity.addProperty('type');
 			entity.type = 'sat';
+			entity.addProperty('lastupdatesat');
+			entity.lastupdatesat = Date.now();
 		}
 	}
 
@@ -571,7 +573,7 @@ function displayDataSat(data) {
 	} else {
 		for (var i = 0; i < viewer.dataSources.get(dsn).entities.values.length; i++) {
 			var entity = viewer.dataSources.get(dsn).entities.values[i];
-			if (parseInt(entity.lastupdatesat) < Math.floor(Date.now()-<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>)) {
+			if (parseInt(entity.lastupdatesat) < Math.floor(Date.now()-<?php if (isset($globalMapRefresh)) print $globalMapRefresh*2000; else print '60000'; ?>)) {
 				viewer.dataSources.get(dsn).entities.remove(entity);
 			}
 		}
@@ -779,7 +781,7 @@ handler.setInputAction(function(click) {
 		//console.log(pickedObject.id);
 		var currenttime = viewer.clock.currentTime;
 		//console.log(pickedObject.id.position.getValue(viewer.clock.currentTime));
-//		console.log(pickedObject.id);
+		console.log(pickedObject.id);
 //		if (typeof pickedObject.id.lastupdate != 'undefined') {
 		if (pickedObject.id.type == 'flight') {
 			flightaware_id = pickedObject.id.id;

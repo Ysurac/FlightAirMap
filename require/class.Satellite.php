@@ -85,8 +85,8 @@ class Satellite {
 	
 	public function position($name,$timestamp_begin = '',$timestamp_end = '',$second = 10) {
 		$qth = new Predict_QTH();
-		$qth->lat = 37.790252;
-		$qth->lon = -122.419968;
+		$qth->lat = floatval(37.790252);
+		$qth->lon = floatval(-122.419968);
 	
 		$tle_file = $this->get_tle($name);
 		//print_r($tle_file);
@@ -102,6 +102,7 @@ class Satellite {
 			$predict->predict_calc($sat,$qth,$now);
 			return array('name' => $name, 'latitude' => $sat->ssplat,'longitude' => $sat->ssplon, 'altitude' => $sat->alt,'speed' => $sat->velo*60*60,'timestamp' => $timestamp_begin,'type' => $type);
 		} else {
+			$result = array();
 			for ($timestamp = $timestamp_begin; $timestamp <= $timestamp_end; $timestamp=$timestamp+$second) {
 				//echo $timestamp."\n";
 				$now = Predict_Time::unix2daynum($timestamp);

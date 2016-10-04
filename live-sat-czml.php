@@ -76,7 +76,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$orientation = '';
 			$prev_satname = $spotter_item['name'];
 			$output .= '{';
-			$output .= '"id": "'.$spotter_item['name'].'",';
+			$output .= '"id": "'.trim(str_replace(array('[+]','[-]'),'',$spotter_item['name'])).'",';
 			$output .= '"properties": {';
 			// Not yet supported in CZML with Cesium
 			$output .= '},';
