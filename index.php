@@ -432,6 +432,7 @@ require_once('header.php');
 					else if ($type_name == 'science') $type_name = 'Space & Earth Science';
 					else if ($type_name == 'military') $type_name = 'Miscellaneous Military';
 					else if ($type_name == 'radar') $type_name = 'Radar Calibration';
+					else if ($type_name == 'tle-new') $type_name = 'Last 30 days launches';
 					
 					if (isset($_COOKIE['sattypes']) && in_array($type['tle_type'],explode(',',$_COOKIE['sattypes']))) {
 						print '<option value="'.$type['tle_type'].'" selected>'.$type_name.'</option>';
