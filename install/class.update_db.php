@@ -133,12 +133,14 @@ class update_db {
 			while (!feof($fh)) {
 				$line = fgetcsv($fh,9999,',');
 				if ($line[0] != '') {
-					try {
-						$query_dest_values = array(':CallSign' => str_replace('*','',$line[7]),':Operator_ICAO' => '',':FromAirport_ICAO' => $Spotter->getAirportICAO($line[0]),':FromAirport_Time' => $line[5],':ToAirport_ICAO' => $Spotter->getAirportICAO($line[1]),':ToAirport_Time' => $line[6],':routestop' => '',':source' => 'oneworld');
-						$sth_dest->execute($query_dest_values);
-					} catch(PDOException $e) {
-						if ($globalTransaction) $Connection->db->rollBack(); 
-						return "error : ".$e->getMessage();
+					if (($line[2] == '-' || ($line[2] != '-' && (strtotime($line[2]) > time()))) && ($line[3] == '-' || ($line[3] != '-' && (strtotime($line[3]) < time())))) {
+						try {
+							$query_dest_values = array(':CallSign' => str_replace('*','',$line[7]),':Operator_ICAO' => '',':FromAirport_ICAO' => $Spotter->getAirportICAO($line[0]),':FromAirport_Time' => $line[5],':ToAirport_ICAO' => $Spotter->getAirportICAO($line[1]),':ToAirport_Time' => $line[6],':routestop' => '',':source' => 'oneworld');
+							$sth_dest->execute($query_dest_values);
+						} catch(PDOException $e) {
+							if ($globalTransaction) $Connection->db->rollBack(); 
+							return "error : ".$e->getMessage();
+						}
 					}
 				}
 			}
@@ -174,8 +176,11 @@ class update_db {
 				while (!feof($fh)) {
 					$line = fgetcsv($fh,9999,',');
 					if ($line[0] != '') {
-						$query_dest_values = array(':CallSign' => str_replace('*','',$line[6]),':Operator_ICAO' => '',':FromAirport_ICAO' => $Spotter->getAirportICAO($line[0]),':FromAirport_Time' => $line[4],':ToAirport_ICAO' => $Spotter->getAirportICAO($line[1]),':ToAirport_Time' => $line[5],':routestop' => '',':source' => 'skyteam');
-						$sth_dest->execute($query_dest_values);
+						//$datebe = explode('  -  ',$line[2]);
+						//if (strtotime($datebe[0]) > time() && strtotime($datebe[1]) < time()) {
+							$query_dest_values = array(':CallSign' => str_replace('*','',$line[6]),':Operator_ICAO' => '',':FromAirport_ICAO' => $Spotter->getAirportICAO($line[0]),':FromAirport_Time' => $line[4],':ToAirport_ICAO' => $Spotter->getAirportICAO($line[1]),':ToAirport_Time' => $line[5],':routestop' => '',':source' => 'skyteam');
+							$sth_dest->execute($query_dest_values);
+						//}
 					}
 				}
 				if ($globalTransaction) $Connection->db->commit();
