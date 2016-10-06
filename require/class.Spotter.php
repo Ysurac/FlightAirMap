@@ -76,7 +76,7 @@ class Spotter{
 			} else {
 				$temp_array['spotter_id'] = '';
 			}
-			$temp_array['flightaware_id'] = $row['flightaware_id'];
+			if (isset($row['flightaware_id'])) $temp_array['flightaware_id'] = $row['flightaware_id'];
 			if (isset($row['modes'])) $temp_array['modes'] = $row['modes'];
 			$temp_array['ident'] = $row['ident'];
 			if (isset($row['registration']) && $row['registration'] != '') {
@@ -84,13 +84,13 @@ class Spotter{
 			} elseif (isset($temp_array['modes'])) {
 				$temp_array['registration'] = $this->getAircraftRegistrationBymodeS($temp_array['modes']);
 			} else $temp_array['registration'] = '';
-			$temp_array['aircraft_type'] = $row['aircraft_icao'];
+			if (isset($row['aircraft_icao'])) $temp_array['aircraft_type'] = $row['aircraft_icao'];
 			
 			$temp_array['departure_airport'] = $row['departure_airport_icao'];
 			$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
 			if (isset($row['real_arrival_airport_icao']) && $row['real_arrival_airport_icao'] != NULL) $temp_array['real_arrival_airport'] = $row['real_arrival_airport_icao'];
-			$temp_array['latitude'] = $row['latitude'];
-			$temp_array['longitude'] = $row['longitude'];
+			if (isset($row['latitude'])) $temp_array['latitude'] = $row['latitude'];
+			if (isset($row['longitude'])) $temp_array['longitude'] = $row['longitude'];
 			/*
 			if (Connection->tableExists('countries')) {
 				$country_info = $this->getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
@@ -100,8 +100,8 @@ class Spotter{
 				}
 			}
 			*/
-			$temp_array['waypoints'] = $row['waypoints'];
-			$temp_array['format_source'] = $row['format_source'];
+			if (isset($row['waypoints'])) $temp_array['waypoints'] = $row['waypoints'];
+			if (isset($row['format_source'])) $temp_array['format_source'] = $row['format_source'];
 			if (isset($row['route_stop'])) {
 				$temp_array['route_stop'] = $row['route_stop'];
 				if ($row['route_stop'] != '') {
@@ -120,11 +120,13 @@ class Spotter{
 					}
 				}
 			}
-			$temp_array['altitude'] = $row['altitude'];
-			$temp_array['heading'] = $row['heading'];
-			$heading_direction = $this->parseDirection($row['heading']);
-			if (isset($heading_direction[0]['direction_fullname'])) $temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
-			$temp_array['ground_speed'] = $row['ground_speed'];
+			if (isset($row['altitude'])) $temp_array['altitude'] = $row['altitude'];
+			if (isset($row['heading'])) {
+				$temp_array['heading'] = $row['heading'];
+				$heading_direction = $this->parseDirection($row['heading']);
+				if (isset($heading_direction[0]['direction_fullname'])) $temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
+			}
+			if (isset($row['ground_speed'])) $temp_array['ground_speed'] = $row['ground_speed'];
 			$temp_array['image'] = "";
 			$temp_array['image_thumbnail'] = "";
 			$temp_array['image_source'] = "";
@@ -134,35 +136,37 @@ class Spotter{
 				$temp_array['highlight'] = $row['highlight'];
 			} else $temp_array['highlight'] = '';
 			
-			$dateArray = $this->parseDateString($row['date']);
-			if ($dateArray['seconds'] < 10)
-			{
-				$temp_array['date'] = "a few seconds ago";
-			} elseif ($dateArray['seconds'] >= 5 && $dateArray['seconds'] < 30)
-			{
-				$temp_array['date'] = "half a minute ago";
-			} elseif ($dateArray['seconds'] >= 30 && $dateArray['seconds'] < 60)
-			{
-				$temp_array['date'] = "about a minute ago";
-			} elseif ($dateArray['minutes'] < 5)
-			{
-				$temp_array['date'] = "a few minutes ago";
-			} elseif ($dateArray['minutes'] >= 5 && $dateArray['minutes'] < 60)
-			{
-				$temp_array['date'] = "about ".$dateArray['minutes']." minutes ago";
-			} elseif ($dateArray['hours'] < 2)
-			{
-				$temp_array['date'] = "about an hour ago";
-			} elseif ($dateArray['hours'] >= 2 && $dateArray['hours'] < 24)
-			{
-				$temp_array['date'] = "about ".$dateArray['hours']." hours ago";
-			} else {
-				$temp_array['date'] = date("M j Y, g:i a",strtotime($row['date']." UTC"));
+			if (isset($row['date'])) {
+				$dateArray = $this->parseDateString($row['date']);
+				if ($dateArray['seconds'] < 10)
+				{
+					$temp_array['date'] = "a few seconds ago";
+				} elseif ($dateArray['seconds'] >= 5 && $dateArray['seconds'] < 30)
+				{
+					$temp_array['date'] = "half a minute ago";
+				} elseif ($dateArray['seconds'] >= 30 && $dateArray['seconds'] < 60)
+				{
+					$temp_array['date'] = "about a minute ago";
+				} elseif ($dateArray['minutes'] < 5)
+				{
+					$temp_array['date'] = "a few minutes ago";
+				} elseif ($dateArray['minutes'] >= 5 && $dateArray['minutes'] < 60)
+				{
+					$temp_array['date'] = "about ".$dateArray['minutes']." minutes ago";
+				} elseif ($dateArray['hours'] < 2)
+				{
+					$temp_array['date'] = "about an hour ago";
+				} elseif ($dateArray['hours'] >= 2 && $dateArray['hours'] < 24)
+				{
+					$temp_array['date'] = "about ".$dateArray['hours']." hours ago";
+				} else {
+					$temp_array['date'] = date("M j Y, g:i a",strtotime($row['date']." UTC"));
+				}
+				$temp_array['date_minutes_past'] = $dateArray['minutes'];
+				$temp_array['date_iso_8601'] = date("c",strtotime($row['date']." UTC"));
+				$temp_array['date_rfc_2822'] = date("r",strtotime($row['date']." UTC"));
+				$temp_array['date_unix'] = strtotime($row['date']." UTC");
 			}
-			$temp_array['date_minutes_past'] = $dateArray['minutes'];
-			$temp_array['date_iso_8601'] = date("c",strtotime($row['date']." UTC"));
-			$temp_array['date_rfc_2822'] = date("r",strtotime($row['date']." UTC"));
-			$temp_array['date_unix'] = strtotime($row['date']." UTC");
 			
 			if (isset($row['aircraft_name']) && $row['aircraft_name'] != '' && isset($row['aircraft_shadow']) && $row['aircraft_shadow'] != '') {
 				$temp_array['aircraft_name'] = $row['aircraft_name'];
@@ -170,7 +174,7 @@ class Spotter{
 				if (isset($row['aircraft_shadow'])) {
 					$temp_array['aircraft_shadow'] = $row['aircraft_shadow'];
 				}
-			} else {
+			} elseif (isset($row['aircraft_icao'])) {
 				$aircraft_array = $this->getAllAircraftInfo($row['aircraft_icao']);
 				if (count($aircraft_array) > 0) {
 					$temp_array['aircraft_name'] = $aircraft_array[0]['type'];
@@ -233,7 +237,7 @@ class Spotter{
 				$temp_array['aircraft_date_first_reg'] = $owner_info['date_first_reg'];
 			}
 
-			if($temp_array['registration'] != "" || ($globalIVAO && $temp_array['aircraft_type'] != ''))
+			if($temp_array['registration'] != "" || ($globalIVAO && isset($temp_array['aircraft_type']) && $temp_array['aircraft_type'] != ''))
 			{
 				if ($globalIVAO) {
 					if (isset($temp_array['airline_icao']))	$image_array = $Image->getSpotterImage('',$temp_array['aircraft_type'],$temp_array['airline_icao']);
@@ -1049,8 +1053,6 @@ class Spotter{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
-		$query_values = array();
-		$additional_query = '';
 		if ($id == '') return array();
 		$additional_query = "spotter_output.spotter_id = :id";
 		$query_values = array(':id' => $id);
@@ -1381,7 +1383,7 @@ class Spotter{
 				$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date ";
 				$query_values = array(':date' => $datetime->format('Y-m-d'), ':offset' => $offset);
 			} elseif ($globalDBdriver == 'pgsql') {
-				$additional_query = " AND spotter_output.date AT TIME ZONE :timezone = :date ";
+				$additional_query = " AND to_char(spotter_output.date AT TIME ZONE :timezone,'YYYY-mm-dd') = :date ";
 				$query_values = array(':date' => $datetime->format('Y-m-d'), ':timezone' => $globalTimezone);
 			}
 		}
@@ -1409,9 +1411,7 @@ class Spotter{
 		}
 
 		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
-		
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
-
 		return $spotter_array;
 	}
 
@@ -8275,17 +8275,23 @@ class Spotter{
 			} else {
 				$orderby_query = " ORDER BY HOUR(spotter_output.date) ASC";
 			}
-
+/*
 			$query = "SELECT spotter_output.*, count(spotter_output.ident) as ident_count
 			    FROM spotter_output
 			    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours' AND spotter_output.ident <> '' AND format_source <> 'aprs'
 			    GROUP BY spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time HAVING count(spotter_output.ident) > 10 $orderby_query";
-
+*/
 /*			$query = "SELECT spotter_output.ident, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time, count(spotter_output.ident) as ident_count
 			    FROM spotter_output
 			    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours' AND spotter_output.ident <> '' AND format_source <> 'aprs'
 			    GROUP BY spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time HAVING count(spotter_output.ident) > 10 $orderby_query";
 */
+			$query = "SELECT spotter_output.ident, spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time, count(spotter_output.ident) as ident_count 
+			    FROM spotter_output
+			    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours' AND spotter_output.ident <> '' AND format_source <> 'aprs'
+			    GROUP BY spotter_output.ident,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time
+			    HAVING count(spotter_output.ident) > 5$orderby_query";
+
 			$spotter_array = $this->getDataFromDB($query.$limit_query);
 		} else {
 			if ($sort != "")
@@ -8293,13 +8299,20 @@ class Spotter{
 				$search_orderby_array = $this->getOrderBy();
 				$orderby_query = $search_orderby_array[$sort]['sql'];
 			} else {
-				$orderby_query = " ORDER BY EXTRACT (HOUR FROM spotter_output.date) ASC";
+				$orderby_query = " ORDER BY to_char(spotter_output.date,'HH') ASC";
 			}
-			$query = "SELECT spotter_output.*, count(spotter_output.ident) as ident_count
+			$query = "SELECT spotter_output.ident, spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time, count(spotter_output.ident) as ident_count, to_char(spotter_output.date,'HH') 
 			    FROM spotter_output
 			    WHERE DATE_PART('dow', spotter_output.date) = DATE_PART('dow', date 'now' AT TIME ZONE :timezone) AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) >= '$currentHour' AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) <= '$next3Hours' AND ident <> '' 
-			    GROUP BY spotter_output.ident, spotter_output.spotter_id HAVING count(spotter_output.ident) > 10 $orderby_query";
+			    GROUP BY spotter_output.ident,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time, to_char(spotter_output.date,'HH')
+			    HAVING count(spotter_output.ident) > 5$orderby_query";
+			//echo $query;
 			$spotter_array = $this->getDataFromDB($query.$limit_query,array(':timezone' => $globalTimezone));
+			/*
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':timezone' => $globalTimezone));
+			return $sth->fetchAll(PDO::FETCH_ASSOC);
+			*/
 		}
 		return $spotter_array;
 	}
@@ -8309,7 +8322,7 @@ class Spotter{
 	* Gets the Barrie Spotter ID based on the FlightAware ID
 	*
 	* @return Integer the Barrie Spotter ID
-	*
+q	*
 	*/
 	public function getSpotterIDBasedOnFlightAwareID($flightaware_id)
 	{

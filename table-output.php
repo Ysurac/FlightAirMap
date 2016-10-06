@@ -130,6 +130,7 @@ if (strtolower($current_page) == "search")
 	} else {
 		print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
 	}
+	/*
 	if ($_GET['sort'] == "date_asc")
 	{
 		print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_desc" class="active">'._("Expected Time").'</a> <i class="fa fa-caret-up"></i></th>';
@@ -139,6 +140,7 @@ if (strtolower($current_page) == "search")
 	} else {
 		print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_asc">'._("Expected Time").'</a> <i class="fa fa-sort small"></i></th>';
 	}
+	*/
 	print '</thead>';
 } else if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive"){
 	print '<thead>';
@@ -344,7 +346,7 @@ foreach($spotter_array as $spotter_item)
 		print '<td colspan="9"><h4>'.$spotter_item['registration'].' - '.$spotter_item['highlight'].'</h4></td>'."\n";
 		print '</tr>'."\n";
 	}
-	if (strtolower($current_page) == "upcoming" && date("ga") == date("ga", strtotime($spotter_item['date_iso_8601'])))
+	if (strtolower($current_page) == "upcoming" && isset($spotter_item['date_iso_8601']) && date("ga") == date("ga", strtotime($spotter_item['date_iso_8601'])))
 	{
 		print '<tr class="currentHour">';
 	} else {
@@ -511,16 +513,18 @@ foreach($spotter_array as $spotter_item)
 		print '<br /><span class="airport_time">'.$departure_airport_time.'</span>'."\n";
 	}
 	if ($spotter_item['departure_airport'] != 'NA') {
-		require_once(dirname(__FILE__).'/require/class.Spotter.php');
-		$Spotter = new Spotter();
-		if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '' && isset($spotter_item['last_longitude']) && $spotter_item['last_longitude'] != '') {
-			$latitude = $spotter_item['last_latitude'];
-			$longitude = $spotter_item['last_longitude'];
-		} else {
-			$latitude = $spotter_item['latitude'];
-			$longitude = $spotter_item['longitude'];
-		}
-		$distance = $Spotter->getAirportDistance($spotter_item['departure_airport'],$latitude,$longitude);
+		if (isset($spotter_item['latitude']) && isset($spotter_item['longitude'])) {
+			require_once(dirname(__FILE__).'/require/class.Spotter.php');
+			$Spotter = new Spotter();
+			if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '' && isset($spotter_item['last_longitude']) && $spotter_item['last_longitude'] != '') {
+				$latitude = $spotter_item['last_latitude'];
+				$longitude = $spotter_item['last_longitude'];
+			} else {
+				$latitude = $spotter_item['latitude'];
+				$longitude = $spotter_item['longitude'];
+			}
+			$distance = $Spotter->getAirportDistance($spotter_item['departure_airport'],$latitude,$longitude);
+		} else $distance = '';
 		if ($distance != '') {
 		    if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
 			    echo '<br/><i>'.round($distance*0.539957).' nm</i>';
@@ -578,14 +582,16 @@ foreach($spotter_array as $spotter_item)
 		print '<br /><span class="airport_time">'.$arrival_airport_time.'</span>'."\n";
 	}
 	if (!isset($spotter_item['real_arrival_airport']) && $spotter_item['arrival_airport'] != 'NA') {
-		if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '' && isset($spotter_item['last_longitude']) && $spotter_item['last_longitude'] != '') {
-			$latitude = $spotter_item['last_latitude'];
-			$longitude = $spotter_item['last_longitude'];
-		} else {
-			$latitude = $spotter_item['latitude'];
-			$longitude = $spotter_item['longitude'];
-		}
-		$distance = $Spotter->getAirportDistance($spotter_item['arrival_airport'],$latitude,$longitude);
+		if (isset($spotter_item['latitude']) && isset($spotter_item['longitude'])) {
+			if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '' && isset($spotter_item['last_longitude']) && $spotter_item['last_longitude'] != '') {
+				$latitude = $spotter_item['last_latitude'];
+				$longitude = $spotter_item['last_longitude'];
+			} else {
+				$latitude = $spotter_item['latitude'];
+				$longitude = $spotter_item['longitude'];
+			}
+			$distance = $Spotter->getAirportDistance($spotter_item['arrival_airport'],$latitude,$longitude);
+		} else $distance = '';
 		if ($distance != '') {
 		    if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
 			    echo '<br/><i>'.round($distance*0.539957).' nm</i>';
@@ -700,10 +706,12 @@ foreach($spotter_array as $spotter_item)
 		print '</td>'."\n";
 	} else if (strtolower($current_page) == "upcoming")
 	{
-		print '<td class="time">';
-		//print '<span>'.date("ga", strtotime($spotter_item['date_iso_8601'])).'</span>';
-		print '<span>'.date("g:i a", strtotime($spotter_item['date_iso_8601'])).'</span>';
-		print '</td>';
+		if (isset($spotter_item['date_iso_8601'])) {
+			print '<td class="time">';
+			//print '<span>'.date("ga", strtotime($spotter_item['date_iso_8601'])).'</span>';
+			print '<span>'.date("g:i a", strtotime($spotter_item['date_iso_8601'])).'</span>';
+			print '</td>';
+		}
 	} elseif (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive")
 	{
 		print '<td class="date">'."\n";
