@@ -1051,18 +1051,12 @@ class Spotter{
 		date_default_timezone_set('UTC');
 		$query_values = array();
 		$additional_query = '';
-		if ($id != "")
-		{
-			if (!is_string($id))
-			{
-				return false;
-			} else {
-				$additional_query = " AND (spotter_output.spotter_id = :id)";
-				$query_values = array(':id' => $id);
-			}
-		}
+		if ($id == '') return array();
+		$additional_query = "spotter_output.spotter_id = :id";
+		$query_values = array(':id' => $id);
 
-		$query  = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ";
+		//$query  = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ";
+		$query  = $global_query." WHERE ".$additional_query." ";
 
 		$spotter_array = $this->getDataFromDB($query,$query_values);
 

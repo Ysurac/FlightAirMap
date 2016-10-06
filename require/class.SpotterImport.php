@@ -10,8 +10,8 @@ require_once(dirname(__FILE__).'/class.Source.php');
 
 class SpotterImport {
     private $all_flights = array();
-    private $last_delete_hourly = '';
-    private $last_delete = '';
+    private $last_delete_hourly = 0;
+    private $last_delete = 0;
     private $stats = array();
     private $tmd = 0;
     private $source_location = array();
@@ -203,11 +203,11 @@ class SpotterImport {
 	// pcntl_signal_dispatch();
 
 	// get the time (so we can figure the timeout)
-	$time = time();
+	//$time = time();
 
 	//pcntl_signal_dispatch();
 	$dataFound = false;
-	$putinarchive = false;
+	//$putinarchive = false;
 	$send = false;
 	
 	// SBS format is CSV format
@@ -429,12 +429,13 @@ class SpotterImport {
 				$this->tmd = 0;
 				//echo 'FOUND : '.$this->all_flights[$id]['over_country'].' ---------------'."\n";
 				//$putinarchive = true;
-			    } else {
-			    /*
+			    } 
+			    /*else {
+			    
 				echo '//////// checkLine FALSE'."\n";
 				echo 'Check DATA : '.$this->all_flights[$id]['archive_latitude'].' '.$this->all_flights[$id]['archive_longitude'].' '.$this->all_flights[$id]['livedb_latitude'].' '.$this->all_flights[$id]['livedb_longitude'].' '.$line['latitude'].' '.$line['longitude']."\n";
-			    */
 			    }
+			    */
 			}
 
 			if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
@@ -536,7 +537,7 @@ class SpotterImport {
 
 				$this->all_flights[$id]['putinarchive'] = true;
 				//$putinarchive = true;
-				$highlight = '';
+				//$highlight = '';
 			    }
 			    
 		    } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('squawk' => $line['squawk']));
@@ -707,7 +708,7 @@ class SpotterImport {
 			}
 			*/
 			//SpotterLive->deleteLiveSpotterDataByIdent($this->all_flights[$id]['ident']);
-				if ($this->last_delete == '' || time() - $this->last_delete > 1800) {
+				if ($this->last_delete == 0 || time() - $this->last_delete > 1800) {
 				    if ($globalDebug) echo "---- Deleting Live Spotter data older than 9 hours...";
 				    //SpotterLive->deleteLiveSpotterDataNotUpdated();
 				    $SpotterLive = new SpotterLive($this->db);
@@ -855,7 +856,7 @@ class SpotterImport {
 			//$this->del();
 			
 			
-			if ($this->last_delete_hourly == '' || time() - $this->last_delete_hourly > 900) {
+			if ($this->last_delete_hourly == 0 || time() - $this->last_delete_hourly > 900) {
 			    if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 2 hour...";
 			    $SpotterLive = new SpotterLive($this->db);
 			    $SpotterLive->deleteLiveSpotterDataNotUpdated();

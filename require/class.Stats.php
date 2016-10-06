@@ -1276,8 +1276,8 @@ class Stats {
 			$this->deleteStatAirport('daily');
 			$pall = $Spotter->getLast7DaysAirportsDeparture();
         		$dall = $Spotter->getLast7DaysDetectedAirportsDeparture();
+        		/*
 	        	$alldata = array();
-    			/*
     			foreach ($pall as $value) {
 	        		$icao = $value['departure_airport_icao'];
     				$alldata[$icao] = $value;
@@ -1317,8 +1317,8 @@ class Stats {
 			echo '...Arrival'."\n";
 			$pall = $Spotter->getLast7DaysAirportsArrival();
         		$dall = $Spotter->getLast7DaysDetectedAirportsArrival();
+        		/*
 	        	$alldata = array();
-	        	/*
     			foreach ($pall as $value) {
 	        		$icao = $value['arrival_airport_icao'];
     				$alldata[$icao] = $value;

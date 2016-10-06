@@ -1,5 +1,6 @@
 <?php
-if ($_GET['id'] == "")
+$id = filter_input(INPUT_GET,'id',FILTER_SANITIZE_STRING);
+if ($id == "")
 {
 	header('Location: /');
 }
@@ -10,7 +11,7 @@ require_once('require/class.Language.php');
 require_once('require/class.SpotterArchive.php');
 $Spotter = new Spotter();
 $SpotterArchive = new SpotterArchive();
-$spotter_array = $Spotter->getSpotterDataByID($_GET['id']);
+$spotter_array = $Spotter->getSpotterDataByID($id);
 
 
 if (!empty($spotter_array))

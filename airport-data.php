@@ -47,7 +47,7 @@ print $spotter_item['city'];
 print '</div>';
 print '<div><span>'._("Altitude").'</span>';
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
-        print $spotter_item['altitude'].'feet';
+        print $spotter_item['altitude'].' feet';
 } else {
         print round($spotter_item['altitude']*0.3048).' m';
 }
