@@ -180,7 +180,7 @@ class SpotterArchive {
                 date_default_timezone_set('UTC');
 
                 $id = filter_var($id, FILTER_SANITIZE_STRING);
-                $query  = "SELECT spotter_archive.altitude, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id";
+                $query  = "SELECT spotter_archive.altitude, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id ORDER BY date";
 
                 try {
                         $sth = $this->db->prepare($query);
@@ -206,7 +206,7 @@ class SpotterArchive {
                 date_default_timezone_set('UTC');
 
                 $id = filter_var($id, FILTER_SANITIZE_STRING);
-                $query  = "SELECT spotter_archive.altitude, spotter_archive.ground_speed, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id";
+                $query  = "SELECT spotter_archive.altitude, spotter_archive.ground_speed, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id ORDER BY date";
 
                 try {
                         $sth = $this->db->prepare($query);
