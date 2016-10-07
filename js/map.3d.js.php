@@ -1,7 +1,24 @@
 <?php
 	require_once('../require/settings.php');
 	require_once('../require/class.Language.php'); 
-	setcookie('MapFormat','3d');
+?>
+function getCookie(cname) {
+	var name = cname + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0; i<ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1);
+		if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+	}
+	return "";
+}
+
+function delCookie(cname) {
+	document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+<?php
 	if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
 	else $MapType = $globalMapProvider;
 
@@ -250,11 +267,9 @@ function bbox () {
 }
 
 function update_airportsLayer() {
- <?php
-	if (isset($_COOKIE['AirportZoom'])) $getZoom = $_COOKIE['AirportZoom'];
-	else $getZoom = '7';
-?>
-//		if (map.getZoom() > <?php print $getZoom; ?>) {
+	var getZoom = getCookie('AirportZoom');
+	if (getZoom == '') getZoom = 7;
+//		if (map.getZoom() > getZoom) {
 			//if (typeof airportsLayer == 'undefined' || map.hasLayer(airportsLayer) == false) {
 //			var bbox = map.getBounds().toBBoxString();
 //			airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
@@ -477,6 +492,7 @@ function displayData(data) {
 			} else {
 				//last.addProperty('lastupdate');
 				last.lastupdate = Date.now();
+				last.type = 'flight';
 			}
 		} else {
 			//console.log('First time');
@@ -518,6 +534,14 @@ function displayData(data) {
 
 		}
 	}
+	var MapTrack = getCookie('MapTrack');
+	if (MapTrack != '') {
+		viewer.trackedEntity = viewer.dataSources.get(dsn).entities.getById(MapTrack);
+		$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
+		$("#aircraft_ident").attr('class',flightaware_id);
+		//lastid = MapTrack;
+	}
+
 
 //    viewer.dataSources.add(data);
 
@@ -578,7 +602,7 @@ function displayDataSat(data) {
 			}
 		}
 	}
-
+	
 //    viewer.dataSources.add(data);
 
 //    }
@@ -662,6 +686,7 @@ Cesium.BingMapsApi.defaultKey = '<?php print $globalBingMapKey; ?>';
 	}
 ?>
 
+//var lastid;
 
 var viewer = new Cesium.Viewer('live-map', {
     sceneMode : Cesium.SceneMode.SCENE3D,
@@ -704,41 +729,50 @@ camera.setView({
 
 var layers = viewer.scene.imageryLayers;
 //var clouds = layers.addImageryProvider(
-//	new Cesium.createTileMapServiceImageryProvider({
-//		url : 'http://a.tile.openweathermap.org/map/clouds'
+//new Cesium.createOpenStreetMapImageryProvider({
+//		url : 'http://b.tile.openweathermap.org/map/clouds',
+//		fileExtension : 'png',
+//		tileMatrixSetID : 'a'
 //	}
 //));
 
 
+
+
 <?php
-	if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'stk') {
+//	if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'stk') {
 ?>
-var cesiumTerrainProviderMeshes = new Cesium.CesiumTerrainProvider({
-    url : 'https://assets.agi.com/stk-terrain/world',
-    requestWaterMask : true,
-    requestVertexNormals : true
-});
-viewer.terrainProvider = cesiumTerrainProviderMeshes;
+var MapTerrain = getCookie('MapTerrain');
+if (MapTerrain == 'stk' || MapTerrain == '') {
+	var cesiumTerrainProviderMeshes = new Cesium.CesiumTerrainProvider({
+	    url : 'https://assets.agi.com/stk-terrain/world',
+	    requestWaterMask : true,
+	    requestVertexNormals : true
+	});
+	viewer.terrainProvider = cesiumTerrainProviderMeshes;
+} else if (MapTerrain == 'ellipsoid') {
 <?php
-	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'ellipsoid') {
+//	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'ellipsoid') {
 ?>
-var ellipsoidProvider = new Cesium.EllipsoidTerrainProvider({
-    requestWaterMask : true,
-    requestVertexNormals : true
-});
-viewer.terrainProvider = ellipsoidProvider;
+	var ellipsoidProvider = new Cesium.EllipsoidTerrainProvider({
+	    requestWaterMask : true,
+	    requestVertexNormals : true
+	});
+	viewer.terrainProvider = ellipsoidProvider;
 <?php 
-	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'vrterrain') {
+//	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'vrterrain') {
 ?>
-var vrTheWorldProvider = new Cesium.VRTheWorldTerrainProvider({
-    url : 'https://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
-    requestWaterMask : true,
-    requestVertexNormals : true,
-    credit : 'Terrain data courtesy VT MÄK'
-});
-viewer.terrainProvider = vrTheWorldProvider;
+} else if (MapTerrain == 'vrterrain') {
+	var vrTheWorldProvider = new Cesium.VRTheWorldTerrainProvider({
+	    url : 'https://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
+	    requestWaterMask : true,
+	    requestVertexNormals : true,
+	    credit : 'Terrain data courtesy VT MÄK'
+	});
+	viewer.terrainProvider = vrTheWorldProvider;
+}
 <?php
-	}
+//	}
 ?>
 viewer.scene.globe.enableLighting = true;
 viewer.scene.globe.depthTestAgainstTerrain = true;
@@ -762,6 +796,7 @@ setInterval(function(){updateSat()},'20000');
 	}
 ?>
 
+
 <?php
 		if (!((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) && (isset($_COOKIE['polar']) && $_COOKIE['polar'] == 'true')) {
 ?>
@@ -771,9 +806,6 @@ setInterval(function(){update_polarLayer()},<?php if (isset($globalMapRefresh)) 
 		}
 ?>
 		
-
-		
-var lastid;
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 handler.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
@@ -783,6 +815,7 @@ handler.setInputAction(function(click) {
 		//console.log(pickedObject.id.position.getValue(viewer.clock.currentTime));
 		console.log(pickedObject.id);
 //		if (typeof pickedObject.id.lastupdate != 'undefined') {
+		delCookie('MapTrack');
 		if (pickedObject.id.type == 'flight') {
 			flightaware_id = pickedObject.id.id;
 			$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
@@ -793,14 +826,15 @@ handler.setInputAction(function(click) {
 					break;
 				}
 			}
-
-			if (typeof lastid != 'undefined') {
+			var lastid = document.getElementById('aircraft_ident').className;
+			if (typeof lastid != 'undefined' && lastid != '') {
 				var plast = viewer.dataSources.get(dsn).entities.getById(lastid);
 				plast.path.show = false;
 			}
 			var pnew = viewer.dataSources.get(dsn).entities.getById(flightaware_id);
 			pnew.path.show = true;
-			lastid = flightaware_id;
+			$("#aircraft_ident").attr('class',flightaware_id);
+			//lastid = flightaware_id;
 		} else if (pickedObject.id.type == 'sat') {
 			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(pickedObject.id.id));
 //		} else if (pickedObject.id.name == 'iss') {
@@ -818,17 +852,10 @@ handler.setInputAction(function(click) {
 
 //var reloadpage = setInterval(function() { updateData(); },30000);
 var reloadpage = setInterval(function(){updateData()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
-<?php
-		if (isset($_COOKIE['displayairports']) && $_COOKIE['displayairports'] == 'true') {
-?>
-update_airportsLayer();
-<?php
-		}
-?>
-<?php
-    if (!isset($_COOKIE['displayminimap']) || (isset($_COOKIE['displayminimap']) && $_COOKIE['displayminimap'] == 'true')) {
-?>
-CesiumMiniMap(viewer);
-<?php
-    }
-?>
+
+if (getCookie('displayairports') == 'true') {
+	update_airportsLayer();
+}
+if (getCookie('displayminimap') == '' || getCookie('displayminimap') == true) {
+	CesiumMiniMap(viewer);
+}

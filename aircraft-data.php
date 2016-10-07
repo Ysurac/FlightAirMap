@@ -131,6 +131,11 @@ if (isset($spotter_item['source_name']) && $spotter_item['source_name'] != '') {
 	print $spotter_item['source_name'];
 	print '</div>';
 }
+if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+	print '<a href="'.$globalURL.'/?3d&trackid='.$spotter_item['flightaware_id'].'">Track it link !</a>';
+} else {
+	print '<a href="'.$globalURL.'/?2d&trackid='.$spotter_item['flightaware_id'].'">Track it link !</a>';
+}
 print '</div>';
 
 if (isset($globalphpVMS) && $globalphpVMS && isset($globalVATSIM) && $globalVATSIM && isset($globalIVAO) && $globalIVAO && isset($spotter_item['format_source']) && $spotter_item['format_source'] != '' && $spotter_item['format_source'] != 'pireps') print '<div class="waypoints"><span>'._("Source").'</span>'.$spotter_item['format_source'].'</div>';

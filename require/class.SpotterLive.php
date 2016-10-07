@@ -439,12 +439,21 @@ class SpotterLive {
 	* @return Array the spotter information
 	*
 	*/
-	public function getAllLiveSpotterDataById($id)
+	public function getAllLiveSpotterDataById($id,$liveinterval = false)
 	{
+		global $globalDBdriver, $globalLiveInterval;
 		date_default_timezone_set('UTC');
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
-		$query  = self::$global_query.' WHERE spotter_live.flightaware_id = :id ORDER BY date';
-//		$spotter_array = Spotter->getDataFromDB($query,array(':id' => $id));
+		//$query  = self::$global_query.' WHERE spotter_live.flightaware_id = :id ORDER BY date';
+		if ($globalDBdriver == 'mysql') {
+			$query = 'SELECT spotter_live.* FROM spotter_live WHERE spotter_live.flightaware_id = :id';
+			if ($liveinterval) $query .= ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= date';
+			$query .= ' ORDER BY date';
+            	} else {
+			$query = 'SELECT spotter_live.* FROM spotter_live WHERE spotter_live.flightaware_id = :id';
+			if ($liveinterval) $query .= " AND CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= date";
+			$query .= ' ORDER BY date';
+                }
 
     		try {
 			

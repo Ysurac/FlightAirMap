@@ -4,6 +4,23 @@ require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 require_once('require/class.Satellite.php');
 
+$trackident = filter_input(INPUT_GET,'trackid',FILTER_SANITIZE_STRING);
+if ($trackident != '') {
+	require_once('require/class.SpotterLive.php');
+	$SpotterLive = new SpotterLive();
+	$resulttrackident = $SpotterLive->getAllLiveSpotterDataById($trackident, true);
+	if (empty($resulttrackident)) {
+		$Spotter = new Spotter();
+		$spotterid = $Spotter->getSpotterIDBasedOnFlightAwareID($trackident);
+		header('Location: '.$globalURL.'/flightid/'.$spotterid);
+	} else {
+		setcookie('MapTrack',$resulttrackident[0]['flightaware_id']);
+	}
+} else {
+	unset($_COOKIE['MapTrack']);
+	setcookie('MapTrack', '', time() - 3600);
+}
+
 $title = _("Home");
 require_once('header.php');
 ?>

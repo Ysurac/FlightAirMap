@@ -7,6 +7,12 @@ $current_page = $file_path['filename'];
 date_default_timezone_set($globalTimezone);
 if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] != '') $MapType = $_COOKIE['MapType'];
 else $MapType = $globalMapProvider;
+if (isset($_GET['3d'])) {
+	setcookie('MapFormat','3d');
+} else if (isset($_GET['2d'])) {
+	setcookie('MapFormat','2d');
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -78,8 +84,8 @@ if (strtolower($current_page) == "index")
 <?php 
 	if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 ?>
-<link rel="stylesheet" href="https://cesiumjs.org/releases/1.25/Build/Cesium/Widgets/widgets.css" />
-<script src="https://cesiumjs.org/releases/1.25/Build/Cesium/Cesium.js"></script>
+<link rel="stylesheet" href="https://cesiumjs.org/releases/1.26/Build/Cesium/Widgets/widgets.css" />
+<script src="https://cesiumjs.org/releases/1.26/Build/Cesium/Cesium.js"></script>
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/cesium-minimap.css" />
 <script src="<?php print $globalURL; ?>/js/cesium-minimap.js"></script>
 <!-- <script src="<?php print $globalURL; ?>/js/Cesium/Cesium.js"></script> -->

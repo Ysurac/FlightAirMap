@@ -2,7 +2,8 @@
 require_once('../require/settings.php');
 require_once('../require/class.Language.php'); 
 
-$_COOKIE['MapFormat'] = '2d';
+setcookie("MapFormat",'2d');
+//$_COOKIE['MapFormat'] = '2d';
 
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
@@ -53,6 +54,21 @@ var weatherradarrefresh;
 var weathersatellite;
 var weathersatelliterefresh; 
 var noTimeout = true;
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
+function delCookie(cname) {
+    document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 
 <?php
 	if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0) {
@@ -578,6 +594,12 @@ function getAltitudeColor(x) {
 };
 
 $("#aircraft_ident").attr('class','');
+var MapTrack = getCookie('MapTrack');
+if (MapTrack != '') {
+	$("#aircraft_ident").attr('class',MapTrack);
+	$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+MapTrack);
+	delCookie('MapTrack');
+}
 
 function getLiveData(click)
 {
@@ -1477,17 +1499,6 @@ function archivePause() {
 function archivePlay() {
     reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
     console.log('Play');
-}
-
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-    }
-    return "";
 }
 
 //zooms in the map
