@@ -856,6 +856,6 @@ var reloadpage = setInterval(function(){updateData()},<?php if (isset($globalMap
 if (getCookie('displayairports') == 'true') {
 	update_airportsLayer();
 }
-if (getCookie('displayminimap') == '' || getCookie('displayminimap') == true) {
+if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
 	CesiumMiniMap(viewer);
 }
