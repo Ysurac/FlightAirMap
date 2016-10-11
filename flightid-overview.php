@@ -49,7 +49,7 @@ if (!empty($spotter_array))
 		// Requirement for altitude graph
 		print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 		$all_data = $SpotterArchive->getAltitudeSpeedArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
-		
+
 		if (isset($globalTimezone)) {
 			date_default_timezone_set($globalTimezone);
 		} else date_default_timezone_set('UTC');
@@ -357,49 +357,53 @@ if (!empty($spotter_array))
 		print '</div>';
 		print '</div>';
 
-		print '<div class="detail departure">';
-		print '<div class="title">Departure Airport</div>';
-		print '<div>';
-		if ($spotter_item['departure_airport_name'] != "")
-		{
-			print '<a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')</a>';
-		} else {
-			print $spotter_item['departure_airport'];
-		}
-		print '</div>';
-		if (isset($spotter_item['departure_airport_time']) && $spotter_item['departure_airport_time'] != '') {
-			if ($spotter_item['departure_airport_time'] > 2460) {
-				print '<div class="time">';
-				print 'at '.date('H:m',$spotter_item['departure_airport_time']);
-				print '</div>';
+		if ($spotter_item['departure_airport'] != 'NA') {
+			print '<div class="detail departure">';
+			print '<div class="title">Departure Airport</div>';
+			print '<div>';
+			if ($spotter_item['departure_airport_name'] != "")
+			{
+				print '<a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'">'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')</a>';
 			} else {
+				print $spotter_item['departure_airport'];
+			}
+			print '</div>';
+			if (isset($spotter_item['departure_airport_time']) && $spotter_item['departure_airport_time'] != '') {
+				if ($spotter_item['departure_airport_time'] > 2460) {
+					print '<div class="time">';
+					print 'at '.date('H:m',$spotter_item['departure_airport_time']);
+					print '</div>';
+				} else {
+					print '<div class="time">';
+					print 'at '.$spotter_item['departure_airport_time'];
+					print '</div>';
+				}
+			}
+			print '</div>';
+		}
+
+		if ($spotter_item['arrival_airport'] != 'NA') {
+			print '<div class="detail arrival">';
+			print '<div class="title">Arrival Airport</div>';
+			print '<div>';
+			if ($spotter_item['arrival_airport_name'] != "")
+			{
+				print '<a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a>';
+			} else {
+				print $spotter_item['arrival_airport'];
+			}
+			print '</div>';
+			if (isset($spotter_item['arrival_airport_time']) && $spotter_item['arrival_airport_time'] != '') {
 				print '<div class="time">';
-				print 'at '.$spotter_item['departure_airport_time'];
+				print 'at '.$spotter_item['arrival_airport_time'];
+				print '</div>';
+			} elseif (isset($spotter_item['real_arrival_airport_time']) && $spotter_item['real_arrival_airport_time'] != '') {
+				print '<div class="time">';
+				print 'at '.$spotter_item['real_arrival_airport_time'];
 				print '</div>';
 			}
-		}
-		print '</div>';
-
-		print '<div class="detail arrival">';
-		print '<div class="title">Arrival Airport</div>';
-		print '<div>';
-		if ($spotter_item['arrival_airport_name'] != "")
-		{
-			print '<a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'">'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].')</a>';
-		} else {
-			print $spotter_item['arrival_airport'];
-		}
-		print '</div>';
-		if (isset($spotter_item['arrival_airport_time']) && $spotter_item['arrival_airport_time'] != '') {
-			print '<div class="time">';
-			print 'at '.$spotter_item['arrival_airport_time'];
-			print '</div>';
-		} elseif (isset($spotter_item['real_arrival_airport_time']) && $spotter_item['real_arrival_airport_time'] != '') {
-			print '<div class="time">';
-			print 'at '.$spotter_item['real_arrival_airport_time'];
 			print '</div>';
 		}
-		print '</div>';
 
 		if ($spotter_item['waypoints'] != "" || $spotter_item['route_stop'] != "")
 		{

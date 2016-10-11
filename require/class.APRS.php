@@ -130,7 +130,8 @@ class aprs {
 		    if (strlen($body_parse) > 0) {
 		        if (preg_match('/\\/A=(-[0-9]{5}|[0-9]{6})/',$body_parse,$matches)) {
 		            $altitude = intval($matches[1]);
-		            $result['altitude'] = round($altitude*0.3048);
+		            //$result['altitude'] = round($altitude*0.3048);
+		            $result['altitude'] = $altitude;
 		            $body_parse = substr($body_parse,strlen($matches[0])+1);
 		        }
 		    }

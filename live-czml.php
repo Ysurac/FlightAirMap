@@ -266,7 +266,9 @@ if (!empty($spotter_array) && is_array($spotter_array))
 				if ($spotter_item['aircraft_shadow'] != '') $output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
 				if ($spotter_item['aircraft_icao'] != '') $output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
 			}
-			$output .= '"heightReference": "CLAMP_TO_GROUND",';
+	//		$output .= '"heightReference": "CLAMP_TO_GROUND",';
+			$output .= '"heightReference": "RELATIVE_TO_GROUND",';
+	//		$output .= '"heightReference": "NONE",';
 			$output .= '"position": {';
 			$output .= '"type": "Point",';
 	//		$output .= '"interpolationAlgorithm" : "LAGRANGE",';

@@ -7,7 +7,9 @@ CREATE TABLE `stats_airport` (
   `departure` int(11) NOT NULL DEFAULT '0',
   `arrival` int(11) NOT NULL DEFAULT '0',
   `stats_type` varchar(50) NOT NULL DEFAULT 'yearly',
-  `date` date DEFAULT NULL
+  `date` date DEFAULT NULL,
+  `stats_airline` varchar(255) DEFAULT '',
+  `filter_name` varchar(255) DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `stats_airport` ADD PRIMARY KEY (`stats_airport_id`), ADD UNIQUE KEY `airport_icao` (`airport_icao`,`stats_type`,`date`);

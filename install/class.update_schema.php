@@ -840,6 +840,202 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_24() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		$query = "";
+		if ($globalDBdriver == 'mysql') {
+			$error .= create_db::import_file('../db/airlines.sql');
+		} else {
+			$error .= create_db::import_file('../db/pgsql/airlines.sql');
+		}
+		if ($error != '') return 'Import airlines.sql : '.$error;
+		if (!$Connection->checkColumnName('airlines','forsource')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE airlines ADD forsource VARCHAR(255) NULL DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add forsource column) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('stats_aircraft','stats_airline')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats_aircraft ADD stats_airline VARCHAR(255) NULL DEFAULT '', ADD filter_name VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add stats_airline & filter_name column in stats_aircraft) : ".$e->getMessage()."\n";
+			}
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index aircraft_icao on stats_aircraft;ALTER TABLE stats_aircraft ADD UNIQUE aircraft_icao (aircraft_icao,stats_airline,filter_name);";
+			} else {
+				$query = "alter table stats_aircraft drop constraint stats_aircraft_aircraft_icao_key;ALTER TABLE stats_aircraft ADD CONSTRAINT aircraft_icao UNIQUE (aircraft_icao,stats_airline,filter_name);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add unique key in stats_aircraft) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('stats_airport','stats_airline')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats_airport ADD stats_airline VARCHAR(255) NULL DEFAULT '', ADD filter_name VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add filter_name column in stats_airport) : ".$e->getMessage()."\n";
+			}
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index airport_icao on stats_airport;ALTER TABLE stats_airport ADD UNIQUE airport_icao (airport_icao,stats_type,date,stats_airline,filter_name);";
+			} else {
+				$query = "alter table stats_airport drop constraint stats_airport_airport_icao_stats_type_date_key;ALTER TABLE stats_airport ADD CONSTRAINT airport_icao UNIQUE (airport_icao,stats_type,date,stats_airline,filter_name);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add unique key in stats_airport) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('stats_country','stats_airline')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats_country ADD stats_airline VARCHAR(255) NULL DEFAULT '', ADD filter_name VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add stats_airline & filter_name column in stats_country) : ".$e->getMessage()."\n";
+			}
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index iso2 on stats_country;ALTER TABLE stats_country ADD UNIQUE iso2 (iso2,stats_airline,filter_name);";
+			} else {
+				$query = "alter table stats_country drop constraint stats_country_iso2_key;ALTER TABLE stats_country ADD CONSTRAINT iso2 UNIQUE (iso2,stats_airline,filter_name);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add unique key in stats_airline) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('stats_flight','stats_airline')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats_flight ADD stats_airline VARCHAR(255) NULL DEFAULT '', ADD filter_name VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add stats_airline & filter_name column in stats_flight) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('stats','stats_airline')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats ADD stats_airline VARCHAR(255) NULL DEFAULT '', ADD filter_name VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add stats_airline & filter_name column in stats) : ".$e->getMessage()."\n";
+			}
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index type on stats;ALTER TABLE stats ADD UNIQUE stats_type (stat_type,stats_date,stats_airline,filter_name);";
+			} else {
+				$query = "alter table stats drop constraint stats_stats_type_stats_date_key;ALTER TABLE stats ADD CONSTRAINT stats_type UNIQUE (stats_type,stats_date,stats_airline,filter_name);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add unique key in stats) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('stats_registration','stats_airline')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats_registration ADD stats_airline VARCHAR(255) NULL DEFAULT '', ADD filter_name VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add stats_airline & filter_name column in stats_registration) : ".$e->getMessage()."\n";
+			}
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index registration on stats_registration;ALTER TABLE stats_registration ADD UNIQUE registration (registration,stats_airline,filter_name);";
+			} else {
+				$query = "alter table stats_registration drop constraint stats_registration_registration_key;ALTER TABLE stats_registration ADD CONSTRAINT registration UNIQUE (registration,stats_airline,filter_name);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add unique key in stats_registration) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('stats_callsign','filter_name')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats_callsign ADD filter_name VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add filter_name column in stats_callsign) : ".$e->getMessage()."\n";
+			}
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index callsign_icao on stats_callsign;ALTER TABLE stats_callsign ADD UNIQUE callsign_icao (callsign_icao,filter_name);";
+			} else {
+				$query = "alter table stats_callsign drop constraint stats_callsign_callsign_icao_key;ALTER TABLE stats_callsign ADD CONSTRAINT callsign_icao UNIQUE (callsign_icao,filter_name);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add unique key in stats_callsign) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('stats_airline','filter_name')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats_airline ADD filter_name VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add filter_name column in stats_airline) : ".$e->getMessage()."\n";
+			}
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index airline_icao on stats_airline;ALTER TABLE stats_airline ADD UNIQUE airline_icao (airline_icao,filter_name);";
+			} else {
+				$query = "alter table stats_airline drop constraint stats_airline_airline_icao_key;ALTER TABLE stats_airline ADD CONSTRAINT airline_icao UNIQUE (airline_icao,filter_name);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add unique key in stats_callsign) : ".$e->getMessage()."\n";
+			}
+		}
+		
+		$query = "UPDATE config SET value = '25' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
 
     	public static function check_version($update = false) {
@@ -948,6 +1144,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '23') {
     			    $error = self::update_from_23();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '24') {
+    			    $error = self::update_from_24();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

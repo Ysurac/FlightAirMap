@@ -11,7 +11,8 @@ CREATE TABLE `airlines` (
   `active` varchar(5) NOT NULL,
   `type` varchar(50) NOT NULL,
   `home_link` varchar(255) DEFAULT NULL,
-  `wikipedia_link` varchar(255) DEFAULT NULL
+  `wikipedia_link` varchar(255) DEFAULT NULL,
+  `forsource` varchar(255) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `icao`, `callsign`, `country`, `active`, `type`, `home_link`, `wikipedia_link`) VALUES

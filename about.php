@@ -15,7 +15,7 @@ require_once('header.php');
 ?>
     <p>This is an open source project displaying <u>most</u> (mostly <a href="http://en.wikipedia.org/wiki/Instrument_flight_rules" target="_blank">IFR</a>) flights that have flown near this site area.
     <?php if ($globalADSBHUB) { ?> Some ADS-B sources come from <a href="http://www.adsbhub.net">ADSBHUB.net</a>.<?php } ?>
-    <?php if ($globalFlightAware) { ?> The data is provided by <a href="http://flightaware.com/" target="_blank">FlightAware</a>.<?php } ?> This project was created by (<a href="http://www.mariotrunz.com" target="_blank">Mario Trunz</a>) as part of his passion of aviation and web design and forked by Ycarus from <a href="http://www.zugaina.com" target="_blank">Zugaina</a>.</p>
+    <?php if ($globalFlightAware) { ?> The data is provided by <a href="http://flightaware.com/" target="_blank">FlightAware</a>.<?php } ?> This project was created by <a href="http://mtru.nz" target="_blank">Mario Trunz</a> as part of his passion of aviation and web design and forked by Ycarus from <a href="http://www.zugaina.com" target="_blank">Zugaina</a>.</p>
     <a name="history"></a>
 		<h3>History</h3>
 

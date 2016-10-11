@@ -47,22 +47,22 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
         }
-	public function getAllAircraftTypes() {
-                $query = "SELECT * FROM stats_aircraft ORDER BY aircraft_manufacturer ASC";
+	public function getAllAircraftTypes($stats_airline = '') {
+                $query = "SELECT * FROM stats_aircraft WHERE stats_airline = :stats_airline ORDER BY aircraft_manufacturer ASC";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
         }
-	public function getAllAirportNames() {
-                $query = "SELECT airport_icao, airport_name,airport_city,airport_country FROM stats_airport GROUP BY airport_icao,airport_name,airport_city,airport_country ORDER BY airport_city ASC";
+	public function getAllAirportNames($stats_airline = '') {
+                $query = "SELECT airport_icao, airport_name,airport_city,airport_country FROM stats_airport WHERE stats_airline = :stats_airline GROUP BY airport_icao,airport_name,airport_city,airport_country ORDER BY airport_city ASC";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
@@ -71,12 +71,12 @@ class Stats {
         }
 
 
-	public function countAllAircraftTypes($limit = true) {
-		if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' ORDER BY aircraft_icao_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' ORDER BY aircraft_icao_count DESC";
+	public function countAllAircraftTypes($limit = true, $stats_airline = '') {
+		if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline = :stats_airline ORDER BY aircraft_icao_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline = :stats_airline ORDER BY aircraft_icao_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
@@ -88,7 +88,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllAirlineCountries($limit = true) {
-		if ($limit) $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao GROUP BY airline_country ORDER BY airline_country_count DESC LIMIT 10 OFFSET 0";
+		if ($limit) $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao AND GROUP BY airline_country ORDER BY airline_country_count DESC LIMIT 10 OFFSET 0";
 		else $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao GROUP BY airline_country ORDER BY airline_country_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
@@ -104,12 +104,12 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllAircraftManufacturers($limit = true) {
-		if ($limit) $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC";
+	public function countAllAircraftManufacturers($limit = true,$stats_airline = '') {
+		if ($limit) $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft WHERE stats_airline = :stats_airline GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft WHERE stats_airline = :stats_airline GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
@@ -121,12 +121,12 @@ class Stats {
                 return $all;
 	}
 
-	public function countAllArrivalCountries($limit = true) {
-		if ($limit) $query = "SELECT airport_country AS airport_arrival_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_country AS airport_arrival_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly'";
+	public function countAllArrivalCountries($limit = true, $stats_airline = '') {
+		if ($limit) $query = "SELECT airport_country AS airport_arrival_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline LIMIT 10 OFFSET 0";
+		else $query = "SELECT airport_country AS airport_arrival_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
@@ -137,12 +137,12 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllDepartureCountries($limit = true) {
-		if ($limit) $query = "SELECT airport_country AS airport_departure_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_country AS airport_departure_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly'";
+	public function countAllDepartureCountries($limit = true, $stats_airline = '') {
+		if ($limit) $query = "SELECT airport_country AS airport_departure_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline LIMIT 10 OFFSET 0";
+		else $query = "SELECT airport_country AS airport_departure_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
@@ -155,8 +155,8 @@ class Stats {
 	}
 
 	public function countAllAirlines($limit = true) {
-		if ($limit) $query = "SELECT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = airline_icao ORDER BY airline_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = airline_icao ORDER BY airline_count DESC";
+		if ($limit) $query = "SELECT DISTINCT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = stats_airline.airline_icao ORDER BY airline_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT DISTINCT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = stats_airline.airline_icao ORDER BY airline_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -202,14 +202,14 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllFlightOverCountries($limit = true) {
+	public function countAllFlightOverCountries($limit = true, $stats_airline = '') {
 		$Connection = new Connection();
 		if ($Connection->tableExists('countries')) {
-			if ($limit) $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 ORDER BY flight_count DESC LIMIT 20 OFFSET 0";
-			else $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 ORDER BY flight_count DESC";
+			if ($limit) $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 AND stats_country.stats_airline = :stats_airline ORDER BY flight_count DESC LIMIT 20 OFFSET 0";
+			else $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 AND stats_country.stats_airline = :stats_airline  ORDER BY flight_count DESC";
 			 try {
 				$sth = $this->db->prepare($query);
-				$sth->execute();
+				$sth->execute(array(':stats_airline' => $stats_airline));
 			} catch(PDOException $e) {
 				echo "error : ".$e->getMessage();
 			}
@@ -325,16 +325,16 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllMonthsLastYear($limit = true) {
+	public function countAllMonthsLastYear($limit = true,$stats_airline = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			if ($limit) $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 MONTH)";
-			else $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth'";
+			if ($limit) $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 MONTH) AND stats_airline = :stats_airline";
+			else $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline";
 		} else {
-			if ($limit) $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '12 MONTHS'";
-			else $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth'";
+			if ($limit) $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '12 MONTHS' AND stats_airline = :stats_airline";
+			else $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline";
 		}
-		$query_data = array();
+		$query_data = array(':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_data);
@@ -342,16 +342,18 @@ class Stats {
                         echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                
                 if (empty($all)) {
             		$Spotter = new Spotter($this->db);
             		$all = $Spotter->countAllMonthsLastYear();
                 }
+                
                 return $all;
 	}
 	
-	public function countAllDatesLastMonth() {
-		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month'";
-		$query_data = array();
+	public function countAllDatesLastMonth($stats_airline = '') {
+		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND stats_airline = :stats_airline";
+		$query_data = array(':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_data);
@@ -365,14 +367,14 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllDatesLast7Days() {
+	public function countAllDatesLast7Days($stats_airline = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY)";
+			$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY) AND stats_airline = :stats_airline";
 		} else {
-			$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date::timestamp >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS'";
+			$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date::timestamp >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND stats_airline = :stats_airline";
 		}
-		$query_data = array();
+		$query_data = array(':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_data);
@@ -386,9 +388,9 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllDates() {
-		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'date'";
-		$query_data = array();
+	public function countAllDates($stats_airline = '') {
+		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'date' AND stats_airline = :stats_airline";
+		$query_data = array(':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_data);
@@ -402,11 +404,27 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllMonths() {
-	    	$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth'";
+	public function countAllDatesByAirlines() {
+		$query = "SELECT stats_airline as airline_icao, flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'date'";
+		$query_data = array();
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute($query_data);
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                if (empty($all)) {
+            		$Spotter = new Spotter($this->db);
+            		$all = $Spotter->countAllDatesByAirlines();
+                }
+                return $all;
+	}
+	public function countAllMonths($stats_airline = '') {
+	    	$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
@@ -432,11 +450,11 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllHours($orderby = 'hour',$limit = true) {
+	public function countAllHours($orderby = 'hour',$limit = true,$stats_airline = '') {
 		global $globalTimezone, $globalDBdriver;
 
-		if ($limit) $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour'";
-		else $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour'";
+		if ($limit) $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour' AND stats_airline = :stats_airline";
+		else $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour' AND stats_airline = :stats_airline";
 		if ($orderby == 'hour') {
 			if ($globalDBdriver == 'mysql') {
 				$query .= " ORDER BY flight_date ASC";
@@ -447,7 +465,7 @@ class Stats {
 		if ($orderby == 'count') $query .= " ORDER BY hour_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
@@ -536,9 +554,9 @@ class Stats {
 		return $all;
 	}
 
-	public function getLast7DaysAirports($airport_icao = '') {
-		$query = "SELECT * FROM stats_airport WHERE stats_type = 'daily' AND airport_icao = :airport_icao ORDER BY date";
-		$query_values = array(':airport_icao' => $airport_icao);
+	public function getLast7DaysAirports($airport_icao = '', $stats_airline = '') {
+		$query = "SELECT * FROM stats_airport WHERE stats_type = 'daily' AND airport_icao = :airport_icao AND stats_airline = :stats_airline ORDER BY date";
+		$query_values = array(':airport_icao' => $airport_icao,':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -548,9 +566,9 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
 	}
-	public function getStats($type) {
-                $query = "SELECT * FROM stats WHERE stats_type = :type ORDER BY stats_date";
-                $query_values = array(':type' => $type);
+	public function getStats($type,$stats_airline = '') {
+                $query = "SELECT * FROM stats WHERE stats_type = :type AND stats_airline = :stats_airline ORDER BY stats_date";
+                $query_values = array(':type' => $type,':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -560,14 +578,14 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
         }
-	public function getSumStats($type,$year) {
+	public function getSumStats($type,$year,$stats_airline = '') {
     		global $globalArchiveMonths, $globalDBdriver;
     		if ($globalDBdriver == 'mysql') {
-	                $query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year";
+	                $query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year AND stats_airline = :stats_airline";
 	        } else {
-            		$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND EXTRACT(YEAR FROM stats_date) = :year";
+            		$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND EXTRACT(YEAR FROM stats_date) = :year AND stats_airline = :stats_airline";
                 }
-                $query_values = array(':type' => $type, ':year' => $year);
+                $query_values = array(':type' => $type, ':year' => $year, ':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -577,14 +595,14 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all[0]['total'];
         }
-	public function getStatsTotal($type) {
+	public function getStatsTotal($type, $stats_airline = '') {
     		global $globalArchiveMonths, $globalDBdriver;
     		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH)";
+			$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH) AND stats_airline = :stats_airline";
 		} else {
-			$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS'";
+			$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS' AND stats_airline = :stats_airline";
                 }
-                $query_values = array(':type' => $type);
+                $query_values = array(':type' => $type, ':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -594,16 +612,16 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all[0]['total'];
         }
-	public function getStatsAircraftTotal() {
+	public function getStatsAircraftTotal($stats_airline = '') {
     		global $globalArchiveMonths, $globalDBdriver;
     		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT SUM(cnt) as total FROM stats_aircraft";
+			$query = "SELECT SUM(cnt) as total FROM stats_aircraft WHERE stats_airline = :stats_airline";
                 } else {
-			$query = "SELECT SUM(cnt) as total FROM stats_aircraft";
+			$query = "SELECT SUM(cnt) as total FROM stats_aircraft WHERE stats_airline = :stats_airline";
                 }
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
@@ -659,14 +677,14 @@ class Stats {
                 return $all[0]['total'];
         }
 
-	public function addStat($type,$cnt,$stats_date) {
+	public function addStat($type,$cnt,$stats_date,$stats_airline = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats (stats_type,cnt,stats_date) VALUES (:type,:cnt,:stats_date) ON DUPLICATE KEY UPDATE cnt = :cnt";
+			$query = "INSERT INTO stats (stats_type,cnt,stats_date,stats_airline) VALUES (:type,:cnt,:stats_date,:stats_airline) ON DUPLICATE KEY UPDATE cnt = :cnt";
                 } else {
-			$query = "UPDATE stats SET cnt = :cnt WHERE stats_type = :type AND stats_date = :stats_date; INSERT INTO stats (stats_type,cnt,stats_date) SELECT :type,:cnt,:stats_date WHERE NOT EXISTS (SELECT 1 FROM stats WHERE  stats_type = :type AND stats_date = :stats_date);"; 
+			$query = "UPDATE stats SET cnt = :cnt WHERE stats_type = :type AND stats_date = :stats_date AND stats_airline = :stats_airline; INSERT INTO stats (stats_type,cnt,stats_date,stats_airline) SELECT :type,:cnt,:stats_date,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats WHERE  stats_type = :type AND stats_date = :stats_date AND stats_airline = :stats_airline);"; 
 		}
-                $query_values = array(':type' => $type,':cnt' => $cnt,':stats_date' => $stats_date);
+                $query_values = array(':type' => $type,':cnt' => $cnt,':stats_date' => $stats_date, ':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -723,9 +741,9 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatFlight($type,$date_name,$cnt) {
-                $query = "INSERT INTO stats_flight (stats_type,flight_date,cnt) VALUES (:type,:flight_date,:cnt)";
-                $query_values = array(':type' => $type,':flight_date' => $date_name,':cnt' => $cnt);
+	public function addStatFlight($type,$date_name,$cnt,$stats_airline = '') {
+                $query = "INSERT INTO stats_flight (stats_type,flight_date,cnt,stats_airline) VALUES (:type,:flight_date,:cnt,:stats_airline)";
+                $query_values = array(':type' => $type,':flight_date' => $date_name,':cnt' => $cnt, ':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -733,14 +751,14 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatAircraftRegistration($registration,$cnt,$aircraft_icao = '') {
+	public function addStatAircraftRegistration($registration,$cnt,$aircraft_icao = '',$airline_icao = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_registration (aircraft_icao,registration,cnt) VALUES (:aircraft_icao,:registration,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+			$query = "INSERT INTO stats_registration (aircraft_icao,registration,cnt,stats_airline) VALUES (:aircraft_icao,:registration,:cnt,:stats_airline) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
 		} else {
-			$query = "UPDATE stats_registration SET cnt = cnt+:cnt WHERE registration = :registration; INSERT INTO stats_registration (aircraft_icao,registration,cnt) SELECT :aircraft_icao,:registration,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_registration WHERE registration = :registration);"; 
+			$query = "UPDATE stats_registration SET cnt = cnt+:cnt WHERE registration = :registration AND stats_airline = :stats_airline; INSERT INTO stats_registration (aircraft_icao,registration,cnt,stats_airline) SELECT :aircraft_icao,:registration,:cnt,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_registration WHERE registration = :registration AND stats_airline = :stats_airline);"; 
 		}
-                $query_values = array(':aircraft_icao' => $aircraft_icao,':registration' => $registration,':cnt' => $cnt);
+                $query_values = array(':aircraft_icao' => $aircraft_icao,':registration' => $registration,':cnt' => $cnt,':stats_airline' => $airline_icao);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -778,14 +796,14 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatAircraft($aircraft_icao,$cnt,$aircraft_name = '',$aircraft_manufacturer = '') {
+	public function addStatAircraft($aircraft_icao,$cnt,$aircraft_name = '',$aircraft_manufacturer = '', $airline_icao = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,aircraft_manufacturer,cnt) VALUES (:aircraft_icao,:aircraft_name,:aircraft_manufacturer,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, aircraft_name = :aircraft_name, aircraft_manufacturer = :aircraft_manufacturer";
+			$query = "INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,aircraft_manufacturer,cnt,stats_airline) VALUES (:aircraft_icao,:aircraft_name,:aircraft_manufacturer,:cnt,:stats_airline) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, aircraft_name = :aircraft_name, aircraft_manufacturer = :aircraft_manufacturer, stats_airline = :stats_airline";
 		} else {
-			$query = "UPDATE stats_aircraft SET cnt = cnt+:cnt, aircraft_name = :aircraft_name, aircraft_manufacturer = :aircraft_manufacturer WHERE aircraft_icao = :aircraft_icao; INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,aircraft_manufacturer,cnt) SELECT :aircraft_icao,:aircraft_name,:aircraft_manufacturer,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_aircraft WHERE aircraft_icao = :aircraft_icao);"; 
+			$query = "UPDATE stats_aircraft SET cnt = cnt+:cnt, aircraft_name = :aircraft_name, aircraft_manufacturer = :aircraft_manufacturer WHERE aircraft_icao = :aircraft_icao AND stats_airline = :stats_airline; INSERT INTO stats_aircraft (aircraft_icao,aircraft_name,aircraft_manufacturer,cnt,stats_airline) SELECT :aircraft_icao,:aircraft_name,:aircraft_manufacturer,:cnt,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_aircraft WHERE aircraft_icao = :aircraft_icao AND stats_airline = :stats_airline);"; 
 		}
-                $query_values = array(':aircraft_icao' => $aircraft_icao,':aircraft_name' => $aircraft_name,':cnt' => $cnt, ':aircraft_manufacturer' => $aircraft_manufacturer);
+                $query_values = array(':aircraft_icao' => $aircraft_icao,':aircraft_name' => $aircraft_name,':cnt' => $cnt, ':aircraft_manufacturer' => $aircraft_manufacturer,':stats_airline' => $airline_icao);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -838,14 +856,14 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatDepartureAirports($airport_icao,$airport_name,$airport_city,$airport_country,$departure) {
+	public function addStatDepartureAirports($airport_icao,$airport_name,$airport_city,$airport_country,$departure,$airline_icao = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date) ON DUPLICATE KEY UPDATE departure = departure+:departure";
+			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date,:stats_airline) ON DUPLICATE KEY UPDATE departure = departure+:departure";
 		} else {
-			$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'yearly'; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly');"; 
+			$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date, :stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline);"; 
 		}
-                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => date('Y').'-01-01 00:00:00');
+                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => date('Y').'-01-01 00:00:00', ':stats_airline' => $airline_icao);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -853,14 +871,14 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatDepartureAirportsDaily($date,$airport_icao,$airport_name,$airport_city,$airport_country,$departure) {
+	public function addStatDepartureAirportsDaily($date,$airport_icao,$airport_name,$airport_city,$airport_country,$departure,$airline_icao = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date) ON DUPLICATE KEY UPDATE departure = :departure";
+			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date,:stats_airline) ON DUPLICATE KEY UPDATE departure = :departure";
 		} else {
-			$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date);"; 
+			$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date);"; 
 		}
-                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => $date);
+                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => $date,':stats_airline' => $airline_icao);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -868,14 +886,14 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatArrivalAirports($airport_icao,$airport_name,$airport_city,$airport_country,$arrival) {
+	public function addStatArrivalAirports($airport_icao,$airport_name,$airport_city,$airport_country,$arrival,$airline_icao = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date) ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
+			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline) ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
 		} else {
-			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'yearly'; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly');"; 
+			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline);"; 
 		}
-                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival,':date' => date('Y').'-01-01 00:00:00');
+                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival,':date' => date('Y').'-01-01 00:00:00',':stats_airline' => $airline_icao);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -883,14 +901,14 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatArrivalAirportsDaily($date,$airport_icao,$airport_name,$airport_city,$airport_country,$arrival) {
+	public function addStatArrivalAirportsDaily($date,$airport_icao,$airport_name,$airport_city,$airport_country,$arrival,$airline_icao = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date) ON DUPLICATE KEY UPDATE arrival = :arrival";
+			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date,:stats_airline) ON DUPLICATE KEY UPDATE arrival = :arrival";
 		} else {
-			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date);"; 
+			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline);"; 
 		}
-                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival, ':date' => $date);
+                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival, ':date' => $date,':stats_airline' => $airline_icao);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -937,6 +955,7 @@ class Stats {
     		date_default_timezone_set('UTC');
     		$last_update = $this->getLastStatsUpdate('last_update_stats');
 		//print_r($last_update);
+		/*
 		$flightsbymonth = $this->getStats('flights_by_month');
     		if (empty($last_update) && empty($flightsbymonth)) {
 			// Initial update
@@ -1156,6 +1175,7 @@ class Stats {
 			}
 			$this->addLastStatsUpdate('last_update_stats',date('Y-m-d G:i:s'));
 		} else {
+		*/
 			echo 'Update stats !'."\n";
 			if (isset($last_update[0]['value'])) {
 				$last_update_day = $last_update[0]['value'];
@@ -1189,6 +1209,7 @@ class Stats {
 			$pall = $Spotter->countAllDepartureAirports(false,0,$last_update_day);
         		$dall = $Spotter->countAllDetectedDepartureAirports(false,0,$last_update_day);
 	        	$alldata = array();
+	        	
     			foreach ($pall as $value) {
 	        		$icao = $value['airport_departure_icao'];
     				$alldata[$icao] = $value;
@@ -1274,6 +1295,8 @@ class Stats {
 			echo 'Airports data...'."\n";
 			echo '...Departure'."\n";
 			$this->deleteStatAirport('daily');
+//			$pall = $Spotter->getLast7DaysAirportsDeparture();
+  //      		$dall = $Spotter->getLast7DaysDetectedAirportsDeparture();
 			$pall = $Spotter->getLast7DaysAirportsDeparture();
         		$dall = $Spotter->getLast7DaysDetectedAirportsDeparture();
         		/*
@@ -1300,7 +1323,7 @@ class Stats {
     				$ddate = $value['date'];
     				$find = false;
     				foreach ($pall as $pvalue) {
-    					if ($pvalue['departure_airport_icao'] == $icao && $pvalue['date'] = $ddate) {
+    					if ($pvalue['departure_airport_icao'] == $icao && $pvalue['date'] == $ddate) {
     						$pvalue['departure_airport_count'] = $pvalue['departure_airport_count'] + $value['departure_airport_count'];
     						$find = true;
     						break;
@@ -1342,7 +1365,7 @@ class Stats {
     				$ddate = $value['date'];
     				$find = false;
     				foreach ($pall as $pvalue) {
-    					if ($pvalue['arrival_airport_icao'] == $icao && $pvalue['date'] = $ddate) {
+    					if ($pvalue['arrival_airport_icao'] == $icao && $pvalue['date'] == $ddate) {
     						$pvalue['arrival_airport_count'] = $pvalue['arrival_airport_count'] + $value['arrival_airport_count'];
     						$find = true;
     						break;
@@ -1384,6 +1407,161 @@ class Stats {
 			foreach ($alldata as $number) {
 				$this->addStatFlight('hour',$number['hour_name'],$number['hour_count']);
 			}
+			
+			// Count by airlines
+			echo '--- Stats by airlines ---'."\n";
+			$Spotter = new Spotter($this->db);
+			$alldata = $Spotter->countAllAircraftTypesByAirlines(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name'],$number['aircraft_manufacturer'],$number['airline_icao']);
+			}
+			$alldata = $Spotter->countAllAircraftRegistrationsByAirlines(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatAircraftRegistration($number['registration'],$number['aircraft_registration_count'],$number['aircraft_icao'],$number['airline_icao']);
+			}
+			$alldata = $Spotter->countAllCallsignsByAirlines(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatCallsign($number['callsign_icao'],$number['callsign_icao_count'],$number['airline_icao']);
+			}
+			
+			$pall = $Spotter->countAllDepartureAirportsByAirlines(false,0,$last_update_day);
+       			$dall = $Spotter->countAllDetectedDepartureAirportsByAirlines(false,0,$last_update_day);
+	        	$alldata = array();
+    			foreach ($dall as $value) {
+    				$icao = $value['airport_departure_icao'];
+    				$dicao = $value['airline_icap'];
+    				$find = false;
+    				foreach ($pall as $pvalue) {
+    					if ($pvalue['airport_departure_icao'] == $icao && $pvalue['airline_icao'] = $dicao) {
+    						$pvalue['airport_departure_icao_count'] = $pvalue['airport_departure_icao_count'] + $value['airport_departure_icao_count'];
+    						$find = true;
+    						break;
+    					}
+    				}
+    				if ($find === false) {
+    					$pall[] = $value;
+    				}
+    			}
+    			$alldata = $pall;
+			foreach ($alldata as $number) {
+				echo $this->addStatDepartureAirports($number['airport_departure_icao'],$number['airport_departure_name'],$number['airport_departure_city'],$number['airport_departure_country'],$number['airport_departure_icao_count'],$number['airline_icao']);
+			}
+			$pall = $Spotter->countAllArrivalAirportsByAirlines(false,0,$last_update_day);
+        		$dall = $Spotter->countAllDetectedArrivalAirportsByAirlines(false,0,$last_update_day);
+	        	$alldata = array();
+    			foreach ($dall as $value) {
+    				$icao = $value['airport_arrival_icao'];
+    				$dicao = $value['airline_icao'];
+    				$find = false;
+    				foreach ($pall as $pvalue) {
+    					if ($pvalue['airport_arrival_icao'] == $icao && $pvalue['airline_icao'] = $dicao) {
+    						$pvalue['airport_arrival_icao_count'] = $pvalue['airport_arrival_icao_count'] + $value['airport_arrival_icao_count'];
+    						$find = true;
+    						break;
+    					}
+    				}
+    				if ($find === false) {
+    					$pall[] = $value;
+    				}
+    			}
+    			$alldata = $pall;
+                        foreach ($alldata as $number) {
+				echo $this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_name'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count'],$number['airline_icao']);
+			}
+			$Spotter = new Spotter($this->db);
+			$alldata = $Spotter->countAllMonthsByAirlines();
+			$lastyear = false;
+			foreach ($alldata as $number) {
+				if ($number['year_name'] != date('Y')) $lastyear = true;
+				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),$number['airline_icao']);
+			}
+			$alldata = $Spotter->countAllMonthsPilotsByAirlines();
+			foreach ($alldata as $number) {
+				$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),$number['airline_icao']);
+			}
+			$alldata = $Spotter->countAllMonthsAircraftsByAirlines();
+			foreach ($alldata as $number) {
+				$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),$number['airline_icao']);
+			}
+			$alldata = $Spotter->countAllMonthsRealArrivalsByAirlines();
+			foreach ($alldata as $number) {
+				$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),$number['airline_icao']);
+			}
+			echo '...Departure'."\n";
+			$pall = $Spotter->getLast7DaysAirportsDepartureByAirlines();
+        		$dall = $Spotter->getLast7DaysDetectedAirportsDepartureByAirlines();
+    			foreach ($dall as $value) {
+    				$icao = $value['departure_airport_icao'];
+    				$airline = $value['airline_icao'];
+    				$ddate = $value['date'];
+    				$find = false;
+    				foreach ($pall as $pvalue) {
+    					if ($pvalue['departure_airport_icao'] == $icao && $pvalue['date'] == $ddate && $pvalue['airline_icao'] = $airline) {
+    						$pvalue['departure_airport_count'] = $pvalue['departure_airport_count'] + $value['departure_airport_count'];
+    						$find = true;
+    						break;
+    					}
+    				}
+    				if ($find === false) {
+    					$pall[] = $value;
+    				}
+    			}
+    			$alldata = $pall;
+			foreach ($alldata as $number) {
+				$this->addStatDepartureAirportsDaily($number['date'],$number['departure_airport_icao'],$number['departure_airport_name'],$number['departure_airport_city'],$number['departure_airport_country'],$number['departure_airport_count'],$number['airline_icao']);
+			}
+			echo '...Arrival'."\n";
+			$pall = $Spotter->getLast7DaysAirportsArrivalByAirlines();
+        		$dall = $Spotter->getLast7DaysDetectedAirportsArrivalByAirlines();
+    			foreach ($dall as $value) {
+    				$icao = $value['arrival_airport_icao'];
+    				$airline = $value['airline_icao'];
+    				$ddate = $value['date'];
+    				$find = false;
+    				foreach ($pall as $pvalue) {
+    					if ($pvalue['arrival_airport_icao'] == $icao && $pvalue['date'] == $ddate && $pvalue['airline_icao'] == $airline) {
+    						$pvalue['arrival_airport_count'] = $pvalue['arrival_airport_count'] + $value['arrival_airport_count'];
+    						$find = true;
+    						break;
+    					}
+    				}
+    				if ($find === false) {
+    					$pall[] = $value;
+    				}
+    			}
+    			$alldata = $pall;
+			foreach ($alldata as $number) {
+				$this->addStatArrivalAirportsDaily($number['date'],$number['arrival_airport_icao'],$number['arrival_airport_name'],$number['arrival_airport_city'],$number['arrival_airport_country'],$number['arrival_airport_count'],$number['airline_icao']);
+			}
+
+			echo 'Flights data...'."\n";
+			echo '-> countAllDatesLastMonth...'."\n";
+			$alldata = $Spotter->countAllDatesLastMonthByAirlines();
+			foreach ($alldata as $number) {
+				$this->addStatFlight('month',$number['date_name'],$number['date_count'], $number['airline_icao']);
+			}
+			echo '-> countAllDates...'."\n";
+			$previousdata = $this->countAllDatesByAirlines();
+			$alldata = $Common->array_merge_noappend($previousdata,$Spotter->countAllDatesByAirlines());
+			$values = array();
+			foreach ($alldata as $cnt) {
+				$values[] = $cnt['date_count'];
+			}
+			array_multisort($values,SORT_DESC,$alldata);
+			array_splice($alldata,11);
+			foreach ($alldata as $number) {
+				$this->addStatFlight('date',$number['date_name'],$number['date_count'],$number['airline_icao']);
+			}
+			
+			echo '-> countAllHours...'."\n";
+			$alldata = $Spotter->countAllHoursByAirlines('hour');
+			foreach ($alldata as $number) {
+				$this->addStatFlight('hour',$number['hour_name'],$number['hour_count'],$number['airline_icao']);
+			}
+			
+
+			
+			
 			if ($lastyear) {
 				echo 'Data from last year...'."\n";
 				// SUM all previous month to put as year
@@ -1393,6 +1571,13 @@ class Stats {
 				$this->addStat('airlines_byyear',$this->getSumStats('airlines_bymonth',$previous_year),$previous_year.'-01-01 00:00:00');
 				$this->addStat('owner_byyear',$this->getSumStats('owner_bymonth',$previous_year),$previous_year.'-01-01 00:00:00');
 				$this->addStat('pilot_byyear',$this->getSumStats('pilot_bymonth',$previous_year),$previous_year.'-01-01 00:00:00');
+				$allairlines = $this->getAllAirlineNames();
+				foreach ($allairlines as $data) {
+					$this->addStat('aircrafts_byyear',$this->getSumStats('aircrafts_bymonth',$previous_year,$data['airline_icao']),$previous_year.'-01-01 00:00:00',$data['airline_icao']);
+					$this->addStat('airlines_byyear',$this->getSumStats('airlines_bymonth',$previous_year,$data['airline_icao']),$previous_year.'-01-01 00:00:00',$data['airline_icao']);
+					$this->addStat('owner_byyear',$this->getSumStats('owner_bymonth',$previous_year,$data['airline_icao']),$previous_year.'-01-01 00:00:00',$data['airline_icao']);
+					$this->addStat('pilot_byyear',$this->getSumStats('pilot_bymonth',$previous_year,$data['airline_icao']),$previous_year.'-01-01 00:00:00',$data['airline_icao']);
+				}
 				
 				if (isset($globalArchiveYear) && $globalArchiveYear) {
 					if ($globalArchive) {
@@ -1452,7 +1637,7 @@ class Stats {
 			echo 'Insert last stats update date...'."\n";
 			date_default_timezone_set('UTC');
 			$this->addLastStatsUpdate('last_update_stats',date('Y-m-d G:i:s'));
-		}
+		//}
 	}
 }
 

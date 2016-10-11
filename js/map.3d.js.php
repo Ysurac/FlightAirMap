@@ -764,7 +764,7 @@ if (MapTerrain == 'stk' || MapTerrain == '') {
 ?>
 } else if (MapTerrain == 'vrterrain') {
 	var vrTheWorldProvider = new Cesium.VRTheWorldTerrainProvider({
-	    url : 'https://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
+	    url : 'http://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
 	    requestWaterMask : true,
 	    requestVertexNormals : true,
 	    credit : 'Terrain data courtesy VT MÄK'

@@ -7,7 +7,9 @@ CREATE TABLE stats_airport (
   departure integer NOT NULL DEFAULT '0',
   arrival integer NOT NULL DEFAULT '0',
   stats_type varchar(50) NOT NULL DEFAULT 'yearly',
-  date date DEFAULT NULL
+  date date DEFAULT NULL,
+  stats_airline varchar(255) DEFAULT '',
+  filter_name varchar(255) DEFAULT ''
 );
 
 ALTER TABLE stats_airport ADD PRIMARY KEY (stats_airport_id), ADD UNIQUE (airport_icao,stats_type,date);

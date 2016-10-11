@@ -1126,7 +1126,8 @@ class update_db {
 	public static function ivao_airlines($filename) {
 		//require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
-		$query = 'TRUNCATE TABLE airlines';
+		//$query = 'TRUNCATE TABLE airlines';
+		$query = "DELETE FROM airlines WHERE forsource = 'ivao'";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
@@ -1144,7 +1145,7 @@ class update_db {
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				if(count($row) > 1) {
-					$query = "INSERT INTO airlines (name,icao,active) VALUES (:name, :icao, 'Y')";
+					$query = "INSERT INTO airlines (name,icao,active,forsource) VALUES (:name, :icao, 'Y','ivao')";
 					try {
 						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':name' => $row[1],':icao' => $row[0]));

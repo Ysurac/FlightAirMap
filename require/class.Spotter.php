@@ -11,7 +11,34 @@ class Spotter{
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
 	}
-	
+
+	/**
+	* Get SQL query part for filter used
+	* @param Array $filter the filter
+	* @return Array the SQL part
+	*/
+	public function getFilter($filter = array()) {
+		global $globalFilter;
+		if (is_array($globalFilter)) $filter = array_merge($globalFilter,$filter);
+		$filter_query = '';
+		if (isset($filter['source']) && !empty($filter['source'])) {
+			$filter_query = " AND format_source IN ('".implode("','",$filter['source'])."')";
+		}
+		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
+			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
+		}
+		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
+			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
+		}
+		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+		}
+		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
+			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
+		}
+		return $filter_query;
+	}
+
 	/**
 	* Executes the SQL statements to get the spotter information
 	*
@@ -189,12 +216,17 @@ class Spotter{
 					$temp_array['aircraft_manufacturer'] = 'N/A';
                             	}
 			}
+			$fromsource = NULL;
+			if (isset($row['format_source']) && $row['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
+			elseif (isset($row['format_source']) && $row['format_source'] == 'whazzup') $fromsource = 'ivao';
+			elseif (isset($globalVATSIM) && $globalVATSIM) $fromsource = 'vatsim';
+			elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';
 			if (!isset($row['airline_name']) || $row['airline_name'] == '') {
 				if (!is_numeric(substr($row['ident'], 0, 3))) {
 					if (is_numeric(substr($row['ident'], 2, 1))) {
-						$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 2));
+						$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 2),$fromsource);
 					} elseif (is_numeric(substr($row['ident'], 3, 1))) {
-						$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3));
+						$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3),$fromsource);
 					} else {
 						$airline_array = $this->getAllAirlineInfo('NA');
 					}
@@ -369,7 +401,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '')
+	public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '',$filter = array())
 	{
 		global $globalTimezone, $globalDBdriver;
 		require_once(dirname(__FILE__).'/class.Translation.php');
@@ -379,6 +411,7 @@ class Spotter{
 
 		$query_values = array();
 		$additional_query = '';
+		$filter_query = $this->getFilter($filter);
 		if ($q != "")
 		{
 			if (!is_string($q))
@@ -697,17 +730,17 @@ class Spotter{
 			if ($globalDBdriver == 'mysql') {
 				$query="SELECT spotter_output.*, 1.60935*3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - spotter_archive.latitude)*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(spotter_archive.latitude*pi()/180)*POWER(SIN(($origLon-spotter_archive.longitude)*pi()/180/2),2))) as distance 
 						FROM spotter_output, spotter_archive WHERE spotter_output.flightaware_id = spotter_archive.flightaware_id AND spotter_output.ident <> '' ".$additional_query."AND spotter_archive.longitude between ($origLon-$dist/cos(radians($origLat))*69) and ($origLon+$dist/cos(radians($origLat)*69)) and spotter_archive.latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
-						AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - spotter_archive.latitude)*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(spotter_archive.latitude*pi()/180)*POWER(SIN(($origLon-spotter_archive.longitude)*pi()/180/2),2)))) < $dist".$orderby_query;
+						AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - spotter_archive.latitude)*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(spotter_archive.latitude*pi()/180)*POWER(SIN(($origLon-spotter_archive.longitude)*pi()/180/2),2)))) < $dist".$filter_query.$orderby_query;
 			} else {
 				$query="SELECT spotter_output.*, 1.60935 * 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(spotter_archive.latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(spotter_archive.latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2))) as distance 
 						FROM spotter_output, spotter_archive WHERE spotter_output.flightaware_id = spotter_archive.flightaware_id AND spotter_output.ident <> '' ".$additional_query."AND CAST(spotter_archive.longitude as double precision) between ($origLon-$dist/cos(radians($origLat))*69) and ($origLon+$dist/cos(radians($origLat))*69) and CAST(spotter_archive.latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
-						AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(spotter_archive.latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(spotter_archive.latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2)))) < $dist".$orderby_query;
+						AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(spotter_archive.latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(spotter_archive.latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2)))) < $dist".$filter_query.$orderby_query;
 			}
 		} else {		
 			$query  = "SELECT spotter_output.* FROM spotter_output 
 					WHERE spotter_output.ident <> '' 
 					".$additional_query."
-					".$orderby_query;
+					".$filter_query.$orderby_query;
 		}
 		$spotter_array = $this->getDataFromDB($query, $query_values,$limit_query);
 		return $spotter_array;
@@ -720,11 +753,13 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function getLatestSpotterData($limit = '', $sort = '')
+	public function getLatestSpotterData($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+
+		$filter_query = $this->getFilter($filter);
 		
 		if ($limit != "")
 		{
@@ -748,7 +783,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query  = $global_query." ".$orderby_query;
+		$query  = $global_query.$filter_query." ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(),$limit_query);
 
@@ -835,11 +870,14 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function getNewestSpotterDataSortedByAircraftType($limit = '', $sort = '')
+	public function getNewestSpotterDataSortedByAircraftType($limit = '', $sort = '',$filter = array())
 	{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+
+		$filter_query = $this->getFilter($filter);
+
 		$limit_query = '';
 		if ($limit != "")
 		{
@@ -863,7 +901,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.aircraft_name <> '' GROUP BY spotter_output.aircraft_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.aircraft_name <> '' GROUP BY spotter_output.aircraft_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$filter_query.$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
@@ -871,19 +909,20 @@ class Spotter{
 	}
     
     
-    /**
+	/**
 	* Gets all the spotter information sorted by the newest aircraft registration
 	*
 	* @return Array the spotter information
 	*
 	*/
-	public function getNewestSpotterDataSortedByAircraftRegistration($limit = '', $sort = '')
+	public function getNewestSpotterDataSortedByAircraftRegistration($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+		$filter_query = $this->getFilter($filter);
+
 		$limit_query = '';
-		
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
@@ -906,25 +945,27 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.registration <> '' GROUP BY spotter_output.registration,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.registration <> '' GROUP BY spotter_output.registration,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$filter_query.$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
 		return $spotter_array;
 	}
-    
-    
-    /**
+
+
+	/**
 	* Gets all the spotter information sorted by the newest airline
 	*
 	* @return Array the spotter information
 	*
 	*/
-	public function getNewestSpotterDataSortedByAirline($limit = '', $sort = '')
+	public function getNewestSpotterDataSortedByAirline($limit = '', $sort = '',$filter = array())
 	{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+		$filter_query = $this->getFilter($filter);
+		
 		$limit_query = '';
 		if ($limit != "")
 		{
@@ -948,7 +989,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.airline_name <> '' GROUP BY spotter_output.airline_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.airline_name <> '' GROUP BY spotter_output.airline_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$filter_query.$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
@@ -962,11 +1003,14 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function getNewestSpotterDataSortedByDepartureAirport($limit = '', $sort = '')
+	public function getNewestSpotterDataSortedByDepartureAirport($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+		
+		$filter_query = $this->getFilter($filter);
+		
 		$limit_query = '';
 		
 		if ($limit != "")
@@ -991,27 +1035,27 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' GROUP BY spotter_output.departure_airport_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' GROUP BY spotter_output.departure_airport_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$filter_query.$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
 		return $spotter_array;
 	}
-    
-    
-    /**
+
+
+	/**
 	* Gets all the spotter information sorted by the newest arrival airport
 	*
 	* @return Array the spotter information
 	*
 	*/
-	public function getNewestSpotterDataSortedByArrivalAirport($limit = '', $sort = '')
+	public function getNewestSpotterDataSortedByArrivalAirport($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+		$filter_query = $this->getFilter($filter);
 		$limit_query = '';
-		
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
@@ -1034,7 +1078,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC ";
 		}
 
-		$query  = $global_query." WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' GROUP BY spotter_output.arrival_airport_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' GROUP BY spotter_output.arrival_airport_icao,spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time ".$filter_query.$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
@@ -1131,7 +1175,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function getSpotterDataByAircraft($aircraft_type = '', $limit = '', $sort = '')
+	public function getSpotterDataByAircraft($aircraft_type = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
 		
@@ -1140,6 +1184,7 @@ class Spotter{
 		$query_values = array();
 		$limit_query = '';
 		$additional_query = '';
+		$filter_query = $this->getFilter($filter);
 		
 		if ($aircraft_type != "")
 		{
@@ -1174,7 +1219,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$filter_query.$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
@@ -1188,7 +1233,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function getSpotterDataByRegistration($registration = '', $limit = '', $sort = '')
+	public function getSpotterDataByRegistration($registration = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
 		
@@ -1197,6 +1242,7 @@ class Spotter{
 		$query_values = array();
 		$limit_query = '';
 		$additional_query = '';
+		$filter_query = $this->getFilter($filter);
 		
 		if ($registration != "")
 		{
@@ -1231,7 +1277,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$filter_query.$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
@@ -1360,13 +1406,31 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function getSpotterDataByDate($date = '', $limit = '', $sort = '')
+	public function getSpotterDataByDate($date = '', $limit = '', $sort = '',$filter = array())
 	{
 		global $global_query, $globalTimezone, $globalDBdriver;
 		
 		$query_values = array();
 		$limit_query = '';
 		$additional_query = '';
+
+		$filter_query = '';
+		if (isset($filter['source']) && !empty($filter['source'])) {
+			$filter_query = " AND format_source IN ('".implode("','",$filter['source'])."')";
+		}
+		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
+			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
+		}
+		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
+			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
+		}
+		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+		}
+		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
+			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
+		}
+	
 		
 		if ($date != "")
 		{
@@ -1410,7 +1474,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query.$filter_array." ".$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 		return $spotter_array;
 	}
@@ -1611,11 +1675,12 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function getSpotterDataByHighlight($limit = '', $sort = '')
+	public function getSpotterDataByHighlight($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
+		$filter_query = $this->getFilter($filter);
 		$limit_query = '';
 		
 		if ($limit != "")
@@ -1640,31 +1705,29 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query  = $global_query." WHERE spotter_output.highlight <> '' ".$orderby_query;
+		$query  = $global_query." WHERE spotter_output.highlight <> '' ".$filter_query.$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, array(), $limit_query);
 
 		return $spotter_array;
 	}
-    
-    
-    
-    /**
+
+	/**
 	* Gets all the highlight based on a aircraft registration
 	*
 	* @return String the highlight text
 	*
 	*/
-	public function getHighlightByRegistration($registration)
+	public function getHighlightByRegistration($registration,$filter = array())
 	{
 		global $global_query;
 		
 		date_default_timezone_set('UTC');
-		
+		$filter_query = $this->getFilter($filter);
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
-
 		
 		$query  = $global_query." WHERE spotter_output.highlight <> '' AND spotter_output.registration = :registration";
+		$query .= $filter_query;
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
 
@@ -1929,7 +1992,7 @@ class Spotter{
 	* @return Array airport information
 	*
 	*/
-	public function getAllAirlineInfo($airline_icao)
+	public function getAllAirlineInfo($airline_icao, $fromsource = NULL)
 	{
 		$airline_icao = strtoupper(filter_var($airline_icao,FILTER_SANITIZE_STRING));
 		if ($airline_icao == 'NA') {
@@ -1938,13 +2001,25 @@ class Spotter{
 			return $airline_array;
 		} else {
 			if (strlen($airline_icao) == 2) {
-				$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y' LIMIT 1";
+				if ($fromsource === NULL) {
+					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y' AND airlines.forsource IS NULL LIMIT 1";
+				} else {
+					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y' AND airlines.forsource = :fromsource LIMIT 1";
+				}
 			} else {
-				$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y' LIMIT 1";
+				if ($fromsource === NULL) {
+					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y' AND airlines.forsource IS NULL LIMIT 1";
+				} else {
+					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y' AND airlines.forsource = :fromsource LIMIT 1";
+				}
 			}
 			
 			$sth = $this->db->prepare($query);
-			$sth->execute(array(':airline_icao' => $airline_icao));
+			if ($fromsource === NULL) {
+				$sth->execute(array(':airline_icao' => $airline_icao));
+			} else {
+				$sth->execute(array(':airline_icao' => $airline_icao,':fromsource' => $fromsource));
+			}
                         /*
 			$airline_array = array();
 			$temp_array = array();
@@ -2652,6 +2727,38 @@ class Spotter{
 	}
 
 	/**
+	* Get a list of flights from airport since 7 days
+	* @return Array number, icao, name and city of airports
+	*/
+
+	public function getLast7DaysAirportsDepartureByAirlines($airport_icao = '') {
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		if ($airport_icao == '') {
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT spotter_output.airline_icao, COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao <> 'NA' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, departure_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+			} else {
+				$query = "SELECT spotter_output.airline_icao, COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND departure_airport_icao <> 'NA' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, departure_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+			}
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset));
+		} else {
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT spotter_output.airline_icao, COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao = :airport_icao AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, departure_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+			} else {
+				$query = "SELECT spotter_output.airline_icao, COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND departure_airport_icao = :airport_icao AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, departure_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+			}
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
+		}
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	/**
 	* Get a list of flights from detected airport since 7 days
 	* @return Array number, icao, name and city of airports
 	*/
@@ -2693,6 +2800,50 @@ class Spotter{
 		}
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
+
+	/**
+	* Get a list of flights from detected airport since 7 days
+	* @return Array number, icao, name and city of airports
+	*/
+
+	public function getLast7DaysDetectedAirportsDepartureByAirlines($airport_icao = '') {
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		if ($airport_icao == '') {
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT spotter_output.airline_icao, COUNT(real_departure_airport_icao) AS departure_airport_count, real_departure_airport_icao AS departure_airport_icao, airport.name AS departure_airport_name, airport.city AS departure_airport_city, airport.country AS departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date 
+				FROM `spotter_output`, airport 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND real_departure_airport_icao <> 'NA' 
+				GROUP BY spotter_output.airline_icao, real_departure_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), airport.name, airport.city, airport.country ORDER BY departure_airport_count DESC";
+			} else {
+				$query = "SELECT spotter_output.airline_icao, COUNT(real_departure_airport_icao) AS departure_airport_count, real_departure_airport_icao AS departure_airport_icao, airport.name AS departure_airport_name, airport.city AS departure_airport_city, airport.country AS departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date 
+				FROM spotter_output, airport 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND real_departure_airport_icao <> 'NA' 
+				GROUP BY spotter_output.airline_icao, real_departure_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), airport.name, airport.city, airport.country ORDER BY departure_airport_count DESC";
+			}
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset));
+		} else {
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT spotter_output.airline_icao, COUNT(real_departure_airport_icao) AS departure_airport_count, real_departure_airport_icao AS departure_airport_icao, airport.name AS departure_airport_name, airport.city AS departure_airport_city, airport.country AS departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date 
+				FROM `spotter_output`, airport 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND real_departure_airport_icao = :airport_icao 
+				GROUP BY spotter_output.airline_icao, departure_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), airport.name, airport.city, airport.country ORDER BY departure_airport_count DESC";
+			} else {
+				$query = "SELECT spotter_output.airline_icao, COUNT(real_departure_airport_icao) AS departure_airport_count, real_departure_airport_icao AS departure_airport_icao, airport.name AS departure_airport_name, airport.city AS departure_airport_city, airport.country AS departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date 
+				FROM spotter_output, airport 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND real_departure_airport_icao = :airport_icao GROUP BY spotter_output.airline_icao, departure_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), airport.name, airport.city, airport.country ORDER BY departure_airport_count DESC";
+			}
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
+		}
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
 
 	/**
 	* Get a list of flights to airport since 7 days
@@ -2765,6 +2916,86 @@ class Spotter{
 				FROM spotter_output, airport 
 				WHERE airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao = :airport_icao 
 				GROUP BY real_arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), airport.name, airport.city, airport.country ORDER BY arrival_airport_count DESC";
+			}
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
+		}
+		
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+
+	/**
+	* Get a list of flights to airport since 7 days
+	* @return Array number, icao, name and city of airports
+	*/
+
+	public function getLast7DaysAirportsArrivalByAirlines($airport_icao = '') {
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		if ($airport_icao == '') {
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT spotter_output.airline_icao, COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, arrival_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+			} else {
+				$query = "SELECT spotter_output.airline_icao, COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+			}
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset));
+		} else {
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT spotter_output.airline_icao, COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao = :airport_icao AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, arrival_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'),arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+			} else {
+				$query = "SELECT spotter_output.airline_icao, COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao = :airport_icao AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+			}
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
+		}
+		
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+
+	/**
+	* Get a list of flights detected to airport since 7 days
+	* @return Array number, icao, name and city of airports
+	*/
+
+	public function getLast7DaysDetectedAirportsArrivalByAirlines($airport_icao = '') {
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		if ($airport_icao == '') {
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT spotter_output.airline_icao, COUNT(real_arrival_airport_icao) AS arrival_airport_count, real_arrival_airport_icao AS arrival_airport_icao, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date 
+				FROM `spotter_output`, airport 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' 
+				GROUP BY spotter_output.airline_icao, real_arrival_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), airport.name, airport.city, airport.country ORDER BY arrival_airport_count DESC";
+			} else {
+				$query = "SELECT spotter_output.airline_icao, COUNT(real_arrival_airport_icao) AS arrival_airport_count, real_arrival_airport_icao AS arrival_airport_icao, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date 
+				FROM spotter_output, airport 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' 
+				GROUP BY spotter_output.airline_icao, real_arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), airport.name, airport.city, airport.country ORDER BY arrival_airport_count DESC";
+			}
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':offset' => $offset));
+		} else {
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT spotter_output.airline_icao, COUNT(real_arrival_airport_icao) AS arrival_airport_count, real_arrival_airport_icao AS arrival_airport_icao, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date 
+				FROM `spotter_output`, airport 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao = :airport_icao 
+				GROUP BY spotter_output.airline_icao, real_arrival_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'),airport.name, airport.city, airport.country ORDER BY arrival_airport_count DESC";
+			} else {
+				$query = "SELECT spotter_output.airline_icao, COUNT(real_arrival_airport_icao) AS arrival_airport_count, real_arrival_airport_icao AS arrival_airport_icao, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date 
+				FROM spotter_output, airport 
+				WHERE spotter_output.airline_icao <> '' AND  airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao = :airport_icao 
+				GROUP BY spotter_output.airline_icao,real_arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), airport.name, airport.city, airport.country ORDER BY arrival_airport_count DESC";
 			}
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
@@ -2857,14 +3088,14 @@ class Spotter{
 	* @return String success or false
 	*
 	*/	
-	public function updateIdentSpotterData($flightaware_id = '', $ident = '')
+	public function updateIdentSpotterData($flightaware_id = '', $ident = '',$fromsource = NULL)
 	{
 		if (!is_numeric(substr($ident, 0, 3)))
 		{
 			if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
-				$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 2));
+				$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 2),$fromsource);
 			} elseif (is_numeric(substr(substr($ident, 0, 4), -1, 1))) {
-				$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 3));
+				$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 3),$fromsource);
 			} else {
 				$airline_array = $this->getAllAirlineInfo("NA");
 			}
@@ -2983,7 +3214,11 @@ class Spotter{
 				}
 			}
 		}
-
+		$fromsource = NULL;
+		if (isset($row['format_source']) && $row['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
+		elseif (isset($row['format_source']) && $row['format_source'] == 'whazzup') $fromsource = 'ivao';
+		elseif (isset($globalVATSIM) && $globalVATSIM) $fromsource = 'vatsim';
+		elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';
 		//getting the airline information
 		if ($ident != "")
 		{
@@ -2995,9 +3230,9 @@ class Spotter{
 				{
 					$timeelapsed = microtime(true);
 					if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
-						$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 2));
+						$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 2),$fromsource);
 					} elseif (is_numeric(substr(substr($ident, 0, 4), -1, 1))) {
-						$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 3));
+						$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 3),$fromsource);
 					} else {
 						$airline_array = $this->getAllAirlineInfo("NA");
 					}
@@ -4003,16 +4238,16 @@ class Spotter{
 					WHERE c.iso2 = s.over_country ";
                 if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
-				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND spotter_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+				$query .= "AND spotter_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
 			}
 		}
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND spotter_output.date > '".$sincedate."' ";
+				$query .= "AND spotter_live.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= "AND spotter_live.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 
@@ -4048,42 +4283,84 @@ class Spotter{
 	{
 		global $globalDBdriver;
 		$query  = "SELECT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer 
-                    FROM spotter_output
-                    WHERE spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' ";
-                if ($olderthanmonths > 0) {
-            		if ($globalDBdriver == 'mysql') {
+		    FROM spotter_output
+		    WHERE spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' ";
+		if ($olderthanmonths > 0) {
+			if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
 				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
 			}
-                }
-                if ($sincedate != '') {
-            		if ($globalDBdriver == 'mysql') {
+		}
+		if ($sincedate != '') {
+			if ($globalDBdriver == 'mysql') {
 				$query .= "AND spotter_output.date > '".$sincedate."' ";
 			} else {
 				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 
-                //if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
-                $query .= "GROUP BY spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer ORDER BY aircraft_icao_count DESC";
+		$query .= "GROUP BY spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer ORDER BY aircraft_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
-      
-		
+ 
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 
 		$aircraft_array = array();
 		$temp_array = array();
-        
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
 			$temp_array['aircraft_icao_count'] = $row['aircraft_icao_count'];
+			$aircraft_array[] = $temp_array;
+		}
+		return $aircraft_array;
+	}
 
+	/**
+	* Gets all aircraft types that have flown over by airline
+	*
+	* @return Array the aircraft list
+	*
+	*/
+	public function countAllAircraftTypesByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '')
+	{
+		global $globalDBdriver;
+		$query  = "SELECT spotter_output.airline_icao, spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer 
+		    FROM spotter_output
+		    WHERE spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' AND spotter_output.airline_icao <>'' AND spotter_output.airline_icao <> 'NA' ";
+		if ($olderthanmonths > 0) {
+			if ($globalDBdriver == 'mysql') {
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+		}
+		if ($sincedate != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
+		$query .= "GROUP BY spotter_output.airline_icao, spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer ORDER BY aircraft_icao_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+ 
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+
+		$aircraft_array = array();
+		$temp_array = array();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['airline_icao'] = $row['airline_icao'];
+			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
+			$temp_array['aircraft_name'] = $row['aircraft_name'];
+			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
+			$temp_array['aircraft_icao_count'] = $row['aircraft_icao_count'];
 			$aircraft_array[] = $temp_array;
 		}
 		return $aircraft_array;
@@ -5007,6 +5284,65 @@ class Spotter{
 	}
 
 
+	/**
+	* Gets all aircraft registrations that have flown over
+	*
+	* @return Array the aircraft list
+	*
+	*/
+	public function countAllAircraftRegistrationsByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '')
+	{
+		global $globalDBdriver;
+		$Image = new Image($this->db);
+		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.registration, COUNT(spotter_output.registration) AS aircraft_registration_count, spotter_output.aircraft_icao,  spotter_output.aircraft_name, spotter_output.airline_name    
+                    FROM spotter_output 
+                    WHERE spotter_output.airline_icao <> '' AND spotter_output.registration <> '' AND spotter_output.registration <> 'NA' ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+		}
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
+		// if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+		//if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                $query .= "GROUP BY spotter_output.airline_icao, spotter_output.registration, spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.airline_name ORDER BY aircraft_registration_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+      
+		$aircraft_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['registration'] = $row['registration'];
+			$temp_array['aircraft_registration_count'] = $row['aircraft_registration_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
+			$temp_array['aircraft_name'] = $row['aircraft_name'];
+			$temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['image_thumbnail'] = "";
+			if($row['registration'] != "")
+			{
+				$image_array = $Image->getSpotterImage($row['registration']);
+				if (isset($image_array[0]['image_thumbnail'])) $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+			}
+          
+			$aircraft_array[] = $temp_array;
+		}
+
+		return $aircraft_array;
+	}
 	
 	
 	/**
@@ -5060,7 +5396,60 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
+
+	/**
+	* Gets all departure airports of the airplanes that have flown over
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllDepartureAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
+	{
+		global $globalDBdriver;
+		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
+								FROM spotter_output
+                    WHERE spotter_output.airline_icao <> '' AND spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+                }
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
+            	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                $query .= "GROUP BY spotter_output.airline_icao, spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
+				ORDER BY airport_departure_icao_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+      
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+      
+		$airport_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['airline_icao'] = $row['airline_icao'];
+			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
+          
+			$airport_array[] = $temp_array;
+		}
+		return $airport_array;
+	}
+
 	/**
 	* Gets all detected departure airports of the airplanes that have flown over
 	*
@@ -5113,7 +5502,58 @@ class Spotter{
 		return $airport_array;
 	}
 	
-	
+	/**
+	* Gets all detected departure airports of the airplanes that have flown over
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllDetectedDepartureAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
+	{
+		global $globalDBdriver;
+		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.real_departure_airport_icao AS departure_airport_icao, COUNT(spotter_output.real_departure_airport_icao) AS airport_departure_icao_count, airport.name as departure_airport_name, airport.city as departure_airport_city, airport.country as departure_airport_country
+				FROM spotter_output, airport
+                    WHERE spotter_output.airline_icao <> '' AND spotter_output.real_departure_airport_icao <> '' AND spotter_output.real_departure_airport_icao <> 'NA' AND airport.icao = spotter_output.real_departure_airport_icao ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+                }
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP) ";
+			}
+		}
+
+            	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                $query .= "GROUP BY spotter_output.airline_icao, spotter_output.real_departure_airport_icao, airport.name, airport.city, airport.country
+				ORDER BY airport_departure_icao_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+      
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+      
+		$airport_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['airline_icao'] = $row['airline_icao'];
+			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
+          
+			$airport_array[] = $temp_array;
+		}
+		return $airport_array;
+	}	
 	
 	/**
 	* Gets all departure airports of the airplanes that have flown over based on an airline icao
@@ -5792,7 +6232,71 @@ class Spotter{
 
 		return $airport_array;
 	}
-	
+
+	/**
+	* Gets all arrival airports of the airplanes that have flown over
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllArrivalAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '', $icaoaskey = false)
+	{
+		global $globalDBdriver;
+		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
+								FROM spotter_output 
+                    WHERE spotter_output.airline_icao <> '' AND spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
+            	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                $query .= "GROUP BY spotter_output.airline_icao,spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
+					ORDER BY airport_arrival_icao_count DESC";
+		if ($limit) $query .= " LIMIT 10";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+      
+		$airport_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['airline_icao'] = $row['airline_icao'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+          
+			if ($icaoaskey) {
+				$icao = $row['arrival_airport_icao'];
+				$airport_array[$icao] = $temp_array;
+			} else $airport_array[] = $temp_array;
+		}
+
+		return $airport_array;
+	}
+
+
 	/**
 	* Gets all detected arrival airports of the airplanes that have flown over
 	*
@@ -5855,7 +6359,68 @@ class Spotter{
 		return $airport_array;
 	}
 	
-	
+	/**
+	* Gets all detected arrival airports of the airplanes that have flown over
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllDetectedArrivalAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$icaoaskey = false)
+	{
+		global $globalDBdriver;
+		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.real_arrival_airport_icao as arrival_airport_icao, COUNT(spotter_output.real_arrival_airport_icao) AS airport_arrival_icao_count, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country 
+			FROM spotter_output, airport 
+                    WHERE spotter_output.airline_icao <> '' AND spotter_output.real_arrival_airport_icao <> '' AND spotter_output.real_arrival_airport_icao <> 'NA' AND airport.icao = spotter_output.real_arrival_airport_icao ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
+            	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+                $query .= "GROUP BY spotter_output.airline_icao, spotter_output.real_arrival_airport_icao, airport.name, airport.city, airport.country
+					ORDER BY airport_arrival_icao_count DESC";
+		if ($limit) $query .= " LIMIT 10";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+      
+		$airport_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+          
+			if ($icaoaskey) {
+				$icao = $row['arrival_airport_icao'];
+				$airport_array[$icao] = $temp_array;
+			} else $airport_array[] = $temp_array;
+		}
+
+		return $airport_array;
+	}	
 	
 	/**
 	* Gets all arrival airports of the airplanes that have flown over based on an airline icao
@@ -7027,6 +7592,48 @@ class Spotter{
 		return $callsign_array;
 	}
 
+	/**
+	* Gets all callsigns that have flown over
+	*
+	* @return Array the callsign list
+	*
+	*/
+	public function countAllCallsignsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
+	{
+		global $globalDBdriver;
+		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.ident, COUNT(spotter_output.ident) AS callsign_icao_count, spotter_output.airline_name  
+                    FROM spotter_output
+                    WHERE spotter_output.ident <> ''  AND spotter_output.airline_icao <> '' ";
+		 if ($olderthanmonths > 0) {
+			if ($globalDBdriver == 'mysql') $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+			else $query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+		}
+		if ($sincedate != '') {
+			if ($globalDBdriver == 'mysql') $query .= "AND spotter_output.date > '".$sincedate."' ";
+			else $query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP) ";
+		}
+		$query .= "GROUP BY spotter_output.airline_icao, spotter_output.ident, spotter_output.airline_name, spotter_output.airline_icao ORDER BY callsign_icao_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+      		
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+      
+		$callsign_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['callsign_icao'] = $row['ident'];
+			$temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+			$temp_array['callsign_icao_count'] = $row['callsign_icao_count'];
+          
+			$callsign_array[] = $temp_array;
+		}
+
+		return $callsign_array;
+	}
+
 
 
 
@@ -7077,7 +7684,55 @@ class Spotter{
 		return $date_array;
 	}
 	
-	
+	/**
+	* Counts all dates
+	*
+	* @return Array the date list
+	*
+	*/
+	public function countAllDatesByAirlines()
+	{
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.airline_icao, DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS date_name, count(*) as date_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, date_name 
+								ORDER BY date_count DESC
+								LIMIT 10 OFFSET 0";
+		} else {
+			$query  = "SELECT spotter_output.airline_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') AS date_name, count(*) as date_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, date_name 
+								ORDER BY date_count DESC
+								LIMIT 10 OFFSET 0";
+		}
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':offset' => $offset));
+      
+		$date_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['date_name'] = $row['date_name'];
+			$temp_array['date_count'] = $row['date_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+
+			$date_array[] = $temp_array;
+		}
+
+		return $date_array;
+	}	
 	
 	/**
 	* Counts all dates during the last 7 days
@@ -7174,7 +7829,58 @@ class Spotter{
 
 		return $date_array;
 	}
+
+
+	/**
+	* Counts all dates during the last month
+	*
+	* @return Array the date list
+	*
+	*/
+	public function countAllDatesLastMonthByAirlines()
+	{
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.airline_icao, DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS date_name, count(*) as date_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao <> '' AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MONTH)
+								GROUP BY spotter_output.airline_icao, date_name 
+								ORDER BY spotter_output.date ASC";
+			$query_data = array(':offset' => $offset);
+		} else {
+			$query  = "SELECT spotter_output.airline_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') AS date_name, count(*) as date_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao <> '' AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 MONTHS'
+								GROUP BY spotter_output.airline_icao, date_name 
+								ORDER BY date_name ASC";
+			$query_data = array(':offset' => $offset);
+    		}
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_data);
+      
+		$date_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['date_name'] = $row['date_name'];
+			$temp_array['date_count'] = $row['date_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+          
+			$date_array[] = $temp_array;
+		}
+
+		return $date_array;
+	}
 	
+
 	/**
 	* Counts all month
 	*
@@ -7214,6 +7920,55 @@ class Spotter{
 			$temp_array['month_name'] = $row['month_name'];
 			$temp_array['year_name'] = $row['year_name'];
 			$temp_array['date_count'] = $row['date_count'];
+
+			$date_array[] = $temp_array;
+		}
+
+		return $date_array;
+	}
+
+	/**
+	* Counts all month
+	*
+	* @return Array the month list
+	*
+	*/
+	public function countAllMonthsByAirlines()
+	{
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(*) as date_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, year_name, month_name 
+								ORDER BY date_count DESC";
+		} else {
+			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(*) as date_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, year_name, month_name 
+								ORDER BY date_count DESC";
+		}
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':offset' => $offset));
+      
+		$date_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['month_name'] = $row['month_name'];
+			$temp_array['year_name'] = $row['year_name'];
+			$temp_array['date_count'] = $row['date_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
 
 			$date_array[] = $temp_array;
 		}
@@ -7362,6 +8117,53 @@ class Spotter{
 		return $date_array;
 	}
 	
+	/**
+	* Counts all month pilot
+	*
+	* @return Array the month list
+	*
+	*/
+	public function countAllMonthsPilotsByAirlines()
+	{
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct pilot_id) as date_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao <> '' AND pilot_id <> '' AND pilot_id IS NOT NULL
+								GROUP BY spotter_output.airline_icao,year_name, month_name
+								ORDER BY date_count DESC";
+		} else {
+			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct pilot_id) as date_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao <> '' AND pilot_id <> '' AND pilot_id IS NOT NULL
+								GROUP BY spotter_output.airline_icao, year_name, month_name
+								ORDER BY date_count DESC";
+		}
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':offset' => $offset));
+      
+		$date_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['month_name'] = $row['month_name'];
+			$temp_array['year_name'] = $row['year_name'];
+			$temp_array['date_count'] = $row['date_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+
+			$date_array[] = $temp_array;
+		}
+
+		return $date_array;
+	}
 
 	/**
 	* Counts all month airline
@@ -7459,6 +8261,54 @@ class Spotter{
 	
 
 	/**
+	* Counts all month aircraft
+	*
+	* @return Array the month list
+	*
+	*/
+	public function countAllMonthsAircraftsByAirlines()
+	{
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.airline_icao,YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct aircraft_icao) as date_count
+								FROM spotter_output 
+								WHERE aircraft_icao <> ''  AND spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, year_name, month_name
+								ORDER BY date_count DESC";
+		} else {
+			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct aircraft_icao) as date_count
+								FROM spotter_output 
+								WHERE aircraft_icao <> '' AND spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, year_name, month_name
+								ORDER BY date_count DESC";
+		}
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':offset' => $offset));
+      
+		$date_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['month_name'] = $row['month_name'];
+			$temp_array['year_name'] = $row['year_name'];
+			$temp_array['date_count'] = $row['date_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+
+			$date_array[] = $temp_array;
+		}
+
+		return $date_array;
+	}
+
+	/**
 	* Counts all month real arrival
 	*
 	* @return Array the month list
@@ -7506,6 +8356,54 @@ class Spotter{
 	}
 	
 
+	/**
+	* Counts all month real arrival
+	*
+	* @return Array the month list
+	*
+	*/
+	public function countAllMonthsRealArrivalsByAirlines()
+	{
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(real_arrival_airport_icao) as date_count
+								FROM spotter_output 
+								WHERE real_arrival_airport_icao <> '' AND spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, year_name, month_name
+								ORDER BY date_count DESC";
+		} else {
+			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(real_arrival_airport_icao) as date_count
+								FROM spotter_output 
+								WHERE real_arrival_airport_icao <> '' AND spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, year_name, month_name
+								ORDER BY date_count DESC";
+		}
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':offset' => $offset));
+      
+		$date_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['month_name'] = $row['month_name'];
+			$temp_array['year_name'] = $row['year_name'];
+			$temp_array['date_count'] = $row['date_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+
+			$date_array[] = $temp_array;
+		}
+
+		return $date_array;
+	}
+	
 
 	/**
 	* Counts all dates during the last year
@@ -7621,7 +8519,74 @@ class Spotter{
 		return $hour_array;
 	}
 	
-	
+	/**
+	* Counts all hours
+	*
+	* @return Array the hour list
+	*
+	*/
+	public function countAllHoursByAirlines($orderby)
+	{
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
+		$orderby_sql = '';
+		if ($orderby == "hour")
+		{
+			$orderby_sql = "ORDER BY hour_name ASC";
+		}
+		if ($orderby == "count")
+		{
+			$orderby_sql = "ORDER BY hour_count DESC";
+		}
+		
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.airline_icao, HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, hour_name 
+								".$orderby_sql;
+
+/*		$query  = "SELECT HOUR(spotter_output.date) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								GROUP BY hour_name 
+								".$orderby_sql."
+								LIMIT 10 OFFSET 00";
+  */    
+		$query_data = array(':offset' => $offset);
+		} else {
+			$query  = "SELECT spotter_output.airline_icao, EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output 
+								WHERE spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, hour_name 
+								".$orderby_sql;
+			$query_data = array(':offset' => $offset);
+		}
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_data);
+      
+		$hour_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['hour_name'] = $row['hour_name'];
+			$temp_array['hour_count'] = $row['hour_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+          
+			$hour_array[] = $temp_array;
+		}
+
+		return $hour_array;
+	}
+
+
+
 	/**
 	* Counts all hours by airline
 	*
@@ -8912,7 +9877,12 @@ q	*
 		{
 			if (is_numeric(substr($row['ident'], -1, 1)))
 			{
-				$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3));
+				$fromsource = NULL;
+				if (isset($row['format_source']) && $row['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
+				elseif (isset($row['format_source']) && $row['format_source'] == 'whazzup') $fromsource = 'ivao';
+				elseif (isset($globalVATSIM) && $globalVATSIM) $fromsource = 'vatsim';
+				elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';
+				$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3),$fromsource);
 				if (isset($airline_array[0]['name'])) {
 					$update_query  = "UPDATE spotter_output SET spotter_output.airline_name = :airline_name, spotter_output.airline_icao = :airline_icao, spotter_output.airline_country = :airline_country, spotter_output.airline_type = :airline_type WHERE spotter_output.spotter_id = :spotter_id";
 					$sthu = $this->db->prepare($update_query);

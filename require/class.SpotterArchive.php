@@ -8,6 +8,26 @@ class SpotterArchive {
 		$this->db = $Connection->db;
 	}
 
+	public function getFilter($filter) {
+		$filter_query = '';
+		if (isset($filter['source']) && !empty($filter['source'])) {
+			$filter_query = " AND format_source IN ('".implode("','",$filter['source'])."')";
+		}
+		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
+			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
+		}
+		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
+			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
+		}
+		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+		}
+		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
+			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
+		}
+		return $filter_query;
+	}
+
 	// Spotter_archive
 	public function addSpotterArchiveData($flightaware_id = '', $ident = '', $registration = '', $airline_name = '', $airline_icao = '', $airline_country = '', $airline_type = '', $aircraft_icao = '', $aircraft_shadow = '', $aircraft_name = '', $aircraft_manufacturer = '', $departure_airport_icao = '', $departure_airport_name = '', $departure_airport_city = '', $departure_airport_country = '', $departure_airport_time = '',$arrival_airport_icao = '', $arrival_airport_name = '', $arrival_airport_city ='', $arrival_airport_country = '', $arrival_airport_time = '', $route_stop = '', $date = '',$latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $ground_speed = '', $squawk = '', $ModeS = '', $pilot_id = '', $pilot_name = '',$verticalrate = '',$format_source = '', $source_name = '', $over_country = '') {
 		require_once(dirname(__FILE__).'/class.Spotter.php');
@@ -462,7 +482,7 @@ class SpotterArchive {
     * @return Array the spotter information
     *
     */
-    public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '')
+    public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '', $filter=array())
     {
 	global $globalTimezone, $globalDBdriver;
 	require_once(dirname(__FILE__).'/class.Translation.php');
@@ -474,6 +494,7 @@ class SpotterArchive {
 	$query_values = array();
 	$additional_query = '';
 	$limit_query = '';
+	$filter_query = $this->getFilter($filter);
 	if ($q != "")
 	{
 	    if (!is_string($q))
@@ -763,9 +784,9 @@ class SpotterArchive {
 
 	if ($origLat != "" && $origLon != "" && $dist != "") {
 		$dist = number_format($dist*0.621371,2,'.','');
-		$query="SELECT spotter_output.*, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2))) as distance 
-                          FROM spotter_output_archive, spotter_archive WHERE spotter_output_archive.flightaware_id = spotter_archive.flightaware_id AND spotter_output.ident <> '' ".$additional_query."AND CAST(spotter_archive.longitude as double precision) between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and CAST(spotter_archive.latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
-                          AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2)))) < $dist ORDER BY distance";
+		$query="SELECT spotter_archive_output.*, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2))) as distance 
+                          FROM spotter_archive_output, spotter_archive WHERE spotter_output_archive.flightaware_id = spotter_archive.flightaware_id AND spotter_output.ident <> '' ".$additional_query."AND CAST(spotter_archive.longitude as double precision) between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and CAST(spotter_archive.latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+                          AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2)))) < $dist".$filter_query." ORDER BY distance";
 	} else {
 		if ($sort != "")
 		{
@@ -783,7 +804,7 @@ class SpotterArchive {
 		$query  = "SELECT spotter_archive_output.* FROM spotter_archive_output 
 		    WHERE spotter_archive_output.ident <> '' 
 		    ".$additional_query."
-		    ".$orderby_query;
+		    ".$filter_query.$orderby_query;
 	}
 	$spotter_array = $Spotter->getDataFromDB($query, $query_values,$limit_query);
 

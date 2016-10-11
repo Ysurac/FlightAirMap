@@ -318,7 +318,12 @@ class SpotterImport {
 		    if ($this->all_flights[$id]['addedSpotter'] == 1) {
 			$timeelapsed = microtime(true);
             		$Spotter = new Spotter($this->db);
-            		$result = $Spotter->updateIdentSpotterData($this->all_flights[$id]['id'],$this->all_flights[$id]['ident']);
+            		$fromsource = NULL;
+            		if (isset($row['format_source']) && $row['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
+			elseif (isset($row['format_source']) && $row['format_source'] == 'whazzup') $fromsource = 'ivao';
+			elseif (isset($globalVATSIM) && $globalVATSIM) $fromsource = 'vatsim';
+			elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';
+            		$result = $Spotter->updateIdentSpotterData($this->all_flights[$id]['id'],$this->all_flights[$id]['ident'],$fromsource);
 			if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
 			$Spotter->db = null;
 			if ($globalDebugTimeElapsed) echo 'Time elapsed for update identspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
