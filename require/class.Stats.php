@@ -1426,7 +1426,7 @@ class Stats {
 			
 			$pall = $Spotter->countAllDepartureAirportsByAirlines(false,0,$last_update_day);
        			$dall = $Spotter->countAllDetectedDepartureAirportsByAirlines(false,0,$last_update_day);
-	        	$alldata = array();
+	        	//$alldata = array();
     			foreach ($dall as $value) {
     				$icao = $value['airport_departure_icao'];
     				$dicao = $value['airline_icap'];
@@ -1448,7 +1448,7 @@ class Stats {
 			}
 			$pall = $Spotter->countAllArrivalAirportsByAirlines(false,0,$last_update_day);
         		$dall = $Spotter->countAllDetectedArrivalAirportsByAirlines(false,0,$last_update_day);
-	        	$alldata = array();
+	        	//$alldata = array();
     			foreach ($dall as $value) {
     				$icao = $value['airport_arrival_icao'];
     				$dicao = $value['airline_icao'];

@@ -1474,7 +1474,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query.$filter_array." ".$orderby_query;
+		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query.$filter_query." ".$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 		return $spotter_array;
 	}
@@ -3215,8 +3215,8 @@ class Spotter{
 			}
 		}
 		$fromsource = NULL;
-		if (isset($row['format_source']) && $row['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
-		elseif (isset($row['format_source']) && $row['format_source'] == 'whazzup') $fromsource = 'ivao';
+		if ($format_source == 'vatsimtxt') $fromsource = 'vatsim';
+		elseif ($format_source == 'whazzup') $fromsource = 'ivao';
 		elseif (isset($globalVATSIM) && $globalVATSIM) $fromsource = 'vatsim';
 		elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';
 		//getting the airline information

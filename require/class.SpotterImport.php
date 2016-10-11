@@ -319,8 +319,8 @@ class SpotterImport {
 			$timeelapsed = microtime(true);
             		$Spotter = new Spotter($this->db);
             		$fromsource = NULL;
-            		if (isset($row['format_source']) && $row['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
-			elseif (isset($row['format_source']) && $row['format_source'] == 'whazzup') $fromsource = 'ivao';
+            		if (isset($line['format_source']) && $line['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
+			elseif (isset($line['format_source']) && $line['format_source'] == 'whazzup') $fromsource = 'ivao';
 			elseif (isset($globalVATSIM) && $globalVATSIM) $fromsource = 'vatsim';
 			elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';
             		$result = $Spotter->updateIdentSpotterData($this->all_flights[$id]['id'],$this->all_flights[$id]['ident'],$fromsource);

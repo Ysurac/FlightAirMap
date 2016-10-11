@@ -844,7 +844,6 @@ class update_schema {
 		global $globalDBdriver;
 		$Connection = new Connection();
 		$error = '';
-		$query = "";
 		if ($globalDBdriver == 'mysql') {
 			$error .= create_db::import_file('../db/airlines.sql');
 		} else {
