@@ -82,8 +82,9 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+            	    $filters = array('airlines' => array($stats_airline));
             	    $Spotter = new Spotter($this->db);
-            	    $all = $Spotter->countAllAircraftTypes($limit);
+            	    $all = $Spotter->countAllAircraftTypes($limit,0,'',$filters);
                 }
                 return $all;
 	}
@@ -115,8 +116,9 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+            		$filters = array('airlines' => array($stats_airline));
             		$Spotter = new Spotter($this->db);
-			$all = $Spotter->countAllAircraftManufacturers();
+			$all = $Spotter->countAllAircraftManufacturers($filters);
                 }
                 return $all;
 	}
@@ -132,8 +134,9 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
-	                $Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllArrivalCountries($limit);
+			$filters = array('airlines' => array($stats_airline));
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->countAllArrivalCountries($limit,$filters);
                 }
                 return $all;
 	}
@@ -148,8 +151,9 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
-		        $Spotter = new Spotter($this->db);
-    	    	        $all = $Spotter->countAllDepartureCountries();
+			$filters = array('airlines' => array($stats_airline));
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->countAllDepartureCountries($filters);
                 }
                 return $all;
 	}
@@ -170,37 +174,39 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllAircraftRegistrations($limit = true) {
-		if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao ORDER BY aircraft_registration_count DESC";
+	public function countAllAircraftRegistrations($limit = true,$stats_airline = '') {
+		if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline = :stats_airline ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline = :stats_airline ORDER BY aircraft_registration_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
 	                $Spotter = new Spotter($this->db);
-    		        $all = $Spotter->countAllAircraftRegistrations($limit);
+    		        $all = $Spotter->countAllAircraftRegistrations($limit,0,'',$filters);
                 }
                 return $all;
 	}
-	public function countAllCallsigns($limit = true) {
-		if ($limit) $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao ORDER BY callsign_icao_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao ORDER BY callsign_icao_count DESC";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if (empty($all)) {
-	                $Spotter = new Spotter($this->db);
-    		        $all = $Spotter->countAllCallsigns($limit);
-                }
-                return $all;
+	public function countAllCallsigns($limit = true,$stats_airline = '') {
+		if ($limit) $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.stats_airline = :stats_airline ORDER BY callsign_icao_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.stats_airline = :stats_airline ORDER BY callsign_icao_count DESC";
+		 try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':stats_airline' => $stats_airline));
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->countAllCallsigns($limit,0,'',$filters);
+		}
+		return $all;
 	}
 	public function countAllFlightOverCountries($limit = true, $stats_airline = '') {
 		$Connection = new Connection();
@@ -257,20 +263,21 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllDepartureAirports($limit = true) {
-		if ($limit) $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly'";
+	public function countAllDepartureAirports($limit = true,$stats_airline = '') {
+		if ($limit) $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline LIMIT 10 OFFSET 0";
+		else $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
             		$Spotter = new Spotter($this->db);
-            		$pall = $Spotter->countAllDepartureAirports($limit);
-        		$dall = $Spotter->countAllDetectedDepartureAirports($limit);
+            		$pall = $Spotter->countAllDepartureAirports($limit,0,'',$filters);
+        		$dall = $Spotter->countAllDetectedDepartureAirports($limit,0,'',$filters);
         		$all = array();
         		foreach ($pall as $value) {
         			$icao = $value['airport_departure_icao'];
@@ -291,20 +298,21 @@ class Stats {
                 }
                 return $all;
 	}
-	public function countAllArrivalAirports($limit = true) {
-		if ($limit) $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly'";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if (empty($all)) {
-            		$Spotter = new Spotter($this->db);
-        		$pall = $Spotter->countAllArrivalAirports($limit);
-        		$dall = $Spotter->countAllDetectedArrivalAirports($limit);
+	public function countAllArrivalAirports($limit = true,$stats_airline = '') {
+		if ($limit) $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline LIMIT 10 OFFSET 0";
+		else $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':stats_airline' => $stats_airline));
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
+			$Spotter = new Spotter($this->db);
+			$pall = $Spotter->countAllArrivalAirports($limit,0,'',false,$filters);
+			$dall = $Spotter->countAllDetectedArrivalAirports($limit,0,'',false,$filters);
         		$all = array();
         		foreach ($pall as $value) {
         			$icao = $value['airport_arrival_icao'];
@@ -342,10 +350,10 @@ class Stats {
                         echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                
                 if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllMonthsLastYear();
+            		$all = $Spotter->countAllMonthsLastYear($filters);
                 }
                 
                 return $all;
@@ -362,8 +370,9 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllDatesLastMonth();
+            		$all = $Spotter->countAllDatesLastMonth($filters);
                 }
                 return $all;
 	}
@@ -383,8 +392,9 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllDatesLast7Days();
+            		$all = $Spotter->countAllDatesLast7Days($filters);
                 }
                 return $all;
 	}
@@ -399,8 +409,9 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllDates();
+            		$all = $Spotter->countAllDates($filters);
                 }
                 return $all;
 	}
@@ -430,8 +441,9 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllMonths();
+            		$all = $Spotter->countAllMonths($filters);
                 }
                 return $all;
 	}
@@ -471,17 +483,19 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllHours($orderby);
+            		$all = $Spotter->countAllHours($orderby,$filters);
                 }
                 return $all;
 	}
 	
-	public function countOverallFlights() {
-		$all = $this->getSumStats('flights_bymonth',date('Y'));
+	public function countOverallFlights($stats_airline = '') {
+		$all = $this->getSumStats('flights_bymonth',date('Y'),$stats_airline);
 		if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallFlights();
+			$all = $Spotter->countOverallFlights($filters);
 		}
 		return $all;
 	}
@@ -493,19 +507,21 @@ class Stats {
 		}
 		return $all;
 	}
-	public function countOverallArrival() {
-		$all = $this->getSumStats('realarrivals_bymonth',date('Y'));
+	public function countOverallArrival($stats_airline = '') {
+		$all = $this->getSumStats('realarrivals_bymonth',date('Y'),$stats_airline);
 		if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallArrival();
+			$all = $Spotter->countOverallArrival($filters);
 		}
 		return $all;
 	}
-	public function countOverallAircrafts() {
-		$all = $this->getSumStats('aircrafts_bymonth',date('Y'));
+	public function countOverallAircrafts($stats_airline = '') {
+		$all = $this->getSumStats('aircrafts_bymonth',date('Y'),$stats_airline);
 		if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallAircrafts();
+			$all = $Spotter->countOverallAircrafts($filters);
 		}
 		return $all;
 	}
@@ -526,7 +542,7 @@ class Stats {
 		}
 		return $all;
 	}
-	public function countOverallOwners() {
+	public function countOverallOwners($stats_airline = '') {
 		/*
 		$query = "SELECT COUNT(*) AS nb_owner FROM stats_owner";
                  try {
@@ -538,18 +554,20 @@ class Stats {
                 $result = $sth->fetchAll(PDO::FETCH_ASSOC);
                 $all = $result[0]['nb_owner'];
                 */
-		$all = $this->getSumStats('owners_bymonth',date('Y'));
+		$all = $this->getSumStats('owners_bymonth',date('Y'),$stats_airline);
 		if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallOwners();
+			$all = $Spotter->countOverallOwners($filters);
 		}
 		return $all;
 	}
-	public function countOverallPilots() {
+	public function countOverallPilots($stats_airline = '') {
 		$all = $this->getSumStats('pilots_bymonth',date('Y'));
 		if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallPilots();
+			$all = $Spotter->countOverallPilots($filters);
 		}
 		return $all;
 	}
