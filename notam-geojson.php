@@ -30,7 +30,7 @@ if (!empty($spotter_array))
 			$output .= '"ref": "'.$spotter_item['ref'].'",';
 			$output .= '"title": "'.$spotter_item['title'].'",';
 			$output .= '"fir": "'.$spotter_item['fir'].'",';
-			$output .= '"text": "'.$spotter_item['notam_text'].'",';
+			$output .= '"text": "'.str_replace('"','',$spotter_item['notam_text']).'",';
 			$output .= '"latitude": "'.$spotter_item['center_latitude'].'",';
 			$output .= '"longitude": "'.$spotter_item['center_longitude'].'",';
 //			$output .= '"altitude": "'.$spotter_item['altitude'].'",';
@@ -55,7 +55,7 @@ if (!empty($spotter_array))
 			$output .= '"radiusm": "'.$radius.'",';
 			$output .= '"radiusnm": "'.$spotter_item['radius'].'",';
 			if ($radius > 25000) $radius = 25000;
-			$output .= '"radius": "'.$radius.'"';
+			$output .= '"radius": '.$radius.'';
 		    $output .= '},';
 		    $output .= '"geometry": {';
 			$output .= '"type": "Point",';

@@ -1637,6 +1637,18 @@ function capture_orientation (event) {
   $("#live-map").css({'-moz-transform': css});
   $("#live-map").css({'-ms-transform': css});
 }
+
+function notamPopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	output += '&nbsp;'+feature.properties.ref+' '+feature.properties.title+'<br /> ';
+	output += '&nbsp;'+feature.properties.text+'<br /> ';
+	output += '&nbsp;<i>'+feature.properties.latitude+'/'+feature.properties.longitude+' '+feature.properties.radiusnm+'NM/'+feature.properties.radiusm+'m</i><br /> ';
+	output += '</div>';
+	layer.bindPopup(output);
+};
+
+
 function update_notamLayer() {
     var bbox = map.getBounds().toBBoxString();
     notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
@@ -1649,6 +1661,15 @@ function update_notamLayer() {
                     opacity: 0.3,
                     fillOpacity: 0.3
             });
+//            .on('click', function() {
+//		    var output = '';
+//		    output += '<div class="top">';
+//		    output += '&nbsp;'+feature.properties.ref+' '+feature.properties.title+'<br /> ';
+//		    output += '&nbsp;'+feature.properties.text+'<br /> ';
+//		    output += '&nbsp;<i>'+feature.properties.latitude+'/'+feature.properties.longitude+' '+feature.properties.radiusnm+'NM/'+feature.properties.radiusm+'m</i><br /> ';
+//		    output += '</div>';
+//		    $(".showdetails").html(output);
+//	    });
 	}
     }).addTo(map);
 };
@@ -1928,16 +1949,6 @@ function showAirspace() {
 	$(".airspace").removeClass("active");
      }
 }
-
-function notamPopup (feature, layer) {
-	var output = '';
-	output += '<div class="top">';
-	output += '&nbsp;'+feature.properties.ref+' '+feature.properties.title+'<br /> ';
-	output += '&nbsp;'+feature.properties.text+'<br /> ';
-	output += '&nbsp;<i>'+feature.properties.latitude+'/'+feature.properties.longitude+' '+feature.properties.radiusnm+'NM/'+feature.properties.radiusm+'m</i><br /> ';
-	output += '</div>';
-	layer.bindPopup(output);
-};
 
 function airspacePopup (feature, layer) {
 	var output = '';
