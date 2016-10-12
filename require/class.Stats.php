@@ -231,35 +231,37 @@ class Stats {
 			return array();
 		}
 	}
-	public function countAllPilots($limit = true) {
-		if ($limit) $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot ORDER BY pilot_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot ORDER BY pilot_count DESC";
+	public function countAllPilots($limit = true,$stats_airline = '') {
+		if ($limit) $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot WHERE stats_airline = :stats_airline ORDER BY pilot_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot WHERE stats_airline = :stats_airline ORDER BY pilot_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllPilots($limit);
+            		$all = $Spotter->countAllPilots($limit,0,'',$filters);
                 }
                 return $all;
 	}
-	public function countAllOwners($limit = true) {
-		if ($limit) $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner ORDER BY owner_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner ORDER BY owner_count DESC";
+	public function countAllOwners($limit = true,$stats_airline = '') {
+		if ($limit) $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner WHERE stats_airline = :stats_airline ORDER BY owner_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner WHERE stats_airline = :stats_airline ORDER BY owner_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
-                        $sth->execute();
+                        $sth->execute(array(':stats_airline' => $stats_airline));
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
+			$filters = array('airlines' => array($stats_airline));
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllOwners($limit);
+            		$all = $Spotter->countAllOwners($limit,0,'',$filters);
                 }
                 return $all;
 	}
@@ -1441,6 +1443,14 @@ class Stats {
 			foreach ($alldata as $number) {
 				$this->addStatCallsign($number['callsign_icao'],$number['callsign_icao_count'],$number['airline_icao']);
 			}
+			$alldata = $Spotter->countAllOwnersByAirlines(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatOwner($number['owner_name'],$number['owner_count'],$number['airline_icao']);
+			}
+			$alldata = $Spotter->countAllPilotsByAirlines(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name'],$number['airline_icao']);
+			}
 			
 			$pall = $Spotter->countAllDepartureAirportsByAirlines(false,0,$last_update_day);
        			$dall = $Spotter->countAllDetectedDepartureAirportsByAirlines(false,0,$last_update_day);
@@ -1492,6 +1502,10 @@ class Stats {
 			foreach ($alldata as $number) {
 				if ($number['year_name'] != date('Y')) $lastyear = true;
 				$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),$number['airline_icao']);
+			}
+			$alldata = $Spotter->countAllMonthsOwnersByAirlines();
+			foreach ($alldata as $number) {
+				$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),$number['airline_icao']);
 			}
 			$alldata = $Spotter->countAllMonthsPilotsByAirlines();
 			foreach ($alldata as $number) {

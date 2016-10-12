@@ -174,7 +174,6 @@ if ($airline_icao == '' && isset($globalFilter)) {
 
 	    <?php
                  $flightover_array = $Stats->countAllFlightOverCountries($airline_icao);
-	    if ($airline_icao == '') {
 		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 		    if (empty($flightover_array)) {
 	    ?>
@@ -277,7 +276,6 @@ if ($airline_icao == '' && isset($globalFilter)) {
         
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
-    	    }
     	    }
     	    if (!empty($flightover_array)) {
     	?>

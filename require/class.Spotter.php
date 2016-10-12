@@ -3623,12 +3623,12 @@ class Spotter{
 	* @return Array the pilots list
 	*
 	*/
-	public function countAllPilots($limit = true, $olderthanmonths = 0, $sincedate = '')
+	public function countAllPilots($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.pilot_id, spotter_output.pilot_name, COUNT(spotter_output.pilot_id) AS pilot_count
-		 			FROM spotter_output
-					WHERE spotter_output.pilot_id <> '' ";
+		 			FROM spotter_output".$filter_query." spotter_output.pilot_id <> '' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -3663,18 +3663,64 @@ class Spotter{
 		return $airline_array;
 	}
 	
+		 /**
+	* Gets all pilots that have flown over
+	*
+	* @return Array the pilots list
+	*
+	*/
+	public function countAllPilotsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
+	{
+		global $globalDBdriver;
+		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.pilot_id, spotter_output.pilot_name, COUNT(spotter_output.pilot_id) AS pilot_count
+		 			FROM spotter_output WHERE spotter_output.pilot_id <> '' ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+		}
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+		$query .= "GROUP BY spotter_output.airline_icao, spotter_output.pilot_id,spotter_output.pilot_name ORDER BY pilot_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+      
+		$airline_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['pilot_name'] = $row['pilot_name'];
+			$temp_array['pilot_id'] = $row['pilot_id'];
+			$temp_array['pilot_count'] = $row['pilot_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+			$airline_array[] = $temp_array;
+		}
+		return $airline_array;
+	}
+	
 	 /**
 	* Gets all owner that have flown over
 	*
 	* @return Array the pilots list
 	*
 	*/
-	public function countAllOwners($limit = true, $olderthanmonths = 0, $sincedate = '')
+	public function countAllOwners($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.owner_name, COUNT(spotter_output.owner_name) AS owner_count
-		 			FROM spotter_output
-					WHERE spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL ";
+		 			FROM spotter_output".$filter_query." spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -3708,7 +3754,51 @@ class Spotter{
 		return $airline_array;
 	}
 	
-	
+	 /**
+	* Gets all owner that have flown over
+	*
+	* @return Array the pilots list
+	*
+	*/
+	public function countAllOwnersByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
+	{
+		global $globalDBdriver;
+		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.owner_name, COUNT(spotter_output.owner_name) AS owner_count
+		 			FROM spotter_output WHERE spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+		}
+                if ($sincedate != '') {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+		$query .= "GROUP BY spotter_output.airline_icao, spotter_output.owner_name ORDER BY owner_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+      
+		$airline_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['owner_name'] = $row['owner_name'];
+			$temp_array['owner_count'] = $row['owner_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
+			$airline_array[] = $temp_array;
+		}
+		return $airline_array;
+	}
+
 	/**
 	* Gets all airlines that have flown over by aircraft
 	*
@@ -8071,6 +8161,54 @@ class Spotter{
 			$temp_array['month_name'] = $row['month_name'];
 			$temp_array['year_name'] = $row['year_name'];
 			$temp_array['date_count'] = $row['date_count'];
+
+			$date_array[] = $temp_array;
+		}
+
+		return $date_array;
+	}
+	
+	/**
+	* Counts all month owners
+	*
+	* @return Array the month list
+	*
+	*/
+	public function countAllMonthsOwnersByAirlines()
+	{
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct owner_name) as date_count
+								FROM spotter_output 
+								WHERE owner_name <> '' AND spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, year_name, month_name
+								ORDER BY date_count DESC";
+		} else {
+			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct owner_name) as date_count
+								FROM spotter_output 
+								WHERE owner_name <> '' AND spotter_output.airline_icao <> '' 
+								GROUP BY spotter_output.airline_icao, year_name, month_name
+								ORDER BY date_count DESC";
+		}
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':offset' => $offset));
+      
+		$date_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['month_name'] = $row['month_name'];
+			$temp_array['year_name'] = $row['year_name'];
+			$temp_array['date_count'] = $row['date_count'];
+			$temp_array['airline_icao'] = $row['airline_icao'];
 
 			$date_array[] = $temp_array;
 		}
