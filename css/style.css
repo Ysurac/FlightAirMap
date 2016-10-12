@@ -502,6 +502,15 @@ a.full-width{
 	padding-top:0.5em;
 }
 
+.stats_airline form{
+	display: inline-block;
+	float: right;
+	margin-right: 10px;
+	margin-top: 8px;
+	margin-bottom: 0px;
+	padding: 0px;
+}
+
 body span.airport_time{
 	text-align: center;
 	font-size: 0.6em;

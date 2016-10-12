@@ -61,7 +61,7 @@ class Spotter{
 	*/
 	public function getDataFromDB($query, $params = array(), $limitQuery = '')
 	{
-		global $globalSquawkCountry, $globalIVAO, $globalVATSIM, $globalphpVMS;
+		global $globalSquawkCountry, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalAirlinesSource;
 		$Image = new Image($this->db);
 		$Schedule = new Schedule($this->db);
 		$ACARS = new ACARS($this->db);
@@ -228,7 +228,8 @@ class Spotter{
                             	}
 			}
 			$fromsource = NULL;
-			if (isset($row['format_source']) && $row['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
+			if (isset($globalAirlinesSource) && $globalAirlinesSource != '') $fromsource = $globalAirlinesSource;
+			elseif (isset($row['format_source']) && $row['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
 			elseif (isset($row['format_source']) && $row['format_source'] == 'whazzup') $fromsource = 'ivao';
 			elseif (isset($globalVATSIM) && $globalVATSIM) $fromsource = 'vatsim';
 			elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';
@@ -2410,8 +2411,9 @@ class Spotter{
 	* @return Array list of airline names
 	*
 	*/
-	public function getAllAirlineNames($airline_type = '')
+	public function getAllAirlineNames($airline_type = '',$forsource = NULL)
 	{
+		global $globalAirlinesSource,$globalVATSIM, $globalIVAO;
 		$airline_type = filter_var($airline_type,FILTER_SANITIZE_STRING);
 		if ($airline_type == '' || $airline_type == 'all') {
 			/*
@@ -2420,21 +2422,27 @@ class Spotter{
 								WHERE spotter_output.airline_icao <> '' 
 								ORDER BY spotter_output.airline_name ASC";
 			*/
-			$query = "SELECT DISTINCT icao AS airline_icao, name AS airline_name, type AS airline_type FROM airlines ORDER BY name ASC";
+			if (isset($globalAirlinesSource) && $globalAirlinesSource != '') $forsource = $globalAirlinesSource;
+			elseif (isset($globalVATSIM) && $globalVATSIM) $forsource = 'vatsim';
+			elseif (isset($globalIVAO) && $globalIVAO) $forsource = 'ivao';
+			if ($forsource == NULL) {
+				$query = "SELECT DISTINCT icao AS airline_icao, name AS airline_name, type AS airline_type FROM airlines WHERE forsource IS NULL ORDER BY name ASC";
+				$query_data = array();
+			} else {
+				$query = "SELECT DISTINCT icao AS airline_icao, name AS airline_name, type AS airline_type FROM airlines WHERE forsource = :forsource ORDER BY name ASC";
+				$query_data = array(':forsource' => $forsource);
+			}
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.airline_icao AS airline_icao, spotter_output.airline_name AS airline_name, spotter_output.airline_type AS airline_type
 					FROM spotter_output
 					WHERE spotter_output.airline_icao <> '' 
 					AND spotter_output.airline_type = :airline_type 
 					ORDER BY spotter_output.airline_icao ASC";
+			$query_data = array(':airline_type' => $airline_type);
 		}
 		
 		$sth = $this->db->prepare($query);
-		if ($airline_type != '' || $airline_type == 'all') {
-			$sth->execute(array(':airline_type' => $airline_type));
-		} else {
-			$sth->execute();
-		}
+		$sth->execute($query_data);
     
 		$airline_array = array();
 		$temp_array = array();
@@ -3191,7 +3199,7 @@ class Spotter{
 	*/
 	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '', $source_name = '')
 	{
-		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalDebugTimeElapsed;
+		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalDebugTimeElapsed, $globalAirlinesSource;
 		
 		//if (isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 		$Image = new Image($this->db);
@@ -3224,7 +3232,8 @@ class Spotter{
 			}
 		}
 		$fromsource = NULL;
-		if ($format_source == 'vatsimtxt') $fromsource = 'vatsim';
+		if (isset($globalAirlinesSource) && $globalAirlinesSource != '') $fromsource = $globalAirlinesSource;
+		elseif ($format_source == 'vatsimtxt') $fromsource = 'vatsim';
 		elseif ($format_source == 'whazzup') $fromsource = 'ivao';
 		elseif (isset($globalVATSIM) && $globalVATSIM) $fromsource = 'vatsim';
 		elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';

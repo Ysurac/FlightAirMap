@@ -124,8 +124,8 @@ class Stats {
 	}
 
 	public function countAllArrivalCountries($limit = true, $stats_airline = '') {
-		if ($limit) $query = "SELECT airport_country AS airport_arrival_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_country AS airport_arrival_country, arrival as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline";
+		if ($limit) $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline GROUP BY airport_arrival_country ORDER BY airport_arrival_country_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline GROUP BY airport_arrival_country ORDER BY airport_arrival_country_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':stats_airline' => $stats_airline));
@@ -141,8 +141,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllDepartureCountries($limit = true, $stats_airline = '') {
-		if ($limit) $query = "SELECT airport_country AS airport_departure_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_country AS airport_departure_country, departure as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline";
+		if ($limit) $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline GROUP BY airport_departure_country ORDER BY airport_departure_country_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline GROUP BY airport_departure_country ORDER BY airport_departure_country_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':stats_airline' => $stats_airline));
@@ -192,8 +192,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllCallsigns($limit = true,$stats_airline = '') {
-		if ($limit) $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.stats_airline = :stats_airline ORDER BY callsign_icao_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.stats_airline = :stats_airline ORDER BY callsign_icao_count DESC";
+		if ($limit) $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.airline_icao = :stats_airline ORDER BY callsign_icao_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.airline_icao = :stats_airline ORDER BY callsign_icao_count DESC";
 		 try {
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':stats_airline' => $stats_airline));
@@ -266,8 +266,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllDepartureAirports($limit = true,$stats_airline = '') {
-		if ($limit) $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline";
+		if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline ORDER BY airport_departure_icao_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline ORDER BY airport_departure_icao_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':stats_airline' => $stats_airline));
@@ -301,8 +301,8 @@ class Stats {
                 return $all;
 	}
 	public function countAllArrivalAirports($limit = true,$stats_airline = '') {
-		if ($limit) $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline";
+		if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline ORDER BY airport_arrival_icao_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline ORDER BY airport_arrival_icao_count DESC";
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':stats_airline' => $stats_airline));
@@ -333,6 +333,7 @@ class Stats {
         		}
         		array_multisort($count,SORT_DESC,$all);
                 }
+ 
                 return $all;
 	}
 	public function countAllMonthsLastYear($limit = true,$stats_airline = '') {
@@ -881,7 +882,7 @@ class Stats {
 		if ($globalDBdriver == 'mysql') {
 			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date,:stats_airline) ON DUPLICATE KEY UPDATE departure = departure+:departure";
 		} else {
-			$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date, :stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline);"; 
+			$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date);"; 
 		}
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => date('Y').'-01-01 00:00:00', ':stats_airline' => $airline_icao);
                  try {
@@ -911,7 +912,7 @@ class Stats {
 		if ($globalDBdriver == 'mysql') {
 			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline) ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
 		} else {
-			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline);"; 
+			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date);"; 
 		}
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival,':date' => date('Y').'-01-01 00:00:00',':stats_airline' => $airline_icao);
                  try {
@@ -926,7 +927,7 @@ class Stats {
 		if ($globalDBdriver == 'mysql') {
 			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date,:stats_airline) ON DUPLICATE KEY UPDATE arrival = :arrival";
 		} else {
-			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline);"; 
+			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline);"; 
 		}
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival, ':date' => $date,':stats_airline' => $airline_icao);
                  try {
@@ -1257,7 +1258,7 @@ class Stats {
 	        	}
 	        	foreach ($dall as $value) {
     				$icao = $value['airport_arrival_icao'];
-        			if (isset($alldata[$icao])) {                                                           
+        			if (isset($alldata[$icao])) {
         				$alldata[$icao]['airport_arrival_icao_count'] = $alldata[$icao]['airport_arrival_icao_count'] + $value['airport_arrival_icao_count'];
 	        		} else $alldata[$icao] = $value;
     			}

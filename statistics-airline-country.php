@@ -4,6 +4,7 @@ require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
 $Stats = new Stats();
 $title = _("Statistics").' - '._("Most common Airline by Country");
+
 require_once('header.php');
 include('statistics-sub-menu.php'); 
 

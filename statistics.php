@@ -5,13 +5,16 @@ require_once('require/class.Language.php');
 $beginpage = microtime(true);
 $Stats = new Stats();
 $title = _("Statistics");
-require_once('header.php');
 
-$airline_icao = filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
-if ($airline_icao == '' && isset($globalFilter)) {
+$airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
+if ($airline_icao == '' && isset($_COOKIE['stats_airline_icao'])) {
+	$airline_icao = $_COOKIE['stats_airline_icao'];
+} elseif ($airline_icao == '' && isset($globalFilter)) {
 	if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];
 }
-if ($airline_icao == '') $airline_icao = '';
+setcookie('stats_airline_icao',$airline_icao);
+require_once('header.php');
+
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <!--<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>-->

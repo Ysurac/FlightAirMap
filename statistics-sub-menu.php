@@ -1,6 +1,30 @@
 <span class="sub-menu-statistic column mobile">
 	<a href="#" onclick="showSubMenu(); return false;"><?php echo _("Statistics"); ?> <i class="fa fa-plus"></i></a>
 </span>
+	<div class="stats_airline">
+		<form>
+			<select name="airline" class="selectpicker" onchange="this.form.submit()">
+				<?php
+					require_once('require/class.Stats.php');
+					$Stats = new Stats();
+					$airlines = $Stats->getAllAirlineNames();
+					if (isset($airline_icao) && $airline_icao == '') {
+						print '<option value="" selected>All</option>';
+					} else {
+						print '<option value="">All</option>';
+					}
+					foreach($airlines as $airline) {
+						if (isset($airline_icao) && $airline_icao == $airline['airline_icao']) {
+							print '<option value="'.$airline['airline_icao'].'" selected>'.$airline['airline_name'].'</option>';
+						} else {
+							print '<option value="'.$airline['airline_icao'].'">'.$airline['airline_name'].'</option>';
+						}
+					}
+				?>
+			</select>
+		</form>
+	</div>
+
 <div class="sub-menu sub-menu-container">
 	<ul class="nav">
 		<li class="dropdown">

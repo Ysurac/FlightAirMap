@@ -188,7 +188,7 @@ class SpotterImport {
     }
 
     public function add($line) {
-	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate;
+	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource;
 	//if (!isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
 /*
@@ -319,7 +319,8 @@ class SpotterImport {
 			$timeelapsed = microtime(true);
             		$Spotter = new Spotter($this->db);
             		$fromsource = NULL;
-            		if (isset($line['format_source']) && $line['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
+            		if (isset($globalAirlinesSource) && $globalAirlinesSource != '') $fromsource = $globalAirlinesSource;
+            		elseif (isset($line['format_source']) && $line['format_source'] == 'vatsimtxt') $fromsource = 'vatsim';
 			elseif (isset($line['format_source']) && $line['format_source'] == 'whazzup') $fromsource = 'ivao';
 			elseif (isset($globalVATSIM) && $globalVATSIM) $fromsource = 'vatsim';
 			elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';

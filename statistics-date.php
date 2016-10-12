@@ -4,6 +4,15 @@ require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
 $Stats = new Stats();
 $title = _("Statistics").' - '._("Busiest Day");
+
+$airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
+if ($airline_icao == '' && isset($_COOKIE['stats_airline_icao'])) {
+    $airline_icao = $_COOKIE['stats_airline_icao'];
+} elseif ($airline_icao == '' && isset($globalFilter)) {
+    if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];
+}
+setcookie('stats_airline_icao',$airline_icao);
+
 require_once('header.php');
 include('statistics-sub-menu.php'); 
 
@@ -13,7 +22,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 	  </div>
       <p>'._("Below is a chart that plots the busiest day during the <strong>last 7 days</strong>.").'</p>';
 
-$date_array = $Stats->countAllDatesLast7Days();
+$date_array = $Stats->countAllDatesLast7Days($airline_icao);
 if (count($date_array) == 0) {
 	print _("No data available");
 } else {
