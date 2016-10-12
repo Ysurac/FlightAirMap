@@ -947,7 +947,7 @@ class update_schema {
 			}
 			// Add unique key
 			if ($globalDBdriver == 'mysql') {
-				$query = "drop index type on stats;ALTER TABLE stats ADD UNIQUE stats_type (stat_type,stats_date,stats_airline,filter_name);";
+				$query = "drop index stats_type on stats;ALTER TABLE stats ADD UNIQUE stats_type (stats_type,stats_date,stats_airline,filter_name);";
 			} else {
 				$query = "alter table stats drop constraint stats_stats_type_stats_date_key;ALTER TABLE stats ADD CONSTRAINT stats_type UNIQUE (stats_type,stats_date,stats_airline,filter_name);";
 			}
@@ -1026,6 +1026,64 @@ class update_schema {
 		}
 		
 		$query = "UPDATE config SET value = '25' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
+	private static function update_from_25() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('stats_owner','stats_airline')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats_owner ADD stats_airline VARCHAR(255) NULL DEFAULT '', ADD filter_name VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add stats_airline & filter_name column in stats_owner) : ".$e->getMessage()."\n";
+			}
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index owner_name on stats_owner;ALTER TABLE stats_owner ADD UNIQUE owner_name (owner_name,stats_airline,filter_name);";
+			} else {
+				$query = "alter table stats_owner drop constraint stats_owner_owner_name_key;ALTER TABLE stats_owner ADD CONSTRAINT owner_name UNIQUE (owner_name,stats_airline,filter_name);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add unique key in stats_owner) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('stats_pilot','stats_airline')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats_pilot ADD stats_airline VARCHAR(255) NULL DEFAULT '', ADD filter_name VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add stats_airline & filter_name column in stats_pilot) : ".$e->getMessage()."\n";
+			}
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index pilot_id on stats_pilot;ALTER TABLE stats_pilot ADD UNIQUE pilot_id (pilot_id,stats_airline,filter_name);";
+			} else {
+				$query = "alter table stats_pilot drop constraint stats_pilot_pilot_id_key;ALTER TABLE stats_pilot ADD CONSTRAINT pilot_id UNIQUE (pilot_id,stats_airline,filter_name);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add unique key in stats_pilot) : ".$e->getMessage()."\n";
+			}
+		}
+		$query = "UPDATE config SET value = '26' WHERE name = 'schema_version'";
 		try {
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
@@ -1147,6 +1205,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '24') {
     			    $error = self::update_from_24();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '25') {
+    			    $error = self::update_from_25();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';
