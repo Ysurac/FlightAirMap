@@ -846,14 +846,14 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatOwner($owner_name,$cnt) {
+	public function addStatOwner($owner_name,$cnt,$stats_airline = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_owner (owner_name,cnt) VALUES (:owner_name,:cnt) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+			$query = "INSERT INTO stats_owner (owner_name,cnt,stats_airline) VALUES (:owner_name,:cnt,:stats_airline) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
 		} else {
-			$query = "UPDATE stats_owner SET cnt = cnt+:cnt WHERE owner_name = :owner_name; INSERT INTO stats_owner (owner_name,cnt) SELECT :owner_name,:cnt WHERE NOT EXISTS (SELECT 1 FROM stats_owner WHERE owner_name = :owner_name);"; 
+			$query = "UPDATE stats_owner SET cnt = cnt+:cnt WHERE owner_name = :owner_name AND stats_airline = :stats_airline; INSERT INTO stats_owner (owner_name,cnt,stats_airline) SELECT :owner_name,:cnt,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_owner WHERE owner_name = :owner_name AND stats_airline = :stats_airline);"; 
 		}
-                $query_values = array(':owner_name' => $owner_name,':cnt' => $cnt);
+                $query_values = array(':owner_name' => $owner_name,':cnt' => $cnt,':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -861,14 +861,14 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatPilot($pilot_id,$cnt,$pilot_name) {
+	public function addStatPilot($pilot_id,$cnt,$pilot_name,$stats_airline = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_pilot (pilot_id,cnt,pilot_name) VALUES (:pilot_id,:cnt,:pilot_name) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, pilot_name = :pilot_name";
+			$query = "INSERT INTO stats_pilot (pilot_id,cnt,pilot_name,stats_airline) VALUES (:pilot_id,:cnt,:pilot_name,:stats_airline) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, pilot_name = :pilot_name";
 		} else {
-			$query = "UPDATE stats_pilot SET cnt = cnt+:cnt, pilot_name = :pilot_name WHERE pilot_id = :pilot_id; INSERT INTO stats_pilot (pilot_id,cnt,pilot_name) SELECT :pilot_id,:cnt,:pilot_name WHERE NOT EXISTS (SELECT 1 FROM stats_pilot WHERE pilot_id = :pilot_id);"; 
+			$query = "UPDATE stats_pilot SET cnt = cnt+:cnt, pilot_name = :pilot_name WHERE pilot_id = :pilot_id AND stats_airline = :stats_airline; INSERT INTO stats_pilot (pilot_id,cnt,pilot_name,stats_airline) SELECT :pilot_id,:cnt,:pilot_name,:stats_airline WHERE NOT EXISTS (SELECT 1 FROM stats_pilot WHERE pilot_id = :pilot_id AND stats_airline = :stats_airline);"; 
 		}
-                $query_values = array(':pilot_id' => $pilot_id,':cnt' => $cnt,':pilot_name' => $pilot_name);
+                $query_values = array(':pilot_id' => $pilot_id,':cnt' => $cnt,':pilot_name' => $pilot_name,':stats_airline' => $stats_airline);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
