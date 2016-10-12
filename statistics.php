@@ -11,7 +11,7 @@ $airline_icao = filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 if ($airline_icao == '' && isset($globalFilter)) {
 	if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];
 }
-
+if ($airline_icao == '') $airline_icao = '';
 ?>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <!--<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>-->
