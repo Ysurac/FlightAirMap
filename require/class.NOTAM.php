@@ -2,6 +2,7 @@
 require_once(dirname(__FILE__).'/settings.php');
 require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.Common.php');
+require_once(dirname(__FILE__).'/class.Spotter.php');
 
 class NOTAM {
 	public $db;
@@ -724,6 +725,18 @@ class NOTAM {
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
 	}
+	public function getNOTAMbyRef($ref) {
+		$query = "SELECT * FROM notam WHERE ref = :ref";
+		$query_values = array('ref' => $ref);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 
 	public function addNOTAM($ref,$title,$type,$fir,$code,$rules,$scope,$lower_limit,$upper_limit,$center_latitude,$center_longitude,$radius,$date_begin,$date_end,$permanent,$text,$full_notam) {
 		$query = "INSERT INTO notam (ref,title,notam_type,fir,code,rules,scope,lower_limit,upper_limit,center_latitude,center_longitude,radius,date_begin,date_end,permanent,notam_text,full_notam) VALUES (:ref,:title,:type,:fir,:code,:rules,:scope,:lower_limit,:upper_limit,:center_latitude,:center_longitude,:radius,:date_begin,:date_end,:permanent,:text,:full_notam)";
@@ -746,6 +759,40 @@ class NOTAM {
 			return "error : ".$e->getMessage();
 		}
 	}
+	public function deleteOldNOTAM() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "DELETE FROM notam WHERE date_end < UTC_TIMESTAMP()";
+		} else {
+			$query = "DELETE FROM notam WHERE date_end < CURRENT_TIMESTAMP AT TIME ZONE 'UTC'";
+		}
+		$query_values = array();
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+	public function deleteNOTAMbyRef($ref) {
+		$query = "DELETE FROM notam WHERE ref = :ref";
+		$query_values = array(':ref' => $ref);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+	public function deleteAllNOTAM() {
+		$query = "DELETE FROM notam";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
 	public function deleteAllNOTAMLocation() {
 		$query = "DELETE FROM notam";
 		try {
@@ -756,13 +803,46 @@ class NOTAM {
 		}
 	}
 
-	public function updateNotam() {
+	public function updateNOTAM() {
 		global $globalNOTAMAirports;
 		if (isset($globalNOTAMAirports) && is_array($globalNOTAMAirports) && count($globalNOTAMAirports) > 0) {
-			foreach ($globalNOTAMAirports as $airport) {
-				$data = $this->downloadNOTAM($airport);
-				if (count($data) > 0) {
-					$this->addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['latitude'],$data['longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
+			foreach (array_chunk($globalNOTAMAirports,10) as $airport) {
+				$airport_icao = implode(',',$airport);
+				$alldata = $this->downloadNOTAM($airport_icao);
+				if (count($alldata) > 0) {
+					foreach ($alldata as $initial_data) {
+						$data = $this->parse($initial_data);
+						$notamref = $this->getNOTAMbyRef($data['ref']);
+						if (count($notamref) == 0) $this->addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['latitude'],$data['longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
+					}
+				}
+			}
+		}
+	}
+
+	public function updateNOTAMallAirports() {
+		$Spotter = new Spotter();
+		$allairports = $Spotter->getAllAirportInfo();
+		foreach (array_chunk($allairports,10) as $airport) {
+			$airports_icao = array();
+			foreach($airport as $icao) {
+				if (isset($icao['icao'])) $airports_icao[] = $icao['icao'];
+			}
+			$airport_icao = implode(',',$airports_icao);
+			$alldata = $this->downloadNOTAM($airport_icao);
+			if (count($alldata) > 0) {
+				foreach ($alldata as $initial_data) {
+					//print_r($initial_data);
+					$data = $this->parse($initial_data);
+					//print_r($data);
+					if (isset($data['ref'])) {
+						$notamref = $this->getNOTAMbyRef($data['ref']);
+						if (count($notamref) == 0) {
+							if (isset($data['ref_replaced'])) $this->deleteNOTAMbyRef($data['ref_replaced']);
+							if (isset($data['ref_cancelled'])) $this->deleteNOTAMbyRef($data['ref_cancelled']);
+							elseif (isset($data['latitude']) && isset($data['scope']) && isset($data['text']) && isset($data['permanent'])) echo $this->addNOTAM($data['ref'],'','',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['latitude'],$data['longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
+						}
+					}
 				}
 			}
 		}
@@ -775,6 +855,7 @@ class NOTAM {
 		$url = str_replace('{icao}',$icao,'https://pilotweb.nas.faa.gov/PilotWeb/notamRetrievalByICAOAction.do?method=displayByICAOs&reportType=RAW&formatType=ICAO&retrieveLocId={icao}&actionType=notamRetrievalByICAOs');
 		$data = $Common->getData($url);
 		preg_match_all("/<pre>(.+?)<\/pre>/is", $data, $matches);
+		//print_r($matches);
 		if (isset($matches[1])) return $matches[1];
 		else return array();
 	}
@@ -791,6 +872,7 @@ class NOTAM {
 			if (preg_match('#Q\) (.*)#',$line,$matches)) {
 				$line = str_replace(' ','',$line);
 				if (preg_match('#Q\)([A-Z]{4})\/([A-Z]{5})\/(IV|I|V)\/([A-Z]{1,3})\/([A-Z]{1,2})\/([0-9]{3})\/([0-9]{3})\/([0-9]{4})(N|S)([0-9]{5})(E|W)([0-9]{3})#',$line,$matches)) {
+				//if (preg_match('#Q\)([A-Z]{4})\/([A-Z]{5})\/(IV|I|V)\/([A-Z]{1,3})\/([A-Z]{1,2})\/([0-9]{3})\/([0-9]{3})\/([0-9]{4})(N|S)([0-9]{5})(E|W)([0-9]{3})#',$line,$matches)) {
 					//print_r($matches);
 					$result['fir'] = $matches[1];
 					$result['code'] = $matches[2];
@@ -850,14 +932,22 @@ class NOTAM {
 				$result['date_begin'] = $matches[1].'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
 			}
 			elseif (preg_match('#C\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})$#',$line,$matches)) {
-				$result['date_finish'] = $matches[1].'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
+				$result['date_end'] = $matches[1].'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
+				$result['permanent'] = 0;
 			}
 			elseif (preg_match('#C\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2}) (EST|PERM)$#',$line,$matches)) {
-				$result['date_finish'] = $matches[1].'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
-				if ($matches[6] == 'EST') $result['estimated'] = true;
-				else $result['estimated'] = false;
-				if ($matches[6] == 'PERM') $result['permanent'] = true;
-				else $result['permanent'] = false;
+				$result['date_end'] = $matches[1].'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
+				if ($matches[6] == 'EST') $result['estimated'] = 1;
+				else $result['estimated'] = 0;
+				if ($matches[6] == 'PERM') $result['permanent'] = 1;
+				else $result['permanent'] = 0;
+			}
+			elseif (preg_match('#C\) (EST|PERM)$#',$line,$matches)) {
+				$result['date_end'] = '30/12/20 12:00';
+				if ($matches[1] == 'EST') $result['estimated'] = 1;
+				else $result['estimated'] = 0;
+				if ($matches[1] == 'PERM') $result['permanent'] = 1;
+				else $result['permanent'] = 0;
 			}
 			elseif (preg_match('#E\) (.*)#',$line,$matches)) {
 				$rtext = array();
@@ -870,10 +960,18 @@ class NOTAM {
 				$result['text'] = implode(' ',$rtext);
 			//} elseif (preg_match('#F\) (.*)#',$line,$matches)) {
 			//} elseif (preg_match('#G\) (.*)#',$line,$matches)) {
-			} elseif (preg_match('#(NOTAMN|NOTAMR|NOTAMC)$#',$line,$matches)) {
+			} elseif (preg_match('#(NOTAMN|NOTAMR|NOTAMC)#',$line,$matches)) {
+				$text = explode(' ',$line);
+				$result['ref'] = $text[0];
 				if ($matches[1] == 'NOTAMN') $result['type'] = 'new';
-				if ($matches[1] == 'NOTAMC') $result['type'] = 'cancel';
-				if ($matches[1] == 'NOTAMC') $result['type'] = 'replace';
+				if ($matches[1] == 'NOTAMC') {
+					$result['type'] = 'cancel';
+					$result['ref_cancelled'] = $text[2];
+				}
+				if ($matches[1] == 'NOTAMR') {
+					$result['type'] = 'replace';
+					$result['ref_replaced'] = $text[2];
+				}
 			}
 		}
 		return $result;
@@ -882,6 +980,8 @@ class NOTAM {
 /*
 $NOTAM = new NOTAM();
 //print_r($NOTAM->downloadNOTAM('lfll'));
-print_r($NOTAM->parse(''));
+//print_r($NOTAM->parse(''));
+$NOTAM->deleteAllNOTAM();
+$NOTAM->updateNOTAMallAirports();
 */
 ?>
