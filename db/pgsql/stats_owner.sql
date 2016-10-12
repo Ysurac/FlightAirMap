@@ -1,7 +1,9 @@
 CREATE TABLE stats_owner (
   stats_owner_id serial,
   owner_name varchar(255) NOT NULL,
-  cnt integer NOT NULL
+  cnt integer NOT NULL,
+  stats_airline varchar(255) DEFAULT '',
+  filter_name varchar(255) DEFAULT ''
 );
 
 ALTER TABLE stats_owner

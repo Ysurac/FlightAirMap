@@ -2,7 +2,9 @@ CREATE TABLE `stats_pilot` (
   `stats_pilot_id` int(11) NOT NULL,
   `pilot_id` int(11) NOT NULL,
   `cnt` int(11) NOT NULL,
-  `pilot_name` varchar(255) DEFAULT NULL
+  `pilot_name` varchar(255) DEFAULT NULL,
+  `stats_airline` varchar(255) DEFAULT '',
+  `filter_name` varchar(255) DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `stats_pilot`
