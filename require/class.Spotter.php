@@ -1230,7 +1230,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$filter_query.$orderby_query;
+		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 

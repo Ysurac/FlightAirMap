@@ -1650,17 +1650,20 @@ function notamPopup (feature, layer) {
 
 
 function update_notamLayer() {
-    var bbox = map.getBounds().toBBoxString();
-    notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
-    onEachFeature: notamPopup,
+	var bbox = map.getBounds().toBBoxString();
+	notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
+	onEachFeature: notamPopup,
 	pointToLayer: function (feature, latlng) {
-	    return L.circle(latlng, feature.properties.radius, {
+	    var circle = L.circle(latlng, feature.properties.radius, {
+//	    return L.circle(latlng, feature.properties.radius, {
+//	    return L.circleMarker(latlng, feature.properties.radius, {
                     fillColor: feature.properties.color,
                     color: feature.properties.color,
                     weight: 1,
                     opacity: 0.3,
                     fillOpacity: 0.3
             });
+            return circle;
 //            .on('click', function() {
 //		    var output = '';
 //		    output += '<div class="top">';
