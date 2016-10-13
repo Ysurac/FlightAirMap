@@ -89,7 +89,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllAirlineCountries($limit = true) {
-		if ($limit) $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao AND GROUP BY airline_country ORDER BY airline_country_count DESC LIMIT 10 OFFSET 0";
+		if ($limit) $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao GROUP BY airline_country ORDER BY airline_country_count DESC LIMIT 10 OFFSET 0";
 		else $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao GROUP BY airline_country ORDER BY airline_country_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
