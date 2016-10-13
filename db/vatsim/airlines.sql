@@ -1,4 +1,3 @@
-TRUNCATE TABLE airlines;
 INSERT INTO airlines (airline_id, icao, name, callsign,forsource) VALUES
 (1, 'ABD', 'Air Atlanta Icelandic', 'Atlanta','vatsim'),
 (2, 'ABB', 'Air Belgium', 'Air Belgium','vatsim'),
