@@ -112,6 +112,7 @@ body {
     text-align: center;
     position: absolute;
     right: 10px;
+    z-index: 2000;
 }
 .infobox h4 {
     margin: 0 0 5px;
