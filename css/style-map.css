@@ -87,10 +87,10 @@ body {
   top:450px;
 }
   */
+  /*
 .showdetails {
-	top: 55px;
-   width: 300px;
-    /*padding: 3px 3px;*/
+    top: 55px;
+    width: 300px;
     font: 12px/14px Arial, Helvetica, sans-serif;
     text-align: center;
     background: white;
@@ -98,8 +98,9 @@ body {
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 12px;
     text-align: center;
+    position: absolute;
 }
-
+*/
 .infobox {
     top: 55px;
     padding: 16px 18px;
@@ -273,6 +274,19 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
   right: 5px;
   top: 160px;
   margin: 0px;
+/*
+    top: 55px;
+*/
+    width: 300px;
+    /*padding: 3px 3px;*/
+    font: 12px/14px Arial, Helvetica, sans-serif;
+    text-align: center;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    text-align: center;
+    z-index: 2000;
 }
 .showdetails img {
   display:inline-block;
