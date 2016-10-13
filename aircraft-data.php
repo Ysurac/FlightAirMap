@@ -132,9 +132,9 @@ if (isset($spotter_item['source_name']) && $spotter_item['source_name'] != '') {
 	print '</div>';
 }
 if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
-	print '<a href="'.$globalURL.'/?3d&trackid='.$spotter_item['flightaware_id'].'">Track it link !</a>';
+	print '<a href="?3d&trackid='.$spotter_item['flightaware_id'].'">Track it link !</a>';
 } else {
-	print '<a href="'.$globalURL.'/?2d&trackid='.$spotter_item['flightaware_id'].'">Track it link !</a>';
+	print '<a href="?2d&trackid='.$spotter_item['flightaware_id'].'">Track it link !</a>';
 }
 print '</div>';
 
