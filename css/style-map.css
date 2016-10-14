@@ -311,6 +311,22 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
     text-transform: uppercase;
     color:#aaa;
 }
+.showdetails .notamtext{
+  padding:4px;
+}
+.showdetails .notamtext span{
+    display:block;
+    text-transform: uppercase;
+    color:#aaa;
+}
+.showdetails .date{
+  padding:4px;
+}
+.showdetails .date span{
+    display:block;
+    text-transform: uppercase;
+    color:#aaa;
+}
 .showdetails .waypoints{
   padding:4px;
 }

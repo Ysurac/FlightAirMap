@@ -48,6 +48,7 @@ var weathercloudsrefresh;
 var geojsonLayer;
 var atcLayer;
 var polarLayer;
+var notamLayer;
 var weatherradar;
 waypoints = '';
 var weatherradarrefresh;
@@ -498,6 +499,11 @@ $( document ).ready(function() {
 			{
 				map.removeLayer(waypointsLayer);
 			}
+		}
+		if ($(".notam").hasClass("active"))
+		{
+			map.removeLayer(notamLayer);
+			update_notamLayer();
 		}
 		getLiveData(1);
 	});
@@ -1400,12 +1406,12 @@ function airlines(selectObj) {
 	    airs.push(air.value);
 	}
     }
-    document.cookie =  'Airlines='+airs.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+    document.cookie =  'Airlines='+airs.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
 }
 function airlinestype(selectObj) {
     var idx = selectObj.selectedIndex;
     var airtype = selectObj.options[idx].value;
-    document.cookie =  'airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+    document.cookie =  'airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
 }
 function sources(selectObj) {
     var sources = [], source;
@@ -1416,7 +1422,7 @@ function sources(selectObj) {
 	}
     }
     //document.cookie =  'Sources='+sources.join()+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'Sources='+sources.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+    document.cookie =  'Sources='+sources.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
 }
 
 function show3D() {

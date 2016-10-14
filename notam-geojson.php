@@ -11,8 +11,8 @@ header('Content-Type: text/javascript');
 if (isset($_GET['coord'])) 
 {
 	$coords = explode(',',$_GET['coord']);
-//	$spotter_array = Spotter::getAllNOTAMbyCoord($coords);
-	$spotter_array = $NOTAM->getAllNOTAM();
+	$spotter_array = $NOTAM->getAllNOTAMbyCoord($coords);
+//	$spotter_array = $NOTAM->getAllNOTAM();
 } else {
 	$spotter_array = $NOTAM->getAllNOTAM();
 }
@@ -30,9 +30,11 @@ if (!empty($spotter_array))
 			$output .= '"ref": "'.$spotter_item['ref'].'",';
 			$output .= '"title": "'.$spotter_item['title'].'",';
 			$output .= '"fir": "'.$spotter_item['fir'].'",';
-			$output .= '"text": "'.str_replace('"','',$spotter_item['notam_text']).'",';
-			$output .= '"latitude": "'.$spotter_item['center_latitude'].'",';
-			$output .= '"longitude": "'.$spotter_item['center_longitude'].'",';
+			$output .= '"text": "'.str_replace(array("\r\n", "\r", "\n"),'<br />',str_replace(array('"',"\t"), '',$spotter_item['notam_text'])).'",';
+			$output .= '"latitude": '.$spotter_item['center_latitude'].',';
+			$output .= '"longitude": '.$spotter_item['center_longitude'].',';
+			$output .= '"lower_limit": '.$spotter_item['lower_limit'].',';
+			$output .= '"upper_limit": '.$spotter_item['upper_limit'].',';
 //			$output .= '"altitude": "'.$spotter_item['altitude'].'",';
 //			$output .= '"popupContent": "'.$spotter_item['ref'].' : '.$spotter_item['title'].'",';
 //			$output .= '"type": "'.$spotter_item['type'].'",';

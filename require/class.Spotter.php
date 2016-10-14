@@ -2425,7 +2425,7 @@ class Spotter{
 			if (isset($globalAirlinesSource) && $globalAirlinesSource != '') $forsource = $globalAirlinesSource;
 			elseif (isset($globalVATSIM) && $globalVATSIM) $forsource = 'vatsim';
 			elseif (isset($globalIVAO) && $globalIVAO) $forsource = 'ivao';
-			if ($forsource == NULL) {
+			if ($forsource === NULL) {
 				$query = "SELECT DISTINCT icao AS airline_icao, name AS airline_name, type AS airline_type FROM airlines WHERE forsource IS NULL ORDER BY name ASC";
 				$query_data = array();
 			} else {

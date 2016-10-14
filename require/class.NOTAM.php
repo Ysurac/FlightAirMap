@@ -714,13 +714,43 @@ class NOTAM {
 		$this->db = $Connection->db;
 	}
 	public function getAllNOTAM() {
-		$query = "SELECT * FROM notam";
+		global $globalDBdriver;
+		//$query = "SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()";
+		if ($globalDBdriver == 'mysql') {
+			$query  = 'SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()';
+		} else {
+			$query  = "SELECT * FROM notam WHERE radius > 0 AND date_end > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AND date_begin < CURRENT_TIMESTAMP AT TIME ZONE 'UTC'";
+		}
 		$query_values = array();
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
-			return "error : ".$e->getMessage();
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
+	public function getAllNOTAMbyCoord($coord) {
+		global $globalDBdriver;
+		if (is_array($coord)) {
+			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		} else return array();
+		if ($globalDBdriver == 'mysql') {
+			$query  = 'SELECT * FROM notam WHERE center_latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND center_longitude BETWEEN '.$minlong.' AND '.$maxlong.' AND radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()';
+		} else {
+			$query  = 'SELECT * FROM notam WHERE center_latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND center_longitude BETWEEN '.$minlong.' AND '.$maxlong." AND radius > 0 AND date_end > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AND date_begin < CURRENT_TIMESTAMP AT TIME ZONE 'UTC'";
+		}
+		//$query = "SELECT * FROM notam WHERE radius > 0";
+		$query_values = array();
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
 		}
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
@@ -735,7 +765,8 @@ class NOTAM {
 			return "error : ".$e->getMessage();
 		}
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-		return $all;
+		if (isset($all[0])) return $all[0];
+		else return array();
 	}
 
 	public function addNOTAM($ref,$title,$type,$fir,$code,$rules,$scope,$lower_limit,$upper_limit,$center_latitude,$center_longitude,$radius,$date_begin,$date_end,$permanent,$text,$full_notam) {
@@ -823,13 +854,14 @@ class NOTAM {
 	public function updateNOTAMallAirports() {
 		$Spotter = new Spotter();
 		$allairports = $Spotter->getAllAirportInfo();
-		foreach (array_chunk($allairports,10) as $airport) {
+		foreach (array_chunk($allairports,20) as $airport) {
 			$airports_icao = array();
 			foreach($airport as $icao) {
 				if (isset($icao['icao'])) $airports_icao[] = $icao['icao'];
 			}
 			$airport_icao = implode(',',$airports_icao);
 			$alldata = $this->downloadNOTAM($airport_icao);
+			if ($globalTransaction) $this->db->beginTransaction();
 			if (count($alldata) > 0) {
 				foreach ($alldata as $initial_data) {
 					//print_r($initial_data);
@@ -844,7 +876,9 @@ class NOTAM {
 						}
 					}
 				}
-			}
+			} else echo 'Error on download. Nothing matches for '.$airport_icao."\n";
+			if ($globalTransaction) $this->db->commit();
+			sleep(5);
 		}
 	}
 
@@ -929,21 +963,27 @@ class NOTAM {
 				$result['icao'] = $matches[1];
 			}
 			elseif (preg_match('#B\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})#',$line,$matches)) {
-				$result['date_begin'] = $matches[1].'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
+				if ($matches[1] > 50) $year = '19'.$matches[1];
+				else $year = '20'.$matches[1];
+				$result['date_begin'] = $year.'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
 			}
 			elseif (preg_match('#C\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})$#',$line,$matches)) {
-				$result['date_end'] = $matches[1].'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
+				if ($matches[1] > 50) $year = '19'.$matches[1];
+				else $year = '20'.$matches[1];
+				$result['date_end'] = $year.'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
 				$result['permanent'] = 0;
 			}
 			elseif (preg_match('#C\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2}) (EST|PERM)$#',$line,$matches)) {
-				$result['date_end'] = $matches[1].'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
+				if ($matches[1] > 50) $year = '19'.$matches[1];
+				else $year = '20'.$matches[1];
+				$result['date_end'] = $year.'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
 				if ($matches[6] == 'EST') $result['estimated'] = 1;
 				else $result['estimated'] = 0;
 				if ($matches[6] == 'PERM') $result['permanent'] = 1;
 				else $result['permanent'] = 0;
 			}
 			elseif (preg_match('#C\) (EST|PERM)$#',$line,$matches)) {
-				$result['date_end'] = '30/12/20 12:00';
+				$result['date_end'] = '2030/12/20 12:00';
 				if ($matches[1] == 'EST') $result['estimated'] = 1;
 				else $result['estimated'] = 0;
 				if ($matches[1] == 'PERM') $result['permanent'] = 1;

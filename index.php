@@ -29,6 +29,8 @@ require_once('header.php');
 <div id="loadingOverlay"><h1>Loading...</h1></div>
 <div id="toolbar"></div>
 <div id="aircraft_ident"></div>
+<div id="airspace"></div>
+<div id="notam"></div>
 <div id="showdetails" class="showdetails"></div>
 <div id="infobox" class="infobox"></div>
 <?php
@@ -57,13 +59,7 @@ require_once('header.php');
 <?php
     }
 ?>
-<?php
-    if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
-?>
 	<li><a href="#home" role="tab" title="<?php echo _("Layers"); ?>"><i class="fa fa-map"></i></a></li>
-<?php
-    }
-?>
 	<li><a href="#settings" role="tab" title="<?php echo _("Settings"); ?>"><i class="fa fa-gears"></i></a></li>
 <?php
     if (isset($globalMap3D) && $globalMap3D) {
@@ -89,6 +85,9 @@ require_once('header.php');
     <div class="sidebar-content active">
 	<div class="sidebar-pane" id="home">
 	    <h1 class="sidebar-header">Weather<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+<?php
+	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
+?>
 		<ul>
 		<li><a class="button weatherprecipitation" onclick="showWeatherPrecipitation(); return false;"><?php echo _("Weather Precipitation"); ?></a></li>
 		<li><a class="button weatherrain" onclick="showWeatherRain(); return false;"><?php echo _("Weather Rain"); ?></a></li>
@@ -99,11 +98,14 @@ require_once('header.php');
 		<ul><li><a class="button waypoints" onclick="showWaypoints(); return false;"><?php echo _("Waypoints"); ?></a></li></ul>
 		<ul><li><a class="button airspace" onclick="showAirspace(); return false;"><?php echo _("Airspace"); ?></a></li></ul>
 <?php
-    if (isset($globalNOTAM) && $globalNOTAM) {
+	}
+	if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+		if (isset($globalNOTAM) && $globalNOTAM) {
 ?>
 		<ul><li><a class="button notam" onclick="showNotam(); return false;"><?php echo _("NOTAM"); ?></a></li></ul>
 <?php
-    }
+		}
+	}
 ?>
         </div>
 <?php

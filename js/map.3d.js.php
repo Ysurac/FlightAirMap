@@ -213,6 +213,17 @@ function show2D() {
 	document.cookie =  'MapFormat=2d; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
 	window.location.reload();
 }
+function showNotam() {
+	if (!$(".notam").hasClass("active"))
+	{
+		addNOTAM();
+		$(".notam").addClass("active");
+	} else {
+		deleteNOTAM();
+		$(".notam").removeClass("active");
+	}
+}
+
 function zoomInMap() {
 	camera.moveForward();
 }
@@ -259,11 +270,22 @@ function update_polarLayer() {
 
 function bbox () {
 	var rectangle = camera.computeViewRectangle();
+//	var rectangle = camera.computeViewRegion();
 	var west = Math.degrees(rectangle.west);
 	var south = Math.degrees(rectangle.south);
 	var east = Math.degrees(rectangle.east);
 	var north = Math.degrees(rectangle.north);
+	
+	var redRectangle = viewer.entities.add({
+	     name : 'Red translucent rectangle with outline',
+	    rectangle : {
+    		coordinates : rectangle,
+	            material : Cesium.Color.RED.withAlpha(0.5)
+	    }
+	});
+	
 	return west+','+south+','+east+','+north;
+//	return south+','+east+','+north+','+west;
 }
 
 function update_airportsLayer() {
@@ -284,6 +306,7 @@ function update_airportsLayer() {
 			var billboard = new Cesium.BillboardGraphics();
 			billboard.image = data.entities.values[i].properties.icon;
 			billboard.scaleByDistance = new Cesium.NearFarScalar(1.0e2, 1, 2.0e6, 0.0);
+//			billboard.distanceDisplayCondition = new DistanceDisplayCondition(0.0,7000.0);
 			data.entities.values[i].billboard = billboard;
 			data.entities.values[i].addProperty('type');
 			data.entities.values[i].type = 'airport';
@@ -678,6 +701,50 @@ function updateISS() {
 	});
 }
 
+var notams;
+function addNOTAM() {
+	//console.log('Download NOTAM...');
+	var notamdata = Cesium.loadJson('<?php print $globalURL; ?>/notam-geojson.php');
+//	var notamdata = Cesium.loadJson('<?php print $globalURL; ?>/notam-geojson.php?coord='+bbox());
+	notamdata.then(function (geojsondata) {
+		//console.log(geojsondata.features);
+		notams = new Cesium.CustomDataSource('notam');
+		for (var i = 0; i < geojsondata.features.length; i++) {
+			data = geojsondata.features[i].properties;
+			//console.log(data);
+			if (data.radius > 0) {
+				var clength = Math.round(data.upper_limit-data.lower_limit);
+				if (clength == 0) clength = 1;
+				var entity = notams.entities.add({
+					id: data.ref,
+					position: Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,data.upper_limit),
+					cylinder : {
+						length : clength,
+						topRadius : data.radius,
+						bottomRadius : data.radius,
+						material : Cesium.Color.fromCssColorString(data.color).withAlpha(0.5)
+					},
+					type: 'notam'
+				});
+//				entity.addProperty('type');
+//				entity.type = 'notam';
+			}
+		}
+		viewer.dataSources.add(notams);
+	});
+}
+
+function deleteNOTAM() {
+//	var dsn;
+//	for (var i =0; i < viewer.dataSources.length; i++) {
+//		if (viewer.dataSources.get(i).name == 'fam') {
+//			dsn = i;
+//			break;
+//		}
+//	}
+	viewer.dataSources.remove(notams);
+}
+
 <?php
 	if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 ?>
@@ -782,7 +849,6 @@ viewer.scene.globe.depthTestAgainstTerrain = true;
 //});
  var czmlds = new Cesium.CzmlDataSource();
 
-
 updateData();
 <?php
 	if (isset($globalMapSatellites) && $globalMapSatellites) {
@@ -837,6 +903,8 @@ handler.setInputAction(function(click) {
 			//lastid = flightaware_id;
 		} else if (pickedObject.id.type == 'sat') {
 			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(pickedObject.id.id));
+		} else if (pickedObject.id.type == 'notam') {
+			$(".showdetails").load("<?php print $globalURL; ?>/notam-data.php?"+Math.random()+"&notam="+encodeURI(pickedObject.id.id));
 //		} else if (pickedObject.id.name == 'iss') {
 //			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString()));
 //		} else if (pickedObject.id.id == 'ISS (ZARYA)') {

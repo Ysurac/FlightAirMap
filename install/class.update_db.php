@@ -1926,12 +1926,15 @@ class update_db {
 	}
 	
 	public static function update_all() {
-		echo update_db::update_routes();
+		global $globalMasterServer;
+		if (!isset($globalMasterServer) || !$globalMasterServer) {
+			echo update_db::update_routes();
+			echo update_db::update_translation();
+			echo update_db::update_translation_fam();
+		}
 		echo update_db::update_ModeS();
 		echo update_db::update_ModeS_flarm();
 		echo update_db::update_ModeS_ogn();
-		echo update_db::update_translation();
-		echo update_db::update_translation_fam();
 	}
 }
 
