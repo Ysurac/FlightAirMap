@@ -713,15 +713,17 @@ function addNOTAM() {
 			data = geojsondata.features[i].properties;
 			//console.log(data);
 			if (data.radius > 0) {
-				var clength = Math.round(data.upper_limit-data.lower_limit);
+				var clength = Math.round((data.upper_limit-data.lower_limit)*100*0.3048);
 				if (clength == 0) clength = 1;
+				var radius = Math.round(data.radius*1852);
+				if (radius > 50000) radius = 50000;
 				var entity = notams.entities.add({
 					id: data.ref,
-					position: Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,data.upper_limit),
+					position: Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,Math.round(data.upper_limit*100*0.3048)),
 					cylinder : {
 						length : clength,
-						topRadius : data.radius,
-						bottomRadius : data.radius,
+						topRadius : radius,
+						bottomRadius : radius,
 						material : Cesium.Color.fromCssColorString(data.color).withAlpha(0.5)
 					},
 					type: 'notam'

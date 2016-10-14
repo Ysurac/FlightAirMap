@@ -852,6 +852,7 @@ class NOTAM {
 	}
 
 	public function updateNOTAMallAirports() {
+		global $globalTransaction;
 		$Spotter = new Spotter();
 		$allairports = $Spotter->getAllAirportInfo();
 		foreach (array_chunk($allairports,20) as $airport) {

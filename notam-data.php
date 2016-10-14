@@ -45,12 +45,12 @@ if ($notam['scope'] != '') {
 	print $notam['scope'];
 	print '</div>';
 }
-if ($notam['lower_limit'] != '') {
+//if ($notam['lower_limit'] != '') {
 	print '<div>';
 	print '<span>'._("Limits").'</span>';
-	print $notam['lower_limit'].'/'.$notam['upper_limit'].' ('.$notam['radius'].')';
+	print 'FL'.$notam['lower_limit'].'/FL'.$notam['upper_limit'].' ('.$notam['radius'].'Nm)';
 	print '</div>';
-}
+//}
 print '</div>';
 print '<div class="notamtext">';
 print '<span>'._("Text").'</span>';
