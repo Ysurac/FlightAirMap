@@ -21,6 +21,16 @@ $globalLanguage = 'EN'; // Used only for wikipedia links for now
 $globalMapProvider = 'MapQuest-OSM'; // Can be Mapbox, OpenStreetMap, MapQuest-OSM or MapQuest-Aerial
 $globalMapboxId = 'examples.map-i86nkdio'; // Mapbox id
 $globalMapboxToken = ''; // Mapbox token
+$globalGoogleAPIKey = '';
+$globalBingMapKey = '';
+$globalHereappID = '';
+$globalHereappCode = '';
+$globalMapQuestKey = '';
+
+// MAP 3D
+$globalMap3D = TRUE; // User can choose 3D map
+$globalMap3Ddefault = FALSE; // Display 3D map by default
+$globalMapSatellites = FALSE; // Display satellites on 3D map
 
 //COVERAGE AREA (its based on a box model. i.e. top-left | top-right | bottom-right | bottom-left)
 $globalLatitudeMax = '46.92'; //the maximum latitude (north)
@@ -32,6 +42,7 @@ $globalCenterLatitude = '46.38'; //the latitude center of your coverage area
 $globalCenterLongitude = '5.29';//the longitude center of your coverage area
 
 $globalLiveZoom = '9'; //default zoom on Live Map
+$globalAirportZoom = '7'; //default zoom to begin to display airports icons
 
 // FLIGHTS MUST BE INSIDE THIS CIRCLE
 $globalDistanceIgnore = array();
@@ -43,6 +54,7 @@ $globalDBhost = 'localhost'; //database connection url
 $globalDBuser = ''; //database username
 $globalDBpass = ''; //database password
 $globalDBname = ''; //database name
+$globalDBport = '3306'; //database port
 $globalTransaction = TRUE; //Activate database transaction support
 
 
@@ -56,7 +68,7 @@ $globalTimezone = 'Europe/Paris';
 
 // DAEMON
 $globalDaemon = TRUE; // Run cron-sbs.php as daemon (don't work well if source is a real SBS1 device)
-$globalCronEnd = '60'; //the script run for xx seconds if $globalDaemon is disable in SBS mode
+$globalCronEnd = '0'; //the script run for xx seconds if $globalDaemon is disable in SBS mode
 
 // FORK
 $globalFork = TRUE; // Allow cron-sbs.php to fork to fetch schedule, no more schedules fetch if set to FALSE
@@ -78,6 +90,8 @@ $globalMapIdleTimeout = '30';
 
 // DISPLAY INFO OF FLIGHTS IN A POPUP
 $globalMapPopup = FALSE;
+// DISPLAY INFO OF AIRPORTS IN A POPUP
+$globalAirportPopup = FALSE;
 
 // DISPLAY ROUTE OF FLIGHT
 $globalMapRoute = TRUE;
@@ -130,9 +144,14 @@ $globalACARSArchive = array('10','80','81','82','3F'); // labels of messages to 
 $globalACARSArchiveKeepMonths = '0';
 
 //APRS configuration (for glidernet)
+$globalAPRS = FALSE;
 $globalAPRSversion = $globalName.' using FlightAirMap';
 $globalAPRSssid = 'FAM';
 $globalAPRSfilter = 'r/'.$globalCenterLatitude.'/'.$globalCenterLongitude.'/250.0';
+$globalAPRSarchive = FALSE; // archive track of APRS flights
+
+//User can choose between APRS & SBS1
+//$globalMapchoose = FALSE;
 
 //Minimal distance to tell if a flight is arrived to airport (in km)
 $globalClosestMinDist = '50';
@@ -151,6 +170,15 @@ $globalLufthansaKey = '';
 
 // Transavia API info
 $globalTransaviaKey = '';
+
+// Default aircraft icon color for 2D map
+$globalAircraftIconColor = '1a3151';
+
+// Display altitude in color
+$globalMapAltitudeColor = TRUE;
+
+// Size of icon on 2D map ('' for default => 30px if zoom > 7 else 15px)
+$globalAircraftSize = '';
 
 //ignore the flights during imports that have the following airports ICAO (departure/arrival) associated with them
 $globalAirportIgnore = array();
@@ -215,4 +243,5 @@ $globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','f
 $globalTranslationFetch = TRUE;
 //Sources for translation, to find name of flight from callsign
 $globalTranslationSources = array();
+
 ?>
