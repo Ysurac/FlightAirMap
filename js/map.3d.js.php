@@ -223,6 +223,11 @@ function showNotam() {
 		$(".notam").removeClass("active");
 	}
 }
+function notamscope(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var scope = selectObj.options[idx].value;
+    document.cookie = 'notamscope='+scope+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
 
 function zoomInMap() {
 	camera.moveForward();
@@ -704,7 +709,14 @@ function updateISS() {
 var notams;
 function addNOTAM() {
 	//console.log('Download NOTAM...');
-	var notamdata = Cesium.loadJson('<?php print $globalURL; ?>/notam-geojson.php');
+	if (getCookie('notamscope']) == '' || getCookie('notamscope') == 'All') {
+		url = "<?php print $globalURL; ?>/notam-geojson.php";
+	} else {
+		url = "<?php print $globalURL; ?>/notam-geojson.php?scope="+notamscope;
+	}
+	
+	var notamdata = Cesium.loadJson(url);
+//	var notamdata = Cesium.loadJson('<?php print $globalURL; ?>/notam-geojson.php');
 //	var notamdata = Cesium.loadJson('<?php print $globalURL; ?>/notam-geojson.php?coord='+bbox());
 	notamdata.then(function (geojsondata) {
 		//console.log(geojsondata.features);

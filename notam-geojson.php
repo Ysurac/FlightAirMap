@@ -11,10 +11,26 @@ header('Content-Type: text/javascript');
 if (isset($_GET['coord'])) 
 {
 	$coords = explode(',',$_GET['coord']);
-	$spotter_array = $NOTAM->getAllNOTAMbyCoord($coords);
+	if (isset($_COOKIE['notamscope']) && $_COOKIE['notamscope'] != '' && $_COOKIE['notamscope'] != 'All') {
+		$scope = filter_var($_COOOKIE['notamscope'],FILTER_SANITIZE_STRING);
+		$spotter_array = $NOTAM->getAllNOTAMbyCoordScope($coords,$scope);
+	} elseif (isset($_GET['scope']) && $_GET['scope'] != '' && $_GET['scope'] != 'All') {
+		$scope = filter_input(INPUT_GET,'scope',FILTER_SANITIZE_STRING);
+		$spotter_array = $NOTAM->getAllNOTAMbyCoordScope($coords,$scope);
+	} else {
+		$spotter_array = $NOTAM->getAllNOTAMbyCoord($coords);
+	}
 //	$spotter_array = $NOTAM->getAllNOTAM();
 } else {
-	$spotter_array = $NOTAM->getAllNOTAM();
+	if (isset($_COOKIE['notamscope']) && $_COOKIE['notamscope'] != '' && $_COOKIE['notamscope'] != 'All') {
+		$scope = filter_var($_COOOKIE['notamscope'],FILTER_SANITIZE_STRING);
+		$spotter_array = $NOTAM->getAllNOTAMbyScope($scope);
+	} elseif (isset($_GET['scope']) && $_GET['scope'] != '' && $_GET['scope'] != 'All') {
+		$scope = filter_input(INPUT_GET,'scope',FILTER_SANITIZE_STRING);
+		$spotter_array = $NOTAM->getAllNOTAMbyCoordScope($coords,$scope);
+	} else {
+		$spotter_array = $NOTAM->getAllNOTAM();
+	}
 }
       
 $output = '{"type": "FeatureCollection","features": [';
@@ -48,6 +64,8 @@ if (!empty($spotter_array))
 			    $output .= '"color": "#EACC04",';
 			} elseif ($spotter_item['scope'] == 'Airport/Enroute warning') {
 			    $output .= '"color": "#EA7D00",';
+			} elseif ($spotter_item['scope'] == 'Airport/Navigation warning') {
+			    $output .= '"color": "#DBEA00",';
 			} elseif ($spotter_item['scope'] == 'Navigation warning') {
 			    $output .= '"color": "#BBEA00",';
 			} else {

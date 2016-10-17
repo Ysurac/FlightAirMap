@@ -1383,15 +1383,20 @@ function showNotam() {
 	$(".notam").removeClass("active");
      }
 }
+function notamscope(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var scope = selectObj.options[idx].value;
+    document.cookie = 'notamscope='+scope+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
 
 function mapType(selectObj) {
     var idx = selectObj.selectedIndex;
     var atype = selectObj.options[idx].value;
     var type = atype.split('-');
-    document.cookie =  'MapType='+type+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	document.cookie =  'MapType='+type+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     if (type[0] == 'Mapbox') {
-    document.cookie =  'MapType='+type[0]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'MapTypeId='+type[1]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+        document.cookie =  'MapType='+type[0]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	document.cookie =  'MapTypeId='+type[1]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     } else {
 	document.cookie =  'MapType='+atype+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     }
@@ -1657,7 +1662,13 @@ function notamPopup (feature, layer) {
 
 function update_notamLayer() {
 	var bbox = map.getBounds().toBBoxString();
-	notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
+	if (getCookie('notamscope') == '' || getCookie('notamscope') == 'All') {
+		url = "<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox;
+	} else {
+		url = "<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox+"&scope="+notamscope;
+	}
+	//notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
+	notamLayer = new L.GeoJSON.AJAX(url,{
 //	onEachFeature: notamPopup,
 	pointToLayer: function (feature, latlng) {
 	    var circle = L.circle(latlng, feature.properties.radius, {

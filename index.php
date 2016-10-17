@@ -32,7 +32,7 @@ require_once('header.php');
 <div id="airspace"></div>
 <div id="notam"></div>
 <div id="showdetails" class="showdetails"></div>
-<div id="infobox" class="infobox"></div>
+<div id="infobox" class="infobox"><h4><?php echo _("Aircrafts detected"); ?></h4><i class="fa fa-spinner fa-pulse fa-fw"></i></div>
 <?php
     if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 
@@ -88,23 +88,38 @@ require_once('header.php');
 <?php
 	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
 ?>
-		<ul>
-		<li><a class="button weatherprecipitation" onclick="showWeatherPrecipitation(); return false;"><?php echo _("Weather Precipitation"); ?></a></li>
-		<li><a class="button weatherrain" onclick="showWeatherRain(); return false;"><?php echo _("Weather Rain"); ?></a></li>
-		<li><a class="button weatherclouds" onclick="showWeatherClouds(); return false;"><?php echo _("Weather Clouds"); ?></a></li>
-                </ul>
+		<form>
+			<ul>
+				<li><div class="checkbox"><label><input type="checkbox" name="weatherprecipitation" value="1" onclick="showWeatherPrecipitation();" /><?php echo _("Weather Precipitation"); ?></label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="weatherrain" value="1" onclick="showWeatherRain();"  /><?php echo _("Weather Rain"); ?></label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="weatherclouds" value="1" onclick="showWeatherClouds();" /><?php echo _("Weather Clouds"); ?></label></div></li>
+			</ul>
+                </form>
                 <br />
 		<h1>Others Layers</h1>
-		<ul><li><a class="button waypoints" onclick="showWaypoints(); return false;"><?php echo _("Waypoints"); ?></a></li></ul>
-		<ul><li><a class="button airspace" onclick="showAirspace(); return false;"><?php echo _("Airspace"); ?></a></li></ul>
+		<form>
+			<ul>
+				<li><div class="checkbox"><label><input type="checkbox" name="waypoints" value="1" onclick="showWaypoints();" /><?php echo _("Waypoints"); ?></label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="airspace" value="1" onclick="showAirspace();" /><?php echo _("Airspace"); ?></label></div></li>
 <?php
 	}
 	if (isset($globalNOTAM) && $globalNOTAM) {
 ?>
-		<ul><li><a class="button notam" onclick="showNotam(); return false;"><?php echo _("NOTAM"); ?></a></li></ul>
+				<li><div class="checkbox"><label><input type="checkbox" name="notam" value="1" onclick="showNotam();" /><?php echo _("NOTAM"); ?></label></div></li>
+				<li><?php echo _("NOTAM scope:"); ?>
+					<select class="selectpicker" onchange="notamscope(this);">
+						<option<?php if (!isset($_COOKIE['notamscope']) || $_COOKIE['notamscope'] == 'All') print ' selected'; ?>>All</option>
+						<option<?php if (isset($_COOKIE['notamscope']) && $_COOKIE['notamscope'] == 'Airport/Enroute warning') print ' selected'; ?>>Airport/Enroute warning</option>
+						<option<?php if (isset($_COOKIE['notamscope']) && $_COOKIE['notamscope'] == 'Airport warning') print ' selected'; ?>>Airport warning</option>
+						<option<?php if (isset($_COOKIE['notamscope']) && $_COOKIE['notamscope'] == 'Navigation warning') print ' selected'; ?>>Navigation warning</option>
+						<option<?php if (isset($_COOKIE['notamscope']) && $_COOKIE['notamscope'] == 'Enroute warning') print ' selected'; ?>>Enroute warning</option>
+					</select
+				</li>
 <?php
 	}
 ?>
+			</ul>
+		</form>
         </div>
 <?php
     if (isset($globalArchive) && $globalArchive == TRUE) {

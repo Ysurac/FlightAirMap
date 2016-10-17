@@ -988,6 +988,24 @@ class NOTAM {
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
 	}
+	public function getAllNOTAMbyScope($scope) {
+		global $globalDBdriver;
+		//$query = "SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()";
+		if ($globalDBdriver == 'mysql') {
+			$query  = 'SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP() AND scope = :scope';
+		} else {
+			$query  = "SELECT * FROM notam WHERE radius > 0 AND date_end > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AND date_begin < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AND scope = :scope";
+		}
+		$query_values = array(':scope' => $scope);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 	public function getAllNOTAMbyCoord($coord) {
 		global $globalDBdriver;
 		if (is_array($coord)) {
@@ -1003,6 +1021,30 @@ class NOTAM {
 		}
 		//$query = "SELECT * FROM notam WHERE radius > 0";
 		$query_values = array();
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
+	public function getAllNOTAMbyCoordScope($coord,$scope) {
+		global $globalDBdriver;
+		if (is_array($coord)) {
+			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		} else return array();
+		if ($globalDBdriver == 'mysql') {
+			$query  = 'SELECT * FROM notam WHERE center_latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND center_longitude BETWEEN '.$minlong.' AND '.$maxlong.' AND radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP() AND scope = :scope';
+		} else {
+			$query  = 'SELECT * FROM notam WHERE center_latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND center_longitude BETWEEN '.$minlong.' AND '.$maxlong." AND radius > 0 AND date_end > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AND date_begin < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AND scope = :scope";
+		}
+		//$query = "SELECT * FROM notam WHERE radius > 0";
+		$query_values = array(':scope' => $scope);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
