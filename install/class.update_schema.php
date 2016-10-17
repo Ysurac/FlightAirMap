@@ -945,6 +945,20 @@ class update_schema {
 			} catch(PDOException $e) {
 				return "error (add stats_airline & filter_name column in stats) : ".$e->getMessage()."\n";
 			}
+		}
+		if ($Connection->indexExists('stats','type')) {
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index type on stats;ALTER TABLE stats ADD UNIQUE stats_type (stats_type,stats_date,stats_airline,filter_name);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add unique key in stats) : ".$e->getMessage()."\n";
+			}
+		
+		} else {
 			// Add unique key
 			if ($globalDBdriver == 'mysql') {
 				$query = "drop index stats_type on stats;ALTER TABLE stats ADD UNIQUE stats_type (stats_type,stats_date,stats_airline,filter_name);";
