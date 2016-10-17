@@ -1328,7 +1328,7 @@ class NOTAM {
 				break;
 			case 'W':
 				$result = 'Navigation Warnings: Warnings ';
-				if (isset($this->code_warning[$code_fp])) $result .= $this->code_warning[$code_fp];
+				if (isset($this->code_warnings[$code_fp])) $result .= $this->code_warnings[$code_fp];
 				break;
 		}
 		switch ($code[3]) {
