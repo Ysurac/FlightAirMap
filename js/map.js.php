@@ -1658,7 +1658,7 @@ function notamPopup (feature, layer) {
 function update_notamLayer() {
 	var bbox = map.getBounds().toBBoxString();
 	notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
-	onEachFeature: notamPopup,
+//	onEachFeature: notamPopup,
 	pointToLayer: function (feature, latlng) {
 	    var circle = L.circle(latlng, feature.properties.radius, {
                     fillColor: feature.properties.color,
@@ -1666,7 +1666,9 @@ function update_notamLayer() {
                     weight: 1,
                     opacity: 0.3,
                     fillOpacity: 0.3
-            });
+		}).on('click', function() {
+			$(".showdetails").load("notam-data.php?"+Math.random()+"&notam="+encodeURI(feature.properties.ref));
+		});
             return circle;
 	}
     }).addTo(map);

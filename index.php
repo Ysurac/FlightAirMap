@@ -99,12 +99,10 @@ require_once('header.php');
 		<ul><li><a class="button airspace" onclick="showAirspace(); return false;"><?php echo _("Airspace"); ?></a></li></ul>
 <?php
 	}
-	if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
-		if (isset($globalNOTAM) && $globalNOTAM) {
+	if (isset($globalNOTAM) && $globalNOTAM) {
 ?>
 		<ul><li><a class="button notam" onclick="showNotam(); return false;"><?php echo _("NOTAM"); ?></a></li></ul>
 <?php
-		}
 	}
 ?>
         </div>

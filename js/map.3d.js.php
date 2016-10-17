@@ -716,7 +716,7 @@ function addNOTAM() {
 				var clength = Math.round((data.upper_limit-data.lower_limit)*100*0.3048);
 				if (clength == 0) clength = 1;
 				var radius = Math.round(data.radius*1852);
-				if (radius > 50000) radius = 50000;
+				if (radius > 40000) radius = 40000;
 				var entity = notams.entities.add({
 					id: data.ref,
 					position: Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,Math.round(data.upper_limit*100*0.3048)),

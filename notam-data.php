@@ -39,6 +39,12 @@ if ($notam['code'] != '') {
 	print $notam['code'];
 	print '</div>';
 }
+if ($notam['title'] != '') {
+	print '<div>';
+	print '<span>'._("Subject").'</span>';
+	print $notam['title'];
+	print '</div>';
+}
 if ($notam['scope'] != '') {
 	print '<div>';
 	print '<span>'._("Scope").'</span>';
