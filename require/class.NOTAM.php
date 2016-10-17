@@ -25,16 +25,19 @@ class NOTAM {
 	                    'ADA' => 'Advisory Area',
 	                    'ADC' => 'Aerodrome Chart',
 	                    'ADDN' => 'Additional',
+	                    'ADIZ' => 'Air defense identification zone',
 	                    'ADJ' => 'Adjacent',
 	                    'ADR' => 'Advisory Route',
 	                    'ADS' => 'Automatic Dependent Surveillance',
 	                    'ADVS' => 'Advisory Service',
 	                    'ADZ' => 'Advised',
 	                    'AFIL' => 'Flight Plan Filed In The Air',
+	                    'AFIS' => 'Airport flight information service',
 	                    'AFM' => 'Affirm',
 	                    'AFT' => 'After',
 	                    'AGA' => 'Aerodromes, Air Routes and Ground Aids',
 	                    'AGN' => 'Again',
+	                    'AIS' => 'Aeronautical information service',
 	                    'ALERFA' => 'Alert Phase',
 	                    'ALRS' => 'Alerting Service',
 	                    'ALS' => 'Approach Lighting System',
@@ -69,6 +72,7 @@ class NOTAM {
 	                    'ATA' => 'Actual Time of Arrival',
 	                    'ATD' => 'Actual Time of Departure',
 	                    'ATFM' => 'Air Traffic Flow Management',
+	                    'ATIS' => 'Automatic terminal information service',
 	                    'ATM' => 'Air Traffic Management',
 	                    'ATP' => 'At',
 	                    'ATTN' => 'Attention',
@@ -135,6 +139,7 @@ class NOTAM {
 	                    'CPL' => 'Current Flight Plan',
 	                    'CRC' => 'Cyclic Redundancy Check',
 	                    'CRZ' => 'Cruise',
+	                    'CTA' => 'Control area',
 	                    'CTAM' => 'Climb To And Maintain',
 	                    'CTC' => 'Contact',
 	                    'CTL' => 'Control',
@@ -163,6 +168,7 @@ class NOTAM {
 	                    'DIV' => 'Divert',
 	                    'DLA' => 'Delay',
 	                    'DLY' => 'Daily',
+	                    'DME' => 'Distance measuring equipment',
 	                    'DNG' => 'Dangerous',
 	                    'DOM' => 'Domestic',
 	                    'DPT' => 'Depth',
@@ -216,6 +222,8 @@ class NOTAM {
 	                    'FCT' => 'Friction Coefficient',
 	                    'FDPS' => 'Flight Data Processing System',
 	                    'FEB' => 'February',
+	                    'FIR' => 'Flight information region',
+	                    'FIS' => 'Flight information service',
 	                    'FLD' => 'Field',
 	                    'FLG' => 'Flashing',
 	                    'FLR' => 'Flares',
@@ -237,6 +245,7 @@ class NOTAM {
 	                    'FR' => 'Fuel Remaining',
 	                    'FREQ' => 'Frequency',
 	                    'FRI' => 'Friday',
+	                    'FRMG' => 'Missile, gun or rocket firing',
 	                    'FRNG' => 'Firing',
 	                    'FRONT' => 'Front',
 	                    'FRQ' => 'Frequent',
@@ -249,6 +258,7 @@ class NOTAM {
 	                    'GARP' => 'GBAS Azimuth Reference Point',
 	                    'GBAS' => 'Ground-based Augmentation System',
 	                    'GCAJ' => 'Ground Controlled Approach',
+	                    'GCA' => 'Ground Controlled Approach System',
 	                    'GEN' => 'General',
 	                    'GEO' => 'Geographic or True',
 	                    'GES' => 'Ground Earth Station',
@@ -418,6 +428,7 @@ class NOTAM {
 	                    'OBSTS' => 'Obstacles',
 	                    'OCA' => 'Oceanic Control Area',
 	                    'OCH' => 'Obstacle Clearance Height',
+	                    'OCL' => 'Obstacle Clearance Limit',
 	                    'OCS' => 'Obstacle Clearance Surface',
 	                    'OCT' => 'October',
 	                    'OFZ' => 'Obstacle Free Zone',
@@ -562,6 +573,7 @@ class NOTAM {
 	                    'SEC' => 'Seconds',
 	                    'SECN' => 'Section',
 	                    'SECT' => 'Sector',
+	                    'SELCAL' => 'Selective calling system',
 	                    'SEP' => 'September',
 	                    'SER' => 'Service',
 	                    'SEV' => 'Severe',
@@ -653,6 +665,7 @@ class NOTAM {
 	                    'UAB' => 'Until Advised By',
 	                    'UAC' => 'Upper Area Control Centre',
 	                    'UAR' => 'Upper Air Route',
+	                    'UDA' => 'Upper advisory area',
 	                    'UFN' => 'Until Further Notice',
 	                    'UHDT' => 'Unable Higher Due Traffic',
 	                    'UIC' => 'Upper Information Centre',
@@ -707,7 +720,251 @@ class NOTAM {
 	                    'XS' => 'Atmospherics',
 	                    'YCZ' => 'Yellow Caution Zone',
 	                    'YR' => 'Your');
-
+	public $code_airspace = array(
+			    'AA' => 'Minimum altitude',
+			    'AC' => 'Class B, C, D, or E Surface Area',
+			    'AD' => 'Air defense identification zone',
+			    'AE' => 'Control area',
+			    'AF' => 'Flight information region',
+			    'AH' => 'Upper control area',
+			    'AL' => 'Minimum usable flight level',
+			    'AN' => 'Area navigation route',
+			    'AO' => 'Oceanic control area',
+			    'AP' => 'Reporting point',
+			    'AR' => 'ATS route',
+			    'AT' => 'Class B Airspace',
+			    'AU' => 'Upper flight information region',
+			    'AV' => 'Upper advisory area',
+			    'AX' => 'Intersection',
+			    'AZ' => 'Aerodrome traffic zone');
+	public $code_comradar = array(
+			    'CA' => 'Air/ground',
+			    'CE' => 'En route surveillance radar',
+			    'CG' => 'Ground controlled approach system',
+			    'CL' => 'Selective calling system',
+			    'CM' => 'Surface movement radar',
+			    'CP' => 'Precision approach radar',
+			    'CR' => 'Surveillance radar element of precision approach radar system',
+			    'CS' => 'Secondary surveillance radar',
+			    'CT' => 'Terminal area surveillance radar');
+	public $code_facilities = array(
+			    'FA' => 'airport',
+			    'FB' => 'Braking action measurement equipment',
+			    'FC' => 'Ceiling measurement equipment',
+			    'FD' => 'Docking system',
+			    'FF' => 'Fire fighting and rescue',
+			    'FG' => 'Ground movement control',
+			    'FH' => 'Helicopter alighting area/platform',
+			    'FL' => 'Landing direction indicator',
+			    'FM' => 'Meteorological service',
+			    'FO' => 'Fog dispersal system',
+			    'FP' => 'Heliport',
+			    'FS' => 'Snow removal equipment',
+			    'FT' => 'Transmissometer',
+			    'FU' => 'Fuel availability',
+			    'FW' => 'Wind direction indicator',
+			    'FZ' => 'Customs');
+	public $code_instrumentlanding = array(
+			    'ID' => 'DME associated with ILS',
+			    'IG' => 'Glide path',
+			    'II' => 'Inner marker',
+			    'IL' => 'Localizer',
+			    'IM' => 'Middle marker',
+			    'IO' => 'Outer marker',
+			    'IS' => 'ILS Category I',
+			    'IT' => 'ILS Category II',
+			    'IU' => 'ILS Category III',
+			    'IW' => 'Microwave landing system',
+			    'IX' => 'Locator, outer',
+			    'IY' => 'Locator, middle');
+	public $code_lightingfacilities = array(
+			    'LA' => 'Approach lighting system',
+			    'LB' => 'Airport beacon',
+			    'LC' => 'Runway center line lights',
+			    'LD' => 'Landing direction indicator lights',
+			    'LE' => 'Runway edge lights',
+			    'LF' => 'Sequenced flashing lights',
+			    'LH' => 'High intensity runway lights',
+			    'LI' => 'Runway end identifier lights',
+			    'LK' => 'Category II components of approach lighting system',
+			    'LL' => 'Low intensity runway lights',
+			    'LM' => 'Medium intensity runway lights',
+			    'LP' => 'Precision approach path indicator',
+			    'LR' => 'All landing area lighting facilities',
+			    'LS' => 'Stopway lights',
+			    'LT' => 'Threshold lights',
+			    'LV' => 'Visual approach slope indicator system',
+			    'LW' => 'Heliport lighting',
+			    'LX' => 'Taxiway center line lights',
+			    'LY' => 'Taxiway edge lights',
+			    'LZ' => 'Runway touchdown zone lights');
+	public $code_movementareas = array(
+			    'MA' => 'Movement area',
+			    'MB' => 'Bearing strength',
+			    'MC' => 'Clearway',
+			    'MD' => 'Declared distances',
+			    'MG' => 'Taxiing guidance system',
+			    'MH' => 'Runway arresting gear',
+			    'MK' => 'Parking area',
+			    'MM' => 'Daylight markings',
+			    'MN' => 'Apron',
+			    'MP' => 'Aircraft stands',
+			    'MR' => 'Runway',
+			    'MS' => 'Stopway',
+			    'MT' => 'Threshold',
+			    'MU' => 'Runway turning bay',
+			    'MW' => 'Strip',
+			    'MX' => 'Taxiway');
+	public $code_terminalfacilities = array(
+			    'NA' => 'All radio navigation facilities',
+			    'NB' => 'Non directional beacon',
+			    'NC' => 'DECCA',
+			    'ND' => 'Distance measuring equipment',
+			    'NF' => 'Fan marker',
+			    'NL' => 'Locator',
+			    'NM' => 'VOR/DME',
+			    'NN' => 'TACAN',
+			    'NO' => 'OMEGA',
+			    'NT' => 'VORTAC',
+			    'NV' => 'VOR',
+			    'NX' => 'Direction finding station');
+	public $code_information = array(
+			    'OA' => 'Aeronautical information service',
+			    'OB' => 'Obstacle',
+			    'OE' => 'Aircraft entry requirements',
+			    'OL' => 'Obstacle lights on',
+			    'OR' => 'Rescue coordination centre');
+	public $code_airtraffic = array(
+			    'PA' => 'Standard instrument arrival',
+			    'PD' => 'Standard instrument departure',
+			    'PF' => 'Flow control procedure',
+			    'PH' => 'Holding procedure',
+			    'PI' => 'Instrument approach procedure',
+			    'PL' => 'Obstacle clearance limit',
+			    'PM' => 'Aerodrome operating minima',
+			    'PO' => 'Obstacle clearance altitude',
+			    'PP' => 'Obstacle clearance height',
+			    'PR' => 'Radio failure procedure',
+			    'PT' => 'Transition altitude',
+			    'PU' => 'Missed approach procedure',
+			    'PX' => 'Minimum holding altitude',
+			    'PZ' => 'ADIZ procedure');
+	public $code_navigationw = array(
+			    'RA' => 'Airspace reservation',
+			    'RD' => 'Danger area',
+			    'RO' => 'Overflying of',
+			    'RP' => 'Prohibited area',
+			    'RR' => 'Restricted area',
+			    'RT' => 'Temporary restricted area');
+	public $code_volmet = array(
+			    'SA' => 'Automatic terminal information service',
+			    'SB' => 'ATS reporting office',
+			    'SC' => 'Area control center',
+			    'SE' => 'Flight information service',
+			    'SF' => 'Airport flight information service',
+			    'SL' => 'Flow control centre',
+			    'SO' => 'Oceanic area control centre',
+			    'SP' => 'Approach control service',
+			    'SS' => 'Flight service station',
+			    'ST' => 'Airport control tower',
+			    'SU' => 'Upper area control centre',
+			    'SV' => 'VOLMET broadcast',
+			    'SY' => 'Upper advisory service');
+	public $code_warnings = array(
+			    'WA' => 'Air display',
+			    'WB' => 'Aerobatics',
+			    'WC' => 'Captive balloon or kite',
+			    'WD' => 'Demolition of explosives',
+			    'WE' => 'Exercises',
+			    'WF' => 'Air refueling',
+			    'WG' => 'Glider flying',
+			    'WJ' => 'Banner/target towing',
+			    'WL' => 'Ascent of free balloon',
+			    'WM' => 'Missile, gun or rocket firing',
+			    'WP' => 'Parachute jumping exercise',
+			    'WS' => 'Burning or blowing gas',
+			    'WT' => 'Mass movement of aircraft',
+			    'WV' => 'Formation flight',
+			    'WZ' => 'model flying');
+	public $code_sp_availabity = array(
+			    'AC' => 'Withdrawn for maintenance',
+			    'AD' => 'Available for daylight operation',
+			    'AF' => 'Flight checked and found reliable',
+			    'AG' => 'Operating but ground checked only, awaiting flight check',
+			    'AH' => 'Hours of service are now',
+			    'AK' => 'Resumed normal operations',
+			    'AM' => 'Military operations only',
+			    'AN' => 'Available for night operation',
+			    'AO' => 'Operational',
+			    'AP' => 'Available, prior permission required',
+			    'AR' => 'Available on request',
+			    'AS' => 'Unserviceable',
+			    'AU' => 'Not available',
+			    'AW' => 'Completely withdrawn',
+			    'AX' => 'Previously promulgated shutdown has been cancelled');
+	public $code_sp_changes = array(
+			    'CA' => 'Activated',
+			    'CC' => 'Completed',
+			    'CD' => 'Deactivated',
+			    'CE' => 'Erected',
+			    'CF' => 'Operating frequency(ies) changed to',
+			    'CG' => 'Downgraded to',
+			    'CH' => 'Changed',
+			    'CI' => 'dentification or radio call sign changed to',
+			    'CL' => 'Realigned',
+			    'CM' => 'Displaced',
+			    'CO' => 'Operating',
+			    'CP' => 'Operating on reduced power',
+			    'CR' => 'Temporarily replaced by',
+			    'CS' => 'Installed',
+			    'CT' => 'On test, do not use');
+	public $code_sp_hazardous = array(
+			    'HA' => 'Braking action is',
+			    'HB' => 'Braking coefficient is',
+			    'HC' => 'Covered by compacted snow to depth of x Ft',
+			    'HD' => 'Covered by dry snow to a depth of x Ft',
+			    'HE' => 'Covered by water to a depth of x Ft',
+			    'HF' => 'Totally free of snow and ice',
+			    'HG' => 'Grass cutting in progress',
+			    'HH' => 'Hazard due to',
+			    'HI' => 'Covered by ice',
+			    'HJ' => 'Launch planned',
+			    'HK' => 'Migration in progress',
+			    'HL' => 'Snow clearance completed',
+			    'HM' => 'Marked by',
+			    'HN' => 'Covered by wet snow or slush to a depth of x Ft',
+			    'HO' => 'Obscured by snow',
+			    'HP' => 'Snow clearance in progress',
+			    'HQ' => 'Operation cancelled',
+			    'HR' => 'Standing water',
+			    'HS' => 'Sanding in progress',
+			    'HT' => 'Approach according to signal area only',
+			    'HU' => 'Launch in progress',
+			    'HV' => 'Work completed',
+			    'HW' => 'Work in progress',
+			    'HX' => 'Concentration of birds',
+			    'HY' => 'Snow banks exist',
+			    'HZ' => 'Covered by frozen ruts and ridges');
+	public $code_sp_limitations = array(
+			    'LA' => 'Operating on Auxiliary Power Supply',
+			    'LB' => 'Reserved for aircraft based therein',
+			    'LC' => 'Closed',
+			    'LD' => 'Unsafe',
+			    'LE' => 'Operated without auxiliary power supply',
+			    'LF' => 'Interference from',
+			    'LG' => 'Operating without identification',
+			    'LH' => 'Unserviceable for aircraft heavier than',
+			    'LI' => 'Close to IFR operations',
+			    'LK' => 'Operating as a fixed light',
+			    'LL' => 'Usable for lenght of... and width of...',
+			    'LN' => 'Close to all night operations',
+			    'LP' => 'Prohibited to',
+			    'LR' => 'Aircraft restricted to runways and taxiways',
+			    'LS' => 'Subject to interruption',
+			    'LT' => 'Limited to',
+			    'LV' => 'Close to VFR operations',
+			    'LW' => 'Will take place',
+			    'LX' => 'Operating but caution advised to'); 
 
 	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
@@ -911,6 +1168,7 @@ class NOTAM {
 					//print_r($matches);
 					$result['fir'] = $matches[1];
 					$result['code'] = $matches[2];
+					$result['title'] = $this->parse_code($result['code']);
 					$rules = str_split($matches[3]);
 					foreach ($rules as $rule) {
 						if ($rule == 'I') {
@@ -1017,12 +1275,92 @@ class NOTAM {
 		}
 		return $result;
 	}
+	
+	public function parse_code($code) {
+		$code = str_split($code);
+		$code_fp = $code[1].$code[2];
+		$code_sp = $code[3].$code[4];
+		$result = '';
+		switch ($code[1]) {
+			case 'A':
+				$result = 'Airspace organization ';
+				if (isset($this->code_airspace[$code_fp])) $result .= $this->code_airspace[$code_fp];
+				break;
+			case 'C':
+				$result = 'Communications and radar facilities ';
+				if (isset($this->code_comradar[$code_fp])) $result .= $this->code_comradar[$code_fp];
+				break;
+			case 'F':
+				$result = 'Facilities and services ';
+				if (isset($this->code_facilities[$code_fp])) $result .= $this->code_facilities[$code_fp];
+				break;
+			case 'I':
+				$result = 'Instrument and Microwave Landing System ';
+				if (isset($this->code_instrumentlanding[$code_fp])) $result .= $this->code_instrumentlanding[$code_fp];
+				break;
+			case 'L':
+				$result = 'Lighting facilities ';
+				if (isset($this->code_lightingfacilities[$code_fp])) $result .= $this->code_lightingfacilities[$code_fp];
+				break;
+			case 'M':
+				$result = 'Movement and landing areas ';
+				if (isset($this->code_movementareas[$code_fp])) $result .= $this->code_movementareas[$code_fp];
+				break;
+			case 'N':
+				$result = 'Terminal and En Route Navigation Facilities ';
+				if (isset($this->code_terminalfacilities[$code_fp])) $result .= $this->code_terminalfacilities[$code_fp];
+				break;
+			case 'O':
+				$result = 'Other information ';
+				if (isset($this->code_information[$code_fp])) $result .= $this->code_information[$code_fp];
+				break;
+			case 'P':
+				$result = 'Air Traffic procedures ';
+				if (isset($this->code_airtraffic[$code_fp])) $result .= $this->code_airtraffic[$code_fp];
+				break;
+			case 'R':
+				$result = 'Navigation Warnings: Airspace Restrictions ';
+				if (isset($this->code_navigationw[$code_fp])) $result .= $this->code_navigationw[$code_fp];
+				break;
+			case 'S':
+				$result = 'Air Traffic and VOLMET Services ';
+				if (isset($this->code_volmet[$code_fp])) $result .= $this->code_volmet[$code_fp];
+				break;
+			case 'W':
+				$result = 'Navigation Warnings: Warnings ';
+				if (isset($this->code_warning[$code_fp])) $result .= $this->code_warning[$code_fp];
+				break;
+		}
+		switch ($code[3]) {
+			case 'A':
+				// Availability
+				if (isset($this->code_sp_availabity[$code_sp])) $result .= ' '.$this->code_sp_availabity[$code_sp];
+				break;
+			case 'C':
+				// Changes
+				if (isset($this->code_sp_changes[$code_sp])) $result .= ' '.$this->code_sp_changes[$code_sp];
+				break;
+			case 'H':
+				// Hazardous conditions
+				if (isset($this->code_sp_hazardous[$code_sp])) $result .= ' '.$this->code_sp_hazardous[$code_sp];
+				break;
+			case 'L':
+				// Limitations
+				if (isset($this->code_sp_limitations[$code_sp])) $result .= ' '.$this->code_sp_limitations[$code_sp];
+				break;
+			case 'X':
+				// Other Information
+				break;
+		}
+		return trim($result);
+	}
 }
 /*
 $NOTAM = new NOTAM();
 //print_r($NOTAM->downloadNOTAM('lfll'));
 //print_r($NOTAM->parse(''));
-$NOTAM->deleteAllNOTAM();
-$NOTAM->updateNOTAMallAirports();
+//$NOTAM->deleteAllNOTAM();
+//$NOTAM->updateNOTAMallAirports();
+echo $NOTAM->parse_code('QFATT');
 */
 ?>
