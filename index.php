@@ -32,7 +32,7 @@ require_once('header.php');
 <div id="airspace"></div>
 <div id="notam"></div>
 <div id="showdetails" class="showdetails"></div>
-<div id="infobox" class="infobox"><h4><?php echo _("Aircrafts detected"); ?></h4><i class="fa fa-spinner fa-pulse fa-fw"></i></div>
+<div id="infobox" class="infobox"><h4><?php echo _("Aircrafts detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div>
 <?php
     if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 

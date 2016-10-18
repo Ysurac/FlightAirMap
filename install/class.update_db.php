@@ -1191,6 +1191,26 @@ class update_db {
 		return $error;
 	}
 
+	public static function update_notam_fam() {
+		global $tmp_dir, $globalDebug;
+		include_once('class.create_db.php');
+		require_once(dirname(__FILE__).'/../require/class.NOTAM.php');
+		if ($globalDebug) echo "NOTAM from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.fr/data/notam.txt.gz',$tmp_dir.'notam.txt.gz');
+		if (file_exists($tmp_dir.'notam.txt.gz')) {
+			if ($globalDebug) echo "Gunzip...";
+			update_db::gunzip($tmp_dir.'notam.txt.gz');
+			if ($globalDebug) echo "Add to DB...";
+			//$error = create_db::import_file($tmp_dir.'notam.sql');
+			$NOTAM = new NOTAM();
+			$NOTAM->updateNOTAMfromTextFile($tmp_dir.'notam.txt');
+		} else $error = "File ".$tmp_dir.'notam.txt.gz'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+
 	public static function update_vatsim() {
 		global $tmp_dir;
 		include_once('class.create_db.php');
@@ -1931,6 +1951,7 @@ class update_db {
 			echo update_db::update_routes();
 			echo update_db::update_translation();
 			echo update_db::update_translation_fam();
+			echo update_db::update_notam_fam();
 		}
 		echo update_db::update_ModeS();
 		echo update_db::update_ModeS_flarm();
@@ -1954,4 +1975,5 @@ class update_db {
 //update_db::update_models();
 //echo $update_db::update_skyteam();
 //echo $update_db::update_tle();
+//echo update_db::update_notam_fam();
 ?>

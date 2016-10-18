@@ -988,6 +988,36 @@ class NOTAM {
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
 	}
+	public function getAllNOTAMtext() {
+		$query  = 'SELECT full_notam FROM notam';
+		$query_values = array();
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
+	public function createNOTAMtextFile($filename) {
+		$allnotam_result = $this->getAllNOTAMtext();
+		$notamtext = '';
+		foreach($allnotam_result as $notam) {
+			$notamtext .= '%%'."\n";
+			$notamtext .= $notam['full_notam'];
+			$notamtext .= "\n".'%%'."\n";
+		}
+		//$allnotam = implode('\n%%%%\n',$allnotam_result);
+		file_put_contents($filename,$notamtext);
+	}
+	public function parseNOTAMtextFile($filename) {
+		$data = file_get_contents($filename);
+		preg_match_all("/%%(.+?)%%/is", $data, $matches);
+		//print_r($matches);
+		if (isset($matches[1])) return $matches[1];
+		else return array();
+	}
 	public function getAllNOTAMbyScope($scope) {
 		global $globalDBdriver;
 		//$query = "SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()";
@@ -1146,6 +1176,17 @@ class NOTAM {
 						if (count($notamref) == 0) $this->addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['latitude'],$data['longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
 					}
 				}
+			}
+		}
+	}
+	public function updateNOTAMfromTextFile($filename) {
+		$alldata = $this->parseNOTAMtextFile($filename);
+		if (count($alldata) > 0) {
+			$this->deleteOldNOTAM();
+			foreach ($alldata as $initial_data) {
+				$data = $this->parse($initial_data);
+				$notamref = $this->getNOTAMbyRef($data['ref']);
+				if (count($notamref) == 0) $this->addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['latitude'],$data['longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
 			}
 		}
 	}
@@ -1403,6 +1444,8 @@ $NOTAM = new NOTAM();
 //print_r($NOTAM->parse(''));
 //$NOTAM->deleteAllNOTAM();
 //$NOTAM->updateNOTAMallAirports();
-echo $NOTAM->parse_code('QFATT');
+//echo $NOTAM->parse_code('QFATT');
+$NOTAM->createNOTAMtextFile('../install/tmp/notam.txt');
+$NOTAM->updateNOTAMfromTextFile('../install/tmp/notam.txt');
 */
 ?>
