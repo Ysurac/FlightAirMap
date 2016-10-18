@@ -38,7 +38,8 @@ if (isset($_GET['3d'])) {
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css" />
 
-<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-2.2.3.min.js"></script>
+<!--<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-2.2.3.min.js"></script>-->
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-3.1.1.min.js"></script>
 
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-ui.min.js"></script>
 

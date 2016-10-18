@@ -105,7 +105,7 @@ require_once('header.php');
 	}
 	if (isset($globalNOTAM) && $globalNOTAM) {
 ?>
-				<li><div class="checkbox"><label><input type="checkbox" name="notam" value="1" onclick="showNotam();" /><?php echo _("NOTAM"); ?></label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="notamcb" value="1" onclick="showNotam();" /><?php echo _("NOTAM"); ?></label></div></li>
 				<li><?php echo _("NOTAM scope:"); ?>
 					<select class="selectpicker" onchange="notamscope(this);">
 						<option<?php if (!isset($_COOKIE['notamscope']) || $_COOKIE['notamscope'] == 'All') print ' selected'; ?>>All</option>
