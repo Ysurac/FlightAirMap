@@ -500,7 +500,7 @@ $( document ).ready(function() {
 				map.removeLayer(waypointsLayer);
 			}
 		}
-		if ($(".notam").hasClass("active"))
+		if ($("#notam").hasClass("active"))
 		{
 			map.removeLayer(notamLayer);
 			update_notamLayer();
@@ -1370,24 +1370,24 @@ function update_polarLayer() {
 
 
 function showNotam() {
-    if (!$(".notam").hasClass("active"))
+    if (!$("#notam").hasClass("active"))
     {
 	//loads the function to load the waypoints
 	update_notamLayer();
 	//add the active class
-	$(".notam").addClass("active");
+	$("#notam").addClass("active");
     } else {
 	//remove the waypoints layer
 	map.removeLayer(notamLayer);
 	//remove the active class
-	$(".notam").removeClass("active");
+	$("#notam").removeClass("active");
      }
 }
 function notamscope(selectObj) {
     var idx = selectObj.selectedIndex;
     var scope = selectObj.options[idx].value;
     document.cookie = 'notamscope='+scope+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    if ($(".notam").hasClass("active"))
+    if ($("#notam").hasClass("active"))
     {
 	map.removeLayer(notamLayer);
 	update_notamLayer();

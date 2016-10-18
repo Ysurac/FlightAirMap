@@ -214,20 +214,22 @@ function show2D() {
 	window.location.reload();
 }
 function showNotam() {
-	if (!$(".notam").hasClass("active"))
+	if (!$("#notam").hasClass("active"))
 	{
+		$("#notam").addClass("active");
+		console.log('add NOTAM');
 		addNOTAM();
-		$(".notam").addClass("active");
 	} else {
+		console.log('remove NOTAM');
+		$("#notam").removeClass("active");
 		deleteNOTAM();
-		$(".notam").removeClass("active");
 	}
 }
 function notamscope(selectObj) {
     var idx = selectObj.selectedIndex;
     var scope = selectObj.options[idx].value;
     document.cookie = 'notamscope='+scope+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    if ($(".notam").hasClass("active")) {
+    if ($("#notam").hasClass("active")) {
     	deleteNOTAM();
     	addNOTAM();
     }
@@ -732,11 +734,12 @@ function addNOTAM() {
 			if (data.radius > 0) {
 				var clength = Math.round((data.upper_limit-data.lower_limit)*100*0.3048);
 				if (clength == 0) clength = 1;
+				var mediumalt = Math.round(((data.upper_limit-data.lower_limit)*100*0.3048)/2);
 				var radius = Math.round(data.radius*1852);
 				if (radius > 40000) radius = 40000;
 				var entity = notams.entities.add({
 					id: data.ref,
-					position: Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,Math.round(data.upper_limit*100*0.3048)),
+					position: Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,mediumalt),
 					cylinder : {
 						length : clength,
 						topRadius : radius,
@@ -756,11 +759,12 @@ function addNOTAM() {
 function deleteNOTAM() {
 //	var dsn;
 //	for (var i =0; i < viewer.dataSources.length; i++) {
-//		if (viewer.dataSources.get(i).name == 'fam') {
+//		if (viewer.dataSources.get(i).name == 'notam') {
 //			dsn = i;
 //			break;
 //		}
 //	}
+//	viewer.dataSources.remove(viewer.dataSources.get(dsn));
 	viewer.dataSources.remove(notams);
 }
 
