@@ -1197,6 +1197,7 @@ class update_db {
 		require_once(dirname(__FILE__).'/../require/class.NOTAM.php');
 		if ($globalDebug) echo "NOTAM from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.fr/data/notam.txt.gz',$tmp_dir.'notam.txt.gz');
+		$error = '';
 		if (file_exists($tmp_dir.'notam.txt.gz')) {
 			if ($globalDebug) echo "Gunzip...";
 			update_db::gunzip($tmp_dir.'notam.txt.gz');

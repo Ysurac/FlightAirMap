@@ -609,6 +609,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="notamsource">URL of your feed from notaminfo.com</label>
 				<input type="text" name="notamsource" id="notamsource" value="<?php if (isset($globalNOTAMSource)) print $globalNOTAMSource; ?>" />
+				<p class="help-block">If you want to use world NOTAM from FlightAirMap website, leave it blank</p>
 			</p>
 			<br />
 			<p>

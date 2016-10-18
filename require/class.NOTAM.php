@@ -1186,7 +1186,7 @@ class NOTAM {
 			foreach ($alldata as $initial_data) {
 				$data = $this->parse($initial_data);
 				$notamref = $this->getNOTAMbyRef($data['ref']);
-				if (count($notamref) == 0) $this->addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['latitude'],$data['longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
+				if (!isset($notamref['notam_id'])) $this->addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['latitude'],$data['longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
 			}
 		}
 	}
