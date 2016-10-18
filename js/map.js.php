@@ -1153,9 +1153,6 @@ function getLiveData(click)
 			//re-create the bootstrap tooltips on the marker 
 			//showBootstrapTooltip();
 		}
-	}).error(function() {
-	    map.removeLayer(layer_data);
-	    //info.update();
 	});
 	//  getLiveData(0);
 }
