@@ -138,6 +138,9 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 Math.degrees = function(radians) {
 	return radians * 180 / Math.PI;
 };
+Math.radians = function(degrees) {
+	return degrees * Math.PI / 180;
+};
 
 function getCookie(cname) {
 	var name = cname + "=";
@@ -281,23 +284,20 @@ function update_polarLayer() {
 
 
 function bbox () {
-	var rectangle = camera.computeViewRectangle();
-//	var rectangle = camera.computeViewRegion();
-	var west = Math.degrees(rectangle.west);
-	var south = Math.degrees(rectangle.south);
-	var east = Math.degrees(rectangle.east);
-	var north = Math.degrees(rectangle.north);
-	
-	var redRectangle = viewer.entities.add({
-	     name : 'Red translucent rectangle with outline',
-	    rectangle : {
-    		coordinates : rectangle,
-	            material : Cesium.Color.RED.withAlpha(0.5)
-	    }
-	});
-	
-	return west+','+south+','+east+','+north;
-//	return south+','+east+','+north+','+west;
+	var position = viewer.camera.positionCartographic;
+	var pitch = viewer.camera.pitch;
+//	console.log('height: '+position.height);
+//	console.log('pitch: '+Math.degrees(pitch));
+	if (position.height < 1000000 && pitch < Math.radians(-25)) { 
+		var rectangle = camera.computeViewRectangle();
+		var west = Math.degrees(rectangle.west);
+		var south = Math.degrees(rectangle.south);
+		var east = Math.degrees(rectangle.east);
+		var north = Math.degrees(rectangle.north);
+		return west+','+south+','+east+','+north;
+	} else {
+		return '';
+	}
 }
 
 function update_airportsLayer() {
@@ -715,45 +715,46 @@ function updateISS() {
 
 var notams;
 function addNOTAM() {
+	var bbox_value = bbox();
 	//console.log('Download NOTAM...');
-	if (getCookie('notamscope') == '' || getCookie('notamscope') == 'All') {
-		url = "<?php print $globalURL; ?>/notam-geojson.php";
-	} else {
-		url = "<?php print $globalURL; ?>/notam-geojson.php?scope="+getCookie('notamscope');
-	}
-	
-	var notamdata = Cesium.loadJson(url);
-//	var notamdata = Cesium.loadJson('<?php print $globalURL; ?>/notam-geojson.php');
-//	var notamdata = Cesium.loadJson('<?php print $globalURL; ?>/notam-geojson.php?coord='+bbox());
-	notamdata.then(function (geojsondata) {
-		//console.log(geojsondata.features);
-		notams = new Cesium.CustomDataSource('notam');
-		for (var i = 0; i < geojsondata.features.length; i++) {
-			data = geojsondata.features[i].properties;
-			//console.log(data);
-			if (data.radius > 0) {
-				var clength = Math.round((data.upper_limit-data.lower_limit)*100*0.3048);
-				if (clength == 0) clength = 1;
-				var mediumalt = Math.round(((data.upper_limit-data.lower_limit)*100*0.3048)/2);
-				var radius = Math.round(data.radius*1852);
-				if (radius > 40000) radius = 40000;
-				var entity = notams.entities.add({
-					id: data.ref,
-					position: Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,mediumalt),
-					cylinder : {
-						length : clength,
-						topRadius : radius,
-						bottomRadius : radius,
-						material : Cesium.Color.fromCssColorString(data.color).withAlpha(0.5)
-					},
-					type: 'notam'
-				});
-//				entity.addProperty('type');
-//				entity.type = 'notam';
-			}
+	if (bbox_value != '') {
+		if (getCookie('notamscope') == '' || getCookie('notamscope') == 'All') {
+			url = "<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox_value;
+		} else {
+			url = "<?php print $globalURL; ?>/notam-geojson.php?scope="+getCookie('notamscope')+"&coord="+bbox_value;
 		}
-		viewer.dataSources.add(notams);
-	});
+		var notamdata = Cesium.loadJson(url);
+		notamdata.then(function (geojsondata) {
+			deleteNOTAM();
+			//console.log(geojsondata.features);
+			notams = new Cesium.CustomDataSource('notam');
+			for (var i = 0; i < geojsondata.features.length; i++) {
+				data = geojsondata.features[i].properties;
+				//console.log(data);
+				if (data.radius > 0) {
+					var clength = Math.round((data.upper_limit-data.lower_limit)*100*0.3048);
+					if (clength == 0) clength = 1;
+					var mediumalt = Math.round(((data.upper_limit-data.lower_limit)*100*0.3048)/2);
+					var radius = Math.round(data.radius*1852);
+					if (radius > 40000) radius = 40000;
+					var entity = notams.entities.add({
+						id: data.ref,
+						position: Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,mediumalt),
+						cylinder : {
+							length : clength,
+							topRadius : radius,
+							bottomRadius : radius,
+							material : Cesium.Color.fromCssColorString(data.color).withAlpha(0.5)
+						},
+						type: 'notam'
+					});
+//					entity.addProperty('type');
+//					entity.type = 'notam';
+				}
+			}
+			viewer.dataSources.add(notams);
+		});
+	}
 }
 
 function deleteNOTAM() {
@@ -939,7 +940,12 @@ handler.setInputAction(function(click) {
 		}
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
+camera.moveEnd.addEventListener(function() {
+	if ($("#notam").hasClass("active"))
+	{
+		addNOTAM();
+	}
+});
 
 //var reloadpage = setInterval(function() { updateData(); },30000);
 var reloadpage = setInterval(function(){updateData()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);

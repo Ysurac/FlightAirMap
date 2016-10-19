@@ -7,7 +7,7 @@
 
 // Check if script is not already running... (dirty)
 if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
-	exec("ps u", $output, $result);
+	exec("ps ux", $output, $result);
 	$j = 0;
 	foreach ($output as $line) if(strpos($line, "update_db.php")) $j++;
 	if ($j > 1) {
@@ -19,11 +19,17 @@ require_once(dirname(__FILE__).'/../require/settings.php');
 require(dirname(__FILE__).'/../install/class.update_db.php');
 $update_db = new update_db();
 
-if (isset($globalNOTAM) && $globalNOTAM && $globalNOTAMSource != '' && $update_db->check_last_notam_update()) {
-	echo "updating NOTAM...";
-	$update_db->update_notam();
-	$update_db->insert_last_notam_update();
-} elseif (isset($globalDebug) && $globalDebug && isset($globalNOTAM) && $globalNOTAM) echo "NOTAM are only updated once a day.\n";
+if (!isset($globalMasterServer) || !$globalMasterServer) {
+	if (isset($globalNOTAM) && $globalNOTAM && $update_db->check_last_notam_update()) {
+		echo "updating NOTAM...";
+		if ($globalNOTAMSource == '') {
+			$update_db->update_notam_fam();
+		} else {
+			$update_db->update_notam();
+		}
+		$update_db->insert_last_notam_update();
+	} elseif (isset($globalDebug) && $globalDebug && isset($globalNOTAM) && $globalNOTAM) echo "NOTAM are only updated once a day.\n";
+}
 
 if ($update_db->check_last_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
 	$update_db->update_all();
@@ -92,8 +98,10 @@ if (isset($globalMap3D) && $globalMap3D) {
 		$update_db->update_tle();
 		$update_db->insert_last_tle_update();
 	}
-	echo "Update 3D models...";
-	$update_db->update_models();
-	$update_db->update_space_models();
+	if (!isset($globalMasterServer) || !$globalMasterServer) {
+		echo "Update 3D models...";
+		$update_db->update_models();
+		$update_db->update_space_models();
+	}
 }
 ?>

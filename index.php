@@ -85,10 +85,10 @@ require_once('header.php');
     <div class="sidebar-content active">
 	<div class="sidebar-pane" id="home">
 	    <h1 class="sidebar-header">Weather<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+		<form>
 <?php
 	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
 ?>
-		<form>
 			<ul>
 				<li><div class="checkbox"><label><input type="checkbox" name="weatherprecipitation" value="1" onclick="showWeatherPrecipitation();" /><?php echo _("Weather Precipitation"); ?></label></div></li>
 				<li><div class="checkbox"><label><input type="checkbox" name="weatherrain" value="1" onclick="showWeatherRain();"  /><?php echo _("Weather Rain"); ?></label></div></li>
@@ -101,10 +101,14 @@ require_once('header.php');
 			<ul>
 				<li><div class="checkbox"><label><input type="checkbox" name="waypoints" value="1" onclick="showWaypoints();" /><?php echo _("Waypoints"); ?></label></div></li>
 				<li><div class="checkbox"><label><input type="checkbox" name="airspace" value="1" onclick="showAirspace();" /><?php echo _("Airspace"); ?></label></div></li>
+			</ul>
+		</form>
 <?php
 	}
 	if (isset($globalNOTAM) && $globalNOTAM) {
 ?>
+		<form>
+			<ul>
 				<li><div class="checkbox"><label><input type="checkbox" name="notamcb" value="1" onclick="showNotam();" /><?php echo _("NOTAM"); ?></label></div></li>
 				<li><?php echo _("NOTAM scope:"); ?>
 					<select class="selectpicker" onchange="notamscope(this);">
@@ -115,11 +119,18 @@ require_once('header.php');
 						<option<?php if (isset($_COOKIE['notamscope']) && $_COOKIE['notamscope'] == 'Enroute warning') print ' selected'; ?>>Enroute warning</option>
 					</select
 				</li>
+			</ul>
+<?php
+		if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+?>
+			<p class="help-block">When enabled, NOTAM will be displayed if you zoom enough on map</p>
+<?php
+		}
+?>
+		</form>
 <?php
 	}
 ?>
-			</ul>
-		</form>
         </div>
 <?php
     if (isset($globalArchive) && $globalArchive == TRUE) {

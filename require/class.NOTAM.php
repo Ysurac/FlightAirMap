@@ -1043,6 +1043,16 @@ class NOTAM {
 			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			if ($minlat > $maxlat) {
+				$tmplat = $minlat;
+				$minlat = $maxlat;
+				$maxlat = $tmplat;
+			}
+			if ($minlong > $maxlong) {
+				$tmplong = $minlong;
+				$minlong = $maxlong;
+				$maxlong = $tmplong;
+			}
 		} else return array();
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT * FROM notam WHERE center_latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND center_longitude BETWEEN '.$minlong.' AND '.$maxlong.' AND radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()';
