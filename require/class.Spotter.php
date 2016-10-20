@@ -4336,6 +4336,8 @@ class Spotter{
 	public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '')
 	{
 		global $globalDBdriver;
+		$Connection= new Connection($this->db);
+		if (!$Connection->tableExists('countries')) return array();
 		/*
 		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb 
 					FROM countries c, spotter_output s
@@ -9677,7 +9679,7 @@ q	*
 		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
-		$Connection = new Connection();
+		$Connection = new Connection($this->db);
 		if (!$Connection->tableExists('countries')) return '';
 	
 		try {
