@@ -9677,6 +9677,9 @@ q	*
 		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
+		$Connection = new Connection();
+		if (!$Connection->tableExists('countries')) return '';
+	
 		try {
 			/*
 			if ($globalDBdriver == 'mysql') {
