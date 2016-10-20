@@ -110,6 +110,7 @@ function create_socket_udp($host, $port, &$errno, &$errstr) {
 function connect_all($hosts) {
     //global $sockets, $formats, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights, $use_aprs;
     global $sockets, $globalSources, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights, $use_aprs;
+    if ($globalDebug) echo 'Connect to all...'."\n";
     foreach ($hosts as $id => $value) {
 	$host = $value['host'];
 	$globalSources[$id]['last_exec'] = 0;
@@ -231,7 +232,7 @@ function connect_all($hosts) {
         }
     }
 }
-if (!isset($globalMinFetch)) $globalMinFetch = 0;
+if (!isset($globalMinFetch)) $globalMinFetch = 15;
 
 // Initialize all
 $status = array();
@@ -248,7 +249,7 @@ $errstr='';
 if (!isset($globalDaemon)) $globalDaemon = TRUE;
 /* Initiate connections to all the hosts simultaneously */
 //connect_all($hosts);
-connect_all($globalSources);
+//connect_all($globalSources);
 
 // APRS Configuration
 if (!is_array($globalSources)) {
@@ -265,6 +266,7 @@ foreach ($globalSources as $key => $source) {
         $globalSources[$key]['format'] = 'auto';
     }
 }
+connect_all($globalSources);
 
 if ($use_aprs) {
 	require_once(dirname(__FILE__).'/../require/class.APRS.php');
@@ -310,7 +312,8 @@ while ($i > 0) {
     }
     //foreach ($formats as $id => $value) {
     foreach ($globalSources as $id => $value) {
-	if ($value['format'] == 'deltadbtxt' && (time() - $value['last_exec'] > $globalMinFetch)) {
+	if (!isset($last_exec[$id]['last'])) $last_exec[$id]['last'] = 0;
+	if ($value['format'] == 'deltadbtxt' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host']);
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
@@ -338,9 +341,9 @@ while ($i > 0) {
 		    unset($data);
     		}
     	    }
-    	    $value['last_exec'] = time();
+    	    $last_exec[$id]['last'] = time();
 	//} elseif (($value == 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value == 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {
-	} elseif (($value['format'] == 'whazzup' && (time() - $value['last_exec'] > $globalMinFetch)) || ($value['format'] == 'vatsimtxt' && (time() - $value['last_exec'] > $globalMinFetch))) {
+	} elseif (($value['format'] == 'whazzup' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) || ($value['format'] == 'vatsimtxt' && (time() - $value[' last_exec'] > $globalMinFetch))) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host']);
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
@@ -412,9 +415,9 @@ while ($i > 0) {
     	    }
     	    //if ($value == 'whazzup') $last_exec['whazzup'] = time();
     	    //elseif ($value == 'vatsimtxt') $last_exec['vatsimtxt'] = time();
-    	    $value['last_exec'] = time();
+    	    $last_exec[$id]['last'] = time();
     	//} elseif ($value == 'aircraftlistjson' && (time() - $last_exec['aircraftlistjson'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'aircraftlistjson' && (time() - $value['last_exec'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'aircraftlistjson' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($value['host'],'get','','','','','20');
 	    if ($buffer != '') {
 	    $all_data = json_decode($buffer,true);
@@ -467,9 +470,9 @@ while ($i > 0) {
 	    }
 	    }
     	    //$last_exec['aircraftlistjson'] = time();
-    	    $value['last_exec'] = time();
+    	    $last_exec[$id]['last'] = time();
     	//} elseif ($value == 'planeupdatefaa' && (time() - $last_exec['planeupdatefaa'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'planeupdatefaa' && (time() - $value['last_exec'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'planeupdatefaa' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['planes'])) {
@@ -501,8 +504,8 @@ while ($i > 0) {
 		}
 	    }
     	    //$last_exec['planeupdatefaa'] = time();
-    	    $value['last_exec'] = time();
-    	} elseif ($value['format'] == 'opensky' && (time() - $value['last_exec'] > $globalMinFetch)) {
+    	    $last_exec[$id]['last'] = time();
+    	} elseif ($value['format'] == 'opensky' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['states'])) {
@@ -528,9 +531,9 @@ while ($i > 0) {
 		}
 	    }
     	    //$last_exec['planeupdatefaa'] = time();
-    	    $value['last_exec'] = time();
+    	    $last_exec[$id]['last'] = time();
     	//} elseif ($value == 'fr24json' && (time() - $last_exec['fr24json'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'fr24json' && (time() - $value['last_exec'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'fr24json' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
@@ -560,9 +563,9 @@ while ($i > 0) {
 		}
 	    }
     	    //$last_exec['fr24json'] = time();
-    	    $value['last_exec'] = time();
+    	    $last_exec[$id]['last'] = time();
     	//} elseif ($value == 'radarvirtueljson' && (time() - $last_exec['radarvirtueljson'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'radarvirtueljson' && (time() - $value['last_exec'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'radarvirtueljson' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    //$buffer = $Common->getData($hosts[$id],'get','','','','','150');
 	    $buffer = $Common->getData($value['host'],'get','','','','','150');
 	    //echo $buffer;
@@ -600,9 +603,9 @@ while ($i > 0) {
 		}
 	    }
     	    //$last_exec['radarvirtueljson'] = time();
-    	    $value['last_exec'] = time();
+    	    $last_exec[$id]['last'] = time();
     	//} elseif ($value == 'pirepsjson' && (time() - $last_exec['pirepsjson'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'pirepsjson' && (time() - $value['last_exec'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'pirepsjson' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host'].'?'.time());
 	    $all_data = json_decode(utf8_encode($buffer),true);
@@ -659,10 +662,11 @@ while ($i > 0) {
 		}
 	    }
     	    //$last_exec['pirepsjson'] = time();
-    	    $value['last_exec'] = time();
+    	    $last_exec[$id]['last'] = time();
     	//} elseif ($value == 'phpvmacars' && (time() - $last_exec['phpvmacars'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'phpvmacars' && (time() - $value['last_exec'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'phpvmacars' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    //$buffer = $Common->getData($hosts[$id]);
+	    if ($globalDebug) echo 'Get Data...'."\n";
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if ($buffer != '' && is_array($all_data)) {
@@ -711,11 +715,11 @@ while ($i > 0) {
 		}
 	    }
     	    //$last_exec['phpvmacars'] = time();
-    	    $value['last_exec'] = time();
+    	    $last_exec[$id]['last'] = time();
 	//} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
 	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
-    	    $value['last_exec'] = time();
+    	    $last_exec[$id]['last'] = time();
 
 	    //$read = array( $sockets[$id] );
 	    $read = $sockets;
@@ -942,7 +946,7 @@ while ($i > 0) {
 			    if (isset($tt[$format])) $tt[$format]++;
 			    else $tt[$format] = 0;
 			    if ($tt[$format] > 30) {
-				if ($globalDebug)echo "ERROR : Reconnect ".$format."...";
+				if ($globalDebug) echo "ERROR : Reconnect ".$format."...";
 				//@socket_close($r);
 				sleep(2);
 				$aprs_connect = 0;
