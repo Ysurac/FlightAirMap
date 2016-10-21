@@ -760,13 +760,15 @@ function getLiveData(click)
 		if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 ?>
 		    .on('click', function() {
-				if (callsign == "NA") {
+				//if (callsign == "NA") {
 				    $("#aircraft_ident").attr('class',flightaware_id);
 				    $(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id);
+				/*
 				} else {
 				    $("#aircraft_ident").attr('class',callsign);
 				    $(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&ident="+callsign);
 				}
+				*/
 				getLiveData(1);
 			});
 <?php
@@ -806,14 +808,16 @@ function getLiveData(click)
 		if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 ?>
 			    .on('click', function() {
-				$("#aircraft_ident").attr('class',callsign);
-				if (callsign == "NA") {
+				//$("#aircraft_ident").attr('class',callsign);
+				//if (callsign == "NA") {
 					$("#aircraft_ident").attr('class',flightaware_id);
 					$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id);
+				/*
 				} else {
 					$("#aircraft_ident").attr('class',callsign);
 					$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&ident="+callsign);
 				}
+				*/
 				getLiveData(1);
 			});
 <?php
@@ -850,13 +854,15 @@ function getLiveData(click)
 		if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 ?>
 			    .on('click', function() {
-				if (callsign == "NA") {
+				//if (callsign == "NA") {
 				    $("#aircraft_ident").attr('class',flightaware_id);
 				    $(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id);
+				/*
 				} else {
 				    $("#aircraft_ident").attr('class',callsign);
 				    $(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&ident="+callsign);
 				}
+				*/
 				getLiveData(1);
 			    });
 <?php
