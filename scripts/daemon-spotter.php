@@ -308,8 +308,22 @@ while ($i > 0) {
     if (!$globalDaemon) $i = $endtime-time();
     // Delete old ATC
     if ($globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
+	if ($globalDebug) echo 'Delete old ATC...'."\n";
         $ATC->deleteOldATC();
     }
+    
+    if (count($last_exec) > 0) {
+	$max = $globalMinFetch;
+	foreach ($last_exec as $last) {
+	    if ((time() - $last['last']) < $max) $max = time() - $last['last'];
+	}
+	if ($max != $globalMinFetch) {
+	    if ($globalDebug) echo 'Sleeping...'."\n";
+	    sleep($globalMinFetch-$max+2);
+	}
+    }
+
+    
     //foreach ($formats as $id => $value) {
     foreach ($globalSources as $id => $value) {
 	if (!isset($last_exec[$id]['last'])) $last_exec[$id]['last'] = 0;
@@ -713,13 +727,16 @@ while ($i > 0) {
 		    $SI->add($data);
 		    unset($data);
 		}
+		if ($globalDebug) echo 'No more data...'."\n";
+		unset($buffer);
+		unset($all_data);
 	    }
     	    //$last_exec['phpvmacars'] = time();
     	    $last_exec[$id]['last'] = time();
 	//} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
 	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
-    	    $last_exec[$id]['last'] = time();
+    	    //$last_exec[$id]['last'] = time();
 
 	    //$read = array( $sockets[$id] );
 	    $read = $sockets;
@@ -986,6 +1003,7 @@ while ($i > 0) {
 	    }
 	}
 	if ($globalDaemon === false) {
+	    if ($globalDebug) echo 'Check all...'."\n";
 	    $SI->checkAll();
 	}
     }
