@@ -228,6 +228,30 @@ function showNotam() {
 		deleteNOTAM();
 	}
 }
+function showAirspace() {
+	if (!$("#airspace").hasClass("active"))
+	{
+		$("#airspace").addClass("active");
+		console.log('add Airspace');
+		addAirspace();
+	} else {
+		console.log('remove Airspace');
+		$("#airspace").removeClass("active");
+		deleteAirspace();
+	}
+}
+function showWaypoints() {
+	if (!$("#waypoints").hasClass("active"))
+	{
+		$("#waypoints").addClass("active");
+		console.log('add Waypoints');
+		addWaypoints();
+	} else {
+		console.log('remove Waypoints');
+		$("#waypoints").removeClass("active");
+		deleteWaypoints();
+	}
+}
 function notamscope(selectObj) {
     var idx = selectObj.selectedIndex;
     var scope = selectObj.options[idx].value;
@@ -766,8 +790,118 @@ function deleteNOTAM() {
 //		}
 //	}
 //	viewer.dataSources.remove(viewer.dataSources.get(dsn));
-	viewer.dataSources.remove(notams);
+	viewer.dataSources.remove(notams,true);
 }
+
+var airspace;
+function addAirspace() {
+	var bbox_value = bbox();
+	//console.log('Download Airspace...');
+	if (bbox_value != '') {
+		if (getCookie('airspacecope') == '' || getCookie('airspacescope') == 'All') {
+			url = "<?php print $globalURL; ?>/airspace-geojson.php?coord="+bbox_value;
+		} else {
+			url = "<?php print $globalURL; ?>/airspace-geojson.php?scope="+getCookie('airspacecope')+"&coord="+bbox_value;
+		}
+		var airspacedata = Cesium.loadJson(url);
+		airspacedata.then(function (geojsondata) {
+			deleteAirspace();
+			airspace = new Cesium.CustomDataSource('airspace');
+			for (var i = 0; i < geojsondata.features.length; i++) {
+				data = geojsondata.features[i].properties;
+				if (typeof data.upper_limit != 'undefined' && typeof data.lower_limit != 'undefined') {
+					var position = [];
+					for (j = 0; j < geojsondata.features[i].geometry.coordinates[0].length; j++) {
+						//position.push(geojsondata.features[i].geometry.coordinates[0][j][0],geojsondata.features[i].geometry.coordinates[0][j][1],0);
+						position.push(geojsondata.features[i].geometry.coordinates[0][j][0],geojsondata.features[i].geometry.coordinates[0][j][1]);
+					}
+					if (position.length > 3) {
+						var entity = airspace.entities.add({
+							id: data.id,
+							polygon : {
+								//hierarchy : new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArrayHeights(position)),
+								hierarchy : new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(position)),
+								height : data.upper_limit,
+								extrudedHeight : data.lower_limit,
+								//material : { solidColor : { color : { rgba : [255, 100, 0, 100] } } }
+								material : Cesium.Color.fromCssColorString(data.color).withAlpha(0.2)
+							},
+							type: 'airspace'
+						});
+//						entity.addProperty('type');
+//						entity.type = 'notam';
+						//console.log(entity);
+					}
+				}
+			}
+			viewer.dataSources.add(airspace);
+		});
+	}
+}
+function deleteAirspace() {
+	viewer.dataSources.remove(airspace,true);
+}
+
+var waypoints;
+function addWaypoints() {
+	var bbox_value = bbox();
+	//console.log('Download Airspace...');
+	if (bbox_value != '') {
+		url = "<?php print $globalURL; ?>/waypoints-geojson.php?coord="+bbox_value;
+		waypoints = new Cesium.GeoJsonDataSource('waypoints');
+		waypoints.load(url);
+		deleteWaypoints();
+		viewer.dataSources.add(waypoints);
+		
+		/*
+		var waypointsdata = Cesium.loadJson(url);
+		waypointsdata.then(function (geojsondata) {
+			deleteWaypoints();
+			waypoints = new Cesium.CustomDataSource('waypoints');
+			for (var i = 0; i < geojsondata.features.length; i++) {
+				data = geojsondata.features[i].properties;
+				if (typeof data.upper_limit != 'undefined' && typeof data.lower_limit != 'undefined') {
+					var position = [];
+					for (j = 0; j < geojsondata.features[i].geometry.coordinates[0].length; j++) {
+						//position.push(geojsondata.features[i].geometry.coordinates[0][j][0],geojsondata.features[i].geometry.coordinates[0][j][1],0);
+						position.push(geojsondata.features[i].geometry.coordinates[0][j][0],geojsondata.features[i].geometry.coordinates[0][j][1]);
+					}
+					if (position.length > 3) {
+						var entity = airspace.entities.add({
+							id: data.id,
+							polygon : {
+								//hierarchy : new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArrayHeights(position)),
+								hierarchy : new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(position)),
+								height : data.upper_limit,
+								extrudedHeight : data.lower_limit,
+								//material : { solidColor : { color : { rgba : [255, 100, 0, 100] } } }
+								material : Cesium.Color.fromCssColorString(data.color).withAlpha(0.5)
+							},
+							type: 'waypoints'
+						});
+//						entity.addProperty('type');
+//						entity.type = 'notam';
+						//console.log(entity);
+					}
+				}
+			}
+			viewer.dataSources.add(waypoints);
+		});
+		*/
+	}
+}
+function deleteWaypoints() {
+	var dsn;
+	for (var i =0; i < viewer.dataSources.length; i++) {
+		if (viewer.dataSources.get(i).name == 'waypoints-geojson.php') {
+			dsn = i;
+			break;
+		}
+	}
+	viewer.dataSources.remove(viewer.dataSources.get(dsn),true);
+//	viewer.dataSources.remove(waypoints);
+}
+
 
 <?php
 	if (isset($globalBingMapKey) && $globalBingMapKey != '') {
@@ -800,14 +934,14 @@ var viewer = new Cesium.Viewer('live-map', {
 //	requestWaterMask : true,
 //        requestVertexNormals : true
 //    }),
-    terrainShadows: Cesium.ShadowMode.DISABLED
+//    terrainShadows: Cesium.ShadowMode.DISABLED
 //    automaticallyTrackDataSourceClocks: false
 });
 
 // Set initial camera position
 var camera = viewer.camera;
 <?php
-	if (isset($globalCenterLatitude) && isset($globalCenterLongitude)) {
+	if (isset($globalCenterLatitude) && isset($globalCenterLongitude) && $globalCenterLatitude != '' && $globalCenterLongitude != '') {
 
 ?>
 camera.setView({
@@ -871,7 +1005,7 @@ viewer.scene.globe.depthTestAgainstTerrain = true;
 //dataSource.then(function (data) { 
 //    displayData(data);
 //});
- var czmlds = new Cesium.CzmlDataSource();
+var czmlds = new Cesium.CzmlDataSource();
 
 updateData();
 <?php
@@ -929,6 +1063,8 @@ handler.setInputAction(function(click) {
 			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(pickedObject.id.id));
 		} else if (pickedObject.id.type == 'notam') {
 			$(".showdetails").load("<?php print $globalURL; ?>/notam-data.php?"+Math.random()+"&notam="+encodeURI(pickedObject.id.id));
+		} else if (pickedObject.id.type == 'airspace') {
+			$(".showdetails").load("<?php print $globalURL; ?>/airspace-data.php?"+Math.random()+"&airspace="+encodeURI(pickedObject.id.id));
 //		} else if (pickedObject.id.name == 'iss') {
 //			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString()));
 //		} else if (pickedObject.id.id == 'ISS (ZARYA)') {
@@ -944,6 +1080,14 @@ camera.moveEnd.addEventListener(function() {
 	if ($("#notam").hasClass("active"))
 	{
 		addNOTAM();
+	}
+	if ($("#airspace").hasClass("active"))
+	{
+		addAirspace();
+	}
+	if ($("#waypoints").hasClass("active"))
+	{
+		addWaypoints();
 	}
 });
 
