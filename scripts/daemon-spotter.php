@@ -257,16 +257,19 @@ if (!is_array($globalSources)) {
 	die;
 }
 foreach ($globalSources as $key => $source) {
+    if (!isset($source['format'])) {
+        $globalSources[$key]['format'] = 'auto';
+    }
+}
+connect_all($globalSources);
+foreach ($globalSources as $key => $source) {
     if (isset($source['format']) && $source['format'] == 'aprs') {
 	$aprs_connect = 0;
 	$use_aprs = true;
 	if (isset($source['port']) && $source['port'] == '10152') $aprs_full = true;
 	break;
-    } elseif (!isset($source['format'])) {
-        $globalSources[$key]['format'] = 'auto';
     }
 }
-connect_all($globalSources);
 
 if ($use_aprs) {
 	require_once(dirname(__FILE__).'/../require/class.APRS.php');
