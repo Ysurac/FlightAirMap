@@ -471,7 +471,7 @@ $( document ).ready(function() {
 			update_airportsLayer();
 			map.removeLayer(locationsLayer);
 			update_locationsLayer();
-			if ($("#.airspace").hasClass("active"))
+			if ($("#airspace").hasClass("active"))
 			{
 				map.removeLayer(airspaceLayer);
 				update_airspaceLayer();
