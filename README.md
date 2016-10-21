@@ -24,7 +24,7 @@ A wiki is available here: https://github.com/Ysurac/FlightAirMap/wiki
 To install the web app, you need to have meet the following requirements:
 
 * PHP version 5.4 or greater
-* MySQL version 5.6 or greater (or MariaDB) or PostgreSQL (with PostGIS if you want waypoints, airspace and countries data)
+* MySQL version 5.6.1 or greater, MariaDB or PostgreSQL (with PostGIS if you want waypoints, airspace and countries data)
 * SQLite 3 (if you use ADS-B as datasource)
 * An HTTP Server such as:
 	* Apache 2.0+

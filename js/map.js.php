@@ -471,12 +471,12 @@ $( document ).ready(function() {
 			update_airportsLayer();
 			map.removeLayer(locationsLayer);
 			update_locationsLayer();
-			if ($(".airspace").hasClass("active"))
+			if ($("#.airspace").hasClass("active"))
 			{
 				map.removeLayer(airspaceLayer);
 				update_airspaceLayer();
 			}
-			if ($(".waypoints").hasClass("active"))
+			if ($("#waypoints").hasClass("active"))
 			{
 				map.removeLayer(waypointsLayer);
 				update_waypointsLayer();
@@ -491,11 +491,11 @@ $( document ).ready(function() {
 			update_airportsLayer();
 			map.removeLayer(locationsLayer);
 			update_locationsLayer();
-			if ($(".airspace").hasClass("active"))
+			if ($("#airspace").hasClass("active"))
 			{
 				map.removeLayer(airspaceLayer);
 			}
-			if ($(".waypoints").hasClass("active"))
+			if ($("#waypoints").hasClass("active"))
 			{
 				map.removeLayer(waypointsLayer);
 			}
@@ -1908,17 +1908,17 @@ function update_waypointsLayer() {
 };
 
 function showWaypoints() {
-    if (!$(".waypoints").hasClass("active"))
+    if (!$("#waypoints").hasClass("active"))
     {
 	//loads the function to load the waypoints
 	update_waypointsLayer();
 	//add the active class
-	$(".waypoints").addClass("active");
+	$("#waypoints").addClass("active");
     } else {
 	//remove the waypoints layer
 	map.removeLayer(waypointsLayer);
 	//remove the active class
-	$(".waypoints").removeClass("active");
+	$("#waypoints").removeClass("active");
      }
 }
 
@@ -1949,17 +1949,17 @@ function waypointsPopup (feature, layer) {
 };
 
 function showAirspace() {
-    if (!$(".airspace").hasClass("active"))
+    if (!$("#airspace").hasClass("active"))
     {
 	//loads the function to load the waypoints
 	update_airspaceLayer();
 	//add the active class
-	$(".airspace").addClass("active");
+	$("#airspace").addClass("active");
     } else {
 	//remove the waypoints layer
 	map.removeLayer(airspaceLayer);
 	//remove the active class
-	$(".airspace").removeClass("active");
+	$("#airspace").removeClass("active");
      }
 }
 
@@ -1997,6 +1997,12 @@ function update_airspaceLayer() {
             */
 	},
 	style: function(feature) {
+		return {
+		    "color": feature.properties.color,
+		    "weight": 1,
+		    "opacity": 0.2
+		};
+/*		
 	    if (feature.properties.type == 'RESTRICTED') {
 		return {
 		    "color": '#cf2626',
@@ -2052,6 +2058,7 @@ function update_airspaceLayer() {
 		    "opacity": 0.55
 		};
 	    }
+	*/
 	}
     }).addTo(map);
 };
