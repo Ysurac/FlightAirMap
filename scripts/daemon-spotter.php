@@ -704,6 +704,7 @@ while ($i > 0) {
 	    	    $data['squawk'] = ''; // squawk
 	    	    $data['emergency'] = ''; // emergency
 	    	    //$data['datetime'] = $line['lastupdate'];
+	    	    $data['last_update'] = $line['lastupdate'];
 		    $data['datetime'] = date('Y-m-d H:i:s');
 	    	    $data['departure_airport_icao'] = $line['depicao'];
 	    	    $data['departure_airport_time'] = $line['deptime'];

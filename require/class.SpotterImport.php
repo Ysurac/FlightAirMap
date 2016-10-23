@@ -53,6 +53,7 @@ class SpotterImport {
 	$dbc = $this->db;
 	
 	if ($globalSchedulesFetch) {
+	if ($globalDebug) echo 'Getting schedule info...'."\n";
 	$Spotter = new Spotter($dbc);
 	$Schedule = new Schedule($dbc);
 	$Translation = new Translation($dbc);
@@ -121,6 +122,7 @@ class SpotterImport {
 
     public function arrival($key) {
 	global $globalClosestMinDist, $globalDebug;
+	if ($globalDebug) echo 'Update arrival...'."\n";
 	$Spotter = new Spotter($this->db);
         $airport_icao = '';
         $airport_time = '';
@@ -162,6 +164,7 @@ class SpotterImport {
     public function del() {
 	global $globalDebug;
 	// Delete old infos
+	if ($globalDebug) echo 'Delete old values and update latest data...'."\n";
 	foreach ($this->all_flights as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
         	if ($flight['lastupdate'] < (time()-3000)) {
@@ -499,6 +502,10 @@ class SpotterImport {
 			echo 'Speed : '.(($Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')/$timediff)*3.6)." km/h - ";
 			echo 'Lat : '.$line['latitude'].' - long : '.$line['longitude'].' - prev lat : '.$this->all_flights[$id]['latitude'].' - prev long : '.$this->all_flights[$id]['longitude']." \n";
 		    }
+		}
+		if (isset($line['last_update']) && $line['last_update'] != '') {
+		    if (isset($this->all_flights[$id]['last_update']) && $this->all_flights[$id]['last_update'] != $line['last_update']) $dataFound = true;
+		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('last_update' => $line['last_update']));
 		}
 		if (isset($line['verticalrate']) && $line['verticalrate'] != '') {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('verticalrate' => $line['verticalrate']));
