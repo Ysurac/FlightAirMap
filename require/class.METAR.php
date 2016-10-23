@@ -339,7 +339,8 @@ class METAR {
     			if (preg_match('#^([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{2}):([0-9]{2})$#',$line)) {
     				//echo "date : ".$line."\n";
     				$date = $line;
-    			} elseif ($line != '') {
+    			} 
+    			if ($line != '') {
     			    //$this->parse($line);
     			    //echo $line;
     			    if ($date == '') $date = date('Y/m/d H:m');
@@ -365,9 +366,10 @@ class METAR {
     		$date = '';
     		foreach(explode("\n",$cycle) as $line) {
     			if (preg_match('#^([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{2}):([0-9]{2})$#',$line)) {
-    				echo "date : ".$line."\n";
+    				//echo "date : ".$line."\n";
     				$date = $line;
-    			} elseif ($line != '') {
+    			} 
+    			if ($line != '') {
     			    //$this->parse($line);
     			    //echo $line;
     			    if ($date == '') $date = date('Y/m/d H:m');
@@ -398,10 +400,10 @@ echo $METAR->parse('LFLY 071100Z 0712/0812 15007KT CAVOK PROB30 0800/0806 4000 B
 echo $METAR->parse('LFMU 070700Z AUTO 02005KT 5000 BR BKN012/// BKN018/// BKN030/// ///CB 11/11 Q1032');
 echo $METAR->parse('METAR LFPO 231027Z AUTO 24004G09MPS 2500 1000NW R32/0400 R08C/0004D +FZRA VCSN //FEW015 17/10 Q1009 REFZRA WS R03');
 */
-/*
+
 $METAR = new METAR();
 $METAR->addMETARCycle();
-*/
+
 /*
 2015/12/07 12:21
 TAF LFLY 071100Z 0712/0812 15007KT CAVOK PROB30 0800/0806 4000 BR 
