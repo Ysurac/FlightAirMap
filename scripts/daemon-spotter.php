@@ -387,6 +387,7 @@ while ($i > 0) {
 	        	$data['waypoints'] = $line[30];
 			$data['datetime'] = date('Y-m-d H:i:s');
 			//$data['datetime'] = date('Y-m-d H:i:s',strtotime($line[37]));
+			if (isset($line[37])) $data['last_update'] = $line[37]
 		        $data['departure_airport_icao'] = $line[11];
 		        $data['departure_airport_time'] = rtrim(chunk_split($line[22],2,':'),':');
 		        $data['arrival_airport_icao'] = $line[13];
