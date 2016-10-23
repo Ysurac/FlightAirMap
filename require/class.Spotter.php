@@ -8007,14 +8007,12 @@ class Spotter{
 			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(*) as date_count
 								FROM spotter_output";
 			$query .= $this->getFilter($filters);
-			$query .= "GROUP BY year_name, month_name 
-								ORDER BY date_count DESC";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(*) as date_count
 								FROM spotter_output";
 			$query .= $this->getFilter($filters);
-			$query .= " GROUP BY year_name, month_name 
-								ORDER BY date_count DESC";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		}
       
 		
