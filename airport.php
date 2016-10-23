@@ -40,6 +40,7 @@ if (isset($_POST['airport']))
 		$title = $airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
 
 		require_once('header.php');
+		/*
 		print '<div class="select-item">';
 		print '<form action="'.$globalURL.'/airport" method="post">';
 		print '<select name="airport" class="selectpicker" data-live-search="true">';
@@ -59,6 +60,7 @@ if (isset($_POST['airport']))
 		print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
 		print '</form>';
 		print '</div>';
+		*/
 
 		if ($airport != "NA")
 		{
