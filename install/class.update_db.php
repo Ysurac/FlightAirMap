@@ -1793,10 +1793,45 @@ class update_db {
 		return '';
 	}
 	
+	public static function create_airspace() {
+		global $globalDBdriver, $globalDebug, $tmp_dir, $globalDBhost, $globalDBuser, $globalDBname, $globalDBpass, $globalDBport;
+		$Connection = new Connection();
+		if ($Connection->tableExists('airspace')) {
+			if ($globalDBdriver == 'mysql') {
+				$query = 'DROP TABLE geometry_columns; DROP TABLE spatial_ref_sys;DROP TABLE airspace;';
+			} else {
+				$query = 'DROP TABLE airspace';
+			}
+			try {
+				$Connection = new Connection();
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+		}
+		$Common = new Common();
+		$airspace_lst = $Common->getData('https://raw.githubusercontent.com/XCSoar/xcsoar-data-repository/master/data/airspace.json');
+		$airspace_json = json_decode($airspace_lst,true);
+		foreach ($airspace_json['records'] as $airspace) {
+			if ($globalDebug) echo $airspace['name']."...\n";
+			update_db::download($airspace['uri'],$tmp_dir.$airspace['name']);
+			if (file_exists($tmp_dir.$airspace['name'])) {
+				file_put_contents($tmp_dir.$airspace['name'], utf8_encode(file_get_contents($tmp_dir.$airspace['name'])));
+				//system('recode l9..utf8 '.$tmp_dir.$airspace['name']);
+				if ($globalDBdriver == 'mysql') {
+					system('ogr2ogr -update -append -f "MySQL" MySQL:"'.$globalDBname.',host='.$globalDBhost.',user='.$globalDBuser.',password='.$globalDBpass.',port='.$globalDBport.'" -nln airspace -nlt POLYGON -skipfailures -lco ENGINE=MyISAM "'.$tmp_dir.$airspace['name'].'"');
+				} else {
+					system('ogr2ogr -append -f "PostgreSQL" PG:"host='.$globalDBhost.' user='.$globalDBuser.' dbname='.$globalDBname.' password='.$globalDBpass.' port='.$globalDBport.'" -nln airspace -nlt POLYGON -skipfailures "'.$tmp_dir.$airspace['name'].'"');
+				}
+			}
+		}
+	}
+	
 	public static function check_last_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_db' AND value > DATE_SUB(NOW(), INTERVAL 15 DAY)";
 		} else {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '15 DAYS'";
 		}
@@ -1827,7 +1862,7 @@ class update_db {
 	public static function check_last_notam_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_notam_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 1 DAY)";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_notam_db' AND value > DATE_SUB(NOW(), INTERVAL 1 DAY)";
 		} else {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_notam_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '1 DAYS'";
 		}
@@ -1858,7 +1893,7 @@ class update_db {
 	public static function check_last_owner_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_owner_db' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_owner_db' AND value > DATE_SUB(NOW(), INTERVAL 15 DAY)";
 		} else {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_owner_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '15 DAYS'";
 		}
@@ -1888,7 +1923,7 @@ class update_db {
 	public static function check_last_schedules_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_schedules' AND value > DATE_SUB(DATE(NOW()), INTERVAL 15 DAY)";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_schedules' AND value > DATE_SUB(NOW(), INTERVAL 15 DAY)";
 		} else {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_schedules' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '15 DAYS'";
 		}
@@ -1918,7 +1953,7 @@ class update_db {
 	public static function check_last_tle_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_tle' AND value > DATE_SUB(DATE(NOW()), INTERVAL 7 DAY)";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_tle' AND value > DATE_SUB(NOW(), INTERVAL 7 DAY)";
 		} else {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_tle' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '7 DAYS'";
 		}
@@ -1977,4 +2012,5 @@ class update_db {
 //echo $update_db::update_skyteam();
 //echo $update_db::update_tle();
 //echo update_db::update_notam_fam();
+//echo update_db::create_airspace();
 ?>
