@@ -46,9 +46,9 @@ class METAR {
        public static function check_last_update() {
     		global $globalDBdriver;
     		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value > DATE_SUB(NOW(), INTERVAL 1 HOUR)";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value > DATE_SUB(NOW(), INTERVAL 20 MINUTE)";
 		} else {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '1 HOURS'";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '20 MINUTES'";
 		}
                 try {
                         $Connection = new Connection();
