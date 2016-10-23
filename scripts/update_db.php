@@ -47,7 +47,7 @@ if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalME
 	if ($METAR->check_last_update()) {
 		$METAR->addMETARCycle();
 		$METAR->insert_last_update();
-	} else echo "METAR are only updated every hours.\n";
+	} else echo "METAR are only updated every 30 minutes.\n";
 }
 
 
