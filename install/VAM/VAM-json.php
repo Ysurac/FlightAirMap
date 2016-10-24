@@ -5,7 +5,7 @@
 */
 header("Content-type: application/json");
 include('db_login.php');
-$db = mysqli($db_host, $db_username, $db_password, $db_database);
+$db = new mysqli($db_host, $db_username, $db_password, $db_database);
 $db->set_charset("utf8");
 if ($db->connect_errno > 0) {
 	die();
