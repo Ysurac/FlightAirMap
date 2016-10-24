@@ -2005,6 +2005,8 @@ class Spotter{
 	*/
 	public function getAllAirlineInfo($airline_icao, $fromsource = NULL)
 	{
+		global $globalUseRealAirlines;
+		if (isset($globalUseRealAirlines) && $globalUseRealAirlines) $fromsource = NULL;
 		$airline_icao = strtoupper(filter_var($airline_icao,FILTER_SANITIZE_STRING));
 		if ($airline_icao == 'NA') {
 			$airline_array = array();

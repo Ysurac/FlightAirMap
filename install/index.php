@@ -536,6 +536,12 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<br />
 			<p>
+				<label for="realairlines">Always use real airlines</label>
+				<input type="checkbox" name="realairlines" id="realairlines" value="realairlines"<?php if (isset($globalUseRealAirlines) && $globalUseRealAirlines) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Use real airlines even for IVAO or VATSIM.</p>
+			</p>
+			<br />
+			<p>
 				<label for="estimation">Planes animate between updates</label>
 				<input type="checkbox" name="estimation" id="estimation" value="estimation"<?php if (isset($globalMapEstimation) && $globalMapEstimation) { ?> checked="checked"<?php } ?> />
 				<p class="help-block">Estimate plane track between flights refresh.</p>
@@ -1061,6 +1067,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalTranslate' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalTranslate' => 'FALSE'));
+	}
+	$realairlines = filter_input(INPUT_POST,'realairlines',FILTER_SANITIZE_STRING);
+	if ($realairlines == 'realairlines') {
+		$settings = array_merge($settings,array('globalUseRealAirlines' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalUseRealAirlines' => 'FALSE'));
 	}
 	$estimation = filter_input(INPUT_POST,'estimation',FILTER_SANITIZE_STRING);
 	if ($estimation == 'estimation') {
