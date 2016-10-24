@@ -32,7 +32,7 @@ while ($rec = $result->fetch_assoc())
 	// $json_array['routes']=$rec['routes'];  // (unusable)
 	$json_array['flight_status']=$rec['flight_status'];  // "return Status"
 	$json_array['last_update']=$rec['last_update'];  // return "DateTime"
-	array_push($json_data,$json_array);  
+	$json_data[] = $json_array;
  }  
-echo json_encode($json_data);  
+echo json_encode($json_data);
 ?>
