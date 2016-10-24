@@ -61,13 +61,14 @@ class Spotter{
 	*/
 	public function getDataFromDB($query, $params = array(), $limitQuery = '')
 	{
-		global $globalSquawkCountry, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalAirlinesSource;
+		global $globalSquawkCountry, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalAirlinesSource, $globalVAM;
 		$Image = new Image($this->db);
 		$Schedule = new Schedule($this->db);
 		$ACARS = new ACARS($this->db);
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		if (!isset($globalVATSIM)) $globalVATSIM = FALSE;
 		if (!isset($globalphpVMS)) $globalphpVMS = FALSE;
+		if (!isset($globalVAM)) $globalVAM = FALSE;
 		date_default_timezone_set('UTC');
 		
 		if (!is_string($query))
@@ -274,7 +275,7 @@ class Spotter{
 			if (isset($row['owner_name']) && $row['owner_name'] != '' && $row['owner_name'] != NULL) {
 				$temp_array['aircraft_owner'] = $row['owner_name'];
 			}
-			if ($temp_array['registration'] != "" && !$globalIVAO && !$globalVATSIM && !$globalphpVMS && !isset($temp_array['aircraft_owner'])) {
+			if ($temp_array['registration'] != "" && !$globalIVAO && !$globalVATSIM && !$globalphpVMS && !$globalVAM && !isset($temp_array['aircraft_owner'])) {
 				$owner_info = $this->getAircraftOwnerByRegistration($temp_array['registration']);
 				if ($owner_info['owner'] != '') $temp_array['aircraft_owner'] = ucwords(strtolower($owner_info['owner']));
 				$temp_array['aircraft_base'] = $owner_info['base'];
@@ -308,7 +309,7 @@ class Spotter{
 			if (isset($row['arrival_airport_time']) && $row['arrival_airport_time'] != '') {
 				$temp_array['arrival_airport_time'] = $row['arrival_airport_time'];
 			}
-			if ((!isset($globalIVAO) || ! $globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+			if ((!isset($globalIVAO) || ! $globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM)) {
 				$schedule_array = $Schedule->getSchedule($temp_array['ident']);
 				//print_r($schedule_array);
 				if (count($schedule_array) > 0) {
@@ -2046,7 +2047,15 @@ class Spotter{
 			}
 			return $airline_array;
 			*/
-			return $sth->fetchAll(PDO::FETCH_ASSOC);
+			$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+			if (empty($result) && $fromsource !== NULL) {
+				$query = 'SELECT COUNT(*) AS nb FROM airlines WHERE forsource = :fromsource';
+				$sth = $this->db->prepare($query);
+				$sth->execute(array(':fromsource' => $fromsource));
+				$row = $sth->fetch(PDO::FETCH_ASSOC);
+				if ($row['nb'] == 0) $result = $this->getAllAirlineInfo($airline_icao);
+			}
+			return $result;
 		}
 	}
 	
@@ -3199,7 +3208,7 @@ class Spotter{
 	*/
 	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '', $source_name = '')
 	{
-		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalDebugTimeElapsed, $globalAirlinesSource;
+		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalDebugTimeElapsed, $globalAirlinesSource, $globalVAM;
 		
 		//if (isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 		$Image = new Image($this->db);
@@ -3208,6 +3217,7 @@ class Spotter{
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		if (!isset($globalVATSIM)) $globalVATSIM = FALSE;
 		if (!isset($globalphpVMS)) $globalphpVMS = FALSE;
+		if (!isset($globalVAM)) $globalVAM = FALSE;
 		date_default_timezone_set('UTC');
 		
 		//getting the registration
@@ -3391,7 +3401,7 @@ class Spotter{
 		}
 
 		//getting the aircraft image
-		if (($registration != "" || $registration != 'NA') && !$globalIVAO && !$globalVATSIM && !$globalphpVMS)
+		if (($registration != "" || $registration != 'NA') && !$globalIVAO && !$globalVATSIM && !$globalphpVMS && !$globalVAM)
 		{
 			$timeelapsed = microtime(true);
 			$image_array = $Image->getSpotterImage($registration);

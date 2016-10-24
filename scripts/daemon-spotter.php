@@ -159,6 +159,10 @@ function connect_all($hosts) {
         	$globalSources[$id]['format'] = 'phpvmacars';
         	//$last_exec['phpvmacars'] = 0;
         	if ($globalDebug) echo "Connect to phpvmacars source (".$host.")...\n";
+            } else if (preg_match('/VAM-json.php$/i',$host)) {
+        	//$formats[$id] = 'phpvmacars';
+        	$globalSources[$id]['format'] = 'vam';
+        	if ($globalDebug) echo "Connect to Vam source (".$host.")...\n";
             } else if (preg_match('/whazzup/i',$host)) {
         	//$formats[$id] = 'whazzup';
         	$globalSources[$id]['format'] = 'whazzup';
@@ -728,6 +732,50 @@ while ($i > 0) {
     		    if (isset($line['route'])) $data['waypoints'] = $line['route'];
     		    $data['id_source'] = $id_source;
 	    	    $data['format_source'] = 'phpvmacars';
+		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+		    $SI->add($data);
+		    unset($data);
+		}
+		if ($globalDebug) echo 'No more data...'."\n";
+		unset($buffer);
+		unset($all_data);
+	    }
+    	    //$last_exec['phpvmacars'] = time();
+    	    $last_exec[$id]['last'] = time();
+    	} elseif ($value['format'] == 'vam' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	    //$buffer = $Common->getData($hosts[$id]);
+	    if ($globalDebug) echo 'Get Data...'."\n";
+	    $buffer = $Common->getData($value['host']);
+	    $all_data = json_decode($buffer,true);
+	    if ($buffer != '' && is_array($all_data)) {
+		foreach ($all_data as $line) {
+	    	    $data = array();
+	    	    //$data['id'] = $line['id']; // id not usable
+	    	    $data['id'] = $line['flight_id'];
+	    	    $data['hex'] = substr(str_pad(bin2hex($line['callsign']),6,'000000',STR_PAD_LEFT),-6); // hex
+	    	    $data['pilot_name'] = $line['pilot_name'];
+	    	    $data['pilot_id'] = $line['pilot_id'];
+	    	    $data['ident'] = $line['callsign']; // ident
+	    	    $data['altitude'] = $line['altitude']; // altitude
+	    	    $data['speed'] = $line['gs']; // speed
+	    	    $data['heading'] = $line['heading']; // heading
+	    	    $data['latitude'] = $line['latitude']; // lat
+	    	    $data['longitude'] = $line['longitude']; // long
+	    	    $data['verticalrate'] = ''; // verticale rate
+	    	    $data['squawk'] = ''; // squawk
+	    	    $data['emergency'] = ''; // emergency
+	    	    //$data['datetime'] = $line['lastupdate'];
+	    	    $data['last_update'] = $line['last_update'];
+		    $data['datetime'] = date('Y-m-d H:i:s');
+	    	    $data['departure_airport_icao'] = $line['departure'];
+	    	    //$data['departure_airport_time'] = $line['departure_time'];
+	    	    $data['arrival_airport_icao'] = $line['arrival'];
+    		    //$data['arrival_airport_time'] = $line['arrival_time'];
+    		    //$data['registration'] = $line['aircraft'];
+		    if (isset($line['route'])) $data['waypoints'] = $line['route']; // route
+	    	    $data['aircraft_icao'] = $line['plane_type'];
+    		    $data['id_source'] = $id_source;
+	    	    $data['format_source'] = 'vam';
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    $SI->add($data);
 		    unset($data);

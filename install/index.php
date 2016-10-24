@@ -357,6 +357,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<label for="vatsim">VATSIM</label>
 				<input type="checkbox" name="globalphpvms" id="phpvms" value="phpvms" onClick="datasource_js()" <?php if (isset($globalphpVMS) && $globalphpVMS) { ?>checked="checked" <?php } ?>/>
 				<label for="phpvms">phpVMS</label>
+				<input type="checkbox" name="globalvam" id="vam" value="vam" onClick="datasource_js()" <?php if (isset($globalVAM) && $globalVAM) { ?>checked="checked" <?php } ?>/>
+				<label for="vam">Virtual Airline Manager</label>
 				</p>
 			</p><p>
 				<b>Real flights</b>
@@ -449,6 +451,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="vatsimtxt" <?php if (isset($source['format']) && $source['format'] == 'vatsimtxt') print 'selected'; ?>>Vatsim</option>
 										<option value="aircraftlistjson" <?php if (isset($source['format']) && $source['format'] == 'aircraftlistjson') print 'selected'; ?>>Virtual Radar Server</option>
 										<option value="phpvmacars" <?php if (isset($source['format']) && $source['format'] == 'phpvmacars') print 'selected'; ?>>phpVMS</option>
+										<option value="vam" <?php if (isset($source['format']) && $source['format'] == 'vam') print 'selected'; ?>>Virtual Airline Manager</option>
 										<option value="whazzup" <?php if (isset($source['format']) && $source['format'] == 'whazzup') print 'selected'; ?>>IVAO</option>
 										<option value="flightgearmp" <?php if (isset($source['format']) && $source['format'] == 'flightgearmp') print 'selected'; ?>>FlightGear Multiplayer</option>
 										<option value="flightgearsp" <?php if (isset($source['format']) && $source['format'] == 'flightgearsp') print 'selected'; ?>>FlightGear Singleplayer</option>
@@ -476,6 +479,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="vatsimtxt">Vatsim</option>
 										<option value="aircraftlistjson">Virtual Radar Server</option>
 										<option value="phpvmacars">phpVMS</option>
+										<option value="vam">Virtual Airline Manager</option>
 										<option value="whazzup">IVAO</option>
 										<option value="flightgearmp">FlightGear Multiplayer</option>
 										<option value="flightgearsp">FlightGear Singleplayer</option>
@@ -489,6 +493,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					</table>
 				<p class="help-block">For working source statistics, the name of the source <b>MUST</b> be the same as the source name of a source location, else center coverage latitude and longitude is used as source position. This is not available/usable with virtual airlines.</p>
 				<p class="help-block">FlightGear Singleplayer open an UDP server, the host should be <i>0.0.0.0</i>.</p>
+				<p class="help-block">Virtual Airline Manager need to use the file <i>install/vAM/VAM-json.php</i> and the url <i>http://yourvaminstall/VAM-json.php</i>.</p>
 				</fieldset>
 			</fieldset>
 			<div id="acars_data">
@@ -874,6 +879,7 @@ if (isset($_POST['dbtype'])) {
 	$globalvatsim = filter_input(INPUT_POST,'globalvatsim',FILTER_SANITIZE_STRING);
 	$globalivao = filter_input(INPUT_POST,'globalivao',FILTER_SANITIZE_STRING);
 	$globalphpvms = filter_input(INPUT_POST,'globalphpvms',FILTER_SANITIZE_STRING);
+	$globalvam = filter_input(INPUT_POST,'globalvam',FILTER_SANITIZE_STRING);
 	$globalsbs = filter_input(INPUT_POST,'globalsbs',FILTER_SANITIZE_STRING);
 	$globalaprs = filter_input(INPUT_POST,'globalaprs',FILTER_SANITIZE_STRING);
 	$datasource = filter_input(INPUT_POST,'datasource',FILTER_SANITIZE_STRING);
@@ -1011,6 +1017,9 @@ if (isset($_POST['dbtype'])) {
 	if ($globalphpvms == 'phpvms') {
 		$settings = array_merge($settings,array('globalphpVMS' => 'TRUE'));
 	} else $settings = array_merge($settings,array('globalphpVMS' => 'FALSE'));
+	if ($globalvam == 'vam') {
+		$settings = array_merge($settings,array('globalVAM' => 'TRUE'));
+	} else $settings = array_merge($settings,array('globalVAM' => 'FALSE'));
 	if ($globalvatsim == 'vatsim' || $globalivao == 'ivao' || $globalphpvms == 'phpvms') {
 		$settings = array_merge($settings,array('globalSchedulesFetch' => 'FALSE','globalTranslationFetch' => 'FALSE'));
 	} else $settings = array_merge($settings,array('globalSchedulesFetch' => 'TRUE','globalTranslationFetch' => 'TRUE'));
@@ -1287,6 +1296,9 @@ if (isset($_POST['dbtype'])) {
 	}
 	if (isset($globalMap3D) && $globalMap3D) {
 		print '<p>You need to run <b>scripts/update_db.php</b> first time manually, this will update all and download 3D models.</p>';
+	}
+	if (isset($globalVAM) && $globalVAM) {
+		print '<p>You need to copy <b>install/VAM/VAM-json.php</b> to your Virtual Airline Manager directory and use this URL as source.</p>';
 	}
 	print '<p>If you want to keep external data updated, you have to add <b>scripts/update_db.php</b> in cron (every hour or 30 minutes if computer is fast enough).</p>';
 	print '</div>';
