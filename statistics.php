@@ -9,6 +9,7 @@ $title = _("Statistics");
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 if ($airline_icao == 'all') {
 	unset($_COOKIE['stats_airline_icao']);
+	setcookie('stats_airline_icao', '', time()-3600);
 	$airline_icao = '';
 } elseif ($airline_icao == '' && isset($_COOKIE['stats_airline_icao'])) {
 	$airline_icao = $_COOKIE['stats_airline_icao'];
