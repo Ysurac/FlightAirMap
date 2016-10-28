@@ -30,6 +30,11 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 		$update_db->insert_last_notam_update();
 	} elseif (isset($globalDebug) && $globalDebug && isset($globalNOTAM) && $globalNOTAM) echo "NOTAM are only updated once a day.\n";
 }
+if (isset($globalWaypoints) && $globalWaypoints && $update_db->check_last_airspace_update()) {
+	echo "Check if new airspace version exist...";
+	echo $update_db->update_airspace_fam();
+	$update_db->insert_last_airspace_update();
+}
 
 if ($update_db->check_last_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
 	$update_db->update_all();

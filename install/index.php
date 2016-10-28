@@ -451,7 +451,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="vatsimtxt" <?php if (isset($source['format']) && $source['format'] == 'vatsimtxt') print 'selected'; ?>>Vatsim</option>
 										<option value="aircraftlistjson" <?php if (isset($source['format']) && $source['format'] == 'aircraftlistjson') print 'selected'; ?>>Virtual Radar Server</option>
 										<option value="phpvmacars" <?php if (isset($source['format']) && $source['format'] == 'phpvmacars') print 'selected'; ?>>phpVMS</option>
-										<option value="vam" <?php if (isset($source['format']) && $source['format'] == 'vam') print 'selected'; ?>>Virtual Airline Manager</option>
+										<option value="vam" <?php if (isset($source['format']) && $source['format'] == 'vam') print 'selected'; ?>>Virtual Airlines Manager</option>
 										<option value="whazzup" <?php if (isset($source['format']) && $source['format'] == 'whazzup') print 'selected'; ?>>IVAO</option>
 										<option value="flightgearmp" <?php if (isset($source['format']) && $source['format'] == 'flightgearmp') print 'selected'; ?>>FlightGear Multiplayer</option>
 										<option value="flightgearsp" <?php if (isset($source['format']) && $source['format'] == 'flightgearsp') print 'selected'; ?>>FlightGear Singleplayer</option>
@@ -479,7 +479,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="vatsimtxt">Vatsim</option>
 										<option value="aircraftlistjson">Virtual Radar Server</option>
 										<option value="phpvmacars">phpVMS</option>
-										<option value="vam">Virtual Airline Manager</option>
+										<option value="vam">Virtual Airlines Manager</option>
 										<option value="whazzup">IVAO</option>
 										<option value="flightgearmp">FlightGear Multiplayer</option>
 										<option value="flightgearsp">FlightGear Singleplayer</option>
@@ -493,7 +493,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					</table>
 				<p class="help-block">For working source statistics, the name of the source <b>MUST</b> be the same as the source name of a source location, else center coverage latitude and longitude is used as source position. This is not available/usable with virtual airlines.</p>
 				<p class="help-block">FlightGear Singleplayer open an UDP server, the host should be <i>0.0.0.0</i>.</p>
-				<p class="help-block">Virtual Airline Manager need to use the file <i>install/vAM/VAM-json.php</i> and the url <i>http://yourvaminstall/VAM-json.php</i>.</p>
+				<p class="help-block">Virtual Airlines Manager need to use the file <i>install/vAM/VAM-json.php</i> and the url <i>http://yourvaminstall/VAM-json.php</i>.</p>
 				</fieldset>
 			</fieldset>
 			<div id="acars_data">
@@ -647,7 +647,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<br />
 			<p>
 				<label for="waypoints">Add Waypoints, Airspace and countries data (about 45Mio in DB) <i>Need PostGIS if you use PostgreSQL</i></label>
-				<input type="checkbox" name="waypoints" id="waypoints" value="waypoints" checked="checked" />
+				<input type="checkbox" name="waypoints" id="waypoints" value="waypoints"<?php if (!isset($globalWaypoints) || (isset($globalWaypoints) && $globalWaypoints)) { ?> checked="checked"<?php } ?> />
 			</p>
 			<br />
 			<p>
@@ -1144,6 +1144,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapRoute' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapRoute' => 'FALSE'));
+	}
+	$waypoints = filter_input(INPUT_POST,'waypoints',FILTER_SANITIZE_STRING);
+	if ($waypoints == 'waypoints') {
+		$settings = array_merge($settings,array('globalWaypoints' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalWaypoints' => 'FALSE'));
 	}
 
 	if (!isset($globalTransaction)) $settings = array_merge($settings,array('globalTransaction' => 'TRUE'));

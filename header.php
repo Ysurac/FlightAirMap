@@ -85,9 +85,19 @@ if (strtolower($current_page) == "index")
 <?php 
 	if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 ?>
+<?php 
+	if (isset($globalBeta) && $globalBeta) {
+?>
+<link rel="stylesheet" href="<?php print $globalURL; ?>/js/Cesium/Widgets/widgets.css" />
+<script src="<?php print $globalURL; ?>/js/Cesium/Cesium.js"></script>
+<?php
+	} else {
+?>
 <link rel="stylesheet" href="https://cesiumjs.org/releases/1.26/Build/Cesium/Widgets/widgets.css" />
 <script src="https://cesiumjs.org/releases/1.26/Build/Cesium/Cesium.js"></script>
-<!-- <script src="<?php print $globalURL; ?>/js/Cesium/Cesium.js"></script> -->
+<?php
+	}
+?>
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/cesium-minimap.css" />
 <script src="<?php print $globalURL; ?>/js/cesium-minimap.js"></script>
 <?php
@@ -137,28 +147,30 @@ if (strtolower($current_page) == "index")
     if (isset($_POST['archive'])) {
 ?>
 <?php
-	if (isset($globalBeta) && $globalBeta) {
+/*	if (isset($globalBeta) && $globalBeta) {
 ?>
 <script src="<?php print $globalURL; ?>/js/leaflet-playback.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.new.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
 <?php
 	} else {
+	*/
 ?>
 
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
 <?php
-	}
+//	}
 ?>
 <?php    
     } else {
 ?>
 <?php
-	if (isset($globalBeta) && $globalBeta) {
+/*	if (isset($globalBeta) && $globalBeta) {
 ?>
 <script src="<?php print $globalURL; ?>/js/leaflet-realtime.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.new.js.php?<?php print time(); ?>"></script>
 <?php
 	} else {
+*/
 ?>
 <?php 
 	    if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
@@ -168,7 +180,7 @@ if (strtolower($current_page) == "index")
 	    }
 ?>
 <?php
-	}
+//	}
 ?>
 <?php
     }

@@ -112,6 +112,16 @@ require_once('header.php');
 			</ul>
 		</form>
 <?php
+	} else {
+?>
+		<form>
+			<ul>
+				<li><div class="checkbox"><label><input type="checkbox" name="waypoints" value="1" onclick="showWaypoints();" /><?php echo _("Display waypoints"); ?> Beta</label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="airspace" value="1" onclick="showAirspace();" /><?php echo _("Display airspace"); ?> Beta</label></div></li>
+			</ul>
+			<p>This layers are in Beta, this can and will crash.</p>
+		</form>
+<?php
 	}
 	if (isset($globalNOTAM) && $globalNOTAM) {
 ?>

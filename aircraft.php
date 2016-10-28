@@ -45,9 +45,9 @@ if (isset($_POST['aircraft_type']))
 			print '<div class="alphabet-item">';
 			print '<a href="'.$globalURL.'/aircraft/'.$value['aircraft_icao'].'">';
 			if ($value['aircraft_name'] == '') {
-				print $value['aircraft_manufacturer'].' '.$value['aircraft_icao'];
+				print strtoupper($value['aircraft_manufacturer']).' '.$value['aircraft_icao'];
 			} else {
-				print $value['aircraft_manufacturer'].' '.$value['aircraft_name'];
+				print strtoupper($value['aircraft_manufacturer']).' '.$value['aircraft_name'];
 			}
 			print '</a>';
 			print '</div>';

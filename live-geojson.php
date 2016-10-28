@@ -225,6 +225,7 @@ $output = '{';
 						//$output .= '"nextlatitude": "'.$nextcoord['latitude'].'",';
 						//$output .= '"nextlongitude": "'.$nextcoord['longitude'].'",';
 						$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+						//$output .= '"nextlatlon": ['.$nextcoord['longitude'].','.$nextcoord['latitude'].'],';
 
 						if (!$min) $output .= '"image": "'.$image.'",';
 						if (isset($spotter_item['image_copyright']) && $spotter_item['image_copyright'] != '') {

@@ -537,6 +537,9 @@ function displayData(data) {
 
 		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
 		entity.orientation = orientation;
+		//var hpRoll = new Cesium.HeadingPitchRoll();
+		//entity.modelMatrix = Cesium.Transforms.aircraftHeadingPitchRollToFixedFrame(entity.position,hpRoll);
+		//console.log(entity);
 
 		if (typeof existing != 'undefined') {
 			// console.log(entity.id);

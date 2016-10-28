@@ -51,7 +51,7 @@ class SpotterImport {
 	} else $dbc = $this->db;
 	*/
 	$dbc = $this->db;
-	
+	$this->all_flights[$id]['schedule_check'] = true;
 	if ($globalSchedulesFetch) {
 	if ($globalDebug) echo 'Getting schedule info...'."\n";
 	$Spotter = new Spotter($dbc);
@@ -382,19 +382,7 @@ class SpotterImport {
 			}
 			if (!isset($globalFork)) $globalFork = TRUE;
 			if (!$globalIVAO && !$globalVATSIM && !$globalphpVMS && !$globalVAM && (!isset($line['format_source']) || $line['format_source'] != 'aprs')) {
-			  /*
-			    if (function_exists('pcntl_fork') && $globalFork) {
-				$this->nb++;
-				$pids[$id] = pcntl_fork();
-				if (!$pids[$id]) {
-				    $sid = posix_setsid();
-				    $this->get_Schedule($id,trim($line['ident']));
-		    		    exit(0);
-				}
-			    } else {
-			    */
-				$this->get_Schedule($id,trim($line['ident']));
-			//    }
+				if (!isset($this->all_flights[$id]['schedule_check']) || $this->all_flights[$id]['schedule_check'] === false) $this->get_Schedule($id,trim($line['ident']));
 			}
 		    }
 		}

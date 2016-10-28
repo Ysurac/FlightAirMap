@@ -6,7 +6,7 @@ Browse through the data based on a particular aircraft, airline or airport to se
 Flights are displayed on a 2D map that can be from : OpenStreetMap, Mapbox, MapQuest, Yandex, Bing, Google,... Or a 3D map using OpenStreetMap or Bing.
 
 It can be used with Dump1090 or any SBS source.
-Can also be used with virtual airlines sources like FlightGear, whazzup.txt from IVAO, VATSIM, phpvms,...
+Can also be used with virtual airlines sources like FlightGear, whazzup.txt from IVAO, VATSIM, phpvms, Virtual Airlines Manager,...
 
 It also support glidernet APRS source.
 
@@ -73,4 +73,6 @@ Use install/index.php
 
 ### VATSIM (virtual flights)
 * You can use as source a vatsim-data.txt file like : http://info.vroute.net/vatsim-data.txt
- 
+
+### Virtual Airlines Manager (virtual flights)
+* You need to copy the file **install/VAM/VAM-json.php** in your VAM directory, and use it as source 

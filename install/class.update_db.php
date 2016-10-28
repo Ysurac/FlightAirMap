@@ -1592,6 +1592,49 @@ class update_db {
 		return '';
 	}
 
+	public static function update_airspace_fam() {
+		global $tmp_dir, $globalDebug, $globalDBdriver;
+		include_once('class.create_db.php');
+		if ($globalDebug) echo "Airspace from FlightAirMap website : Download...";
+		if ($globalDBdriver == 'mysql') {
+			update_db::download('http://data.flightairmap.fr/data/airspace_mysql.sql.gz.md5',$tmp_dir.'airspace.sql.gz.md5');
+		} else {
+			update_db::download('http://data.flightairmap.fr/data/airspace_pgsql.sql.gz.md5',$tmp_dir.'airspace.sql.gz.md5');
+		}
+		if (file_exists($tmp_dir.'airspace.sql.gz.md5')) {
+			$airspace_md5_file = explode(' ',file_get_contents($tmp_dir.'airspace.sql.gz.md5'));
+			$airspace_md5 = $airspace_md5_file[0];
+			if (!update_db::check_airspace_version($airspace_md5)) {
+				if ($globalDBdriver == 'mysql') {
+					update_db::download('http://data.flightairmap.fr/data/airspace_mysql.sql.gz',$tmp_dir.'airspace.sql.gz');
+				} else {
+					update_db::download('http://data.flightairmap.fr/data/airspace_pgsql.sql.gz',$tmp_dir.'airspace.sql.gz');
+				}
+				if (file_exists($tmp_dir.'airspace.sql.gz')) {
+					if ($globalDebug) echo "Gunzip...";
+					update_db::gunzip($tmp_dir.'airspace.sql.gz');
+					if ($globalDebug) echo "Add to DB...";
+					$Connection = new Connection();
+					if ($Connection->tableExists('airspace')) {
+						$query = 'DROP TABLE airspace';
+						try {
+							$sth = $Connection->db->prepare($query);
+    	    	    					$sth->execute();
+			            		} catch(PDOException $e) {
+							return "error : ".$e->getMessage();
+		            			}
+		    			}
+					$error = create_db::import_file($tmp_dir.'airspace.sql');
+					update_db::insert_airspace_version($airspace_md5);
+				} else $error = "File ".$tmp_dir.'airpsace.sql.gz'." doesn't exist. Download failed.";
+			}
+		} else $error = "File ".$tmp_dir.'airpsace.sql.gz.md5'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+
 	public static function update_tle() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Download TLE : Download...";
@@ -1859,6 +1902,33 @@ class update_db {
                 }
 	}
 
+	public static function check_airspace_version($version) {
+		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'airspace_version' AND value = :version";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':version' => $version));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return true;
+                else return false;
+	}
+
+
+	public static function insert_airspace_version($version) {
+		$query = "DELETE FROM config WHERE name = 'airspace_version';
+			INSERT INTO config (name,value) VALUES ('airspace_version',:version);";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':version' => $version));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
+
 	public static function check_last_notam_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
@@ -1881,6 +1951,36 @@ class update_db {
 	public static function insert_last_notam_update() {
 		$query = "DELETE FROM config WHERE name = 'last_update_notam_db';
 			INSERT INTO config (name,value) VALUES ('last_update_notam_db',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
+	public static function check_last_airspace_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_airspace_db' AND value > DATE_SUB(NOW(), INTERVAL 7 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_airspace_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '7 DAYS'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return false;
+                else return true;
+	}
+
+	public static function insert_last_airspace_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_airspace_db';
+			INSERT INTO config (name,value) VALUES ('last_update_airspace_db',NOW());";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
