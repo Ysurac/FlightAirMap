@@ -7,7 +7,10 @@ $Stats = new Stats();
 $title = _("Statistics");
 
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
-if ($airline_icao == '' && isset($_COOKIE['stats_airline_icao'])) {
+if ($airline_icao == 'all') {
+	unset($_COOKIE['stats_airline_icao']);
+	$airline_icao = '';
+} elseif ($airline_icao == '' && isset($_COOKIE['stats_airline_icao'])) {
 	$airline_icao = $_COOKIE['stats_airline_icao'];
 } elseif ($airline_icao == '' && isset($globalFilter)) {
 	if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];
@@ -124,7 +127,8 @@ require_once('header.php');
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
-    if ($airline_icao == '') {
+//    echo $airline_icao;
+    if ($airline_icao == '' || $airline_icao == 'all') {
 ?>
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Airline"); ?></h2>

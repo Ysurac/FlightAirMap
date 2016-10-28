@@ -8,10 +8,10 @@
 					require_once('require/class.Stats.php');
 					$Stats = new Stats();
 					$airlines = $Stats->getAllAirlineNames();
-					if (isset($airline_icao) && $airline_icao == '') {
-						print '<option value="" selected>All</option>';
+					if (isset($airline_icao) && ($airline_icao == '' || $airline_icao == 'all')) {
+						print '<option value="all" selected>All</option>';
 					} else {
-						print '<option value="">All</option>';
+						print '<option value="all">All</option>';
 					}
 					foreach($airlines as $airline) {
 						if (isset($airline_icao) && $airline_icao == $airline['airline_icao']) {

@@ -6,7 +6,10 @@ $Stats = new Stats();
 $title = _("Statistics").' - '._("Busiest Month of Last Year");
 
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
-if ($airline_icao == '' && isset($_COOKIE['stats_airline_icao'])) {
+if ($airline_icao == 'all') {
+    unset($_COOKIE['stats_airline_icao']);
+    $airline_icao = '';
+} elseif ($airline_icao == '' && isset($_COOKIE['stats_airline_icao'])) {
     $airline_icao = $_COOKIE['stats_airline_icao'];
 } elseif ($airline_icao == '' && isset($globalFilter)) {
     if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];

@@ -4315,11 +4315,11 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public function countAllAirlineCountries($limit = true)
+	public function countAllAirlineCountries($limit = true, $filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
-		 			FROM spotter_output
-					WHERE spotter_output.airline_country <> '' AND spotter_output.airline_country <> 'NA' 
+		 			FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND spotter_output.airline_country <> 'NA' 
 					GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
@@ -7813,7 +7813,7 @@ class Spotter{
 	* @return Array the date list
 	*
 	*/
-	public function countAllDatesByAirlines()
+	public function countAllDatesByAirlines($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -7821,11 +7821,10 @@ class Spotter{
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
-
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS date_name, count(*) as date_count
-								FROM spotter_output 
-								WHERE spotter_output.airline_icao <> '' 
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' 
 								GROUP BY spotter_output.airline_icao, date_name 
 								ORDER BY date_count DESC
 								LIMIT 10 OFFSET 0";
@@ -8101,7 +8100,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMilitaryMonths()
+	public function countAllMilitaryMonths($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -8109,17 +8108,15 @@ class Spotter{
 			$datetime = new DateTime();
 			$offset = $datetime->format('P');
 		} else $offset = '+00:00';
-
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT YEAR(CONVERT_TZ(s.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(s.date,'+00:00', :offset)) AS month_name, count(*) as date_count
-								FROM spotter_output s
-								WHERE s.airline_type = 'military'
+								FROM spotter_output s".$filter_query." s.airline_type = 'military'
 								GROUP BY year_name, month_name 
 								ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT EXTRACT(YEAR FROM s.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM s.date AT TIME ZONE INTERVAL :offset) AS month_name, count(*) as date_count
-								FROM spotter_output s
-								WHERE s.airline_type = 'military'
+								FROM spotter_output s".$filter_query." s.airline_type = 'military'
 								GROUP BY year_name, month_name 
 								ORDER BY date_count DESC";
 		}
