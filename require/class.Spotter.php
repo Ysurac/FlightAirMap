@@ -3599,12 +3599,12 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public function countAllAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
+	public function countAllAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
-		 			FROM spotter_output
-					WHERE spotter_output.airline_name <> '' AND spotter_output.airline_icao <> 'NA' ";
+		 			FROM spotter_output".$filter_query." spotter_output.airline_name <> '' AND spotter_output.airline_icao <> 'NA' ";
 		if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';

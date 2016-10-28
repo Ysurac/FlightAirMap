@@ -483,6 +483,7 @@ class Stats {
                 return $all;
 	}
 	public function countAllDatesByAirlines($filter_name = '') {
+		global $globalStatsFilters;
 		$query = "SELECT stats_airline as airline_icao, flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'date' AND filter_name = :filter_name";
 		$query_data = array('filter_name' => $filter_name);
                  try {
@@ -587,6 +588,7 @@ class Stats {
 		return $all;
 	}
 	public function countOverallMilitaryFlights($filter_name = '') {
+		global $globalStatsFilters;
 		$all = $this->getSumStats('military_flights_bymonth',date('Y'),'',$filter_name);
 		if (empty($all)) {
 		        $filters = array();
@@ -625,6 +627,7 @@ class Stats {
 		return $all;
 	}
 	public function countOverallAirlines($filter_name = '') {
+		global $globalStatsFilters;
 		$query = "SELECT COUNT(*) AS nb_airline FROM stats_airline WHERE filter_name = :filter_name";
                  try {
                         $sth = $this->db->prepare($query);
