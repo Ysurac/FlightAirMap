@@ -234,7 +234,8 @@ class Connection{
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':database' => $globalDBname,':table' => $table,':name' => $name));
 			} catch(PDOException $e) {
-				return "error : ".$e->getMessage()."\n";
+				echo "error : ".$e->getMessage()."\n";
+				return false;
 			}
 			$result = $sth->fetch(PDO::FETCH_ASSOC);
 			if ($result['nb'] > 0) return true;
@@ -244,7 +245,8 @@ class Connection{
 			try {
 				$results = $this->db->query($query);
 			} catch(PDOException $e) {
-				return "error : ".$e->getMessage()."\n";
+				echo "error : ".$e->getMessage()."\n";
+				return false;
 			}
 			$colcnt = $results->columnCount();
 			for ($i = 0; $i < $colcnt; $i++) {
