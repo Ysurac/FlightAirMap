@@ -1595,6 +1595,7 @@ class update_db {
 	public static function update_airspace_fam() {
 		global $tmp_dir, $globalDebug, $globalDBdriver;
 		include_once('class.create_db.php');
+		$error = '';
 		if ($globalDebug) echo "Airspace from FlightAirMap website : Download...";
 		if ($globalDBdriver == 'mysql') {
 			update_db::download('http://data.flightairmap.fr/data/airspace_mysql.sql.gz.md5',$tmp_dir.'airspace.sql.gz.md5');

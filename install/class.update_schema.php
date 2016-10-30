@@ -859,6 +859,9 @@ class update_schema {
 			} catch(PDOException $e) {
 				return "error (add forsource column) : ".$e->getMessage()."\n";
 			}
+		} else {
+			$errort = $Connection->checkColumnName('airlines','forsource');
+			if ($errort !== true && $errort !== false) return 'Error check column airlines : '.$errort;
 		}
 		if (!$Connection->checkColumnName('stats_aircraft','stats_airline')) {
 			// Add forsource to airlines
@@ -903,6 +906,9 @@ class update_schema {
 			} catch(PDOException $e) {
 				return "error (add unique key in stats_airport) : ".$e->getMessage()."\n";
 			}
+		} else {
+			$errort = $Connection->checkColumnName('stats_airport','stats_airline');
+			if ($errort !== true && $errort !== false) return 'Error check column stats_airport : '.$errort;
 		}
 		if (!$Connection->checkColumnName('stats_country','stats_airline')) {
 			// Add forsource to airlines
@@ -945,29 +951,28 @@ class update_schema {
 			} catch(PDOException $e) {
 				return "error (add stats_airline & filter_name column in stats) : ".$e->getMessage()."\n";
 			}
-		}
-		if ($globalDBdriver == 'mysql' && $Connection->indexExists('stats','type')) {
-			// Add unique key
-			$query = "drop index type on stats;ALTER TABLE stats ADD UNIQUE stats_type (stats_type,stats_date,stats_airline,filter_name);";
-			try {
-				$sth = $Connection->db->prepare($query);
-				$sth->execute();
-			} catch(PDOException $e) {
-				return "error (add unique key in stats) : ".$e->getMessage()."\n";
-			}
-		
-		} else {
-			// Add unique key
-			if ($globalDBdriver == 'mysql') {
-				$query = "drop index stats_type on stats;ALTER TABLE stats ADD UNIQUE stats_type (stats_type,stats_date,stats_airline,filter_name);";
+			if ($globalDBdriver == 'mysql' && $Connection->indexExists('stats','type')) {
+				// Add unique key
+				$query = "drop index type on stats;ALTER TABLE stats ADD UNIQUE stats_type (stats_type,stats_date,stats_airline,filter_name);";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add unique key in stats) : ".$e->getMessage()."\n";
+				}
 			} else {
-				$query = "alter table stats drop constraint stats_stats_type_stats_date_key;ALTER TABLE stats ADD CONSTRAINT stats_type UNIQUE (stats_type,stats_date,stats_airline,filter_name);";
-			}
-			try {
-				$sth = $Connection->db->prepare($query);
-				$sth->execute();
-			} catch(PDOException $e) {
-				return "error (add unique key in stats) : ".$e->getMessage()."\n";
+				// Add unique key
+				if ($globalDBdriver == 'mysql') {
+					$query = "drop index stats_type on stats;ALTER TABLE stats ADD UNIQUE stats_type (stats_type,stats_date,stats_airline,filter_name);";
+				} else {
+					$query = "alter table stats drop constraint stats_stats_type_stats_date_key;ALTER TABLE stats ADD CONSTRAINT stats_type UNIQUE (stats_type,stats_date,stats_airline,filter_name);";
+				}
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add unique key in stats) : ".$e->getMessage()."\n";
+				}
 			}
 		}
 		if (!$Connection->checkColumnName('stats_registration','stats_airline')) {
