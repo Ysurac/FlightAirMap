@@ -1771,6 +1771,7 @@ class Spotter{
 		$sth->execute($query_values);
     
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		if (count($row) > 0) {
 			return $row['usage'];
 		} else return '';
@@ -1795,6 +1796,7 @@ class Spotter{
 		$sth->execute($query_values);
 		
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		if (count($row) > 0) {
 			return $row['icao'];
 		} else return '';
@@ -1819,6 +1821,7 @@ class Spotter{
 		$sth = $this->db->prepare($query);
 		$sth->execute($query_values);
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		if (count($row) > 0) {
 			$airport_latitude = $row['latitude'];
 			$airport_longitude = $row['longitude'];
@@ -2055,6 +2058,7 @@ class Spotter{
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':fromsource' => $fromsource));
 				$row = $sth->fetch(PDO::FETCH_ASSOC);
+				$sth->closeCursor();
 				if ($row['nb'] == 0) $result = $this->getAllAirlineInfo($airline_icao);
 			}
 			return $result;
@@ -2147,6 +2151,7 @@ class Spotter{
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		if (isset($row['icaotypecode'])) {
 			return $row['icaotypecode'];
 		} else return '';
@@ -2168,6 +2173,7 @@ class Spotter{
 		$sth->execute(array(':operator' => $operator));
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		if (isset($row['operator_correct'])) {
 			return $row['operator_correct'];
 		} else return $operator;
@@ -2190,6 +2196,7 @@ class Spotter{
 		$sth->execute(array(':callsign' => $callsign));
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		if (count($row) > 0) {
 			return $row;
 		} else return array();
@@ -2242,8 +2249,9 @@ class Spotter{
 			$query  = "SELECT aircraft_owner.base, aircraft_owner.owner, aircraft_owner.date_first_reg FROM aircraft_owner WHERE registration = :registration LIMIT 1";
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':registration' => $registration));
-
-			return $sth->fetch(PDO::FETCH_ASSOC);
+			$result = $sth->fetch(PDO::FETCH_ASSOC);
+			$sth->closeCursor();
+			return $result;
 		} else return array();
 	}
 	
@@ -9638,6 +9646,7 @@ q	*
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
     
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		if (count($row) > 0) {
 		    //return $row['Registration'];
 		    return $row['registration'];
@@ -9662,6 +9671,7 @@ q	*
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
     
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		if (count($row) > 0) {
 		    if ($row['type_flight'] == null) return '';
 		    else return $row['type_flight'];
@@ -9700,6 +9710,7 @@ q	*
 			$sth->execute();
     
 			$row = $sth->fetch(PDO::FETCH_ASSOC);
+			$sth->closeCursor();
 			if (count($row) > 0) {
 				return $row;
 			} else return '';

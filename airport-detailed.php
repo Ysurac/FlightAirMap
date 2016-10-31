@@ -52,12 +52,14 @@ if (!isset($_GET['airport'])){
 		$title = sprintf(_("Detailed View for %s, %s (%s)"),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']);
 
 		require_once('header.php');
-		/*
+		
 		print '<div class="select-item">';
 		print '<form action="'.$globalURL.'/airport" method="post">';
 		print '<select name="airport" class="selectpicker" data-live-search="true">';
 		print '<option></option>';
-		$airport_names = $Spotter->getAllAirportNames();
+		$Stats = new Stats();
+		$airport_names = $Stats->getAllAirportNames();
+		if (empty($airport_names)) $airport_names = $Spotter->getAllAirportNames();
 		ksort($airport_names);
 		foreach($airport_names as $airport_name)
 		{
@@ -72,7 +74,7 @@ if (!isset($_GET['airport'])){
 		print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
 		print '</form>';
 		print '</div>';
-		*/
+		
 		if ($airport_icao != "NA")
 		{
 			print '<div class="info column">';

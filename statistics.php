@@ -6,6 +6,7 @@ $beginpage = microtime(true);
 $Stats = new Stats();
 $title = _("Statistics");
 
+if (!isset($filter_name)) $filter_name = '';
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 if ($airline_icao == 'all') {
 	unset($_COOKIE['stats_airline_icao']);
@@ -45,29 +46,29 @@ require_once('header.php');
     ?>
     <?php include('statistics-sub-menu.php'); ?>
     <div class="row global-stats">
-        <div class="col-md-2"><span class="type"><?php echo _("Flights"); ?></span><span><?php print number_format($Stats->countOverallFlights($airline_icao)); ?></span></div> 
+        <div class="col-md-2"><span class="type"><?php echo _("Flights"); ?></span><span><?php print number_format($Stats->countOverallFlights($airline_icao,$filter_name)); ?></span></div> 
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-        <div class="col-md-2"><span class="type"><?php echo _("Arrivals seen"); ?></span><span><?php print number_format($Stats->countOverallArrival($airline_icao)); ?></span></div> 
+        <div class="col-md-2"><span class="type"><?php echo _("Arrivals seen"); ?></span><span><?php print number_format($Stats->countOverallArrival($airline_icao,$filter_name)); ?></span></div> 
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
 	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 	?>
-    	    <div class="col-md-2"><span class="type"><?php echo _("Pilots"); ?></span><span><?php print number_format($Stats->countOverallPilots($airline_icao)); ?></span></div> 
+    	    <div class="col-md-2"><span class="type"><?php echo _("Pilots"); ?></span><span><?php print number_format($Stats->countOverallPilots($airline_icao,$filter_name)); ?></span></div> 
 	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     	    } else {
     	?>
-    	    <div class="col-md-2"><span class="type"><?php echo _("Owners"); ?></span><span><?php print number_format($Stats->countOverallOwners($airline_icao)); ?></span></div> 
+    	    <div class="col-md-2"><span class="type"><?php echo _("Owners"); ?></span><span><?php print number_format($Stats->countOverallOwners($airline_icao,$filter_name)); ?></span></div> 
 	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
     	<?php
     	    }
     	?>
-        <div class="col-md-2"><span class="type"><?php echo _("Aircrafts"); ?></span><span><?php print number_format($Stats->countOverallAircrafts($airline_icao)); ?></span></div> 
+        <div class="col-md-2"><span class="type"><?php echo _("Aircrafts"); ?></span><span><?php print number_format($Stats->countOverallAircrafts($airline_icao,$filter_name)); ?></span></div> 
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     		if ($airline_icao == '') {
     	?>
-        <div class="col-md-2"><span class="type"><?php echo _("Airlines"); ?></span><span><?php print number_format($Stats->countOverallAirlines()); ?></span></div>
+        <div class="col-md-2"><span class="type"><?php echo _("Airlines"); ?></span><span><?php print number_format($Stats->countOverallAirlines($filter_name)); ?></span></div>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
 		}
@@ -75,7 +76,7 @@ require_once('header.php');
 	<?php
 		if (!(isset($globalIVAO) && $globalIVAO) && !(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalphpVMS) && $globalphpVMS)) {
 	?>
-        <div class="col-md-2"><span class="type"><?php echo _("Military"); ?></span><span><?php print number_format($Stats->countOverallMilitaryFlights()); ?></span></div> 
+        <div class="col-md-2"><span class="type"><?php echo _("Military"); ?></span><span><?php print number_format($Stats->countOverallMilitaryFlights($filter_name)); ?></span></div> 
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
 		}
@@ -87,7 +88,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Aircraft Type"); ?></h2>
                  <?php
-                  $aircraft_array = $Stats->countAllAircraftTypes(true,$airline_icao);
+                  $aircraft_array = $Stats->countAllAircraftTypes(true,$airline_icao,$filter_name);
 		    if (count($aircraft_array) == 0) print _("No data available");
 		    else {
 
@@ -134,7 +135,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Airline"); ?></h2>
                  <?php
-                  $airline_array = $Stats->countAllAirlines();
+                  $airline_array = $Stats->countAllAirlines(true,$filter_name);
 		    if (count($airline_array) == 0) print _("No data available");
 		    else {
 
@@ -181,7 +182,7 @@ require_once('header.php');
         <div class="row column">
 
 	    <?php
-                 $flightover_array = $Stats->countAllFlightOverCountries($airline_icao);
+                 $flightover_array = $Stats->countAllFlightOverCountries($airline_icao,$filter_name);
 		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 		    if (empty($flightover_array)) {
 	    ?>
@@ -195,7 +196,7 @@ require_once('header.php');
             ?>
                 <h2><?php echo _("Top 10 Most Common Pilots"); ?></h2>
                  <?php
-                  $pilot_array = $Stats->countAllPilots(true,$airline_icao);
+                  $pilot_array = $Stats->countAllPilots(true,$airline_icao,$filter_name);
 		    if (count($pilot_array) == 0) print _("No data available");
 		    else {
 
@@ -242,7 +243,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Owners"); ?></h2>
                  <?php
-                  $owner_array = $Stats->countAllOwners(true,$airline_icao);
+                  $owner_array = $Stats->countAllOwners(true,$airline_icao,$filter_name);
 		    if (count($owner_array) == 0) print _("No data available");
 		    else {
 
@@ -344,7 +345,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Departure Airports"); ?></h2>
                 <?php
-                $airport_airport_array = $Stats->countAllDepartureAirports($airline_icao);
+                $airport_airport_array = $Stats->countAllDepartureAirports($airline_icao,$filter_name);
 		    if (count($airport_airport_array) == 0) print _("No data available");
 		    else {
 
@@ -394,7 +395,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Arrival Airports"); ?></h2>
                 <?php
-                $airport_airport_array2 = $Stats->countAllArrivalAirports($airline_icao);
+                $airport_airport_array2 = $Stats->countAllArrivalAirports($airline_icao,$filter_name);
 		    if (count($airport_airport_array2) == 0) print _("No data available");
 		    else {
 
@@ -446,7 +447,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Months of the last 12 Months"); ?></h2>
                 <?php
-                  $year_array = $Stats->countAllMonthsLastYear($airline_icao);
+                  $year_array = $Stats->countAllMonthsLastYear($airline_icao,$filter_name);
 		    if (count($year_array) == 0) print _("No data available");
 		    else {
                   print '<div id="chart8" class="chart" width="100%"></div>
@@ -492,7 +493,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Day in the last Month"); ?></h2>
                 <?php
-                  $month_array = $Stats->countAllDatesLastMonth($airline_icao);
+                  $month_array = $Stats->countAllDatesLastMonth($airline_icao,$filter_name);
 		    if (count($month_array) == 0) print _("No data available");
 		    else {
                   print '<div id="chart9" class="chart" width="100%"></div>
@@ -538,7 +539,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Day in the last 7 Days"); ?></h2>
                 <?php
-                    $date_array = $Stats->countAllDatesLast7Days($airline_icao);
+                    $date_array = $Stats->countAllDatesLast7Days($airline_icao,$filter_name);
 		    if (empty($date_array)) print _("No data available");
 		    else {
                   print '<div id="chart5" class="chart" width="100%"></div>
@@ -585,7 +586,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Time of the Day"); ?></h2>
                 <?php
-                  $hour_array = $Stats->countAllHours('hour',$airline_icao);
+                  $hour_array = $Stats->countAllHours('hour',true,$airline_icao,$filter_name);
 		    if (empty($hour_array)) print _("No data available");
 		    else {
 
@@ -630,7 +631,7 @@ require_once('header.php');
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         </div>
 <?php
-    if ($airline_icao == '') {
+    if ($airline_icao == '' && $filter_name == '') {
 ?>
         <div class="row column">
         	<?php

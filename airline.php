@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
 require_once('require/class.Stats.php');
 
@@ -33,12 +34,14 @@ if (isset($_POST['airline']))
 	print '>'._("Military").'</option></select>';
 	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button></form></div>';
 
+	$Stats = new Stats();
 	if (isset($_POST['airline_type'])) 
 	{
 		$airline_type = filter_input(INPUT_POST,'airline_type',FILTER_SANITIZE_STRING);
+		//$airline_names = $Stats->getAllAirlineNames($airline_type);
 		$airline_names = $Spotter->getAllAirlineNames($airline_type);
 	} else {
-		$Stats = new Stats();
+		//$Stats = new Stats();
 		//$airline_names = $Spotter->getAllAirlineNames();
 		$airline_names = $Stats->getAllAirlineNames();
 		if (empty($airline_names)) $airline_names = $Spotter->getAllAirlineNames();

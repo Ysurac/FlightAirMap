@@ -53,6 +53,7 @@ class Translation {
                         return "error : ".$e->getMessage();
                 }
                 $row = $sth->fetch(PDO::FETCH_ASSOC);
+                $sth->closeCursor();
                 if (count($row) > 0) {
                         return $row['operator_correct'];
                 } else return $ident;

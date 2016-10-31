@@ -5,6 +5,7 @@ require_once('require/class.Language.php');
 $Stats = new Stats();
 $title = _("Statistics").' - '._("Most common Airline");
 require_once('header.php');
+if (!isset($filter_name)) $filter_name = '';
 include('statistics-sub-menu.php'); 
 
 print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -13,7 +14,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 	  </div>
     	<p>'._("Below are the <strong>Top 10</strong> most common airlines.").'</p>';
 
-$airline_array = $Stats->countAllAirlines();
+$airline_array = $Stats->countAllAirlines(true,$filter_name);
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});

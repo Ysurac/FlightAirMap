@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
 
 if (!isset($_GET['airline'])){
@@ -44,7 +45,9 @@ if (!isset($_GET['airline'])){
 		print '<form action="'.$globalURL.'/airline" method="post">';
 		print '<select name="airline" class="selectpicker" data-live-search="true">';
 		print '<option></option>';
-		$airline_names = $Spotter->getAllAirlineNames();
+		$Stats = new Stats();
+		$airline_names = $Stats->getAllAirlineNames();
+		if (empty($airline_names)) $airline_names = $Spotter->getAllAirlineNames();
 		foreach($airline_names as $airline_name)
 		{
 			if($_GET['airline'] == $airline_name['airline_icao'])

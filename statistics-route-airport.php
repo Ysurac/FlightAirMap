@@ -5,6 +5,7 @@ require_once('require/class.Language.php');
 $Spotter = new Spotter();
 $title = _("Statistics").' - '._("Most common Route by Airport");
 require_once('header.php');
+if (!isset($filter_name)) $filter_name = '';
 include('statistics-sub-menu.php'); 
 
 print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>

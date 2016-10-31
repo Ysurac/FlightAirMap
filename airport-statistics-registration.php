@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
 if (!isset($_GET['airport'])) {
         header('Location: '.$globalURL.'/airport');
@@ -20,7 +21,9 @@ if (!empty($airport_array))
 	print '<form action="'.$globalURL.'/airport" method="post">';
 	print '<select name="airport" class="selectpicker" data-live-search="true">';
 	print '<option></option>';
-	$airport_names = $Spotter->getAllAirportNames();
+	$Stats = new Stats();
+	$airport_names = $tats->getAllAirportNames();
+	if (empty($airport_names)) $airport_names = $Spotter->getAllAirportNames();
 	ksort($airport_names);
 	foreach($airport_names as $airport_name)
 	{

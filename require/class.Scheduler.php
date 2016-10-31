@@ -120,6 +120,7 @@ class Schedule {
 			return "error : ".$e->getMessage();
 		}
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		if (count($row) > 0) {
 			return $row;
 		} else return array();
@@ -143,6 +144,7 @@ class Schedule {
 			return "error : ".$e->getMessage();
 		}
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		return $row['nb'];
 	}
 

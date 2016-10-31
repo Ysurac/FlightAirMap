@@ -7,7 +7,8 @@
 				<?php
 					require_once('require/class.Stats.php');
 					$Stats = new Stats();
-					$airlines = $Stats->getAllAirlineNames();
+					if (!isset($filter_name)) $filter_name = '';
+					$airlines = $Stats->getAllAirlineNames($filter_name);
 					if (isset($airline_icao) && ($airline_icao == '' || $airline_icao == 'all')) {
 						print '<option value="all" selected>All</option>';
 					} else {

@@ -468,6 +468,7 @@ class SpotterArchive {
                         die;
                 }
 		$result = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
                 return $result['nb'];
 
         }

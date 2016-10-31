@@ -5,6 +5,7 @@ require_once('require/class.Language.php');
 $Stats = new Stats();
 $title = _("Statistics").' - '._("Busiest Time of the Day");
 
+if (!isset($filter_name)) $filter_name = '';
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 if ($airline_icao == 'all') {
     unset($_COOKIE['stats_airline_icao']);
@@ -26,7 +27,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 	</div>
 	<p>'._("Below is a list of the most common <strong>time of day</strong>.").'</p>';
 
-$hour_array = $Stats->countAllHours('hour',true,$airline_icao);
+$hour_array = $Stats->countAllHours('hour',true,$airline_icao,$filter_name);
 print '<div id="chartHour" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});

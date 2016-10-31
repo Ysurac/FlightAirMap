@@ -195,7 +195,7 @@ class Connection{
 			return false;
 		}
 		if($results->rowCount()>0) {
-		    return true; 
+			return true; 
 		}
 		else return false;
 	}

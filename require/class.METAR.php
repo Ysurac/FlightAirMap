@@ -58,6 +58,7 @@ class METAR {
                         return "error : ".$e->getMessage();
                 }
                 $row = $sth->fetch(PDO::FETCH_ASSOC);
+                $sth->closeCursor();
                 if ($row['nb'] > 0) return false;
                 else return true;
         }

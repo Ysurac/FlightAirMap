@@ -4,7 +4,7 @@ require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
 $Stats = new Stats();
 $title = _("Statistics").' - '._("Most common Airline by Country");
-
+if (!isset($filter_name)) $filter_name = '';
 require_once('header.php');
 include('statistics-sub-menu.php'); 
 
@@ -14,7 +14,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 	  </div>
       <p>'._("Below are the <strong>Top 10</strong> countries that an airline belongs to.").'</p>';
 
-$airline_array = $Stats->countAllAirlineCountries();
+$airline_array = $Stats->countAllAirlineCountries(true,$filter_name);
 if (count($airline_array) > 0) {
 print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 

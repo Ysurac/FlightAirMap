@@ -5,6 +5,7 @@ require_once('require/class.Language.php');
 $Stats = new Stats();
 $title = _("Statistics").' - '._("Most common Departure Airport");
 
+if (!isset($filter_name)) $filter_name = '';
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 if ($airline_icao == 'all') {
     unset($_COOKIE['stats_airline_icao']);
@@ -26,7 +27,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 	  </div>
     	<p>'._("Below are the <strong>Top 10</strong> most common departure airports.").'</p>';
 
-$airport_airport_array = $Stats->countAllDepartureAirports(true,$airline_icao);
+$airport_airport_array = $Stats->countAllDepartureAirports(true,$airline_icao,$filter_name);
 print '<script>
     	google.load("visualization", "1", {packages:["geochart"]});
     	google.setOnLoadCallback(drawCharts);

@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
 $Spotter = new Spotter();
 
@@ -42,7 +43,9 @@ if (!isset($_GET['aircraft_type'])){
 		print '<form action="'.$globalURL.'/aircraft" method="post">';
 		print '<select name="aircraft_type" class="selectpicker" data-live-search="true">';
     		print '<option></option>';
-		$aircraft_types = $Spotter->getAllAircraftTypes();
+    		$Stats = new Stats();
+		$aircraft_types = $Stats->getAllAircraftTypes();
+		if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();
 		foreach($aircraft_types as $aircrafttype)
 		{
 			if($aircraft_type == $aircrafttype['aircraft_icao'])
