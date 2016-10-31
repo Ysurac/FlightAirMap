@@ -240,6 +240,7 @@ class Connection{
 				echo "error : ".$e->getMessage()."\n";
 			}
 			$result = $sth->fetch(PDO::FETCH_ASSOC);
+			$sth->closeCursor();
 			if ($result['nb'] > 0) return true;
 			else return false;
 /*		} else {
