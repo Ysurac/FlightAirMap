@@ -95,7 +95,7 @@ class Connection{
 					$this->dbs[$DBname]->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
 					$this->dbs[$DBname]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 					$this->dbs[$DBname]->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
-					if (!isset($globalDBTimeOut)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,200);
+					if (!isset($globalDBTimeOut)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,500);
 					else $this->dbs[$DBname]->setAttribute(PDO::ATTR_TIMEOUT,$globalDBTimeOut);
 					if (!isset($globalDBPersistent)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
 					else $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,$globalDBPersistent);
@@ -230,16 +230,19 @@ class Connection{
 		global $globalDBdriver, $globalDBname;
 		if ($globalDBdriver == 'mysql') {
 			$query = "SELECT COUNT(*) as nb FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = :database AND TABLE_NAME = :table AND COLUMN_NAME = :name";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = :database AND TABLE_NAME = :table AND COLUMN_NAME = :name";
+		}
 			try {
-				$sth = $this->db->prepare($query);
+				$sth = $this->db()->prepare($query);
 				$sth->execute(array(':database' => $globalDBname,':table' => $table,':name' => $name));
 			} catch(PDOException $e) {
-				return "error : ".$e->getMessage()."\n";
+				echo "error : ".$e->getMessage()."\n";
 			}
 			$result = $sth->fetch(PDO::FETCH_ASSOC);
 			if ($result['nb'] > 0) return true;
 			else return false;
-		} else {
+/*		} else {
 			$query = "SELECT * FROM ".$table." LIMIT 0";
 			try {
 				$results = $this->db->query($query);
@@ -252,6 +255,7 @@ class Connection{
 				if ($name == $col['name']) return true;
 			}
 			return false;
+*/
 		}
 	}
 
