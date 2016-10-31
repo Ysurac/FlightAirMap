@@ -787,7 +787,7 @@ while ($i > 0) {
     	    //$last_exec['phpvmacars'] = time();
     	    $last_exec[$id]['last'] = time();
 	//} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
-	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars') {
+	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars' || $value['format'] == 'acarssbs3') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
     	    //$last_exec[$id]['last'] = time();
 
@@ -801,7 +801,7 @@ while ($i > 0) {
 		foreach ($read as $nb => $r) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
-        	    if ($format == 'sbs' || $format == 'aprs' || $format == 'raw' || $format == 'tsv') {
+        	    if ($format == 'sbs' || $format == 'aprs' || $format == 'raw' || $format == 'tsv' || $format == 'acarssbs3') {
         		$buffer = socket_read($r, 6000,PHP_NORMAL_READ);
         	    } else {
 	    	        $az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
@@ -817,7 +817,9 @@ while ($i > 0) {
 		    if ($buffer != '') {
 			$tt[$format] = 0;
 			if ($format == 'acarssbs3') {
-			    echo $buffer."\n";
+                    	    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
+			    $ACARS->add(trim($buffer));
+			    $ACARS->deleteLiveAcarsData();
 			} elseif ($format == 'raw') {
 			    // AVR format
 			    $data = $SBS->parse($buffer);
@@ -1033,7 +1035,7 @@ while ($i > 0) {
 	    } else {
 		$error = socket_strerror(socket_last_error());
 		if ($globalDebug) echo "ERROR : socket_select give this error ".$error . "\n";
-		if (($error != SOCKET_EINPROGRESS && $error != SOCKET_EALREADY) || time() - $time >= $timeout) {
+		if (($error != SOCKET_EINPROGRESS && $error != SOCKET_EALREADY && $error != 'Success') || time() - $time >= $timeout) {
 			if (isset($globalDebug)) echo "Restarting...\n";
 			// Restart the script if possible
 			if (is_array($sockets)) {

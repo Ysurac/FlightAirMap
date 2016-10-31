@@ -859,9 +859,6 @@ class update_schema {
 			} catch(PDOException $e) {
 				return "error (add forsource column) : ".$e->getMessage()."\n";
 			}
-		} else {
-			$errort = $Connection->checkColumnName('airlines','forsource');
-			if ($errort !== true && $errort !== false) return 'Error check column airlines : '.$errort;
 		}
 		if (!$Connection->checkColumnName('stats_aircraft','stats_airline')) {
 			// Add forsource to airlines
@@ -906,9 +903,6 @@ class update_schema {
 			} catch(PDOException $e) {
 				return "error (add unique key in stats_airport) : ".$e->getMessage()."\n";
 			}
-		} else {
-			$errort = $Connection->checkColumnName('stats_airport','stats_airline');
-			if ($errort !== true && $errort !== false) return 'Error check column stats_airport : '.$errort;
 		}
 		if (!$Connection->checkColumnName('stats_country','stats_airline')) {
 			// Add forsource to airlines

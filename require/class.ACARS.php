@@ -104,6 +104,8 @@ class ACARS {
 		$result = array();
 		$n = sscanf($data,'(null) %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 		if ($n == 0) $n = sscanf($data,'AC%*c %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+		if ($n == 0) $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%6[0-9A-Z-],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+		if ($n == 0) $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%5[0-9A-Z],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 		if ($n != 0) {
 			$registration = str_replace('.','',$registration);
 			$result = array('registration' => $registration, 'ident' => $ident,'label' => $label, 'block_id' => $block_id,'msg_no' => $msg_no,'message' => $message);
@@ -1179,6 +1181,7 @@ class ACARS {
 			return "error : ".$e->getMessage();
 		}
 		$resultsi = $sthsi->fetch(PDO::FETCH_ASSOC);
+		$sthsi->closeCursor();
 		//print_r($resultsi);
 		if (count($resultsi) > 0 && $resultsi['ident'] != $ident && $resultsi['ident'] != '') {
 			$Translation = new Translation($this->db);
@@ -1198,6 +1201,7 @@ class ACARS {
 					return "error : ".$e->getMessage();
 				}
 				$result = $sth->fetch(PDO::FETCH_ASSOC);
+				$sth->closeCursor();
 				if (isset($result['modes'])) $hex = $result['modes'];
 				else $hex = '';
 				$SI_data = array('hex' => $hex,'ident' => $ident,'aircraft_icao' => $ICAOTypeCode,'registration' => $registration,'latitude' => $latitude,'$longitude' => $longitude,'format_source' => 'ACARS');
@@ -1217,6 +1221,7 @@ class ACARS {
 			return "error : ".$e->getMessage();
 		}
 		$result = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
 		//print_r($result);
 		if (isset($result['flightaware_id'])) {
 			if (isset($result['ModeS'])) $ModeS = $result['ModeS'];
@@ -1238,7 +1243,7 @@ class ACARS {
 					return "error : ".$e->getMessage();
 				}
 				$row = $sthc->fetch(PDO::FETCH_ASSOC);
-
+				$sthc->closeCursor();
 				if (count($row) ==  0) {
 					if ($globalDebug) echo " Add to ModeS table - ";
 					$queryi = "INSERT INTO aircraft_modes (ModeS,ModeSCountry,Registration,ICAOTypeCode,Source) VALUES (:ModeS,:ModeSCountry,:Registration, :ICAOTypeCode,'ACARS')";

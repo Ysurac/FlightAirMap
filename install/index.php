@@ -455,6 +455,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="whazzup" <?php if (isset($source['format']) && $source['format'] == 'whazzup') print 'selected'; ?>>IVAO</option>
 										<option value="flightgearmp" <?php if (isset($source['format']) && $source['format'] == 'flightgearmp') print 'selected'; ?>>FlightGear Multiplayer</option>
 										<option value="flightgearsp" <?php if (isset($source['format']) && $source['format'] == 'flightgearsp') print 'selected'; ?>>FlightGear Singleplayer</option>
+										<option value="acars" <?php if (isset($source['format']) && $source['format'] == 'acars') print 'selected'; ?>>ACARS from acarsdec/acarsdeco2 over UDP</option>
+										<option value="acarssbs3" <?php if (isset($source['format']) && $source['format'] == 'acarssbs3') print 'selected'; ?>>ACARS over SBS-3 TCP</option>
 									</select>
 								</td>
 								<td><input type="text" name="name[]" id="name" value="<?php if (isset($source['name'])) print $source['name']; ?>" /></td>
@@ -483,6 +485,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="whazzup">IVAO</option>
 										<option value="flightgearmp">FlightGear Multiplayer</option>
 										<option value="flightgearsp">FlightGear Singleplayer</option>
+										<option value="acars">ACARS from acarsdec/acarsdeco2 over UDP</option>
+										<option value="acarssbs3">ACARS SBS-3 over TCP</option>
 									</select>
 								</td>
 								<td><input type="text" name="name[]" value="" id="name" /></td>
@@ -499,7 +503,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<div id="acars_data">
 				<fieldset>
 					<legend>Source ACARS</legend>
-					<p>Listen UDP server for acarsdec/acarsdeco2/...</p>
+					<p>Listen UDP server for acarsdec/acarsdeco2/... with <i>daemon-acars.php</i> script</p>
 					<p>
 						<label for="acarshost">ACARS UDP host</label>
 						<input type="text" name="acarshost" id="acarshost" value="<?php if (isset($globalACARSHost)) print $globalACARSHost; ?>" />
