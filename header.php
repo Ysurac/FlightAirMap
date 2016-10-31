@@ -347,17 +347,17 @@ if ($facebook_meta_image != "")
         	    if (isset($globalDemo) && $globalDemo) {
     	    ?>
             <li><hr /></li>
-            <li><i>_('ACARS data not available publicly'); ?></i></li>
-            <li><a href="">_('Latest ACARS messages'); ?></a></li>
-            <li><a href="">_('Archive ACARS messages'); ?></a></li>
+            <li><i><?php echo _('ACARS data not available publicly'); ?></i></li>
+            <li><a href=""><?php echo _('Latest ACARS messages'); ?></a></li>
+            <li><a href=""><?php echo _('Archive ACARS messages'); ?></a></li>
             <?php
-        	} else {
+        	    } else {
     	    ?>
             <li><hr /></li>
             <li><a href="<?php print $globalURL; ?>/acars-latest"><?php echo _("Latest ACARS messages"); ?></a></li>
             <li><a href="<?php print $globalURL; ?>/acars-archive"><?php echo _("Archive ACARS messages"); ?></a></li>
             <?php
-        	}
+        	    }
         	}
     	    ?>
             <li><hr /></li>
