@@ -255,8 +255,8 @@ class Connection{
 				if ($name == $col['name']) return true;
 			}
 			return false;
-*/
 		}
+*/
 	}
 
 	/*
