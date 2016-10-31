@@ -247,6 +247,7 @@ RewriteRule ^statistics(/?)$ statistics.php [L,NC]
 
 RewriteRule ^upcoming/([^/]+)/([^/]+)(/?)$ upcoming.php?limit=$1&sort=$2 [L,NC]
 RewriteRule ^upcoming/([^/]+)(/?)$ upcoming.php?limit=$1 [L,NC]
+RewriteRule ^upcoming(/?)$ upcoming.php [L,NC]
 
 ########### TOOLS ###########
 RewriteRule ^tools/acars(/?)$ tools-acars.php [L,NC]
