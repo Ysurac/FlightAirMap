@@ -549,11 +549,12 @@ class Stats {
 		if ($limit) $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour' AND stats_airline = :stats_airline AND filter_name = :filter_name";
 		else $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour' AND stats_airline = :stats_airline AND filter_name = :filter_name";
 		if ($orderby == 'hour') {
+			/*
 			if ($globalDBdriver == 'mysql') {
 				$query .= " ORDER BY flight_date ASC";
 			} else {
-				$query .= " ORDER BY CAST(flight_date AS integer) ASC";
-			}
+			*/
+			$query .= " ORDER BY CAST(flight_date AS integer) ASC";
 		}
 		if ($orderby == 'count') $query .= " ORDER BY hour_count DESC";
                  try {
