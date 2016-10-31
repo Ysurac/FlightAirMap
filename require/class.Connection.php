@@ -229,9 +229,9 @@ class Connection{
 	{
 		global $globalDBdriver, $globalDBname;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(*) as nb FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = :database AND TABLE_NAME = :table AND COLUMN_NAME = :name";
+			$query = "SELECT COUNT(*) as nb FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = :database AND TABLE_NAME = :table AND COLUMN_NAME = :name LIMIT 1";
 		} else {
-			$query = "SELECT COUNT(*) as nb FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = :database AND TABLE_NAME = :table AND COLUMN_NAME = :name";
+			$query = "SELECT COUNT(*) as nb FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = :database AND TABLE_NAME = :table AND COLUMN_NAME = :name LIMIT 1";
 		}
 			try {
 				$sth = $this->db()->prepare($query);
