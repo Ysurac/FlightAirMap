@@ -18,7 +18,8 @@ class Spotter{
 	* @return Array the SQL part
 	*/
 	public function getFilter($filter = array(),$where = false,$and = false) {
-		global $globalFilter;
+		global $globalFilter, $globalStatsFilters, $globalFilterName;
+		if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) $filter = array_merge($globalStatsFilters[$globalFilterName],$filter);
 		if (is_array($globalFilter)) $filter = array_merge($globalFilter,$filter);
 		$filter_query_join = '';
 		$filter_query_where = '';
@@ -3789,11 +3790,12 @@ class Spotter{
 	* @return Array the pilots list
 	*
 	*/
-	public function countAllOwnersByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
+	public function countAllOwnersByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.owner_name, COUNT(spotter_output.owner_name) AS owner_count
-		 			FROM spotter_output WHERE spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL ";
+		 			FROM spotter_output".$filter_query." spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -3834,13 +3836,12 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public function countAllAirlinesByAircraft($aircraft_icao)
+	public function countAllAirlinesByAircraft($aircraft_icao,$filters = array())
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
-
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
-		 			FROM spotter_output
-					WHERE spotter_output.airline_name <> '' AND spotter_output.aircraft_icao = :aircraft_icao 
+		 			FROM spotter_output".$filter_query." spotter_output.airline_name <> '' AND spotter_output.aircraft_icao = :aircraft_icao 
                     GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
@@ -3871,13 +3872,12 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public function countAllAirlineCountriesByAircraft($aircraft_icao)
+	public function countAllAirlineCountriesByAircraft($aircraft_icao,$filters = array())
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
-      
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
-		 			FROM spotter_output
-					WHERE spotter_output.airline_country <> '' AND spotter_output.aircraft_icao = :aircraft_icao
+		 			FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND spotter_output.aircraft_icao = :aircraft_icao
                     GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
 					LIMIT 10 OFFSET 0";
@@ -3908,13 +3908,12 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public function countAllAirlinesByAirport($airport_icao)
+	public function countAllAirlinesByAirport($airport_icao,$filters = array())
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
-
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
-		 			FROM spotter_output
-					WHERE spotter_output.airline_name <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao ) 
+		 			FROM spotter_output".$filter_query." spotter_output.airline_name <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao ) 
                     GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
@@ -3944,13 +3943,12 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public function countAllAirlineCountriesByAirport($airport_icao)
+	public function countAllAirlineCountriesByAirport($airport_icao,$filters = array())
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
-      
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
-		 			FROM spotter_output
-					WHERE spotter_output.airline_country <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao )
+		 			FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao )
 					GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
 					LIMIT 10 OFFSET 0";
@@ -3979,13 +3977,12 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public function countAllAirlinesByManufacturer($aircraft_manufacturer)
+	public function countAllAirlinesByManufacturer($aircraft_manufacturer,$filters = array())
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
-
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
-		 			FROM spotter_output
-					WHERE spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
+		 			FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
 					GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
  
@@ -4015,13 +4012,12 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public function countAllAirlineCountriesByManufacturer($aircraft_manufacturer)
+	public function countAllAirlineCountriesByManufacturer($aircraft_manufacturer,$filters = array())
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
-      
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
-		 			FROM spotter_output
-					WHERE spotter_output.airline_country <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
+		 			FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
 					GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
 					LIMIT 10 OFFSET 0";
@@ -4049,11 +4045,11 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public function countAllAirlinesByDate($date)
+	public function countAllAirlinesByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
-
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime($date);
@@ -4062,14 +4058,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
-		 			FROM spotter_output
-					WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
+		 			FROM spotter_output".$filter_query." DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
 					GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
-		 			FROM spotter_output
-					WHERE to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
+		 			FROM spotter_output".$filter_query." to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
 					GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
 		}
@@ -4099,9 +4093,10 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public function countAllAirlineCountriesByDate($date)
+	public function countAllAirlineCountriesByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -4111,15 +4106,13 @@ class Spotter{
 		
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
-		 			FROM spotter_output
-					WHERE spotter_output.airline_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
+		 			FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
 					GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
 					LIMIT 10 OFFSET 0";
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
-		 			FROM spotter_output
-					WHERE spotter_output.airline_country <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
+		 			FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
 					GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC
 					LIMIT 10 OFFSET 0";
@@ -4147,13 +4140,12 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public function countAllAirlinesByIdent($ident)
+	public function countAllAirlinesByIdent($ident,$filters = array())
 	{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
-
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
-		 		FROM spotter_output
-				WHERE spotter_output.ident = :ident  
+		 		FROM spotter_output".$filter_query." spotter_output.ident = :ident  
 				GROUP BY spotter_output.airline_name
 				ORDER BY airline_count DESC";
       
@@ -4182,14 +4174,14 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public function countAllAirlinesByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllAirlinesByRoute($departure_airport_icao, $arrival_airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
-		 			FROM spotter_output
-					WHERE (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao) 
+		 			FROM spotter_output".$filter_query." (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao) 
 					GROUP BY spotter_output.airline_name
 					ORDER BY airline_count DESC";
       
@@ -4218,14 +4210,14 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public function countAllAirlineCountriesByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllAirlineCountriesByRoute($departure_airport_icao, $arrival_airport_icao,$filters= array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
       
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
-		 		FROM spotter_output
-				WHERE spotter_output.airline_country <> '' AND (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao) 
+		 		FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao) 
 				GROUP BY spotter_output.airline_country
 				ORDER BY airline_country_count DESC
 				LIMIT 10 OFFSET 0";
@@ -4254,13 +4246,12 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public function countAllAirlinesByCountry($country)
+	public function countAllAirlinesByCountry($country,$filters = array())
 	{
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
-		 		FROM spotter_output
-				WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country  
+		 		FROM spotter_output".$filter_query." ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country  
 				GROUP BY spotter_output.airline_name
 				ORDER BY airline_count DESC";
       
@@ -4289,13 +4280,12 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public function countAllAirlineCountriesByCountry($country)
+	public function countAllAirlineCountriesByCountry($country,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-      
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
-		 		FROM spotter_output
-				WHERE spotter_output.airline_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
+		 		FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
 				GROUP BY spotter_output.airline_country
 				ORDER BY airline_country_count DESC
 				LIMIT 10 OFFSET 0";
@@ -4356,6 +4346,7 @@ class Spotter{
 	public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '')
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$Connection= new Connection($this->db);
 		if (!$Connection->tableExists('countries')) return array();
 		/*
@@ -4456,12 +4447,12 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypesByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '')
+	public function countAllAircraftTypesByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT spotter_output.airline_icao, spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer 
-		    FROM spotter_output
-		    WHERE spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' AND spotter_output.airline_icao <>'' AND spotter_output.airline_icao <> 'NA' ";
+		    FROM spotter_output".$filter_query." spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' AND spotter_output.airline_icao <>'' AND spotter_output.airline_icao <> 'NA' ";
 		if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -4504,14 +4495,14 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftRegistrationByAircraft($aircraft_icao)
+	public function countAllAircraftRegistrationByAircraft($aircraft_icao,$filters = array())
 	{
 		$Image = new Image($this->db);
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
-				FROM spotter_output
-				WHERE spotter_output.registration <> '' AND spotter_output.aircraft_icao = :aircraft_icao  
+				FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.aircraft_icao = :aircraft_icao  
 				GROUP BY spotter_output.registration 
 				ORDER BY registration_count DESC";
 
@@ -4547,13 +4538,12 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypesByAirline($airline_icao)
+	public function countAllAircraftTypesByAirline($airline_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
-				FROM spotter_output
-				WHERE spotter_output.aircraft_icao <> '' AND spotter_output.airline_icao = :airline_icao 
+				FROM spotter_output".$filter_query." spotter_output.aircraft_icao <> '' AND spotter_output.airline_icao = :airline_icao 
 				GROUP BY spotter_output.aircraft_name 
 				ORDER BY aircraft_icao_count DESC";
 
@@ -4581,14 +4571,14 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftRegistrationByAirline($airline_icao)
+	public function countAllAircraftRegistrationByAirline($airline_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
-				FROM spotter_output
-				WHERE spotter_output.registration <> '' AND spotter_output.airline_icao = :airline_icao 
+				FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.airline_icao = :airline_icao 
 				GROUP BY spotter_output.registration 
 				ORDER BY registration_count DESC";
 
@@ -4623,13 +4613,12 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftManufacturerByAirline($airline_icao)
+	public function countAllAircraftManufacturerByAirline($airline_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
-				FROM spotter_output
-				WHERE spotter_output.aircraft_manufacturer <> '' AND spotter_output.airline_icao = :airline_icao 
+				FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer <> '' AND spotter_output.airline_icao = :airline_icao 
 				GROUP BY spotter_output.aircraft_manufacturer 
 				ORDER BY aircraft_manufacturer_count DESC";
 
@@ -4656,13 +4645,13 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypesByAirport($airport_icao)
+	public function countAllAircraftTypesByAirport($airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
-				FROM spotter_output
-				WHERE spotter_output.aircraft_icao <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao) 
+				FROM spotter_output".$filter_query." spotter_output.aircraft_icao <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao) 
 				GROUP BY spotter_output.aircraft_name 
 				ORDER BY aircraft_icao_count DESC";
  
@@ -4689,14 +4678,14 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftRegistrationByAirport($airport_icao)
+	public function countAllAircraftRegistrationByAirport($airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
-                    FROM spotter_output
-                    WHERE spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)   
+                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)   
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
@@ -4731,13 +4720,12 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftManufacturerByAirport($airport_icao)
+	public function countAllAircraftManufacturerByAirport($airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
-                    FROM spotter_output
-                    WHERE spotter_output.aircraft_manufacturer <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)  
+                    FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)  
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
@@ -4762,13 +4750,13 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypesByManufacturer($aircraft_manufacturer)
+	public function countAllAircraftTypesByManufacturer($aircraft_manufacturer,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
-                    FROM spotter_output
-                    WHERE spotter_output.aircraft_manufacturer = :aircraft_manufacturer
+                    FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer = :aircraft_manufacturer
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
 
@@ -4793,14 +4781,14 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftRegistrationByManufacturer($aircraft_manufacturer)
+	public function countAllAircraftRegistrationByManufacturer($aircraft_manufacturer, $filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
-                    FROM spotter_output
-                    WHERE spotter_output.registration <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer   
+                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer   
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
@@ -4833,9 +4821,10 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypesByDate($date)
+	public function countAllAircraftTypesByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -4845,14 +4834,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
-					FROM spotter_output
-					WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
+					FROM spotter_output".$filter_query." DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
 					GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
-					FROM spotter_output
-					WHERE to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date
+					FROM spotter_output".$filter_query." to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date
 					GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
 		}
@@ -4880,9 +4867,10 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftRegistrationByDate($date)
+	public function countAllAircraftRegistrationByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
@@ -4893,14 +4881,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name    
-					FROM spotter_output
-					WHERE spotter_output.registration <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
+					FROM spotter_output".$filter_query." spotter_output.registration <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
 					GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name    
-					FROM spotter_output
-					WHERE spotter_output.registration <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
+					FROM spotter_output".$filter_query." spotter_output.registration <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
 					GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 		}
@@ -4936,9 +4922,10 @@ class Spotter{
 	* @return Array the aircraft manufacturer list
 	*
 	*/
-	public function countAllAircraftManufacturerByDate($date)
+	public function countAllAircraftManufacturerByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -4948,14 +4935,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
-				FROM spotter_output
-				WHERE spotter_output.aircraft_manufacturer <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
+				FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
 				GROUP BY spotter_output.aircraft_manufacturer 
 				ORDER BY aircraft_manufacturer_count DESC";
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
-				FROM spotter_output
-				WHERE spotter_output.aircraft_manufacturer <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
+				FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
 				GROUP BY spotter_output.aircraft_manufacturer 
 				ORDER BY aircraft_manufacturer_count DESC";
 		}
@@ -4983,13 +4968,12 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypesByIdent($ident)
+	public function countAllAircraftTypesByIdent($ident,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
-				FROM spotter_output
-				WHERE spotter_output.ident = :ident 
+				FROM spotter_output".$filter_query." spotter_output.ident = :ident 
 				GROUP BY spotter_output.aircraft_name, spotter_output.aircraft_icao
 				ORDER BY aircraft_icao_count DESC";
 
@@ -5017,14 +5001,14 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftRegistrationByIdent($ident)
+	public function countAllAircraftRegistrationByIdent($ident,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
-                    FROM spotter_output
-                    WHERE spotter_output.registration <> '' AND spotter_output.ident = :ident   
+                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.ident = :ident   
                     GROUP BY spotter_output.registration,spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.airline_name
 		    ORDER BY registration_count DESC";
 
@@ -5061,13 +5045,12 @@ class Spotter{
 	* @return Array the aircraft manufacturer list
 	*
 	*/
-	public function countAllAircraftManufacturerByIdent($ident)
+	public function countAllAircraftManufacturerByIdent($ident,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
-                    FROM spotter_output
-                    WHERE spotter_output.aircraft_manufacturer <> '' AND spotter_output.ident = :ident  
+                    FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer <> '' AND spotter_output.ident = :ident  
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
@@ -5092,15 +5075,15 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypesByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllAircraftTypesByRoute($departure_airport_icao, $arrival_airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 		
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
-                    FROM spotter_output
-                    WHERE (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)
+                    FROM spotter_output".$filter_query." (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)
                     GROUP BY spotter_output.aircraft_name 
 					ORDER BY aircraft_icao_count DESC";
  
@@ -5125,15 +5108,15 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftRegistrationByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllAircraftRegistrationByRoute($departure_airport_icao, $arrival_airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
-                    FROM spotter_output
-                    WHERE spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)   
+                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)   
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
@@ -5171,14 +5154,14 @@ class Spotter{
 	* @return Array the aircraft manufacturer list
 	*
 	*/
-	public function countAllAircraftManufacturerByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllAircraftManufacturerByRoute($departure_airport_icao, $arrival_airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
-                    FROM spotter_output
-                    WHERE spotter_output.aircraft_manufacturer <> '' AND (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao) 
+                    FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer <> '' AND (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao) 
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
@@ -5209,15 +5192,14 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypesByCountry($country)
+	public function countAllAircraftTypesByCountry($country,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
-                    FROM spotter_output
-                    WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
+                    FROM spotter_output".$filter_query." ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
                     GROUP BY spotter_output.aircraft_name 
-					ORDER BY aircraft_icao_count DESC";
+			ORDER BY aircraft_icao_count DESC";
  
 		
 		$sth = $this->db->prepare($query);
@@ -5245,14 +5227,13 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftRegistrationByCountry($country)
+	public function countAllAircraftRegistrationByCountry($country,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name 
-                    FROM spotter_output
-                    WHERE spotter_output.registration <> '' AND (((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country)    
+                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND (((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country)    
                     GROUP BY spotter_output.registration 
 					ORDER BY registration_count DESC";
 
@@ -5290,13 +5271,12 @@ class Spotter{
 	* @return Array the aircraft manufacturer list
 	*
 	*/
-	public function countAllAircraftManufacturerByCountry($country)
+	public function countAllAircraftManufacturerByCountry($country,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
-                    FROM spotter_output
-                    WHERE spotter_output.aircraft_manufacturer <> '' AND (((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country) 
+                    FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer <> '' AND (((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country) 
                     GROUP BY spotter_output.aircraft_manufacturer 
 					ORDER BY aircraft_manufacturer_count DESC";
 
@@ -5326,9 +5306,9 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftManufacturers($filter = array())
+	public function countAllAircraftManufacturers($filters = array())
 	{
-		$filter_query = $this->getFilter($filter,true,true);
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output ".$filter_query." spotter_output.aircraft_manufacturer <> '' AND spotter_output.aircraft_manufacturer <> 'Not Available'";
                 $query .= " GROUP BY spotter_output.aircraft_manufacturer
@@ -5421,13 +5401,13 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftRegistrationsByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '')
+	public function countAllAircraftRegistrationsByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.registration, COUNT(spotter_output.registration) AS aircraft_registration_count, spotter_output.aircraft_icao,  spotter_output.aircraft_name, spotter_output.airline_name    
-                    FROM spotter_output 
-                    WHERE spotter_output.airline_icao <> '' AND spotter_output.registration <> '' AND spotter_output.registration <> 'NA' ";
+                    FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND spotter_output.registration <> '' AND spotter_output.registration <> 'NA' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -5534,12 +5514,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
+	public function countAllDepartureAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-								FROM spotter_output
-                    WHERE spotter_output.airline_icao <> '' AND spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' ";
+			FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -5638,12 +5618,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDetectedDepartureAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
+	public function countAllDetectedDepartureAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.real_departure_airport_icao AS departure_airport_icao, COUNT(spotter_output.real_departure_airport_icao) AS airport_departure_icao_count, airport.name as departure_airport_name, airport.city as departure_airport_city, airport.country as departure_airport_country
-				FROM spotter_output, airport
-                    WHERE spotter_output.airline_icao <> '' AND spotter_output.real_departure_airport_icao <> '' AND spotter_output.real_departure_airport_icao <> 'NA' AND airport.icao = spotter_output.real_departure_airport_icao ";
+				FROM spotter_output, airport".$filter_query." spotter_output.airline_icao <> '' AND spotter_output.real_departure_airport_icao <> '' AND spotter_output.real_departure_airport_icao <> 'NA' AND airport.icao = spotter_output.real_departure_airport_icao ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -5691,13 +5671,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportsByAirline($airline_icao)
+	public function countAllDepartureAirportsByAirline($airline_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.airline_icao = :airline_icao 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.airline_icao = :airline_icao 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -5730,13 +5709,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportCountriesByAirline($airline_icao)
+	public function countAllDepartureAirportCountriesByAirline($airline_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND spotter_output.airline_icao = :airline_icao 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND spotter_output.airline_icao = :airline_icao 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
@@ -5766,13 +5744,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportsByAircraft($aircraft_icao)
+	public function countAllDepartureAirportsByAircraft($aircraft_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.aircraft_icao = :aircraft_icao 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.aircraft_icao = :aircraft_icao 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -5804,13 +5781,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportCountriesByAircraft($aircraft_icao)
+	public function countAllDepartureAirportCountriesByAircraft($aircraft_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND spotter_output.aircraft_icao = :aircraft_icao
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND spotter_output.aircraft_icao = :aircraft_icao
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
@@ -5839,13 +5815,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportsByRegistration($registration)
+	public function countAllDepartureAirportsByRegistration($registration,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.registration = :registration 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.registration = :registration 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -5877,13 +5852,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportCountriesByRegistration($registration)
+	public function countAllDepartureAirportCountriesByRegistration($registration,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND spotter_output.registration = :registration 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND spotter_output.registration = :registration 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
@@ -5912,13 +5886,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportsByAirport($airport_icao)
+	public function countAllDepartureAirportsByAirport($airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao = :airport_icao 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao = :airport_icao 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -5950,13 +5923,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportCountriesByAirport($airport_icao)
+	public function countAllDepartureAirportCountriesByAirport($airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND spotter_output.arrival_airport_icao = :airport_icao 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND spotter_output.arrival_airport_icao = :airport_icao 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
@@ -5986,13 +5958,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportsByManufacturer($aircraft_manufacturer)
+	public function countAllDepartureAirportsByManufacturer($aircraft_manufacturer,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-								FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -6024,13 +5995,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportCountriesByManufacturer($aircraft_manufacturer)
+	public function countAllDepartureAirportCountriesByManufacturer($aircraft_manufacturer,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
@@ -6059,11 +6029,11 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportsByDate($date)
+	public function countAllDepartureAirportsByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
-
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime($date);
@@ -6072,14 +6042,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-					FROM spotter_output
-					WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
+					FROM spotter_output".$filter_query." spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
 					GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-					FROM spotter_output
-					WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date
+					FROM spotter_output".$filter_query." spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date
 					GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
 		}
@@ -6111,9 +6079,10 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportCountriesByDate($date)
+	public function countAllDepartureAirportCountriesByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -6123,14 +6092,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
-					FROM spotter_output 
-					WHERE spotter_output.departure_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
+					FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
 					GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
-					FROM spotter_output 
-					WHERE spotter_output.departure_airport_country <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
+					FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
 					GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
 		}
@@ -6159,13 +6126,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportsByIdent($ident)
+	public function countAllDepartureAirportsByIdent($ident,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-		    FROM spotter_output
-                    WHERE spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.ident = :ident 
+		    FROM spotter_output".$filter_query." spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.ident = :ident 
                     GROUP BY spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
 		    ORDER BY airport_departure_icao_count DESC";
       
@@ -6198,13 +6164,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportCountriesByIdent($ident)
+	public function countAllDepartureAirportCountriesByIdent($ident,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND spotter_output.ident = :ident 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND spotter_output.ident = :ident 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
@@ -6234,13 +6199,13 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportsByCountry($country)
+	public function countAllDepartureAirportsByCountry($country,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
-								FROM spotter_output
-                    WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country
+			FROM spotter_output".$filter_query." ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country
                     GROUP BY spotter_output.departure_airport_icao
 					ORDER BY airport_departure_icao_count DESC";
       
@@ -6272,13 +6237,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirportCountriesByCountry($country)
+	public function countAllDepartureAirportCountriesByCountry($country,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.departure_airport_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
                     GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC";
       
@@ -6369,12 +6333,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '', $icaoaskey = false)
+	public function countAllArrivalAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '', $icaoaskey = false,$filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-								FROM spotter_output 
-                    WHERE spotter_output.airline_icao <> '' AND spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' ";
+			FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -6494,12 +6458,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDetectedArrivalAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$icaoaskey = false)
+	public function countAllDetectedArrivalAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$icaoaskey = false,$filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.real_arrival_airport_icao as arrival_airport_icao, COUNT(spotter_output.real_arrival_airport_icao) AS airport_arrival_icao_count, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country 
-			FROM spotter_output, airport 
-                    WHERE spotter_output.airline_icao <> '' AND spotter_output.real_arrival_airport_icao <> '' AND spotter_output.real_arrival_airport_icao <> 'NA' AND airport.icao = spotter_output.real_arrival_airport_icao ";
+			FROM spotter_output, airport".$filter_query." spotter_output.airline_icao <> '' AND spotter_output.real_arrival_airport_icao <> '' AND spotter_output.real_arrival_airport_icao <> 'NA' AND airport.icao = spotter_output.real_arrival_airport_icao ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
 				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -6557,16 +6521,14 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportsByAirline($airline_icao)
+	public function countAllArrivalAirportsByAirline($airline_icao, $filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.airline_icao = :airline_icao 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.airline_icao = :airline_icao 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
-      
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airline_icao' => $airline_icao));
@@ -6595,13 +6557,13 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportCountriesByAirline($airline_icao)
+	public function countAllArrivalAirportCountriesByAirline($airline_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.airline_icao = :airline_icao 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND spotter_output.airline_icao = :airline_icao 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
@@ -6630,13 +6592,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportsByAircraft($aircraft_icao)
+	public function countAllArrivalAirportsByAircraft($aircraft_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.aircraft_icao = :aircraft_icao 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.aircraft_icao = :aircraft_icao 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -6669,13 +6630,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportCountriesByAircraft($aircraft_icao)
+	public function countAllArrivalAirportCountriesByAircraft($aircraft_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.aircraft_icao = :aircraft_icao
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND spotter_output.aircraft_icao = :aircraft_icao
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
@@ -6704,13 +6664,13 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportsByRegistration($registration)
+	public function countAllArrivalAirportsByRegistration($registration,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.registration = :registration 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.registration = :registration 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -6742,13 +6702,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportCountriesByRegistration($registration)
+	public function countAllArrivalAirportCountriesByRegistration($registration,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.registration = :registration 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND spotter_output.registration = :registration 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
@@ -6778,13 +6737,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportsByAirport($airport_icao)
+	public function countAllArrivalAirportsByAirport($airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.departure_airport_icao = :airport_icao 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.departure_airport_icao = :airport_icao 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -6816,13 +6774,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportCountriesByAirport($airport_icao)
+	public function countAllArrivalAirportCountriesByAirport($airport_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.departure_airport_icao = :airport_icao 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND spotter_output.departure_airport_icao = :airport_icao 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
@@ -6851,13 +6808,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportsByManufacturer($aircraft_manufacturer)
+	public function countAllArrivalAirportsByManufacturer($aircraft_manufacturer,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -6890,13 +6846,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportCountriesByManufacturer($aircraft_manufacturer)
+	public function countAllArrivalAirportCountriesByManufacturer($aircraft_manufacturer,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
@@ -6926,9 +6881,10 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportsByDate($date)
+	public function countAllArrivalAirportsByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -6938,14 +6894,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-					FROM spotter_output 
-					WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date  
+					FROM spotter_output".$filter_query." spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date  
 					GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-					FROM spotter_output 
-					WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date  
+					FROM spotter_output".$filter_query." spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date  
 					GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
 		}
@@ -6977,9 +6931,10 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportCountriesByDate($date)
+	public function countAllArrivalAirportCountriesByDate($date, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -6989,14 +6944,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
-					FROM spotter_output 
-					WHERE spotter_output.arrival_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
+					FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date 
 					GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
-					FROM spotter_output 
-					WHERE spotter_output.arrival_airport_country <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
+					FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date 
 					GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
 		}
@@ -7025,13 +6978,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportsByIdent($ident)
+	public function countAllArrivalAirportsByIdent($ident,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-		    FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.ident = :ident  
+		    FROM spotter_output".$filter_query." WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.ident = :ident  
                     GROUP BY spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
 		    ORDER BY airport_arrival_icao_count DESC";
       
@@ -7063,13 +7015,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportCountriesByIdent($ident)
+	public function countAllArrivalAirportCountriesByIdent($ident, $filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND spotter_output.ident = :ident 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND spotter_output.ident = :ident 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
@@ -7099,13 +7050,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportsByCountry($country)
+	public function countAllArrivalAirportsByCountry($country,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-								FROM spotter_output 
-                    WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country  
+			FROM spotter_output".$filter_query." ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country  
                     GROUP BY spotter_output.arrival_airport_icao
 					ORDER BY airport_arrival_icao_count DESC";
       
@@ -7137,13 +7087,12 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirportCountriesByCountry($country)
+	public function countAllArrivalAirportCountriesByCountry($country,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-					
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
-								FROM spotter_output 
-                    WHERE spotter_output.arrival_airport_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
+			FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
                     GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
       
@@ -7244,12 +7193,11 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public function countAllRoutes()
+	public function countAllRoutes($filters = array())
 	{
-		
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-		    FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> 'NA'
+		    FROM spotter_output".$filter_query." spotter_output.ident <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> 'NA'
                     GROUP BY route,spotter_output.departure_airport_icao, spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
                     ORDER BY route_count DESC
 		    LIMIT 10 OFFSET 0";
@@ -7288,16 +7236,14 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public function countAllRoutesByAircraft($aircraft_icao)
+	public function countAllRoutesByAircraft($aircraft_icao,$filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
-		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.aircraft_icao = :aircraft_icao 
+			FROM spotter_output".$filter_query." spotter_output.ident <> '' AND spotter_output.aircraft_icao = :aircraft_icao 
                     GROUP BY route
                     ORDER BY route_count DESC";
-      
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_icao' => $aircraft_icao));
@@ -7330,13 +7276,12 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public function countAllRoutesByRegistration($registration)
+	public function countAllRoutesByRegistration($registration, $filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$registration = filter_var($registration, FILTER_SANITIZE_STRING);
-		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.registration = :registration 
+			FROM spotter_output".$filter_query." spotter_output.ident <> '' AND spotter_output.registration = :registration 
                     GROUP BY route
                     ORDER BY route_count DESC";
       
@@ -7373,13 +7318,12 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public function countAllRoutesByAirline($airline_icao)
+	public function countAllRoutesByAirline($airline_icao, $filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
-		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.airline_icao = :airline_icao 
+			FROM spotter_output".$filter_query." spotter_output.ident <> '' AND spotter_output.airline_icao = :airline_icao 
                     GROUP BY route
                     ORDER BY route_count DESC";
       
@@ -7416,16 +7360,14 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public function countAllRoutesByAirport($airport_icao)
+	public function countAllRoutesByAirport($airport_icao, $filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
-		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)
+			FROM spotter_output".$filter_query." spotter_output.ident <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)
                     GROUP BY route
                     ORDER BY route_count DESC";
-      
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':airport_icao' => $airport_icao));
@@ -7459,16 +7401,14 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public function countAllRoutesByCountry($country)
+	public function countAllRoutesByCountry($country, $filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-								FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
+			FROM spotter_output".$filter_query." spotter_output.ident <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
                     GROUP BY route
                     ORDER BY route_count DESC";
-      
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
@@ -7501,9 +7441,10 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public function countAllRoutesByDate($date)
+	public function countAllRoutesByDate($date, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -7513,14 +7454,12 @@ class Spotter{
 		
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-					FROM spotter_output
-					WHERE spotter_output.ident <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date  
+					FROM spotter_output".$filter_query." spotter_output.ident <> '' AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date  
 					GROUP BY route
 					ORDER BY route_count DESC";
 		} else {
 			$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-					FROM spotter_output
-					WHERE spotter_output.ident <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date  
+					FROM spotter_output".$filter_query." spotter_output.ident <> '' AND to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = :date  
 					GROUP BY route
 					ORDER BY route_count DESC";
 		}
@@ -7556,13 +7495,12 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public function countAllRoutesByIdent($ident)
+	public function countAllRoutesByIdent($ident, $filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
-		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-		    FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.ident = :ident   
+		    FROM spotter_output".$filter_query." spotter_output.ident <> '' AND spotter_output.ident = :ident   
                     GROUP BY route, spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
                     ORDER BY route_count DESC";
       
@@ -7598,13 +7536,12 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public function countAllRoutesByManufacturer($aircraft_manufacturer)
+	public function countAllRoutesByManufacturer($aircraft_manufacturer, $filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
-		
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-		    FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer   
+		    FROM spotter_output".$filter_query." spotter_output.ident <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer   
                     GROUP BY route
                     ORDER BY route_count DESC";
       
@@ -7641,11 +7578,11 @@ class Spotter{
 	* @return Array the route list
 	*
 	*/
-	public function countAllRoutesWithWaypoints()
+	public function countAllRoutesWithWaypoints($filters = array())
 	{
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.waypoints AS route, count(spotter_output.waypoints) AS route_count, spotter_output.spotter_id, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-		    FROM spotter_output
-                    WHERE spotter_output.ident <> '' AND spotter_output.waypoints <> '' 
+		    FROM spotter_output".$filter_query." spotter_output.ident <> '' AND spotter_output.waypoints <> '' 
                     GROUP BY route, spotter_output.spotter_id, spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
                     ORDER BY route_count DESC
 		    LIMIT 10 OFFSET 0";
@@ -7675,9 +7612,6 @@ class Spotter{
 
 		return $routes_array;
 	}
-	
-	
-	
 	
 	/**
 	* Gets all callsigns that have flown over
@@ -7727,12 +7661,12 @@ class Spotter{
 	* @return Array the callsign list
 	*
 	*/
-	public function countAllCallsignsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
+	public function countAllCallsignsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '', $filters = array())
 	{
 		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.ident, COUNT(spotter_output.ident) AS callsign_icao_count, spotter_output.airline_name  
-                    FROM spotter_output
-                    WHERE spotter_output.ident <> ''  AND spotter_output.airline_icao <> '' ";
+                    FROM spotter_output".$filter_query." spotter_output.ident <> ''  AND spotter_output.airline_icao <> '' ";
 		 if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
 			else $query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
@@ -7963,9 +7897,10 @@ class Spotter{
 	* @return Array the date list
 	*
 	*/
-	public function countAllDatesLastMonthByAirlines()
+	public function countAllDatesLastMonthByAirlines($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -7974,15 +7909,13 @@ class Spotter{
 		
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS date_name, count(*) as date_count
-								FROM spotter_output 
-								WHERE spotter_output.airline_icao <> '' AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MONTH)
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MONTH)
 								GROUP BY spotter_output.airline_icao, date_name 
 								ORDER BY spotter_output.date ASC";
 			$query_data = array(':offset' => $offset);
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') AS date_name, count(*) as date_count
-								FROM spotter_output 
-								WHERE spotter_output.airline_icao <> '' AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 MONTHS'
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 MONTHS'
 								GROUP BY spotter_output.airline_icao, date_name 
 								ORDER BY date_name ASC";
 			$query_data = array(':offset' => $offset);
@@ -8059,9 +7992,10 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsByAirlines()
+	public function countAllMonthsByAirlines($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -8070,8 +8004,7 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(*) as date_count
-								FROM spotter_output 
-								WHERE spotter_output.airline_icao <> '' 
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' 
 								GROUP BY spotter_output.airline_icao, year_name, month_name 
 								ORDER BY date_count DESC";
 		} else {
@@ -8199,9 +8132,10 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsOwnersByAirlines()
+	public function countAllMonthsOwnersByAirlines($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -8210,14 +8144,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct owner_name) as date_count
-								FROM spotter_output 
-								WHERE owner_name <> '' AND spotter_output.airline_icao <> '' 
+								FROM spotter_output".$filter_query." owner_name <> '' AND spotter_output.airline_icao <> '' 
 								GROUP BY spotter_output.airline_icao, year_name, month_name
 								ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct owner_name) as date_count
-								FROM spotter_output 
-								WHERE owner_name <> '' AND spotter_output.airline_icao <> '' 
+								FROM spotter_output".$filter_query." owner_name <> '' AND spotter_output.airline_icao <> '' 
 								GROUP BY spotter_output.airline_icao, year_name, month_name
 								ORDER BY date_count DESC";
 		}
@@ -8293,9 +8225,10 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsPilotsByAirlines()
+	public function countAllMonthsPilotsByAirlines($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -8304,14 +8237,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct pilot_id) as date_count
-								FROM spotter_output 
-								WHERE spotter_output.airline_icao <> '' AND pilot_id <> '' AND pilot_id IS NOT NULL
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND pilot_id <> '' AND pilot_id IS NOT NULL
 								GROUP BY spotter_output.airline_icao,year_name, month_name
 								ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct pilot_id) as date_count
-								FROM spotter_output 
-								WHERE spotter_output.airline_icao <> '' AND pilot_id <> '' AND pilot_id IS NOT NULL
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND pilot_id <> '' AND pilot_id IS NOT NULL
 								GROUP BY spotter_output.airline_icao, year_name, month_name
 								ORDER BY date_count DESC";
 		}
@@ -8341,9 +8272,10 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsAirlines()
+	public function countAllMonthsAirlines($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -8352,14 +8284,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct airline_icao) as date_count
-								FROM spotter_output 
-								WHERE airline_icao <> '' 
+								FROM spotter_output".$filter_query." airline_icao <> '' 
 								GROUP BY year_name, month_name
 								ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct airline_icao) as date_count
-								FROM spotter_output 
-								WHERE airline_icao <> '' 
+								FROM spotter_output".$filter_query." airline_icao <> '' 
 								GROUP BY year_name, month_name
 								ORDER BY date_count DESC";
 		}
@@ -8435,9 +8365,10 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsAircraftsByAirlines()
+	public function countAllMonthsAircraftsByAirlines($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -8446,14 +8377,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao,YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct aircraft_icao) as date_count
-								FROM spotter_output 
-								WHERE aircraft_icao <> ''  AND spotter_output.airline_icao <> '' 
+								FROM spotter_output".$filter_query." aircraft_icao <> ''  AND spotter_output.airline_icao <> '' 
 								GROUP BY spotter_output.airline_icao, year_name, month_name
 								ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct aircraft_icao) as date_count
-								FROM spotter_output 
-								WHERE aircraft_icao <> '' AND spotter_output.airline_icao <> '' 
+								FROM spotter_output".$filter_query." aircraft_icao <> '' AND spotter_output.airline_icao <> '' 
 								GROUP BY spotter_output.airline_icao, year_name, month_name
 								ORDER BY date_count DESC";
 		}
@@ -8530,9 +8459,10 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsRealArrivalsByAirlines()
+	public function countAllMonthsRealArrivalsByAirlines($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -8541,14 +8471,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(real_arrival_airport_icao) as date_count
-								FROM spotter_output 
-								WHERE real_arrival_airport_icao <> '' AND spotter_output.airline_icao <> '' 
+								FROM spotter_output".$filter_query." real_arrival_airport_icao <> '' AND spotter_output.airline_icao <> '' 
 								GROUP BY spotter_output.airline_icao, year_name, month_name
 								ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(real_arrival_airport_icao) as date_count
-								FROM spotter_output 
-								WHERE real_arrival_airport_icao <> '' AND spotter_output.airline_icao <> '' 
+								FROM spotter_output".$filter_query." real_arrival_airport_icao <> '' AND spotter_output.airline_icao <> '' 
 								GROUP BY spotter_output.airline_icao, year_name, month_name
 								ORDER BY date_count DESC";
 		}
@@ -8693,9 +8621,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursByAirlines($orderby)
+	public function countAllHoursByAirlines($orderby, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -8714,8 +8643,7 @@ class Spotter{
 		
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.airline_icao <> '' 
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' 
 								GROUP BY spotter_output.airline_icao, hour_name 
 								".$orderby_sql;
 
@@ -8728,8 +8656,7 @@ class Spotter{
 		$query_data = array(':offset' => $offset);
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.airline_icao <> '' 
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' 
 								GROUP BY spotter_output.airline_icao, hour_name 
 								".$orderby_sql;
 			$query_data = array(':offset' => $offset);
@@ -8761,9 +8688,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursByAirline($airline_icao)
+	public function countAllHoursByAirline($airline_icao, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -8774,14 +8702,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.airline_icao = :airline_icao
+								FROM spotter_output".$filter_query." spotter_output.airline_icao = :airline_icao
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.airline_icao = :airline_icao
+								FROM spotter_output".$filter_query." spotter_output.airline_icao = :airline_icao
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -8812,9 +8738,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursByAircraft($aircraft_icao)
+	public function countAllHoursByAircraft($aircraft_icao, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -8824,14 +8751,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.aircraft_icao = :aircraft_icao
+								FROM spotter_output".$filter_query." spotter_output.aircraft_icao = :aircraft_icao
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.aircraft_icao = :aircraft_icao
+								FROM spotter_output".$filter_query." spotter_output.aircraft_icao = :aircraft_icao
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -8860,9 +8785,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursByRegistration($registration)
+	public function countAllHoursByRegistration($registration, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -8872,14 +8798,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.registration = :registration
+								FROM spotter_output".$filter_query." spotter_output.registration = :registration
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.registration = :registration
+								FROM spotter_output".$filter_query." spotter_output.registration = :registration
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -8908,9 +8832,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursByAirport($airport_icao)
+	public function countAllHoursByAirport($airport_icao, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -8920,14 +8845,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)
+								FROM spotter_output".$filter_query." (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)
+								FROM spotter_output".$filter_query." (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao)
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -8957,9 +8880,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursByManufacturer($aircraft_manufacturer)
+	public function countAllHoursByManufacturer($aircraft_manufacturer,$filters =array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -8969,14 +8893,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.aircraft_manufacturer = :aircraft_manufacturer
+								FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer = :aircraft_manufacturer
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.aircraft_manufacturer = :aircraft_manufacturer
+								FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer = :aircraft_manufacturer
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -9006,9 +8928,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursByDate($date)
+	public function countAllHoursByDate($date, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -9018,14 +8941,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
+								FROM spotter_output".$filter_query." DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE to_char(spotter_output.date AT TIME ZONE INTERVAL :offset, 'YYYY-mm-dd') = :date
+								FROM spotter_output".$filter_query." to_char(spotter_output.date AT TIME ZONE INTERVAL :offset, 'YYYY-mm-dd') = :date
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -9055,9 +8976,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursByIdent($ident)
+	public function countAllHoursByIdent($ident, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -9067,14 +8989,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.ident = :ident 
+								FROM spotter_output".$filter_query." spotter_output.ident = :ident 
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE spotter_output.ident = :ident 
+								FROM spotter_output".$filter_query." spotter_output.ident = :ident 
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -9105,9 +9025,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursByRoute($departure_airport_icao, $arrival_airport_icao)
+	public function countAllHoursByRoute($departure_airport_icao, $arrival_airport_icao, $filters =array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
@@ -9118,14 +9039,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)
+								FROM spotter_output".$filter_query." (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)
+								FROM spotter_output".$filter_query." (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -9154,9 +9073,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursByCountry($country)
+	public function countAllHoursByCountry($country, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
@@ -9166,14 +9086,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country
+								FROM spotter_output".$filter_query." ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country
+								FROM spotter_output".$filter_query." ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -9324,9 +9242,10 @@ class Spotter{
 	* @return Array the hour list
 	*
 	*/
-	public function countAllHoursFromToday()
+	public function countAllHoursFromToday($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalTimezone != '') {
 			date_default_timezone_set($globalTimezone);
 			$datetime = new DateTime();
@@ -9335,14 +9254,12 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = CURDATE()
+								FROM spotter_output".$filter_query." DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = CURDATE()
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		} else {
 			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
-								FROM spotter_output 
-								WHERE to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = CAST(NOW() AS date)
+								FROM spotter_output".$filter_query." to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') = CAST(NOW() AS date)
 								GROUP BY hour_name 
 								ORDER BY hour_name ASC";
 		}
@@ -9369,9 +9286,10 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function getUpcomingFlights($limit = '', $sort = '')
+	public function getUpcomingFlights($limit = '', $sort = '', $filters = array())
 	{
 		global $global_query, $globalDBdriver, $globalTimezone;
+		$filter_query = $this->getFilter($filters,true,true);
 		date_default_timezone_set('UTC');
 		$limit_query = '';
 		if ($limit != "")
@@ -9413,8 +9331,7 @@ class Spotter{
 			    GROUP BY spotter_output.ident,spotter_output.spotter_id, spotter_output.flightaware_id, spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.verticalrate,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time HAVING count(spotter_output.ident) > 10 $orderby_query";
 */
 			$query = "SELECT spotter_output.ident, spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time, count(spotter_output.ident) as ident_count 
-			    FROM spotter_output
-			    WHERE DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours' AND spotter_output.ident <> '' AND format_source <> 'aprs'
+			    FROM spotter_output".$filter_query." DAYNAME(spotter_output.date) = '$currentDayofWeek' AND HOUR(spotter_output.date) >= '$currentHour' AND HOUR(spotter_output.date) <= '$next3Hours' AND spotter_output.ident <> '' AND format_source <> 'aprs'
 			    GROUP BY spotter_output.ident,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time
 			    HAVING count(spotter_output.ident) > 5$orderby_query";
 
@@ -9428,8 +9345,7 @@ class Spotter{
 				$orderby_query = " ORDER BY to_char(spotter_output.date,'HH') ASC";
 			}
 			$query = "SELECT spotter_output.ident, spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time, count(spotter_output.ident) as ident_count, to_char(spotter_output.date,'HH') 
-			    FROM spotter_output
-			    WHERE DATE_PART('dow', spotter_output.date) = DATE_PART('dow', date 'now' AT TIME ZONE :timezone) AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) >= '$currentHour' AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) <= '$next3Hours' AND ident <> '' 
+			    FROM spotter_output".$filter_query." DATE_PART('dow', spotter_output.date) = DATE_PART('dow', date 'now' AT TIME ZONE :timezone) AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) >= '$currentHour' AND EXTRACT (HOUR FROM spotter_output.date AT TIME ZONE :timezone) <= '$next3Hours' AND ident <> '' 
 			    GROUP BY spotter_output.ident,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time, to_char(spotter_output.date,'HH')
 			    HAVING count(spotter_output.ident) > 5$orderby_query";
 			//echo $query;

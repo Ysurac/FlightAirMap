@@ -47,7 +47,9 @@ if (isset($_POST['airport']))
 		print '<option></option>';
 		$Stats = new Stats();
 		$airport_names = $Stats->getAllAirportNames();
-		if (empty($airport_names)) $airport_names = $Spotter->getAllAirportNames();
+		if (empty($airport_names)) {
+			$airport_names = $Spotter->getAllAirportNames();
+		}
 		ksort($airport_names);
 		foreach($airport_names as $airport_name)
 		{
@@ -113,7 +115,9 @@ if (isset($_POST['airport']))
 	print '<div class="column">';
 	print '<h1>'._("Airports").'</h1>';
 	$airport_names = $Stats->getAllAirportNames();
-	if (empty($airport_names)) $airport_names = $Spotter->getAllAirportNames();
+	if (empty($airport_names)) {
+		$airport_names = $Spotter->getAllAirportNames();
+	}
 	ksort($airport_names);
 	$previous = null;
 	print '<div class="alphabet-legend">';
