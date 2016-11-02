@@ -4346,7 +4346,7 @@ class Spotter{
 	public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '')
 	{
 		global $globalDBdriver;
-		$filter_query = $this->getFilter($filters,true,true);
+		//$filter_query = $this->getFilter($filters,true,true);
 		$Connection= new Connection($this->db);
 		if (!$Connection->tableExists('countries')) return array();
 		/*

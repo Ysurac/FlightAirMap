@@ -1566,6 +1566,7 @@ class Stats {
 			}
 			echo '-> countAllDates...'."\n";
 			$previousdata = $this->countAllDates();
+			$previousdatabyairlines = $this->countAllDatesByAirlines();
 			$this->deleteStatFlight('date');
 			$alldata = $Common->array_merge_noappend($previousdata,$Spotter->countAllDates());
 			$values = array();
@@ -1732,8 +1733,8 @@ class Stats {
 				$this->addStatFlight('month',$number['date_name'],$number['date_count'], $number['airline_icao']);
 			}
 			echo '-> countAllDates...'."\n";
-			$previousdata = $this->countAllDatesByAirlines();
-			$alldata = $Common->array_merge_noappend($previousdata,$Spotter->countAllDatesByAirlines());
+			//$previousdata = $this->countAllDatesByAirlines();
+			$alldata = $Common->array_merge_noappend($previousdatabyairlines,$Spotter->countAllDatesByAirlines());
 			$values = array();
 			foreach ($alldata as $cnt) {
 				$values[] = $cnt['date_count'];
