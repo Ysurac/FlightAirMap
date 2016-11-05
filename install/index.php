@@ -923,9 +923,10 @@ if (isset($_POST['dbtype'])) {
 	}
 	$settings = array_merge($settings,array('globalSources' => $gSources));
 
+/*
 	$sbstimeout = filter_input(INPUT_POST,'sbstimeout',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalSourcesTimeOut' => $sbstimeout));
-
+*/
 	$acarshost = filter_input(INPUT_POST,'acarshost',FILTER_SANITIZE_STRING);
 	$acarsport = filter_input(INPUT_POST,'acarsport',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalACARSHost' => $acarshost,'globalACARSPort' => $acarsport));
