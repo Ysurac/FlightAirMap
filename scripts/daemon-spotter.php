@@ -340,18 +340,18 @@ while ($i > 0) {
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 	    $buffer = explode('\n',$buffer);
 	    foreach ($buffer as $line) {
-    		if ($line != '') {
+    		if ($line != '' && count($line) > 7) {
     		    $line = explode(',', $line);
 	            $data = array();
 	            $data['hex'] = $line[1]; // hex
 	            $data['ident'] = $line[2]; // ident
-	            $data['altitude'] = $line[3]; // altitude
-	            $data['speed'] = $line[4]; // speed
-	            $data['heading'] = $line[5]; // heading
-	            $data['latitude'] = $line[6]; // lat
-	            $data['longitude'] = $line[7]; // long
+	            if (isset($line[3])) $data['altitude'] = $line[3]; // altitude
+	            if (isset($line[4])) $data['speed'] = $line[4]; // speed
+	            if (isset($line[5])) $data['heading'] = $line[5]; // heading
+	            if (isset($line[6])) $data['latitude'] = $line[6]; // lat
+	            if (isset($line[7])) $data['longitude'] = $line[7]; // long
 	            $data['verticalrate'] = ''; // vertical rate
-	            $data['squawk'] = ''; // squawk
+	            //if (isset($line[9])) $data['squawk'] = $line[9]; // squawk
 	            $data['emergency'] = ''; // emergency
 		    $data['datetime'] = date('Y-m-d H:i:s');
 		    $data['format_source'] = 'deltadbtxt';
