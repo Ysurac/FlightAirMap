@@ -167,7 +167,7 @@ require_once('header.php');
 		        <div class="form-group">
 			    <label>From (UTC):</label>
 		            <div class='input-group date' id='datetimepicker1'>
-            			<input type='text' name="start_date" class="form-control" value="<?php if (isset($_COOKIE['archive_begin'])) print date("d/m/Y h:i a",$_COOKIE['archive_begin']); ?>" required />
+            			<input type='text' name="start_date" class="form-control" value="<?php if (isset($_POST['start_date'])) print $_POST['start_date']; elseif (isset($_COOKIE['archive_begin'])) print date("d/m/Y h:i a",$_COOKIE['archive_begin']); ?>" required />
 		                <span class="input-group-addon">
             			    <span class="glyphicon glyphicon-calendar"></span>
 		                </span>
@@ -176,7 +176,7 @@ require_once('header.php');
 		        <div class="form-group">
 			    <label>To (UTC):</label>
 		            <div class='input-group date' id='datetimepicker2'>
-		                <input type='text' name="end_date" class="form-control" value="<?php if (isset($_COOKIE['archive_end'])) print date("d/m/Y h:i a",$_COOKIE['archive_end']); ?>" />
+		                <input type='text' name="end_date" class="form-control" value="<?php if (isset($_POST['end_date'])) print $_POST['end_date']; elseif (isset($_COOKIE['archive_end'])) print date("d/m/Y h:i a",$_COOKIE['archive_end']); ?>" />
             			<span class="input-group-addon">
 		                    <span class="glyphicon glyphicon-calendar"></span>
             			</span>
@@ -202,7 +202,7 @@ require_once('header.php');
 
 		    <li><?php echo _("Playback speed:"); ?>
 			<div class="range">
-			    <input type="range" min="0" max="50" step="1" name="archivespeed" onChange="archivespeedrange.value=value;" value="<?php  if (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?>">
+			    <input type="range" min="0" max="50" step="1" name="archivespeed" onChange="archivespeedrange.value=value;" value="<?php  if (isset($_POST['archivespeed'])) print $_POST['archivespeed']; elseif (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?>">
 			    <output id="archivespeedrange"><?php  if (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?></output>
 			</div>
 		    </li>
