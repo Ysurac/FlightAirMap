@@ -167,7 +167,7 @@ require_once('header.php');
 		        <div class="form-group">
 			    <label>From (UTC):</label>
 		            <div class='input-group date' id='datetimepicker1'>
-            			<input type='text' name="start_date" class="form-control" value="<?php if (isset($_POST['start_date'])) print $_POST['start_date']; elseif (isset($_COOKIE['archive_begin'])) print date("d/m/Y h:i a",$_COOKIE['archive_begin']); ?>" required />
+            			<input type='text' name="start_date" class="form-control" value="<?php if (isset($_POST['start_date'])) print $_POST['start_date']; elseif (isset($_COOKIE['archive_begin'])) print date("m/d/Y h:i a",$_COOKIE['archive_begin']); ?>" required />
 		                <span class="input-group-addon">
             			    <span class="glyphicon glyphicon-calendar"></span>
 		                </span>
@@ -176,7 +176,7 @@ require_once('header.php');
 		        <div class="form-group">
 			    <label>To (UTC):</label>
 		            <div class='input-group date' id='datetimepicker2'>
-		                <input type='text' name="end_date" class="form-control" value="<?php if (isset($_POST['end_date'])) print $_POST['end_date']; elseif (isset($_COOKIE['archive_end'])) print date("d/m/Y h:i a",$_COOKIE['archive_end']); ?>" />
+		                <input type='text' name="end_date" class="form-control" value="<?php if (isset($_POST['end_date'])) print $_POST['end_date']; elseif (isset($_COOKIE['archive_end'])) print date("m/d/Y h:i a",$_COOKIE['archive_end']); ?>" />
             			<span class="input-group-addon">
 		                    <span class="glyphicon glyphicon-calendar"></span>
             			</span>
@@ -189,7 +189,7 @@ require_once('header.php');
 			    	);
 			        $('#datetimepicker2').datetimepicker({
 			    	    //format: 'LT',
-			            useCurrent: false //Important! See issue #1075
+			            useCurrent: false
 			        });
 			        $("#datetimepicker1").on("dp.change", function (e) {
 			            $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
