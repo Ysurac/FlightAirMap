@@ -275,7 +275,7 @@ class SpotterImport {
 			if ($aircraft_icao != '') $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $aircraft_icao));
 			else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => 'NA'));
 		    } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
-		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '','altitude_real' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','ground' => '0', 'format_source' => '','source_name' => '','over_country' => '','verticalrate' => '','noarchive' => false,'putinarchive' => false));
+		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '','altitude_real' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','ground' => '0', 'format_source' => '','source_name' => '','over_country' => '','verticalrate' => '','noarchive' => false,'putinarchive' => true));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('lastupdate' => time()));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
@@ -414,9 +414,9 @@ class SpotterImport {
 				$this->all_flights[$id]['archive_latitude'] = $line['latitude'];
 				$this->all_flights[$id]['archive_longitude'] = $line['longitude'];
 				$this->all_flights[$id]['putinarchive'] = true;
+			    
 				
-				
-				//echo "\n".' ------- Check Country.... ';
+				if ($globalDebug) echo "\n".' ------- Check Country.... ';
 				$timeelapsed = microtime(true);
 				$Spotter = new Spotter($this->db);
 				$all_country = $Spotter->getCountryFromLatitudeLongitude($line['latitude'],$line['longitude']);
@@ -424,15 +424,8 @@ class SpotterImport {
 				$Spotter->db = null;
 				if ($globalDebugTimeElapsed) echo 'Time elapsed for update getCountryFromlatitudeLongitude : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				$this->tmd = 0;
-				//echo 'FOUND : '.$this->all_flights[$id]['over_country'].' ---------------'."\n";
-				//$putinarchive = true;
-			    } 
-			    /*else {
-			    
-				echo '//////// checkLine FALSE'."\n";
-				echo 'Check DATA : '.$this->all_flights[$id]['archive_latitude'].' '.$this->all_flights[$id]['archive_longitude'].' '.$this->all_flights[$id]['livedb_latitude'].' '.$this->all_flights[$id]['livedb_longitude'].' '.$line['latitude'].' '.$line['longitude']."\n";
+				if ($globalDebug) echo 'FOUND : '.$this->all_flights[$id]['over_country'].' ---------------'."\n";
 			    }
-			    */
 			}
 
 			if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {

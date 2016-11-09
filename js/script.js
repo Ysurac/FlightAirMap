@@ -47,3 +47,23 @@ function language(selectObj) {
     document.cookie =  'language='+lang+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
 }
+function populate(obj,str,selected) {
+	console.log('populate');
+	$.ajax({
+		url:'search-ajax.php',
+		type:'GET',
+		data: 'ask=' + str,
+		dataType: 'json',
+		success: function( json ) {
+			var options = "";
+			$.each(json, function(i, item){
+				if ($.inArray(item.id,selected) != -1) {
+					options += "<option value="+item.id+" selected>"+item.value+"</option>";
+				} else {
+					options += "<option value="+item.id+">"+item.value+"</option>";
+				}
+			});
+			obj.append(options);
+		}
+	});
+}

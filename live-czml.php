@@ -47,14 +47,15 @@ $from_archive = false;
 $min = false;
 $allhistory = false;
 $filter['source'] = array();
-if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM'] == 'true') $filter['source'] = array_merge($filter['source'],array('vatsimtxt'));
-if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalIVAO) && $globalIVAO && isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO'] == 'true') $filter['source'] = array_merge($filter['source'],array('whazzup'));
-if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalphpVMS) && $globalphpVMS && isset($_COOKIE['ShowVMS']) && $_COOKIE['ShowVMS'] == 'true') $filter['source'] = array_merge($filter['source'],array('phpvmacars'));
-if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalSBS1) && $globalSBS1 && isset($_COOKIE['ShowSBS1']) && $_COOKIE['ShowSBS1'] == 'true') $filter['source'] = array_merge($filter['source'],array('sbs'));
-if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalAPRS) && $globalAPRS && isset($_COOKIE['ShowAPRS']) && $_COOKIE['ShowAPRS'] == 'true') $filter['source'] = array_merge($filter['source'],array('aprs'));
-if (isset($_COOKIE['Airlines']) && $_COOKIE['Airlines'] != '') $filter['airlines'] = explode(',',$_COOKIE['Airlines']);
-if (isset($_COOKIE['Sources']) && $_COOKIE['Sources'] != '') $filter['source_aprs'] = explode(',',$_COOKIE['Sources']);
-if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] != 'all') $filter['airlinestype'] = $_COOKIE['airlinestype'];
+if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['filter_ShowVATSIM']) && $_COOKIE['filter_ShowVATSIM'] == 'true') $filter['source'] = array_merge($filter['source'],array('vatsimtxt'));
+if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalIVAO) && $globalIVAO && isset($_COOKIE['filter_ShowIVAO']) && $_COOKIE['filter_ShowIVAO'] == 'true') $filter['source'] = array_merge($filter['source'],array('whazzup'));
+if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalphpVMS) && $globalphpVMS && isset($_COOKIE['filter_ShowVMS']) && $_COOKIE['filter_ShowVMS'] == 'true') $filter['source'] = array_merge($filter['source'],array('phpvmacars'));
+if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalSBS1) && $globalSBS1 && isset($_COOKIE['filter_ShowSBS1']) && $_COOKIE['filter_ShowSBS1'] == 'true') $filter['source'] = array_merge($filter['source'],array('sbs'));
+if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalAPRS) && $globalAPRS && isset($_COOKIE['filter_ShowAPRS']) && $_COOKIE['filter_ShowAPRS'] == 'true') $filter['source'] = array_merge($filter['source'],array('aprs'));
+if (isset($_COOKIE['filter_ident']) && $_COOKIE['filter_ident'] != '') $filter['ident'] = filter_var($_COOKIE['filter_ident'],FILTER_SANITIZE_STRING);
+if (isset($_COOKIE['filter_Airlines']) && $_COOKIE['filter_Airlines'] != '') $filter['airlines'] = filter_var_array(explode(',',$_COOKIE['filter_Airlines']),FILTER_SANITIZE_STRING);
+if (isset($_COOKIE['filter_Sources']) && $_COOKIE['filter_Sources'] != '') $filter['source_aprs'] = filter_var_array(explode(',',$_COOKIE['filter_Sources']),FILTER_SANITIZE_STRING);
+if (isset($_COOKIE['filter_airlinestype']) && $_COOKIE['filter_airlinestype'] != 'all') $filter['airlinestype'] = filter_var($_COOKIE['filter_airlinestype'],FILTER_SANITIZE_STRING);
 /*
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) {
 	$min = true;
@@ -97,7 +98,33 @@ if (isset($_GET['ident'])) {
 	$spotter_array = $SpotterLive->getLiveSpotterData('','',$filter);
 }
 */
-$spotter_array = $SpotterLive->getMinLastLiveSpotterData($filter);
+if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate']) && isset($_GET['speed'])) {
+	$from_archive = true;
+//	$begindate = filter_input(INPUT_GET,'begindate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
+//	$enddate = filter_input(INPUT_GET,'enddate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
+	$begindate = filter_input(INPUT_GET,'begindate',FILTER_SANITIZE_NUMBER_INT);
+	$enddate = filter_input(INPUT_GET,'enddate',FILTER_SANITIZE_NUMBER_INT);
+	$archivespeed = filter_input(INPUT_GET,'speed',FILTER_SANITIZE_NUMBER_INT);
+	$begindate = date('Y-m-d H:i:s',$begindate);
+	$enddate = date('Y-m-d H:i:s',$enddate);
+	$spotter_array = $SpotterArchive->getMinLiveSpotterDataPlayback($begindate,$enddate,$filter);
+} elseif (isset($_COOKIE['archive']) && isset($_COOKIE['archive_begin']) && isset($_COOKIE['archive_end']) && isset($_COOKIE['archive_speed'])) {
+	$from_archive = true;
+//	$begindate = filter_input(INPUT_GET,'begindate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
+//	$enddate = filter_input(INPUT_GET,'enddate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
+//	$begindate = filter_var($_COOKIE['archive_begin'],FILTER_SANITIZE_NUMBER_INT);
+//	$enddate = filter_var($_COOKIE['archive_end'],FILTER_SANITIZE_NUMBER_INT);
+	$begindate = $_COOKIE['archive_begin'];
+	$enddate = $_COOKIE['archive_end'];
+
+	$archivespeed = filter_var($_COOKIE['archive_speed'],FILTER_SANITIZE_NUMBER_INT);
+	$begindate = date('Y-m-d H:i:s',$begindate);
+	$enddate = date('Y-m-d H:i:s',$enddate);
+//	echo 'Begin : '.$begindate.' - End : '.$enddate."\n";
+	$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
+} else {
+	$spotter_array = $SpotterLive->getMinLastLiveSpotterData($filter);
+}
 
 if (!empty($spotter_array)) {
 	if (isset($_GET['archive'])) {
@@ -110,6 +137,7 @@ if (!empty($spotter_array)) {
 
 $sqltime = round(microtime(true)-$begintime,2);
 $minitime = time();
+$maxitime = 0;
 
 
 $modelsdb = array();
@@ -126,14 +154,19 @@ if (file_exists('models/modelsdb')) {
 }
 $j = 0;
 $prev_flightaware_id = '';
-
+$speed = 1;
+if (isset($archivespeed)) $speed = $archivespeed;
 $output = '[';
 $output .= '{"id" : "document", "name" : "fam","version" : "1.0"';
 //	$output .= ',"clock": {"interval" : "'.date("c",time()-$globalLiveInterval).'/'.date("c").'","currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"range" : "LOOP_STOP","step": "SYSTEM_CLOCK_MULTIPLIER"}';
 
 //	$output .= ',"clock": {"interval" : "'.date("c",time()-$globalLiveInterval).'/'.date("c").'","currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
 //$output .= ',"clock": {"currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
-$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : 1,"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
+if ($from_archive == true) {
+	$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER","interval": "%minitime%/%maxitime%"}';
+} else {
+	$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
+}
 
 //	$output .= ',"clock": {"interval" : "'.date("c",time()-$globalLiveInterval).'/'.date("c").'","currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"step": "SYSTEM_CLOCK_MULTIPLIER"}';
 $output .= '},';
@@ -276,6 +309,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 	//		$output .= '"epoch" : "'.date("c",strtotime($spotter_item['date'])).'", ';
 			$output .= '"cartographicDegrees": [';
 			if ($minitime > strtotime($spotter_item['date'])) $minitime = strtotime($spotter_item['date']);
+			if ($maxitime < strtotime($spotter_item['date'])) $maxitime = strtotime($spotter_item['date']);
 			$output .= '"'.date("c",strtotime($spotter_item['date'])).'", ';
 			$output .= $spotter_item['longitude'].', ';
 			$output .= $spotter_item['latitude'].', ';
@@ -289,6 +323,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			//$orientation .= '"'.date("c",strtotime($spotter_item['date'])).'",'.$quat['x'].','.$quat['y'].','.$quat['z'].','.$quat['w'];
 		} else {
 			$output .= ',"'.date("c",strtotime($spotter_item['date'])).'", ';
+			if ($maxitime < strtotime($spotter_item['date'])) $maxitime = strtotime($spotter_item['date']);
 			if ($spotter_item['ground_speed'] == 0) {
 				$output .= $prevlong.', ';
 				$output .= $prevlat.', ';
@@ -317,5 +352,6 @@ if (!empty($spotter_array) && is_array($spotter_array))
 }
 $output .= ']';
 $output = str_replace('%minitime%',date("c",$minitime),$output);
+$output = str_replace('%maxitime%',date("c",$maxitime),$output);
 print $output;
 ?>

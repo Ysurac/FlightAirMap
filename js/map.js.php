@@ -1420,12 +1420,29 @@ function airlines(selectObj) {
 	    airs.push(air.value);
 	}
     }
-    document.cookie =  'Airlines='+airs.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
+    document.cookie =  'filter_Airlines='+airs.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
 }
 function airlinestype(selectObj) {
     var idx = selectObj.selectedIndex;
     var airtype = selectObj.options[idx].value;
-    document.cookie =  'airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
+    document.cookie =  'filter_airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
+}
+
+function identfilter() {
+    var ident = $('#identfilter').val();
+    console.log('Filter with '+ident);
+    document.cookie =  'filter_ident='+ident+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function removefilters() {
+    // Get an array of all cookie names (the regex matches what we don't want)
+    var cookieNames = document.cookie.split(/=[^;]*(?:;\s*|$)/);
+    // Remove any that match the pattern
+    for (var i = 0; i < cookieNames.length; i++) {
+	if (/^filter_/.test(cookieNames[i])) {
+    	    document.cookie = cookieNames[i] + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+        }
+    }
+    window.location.reload();
 }
 function sources(selectObj) {
     var sources = [], source;
@@ -1436,7 +1453,7 @@ function sources(selectObj) {
 	}
     }
     //document.cookie =  'Sources='+sources.join()+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'Sources='+sources.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
+    document.cookie =  'filter_Sources='+sources.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
 }
 
 function show3D() {
@@ -1459,23 +1476,23 @@ function airportDisplayZoom(zoom) {
 
 function clickVATSIM(cb) {
     //document.cookie =  'ShowVATSIM='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'ShowVATSIM='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+    document.cookie =  'filter_ShowVATSIM='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
 }
 function clickIVAO(cb) {
     //document.cookie =  'ShowIVAO='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'ShowIVAO='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+    document.cookie =  'filter_ShowIVAO='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
 }
 function clickphpVMS(cb) {
     //document.cookie =  'ShowVMS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'ShowVMS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+    document.cookie =  'filter_ShowVMS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
 }
 function clickSBS1(cb) {
     //document.cookie =  'ShowSBS1='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'ShowSBS1='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+    document.cookie =  'filter_ShowSBS1='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
 }
 function clickAPRS(cb) {
     //document.cookie =  'ShowAPRS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    document.cookie =  'ShowAPRS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+    document.cookie =  'filter_ShowAPRS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
 }
 function clickFlightPopup(cb) {
     document.cookie =  'flightpopup='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'

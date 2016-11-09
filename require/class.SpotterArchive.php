@@ -19,6 +19,9 @@ class SpotterArchive {
 		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
 		}
+		if (isset($filter['ident']) && !empty($filter['ident'])) {
+			$filter_query_where = " WHERE ident =  '".$filter['ident']."'";
+		}
 		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
 			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
 		}
@@ -334,6 +337,7 @@ class SpotterArchive {
                     		    FROM spotter_archive 
                     		    INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE (l.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".') GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate '.$filter_query.'LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_archive.aircraft_icao = a.icao';
 			*/
+/*
 			$query  = 'SELECT a.aircraft_shadow, spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk 
 				    FROM spotter_archive 
 				    INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate 
@@ -341,8 +345,21 @@ class SpotterArchive {
 						WHERE (l.date BETWEEN DATE_SUB('."'".$begindate."'".',INTERVAL '.$globalLiveInterval.' SECOND) AND '."'".$begindate."'".') 
 						GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id 
 				    AND spotter_archive.date = s.maxdate '.$filter_query.'LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_archive.aircraft_icao = a.icao';
+*/
+			$query  = 'SELECT a.aircraft_shadow, spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk 
+				    FROM spotter_archive 
+				    INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate 
+						FROM spotter_archive l 
+						WHERE (l.date BETWEEN '."'".$begindate."'".' AND '."'".$begindate."'".') 
+						GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id 
+				    AND spotter_archive.date = s.maxdate '.$filter_query.'LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_archive.aircraft_icao = a.icao';
                 } else {
-                        $query  = 'SELECT spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, a.aircraft_shadow FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate '.$filter_query.'INNER JOIN (SELECT * FROM aircraft) a on spotter_archive.aircraft_icao = a.icao';
+                        //$query  = 'SELECT spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, a.aircraft_shadow FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate '.$filter_query.'INNER JOIN (SELECT * FROM aircraft) a on spotter_archive.aircraft_icao = a.icao';
+                        $query  = 'SELECT spotter_archive.date,spotter_archive.flightaware_id, spotter_archive.ident, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, a.aircraft_shadow,a.engine_type, a.engine_count, a.wake_category 
+                        	    FROM spotter_archive 
+                        	    INNER JOIN (SELECT * FROM aircraft) a on spotter_archive.aircraft_icao = a.icao
+                        	    WHERE spotter_archive.date >= '."'".$begindate."'".' AND spotter_archive.date <= '."'".$enddate."'".'
+                        	    '.$filter_query.' ORDER BY flightaware_id LIMIT 3500 OFFSET 0';
                 }
                 //echo $query;
                 try {
@@ -405,10 +422,10 @@ class SpotterArchive {
                         	    WHERE spotter_archive_output.date >= '."'".$begindate."'".' AND spotter_archive_output.date <= '."'".$enddate."'".'
                         	    '.$filter_query.' GROUP BY spotter_archive_output.flightaware_id, spotter_archive_output.ident, spotter_archive_output.aircraft_icao, spotter_archive_output.departure_airport_icao, spotter_archive_output.arrival_airport_icao, spotter_archive_output.latitude, spotter_archive_output.longitude, spotter_archive_output.altitude, spotter_archive_output.heading, spotter_archive_output.ground_speed, spotter_archive_output.squawk, a.aircraft_shadow';
                         */
-                        $query  = 'SELECT DISTINCT spotter_output.flightaware_id, spotter_output.ident, spotter_output.aircraft_icao, spotter_output.departure_airport_icao as departure_airport, spotter_output.arrival_airport_icao as arrival_airport, spotter_output.latitude, spotter_output.longitude, spotter_output.altitude, spotter_output.heading, spotter_output.ground_speed, spotter_output.squawk, a.aircraft_shadow
-                        	    FROM spotter_output 
-                        	    INNER JOIN (SELECT * FROM aircraft) a on spotter_output.aircraft_icao = a.icao
-                        	    WHERE spotter_output.date >= '."'".$begindate."'".' AND spotter_output.date <= '."'".$enddate."'".'
+                        $query  = 'SELECT DISTINCT spotter_archive_output.flightaware_id, spotter_archive_output.ident, spotter_archive_output.aircraft_icao, spotter_archive_output.departure_airport_icao as departure_airport, spotter_archive_output.arrival_airport_icao as arrival_airport, spotter_archive_output.latitude, spotter_archive_output.longitude, spotter_archive_output.altitude, spotter_archive_output.heading, spotter_archive_output.ground_speed, spotter_archive_output.squawk, a.aircraft_shadow
+                        	    FROM spotter_archive_output 
+                        	    INNER JOIN (SELECT * FROM aircraft) a on spotter_archive_output.aircraft_icao = a.icao
+                        	    WHERE spotter_archive_output.date >= '."'".$begindate."'".' AND spotter_archive_output.date <= '."'".$enddate."'".'
                         	    '.$filter_query.' LIMIT 200 OFFSET 0';
 //                        	    .' GROUP BY spotter_output.flightaware_id, spotter_output.ident, spotter_output.aircraft_icao, spotter_output.departure_airport_icao, spotter_output.arrival_airport_icao, spotter_output.latitude, spotter_output.longitude, spotter_output.altitude, spotter_output.heading, spotter_output.ground_speed, spotter_output.squawk, a.aircraft_shadow';
                         	    
@@ -931,6 +948,41 @@ class SpotterArchive {
 	}
 	return $flight_array;
     }
+
+    /**
+    * Gets last spotter information based on a particular callsign
+    *
+    * @return Array the spotter information
+    *
+    */
+    public function getDateArchiveSpotterDataById($id,$date)
+    {
+	$Spotter = new Spotter($this->db);
+	date_default_timezone_set('UTC');
+	$id = filter_var($id, FILTER_SANITIZE_STRING);
+	$query  = 'SELECT spotter_archive.* FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE l.flightaware_id = :id AND l.date <= :date GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate ORDER BY spotter_archive.date DESC';
+	$date = date('c',$date);
+	$spotter_array = $Spotter->getDataFromDB($query,array(':id' => $id,':date' => $date));
+	return $spotter_array;
+    }
+
+    /**
+    * Gets all the spotter information based on a particular callsign
+    *
+    * @return Array the spotter information
+    *
+    */
+    public function getDateArchiveSpotterDataByIdent($ident,$date)
+    {
+	$Spotter = new Spotter($this->db);
+	date_default_timezone_set('UTC');
+	$ident = filter_var($ident, FILTER_SANITIZE_STRING);
+	$query  = 'SELECT spotter_archive.* FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE l.ident = :ident AND l.date <= :date GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate ORDER BY spotter_archive.date DESC';
+	$date = date('c',$date);
+	$spotter_array = $Spotter->getDataFromDB($query,array(':ident' => $ident,':date' => $date));
+	return $spotter_array;
+    }
+
 
 }
 ?>

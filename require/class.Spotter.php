@@ -38,6 +38,9 @@ class Spotter{
 		if (isset($filter['source']) && !empty($filter['source'])) {
 			$filter_query_where = " WHERE format_source IN ('".implode("','",$filter['source'])."')";
 		}
+		if (isset($filter['ident']) && !empty($filter['ident'])) {
+			$filter_query_where = " WHERE ident = '".$filter['ident']."'";
+		}
 		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
 			if ($filter_query_where == '') {
 				$filter_query_where = " WHERE format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";

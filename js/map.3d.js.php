@@ -192,12 +192,27 @@ function airlines(selectObj) {
 			airs.push(air.value);
 		}
 	}
-	document.cookie =  'Airlines='+airs.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+	document.cookie =  'filter_Airlines='+airs.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
 }
 function airlinestype(selectObj) {
 	var idx = selectObj.selectedIndex;
 	var airtype = selectObj.options[idx].value;
 	document.cookie =  'airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function identfilter() {
+	var ident = $("#identfilter").value;
+	document.cookie =  'filter_ident='+ident+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function removefilters() {
+    // Get an array of all cookie names (the regex matches what we don't want)
+    var cookieNames = document.cookie.split(/=[^;]*(?:;\s*|$)/);
+    // Remove any that match the pattern
+    for (var i = 0; i < cookieNames.length; i++) {
+    if (/^filter_/.test(cookieNames[i])) {
+	    document.cookie = cookieNames[i] + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+        }
+    }
+    window.location.reload();
 }
 function sources(selectObj) {
 	var sources = [], source;
@@ -208,7 +223,7 @@ function sources(selectObj) {
 		}
 	}
 	//document.cookie =  'Sources='+sources.join()+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	document.cookie =  'Sources='+sources.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
+	document.cookie =  'filter_Sources='+sources.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
 }
 
 
@@ -464,23 +479,23 @@ function capture_orientation (event) {
 
 function clickVATSIM(cb) {
 	//document.cookie =  'ShowVATSIM='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	document.cookie =  'ShowVATSIM='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
+	document.cookie =  'filter_ShowVATSIM='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
 }
 function clickIVAO(cb) {
 	//document.cookie =  'ShowIVAO='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	document.cookie =  'ShowIVAO='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
+	document.cookie =  'filter_ShowIVAO='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
 }
 function clickphpVMS(cb) {
 	//document.cookie =  'ShowVMS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	document.cookie =  'ShowVMS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
+	document.cookie =  'filter_ShowVMS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
 }
 function clickSBS1(cb) {
 	//document.cookie =  'ShowSBS1='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	document.cookie =  'ShowSBS1='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
+	document.cookie =  'filter_ShowSBS1='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
 }
 function clickAPRS(cb) {
 	//document.cookie =  'ShowAPRS='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	document.cookie =  'ShowAPRS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
+	document.cookie =  'filter_ShowAPRS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
 }
 function unitdistance(selectObj) {
 	var idx = selectObj.selectedIndex;
@@ -916,13 +931,20 @@ Cesium.BingMapsApi.defaultKey = '<?php print $globalBingMapKey; ?>';
 
 //var lastid;
 
+if (getCookie('archive') == '' || getCookie('archive') == 'false') {
+	var archive = false;
+} else {
+	var archive = true;
+	document.getElementById("archivebox").style.display = "inline";
+}
+
 var viewer = new Cesium.Viewer('live-map', {
     sceneMode : Cesium.SceneMode.SCENE3D,
     imageryProvider : imProv,
 //    imageryProvider : Cesium.createTileMapServiceImageryProvider({
 //        url : Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
 //    }),
-    timeline : false,
+    timeline : archive,
     animation : false,
     shadows : true,
 //    selectionIndicator : false,
@@ -1095,7 +1117,18 @@ camera.moveEnd.addEventListener(function() {
 });
 
 //var reloadpage = setInterval(function() { updateData(); },30000);
-var reloadpage = setInterval(function(){updateData()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+if (archive == false) {
+	var reloadpage = setInterval(function(){updateData()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+} else {
+	//var widget = new Cesium.CesiumWidget('archivebox');
+//	var timeline = new Cesium.Timeline(viewer);
+	var clockViewModel = new Cesium.ClockViewModel(viewer.clock);
+	var animationViewModel = new Cesium.AnimationViewModel(clockViewModel);
+	//this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><i class="fa fa-fast-backward" aria-hidden="true"></i> <i class="fa fa-backward" aria-hidden="true"></i>  <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>  <i class="fa fa-forward" aria-hidden="true"></i> <i class="fa fa-fast-forward" aria-hidden="true"></i>';
+	$(".archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive")); ?></h4>' + '<br/><form id="noarchive" method="post"><input type="hidden" name="noarchive" /></form><a href="#" onClick="animationViewModel.playReverseViewModel.command();"><i class="fa fa-play fa-flip-horizontal" aria-hidden="true"></i></a> <a href="#" onClick="'+"document.getElementById('noarchive').submit();"+'"><i class="fa fa-eject" aria-hidden="true"></i></a> <a href="#" onClick="animationViewModel.pauseViewModel.command();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="animationViewModel.playForwardViewModel.command();"><i class="fa fa-play" aria-hidden="true"></i></a>');
+	//		this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i></b>';
+
+}
 
 if (getCookie('displayairports') == 'true') {
 	update_airportsLayer();
@@ -1103,3 +1136,5 @@ if (getCookie('displayairports') == 'true') {
 if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
 	CesiumMiniMap(viewer);
 }
+
+

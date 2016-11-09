@@ -14,6 +14,10 @@ if (isset($_GET['ident'])) {
 		$currenttime = filter_input(INPUT_GET,'currenttime',FILTER_SANITIZE_NUMBER_INT);
 		$currenttime = round($currenttime/1000);
 		$spotter_array = $SpotterLive->getDateLiveSpotterDataByIdent($ident,$currenttime);
+		if (empty($spotter_array)) {
+			$from_archive = true;
+			$spotter_array = $SpotterArchive->getDateArchiveSpotterDataByIdent($ident,$currenttime);
+		}
 	} else {
 		$spotter_array = $SpotterLive->getLastLiveSpotterDataByIdent($ident);
 		if (empty($spotter_array)) {
@@ -28,6 +32,11 @@ if (isset($_GET['flightaware_id'])) {
 		$currenttime = filter_input(INPUT_GET,'currenttime',FILTER_SANITIZE_NUMBER_INT);
 		$currenttime = round($currenttime/1000);
 		$spotter_array = $SpotterLive->getDateLiveSpotterDataById($flightaware_id,$currenttime);
+		if (empty($spotter_array)) {
+			$from_archive = true;
+//			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
+			$spotter_array = $SpotterArchive->getDateArchiveSpotterDataById($flightaware_id,$currenttime);
+		}
 	} else {
 		$spotter_array = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
 		if (empty($spotter_array)) {

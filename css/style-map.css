@@ -119,8 +119,8 @@ body {
     color: #777;
 }
 .archivebox {
-    top: -32px;
-    right: 200px;
+    top: 55px;
+    right: 220px;
     padding: 16px 18px;
     font: 12px/14px Arial, Helvetica, sans-serif;
     background: #FFCA42;
@@ -128,12 +128,18 @@ body {
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
     text-align: center;
+    z-index: 2000;
+    position: absolute;
+    display: none;
 }
 .archivebox h4 {
     margin: 0 0 5px;
     color: #777;
 }
-
+.archivebox form {
+    padding: 5px;
+    margin-bottom: 0px;
+}
 .mobile{
     display: none !important;
 }

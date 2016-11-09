@@ -13,6 +13,29 @@ if (isset($_GET['3d'])) {
 	setcookie('MapFormat','2d');
 }
 
+if (isset($_POST['archive'])) {
+	setcookie('archive','true');
+	setcookie('archive_begin',strtotime($_POST['start_date']));
+	setcookie('archive_end',strtotime($_POST['end_date']));
+	setcookie('archive_speed',$_POST['archivespeed']);
+}
+if (isset($_POST['noarchive'])) {
+	setcookie('archive','false',-1);
+	setcookie('archive_begin','',-1);
+	setcookie('archive_end','',-1);
+	setcookie('archive_speed','',-1);
+}
+// When button "Remove all filters" is clicked
+if (isset($_POST['removefilters'])) {
+	$allfilters = array_filter(array_keys($_COOKIE),function($key) {
+	    return strpos($key,'filter_') === 0;
+	});
+	foreach ($allfilters as $filt) {
+		unset($_COOKIE[$filt]);
+		setcookie($filt,null,-1);
+	}
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -146,21 +169,13 @@ if (strtolower($current_page) == "index")
 <?php 
     if (isset($_POST['archive'])) {
 ?>
-<?php
-/*	if (isset($globalBeta) && $globalBeta) {
-?>
-<script src="<?php print $globalURL; ?>/js/leaflet-playback.js"></script>
-<script src="<?php print $globalURL; ?>/js/map.new.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
-<?php
-	} else {
-	*/
+<?php 
+	    if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
 ?>
 
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
-<?php
-//	}
-?>
 <?php    
+	    }
     } else {
 ?>
 <?php
@@ -175,6 +190,7 @@ if (strtolower($current_page) == "index")
 <?php 
 	    if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
 ?>
+<script src="<?php print $globalURL; ?>/js/leaflet-playback.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script>
 <?php
 	    }

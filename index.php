@@ -32,6 +32,7 @@ require_once('header.php');
 <div id="airspace"></div>
 <div id="notam"></div>
 <div id="waypoints"></div>
+<div id="archivebox" class="archivebox"></div>
 <div id="showdetails" class="showdetails"></div>
 <div id="infobox" class="infobox"><h4><?php echo _("Aircrafts detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div>
 <?php
@@ -54,13 +55,16 @@ require_once('header.php');
 	<li><a href="#" onclick="getUserLocation(); return false;" title="<?php echo _("Plot your Location"); ?>"><i class="fa fa-map-marker"></i></a></li>
 	<li><a href="#" onclick="getCompassDirection(); return false;" title="<?php echo _("Compass Mode"); ?>"><i class="fa fa-compass"></i></a></li>
 <?php
-    if (isset($globalArchive) && $globalArchive == TRUE && (isset($globalBeta) && $globalBeta == TRUE)) {
+    if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+	if (isset($globalArchive) && $globalArchive == TRUE) {
 ?>
 	<li><a href="#archive" role="tab" title="<?php echo _("Archive"); ?>"><i class="fa fa-archive"></i></a></li>
 <?php
+	}
     }
 ?>
 	<li><a href="#home" role="tab" title="<?php echo _("Layers"); ?>"><i class="fa fa-map"></i></a></li>
+	<li><a href="#filters" role="tab" title="<?php echo _("Filters"); ?>"><i class="fa fa-filter"></i></a></li>
 	<li><a href="#settings" role="tab" title="<?php echo _("Settings"); ?>"><i class="fa fa-gears"></i></a></li>
 <?php
     if (isset($globalMap3D) && $globalMap3D) {
@@ -180,8 +184,11 @@ require_once('header.php');
 		        </div>
 			<script type="text/javascript">
 			    $(function () {
-			        $('#datetimepicker1').datetimepicker();
+			        $('#datetimepicker1').datetimepicker(
+			    	    //format: 'LT'
+			    	);
 			        $('#datetimepicker2').datetimepicker({
+			    	    //format: 'LT',
 			            useCurrent: false //Important! See issue #1075
 			        });
 			        $("#datetimepicker1").on("dp.change", function (e) {
@@ -199,11 +206,12 @@ require_once('header.php');
 			    <output id="archivespeedrange"><?php  if (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?></output>
 			</div>
 		    </li>
-
-
-			<input type="hidden" name="during" value="60" />
-		    </li>
-		    <li><input type="submit" name="archive" value="Show archive" /></li>
+		    <li><input type="submit" name="archive" value="Show archive" class="btn btn-primary" /></li>
+		</ul>
+	    </form>
+	    <form>
+		<ul>
+		    <li><input type="submit" name="noarchive" class="btn btn-primary" value="Back from archive view" /></li>
 		</ul>
 	    </form>
 	</div>
@@ -366,6 +374,35 @@ require_once('header.php');
 <?php
     }
 ?>
+		    <li><?php echo _("Distance unit:"); ?>
+			<select class="selectpicker" onchange="unitdistance(this);">
+			    <option value="km"<?php if ((!isset($_COOKIE['unitdistance']) && (!isset($globalUnitDistance) || (isset($globalUnitDistance) && $globalUnitDistance == 'km'))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) echo ' selected'; ?>>km</option>
+			    <option value="nm"<?php if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) echo ' selected'; ?>>nm</option>
+			    <option value="mi"<?php if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) echo ' selected'; ?>>mi</option>
+		        </select>
+		    </li>
+		    <li><?php echo _("Altitude unit:"); ?>
+			<select class="selectpicker" onchange="unitaltitude(this);">
+			    <option value="m"<?php if ((!isset($_COOKIE['unitaltitude']) && (!isset($globalUnitAltitude) || (isset($globalUnitAltitude) && $globalUnitAltitude == 'm'))) || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'm')) echo ' selected'; ?>>m</option>
+			    <option value="feet"<?php if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) echo ' selected'; ?>>feet</option>
+		        </select>
+		    </li>
+		    <li><?php echo _("Speed unit:"); ?>
+			<select class="selectpicker" onchange="unitspeed(this);">
+			    <option value="kmh"<?php if ((!isset($_COOKIE['unitspeed']) && (!isset($globalUnitSpeed) || (isset($globalUnitSpeed) && $globalUnitSpeed == 'kmh'))) || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'kmh')) echo ' selected'; ?>>km/h</option>
+			    <option value="mph"<?php if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) echo ' selected'; ?>>mph</option>
+			    <option value="knots"<?php if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) echo ' selected'; ?>>knots</option>
+		        </select>
+		    </li>
+
+		</ul>
+	    </form>
+	    <p><?php echo _("Any change in settings reload page"); ?></p>
+	</div>
+        <div class="sidebar-pane" id="filters">
+	    <h1 class="sidebar-header"><?php echo _("Filters"); ?><span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+		<form>
+		    <ul>
 		    <?php
 			if (((isset($globalVATSIM) && $globalVATSIM) || isset($globalIVAO) && $globalIVAO || isset($globalphpVMS) && $globalphpVMS) && (!isset($globalMapVAchoose) || $globalMapVAchoose)) {
 		    ?>
@@ -388,7 +425,8 @@ require_once('header.php');
 			}
 		    ?>
 		    <li><?php echo _("Display airlines:"); ?>
-			<select class="selectpicker" multiple onchange="airlines(this);">
+		    <br/>
+			<select class="selectpicker" multiple onchange="airlines(this);" id="display_airlines">
 			    <?php
 				$Spotter = new Spotter();
 				foreach($Spotter->getAllAirlineNames() as $airline) {
@@ -426,7 +464,7 @@ require_once('header.php');
 		    <?php
 			if (!(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalphpVMS) && $globalphpVMS)) {
 		    ?>
-		    <li><?php echo _("Display airlines of type:"); ?>
+		    <li><?php echo _("Display airlines of type:"); ?><br/>
 			<select class="selectpicker" onchange="airlinestype(this);">
 			    <option value="all"<?php if (!isset($_COOKIE['airlinestype']) || $_COOKIE['airlinestype'] == 'all' || $_COOKIE['airlinestype'] == '') echo ' selected'; ?>><?php echo _("All"); ?></option>
 			    <option value="passenger"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'passenger') echo ' selected'; ?>><?php echo _("Passenger"); ?></option>
@@ -437,29 +475,16 @@ require_once('header.php');
 		    <?php
 			}
 		    ?>
-		    <li><?php echo _("Distance unit:"); ?>
-			<select class="selectpicker" onchange="unitdistance(this);">
-			    <option value="km"<?php if ((!isset($_COOKIE['unitdistance']) && (!isset($globalUnitDistance) || (isset($globalUnitDistance) && $globalUnitDistance == 'km'))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) echo ' selected'; ?>>km</option>
-			    <option value="nm"<?php if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) echo ' selected'; ?>>nm</option>
-			    <option value="mi"<?php if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) echo ' selected'; ?>>mi</option>
-		        </select>
-		    </li>
-		    <li><?php echo _("Altitude unit:"); ?>
-			<select class="selectpicker" onchange="unitaltitude(this);">
-			    <option value="m"<?php if ((!isset($_COOKIE['unitaltitude']) && (!isset($globalUnitAltitude) || (isset($globalUnitAltitude) && $globalUnitAltitude == 'm'))) || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'm')) echo ' selected'; ?>>m</option>
-			    <option value="feet"<?php if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) echo ' selected'; ?>>feet</option>
-		        </select>
-		    </li>
-		    <li><?php echo _("Speed unit:"); ?>
-			<select class="selectpicker" onchange="unitspeed(this);">
-			    <option value="kmh"<?php if ((!isset($_COOKIE['unitspeed']) && (!isset($globalUnitSpeed) || (isset($globalUnitSpeed) && $globalUnitSpeed == 'kmh'))) || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'kmh')) echo ' selected'; ?>>km/h</option>
-			    <option value="mph"<?php if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) echo ' selected'; ?>>mph</option>
-			    <option value="knots"<?php if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) echo ' selected'; ?>>knots</option>
-		        </select>
+		    <li>
+			<?php echo _("Display flight with ident:"); ?>
+			<input type="text" name="identfilter" id="identfilter" value="<?php if (isset($_COOKIE['identfilter'])) print $_COOKIE['identfilter']; ?>" />
 		    </li>
 		</ul>
 	    </form>
-	    <p><?php echo _("Any change in settings reload page"); ?></p>
+	    <form method="post">
+		<!-- <center><input type="submit" name="removefilters" value="<?php echo _("Remove all filters"); ?>" class="btn btn-primary" /></center> -->
+		<center><button type="button" class="btn btn-primary" onclick="removefilters();"><?php echo _("Remove all filters"); ?></button></center>
+	    </form>
     	</div>
 <?php
     if (isset($globalMapSatellites) && $globalMapSatellites && isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
@@ -522,6 +547,17 @@ require_once('header.php');
     if (getCookie('flightpopup') == 'true') $(".flightpopup").addClass("active");
     if (getCookie('maproute') == 'true') $(".flightroute").addClass("active");
     var sidebar = $('#sidebar').sidebar();
+//    $(document).ready(function(){
+//    	populate($("#display_airlines"),'airlinenames',getCookie('airline'));
+//    });
+    var typingTimer;
+    var doneTypingInterval = 4000;
+    $("#identfilter").on('input', function() {
+	clearTimeout(typingTimer);
+	if (this.value) {
+	    typingTimer = setTimeout(identfilter,doneTypingInterval);
+	}
+    });
 </script>
 <?php
 require_once('footer.php');
