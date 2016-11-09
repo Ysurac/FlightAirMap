@@ -162,7 +162,7 @@ $output .= '{"id" : "document", "name" : "fam","version" : "1.0"';
 
 //	$output .= ',"clock": {"interval" : "'.date("c",time()-$globalLiveInterval).'/'.date("c").'","currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
 //$output .= ',"clock": {"currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
-if ($from_archive == true) {
+if ($from_archive === true) {
 	$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER","interval": "%minitime%/%maxitime%"}';
 } else {
 	$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';

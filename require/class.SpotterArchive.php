@@ -11,7 +11,7 @@ class SpotterArchive {
 	public function getFilter($filter) {
 		$filter_query = '';
 		if (isset($filter['source']) && !empty($filter['source'])) {
-			$filter_query = " AND format_source IN ('".implode("','",$filter['source'])."')";
+			$filter_query .= " AND format_source IN ('".implode("','",$filter['source'])."')";
 		}
 		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
@@ -20,10 +20,10 @@ class SpotterArchive {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
 		}
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
-			$filter_query_where = " WHERE ident =  '".$filter['ident']."'";
+			$filter_query .= " AND ident =  '".$filter['ident']."'";
 		}
 		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
-			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+			$filter_query .= " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
 		}
 		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
