@@ -66,7 +66,7 @@ class Stats {
         }
 	public function getAllAirportNames($stats_airline = '',$filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-                $query = "SELECT airport_icao, airport_name,airport_city,airport_country FROM stats_airport WHERE stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_icao,airport_name,airport_city,airport_country ORDER BY airport_city ASC";
+                $query = "SELECT airport_icao, airport_name,airport_city,airport_country FROM stats_airport WHERE stats_airline = :stats_airline AND filter_name = :filter_name AND stats_type = 'daily' GROUP BY airport_icao,airport_name,airport_city,airport_country ORDER BY airport_city ASC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));

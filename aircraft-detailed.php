@@ -74,7 +74,7 @@ if (!isset($_GET['aircraft_type'])){
 	      
 		include('aircraft-sub-menu.php');
 	        
-		print '<div class="table column">';	  
+		print '<div class="table column">';
 		print '<p>'.sprintf(_("The table below shows the detailed information of all flights from <strong>%s (%s)</strong>."),$spotter_array[0]['aircraft_name'],$spotter_array[0]['aircraft_type']).'</p>';
 		  
 		include('table-output.php');

@@ -178,7 +178,7 @@ if (!isset($_GET['airport'])){
 		}
 		include('airport-sub-menu.php');
 		print '<div class="table column">';
-		 if ($airport_array[0]['iata'] != "NA")
+		if ($airport_array[0]['iata'] != "NA")
 		{
 			print '<p>'.sprintf(_("The table below shows the detailed information of all flights to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
 		}

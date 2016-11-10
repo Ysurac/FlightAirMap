@@ -8,28 +8,47 @@ class SpotterArchive {
 		$this->db = $Connection->db;
 	}
 
-	public function getFilter($filter) {
-		$filter_query = '';
-		if (isset($filter['source']) && !empty($filter['source'])) {
-			$filter_query .= " AND format_source IN ('".implode("','",$filter['source'])."')";
-		}
-		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
-			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
-		}
-		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
-			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
-		}
-		if (isset($filter['ident']) && !empty($filter['ident'])) {
-			$filter_query .= " AND ident =  '".$filter['ident']."'";
-		}
-		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
-			$filter_query .= " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
-		}
-		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
-			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
-		}
-		return $filter_query;
+    /**
+    * Get SQL query part for filter used
+    * @param Array $filter the filter
+    * @return Array the SQL part
+    */
+    public function getFilter($filter = array(),$where = false,$and = false) {
+	global $globalFilter, $globalStatsFilters, $globalFilterName;
+	if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) $filter = array_merge($globalStatsFilters[$globalFilterName],$filter);
+	if (is_array($globalFilter)) $filter = array_merge($globalFilter,$filter);
+	$filter_query_join = '';
+	$filter_query_where = '';
+	if (isset($filter['airlines']) && !empty($filter['airlines'])) {
+	    if ($filter['airlines'][0] != '') {
+		$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_archive_output.flightaware_id";
+	    }
 	}
+	
+	if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
+	    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_archive_output.flightaware_id ";
+	}
+	if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
+	    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) so ON so.flightaware_id = spotter_archive_output.flightaware_id";
+	}
+	if (isset($filter['source']) && !empty($filter['source'])) {
+	    $filter_query_where = " WHERE format_source IN ('".implode("','",$filter['source'])."')";
+	}
+	if (isset($filter['ident']) && !empty($filter['ident'])) {
+	    $filter_query_where = " WHERE ident = '".$filter['ident']."'";
+	}
+	if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+	    if ($filter_query_where == '') {
+		$filter_query_where = " WHERE format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+	    } else {
+		$filter_query_where .= " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+	    }
+	}
+	if ($filter_query_where == '' && $where) $filter_query_where = ' WHERE';
+	elseif ($filter_query_where != '' && $and) $filter_query_where .= ' AND';
+	$filter_query = $filter_query_join.$filter_query_where;
+	return $filter_query;
+    }
 
 	// Spotter_archive
 	public function addSpotterArchiveData($flightaware_id = '', $ident = '', $registration = '', $airline_name = '', $airline_icao = '', $airline_country = '', $airline_type = '', $aircraft_icao = '', $aircraft_shadow = '', $aircraft_name = '', $aircraft_manufacturer = '', $departure_airport_icao = '', $departure_airport_name = '', $departure_airport_city = '', $departure_airport_country = '', $departure_airport_time = '',$arrival_airport_icao = '', $arrival_airport_name = '', $arrival_airport_city ='', $arrival_airport_country = '', $arrival_airport_time = '', $route_stop = '', $date = '',$latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $ground_speed = '', $squawk = '', $ModeS = '', $pilot_id = '', $pilot_name = '',$verticalrate = '',$format_source = '', $source_name = '', $over_country = '') {
@@ -981,6 +1000,60 @@ class SpotterArchive {
 	return $spotter_array;
     }
 
+    /**
+    * Gets all the spotter information based on the airport
+    *
+    * @return Array the spotter information
+    *
+    */
+    public function getSpotterDataByAirport($airport = '', $limit = '', $sort = '',$filters = array())
+    {
+	global $global_query;
+	$Spotter = new Spotter();
+	date_default_timezone_set('UTC');
+	$query_values = array();
+	$limit_query = '';
+	$additional_query = '';
+	$filter_query = $this->getFilter($filters,true,true);
+	
+	if ($airport != "")
+	{
+	    if (!is_string($airport))
+	    {
+		return false;
+	    } else {
+		$additional_query .= " AND ((spotter_archive_output.departure_airport_icao = :airport) OR (spotter_archive_output.arrival_airport_icao = :airport))";
+		$query_values = array(':airport' => $airport);
+	    }
+	}
+	
+	if ($limit != "")
+	{
+	    $limit_array = explode(",", $limit);
+	    
+	    $limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+	    $limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+	    
+	    if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+	    {
+		//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+		$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+	    }
+	}
+	
+	if ($sort != "")
+	{
+	    $search_orderby_array = $Spotter->getOrderBy();
+	    $orderby_query = $search_orderby_array[$sort]['sql'];
+	} else {
+	    $orderby_query = " ORDER BY spotter_archive_output.date DESC";
+	}
 
+	$query = $global_query.$filter_query." spotter_archive_output.ident <> '' ".$additional_query." AND ((spotter_archive_output.departure_airport_icao <> 'NA') AND (spotter_archive_output.arrival_airport_icao <> 'NA')) ".$orderby_query;
+
+	$spotter_array = $Spotter->getDataFromDB($query, $query_values, $limit_query);
+
+	return $spotter_array;
+    }
 }
 ?>
