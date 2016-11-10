@@ -92,6 +92,7 @@ if (!isset($_GET['airport'])){
 			}
 			print '</div>';
 			print '<div><span class="label">'._("Coordinates").'</span><a href="http://maps.google.ca/maps?z=10&t=k&q='.$airport_array[0]['latitude'].','.$airport_array[0]['longitude'].'" target="_blank">Google Map<i class="fa fa-angle-double-right"></i></a></div>';
+			print '<div><span class="label">'._("Live Air Traffic").'</span><a href="http://www.liveatc.net/search/?icao='.$airport_array[0]['icao'].'" target="_blank">LiveATC.net<i class="fa fa-angle-double-right"></i></a></div>';
 			print '</div>';
 			
 			print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
