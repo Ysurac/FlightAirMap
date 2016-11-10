@@ -1430,23 +1430,7 @@ class Spotter{
 		$limit_query = '';
 		$additional_query = '';
 
-		$filter_query = '';
-		if (isset($filter['source']) && !empty($filter['source'])) {
-			$filter_query = " AND format_source IN ('".implode("','",$filter['source'])."')";
-		}
-		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
-			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
-		}
-		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
-			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
-		}
-		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
-			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
-		}
-		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
-			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
-		}
-	
+		$filter_query = $this->getFilter($filter,true,true);
 		
 		if ($date != "")
 		{
@@ -1490,7 +1474,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query." WHERE spotter_output.ident <> '' ".$additional_query.$filter_query." ".$orderby_query;
+		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query.$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 		return $spotter_array;
 	}
@@ -9202,8 +9186,8 @@ class Spotter{
 	public function countOverallMilitaryFlights($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
-		$query  = "SELECT COUNT(s.spotter_id) AS flight_count  
-                    FROM spotter_output s, airlines a".$filter_query." s.airline_icao = a.icao AND a.type = 'military'";
+		$query  = "SELECT COUNT(spotter_output.spotter_id) AS flight_count  
+                    FROM airlines,spotter_output".$filter_query." spotter_output.airline_icao = airlines.icao AND airlines.type = 'military'";
       
 		$sth = $this->db->prepare($query);
 		$sth->execute();

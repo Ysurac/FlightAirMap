@@ -17,8 +17,8 @@ class SpotterLive {
 	* @return Array the SQL part
 	*/
 	public function getFilter($filter = array(),$where = false,$and = false) {
-		global $globalFilter, $globalStatsFilter, $globalFilterName;
-		if (is_array($globalStatsFilter) && isset($globalStatsFilter[$globalFilterName])) $filter = array_merge($globalStatsFilter[$globalFilterName],$filter);
+		global $globalFilter, $globalStatsFilters, $globalFilterName;
+		if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) $filter = array_merge($globalStatsFilters[$globalFilterName],$filter);
 		if (is_array($globalFilter)) $filter = array_merge($globalFilter,$filter);
 		$filter_query_join = '';
 		$filter_query_where = '';

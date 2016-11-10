@@ -345,7 +345,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Departure Airports"); ?></h2>
                 <?php
-                $airport_airport_array = $Stats->countAllDepartureAirports($airline_icao,$filter_name);
+                $airport_airport_array = $Stats->countAllDepartureAirports(true,$airline_icao,$filter_name);
 		    if (count($airport_airport_array) == 0) print _("No data available");
 		    else {
 
@@ -395,7 +395,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Arrival Airports"); ?></h2>
                 <?php
-                $airport_airport_array2 = $Stats->countAllArrivalAirports($airline_icao,$filter_name);
+                $airport_airport_array2 = $Stats->countAllArrivalAirports(true,$airline_icao,$filter_name);
 		    if (count($airport_airport_array2) == 0) print _("No data available");
 		    else {
 
@@ -447,7 +447,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Months of the last 12 Months"); ?></h2>
                 <?php
-                  $year_array = $Stats->countAllMonthsLastYear($airline_icao,$filter_name);
+                  $year_array = $Stats->countAllMonthsLastYear(true,$airline_icao,$filter_name);
 		    if (count($year_array) == 0) print _("No data available");
 		    else {
                   print '<div id="chart8" class="chart" width="100%"></div>

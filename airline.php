@@ -44,7 +44,9 @@ if (isset($_POST['airline']))
 		//$Stats = new Stats();
 		//$airline_names = $Spotter->getAllAirlineNames();
 		$airline_names = $Stats->getAllAirlineNames();
-		if (empty($airline_names)) $airline_names = $Spotter->getAllAirlineNames();
+		if (empty($airline_names)) {
+			$airline_names = $Spotter->getAllAirlineNames();
+		}
 	}
 	$previous = null;
 	print '<div class="alphabet-legend">';

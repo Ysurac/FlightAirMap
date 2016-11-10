@@ -328,8 +328,8 @@ class Stats {
 	public function countAllDepartureAirports($limit = true,$stats_airline = '',$filter_name = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC";
+		if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE departure > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE departure > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
@@ -368,8 +368,8 @@ class Stats {
 	public function countAllArrivalAirports($limit = true,$stats_airline = '',$filter_name = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC";
+		if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE arrival > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE arrival > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC";
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
@@ -1762,6 +1762,10 @@ class Stats {
 				$alldata = $Spotter->countAllAircraftTypes(false,0,$last_update_day,$filter);
 				foreach ($alldata as $number) {
 					$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name'],$number['aircraft_manufacturer'],'',$filter_name);
+				}
+				$alldata = $Spotter->countAllAirlines(false,0,$last_update_day,$filter);
+				foreach ($alldata as $number) {
+					$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name'],$filter_name);
 				}
 				$alldata = $Spotter->countAllAircraftRegistrations(false,0,$last_update_day,$filter);
 				foreach ($alldata as $number) {
