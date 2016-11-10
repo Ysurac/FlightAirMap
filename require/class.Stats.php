@@ -1617,7 +1617,7 @@ class Stats {
 	        	//$alldata = array();
     			foreach ($dall as $value) {
     				$icao = $value['airport_departure_icao'];
-    				$dicao = $value['airline_icap'];
+    				$dicao = $value['airline_icao'];
     				$find = false;
     				foreach ($pall as $pvalue) {
     					if ($pvalue['airport_departure_icao'] == $icao && $pvalue['airline_icao'] = $dicao) {
@@ -1757,7 +1757,7 @@ class Stats {
 				//$filter_name = $filter['name'];
 				$filter_name = $name;
 				// Count by filter
-				echo '--- Stats by airlines ---'."\n";
+				echo '--- Stats for filter '.$filter_name.' ---'."\n";
 				$Spotter = new Spotter($this->db);
 				$alldata = $Spotter->countAllAircraftTypes(false,0,$last_update_day,$filter);
 				foreach ($alldata as $number) {
@@ -1782,45 +1782,43 @@ class Stats {
     			
 				$pall = $Spotter->countAllDepartureAirports(false,0,$last_update_day,$filter);
 	       			$dall = $Spotter->countAllDetectedDepartureAirports(false,0,$last_update_day,$filter);
-		        	//$alldata = array();
-	    			foreach ($dall as $value) {
+		        	$alldata = array();
+	    			foreach ($pall as $value) {
+		        		$icao = $value['airport_departure_icao'];
+    					$alldata[$icao] = $value;
+	    			}
+		        	foreach ($dall as $value) {
 	    				$icao = $value['airport_departure_icao'];
-	    				$dicao = $value['airline_icap'];
-	    				$find = false;
-        				foreach ($pall as $pvalue) {
-        					if ($pvalue['airport_departure_icao'] == $icao && $pvalue['airline_icao'] = $dicao) {
-        						$pvalue['airport_departure_icao_count'] = $pvalue['airport_departure_icao_count'] + $value['airport_departure_icao_count'];
-        						$find = true;
-        						break;
-        					}
-        				}
-        				if ($find === false) {
-        					$pall[] = $value;
-        				}
-        			}
-        			$alldata = $pall;
+        				if (isset($alldata[$icao])) {
+    						$alldata[$icao]['airport_departure_icao_count'] = $alldata[$icao]['airport_departure_icao_count'] + $value['airport_departure_icao_count'];
+        				} else $alldata[$icao] = $value;
+				}
+	    			$count = array();
+    				foreach ($alldata as $key => $row) {
+    					$count[$key] = $row['airport_departure_icao_count'];
+    				}
+				array_multisort($count,SORT_DESC,$alldata);
 				foreach ($alldata as $number) {
     					echo $this->addStatDepartureAirports($number['airport_departure_icao'],$number['airport_departure_name'],$number['airport_departure_city'],$number['airport_departure_country'],$number['airport_departure_icao_count'],'',$filter_name);
 				}
 				$pall = $Spotter->countAllArrivalAirports(false,0,$last_update_day,$filter);
     				$dall = $Spotter->countAllDetectedArrivalAirports(false,0,$last_update_day,$filter);
-	    			//$alldata = array();
-				foreach ($dall as $value) {
-    					$icao = $value['airport_arrival_icao'];
-	    				$dicao = $value['airline_icao'];
-	    				$find = false;
-    					foreach ($pall as $pvalue) {
-    						if ($pvalue['airport_arrival_icao'] == $icao && $pvalue['airline_icao'] = $dicao) {
-							$pvalue['airport_arrival_icao_count'] = $pvalue['airport_arrival_icao_count'] + $value['airport_arrival_icao_count'];
-							$find = true;
-							break;
-        					}
-					}
-					if ($find === false) {
-						$pall[] = $value;
-					}
-        			}
-				$alldata = $pall;
+				$alldata = array();
+    				foreach ($pall as $value) {
+		        		$icao = $value['airport_arrival_icao'];
+    					$alldata[$icao] = $value;
+	    			}
+		        	foreach ($dall as $value) {
+	    				$icao = $value['airport_arrival_icao'];
+        				if (isset($alldata[$icao])) {
+        					$alldata[$icao]['airport_arrival_icao_count'] = $alldata[$icao]['airport_arrival_icao_count'] + $value['airport_arrival_icao_count'];
+		        		} else $alldata[$icao] = $value;
+	    			}
+        			$count = array();
+        			foreach ($alldata as $key => $row) {
+    					$count[$key] = $row['airport_arrival_icao_count'];
+		        	}
+        			array_multisort($count,SORT_DESC,$alldata);
 				foreach ($alldata as $number) {
 					echo $this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_name'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count'],'',$filter_name);
 				}
@@ -1848,38 +1846,36 @@ class Stats {
 					$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
 				}
 				echo '...Departure'."\n";
-				$pall = $Spotter->getLast7DaysAirportsDeparture($filter);
-        			$dall = $Spotter->getLast7DaysDetectedAirportsDeparture($filter);
-	    			foreach ($dall as $value) {
+				$pall = $Spotter->getLast7DaysAirportsDeparture('',$filter);
+        			$dall = $Spotter->getLast7DaysDetectedAirportsDeparture('',$filter);
+				foreach ($dall as $value) {
     					$icao = $value['departure_airport_icao'];
-    					$airline = $value['airline_icao'];
-	    				$ddate = $value['date'];
+    					$ddate = $value['date'];
     					$find = false;
     					foreach ($pall as $pvalue) {
-    						if ($pvalue['departure_airport_icao'] == $icao && $pvalue['date'] == $ddate && $pvalue['airline_icao'] = $airline) {
-	    						$pvalue['departure_airport_count'] = $pvalue['departure_airport_count'] + $value['departure_airport_count'];
-    							$find = true;
+    						if ($pvalue['departure_airport_icao'] == $icao && $pvalue['date'] == $ddate) {
+    							$pvalue['departure_airport_count'] = $pvalue['departure_airport_count'] + $value['departure_airport_count'];
+	    						$find = true;
     							break;
     						}
     					}
-					if ($find === false) {
-	    					$pall[] = $value;
-    					}
+    					if ($find === false) {
+    						$pall[] = $value;
+	    				}
     				}
 	    			$alldata = $pall;
 				foreach ($alldata as $number) {
 					$this->addStatDepartureAirportsDaily($number['date'],$number['departure_airport_icao'],$number['departure_airport_name'],$number['departure_airport_city'],$number['departure_airport_country'],$number['departure_airport_count'],'',$filter_name);
 				}
 				echo '...Arrival'."\n";
-				$pall = $Spotter->getLast7DaysAirportsArrival($filter);
-    				$dall = $Spotter->getLast7DaysDetectedAirportsArrival($filter);
+				$pall = $Spotter->getLast7DaysAirportsArrival('',$filter);
+    				$dall = $Spotter->getLast7DaysDetectedAirportsArrival('',$filter);
 				foreach ($dall as $value) {
 					$icao = $value['arrival_airport_icao'];
-					$airline = $value['airline_icao'];
 					$ddate = $value['date'];
     					$find = false;
 					foreach ($pall as $pvalue) {
-    						if ($pvalue['arrival_airport_icao'] == $icao && $pvalue['date'] == $ddate && $pvalue['airline_icao'] == $airline) {
+    						if ($pvalue['arrival_airport_icao'] == $icao && $pvalue['date'] == $ddate) {
     							$pvalue['arrival_airport_count'] = $pvalue['arrival_airport_count'] + $value['arrival_airport_count'];
     							$find = true;
     							break;
@@ -1901,7 +1897,7 @@ class Stats {
 					$this->addStatFlight('month',$number['date_name'],$number['date_count'], '',$filter_name);
 				}
 				echo '-> countAllDates...'."\n";
-				$previousdata = $this->countAllDates($filter);
+				$previousdata = $this->countAllDates('',$filter_name);
 				$alldata = $Common->array_merge_noappend($previousdata,$Spotter->countAllDates($filter));
 				$values = array();
 				foreach ($alldata as $cnt) {
