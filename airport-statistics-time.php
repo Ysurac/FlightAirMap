@@ -22,7 +22,7 @@ if (!empty($airport_array))
 	print '<select name="airport" class="selectpicker" data-live-search="true">';
 	print '<option></option>';
 	$Stats = new Stats();
-	$airport_names = $tats->getAllAirportNames();
+	$airport_names = $Stats->getAllAirportNames();
 	if (empty($airport_names)) $airport_names = $Spotter->getAllAirportNames();
 	ksort($airport_names);
 	foreach($airport_names as $airport_name)
@@ -57,7 +57,7 @@ if (!empty($airport_array))
 
 	include('airport-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>'._("Most Common Time of Day");'</h2>';
+	print '<h2>'._("Most Common Time of Day").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common time of day to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
 
 	$hour_array = $Spotter->countAllHoursByAirport($airport);

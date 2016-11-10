@@ -21,7 +21,7 @@ if (!empty($airport_array))
 	print '<select name="airport" class="selectpicker" data-live-search="true">';
 	print '<option></option>';
 	$Stats = new Stats();
-	$airport_names = $tats->getAllAirportNames();
+	$airport_names = $Stats->getAllAirportNames();
 	if (empty($airport_names)) $airport_names = $Spotter->getAllAirportNames();
 	ksort($airport_names);
 	foreach($airport_names as $airport_name)

@@ -498,7 +498,7 @@ class SpotterArchive {
     * @return Array the spotter information
     *
     */
-    public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '', $filter=array())
+    public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '', $filters=array())
     {
 	global $globalTimezone, $globalDBdriver;
 	require_once(dirname(__FILE__).'/class.Translation.php');
@@ -510,7 +510,7 @@ class SpotterArchive {
 	$query_values = array();
 	$additional_query = '';
 	$limit_query = '';
-	$filter_query = $this->getFilter($filter);
+	$filter_query = $this->getFilter($filters);
 	if ($q != "")
 	{
 	    if (!is_string($q))

@@ -23,7 +23,7 @@ if (!empty($spotter_array))
 	$Stats = new Stats();
 	$aircraft_types = $Stats->getAllAircraftTypes();
 	if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();
-	foreach($aircraft_types as $aircraft_type)
+	foreach($aircraft_types as $aircrafttype)
 	{
 		if($aircraft_type == $aircrafttype['aircraft_icao'])
 		{

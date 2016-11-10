@@ -22,7 +22,7 @@ if (!empty($airport_array))
 	print '<select name="airport" class="selectpicker" data-live-search="true">';
 	print '<option></option>';
 	$Stats = new Stats();
-	$airport_names = $tats->getAllAirportNames();
+	$airport_names = $Stats->getAllAirportNames();
 	if (empty($airport_names)) $airport_names = $Spotter->getAllAirportNames();
 	ksort($airport_names);
 	foreach($airport_names as $airport_name)
@@ -49,7 +49,7 @@ if (!empty($airport_array))
 		print '<div><span class="label">'._("ICAO").'</span>'.$airport_array[0]['icao'].'</div>';
 		print '<div><span class="label">'._("IATA").'</span>'.$airport_array[0]['iata'].'</div>';
 		print '<div><span class="label">'._("Altitude").'</span>'.$airport_array[0]['altitude'].'</div>';
-		print '<div><span class="label">'._("Coordinates");'</span><a href="http://maps.google.ca/maps?z=10&t=k&q='.$airport_array[0]['latitude'].','.$airport_array[0]['longitude'].'" target="_blank">Google Map<i class="fa fa-angle-double-right"></i></a></div>';
+		print '<div><span class="label">'._("Coordinates").'</span><a href="http://maps.google.ca/maps?z=10&t=k&q='.$airport_array[0]['latitude'].','.$airport_array[0]['longitude'].'" target="_blank">Google Map<i class="fa fa-angle-double-right"></i></a></div>';
 		print '</div>';
 	} else {
 		print '<div class="alert alert-warning">'._("This special airport profile shows all flights that do <u>not</u> have a departure and/or arrival airport associated with them.").'</div>';
@@ -57,7 +57,7 @@ if (!empty($airport_array))
 
 	include('airport-sub-menu.php');
 	print '<div class="column">';
-	print '<h2>'._("Most Common Routes");'</h2>';
+	print '<h2>'._("Most Common Routes").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common routes to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
 
 	$route_array = $Spotter->countAllRoutesByAirport($airport);

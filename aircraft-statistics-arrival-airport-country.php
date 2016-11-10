@@ -8,7 +8,7 @@ if (!isset($_GET['aircraft_type'])) {
         die();
 }
 
-$aircraft_type = filter_input(FILTER_INPUT,'aircraft_type',FILTER_SANITIZE_STRING);
+$aircraft_type = filter_input(INPUT_GET,'aircraft_type',FILTER_SANITIZE_STRING);
 $Spotter = new Spotter();
 $spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,"0,1","");
 
@@ -21,9 +21,10 @@ if (!empty($spotter_array))
 	print '<form action="'.$globalURL.'/aircraft" method="post">';
 	print '<select name="aircraft_type" class="selectpicker" data-live-search="true">';
 	print '<option></option>';
+	$Stats = new Stats();
 	$aircraft_types = $Stats->getAllAircraftTypes();
 	if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();
-	foreach($aircraft_types as $aircraft_type)
+	foreach($aircraft_types as $aircrafttype)
 	{
 		if($aircraft_type == $aircrafttype['aircraft_icao'])
 		{
