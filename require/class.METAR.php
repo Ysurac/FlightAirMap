@@ -295,7 +295,7 @@ class METAR {
 		} else {
 			$query = "UPDATE metar SET metar_date = :date, metar = metar WHERE metar_location = :location;INSERT INTO metar (metar_location,metar_date,metar) SELECT :location,:date,:metar WHERE NOT EXISTS (SELECT 1 FROM metar WHERE metar_location = :location);";
 		}
-                $query_values = array(':location' => $location,':date' => $date,':metar' => $metar);
+                $query_values = array(':location' => $location,':date' => $date,':metar' => utf8_encode($metar));
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
