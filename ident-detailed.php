@@ -48,7 +48,7 @@ if (!isset($_GET['ident'])){
 			$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
 		}
 	}
-	if (!empty($spotter_array)) {
+	if (empty($spotter_array)) {
 		$new_ident = $Translation->checkTranslation($ident);
 		if ($new_ident != $ident) {
 			$ident = $new_ident;
