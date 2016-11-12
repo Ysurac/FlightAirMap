@@ -24,7 +24,7 @@ class Image {
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 		if ($registration == '' && $aircraft_icao != '') $registration = $aircraft_icao.$airline_icao;
 		$registration = trim($registration);
-		$query  = "SELECT spotter_image.image, spotter_image.image_thumbnail, spotter_image.image_source, spotter_image.image_source_website,spotter_image.image_copyright
+		$query  = "SELECT spotter_image.image, spotter_image.image_thumbnail, spotter_image.image_source, spotter_image.image_source_website,spotter_image.image_copyright, spotter_image.registration 
 			FROM spotter_image 
 			WHERE spotter_image.registration = :registration";
 		$sth = $this->db->prepare($query);
