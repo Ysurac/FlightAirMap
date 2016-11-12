@@ -184,9 +184,9 @@ class Connection{
 	{
 		global $globalDBdriver, $globalDBname;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(1) IndexIsThere FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema=DATABASE() AND table_name='".$table."' AND index_name='".$index."'";
+			$query = "SELECT COUNT(*) as nb FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema=DATABASE() AND table_name='".$table."' AND index_name='".$index."'";
 		} else {
-			$query = "SELECT 1 FROM   pg_class c JOIN   pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '".$index."' AND n.nspname = '".$table."'";
+			$query = "SELECT count(*) as nb FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '".$index."' AND n.nspname = '".$table."'";
 		}
 		try {
 			//$Connection = new Connection();
@@ -194,7 +194,8 @@ class Connection{
 		} catch(PDOException $e) {
 			return false;
 		}
-		if($results->rowCount()>0) {
+		$nb = $results->fetchAll(PDO::FETCH_ASSOC);
+		if($nb[0]['nb'] > 0) {
 			return true; 
 		}
 		else return false;
