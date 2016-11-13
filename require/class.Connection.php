@@ -280,6 +280,7 @@ class Connection{
 					return "error : ".$e->getMessage()."\n";
 				}
 				$result = $sth->fetch(PDO::FETCH_ASSOC);
+				$sth->closeCursor();
 				return $result['value'];
 			}
 		} else return $version;
