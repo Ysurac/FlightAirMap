@@ -107,7 +107,7 @@ class SpotterLive {
 		global $globalDBdriver, $globalLiveInterval;
 		date_default_timezone_set('UTC');
 
-		$filter_query = $this->getFilter($filter);
+		$filter_query = $this->getFilter($filter,true,true);
 
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		if ($globalDBdriver == 'mysql') {
@@ -116,7 +116,7 @@ class SpotterLive {
 //			$query  = 'SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate'.$filter_query;
 
 			$query  = 'SELECT a.aircraft_shadow, spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source 
-			FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_live.aircraft_icao = a.icao'.$filter_query;
+			FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_live.aircraft_icao = a.icao'.$filter_query." spotter_live.latitude <> '0' AND spotter_live.longitude <> '0'";
 
 //			$query  = 'SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk FROM spotter_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= spotter_live.date ORDER BY spotter_live.date GROUP BY spotter_live.flightaware_id'.$filter_query;
 
@@ -126,7 +126,7 @@ class SpotterLive {
 			//$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE NOW() AT TIME ZONE 'UTC' - '".$globalLiveInterval." SECONDS'->INTERVAL <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate$orderby_query";
 			//$query  = 'SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, a.aircraft_shadow FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate '.$filter_query.'INNER JOIN (SELECT * FROM aircraft) a on spotter_live.aircraft_icao = a.icao';
 			$query  = "SELECT a.aircraft_shadow, spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source 
-			FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_live.aircraft_icao = a.icao".$filter_query;
+			FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_live.aircraft_icao = a.icao".$filter_query." spotter_live.latitude <> '0' AND spotter_live.longitude <> '0'";
 		}
 //		$spotter_array = Spotter->getDataFromDB($query.$limit_query);
 		//echo $query;
@@ -160,8 +160,8 @@ class SpotterLive {
 		if ($globalDBdriver == 'mysql') {
 
 			$query  = 'SELECT a.aircraft_shadow, a.engine_type, a.engine_count, a.wake_category, spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source 
-			FROM spotter_live LEFT JOIN (SELECT aircraft_shadow,engine_type, engine_count, wake_category,icao FROM aircraft) a ON spotter_live.aircraft_icao = a.icao'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= spotter_live.date 
-			ORDER BY spotter_live.flightaware_id, spotter_live.date';
+			FROM spotter_live LEFT JOIN (SELECT aircraft_shadow,engine_type, engine_count, wake_category,icao FROM aircraft) a ON spotter_live.aircraft_icao = a.icao'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= spotter_live.date AND spotter_live.latitude <> '0' AND spotter_live.longitude <> '0' 
+			ORDER BY spotter_live.flightaware_id, spotter_live.date";
                 } else {
 /*
 			$query  = "SELECT a.aircraft_shadow, spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source 
@@ -169,7 +169,7 @@ class SpotterLive {
 			".$filter_query.'LEFT JOIN (SELECT aircraft_shadow,icao FROM aircraft) a ON spotter_live.aircraft_icao = a.icao ORDER BY spotter_live.flightaware_id, spotter_live.date';
 */
 			$query  = "SELECT a.aircraft_shadow, a.engine_type, a.engine_count, a.wake_category, spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source 
-			FROM spotter_live LEFT JOIN (SELECT aircraft_shadow,engine_type, engine_count, wake_category, icao FROM aircraft) a ON spotter_live.aircraft_icao = a.icao".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= spotter_live.date 
+			FROM spotter_live LEFT JOIN (SELECT aircraft_shadow,engine_type, engine_count, wake_category, icao FROM aircraft) a ON spotter_live.aircraft_icao = a.icao".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= spotter_live.date AND spotter_live.latitude <> '0' AND spotter_live.longitude <> '0' 
 			ORDER BY spotter_live.flightaware_id, spotter_live.date";
 //			echo $query;
 		}
@@ -832,7 +832,7 @@ class SpotterLive {
 			{
 				return false;
 			}
-		}
+		} else return '';
 
 		if ($longitude != '')
 		{
@@ -840,7 +840,7 @@ class SpotterLive {
 			{
 				return false;
 			}
-		}
+		} else return '';
 
 		if ($waypoints != '')
 		{

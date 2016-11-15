@@ -454,7 +454,13 @@ if (isset($top_header) && $top_header != "")
 if (strtolower($current_page) =='ident-detailed' || strtolower($current_page) == 'flightid-overview') {
 ?>
     <div class="top-header clear" role="main">
+<?php
+    if (isset($longitude) && isset($latitude) && $longitude != 0 && $latitude != 0) {
+?>
     <div id="archive-map"></div>
+<?php
+    }
+?>
     </div>
 <?php
 }

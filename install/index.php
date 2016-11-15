@@ -724,6 +724,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<br />
 			<p>
+				<label for="allflights">Put all flights in DB even without coordinates</label>
+				<input type="checkbox" name="allflights" id="allflights" value="allflights"<?php if ((isset($globalAllFlights) && $globalAllFlights) || !isset($globalAllFlights)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<br />
+			<p>
 				<label for="refresh">Show flights detected since xxx seconds</label>
 				<input type="number" name="refresh" id="refresh" value="<?php if (isset($globalLiveInterval)) echo $globalLiveInterval; else echo '200'; ?>" />
 			</p>
@@ -1149,6 +1154,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapRoute' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapRoute' => 'FALSE'));
+	}
+	$allflights = filter_input(INPUT_POST,'allflights',FILTER_SANITIZE_STRING);
+	if ($allflights == 'allflights') {
+		$settings = array_merge($settings,array('globalAllFlights' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalAllFlights' => 'FALSE'));
 	}
 	$waypoints = filter_input(INPUT_POST,'waypoints',FILTER_SANITIZE_STRING);
 	if ($waypoints == 'waypoints') {

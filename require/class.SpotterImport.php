@@ -191,7 +191,7 @@ class SpotterImport {
     }
 
     public function add($line) {
-	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource, $globalVAM;
+	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource, $globalVAM, $globalAllFlights;
 	//if (!isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
 /*
@@ -286,6 +286,7 @@ class SpotterImport {
 		     } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $line['id']));
 
 		    if ($globalDebug) echo "*********** New aircraft hex : ".$hex." ***********\n";
+		    if ($globalAllFlights !== FALSE) $dataFound = true;
 		}
 		
 		if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
@@ -414,7 +415,6 @@ class SpotterImport {
 				$this->all_flights[$id]['archive_latitude'] = $line['latitude'];
 				$this->all_flights[$id]['archive_longitude'] = $line['longitude'];
 				$this->all_flights[$id]['putinarchive'] = true;
-			    
 				
 				if ($globalDebug) echo "\n".' ------- Check Country.... ';
 				$timeelapsed = microtime(true);
@@ -572,10 +572,11 @@ class SpotterImport {
 		//gets the callsign from the last hour
 		//if (time()-$this->all_flights[$id]['lastupdate'] > 30 && $dataFound == true && $this->all_flights[$id]['ident'] != '' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
 		//if ($dataFound == true && isset($this->all_flights[$id]['hex']) && $this->all_flights[$id]['ident'] != '' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
-		if ($dataFound === true && isset($this->all_flights[$id]['hex']) && $this->all_flights[$id]['heading'] != '' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
+		//if ($dataFound === true && isset($this->all_flights[$id]['hex']) && $this->all_flights[$id]['heading'] != '' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
+		if ($dataFound === true && isset($this->all_flights[$id]['hex'])) {
 		    $this->all_flights[$id]['lastupdate'] = time();
 		    if ($this->all_flights[$id]['addedSpotter'] == 0) {
-		        if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
+		        if (!isset($globalDistanceIgnore['latitude']) || $this->all_flights[$id]['longitude'] == ''  || $this->all_flights[$id]['latitude'] == '' || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 			    //print_r($this->all_flights);
 			    //echo $this->all_flights[$id]['id'].' - '.$this->all_flights[$id]['addedSpotter']."\n";
 			    //$last_hour_ident = Spotter->getIdentFromLastHour($this->all_flights[$id]['ident']);
@@ -791,7 +792,7 @@ class SpotterImport {
 				// Put statistics in $this->stats variable
 				//if ($line['format_source'] != 'aprs') {
 				//if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt')) {
-				if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE && $line['format_source'] != 'aprs') {
+				if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE && $line['format_source'] != 'aprs' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
 					$source = $this->all_flights[$id]['source_name'];
 					if ($source == '') $source = $this->all_flights[$id]['format_source'];
 					if (!isset($this->source_location[$source])) {

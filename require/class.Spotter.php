@@ -1258,7 +1258,6 @@ class Spotter{
 		$query_values = array();
 		$limit_query = '';
 		$additional_query = '';
-		$filter_query = $this->getFilter($filter,true,true);
 		
 		if ($registration != "")
 		{
@@ -1266,7 +1265,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query = " AND (spotter_output.registration = :registration)";
+				$additional_query = " (spotter_output.registration = :registration)";
 				$query_values = array(':registration' => $registration);
 			}
 		}
@@ -1292,8 +1291,10 @@ class Spotter{
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
+		$filter_query = $this->getFilter($filter,true,true);
 
-		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		//$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_query.$filter_query." ".$additional_query." ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
@@ -3460,6 +3461,10 @@ class Spotter{
                         $arrival_airport_array = $this->getAllAirportInfo('NA');
                 }
                 if ($registration == '') $registration = 'NA';
+                if ($latitude == '' && $longitude == '') {
+            		$latitude = 0;
+            		$longitude = 0;
+            	}
                 if ($squawk == '' || $Common->isInteger($squawk) === false) $squawk = NULL;
                 if ($verticalrate == '' || $Common->isInteger($verticalrate) === false) $verticalrate = NULL;
                 if ($heading == '' || $Common->isInteger($heading) === false) $heading = 0;
@@ -9977,7 +9982,7 @@ q	*
 				$aircraft_name = $this->getAllAircraftInfo($row['aircraft_icao']);
 				if ($row['registration'] != ""){
 					$image_array = $Image->getSpotterImage($row['registration']);
-					if (count($image_array) == 0) {
+					if (!isset($image_array[0]['registration'])) {
 						$Image->addSpotterImage($row['registration']);
 					}
 				}

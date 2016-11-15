@@ -47,7 +47,7 @@ if (!empty($spotter_array))
 
 	if (isset($globalArchive) && $globalArchive) {
 		// Requirement for altitude graph
-		print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+		print '<br/><script type="text/javascript" src="https://www.google.com/jsapi"></script><br/>';
 		$all_data = $SpotterArchive->getAltitudeSpeedArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
 
 		if (isset($globalTimezone)) {
@@ -56,7 +56,7 @@ if (!empty($spotter_array))
 		
 		//date_default_timezone_set('UTC');
 		if (is_array($all_data) && count($all_data) > 0) {
-			print '<div id="chart6" class="chart" width="100%"></div>
+			print '<br/><div id="chart6" class="chart" width="100%"></div>
                     <script> 
                         google.load("visualization", "1.1", {packages:["line","corechart"]});
                       google.setOnLoadCallback(drawChart6);
@@ -424,6 +424,7 @@ if (!empty($spotter_array))
 
 		print '<div class="details">';
 		print '<h3>Additional information as it flew nearby</h3>';
+		if ($spotter_item['latitude'] != 0 && $spotter_item['longitude'] != 0) {
 		print '<div class="detail speed">';
 		print '<div class="title">Ground Speed</div>';
 		print '<div>';
@@ -484,7 +485,7 @@ if (!empty($spotter_array))
 		}
 		print '</div>';
 		print '</div>';
-
+		}
 		print '<div class="detail date">';
 		print '<div class="title">Date ('.$globalTimezone.')</div>';
 		print '<div>';
@@ -501,7 +502,7 @@ if (!empty($spotter_array))
 		print '</div>';
 		print '</div>';
 
-		if (isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != '' && $spotter_item['departure_airport'] != 'NA') {
+		if (isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != '' && $spotter_item['departure_airport'] != 'NA' && $spotter_item['latitude'] != 0 && $spotter_item['longitude'] != 0) {
 			print '<div class="detail distance-departure">';
 			print '<div class="title">Distance from Departure Airport</div>';
 			print '<div>';
@@ -527,7 +528,7 @@ if (!empty($spotter_array))
 			print '</div>';
 			print '</div>';
 		}
-		if (isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != '' && $spotter_item['arrival_airport'] != 'NA') {
+		if (isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != '' && $spotter_item['arrival_airport'] != 'NA' && $spotter_item['latitude'] != 0 && $spotter_item['longitude'] != 0) {
 			print '<div class="detail distance-arrival">';
 			print '<div class="title">Distance to Arrival Airport</div>';
 			print '<div>';
