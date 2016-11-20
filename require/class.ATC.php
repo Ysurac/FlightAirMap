@@ -10,7 +10,7 @@ class ATC {
 	}
 
        public function getAll() {
-                $query = "SELECT * FROM atc GROUP BY ident";
+                $query = "SELECT * FROM atc";
                 $query_values = array();
                  try {
                         $sth = $this->db->prepare($query);

@@ -631,7 +631,7 @@ require_once('header.php');
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         </div>
 <?php
-    if ($airline_icao == '' && $filter_name == '') {
+    if (($airline_icao == '' || $airline_icao == 'all') && $filter_name == '') {
 ?>
         <div class="row column">
         	<?php

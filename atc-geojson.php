@@ -17,7 +17,6 @@ if (isset($_GET['coord']))
 }
       
 $output = '{"type": "FeatureCollection","features": [';
-            
 if (!empty($spotter_array))
 {	  
 	foreach($spotter_array as $spotter_item)
@@ -44,6 +43,8 @@ if (!empty($spotter_array))
 		$output .= '},';
 	}
 	$output  = substr($output, 0, -1);
+} else {
+	$output .= '[';
 }
 $output .= ']}';
 

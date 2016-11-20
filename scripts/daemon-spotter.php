@@ -22,7 +22,10 @@ if ($Connection->latest() === false) {
     echo "You MUST update to latest schema. Run install/index.php";
     exit();
 }
-
+if (PHP_SAPI != 'cli') {
+    echo "This script MUST be called from console, not a web browser.";
+    exit();
+}
 
 // This is to be compatible with old version of settings.php
 if (!isset($globalSources)) {

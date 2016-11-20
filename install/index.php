@@ -77,6 +77,7 @@ if(function_exists('apache_get_modules') ){
 if (!function_exists("gettext")) {
 	print '<div class="info column"><p><strong>gettext doesn\'t exist. Site translation not available.</strong></p></div>';
 }
+print '<div class="info column"><p><strong>If you use MySQL or MariaDB, check that <i>max_allowed_packet</i> >= 8M, else import of some table can fail.</strong></p></div>';
 if (isset($_SERVER['REQUEST_SCHEME']) && isset($_SERVER['SERVER_NAME']) && isset($_SERVER['SERVER_PORT']) && isset($_SERVER['REQUEST_URI'])) {
 	if (function_exists('get_headers')) {
 		$check_header = @get_headers($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].str_replace('install/','search',str_replace('index.php',$_SERVER["REQUEST_URI"])));

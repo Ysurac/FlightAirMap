@@ -109,7 +109,7 @@ $(document).idle({
 ?>
 
 <?php
-	if (isset($ident) || isset($flightaware_id)) {
+	if ((isset($ident) || isset($flightaware_id)) && ($latitude != 0 && $longitude != 0)) {
 ?>
 $( document ).ready(function() {
 	//setting the zoom functionality for either mobile or desktop
