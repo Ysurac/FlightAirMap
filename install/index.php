@@ -60,6 +60,9 @@ if (!extension_loaded('zip')) {
 if (!extension_loaded('json')) {
 	$error[] = "Json is not loaded. Needed for aircraft schedule and bitly.";
 }
+if (!extension_loaded('sockets')) {
+	$error[] = "Sockets is not loaded. Needed to populate DB from spotter_daemon.php script.";
+}
 if (!extension_loaded('curl')) {
 	$error[] = "Curl is not loaded.";
 }
