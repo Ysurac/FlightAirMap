@@ -380,6 +380,7 @@ a.mobile,
 a.tablet{
 	display:none !important;
 }
+/*
 form{
   margin-bottom:20px;
   padding:40px;
@@ -412,6 +413,7 @@ form .radio label{
 form .time{
 	margin-bottom:20px;
 }
+*/
 form #recaptcha_widget_div{
 	display: inline-block;
 }

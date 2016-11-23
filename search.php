@@ -273,131 +273,167 @@ if (!empty($_GET)){
 	<form action="<?php print $globalURL; ?>/search" method="get" role="form" class="form-horizontal">
 		<fieldset>
 			<div class="form-group">
-				<label><?php echo _("Keywords"); ?></label> 
-				<input type="text" id="q" name="q" value="<?php if (isset($_GET['q'])) print $_GET['q']; ?>" size="10" placeholder="<?php echo _("Keywords"); ?>" />
+				<label class="control-label col-sm-2"><?php echo _("Keywords"); ?></label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="q" name="q" value="<?php if (isset($_GET['q'])) print $_GET['q']; ?>" size="10" placeholder="<?php echo _("Keywords"); ?>" />
+				</div>
 			</div>
 		</fieldset>
 		<div class="advanced-form">
 			<fieldset>
 				<legend><?php echo _("Aircraft"); ?></legend>
 				<div class="form-group">
-					<label><?php echo _("Manufacturer"); ?></label> 
-					<select name="manufacturer" id="manufacturer" class="selectpicker" data-live-search="true">
-						<option></option>
-					</select>
+					<label class="control-label col-sm-2"><?php echo _("Manufacturer"); ?></label>
+					<div class="col-sm-10">
+						<select name="manufacturer" class="form-control" id="manufacturer" class="selectpicker" data-live-search="true">
+							<option></option>
+					    </select>
+					</div>
 				</div>
 				<script type="text/javascript">getSelect('manufacturer','<?php if(isset($_GET['manufacturer'])) print $_GET['manufacturer']; ?>')</script>
 				<div class="form-group">
-					<label><?php echo _("Type"); ?></label> 
-					<select name="aircraft" id="aircrafttypes" class="selectpicker" data-live-search="true">
-						<option></option>
-					</select>
+					<label class="control-label col-sm-2"><?php echo _("Type"); ?></label>
+						<div class="col-sm-10">
+							<select name="aircraft" class="form-control" id="aircrafttypes" class="selectpicker" data-live-search="true">
+								<option></option>
+							</select>
+						</div>
 				</div>
 				<script type="text/javascript">getSelect('aircrafttypes','<?php if(isset($_GET['aircraft_icao'])) print $_GET['aircraft_icao']; ?>');</script>
 				<div class="form-group">
-					<label><?php echo _("Registration"); ?></label> 
-					<input type="text" name="registration" value="<?php if (isset($_GET['registration'])) print $_GET['registration']; ?>" size="8" />
+					<label class="control-label col-sm-2"><?php echo _("Registration"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" class="form-control" name="registration" value="<?php if (isset($_GET['registration'])) print $_GET['registration']; ?>" size="8" />
+					</div>
 				</div>
 <?php
 if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 ?>
 				<div class="form-group">
-					<label><?php echo _("Pilot id"); ?></label> 
-					<input type="text" name="pilot_id" value="<?php if (isset($_GET['pilot_id'])) print $_GET['pilot_id']; ?>" size="15" />
+					<label class="control-label col-sm-2"><?php echo _("Pilot id"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" class="form-control" name="pilot_id" value="<?php if (isset($_GET['pilot_id'])) print $_GET['pilot_id']; ?>" size="15" />
+					</div>
 				</div>
 				<div class="form-group">
-					<label><?php echo _("Pilot name"); ?></label> 
-					<input type="text" name="pilot_name" value="<?php if (isset($_GET['pilot_name'])) print $_GET['pilot_name']; ?>" size="15" />
+					<label class="control-label col-sm-2"><?php echo _("Pilot name"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" class="form-control" name="pilot_name" value="<?php if (isset($_GET['pilot_name'])) print $_GET['pilot_name']; ?>" size="15" />
+					</div>
 				</div>
 <?php
 }else {
 ?>
 				<div class="form-group">
-					<label><?php echo _("Owner name"); ?></label> 
-					<input type="text" name="owner" value="<?php if (isset($_GET['owner'])) print $_GET['owner']; ?>" size="15" />
+					<label class="control-label col-sm-2"><?php echo _("Owner name"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" class="form-control" name="owner" value="<?php if (isset($_GET['owner'])) print $_GET['owner']; ?>" size="15" />
+					</div>
 				</div>
 <?php
 }
 ?>
-				<div class="form-group checkbox">
-					<div><input type="checkbox" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <label for="highlights"><?php echo _("Include only aircrafts with special highlights (unique liveries, destinations etc.)"); ?></label></div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+					<!--<div><input type="checkbox" class="form-control" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <label for="highlights"><?php echo _("Include only aircrafts with special highlights (unique liveries, destinations etc.)"); ?></label></div>-->
+					<label class="checkbox-inline"><input type="checkbox" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <?php echo _("Include only aircrafts with special highlights (unique liveries, destinations etc.)"); ?></label>
+					</div>
 				</div>
 			</fieldset>
 			<fieldset>
 				<legend><?php echo _("Airline"); ?></legend>
 				<div class="form-group">
-					<label><?php echo _("Name"); ?></label> 
-					<select name="airline" id="airlinenames" class="selectpicker" data-live-search="true">
-						<option></option>
-					</select>
+					<label class="control-label col-sm-2"><?php echo _("Name"); ?></label> 
+					<div class="col-sm-10">
+						<select name="airline" id="airlinenames" class="form-control selectpicker" data-live-search="true">
+							<option></option>
+						</select>
+					</div>
 				</div>
 				<script type="text/javascript">getSelect('airlinenames','<?php if(isset($_GET['airline'])) print $_GET['airline']; ?>');</script>
 				<div class="form-group">
-					<label><?php echo _("Country"); ?></label> 
-					<select name="airline_country" id="airlinecountries" class="selectpicker" data-live-search="true">
-						<option></option>
-					</select>
+					<label class="control-label col-sm-2"><?php echo _("Country"); ?></label> 
+					<div class="col-sm-10">
+						<select name="airline_country" id="airlinecountries" class="form-control selectpicker" data-live-search="true">
+							<option></option>
+						</select>
+					</div>
 				</div>
 				<script type="text/javascript">getSelect('airlinecountries','<?php if(isset($_GET['airline_country'])) print $_GET['airline_country']; ?>');</script>
 				<div class="form-group">
-					<label><?php echo _("Callsign"); ?></label> 
-					<input type="text" name="callsign" value="<?php if (isset($_GET['callsign'])) print $_GET['callsign']; ?>" size="8" />
+					<label class="control-label col-sm-2"><?php echo _("Callsign"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" name="callsign" class="form-control" value="<?php if (isset($_GET['callsign'])) print $_GET['callsign']; ?>" size="8" />
+					</div>
 				</div>
-				<div class="form-group radio">
-					<div><input type="radio" name="airline_type" value="all" id="airline_type_all" <?php if (!isset($_GET['airline_type']) || $_GET['airline_type'] == "all"){ print 'checked="checked"'; } ?>> <label for="airline_type_all"><?php echo _("All airlines types"); ?></label></div>
-					<div><input type="radio" name="airline_type" value="passenger" id="airline_type_passenger" <?php if (isset($_GET['airline_type'])) if ($_GET['airline_type'] == "passenger"){ print 'checked="checked"'; } ?>> <label for="airline_type_passenger"><?php echo _("Only Passenger airlines"); ?></label></div>
-					<div><input type="radio" name="airline_type" value="cargo" id="airline_type_cargo" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "cargo"){ print 'checked="checked"'; } ?>> <label for="airline_type_cargo"><?php echo _("Only Cargo airlines"); ?></label></div>
-					<div><input type="radio" name="airline_type" value="military" id="airline_type_military" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "military"){ print 'checked="checked"'; } ?>> <label for="airline_type_military"><?php echo _("Only Military airlines"); ?></label></div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<label class="radio-inline"><input type="radio" name="airline_type" value="all" id="airline_type_all" <?php if (!isset($_GET['airline_type']) || $_GET['airline_type'] == "all"){ print 'checked="checked"'; } ?>> <?php echo _("All airlines types"); ?></label>
+						<label class="radio-inline"><input type="radio" name="airline_type" value="passenger" id="airline_type_passenger" <?php if (isset($_GET['airline_type'])) if ($_GET['airline_type'] == "passenger"){ print 'checked="checked"'; } ?>> <?php echo _("Only Passenger airlines"); ?></label>
+						<label class="radio-inline"><input type="radio" name="airline_type" value="cargo" id="airline_type_cargo" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "cargo"){ print 'checked="checked"'; } ?>> <?php echo _("Only Cargo airlines"); ?></label>
+						<label class="radio-inline"><input type="radio" name="airline_type" value="military" id="airline_type_military" <?php if (isset($_GET['airline_type'])) if ( $_GET['airline_type'] == "military"){ print 'checked="checked"'; } ?>> <?php echo _("Only Military airlines"); ?></label>
+					</div>
 				</div>
 			</fieldset>
 			<fieldset>
 				<legend><?php echo _("Airport"); ?></legend>
 				<div class="form-group">
-					<label><?php echo _("Name"); ?></label> 
-					<select name="airport" id="airportnames" class="selectpicker" data-live-search="true">
-						<option></option>
-					</select>
+					<label class="control-label col-sm-2"><?php echo _("Name"); ?></label> 
+					<div class="col-sm-10">
+						<select name="airport" id="airportnames" class="form-control selectpicker" data-live-search="true">
+							<option></option>
+						</select>
+					</div>
 				</div>
 				<script type="text/javascript">getSelect('airportnames','<?php if(isset($_GET['airport_icao'])) print $_GET['airport_icao']; ?>');</script>
 				<div class="form-group">
-					<label><?php echo _("Country"); ?></label> 
-					<select name="airport_country" id="airportcountries" class="selectpicker" data-live-search="true">
-						<option></option>
-					</select>
+					<label class="control-label col-sm-2"><?php echo _("Country"); ?></label> 
+					<div class="col-sm-10">
+						<select name="airport_country" id="airportcountries" class="form-control selectpicker" data-live-search="true">
+							<option></option>
+						</select>
+					</div>
 				</div>
 				<script type="text/javascript">getSelect('airportcountries','<?php if(isset($_GET['airport_country'])) print $_GET['airport_country']; ?>');</script>
 			</fieldset>
 			<fieldset>
 				<legend><?php echo _("Route"); ?></legend>
 				<div class="form-group">
-					<label><?php echo _("Departure Airport"); ?></label> 
-					<select name="departure_airport_route" id="departureairportnames" class="selectpicker" data-live-search="true">
-						<option></option>
-					</select>
+					<label class="control-label col-sm-2"><?php echo _("Departure Airport"); ?></label> 
+					<div class="col-sm-10">
+						<select name="departure_airport_route" id="departureairportnames" class="form-control selectpicker" data-live-search="true">
+							<option></option>
+						</select>
+					</div>
 				</div>
 				<script type="text/javascript">getSelect('departureairportnames','<?php if(isset($_GET['departure_airport_route'])) print $_GET['departure_airport_route']; ?>');</script>
 				<div class="form-group">
-					<label><?php echo _("Arrival Airport"); ?></label> 
-					<select name="arrival_airport_route" id="arrivalairportnames" class="selectpicker" data-live-search="true">
-						<option></option>
-					</select>
+					<label class="control-label col-sm-2"><?php echo _("Arrival Airport"); ?></label> 
+					<div class="col-sm-10">
+						<select name="arrival_airport_route" id="arrivalairportnames" class="form-control selectpicker" data-live-search="true">
+							<option></option>
+						</select>
+					</div>
 				</div>
 				<script type="text/javascript">getSelect('arrivalairportnames','<?php if(isset($_GET['arrival_airport_route'])) print $_GET['arrival_airport_route']; ?>');</script>
 			</fieldset>
 			<fieldset>
 				<legend><?php echo _("Date"); ?></legend>
 				<div class="form-group">
-					<label><?php echo _("Start Date"); ?></label>
-					<div class='input-group date' id='datetimepicker1'>
-						<input type='text' name="start_date" class="form-control" value="<?php if (isset($_GET['start_date'])) print $_GET['start_date']; ?>" placeholder="<?php echo _("Start Date/Time"); ?>" />
-						<span class="input-group-addon">
-							<span class="glyphicon glyphicon-calendar"></span>
-						</span>
+					<label class="control-label col-sm-2"><?php echo _("Start Date"); ?></label>
+					<div class="col-sm-10">
+						<div class='input-group date' id='datetimepicker1'>
+							<input type='text' name="start_date" class="form-control" value="<?php if (isset($_GET['start_date'])) print $_GET['start_date']; ?>" placeholder="<?php echo _("Start Date/Time"); ?>" />
+							<span class="input-group-addon">
+								<span class="glyphicon glyphicon-calendar"></span>
+							</span>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
-					<label><?php echo _("End Date"); ?></label>
-					<div class='input-group date' id='datetimepicker2'>
+					<label class="control-label col-sm-2"><?php echo _("End Date"); ?></label>
+					<div class="col-sm-10">
+						<div class='input-group date' id='datetimepicker2'>
 						<input type='text' name="end_date" class="form-control" value="<?php if (isset($_GET['end_date'])) print $_GET['end_date']; ?>" placeholder="<?php echo _("End Date/Time"); ?>" />
 						<span class="input-group-addon">
 							<span class="glyphicon glyphicon-calendar"></span>
@@ -427,9 +463,10 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 		<fieldset>
 			<legend>Altitude</legend>
 			<div class="form-group">
-				<label><?php echo _("Lowest Altitude"); ?></label> 
-				<select name="lowest_altitude" class="selectpicker" data-live-search="true">
-					<option></option>
+				<label class="control-label col-sm-2"><?php echo _("Lowest Altitude"); ?></label> 
+				<div class="col-sm-10">
+					<select name="lowest_altitude" class="form-control selectpicker" data-live-search="true">
+						<option></option>
 <?php
 $altitude_array = Array(1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000);
 foreach($altitude_array as $altitude)
@@ -442,11 +479,13 @@ foreach($altitude_array as $altitude)
 	}
 }
 ?>
-				</select>
+					</select>
+				</div>
 			</div>
 			<div class="form-group">
-				<label><?php echo _("Highest Altitude"); ?></label> 
-				<select name="highest_altitude" class="selectpicker" data-live-search="true">
+				<label class="control-label col-sm-2"><?php echo _("Highest Altitude"); ?></label> 
+					<div class="col-sm-10">
+				<select name="highest_altitude" class="form-control selectpicker" data-live-search="true">
 					<option></option>
 <?php
 $altitude_array = Array(1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000);
@@ -466,23 +505,30 @@ foreach($altitude_array as $altitude)
 		<fieldset>
 			<legend><?php echo _("Flights near"); ?></legend>
 			<div class="form-group">
-				<label><?php echo _("Latitude"); ?></label>
-				<input type="text" name="origlat" class="form-control" placeholder="<?php echo _("Center point latitude"); ?>" />
+				<label class="control-label col-sm-2"><?php echo _("Latitude"); ?></label>
+				<div class="col-sm-10">
+					<input type="text" name="origlat" class="form-control" placeholder="<?php echo _("Center point latitude"); ?>" />
+				</div>
 			</div>
 			<div class="form-group">
-				<label><?php echo _("Longitude"); ?></label>
-				<input type="text" name="origlon" class="form-control" placeholder="<?php echo _("Center point longitude"); ?>" />
+				<label class="control-label col-sm-2"><?php echo _("Longitude"); ?></label>
+				<div class="col-sm-10">
+					<input type="text" name="origlon" class="form-control" placeholder="<?php echo _("Center point longitude"); ?>" />
+				</div>
 			</div>
 			<div class="form-group">
-				<label><?php echo _("Distance").' ('; if (isset($globalDistanceUnit)) print $globalDistanceUnit; else print 'km'; print ')'; ?></label>
-				<input type="text" name="dist" class="form-control" placeholder="<?php echo _("Distance from center point"); ?>" />
+				<label class="control-label col-sm-2"><?php echo _("Distance").' ('; if (isset($globalDistanceUnit)) print $globalDistanceUnit; else print 'km'; print ')'; ?></label>
+				<div class="col-sm-10">
+					<input type="text" name="dist" class="form-control" placeholder="<?php echo _("Distance from center point"); ?>" />
+				</div>
 			</div>
 		</fieldset>
 		<fieldset>
 			<legend><?php echo _("Limit per Page"); ?></legend>
 			<div class="form-group">
-				<label><?php echo _("Number of Results"); ?></label> 
-				<select name="number_results">
+				<label class="control-label col-sm-2"><?php echo _("Number of Results"); ?></label> 
+				<div class="col-sm-10">
+					<select class="form-control" name="number_results">
 <?php
 $number_results_array = Array(25, 50, 100, 150, 200, 250, 300, 400, 500,  600, 700, 800, 900, 1000);
 foreach($number_results_array as $number)
@@ -495,7 +541,8 @@ foreach($number_results_array as $number)
 	}
 }
 ?>
-				</select>
+					</select>
+				</div>
 			</div>
 		</fieldset>
 <?php
@@ -503,16 +550,17 @@ if (isset($globalArchiveKeepMonths) && $globalArchiveKeepMonths > 0) {
 ?>
 		<fieldset>
 			<div class="form-group">
-				<label><?php echo sprintf(_("Search in archive (older than %s months)"),$globalArchiveKeepMonths); ?></label>
-				<input type="checkbox" name="archive" value="1" />
+				<div class="col-sm-offset-2 col-sm-10">
+					<label class="checkbox-inline"><input type="checkbox" name="archive" value="1" /><?php echo sprintf(_("Search in archive (older than %s months)"),$globalArchiveKeepMonths); ?></label>
+				</div>
 			</div>
 		</fieldset>
 <?php
 }
 ?>
 		<fieldset>
-			<div>
-				<input type="submit" value="<?php echo _("Search"); ?>" />
+			<div class="col-sm-offset-2 col-sm-10">
+				<input type="submit" class="btn btn-default" value="<?php echo _("Search"); ?>" />
 			</div>
 		</fieldset>
 	 </form>
