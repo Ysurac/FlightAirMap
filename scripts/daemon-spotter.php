@@ -367,7 +367,7 @@ while ($i > 0) {
     	    }
     	    $last_exec[$id]['last'] = time();
 	//} elseif (($value == 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value == 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {
-	} elseif (($value['format'] == 'whazzup' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) || ($value['format'] == 'vatsimtxt' && (time() - $value[' last_exec'] > $globalMinFetch))) {
+	} elseif (($value['format'] == 'whazzup' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) || ($value['format'] == 'vatsimtxt' && (time() - $last_exec[$id]['last'] > $globalMinFetch))) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host']);
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
