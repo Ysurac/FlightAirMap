@@ -101,7 +101,7 @@ if (count($error) > 0) {
 
 if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) == 0)) {
 	?>
-	<div class="info column">
+	<div class="info column install">
 	<form method="post" class="form-horizontal">
 		<fieldset id="database">
 			<legend>Database configuration</legend>
@@ -1199,9 +1199,9 @@ if (isset($_POST['dbtype'])) {
 		if (isset($_POST['createdb'])) {
 			$_SESSION['install'] = 'database_create';
 		} else {
-			if (update_schema::check_version(false) > 0 && isset($_POST['waypoints']) && $_POST['waypoints'] == 'waypoints') {
-				require_once(dirname(__FILE__).'/../require/class.Connection.php');
-				$Connection = new Connection();
+			require_once(dirname(__FILE__).'/../require/class.Connection.php');
+			$Connection = new Connection();
+			if ($Connection->latest() && isset($_POST['waypoints']) && $_POST['waypoints'] == 'waypoints') {
 				if ($Connection->tableExists('airspace') === false) {
 					$_SESSION['install'] = 'waypoints';
 				} else {
