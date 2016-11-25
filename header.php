@@ -160,7 +160,7 @@ if (strtolower($current_page) == "index")
 <?php
 		if ($MapType == 'Yandex') {
 ?>
-<script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
+<script src="https://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
 <?php
 		}
