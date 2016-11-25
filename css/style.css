@@ -381,36 +381,36 @@ a.tablet{
 	display:none !important;
 }
 
-form{
+.install form{
   margin-bottom:20px;
   padding:40px;
   padding-bottom:30px;
 }
-form fieldset{
+.install form fieldset{
 	margin-bottom:20px;
 }
-form label{
+.install form label{
   display:inline-block;
   width:200px;
   margin-bottom:10px;
   vertical-align: top;
 }
-form input[type="text"],
-form input[type="password"],
-form textarea,
-form select{
+.install form input[type="text"],
+.install form input[type="password"],
+.install form textarea,
+.install form select{
 	width:350px;
 	padding:5px;
 	border:1px solid #ddd;
 }
-form .sources input[type="text"] {
+.install form .sources input[type="text"] {
 	width:auto;
 }
-form .radio label{
+.install form .radio label{
 	display:inline-block;
 	width:inherit;
 }
-form .time{
+.install form .time{
 	margin-bottom:20px;
 }
 
@@ -512,6 +512,9 @@ a.full-width{
 	margin-top: 8px;
 	margin-bottom: 0px;
 	padding: 0px;
+}
+.stats_airline .btn {
+	padding: 0.1em;
 }
 
 body span.airport_time{
