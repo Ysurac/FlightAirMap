@@ -1104,6 +1104,29 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_26() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('atc','format_source')) {
+			$query = "ALTER TABLE atc ADD format_source VARCHAR(255) DEFAULT NULL, ADD source_name VARCHAR(255) DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add format_source & source_name column in atc) : ".$e->getMessage()."\n";
+			}
+		}
+		$query = "UPDATE config SET value = '27' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
 
     	public static function check_version($update = false) {
@@ -1220,6 +1243,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '25') {
     			    $error = self::update_from_25();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '26') {
+    			    $error = self::update_from_26();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

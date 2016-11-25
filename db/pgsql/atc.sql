@@ -11,5 +11,7 @@ CREATE TABLE atc (
   atc_lastseen timestamp NOT NULL,
   info text NOT NULL,
   type varchar(255) DEFAULT NULL,
+  format_source varchar(255) DEFAULT NULL,
+  source_name varchar(255) DEFAULT NULL,
   PRIMARY KEY (atc_id)
 );

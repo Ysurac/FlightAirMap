@@ -431,8 +431,8 @@ while ($i > 0) {
 				elseif ($typec == 'FSS') $data['type'] = 'Flight Service Station';
 				elseif ($typec == 'CTR') $data['type'] = 'Control Radar or Centre';
 				elseif ($data['type'] == '') $data['type'] = 'Observer';
-				
-				echo $ATC->add($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name']);
+				if (!isset($data['source_name'])) $data['source_name'] = '';
+				echo $ATC->add($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source'],$data['source_name']);
 			}
     			unset($data);
     		    }
@@ -681,7 +681,7 @@ while ($i > 0) {
 			elseif ($typec == 'FSS') $data['type'] = 'Flight Service Station';
 			elseif ($typec == 'CTR') $data['type'] = 'Control Radar or Centre';
 			else $data['type'] = 'Observer';
-			echo $ATC->add($data['ident'],'',$data['latitude'],$data['longitude'],'0',$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name']);
+			echo $ATC->add($data['ident'],'',$data['latitude'],$data['longitude'],'0',$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source']);
 		    }
 		    unset($data);
 		}

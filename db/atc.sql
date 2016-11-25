@@ -10,5 +10,7 @@ CREATE TABLE IF NOT EXISTS `atc` (
   `atc_lastseen` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `info` text NOT NULL,
   `type` enum('Observer','Flight Information','Delivery','Tower','Approach','ACC','Departure') DEFAULT NULL,
+  `format_source` varchar(255) DEFAULT NULL,
+  `source_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`atc_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

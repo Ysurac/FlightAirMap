@@ -95,8 +95,8 @@ if (count($error) > 0) {
 		print '<li>'.$err.'</li>';
 	}
 	print '</ul>You <strong>must</strong> add these modules/fix errors.</div>';
-	require('../footer.php');
-        exit;
+//	require('../footer.php');
+//	exit;
 }
 
 if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) == 0)) {
