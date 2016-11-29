@@ -19,22 +19,46 @@ class Spotter{
 	*/
 	public function getFilter($filter = array(),$where = false,$and = false) {
 		global $globalFilter, $globalStatsFilters, $globalFilterName;
-		if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) $filter = array_merge($globalStatsFilters[$globalFilterName],$filter);
+		$filters = array();
+		if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
+			if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
+				$filters = $globalStatsFilters[$globalFilterName];
+			} else {
+				$filter = array_merge($globalStatsFilters[$globalFilterName],$filter);
+			}
+		}
 		if (is_array($globalFilter)) $filter = array_merge($globalFilter,$filter);
 		$filter_query_join = '';
 		$filter_query_where = '';
-		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
-			if ($filter['airlines'][0] != '') {
-				$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_output.flightaware_id";
+		foreach($filters as $flt) {
+			if (isset($flt['airlines']) && !empty($flt['airlines'])) {
+				if ($flt['airlines'][0] != '') {
+					if (isset($flt['source'])) {
+						$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$flt['airlines'])."') AND spotter_output.format_source IN ('".implode("','",$flt['source'])."')) so ON so.flightaware_id = spotter_output.flightaware_id";
+					} else {
+						$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$flt['airlines'])."')) so ON so.flightaware_id = spotter_output.flightaware_id";
+					}
+				}
+			}
+			if (isset($flt['pilots_id']) && !empty($flt['pilots_id'])) {
+				if (isset($flt['source'])) {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$flt['pilots_id'])."') AND spotter_output.format_source IN ('".implode("','",$flt['source'])."')) so ON so.flightaware_id = spotter_output.flightaware_id";
+				} else {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$flt['pilots_id'])."')) so ON so.flightaware_id = spotter_output.flightaware_id";
+				}
 			}
 		}
-		
+		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
+			if ($filter['airlines'][0] != '') {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_output.flightaware_id";
+			}
+		}
 		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
 			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_output.flightaware_id ";
 		}
 		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
-			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) so ON so.flightaware_id = spotter_output.flightaware_id";
-		}
+				$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) so ON so.flightaware_id = spotter_output.flightaware_id";
+			}
 		if (isset($filter['source']) && !empty($filter['source'])) {
 			$filter_query_where = " WHERE format_source IN ('".implode("','",$filter['source'])."')";
 		}
