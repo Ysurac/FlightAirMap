@@ -24,7 +24,7 @@ if ($Connection->latest() === false) {
 }
 if (PHP_SAPI != 'cli') {
     echo "This script MUST be called from console, not a web browser.";
-    exit();
+//    exit();
 }
 
 // This is to be compatible with old version of settings.php

@@ -15,6 +15,7 @@ if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
 		die();
 	}
 }
+$runningUpdateScript = TRUE;
 require_once(dirname(__FILE__).'/../require/settings.php');
 require(dirname(__FILE__).'/../install/class.update_db.php');
 $update_db = new update_db();
@@ -57,14 +58,14 @@ if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalME
 
 
 if (isset($globalOwner) && $globalOwner && $update_db->check_last_owner_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
-	echo "Updating private aircraft's owners...";
+	echo "Updating private aircraft's owners...\n";
 	$update_db->update_owner();
 	$update_db->insert_last_owner_update();
 } elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Owner are only updated every 15 days.\n";
 
 if (isset($globalSchedules) && $globalSchedules && $update_db->check_last_schedules_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
 	echo "Updating schedules...";
-	$update_db->update_oneworld();
+	//$update_db->update_oneworld();
 	$update_db->update_skyteam();
 	$update_db->insert_last_schedules_update();
 } elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Schedules are only updated every 15 days.\n";
