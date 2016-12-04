@@ -87,7 +87,7 @@ class Spotter{
 	* @return Array the spotter information
 	*
 	*/
-	public function getDataFromDB($query, $params = array(), $limitQuery = '')
+	public function getDataFromDB($query, $params = array(), $limitQuery = '',$schedules = false)
 	{
 		global $globalSquawkCountry, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalAirlinesSource, $globalVAM;
 		$Image = new Image($this->db);
@@ -349,20 +349,21 @@ class Spotter{
 				$temp_array['arrival_airport_time'] = $row['arrival_airport_time'];
 			}
 			if ((!isset($globalIVAO) || ! $globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM)) {
-				$schedule_array = $Schedule->getSchedule($temp_array['ident']);
-				//print_r($schedule_array);
-				if (count($schedule_array) > 0) {
-					if ($schedule_array['departure_airport_icao'] != '') {
-						$row['departure_airport_icao'] = $schedule_array['departure_airport_icao'];
-						 $temp_array['departure_airport'] = $row['departure_airport_icao'];
+				if ($schedules === true) {
+					$schedule_array = $Schedule->getSchedule($temp_array['ident']);
+					//print_r($schedule_array);
+					if (count($schedule_array) > 0) {
+						if ($schedule_array['departure_airport_icao'] != '') {
+							$row['departure_airport_icao'] = $schedule_array['departure_airport_icao'];
+							$temp_array['departure_airport'] = $row['departure_airport_icao'];
+						}
+						if ($schedule_array['arrival_airport_icao'] != '') {
+							$row['arrival_airport_icao'] = $schedule_array['arrival_airport_icao'];
+							$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
+						}
+						$temp_array['departure_airport_time'] = $schedule_array['departure_airport_time'];
+						$temp_array['arrival_airport_time'] = $schedule_array['arrival_airport_time'];
 					}
-					if ($schedule_array['arrival_airport_icao'] != '') {
-						$row['arrival_airport_icao'] = $schedule_array['arrival_airport_icao'];
-						$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
-					}
-
-					$temp_array['departure_airport_time'] = $schedule_array['departure_airport_time'];
-					$temp_array['arrival_airport_time'] = $schedule_array['arrival_airport_time'];
 				}
 			} else {
 				if (isset($row['real_departure_airport_time']) && $row['real_departure_airport_time'] != '') {
@@ -836,7 +837,7 @@ class Spotter{
 
 		$query  = $global_query.$filter_query." ".$orderby_query;
 
-		$spotter_array = $this->getDataFromDB($query, array(),$limit_query);
+		$spotter_array = $this->getDataFromDB($query, array(),$limit_query,true);
 
 		return $spotter_array;
 	}

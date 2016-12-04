@@ -115,7 +115,7 @@ class SpotterLive {
 		} else {
 			$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate".$filter_query.$orderby_query;
 		}
-		$spotter_array = $Spotter->getDataFromDB($query.$limit_query);
+		$spotter_array = $Spotter->getDataFromDB($query.$limit_query,array(),'',true);
 
 		return $spotter_array;
 	}
@@ -345,7 +345,7 @@ class SpotterLive {
 		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
                 $query  = 'SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE l.ident = :ident GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate ORDER BY spotter_live.date DESC';
 
-		$spotter_array = $Spotter->getDataFromDB($query,array(':ident' => $ident));
+		$spotter_array = $Spotter->getDataFromDB($query,array(':ident' => $ident),'',true);
 
 		return $spotter_array;
 	}
@@ -384,7 +384,7 @@ class SpotterLive {
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
                 $query  = 'SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE l.flightaware_id = :id GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate ORDER BY spotter_live.date DESC';
 
-		$spotter_array = $Spotter->getDataFromDB($query,array(':id' => $id));
+		$spotter_array = $Spotter->getDataFromDB($query,array(':id' => $id),'',true);
 
 		return $spotter_array;
 	}
@@ -403,7 +403,7 @@ class SpotterLive {
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
                 $query  = 'SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE l.flightaware_id = :id AND l.date <= :date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate ORDER BY spotter_live.date DESC';
                 $date = date('c',$date);
-		$spotter_array = $Spotter->getDataFromDB($query,array(':id' => $id,':date' => $date));
+		$spotter_array = $Spotter->getDataFromDB($query,array(':id' => $id,':date' => $date),'',true);
 
 		return $spotter_array;
 	}
