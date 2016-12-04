@@ -285,12 +285,23 @@ class Spotter{
 			} else {
 				$temp_array['airline_icao'] = $row['airline_icao'];
 				if (isset($row['airline_iata'])) $temp_array['airline_iata'] = $row['airline_iata'];
-				else $temp_array['airline_iata'] = '';
+				else $temp_array['airline_iata'] = 'N/A';
 				$temp_array['airline_name'] = $row['airline_name'];
 				$temp_array['airline_country'] = $row['airline_country'];
 				if (isset($row['airline_callsign'])) $temp_array['airline_callsign'] = $row['airline_callsign'];
 				else $temp_array['airline_callsign'] = 'N/A';
 				$temp_array['airline_type'] = $row['airline_type'];
+				if ($temp_array['airline_icao'] != '' && $temp_array['airline_iata'] == 'N/A') {
+					$airline_array = $this->getAllAirlineInfo($temp_array['airline_icao']);
+					if (count($airline_array) > 0) {
+						$temp_array['airline_icao'] = $airline_array[0]['icao'];
+						$temp_array['airline_iata'] = $airline_array[0]['iata'];
+						$temp_array['airline_name'] = $airline_array[0]['name'];
+						$temp_array['airline_country'] = $airline_array[0]['country'];
+						$temp_array['airline_callsign'] = $airline_array[0]['callsign'];
+						$temp_array['airline_type'] = $airline_array[0]['type'];
+					}
+				}
 			}
 			if (isset($temp_array['airline_iata']) && $temp_array['airline_iata'] != '') {
 				$acars_array = $ACARS->getLiveAcarsData($temp_array['airline_iata'].substr($temp_array['ident'],3));
