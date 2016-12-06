@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
 $Spotter = new Spotter();
 if (!isset($_GET['aircraft_manufacturer'])){
@@ -44,8 +45,9 @@ if (!isset($_GET['aircraft_manufacturer'])){
 		print '<div class="select-item">';
 		print '<form action="'.$globalURL.'/manufacturer" method="post">';
 		print '<select name="aircraft_manufacturer" class="selectpicker" data-live-search="true">';
-		print '<option></option>';
-		$all_manufacturers = $Spotter->getAllManufacturers();
+		$Stats = new Stats();
+		$all_manufacturers = $Stats->getAllManufacturers();
+		if (empty($all_manufacturers)) $all_manufacturers = $Spotter->getAllManufacturers();
 		foreach($all_manufacturers as $all_manufacturer)
 		{
 			if($_GET['aircraft_manufacturer'] == strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])))

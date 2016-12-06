@@ -6,6 +6,9 @@ require_once('require/class.Language.php');
 if ($_POST['aircraft_manufacturer'] != "")
 {
 	header('Location: '.$globalURL.'/manufacturer/'.$_POST['aircraft_manufacturer']);
+} elseif ($_GET['aircraft_manufacturer'] != "")
+{
+	header('Location: '.$globalURL.'/manufacturer/'.$_GET['aircraft_manufacturer']);
 } else {
 	header('Location: '.$globalURL);
 }

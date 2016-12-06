@@ -477,7 +477,7 @@ require_once('header.php');
 		    ?>
 		    <li>
 			<?php echo _("Display flight with ident:"); ?>
-			<input type="text" name="identfilter" id="identfilter" value="<?php if (isset($_COOKIE['identfilter'])) print $_COOKIE['identfilter']; ?>" />
+			<input type="text" name="identfilter" onchange="identfilter();" id="identfilter" value="<?php if (isset($_COOKIE['identfilter'])) print $_COOKIE['identfilter']; ?>" />
 		    </li>
 		</ul>
 	    </form>

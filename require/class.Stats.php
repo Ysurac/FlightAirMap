@@ -64,6 +64,18 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
         }
+	public function getAllManufacturers($stats_airline = '',$filter_name = '') {
+		if ($filter_name == '') $filter_name = $this->filter_name;
+                $query = "SELECT DISTINCT(aircraft_manufacturer) FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name AND aircraft_manufacturer <> '' ORDER BY aircraft_manufacturer ASC";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
+        }
 	public function getAllAirportNames($stats_airline = '',$filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
                 $query = "SELECT airport_icao, airport_name,airport_city,airport_country FROM stats_airport WHERE stats_airline = :stats_airline AND filter_name = :filter_name AND stats_type = 'daily' GROUP BY airport_icao,airport_name,airport_city,airport_country ORDER BY airport_city ASC";
