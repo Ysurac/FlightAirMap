@@ -377,7 +377,7 @@ while ($i > 0) {
     		    $line = explode(':', $line);
     		    if (count($line) > 30 && $line[0] != 'callsign') {
 			$data = array();
-			$data['id'] = $line[1].'-'.$line[0];
+			$data['id'] = $value['format'].'-'.$line[1].'-'.$line[0];
 			$data['pilot_id'] = $line[1];
 			$data['pilot_name'] = $line[2];
 			$data['hex'] = str_pad(dechex($line[1]),6,'000000',STR_PAD_LEFT);
