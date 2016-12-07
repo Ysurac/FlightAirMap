@@ -8,9 +8,39 @@ class ATC {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db;
 	}
+	
+	
+    /**
+    * Get SQL query part for filter used
+    * @param Array $filter the filter
+    * @return Array the SQL part
+    */
+    public function getFilter($filter = array(),$where = false,$and = false) {
+	global $globalFilter, $globalStatsFilters, $globalFilterName;
+	if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
+	    if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
+		foreach($globalStatsFilters[$globalFilterName] as $source) {
+			$filter['source'][] = $source;
+		}
+	    } else {
+		$filter = $globalStatsFilters[$globalFilterName];
+	    }
+	}
+	if (is_array($globalFilter)) $filter = array_merge($filter,$globalFilter);
+	$filter_query_join = '';
+	$filter_query_where = '';
+	if (isset($filter['source']) && !empty($filter['source'])) {
+	    $filter_query_where = " WHERE format_source IN ('".implode("','",$filter['source'])."')";
+	}
+	if ($filter_query_where == '' && $where) $filter_query_where = ' WHERE';
+	elseif ($filter_query_where != '' && $and) $filter_query_where .= ' AND';
+	$filter_query = $filter_query_join.$filter_query_where;
+	return $filter_query;
+    }
 
        public function getAll() {
-                $query = "SELECT * FROM atc";
+    		$filter_query = $this->getFilter(array(),true);
+                $query = "SELECT * FROM atc".$filter_query;
                 $query_values = array();
                  try {
                         $sth = $this->db->prepare($query);

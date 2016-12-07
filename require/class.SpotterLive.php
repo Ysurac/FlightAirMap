@@ -23,10 +23,10 @@ class SpotterLive {
 			if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
 				$filters = $globalStatsFilters[$globalFilterName];
 			} else {
-				$filter = array_merge($globalStatsFilters[$globalFilterName],$filter);
+				$filter = array_merge($filter,$globalStatsFilters[$globalFilterName]);
 			}
 		}
-		if (is_array($globalFilter)) $filter = array_merge($globalFilter,$filter);
+		if (is_array($globalFilter)) $filter = array_merge($filter,$globalFilter);
 		$filter_query_join = '';
 		$filter_query_where = '';
 		foreach($filters as $flt) {
