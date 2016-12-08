@@ -1127,6 +1127,41 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_27() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('stats_pilot','format_source')) {
+			// Add forsource to airlines
+			$query = "ALTER TABLE stats_pilot ADD format_source VARCHAR(255) NULL DEFAULT ''";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add format_source column in stats_pilot) : ".$e->getMessage()."\n";
+			}
+			// Add unique key
+			if ($globalDBdriver == 'mysql') {
+				$query = "drop index pilot_id on stats_pilot;ALTER TABLE stats_pilot ADD UNIQUE pilot_id (pilot_id,stats_airline,filter_name,format_source);";
+			} else {
+				$query = "alter table stats_pilot drop constraint pilot_id;ALTER TABLE stats_pilot ADD CONSTRAINT pilot_id UNIQUE (pilot_id,stats_airline,filter_name,format_source);";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (modify unique key in stats_pilot) : ".$e->getMessage()."\n";
+			}
+		}
+		$query = "UPDATE config SET value = '28' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
 
 
     	public static function check_version($update = false) {
@@ -1247,6 +1282,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '26') {
     			    $error = self::update_from_26();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '27') {
+    			    $error = self::update_from_27();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

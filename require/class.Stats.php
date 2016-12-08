@@ -296,8 +296,8 @@ class Stats {
 	public function countAllPilots($limit = true,$stats_airline = '',$filter_name = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($limit) $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY pilot_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name FROM stats_pilot WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY pilot_count DESC";
+		if ($limit) $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name, format_source FROM stats_pilot WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY pilot_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT pilot_id, cnt AS pilot_count, pilot_name, format_source FROM stats_pilot WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY pilot_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
@@ -1030,12 +1030,12 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatPilot($pilot_id,$cnt,$pilot_name,$stats_airline = '',$filter_name = '') {
+	public function addStatPilot($pilot_id,$cnt,$pilot_name,$stats_airline = '',$filter_name = '',$format_source = '') {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_pilot (pilot_id,cnt,pilot_name,stats_airline,filter_name) VALUES (:pilot_id,:cnt,:pilot_name,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, pilot_name = :pilot_name";
+			$query = "INSERT INTO stats_pilot (pilot_id,cnt,pilot_name,stats_airline,filter_name,format_source) VALUES (:pilot_id,:cnt,:pilot_name,:stats_airline,:filter_name,:format_source) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt, pilot_name = :pilot_name";
 		} else {
-			$query = "UPDATE stats_pilot SET cnt = cnt+:cnt, pilot_name = :pilot_name WHERE pilot_id = :pilot_id AND stats_airline = :stats_airline AND filter_name = :filter_name; INSERT INTO stats_pilot (pilot_id,cnt,pilot_name,stats_airline,filter_name) SELECT :pilot_id,:cnt,:pilot_name,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_pilot WHERE pilot_id = :pilot_id AND stats_airline = :stats_airline AND filter_name = :filter_name);"; 
+			$query = "UPDATE stats_pilot SET cnt = cnt+:cnt, pilot_name = :pilot_name WHERE pilot_id = :pilot_id AND stats_airline = :stats_airline AND filter_name = :filter_name AND format_source = :format_source; INSERT INTO stats_pilot (pilot_id,cnt,pilot_name,stats_airline,filter_name,format_source) SELECT :pilot_id,:cnt,:pilot_name,:stats_airline,:filter_name,:format_source WHERE NOT EXISTS (SELECT 1 FROM stats_pilot WHERE pilot_id = :pilot_id AND stats_airline = :stats_airline AND filter_name = :filter_name AND format_source = :format_source);"; 
 		}
                 $query_values = array(':pilot_id' => $pilot_id,':cnt' => $cnt,':pilot_name' => $pilot_name,':stats_airline' => $stats_airline,':filter_name' => $filter_name);
                  try {

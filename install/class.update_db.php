@@ -176,11 +176,11 @@ class update_db {
 				while (!feof($fh)) {
 					$line = fgetcsv($fh,9999,',');
 					if ($line[0] != '') {
-						//$datebe = explode('  -  ',$line[2]);
-						//if (strtotime($datebe[0]) > time() && strtotime($datebe[1]) < time()) {
+						$datebe = explode('  -  ',$line[2]);
+						if (strtotime($datebe[0]) > time() && strtotime($datebe[1]) < time()) {
 							$query_dest_values = array(':CallSign' => str_replace('*','',$line[6]),':Operator_ICAO' => '',':FromAirport_ICAO' => $Spotter->getAirportICAO($line[0]),':FromAirport_Time' => $line[4],':ToAirport_ICAO' => $Spotter->getAirportICAO($line[1]),':ToAirport_Time' => $line[5],':routestop' => '',':source' => 'skyteam');
 							$sth_dest->execute($query_dest_values);
-						//}
+						}
 					}
 				}
 				if ($globalTransaction) $Connection->db->commit();

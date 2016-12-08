@@ -7,4 +7,4 @@ CREATE TABLE stats_owner (
 );
 
 ALTER TABLE stats_owner
-  ADD PRIMARY KEY (stats_owner_id), ADD UNIQUE (owner_name);
+  ADD PRIMARY KEY (stats_owner_id), ADD UNIQUE (owner_name,stats_airline,filter_name);
