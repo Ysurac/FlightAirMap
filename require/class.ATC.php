@@ -20,7 +20,7 @@ class ATC {
 	if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
 	    if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
 		foreach($globalStatsFilters[$globalFilterName] as $source) {
-			$filter['source'][] = $source;
+			if (isset($source['source'])) $filter['source'][] = $source['source'];
 		}
 	    } else {
 		$filter = $globalStatsFilters[$globalFilterName];
