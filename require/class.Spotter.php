@@ -3686,7 +3686,7 @@ class Spotter{
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
-		$query  = "SELECT DISTINCT spotter_output.pilot_id, spotter_output.pilot_name, COUNT(spotter_output.pilot_id) AS pilot_count
+		$query  = "SELECT DISTINCT spotter_output.pilot_id, spotter_output.pilot_name, COUNT(spotter_output.pilot_id) AS pilot_count, spotter_output.format_source
 		 			FROM spotter_output".$filter_query." spotter_output.pilot_id <> '' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
@@ -3702,7 +3702,7 @@ class Spotter{
 				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-		$query .= "GROUP BY spotter_output.pilot_id,spotter_output.pilot_name ORDER BY pilot_count DESC";
+		$query .= "GROUP BY spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.format_source ORDER BY pilot_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
@@ -3717,6 +3717,7 @@ class Spotter{
 			$temp_array['pilot_name'] = $row['pilot_name'];
 			$temp_array['pilot_id'] = $row['pilot_id'];
 			$temp_array['pilot_count'] = $row['pilot_count'];
+			$temp_array['format_source'] = $row['format_source'];
 			$airline_array[] = $temp_array;
 		}
 		return $airline_array;
@@ -3731,7 +3732,7 @@ class Spotter{
 	public function countAllPilotsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
 	{
 		global $globalDBdriver;
-		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.pilot_id, spotter_output.pilot_name, COUNT(spotter_output.pilot_id) AS pilot_count
+		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.pilot_id, spotter_output.pilot_name, COUNT(spotter_output.pilot_id) AS pilot_count, spotter_output.format_source
 		 			FROM spotter_output WHERE spotter_output.pilot_id <> '' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
@@ -3747,7 +3748,7 @@ class Spotter{
 				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-		$query .= "GROUP BY spotter_output.airline_icao, spotter_output.pilot_id,spotter_output.pilot_name ORDER BY pilot_count DESC";
+		$query .= "GROUP BY spotter_output.airline_icao, spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.format_source ORDER BY pilot_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
@@ -3763,6 +3764,7 @@ class Spotter{
 			$temp_array['pilot_id'] = $row['pilot_id'];
 			$temp_array['pilot_count'] = $row['pilot_count'];
 			$temp_array['airline_icao'] = $row['airline_icao'];
+			$temp_array['format_source'] = $row['format_source'];
 			$airline_array[] = $temp_array;
 		}
 		return $airline_array;

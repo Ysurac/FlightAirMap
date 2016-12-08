@@ -1037,7 +1037,7 @@ class Stats {
 		} else {
 			$query = "UPDATE stats_pilot SET cnt = cnt+:cnt, pilot_name = :pilot_name WHERE pilot_id = :pilot_id AND stats_airline = :stats_airline AND filter_name = :filter_name AND format_source = :format_source; INSERT INTO stats_pilot (pilot_id,cnt,pilot_name,stats_airline,filter_name,format_source) SELECT :pilot_id,:cnt,:pilot_name,:stats_airline,:filter_name,:format_source WHERE NOT EXISTS (SELECT 1 FROM stats_pilot WHERE pilot_id = :pilot_id AND stats_airline = :stats_airline AND filter_name = :filter_name AND format_source = :format_source);"; 
 		}
-                $query_values = array(':pilot_id' => $pilot_id,':cnt' => $cnt,':pilot_name' => $pilot_name,':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+                $query_values = array(':pilot_id' => $pilot_id,':cnt' => $cnt,':pilot_name' => $pilot_name,':stats_airline' => $stats_airline,':filter_name' => $filter_name,':format_source' => $format_source);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -1398,7 +1398,7 @@ class Stats {
 			if ($globalDebug) echo 'Count all pilots...'."\n";
 			$alldata = $Spotter->countAllPilots(false,0,$last_update_day);
 			foreach ($alldata as $number) {
-				$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name']);
+				$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name'],'','',$number['format_source']);
 			}
 			
 			if ($globalDebug) echo 'Count all departure airports...'."\n";
@@ -1646,7 +1646,7 @@ class Stats {
 			if ($globalDebug) echo 'Count all pilots by airlines...'."\n";
 			$alldata = $Spotter->countAllPilotsByAirlines(false,0,$last_update_day);
 			foreach ($alldata as $number) {
-				$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name'],$number['airline_icao']);
+				$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name'],$number['airline_icao'],'',$number['format_source']);
 			}
 			if ($globalDebug) echo 'Count all departure airports by airlines...'."\n";
 			$pall = $Spotter->countAllDepartureAirportsByAirlines(false,0,$last_update_day);
@@ -1828,7 +1828,7 @@ class Stats {
 				}
 				$alldata = $Spotter->countAllPilots(false,0,$last_update_day,$filter);
 				foreach ($alldata as $number) {
-					$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name'],'',$filter_name);
+					$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name'],'',$filter_name,$number['format_source']);
 				}
     			
 				$pall = $Spotter->countAllDepartureAirports(false,0,$last_update_day,$filter);
