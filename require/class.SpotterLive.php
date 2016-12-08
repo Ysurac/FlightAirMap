@@ -46,6 +46,11 @@ class SpotterLive {
 					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$flt['pilots_id'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
 				}
 			}
+			if ((isset($flt['airlines']) && empty($flt['airlines']) && isset($flt['pilots_id']) && empty($flt['pilots_id'])) || (!isset($flt['airlines']) && !isset($flt['pilots_id']))) {
+				if (isset($flt['source'])) {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.format_source IN ('".implode("','",$flt['source'])."')) so ON so.flightaware_id = spotter_output.flightaware_id";
+				}
+			}
 		}
 		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
 			if ($filter['airlines'][0] != '') {
