@@ -212,7 +212,7 @@ class update_db {
                 }
 
     		update_db::connect_sqlite($database_file);
-		$query = 'select * from Aircraft';
+		$query = 'select * from aircraft';
 		try {
                         $sth = update_db::$db_sqlite->prepare($query);
                         $sth->execute();
