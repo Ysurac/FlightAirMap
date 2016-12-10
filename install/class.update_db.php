@@ -212,7 +212,7 @@ class update_db {
                 }
 
     		update_db::connect_sqlite($database_file);
-		$query = 'select * from aircraft';
+		$query = 'select * from Aircraft';
 		try {
                         $sth = update_db::$db_sqlite->prepare($query);
                         $sth->execute();
@@ -1341,14 +1341,16 @@ class update_db {
 */
 		if ($globalDebug) echo "Modes : Download...";
 //		update_db::download('http://planebase.biz/sqb.php?f=basestationall.zip',$tmp_dir.'basestation_latest.zip','http://planebase.biz/bstnsqb');
-		update_db::download('http://data.flightairmap.fr/data/BaseStation.sqb.gz',$tmp_dir.'basestation_latest.gz');
+		update_db::download('http://data.flightairmap.fr/data/BaseStation.sqb.gz',$tmp_dir.'BaseStation.sqb.gz');
+
 //		if (file_exists($tmp_dir.'basestation_latest.zip')) {
-		if (file_exists($tmp_dir.'basestation_latest.gz')) {
+		if (file_exists($tmp_dir.'BaseStation.sqb.gz')) {
 			if ($globalDebug) echo "Unzip...";
 //			update_db::unzip($tmp_dir.'basestation_latest.zip');
-			update_db::gunzip($tmp_dir.'basestation_latest.gz');
+			update_db::gunzip($tmp_dir.'BaseStation.sqb.gz');
 			if ($globalDebug) echo "Add to DB...";
 			$error = update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'BaseStation.sqb');
+//			$error = update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'basestation.sqb');
 		} else $error = "File ".$tmp_dir.'basestation_latest.zip'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
