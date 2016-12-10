@@ -1340,10 +1340,13 @@ class update_db {
 		} elseif ($globalDebug) echo "Done\n";
 */
 		if ($globalDebug) echo "Modes : Download...";
-		update_db::download('http://planebase.biz/sqb.php?f=basestationall.zip',$tmp_dir.'basestation_latest.zip','http://planebase.biz/bstnsqb');
-		if (file_exists($tmp_dir.'basestation_latest.zip')) {
+//		update_db::download('http://planebase.biz/sqb.php?f=basestationall.zip',$tmp_dir.'basestation_latest.zip','http://planebase.biz/bstnsqb');
+		update_db::download('http://data.flightairmap.fr/data/BaseStation.sqb.gz',$tmp_dir.'basestation_latest.gz');
+//		if (file_exists($tmp_dir.'basestation_latest.zip')) {
+		if (file_exists($tmp_dir.'basestation_latest.gz')) {
 			if ($globalDebug) echo "Unzip...";
-			update_db::unzip($tmp_dir.'basestation_latest.zip');
+//			update_db::unzip($tmp_dir.'basestation_latest.zip');
+			update_db::gunzip($tmp_dir.'basestation_latest.gz');
 			if ($globalDebug) echo "Add to DB...";
 			$error = update_db::retrieve_modes_sqlite_to_dest($tmp_dir.'BaseStation.sqb');
 		} else $error = "File ".$tmp_dir.'basestation_latest.zip'." doesn't exist. Download failed.";
@@ -2114,4 +2117,5 @@ class update_db {
 //echo $update_db::update_tle();
 //echo update_db::update_notam_fam();
 //echo update_db::create_airspace();
+//echo update_db::update_ModeS();
 ?>
