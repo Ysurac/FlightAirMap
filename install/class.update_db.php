@@ -947,7 +947,6 @@ class update_db {
 	public static function modes_fam() {
 		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
-		$Spotter = new Spotter();
 		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source = :source";
 		try {
 			$Connection = new Connection();
@@ -959,7 +958,6 @@ class update_db {
 
 		
 		//update_db::unzip($out_file);
-		$header = NULL;
 		$delimiter = "\t";
 		$Connection = new Connection();
 		if (($handle = fopen($tmp_dir.'modes.tsv', 'r')) !== FALSE)
