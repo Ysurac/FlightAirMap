@@ -944,6 +944,49 @@ class update_db {
 		return '';
         }
 
+	public static function modes_fam() {
+		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
+		global $tmp_dir, $globalTransaction;
+		$Spotter = new Spotter();
+		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => 'website_fam'));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+		
+		//update_db::unzip($out_file);
+		$header = NULL;
+		$delimiter = "\t";
+		$Connection = new Connection();
+		if (($handle = fopen($tmp_dir.'modes.tsv', 'r')) !== FALSE)
+		{
+			$i = 0;
+			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
+			//$Connection->db->beginTransaction();
+			if ($globalTransaction) $Connection->db->beginTransaction();
+			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				if ($i > 0) {
+					$query = 'INSERT INTO aircraft_modes (FirstCreated,LastModified,ModeS,ModeSCountry,Registration,ICAOTypeCode,type_flight,Source) VALUES (:FirstCreated,:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:type_flight,:source)';
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':FirstCreated' => $data[0],':LastModified' => $data[1],':ModeS' => $data[2],':ModeSCountry' => $data[3], ':Registration' => $data[4],':ICAOTypeCode' => $data[5],':type_flight' => $data[6],':source' => 'website_fam'));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				}
+				$i++;
+			}
+			fclose($handle);
+			if ($globalTransaction) $Connection->db->commit();
+		}
+		return '';
+        }
+
 	public static function tle($filename,$tletype) {
 		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
@@ -1596,6 +1639,21 @@ class update_db {
 		} elseif ($globalDebug) echo "Done\n";
 		return '';
 	}
+	public static function update_ModeS_fam() {
+		global $tmp_dir, $globalDebug;
+		if ($globalDebug) echo "ModeS from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.fr/data/modes.tsv.gz',$tmp_dir.'modes.tsv.gz');
+		if (file_exists($tmp_dir.'modes.tsv.gz')) {
+			if ($globalDebug) echo "Gunzip...";
+			update_db::gunzip($tmp_dir.'modes.tsv.gz');
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::modes_fam();
+		} else $error = "File ".$tmp_dir.'modes.tsv.gz'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
 
 	public static function update_airspace_fam() {
 		global $tmp_dir, $globalDebug, $globalDBdriver;
@@ -2094,8 +2152,9 @@ class update_db {
 			echo update_db::update_translation();
 			echo update_db::update_translation_fam();
 			echo update_db::update_notam_fam();
+			//echo update_db::update_ModeS();
+			echo update_db::update_ModeS_fam();
 		}
-		echo update_db::update_ModeS();
 		echo update_db::update_ModeS_flarm();
 		echo update_db::update_ModeS_ogn();
 	}
@@ -2120,4 +2179,5 @@ class update_db {
 //echo update_db::update_notam_fam();
 //echo update_db::create_airspace();
 //echo update_db::update_ModeS();
+//echo update_db::update_ModeS_fam();
 ?>
