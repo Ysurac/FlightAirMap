@@ -10,6 +10,8 @@ Can also be used with virtual airlines sources like FlightGear, whazzup.txt from
 
 It also support glidernet APRS source.
 
+Satellites can be displayed on 3D map.
+
 ## Demo
 * From ADS-B : [https://www.flightairmap.fr/](https://www.flightairmap.fr/)
 * From IVAO : [https://ivao.flightairmap.fr/](https://ivao.flightairmap.fr/)
@@ -25,7 +27,6 @@ To install the web app, you need to have meet the following requirements:
 
 * PHP version 5.4 or greater
 * MySQL version 5.6.1 or greater, MariaDB or PostgreSQL (with PostGIS if you want waypoints, airspace and countries data)
-* SQLite 3 (if you use ADS-B as datasource)
 * An HTTP Server such as:
 	* Apache 2.0+
 	* Nginx (include install/flightairmap-nginx-conf.include in server part of the config)
@@ -35,7 +36,7 @@ To install the web app, you need to have meet the following requirements:
 The follwing is a list of PHP extensions that must be installed on your server in order for this web app to run properly:
 
 * cURL [http://php.net/curl](http://php.net/curl) which is used to access remote sites.
-* PDO [http://php.net/pdo](http://php.net/pdo) with MySQL or PostgreSQL driver is required for database access (Maybe other databases work too, not tested). SQLite driver needed for SBS.
+* PDO [http://php.net/pdo](http://php.net/pdo) with MySQL or PostgreSQL driver is required for database access (Maybe other databases work too, not tested).
 * JSON [http://php.net/json](http://php.net/json)
 * ZIP [http://php.net/zip](http://php.net/zip) needed for SBS.
 * DOM [http://php.net/dom](http://php.net/dom)

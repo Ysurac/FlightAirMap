@@ -945,7 +945,6 @@ class update_db {
         }
 
 	public static function modes_fam() {
-		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
 		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source = :source";
 		try {
@@ -973,6 +972,46 @@ class update_db {
 					try {
 						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':FirstCreated' => $data[0],':LastModified' => $data[1],':ModeS' => $data[2],':ModeSCountry' => $data[3], ':Registration' => $data[4],':ICAOTypeCode' => $data[5],':type_flight' => $data[6],':source' => 'website_fam'));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				}
+				$i++;
+			}
+			fclose($handle);
+			if ($globalTransaction) $Connection->db->commit();
+		}
+		return '';
+        }
+
+	public static function routes_fam() {
+		global $tmp_dir, $globalTransaction;
+		$query = "DELETE FROM routes WHERE Source = '' OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => 'website_fam'));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+		
+		//update_db::unzip($out_file);
+		$delimiter = "\t";
+		$Connection = new Connection();
+		if (($handle = fopen($tmp_dir.'routes.tsv', 'r')) !== FALSE)
+		{
+			$i = 0;
+			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
+			//$Connection->db->beginTransaction();
+			if ($globalTransaction) $Connection->db->beginTransaction();
+			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				if ($i > 0) {
+					$query = 'INSERT INTO routes (CallSign,Operator_ICAO,FromAirport_ICAO,FromAirport_Time,ToAirport_ICAO,ToAirport_Time,RouteStop,Source) VALUES (:CallSign,:Operator_ICAO,:FromAirport_ICAO,:FromAirport_Time,:ToAirport_ICAO,:ToAirport_Time,:RouteStop,:source)';
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':CallSign' => $data[0],':Operator_ICAO' => $data[1],':FromAirport_ICAO' => $data[2],':FromAirport_Time' => $data[3], ':ToAirport_ICAO' => $data[4],':ToAirport_Time' => $data[5],':RouteStop' => $data[6],':source' => 'website_fam'));
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage();
 					}
@@ -1652,6 +1691,21 @@ class update_db {
 		} elseif ($globalDebug) echo "Done\n";
 		return '';
 	}
+	public static function update_routes_fam() {
+		global $tmp_dir, $globalDebug;
+		if ($globalDebug) echo "Routes from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.fr/data/routes.tsv.gz',$tmp_dir.'routes.tsv.gz');
+		if (file_exists($tmp_dir.'routes.tsv.gz')) {
+			if ($globalDebug) echo "Gunzip...";
+			update_db::gunzip($tmp_dir.'routes.tsv.gz');
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::routes_fam();
+		} else $error = "File ".$tmp_dir.'routes.tsv.gz'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
 
 	public static function update_airspace_fam() {
 		global $tmp_dir, $globalDebug, $globalDBdriver;
@@ -2146,15 +2200,16 @@ class update_db {
 	public static function update_all() {
 		global $globalMasterServer;
 		if (!isset($globalMasterServer) || !$globalMasterServer) {
-			echo update_db::update_routes();
+			//echo update_db::update_routes();
+			echo update_db::update_routes_fam();
 			echo update_db::update_translation();
 			echo update_db::update_translation_fam();
 			echo update_db::update_notam_fam();
 			//echo update_db::update_ModeS();
 			echo update_db::update_ModeS_fam();
+			echo update_db::update_ModeS_flarm();
+			echo update_db::update_ModeS_ogn();
 		}
-		echo update_db::update_ModeS_flarm();
-		echo update_db::update_ModeS_ogn();
 	}
 }
 
@@ -2178,4 +2233,5 @@ class update_db {
 //echo update_db::create_airspace();
 //echo update_db::update_ModeS();
 //echo update_db::update_ModeS_fam();
+//echo update_db::update_routes_fam();
 ?>

@@ -30,20 +30,19 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 		}
 		$update_db->insert_last_notam_update();
 	} elseif (isset($globalDebug) && $globalDebug && isset($globalNOTAM) && $globalNOTAM) echo "NOTAM are only updated once a day.\n";
+	if ($update_db->check_last_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+		$update_db->update_all();
+	//	require_once(dirname(__FILE__).'/../require/class.Spotter.php');
+	//	$Spotter = new Spotter();
+	//	$Spotter->updateFieldsFromOtherTables();
+		$update_db->insert_last_update();
+	} elseif (isset($globalDebug) && $globalDebug && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM)) echo "DB are populated with external data only every 15 days ! Files are not updated more often.\n";
 }
 if (isset($globalWaypoints) && $globalWaypoints && $update_db->check_last_airspace_update()) {
 	echo "Check if new airspace version exist...";
 	echo $update_db->update_airspace_fam();
 	$update_db->insert_last_airspace_update();
 }
-
-if ($update_db->check_last_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
-	$update_db->update_all();
-//	require_once(dirname(__FILE__).'/../require/class.Spotter.php');
-//	$Spotter = new Spotter();
-//	$Spotter->updateFieldsFromOtherTables();
-	$update_db->insert_last_update();
-} elseif (isset($globalDebug) && $globalDebug && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM)) echo "DB are populated with external data only every 15 days ! Files are not updated more often.\n";
 
 
 if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalMETARcycle) {
