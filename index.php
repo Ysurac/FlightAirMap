@@ -432,7 +432,7 @@ require_once('header.php');
 				$allairlinenames = $Stats->getAllAirlineNames()
 				if (empty($allairlinenames)) {
 					$Spotter = new Spotter();
-					$allairlinenames = $Spotter->getAllAirlineNames()
+					$allairlinenames = $Spotter->getAllAirlineNames();
 				}
 				foreach($allairlinenames as $airline) {
 					$airline_name = $airline['airline_name'];
