@@ -429,7 +429,7 @@ require_once('header.php');
 			<select class="selectpicker" multiple onchange="airlines(this);" id="display_airlines">
 			    <?php
 				$Stats = new Stats();
-				$allairlinenames = $Stats->getAllAirlineNames()
+				$allairlinenames = $Stats->getAllAirlineNames();
 				if (empty($allairlinenames)) {
 					$Spotter = new Spotter();
 					$allairlinenames = $Spotter->getAllAirlineNames();
