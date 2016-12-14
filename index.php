@@ -428,8 +428,13 @@ require_once('header.php');
 		    <br/>
 			<select class="selectpicker" multiple onchange="airlines(this);" id="display_airlines">
 			    <?php
-				$Spotter = new Spotter();
-				foreach($Spotter->getAllAirlineNames() as $airline) {
+				$Stats = new Stats();
+				$allairlinenames = $Stats->getAllAirlineNames()
+				if (empty($allairlinenames)) {
+					$Spotter = new Spotter();
+					$allairlinenames = $Spotter->getAllAirlineNames()
+				}
+				foreach($allairlinenames as $airline) {
 					$airline_name = $airline['airline_name'];
 					if (strlen($airline_name) > 30) $airline_name = substr($airline_name,0,30).'...';
 					if (isset($_COOKIE['Airlines']) && in_array($airline['airline_icao'],explode(',',$_COOKIE['Airlines']))) {
