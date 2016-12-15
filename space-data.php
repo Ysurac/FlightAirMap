@@ -65,6 +65,13 @@ if ($sat == 'ISS (ZARYA)') {
 	$aircraft_wiki = 'https://en.wikipedia.org/wiki/AMSAT-OSCAR_7';
 	$aircraft_name = $sat;
 	$launch_date = '15 November 1974';
+} elseif (strpos($sat,'santaclaus') !== false) {
+	$image = 'https://upload.wikimedia.org/wikipedia/commons/4/49/Jonathan_G_Meath_portrays_Santa_Claus.jpg';
+	$image_copyright = 'Jonathan G Meath';
+	$ident = 'Santa Claus';
+	$aircraft_wiki = 'https://en.wikipedia.org/wiki/Santa_Claus';
+	$aircraft_name = 'Sleigh led by eight reindeer';
+//	$launch_date = '15 November 1974';
 } else {
 	$ident = $sat;
 }

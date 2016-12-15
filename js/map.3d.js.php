@@ -290,6 +290,27 @@ function clickPolar(cb) {
 	window.location.reload();
 }
 
+function clickSanta(cb) {
+	if (cb.checked) {
+		czmldssanta = new Cesium.CzmlDataSource();
+		var livesantadata = czmldssanta.process('<?php print $globalURL; ?>/live-santa-czml.php?now&' + Date.now());
+		livesantadata.then(function (data) {
+			console.log('Add santa !');
+			displayDataSanta(data);
+			viewer.trackedEntity = ds.entities.getById('santaclaus');
+		});
+	} else {
+		var dsn;
+			for (var i =0; i < viewer.dataSources.length; i++) {
+				if (viewer.dataSources.get(i).name == 'famsanta') {
+					dsn = i;
+					break;
+				}
+			}
+		viewer.dataSources.remove(viewer.dataSources.get(dsn),true);
+	}
+}
+
 
 function clickDisplayAirports(cb) {
 	document.cookie =  'displayairports='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
@@ -689,6 +710,16 @@ function displayDataSat(data) {
     //console.log(viewer.dataSources.length);
     //console.log(dsn);
 };
+function displayDataSanta(data) {
+	var entities = data.entities.values;
+	for (var i = 0; i < entities.length; i++) {
+		var entity = entities[i];
+		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
+		entity.orientation = orientation;
+	}
+	viewer.dataSources.add(data);
+	dsn = viewer.dataSources.indexOf(data);
+};
 
 function updateData() {
   //  console.log('Update Data');
@@ -710,6 +741,14 @@ function updateSat() {
 	var livesatdata = czmldssat.process('<?php print $globalURL; ?>/live-sat-czml.php?' + Date.now());
 	livesatdata.then(function (data) { 
 		displayDataSat(data);
+	});
+}
+
+function updateSanta() {
+	var livesantadata = czmldssanta.process('<?php print $globalURL; ?>/live-santa-czml.php?' + Date.now());
+	livesantadata.then(function (data) {
+		console.log('Add santa !');
+		displayDataSanta(data);
 	});
 }
 
@@ -1098,6 +1137,19 @@ handler.setInputAction(function(click) {
 		} else if (pickedObject.id.type == 'airport') {
 			var icao = pickedObject.id.properties.icao;
 			$(".showdetails").load("<?php print $globalURL; ?>/airport-data.php?"+Math.random()+"&airport_icao="+icao);
+		} else if (pickedObject.id.id == 'santaclaus') {
+			console.log('santa');
+			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(pickedObject.id.id));
+			var dsn;
+			for (var i =0; i < viewer.dataSources.length; i++) {
+				if (viewer.dataSources.get(i).name == 'famsanta') {
+					dsn = i;
+					break;
+				}
+			}
+			console.log('dsn : '+dsn);
+			var pnew = viewer.dataSources.get(dsn).entities.getById(pickedObject.id.id);
+			pnew.path.show = true;
 		}
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -1118,7 +1170,22 @@ camera.moveEnd.addEventListener(function() {
 
 //var reloadpage = setInterval(function() { updateData(); },30000);
 if (archive == false) {
-	var reloadpage = setInterval(function(){updateData()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+	var czmldssanta;
+	if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('2016-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('2016-12-25T02:00Z'))) {
+		czmldssanta = new Cesium.CzmlDataSource();
+		updateSanta();
+	}
+	var reloadpage = setInterval(
+		function(){
+			updateData();
+			if (typeof czmldssanta == 'undefined') {
+				if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('2016-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('2016-12-25T02:00Z'))) {
+					czmldssanta = new Cesium.CzmlDataSource();
+					updateSanta();
+				}
+			}
+		}
+	,<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 } else {
 	//var widget = new Cesium.CesiumWidget('archivebox');
 //	var timeline = new Cesium.Timeline(viewer);

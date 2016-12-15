@@ -325,6 +325,11 @@ require_once('header.php');
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayminimap" value="1" onclick="clickDisplayMinimap(this)" <?php if (!isset($_COOKIE['displayminimap']) || (isset($_COOKIE['displayminimap']) && $_COOKIE['displayminimap'] == 'true')) print 'checked'; ?> ><?php echo _("Show mini-map"); ?></label></div></li>
 <?php
+	if (time() > mktime(0,0,0,12,1,date("Y")) && time() < mktime(0,0,0,12,31,date("Y"))) {
+?>
+		    <li><div class="checkbox"><label><input type="checkbox" name="displaysanta" value="1" onclick="clickSanta(this)"><?php echo _("Show Santa Claus now"); ?></label></div></li>
+<?php
+	}
     }
 ?>
 
