@@ -191,11 +191,11 @@ if (strtolower($current_page) == "index")
 	    if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
 ?>
 <?php
-		if (isset($globalBeta) && $globalBeta) {
+//		if (isset($globalBeta) && $globalBeta) {
 ?>
 <script src="<?php print $globalURL; ?>/js/leaflet-playback.js"></script>
 <?php
-		}
+//		}
 ?>
 <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script>
 <?php

@@ -48,6 +48,7 @@ var weathercloudsrefresh;
 var geojsonLayer;
 var atcLayer;
 var polarLayer;
+var santaLayer;
 var notamLayer;
 var weatherradar;
 waypoints = '';
@@ -1178,8 +1179,19 @@ reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php print $
 	} else {
 ?>
 //then load it again every 30 seconds
-reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
-
+reloadPage = setInterval(
+    function(){
+	if (noTimeout) {
+	    getLiveData(0);
+	}
+    ,<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+var currentdate = new Date(Date.UTC());
+var currentyear = new Date().getFullYear();
+var begindate = new Date(Date.UTC(currentyear,12,24,2,0,0,0));
+var enddate = new Date(Date.UTC(currentyear,12,25,2,0,0,0));
+if (currentdate.getTime() > begindate.getTime() && currentdate.getTime() < enddate.getTime()) {
+	update_santaLayer();
+}
 <?php
 		if (!((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) && (isset($_COOKIE['polar']) && $_COOKIE['polar'] == 'true')) {
 ?>
@@ -1372,6 +1384,30 @@ function update_polarLayer() {
 
 });
 
+function update_santaLayer() {
+    var santageoJSON = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/live-santa-geojson.php",{
+	onEachFeature: function(feature,layer) {
+	    var playbackOptions = {
+		orientIcons: true,
+		clickCallback: function() { $(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat=santaclaus"); },
+		marker: function(){
+		    return {
+			icon: L.icon({
+			    iconUrl: '<?php print $globalURL; ?>/images/santa.png',
+			    iconSize: [30, 30],
+			    iconAnchor: [15, 15]
+			})
+		    }
+    		}
+	    };
+	    var santaplayback = new L.Playback(map,feature,null,playbackOptions);
+	    santaplayback.start();
+	}
+    });
+};
+
+
+
 
 function showNotam() {
     if (!$("#notam").hasClass("active"))
@@ -1513,6 +1549,14 @@ function clickFlightEstimation(cb) {
 function clickPolar(cb) {
     document.cookie =  'polar='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
+}
+function clickSanta(cb) {
+    if (cb.checked) {
+	update_santaLayer();
+    } else {
+	// FIXME : Need to use leafletplayback stop() for example
+	window.location.reload();
+    }
 }
 function unitdistance(selectObj) {
     var idx = selectObj.selectedIndex;

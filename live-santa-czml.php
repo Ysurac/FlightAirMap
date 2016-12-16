@@ -10,7 +10,7 @@ $Common = new Common();
 if (isset($_GET['download'])) {
 	if ($_GET['download'] == "true")
 	{
-		header('Content-disposition: attachment; filename="flightairmap-sat.json"');
+		header('Content-disposition: attachment; filename="flightairmap-santa.czml"');
 	}
 }
 header('Content-Type: text/javascript');

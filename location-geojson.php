@@ -21,7 +21,7 @@ if (!isset($globalDemo)) {
 }
 
 $output = '{"type": "FeatureCollection","features": [';
-if (!empty($spotter_array))
+if (!empty($spotter_array) && count($spotter_array) > 0)
 {
 	foreach($spotter_array as $spotter_item)
 	{
