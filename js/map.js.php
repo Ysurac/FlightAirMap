@@ -1180,11 +1180,7 @@ reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php print $
 ?>
 //then load it again every 30 seconds
 reloadPage = setInterval(
-    function(){
-	if (noTimeout) {
-	    getLiveData(0);
-	}
-    ,<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+    function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 var currentdate = new Date(Date.UTC());
 var currentyear = new Date().getFullYear();
 var begindate = new Date(Date.UTC(currentyear,12,24,2,0,0,0));
