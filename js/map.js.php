@@ -1390,8 +1390,8 @@ function update_santaLayer() {
 		    return {
 			icon: L.icon({
 			    iconUrl: '<?php print $globalURL; ?>/images/santa.png',
-			    iconSize: [30, 30],
-			    iconAnchor: [15, 15]
+			    iconSize: [80, 80],
+			    iconAnchor: [50, 50]
 			})
 		    }
     		}
