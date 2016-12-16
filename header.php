@@ -56,7 +56,7 @@ if (isset($_POST['removefilters'])) {
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui.min.css" />
 <!--<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui-timepicker-addon.min.css" />-->
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-datetimepicker.min.css" />  
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/font-awesome-4.5.0/css/font-awesome.min.css" />
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/font-awesome-4.7.0/css/font-awesome.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css" />
