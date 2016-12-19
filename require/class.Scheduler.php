@@ -521,12 +521,12 @@ class Schedule {
 		$data = $Common->getData($url);
 		if ($data != '') {
 		    //echo $data;
-		    $parsed_json = json_decode($data);
-		    if (isset($parsed_json[0]->FromAirportCode)) {
-			$DepartureAirportIata = $parsed_json[0]->FromAirportCode;
-			$ArrivalAirportIata = $parsed_json[0]->ToAirportCode;
-			$departureTime = date('H:i',strtotime($parsed_json[0]->ScheduledDepatureDate));
-			$arrivalTime = date('H:i',strtotime($parsed_json[0]->ScheduledArrivalDate));
+		    $parsed_json = json_decode($data,true);
+		    if (isset($parsed_json[0]['FromAirportCode'])) {
+			$DepartureAirportIata = $parsed_json[0]['FromAirportCode'];
+			$ArrivalAirportIata = $parsed_json[0]['ToAirportCode'];
+			$departureTime = date('H:i',strtotime($parsed_json[0]['ScheduledDepatureDate']));
+			$arrivalTime = date('H:i',strtotime($parsed_json[0]['ScheduledArrivalDate']));
 			return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_brussels');
 		    }
 		}
