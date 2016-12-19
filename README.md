@@ -11,6 +11,7 @@ Can also be used with virtual airlines sources like FlightGear, whazzup.txt from
 It also support glidernet APRS source.
 
 Satellites can be displayed on 3D map.
+On december, you can track Santa's flight.
 
 ## Demo
 * From ADS-B : [https://www.flightairmap.fr/](https://www.flightairmap.fr/)

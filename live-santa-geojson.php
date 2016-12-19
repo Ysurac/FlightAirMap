@@ -21,55 +21,9 @@ $timeb = time();
 $spotter_array = array();
 $j = 0;
 $prev_satname = '';
-/*
-$output = '[';
-$output .= '{"id" : "document", "name" : "famsanta","version" : "1.0"';
-//	$output .= ',"clock": {"interval" : "'.date("c",time()-$globalLiveInterval).'/'.date("c").'","currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"range" : "LOOP_STOP","step": "SYSTEM_CLOCK_MULTIPLIER"}';
-
-//	$output .= ',"clock": {"interval" : "'.date("c",time()-$globalLiveInterval).'/'.date("c").'","currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
-$output .= ',"clock": {"currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"';
-if (!isset($_GET['now'])) $output .= ',"interval": "'.date("Y").'-12-24T02:00:00Z/'.date("Y").'-12-25T02:00:00Z"';
-$output .= '}';
-//$output .= ',"clock": {"currentTime" : "'.date("c",time()).'","multiplier" : 300,"range" : "UNBOUNDED","step": "TICK_DEPENDENT"}';
-//$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : 1,"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
-
-//	$output .= ',"clock": {"interval" : "'.date("c",time()-$globalLiveInterval).'/'.date("c").'","currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"step": "SYSTEM_CLOCK_MULTIPLIER"}';
-$output .= '},';
-$output .= '{';
-$output .= '"id": "santaclaus",';
-if (!isset($_GET['now'])) $output .= '"interval": "'.date("Y").'-12-24T02:00:00Z/'.date("Y").'-12-25T02:00:00Z",';
-$output .= '"properties": {';
-// Not yet supported in CZML with Cesium
-$output .= '},';
-$output .= '"path" : { ';
-$output .= '"show" : false, ';
-$output .= '"material" : { ';
-$output .= '"polylineOutline" : { ';
-$output .= '"color" : { "rgba" : [238, 250, 255, 255] }, ';
-$output .= '"outlineColor" : { "rgba" : [200, 209, 214, 255] }, ';
-$output .= '"outlineWidth" : 5, ';
-$output .= '"polylineGlow" : { "color" : { "rgba" : [214, 208, 214, 255] }, "glowPower" : 3 } ';
-$output .= '}';
-$output .= '}, ';
-$output .= '"width" : 6, "leadTime" : 0, "trailTime" : 1000000, "resolution" : 10 },';
-$output .= '"model": {"gltf" : "'.$globalURL.'/models/santa.glb'.'","scale" : 1.0,"minimumPixelSize": 100,"maximunPixelSize": 600 },';
-//$output .= '"model": {"gltf" : "'.$globalURL.'/models/gyro.glb'.'","scale" : 1.0,"minimumPixelSize": 50,"maximunPixelSize": 300 },';
-$output .= '"heightReference": "RELATIVE_TO_GROUND",';
-$output .= '"position": {';
-if (!isset($_GET['now'])) {
-	$output .= '"epoch" : "'.date("Y").'-12-24T02:00:00Z",';
-} else {
-	$output .= '"epoch" : "'.date("c",time() - $globalLiveInterval).'",';
-}
-//$output .= '"type": "Point",';
-//$output .= '"interpolationAlgorithm" : "LAGRANGE",';
-//$output .= '"interpolationDegree" : 5,';
-//		$output .= '"epoch" : "'.date("c",strtotime($spotter_item['date'])).'", ';
-$output .= ']}}';
-$output .= ']';
-*/
 $timearray = array();
-$begin = time();
+if (isset($_GET['now'])) $begin = time();
+else $begin = strtotime(date("Y").'-12-24T02:00:00Z');
 for ($i =0; $i <= 288; $i++) {
 	$timearray[] = ($begin + $i*300)*1000;
 }

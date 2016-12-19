@@ -1186,7 +1186,7 @@ var currentyear = new Date().getFullYear();
 var begindate = new Date(Date.UTC(currentyear,12,24,2,0,0,0));
 var enddate = new Date(Date.UTC(currentyear,12,25,2,0,0,0));
 if (currentdate.getTime() > begindate.getTime() && currentdate.getTime() < enddate.getTime()) {
-	update_santaLayer();
+	update_santaLayer(false);
 }
 <?php
 		if (!((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) && (isset($_COOKIE['polar']) && $_COOKIE['polar'] == 'true')) {
@@ -1380,8 +1380,10 @@ function update_polarLayer() {
 
 });
 
-function update_santaLayer() {
-    var santageoJSON = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/live-santa-geojson.php",{
+function update_santaLayer(now) {
+    if (now) var url = "<?php print $globalURL; ?>/live-santa-geojson.php?now";
+    else var url = "<?php print $globalURL; ?>/live-santa-geojson.php";
+    var santageoJSON = new L.GeoJSON.AJAX(url,{
 	onEachFeature: function(feature,layer) {
 	    var playbackOptions = {
 		orientIcons: true,
@@ -1390,8 +1392,8 @@ function update_santaLayer() {
 		    return {
 			icon: L.icon({
 			    iconUrl: '<?php print $globalURL; ?>/images/santa.png',
-			    iconSize: [80, 80],
-			    iconAnchor: [50, 50]
+			    iconSize: [60, 60],
+			    iconAnchor: [30, 30]
 			})
 		    }
     		}
@@ -1548,7 +1550,7 @@ function clickPolar(cb) {
 }
 function clickSanta(cb) {
     if (cb.checked) {
-	update_santaLayer();
+	update_santaLayer(true);
     } else {
 	// FIXME : Need to use leafletplayback stop() for example
 	window.location.reload();
