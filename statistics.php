@@ -45,30 +45,30 @@ require_once('header.php');
 	// print_r($Stats->getAllAirlineNames()); 
     ?>
     <?php include('statistics-sub-menu.php'); ?>
-    <div class="row global-stats">
-        <div class="col-md-2"><span class="type"><?php echo _("Flights"); ?></span><span><?php print number_format($Stats->countOverallFlights($airline_icao,$filter_name)); ?></span></div> 
+    <p class="global-stats">
+        <span><span class="badge"><?php print number_format($Stats->countOverallFlights($airline_icao,$filter_name)); ?></span> <?php echo _("Flights"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-        <div class="col-md-2"><span class="type"><?php echo _("Arrivals seen"); ?></span><span><?php print number_format($Stats->countOverallArrival($airline_icao,$filter_name)); ?></span></div> 
+        <span><span class="badge"><?php print number_format($Stats->countOverallArrival($airline_icao,$filter_name)); ?></span> <?php echo _("Arrivals seen"); ?></span>
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
 	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 	?>
-    	    <div class="col-md-2"><span class="type"><?php echo _("Pilots"); ?></span><span><?php print number_format($Stats->countOverallPilots($airline_icao,$filter_name)); ?></span></div> 
+    	    <span><span class="badge"><?php print number_format($Stats->countOverallPilots($airline_icao,$filter_name)); ?></span> <?php echo _("Pilots"); ?></span>
 	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     	    } else {
     	?>
-    	    <div class="col-md-2"><span class="type"><?php echo _("Owners"); ?></span><span><?php print number_format($Stats->countOverallOwners($airline_icao,$filter_name)); ?></span></div> 
+    	    <span><span class="badge"><?php print number_format($Stats->countOverallOwners($airline_icao,$filter_name)); ?></span> <?php echo _("Owners"); ?></span>
 	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
     	<?php
     	    }
     	?>
-        <div class="col-md-2"><span class="type"><?php echo _("Aircrafts"); ?></span><span><?php print number_format($Stats->countOverallAircrafts($airline_icao,$filter_name)); ?></span></div> 
+        <span><span class="badge"><?php print number_format($Stats->countOverallAircrafts($airline_icao,$filter_name)); ?></span> <?php echo _("Aircrafts"); ?></span>
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     		if ($airline_icao == '') {
     	?>
-        <div class="col-md-2"><span class="type"><?php echo _("Airlines"); ?></span><span><?php print number_format($Stats->countOverallAirlines($filter_name)); ?></span></div>
+        <span><span class="badge"><?php print number_format($Stats->countOverallAirlines($filter_name)); ?></span> <?php echo _("Airlines"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
 		}
@@ -76,12 +76,12 @@ require_once('header.php');
 	<?php
 		if (!(isset($globalIVAO) && $globalIVAO) && !(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalphpVMS) && $globalphpVMS)) {
 	?>
-        <div class="col-md-2"><span class="type"><?php echo _("Military"); ?></span><span><?php print number_format($Stats->countOverallMilitaryFlights($filter_name)); ?></span></div> 
+        <span><span class="badge"><?php print number_format($Stats->countOverallMilitaryFlights($filter_name)); ?></span> <?php echo _("Military"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
 		}
 	?>
-    </div>
+    </p>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
     <div class="specific-stats">
         <div class="row column">
@@ -131,29 +131,26 @@ require_once('header.php');
 <?php
 //    echo $airline_icao;
     if ($airline_icao == '' || $airline_icao == 'all') {
-?>
-            <div class="col-md-6">
-                <h2><?php echo _("Top 10 Most Common Airline"); ?></h2>
-                 <?php
-                  $airline_array = $Stats->countAllAirlines(true,$filter_name);
-		    if (count($airline_array) == 0) print _("No data available");
-		    else {
-
-                  print '<div id="chart2" class="chart" width="100%"></div>
+	$airline_array = $Stats->countAllAirlines(true,$filter_name);
+	if (count($airline_array) == 0) print _("No data available");
+	else {
+            print '<div class="col-md-6">';
+	    print '<h2>'._("Top 10 Most Common Airline").'</h2>';
+	    print '<div id="chart2" class="chart" width="100%"></div>
                     <script> 
                         google.load("visualization", "1", {packages:["corechart"]});
                       google.setOnLoadCallback(drawChart2);
                       function drawChart2() {
                         var data = google.visualization.arrayToDataTable([
                             ["'._("Airline").'", "'._("# of times").'"], ';
-                            $airline_data = '';
-                          foreach($airline_array as $airline_item)
-                                    {
-                                            $airline_data .= '[ "'.$airline_item['airline_name'].' ('.$airline_item['airline_icao'].')",'.$airline_item['airline_count'].'],';
-                                    }
-                                    $airline_data = substr($airline_data, 0, -1);
-                                    print $airline_data;
-                        print ']);
+	    $airline_data = '';
+	    foreach($airline_array as $airline_item)
+	    {
+		$airline_data .= '[ "'.$airline_item['airline_name'].' ('.$airline_item['airline_icao'].')",'.$airline_item['airline_count'].'],';
+	    }
+	    $airline_data = substr($airline_data, 0, -1);
+	    print $airline_data;
+	    print ']);
 
                         var options = {
                             chartArea: {"width": "80%", "height": "60%"},
@@ -168,12 +165,10 @@ require_once('header.php');
                               drawChart2();
                             });
                   </script>';
-                  }
-                  ?>
-                <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/airline" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
-                </div>
-            </div>
+	    print '<div class="more"><a href="'.$globalURL.'/statistics/airline" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
+    	    print '</div>';
+	}
+?>
         </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
