@@ -132,8 +132,7 @@ require_once('header.php');
 //    echo $airline_icao;
     if ($airline_icao == '' || $airline_icao == 'all') {
 	$airline_array = $Stats->countAllAirlines(true,$filter_name);
-	if (count($airline_array) == 0) print _("No data available");
-	else {
+	if (count($airline_array) > 0) {
             print '<div class="col-md-6">';
 	    print '<h2>'._("Top 10 Most Common Airline").'</h2>';
 	    print '<div id="chart2" class="chart" width="100%"></div>
