@@ -40,6 +40,24 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all;
         }
+        public function deleteStats($filter_name = '') {
+        	/*
+        	$query = "DELETE FROM config WHERE name = 'last_update_stats'";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                */
+        	$query = "DELETE FROM stats WHERE filter_name = :filter_name;DELETE FROM stats_aircraft WHERE filter_name = :filter_name;DELETE FROM stats_airline WHERE filter_name = :filter_name;DELETE FROM stats_airport WHERE filter_name = :filter_name;DELETE FROM stats_callsign WHERE filter_name = :filter_name;DELETE FROM stats_country WHERE filter_name = :filter_name;DELETE FROM stats_flight WHERE filter_name = :filter_name;DELETE FROM stats_owner WHERE filter_name = :filter_name;DELETE FROM stats_pilot WHERE filter_name = :filter_name;DELETE FROM stats_registration WHERE filter_name = :filter_name;";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute(array(':filter_name' => $filter_name));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+        }
 	public function getAllAirlineNames($filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
                 $query = "SELECT * FROM stats_airline WHERE filter_name = :filter_name ORDER BY airline_name ASC";
@@ -1803,6 +1821,12 @@ class Stats {
 			foreach ($globalStatsFilters as $name => $filter) {
 				//$filter_name = $filter['name'];
 				$filter_name = $name;
+
+				$last_update = $this->getLastStatsUpdate('last_update_stats_'.$filter_name);
+				if (isset($last_update[0]['value'])) {
+					$last_update_day = $last_update[0]['value'];
+				} else $last_update_day = '2012-12-12 12:12:12';
+
 				// Count by filter
 				if ($globalDebug) echo '--- Stats for filter '.$filter_name.' ---'."\n";
 				$Spotter = new Spotter($this->db);
@@ -1965,6 +1989,9 @@ class Stats {
 				foreach ($alldata as $number) {
 					$this->addStatFlight('hour',$number['hour_name'],$number['hour_count'],'',$filter_name);
 				}
+				echo 'Insert last stats update date...'."\n";
+				date_default_timezone_set('UTC');
+				$this->addLastStatsUpdate('last_update_stats_'.$filter_name,date('Y-m-d G:i:s'));
 			}
 	
 
