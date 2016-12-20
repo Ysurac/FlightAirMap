@@ -53,7 +53,6 @@ $output .= '}';
 $output .= '}, ';
 $output .= '"width" : 6, "leadTime" : 0, "trailTime" : 1000000, "resolution" : 10 },';
 $output .= '"model": {"gltf" : "'.$globalURL.'/models/santa.glb'.'","scale" : 1.0,"minimumPixelSize": 100,"maximunPixelSize": 600 },';
-//$output .= '"model": {"gltf" : "'.$globalURL.'/models/gyro.glb'.'","scale" : 1.0,"minimumPixelSize": 50,"maximunPixelSize": 300 },';
 $output .= '"heightReference": "RELATIVE_TO_GROUND",';
 $output .= '"position": {';
 if (!isset($_GET['now'])) {

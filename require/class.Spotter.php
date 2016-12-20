@@ -3290,7 +3290,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				if (!is_numeric(substr($ident, 0, 3)))
+				if (!is_numeric(substr($ident, 0, 3)) && !((substr($ident, 0, 3) == 'OGN' || substr($ident, 0, 3) == 'FLR' || substr($ident, 0, 3) == 'ICA') && $format_source == 'aprs'))
 				{
 					$timeelapsed = microtime(true);
 					if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
@@ -4510,6 +4510,53 @@ class Spotter{
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airline_icao'] = $row['airline_icao'];
+			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
+			$temp_array['aircraft_name'] = $row['aircraft_name'];
+			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
+			$temp_array['aircraft_icao_count'] = $row['aircraft_icao_count'];
+			$aircraft_array[] = $temp_array;
+		}
+		return $aircraft_array;
+	}
+
+	/**
+	* Gets all aircraft types that have flown over by months
+	*
+	* @return Array the aircraft list
+	*
+	*/
+	public function countAllAircraftTypesByMonths($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
+	{
+		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT EXTRACT(month from spotter_output.date) as month, EXTRACT(year from spotter_output.date) as year,spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer 
+		    FROM spotter_output".$filter_query." spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' AND spotter_output.airline_icao <>'' AND spotter_output.airline_icao <> 'NA' ";
+		if ($olderthanmonths > 0) {
+			if ($globalDBdriver == 'mysql') {
+				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+			}
+		}
+		if ($sincedate != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= "AND spotter_output.date > '".$sincedate."' ";
+			} else {
+				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+
+		$query .= "GROUP BY EXTRACT(month from spotter_output.date), EXTRACT(year from spotter_output.date), spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer ORDER BY aircraft_icao_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+ 
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+
+		$aircraft_array = array();
+		$temp_array = array();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			//$temp_array['airline_icao'] = $row['airline_icao'];
 			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
 			$temp_array['aircraft_name'] = $row['aircraft_name'];
 			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];

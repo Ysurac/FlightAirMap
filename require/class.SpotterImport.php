@@ -540,7 +540,7 @@ class SpotterImport {
 
 		if (isset($line['altitude']) && $line['altitude'] != '') {
 		    //if (!isset($this->all_flights[$id]['altitude']) || $this->all_flights[$id]['altitude'] == '' || ($this->all_flights[$id]['altitude'] > 0 && $line['altitude'] != 0)) {
-			if (abs(round($line['altitude']/100)-$this->all_flights[$id]['altitude']) > 2) $this->all_flights[$id]['putinarchive'] = true;
+			if (is_int($this->all_flights[$id]['altitude']) && abs(round($line['altitude']/100)-$this->all_flights[$id]['altitude']) > 2) $this->all_flights[$id]['putinarchive'] = true;
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('altitude' => round($line['altitude']/100)));
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('altitude_real' => $line['altitude']));
 			//$dataFound = true;
@@ -552,7 +552,7 @@ class SpotterImport {
 		}
 		
 		if (isset($line['heading']) && $line['heading'] != '') {
-		    if (abs($this->all_flights[$id]['heading']-round($line['heading'])) > 2) $this->all_flights[$id]['putinarchive'] = true;
+		    if (is_int($this->all_flights[$id]['heading']) && abs($this->all_flights[$id]['heading']-round($line['heading'])) > 2) $this->all_flights[$id]['putinarchive'] = true;
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => round($line['heading'])));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading_fromsrc' => true));
 		    //$dataFound = true;
