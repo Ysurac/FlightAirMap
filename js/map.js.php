@@ -506,6 +506,8 @@ $( document ).ready(function() {
 			map.removeLayer(notamLayer);
 			update_notamLayer();
 		}
+	});
+	map.on('zoomend', function() {
 		getLiveData(1);
 	});
 
