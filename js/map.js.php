@@ -751,10 +751,12 @@ function getLiveData(click)
 			icon: L.icon({
 			    iconUrl: iconURLpath,
 			    iconSize: [<?php print $globalAircraftSize; ?>, <?php print $globalAircraftSize; ?>],
-			    iconAnchor: [<?php print $globalAircraftSize/2; ?>, <?php print $globalAircraftSize; ?>],
+			    iconAnchor: [<?php print $globalAircraftSize/2; ?>, <?php print $globalAircraftSize; ?>]
+			    /*
 			    shadowUrl: iconURLShadowpath,
 			    shadowSize: [<?php print $globalAircraftSize; ?>, <?php print $globalAircraftSize; ?>],
 			    shadowAnchor: [<?php print ($globalAircraftSize/2)+1; ?>, <?php print $globalAircraftSize; ?>]
+			    */
 			})
 		    })
 <?php
@@ -798,11 +800,13 @@ function getLiveData(click)
 				alt: callsign,
 				icon: L.icon({
 				    iconUrl: iconURLpath,
-				    shadowUrl: iconURLShadowpath,
 				    iconSize: [30, 30],
+				    iconAnchor: [15, 30]
+				    /*
+				    shadowUrl: iconURLShadowpath,
 				    shadowSize: [30,30],
-				    iconAnchor: [15, 30],
 				    shadowAnchor: [16,30]
+				    */
 				})
 			    })
 <?php
@@ -844,11 +848,13 @@ function getLiveData(click)
 				alt: callsign,
 				icon: L.icon({
 				    iconUrl: iconURLpath,
-				    shadowUrl: iconURLShadowpath,
-				    shadowSize: [15,15],
-				    shadowAnchor: [8,15],
 				    iconSize: [15, 15],
 				    iconAnchor: [7, 15]
+				    /*
+				    shadowUrl: iconURLShadowpath,
+				    shadowSize: [15,15],
+				    shadowAnchor: [8,15]
+				    */
 				})
 			    })
 <?php
