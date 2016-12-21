@@ -1854,7 +1854,6 @@ class Stats {
 				foreach ($alldata as $number) {
 					$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name'],'',$filter_name,$number['format_source']);
 				}
-    			
 				$pall = $Spotter->countAllDepartureAirports(false,0,$last_update_day,$filter);
 	       			$dall = $Spotter->countAllDetectedDepartureAirports(false,0,$last_update_day,$filter);
 		        	$alldata = array();
@@ -1911,6 +1910,10 @@ class Stats {
 				$alldata = $Spotter->countAllMonthsPilots($filter);
 				foreach ($alldata as $number) {
 					$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
+				}
+				$alldata = $Spotter->countAllMilitaryMonths($filter);
+				foreach ($alldata as $number) {
+					$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
 				}
 				$alldata = $Spotter->countAllMonthsAircrafts($filter);
 				foreach ($alldata as $number) {
