@@ -174,41 +174,35 @@ require_once('header.php');
     }
 ?>
         <div class="row column">
-
-	    <?php
-                 $flightover_array = $Stats->countAllFlightOverCountries($airline_icao,$filter_name);
-		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
-		    if (empty($flightover_array)) {
-	    ?>
-            <div class="col-md-12">
-            <?php
-        	    } else {
-            ?>
-            <div class="col-md-6">
-            <?php
-            	    }
-            ?>
+<?php
+    $flightover_array = $Stats->countAllFlightOverCountries($airline_icao,$filter_name);
+    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+	if (empty($flightover_array)) {
+	    print '<div class="col-md-12">';
+	} else {
+            print '<div class="col-md-6">';
+	}
+?>
                 <h2><?php echo _("Top 10 Most Common Pilots"); ?></h2>
-                 <?php
-                  $pilot_array = $Stats->countAllPilots(true,$airline_icao,$filter_name);
-		    if (count($pilot_array) == 0) print _("No data available");
-		    else {
-
-                  print '<div id="chart7" class="chart" width="100%"></div>
+<?php
+	$pilot_array = $Stats->countAllPilots(true,$airline_icao,$filter_name);
+	if (count($pilot_array) == 0) print _("No data available");
+	else {
+	    print '<div id="chart7" class="chart" width="100%"></div>
                     <script> 
                         google.load("visualization", "1", {packages:["corechart"]});
                       google.setOnLoadCallback(drawChart7);
                       function drawChart7() {
                         var data = google.visualization.arrayToDataTable([
                             ["'._("Pilots").'", "'._("# of times").'"], ';
-                            $pilot_data = '';
-                          foreach($pilot_array as $pilot_item)
-                                    {
-                                            $pilot_data .= '[ "'.$pilot_item['pilot_name'].' ('.$pilot_item['pilot_id'].')",'.$pilot_item['pilot_count'].'],';
-                                    }
-                                    $pilot_data = substr($pilot_data, 0, -1);
-                                    print $pilot_data;
-                        print ']);
+	    $pilot_data = '';
+	    foreach($pilot_array as $pilot_item)
+	    {
+		$pilot_data .= '[ "'.$pilot_item['pilot_name'].' ('.$pilot_item['pilot_id'].')",'.$pilot_item['pilot_count'].'],';
+	    }
+	    $pilot_data = substr($pilot_data, 0, -1);
+	    print $pilot_data;
+	    print ']);
 
                         var options = {
                             chartArea: {"width": "80%", "height": "60%"},
@@ -223,25 +217,24 @@ require_once('header.php');
                               drawChart7();
                             });
                   </script>';
-                  }
-                  ?>
+        }
+?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/pilot" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
         
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-        <?php
-    	    } else {
-    	?>
+<?php
+    } else {
+?>
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Owners"); ?></h2>
-                 <?php
-                  $owner_array = $Stats->countAllOwners(true,$airline_icao,$filter_name);
-		    if (count($owner_array) == 0) print _("No data available");
-		    else {
-
-                  print '<div id="chart7" class="chart" width="100%"></div>
+<?php
+	$owner_array = $Stats->countAllOwners(true,$airline_icao,$filter_name);
+	if (count($owner_array) == 0) print _("No data available");
+	else {
+	    print '<div id="chart7" class="chart" width="100%"></div>
                     <script> 
                         google.load("visualization", "1", {packages:["corechart"]});
                       google.setOnLoadCallback(drawChart7);
@@ -249,13 +242,13 @@ require_once('header.php');
                         var data = google.visualization.arrayToDataTable([
                             ["'._("Owner").'", "'._("# of times").'"], ';
                             $owner_data = '';
-                          foreach($owner_array as $owner_item)
-                                    {
-                                            $owner_data .= '[ "'.$owner_item['owner_name'].'",'.$owner_item['owner_count'].'],';
-                                    }
-                                    $owner_data = substr($owner_data, 0, -1);
-                                    print $owner_data;
-                        print ']);
+	    foreach($owner_array as $owner_item)
+	    {
+		$owner_data .= '[ "'.$owner_item['owner_name'].'",'.$owner_item['owner_count'].'],';
+	    }
+	    $owner_data = substr($owner_data, 0, -1);
+	    print $owner_data;
+	    print ']);
 
                         var options = {
                             chartArea: {"width": "80%", "height": "60%"},
@@ -270,27 +263,25 @@ require_once('header.php');
                               drawChart7();
                             });
                   </script>';
-                  }
-                  ?>
+	}
+?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/owner" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
         
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-        <?php
-    	    }
-    	    if (!empty($flightover_array)) {
-    	?>
-    	
+<?php
+    }
+    if (!empty($flightover_array)) {
+?>
             <div class="col-md-6">
                 <h2><?php echo _("Top 20 Most Common Country a Flight was Over"); ?></h2>
-                 <?php
-                  //$flightover_array = $Stats->countAllFlightOverCountries();
-		    if (count($flightover_array) == 0) print _("No data available");
-		    else {
-
-                  print '<div id="chart10" class="chart" width="100%"></div>
+<?php
+	 //$flightover_array = $Stats->countAllFlightOverCountries();
+	if (count($flightover_array) == 0) print _("No data available");
+	else {
+	    print '<div id="chart10" class="chart" width="100%"></div>
                     <script> 
                         google.load("visualization", "1", {packages:["corechart"]});
                       google.setOnLoadCallback(drawChart10);
@@ -298,13 +289,13 @@ require_once('header.php');
                         var data = google.visualization.arrayToDataTable([
                             ["'._("Country").'", "'._("# of times").'"], ';
                             $flightover_data = '';
-                          foreach($flightover_array as $flightover_item)
-                                    {
-                                            $flightover_data .= '[ "'.$flightover_item['flight_country'].' ('.$flightover_item['flight_country_iso2'].')",'.$flightover_item['flight_count'].'],';
-                                    }
-                                    $flightover_data = substr($flightover_data, 0, -1);
-                                    print $flightover_data;
-                        print ']);
+	    foreach($flightover_array as $flightover_item)
+	    {
+		$flightover_data .= '[ "'.$flightover_item['flight_country'].' ('.$flightover_item['flight_country_iso2'].')",'.$flightover_item['flight_count'].'],';
+	    }
+	    $flightover_data = substr($flightover_data, 0, -1);
+	    print $flightover_data;
+	    print ']);
 
                         var options = {
                             chartArea: {"width": "80%", "height": "60%"},
@@ -321,15 +312,15 @@ require_once('header.php');
                               drawChart10();
                             });
                   </script>';
-                  }
-                  ?>
+	}
+?>
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/statistics/country" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
-        <?php
-            }
-        ?>
+<?php
+    }
+?>
         </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
@@ -337,13 +328,11 @@ require_once('header.php');
         </div>
         <div class="row column">
             <div class="col-md-6">
-                <h2><?php echo _("Top 10 Most Common Departure Airports"); ?></h2>
-                <?php
-                $airport_airport_array = $Stats->countAllDepartureAirports(true,$airline_icao,$filter_name);
-		    if (count($airport_airport_array) == 0) print _("No data available");
-		    else {
-
-                 print '<div id="chart3" class="chart" width="100%"></div>
+<?php
+    $airport_airport_array = $Stats->countAllDepartureAirports(true,$airline_icao,$filter_name);
+    if (count($airport_airport_array) > 0) {
+	print '<h2>'._("Top 10 Most Common Departure Airports").'</h2>';
+	print '<div id="chart3" class="chart" width="100%"></div>
                 <script>
                 google.load("visualization", "1", {packages:["geochart"]});
                 google.setOnLoadCallback(drawCharts3);
@@ -355,16 +344,16 @@ require_once('header.php');
                 var data = google.visualization.arrayToDataTable([ 
                     ["'._("Airport").'", "'._("# of times").'"],';
                     $airport_data = '';
-                  foreach($airport_airport_array as $airport_item)
-                        {
-                            $name = $airport_item['airport_departure_city'].', '.$airport_item['airport_departure_country'].' ('.$airport_item['airport_departure_icao'].')';
-                            $name = str_replace("'", "", $name);
-                            $name = str_replace('"', "", $name);
-                            $airport_data .= '[ "'.$name.'",'.$airport_item['airport_departure_icao_count'].'],';
-                        }
-                        $airport_data = substr($airport_data, 0, -1);
-                        print $airport_data;
-                print ']);
+	foreach($airport_airport_array as $airport_item)
+	{
+	    $name = $airport_item['airport_departure_city'].', '.$airport_item['airport_departure_country'].' ('.$airport_item['airport_departure_icao'].')';
+	    $name = str_replace("'", "", $name);
+	    $name = str_replace('"', "", $name);
+	    $airport_data .= '[ "'.$name.'",'.$airport_item['airport_departure_icao_count'].'],';
+	}
+	$airport_data = substr($airport_data, 0, -1);
+	print $airport_data;
+	print ']);
 
                 var options = {
                     legend: {position: "none"},
@@ -378,22 +367,18 @@ require_once('header.php');
                 chart.draw(data, options);
               }
                 </script>';
-                }
-              ?>
-              <div class="more">
-                <a href="<?php print $globalURL; ?>/statistics/airport-departure" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
-              </div>
+	print '<div class="more"><a href="'.$globalURL.'/statistics/airport-departure" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
+    }
+?>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
             <div class="col-md-6">
-                <h2><?php echo _("Top 10 Most Common Arrival Airports"); ?></h2>
-                <?php
-                $airport_airport_array2 = $Stats->countAllArrivalAirports(true,$airline_icao,$filter_name);
-		    if (count($airport_airport_array2) == 0) print _("No data available");
-		    else {
-
-                print '<div id="chart4" class="chart" width="100%"></div>
+<?php
+    $airport_airport_array2 = $Stats->countAllArrivalAirports(true,$airline_icao,$filter_name);
+    if (count($airport_airport_array2) > 0) {
+	print '<h2>'._("Top 10 Most Common Arrival Airports").'</h2>';
+	print '<div id="chart4" class="chart" width="100%"></div>
                 <script>
                 google.load("visualization", "1", {packages:["geochart"]});
                 google.setOnLoadCallback(drawCharts4);
@@ -404,17 +389,16 @@ require_once('header.php');
 
                 var data = google.visualization.arrayToDataTable([ 
                     ["'._("Airport").'", "'._("# of times").'"],';
-                    $airport_data2 = '';
-                  foreach($airport_airport_array2 as $airport_item2)
-                        {
-                            $name2 = $airport_item2['airport_arrival_city'].', '.$airport_item2['airport_arrival_country'].' ('.$airport_item2['airport_arrival_icao'].')';
-                            $name2 = str_replace("'", "", $name2);
-                            $name2 = str_replace('"', "", $name2);
-                            $airport_data2 .= '[ "'.$name2.'",'.$airport_item2['airport_arrival_icao_count'].'],';
-                        }
-                        $airport_data2 = substr($airport_data2, 0, -1);
-                        print $airport_data2;
-                print ']);
+	$airport_data2 = '';
+	foreach($airport_airport_array2 as $airport_item2)
+	{
+	    $name2 = $airport_item2['airport_arrival_city'].', '.$airport_item2['airport_arrival_country'].' ('.$airport_item2['airport_arrival_icao'].')';
+	    $name2 = str_replace(array("'",'"'), '', $name2);
+	    $airport_data2 .= '[ "'.$name2.'",'.$airport_item2['airport_arrival_icao_count'].'],';
+	}
+	$airport_data2 = substr($airport_data2, 0, -1);
+	print $airport_data2;
+	print ']);
 
                 var options = {
                     legend: {position: "none"},
@@ -428,11 +412,9 @@ require_once('header.php');
                 chart.draw(data, options);
               }
                 </script>';
-                }
-              ?>
-              <div class="more">
-                <a href="<?php print $globalURL; ?>/statistics/airport-arrival" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
-              </div>
+	print '<div class="more"><a href="'.$globalURL.'/statistics/airport-arrival" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
+    }
+?>
             </div>
         </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
