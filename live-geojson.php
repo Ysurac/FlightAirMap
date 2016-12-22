@@ -96,7 +96,7 @@ if ((!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $glo
 else $usenextlatlon = true;
 $j = 0;
 $prev_flightaware_id = '';
-
+$aircrafts_shadow = array();
 $output = '{';
 	$output .= '"type": "FeatureCollection",';
 		if ($min) $output .= '"minimal": "true",';
@@ -170,10 +170,15 @@ $output = '{';
 						if (!isset($spotter_item['aircraft_shadow'])) {
 							if (!isset($spotter_item['aircraft_icao']) || $spotter_item['aircraft_icao'] == '') $spotter_item['aircraft_shadow'] = '';
 							else {
-								$aircraft_info = $Spotter->getAllAircraftInfo($spotter_item['aircraft_icao']);
-								if (count($aircraft_info) > 0) $spotter_item['aircraft_shadow'] = $aircraft_info[0]['aircraft_shadow'];
-								elseif (isset($spotter_item['format_source']) && $spotter_item['format_source'] == 'aprs') $spotter_item['aircraft_shadow'] = 'PA18.png';
-								else $spotter_item['aircraft_shadow'] = '';
+								$aircraft_icao = $spotter_item['aircraft_icao'];
+								if (isset($aircrafts_shadow[$aircraft_icao])) $spotter_item['aircraft_shadow'] = $aircrafts_shadow[$aircraft_icao];
+								else {
+									$aircraft_info = $Spotter->getAllAircraftInfo($spotter_item['aircraft_icao']);
+									if (count($aircraft_info) > 0) $spotter_item['aircraft_shadow'] = $aircraft_info[0]['aircraft_shadow'];
+									elseif (isset($spotter_item['format_source']) && $spotter_item['format_source'] == 'aprs') $spotter_item['aircraft_shadow'] = 'PA18.png';
+									else $spotter_item['aircraft_shadow'] = '';
+									$aircrafts_shadow[$aircraft_icao] = $spotter_item['aircraft_shadow'];
+								}
 							}
 						}
 						if ($spotter_item['aircraft_shadow'] == '') {
