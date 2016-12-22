@@ -2116,7 +2116,7 @@ class Spotter{
 		if ($aircraft_type == 'NA') {
 			return array(array('icao' => 'NA','type' => 'Not Available', 'manufacturer' => 'Not Available', 'aircraft_shadow' => NULL));
 		}
-		$query  = "SELECT aircraft.icao, aircraft.type,aircraft.manufacturer,aircraft.aircraft_shadow FROM aircraft WHERE aircraft.icao = :aircraft_type";
+		$query  = "SELECT aircraft.icao, aircraft.type,aircraft.manufacturer,aircraft.aircraft_shadow, aircraft.official_page, aircraft.aircraft_description, aircraft.engine_type, aircraft.engine_count, aircraft.wake_category FROM aircraft WHERE aircraft.icao = :aircraft_type";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_type' => $aircraft_type));

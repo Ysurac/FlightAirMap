@@ -22,7 +22,7 @@ if (!isset($globalJsonCompress)) $compress = true;
 else $compress = $globalJsonCompress;
 
 $from_archive = false;
-$min = false;
+$min = true;
 $allhistory = false;
 $filter['source'] = array();
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['filter_ShowVATSIM']) && $_COOKIE['filter_ShowVATSIM'] == 'true') $filter['source'] = array_merge($filter['source'],array('vatsimtxt'));
@@ -37,7 +37,7 @@ if (isset($_COOKIE['filter_airlinestype']) && $_COOKIE['filter_airlinestype'] !=
 
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) {
 	$min = true;
-}
+} else $min = false;
 
 if (isset($_GET['ident'])) {
 	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
