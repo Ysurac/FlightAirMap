@@ -1191,8 +1191,8 @@ reloadPage = setInterval(
     function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 var currentdate = new Date();
 var currentyear = new Date().getFullYear();
-var begindate = new Date(Date.UTC(currentyear,11,23,2,0,0,0));
-var enddate = new Date(Date.UTC(currentyear,11,24,2,0,0,0));
+var begindate = new Date(Date.UTC(currentyear,11,24,2,0,0,0));
+var enddate = new Date(Date.UTC(currentyear,11,25,2,0,0,0));
 if (currentdate.getTime() > begindate.getTime() && currentdate.getTime() < enddate.getTime()) {
 	update_santaLayer(false);
 }
