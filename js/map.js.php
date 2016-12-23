@@ -1189,10 +1189,10 @@ reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php print $
 //then load it again every 30 seconds
 reloadPage = setInterval(
     function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
-var currentdate = new Date(Date.UTC());
+var currentdate = new Date();
 var currentyear = new Date().getFullYear();
-var begindate = new Date(Date.UTC(currentyear,12,24,2,0,0,0));
-var enddate = new Date(Date.UTC(currentyear,12,25,2,0,0,0));
+var begindate = new Date(Date.UTC(currentyear,11,23,2,0,0,0));
+var enddate = new Date(Date.UTC(currentyear,11,24,2,0,0,0));
 if (currentdate.getTime() > begindate.getTime() && currentdate.getTime() < enddate.getTime()) {
 	update_santaLayer(false);
 }
@@ -1388,8 +1388,8 @@ function update_polarLayer() {
 
 });
 
-function update_santaLayer(now) {
-    if (now) var url = "<?php print $globalURL; ?>/live-santa-geojson.php?now";
+function update_santaLayer(nows) {
+    if (nows) var url = "<?php print $globalURL; ?>/live-santa-geojson.php?now";
     else var url = "<?php print $globalURL; ?>/live-santa-geojson.php";
     var santageoJSON = new L.GeoJSON.AJAX(url,{
 	onEachFeature: function(feature,layer) {
@@ -1408,6 +1408,8 @@ function update_santaLayer(now) {
 	    };
 	    var santaplayback = new L.Playback(map,feature,null,playbackOptions);
 	    santaplayback.start();
+	    var now = new Date(); 
+	    if (nows == false) santaplayback.setCursor(now.getTime());
 	}
     });
 };
