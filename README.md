@@ -55,7 +55,7 @@ Use install/index.php
 * Create a mysql database.
 * Populate the database with db/*.sql
 * supply require/settings.php with your database credentials.
-* run install/populate_all.php (You should go to http://www.virtualradarserver.co.uk/ and http://pp-sqb.mantma.co.uk/ to read the licences. If you find databases with better licences contact me) or install/populate_ivao.php if you use IVAO as datasource
+* run install/populate_all.php or install/populate_ivao.php if you use IVAO as datasource
 
 ## Data Sources
 
