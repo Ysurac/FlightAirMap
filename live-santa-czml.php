@@ -51,9 +51,10 @@ $output .= '"outlineWidth" : 5, ';
 $output .= '"polylineGlow" : { "color" : { "rgba" : [214, 208, 214, 255] }, "glowPower" : 3 } ';
 $output .= '}';
 $output .= '}, ';
+$output .= '"heightReference": "NONE",';
 $output .= '"width" : 6, "leadTime" : 0, "trailTime" : 1000000, "resolution" : 10 },';
-$output .= '"model": {"gltf" : "'.$globalURL.'/models/santa.glb'.'","scale" : 1.0,"minimumPixelSize": 100,"maximunPixelSize": 600 },';
-$output .= '"heightReference": "RELATIVE_TO_GROUND",';
+$output .= '"model": {"gltf" : "'.$globalURL.'/models/santa.glb'.'","scale" : 1.0,"minimumPixelSize": 100,"maximunPixelSize": 600 ,';
+$output .= '"heightReference": "NONE"},';
 $output .= '"position": {';
 if (!isset($_GET['now'])) {
 	$output .= '"epoch" : "'.date("Y").'-12-24T02:00:00Z",';
@@ -64,7 +65,6 @@ if (!isset($_GET['now'])) {
 //$output .= '"interpolationAlgorithm" : "LAGRANGE",';
 //$output .= '"interpolationDegree" : 5,';
 //		$output .= '"epoch" : "'.date("c",strtotime($spotter_item['date'])).'", ';
-
 $output .= '"cartographicDegrees": [';
 $i = 0;
 $output .= $i.',-114.4,82.7,150000,';
