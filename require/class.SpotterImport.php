@@ -416,7 +416,7 @@ class SpotterImport {
 				$this->all_flights[$id]['archive_longitude'] = $line['longitude'];
 				$this->all_flights[$id]['putinarchive'] = true;
 				
-				if ($globalDebug) echo "\n".' ------- Check Country.... ';
+				if ($globalDebug) echo "\n".' ------- Check Country for '.$this->all_flights[$id]['ident'].' with latitude : '.$line['latitude'].' and longitude : '.$line['longitude'].'.... ';
 				$timeelapsed = microtime(true);
 				$Spotter = new Spotter($this->db);
 				$all_country = $Spotter->getCountryFromLatitudeLongitude($line['latitude'],$line['longitude']);
