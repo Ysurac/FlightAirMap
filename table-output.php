@@ -499,12 +499,12 @@ foreach($spotter_array as $spotter_item)
 			$real_departure_airport_time = date('H:m',$spotter_item['real_departure_airport_time']);
 		} else $real_departure_airport_time = $spotter_item['real_departure_airport_time'];
 		print '<br /><span class="airport_time">'.$departure_airport_time.' ('.$real_departure_airport_time.')</span>'."\n";
-	} elseif (isset($spotter_item['real_departure_airport_time'])) {
+	} elseif (isset($spotter_item['real_departure_airport_time']) && $spotter_item['real_departure_airport_time'] != 'NULL') {
 		if ($spotter_item['real_departure_airport_time'] > 2460) {
 			$real_departure_airport_time = date('H:m',$spotter_item['real_departure_airport_time']);
 		} else $real_departure_airport_time = $spotter_item['real_departure_airport_time'];
 		print '<br /><span class="airport_time">'.$real_departure_airport_time.'</span>'."\n";
-	} elseif (isset($spotter_item['departure_airport_time'])) {
+	} elseif (isset($spotter_item['departure_airport_time']) && $spotter_item['departure_airport_time'] != 'NULL') {
 		if ($spotter_item['departure_airport_time'] > 2460) {
 			$departure_airport_time = date('H:m',$spotter_item['departure_airport_time']);
 		} else {
@@ -575,7 +575,7 @@ foreach($spotter_array as $spotter_item)
 			$real_arrival_airport_time = date('H:m',$spotter_item['real_arrival_airport_time']);
 		} else $real_arrival_airport_time = $spotter_item['real_arrival_airport_time'];
 		print '<br /><span class="airport_time">'.$real_arrival_airport_time.'</span>'."\n";
-	} elseif (isset($spotter_item['arrival_airport_time'])) {
+	} elseif (isset($spotter_item['arrival_airport_time']) && $spotter_item['arrival_airport_time'] != 'NULL') {
 		if ($spotter_item['arrival_airport_time'] > 2460) {
 			$arrival_airport_time = date('H:m',$spotter_item['arrival_airport_time']);
 		} else $arrival_airport_time = $spotter_item['arrival_airport_time'];
