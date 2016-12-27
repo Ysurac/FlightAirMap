@@ -606,9 +606,12 @@ foreach($spotter_array as $spotter_item)
 	// Route stop
 	if(strtolower($current_page) != "upcoming"){
 		print '<td class="route_stop">'."\n";
-		if (!isset($spotter_item['route_stop']) || $spotter_item['route_stop'] == '') {
+		if (!isset($spotter_item['route_stop']) || $spotter_item['route_stop'] == '' || $spotter_item['route_stop'] == 'NULL') {
 			print '<span class="nomobile">-</span>'."\n";
 			print '<span class="mobile">-</span>'."\n";
+		} elseif (!isset($spotter_item['route_stop_details'])) {
+			print '<span class="nomobile">'.$spotter_item['route_stop'].'</span>'."\n";
+			print '<span class="mobile">'.$spotter_item['route_stop'].'</span>'."\n";
 		} else {
 			foreach ($spotter_item['route_stop_details'] as $rst) {
 				print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$rst['airport_icao'].'">'.$rst['airport_city'].', '.$rst['airport_country'].' ('.$rst['airport_icao'].')</a></span>'."\n";
