@@ -659,6 +659,12 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<br />
 			<p>
+				<label for="resetyearstats">Reset stats every years</label>
+				<input type="checkbox" name="resetyearstats" id="resetyearsats" value="resetyearstats"<?php if ((isset($globalDeleteLastYearStats) && $globalDeleteLastYearStats) || !isset($globalDeleteLastYearStats)) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Reset count of aircraft types, airlines, registrations, callsigns, owners, pilots, departure and arrival airports</p>
+			</p>
+			<br />
+			<p>
 				<label for="archive">Archive all flights data</label>
 				<input type="checkbox" name="archive" id="archive" value="archive"<?php if ((isset($globalArchive) && $globalArchive) || !isset($globalArchive)) { ?> checked="checked"<?php } ?> />
 			</p>
@@ -993,6 +999,13 @@ if (isset($_POST['dbtype'])) {
 	// Create in settings.php keys not yet configurable if not already here
 	//if (!isset($globalImageBingKey)) $settings = array_merge($settings,array('globalImageBingKey' => ''));
 	if (!isset($globalDebug)) $settings = array_merge($settings,array('globalDebug' => 'TRUE'));
+
+	$resetyearstats = filter_input(INPUT_POST,'resetyearstats',FILTER_SANITIZE_STRING);
+	if ($resetyearstats == 'resetyearstats') {
+		$settings = array_merge($settings,array('globalDeleteLastYearStats' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalDeleteLastYearStats' => 'FALSE'));
+	}
 
 	$archive = filter_input(INPUT_POST,'archive',FILTER_SANITIZE_STRING);
 	if ($archive == 'archive') {

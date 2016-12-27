@@ -58,6 +58,24 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
+        public function deleteOldStats($filter_name = '') {
+        	
+        	$query = "DELETE FROM config WHERE name = 'last_update_stats'";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                
+        	$query = "DELETE FROM stats_aircraft WHERE filter_name = :filter_name;DELETE FROM stats_airline WHERE filter_name = :filter_name;DELETE FROM stats_callsign WHERE filter_name = :filter_name;DELETE FROM stats_country WHERE filter_name = :filter_name;DELETE FROM stats_owner WHERE filter_name = :filter_name;DELETE FROM stats_pilot WHERE filter_name = :filter_name;DELETE FROM stats_registration WHERE filter_name = :filter_name;";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute(array(':filter_name' => $filter_name));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+        }
 	public function getAllAirlineNames($filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
                 $query = "SELECT * FROM stats_airline WHERE filter_name = :filter_name ORDER BY airline_name ASC";
@@ -1156,7 +1174,7 @@ class Stats {
         }
         
         public function addOldStats() {
-    		global $globalDebug, $globalArchiveMonths, $globalArchive, $globalArchiveYear, $globalDBdriver, $globalStatsFilters;
+    		global $globalDebug, $globalArchiveMonths, $globalArchive, $globalArchiveYear, $globalDBdriver, $globalStatsFilters,$globalDeleteLastYearStats;
     		$Common = new Common();
     		$Connection = new Connection();
     		date_default_timezone_set('UTC');
@@ -1995,6 +2013,13 @@ class Stats {
 				echo 'Insert last stats update date...'."\n";
 				date_default_timezone_set('UTC');
 				$this->addLastStatsUpdate('last_update_stats_'.$filter_name,date('Y-m-d G:i:s'));
+				if (isset($filter['DeleteLastYearStats']) && $filter['DeleteLastYearStats'] == true) {
+					if (date('Y',strtotime($last_update_day)) != date('Y')) {
+						$this->deleteOldStats($filter_name);
+						$this->addLastStatsUpdate('last_update_stats_'.$filter_name,date('Y').'-01-01 00:00:00');
+					}
+				}
+
 			}
 	
 
@@ -2033,6 +2058,13 @@ class Stats {
 						$sth->execute();
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage().' - query : '.$query."\n";
+					}
+				}
+				if (isset($globalDeleteLastYearStats) && $globalDeleteLastYearStats) {
+					$last_update = $this->getLastStatsUpdate('last_update_stats');
+					if (date('Y',strtotime($last_update[0]['value'])) != date('Y')) {
+						$this->deleteOldStats();
+						$this->addLastStatsUpdate('last_update_stats',date('Y').'-01-01 00:00:00');
 					}
 				}
 			}
