@@ -1667,6 +1667,7 @@ class Spotter{
 			} else {
 				$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 				$additional_query .= " AND (spotter_output.departure_airport_icao = :departure_airport_icao)";
+				//$additional_query .= " AND (spotter_output.departure_airport_icao = :departure_airport_icao AND spotter_output.real_departure_airport_icao IS NULL) OR spotter_output.real_departure_airport_icao = :departure_airport_icao";
 				$query_values = array(':departure_airport_icao' => $departure_airport_icao);
 			}
 		}
@@ -1679,6 +1680,7 @@ class Spotter{
 			} else {
 				$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 				$additional_query .= " AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)";
+				//$additional_query .= " AND ((spotter_output.arrival_airport_icao = :arrival_airport_icao AND spotter_output.real_arrival_airport_icao IS NULL) OR spotter_output.real_arrival_airport_icao = :arrival_airport_icao)";
 				$query_values = array_merge($query_values,array(':arrival_airport_icao' => $arrival_airport_icao));
 			}
 		}
@@ -4374,7 +4376,7 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '')
+	public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
 		//$filter_query = $this->getFilter($filters,true,true);
@@ -4385,25 +4387,32 @@ class Spotter{
 					FROM countries c, spotter_output s
 					WHERE Within(GeomFromText(CONCAT('POINT(',s.longitude,' ',s.latitude,')')), ogc_geom) ";
 		*/
+/*
 		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb 
 					FROM countries c, spotter_live s
 					WHERE c.iso2 = s.over_country ";
+		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spottrer_live) l ON c.iso2 = l.over_country ";
+*/
+		require_once('class.SpotterLive.php');
+		$SpotterLive = new SpotterLive();
+		$filter_query = $SpotterLive->getFilter($filters,true,true);
+		$filter_query .= ' over_country IS NOT NULL';
                 if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
-				$query .= 'AND spotter_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+				$filter_query .= ' AND spotter_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND spotter_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+				$filter_query .= " AND spotter_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
 			}
 		}
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND spotter_live.date > '".$sincedate."' ";
+				$filter_query .= " AND spotter_live.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND spotter_live.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$filter_query .= " AND spotter_live.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-
-		$query .= "GROUP BY c.name ORDER BY nb DESC";
+		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_live".$filter_query.") l ON c.iso2 = l.over_country ";
+		$query .= "GROUP BY c.name,c.iso3,c.iso2 ORDER BY nb DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
