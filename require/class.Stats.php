@@ -2065,6 +2065,7 @@ class Stats {
 					if (date('Y',strtotime($last_update[0]['value'])) != date('Y')) {
 						$this->deleteOldStats();
 						$this->addLastStatsUpdate('last_update_stats',date('Y').'-01-01 00:00:00');
+						$lastyearupdate = true;
 					}
 				}
 			}
@@ -2103,9 +2104,11 @@ class Stats {
 					return "error : ".$e->getMessage();
 				}
 			}
-			echo 'Insert last stats update date...'."\n";
-			date_default_timezone_set('UTC');
-			$this->addLastStatsUpdate('last_update_stats',date('Y-m-d G:i:s'));
+			if (!isset($lastyearupdate)) {
+				echo 'Insert last stats update date...'."\n";
+				date_default_timezone_set('UTC');
+				$this->addLastStatsUpdate('last_update_stats',date('Y-m-d G:i:s'));
+			}
 		//}
 	}
 }
