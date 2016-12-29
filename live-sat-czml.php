@@ -150,6 +150,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 	//		$output .= '"interpolationAlgorithm" : "LAGRANGE",';
 	//		$output .= '"interpolationDegree" : 5,';
 	//		$output .= '"epoch" : "'.date("c",strtotime($spotter_item['date'])).'", ';
+			$output .= '"interpolationAlgorithm":"HERMITE","interpolationDegree":3,';
 			$output .= '"cartographicDegrees": [';
 			$output .= '"'.date("c",$spotter_item['timestamp']).'", ';
 			$output .= $spotter_item['longitude'].', ';

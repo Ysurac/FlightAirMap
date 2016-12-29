@@ -65,6 +65,7 @@ if (!isset($_GET['now'])) {
 //$output .= '"interpolationAlgorithm" : "LAGRANGE",';
 //$output .= '"interpolationDegree" : 5,';
 //		$output .= '"epoch" : "'.date("c",strtotime($spotter_item['date'])).'", ';
+$output .= '"interpolationAlgorithm":"HERMITE","interpolationDegree":3,';
 $output .= '"cartographicDegrees": [';
 $i = 0;
 $output .= $i.',-114.4,82.7,150000,';

@@ -353,6 +353,7 @@ class Spotter{
 			if (isset($row['arrival_airport_time']) && $row['arrival_airport_time'] != '') {
 				$temp_array['arrival_airport_time'] = $row['arrival_airport_time'];
 			}
+			
 			if ((!isset($globalIVAO) || ! $globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM)) {
 				if ($schedules === true) {
 					$schedule_array = $Schedule->getSchedule($temp_array['ident']);

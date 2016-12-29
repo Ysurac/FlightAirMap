@@ -1006,10 +1006,10 @@ var viewer = new Cesium.Viewer('live-map', {
 var camera = viewer.camera;
 <?php
 	if (isset($globalCenterLatitude) && isset($globalCenterLongitude) && $globalCenterLatitude != '' && $globalCenterLongitude != '') {
-
+		$zoom = $globalLiveZoom*1000000.0;
 ?>
 camera.setView({
-	destination : Cesium.Cartesian3.fromDegrees(<?php echo $globalCenterLongitude; ?>,<?php echo $globalCenterLatitude; ?>, 5000000.0),
+	destination : Cesium.Cartesian3.fromDegrees(<?php echo $globalCenterLongitude; ?>,<?php echo $globalCenterLatitude; ?>, <?php echo $zoom; ?>),
 });
 <?php
 

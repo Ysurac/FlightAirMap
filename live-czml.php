@@ -226,8 +226,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 					$spotter_item['engine_type'] = $aircraft_info[0]['engine_type'];
 					$spotter_item['wake_category'] = $aircraft_info[0]['wake_category'];
 					$spotter_item['engine_count'] = $aircraft_info[0]['engine_count'];
-				} elseif (isset($spotter_item['format_source']) && $spotter_item['format_source'] == 'aprs') $aircraft_shadow = 'PA18.png';
-				else $aircraft_shadow = '';
+				} else $aircraft_shadow = '';
 				if ($aircraft_shadow != '') {
 					if (isset($modelsdb[$aircraft_shadow])) {
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$aircraft_shadow].'","scale" : 1.0,"minimumPixelSize": 20 ,';
@@ -327,6 +326,11 @@ if (!empty($spotter_array) && is_array($spotter_array))
 						if ($spotter_item['aircraft_icao'] != '') $output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
 						$modelsdb[$aircraft_icao] = 'Cesium_Air.glb';
 					}
+				} elseif (isset($spotter_item['format_source']) && $spotter_item['format_source'] == 'aprs') {
+					$aircraft_shadow = 'PA18';
+					$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$aircraft_shadow].'","scale" : 1.0,"minimumPixelSize": 20 ,';
+					$output .= '"heightReference": "'.$heightrelative.'"},';
+					$modelsdb[$aircraft_icao] = $modelsdb[$aircraft_shadow];
 				} else {
 					$output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20,';
 					$output .= '"heightReference": "'.$heightrelative.'"},';
@@ -346,6 +350,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$output .= '"heightReference": "'.$heightrelative.'",';
 	//		$output .= '"heightReference": "NONE",';
 			$output .= '"position": {';
+			$output .= '"interpolationAlgorithm":"HERMITE","interpolationDegree":3,';
 			$output .= '"type": "Point",';
 	//		$output .= '"interpolationAlgorithm" : "LAGRANGE",';
 	//		$output .= '"interpolationDegree" : 5,';
