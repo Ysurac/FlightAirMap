@@ -2199,7 +2199,7 @@ class update_db {
 	public static function delete_duplicatemodes() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "DELETE a FROM aircraft_modes a, aircraft_modes b WHERE a.ModeS = b.ModeS AND a.AircraftID < b.AircraftID AND a.Source != 'ACARS'";
+			$query = "DELETE a FROM aircraft_modes a, aircraft_modes b WHERE a.ModeS = b.ModeS AND a.FirstCreated < b.FirstCreated AND a.Source != 'ACARS'";
 		} else {
 			$query = "DELETE FROM aircraft_modes WHERE AircraftID IN (SELECT AircraftID FROM (SELECT AircraftID, ROW_NUMBER() OVER (partition BY ModeS ORDER BY FirstCreated) AS rnum FROM aircraft_modes) t WHERE t.rnum > 1) AND Source != 'ACARS'";
 		}
