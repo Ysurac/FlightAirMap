@@ -2183,7 +2183,7 @@ class Spotter{
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
 
-		$query  = "SELECT aircraft_modes.ICAOTypeCode FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes LIMIT 1";
+		$query  = "SELECT aircraft_modes.ICAOTypeCode FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes ORDER BY FirstCreated DESC LIMIT 1";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
@@ -9643,7 +9643,7 @@ q	*
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
 	
-		$query  = "SELECT aircraft_modes.Registration FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes LIMIT 1";
+		$query  = "SELECT aircraft_modes.Registration FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes ORDER BY FirstCreated DESC LIMIT 1";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
@@ -9668,7 +9668,7 @@ q	*
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
 	
-		$query  = "SELECT aircraft_modes.type_flight FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes LIMIT 1";
+		$query  = "SELECT aircraft_modes.type_flight FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes ORDER BY FirstCreated DESC LIMIT 1";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
