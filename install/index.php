@@ -660,7 +660,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<br />
 			<p>
 				<label for="resetyearstats">Reset stats every years</label>
-				<input type="checkbox" name="resetyearstats" id="resetyearsats" value="resetyearstats"<?php if ((isset($globalDeleteLastYearStats) && $globalDeleteLastYearStats) || !isset($globalDeleteLastYearStats)) { ?> checked="checked"<?php } ?> />
+				<input type="checkbox" name="resetyearstats" id="resetyearsats" value="1"<?php if ((isset($globalDeleteLastYearStats) && $globalDeleteLastYearStats) || !isset($globalDeleteLastYearStats)) { ?> checked="checked"<?php } ?> />
 				<p class="help-block">Reset count of aircraft types, airlines, registrations, callsigns, owners, pilots, departure and arrival airports</p>
 			</p>
 			<br />

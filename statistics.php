@@ -63,7 +63,7 @@ require_once('header.php');
     	<?php
     	    }
     	?>
-        <span><span class="badge"><?php print number_format($Stats->countOverallAircrafts($airline_icao,$filter_name)); ?></span> <?php echo _("Aircrafts"); ?></span>
+        <span><span class="badge"><?php print number_format($Stats->countOverallAircrafts($airline_icao,$filter_name)); ?></span> <?php echo _("Aircrafts types"); ?></span>
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
     		if ($airline_icao == '') {

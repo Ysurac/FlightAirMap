@@ -2196,6 +2196,21 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 	}
+	public static function delete_duplicatemodes() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "DELETE a FROM aircraft_modes a, aircraft_modes b WHERE a.ModeS = b.ModeS AND a.AircraftID < b.AircraftID AND a.Source != 'ACARS'";
+		} else {
+			$query = "DELETE FROM aircraft_modes WHERE AircraftID IN (SELECT AircraftID FROM (SELECT AircraftID, ROW_NUMBER() OVER (partition BY ModeS ORDER BY FirstCreated) AS rnum FROM aircraft_modes) t WHERE t.rnum > 1) AND Source != 'ACARS'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
 	
 	public static function update_all() {
 		global $globalMasterServer;
@@ -2209,6 +2224,7 @@ class update_db {
 			echo update_db::update_ModeS_fam();
 			echo update_db::update_ModeS_flarm();
 			echo update_db::update_ModeS_ogn();
+			echo update_db::delete_duplicatemodes();
 		}
 	}
 }
