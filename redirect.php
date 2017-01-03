@@ -5,7 +5,8 @@ require_once('require/class.Language.php');
 $Spotter = new Spotter();
 if ($_GET['flightaware_id'] != "")
 {
-	$spotter_id = $Spotter->getSpotterIDBasedOnFlightAwareID($_GET['flightaware_id']);
+	$flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
+	$spotter_id = $Spotter->getSpotterIDBasedOnFlightAwareID($flightaware_id);
     
     if ($spotter_id != "")
     {

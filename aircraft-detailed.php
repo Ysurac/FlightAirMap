@@ -31,7 +31,7 @@ if (!isset($_GET['aircraft_type'])){
 	$aircraft_type = filter_input(INPUT_GET,'aircraft_type',FILTER_SANITIZE_STRING);
 	$page_url = $globalURL.'/aircraft/'.$aircraft_type;
 	
-	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+	$sort = htmlspecialchars(filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING));
 	$spotter_array = $Spotter->getSpotterDataByAircraft($aircraft_type,$limit_start.",".$absolute_difference, $sort);
 	
 	if (!empty($spotter_array))

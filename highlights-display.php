@@ -40,7 +40,7 @@ print '<div class="column">';
 print '<p>'._("The view below shows all aircrafts that have been selected to have some sort of special characteristic about them, such as unique liveries, destinations etc.").'</p>';
 
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-if (isset($_GET['sort'])) {
+if ($sort != '') {
 	$spotter_array = $Spotter->getSpotterDataByHighlight($limit_start.",".$absolute_difference, $sort);
 } else {
 	$spotter_array = $Spotter->getSpotterDataByHighlight($limit_start.",".$absolute_difference, '');

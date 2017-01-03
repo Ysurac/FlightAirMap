@@ -36,8 +36,8 @@ $spotter_array = $ACARS->getArchiveAcarsData($limit_start.",".$absolute_differen
 if (!empty($spotter_array)) {
 	include('table-output.php');
 	print '<div class="pagination">';
-	if ($limit_previous_1 >= 0) print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
-	if ($spotter_array[0]['query_number_rows'] == $absolute_difference) print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
+	if ($limit_previous_1 >= 0) print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';
+	if ($spotter_array[0]['query_number_rows'] == $absolute_difference) print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'">'._("Next Page").'&raquo;</a>';
 	print '</div>';
 }
 print '</div>';

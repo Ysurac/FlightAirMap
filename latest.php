@@ -46,11 +46,11 @@ if (!empty($spotter_array))
 	print '<div class="pagination">';
 	if ($limit_previous_1 >= 0)
 	{
-		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
+		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$sort.'">&laquo;'._("Previous Page").'</a>';
 	}
 	if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 	{
-		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
+		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$sort.'">'._("Next Page").'&raquo;</a>';
 	}
 	print '</div>';
 	print '</div>';

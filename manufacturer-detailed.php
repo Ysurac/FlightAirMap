@@ -31,7 +31,7 @@ if (!isset($_GET['aircraft_manufacturer'])){
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	$page_url = $globalURL.'/manufacturer/'.$_GET['aircraft_manufacturer'];
 	
-	if (isset($_GET['sort'])) {
+	if ($sort != '') {
 		$spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,$limit_start.",".$absolute_difference, $sort);
 	} else {
 		$spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,$limit_start.",".$absolute_difference, '');
@@ -74,11 +74,11 @@ if (!isset($_GET['aircraft_manufacturer'])){
 		print '<div class="pagination">';
 		if ($limit_previous_1 >= 0)
 		{
-			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
+			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$sort.'">&laquo;'._("Previous Page").'</a>';
 		}
 		if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 		{
-			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
+			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$sort.'">'._("Next Page").'&raquo;</a>';
 		}
 		print '</div>';
 		print '</div>';

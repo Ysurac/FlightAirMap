@@ -36,7 +36,7 @@ if (!isset($_GET['ident'])){
 	
 	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-	if (isset($_GET['sort'])) 
+	if ($sort != '') 
 	{
 		$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
 		if (empty($spotter_array)) {
@@ -52,7 +52,7 @@ if (!isset($_GET['ident'])){
 		$new_ident = $Translation->checkTranslation($ident);
 		if ($new_ident != $ident) {
 			$ident = $new_ident;
-			if (isset($_GET['sort'])) 
+			if ($sort != '') 
 			{
 				$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
 				if (empty($spotter_array)) {
@@ -138,11 +138,11 @@ if (!isset($_GET['ident'])){
 		print '<div class="pagination">';
 		if ($limit_previous_1 >= 0)
 		{
-			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$_GET['sort'].'">&laquo;'._("Previous Page").'</a>';
+			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$sort.'">&laquo;'._("Previous Page").'</a>';
 		}
 		if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 		{
-			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$_GET['sort'].'">'._("Next Page").'&raquo;</a>';
+			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$sort.'">'._("Next Page").'&raquo;</a>';
 		}
 		print '</div>';
 		print '</div>';

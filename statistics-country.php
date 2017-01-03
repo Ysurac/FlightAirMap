@@ -28,6 +28,11 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 	<p>'._("Below are the <strong>Top 10</strong> most common country a flight was over.").'</p>';
 
 $flightover_array = $Stats->countAllFlightOverCountries(true,$airline_icao,$filter_name);
+/*
+require_once('require/class.Spotter.php');
+$Spotter = new Spotter();
+$flightover_array = $Spotter->countAllFlightOverCountries(true,$airline_icao,$filter_name);
+*/
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});

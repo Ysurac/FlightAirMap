@@ -4,9 +4,10 @@ require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$date = filter_input(INPUT_GET,'date',FILTER_SANITIZE_STRING);
 
 $Spotter = new Spotter();
-if (isset($_GET['date'])) $spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $sort);
+if (isset($_GET['date'])) $spotter_array = $Spotter->getSpotterDataByDate($date,"0,1", $sort);
 else $spotter_array = array();
 
 if (!empty($spotter_array))
@@ -16,7 +17,7 @@ if (!empty($spotter_array))
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/date" method="post">';
 	print '<label for="date">'._("Select a Date").'</label>';
-	print '<input type="text" id="date" name="date" value="'.$_GET['date'].'" size="8" readonly="readonly" class="custom" />';
+	print '<input type="text" id="date" name="date" value="'.$date.'" size="8" readonly="readonly" class="custom" />';
 	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
 	print '</form>';
 	print '</div>';
@@ -30,7 +31,7 @@ if (!empty($spotter_array))
 	print '<h2>'._("Most Common Airlines by Country").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common airlines by Country of origin of flights on <strong>%s</strong>."),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
 
-	$airline_array = $Spotter->countAllAirlineCountriesByDate($_GET['date']);
+	$airline_array = $Spotter->countAllAirlineCountriesByDate($date);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>
 	<script> 

@@ -4,7 +4,8 @@ require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-if (isset($_GET['date'])) $spotter_array = $Spotter->getSpotterDataByDate($_GET['date'],"0,1", $sort);
+$date = filter_input(INPUT_GET,'date',FILTER_SANITIZE_STRING);
+if (isset($_GET['date'])) $spotter_array = $Spotter->getSpotterDataByDate($date,"0,1", $sort);
 else $spotter_array = array();
 
 if (!empty($spotter_array))
@@ -14,7 +15,7 @@ if (!empty($spotter_array))
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/date" method="post">';
 	print '<label for="date">Select a Date</label>';
-	print '<input type="text" id="date" name="date" value="'.$_GET['date'].'" size="8" readonly="readonly" class="custom" />';
+	print '<input type="text" id="date" name="date" value="'.$date.'" size="8" readonly="readonly" class="custom" />';
 	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
 	print '</form>';
 	print '</div>';
@@ -27,8 +28,8 @@ if (!empty($spotter_array))
 	print '<div class="column">';
 	print '<h2>'._("Most Common Aircraft").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights on <strong>%s</strong>."),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
-
-	$aircraft_array = $Spotter->countAllAircraftTypesByDate($_GET['date']);
+	
+	$aircraft_array = $Spotter->countAllAircraftTypesByDate($date);
 	if (!empty($aircraft_array))
 	{
 		print '<div class="table-responsive">';
@@ -51,7 +52,7 @@ if (!empty($spotter_array))
 			print '<td>';
 			print $aircraft_item['aircraft_icao_count'];
 			print '</td>';
-			print '<td><a href="'.$globalURL.'/search?aircraft='.$aircraft_item['aircraft_icao'].'&start_date='.$_GET['date'].'+00:00&end_date='.$_GET['date'].'+23:59">'._("Search flights").'</a></td>';
+			print '<td><a href="'.$globalURL.'/search?aircraft='.$aircraft_item['aircraft_icao'].'&start_date='.$date.'+00:00&end_date='.$date.'+23:59">'._("Search flights").'</a></td>';
 			print '</tr>';
 			$i++;
 		}

@@ -9,7 +9,7 @@ if (!isset($_GET['ident'])) {
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
-if (isset($_GET['sort'])) {
+if ($sort != '') {
 	$spotter_array = $Spotter->getSpotterDataByIdent($ident,"0,1", $sort);
 } else {
 	$spotter_array = $Spotter->getSpotterDataByIdent($ident,"0,1", '');
