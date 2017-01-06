@@ -245,6 +245,7 @@ class update_db {
 			return "error : ".$e->getMessage();
 		}
 
+		// Remove data already in DB from ACARS
 		$query = "DELETE FROM aircraft_modes WHERE Source = :source AND ModeS IN (SELECT * FROM (SELECT ModeS FROM aircraft_modes WHERE Source = 'ACARS') _alias)";
 		try {
 			$Connection = new Connection();
@@ -302,7 +303,7 @@ class update_db {
 					}
 					if (!isset($values['ICAOTypeCode'])) $values['ICAOTypeCode'] = 'GLID';
 					// Add data to db
-					if ($values['ModeS'] != '' && $values['Registration'] != '' && $values['Registration'] != '0000') {
+					if ($values['Registration'] != '' && $values['Registration'] != '0000') {
 						//$query_dest_values = array(':AircraftID' => $values['AircraftID'],':FirstCreated' => $values['FirstCreated'],':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':SerialNo' => $values['SerialNo'], ':OperatorFlagCode' => $values['OperatorFlagCode'], ':Manufacturer' => $values['Manufacturer'], ':Type' => $values['Type'], ':FirstRegDate' => $values['FirstRegDate'], ':CurrentRegDate' => $values['CurrentRegDate'], ':Country' => $values['Country'], ':PreviousID' => $values['PreviousID'], ':DeRegDate' => $values['DeRegDate'], ':Status' => $values['Status'], ':PopularName' => $values['PopularName'],':GenericName' => $values['GenericName'],':AircraftClass' => $values['AircraftClass'], ':Engines' => $values['Engines'], ':OwnershipStatus' => $values['OwnershipStatus'],':RegisteredOwners' => $values['RegisteredOwners'],':MTOW' => $values['MTOW'], ':TotalHours' => $values['TotalHours'],':YearBuilt' => $values['YearBuilt'], ':CofACategory' => $values['CofACategory'], ':CofAExpiry' => $values['CofAExpiry'], ':UserNotes' => $values['UserNotes'], ':Interested' => $values['Interested'], ':UserTag' => $values['UserTag'], ':InfoUrl' => $values['InfoURL'], ':PictureUrl1' => $values['PictureURL1'], ':PictureUrl2' => $values['PictureURL2'], ':PictureUrl3' => $values['PictureURL3'], ':UserBool1' => $values['UserBool1'], ':UserBool2' => $values['UserBool2'], ':UserBool3' => $values['UserBool3'], ':UserBool4' => $values['UserBool4'], ':UserBool5' => $values['UserBool5'], ':UserString1' => $values['UserString1'], ':UserString2' => $values['UserString2'], ':UserString3' => $values['UserString3'], ':UserString4' => $values['UserString4'], ':UserString5' => $values['UserString5'], ':UserInt1' => $values['UserInt1'], ':UserInt2' => $values['UserInt2'], ':UserInt3' => $values['UserInt3'], ':UserInt4' => $values['UserInt4'], ':UserInt5' => $values['UserInt5']);
 						$query_dest_values = array(':ModeS' => $values['ModeS'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':source' => $database_file);
 						//print_r($query_dest_values);
@@ -370,7 +371,7 @@ class update_db {
 					}
 					//if (!isset($values['ICAOTypeCode'])) $values['ICAOTypeCode'] = 'GLID';
 					// Add data to db
-					if ($values['ModeS'] != '' && $values['Registration'] != '' && $values['Registration'] != '0000' && $values['ICAOTypeCode'] != '') {
+					if ($values['Registration'] != '' && $values['Registration'] != '0000' && $values['ICAOTypeCode'] != '') {
 						//$query_dest_values = array(':AircraftID' => $values['AircraftID'],':FirstCreated' => $values['FirstCreated'],':LastModified' => $values['LastModified'],':ModeS' => $values['ModeS'],':ModeSCountry' => $values['ModeSCountry'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':SerialNo' => $values['SerialNo'], ':OperatorFlagCode' => $values['OperatorFlagCode'], ':Manufacturer' => $values['Manufacturer'], ':Type' => $values['Type'], ':FirstRegDate' => $values['FirstRegDate'], ':CurrentRegDate' => $values['CurrentRegDate'], ':Country' => $values['Country'], ':PreviousID' => $values['PreviousID'], ':DeRegDate' => $values['DeRegDate'], ':Status' => $values['Status'], ':PopularName' => $values['PopularName'],':GenericName' => $values['GenericName'],':AircraftClass' => $values['AircraftClass'], ':Engines' => $values['Engines'], ':OwnershipStatus' => $values['OwnershipStatus'],':RegisteredOwners' => $values['RegisteredOwners'],':MTOW' => $values['MTOW'], ':TotalHours' => $values['TotalHours'],':YearBuilt' => $values['YearBuilt'], ':CofACategory' => $values['CofACategory'], ':CofAExpiry' => $values['CofAExpiry'], ':UserNotes' => $values['UserNotes'], ':Interested' => $values['Interested'], ':UserTag' => $values['UserTag'], ':InfoUrl' => $values['InfoURL'], ':PictureUrl1' => $values['PictureURL1'], ':PictureUrl2' => $values['PictureURL2'], ':PictureUrl3' => $values['PictureURL3'], ':UserBool1' => $values['UserBool1'], ':UserBool2' => $values['UserBool2'], ':UserBool3' => $values['UserBool3'], ':UserBool4' => $values['UserBool4'], ':UserBool5' => $values['UserBool5'], ':UserString1' => $values['UserString1'], ':UserString2' => $values['UserString2'], ':UserString3' => $values['UserString3'], ':UserString4' => $values['UserString4'], ':UserString5' => $values['UserString5'], ':UserInt1' => $values['UserInt1'], ':UserInt2' => $values['UserInt2'], ':UserInt3' => $values['UserInt3'], ':UserInt4' => $values['UserInt4'], ':UserInt5' => $values['UserInt5']);
 						$query_dest_values = array(':ModeS' => $values['ModeS'],':Registration' => $values['Registration'],':ICAOTypeCode' => $values['ICAOTypeCode'],':source' => $database_file);
 						//print_r($query_dest_values);
@@ -944,6 +945,63 @@ class update_db {
 		return '';
         }
 
+	public static function modes_faa() {
+		global $tmp_dir, $globalTransaction;
+		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => 'website_faa'));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+		$query = "DELETE FROM aircraft_owner WHERE Source = '' OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => 'website_faa'));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+		
+		//$aircrafts_icao = array('7102811' => 'P28R',...
+		$delimiter = ",";
+		$Connection = new Connection();
+		if (($handle = fopen($tmp_dir.'MASTER.txt', 'r')) !== FALSE)
+		{
+			$i = 0;
+			if ($globalTransaction) $Connection->db->beginTransaction();
+			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				if ($i > 0) {
+					/*
+					$query = 'INSERT INTO aircraft_modes (FirstCreated,LastModified,ModeS,ModeSCountry,Registration,ICAOTypeCode,type_flight,Source) VALUES (:FirstCreated,:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:type_flight,:source)';
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':FirstCreated' => $data[16],':LastModified' => $data[15],':ModeS' => $data[33],':ModeSCountry' => $data[14], ':Registration' => 'N'.$data[0],':ICAOTypeCode' => $data[5],':type_flight' => $data[6],':source' => 'website_fam'));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+					*/
+					if (strtotime($data[29]) > time()) {
+						$query = 'INSERT INTO aircraft_owner (registration,base,owner,date_first_reg,Source) VALUES (:registration,:base,:owner,:date_first_reg,:source)';
+						try {
+							$sth = $Connection->db->prepare($query);
+							$sth->execute(array(':registration' => 'N'.$data[0],':base' => $data[9],':owner' => $data[6],':date_first_reg' => date('Y-m-d',strtotime($data[23])), ':source' => 'website_faa'));
+						} catch(PDOException $e) {
+							return "error : ".$e->getMessage();
+						}
+					}
+				}
+				$i++;
+			}
+			fclose($handle);
+			if ($globalTransaction) $Connection->db->commit();
+		}
+		return '';
+        }
 	public static function modes_fam() {
 		global $tmp_dir, $globalTransaction;
 		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source = :source";
@@ -973,6 +1031,43 @@ class update_db {
 						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':FirstCreated' => $data[0],':LastModified' => $data[1],':ModeS' => $data[2],':ModeSCountry' => $data[3], ':Registration' => $data[4],':ICAOTypeCode' => $data[5],':type_flight' => $data[6],':source' => 'website_fam'));
 					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				}
+				$i++;
+			}
+			fclose($handle);
+			if ($globalTransaction) $Connection->db->commit();
+		}
+		return '';
+        }
+        
+	public static function owner_fam() {
+		global $tmp_dir, $globalTransaction;
+		$query = "DELETE FROM aircraft_owner WHERE Source = '' OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':source' => 'website_fam'));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+		$delimiter = "\t";
+		$Connection = new Connection();
+		if (($handle = fopen($tmp_dir.'owners.tsv', 'r')) !== FALSE)
+		{
+			$i = 0;
+			if ($globalTransaction) $Connection->db->beginTransaction();
+			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				if ($i > 0) {
+					$query = 'INSERT INTO aircraft_owner (registration,base,owner,date_first_reg,Source) VALUES (:registration,:base,:owner,NULL,:source)';
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':registration' => $data[0],':base' => $data[1],':owner' => $data[2], ':source' => 'website_fam'));
+					} catch(PDOException $e) {
+						print_r($data);
 						return "error : ".$e->getMessage();
 					}
 				}
@@ -1438,6 +1533,22 @@ class update_db {
 		return '';
 	}
 
+	public static function update_ModeS_faa() {
+		global $tmp_dir, $globalDebug;
+		if ($globalDebug) echo "Modes FAA: Download...";
+		update_db::download('http://registry.faa.gov/database/ReleasableAircraft.zip',$tmp_dir.'ReleasableAircraft.zip');
+		if (file_exists($tmp_dir.'ReleasableAircraft.zip')) {
+			if ($globalDebug) echo "Unzip...";
+			update_db::unzip($tmp_dir.'ReleasableAircraft.zip');
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::modes_faa($tmp_dir.'ReleasableAircraft.zip');
+		} else $error = "File ".$tmp_dir.'ReleasableAircraft.zip'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+
 	public static function update_ModeS_flarm() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Modes Flarmnet: Download...";
@@ -1686,6 +1797,25 @@ class update_db {
 			if ($globalDebug) echo "Add to DB...";
 			$error = update_db::modes_fam();
 		} else $error = "File ".$tmp_dir.'modes.tsv.gz'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+	public static function update_owner_fam() {
+		global $tmp_dir, $globalDebug, $globalOwner;
+		if ($globalDebug) echo "owner from FlightAirMap website : Download...";
+		if ($globalOwner === TRUE) {
+			update_db::download('http://data.flightairmap.fr/data/owners_all.tsv.gz',$tmp_dir.'owners.tsv.gz');
+		} else {
+			update_db::download('http://data.flightairmap.fr/data/owners.tsv.gz',$tmp_dir.'owners.tsv.gz');
+		}
+		if (file_exists($tmp_dir.'owners.tsv.gz')) {
+			if ($globalDebug) echo "Gunzip...";
+			update_db::gunzip($tmp_dir.'owners.tsv.gz');
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::owner_fam();
+		} else $error = "File ".$tmp_dir.'owners.tsv.gz'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
 		} elseif ($globalDebug) echo "Done\n";
@@ -2211,20 +2341,46 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 	}
+	public static function delete_duplicateowner() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "DELETE a FROM aircraft_owner a, aircraft_owner b WHERE a.registration = b.registration AND a.owner_id < b.owner_id";
+		} else {
+			$query = "DELETE FROM aircraft_owner WHERE owner_id IN (SELECT owner_id FROM (SELECT owner_id, ROW_NUMBER() OVER (partition BY registration ORDER BY owner_id) AS rnum FROM aircraft_owner) t WHERE t.rnum > 1)";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
 	
 	public static function update_all() {
-		global $globalMasterServer;
+		global $globalMasterServer, $globalMasterSource;
 		if (!isset($globalMasterServer) || !$globalMasterServer) {
-			//echo update_db::update_routes();
-			echo update_db::update_routes_fam();
-			echo update_db::update_translation();
-			echo update_db::update_translation_fam();
-			echo update_db::update_notam_fam();
-			//echo update_db::update_ModeS();
-			echo update_db::update_ModeS_fam();
-			echo update_db::update_ModeS_flarm();
-			echo update_db::update_ModeS_ogn();
-			echo update_db::delete_duplicatemodes();
+			if (isset($globalMasterSource) && $globalMasterSource) {
+				echo update_db::update_routes();
+				echo update_db::update_translation();
+				echo update_db::update_notam_fam();
+				echo update_db::update_ModeS();
+				echo update_db::update_ModeS_flarm();
+				echo update_db::update_ModeS_ogn();
+				echo update_db::update_ModeS_faa();
+				//echo update_db::delete_duplicatemodes();
+			} else {
+				//echo update_db::update_routes();
+				echo update_db::update_routes_fam();
+				echo update_db::update_translation();
+				echo update_db::update_translation_fam();
+				echo update_db::update_notam_fam();
+				//echo update_db::update_ModeS();
+				echo update_db::update_ModeS_fam();
+				echo update_db::update_ModeS_flarm();
+				echo update_db::update_ModeS_ogn();
+				echo update_db::delete_duplicatemodes();
+			}
 		}
 	}
 }
@@ -2250,4 +2406,7 @@ class update_db {
 //echo update_db::update_ModeS();
 //echo update_db::update_ModeS_fam();
 //echo update_db::update_routes_fam();
+//echo update_db::update_ModeS_faa();
+//echo update_db::update_owner_fam();
+//echo update_db::delete_duplicateowner();
 ?>
