@@ -1541,7 +1541,7 @@ class update_db {
 			if ($globalDebug) echo "Unzip...";
 			update_db::unzip($tmp_dir.'ReleasableAircraft.zip');
 			if ($globalDebug) echo "Add to DB...";
-			$error = update_db::modes_faa($tmp_dir.'ReleasableAircraft.zip');
+			$error = update_db::modes_faa();
 		} else $error = "File ".$tmp_dir.'ReleasableAircraft.zip'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
