@@ -56,11 +56,13 @@ if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalME
 }
 
 
-if (isset($globalOwner) && $globalOwner && $update_db->check_last_owner_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
-	echo "Updating private aircraft's owners...\n";
-	$update_db->update_owner();
+if ($update_db->check_last_owner_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+	echo "Updating aircraft's owners...\n";
+//	$update_db->update_owner();
+	$update_db->update_owner_fam();
+	$update_db->delete_duplicateowner();
 	$update_db->insert_last_owner_update();
-} elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Owner are only updated every 15 days.\n";
+} elseif (isset($globalDebug) && $globalDebug && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Owner are only updated every 15 days.\n";
 
 if (isset($globalSchedules) && $globalSchedules && $update_db->check_last_schedules_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
 	echo "Updating schedules...";

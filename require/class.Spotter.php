@@ -2173,7 +2173,7 @@ class Spotter{
 	}
 	
 	/**
-	* Gets the aircraft info based on the aircraft ident
+	* Gets the aircraft info based on the aircraft modes
 	*
 	* @param String $aircraft_modes the aircraft ident (hex)
 	* @return String aircraft type
@@ -2187,6 +2187,29 @@ class Spotter{
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
+
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
+		if (isset($row['icaotypecode'])) {
+			return $row['icaotypecode'];
+		} else return '';
+	}
+
+	/**
+	* Gets the aircraft info based on the aircraft registration
+	*
+	* @param String $aircraft_registration the aircraft registration
+	* @return String aircraft type
+	*
+	*/
+	public function getAllAircraftTypeByRegistration($registration)
+	{
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
+
+		$query  = "SELECT aircraft_modes.ICAOTypeCode FROM aircraft_modes WHERE aircraft_modes.registration = :registration ORDER BY FirstCreated DESC LIMIT 1";
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':registration' => $registration));
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		$sth->closeCursor();
@@ -9683,7 +9706,7 @@ q	*
 	}
 
 	/**
-	* Gets Countrie from latitude/longitude
+	* Gets Country from latitude/longitude
 	*
 	* @param Float $latitude latitute of the flight
 	* @param Float $longitude longitute of the flight
@@ -9711,6 +9734,38 @@ q	*
 			$sth = $this->db->prepare($query);
 			//$sth->execute(array(':latitude' => $latitude,':longitude' => $longitude));
 			$sth->execute();
+    
+			$row = $sth->fetch(PDO::FETCH_ASSOC);
+			$sth->closeCursor();
+			if (count($row) > 0) {
+				return $row;
+			} else return '';
+		} catch (PDOException $e) {
+			if (isset($globalDebug) && $globalDebug) echo 'Error : '.$e->getMessage()."\n";
+			return '';
+		}
+	
+	}
+
+	/**
+	* Gets Country from iso2
+	*
+	* @param String $iso2 ISO2 country code
+	* @return String the countrie
+	*/
+	public function getCountryFromISO2($iso2)
+	{
+		global $globalDBdriver, $globalDebug;
+		$iso2 = filter_var($iso2,FILTER_SANITIZE_STRING);
+	
+		$Connection = new Connection($this->db);
+		if (!$Connection->tableExists('countries')) return '';
+	
+		try {
+			$query = "SELECT name,iso2,iso3 FROM countries WHERE iso2 = :iso2 LIMIT 1";
+		
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':iso2' => $iso2));
     
 			$row = $sth->fetch(PDO::FETCH_ASSOC);
 			$sth->closeCursor();
@@ -9839,6 +9894,28 @@ q	*
 			}
 		}
     
+		return $country;
+	}
+
+	/**
+	* Country from the registration code
+	*
+	* @param String $registration the aircraft registration
+	* @return String the country
+	*
+	*/
+	public function countryFromAircraftRegistrationCode($registration)
+	{
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
+		
+		$country = '';
+		$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration LIMIT 1";
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':registration' => $registration));
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$country = $row['country'];
+		}
 		return $country;
 	}
 	

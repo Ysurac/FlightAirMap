@@ -945,8 +945,12 @@ class update_db {
 		return '';
         }
 
+	/*
+	* This function use FAA public data.
+	* With the help of data from other source, Mfr id is added to manufacturer table. Then ModeS with ICAO are added based on that.
+	*/
 	public static function modes_faa() {
-		global $tmp_dir, $globalTransaction;
+		global $tmp_dir, $globalTransaction, $globalDebug;
 		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source = :source";
 		try {
 			$Connection = new Connection();
@@ -965,8 +969,6 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 
-		
-		//$aircrafts_icao = array('7102811' => 'P28R',...
 		$delimiter = ",";
 		$Connection = new Connection();
 		if (($handle = fopen($tmp_dir.'MASTER.txt', 'r')) !== FALSE)
@@ -976,24 +978,58 @@ class update_db {
 			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				if ($i > 0) {
-					/*
-					$query = 'INSERT INTO aircraft_modes (FirstCreated,LastModified,ModeS,ModeSCountry,Registration,ICAOTypeCode,type_flight,Source) VALUES (:FirstCreated,:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:type_flight,:source)';
+					$query_search = 'SELECT icaotypecode FROM aircraft_modes WHERE registration = :registration AND Source <> :source LIMIT 1';
 					try {
-						$sth = $Connection->db->prepare($query);
-						$sth->execute(array(':FirstCreated' => $data[16],':LastModified' => $data[15],':ModeS' => $data[33],':ModeSCountry' => $data[14], ':Registration' => 'N'.$data[0],':ICAOTypeCode' => $data[5],':type_flight' => $data[6],':source' => 'website_fam'));
+						$sths = $Connection->db->prepare($query_search);
+						$sths->execute(array(':registration' => 'N'.$data[0],':source' => 'website_faa'));
 					} catch(PDOException $e) {
-						return "error : ".$e->getMessage();
+						return "error s : ".$e->getMessage();
 					}
-					*/
+					$result_search = $sths->fetchAll(PDO::FETCH_ASSOC);
+					if (!empty($result_search)) {
+						if ($globalDebug) echo '.';
+						$queryi = 'UPDATE aircraft SET mfr = :mfr WHERE icao = :icao';
+						try {
+							$sthi = $Connection->db->prepare($queryi);
+							$sthi->execute(array(':mfr' => $data[2],':icao' => $result_search[0]['icaotypecode']));
+						} catch(PDOException $e) {
+							return "error u : ".$e->getMessage();
+						}
+					} else {
+						$query_search_mfr = 'SELECT icao FROM aircraft WHERE mfr = :mfr';
+						try {
+							$sthsm = $Connection->db->prepare($query_search_mfr);
+							$sthsm->execute(array(':mfr' => $data[2]));
+						} catch(PDOException $e) {
+							return "error mfr : ".$e->getMessage();
+						}
+						$result_search_mfr = $sthsm->fetchAll(PDO::FETCH_ASSOC);
+						if (!empty($result_search_mfr)) {
+							if (trim($data[16]) == '' && trim($data[23]) != '') $data[16] = $data[23];
+							if (trim($data[16]) == '' && trim($data[15]) != '') $data[16] = $data[15];
+							$queryf = 'INSERT INTO aircraft_modes (FirstCreated,LastModified,ModeS,ModeSCountry,Registration,ICAOTypeCode,Source) VALUES (:FirstCreated,:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:source)';
+							try {
+								$sthf = $Connection->db->prepare($queryf);
+								$sthf->execute(array(':FirstCreated' => $data[16],':LastModified' => $data[15],':ModeS' => $data[33],':ModeSCountry' => $data[14], ':Registration' => 'N'.$data[0],':ICAOTypeCode' => $result_search_mfr[0]['icao'],':source' => 'website_faa'));
+							} catch(PDOException $e) {
+								return "error f : ".$e->getMessage();
+							}
+						}
+					}
 					if (strtotime($data[29]) > time()) {
+						if ($globalDebug) echo 'i';
 						$query = 'INSERT INTO aircraft_owner (registration,base,owner,date_first_reg,Source) VALUES (:registration,:base,:owner,:date_first_reg,:source)';
 						try {
 							$sth = $Connection->db->prepare($query);
-							$sth->execute(array(':registration' => 'N'.$data[0],':base' => $data[9],':owner' => $data[6],':date_first_reg' => date('Y-m-d',strtotime($data[23])), ':source' => 'website_faa'));
+							$sth->execute(array(':registration' => 'N'.$data[0],':base' => $data[9],':owner' => ucwords(strtolower($data[6])),':date_first_reg' => date('Y-m-d',strtotime($data[23])), ':source' => 'website_faa'));
 						} catch(PDOException $e) {
-							return "error : ".$e->getMessage();
+							return "error i : ".$e->getMessage();
 						}
 					}
+				}
+				if ($i % 90 == 0) {
+					if ($globalTransaction) $Connection->db->commit();
+					if ($globalTransaction) $Connection->db->beginTransaction();
 				}
 				$i++;
 			}
@@ -2407,6 +2443,7 @@ class update_db {
 //echo update_db::update_ModeS_fam();
 //echo update_db::update_routes_fam();
 //echo update_db::update_ModeS_faa();
+//echo update_db::modes_faa();
 //echo update_db::update_owner_fam();
 //echo update_db::delete_duplicateowner();
 ?>

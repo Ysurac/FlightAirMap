@@ -37,7 +37,7 @@ class settings {
 					}
 				} else {
 					foreach ($value as $key => $data) {
-						if ($Common->isAssoc($data)) {
+						if (is_array($data) && $Common->isAssoc($data)) {
 							foreach ($data as $keyd => $datad) {
 								if (!isset($arrayd_value)) {
 									if ($datad == 'TRUE' || $datad == 'FALSE') {

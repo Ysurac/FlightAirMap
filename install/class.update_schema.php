@@ -1163,6 +1163,48 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_28() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if ($globalDBdriver == 'mysql' && !$Connection->indexExists('spotter_live','latitude')) {
+			// Add unique key
+			$query = "alter table spotter_live add index(latitude,longitude)";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add index latitude,longitude on spotter_live) : ".$e->getMessage()."\n";
+			}
+                }
+		if (!$Connection->checkColumnName('aircraft','manufacturer')) {
+			// Add mfr to aircraft
+			$query = "ALTER TABLE aircraft ADD mfr VARCHAR(255) NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add mfr column in aircraft) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->tableExists('accidents')) {
+			if ($globalDBdriver == 'mysql') {
+				$error .= create_db::import_file('../db/accidents.sql');
+			} else {
+				$error .= create_db::import_file('../db/pgsql/accidents.sql');
+			}
+		}
+
+		$query = "UPDATE config SET value = '29' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
     	public static function check_version($update = false) {
     	    global $globalDBname;
@@ -1286,6 +1328,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '27') {
     			    $error = self::update_from_27();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '28') {
+    			    $error = self::update_from_28();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

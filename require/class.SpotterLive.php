@@ -107,7 +107,7 @@ class SpotterLive {
 			}
 		}
 		$orderby_query = '';
-		if ($sort != '')
+		if ($sort != '' && isset($search_orderby_array[$sort]['sql']))
 		{
 			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = ' '.$search_orderby_array[$sort]['sql'];
