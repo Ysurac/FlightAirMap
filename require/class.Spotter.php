@@ -2198,7 +2198,7 @@ class Spotter{
 	/**
 	* Gets the aircraft info based on the aircraft registration
 	*
-	* @param String $aircraft_registration the aircraft registration
+	* @param String $registration the aircraft registration
 	* @return String aircraft type
 	*
 	*/

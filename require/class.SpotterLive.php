@@ -107,10 +107,13 @@ class SpotterLive {
 			}
 		}
 		$orderby_query = '';
-		if ($sort != '' && isset($search_orderby_array[$sort]['sql']))
+		if ($sort != '')
 		{
 			$search_orderby_array = $this->getOrderBy();
-			$orderby_query = ' '.$search_orderby_array[$sort]['sql'];
+			if (isset($search_orderby_array[$sort]['sql'])) 
+			{
+				$orderby_query = ' '.$search_orderby_array[$sort]['sql'];
+			}
 		}
 
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
