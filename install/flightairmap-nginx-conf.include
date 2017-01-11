@@ -16,6 +16,14 @@ location /acars-archive {
     rewrite ^/acars-archive/([^/]+)(/?)$ /acars-archive.php?limit=$1 last;
     rewrite ^/acars-archive(/?)$ /acars-archive.php last;
 }
+location /accident-latest {
+    rewrite ^/accident-latest/([^/]+)(/?)$ /accident-latest.php?limit=$1 last;
+    rewrite ^/accident-latest(/?)$ /accident-latest.php last;
+}
+location /incident-latest {
+    rewrite ^/incident-latest/([^/]+)(/?)$ /incident-latest.php?limit=$1 last;
+    rewrite ^/incident-latest(/?)$ /incident-latest.php last;
+}
 location /newest {
     rewrite ^/newest/([^/]+)/([^/]+)/([^/]+)(/?)$ /newest.php?category=$1&limit=$2&sort=$3 last;
     rewrite ^/newest/([^/]+)/([^/]+)(/?)$ /newest.php?category=$1&limit=$2 last;
