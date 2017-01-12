@@ -43,3 +43,4 @@ CREATE TABLE IF NOT EXISTS `spotter_live` (
 
 ALTER TABLE `spotter_live` ADD INDEX(`flightaware_id`);
 ALTER TABLE `spotter_live` ADD INDEX(`date`);
+ALTER TABLE `spotter_live` ADD INDEX(`latitude`,`longitude`);

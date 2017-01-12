@@ -9,7 +9,8 @@ CREATE TABLE aircraft (
   aircraft_description varchar(255) DEFAULT NULL,
   engine_type varchar(255) DEFAULT NULL,
   engine_count integer DEFAULT NULL,
-  wake_category varchar(10) DEFAULT NULL
+  wake_category varchar(10) DEFAULT NULL,
+  mfr varchar(255) DEFAULT NULL
 );
 
 INSERT INTO aircraft (aircraft_id, icao, type, manufacturer, official_page, aircraft_shadow, aircraft_description, engine_type, engine_count, wake_category) VALUES
