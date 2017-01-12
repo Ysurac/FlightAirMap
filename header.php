@@ -382,6 +382,15 @@ if ($facebook_meta_image != "")
         	    }
         	}
     	    ?>
+    	    <?php
+    	        if (isset($globalAccidents) && $globalAccidents) {
+    	    ?>
+            <li><hr /></li>
+            <li><a href="<?php print $globalURL; ?>/accident-latest"><?php echo _("Latest accident messages"); ?></a></li>
+            <li><a href="<?php print $globalURL; ?>/incident-latest"><?php echo _("Latest incident messages"); ?></a></li>
+            <?php
+        	}
+    	    ?>
             <li><hr /></li>
             <li><a href="<?php print $globalURL; ?>/highlights/table"><?php echo _("Special Highlights"); ?></a></li>
             <li><a href="<?php print $globalURL; ?>/upcoming"><?php echo _("Upcoming Flights"); ?></a></li>

@@ -1177,7 +1177,7 @@ class update_schema {
 				return "error (add index latitude,longitude on spotter_live) : ".$e->getMessage()."\n";
 			}
                 }
-		if (!$Connection->checkColumnName('aircraft','manufacturer')) {
+		if (!$Connection->checkColumnName('aircraft','mfr')) {
 			// Add mfr to aircraft
 			$query = "ALTER TABLE aircraft ADD mfr VARCHAR(255) NULL";
 			try {
@@ -1196,6 +1196,38 @@ class update_schema {
 		}
 
 		$query = "UPDATE config SET value = '29' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
+	private static function update_from_29() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if ($Connection->checkColumnName('aircraft','mfr')) {
+			// drop mfr to aircraft
+			$query = "ALTER TABLE aircraft DROP COLUMN mfr";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (drop mfr column in aircraft) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->tableExists('faamfr')) {
+			if ($globalDBdriver == 'mysql') {
+				$error .= create_db::import_file('../db/faamfr.sql');
+			} else {
+				$error .= create_db::import_file('../db/pgsql/faamfr.sql');
+			}
+		}
+
+		$query = "UPDATE config SET value = '30' WHERE name = 'schema_version'";
 		try {
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
@@ -1332,6 +1364,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '28') {
     			    $error = self::update_from_28();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '29') {
+    			    $error = self::update_from_29();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

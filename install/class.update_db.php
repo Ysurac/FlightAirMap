@@ -970,6 +970,7 @@ class update_db {
                 }
 
 		$delimiter = ",";
+		$mfr = array();
 		$Connection = new Connection();
 		if (($handle = fopen($tmp_dir.'MASTER.txt', 'r')) !== FALSE)
 		{
@@ -988,7 +989,11 @@ class update_db {
 					$result_search = $sths->fetchAll(PDO::FETCH_ASSOC);
 					if (!empty($result_search)) {
 						if ($globalDebug) echo '.';
-						$queryi = 'UPDATE aircraft SET mfr = :mfr WHERE icao = :icao';
+							//if ($globalDBdriver == 'mysql') {
+							//	$queryi = 'INSERT INTO faamfr (mfr,icao) VALUES (:mfr,:icao) ON DUPLICATE KEY UPDATE icao = :icao';
+							//} else {
+								$queryi = "INSERT INTO faamfr (mfr,icao) SELECT :mfr,:icao WHERE NOT EXISTS (SELECT 1 FROM faamfr WHERE mfr = :mfr);"; 
+							//}
 						try {
 							$sthi = $Connection->db->prepare($queryi);
 							$sthi->execute(array(':mfr' => $data[2],':icao' => $result_search[0]['icaotypecode']));
@@ -996,7 +1001,7 @@ class update_db {
 							return "error u : ".$e->getMessage();
 						}
 					} else {
-						$query_search_mfr = 'SELECT icao FROM aircraft WHERE mfr = :mfr';
+						$query_search_mfr = 'SELECT icao FROM faamfr WHERE mfr = :mfr';
 						try {
 							$sthsm = $Connection->db->prepare($query_search_mfr);
 							$sthsm->execute(array(':mfr' => $data[2]));
@@ -1036,6 +1041,7 @@ class update_db {
 			fclose($handle);
 			if ($globalTransaction) $Connection->db->commit();
 		}
+		print_r($mfr);
 		return '';
         }
 	public static function modes_fam() {
@@ -2443,7 +2449,7 @@ class update_db {
 //echo update_db::update_ModeS_fam();
 //echo update_db::update_routes_fam();
 //echo update_db::update_ModeS_faa();
-//echo update_db::modes_faa();
+echo update_db::modes_faa();
 //echo update_db::update_owner_fam();
 //echo update_db::delete_duplicateowner();
 ?>

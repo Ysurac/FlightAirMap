@@ -523,6 +523,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		<fieldset id="optional">
 			<legend>Optional configuration</legend>
 			<p>
+				<label for="crash">Add accident/incident support for real flights</label>
+				<input type="checkbox" name="crash" id="crash" value="crash"<?php if ((isset($globalAccidents) && $globalAccidents) || !isset($globalAccidents)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<br />
+			<p>
 				<label for="map3d">Enable map in 3D</label>
 				<input type="checkbox" name="map3d" id="map3d" value="map3d"<?php if ((isset($globalMap3D) && $globalMap3D) || !isset($globalMap3D)) { ?> checked="checked"<?php } ?> />
 				<p class="help-block">Bing map key is needed.</p>
@@ -1076,6 +1081,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMap3D' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMap3D' => 'FALSE'));
+	}
+	$crash = filter_input(INPUT_POST,'crash',FILTER_SANITIZE_STRING);
+	if ($crash == 'crash') {
+		$settings = array_merge($settings,array('globalAccidents' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalAccidents' => 'FALSE'));
 	}
 	$mapsatellites = filter_input(INPUT_POST,'mapsatellites',FILTER_SANITIZE_STRING);
 	if ($mapsatellites == 'mapsatellites') {
