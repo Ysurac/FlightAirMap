@@ -2399,8 +2399,10 @@ class Spotter{
 								ORDER BY spotter_output.aircraft_name ASC";
 								
 		*/
-		$filter_query = $this->getFilter($filters,true,true);
-		$query = "SELECT DISTINCT icao AS aircraft_icao, type AS aircraft_name, manufacturer AS aircraft_manufacturer FROM aircraft".$filter_query." icao <> '' ORDER BY aircraft_manufacturer ASC";
+		//$filter_query = $this->getFilter($filters,true,true);
+		//$query = "SELECT DISTINCT icao AS aircraft_icao, type AS aircraft_name, manufacturer AS aircraft_manufacturer FROM aircraft".$filter_query." icao <> '' ORDER BY aircraft_manufacturer ASC";
+
+		$query = "SELECT DISTINCT icao AS aircraft_icao, type AS aircraft_name, manufacturer AS aircraft_manufacturer FROM aircraft WHERE icao <> '' ORDER BY aircraft_manufacturer ASC";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute();
