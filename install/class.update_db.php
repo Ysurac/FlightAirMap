@@ -2449,7 +2449,7 @@ class update_db {
 //echo update_db::update_ModeS_fam();
 //echo update_db::update_routes_fam();
 //echo update_db::update_ModeS_faa();
-echo update_db::modes_faa();
+//echo update_db::modes_faa();
 //echo update_db::update_owner_fam();
 //echo update_db::delete_duplicateowner();
 ?>
