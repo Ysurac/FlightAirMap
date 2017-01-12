@@ -73,8 +73,8 @@ class Accident {
 		else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
 		$aircraft_type = $Spotter->getAllAircraftTypeByRegistration($row['registration']);
 		$aircraft_info = $Spotter->getAllAircraftInfo($aircraft_type);
-		//echo $row['registration'];
-		//print_r($aircraft_info);
+		echo $row['registration'];
+		print_r($aircraft_info);
 		if (!empty($aircraft_info)) {
 			//echo 'ok!!!';
 			$data['aircraft_type'] = $aircraft_info[0]['icao'];
