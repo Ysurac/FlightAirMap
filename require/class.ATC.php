@@ -39,7 +39,7 @@ class ATC {
     }
 
        public function getAll() {
-    		$filter_query = $this->getFilter(array(),true);
+    		$filter_query = $this->getFilter(array());
                 $query = "SELECT * FROM atc".$filter_query;
                 $query_values = array();
                  try {
