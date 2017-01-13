@@ -44,9 +44,12 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 	}
 	if ($update_db->check_last_owner_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
 		echo "Updating aircraft's owners...\n";
-//		$update_db->update_owner();
-		$update_db->update_owner_fam();
-		$update_db->delete_duplicateowner();
+		if (isset($globalMasterSource) && $globalMasterSource) {
+			$update_db->update_owner();
+		} else {
+			$update_db->update_owner_fam();
+			$update_db->delete_duplicateowner();
+		}
 		$update_db->insert_last_owner_update();
 	} elseif (isset($globalDebug) && $globalDebug && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Owner are only updated every 15 days.\n";
 }
