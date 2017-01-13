@@ -2405,7 +2405,7 @@ class update_db {
 			if (isset($globalMasterSource) && $globalMasterSource) {
 				echo update_db::update_routes();
 				echo update_db::update_translation();
-				echo update_db::update_notam_fam();
+				//echo update_db::update_notam_fam();
 				echo update_db::update_ModeS();
 				echo update_db::update_ModeS_flarm();
 				echo update_db::update_ModeS_ogn();
@@ -2416,7 +2416,7 @@ class update_db {
 				echo update_db::update_routes_fam();
 				echo update_db::update_translation();
 				echo update_db::update_translation_fam();
-				echo update_db::update_notam_fam();
+				//echo update_db::update_notam_fam();
 				//echo update_db::update_ModeS();
 				echo update_db::update_ModeS_fam();
 				echo update_db::update_ModeS_flarm();
