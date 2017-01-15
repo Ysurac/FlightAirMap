@@ -12,6 +12,6 @@ CREATE TABLE `stats_airport` (
   `filter_name` varchar(255) DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-ALTER TABLE `stats_airport` ADD PRIMARY KEY (`stats_airport_id`), ADD UNIQUE KEY `airport_icao` (`airport_icao`,`stats_type`,`date`);
+ALTER TABLE `stats_airport` ADD PRIMARY KEY (`stats_airport_id`), ADD UNIQUE KEY `airport_icao` (`airport_icao`,`stats_type`,`date`,`stats_airline`,`filter_name`);
 
 ALTER TABLE `stats_airport` MODIFY `stats_airport_id` int(11) NOT NULL AUTO_INCREMENT;

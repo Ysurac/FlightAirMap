@@ -12,4 +12,4 @@ CREATE TABLE stats_airport (
   filter_name varchar(255) DEFAULT ''
 );
 
-ALTER TABLE stats_airport ADD PRIMARY KEY (stats_airport_id), ADD UNIQUE (airport_icao,stats_type,date);
+ALTER TABLE stats_airport ADD PRIMARY KEY (stats_airport_id), ADD UNIQUE (airport_icao,stats_type,date,stats_airline,filter_name);
