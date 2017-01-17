@@ -289,7 +289,7 @@ class Common {
 	}
 	
 
-	function arr_diff($arraya, $arrayb) {
+	public function arr_diff($arraya, $arrayb) {
 		foreach ($arraya as $keya => $valuea) {
 			if (in_array($valuea, $arrayb)) {
 				unset($arraya[$keya]);

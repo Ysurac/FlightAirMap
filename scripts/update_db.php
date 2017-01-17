@@ -52,6 +52,17 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 		}
 		$update_db->insert_last_owner_update();
 	} elseif (isset($globalDebug) && $globalDebug && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Owner are only updated every 15 days.\n";
+
+	if (isset($globalAccidents) && $globalAccidents && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+		require_once(dirname(__FILE__).'/../require/class.Accident.php');
+		$Accident = new Accident();
+		echo "Updating accidents...";
+		if ($Accident->check_last_accidents_update()) {
+			$Accident->download_update();
+			$Accident->insert_last_accidents_update();
+		} else echo "Accidents are update once a day.\n";
+	}
+
 }
 
 
