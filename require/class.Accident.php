@@ -117,9 +117,7 @@ class Accident {
 	*/
 	public function import($file) {
 		global $globalTransaction, $globalDebug;
-		require_once('class.Connection.php');
 		echo 'Import '.$file."\n";
-		$Connection = new Connection();
 		$result = array();
 		if (($handle = fopen($file,'r')) !== FALSE) {
 			while (($data = fgetcsv($handle,2000,",")) !== FALSE) {
