@@ -78,6 +78,20 @@ class Common {
 			$cookies[] = $cookie;
 		return strlen($headerLine); // Needed by curl
 	}
+
+	public static function download($url, $file, $referer = '') {
+		$fp = fopen($file, 'w+');
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		if ($referer != '') curl_setopt($ch, CURLOPT_REFERER, $referer);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
+		curl_setopt($ch, CURLOPT_FILE, $fp);
+		curl_exec($ch);
+		curl_close($ch);
+		fclose($fp);
+	}
 	
 	/**
 	* Convert a HTML table to an array
@@ -272,6 +286,16 @@ class Common {
 			}
 		}
 		return $output;
+	}
+	
+
+	function arr_diff($arraya, $arrayb) {
+		foreach ($arraya as $keya => $valuea) {
+			if (in_array($valuea, $arrayb)) {
+				unset($arraya[$keya]);
+			}
+		}
+		return $arraya;
 	}
 	
 	/**
