@@ -330,29 +330,33 @@ class METAR {
     		date_default_timezone_set("UTC");
     		$Common = new Common();
     		if (isset($globalIVAO) && $globalIVAO) {
-        		$cycle = $Common->getData('http://wx.ivao.aero/metar.php');
+        		//$cycle = $Common->getData('http://wx.ivao.aero/metar.php');
+			$Common->download('http://wx.ivao.aero/metar.php',dirname(__FILE__).'/../install/tmp/ivaometar.txt');
+    			$handle = fopen(dirname(__FILE__).'/../install/tmp/ivaometar.txt',"r");
     		} else {
-			$cycle = $Common->getData('http://tgftp.nws.noaa.gov/data/observations/metar/cycles/'.date('H').'Z.TXT');
+			//$cycle = $Common->getData('http://tgftp.nws.noaa.gov/data/observations/metar/cycles/'.date('H').'Z.TXT');
+			$Common->download('http://tgftp.nws.noaa.gov/data/observations/metar/cycles/'.date('H').'Z.TXT',dirname(__FILE__).'/../install/tmp/'.date('H').'Z.TXT');
+    			$handle = fopen(dirname(__FILE__).'/../install/tmp/'.date('H').'Z.TXT',"r");
     		}
-    		if (isset($globalDebug) && $globalDebug) echo "Done - Updating DB...";
-    		$date = '';
-    		foreach(explode("\n",$cycle) as $line) {
-    			if (preg_match('#^([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{2}):([0-9]{2})$#',$line)) {
-    				//echo "date : ".$line."\n";
-    				$date = $line;
-    			} 
-    			if ($line != '') {
-    			    //$this->parse($line);
-    			    //echo $line;
-    			    if ($date == '') $date = date('Y/m/d H:m');
-    			    $pos = 0;
-    			    $pieces = preg_split('/\s/',$line);
-    			    if ($pieces[0] == 'METAR') $pos++;
-    			    if (strlen($pieces[$pos]) != 4) $pos++;
-	        	    $location = $pieces[$pos];
-	        	    echo $this->addMETAR($location,$line,$date);
+    		if ($handle) {
+			if (isset($globalDebug) && $globalDebug) echo "Done - Updating DB...";
+			$date = '';
+    			//foreach(explode("\n",$cycle) as $line) {
+	    		while(($line = fgets($handle,4096)) !== false) {
+				if (preg_match('#^([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{2}):([0-9]{2})$#',$line)) {
+					$date = $line;
+    				} elseif ($line != '') {
+    				    //$this->parse($line);
+    				    if ($date == '') $date = date('Y/m/d H:m');
+        			    $pos = 0;
+        			    $pieces = preg_split('/\s/',$line);
+        			    if ($pieces[0] == 'METAR') $pos++;
+        			    if (strlen($pieces[$pos]) != 4) $pos++;
+		        	    $location = $pieces[$pos];
+        	        	    echo $this->addMETAR($location,$line,$date);
+    				}
     			}
-    			//echo $line."\n";
+    			fclose($handle);
     		}
     		if (isset($globalDebug) && $globalDebug) echo "Done\n";
         
