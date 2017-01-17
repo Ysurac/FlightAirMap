@@ -1101,7 +1101,7 @@ class Stats {
 		if ($globalDBdriver == 'mysql') {
 			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE departure = :departure";
 		} else {
-			$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name);"; 
+			$query = "UPDATE stats_airport SET departure = :departure WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name);"; 
 		}
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => $date,':stats_airline' => $airline_icao,':filter_name' => $filter_name);
                  try {
@@ -1131,7 +1131,7 @@ class Stats {
 		if ($globalDBdriver == 'mysql') {
 			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE arrival = :arrival";
 		} else {
-			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name);"; 
+			$query = "UPDATE stats_airport SET arrival = :arrival WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name);"; 
 		}
                 $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival, ':date' => $date,':stats_airline' => $airline_icao,':filter_name' => $filter_name);
                  try {
@@ -1893,8 +1893,8 @@ class Stats {
 				foreach ($alldata as $number) {
     					echo $this->addStatDepartureAirports($number['airport_departure_icao'],$number['airport_departure_name'],$number['airport_departure_city'],$number['airport_departure_country'],$number['airport_departure_icao_count'],'',$filter_name);
 				}
-				$pall = $Spotter->countAllArrivalAirports(false,0,$last_update_day,$filter);
-    				$dall = $Spotter->countAllDetectedArrivalAirports(false,0,$last_update_day,$filter);
+				$pall = $Spotter->countAllArrivalAirports(false,0,$last_update_day,false,$filter);
+    				$dall = $Spotter->countAllDetectedArrivalAirports(false,0,$last_update_day,false,$filter);
 				$alldata = array();
     				foreach ($pall as $value) {
 		        		$icao = $value['airport_arrival_icao'];
