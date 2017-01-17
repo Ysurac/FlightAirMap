@@ -1732,7 +1732,7 @@ class Stats {
     			}
     			$alldata = $pall;
                         foreach ($alldata as $number) {
-				echo $this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_name'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count'],$number['airline_icao']);
+				if ($number['airline_icao'] != '') echo $this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_name'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count'],$number['airline_icao']);
 			}
 			if ($globalDebug) echo 'Count all flights by months by airlines...'."\n";
 			$Spotter = new Spotter($this->db);
