@@ -117,17 +117,19 @@ class Accident {
 	*/
 	public function import($file) {
 		global $globalTransaction, $globalDebug;
-		echo 'Import '.$file."\n";
+		if ($globalDebug) echo 'Import '.$file."\n";
 		$result = array();
-		if (($handle = fopen($file,'r')) !== FALSE) {
-			while (($data = fgetcsv($handle,2000,",")) !== FALSE) {
-				if (isset($data[1]) && $data[1] != '0000-00-00 00:00:00') {
-					$result[] = array('registration' => $data[0],'date' => strtotime($data[1]),'url' => $data[2],'country' => $data[3],'place' => $data[4],'title' => $data[5],'fatalities' => $data[6],'latitude' => $data[7],'longitude' => $data[8],'type' => $data[9],'ident' => $data[10],'aircraft_manufacturer' => $data[11],'aircraft_name' => $data[12],'source' => 'website_fam');
+		if (file_exists($file)) {
+			if (($handle = fopen($file,'r')) !== FALSE) {
+				while (($data = fgetcsv($handle,2000,",")) !== FALSE) {
+					if (isset($data[1]) && $data[1] != '0000-00-00 00:00:00') {
+						$result[] = array('registration' => $data[0],'date' => strtotime($data[1]),'url' => $data[2],'country' => $data[3],'place' => $data[4],'title' => $data[5],'fatalities' => $data[6],'latitude' => $data[7],'longitude' => $data[8],'type' => $data[9],'ident' => $data[10],'aircraft_manufacturer' => $data[11],'aircraft_name' => $data[12],'source' => 'website_fam');
+					}
 				}
+				fclose($handle);
 			}
-			fclose($handle);
+			if (!empty($result)) $this->add($result,true);
 		}
-		if (!empty($result)) $this->add($result,true);
 	}
 
 	public function download_update() {
@@ -136,14 +138,16 @@ class Accident {
 		$all_md5 = array();
 		$all_md5_new = array();
 		if (file_exists(dirname(__FILE__).'/../install/tmp/cr-all.md5')) {
-			if (($handle = fopen(dirname(__FILE__).'/../install/tmp/cr-all.md5','r')) !== FALSE) {
-				while (($data = fgetcsv($handle,2000,"\t")) !== FALSE) {
-					if (isset($data[1])) {
-						$year = $data[0];
-						$all_md5[$year] = $data[1];
+			if ($this->check_accidents_nb() > 0) {
+				if (($handle = fopen(dirname(__FILE__).'/../install/tmp/cr-all.md5','r')) !== FALSE) {
+					while (($data = fgetcsv($handle,2000,"\t")) !== FALSE) {
+						if (isset($data[1])) {
+							$year = $data[0];
+							$all_md5[$year] = $data[1];
+						}
 					}
+					fclose($handle);
 				}
-				fclose($handle);
 			}
 		}
 		$Common->download('https://data.flightairmap.fr/data/cr/cr-all.md5',dirname(__FILE__).'/../install/tmp/cr-all.md5');
@@ -222,6 +226,20 @@ class Accident {
 			echo $e->getMessage();
 		}
 		$sth_check->closeCursor();
+	}
+
+	public static function check_accidents_nb() {
+		global $globalDBdriver;
+			$query = "SELECT COUNT(*) as nb FROM accidents";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		return $row['nb'];
 	}
 
 	public static function check_last_accidents_update() {

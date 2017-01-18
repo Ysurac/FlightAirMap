@@ -60,7 +60,7 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 		if ($Accident->check_last_accidents_update()) {
 			$Accident->download_update();
 			$Accident->insert_last_accidents_update();
-		} else echo "Accidents are update once a day.\n";
+		} else echo "Accidents are updated once a day.\n";
 	}
 
 }
