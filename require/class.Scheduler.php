@@ -107,10 +107,10 @@ class Schedule {
 	        $Translation = new Translation($this->db);
 	        $operator = $Translation->checkTranslation($ident,false);
 	        if ($ident != $operator) {
-	    		$query = "SELECT FromAirport_ICAO as departure_airport_icao, ToAirport_ICAO as arrival_airport_icao, FromAirport_Time as departure_airport_time, ToAirport_Time as arrival_airport_time FROM routes WHERE CallSign = :operator OR CallSign = :ident LIMIT 1";
+	    		$query = "SELECT FromAirport_ICAO as departure_airport_icao, ToAirport_ICAO as arrival_airport_icao, FromAirport_Time as departure_airport_time, ToAirport_Time as arrival_airport_time FROM routes WHERE FromAirport_ICAO <> '' AND ToAirport_ICAO <> '' AND CallSign = :operator OR CallSign = :ident LIMIT 1";
 	    		$query_values = array(':ident' => $ident,'operator' => $operator);
 	    	} else {
-		        $query = "SELECT FromAirport_ICAO as departure_airport_icao, ToAirport_ICAO as arrival_airport_icao, FromAirport_Time as departure_airport_time, ToAirport_Time as arrival_airport_time FROM routes WHERE CallSign = :ident LIMIT 1";
+		        $query = "SELECT FromAirport_ICAO as departure_airport_icao, ToAirport_ICAO as arrival_airport_icao, FromAirport_Time as departure_airport_time, ToAirport_Time as arrival_airport_time FROM routes WHERE FromAirport_ICAO <> '' AND ToAirport_ICAO <> '' AND CallSign = :ident LIMIT 1";
 	    		$query_values = array(':ident' => $ident);
 	    	}
 		 try {
@@ -130,9 +130,9 @@ class Schedule {
 		global $globalDBdriver;
 	        //$query = "SELECT COUNT(*) as nb FROM schedule WHERE ident = :ident AND date_added > DATE_SUB(CURDATE(), INTERVAL 8 DAY) - 8 LIMIT 1";
 	        if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(*) as nb FROM routes WHERE CallSign = :ident AND ((date_added BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND DATE(NOW()) and date_modified IS NULL) OR (date_modified BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 15 DAY)) AND DATE(NOW()))) LIMIT 1";
+			$query = "SELECT COUNT(*) as nb FROM routes WHERE FromAirport_ICAO <> '' AND ToAirport_ICAO <> '' AND CallSign = :ident AND ((date_added BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND DATE(NOW()) and date_modified IS NULL) OR (date_modified BETWEEN DATE(DATE_SUB(CURDATE(), INTERVAL 15 DAY)) AND DATE(NOW()))) LIMIT 1";
 		} else {
-			$query = "SELECT COUNT(*) as nb FROM routes WHERE CallSign = :ident 
+			$query = "SELECT COUNT(*) as nb FROM routes WHERE FromAirport_ICAO <> '' AND ToAirport_ICAO <> '' AND CallSign = :ident 
 			AND ((date_added::timestamp BETWEEN CURRENT_TIMESTAMP - INTERVAL '1 MONTH' AND CURRENT_TIMESTAMP) and date_modified::timestamp IS NULL)
 			     OR (date_modified::timestamp BETWEEN CURRENT_TIMESTAMP - INTERVAL '1 MONTH' AND CURRENT_TIMESTAMP) LIMIT 1";
 		}

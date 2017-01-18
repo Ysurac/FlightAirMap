@@ -58,6 +58,7 @@ class SpotterImport {
 	$Schedule = new Schedule($dbc);
 	$Translation = new Translation($dbc);
 	$operator = $Spotter->getOperator($ident);
+	$scheduleexist = false;
 	if ($Schedule->checkSchedule($operator) == 0) {
 	    $operator = $Translation->checkTranslation($ident);
 	    if ($Schedule->checkSchedule($operator) == 0) {
@@ -87,10 +88,14 @@ class SpotterImport {
 		    }
 		    $Schedule->addSchedule($operator,$this->all_flights[$id]['departure_airport'],$this->all_flights[$id]['departure_airport_time'],$this->all_flights[$id]['arrival_airport'],$this->all_flights[$id]['arrival_airport_time'],$schedule['Source']);
 		}
-	    }
-	}
+	    } else $scheduleexist = true;
+	} else $scheduleexist = true;
 	// close connection, at least one way will work ?
-       
+       if ($scheduleexist) {
+		if ($globalDebug) echo "-> get arrival/departure airport info for ".$ident."\n";
+    		$sch = $Schedule->getSchedule($operator);
+		$this->all_flights[$id] = array_merge($this->all_flights[$id],array('arrival_airport' => $sch['arrival_airport_icao'],'departure_airport' => $sch['departure_airport_icao'],'departure_airport_time' => $sch['departure_airport_time'],'arrival_airport_time' => $sch['arrival_airport_time']));
+       }
 	$Spotter->db = null;
 	$Schedule->db = null;
 	$Translation->db = null;
