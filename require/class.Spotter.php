@@ -2803,9 +2803,9 @@ class Spotter{
 		} else $offset = '+00:00';
 		if ($airport_icao == '') {
 			if ($globalDBdriver == 'mysql') {
-				$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output`".$filter_query." spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao <> 'NA' GROUP BY departure_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+				$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output`".$filter_query." spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao <> 'NA' AND departure_airport_icao <> '' GROUP BY departure_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
 			} else {
-				$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output".$filter_query." spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND departure_airport_icao <> 'NA' GROUP BY departure_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+				$query = "SELECT COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output".$filter_query." spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND departure_airport_icao <> 'NA' AND departure_airport_icao <> '' GROUP BY departure_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
 			}
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset));
@@ -2835,9 +2835,9 @@ class Spotter{
 		} else $offset = '+00:00';
 		if ($airport_icao == '') {
 			if ($globalDBdriver == 'mysql') {
-				$query = "SELECT spotter_output.airline_icao, COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao <> 'NA' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, departure_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+				$query = "SELECT spotter_output.airline_icao, COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND departure_airport_icao <> 'NA' AND departure_airport_icao <> '' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, departure_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
 			} else {
-				$query = "SELECT spotter_output.airline_icao, COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND departure_airport_icao <> 'NA' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, departure_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
+				$query = "SELECT spotter_output.airline_icao, COUNT(departure_airport_icao) AS departure_airport_count, departure_airport_icao, departure_airport_name, departure_airport_city, departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND departure_airport_icao <> 'NA' AND departure_airport_icao <> '' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, departure_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), departure_airport_name, departure_airport_city, departure_airport_country ORDER BY departure_airport_count DESC";
 			}
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset));
@@ -2869,11 +2869,11 @@ class Spotter{
 		if ($airport_icao == '') {
 			if ($globalDBdriver == 'mysql') {
 				$query = "SELECT COUNT(real_departure_airport_icao) AS departure_airport_count, real_departure_airport_icao AS departure_airport_icao, airport.name AS departure_airport_name, airport.city AS departure_airport_city, airport.country AS departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date 
-				FROM airport, spotter_output".$filter_query." airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND real_departure_airport_icao <> 'NA' 
+				FROM airport, spotter_output".$filter_query." airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND real_departure_airport_icao <> 'NA' AND real_departure_airport_icao <> '' 
 				GROUP BY real_departure_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), airport.name, airport.city, airport.country ORDER BY departure_airport_count DESC";
 			} else {
 				$query = "SELECT COUNT(real_departure_airport_icao) AS departure_airport_count, real_departure_airport_icao AS departure_airport_icao, airport.name AS departure_airport_name, airport.city AS departure_airport_city, airport.country AS departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date 
-				FROM airport, spotter_output".$filter_query." airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND real_departure_airport_icao <> 'NA' 
+				FROM airport, spotter_output".$filter_query." airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND real_departure_airport_icao <> 'NA' AND real_departure_airport_icao <> '' 
 				GROUP BY real_departure_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), airport.name, airport.city, airport.country ORDER BY departure_airport_count DESC";
 			}
 			$sth = $this->db->prepare($query);
@@ -2909,12 +2909,12 @@ class Spotter{
 			if ($globalDBdriver == 'mysql') {
 				$query = "SELECT spotter_output.airline_icao, COUNT(real_departure_airport_icao) AS departure_airport_count, real_departure_airport_icao AS departure_airport_icao, airport.name AS departure_airport_name, airport.city AS departure_airport_city, airport.country AS departure_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date 
 				FROM `spotter_output`, airport 
-				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND real_departure_airport_icao <> 'NA' 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND real_departure_airport_icao <> 'NA' AND real_departure_airport_icao <> '' 
 				GROUP BY spotter_output.airline_icao, real_departure_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), airport.name, airport.city, airport.country ORDER BY departure_airport_count DESC";
 			} else {
 				$query = "SELECT spotter_output.airline_icao, COUNT(real_departure_airport_icao) AS departure_airport_count, real_departure_airport_icao AS departure_airport_icao, airport.name AS departure_airport_name, airport.city AS departure_airport_city, airport.country AS departure_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date 
 				FROM spotter_output, airport 
-				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND real_departure_airport_icao <> 'NA' 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_departure_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND real_departure_airport_icao <> 'NA' AND real_departure_airport_icao <> '' 
 				GROUP BY spotter_output.airline_icao, real_departure_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), airport.name, airport.city, airport.country ORDER BY departure_airport_count DESC";
 			}
 			$sth = $this->db->prepare($query);
@@ -2952,9 +2952,9 @@ class Spotter{
 		} else $offset = '+00:00';
 		if ($airport_icao == '') {
 			if ($globalDBdriver == 'mysql') {
-				$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output`".$filter_query." spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' GROUP BY arrival_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+				$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output`".$filter_query." spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' AND arrival_airport_icao <> '' GROUP BY arrival_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
 			} else {
-				$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output".$filter_query." spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' GROUP BY arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+				$query = "SELECT COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output".$filter_query." spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' AND arrival_airport_icao <> '' GROUP BY arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
 			}
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset));
@@ -2988,11 +2988,11 @@ class Spotter{
 		if ($airport_icao == '') {
 			if ($globalDBdriver == 'mysql') {
 				$query = "SELECT COUNT(real_arrival_airport_icao) AS arrival_airport_count, real_arrival_airport_icao AS arrival_airport_icao, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date 
-				FROM airport,spotter_output".$filter_query." airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' 
+				FROM airport,spotter_output".$filter_query." airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' AND arrival_airport_icao <> '' 
 				GROUP BY real_arrival_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), airport.name, airport.city, airport.country ORDER BY arrival_airport_count DESC";
 			} else {
 				$query = "SELECT COUNT(real_arrival_airport_icao) AS arrival_airport_count, real_arrival_airport_icao AS arrival_airport_icao, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date 
-				FROM airport,spotter_output".$filter_query." airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' 
+				FROM airport,spotter_output".$filter_query." airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' AND arrival_airport_icao <> '' 
 				GROUP BY real_arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), airport.name, airport.city, airport.country ORDER BY arrival_airport_count DESC";
 			}
 			$sth = $this->db->prepare($query);
@@ -3029,9 +3029,9 @@ class Spotter{
 		} else $offset = '+00:00';
 		if ($airport_icao == '') {
 			if ($globalDBdriver == 'mysql') {
-				$query = "SELECT spotter_output.airline_icao, COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, arrival_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+				$query = "SELECT spotter_output.airline_icao, COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date FROM `spotter_output` WHERE spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' AND arrival_airport_icao <> '' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, arrival_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
 			} else {
-				$query = "SELECT spotter_output.airline_icao, COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
+				$query = "SELECT spotter_output.airline_icao, COUNT(arrival_airport_icao) AS arrival_airport_count, arrival_airport_icao, arrival_airport_name, arrival_airport_city, arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date FROM spotter_output WHERE spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' AND arrival_airport_icao <> '' AND spotter_output.airline_icao <> '' GROUP BY spotter_output.airline_icao, arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), arrival_airport_name, arrival_airport_city, arrival_airport_country ORDER BY arrival_airport_count DESC";
 			}
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset));
@@ -3065,12 +3065,12 @@ class Spotter{
 			if ($globalDBdriver == 'mysql') {
 				$query = "SELECT spotter_output.airline_icao, COUNT(real_arrival_airport_icao) AS arrival_airport_count, real_arrival_airport_icao AS arrival_airport_icao, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d') as date 
 				FROM `spotter_output`, airport 
-				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND arrival_airport_icao <> 'NA' AND arrival_airport_icao <> '' 
 				GROUP BY spotter_output.airline_icao, real_arrival_airport_icao, DATE_FORMAT(DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)),'%Y-%m-%d'), airport.name, airport.city, airport.country ORDER BY arrival_airport_count DESC";
 			} else {
 				$query = "SELECT spotter_output.airline_icao, COUNT(real_arrival_airport_icao) AS arrival_airport_count, real_arrival_airport_icao AS arrival_airport_icao, airport.name AS arrival_airport_name, airport.city AS arrival_airport_city, airport.country AS arrival_airport_country, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date 
 				FROM spotter_output, airport 
-				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' 
+				WHERE spotter_output.airline_icao <> '' AND airport.icao = spotter_output.real_arrival_airport_icao AND spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND arrival_airport_icao <> 'NA' AND arrival_airport_icao <> '' 
 				GROUP BY spotter_output.airline_icao, real_arrival_airport_icao, to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd'), airport.name, airport.city, airport.country ORDER BY arrival_airport_count DESC";
 			}
 			$sth = $this->db->prepare($query);
