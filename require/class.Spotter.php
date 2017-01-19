@@ -3349,7 +3349,7 @@ class Spotter{
 		
 		//getting the aircraft information
 		$aircraft_array = array();
-		if ($aircraft_icao != "")
+		if ($aircraft_icao != '')
 		{
 			if (!is_string($aircraft_icao))
 			{
@@ -3387,7 +3387,7 @@ class Spotter{
 		//getting the departure airport information
 		$departure_airport_array = array();
 		$departure_airport_icao = trim($departure_airport_icao);
-		if ($departure_airport_icao != "")
+		if ($departure_airport_icao != '')
 		{
 			if (!is_string($departure_airport_icao))
 			{
@@ -3402,7 +3402,7 @@ class Spotter{
 		//getting the arrival airport information
 		$arrival_airport_array = array();
 		$arrival_airport_icao = trim($arrival_airport_icao);
-		if ($arrival_airport_icao != "")
+		if ($arrival_airport_icao != '')
 		{
 			if (!is_string($arrival_airport_icao))
 			{
@@ -3414,7 +3414,6 @@ class Spotter{
 			}
 		}
 
-						
 		if ($latitude != "")
 		{
 			if (!is_numeric($latitude))
@@ -3526,11 +3525,11 @@ class Spotter{
                 {
                         $aircraft_array = $this->getAllAircraftInfo('NA');
                 }
-                if (count($departure_airport_array) == 0) 
+                if (count($departure_airport_array) == 0 || $departure_airport_array[0]['icao'] == '' || $departure_airport_icao == '') 
                 {
                         $departure_airport_array = $this->getAllAirportInfo('NA');
                 }
-                if (count($arrival_airport_array) == 0) 
+                if (count($arrival_airport_array) == 0 || $arrival_airport_array[0]['icao'] == '' || $arrival_airport_icao == '') 
                 {
                         $arrival_airport_array = $this->getAllAirportInfo('NA');
                 }
@@ -3560,8 +3559,9 @@ class Spotter{
                 $aircraft_type = $aircraft_array[0]['type'];
                 $aircraft_manufacturer = $aircraft_array[0]['manufacturer'];
                 $departure_airport_name = $departure_airport_array[0]['name'];
-                $departure_airport_city = $departure_airport_array[0]['city'];
-                $departure_airport_country = $departure_airport_array[0]['country'];
+	        $departure_airport_city = $departure_airport_array[0]['city'];
+            	$departure_airport_country = $departure_airport_array[0]['country'];
+                
                 $arrival_airport_name = $arrival_airport_array[0]['name'];
                 $arrival_airport_city = $arrival_airport_array[0]['city'];
                 $arrival_airport_country = $arrival_airport_array[0]['country'];

@@ -387,7 +387,9 @@ if ($facebook_meta_image != "")
     	    ?>
             <li><hr /></li>
             <li><a href="<?php print $globalURL; ?>/accident-latest"><?php echo _("Latest accident messages"); ?></a></li>
+            <li><a href="<?php print $globalURL; ?>/accident/<?php print date("Y-m-d"); ?>"><?php echo _("Today's Accident"); ?></a></li>
             <li><a href="<?php print $globalURL; ?>/incident-latest"><?php echo _("Latest incident messages"); ?></a></li>
+            <li><a href="<?php print $globalURL; ?>/incident/<?php print date("Y-m-d"); ?>"><?php echo _("Today's Incident"); ?></a></li>
             <?php
         	}
     	    ?>

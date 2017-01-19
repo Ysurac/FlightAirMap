@@ -71,7 +71,7 @@ class SpotterImport {
 		    if ($schedule['DepartureAirportIATA'] != '') {
 			if ($this->all_flights[$id]['departure_airport'] != $Spotter->getAirportIcao($schedule['DepartureAirportIATA'])) {
 			    $airport_icao = $Spotter->getAirportIcao($schedule['DepartureAirportIATA']);
-			    if ($airport_icao != '') {
+			    if (trim($airport_icao) != '') {
 				$this->all_flights[$id]['departure_airport'] = $airport_icao;
 				if ($globalDebug) echo "-> Change departure airport to ".$airport_icao." for ".$ident."\n";
 			    }
@@ -80,7 +80,7 @@ class SpotterImport {
 		    if ($schedule['ArrivalAirportIATA'] != '') {
 			if ($this->all_flights[$id]['arrival_airport'] != $Spotter->getAirportIcao($schedule['ArrivalAirportIATA'])) {
 			    $airport_icao = $Spotter->getAirportIcao($schedule['ArrivalAirportIATA']);
-			    if ($airport_icao != '') {
+			    if (trim($airport_icao) != '') {
 				$this->all_flights[$id]['arrival_airport'] = $airport_icao;
 				if ($globalDebug) echo "-> Change arrival airport to ".$airport_icao." for ".$ident."\n";
 			    }

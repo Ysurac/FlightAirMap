@@ -967,6 +967,7 @@ while ($i > 0) {
     					date_default_timezone_set('UTC');
     				*/
     				// Force datetime to current UTC datetime
+    				date_default_timezone_set('UTC');
     				$data['datetime'] = date('Y-m-d H:i:s');
     				$data['ident'] = trim($line[10]);
     				$data['latitude'] = $line[14];
