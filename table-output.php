@@ -151,7 +151,7 @@ if (strtolower($current_page) == "search")
 	print '<th class="time">'._("Date").'</th>';
 	print '<th class="more"></th>';
 	print '</thead>';
-} else if (strtolower($current_page) == "accident-latest") {
+} else if (strtolower($current_page) == "accident-latest" || strtolower($current_page) == "accident-detailed") {
 	print '<thead>';
 	print '<th class="aircraft_thumbnail"></th>';
 	print '<th class="logo">'._("Airline").'</th>';
@@ -164,7 +164,7 @@ if (strtolower($current_page) == "search")
 	print '<th class="time">'._("Date").'</th>';
 	print '<th class="more"></th>';
 	print '</thead>';
-} else if (strtolower($current_page) == "incident-latest") {
+} else if (strtolower($current_page) == "incident-latest" || strtolower($current_page) == "incident-detailed") {
 	print '<thead>';
 	print '<th class="aircraft_thumbnail"></th>';
 	print '<th class="logo">'._("Airline").'</th>';
@@ -378,7 +378,7 @@ foreach($spotter_array as $spotter_item)
 	} else {
 		print '<tr>';
 	}
-	if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive" || strtolower($current_page) == "currently" || strtolower($current_page) == "accident-latest" || strtolower($current_page) == "incident-latest") {
+	if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive" || strtolower($current_page) == "currently" || strtolower($current_page) == "accident-latest" || strtolower($current_page) == "incident-latest" || strtolower($current_page) == "accident-detailed" || strtolower($current_page) == "incident-detailed") {
 		if ($spotter_item['image_thumbnail'] != "")
 		{
 			print '<td class="aircraft_thumbnail">'."\n";
@@ -411,7 +411,7 @@ foreach($spotter_array as $spotter_item)
 			print '<img src="'.$globalURL.'/images/placeholder_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['registration'].' - '._("Not available").'" alt="'.$spotter_item['registration'].' - '._("Not available").'" data-content="'._("Registration:").' '.$spotter_item['registration'].'<br />'._("Airline:").' '._("Not available").'" data-html="true" width="100px" />'."\n";
 			print '</td>'."\n";
 		}
-	} elseif(strtolower($current_page) != "currently" && strtolower($current_page) != "upcoming" && strtolower($current_page) != "acars-latest" && strtolower($current_page) != "acars-archive" && strtolower($current_page) != "accident-latest" && strtolower($current_page) != "incident-latest"){
+	} elseif(strtolower($current_page) != "currently" && strtolower($current_page) != "upcoming" && strtolower($current_page) != "acars-latest" && strtolower($current_page) != "acars-archive" && strtolower($current_page) != "accident-latest" && strtolower($current_page) != "incident-latest" && strtolower($current_page) != "accident-detailed" && strtolower($current_page) != "incident-detailed"){
 		if (!isset($spotter_item['squawk']) || $spotter_item['squawk'] == 0) {
 		    $spotter_item['squawk'] = '-';
 		}
@@ -512,7 +512,7 @@ foreach($spotter_array as $spotter_item)
 		print '<span class="mobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a></span>'."\n";
 		print '</td>'."\n";
 	}
-	if (strtolower($current_page) != "acars-latest" && strtolower($current_page) != "acars-archive" && strtolower($current_page) != "accident-latest" && strtolower($current_page) != "incident-latest") {
+	if (strtolower($current_page) != "acars-latest" && strtolower($current_page) != "acars-archive" && strtolower($current_page) != "accident-latest" && strtolower($current_page) != "incident-latest" && strtolower($current_page) != "accident-detailed" && strtolower($current_page) != "incident-detailed") {
 		// Departure Airport
 		print '<td class="departure_airport">'."\n";
 		if (!isset($spotter_item['departure_airport']) || !isset($spotter_item['departure_airport_city']) || (isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] == 'NA')) {
@@ -722,7 +722,7 @@ foreach($spotter_array as $spotter_item)
 			print '</td>'."\n";
 		}
 	}
-	if (strtolower($current_page) == "accident-latest") {
+	if (strtolower($current_page) == "accident-latest" || strtolower($current_page) == "accident-detailed") {
 		print '<td class="owner">'."\n";
 		if (isset($spotter_item['aircraft_owner'])) {
 			print $spotter_item['aircraft_owner'];
@@ -746,7 +746,7 @@ foreach($spotter_array as $spotter_item)
 		print str_replace(array("\r\n", "\n", "\r"),'<br />',$spotter_item['message']);
 		print '</td>'."\n";
 	}
-	if (strtolower($current_page) == "incident-latest") {
+	if (strtolower($current_page) == "incident-latest" || strtolower($current_page) == "incident-detailed") {
 		print '<td class="owner">'."\n";
 		if (isset($spotter_item['aircraft_owner'])) {
 			print $spotter_item['aircraft_owner'];
@@ -799,13 +799,13 @@ foreach($spotter_array as $spotter_item)
 		print '<span class="nomobile">'.date("r", strtotime($spotter_item['date'].' UTC')).'</span>'."\n";
 		print '<span class="mobile">'.date("j/n/Y g:i a", strtotime($spotter_item['date'].' UTC')).'</span>'."\n";
 		print '</td>'."\n";
-	} elseif (strtolower($current_page) == "accident-latest")
+	} elseif (strtolower($current_page) == "accident-latest" || strtolower($current_page) == "accident-detailed")
 	{
 		print '<td class="date">'."\n";
 		print '<span class="nomobile">'.date("d/m/Y", strtotime($spotter_item['date'].' UTC')).'</span>'."\n";
 		print '<span class="mobile">'.date("d/m/Y", strtotime($spotter_item['date'].' UTC')).'</span>'."\n";
 		print '</td>'."\n";
-	} elseif (strtolower($current_page) == "incident-latest")
+	} elseif (strtolower($current_page) == "incident-latest" || strtolower($current_page) == "incident-detailed")
 	{
 		print '<td class="date">'."\n";
 		print '<span class="nomobile">'.date("d/m/Y", strtotime($spotter_item['date'].' UTC')).'</span>'."\n";
@@ -859,7 +859,7 @@ foreach($spotter_array as $spotter_item)
 		{
 			print '<li><a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $spotter_item['arrival_airport_country'])).'">'._("Arrival Airport Country Profile").'</a></li>';
 		}
-		if (strtolower($current_page) == "accident-latest") {
+		if (strtolower($current_page) == "accident-latest" || strtolower($current_page) == "incident-latest" || strtolower($current_page) == "accident-detailed" || strtolower($current_page) == "incident-detailed") {
 			if (isset($spotter_item['url']) && $spotter_item['url'] != "")
 			{
 				print '<li><a href="'.$spotter_item['url'].'">'._("Detailed information").'</a></li>';

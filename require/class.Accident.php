@@ -31,6 +31,7 @@ class Accident {
 		$Image = new Image($this->db);
 		$Spotter = new Spotter($this->db);
 		$Translation = new Translation($this->db);
+		$date = filter_var($date,FILTER_SANITIZE_STRING);
 		date_default_timezone_set('UTC');
 		$result = array();
 		$limit_query = '';
@@ -47,7 +48,12 @@ class Accident {
 
 		if ($type != '') {
 			if ($date != '') {
-				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND date = :date GROUP BY registration) ORDER BY date DESC".$limit_query;
+				if (preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/",$date)) {
+					$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND date = :date GROUP BY registration) ORDER BY date DESC".$limit_query;
+				} else {
+					$date = $date.'%';
+					$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND to_char(date,'YYYY-MM-DD') LIKE :date GROUP BY registration) ORDER BY date DESC".$limit_query;
+				}
 				$query_values = array(':type' => $type,':date' => $date);
 			} else {
 				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type GROUP BY registration) ORDER BY date DESC".$limit_query;
@@ -55,7 +61,12 @@ class Accident {
 			}
 		} else {
 			if ($date != '') {
-				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE date = :date GROUP BY registration) ORDER BY date DESC".$limit_query;
+				if (preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/",$date)) {
+					$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE date = :date GROUP BY registration) ORDER BY date DESC".$limit_query;
+				} else {
+					$date = $date.'%';
+					$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE to_char(date,'YYYY-MM-DD') LIKE :date GROUP BY registration) ORDER BY date DESC".$limit_query;
+				}
 				$query_values = array(':date' => $date);
 			} else {
 				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents GROUP BY registration) ORDER BY date DESC".$limit_query;

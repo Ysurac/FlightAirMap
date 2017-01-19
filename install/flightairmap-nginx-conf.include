@@ -20,9 +20,21 @@ location /accident-latest {
     rewrite ^/accident-latest/([^/]+)(/?)$ /accident-latest.php?limit=$1 last;
     rewrite ^/accident-latest(/?)$ /accident-latest.php last;
 }
+location /accident {
+    rewrite ^/accident/([^/]+)/([^/]+)/([^/]+)(/?)$ /accident-detailed.php?date=$1&limit=$2&sort=$3 last;
+    rewrite ^/accident/([^/]+)/([^/]+)(/?)$ /accident-detailed.php?date=$1&limit=$2 last;
+    rewrite ^/accident/([^/]+)(/?)$ /accident-detailed.php?date=$1 last;
+    rewrite ^/accident(/?)$ /accident.php last;
+}
 location /incident-latest {
     rewrite ^/incident-latest/([^/]+)(/?)$ /incident-latest.php?limit=$1 last;
     rewrite ^/incident-latest(/?)$ /incident-latest.php last;
+}
+location /incident {
+    rewrite ^/incident/([^/]+)/([^/]+)/([^/]+)(/?)$ /incident-detailed.php?date=$1&limit=$2&sort=$3 last;
+    rewrite ^/incident/([^/]+)/([^/]+)(/?)$ /incident-detailed.php?date=$1&limit=$2 last;
+    rewrite ^/incident/([^/]+)(/?)$ /incident-detailed.php?date=$1 last;
+    rewrite ^/incident(/?)$ /incident.php last;
 }
 location /newest {
     rewrite ^/newest/([^/]+)/([^/]+)/([^/]+)(/?)$ /newest.php?category=$1&limit=$2&sort=$3 last;
