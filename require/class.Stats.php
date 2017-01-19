@@ -1083,62 +1083,70 @@ class Stats {
         }
 	public function addStatDepartureAirports($airport_icao,$airport_name,$airport_city,$airport_country,$departure,$airline_icao = '',$filter_name = '') {
 		global $globalDBdriver;
-		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE departure = departure+:departure";
-		} else {
-			$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date AND filter_name = :filter_name);"; 
-		}
-                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => date('Y').'-01-01 00:00:00', ':stats_airline' => $airline_icao,':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+		if ($airport_icao != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE departure = departure+:departure";
+			} else {
+				$query = "UPDATE stats_airport SET departure = departure+:departure WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'yearly',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date AND filter_name = :filter_name);"; 
+			}
+			$query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => date('Y').'-01-01 00:00:00', ':stats_airline' => $airline_icao,':filter_name' => $filter_name);
+			try {
+				$sth = $this->db->prepare($query);
+				$sth->execute($query_values);
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
                 }
         }
 	public function addStatDepartureAirportsDaily($date,$airport_icao,$airport_name,$airport_city,$airport_country,$departure,$airline_icao = '',$filter_name = '') {
 		global $globalDBdriver;
-		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE departure = :departure";
-		} else {
-			$query = "UPDATE stats_airport SET departure = :departure WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name);"; 
-		}
-                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => $date,':stats_airline' => $airline_icao,':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+		if ($airport_icao != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE departure = :departure";
+			} else {
+				$query = "UPDATE stats_airport SET departure = :departure WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,departure,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:departure,'daily',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name);"; 
+			}
+			$query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':departure' => $departure,':date' => $date,':stats_airline' => $airline_icao,':filter_name' => $filter_name);
+			 try {
+				$sth = $this->db->prepare($query);
+				$sth->execute($query_values);
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
                 }
         }
 	public function addStatArrivalAirports($airport_icao,$airport_name,$airport_city,$airport_country,$arrival,$airline_icao = '',$filter_name = '') {
 		global $globalDBdriver;
-		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
-		} else {
-			$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date AND filter_name = :filter_name);"; 
-		}
-                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival,':date' => date('Y').'-01-01 00:00:00',':stats_airline' => $airline_icao,':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
+		if ($airport_icao != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE arrival = arrival+:arrival";
+			} else {
+				$query = "UPDATE stats_airport SET arrival = arrival+:arrival WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'yearly',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'yearly' AND stats_airline = :stats_airline AND date = :date AND filter_name = :filter_name);"; 
+			}
+	                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival,':date' => date('Y').'-01-01 00:00:00',':stats_airline' => $airline_icao,':filter_name' => $filter_name);
+			 try {
+                    		$sth = $this->db->prepare($query);
+	                        $sth->execute($query_values);
+    		        } catch(PDOException $e) {
+            		        return "error : ".$e->getMessage();
+	                }
+	        }
         }
 	public function addStatArrivalAirportsDaily($date,$airport_icao,$airport_name,$airport_city,$airport_country,$arrival,$airline_icao = '',$filter_name = '') {
 		global $globalDBdriver;
-		if ($globalDBdriver == 'mysql') {
-			$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE arrival = :arrival";
-		} else {
-			$query = "UPDATE stats_airport SET arrival = :arrival WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name);"; 
-		}
-                $query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival, ':date' => $date,':stats_airline' => $airline_icao,':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
+		if ($airport_icao != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query = "INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) VALUES (:airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date,:stats_airline,:filter_name) ON DUPLICATE KEY UPDATE arrival = :arrival";
+			} else {
+				$query = "UPDATE stats_airport SET arrival = :arrival WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name; INSERT INTO stats_airport (airport_icao,airport_name,airport_city,airport_country,arrival,stats_type,date,stats_airline,filter_name) SELECT :airport_icao,:airport_name,:airport_city,:airport_country,:arrival,'daily',:date,:stats_airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_airport WHERE airport_icao = :airport_icao AND stats_type = 'daily' AND date = :date AND stats_airline = :stats_airline AND filter_name = :filter_name);"; 
+			}
+			$query_values = array(':airport_icao' => $airport_icao,':airport_name' => $airport_name,':airport_city' => $airport_city,':airport_country' => $airport_country,':arrival' => $arrival, ':date' => $date,':stats_airline' => $airline_icao,':filter_name' => $filter_name);
+			try {
+				$sth = $this->db->prepare($query);
+				$sth->execute($query_values);
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
                 }
         }
 
