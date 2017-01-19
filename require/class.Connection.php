@@ -117,6 +117,7 @@ class Connection{
 					if (!isset($globalDBPersistent)) $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,true);
 					else $this->dbs[$DBname]->setAttribute(PDO::ATTR_PERSISTENT,$globalDBPersistent);
 					$this->dbs[$DBname]->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+					$this->dbs[$DBname]->exec('SET timezone="UTC"');
 				}
 				break;
 			} catch(PDOException $e) {

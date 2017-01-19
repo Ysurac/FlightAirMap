@@ -34,7 +34,7 @@ print '</div>';
 
 print '<div class="table column">';
 print '<p>'._("The table below shows the latest Accidents.").'</p>';
-$spotter_array = $Accident->getLatestAccidentData($limit_start.",".$absolute_difference,'accident');
+$spotter_array = $Accident->getAccidentData($limit_start.",".$absolute_difference,'accident');
 //print_r($spotter_array);
 if (!empty($spotter_array) && $spotter_array[0]['query_number_rows'] != 0) {
 	include('table-output.php');

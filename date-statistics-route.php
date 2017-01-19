@@ -13,13 +13,19 @@ if (!empty($spotter_array))
 
 	require_once('header.php');
 	print '<div class="select-item">';
-	print '<form action="'.$globalURL.'/date" method="post">';
-	print '<label for="date">'._("Select a Date").'</label>';
-	print '<input type="text" id="date" name="date" value="'.$date.'" size="8" readonly="readonly" class="custom" />';
+	print '<form action="'.$globalURL.'/date" method="post" class="form-inline">';
+	print '<div class="form-group">';
+	print '<label for="datepickeri">'._("Select a Date").'</label>';
+	print '<div class="input-group date" id="datepicker">';
+	print '<input type="text" class="form-control" id="datepickeri" name="date" value="" />';
+	print '<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>';
+	print '</div>';
 	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
+	print '</div>';
 	print '</form>';
 	print '</div>';
-
+	print '<script type="text/javascript">$(function () { $("#datepicker").datetimepicker({ format: "YYYY-MM-DD", defaultDate: "'.$date.'" }); }); </script>';
+	print '<br />';
 	print '<div class="info column">';
 	print '<h1>'.sprintf(_("Flights from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</h1>';
 	print '</div>';

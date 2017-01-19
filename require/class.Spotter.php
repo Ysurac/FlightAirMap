@@ -1492,8 +1492,11 @@ class Spotter{
 				$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date ";
 				$query_values = array(':date' => $datetime->format('Y-m-d'), ':offset' => $offset);
 			} elseif ($globalDBdriver == 'pgsql') {
+				//$globalTimezone = 'UTC';
 				$additional_query = " AND to_char(spotter_output.date AT TIME ZONE :timezone,'YYYY-mm-dd') = :date ";
 				$query_values = array(':date' => $datetime->format('Y-m-d'), ':timezone' => $globalTimezone);
+				//$additional_query = " AND to_char(spotter_output.date,'YYYY-mm-dd') = :date ";
+				//$query_values = array(':date' => $datetime->format('Y-m-d'));
 			}
 		}
 		

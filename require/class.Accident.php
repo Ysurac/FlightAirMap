@@ -22,11 +22,11 @@ class Accident {
 	}
 	
 	/**
-	* Get Latest Accidents data from DB
+	* Get Accidents data from DB
 	*
 	* @return Array Return Accidents data in array
 	*/
-	public function getLatestAccidentData($limit = '',$type = '') {
+	public function getAccidentData($limit = '',$type = '',$date = '') {
 		global $globalURL, $globalDBdriver;
 		$Image = new Image($this->db);
 		$Spotter = new Spotter($this->db);
@@ -46,12 +46,21 @@ class Accident {
 		}
 
 		if ($type != '') {
-			$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type GROUP BY registration) ORDER BY date DESC".$limit_query;
-			$query_values = array(':type' => $type);
+			if ($date != '') {
+				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND date = :date GROUP BY registration) ORDER BY date DESC".$limit_query;
+				$query_values = array(':type' => $type,':date' => $date);
+			} else {
+				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type GROUP BY registration) ORDER BY date DESC".$limit_query;
+				$query_values = array(':type' => $type);
+			}
 		} else {
-			//$query = "SELECT * FROM accidents GROUP BY registration ORDER BY date DESC".$limit_query;
-			$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents GROUP BY registration) ORDER BY date DESC".$limit_query;
-			$query_values = array();
+			if ($date != '') {
+				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE date = :date GROUP BY registration) ORDER BY date DESC".$limit_query;
+				$query_values = array(':date' => $date);
+			} else {
+				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents GROUP BY registration) ORDER BY date DESC".$limit_query;
+				$query_values = array();
+			}
 		}
 
 		try {
