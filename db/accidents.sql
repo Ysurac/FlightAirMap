@@ -16,3 +16,5 @@ CREATE TABLE `accidents` (
     `aircraft_name` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`accidents_id`)
 );
+CREATE INDEX `registration_idx` ON `accidents` (`registration`);
+CREATE INDEX `rdts` ON `accidents` (`registration`,`date`,`type`,`source`);

@@ -235,7 +235,7 @@ class Accident {
 						}
 					}
 				}
-				if ($globalTransaction && $j % 90 == 0) {
+				if ($globalTransaction && $j % 100 == 0) {
 					$Connection->db->commit();
 					$Connection->db->beginTransaction();
 				}

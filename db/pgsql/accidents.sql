@@ -16,3 +16,5 @@ CREATE TABLE accidents (
     aircraft_name character varying(255) DEFAULT NULL::character varying,
     PRIMARY KEY (accidents_id)
 );
+CREATE INDEX registration_idx ON accidents USING btree(registration);
+CREATE INDEX rdts ON accidents USING btree(registration,date,type,source);

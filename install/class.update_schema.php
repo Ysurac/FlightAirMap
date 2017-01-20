@@ -1004,7 +1004,7 @@ class update_schema {
 			if ($globalDBdriver == 'mysql') {
 				$query = "drop index callsign_icao on stats_callsign;ALTER TABLE stats_callsign ADD UNIQUE callsign_icao (callsign_icao,filter_name);";
 			} else {
-				$query = "alter table stats_callsign drop constraint stats_callsign_callsign_icao_key;ALTER TABLE stats_callsign ADD CONSTRAINT callsign_icao UNIQUE (callsign_icao,filter_name);";
+				$query = "drop index stats_callsign_callsign_icao_key;ALTER TABLE stats_callsign ADD CONSTRAINT callsign_icao UNIQUE (callsign_icao,filter_name);";
 			}
 			try {
 				$sth = $Connection->db->prepare($query);
@@ -1026,7 +1026,7 @@ class update_schema {
 			if ($globalDBdriver == 'mysql') {
 				$query = "drop index airline_icao on stats_airline;ALTER TABLE stats_airline ADD UNIQUE airline_icao (airline_icao,filter_name);";
 			} else {
-				$query = "alter table stats_airline drop constraint stats_airline_airline_icao_key;ALTER TABLE stats_airline ADD CONSTRAINT airline_icao UNIQUE (airline_icao,filter_name);";
+				$query = "drop index stats_airline_airline_icao_key;ALTER TABLE stats_airline ADD CONSTRAINT airline_icao UNIQUE (airline_icao,filter_name);";
 			}
 			try {
 				$sth = $Connection->db->prepare($query);
@@ -1063,7 +1063,7 @@ class update_schema {
 			if ($globalDBdriver == 'mysql') {
 				$query = "drop index owner_name on stats_owner;ALTER TABLE stats_owner ADD UNIQUE owner_name (owner_name,stats_airline,filter_name);";
 			} else {
-				$query = "alter table stats_owner drop constraint stats_owner_owner_name_key;ALTER TABLE stats_owner ADD CONSTRAINT owner_name UNIQUE (owner_name,stats_airline,filter_name);";
+				$query = "drop index stats_owner_owner_name_key;ALTER TABLE stats_owner ADD CONSTRAINT owner_name UNIQUE (owner_name,stats_airline,filter_name);";
 			}
 			try {
 				$sth = $Connection->db->prepare($query);
@@ -1085,7 +1085,7 @@ class update_schema {
 			if ($globalDBdriver == 'mysql') {
 				$query = "drop index pilot_id on stats_pilot;ALTER TABLE stats_pilot ADD UNIQUE pilot_id (pilot_id,stats_airline,filter_name);";
 			} else {
-				$query = "alter table stats_pilot drop constraint stats_pilot_pilot_id_key;ALTER TABLE stats_pilot ADD CONSTRAINT pilot_id UNIQUE (pilot_id,stats_airline,filter_name);";
+				$query = "drop index stats_pilot_pilot_id_key;ALTER TABLE stats_pilot ADD CONSTRAINT pilot_id UNIQUE (pilot_id,stats_airline,filter_name);";
 			}
 			try {
 				$sth = $Connection->db->prepare($query);
@@ -1144,7 +1144,7 @@ class update_schema {
 			if ($globalDBdriver == 'mysql') {
 				$query = "drop index pilot_id on stats_pilot;ALTER TABLE stats_pilot ADD UNIQUE pilot_id (pilot_id,stats_airline,filter_name,format_source);";
 			} else {
-				$query = "alter table stats_pilot drop constraint pilot_id;ALTER TABLE stats_pilot ADD CONSTRAINT pilot_id UNIQUE (pilot_id,stats_airline,filter_name,format_source);";
+				$query = "drop index pilot_id;ALTER TABLE stats_pilot ADD CONSTRAINT pilot_id UNIQUE (pilot_id,stats_airline,filter_name,format_source);";
 			}
 			try {
 				$sth = $Connection->db->prepare($query);
@@ -1228,6 +1228,41 @@ class update_schema {
 		}
 
 		$query = "UPDATE config SET value = '30' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
+	private static function update_from_30() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->indexExists('accidents','registration_idx')) {
+			// Add index key
+			$query = "create index registration_idx on accidents (registration)";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add index registration on accidents) : ".$e->getMessage()."\n";
+			}
+                }
+		if (!$Connection->indexExists('accidents','rdts')) {
+			// Add index key
+			$query = "create index rdts on accidents (registration,date,type,source)";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add index registration, date, type & source on accidents) : ".$e->getMessage()."\n";
+			}
+                }
+
+		$query = "UPDATE config SET value = '31' WHERE name = 'schema_version'";
 		try {
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
@@ -1368,6 +1403,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '29') {
     			    $error = self::update_from_29();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '30') {
+    			    $error = self::update_from_30();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';
