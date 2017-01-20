@@ -182,7 +182,7 @@ class Accident {
 					}
 				}
 				fclose($handle);
-			}
+			} elseif ($globalDebug) echo "Can't open ".dirname(__FILE__).'/../install/tmp/cr-all.md5';
 		} elseif ($globalDebug) echo 'Download cr-all.md5 failed. '.dirname(__FILE__).'/../install/tmp/cr-all.md5 not here.';
 		$result = $Common->arr_diff($all_md5_new,$all_md5);
 		if (empty($result) && $globalDebug) echo 'Nothing to update';
