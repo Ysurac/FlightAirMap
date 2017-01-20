@@ -80,7 +80,8 @@ class Common {
 	}
 
 	public static function download($url, $file, $referer = '') {
-		$fp = fopen($file, 'w+');
+		global $globalDebug;
+		$fp = fopen($file, 'w');
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -89,6 +90,7 @@ class Common {
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
 		curl_setopt($ch, CURLOPT_FILE, $fp);
 		curl_exec($ch);
+		if (curl_errno($ch) && $globalDebug) echo 'Download error: '.curl_error($ch);
 		curl_close($ch);
 		fclose($fp);
 	}
