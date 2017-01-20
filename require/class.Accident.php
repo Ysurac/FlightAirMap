@@ -154,7 +154,7 @@ class Accident {
 	}
 
 	public function download_update() {
-		global $globalDebug,
+		global $globalDebug;
 		require_once('class.Common.php');
 		$Common = new Common();
 		$all_md5 = array();
