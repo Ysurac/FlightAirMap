@@ -19,3 +19,5 @@ CREATE TABLE IF NOT EXISTS notam (
   full_notam text NOT NULL,
   PRIMARY KEY (notam_id)
 );
+
+CREATE INDEX ref_idx ON notam (ref);

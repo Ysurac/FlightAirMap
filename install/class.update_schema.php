@@ -1241,6 +1241,16 @@ class update_schema {
 		global $globalDBdriver;
 		$Connection = new Connection();
 		$error = '';
+		if (!$Connection->indexExists('notam','ref')) {
+			// Add index key
+			$query = "create index ref_idx on notam (ref)";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add index ref on notam) : ".$e->getMessage()."\n";
+			}
+                }
 		if (!$Connection->indexExists('accidents','registration_idx')) {
 			// Add index key
 			$query = "create index registration_idx on accidents (registration)";

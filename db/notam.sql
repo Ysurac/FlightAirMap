@@ -19,3 +19,5 @@ CREATE TABLE IF NOT EXISTS notam (
   full_notam text NOT NULL,
   PRIMARY KEY (notam_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+
+CREATE INDEX ref_idx ON notam (ref);
