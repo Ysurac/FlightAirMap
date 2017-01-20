@@ -149,10 +149,12 @@ class Accident {
 				fclose($handle);
 			}
 			if (!empty($result)) $this->add($result,true);
+			elseif ($globalDebug) echo 'Nothing to import';
 		}
 	}
 
 	public function download_update() {
+		global $globalDebug,
 		require_once('class.Common.php');
 		$Common = new Common();
 		$all_md5 = array();
@@ -181,7 +183,7 @@ class Accident {
 				}
 				fclose($handle);
 			}
-		}
+		} elseif ($globalDebug) echo 'Download cr-all.md5 failed. '.dirname(__FILE__).'/../install/tmp/cr-all.md5 not here.';
 		//print_r($all_md5_new);
 		//print_r($all_md5);
 		$result = $Common->arr_diff($all_md5_new,$all_md5);
@@ -189,6 +191,7 @@ class Accident {
 		foreach ($result as $file => $md5) {
 			$Common->download('https://data.flightairmap.fr/data/cr/'.$file,dirname(__FILE__).'/../install/tmp/'.$file);
 			if (file_exists(dirname(__FILE__).'/../install/tmp/'.$file)) $this->import(dirname(__FILE__).'/../install/tmp/'.$file);
+			elseif ($globalDebug) echo 'Download '.$file.' failed';
 		}
 	}
 
