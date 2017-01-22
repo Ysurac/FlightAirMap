@@ -460,6 +460,7 @@ class Image {
 		global $globalAircraftImageCustomSources, $globalDebug;
 		//$globalAircraftImageCustomSource[] = array('thumbnail' => '','original' => '', 'copyright' => '', 'source_website' => '', 'source' => '','exif' => true);
 		if (!empty($globalAircraftImageCustomSources)) {
+			$customsources = array();
 			if (!isset($globalAircraftImageCustomSources[0])) {
 				$customsources[] = $globalAircraftImageCustomSources;
 			} else {
