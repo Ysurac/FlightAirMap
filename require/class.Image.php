@@ -460,13 +460,17 @@ class Image {
 		global $globalAircraftImageCustomSources, $globalDebug;
 		//$globalAircraftImageCustomSource[] = array('thumbnail' => '','original' => '', 'copyright' => '', 'source_website' => '', 'source' => '','exif' => true);
 		if (!empty($globalAircraftImageCustomSources)) {
-			if (!isset($globalAircraftImageCustomSources[0])) $globalAircraftImageCustomSources[] = $globalAircraftImageCustomSources;
-			foreach ($globalAircraftImageCustomSources as $source) {
+			if (!isset($globalAircraftImageCustomSources[0])) {
+				$customsources[] = $globalAircraftImageCustomSources;
+			} else {
+				$customsources = $globalAircraftImageCustomSources;
+			}
+			foreach ($customsources as $source) {
 				$Common = new Common();
 				if (!isset($source['original']) && $globalDebug) {
 					echo 'original entry not found for $globalAircraftImageCustomSources.';
 					print_r($source);
-					print_r($globalAircraftImageCustomSources);
+					print_r($customsources);
 				}
 				$url = str_replace('{registration}',$aircraft_registration,$source['original']);
 				$url_thumbnail = str_replace('{registration}',$aircraft_registration,$source['thumbnail']);
