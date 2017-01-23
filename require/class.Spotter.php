@@ -2106,6 +2106,37 @@ class Spotter{
 		}
 	}
 	
+	/**
+	* Gets the airline info based on the airline name
+	*
+	* @param String $airline_name the name of the airline
+	* @return Array airline information
+	*
+	*/
+	public function getAllAirlineInfoByName($airline_name, $fromsource = NULL)
+	{
+		global $globalUseRealAirlines;
+		if (isset($globalUseRealAirlines) && $globalUseRealAirlines) $fromsource = NULL;
+		$airline_name = strtolower(filter_var($airline_name,FILTER_SANITIZE_STRING));
+		$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE lower(airlines.name) = :airline_name AND airlines.active = 'Y' AND airlines.forsource IS NULL LIMIT 1";
+		$sth = $this->db->prepare($query);
+		if ($fromsource === NULL) {
+			$sth->execute(array(':airline_name' => $airline_name));
+		} else {
+			$sth->execute(array(':airline_name' => $airline_name,':fromsource' => $fromsource));
+		}
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($result) && $fromsource !== NULL) {
+			$query = 'SELECT COUNT(*) AS nb FROM airlines WHERE forsource = :fromsource';
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':fromsource' => $fromsource));
+			$row = $sth->fetch(PDO::FETCH_ASSOC);
+			$sth->closeCursor();
+			if ($row['nb'] == 0) $result = $this->getAllAirlineInfoByName($airline_name);
+		}
+		return $result;
+	}
+	
 	
 	
 	/**

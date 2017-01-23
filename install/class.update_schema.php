@@ -1282,6 +1282,40 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_31() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('accidents','airline_name')) {
+			// Add airline_name to accidents
+			$query = "ALTER TABLE accidents ADD airline_name VARCHAR(255) NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add airline_name column in accidents) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('accidents','airline_icao')) {
+			// Add airline_icao to accidents
+			$query = "ALTER TABLE accidents ADD airline_icao VARCHAR(10) NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add airline_icao column in accidents) : ".$e->getMessage()."\n";
+			}
+		}
+		$query = "UPDATE config SET value = '32' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
     	public static function check_version($update = false) {
     	    global $globalDBname;
@@ -1417,6 +1451,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '30') {
     			    $error = self::update_from_30();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '31') {
+    			    $error = self::update_from_31();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

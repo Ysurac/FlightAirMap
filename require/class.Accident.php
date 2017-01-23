@@ -116,6 +116,16 @@ class Accident {
 			$icao = $Translation->checkTranslation($icao,false);
 			//$data = array_merge($data,array('registration' => $row['registration'], 'date' => $row['date'], 'ident' => $icao,'url' => $row['url']));
 			$data = array_merge($row,$data);
+			if ($row['airline_name'] != '') {
+				//echo 'Check airline info... for '.$row['airline_name'].' ';
+				$airline_info = $Spotter->getAllAirlineInfoByName($row['airline_name']);
+				if (!empty($airline_info)) {
+					//echo 'data found !'."\n";
+					//print_r($airline_info);
+					$data = array_merge($data,$airline_info);
+				} 
+				//else echo 'No data...'."\n";
+			}
 			if ($data['ident'] == null) $data['ident'] = $icao;
 			if ($data['title'] == null) {
 				$data['message'] = $row['type'].' of '.$row['registration'].' at '.$row['place'].','.$row['country'];
@@ -143,7 +153,7 @@ class Accident {
 			if (($handle = fopen($file,'r')) !== FALSE) {
 				while (($data = fgetcsv($handle,2000,",")) !== FALSE) {
 					if (isset($data[1]) && $data[1] != '0000-00-00 00:00:00') {
-						$result[] = array('registration' => $data[0],'date' => strtotime($data[1]),'url' => $data[2],'country' => $data[3],'place' => $data[4],'title' => $data[5],'fatalities' => $data[6],'latitude' => $data[7],'longitude' => $data[8],'type' => $data[9],'ident' => $data[10],'aircraft_manufacturer' => $data[11],'aircraft_name' => $data[12],'source' => 'website_fam');
+						$result[] = array('registration' => $data[0],'date' => strtotime($data[1]),'url' => $data[2],'country' => $data[3],'place' => $data[4],'title' => $data[5],'fatalities' => $data[6],'latitude' => $data[7],'longitude' => $data[8],'type' => $data[9],'ident' => $data[10],'aircraft_manufacturer' => $data[11],'aircraft_name' => $data[12],'operator' => $data[13],'source' => 'website_fam');
 					}
 				}
 				fclose($handle);
@@ -209,10 +219,10 @@ class Accident {
 			$sthd->execute(array(':source' => $crash[0]['source']));
 		}
 		if ($globalTransaction) $Connection->db->beginTransaction();
-		$initial_array = array('ident' => null,'type' => 'accident','url' => null,'registration' => null, 'date' => null, 'place' => null,'country' => null, 'latitude' => null, 'longitude' => null, 'fatalities' => null, 'title' => '','source' => '','aircraft_manufacturer' => null,'aircraft_name' => null);
+		$initial_array = array('ident' => null,'type' => 'accident','url' => null,'registration' => null, 'date' => null, 'place' => null,'country' => null, 'latitude' => null, 'longitude' => null, 'fatalities' => null, 'title' => '','source' => '','aircraft_manufacturer' => null,'aircraft_name' => null,'operator' => null);
 		$query_check = 'SELECT COUNT(*) as nb FROM accidents WHERE registration = :registration AND date = :date AND type = :type AND source = :source';
 		$sth_check = $Connection->db->prepare($query_check);
-		$query = 'INSERT INTO accidents (aircraft_manufacturer,aircraft_name,ident,registration,date,url,country,place,title,fatalities,latitude,longitude,type,source) VALUES (:aircraft_manufacturer,:aircraft_name,:ident,:registration,:date,:url,:country,:place,:title,:fatalities,:latitude,:longitude,:type,:source)';
+		$query = 'INSERT INTO accidents (aircraft_manufacturer,aircraft_name,ident,registration,date,url,country,place,title,fatalities,latitude,longitude,type,airline_name,source) VALUES (:aircraft_manufacturer,:aircraft_name,:ident,:registration,:date,:url,:country,:place,:title,:fatalities,:latitude,:longitude,:type,:airline_name,:source)';
 		$sth = $Connection->db->prepare($query);
 		$j = 0;
 		try {
@@ -228,7 +238,7 @@ class Accident {
 					$sth_check->execute($query_check_values);
 					$result_check = $sth_check->fetch(PDO::FETCH_ASSOC);
 					if ($result_check['nb'] == 0) {
-						$query_values = array(':registration' => trim($cr['registration']),':date' => date('Y-m-d',$cr['date']),':url' => $cr['url'],':country' => $cr['country'],':place' => $cr['place'],':title' => $cr['title'],':fatalities' => $cr['fatalities'],':latitude' => $cr['latitude'],':longitude' => $cr['longitude'],':type' => $cr['type'],':source' => $cr['source'],':ident' => $cr['ident'],':aircraft_manufacturer' => $cr['aircraft_manufacturer'],':aircraft_name' => $cr['aircraft_name']);
+						$query_values = array(':registration' => trim($cr['registration']),':date' => date('Y-m-d',$cr['date']),':url' => $cr['url'],':country' => $cr['country'],':place' => $cr['place'],':title' => $cr['title'],':fatalities' => $cr['fatalities'],':latitude' => $cr['latitude'],':longitude' => $cr['longitude'],':type' => $cr['type'],':source' => $cr['source'],':ident' => $cr['ident'],':aircraft_manufacturer' => $cr['aircraft_manufacturer'],':aircraft_name' => $cr['aircraft_name'],':airline_name' => $cr['operator']);
 						$sth->execute($query_values);
 						if ($cr['date'] > time()-(30*86400)) {
 							if (empty($Image->getSpotterImage($cr['registration']))) {

@@ -14,6 +14,8 @@ CREATE TABLE `accidents` (
     `ident` varchar(255) DEFAULT NULL,
     `aircraft_manufacturer` varchar(255) DEFAULT NULL,
     `aircraft_name` varchar(255) DEFAULT NULL,
+    `airline_name` varchar(255) DEFAULT NULL,
+    `airline_icao` varchar(10) DEFAULT NULL,
     PRIMARY KEY (`accidents_id`)
 );
 CREATE INDEX `registration_idx` ON `accidents` (`registration`);
