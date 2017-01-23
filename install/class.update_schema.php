@@ -1241,7 +1241,7 @@ class update_schema {
 		global $globalDBdriver;
 		$Connection = new Connection();
 		$error = '';
-		if (!$Connection->indexExists('notam','ref')) {
+		if (!$Connection->indexExists('notam','ref_idx')) {
 			// Add index key
 			$query = "create index ref_idx on notam (ref)";
 			try {
