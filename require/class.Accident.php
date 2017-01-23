@@ -223,7 +223,7 @@ class Accident {
 					return $value === "" ? NULL : $value;
 				}, $cr);
 				if ($cr['date'] != '' && $cr['registration'] != null && $cr['registration'] != '' && $cr['registration'] != '?' && $cr['registration'] != '-' && $cr['date'] < time() && !preg_match('/\s/',$cr['registration'])) {
-					if (!strpos('-',$cr['registration'])) $cr['registration'] = $Spotter->convertAircraftRegistration($cr['registration']);
+					if (!strpos($cr['registration'],'-')) $cr['registration'] = $Spotter->convertAircraftRegistration($cr['registration']);
 					$query_check_values = array(':registration' => $cr['registration'],':date' => date('Y-m-d',$cr['date']),':type' => $cr['type'],':source' => $cr['source']);
 					$sth_check->execute($query_check_values);
 					$result_check = $sth_check->fetch(PDO::FETCH_ASSOC);
