@@ -105,7 +105,7 @@ class Accident {
 			} else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
 			if ($row['registration'] == '') $row['registration'] = 'NA';
 			if ($row['ident'] == '') $row['ident'] = 'NA';
-			$identicao = $Spotter->getAllAirlineInfo(substr($row['ident'],0,2));
+			$identicao = $Spotter->getAllAirlineInfo(substr($row['ident'],0,3));
 			if (isset($identicao[0])) {
 				if (substr($row['ident'],0,2) == 'AF') {
 					if (filter_var(substr($row['ident'],2),FILTER_VALIDATE_INT,array("flags"=>FILTER_FLAG_ALLOW_OCTAL))) $icao = $row['ident'];
@@ -115,9 +115,9 @@ class Accident {
 			} else $icao = $row['ident'];
 			$icao = $Translation->checkTranslation($icao,false);
 			//$data = array_merge($data,array('registration' => $row['registration'], 'date' => $row['date'], 'ident' => $icao,'url' => $row['url']));
-			$data = array_merge($row,$data);
 			if ($row['airline_name'] != '' && !isset($data['airline_name'])) {
 				//echo 'Check airline info... for '.$row['airline_name'].' ';
+				//echo $row['airline_name'];
 				$airline_info = $Spotter->getAllAirlineInfoByName($row['airline_name']);
 				if (!empty($airline_info)) {
 					//echo 'data found !'."\n";
@@ -126,6 +126,7 @@ class Accident {
 				} 
 				//else echo 'No data...'."\n";
 			}
+			$data = array_merge($row,$data);
 			if ($data['ident'] == null) $data['ident'] = $icao;
 			if ($data['title'] == null) {
 				$data['message'] = $row['type'].' of '.$row['registration'].' at '.$row['place'].','.$row['country'];
