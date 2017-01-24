@@ -6520,7 +6520,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (7487, 0, 'Vnukovo Airlines', '', 'V5', 'VKO', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Vnukovo_Airlines', NULL),
 (7489, 0, 'Ying\'an Airlines', '', '', 'AYE', '', '', 'Y', 'passenger', 'http://yingair.yndinghao.com/', 'http://en.wikipedia.org/wiki/Ying\'an_Airlines', NULL),
 (7490, 0, 'Zambia Airways', '', 'QZ', 'ZAC', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Zambia_Airways', NULL),
-(7491, 0, 'Zimbabwe Airlink', '', 'YZ', 'FEM', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Zimbabwe_Airlink', NULL);
+(7491, 0, 'Zimbabwe Airlink', '', 'YZ', 'FEM', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Zimbabwe_Airlink', NULL),
 (7492, 0, 'Southern Airways Express', '', '9X', 'FDY', '', '', 'Y', 'passenger', '', 'https://en.wikipedia.org/wiki/Southern_Airways_Express', NULL);
 
 

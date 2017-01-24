@@ -1,3 +1,4 @@
+/*
 DROP TABLE IF EXISTS airlines;
 CREATE TABLE airlines (
   airlines_id serial,
@@ -14,6 +15,8 @@ CREATE TABLE airlines (
   wikipedia_link varchar(255) DEFAULT NULL,
   forsource varchar(255) DEFAULT NULL
 );
+*/
+TRUNCATE TABLE airlines;
 
 INSERT INTO airlines (airlines_id, airline_id, name, alias, iata, icao, callsign, country, active, type, home_link, wikipedia_link, forsource) VALUES
 (1, 1, 'Private flight', 'N', '-', 'N/A', '', '', 'Y', 'passenger', NULL, NULL, NULL),
@@ -6519,7 +6522,7 @@ INSERT INTO airlines (airlines_id, airline_id, name, alias, iata, icao, callsign
 (7487, 0, 'Vnukovo Airlines', '', 'V5', 'VKO', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Vnukovo_Airlines', NULL),
 (7489, 0, 'Ying''an Airlines', '', '', 'AYE', '', '', 'Y', 'passenger', 'http://yingair.yndinghao.com/', 'http://en.wikipedia.org/wiki/Ying''an_Airlines', NULL),
 (7490, 0, 'Zambia Airways', '', 'QZ', 'ZAC', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Zambia_Airways', NULL),
-(7491, 0, 'Zimbabwe Airlink', '', 'YZ', 'FEM', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Zimbabwe_Airlink', NULL);
+(7491, 0, 'Zimbabwe Airlink', '', 'YZ', 'FEM', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Zimbabwe_Airlink', NULL),
 (7492, 0, 'Southern Airways Express', '', '9X', 'FDY', '', '', 'Y', 'passenger', '', 'https://en.wikipedia.org/wiki/Southern_Airways_Express', NULL);
 
 ALTER TABLE airlines ADD PRIMARY KEY (airlines_id);
