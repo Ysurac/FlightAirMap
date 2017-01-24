@@ -6201,7 +6201,7 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (7168, 0, 'Starlight Airlines', '', 'QP', 'SLT', '', '', 'Y', 'passenger', NULL, NULL, NULL),
 (7169, 0, 'Starlink Aviation', '', 'Q4', 'TLK', '', '', 'Y', 'passenger', 'http://www.starlinkaviation.com/', 'http://en.wikipedia.org/wiki/Starlink_Aviation', NULL),
 (7170, 0, 'Strait Air', '', '', 'NUK', '', '', 'Y', 'passenger', NULL, NULL, NULL),
-(7171, 0, 'Sun Air Express', '', '6G', 'FDY', '', '', 'Y', 'passenger', 'http://www.flysunairexpress.com', 'http://en.wikipedia.org/wiki/Sun_Air_Express', NULL),
+(7171, 0, 'Sun Air Express', '', '6G', 'FDY', '', '', 'N', 'passenger', 'http://www.flysunairexpress.com', 'http://en.wikipedia.org/wiki/Sun_Air_Express', NULL),
 (7172, 0, 'Suncor Energy', '', '', 'JSN', '', '', 'Y', 'passenger', NULL, NULL, NULL),
 (7173, 0, 'TACA Airlines', '', 'TA', 'TAI', '', '', 'Y', 'passenger', 'http://www.avianca.com', 'http://en.wikipedia.org/wiki/Avianca_El_Salvador', NULL),
 (7174, 0, 'TAG Airlines', '', '5U', 'TGU', '', '', 'Y', 'passenger', 'http://www.tag.com.gt', 'http://en.wikipedia.org/wiki/Transportes_Aéreos_Guatemaltecos', NULL),
@@ -6521,7 +6521,8 @@ INSERT INTO `airlines` (`airlines_id`, `airline_id`, `name`, `alias`, `iata`, `i
 (7489, 0, 'Ying\'an Airlines', '', '', 'AYE', '', '', 'Y', 'passenger', 'http://yingair.yndinghao.com/', 'http://en.wikipedia.org/wiki/Ying\'an_Airlines', NULL),
 (7490, 0, 'Zambia Airways', '', 'QZ', 'ZAC', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Zambia_Airways', NULL),
 (7491, 0, 'Zimbabwe Airlink', '', 'YZ', 'FEM', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Zimbabwe_Airlink', NULL);
+(7492, 0, 'Southern Airways Express', '', '9X', 'FDY', '', '', 'Y', 'passenger', '', 'https://en.wikipedia.org/wiki/Southern_Airways_Express', NULL);
 
 
 ALTER TABLE `airlines` ADD PRIMARY KEY (`airlines_id`), ADD KEY `airlines_id` (`airlines_id`), ADD KEY `icao` (`icao`);
-ALTER TABLE `airlines` MODIFY `airlines_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7492;
+ALTER TABLE `airlines` MODIFY `airlines_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7493;
