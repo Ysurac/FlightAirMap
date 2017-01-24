@@ -116,7 +116,7 @@ class Accident {
 			$icao = $Translation->checkTranslation($icao,false);
 			//$data = array_merge($data,array('registration' => $row['registration'], 'date' => $row['date'], 'ident' => $icao,'url' => $row['url']));
 			$data = array_merge($row,$data);
-			if ($row['airline_name'] != '') {
+			if ($row['airline_name'] != '' && !isset($data['airline_name'])) {
 				//echo 'Check airline info... for '.$row['airline_name'].' ';
 				$airline_info = $Spotter->getAllAirlineInfoByName($row['airline_name']);
 				if (!empty($airline_info)) {
