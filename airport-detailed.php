@@ -9,7 +9,7 @@ if (!isset($_GET['airport'])){
 	header('Location: '.$globalURL.'/airport');
 } else {
 	$Spotter = new Spotter();
-	//calculuation for the pagination
+	//calculation for the pagination
 	if(!isset($_GET['limit']))
 	{
 		$limit_start = 0;
@@ -32,7 +32,8 @@ if (!isset($_GET['airport'])){
 	$page_url = $globalURL.'/airport/'.$airport_icao;
 	
 	if (isset($_GET['sort'])) {
-		$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, $_GET['sort']);
+		$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+		$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, $sort);
 	} else {
 		$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, '');
 	}
@@ -97,8 +98,8 @@ if (!isset($_GET['airport'])){
 			
 			print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 			$Stats = new Stats();
-			
 			$all_data = $Stats->getLast7DaysAirports($airport_icao);
+			// Use spotter also
 			if (isset($globalTimezone)) {
 				date_default_timezone_set($globalTimezone);
 			} else date_default_timezone_set('UTC');
