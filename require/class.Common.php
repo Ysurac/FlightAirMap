@@ -373,7 +373,7 @@ class Common {
 	 * @param integer $level GZIP compression level (default: 9)
 	 * @return string New filename (with .gz appended) if success, or false if operation fails
 	 */
-	function gzCompressFile($source, $level = 9){ 
+	public function gzCompressFile($source, $level = 9){ 
 		$dest = $source . '.gz'; 
 		$mode = 'wb' . $level; 
 		$error = false; 
