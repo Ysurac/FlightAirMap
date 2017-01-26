@@ -9921,6 +9921,68 @@ q	*
 	}
 
 	/**
+	* Registration prefix from the registration code
+	*
+	* @param String $registration the aircraft registration
+	* @return String the registration prefix
+	*
+	*/
+	public function registrationPrefixFromAircraftRegistration($registration)
+	{
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
+		
+		$registration_prefix = '';
+		$registration_test = explode('-',$registration);
+		$country = '';
+		if ($registration_test[0] != $registration) {
+			$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_1 LIMIT 1";
+	      
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':registration_1' => $registration_test[0]));
+			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+			{
+				$registration_prefix = $row['registration_prefix'];
+				$country = $row['country'];
+			}
+		} else {
+    			$registration_1 = substr($registration, 0, 1);
+		        $registration_2 = substr($registration, 0, 2);
+
+			$country = '';
+			//first get the prefix based on two characters
+			$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_2 LIMIT 1";
+      
+			
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':registration_2' => $registration_2));
+        
+			while($row = $sth->fetch(PDO::FETCH_ASSOC))
+			{
+				$registration_prefix = $row['registration_prefix'];
+				$country = $row['country'];
+			}
+
+			//if we didn't find a two chracter prefix lets just search the one with one character
+			if ($registration_prefix == "")
+			{
+				$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_1 LIMIT 1";
+	      
+				$sth = $this->db->prepare($query);
+				$sth->execute(array(':registration_1' => $registration_1));
+	        
+				while($row = $sth->fetch(PDO::FETCH_ASSOC))
+				{
+					$registration_prefix = $row['registration_prefix'];
+					$country = $row['country'];
+				}
+			}
+		}
+    
+		return $registration_prefix;
+	}
+
+
+	/**
 	* Country from the registration code
 	*
 	* @param String $registration the aircraft registration
