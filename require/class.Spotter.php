@@ -9933,7 +9933,7 @@ q	*
 		
 		$registration_prefix = '';
 		$registration_test = explode('-',$registration);
-		$country = '';
+		//$country = '';
 		if ($registration_test[0] != $registration) {
 			$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_1 LIMIT 1";
 	      
@@ -9942,13 +9942,12 @@ q	*
 			while($row = $sth->fetch(PDO::FETCH_ASSOC))
 			{
 				$registration_prefix = $row['registration_prefix'];
-				$country = $row['country'];
+				//$country = $row['country'];
 			}
 		} else {
     			$registration_1 = substr($registration, 0, 1);
 		        $registration_2 = substr($registration, 0, 2);
 
-			$country = '';
 			//first get the prefix based on two characters
 			$query  = "SELECT aircraft_registration.registration_prefix, aircraft_registration.country FROM aircraft_registration WHERE registration_prefix = :registration_2 LIMIT 1";
       
@@ -9959,7 +9958,7 @@ q	*
 			while($row = $sth->fetch(PDO::FETCH_ASSOC))
 			{
 				$registration_prefix = $row['registration_prefix'];
-				$country = $row['country'];
+				//$country = $row['country'];
 			}
 
 			//if we didn't find a two chracter prefix lets just search the one with one character
@@ -9973,7 +9972,7 @@ q	*
 				while($row = $sth->fetch(PDO::FETCH_ASSOC))
 				{
 					$registration_prefix = $row['registration_prefix'];
-					$country = $row['country'];
+					//$country = $row['country'];
 				}
 			}
 		}
