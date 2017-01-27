@@ -3,30 +3,26 @@ require_once('../require/settings.php');
 require_once('../require/class.Language.php'); 
 
 setcookie("MapFormat",'2d');
-//$_COOKIE['MapFormat'] = '2d';
 
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
 else $compress = $globalJsonCompress;
+if (isset($_GET['archive'])) {
+	//$archiveupdatetime = 50;
+	$archiveupdatetime = $globalMapRefresh;
+	date_default_timezone_set('UTC');
+	$archivespeed = $_GET['archivespeed'];
+	$begindate = $_GET['begindate'];
+	//$lastupd = round(($_GET['enddate']-$_GET['begindate'])/(($_GET['during']*60)/10));
+	//$lastupd = 20;
+	$lastupd = $_GET['archivespeed']*$archiveupdatetime;
+	if (isset($_GET['enddate']) && $_GET['enddate'] != '') $enddate = $_GET['enddate'];
+	else $enddate = time();
+	setcookie("archive_begin",$begindate);
+	setcookie("archive_end",$enddate);
+	setcookie("archive_update",$lastupd);
+	setcookie("archive_speed",$archivespeed);
 ?>
-<?php
-	if (isset($_GET['archive'])) {
-		//$archiveupdatetime = 50;
-		$archiveupdatetime = $globalMapRefresh;
-		date_default_timezone_set('UTC');
-		$archivespeed = $_GET['archivespeed'];
-		$begindate = $_GET['begindate'];
-		//$lastupd = round(($_GET['enddate']-$_GET['begindate'])/(($_GET['during']*60)/10));
-		//$lastupd = 20;
-		$lastupd = $_GET['archivespeed']*$archiveupdatetime;
-		if (isset($_GET['enddate']) && $_GET['enddate'] != '') $enddate = $_GET['enddate'];
-		else $enddate = time();
-		setcookie("archive_begin",$begindate);
-		setcookie("archive_end",$enddate);
-		setcookie("archive_update",$lastupd);
-		setcookie("archive_speed",$archivespeed);
-?>
-
 document.cookie =  'archive_begin=<?php print $begindate; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
 document.cookie =  'archive_end=<?php print $enddate; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
 document.cookie =  'archive_update=<?php print $lastupd; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
@@ -1470,6 +1466,11 @@ function airlinestype(selectObj) {
     var idx = selectObj.selectedIndex;
     var airtype = selectObj.options[idx].value;
     document.cookie =  'filter_airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
+}
+function alliance(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var alliance = selectObj.options[idx].value;
+    document.cookie =  'filter_alliance='+alliance+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+1, date("Y"))); ?>; path=/'
 }
 
 function identfilter() {

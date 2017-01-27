@@ -61,6 +61,9 @@ class Spotter{
 		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
 			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_output.flightaware_id ";
 		}
+		if (isset($filter['alliance']) && !empty($filter['alliance'])) {
+			$filter_query_join .= " INNER JOIN (SELECT icao FROM airlines WHERE alliance = '".$filter['alliance']."') sal ON sal.icao = spotter_output.airline_icao ";
+		}
 		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
 				$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) so ON so.flightaware_id = spotter_output.flightaware_id";
 			}
@@ -2575,6 +2578,34 @@ class Spotter{
 		return $airline_array;
 	}
 	
+	/**
+	* Gets a list of all alliance names
+	*
+	* @return Array list of alliance names
+	*
+	*/
+	public function getAllAllianceNames($forsource = NULL,$filters = array())
+	{
+		global $globalAirlinesSource,$globalVATSIM, $globalIVAO;
+		$filter_query = $this->getFilter($filters,true,true);
+		if (isset($globalAirlinesSource) && $globalAirlinesSource != '') $forsource = $globalAirlinesSource;
+		elseif (isset($globalVATSIM) && $globalVATSIM) $forsource = 'vatsim';
+		elseif (isset($globalIVAO) && $globalIVAO) $forsource = 'ivao';
+		if ($forsource === NULL) {
+			$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND forsource IS NULL ORDER BY alliance ASC";
+			$query_data = array();
+		} else {
+			$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND  forsource = :forsource ORDER BY alliance ASC";
+			$query_data = array(':forsource' => $forsource);
+		}
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_data);
+    
+		$alliance_array = array();
+		$alliance_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $alliance_array;
+	}
 	
 	/**
 	* Gets a list of all airline countries

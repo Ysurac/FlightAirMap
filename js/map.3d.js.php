@@ -197,7 +197,12 @@ function airlines(selectObj) {
 function airlinestype(selectObj) {
 	var idx = selectObj.selectedIndex;
 	var airtype = selectObj.options[idx].value;
-	document.cookie =  'airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+	document.cookie =  'filter_airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+}
+function alliance(selectObj) {
+	var idx = selectObj.selectedIndex;
+	var alliance = selectObj.options[idx].value;
+	document.cookie =  'filter_alliance='+alliance+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
 }
 function identfilter() {
 	var ident = $("#identfilter").value;
@@ -568,8 +573,9 @@ function displayData(data) {
 //    	billboard.image = iconURLpath;
 //	entity.billboard = billboard;
 //	entity.billboard = undefined;
-
-
+		//console.log(entity.position);
+		//var positionCartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(entity.position);
+		//console.log(positionCartographic.height.toFixed(2));
 
 		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
 		entity.orientation = orientation;
@@ -1171,7 +1177,7 @@ camera.moveEnd.addEventListener(function() {
 //var reloadpage = setInterval(function() { updateData(); },30000);
 if (archive == false) {
 	var czmldssanta;
-	if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('2016-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('2016-12-25T02:00Z'))) {
+	if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-25T02:00Z'))) {
 		czmldssanta = new Cesium.CzmlDataSource();
 		updateSanta();
 	}
@@ -1179,7 +1185,7 @@ if (archive == false) {
 		function(){
 			updateData();
 			if (typeof czmldssanta == 'undefined') {
-				if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('2016-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('2016-12-25T02:00Z'))) {
+				if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-25T02:00Z'))) {
 					czmldssanta = new Cesium.CzmlDataSource();
 					updateSanta();
 				}

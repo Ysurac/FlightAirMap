@@ -44,7 +44,7 @@ if (isset($_POST['removefilters'])) {
 <meta http-equiv="X-UA-Compatible" content="IE=10" />
 <title><?php print $title; ?> | <?php print $globalName; ?></title>
 <meta name="keywords" content="<?php print $title; ?> spotter live flight tracking tracker map aircraft airline airport history database ads-b acars" />
-<meta name="description" content="<?php print $title; ?> | <?php print $globalName; ?> use FlightAirMap to display flight in his area" />
+<meta name="description" content="<?php print $title; ?> | <?php print $globalName; ?> use FlightAirMap to track flight" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="shortcut icon" type="image/x-icon" href="<?php print $globalURL; ?>/favicon.ico">
 <link rel="apple-touch-icon" href="<?php print $globalURL; ?>/images/touch-icon.png">

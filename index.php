@@ -442,7 +442,7 @@ require_once('header.php');
 				foreach($allairlinenames as $airline) {
 					$airline_name = $airline['airline_name'];
 					if (strlen($airline_name) > 30) $airline_name = substr($airline_name,0,30).'...';
-					if (isset($_COOKIE['Airlines']) && in_array($airline['airline_icao'],explode(',',$_COOKIE['Airlines']))) {
+					if (isset($_COOKIE['filter_Airlines']) && in_array($airline['airline_icao'],explode(',',$_COOKIE['filter_Airlines']))) {
 						echo '<option value="'.$airline['airline_icao'].'" selected>'.$airline_name.'</option>';
 					} else {
 						echo '<option value="'.$airline['airline_icao'].'">'.$airline_name.'</option>';
@@ -452,6 +452,30 @@ require_once('header.php');
 			</select>
 		    </li>
 		    <?php
+			$Spotter = new Spotter();
+			$allalliancenames = $Spotter->getAllAllianceNames();
+			if (!empty($allalliancenames)) {
+		    ?>
+		    <li><?php echo _("Display alliance:"); ?>
+		    <br/>
+			<select class="selectpicker" onchange="alliance(this);" id="display_alliance">
+			    <option value="all"<?php if (!isset($_COOKIE['filter_alliance']) || $_COOKIE['filter_alliance'] == 'all' || $_COOKIE['filter_alliance'] == '') echo ' selected'; ?>><?php echo _("All"); ?></option>
+			    <?php
+				foreach($allalliancenames as $alliance) {
+					$alliance_name = $alliance['alliance'];
+					if (isset($_COOKIE['filter_alliance']) && $_COOKIE['filter_alliance'] == $alliance_name) {
+						echo '<option value="'.$alliance_name.'" selected>'.$alliance_name.'</option>';
+					} else {
+						echo '<option value="'.$alliance_name.'">'.$alliance_name.'</option>';
+					}
+				}
+			    ?>
+			</select>
+		    </li>
+		    <?php
+			}
+		    ?>
+		    <?php
 			if (isset($globalAPRS) && $globalAPRS) {
 		    ?>
 		    <li><?php echo _("Display APRS sources name:"); ?>
@@ -459,7 +483,7 @@ require_once('header.php');
 			    <?php
 				$Spotter = new Spotter();
 				foreach($Spotter->getAllSourceName('aprs') as $source) {
-					if (isset($_COOKIE['Sources']) && in_array($source['source_name'],explode(',',$_COOKIE['Sources']))) {
+					if (isset($_COOKIE['filter_Sources']) && in_array($source['source_name'],explode(',',$_COOKIE['filter_Sources']))) {
 						echo '<option value="'.$source['source_name'].'" selected>'.$source['source_name'].'</option>';
 					} else {
 						echo '<option value="'.$source['source_name'].'">'.$source['source_name'].'</option>';
@@ -476,10 +500,10 @@ require_once('header.php');
 		    ?>
 		    <li><?php echo _("Display airlines of type:"); ?><br/>
 			<select class="selectpicker" onchange="airlinestype(this);">
-			    <option value="all"<?php if (!isset($_COOKIE['airlinestype']) || $_COOKIE['airlinestype'] == 'all' || $_COOKIE['airlinestype'] == '') echo ' selected'; ?>><?php echo _("All"); ?></option>
-			    <option value="passenger"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'passenger') echo ' selected'; ?>><?php echo _("Passenger"); ?></option>
-			    <option value="cargo"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'cargo') echo ' selected'; ?>><?php echo _("Cargo"); ?></option>
-			    <option value="military"<?php if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] == 'military') echo ' selected'; ?>><?php echo _("Military"); ?></option>
+			    <option value="all"<?php if (!isset($_COOKIE['filter_airlinestype']) || $_COOKIE['filter_airlinestype'] == 'all' || $_COOKIE['filter_airlinestype'] == '') echo ' selected'; ?>><?php echo _("All"); ?></option>
+			    <option value="passenger"<?php if (isset($_COOKIE['filter_airlinestype']) && $_COOKIE['filter_airlinestype'] == 'passenger') echo ' selected'; ?>><?php echo _("Passenger"); ?></option>
+			    <option value="cargo"<?php if (isset($_COOKIE['filter_airlinestype']) && $_COOKIE['filter_airlinestype'] == 'cargo') echo ' selected'; ?>><?php echo _("Cargo"); ?></option>
+			    <option value="military"<?php if (isset($_COOKIE['filter_airlinestype']) && $_COOKIE['filter_airlinestype'] == 'military') echo ' selected'; ?>><?php echo _("Military"); ?></option>
 			</select>
 		    </li>
 		    <?php
@@ -487,7 +511,7 @@ require_once('header.php');
 		    ?>
 		    <li>
 			<?php echo _("Display flight with ident:"); ?>
-			<input type="text" name="identfilter" onchange="identfilter();" id="identfilter" value="<?php if (isset($_COOKIE['identfilter'])) print $_COOKIE['identfilter']; ?>" />
+			<input type="text" name="identfilter" onchange="identfilter();" id="identfilter" value="<?php if (isset($_COOKIE['filter_ident'])) print $_COOKIE['filter_ident']; ?>" />
 		    </li>
 		</ul>
 	    </form>

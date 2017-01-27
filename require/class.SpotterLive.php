@@ -57,6 +57,9 @@ class SpotterLive {
 				$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_live.flightaware_id";
 			}
 		}
+		if (isset($filter['alliance']) && !empty($filter['alliance'])) {
+			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN (SELECT icao FROM airlines WHERE alliance = '".$filter['alliance']."')) sal ON sal.flightaware_id = spotter_live.flightaware_id ";
+		}
 		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
 			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_live.flightaware_id ";
 		}
