@@ -1173,18 +1173,20 @@ class update_db {
 		}
 
 		$Connection = new Connection();
-		if (($handle = fopen($tmp_dir.'ban_ue.csv', 'r')) !== FALSE)
+		if (($handle = fopen($tmp_dir.'ban_eu.csv', 'r')) !== FALSE)
 		{
 			if ($globalTransaction) $Connection->db->beginTransaction();
-			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			while (($data = fgetcsv($handle, 1000)) !== FALSE)
 			{
 				$query = 'UPDATE airlines SET ban_eu = 1 WHERE icao = :icao AND forsource IS NULL';
-				if ($data[0] != '') $icao = $data[0];
-				try {
-					$sth = $Connection->db->prepare($query);
-					$sth->execute(array(':icao' => $icao));
-				} catch(PDOException $e) {
-					return "error : ".$e->getMessage();
+				if ($data[0] != '') {
+					$icao = $data[0];
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':icao' => $icao));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
 				}
 			}
 			fclose($handle);
@@ -1913,13 +1915,13 @@ class update_db {
 	public static function update_banned_fam() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Banned airlines in Europe from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/ban_ue.csv',$tmp_dir.'ban_ue.csv');
-		if (file_exists($tmp_dir.'ban_ue.csv')) {
+		update_db::download('http://data.flightairmap.fr/data/ban_eu.csv',$tmp_dir.'ban_eu.csv');
+		if (file_exists($tmp_dir.'ban_eu.csv')) {
 			//if ($globalDebug) echo "Gunzip...";
 			//update_db::gunzip($tmp_dir.'ban_ue.csv');
 			if ($globalDebug) echo "Add to DB...";
 			$error = update_db::banned_fam();
-		} else $error = "File ".$tmp_dir.'ban_ue.csv'." doesn't exist. Download failed.";
+		} else $error = "File ".$tmp_dir.'ban_eu.csv'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
 		} elseif ($globalDebug) echo "Done\n";
@@ -2415,36 +2417,6 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 	}
-	public static function check_last_banned_update() {
-		global $globalDBdriver;
-		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_banned' AND value > DATE_SUB(NOW(), INTERVAL 7 DAY)";
-		} else {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_banned' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '7 DAYS'";
-		}
-		try {
-			$Connection = new Connection();
-			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-                $row = $sth->fetch(PDO::FETCH_ASSOC);
-                if ($row['nb'] > 0) return false;
-                else return true;
-	}
-
-	public static function insert_last_banned_update() {
-		$query = "DELETE FROM config WHERE name = 'last_update_banned';
-			INSERT INTO config (name,value) VALUES ('last_update_banned',NOW());";
-		try {
-			$Connection = new Connection();
-			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-	}
 	public static function delete_duplicatemodes() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
@@ -2487,6 +2459,7 @@ class update_db {
 				echo update_db::update_ModeS_flarm();
 				echo update_db::update_ModeS_ogn();
 				echo update_db::update_ModeS_faa();
+				echo update_db::update_banned_fam();
 				//echo update_db::delete_duplicatemodes();
 			} else {
 				//echo update_db::update_routes();
@@ -2499,6 +2472,7 @@ class update_db {
 				echo update_db::update_ModeS_flarm();
 				echo update_db::update_ModeS_ogn();
 				echo update_db::delete_duplicatemodes();
+				echo update_db::update_banned_fam();
 			}
 		}
 	}
@@ -2526,6 +2500,7 @@ class update_db {
 //echo update_db::update_ModeS_fam();
 //echo update_db::update_routes_fam();
 //echo update_db::update_ModeS_faa();
+//echo update_db::update_banned_fam();
 //echo update_db::modes_faa();
 //echo update_db::update_owner_fam();
 //echo update_db::delete_duplicateowner();
