@@ -82,8 +82,10 @@ if (isset($_POST['airline']))
 			} elseif (@getimagesize('images/airlines/'.$value['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.png'))
 			{
 				print '<img src="'.$globalURL.'/images/airlines/'.$value['airline_icao'].'.png" alt="'._("Click to see airline activity").'" title="'._("Click to see airline activity").'" /> ';
+				if (isset($value['ban_eu']) && $value['ban_eu'] == 1) print '<img src="'.$globalURL.'/images/baneu.png" alt="'._("Banned in Europe").'" title="'._("Banned in Europe").'" /> ';
 			} else {
 				print $value['airline_name'];
+				if (isset($value['ban_eu']) && $value['ban_eu'] == 1) print '<img src="'.$globalURL.'/images/baneu.png" alt="'._("Banned in Europe").'" title="'._("Banned in Europe").'" /> ';
 			}
 			print '</a>';
 			print '</div>';

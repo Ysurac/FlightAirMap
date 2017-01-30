@@ -1359,6 +1359,30 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_33() {
+		global $globalDBdriver, $globalVATSIM, $globalIVAO;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('airlines','ban_eu')) {
+			// Add ban_eu to airlines
+			$query = "ALTER TABLE airlines ADD ban_eu INTEGER NOT NULL DEFAULT '0'";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add ban_eu column in airlines) : ".$e->getMessage()."\n";
+			}
+		}
+		$query = "UPDATE config SET value = '34' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
     	public static function check_version($update = false) {
     	    global $globalDBname;
@@ -1502,6 +1526,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '32') {
     			    $error = self::update_from_32();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '33') {
+    			    $error = self::update_from_33();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

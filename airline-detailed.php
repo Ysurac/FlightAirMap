@@ -79,6 +79,7 @@ if (!isset($_GET['airline'])){
 			if (isset($spotter_array[0]['airline_iata'])) print '<div><span class="label">'._("IATA").'</span>'.$spotter_array[0]['airline_iata'].'</div>';
 			if (isset($spotter_array[0]['airline_callsign'])) print '<div><span class="label">'._("Callsign").'</span>'.$spotter_array[0]['airline_callsign'].'</div>'; 
 			print '<div><span class="label">'._("Type").'</span>'.ucwords($spotter_array[0]['airline_type']).'</div>';
+			if (isset($spotter_array[0]['ban_eu']) && $spotter_array[0]['ban_eu'] == 1) print '<div><img src="'.$globalURL.'/images/baneu.png" alt="'._("This airline is banned in Europe").'" title="'._("This airline is banned in Europe").'" /></div>';
 			print '</div>';
 		} else {
 			print '<div class="alert alert-warning">'._("This special airline profile shows all flights that do <u>not</u> have a airline associated with them.").'</div>';

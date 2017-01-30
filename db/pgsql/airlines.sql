@@ -14,6 +14,7 @@ CREATE TABLE airlines (
   wikipedia_link varchar(255) DEFAULT NULL,
   forsource varchar(255) DEFAULT NULL,
   alliance varchar(255) DEFAULT NULL,
+  ban_eu integer NOT NULL DEFAULT '0',
   PRIMARY KEY (airlines_id)
 );
 
