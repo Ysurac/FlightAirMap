@@ -22,12 +22,12 @@ if (isset($_POST['aircraft_type']))
 	foreach($aircraft_types as $value) {
 		//$firstLetter = substr($value['aircraft_name'], 0, 1);
 		$firstLetter = substr($value['aircraft_manufacturer'], 0, 1);
-		if($previous !== $firstLetter)
+		if($previous !== $firstLetter && $firstLetter != '(' && $firstLetter != ')')
 		{
 			if ($previous !== null) print ' | ';
 			print '<a href="#'.$firstLetter.'">'.$firstLetter.'</a>';
 		}
-		$previous = $firstLetter;
+		if ($firstLetter != '(' && $firstLetter != ')') $previous = $firstLetter;
 	}
 	print '</div>';
 	$previous = null;
