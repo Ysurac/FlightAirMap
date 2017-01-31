@@ -36,12 +36,12 @@ if (isset($_POST['aircraft_type']))
 		$firstLetter = substr($value['aircraft_manufacturer'], 0, 1);
 		if ($firstLetter != "")
 		{
-			if($previous !== $firstLetter)
+			if($previous !== $firstLetter && $firstLetter != '(' && $firstLetter != ')')
 			{
 				if ($previous !== null) print '</div>';
 				print '<a name="'.$firstLetter.'"></a><h4 class="alphabet-header">'.$firstLetter.'</h4><div class="alphabet">';
 			}
-			$previous = $firstLetter;
+			if ($firstLetter != '(' && $firstLetter != ')') $previous = $firstLetter;
 			print '<div class="alphabet-item">';
 			print '<a href="'.$globalURL.'/aircraft/'.$value['aircraft_icao'].'">';
 			if ($value['aircraft_name'] == '') {

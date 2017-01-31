@@ -5,6 +5,48 @@ require_once(dirname(__FILE__).'/class.Image.php');
 $global_query = "SELECT spotter_output.* FROM spotter_output";
 
 class Spotter{
+	public $aircraft_correct_icaotype = array('CL64' => 'CL60',
+					'F9LX' => 'F900',
+					'K35T' => 'K35R',
+					'F5EX' => 'FA50',
+					'G102' => 'GLID',
+					'LJ36' => 'LJ35',
+					'G500' => 'EGRT',
+					'A300' => 'A30B',
+					'ROT' => 'B77W',
+					'BPN' => 'B772',
+					'0011' => 'B77W',
+					'F9DX' => 'F900',
+					'B757' => 'B752',
+					'4/05' => 'A332',
+					'F/A3' => 'A320',
+					'F2EX' => 'F2TH',
+					'EA55' => 'EA50',
+					'B73B' => 'B737',
+					'G450' => 'GLF4',
+					'H25X' => 'H25B',
+					'E175' => 'E75S',
+					'B777' => 'B77W',
+					'F2LX' => 'F2TH',
+					'CL65' => 'CL60',
+					'A380' => 'A388',
+					'G550' => 'GLF5',
+					'F9EX' => 'F900',
+					'E195' => 'E190',
+					'H750' => 'H25B',
+					'B747' => 'B744',
+					'B767' => 'B763',
+					'PA39' => 'PA30',
+					'H900' => 'H25B',
+					'AN74' => 'AN72',
+					'CL85' => 'CRJ2',
+					'G400' => 'GLF4',
+					'CL61' => 'CL60',
+					'F2TS' => 'F2TH',
+					'Z602' => 'CH60',
+					'G100' => 'ASTR');
+
+
 	public $db;
 	
 	public function __construct($dbc = null) {
@@ -2228,7 +2270,9 @@ class Spotter{
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		$sth->closeCursor();
 		if (isset($row['icaotypecode'])) {
-			return $row['icaotypecode'];
+			$icao = $row['icaotypecode'];
+			if (isset($this->aircraft_correct_icaotype[$icao])) $icao = $this->aircraft_correct_icaotype[$icao];
+			return $icao;
 		} else return '';
 	}
 

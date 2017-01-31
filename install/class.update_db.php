@@ -2208,6 +2208,21 @@ class update_db {
 		}
 	}
 	
+	public static function fix_icaotype() {
+		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
+		$Spotter = new Spotter();
+		foreach ($Spotter->aircraft_correct_icaotype as $old => $new) {
+			$query = 'UPDATE aircraft_modes SET ICAOTypeCode = :new WHERE ICAOTypeCode = :old';
+			try {
+				$Connection = new Connection();
+				$sth = $Connection->db->prepare($query);
+				$sth->execute(array(':new' => $new, ':old' => $old));
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+		}
+	}
+
 	public static function check_last_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
@@ -2459,6 +2474,7 @@ class update_db {
 				echo update_db::update_ModeS_flarm();
 				echo update_db::update_ModeS_ogn();
 				echo update_db::update_ModeS_faa();
+				echo update_db::fix_icaotype();
 				echo update_db::update_banned_fam();
 				//echo update_db::delete_duplicatemodes();
 			} else {
@@ -2504,4 +2520,5 @@ class update_db {
 //echo update_db::modes_faa();
 //echo update_db::update_owner_fam();
 //echo update_db::delete_duplicateowner();
+//echo update_db::fix_icaotype();
 ?>
