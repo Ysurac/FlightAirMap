@@ -248,9 +248,10 @@ class Accident {
 							}
 							// elseif ($globalDebug) echo 'Image already in DB'."\n";
 						}
+						$Spotter->setHighlightFlightByRegistration($cr['registration'],$cr['title'],date('Y-m-d',$cr['date']));
 					}
 				}
-				if ($globalTransaction && $j % 100 == 0) {
+				if ($globalTransaction && $j % 1000 == 0) {
 					$Connection->db->commit();
 					$Connection->db->beginTransaction();
 				}

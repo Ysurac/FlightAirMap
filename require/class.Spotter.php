@@ -10046,6 +10046,25 @@ q	*
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':flightaware_id' => $flightaware_id, ':highlight' => $highlight));
 	}
+
+	/**
+	* Set a new highlight value for a flight by Registration
+	*
+	* @param String $registration Registration of the aircraft
+	* @param String $date Date of spotted aircraft
+	* @param String $highlight New highlight value
+	*/
+	public function setHighlightFlightByRegistration($registration,$highlight, $date = '') {
+		if ($date == '') {
+			$query  = "UPDATE spotter_output SET highlight = :highlight WHERE spotter_id IN (SELECT MAX(spotter_id) FROM spotter_output WHERE registration = :registration)";
+			$query_values = array(':registration' => $registration, ':highlight' => $highlight);
+		} else {
+			$query  = "UPDATE spotter_output SET highlight = :highlight WHERE registration = :registration AND date(date) = :date";
+			$query_values = array(':registration' => $registration, ':highlight' => $highlight,':date' => $date);
+		}
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+	}
 	
 	/**
 	* Gets the short url from bit.ly
