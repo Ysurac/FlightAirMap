@@ -1068,6 +1068,7 @@ class update_db {
 			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				if ($i > 0) {
+					if ($data[1] == 'NULL') $data[1] = $data[0];
 					$query = 'INSERT INTO aircraft_modes (FirstCreated,LastModified,ModeS,ModeSCountry,Registration,ICAOTypeCode,type_flight,Source) VALUES (:FirstCreated,:LastModified,:ModeS,:ModeSCountry,:Registration,:ICAOTypeCode,:type_flight,:source)';
 					try {
 						$sth = $Connection->db->prepare($query);
