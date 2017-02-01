@@ -607,6 +607,111 @@ require_once('header.php');
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         </div>
 <?php
+    if (isset($globalAccidents) && $globalAccidents) {
+?>
+        <div class="row column">
+            <div class="col-md-6">
+                <h2><?php echo _("Fatalities by Years"); ?></h2>
+                <?php
+		    require_once('require/class.Accident.php');
+            	    $Accident = new Accident();
+                  $year_array = $Accident->countFatalitiesByYear($filter_name);
+		    if (count($year_array) == 0) print _("No data available");
+		    else {
+                  print '<div id="chart32" class="chart" width="100%"></div>
+                    <script> 
+                        google.load("visualization", "1", {packages:["corechart"]});
+                      google.setOnLoadCallback(drawChart32);
+                      function drawChart32() {
+                        var data = google.visualization.arrayToDataTable([
+                            ["'._("Year").'", "'._("# of Fatalities").'"], ';
+                            $year_data = '';
+                          foreach($year_array as $year_item)
+                                    {
+                                        $year_data .= '[ "'.$year_item['year'].'",'.$year_item['count'].'],';
+                                    }
+                                    $year_data = substr($year_data, 0, -1);
+                                    print $year_data;
+                        print ']);
+
+                        var options = {
+                            legend: {position: "none"},
+                            chartArea: {"width": "80%", "height": "60%"},
+                            vAxis: {title: "'._("# of Fatalities").'"},
+                            hAxis: {showTextEvery: 2},
+                            height:300,
+                            colors: ["#1a3151"]
+                        };
+
+                        var chart = new google.visualization.AreaChart(document.getElementById("chart32"));
+                        chart.draw(data, options);
+                      }
+                      $(window).resize(function(){
+                              drawChart32();
+                            });
+                  </script>';
+                  }
+                  ?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/statistics/fatalities/year" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
+            </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+
+        <div class="row column">
+            <div class="col-md-6">
+                <h2><?php echo _("Fatalities last 12 Months"); ?></h2>
+                <?php
+		    require_once('require/class.Accident.php');
+            	    $Accident = new Accident();
+                  $year_array = $Accident->countFatalitiesLast12Months($filter_name);
+		    if (count($year_array) == 0) print _("No data available");
+		    else {
+                  print '<div id="chart33" class="chart" width="100%"></div>
+                    <script> 
+                        google.load("visualization", "1", {packages:["corechart"]});
+                      google.setOnLoadCallback(drawChart33);
+                      function drawChart33() {
+                        var data = google.visualization.arrayToDataTable([
+                            ["'._("Month").'", "'._("# of Fatalities").'"], ';
+                            $year_data = '';
+                          foreach($year_array as $year_item)
+                                    {
+                                        $year_data .= '[ "'.date('F, Y',strtotime($year_item['year'].'-'.$year_item['month'].'-01')).'",'.$year_item['count'].'],';
+                                    }
+                                    $year_data = substr($year_data, 0, -1);
+                                    print $year_data;
+                        print ']);
+
+                        var options = {
+                            legend: {position: "none"},
+                            chartArea: {"width": "80%", "height": "60%"},
+                            vAxis: {title: "'._("# of Fatalities").'"},
+                            hAxis: {showTextEvery: 2},
+                            height:300,
+                            colors: ["#1a3151"]
+                        };
+
+                        var chart = new google.visualization.AreaChart(document.getElementById("chart33"));
+                        chart.draw(data, options);
+                      }
+                      $(window).resize(function(){
+                              drawChart33();
+                            });
+                  </script>';
+                  }
+                  ?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/statistics/fatalities/month" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
+            </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+<br/>
+<?php
+    }
+?>
+
+<?php
     if (($airline_icao == '' || $airline_icao == 'all') && $filter_name == '') {
 ?>
         <div class="row column">

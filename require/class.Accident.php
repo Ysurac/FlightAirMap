@@ -13,6 +13,7 @@ class Accident {
 	}
 
 
+	
 	public function get() {
 		$query = 'SELECT DISTINCT registration FROM accidents ORDER BY date DESC';
 		$sth = $this->db->prepare($query);
@@ -23,7 +24,9 @@ class Accident {
 	
 	/**
 	* Get Accidents data from DB
-	*
+	* @param String $limit Limit
+	* @param String $type Set type accident or incident
+	* @param String $date get data for a date
 	* @return Array Return Accidents data in array
 	*/
 	public function getAccidentData($limit = '',$type = '',$date = '') {
@@ -141,6 +144,35 @@ class Accident {
 		else return array();
 	}
 	
+	/*
+	* Get fatalities by year
+	* @return Array number of fatalities by year
+	*/
+	public function countFatalitiesByYear() {
+		$query = 'SELECT EXTRACT(year FROM date) AS year, SUM(fatalities) as count FROM accidents WHERE accidents_id IN (SELECT MAX(accidents_id) FROM accidents WHERE fatalities > 0 AND EXTRACT(year FROM date) > 2006 GROUP BY registration) GROUP BY EXTRACT(year FROM date) ORDER BY year';
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			echo "Error : ".$e->getMessage();
+		}
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	/*
+	* Get fatalities last 12 months
+	* @return Array number of fatalities last 12 months
+	*/
+	public function countFatalitiesLast12Months() {
+		$query = "SELECT EXTRACT(month FROM date) AS month, EXTRACT(year FROM date) AS year, SUM(fatalities) as count FROM accidents WHERE accidents_id IN (SELECT MAX(accidents_id) FROM accidents WHERE fatalities > 0 AND date > (current_date - INTERVAL '12 months') GROUP BY registration) GROUP BY EXTRACT(month FROM date), EXTRACT(year FROM date) ORDER BY year,month";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			echo "Error : ".$e->getMessage();
+		}
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
 	
 	/*
 	* Import csv accidents file into the DB
@@ -164,6 +196,9 @@ class Accident {
 		}
 	}
 
+	/*
+	* Check if file changed since last update, if true import modified files
+	*/
 	public function download_update() {
 		global $globalDebug;
 		require_once('class.Common.php');
@@ -204,6 +239,10 @@ class Accident {
 		}
 	}
 
+	/*
+	* Add data to DB
+	* @param Array $crash An array with accidents/incidents data
+	*/
 	public function add($crash,$new = false) {
 		global $globalTransaction, $globalDebug;
 		require_once('class.Connection.php');
@@ -264,6 +303,10 @@ class Accident {
 		$sth_check->closeCursor();
 	}
 
+	/*
+	* Get number of accidents
+	* @return Integer Number of accidents/incidents in table
+	*/
 	public static function check_accidents_nb() {
 		global $globalDBdriver;
 			$query = "SELECT COUNT(*) as nb FROM accidents";

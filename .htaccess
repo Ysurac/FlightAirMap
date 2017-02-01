@@ -241,6 +241,8 @@ RewriteRule ^statistics/owner(/?)$ statistics-owner.php [L,NC]
 RewriteRule ^statistics/pilot(/?)$ statistics-pilot.php [L,NC]
 RewriteRule ^statistics/country(/?)$ statistics-country.php [L,NC]
 RewriteRule ^statistics(/?)$ statistics.php [L,NC]
+RewriteRule ^statistics/fatalitites/year(/?)$ statistics-fatalitites-year.php [L,NC]
+RewriteRule ^statistics/fatalitites/month(/?)$ statistics-fatalitites-month.php [L,NC]
 
 
 ########### UPCOMING ###########
