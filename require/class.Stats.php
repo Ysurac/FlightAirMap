@@ -1273,7 +1273,7 @@ class Stats {
 			if ($globalDebug) echo 'Count all aircraft types...'."\n";
 			$alldata = $Spotter->countAllAircraftTypes(false,0,$last_update_day);
 			foreach ($alldata as $number) {
-				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name'],$number['aircraft_manufacturer'],'','','',$reset);
+				$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name'],$number['aircraft_manufacturer'],'','',$reset);
 			}
 			if ($globalDebug) echo 'Count all airlines...'."\n";
 			$alldata = $Spotter->countAllAirlines(false,0,$last_update_day);
