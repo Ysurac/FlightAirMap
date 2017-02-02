@@ -78,5 +78,20 @@
 			  <li><a href="<?php print $globalURL; ?>/statistics/time"><?php echo _("Time"); ?></a></li>
 		    </ul>
 		</li>
+		<?php
+		    if (isset($globalAccidents) && $globalAccidents) {
+		?>
+		<li class="dropdown">
+		    <a class="dropdown-toggle <?php if(strtolower($current_page) == "statistics-fatalities-year" || strtolower($current_page) == "statistics-fatalities-month"){ print 'active'; } ?>" data-toggle="dropdown" href="#">
+		      <?php echo _("Fatalities"); ?> <span class="caret"></span>
+		    </a>
+		    <ul class="dropdown-menu" role="menu">
+		      <li><a href="<?php print $globalURL; ?>/statistics/fatalities/year"><?php echo _("Fatalities by Year"); ?></a></li>
+			  <li><a href="<?php print $globalURL; ?>/statistics/fatalities/month"><?php echo _("Fatalities last 12 months"); ?></a></li>
+		    </ul>
+		</li>
+		<?php
+		    }
+		?>
 	</ul>
 </div>

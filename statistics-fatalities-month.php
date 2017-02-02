@@ -9,7 +9,7 @@ require_once('header.php');
 include('statistics-sub-menu.php');
 print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<div class="info">
-	  	<h1>'._("Fatalities").'</h1>
+	  	<h1>'._("Fatalities last 12 months").'</h1>
 	</div>
       <p>'._("Below is a chart that plots the fatalities <strong>last 12 months</strong>.").'</p>';
 
