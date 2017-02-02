@@ -81,6 +81,7 @@ if (function_exists('pcntl_fork')) {
 if ($globalDebug) echo "Connecting...\n";
 $use_aprs = false;
 $aprs_full = false;
+$reset = 0;
 
 function create_socket($host, $port, &$errno, &$errstr) {
     $ip = gethostbyname($host);
@@ -112,7 +113,8 @@ function create_socket_udp($host, $port, &$errno, &$errstr) {
 
 function connect_all($hosts) {
     //global $sockets, $formats, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights, $use_aprs;
-    global $sockets, $globalSources, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights, $use_aprs;
+    global $sockets, $globalSources, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights, $use_aprs, $reset;
+    $reset++;
     if ($globalDebug) echo 'Connect to all...'."\n";
     foreach ($hosts as $id => $value) {
 	$host = $value['host'];
@@ -340,6 +342,7 @@ while ($i > 0) {
 	if ($value['format'] == 'deltadbtxt' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host']);
+	    if ($buffer != '') $reset = 0;
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 	    $buffer = explode('\n',$buffer);
 	    foreach ($buffer as $line) {
@@ -372,6 +375,7 @@ while ($i > 0) {
 	    $buffer = $Common->getData($value['host']);
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 	    $buffer = explode('\n',$buffer);
+	    $reset = 0;
 	    foreach ($buffer as $line) {
     		if ($line != '') {
     		    $line = explode(':', $line);
@@ -447,6 +451,7 @@ while ($i > 0) {
 	    if ($buffer != '') {
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['acList'])) {
+		$reset = 0;
 		foreach ($all_data['acList'] as $line) {
 		    $data = array();
 		    $data['hex'] = $line['Icao']; // hex
@@ -473,6 +478,7 @@ while ($i > 0) {
 		    unset($data);
 		}
 	    } else {
+		$reset = 0;
 		foreach ($all_data as $line) {
 		    $data = array();
 		    $data['hex'] = $line['hex']; // hex
@@ -501,6 +507,7 @@ while ($i > 0) {
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['planes'])) {
+		$reset = 0;
 		foreach ($all_data['planes'] as $key => $line) {
 		    $data = array();
 		    $data['hex'] = $key; // hex
@@ -534,6 +541,7 @@ while ($i > 0) {
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['states'])) {
+		$reset = 0;
 		foreach ($all_data['states'] as $key => $line) {
 		    $data = array();
 		    $data['hex'] = $line[0]; // hex
@@ -562,6 +570,7 @@ while ($i > 0) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
+	    if (!empty($all_data)) $reset = 0;
 	    foreach ($all_data as $key => $line) {
 		if ($key != 'full_count' && $key != 'version' && $key != 'stats') {
 		    $data = array();
@@ -601,6 +610,7 @@ while ($i > 0) {
 		die(json_last_error_msg());
 	    }
 	    if (isset($all_data['mrkrs'])) {
+		$reset = 0;
 		foreach ($all_data['mrkrs'] as $key => $line) {
 		    if (isset($line['inf'])) {
 			$data = array();
@@ -636,6 +646,7 @@ while ($i > 0) {
 	    $all_data = json_decode(utf8_encode($buffer),true);
 	    
 	    if (isset($all_data['pireps'])) {
+		$reset = 0;
 	        foreach ($all_data['pireps'] as $line) {
 		    $data = array();
 		    $data['id'] = $line['id'];
@@ -695,6 +706,7 @@ while ($i > 0) {
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if ($buffer != '' && is_array($all_data)) {
+		$reset = 0;
 		foreach ($all_data as $line) {
 	    	    $data = array();
 	    	    //$data['id'] = $line['id']; // id not usable
@@ -751,6 +763,7 @@ while ($i > 0) {
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if ($buffer != '' && is_array($all_data)) {
+		$reset = 0;
 		foreach ($all_data as $line) {
 	    	    $data = array();
 	    	    //$data['id'] = $line['id']; // id not usable
@@ -801,6 +814,7 @@ while ($i > 0) {
 	    $n = socket_select($read, $write, $e, $timeout);
 	    if ($e != NULL) var_dump($e);
 	    if ($n > 0) {
+		$reset = 0;
 		foreach ($read as $nb => $r) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
@@ -1051,13 +1065,13 @@ while ($i > 0) {
 			    }
 			    
 			}
-			    if ($globalDebug) echo "Restart all connections...";
-			    sleep(2);
-			    $time = time();
-			    //connect_all($hosts);
-			    $aprs_connect = 0;
-			    connect_all($globalSources);
-
+			if ($globalDebug) echo "Restart all connections...";
+			sleep(2);
+			$time = time();
+			//connect_all($hosts);
+			$aprs_connect = 0;
+			if ($reset > 40) exit('Too many attempts...');
+			connect_all($globalSources);
 		}
 	    }
 	}
