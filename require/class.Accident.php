@@ -182,7 +182,12 @@ class Accident {
 	* @return Array number of fatalities last 12 months
 	*/
 	public function countFatalitiesLast12Months() {
-		$query = "SELECT EXTRACT(month FROM date) AS month, EXTRACT(year FROM date) AS year, SUM(fatalities) as count FROM accidents WHERE accidents_id IN (SELECT MAX(accidents_id) FROM accidents WHERE fatalities > 0 AND date > (current_date - INTERVAL '12 months') GROUP BY registration) GROUP BY EXTRACT(month FROM date), EXTRACT(year FROM date) ORDER BY year,month";
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT EXTRACT(month FROM date) AS month, EXTRACT(year FROM date) AS year, SUM(fatalities) as count FROM accidents WHERE accidents_id IN (SELECT MAX(accidents_id) FROM accidents WHERE fatalities > 0 AND date > DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY registration) GROUP BY EXTRACT(month FROM date), EXTRACT(year FROM date) ORDER BY year,month";
+		} else {
+			$query = "SELECT EXTRACT(month FROM date) AS month, EXTRACT(year FROM date) AS year, SUM(fatalities) as count FROM accidents WHERE accidents_id IN (SELECT MAX(accidents_id) FROM accidents WHERE fatalities > 0 AND date > (current_date - INTERVAL '12 months') GROUP BY registration) GROUP BY EXTRACT(month FROM date), EXTRACT(year FROM date) ORDER BY year,month";
+		}
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute();
