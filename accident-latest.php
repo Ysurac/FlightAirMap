@@ -12,7 +12,6 @@ if(!isset($_GET['limit']))
 {
 	$limit_start = 0;
 	$limit_end = 25;
-	$absolute_difference = 25;
 } else {
 	$limit_explode = explode(",", $_GET['limit']);
 	$limit_start = $limit_explode[0];
@@ -36,7 +35,7 @@ print '<div class="table column">';
 print '<p>'._("The table below shows the latest Accidents.").'</p>';
 $spotter_array = $Accident->getAccidentData($limit_start.",".$absolute_difference,'accident');
 //print_r($spotter_array);
-if (!empty($spotter_array) && $spotter_array[0]['query_number_rows'] != 0) {
+if (!empty($spotter_array) && isset($spotter_array[0]['query_number_rows']) && $spotter_array[0]['query_number_rows'] != 0) {
 	include('table-output.php');
 	print '<div class="pagination">';
 	if ($limit_previous_1 >= 0) print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';

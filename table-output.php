@@ -64,7 +64,9 @@ if (strtolower($current_page) == "search")
 	} else {
 		print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
 	}
-	print '<th class="routestop"><span class="nomobile">'._("Route stop").'</span><span class="mobile">'._("Stop").'</span></a></th>';
+	if ((isset($globalIvAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
+		print '<th class="routestop"><span class="nomobile">'._("Route stop").'</span><span class="mobile">'._("Stop").'</span></a></th>';
+	}
 	if (isset($_GET['dist']) && $_GET['dist'] != '') {
 		if ($_GET['sort'] == "distance_asc")
 		{
@@ -227,8 +229,8 @@ if (strtolower($current_page) == "search")
 		} else {
 			print '<th class="arrival"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></th>';
 		}                                               
-		print '<th class="route"><span class="nomobile">'._("Route").'</span><span class="mobile">'._("Route").'</span></th>';
-		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+		if ((isset($globalIvAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
+			print '<th class="route"><span class="nomobile">'._("Route").'</span><span class="mobile">'._("Route").'</span></th>';
 			print '<th class="pilot"><span class="nomobile">'._("Pilot name").'</span><span class="mobile">'._("Pilot").'</span></a></th>';
 		} else {
 			print '<th class="owner"><span class="nomobile">'._("Owner name").'</span><span class="mobile">'._("Owner").'</span></a></th>';
@@ -316,8 +318,8 @@ if (strtolower($current_page) == "search")
 		} else {
 			print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
 		}
-		print '<th class="routestop"><span class="nomobile">'._("Route stop").'</span><span class="mobile">Stop</span></a></th>';
-		if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+		if ((isset($globalIvAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
+			print '<th class="routestop"><span class="nomobile">'._("Route stop").'</span><span class="mobile">Stop</span></a></th>';
 			print '<th class="pilot"><span class="nomobile">'._("Pilot name").'</span><span class="mobile">'._("Pilot").'</span></a></th>';
 		} else {
 			print '<th class="owner"><span class="nomobile">'._("Owner name").'</span><span class="mobile">'._("Owner").'</span></a></th>';
@@ -623,33 +625,35 @@ foreach($spotter_array as $spotter_item)
 				}
 				$distance = $Spotter->getAirportDistance($spotter_item['arrival_airport'],$latitude,$longitude);
 			} else $distance = '';
-				if ($distance != '') {
-				    if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
-					    echo '<br/><i>'.round($distance*0.539957).' nm</i>';
-				    } elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
-					    echo '<br/><i>'.round($distance*0.621371).' mi</i>';
-				    } elseif ((!isset($_COOKIE['unitdistance']) && ((isset($globalUnitDistance) && $globalUnitDistance == 'km') || !isset($globalUnitDistance))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) {
-					    echo '<br/><i>'.$distance.' km</i>';
-				    }
+			if ($distance != '') {
+				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+					echo '<br/><i>'.round($distance*0.539957).' nm</i>';
+				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+					echo '<br/><i>'.round($distance*0.621371).' mi</i>';
+				} elseif ((!isset($_COOKIE['unitdistance']) && ((isset($globalUnitDistance) && $globalUnitDistance == 'km') || !isset($globalUnitDistance))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) {
+					echo '<br/><i>'.$distance.' km</i>';
 				}
 			}
-			print '</td>'."\n";
+		}
+		print '</td>'."\n";
+		if ((isset($globalIvAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
 			// Route stop
 			if(strtolower($current_page) != "upcoming"){
-			print '<td class="route_stop">'."\n";
-			if (!isset($spotter_item['route_stop']) || $spotter_item['route_stop'] == '' || $spotter_item['route_stop'] == 'NULL') {
-				print '<span class="nomobile">-</span>'."\n";
-				print '<span class="mobile">-</span>'."\n";
-			} elseif (!isset($spotter_item['route_stop_details'])) {
-				print '<span class="nomobile">'.$spotter_item['route_stop'].'</span>'."\n";
-				print '<span class="mobile">'.$spotter_item['route_stop'].'</span>'."\n";
-			} else {
-				foreach ($spotter_item['route_stop_details'] as $rst) {
-					print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$rst['airport_icao'].'">'.$rst['airport_city'].', '.$rst['airport_country'].' ('.$rst['airport_icao'].')</a></span>'."\n";
-					print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$rst['airport_icao'].'">'.$rst['airport_icao'].'</a></span><br />'."\n";
+				print '<td class="route_stop">'."\n";
+				if (!isset($spotter_item['route_stop']) || $spotter_item['route_stop'] == '' || $spotter_item['route_stop'] == 'NULL') {
+					print '<span class="nomobile">-</span>'."\n";
+					print '<span class="mobile">-</span>'."\n";
+				} elseif (!isset($spotter_item['route_stop_details'])) {
+					print '<span class="nomobile">'.$spotter_item['route_stop'].'</span>'."\n";
+					print '<span class="mobile">'.$spotter_item['route_stop'].'</span>'."\n";
+				} else {
+					foreach ($spotter_item['route_stop_details'] as $rst) {
+						print '<span class="nomobile"><a href="'.$globalURL.'/airport/'.$rst['airport_icao'].'">'.$rst['airport_city'].', '.$rst['airport_country'].' ('.$rst['airport_icao'].')</a></span>'."\n";
+						print '<span class="mobile"><a href="'.$globalURL.'/airport/'.$rst['airport_icao'].'">'.$rst['airport_icao'].'</a></span><br />'."\n";
+					}
 				}
+				print '</td>'."\n";
 			}
-			print '</td>'."\n";
 		}
 		if (isset($_GET['dist']) && $_GET['dist'] != '') {
 			print '<td class="distance">'."\n";
@@ -829,7 +833,11 @@ foreach($spotter_array as $spotter_item)
 			print '<li><a href="'.$globalURL.'/search/xml?q='.$spotter_item['spotter_id'].'&download=true"><i class="fa fa-download"></i>'._("Download Flight Data").' (XML)</a></li>';
 			print '<li><hr /></li>';
 		}
-		if (isset($spotter_item['registration']) && $spotter_item['registration'] != "")
+		if (strtolower($current_page) == "accident-latest" || strtolower($current_page) == "accident-detailed" || strtolower($current_page) == "incident-latest" || strtolower($current_page) == "incident-detailed") {
+			if (isset($spotter_item['flightaware_id'])) {
+				print '<li><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'">'._("Aircraft History").' ('.$spotter_item['registration'].')</a></li>';
+			}
+		} elseif (isset($spotter_item['registration']) && $spotter_item['registration'] != "")
 		{
 			print '<li><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'">'._("Aircraft History").' ('.$spotter_item['registration'].')</a></li>';
 		}

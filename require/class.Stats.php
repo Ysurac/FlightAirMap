@@ -1975,6 +1975,11 @@ class Stats {
 				date_default_timezone_set('UTC');
 				$this->addLastStatsUpdate('last_update_stats',date('Y-m-d G:i:s'));
 			}
+			if ($globalStatsResetYear) {
+				require_once(dirname(__FILE__).'../install/class.settings.php');
+				settings::modify_settings(array('globalStatsResetYear' => 'FALSE'));
+			}
+
 		//}
 	}
 }

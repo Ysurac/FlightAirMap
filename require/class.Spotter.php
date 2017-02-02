@@ -2300,7 +2300,31 @@ class Spotter{
 	}
 
 	/**
-	* Gets correct aircraft operator corde
+	* Gets the spotter_id and flightaware_id based on the aircraft registration
+	*
+	* @param String $registration the aircraft registration
+	* @return Array spotter_id and flightaware_id
+	*
+	*/
+	public function getAllIDByRegistration($registration)
+	{
+		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
+
+		$query  = "SELECT spotter_id,flightaware_id, date FROM spotter_output WHERE spotter_output.registration = :registration";
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':registration' => $registration));
+
+		$idarray = array();
+		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+			$date = $row['date'];
+			$idarray[$date] = array('flightaware_id' => $row['flightaware_id'],'spotter_id' => $row['spotter_id']);
+		}
+		return $idarray;
+	}
+
+	/**
+	* Gets correct aircraft operator code
 	*
 	* @param String $operator the aircraft operator code (callsign)
 	* @return String aircraft operator code
