@@ -6,8 +6,8 @@ require_once('require/class.Translation.php');
 //require_once('require/class.SpotterLive.php');
 require_once('require/class.SpotterArchive.php');
 
-if (!isset($_GET['owner'])){
-	header('Location: '.$globalURL.'');
+if (!isset($_GET['pilot'])){
+	header('Location: '.$globalURL.'/');
 } else {
 	$Spotter = new Spotter();
 	$SpotterArchive = new SpotterArchive();
