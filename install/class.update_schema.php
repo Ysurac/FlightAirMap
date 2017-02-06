@@ -1338,7 +1338,7 @@ class update_schema {
 			if ($error != '') return $error;
 		}
 		if ((isset($globalVATSIM) && $globalVATSIM) || (isset($globalIVAO) && $globalIVAO)) {
-			include_once('class/class.update_db.php');
+			include_once(dirname(__FILE__)'/class.update_db.php');
 			if (isset($globalVATSIM) && $globalVATSIM) {
 				$error .= update_db::update_vatsim();
 				if ($error != '') return $error;
