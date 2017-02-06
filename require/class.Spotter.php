@@ -1342,13 +1342,8 @@ class Spotter{
 		$additional_query = '';
 		if ($pilot != "")
 		{
-			if (!is_string($pilot))
-			{
-				return false;
-			} else {
-				$additional_query = " AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot)";
-				$query_values = array(':pilot' => $pilot);
-			}
+			$additional_query = " AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot)";
+			$query_values = array(':pilot' => $pilot);
 		}
 		
 		if ($limit != "")

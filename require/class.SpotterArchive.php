@@ -1025,15 +1025,10 @@ class SpotterArchive {
 	$limit_query = '';
 	$additional_query = '';
 	
-	if ($owner != "")
+	if ($pilot != "")
 	{
-	    if (!is_string($owner))
-	    {
-		return false;
-	    } else {
 		$additional_query = " AND (spotter_archive_output.pilot_id = :pilot OR spotter_archive_output.pilot_name = :pilot)";
 		$query_values = array(':pilot' => $pilot);
-	    }
 	}
 	
 	if ($limit != "")
