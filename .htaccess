@@ -173,6 +173,20 @@ RewriteRule ^ident/([^/]+)/([^/]+)(/?)$ ident-detailed.php?ident=$1&limit=$2 [L,
 RewriteRule ^ident/([^/]+)(/?)$ ident-detailed.php?ident=$1 [L,NC]
 RewriteRule ^ident(/?)$ ident.php [L,NC]
 
+########### OWNER ###########
+
+RewriteRule ^owner/([^/]+)/([^/]+)/([^/]+)(/?)$ owner-detailed.php?owner=$1&limit=$2&sort=$3 [L,NC]
+RewriteRule ^owner/([^/]+)/([^/]+)(/?)$ owner-detailed.php?owner=$1&limit=$2 [L,NC]
+RewriteRule ^owner/([^/]+)(/?)$ owner-detailed.php?owner=$1 [L,NC]
+RewriteRule ^owner(/?)$ owner.php [L,NC]
+
+########### PILOT ###########
+
+RewriteRule ^pilot/([^/]+)/([^/]+)/([^/]+)(/?)$ pilot-detailed.php?pilot=$1&limit=$2&sort=$3 [L,NC]
+RewriteRule ^pilot/([^/]+)/([^/]+)(/?)$ pilot-detailed.php?pilot=$1&limit=$2 [L,NC]
+RewriteRule ^pilot/([^/]+)(/?)$ pilot-detailed.php?pilot=$1 [L,NC]
+RewriteRule ^pilot(/?)$ pilot.php [L,NC]
+
 
 ########### AIRCRAFT ###########
 

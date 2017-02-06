@@ -1270,6 +1270,116 @@ class Spotter{
 		return $spotter_array;
 	}
 	
+	/**
+	* Gets all the spotter information based on the owner
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public function getSpotterDataByOwner($owner = '', $limit = '', $sort = '')
+	{
+		global $global_query;
+		
+		date_default_timezone_set('UTC');
+		
+		$query_values = array();
+		$limit_query = '';
+		$additional_query = '';
+		if ($owner != "")
+		{
+			if (!is_string($owner))
+			{
+				return false;
+			} else {
+				$additional_query = " AND (spotter_output.owner_name = :owner)";
+				$query_values = array(':owner' => $owner);
+			}
+		}
+		
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+			
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+			}
+		}
+
+		if ($sort != "")
+		{
+			$search_orderby_array = $this->getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY spotter_output.date DESC";
+		}
+
+		$query = $global_query." WHERE spotter_output.owner_name <> '' ".$additional_query." ".$orderby_query;
+
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
+
+		return $spotter_array;
+	}
+	
+	/**
+	* Gets all the spotter information based on the pilot
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public function getSpotterDataByPilot($pilot = '', $limit = '', $sort = '')
+	{
+		global $global_query;
+		
+		date_default_timezone_set('UTC');
+		
+		$query_values = array();
+		$limit_query = '';
+		$additional_query = '';
+		if ($pilot != "")
+		{
+			if (!is_string($pilot))
+			{
+				return false;
+			} else {
+				$additional_query = " AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot)";
+				$query_values = array(':pilot' => $pilot);
+			}
+		}
+		
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+			
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+			}
+		}
+
+		if ($sort != "")
+		{
+			$search_orderby_array = $this->getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY spotter_output.date DESC";
+		}
+
+		$query = $global_query." WHERE spotter_output.pilot_name <> '' ".$additional_query." ".$orderby_query;
+
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
+
+		return $spotter_array;
+	}
+	
 	
 	
 	/**

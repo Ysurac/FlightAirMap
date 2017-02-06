@@ -201,6 +201,20 @@ location /ident {
     rewrite ^/ident(/?)$ /ident.php last;
 }
 
+location /owner {
+    rewrite ^/owner/([^/]+)/([^/]+)/([^/]+)(/?)$ /owner-detailed.php?owner=$1&limit=$2&sort=$3 last;
+    rewrite ^/owner/([^/]+)/([^/]+)(/?)$ /owner-detailed.php?owner=$1&limit=$2 last;
+    rewrite ^/owner/([^/]+)(/?)$ /owner-detailed.php?owner=$1 last;
+    rewrite ^/owner(/?)$ /owner.php last;
+}
+
+location /pilot {
+    rewrite ^/pilot/([^/]+)/([^/]+)/([^/]+)(/?)$ /pilot-detailed.php?pilot=$1&limit=$2&sort=$3 last;
+    rewrite ^/pilot/([^/]+)/([^/]+)(/?)$ /pilot-detailed.php?pilot=$1&limit=$2 last;
+    rewrite ^/pilot/([^/]+)(/?)$ /pilot-detailed.php?pilot=$1 last;
+    rewrite ^/pilot(/?)$ /pilot.php last;
+}
+
 location /aircraft {
     rewrite ^/aircraft/statistics/airline/([^/]+)(/?)$ /aircraft-statistics-airline.php?aircraft_type=$1 last;
     rewrite ^/aircraft/statistics/airline-country/([^/]+)(/?)$ /aircraft-statistics-airline-country.php?aircraft_type=$1 last;

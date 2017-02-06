@@ -684,15 +684,15 @@ foreach($spotter_array as $spotter_item)
 					print '<span class="nomobile">-</span>'."\n";
 					print '<span class="mobile">-</span>'."\n";
 				} elseif ((!isset($spotter_item['pilot_id']) || $spotter_item['pilot_id'] == '') && (isset($spotter_item['pilot_name']) && $spotter_item['pilot_name'] != '')) {
-					print '<span class="nomobile">'.$spotter_item['pilot_name'].'</span>'."\n";
-					print '<span class="mobile">'.$spotter_item['pilot_name'].'-</span>'."\n";
+					print '<span class="nomobile"><a href="'.$globalURL.'/pilot/'.$spotter_item['pilot_name'].'">'.$spotter_item['pilot_name'].'</a></span>'."\n";
+					print '<span class="mobile"><a href="'.$globalURL.'/pilot/'.$spotter_item['pilot_name'].'">'.$spotter_item['pilot_name'].'</a></span>'."\n";
 				} else {
 					if (isset($spotter_item['format_source']) && $spotter_item['format_source'] == 'whazzup') {
-						print '<span class="nomobile"><a href="https://www.ivao.aero/Member.aspx?ID='.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')</a></span>'."\n";
-						print '<span class="mobile"><a href="https://www.ivao.aero/Member.aspx?ID='.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')</a></span>'."\n";
+						print '<span class="nomobile"><a href="'.$globalURL.'/pilot/'.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_name'].'</a> (<a href="https://www.ivao.aero/Member.aspx?ID='.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].'</a>)</span>'."\n";
+						print '<span class="mobile"><a href="'.$globalURL.'/pilot/'.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_name'].'</a> (<a href="https://www.ivao.aero/Member.aspx?ID='.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_id'].'</a>)</span>'."\n";
 					} else {
-						print '<span class="nomobile">'.$spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')</span>'."\n";
-						print '<span class="mobile">'.$spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')</span>'."\n";
+						print '<span class="nomobile"><a href="'.$globalURL.'/pilot/'.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')</a></span>'."\n";
+						print '<span class="mobile"><a href="'.$globalURL.'/pilot/'.$spotter_item['pilot_id'].'">'.$spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')</a></span>'."\n";
 					}
 				}
 				print '</td>'."\n";
@@ -702,8 +702,8 @@ foreach($spotter_array as $spotter_item)
 					print '<span class="nomobile">-</span>'."\n";
 					print '<span class="mobile">-</span>'."\n";
 				} else {
-					print '<span class="nomobile">'.$spotter_item['aircraft_owner'].'</span>'."\n";
-					print '<span class="mobile">'.$spotter_item['aircraft_owner'].'</span>'."\n";
+					print '<span class="nomobile"><a href="'.$globalURL.'/owner/'.$spotter_item['aircraft_owner'].'">'.$spotter_item['aircraft_owner'].'</a></span>'."\n";
+					print '<span class="mobile"><a href="'.$globalURL.'/owner/'.$spotter_item['aircraft_owner'].'">'.$spotter_item['aircraft_owner'].'</a></span>'."\n";
 				}
 				print '</td>'."\n";
 			}
