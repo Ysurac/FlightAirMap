@@ -2245,12 +2245,15 @@ class Spotter{
 			*/
 			$result = $sth->fetchAll(PDO::FETCH_ASSOC);
 			if (empty($result) && $fromsource !== NULL) {
+				/*
 				$query = 'SELECT COUNT(*) AS nb FROM airlines WHERE forsource = :fromsource';
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':fromsource' => $fromsource));
 				$row = $sth->fetch(PDO::FETCH_ASSOC);
 				$sth->closeCursor();
 				if ($row['nb'] == 0) $result = $this->getAllAirlineInfo($airline_icao);
+				*/
+				$result = $this->getAllAirlineInfo($airline_icao);
 			}
 			return $result;
 		}
