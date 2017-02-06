@@ -3872,7 +3872,7 @@ class Spotter{
 	* @return Array the pilots list
 	*
 	*/
-	public function countAllPilots($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '', $month = '')
+	public function countAllPilots($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '', $month = '',$day = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9834,6 +9834,7 @@ class Spotter{
 	*/
 	public function countOverallPilots($filters = array(),$year = '',$month = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT COUNT(DISTINCT spotter_output.pilot_id) AS pilot_count  
                     FROM spotter_output".$filter_query." spotter_output.pilot_id <> ''";

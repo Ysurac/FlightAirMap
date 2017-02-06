@@ -68,7 +68,6 @@ function populate(obj,str,selected) {
 	});
 }
 function statsdatechange(e) {
-	console.log(e);
 	var form = document.getElementById('changedate');
 	var yearmonth = form.date.value.split("-");
 	var pagename = location.pathname;
