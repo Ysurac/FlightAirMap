@@ -48,7 +48,7 @@ function language(selectObj) {
     window.location.reload();
 }
 function populate(obj,str,selected) {
-	console.log('populate');
+	//console.log('populate');
 	$.ajax({
 		url:'search-ajax.php',
 		type:'GET',
@@ -66,4 +66,18 @@ function populate(obj,str,selected) {
 			obj.append(options);
 		}
 	});
+}
+function statsdatechange(e) {
+	console.log(e);
+	var form = document.getElementById('changedate');
+	var yearmonth = form.date.value.split("-");
+	var pagename = location.pathname;
+	pagename = pagename.split('/');
+	var i = 0;
+	var page = '';
+	for (i = 0; i < pagename.length; i++) {
+		if (isNaN(pagename[i])) page = page +'/'+ pagename[i];
+	}
+	form.action = page+'/'+yearmonth[0]+'/'+yearmonth[1];
+	form.submit();
 }

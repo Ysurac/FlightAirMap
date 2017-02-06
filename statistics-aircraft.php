@@ -17,6 +17,8 @@ if ($airline_icao == 'all') {
     if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];
 }
 setcookie('stats_airline_icao',$airline_icao);
+$year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
+$month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
 
 require_once('header.php');
 
@@ -27,7 +29,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 	</div>
 	<p>'._("Below are the <strong>Top 10</strong> most common aircraft types.").'</p>';
 	  
-$aircraft_array = $Stats->countAllAircraftTypes(true,$airline_icao,$filter_name);
+$aircraft_array = $Stats->countAllAircraftTypes(true,$airline_icao,$filter_name,$year,$month);
 print '<div id="chart" class="chart" width="100%"></div>
       	<script> 
       		google.load("visualization", "1", {packages:["corechart"]});
@@ -38,7 +40,7 @@ print '<div id="chart" class="chart" width="100%"></div>
 $aircraft_data = '';
 foreach($aircraft_array as $aircraft_item)
 {
-	$aircraft_data .= '[ "'.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')",'.$aircraft_item['aircraft_icao_count'].'],';
+	$aircraft_data .= '[ "'.$aircraft_item['aircraft_manufacturer'].' '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')",'.$aircraft_item['aircraft_icao_count'].'],';
 }
 $aircraft_data = substr($aircraft_data, 0, -1);
 print $aircraft_data;
@@ -74,7 +76,7 @@ if (!empty($aircraft_array))
 		print '<tr>';
 		print '<td><strong>'.$i.'</strong></td>';
 		print '<td>';
-		print '<a href="'.$globalURL.'/aircraft/'.$aircraft_item['aircraft_icao'].'">'.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')</a>';
+		print '<a href="'.$globalURL.'/aircraft/'.$aircraft_item['aircraft_icao'].'">'.$aircraft_item['aircraft_manufacturer'].' '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')</a>';
 		print '</td>';
 		print '<td>';
 		print $aircraft_item['aircraft_icao_count'];

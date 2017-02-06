@@ -98,7 +98,7 @@ function create_socket($host, $port, &$errno, &$errstr) {
 }
 
 function create_socket_udp($host, $port, &$errno, &$errstr) {
-    echo "UDP !!";
+    echo "Create an UDP socket...\n";
     $ip = gethostbyname($host);
     $s = socket_create(AF_INET, SOCK_DGRAM, 0);
     $r = @socket_bind($s, $ip, $port);

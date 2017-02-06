@@ -17,6 +17,8 @@ if ($airline_icao == 'all') {
     if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];
 }
 setcookie('stats_airline_icao',$airline_icao);
+$year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
+$month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
 
 require_once('header.php');
 include('statistics-sub-menu.php'); 
@@ -27,7 +29,7 @@ print '<script type="text/javascript" src="https://www.google.com/jsapi"></scrip
 	</div>
     	<p>'._("Below are the <strong>Top 10</strong> most common aircraft registrations.").'</p>';
   
-$registration_array = $Stats->countAllAircraftRegistrations(true,$airline_icao,$filter_name);
+$registration_array = $Stats->countAllAircraftRegistrations(true,$airline_icao,$filter_name,$year,$month);
 print '<div id="chart" class="chart" width="100%"></div>
       	    <script> 
       		google.load("visualization", "1", {packages:["corechart"]});

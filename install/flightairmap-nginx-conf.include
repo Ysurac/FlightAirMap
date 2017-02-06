@@ -240,24 +240,37 @@ location /flightid {
 }
 
 location /statistics {
+    rewrite ^/statistics/([0-9]+)/([0-9]+)(/?)$ /statistics.php?year=$1&month=$2 last;
     rewrite ^/statistics(/?)$ /statistics.php last;
+    rewrite ^/statistics/aircraft/([0-9]+)/([0-9]+)(/?)$ /statistics-aircraft.php?year=$1&month=$2 last;
     rewrite ^/statistics/aircraft(/?)$ /statistics-aircraft.php last;
+    rewrite ^/statistics/registration/([0-9]+)/([0-9]+)(/?)$ /statistics-registration.php?year=$1&month=$2 last;
     rewrite ^/statistics/registration(/?)$ /statistics-registration.php last;
+    rewrite ^/statistics/manufacturer/([0-9]+)/([0-9]+)(/?)$ /statistics-manufacturer.php?year=$1&month=$2 last;
     rewrite ^/statistics/manufacturer(/?)$ /statistics-manufacturer.php last;
+    rewrite ^/statistics/airline/([0-9]+)/([0-9]+)(/?)$ /statistics-airline.php?year=$1&month=$2 last;
     rewrite ^/statistics/airline(/?)$ /statistics-airline.php last;
+    rewrite ^/statistics/airline-country/([0-9]+)/([0-9]+)(/?)$ /statistics-airline-country.php?year=$1&month=$2 last;
     rewrite ^/statistics/airline-country(/?)$ /statistics-airline-country.php last;
+    rewrite ^/statistics/airport-departure/([0-9]+)/([0-9]+)(/?)$ /statistics-airport-departure.php?year=$1&month=$2 last;
     rewrite ^/statistics/airport-departure(/?)$ /statistics-airport-departure.php last;
+    rewrite ^/statistics/airport-departure-country/([0-9]+)/([0-9]+)(/?)$ /statistics-airport-departure-country.php?year=$1&month=$2 last;
     rewrite ^/statistics/airport-departure-country(/?)$ /statistics-airport-departure-country.php last;
+    rewrite ^/statistics/airport-arrival/([0-9]+)/([0-9]+)(/?)$ /statistics-airport-arrival.php?year=$1&month=$2 last;
     rewrite ^/statistics/airport-arrival(/?)$ /statistics-airport-arrival.php last;
+    rewrite ^/statistics/airport-arrival-country/([0-9]+)/([0-9]+)(/?)$ /statistics-airport-arrival-country.php?year=$1&month=$2 last;
     rewrite ^/statistics/airport-arrival-country(/?)$ /statistics-airport-arrival-country.php last;
     rewrite ^/statistics/route-airport(/?)$ /statistics-route-airport.php last;
     rewrite ^/statistics/route-waypoint(/?)$ /statistics-route-waypoint.php last;
+    rewrite ^/statistics/callsign/([0-9]+)/([0-9]+)(/?)$ /statistics-callsign.php?year=$1&month=$2 last;
     rewrite ^/statistics/callsign(/?)$ /statistics-callsign.php last;
     rewrite ^/statistics/date(/?)$ /statistics-date.php last;
     rewrite ^/statistics/time(/?)$ /statistics-time.php last;
     rewrite ^/statistics/month(/?)$ /statistics-month.php last;
     rewrite ^/statistics/year(/?)$ /statistics-year.php last;
+    rewrite ^/statistics/pilot/([0-9]+)/([0-9]+)(/?)$ /statistics-pilot.php?year=$1&month=$2 last;
     rewrite ^/statistics/pilot(/?)$ /statistics-pilot.php last;
+    rewrite ^/statistics/owner/([0-9]+)/([0-9]+)(/?)$ /statistics-owner.php?year=$1&month=$2 last;
     rewrite ^/statistics/owner(/?)$ /statistics-owner.php last;
     rewrite ^/statistics/country(/?)$ /statistics-country.php last;
     rewrite ^/statistics/fatalities/year(/?)$ /statistics-fatalities-year.php last;

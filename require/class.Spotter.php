@@ -3800,32 +3800,59 @@ class Spotter{
 	* @return Array the airline list
 	*
 	*/
-	public function countAllAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
+	public function countAllAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(), $year = '', $month = '', $day = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
-		 			FROM spotter_output".$filter_query." spotter_output.airline_name <> '' AND spotter_output.airline_icao <> 'NA' ";
+		 			FROM spotter_output".$filter_query." spotter_output.airline_name <> '' AND spotter_output.airline_icao <> 'NA'";
 		if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
-				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= ' AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH)';
 			} else {
-				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= " AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
 			}
 		}
                 if ($sincedate != '') {
 			if ($globalDBdriver == 'mysql') {
-				$query .= "AND spotter_output.date > '".$sincedate."' ";
+				$query .= " AND spotter_output.date > '".$sincedate."'";
 			} else {
-				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-		$query .= "GROUP BY spotter_output.airline_name,spotter_output.airline_icao, spotter_output.airline_country ORDER BY airline_count DESC";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query .= " GROUP BY spotter_output.airline_name,spotter_output.airline_icao, spotter_output.airline_country ORDER BY airline_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
-		
+
 		$sth = $this->db->prepare($query);
-		$sth->execute();
- 
+		$sth->execute($query_values);
 		$airline_array = array();
 		$temp_array = array();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
@@ -3845,7 +3872,7 @@ class Spotter{
 	* @return Array the pilots list
 	*
 	*/
-	public function countAllPilots($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
+	public function countAllPilots($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '', $month = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -3865,16 +3892,43 @@ class Spotter{
 				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		
 		$query .= "GROUP BY spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.format_source ORDER BY pilot_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
-		$sth->execute();
-      
+		$sth->execute($query_values);
 		$airline_array = array();
 		$temp_array = array();
-        
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['pilot_name'] = $row['pilot_name'];
@@ -3886,7 +3940,7 @@ class Spotter{
 		return $airline_array;
 	}
 	
-		 /**
+	/**
 	* Gets all pilots that have flown over
 	*
 	* @return Array the pilots list
@@ -3939,17 +3993,17 @@ class Spotter{
 	* @return Array the pilots list
 	*
 	*/
-	public function countAllOwners($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
+	public function countAllOwners($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.owner_name, COUNT(spotter_output.owner_name) AS owner_count
-		 			FROM spotter_output".$filter_query." spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL ";
+					FROM spotter_output".$filter_query." spotter_output.owner_name <> '' AND spotter_output.owner_name IS NOT NULL";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
-				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= ' AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH)';
 			} else {
-				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= " AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
 			}
 		}
                 if ($sincedate != '') {
@@ -3959,16 +4013,41 @@ class Spotter{
 				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-		$query .= "GROUP BY spotter_output.owner_name ORDER BY owner_count DESC";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query .= " GROUP BY spotter_output.owner_name ORDER BY owner_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
-      
 		
 		$sth = $this->db->prepare($query);
-		$sth->execute();
-      
+		$sth->execute($query_values);
 		$airline_array = array();
 		$temp_array = array();
-        
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['owner_name'] = $row['owner_name'];
@@ -4507,17 +4586,46 @@ class Spotter{
 	* @return Array the airline country list
 	*
 	*/
-	public function countAllAirlineCountries($limit = true, $filters = array())
+	public function countAllAirlineCountries($limit = true, $filters = array(), $year = '', $month = '', $day = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
-		 			FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND spotter_output.airline_country <> 'NA' 
-					GROUP BY spotter_output.airline_country
+		 			FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND spotter_output.airline_country <> 'NA'";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query .= " GROUP BY spotter_output.airline_country
 					ORDER BY airline_country_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
 
 		$airline_array = array();
 		$temp_array = array();
@@ -4601,11 +4709,10 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypes($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
+	public function countAllAircraftTypes($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
-
 		$query  = "SELECT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer 
 		    FROM spotter_output ".$filter_query." spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> ''";
 		if ($olderthanmonths > 0) {
@@ -4622,12 +4729,40 @@ class Spotter{
 				$query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
 
 		$query .= " GROUP BY spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer ORDER BY aircraft_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
  
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
 
 		$aircraft_array = array();
 		$temp_array = array();
@@ -4648,7 +4783,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftTypesByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
+	public function countAllAircraftTypesByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array(),$year = '',$month = '', $day = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -4668,12 +4803,40 @@ class Spotter{
 				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
 
 		$query .= "GROUP BY spotter_output.airline_icao, spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer ORDER BY aircraft_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
  
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
 
 		$aircraft_array = array();
 		$temp_array = array();
@@ -5553,18 +5716,47 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftManufacturers($filters = array())
+	public function countAllAircraftManufacturers($filters = array(),$year = '',$month = '',$day = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
                     FROM spotter_output ".$filter_query." spotter_output.aircraft_manufacturer <> '' AND spotter_output.aircraft_manufacturer <> 'Not Available'";
-                $query .= " GROUP BY spotter_output.aircraft_manufacturer
+                $query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query .= " GROUP BY spotter_output.aircraft_manufacturer
 					ORDER BY aircraft_manufacturer_count DESC
 					LIMIT 10";
       
 		
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
       
 		$manufacturer_array = array();
 		$temp_array = array();
@@ -5588,7 +5780,7 @@ class Spotter{
 	* @return Array the aircraft list
 	*
 	*/
-	public function countAllAircraftRegistrations($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
+	public function countAllAircraftRegistrations($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array(),$year = '', $month = '', $day = '')
 	{
 		global $globalDBdriver;
 		$Image = new Image($this->db);
@@ -5609,14 +5801,39 @@ class Spotter{
 				$query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-
-		// if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-		//if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
-                $query .= " GROUP BY spotter_output.registration, spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.airline_name ORDER BY aircraft_registration_count DESC";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query .= " GROUP BY spotter_output.registration, spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.airline_name ORDER BY aircraft_registration_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
 		
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
       
 		$aircraft_array = array();
 		$temp_array = array();
@@ -5709,7 +5926,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDepartureAirports($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
+	public function countAllDepartureAirports($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5729,19 +5946,43 @@ class Spotter{
 				$query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-
-            	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
                 $query .= " GROUP BY spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
 				ORDER BY airport_departure_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
-      
+
 		$sth = $this->db->prepare($query);
-		$sth->execute();
-      
+		$sth->execute($query_values);
+
 		$airport_array = array();
 		$temp_array = array();
-        
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
@@ -5814,7 +6055,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDetectedDepartureAirports($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
+	public function countAllDetectedDepartureAirports($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5834,14 +6075,40 @@ class Spotter{
 				$query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-            	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
                 $query .= " GROUP BY spotter_output.real_departure_airport_icao, airport.name, airport.city, airport.country
 				ORDER BY airport_departure_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
     		//echo $query;
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
       
 		$airport_array = array();
 		$temp_array = array();
@@ -6523,7 +6790,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllArrivalAirports($limit = true, $olderthanmonths = 0, $sincedate = '', $icaoaskey = false,$filters = array())
+	public function countAllArrivalAirports($limit = true, $olderthanmonths = 0, $sincedate = '', $icaoaskey = false,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -6543,16 +6810,41 @@ class Spotter{
 				$query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-
-            	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
                 $query .= " GROUP BY spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10";
       
 		
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
       
 		$airport_array = array();
 		$temp_array = array();
@@ -6639,7 +6931,7 @@ class Spotter{
 	* @return Array the airport list
 	*
 	*/
-	public function countAllDetectedArrivalAirports($limit = true, $olderthanmonths = 0, $sincedate = '',$icaoaskey = false,$filters = array())
+	public function countAllDetectedArrivalAirports($limit = true, $olderthanmonths = 0, $sincedate = '',$icaoaskey = false,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -6659,19 +6951,44 @@ class Spotter{
 				$query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
-            	//if ($olderthanmonths > 0) $query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-                //if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
                 $query .= " GROUP BY spotter_output.real_arrival_airport_icao, airport.name, airport.city, airport.country
 					ORDER BY airport_arrival_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10";
       
 		
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
       
 		$airport_array = array();
 		$temp_array = array();
-        
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
@@ -7321,6 +7638,7 @@ class Spotter{
 	*/
 	public function countAllArrivalAirportCountriesByCountry($country,$filters = array())
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
@@ -7354,18 +7672,47 @@ class Spotter{
 	* @return Array the airport departure list
 	*
 	*/
-	public function countAllDepartureCountries($filters = array())
+	public function countAllDepartureCountries($filters = array(),$year = '',$month = '', $day = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
 				FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.departure_airport_icao <> ''";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
 		$query .= " GROUP BY spotter_output.departure_airport_country
 					ORDER BY airport_departure_country_count DESC
 					LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
       
 		$airport_array = array();
 		$temp_array = array();
@@ -7388,18 +7735,47 @@ class Spotter{
 	* @return Array the airport arrival list
 	*
 	*/
-	public function countAllArrivalCountries($limit = true,$filters = array())
+	public function countAllArrivalCountries($limit = true,$filters = array(),$year = '',$month = '',$day = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 			FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> ''";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
 		$query .= " GROUP BY spotter_output.arrival_airport_country
 					ORDER BY airport_arrival_country_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
       
 		$airport_array = array();
 		$temp_array = array();
@@ -7851,7 +8227,7 @@ class Spotter{
 	* @return Array the callsign list
 	*
 	*/
-	public function countAllCallsigns($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
+	public function countAllCallsigns($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '', $month = '', $day = '')
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7865,11 +8241,39 @@ class Spotter{
 			if ($globalDBdriver == 'mysql') $query .= " AND spotter_output.date > '".$sincedate."'";
 			else $query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 		}
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM spotter_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
 		$query .= " GROUP BY spotter_output.ident, spotter_output.airline_name, spotter_output.airline_icao ORDER BY callsign_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       		
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
       
 		$callsign_array = array();
 		$temp_array = array();
@@ -9354,13 +9758,34 @@ class Spotter{
 	* @return Integer the number of aircrafts
 	*
 	*/
-	public function countOverallAircrafts($filters = array())
+	public function countOverallAircrafts($filters = array(),$year = '',$month = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT COUNT(DISTINCT spotter_output.aircraft_icao) AS aircraft_count  
                     FROM spotter_output".$filter_query." spotter_output.ident <> ''";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
 
@@ -9370,14 +9795,34 @@ class Spotter{
 	* @return Integer the number of aircrafts
 	*
 	*/
-	public function countOverallArrival($filters = array())
+	public function countOverallArrival($filters = array(),$year = '',$month = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT COUNT(spotter_output.real_arrival_airport_icao) AS arrival_count  
                     FROM spotter_output".$filter_query." spotter_output.arrival_airport_icao <> ''";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
 		
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
 
@@ -9387,13 +9832,32 @@ class Spotter{
 	* @return Integer the number of pilots
 	*
 	*/
-	public function countOverallPilots($filters = array())
+	public function countOverallPilots($filters = array(),$year = '',$month = '')
 	{
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT COUNT(DISTINCT spotter_output.pilot_id) AS pilot_count  
                     FROM spotter_output".$filter_query." spotter_output.pilot_id <> ''";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
 
@@ -9403,13 +9867,33 @@ class Spotter{
 	* @return Integer the number of owners
 	*
 	*/
-	public function countOverallOwners($filters = array())
+	public function countOverallOwners($filters = array(),$year = '',$month = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT COUNT(DISTINCT spotter_output.owner_name) AS owner_count  
                     FROM spotter_output".$filter_query." spotter_output.owner_name <> ''";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
 	
@@ -9420,14 +9904,36 @@ class Spotter{
 	* @return Integer the number of flights
 	*
 	*/
-	public function countOverallFlights($filters = array())
+	public function countOverallFlights($filters = array(),$year = '',$month = '')
 	{
-		$query  = "SELECT COUNT(spotter_output.spotter_id) AS flight_count  
-                    FROM spotter_output";
-		$query .= $this->getFilter($filters);
+		global $globalDBdriver;
+		$queryi  = "SELECT COUNT(spotter_output.spotter_id) AS flight_count FROM spotter_output";
+		$query_values = array();
+		$query = '';
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if (empty($query_values)) $queryi .= $this->getFilter($filters);
+		else $queryi .= $this->getFilter($filters,true,true).substr($query,4);
+		
 		//echo $query;
-		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth = $this->db->prepare($queryi);
+		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
 	
@@ -9437,14 +9943,34 @@ class Spotter{
 	* @return Integer the number of flights
 	*
 	*/
-	public function countOverallMilitaryFlights($filters = array())
+	public function countOverallMilitaryFlights($filters = array(),$year = '',$month = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT COUNT(spotter_output.spotter_id) AS flight_count  
                     FROM airlines,spotter_output".$filter_query." spotter_output.airline_icao = airlines.icao AND airlines.type = 'military'";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
       
 		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
 	
@@ -9456,14 +9982,38 @@ class Spotter{
 	* @return Integer the number of airlines
 	*
 	*/
-	public function countOverallAirlines($filters = array())
+	public function countOverallAirlines($filters = array(),$year = '',$month = '')
 	{
-		$query  = "SELECT COUNT(DISTINCT spotter_output.airline_name) AS airline_count 
+		global $globalDBdriver;
+		$queryi  = "SELECT COUNT(DISTINCT spotter_output.airline_name) AS airline_count 
 							FROM spotter_output";
       
-		$query .= $this->getFilter($filters);
-		$sth = $this->db->prepare($query);
-		$sth->execute();
+		$query_values = array();
+		$query = '';
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM spotter_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM spotter_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+                if ($query == '') $queryi .= $this->getFilter($filters);
+                else $queryi .= $this->getFilter($filters,true,true).substr($query,4);
+
+
+		$sth = $this->db->prepare($queryi);
+		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
 
