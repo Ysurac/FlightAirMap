@@ -107,7 +107,7 @@ if (!isset($_GET['pilot'])){
 		*/
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['pilot_name'].'</h1>';
-		//print '<div><span class="label">'._("Owner").'</span>'.$spotter_array[0]['aircraft_owner'].'</div>';
+		if (isset($spotter_array[0]['pilot_id']) && $spotter_array[0]['pilot_id'] != '') print '<div><span class="label">'._("Pilot ID").'</span>'.$spotter_array[0]['pilot_id'].'</div>';
 		print '</div>';
 	
 		include('owner-sub-menu.php');

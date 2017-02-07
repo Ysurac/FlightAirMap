@@ -359,6 +359,17 @@ if ($facebook_meta_image != "")
           	<li><a href="<?php print $globalURL; ?>/aircraft"><?php echo _("Aircrafts Types"); ?></a></li>
 			<li><a href="<?php print $globalURL; ?>/airline"><?php echo _("Airlines"); ?></a></li>
 			<li><a href="<?php print $globalURL; ?>/airport"><?php echo _("Airports"); ?></a></li>
+<?php
+    if ((!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM)) {
+?>
+			<li><a href="<?php print $globalURL; ?>/owner"><?php echo _("Owners"); ?></a></li>
+<?php
+    } else {
+?>
+			<li><a href="<?php print $globalURL; ?>/pilot"><?php echo _("Pilots"); ?></a></li>
+<?php
+    }
+?>
 			<li><hr /></li>
             <li><a href="<?php print $globalURL; ?>/currently"><?php echo _("Current Activity"); ?></a></li>
             <li><a href="<?php print $globalURL; ?>/latest"><?php echo _("Latest Activity"); ?></a></li>

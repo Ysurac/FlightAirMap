@@ -125,6 +125,32 @@ class Stats {
                 return $all;
         }
 
+	public function getAllOwnerNames($stats_airline = '',$filter_name = '') {
+		if ($filter_name == '') $filter_name = $this->filter_name;
+                $query = "SELECT owner_name FROM stats_owner WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY owner_name ASC";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
+        }
+
+	public function getAllPilotNames($stats_airline = '',$filter_name = '') {
+		if ($filter_name == '') $filter_name = $this->filter_name;
+                $query = "SELECT pilot_id,pilot_name FROM stats_pilot WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY pilot_name ASC";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
+        }
+
 
 	public function countAllAircraftTypes($limit = true, $stats_airline = '', $filter_name = '',$year = '', $month = '') {
 		global $globalStatsFilters;

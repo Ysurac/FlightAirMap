@@ -2866,6 +2866,44 @@ class Spotter{
 
 		return $airport_array;
 	} 
+
+	/**
+	* Gets a list of all owner names
+	*
+	* @return Array list of owner names
+	*
+	*/
+	public function getAllOwnerNames($filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$airport_array = array();
+		$query  = "SELECT DISTINCT spotter_output.owner_name
+				FROM spotter_output".$filter_query." spotter_output.owner_name <> '' 
+				ORDER BY spotter_output.owner_name ASC";
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	} 
+
+	/**
+	* Gets a list of all pilot names and pilot ids
+	*
+	* @return Array list of pilot names and pilot ids
+	*
+	*/
+	public function getAllPilotNames($filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$airport_array = array();
+		$query  = "SELECT DISTINCT spotter_output.pilot_name, spotter_output.pilot_id
+				FROM spotter_output".$filter_query." spotter_output.pilot_name <> '' 
+				ORDER BY spotter_output.pilot_name ASC";
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	} 
 	
 	
 	/**
@@ -5640,7 +5678,7 @@ class Spotter{
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.registration, spotter_output.airline_name  
                     FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.owner_name = :owner 
                     GROUP BY spotter_output.registration,spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.airline_name
-		    ORDER BY registration_count DESC LIMIT 100";
+		    ORDER BY registration_count DESC";
 
 		
 		$sth = $this->db->prepare($query);
@@ -5684,7 +5722,7 @@ class Spotter{
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.registration, spotter_output.airline_name  
                     FROM spotter_output".$filter_query." spotter_output.registration <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
                     GROUP BY spotter_output.registration,spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.airline_name
-		    ORDER BY registration_count DESC LIMIT 100";
+		    ORDER BY registration_count DESC";
 
 		
 		$sth = $this->db->prepare($query);

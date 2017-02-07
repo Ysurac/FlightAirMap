@@ -45,14 +45,14 @@ if (!isset($_GET['owner'])){
 	} else {
 		$spotter_array = $Spotter->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference);
 		if (empty($spotter_array)) {
-			$spotter_array = $SpotterArchive->getSpotterDataByOwner($ident,$limit_start.",".$absolute_difference);
+			$spotter_array = $SpotterArchive->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference);
 		}
 	}
 
 	if (!empty($spotter_array))
 	{
 		$title = sprintf(_("Detailed View for %s"),$spotter_array[0]['aircraft_owner']);
-		$ident = $spotter_array[0]['ident'];
+		//$ident = $spotter_array[0]['ident'];
 		if (isset($spotter_array[0]['latitude'])) $latitude = $spotter_array[0]['latitude'];
 		if (isset($spotter_array[0]['longitude'])) $longitude = $spotter_array[0]['longitude'];
 		require_once('header.php');
