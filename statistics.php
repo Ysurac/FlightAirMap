@@ -22,7 +22,7 @@ if ($airline_icao != '' && $airline_icao != 'all') {
 	$airline_info = $Spotter->getAllAirlineInfo($airline_icao);
 	$airline_name = $airline_info[0]['name'];
 }
-setcookie('stats_airline_icao',$airline_icao);
+setcookie('stats_airline_icao',$airline_icao,time()+60*60*24,'/');
 if (isset($airline_name)) {
 	$title = _("Statistics").' - '.$airline_name;
 } else {

@@ -16,7 +16,7 @@ if ($airline_icao == 'all') {
 } elseif ($airline_icao == '' && isset($globalFilter)) {
     if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];
 }
-setcookie('stats_airline_icao',$airline_icao);
+setcookie('stats_airline_icao',$airline_icao,time()+60*60*24,'/');
 
 $year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
 $month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
