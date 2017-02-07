@@ -68,7 +68,7 @@ print ']);
     			});
       </script>';
 
-$hour_array = $Stats->countAllHours('count');
+$hour_array = $Stats->countAllHours('count',true,$airline_icao,$filter_name);
 if (!empty($hour_array))
 {
 	print '<div class="table-responsive">';

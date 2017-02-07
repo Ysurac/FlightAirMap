@@ -70,7 +70,7 @@ if (isset($globalDBArchiveMonths) && $globalDBArchiveMonths > 0) {
 } else {
 	print '<p>'._("Below are the <strong>Top 10</strong> most busiest dates.").'</p>';
 }
-$date_array = $Stats->countAllDates();
+$date_array = $Stats->countAllDates($airline_icao,$filter_name);
 if (!empty($date_array))
 {
 	print '<div class="table-responsive">';
