@@ -202,7 +202,7 @@ require_once('header.php');
 ?>
         <div class="row column">
 <?php
-    $flightover_array = $Stats->countAllFlightOverCountries($airline_icao,$filter_name,$year,$month);
+    $flightover_array = $Stats->countAllFlightOverCountries(false,$airline_icao,$filter_name,$year,$month);
     if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 	if (empty($flightover_array)) {
 	    print '<div class="col-md-12">';
