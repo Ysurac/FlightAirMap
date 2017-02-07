@@ -395,7 +395,7 @@ class Common {
 			return $dest; 
 	} 
 	
-	function remove_accents($string) {
+	public function remove_accents($string) {
 		if ( !preg_match('/[\x80-\xff]/', $string) ) return $string;
 		$chars = array(
 		    // Decompositions for Latin-1 Supplement

@@ -2876,7 +2876,6 @@ class Spotter{
 	public function getAllOwnerNames($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
-		$airport_array = array();
 		$query  = "SELECT DISTINCT spotter_output.owner_name
 				FROM spotter_output".$filter_query." spotter_output.owner_name <> '' 
 				ORDER BY spotter_output.owner_name ASC";
@@ -2895,7 +2894,6 @@ class Spotter{
 	public function getAllPilotNames($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
-		$airport_array = array();
 		$query  = "SELECT DISTINCT spotter_output.pilot_name, spotter_output.pilot_id
 				FROM spotter_output".$filter_query." spotter_output.pilot_name <> '' 
 				ORDER BY spotter_output.pilot_name ASC";
