@@ -2540,7 +2540,7 @@ class update_db {
 				echo update_db::update_translation();
 				//echo update_db::update_notam_fam();
 				echo update_db::update_ModeS();
-				echo update_db::update_ModeS_flarm();
+				//echo update_db::update_ModeS_flarm();
 				echo update_db::update_ModeS_ogn();
 				echo update_db::update_ModeS_faa();
 				echo update_db::fix_icaotype();
@@ -2554,7 +2554,7 @@ class update_db {
 				//echo update_db::update_notam_fam();
 				//echo update_db::update_ModeS();
 				echo update_db::update_ModeS_fam();
-				echo update_db::update_ModeS_flarm();
+				//echo update_db::update_ModeS_flarm();
 				echo update_db::update_ModeS_ogn();
 				echo update_db::delete_duplicatemodes();
 				echo update_db::update_banned_fam();
