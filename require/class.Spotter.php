@@ -4961,19 +4961,19 @@ class Spotter{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT spotter_output.airline_icao, spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer 
-		    FROM spotter_output".$filter_query." spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' AND spotter_output.airline_icao <>'' AND spotter_output.airline_icao <> 'NA' ";
+		    FROM spotter_output".$filter_query." spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' AND spotter_output.airline_icao <>'' AND spotter_output.airline_icao <> 'NA'";
 		if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
-				$query .= 'AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= ' AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH)';
 			} else {
-				$query .= "AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS' ";
+				$query .= " AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
 			}
 		}
 		if ($sincedate != '') {
 			if ($globalDBdriver == 'mysql') {
-				$query .= "AND spotter_output.date > '".$sincedate."' ";
+				$query .= " AND spotter_output.date > '".$sincedate."'";
 			} else {
-				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 		$query_values = array();
@@ -5005,7 +5005,7 @@ class Spotter{
 			}
 		}
 
-		$query .= "GROUP BY spotter_output.airline_icao, spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer ORDER BY aircraft_icao_count DESC";
+		$query .= " GROUP BY spotter_output.airline_icao, spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer ORDER BY aircraft_icao_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
  
 		$sth = $this->db->prepare($query);
@@ -8875,7 +8875,7 @@ class Spotter{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.ident, COUNT(spotter_output.ident) AS callsign_icao_count, spotter_output.airline_name, spotter_output.airline_icao  
-                    FROM spotter_output".$filter_query." spotter_output.ident <> '' ";
+                    FROM spotter_output".$filter_query." spotter_output.ident <> ''";
 		 if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') $query .= ' AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH)';
 			else $query .= " AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
