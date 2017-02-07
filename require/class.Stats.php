@@ -638,6 +638,7 @@ class Stats {
                         echo "error : ".$e->getMessage();
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                
                 if (empty($all)) {
 			$filters = array('airlines' => array($stats_airline));
 			if ($filter_name != '') {
@@ -646,6 +647,7 @@ class Stats {
             		$Spotter = new Spotter($this->db);
             		$all = $Spotter->countAllMonths($filters);
                 }
+                
                 return $all;
 	}
 	public function countAllMilitaryMonths($filter_name = '') {
