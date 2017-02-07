@@ -8107,7 +8107,7 @@ class Spotter{
 	public function countAllArrivalAirportCountriesByPilot($pilot, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
-		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
 		    FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
                     GROUP BY spotter_output.arrival_airport_country
