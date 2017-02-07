@@ -2,31 +2,31 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
-if (!isset($_GET['ident'])) {
-        header('Location: '.$globalURL.'/ident');
+if (!isset($_GET['pilot'])) {
+        header('Location: '.$globalURL.'/pilot');
         die();
 }
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
-$spotter_array = $Spotter->getSpotterDataByIdent($ident,"0,1", $sort);
+$pilot = filter_input(INPUT_GET,'pilot',FILTER_SANITIZE_STRING);
+$spotter_array = $Spotter->getSpotterDataByPilot($pilot,"0,1", $sort);
 
 if (!empty($spotter_array))
 {
-	$title = sprintf(_("Most Common Airlines of %s"),$spotter_array[0]['ident']);
+	$title = sprintf(_("Most Common Airlines of %s"),$spotter_array[0]['pilot_name']);
 	require_once('header.php');
 	print '<div class="info column">';
-	print '<h1>'.$spotter_array[0]['ident'].'</h1>';
-	print '<div><span class="label">'._("Ident").'</span>'.$spotter_array[0]['ident'].'</div>';
-	print '<div><span class="label">'._("Airline").'</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
+	print '<h1>'.$spotter_array[0]['pilot_name'].'</h1>';
+//	print '<div><span class="label">'._("Ident").'</span>'.$spotter_array[0]['ident'].'</div>';
+//	print '<div><span class="label">'._("Airline").'</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
 	print '</div>';
 
-	include('ident-sub-menu.php');
+	include('pilot-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Airlines").'</h2>';
-	print '<p>'.sprintf(_("The statistic below shows the most common airlines of flights using the ident/callsign <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common airlines of flights owned by <strong>%s</strong>."),$spotter_array[0]['pilot_name']).'</p>';
 
-	$airline_array = $Spotter->countAllAirlinesByIdent($ident);
+	$airline_array = $Spotter->countAllAirlinesByPilot($pilot);
 	if (!empty($airline_array))
 	{
 		print '<div class="table-responsive">';
@@ -67,7 +67,7 @@ if (!empty($spotter_array))
 			print '<td>';
 			print $airline_item['airline_count'];
 			print '</td>';
-			print '<td><a href="'.$globalURL.'/search?airline='.$airline_item['airline_icao'].'&callsign='.$_GET['ident'].'">'._("Search flights").'</a></td>';
+			print '<td><a href="'.$globalURL.'/search?airline='.$airline_item['airline_icao'].'&pilot_name='.$spotter_array[0]['pilot_name'].'">'._("Search flights").'</a></td>';
 			print '</tr>';
 			$i++;
 		}
@@ -77,10 +77,10 @@ if (!empty($spotter_array))
 	}
 	print '</div>';
 } else {
-	$title = _("Ident");
+	$title = _("Pilot");
 	require_once('header.php');
 	print '<h1>'._("Error").'</h1>';
-	print '<p>'._("Sorry, this ident/callsign is not in the database. :(").'</p>'; 
+	print '<p>'._("Sorry, this pilot is not in the database. :(").'</p>'; 
 }
 
 require_once('footer.php');

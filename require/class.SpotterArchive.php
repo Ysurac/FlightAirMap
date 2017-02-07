@@ -974,7 +974,7 @@ class SpotterArchive {
 	    {
 		return false;
 	    } else {
-		$additional_query = " AND (spotter_archive_output.owner = :owner)";
+		$additional_query = " AND (spotter_archive_output.owner_name = :owner)";
 		$query_values = array(':owner' => $owner);
 	    }
 	}
@@ -1001,7 +1001,7 @@ class SpotterArchive {
 	    $orderby_query = " ORDER BY spotter_archive_output.date DESC";
 	}
 
-	$query = $global_query." WHERE spotter_archive_output.owner <> '' ".$additional_query." ".$orderby_query;
+	$query = $global_query." WHERE spotter_archive_output.owner_name <> '' ".$additional_query." ".$orderby_query;
 
 	$spotter_array = $Spotter->getDataFromDB($query, $query_values, $limit_query);
 

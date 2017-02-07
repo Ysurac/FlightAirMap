@@ -175,6 +175,15 @@ RewriteRule ^ident(/?)$ ident.php [L,NC]
 
 ########### OWNER ###########
 
+RewriteRule ^owner/statistics/aircraft/([^/]+)(/?)$ owner-statistics-aircraft.php?owner=$1 [L,NC]
+RewriteRule ^owner/statistics/registration/([^/]+)(/?)$ owner-statistics-registration.php?owner=$1 [L,NC]
+RewriteRule ^owner/statistics/manufacturer/([^/]+)(/?)$ owner-statistics-manufacturer.php?owner=$1 [L,NC]
+RewriteRule ^owner/statistics/departure-airport/([^/]+)(/?)$ owner-statistics-departure-airport.php?owner=$1 [L,NC]
+RewriteRule ^owner/statistics/departure-airport-country/([^/]+)(/?)$ owner-statistics-departure-airport-country.php?owner=$1 [L,NC]
+RewriteRule ^owner/statistics/arrival-airport/([^/]+)(/?)$ owner-statistics-arrival-airport.php?owner=$1 [L,NC]
+RewriteRule ^owner/statistics/arrival-airport-country/([^/]+)(/?)$ owner-statistics-arrival-airport-country.php?owner=$1 [L,NC]
+RewriteRule ^owner/statistics/time/([^/]+)(/?)$ owner-statistics-time.php?owner=$1 [L,NC]
+RewriteRule ^owner/statistics/route/([^/]+)(/?)$ owner-statistics-route.php?owner=$1 [L,NC]
 RewriteRule ^owner/([^/]+)/([^/]+)/([^/]+)(/?)$ owner-detailed.php?owner=$1&limit=$2&sort=$3 [L,NC]
 RewriteRule ^owner/([^/]+)/([^/]+)(/?)$ owner-detailed.php?owner=$1&limit=$2 [L,NC]
 RewriteRule ^owner/([^/]+)(/?)$ owner-detailed.php?owner=$1 [L,NC]
@@ -182,6 +191,15 @@ RewriteRule ^owner(/?)$ owner.php [L,NC]
 
 ########### PILOT ###########
 
+RewriteRule ^pilot/statistics/aircraft/([^/]+)(/?)$ pilot-statistics-aircraft.php?pilot=$1 [L,NC]
+RewriteRule ^pilot/statistics/registration/([^/]+)(/?)$ pilot-statistics-registration.php?pilot=$1 [L,NC]
+RewriteRule ^pilot/statistics/manufacturer/([^/]+)(/?)$ pilot-statistics-manufacturer.php?pilot=$1 [L,NC]
+RewriteRule ^pilot/statistics/departure-airport/([^/]+)(/?)$ pilot-statistics-departure-airport.php?pilot=$1 [L,NC]
+RewriteRule ^pilot/statistics/departure-airport-country/([^/]+)(/?)$ pilot-statistics-departure-airport-country.php?pilot=$1 [L,NC]
+RewriteRule ^pilot/statistics/arrival-airport/([^/]+)(/?)$ pilot-statistics-arrival-airport.php?pilot=$1 [L,NC]
+RewriteRule ^pilot/statistics/arrival-airport-country/([^/]+)(/?)$ pilot-statistics-arrival-airport-country.php?pilot=$1 [L,NC]
+RewriteRule ^pilot/statistics/time/([^/]+)(/?)$ pilot-statistics-time.php?pilot=$1 [L,NC]
+RewriteRule ^pilot/statistics/route/([^/]+)(/?)$ pilot-statistics-route.php?pilot=$1 [L,NC]
 RewriteRule ^pilot/([^/]+)/([^/]+)/([^/]+)(/?)$ pilot-detailed.php?pilot=$1&limit=$2&sort=$3 [L,NC]
 RewriteRule ^pilot/([^/]+)/([^/]+)(/?)$ pilot-detailed.php?pilot=$1&limit=$2 [L,NC]
 RewriteRule ^pilot/([^/]+)(/?)$ pilot-detailed.php?pilot=$1 [L,NC]

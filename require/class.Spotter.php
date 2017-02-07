@@ -4527,26 +4527,55 @@ class Spotter{
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
 		 		FROM spotter_output".$filter_query." spotter_output.ident = :ident  
-				GROUP BY spotter_output.airline_name
+				GROUP BY spotter_output.airline_icao, spotter_output.airline_name, spotter_output.airline_country
 				ORDER BY airline_count DESC";
       
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
-      
-		$airline_array = array();
-		$temp_array = array();
-        
-		while($row = $sth->fetch(PDO::FETCH_ASSOC))
-		{
-			$temp_array['airline_name'] = $row['airline_name'];
-			$temp_array['airline_icao'] = $row['airline_icao'];
-			$temp_array['airline_count'] = $row['airline_count'];
-			$temp_array['airline_country'] = $row['airline_country'];
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
 
-			$airline_array[] = $temp_array;
-		}
-		return $airline_array;
+	/**
+	* Gets all airlines by owner
+	*
+	* @return Array the airline list
+	*
+	*/
+	public function countAllAirlinesByOwner($owner,$filters = array())
+	{
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
+		 		FROM spotter_output".$filter_query." spotter_output.owner_name = :owner  
+				GROUP BY spotter_output.airline_icao, spotter_output.airline_name, spotter_output.airline_country
+				ORDER BY airline_count DESC";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner));
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	/**
+	* Gets all airlines used by pilot
+	*
+	* @return Array the airline list
+	*
+	*/
+	public function countAllAirlinesByPilot($pilot,$filters = array())
+	{
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT DISTINCT spotter_output.airline_name, spotter_output.airline_icao, spotter_output.airline_country, COUNT(spotter_output.airline_name) AS airline_count
+		 		FROM spotter_output".$filter_query." (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+				GROUP BY spotter_output.airline_icao, spotter_output.airline_name, spotter_output.airline_country
+				ORDER BY airline_count DESC";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot));
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
 	/**
@@ -5512,6 +5541,46 @@ class Spotter{
 		return $aircraft_array;
 	}
 
+	/**
+	* Gets all aircraft types that have flown over by pilot
+	*
+	* @return Array the aircraft list
+	*
+	*/
+	public function countAllAircraftTypesByPilot($pilot,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
+				FROM spotter_output".$filter_query." (spotter_output.pilot_id = :pilot OR spotter_output.pilot_name = :pilot) 
+				GROUP BY spotter_output.aircraft_name, spotter_output.aircraft_icao
+				ORDER BY aircraft_icao_count DESC";
+
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot));
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	/**
+	* Gets all aircraft types that have flown over by owner
+	*
+	* @return Array the aircraft list
+	*
+	*/
+	public function countAllAircraftTypesByOwner($owner,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer 
+				FROM spotter_output".$filter_query." spotter_output.owner_name = :owner 
+				GROUP BY spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.aircraft_icao
+				ORDER BY aircraft_icao_count DESC";
+
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner));
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
 
 	/**
 	* Gets all aircraft registration that have flown over by ident/callsign
@@ -5556,6 +5625,94 @@ class Spotter{
 		return $aircraft_array;
 	}
 
+	/**
+	* Gets all aircraft registration that have flown over by owner
+	*
+	* @return Array the aircraft list
+	*
+	*/
+	public function countAllAircraftRegistrationByOwner($owner,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$Image = new Image($this->db);
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.registration, spotter_output.airline_name  
+                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.owner_name = :owner 
+                    GROUP BY spotter_output.registration,spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.airline_name
+		    ORDER BY registration_count DESC LIMIT 100";
+
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner));
+      
+		$aircraft_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
+			$temp_array['aircraft_name'] = $row['aircraft_name'];
+			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
+			$temp_array['registration'] = $row['registration'];
+			$temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['image_thumbnail'] = "";
+			if($row['registration'] != "")
+			{
+				$image_array = $Image->getSpotterImage($row['registration']);
+				if (isset($image_array[0]['image_thumbnail'])) $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+				else $temp_array['image_thumbnail'] = '';
+			}
+			$temp_array['registration_count'] = $row['registration_count'];
+			$aircraft_array[] = $temp_array;
+		}
+		return $aircraft_array;
+	}
+
+	/**
+	* Gets all aircraft registration that have flown over by pilot
+	*
+	* @return Array the aircraft list
+	*
+	*/
+	public function countAllAircraftRegistrationByPilot($pilot,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$Image = new Image($this->db);
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
+
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.registration, spotter_output.airline_name  
+                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+                    GROUP BY spotter_output.registration,spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.airline_name
+		    ORDER BY registration_count DESC LIMIT 100";
+
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot));
+      
+		$aircraft_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['aircraft_icao'] = $row['aircraft_icao'];
+			$temp_array['aircraft_name'] = $row['aircraft_name'];
+			$temp_array['aircraft_manufacturer'] = $row['aircraft_manufacturer'];
+			$temp_array['registration'] = $row['registration'];
+			$temp_array['airline_name'] = $row['airline_name'];
+			$temp_array['image_thumbnail'] = "";
+			if($row['registration'] != "")
+			{
+				$image_array = $Image->getSpotterImage($row['registration']);
+				if (isset($image_array[0]['image_thumbnail'])) $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+				else $temp_array['image_thumbnail'] = '';
+			}
+			$temp_array['registration_count'] = $row['registration_count'];
+			$aircraft_array[] = $temp_array;
+		}
+		return $aircraft_array;
+	}
+
 
 	/**
 	* Gets all aircraft manufacturer that have flown over by ident/callsign
@@ -5584,6 +5741,48 @@ class Spotter{
 			$aircraft_array[] = $temp_array;
 		}
 		return $aircraft_array;
+	}
+
+	/**
+	* Gets all aircraft manufacturer that have flown over by owner
+	*
+	* @return Array the aircraft manufacturer list
+	*
+	*/
+	public function countAllAircraftManufacturerByOwner($owner,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
+		    FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer <> '' AND spotter_output.owner_name = :owner 
+		    GROUP BY spotter_output.aircraft_manufacturer 
+		    ORDER BY aircraft_manufacturer_count DESC";
+
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner));
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	/**
+	* Gets all aircraft manufacturer that have flown over by pilot
+	*
+	* @return Array the aircraft manufacturer list
+	*
+	*/
+	public function countAllAircraftManufacturerByPilot($pilot,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
+		    FROM spotter_output".$filter_query." spotter_output.aircraft_manufacturer <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+		    GROUP BY spotter_output.aircraft_manufacturer 
+		    ORDER BY aircraft_manufacturer_count DESC";
+
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot));
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
 
@@ -6778,6 +6977,77 @@ class Spotter{
 		return $airport_array;
 	}
 	
+	/**
+	* Gets all departure airports of the airplanes that have flown over based on a owner
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllDepartureAirportsByOwner($owner,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
+		    FROM spotter_output".$filter_query." spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.departure_airport_icao <> '' AND spotter_output.owner_name = :owner 
+                    GROUP BY spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
+		    ORDER BY airport_departure_icao_count DESC";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner));
+      
+		$airport_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
+          
+			$airport_array[] = $temp_array;
+		}
+
+		return $airport_array;
+	}
+	
+	/**
+	* Gets all departure airports of the airplanes that have flown over based on a pilot
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllDepartureAirportsByPilot($pilot,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.departure_airport_icao, COUNT(spotter_output.departure_airport_icao) AS airport_departure_icao_count, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country 
+		    FROM spotter_output".$filter_query." spotter_output.departure_airport_name <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.departure_airport_icao <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+                    GROUP BY spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
+		    ORDER BY airport_departure_icao_count DESC";
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot));
+      
+		$airport_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
+			$temp_array['airport_departure_icao_count'] = $row['airport_departure_icao_count'];
+			$temp_array['airport_departure_name'] = $row['departure_airport_name'];
+			$temp_array['airport_departure_city'] = $row['departure_airport_city'];
+			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
+          
+			$airport_array[] = $temp_array;
+		}
+
+		return $airport_array;
+	}
+	
 	
 	
 	/**
@@ -6811,6 +7081,46 @@ class Spotter{
 		}
 
 		return $airport_array;
+	}
+	
+	/**
+	* Gets all departure airports by country of the airplanes that have flown over based on owner
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllDepartureAirportCountriesByOwner($owner,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND spotter_output.owner_name = :owner 
+			GROUP BY spotter_output.departure_airport_country
+			ORDER BY airport_departure_country_count DESC";
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner));
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+	
+	/**
+	* Gets all departure airports by country of the airplanes that have flown over based on pilot
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllDepartureAirportCountriesByPilot($pilot,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
+			FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+			GROUP BY spotter_output.departure_airport_country
+			ORDER BY airport_departure_country_count DESC";
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot));
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 	
 	
@@ -7640,7 +7950,7 @@ class Spotter{
 		$filter_query = $this->getFilter($filters,true,true);
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
-		    FROM spotter_output".$filter_query." WHERE spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> '' AND spotter_output.ident = :ident  
+		    FROM spotter_output".$filter_query." spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> '' AND spotter_output.ident = :ident  
                     GROUP BY spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
 		    ORDER BY airport_arrival_icao_count DESC";
       
@@ -7665,6 +7975,75 @@ class Spotter{
 		return $airport_array;
 	}
 	
+	/**
+	* Gets all arrival airports of the airplanes that have flown over based on a owner
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllArrivalAirportsByOwner($owner,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
+		    FROM spotter_output".$filter_query." spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> '' AND spotter_output.owner_name = :owner 
+                    GROUP BY spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
+		    ORDER BY airport_arrival_icao_count DESC";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner));
+		$airport_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+          
+			$airport_array[] = $temp_array;
+		}
+
+		return $airport_array;
+	}
+
+	/**
+	* Gets all arrival airports of the airplanes that have flown over based on a pilot
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllArrivalAirportsByPilot($pilot,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country 
+		    FROM spotter_output".$filter_query." spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+                    GROUP BY spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
+		    ORDER BY airport_arrival_icao_count DESC";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot));
+		$airport_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_icao_count'] = $row['airport_arrival_icao_count'];
+			$temp_array['airport_arrival_name'] = $row['arrival_airport_name'];
+			$temp_array['airport_arrival_city'] = $row['arrival_airport_city'];
+			$temp_array['airport_arrival_country'] = $row['arrival_airport_country'];
+          
+			$airport_array[] = $temp_array;
+		}
+
+		return $airport_array;
+	}
 	
 	/**
 	* Gets all arrival airports by country of the airplanes that have flown over based on a callsign/ident
@@ -7697,6 +8076,26 @@ class Spotter{
 		}
 
 		return $airport_array;
+	}
+	
+	/**
+	* Gets all arrival airports by country of the airplanes that have flown over based on a owner
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllArrivalAirportCountriesByOwner($owner, $filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
+		    FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND spotter_output.owner_name = :owner 
+                    GROUP BY spotter_output.arrival_airport_country
+		    ORDER BY airport_arrival_country_count DESC";
+
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner));
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 	
 	
@@ -8223,6 +8622,86 @@ class Spotter{
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident));
+      
+		$routes_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['route_count'] = $row['route_count'];
+			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+          
+			$routes_array[] = $temp_array;
+		}
+
+		return $routes_array;
+	}
+	
+	/**
+	* Gets all route combinations based on an owner
+	*
+	* @return Array the route list
+	*
+	*/
+	public function countAllRoutesByOwner($owner,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
+		    FROM spotter_output".$filter_query." spotter_output.ident <> '' AND spotter_output.owner_name = :owner 
+                    GROUP BY route, spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
+                    ORDER BY route_count DESC";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner));
+      
+		$routes_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['route_count'] = $row['route_count'];
+			$temp_array['airport_departure_icao'] = $row['departure_airport_icao'];
+			$temp_array['airport_departure_name'] = $row['airport_departure_name'];
+			$temp_array['airport_departure_city'] = $row['airport_departure_city'];
+			$temp_array['airport_departure_country'] = $row['airport_departure_country'];
+			$temp_array['airport_arrival_icao'] = $row['arrival_airport_icao'];
+			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
+			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
+			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
+          
+			$routes_array[] = $temp_array;
+		}
+
+		return $routes_array;
+	}
+	
+	/**
+	* Gets all route combinations based on a pilot
+	*
+	* @return Array the route list
+	*
+	*/
+	public function countAllRoutesByPilot($pilot,$filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
+		    FROM spotter_output".$filter_query." spotter_output.ident <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+                    GROUP BY route, spotter_output.departure_airport_icao, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country
+                    ORDER BY route_count DESC";
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot));
       
 		$routes_array = array();
 		$temp_array = array();
@@ -9746,6 +10225,100 @@ class Spotter{
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':ident' => $ident,':offset' => $offset));
+      
+		$hour_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['hour_name'] = $row['hour_name'];
+			$temp_array['hour_count'] = $row['hour_count'];
+          
+			$hour_array[] = $temp_array;
+		}
+
+		return $hour_array;
+	}
+	
+	/**
+	* Counts all hours by a owner
+	*
+	* @return Array the hour list
+	*
+	*/
+	public function countAllHoursByOwner($owner, $filters = array())
+	{
+		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+								FROM spotter_output".$filter_query." spotter_output.owner_name = :owner 
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output".$filter_query." spotter_output.owner_name = :owner 
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner,':offset' => $offset));
+      
+		$hour_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['hour_name'] = $row['hour_name'];
+			$temp_array['hour_count'] = $row['hour_count'];
+          
+			$hour_array[] = $temp_array;
+		}
+
+		return $hour_array;
+	}
+	
+	/**
+	* Counts all hours by a pilot
+	*
+	* @return Array the hour list
+	*
+	*/
+	public function countAllHoursByPilot($pilot, $filters = array())
+	{
+		global $globalTimezone, $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT HOUR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS hour_name, count(*) as hour_count
+								FROM spotter_output".$filter_query." (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		} else {
+			$query  = "SELECT EXTRACT(HOUR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS hour_name, count(*) as hour_count
+								FROM spotter_output".$filter_query." (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+								GROUP BY hour_name 
+								ORDER BY hour_name ASC";
+		}
+      
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot,':offset' => $offset));
       
 		$hour_array = array();
 		$temp_array = array();
