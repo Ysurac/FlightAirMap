@@ -1,10 +1,10 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
+require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 $beginpage = microtime(true);
 $Stats = new Stats();
-$title = _("Statistics");
 
 if (!isset($filter_name)) $filter_name = '';
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
@@ -17,7 +17,17 @@ if ($airline_icao == 'all') {
 } elseif ($airline_icao == '' && isset($globalFilter)) {
 	if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];
 }
+if ($airline_icao != '' && $airline_icao != 'all') {
+	$Spotter = new Spotter();
+	$airline_info = $Spotter->getAllAirlineInfo($airline_icao);
+	$airline_name = $airline_info[0]['name'];
+}
 setcookie('stats_airline_icao',$airline_icao);
+if (isset($airline_name)) {
+	$title = _("Statistics").' - '.$airline_name;
+} else {
+	$title = _("Statistics");
+}
 
 $year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
 $month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
@@ -33,7 +43,7 @@ require_once('header.php');
 <script type="text/javascript" src="<?php echo $globalURL; ?>/js/justgage.js"></script>
 <div class="column">
     <div class="info">
-            <h1><?php echo _("Statistics"); ?></h1>
+            <h1><?php if (isset($airline_name)) echo _("Statistics for ").$airline_name; else echo _("Statistics"); ?></h1>
     <?php 
 	$last_update = $Stats->getLastStatsUpdate();
 	//if (isset($last_update[0]['value'])) print '<!-- Last update : '.$last_update[0]['value'].' -->';
@@ -76,10 +86,12 @@ require_once('header.php');
 	?>
 	<?php
 		if (!(isset($globalIVAO) && $globalIVAO) && !(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalphpVMS) && $globalphpVMS)) {
+			if ($airline_icao == '' || $airline_icao == 'all') {
 	?>
         <span><span class="badge"><?php print number_format($Stats->countOverallMilitaryFlights($filter_name,$year,$month)); ?></span> <?php echo _("Military"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
+			}
 		}
 	?>
     </p>
@@ -626,7 +638,7 @@ require_once('header.php');
 ?>
 
 <?php
-    if ($year == '' && $month == '' && isset($globalAccidents) && $globalAccidents) {
+    if (($airline_icao == '' || $airline_icao == 'all') && $year == '' && $month == '' && isset($globalAccidents) && $globalAccidents) {
 ?>
         <div class="row column">
             <div class="col-md-6">
