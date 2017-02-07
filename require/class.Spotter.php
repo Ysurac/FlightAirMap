@@ -4152,9 +4152,9 @@ class Spotter{
 		}
                 if ($sincedate != '') {
             		if ($globalDBdriver == 'mysql') {
-				$query .= "AND spotter_output.date > '".$sincedate."' ";
+				$query .= " AND spotter_output.date > '".$sincedate."' ";
 			} else {
-				$query .= "AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				$query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
 			}
 		}
 		$query_values = array();
