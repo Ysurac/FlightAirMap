@@ -122,7 +122,7 @@ class Connection{
 				break;
 			} catch(PDOException $e) {
 				$i++;
-				if (isset($globalDebug) && $globalDebug) echo $e->getMessage()."\n";
+				if (isset($globalDebug) && $globalDebug) echo 'Error connecting to DB: '.$globalDBSname.' - Error: '.$e->getMessage()."\n";
 				//exit;
 				if ($i > $globalDBretry) return false;
 				//return false;
