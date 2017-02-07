@@ -8098,6 +8098,26 @@ class Spotter{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 	
+	/**
+	* Gets all arrival airports by country of the airplanes that have flown over based on a pilot
+	*
+	* @return Array the airport list
+	*
+	*/
+	public function countAllArrivalAirportCountriesByPilot($pilot, $filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
+		    FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+                    GROUP BY spotter_output.arrival_airport_country
+		    ORDER BY airport_arrival_country_count DESC";
+
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot));
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+	
 	
 	
 	/**
