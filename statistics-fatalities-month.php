@@ -71,7 +71,9 @@ if (!empty($date_array))
 		print '<tr>';
 		print '<td><strong>'.$i.'</strong></td>';
 		print '<td>';
-		print '<a href="'.$globalURL.'/accident/'.$date_item['year'].'-'.$date_item['month'].'">'.date('F, Y',strtotime($date_item['year'].'-'.$date_item['month'].'-01')).'</a>';
+		if ($date_item['month'] < 10) $month = '0'.$date_item['month'];
+		else $month = $date_item['month'];
+		print '<a href="'.$globalURL.'/accident/'.$date_item['year'].'-'.$month.'">'.date('F, Y',strtotime($date_item['year'].'-'.$date_item['month'].'-01')).'</a>';
 		print '</td>';
 		print '<td>';
 		print $date_item['count'];
