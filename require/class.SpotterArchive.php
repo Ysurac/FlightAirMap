@@ -1120,18 +1120,18 @@ class SpotterArchive {
 		    FROM countries c, spotter_archive s
 		    WHERE Within(GeomFromText(CONCAT('POINT(',s.longitude,' ',s.latitude,')')), ogc_geom) ";
 	*/
-	$query = "SELECT s.airline_icao,c.name, c.iso3, c.iso2, count(c.name) as nb
-		    FROM countries c, spotter_archive s
-		    WHERE c.iso2 = s.over_country ";
+	$query = "SELECT o.airline_icao,c.name, c.iso3, c.iso2, count(c.name) as nb
+		    FROM countries c, spotter_archive s, spotter_output o
+		    WHERE c.iso2 = s.over_country AND o.airline_icao <> '' AND o.flightaware_id = s.flightaware_id ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
-				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+				$query .= 'AND s.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
 			} else {
-				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+				$query .= "AND s.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
 			}
 		}
-                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
-	$query .= "GROUP BY s.airline_icao,c.name, c.iso3, c.iso2 ORDER BY nb DESC";
+                if ($sincedate != '') $query .= "AND s.date > '".$sincedate."' ";
+	$query .= "GROUP BY o.airline_icao,c.name, c.iso3, c.iso2 ORDER BY nb DESC";
 	if ($limit) $query .= " LIMIT 0,10";
       
 	
