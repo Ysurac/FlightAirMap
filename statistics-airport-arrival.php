@@ -7,16 +7,9 @@ $title = _("Statistics").' - '._("Most common Arrival Airport");
 
 if (!isset($filter_name)) $filter_name = '';
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
-if ($airline_icao == 'all') {
-    unset($_COOKIE['stats_airline_icao']);
-    setcookie('stats_airline_icao', '', time()-3600);
-    $airline_icao = '';
-} elseif ($airline_icao == '' && isset($_COOKIE['stats_airline_icao'])) {
-    $airline_icao = $_COOKIE['stats_airline_icao'];
-} elseif ($airline_icao == '' && isset($globalFilter)) {
+if ($airline_icao == '' && isset($globalFilter)) {
     if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];
 }
-setcookie('stats_airline_icao',$airline_icao,time()+60*60*24,'/');
 $year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
 $month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
 

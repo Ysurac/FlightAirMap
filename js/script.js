@@ -75,8 +75,31 @@ function statsdatechange(e) {
 	var i = 0;
 	var page = '';
 	for (i = 0; i < pagename.length; i++) {
-		if (isNaN(pagename[i])) page = page +'/'+ pagename[i];
+		if (pagename[i] != '') {
+			if (isNaN(pagename[i])) page = page +'/'+ pagename[i];
+		}
 	}
 	form.action = page+'/'+yearmonth[0]+'/'+yearmonth[1];
+	form.submit();
+}
+function statsairlinechange(e) {
+	var form = document.getElementById('changeairline');
+	var airline = form.airline.value;
+	var pagename = location.pathname;
+	pagename = pagename.split('/');
+	var i = 0;
+	var page = '';
+	var add = false;
+	for (i = 0; i < pagename.length; i++) {
+		if (pagename[i] != '') {
+			if (pagename[i].length != 3) page = page+'/'+pagename[i];
+			else {
+				add = true;
+				if (airline != 'all') page = page+'/'+airline;
+			}
+		}
+	}
+	if (add === false) page = page+'/'+airline;
+	form.action = page;
 	form.submit();
 }
