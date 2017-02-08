@@ -53,7 +53,7 @@ if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$date)) {
 } elseif (preg_match('/^[0-9]{4}-[0-9]{2}$/',$date)) {
 	print '<h1>'.sprintf(_("Accidents from %s"),date("F, Y",strtotime($date))).'</h1>';
 } elseif (preg_match('/^[0-9]{4}$/',$date)) {
-	print '<h1>'.sprintf(_("Accidents from %s"),date("Y",strtotime($date))).'</h1>';
+	print '<h1>'.sprintf(_("Accidents from %s"),$date).'</h1>';
 }
 print '</div>';
 
@@ -64,7 +64,7 @@ if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$date)) {
 } elseif (preg_match('/^[0-9]{4}-[0-9]{2}$/',$date)) {
 	print '<p>'.sprintf(_("The table below shows the Accidents on <strong>%s</strong>."),date("M, Y",strtotime($date))).'</p>';
 } elseif (preg_match('/^[0-9]{4}$/',$date)) {
-	print '<p>'.sprintf(_("The table below shows the Accidents on <strong>%s</strong>."),date("Y",strtotime($date))).'</p>';
+	print '<p>'.sprintf(_("The table below shows the Accidents on <strong>%s</strong>."),$date).'</p>';
 }
 $spotter_array = $Accident->getAccidentData($limit_start.",".$absolute_difference,'accident',$date);
 //print_r($spotter_array);
