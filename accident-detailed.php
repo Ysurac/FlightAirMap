@@ -48,11 +48,24 @@ print '<script type="text/javascript">$(function () { $("#datepicker").datetimep
 print '<br />';
 
 print '<div class="info column">';
-print '<h1>'.sprintf(_("Accidents from %s"),date("l F j, Y",strtotime($date))).'</h1>';
+if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$date)) {
+	print '<h1>'.sprintf(_("Accidents from %s"),date("l F j, Y",strtotime($date))).'</h1>';
+} elseif (preg_match('/^[0-9]{4}-[0-9]{2}$/',$date)) {
+	print '<h1>'.sprintf(_("Accidents from %s"),date("F, Y",strtotime($date))).'</h1>';
+} elseif (preg_match('/^[0-9]{4}$/',$date)) {
+	print '<h1>'.sprintf(_("Accidents from %s"),date("Y",strtotime($date))).'</h1>';
+}
 print '</div>';
 
 print '<div class="table column">';
-print '<p>'.sprintf(_("The table below shows the Accidents on <strong>%s</strong>."),date("l M j, Y",strtotime($date))).'</p>';
+
+if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$date)) {
+	print '<p>'.sprintf(_("The table below shows the Accidents on <strong>%s</strong>."),date("l M j, Y",strtotime($date))).'</p>';
+} elseif (preg_match('/^[0-9]{4}-[0-9]{2}$/',$date)) {
+	print '<p>'.sprintf(_("The table below shows the Accidents on <strong>%s</strong>."),date("M, Y",strtotime($date))).'</p>';
+} elseif (preg_match('/^[0-9]{4}$/',$date)) {
+	print '<p>'.sprintf(_("The table below shows the Accidents on <strong>%s</strong>."),date("Y",strtotime($date))).'</p>';
+}
 $spotter_array = $Accident->getAccidentData($limit_start.",".$absolute_difference,'accident',$date);
 //print_r($spotter_array);
 if (!empty($spotter_array) && isset($spotter_array[0]['query_number_rows']) && $spotter_array[0]['query_number_rows'] != 0) {
