@@ -56,8 +56,12 @@ class Accident {
 					//$query = "SELECT accidents.registration, accidents.ident, accidents.date, accidents.url, accidents.country, accidents.place, accidents.title, accidents.fatalities, accidents.type, accidents.ident, accidents.aircraft_manufacturer, accidents.aircraft_name, accidents.airline_name, accidents.airline_icao, spotter_output.flightaware_id FROM accidents LEFT OUTER JOIN spotter_output ON accidents.registration = spotter_output.registration WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND date = :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
 				} else {
 					$date = $date.'%';
-					$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND to_char(date,'YYYY-MM-DD') LIKE :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
-					//$query = "SELECT accidents.registration, accidents.ident, accidents.date, accidents.url, accidents.country, accidents.place, accidents.title, accidents.fatalities, accidents.type, accidents.ident, accidents.aircraft_manufacturer, accidents.aircraft_name, accidents.airline_name, accidents.airline_icao, spotter_output.flightaware_id FROM accidents LEFT OUTER JOIN spotter_output ON accidents.registration = spotter_output.registration WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND to_char(date,'YYYY-MM-DD') LIKE :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+					if ($globalDBdriver == 'mysql') {
+						$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND DATE_FORMAT(date,'%Y-%m-%d') LIKE :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+					} else {
+						$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND to_char(date,'YYYY-MM-DD') LIKE :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+						//$query = "SELECT accidents.registration, accidents.ident, accidents.date, accidents.url, accidents.country, accidents.place, accidents.title, accidents.fatalities, accidents.type, accidents.ident, accidents.aircraft_manufacturer, accidents.aircraft_name, accidents.airline_name, accidents.airline_icao, spotter_output.flightaware_id FROM accidents LEFT OUTER JOIN spotter_output ON accidents.registration = spotter_output.registration WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND to_char(date,'YYYY-MM-DD') LIKE :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+					}
 				}
 				$query_values = array(':type' => $type,':date' => $date);
 			} else {
