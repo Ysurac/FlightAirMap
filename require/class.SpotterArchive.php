@@ -1107,6 +1107,53 @@ class SpotterArchive {
     }
 
     /**
+    * Gets all number of flight over countries
+    *
+    * @return Array the airline country list
+    *
+    */
+    public function countAllFlightOverCountriesByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '')
+    {
+	global $globalDBdriver;
+	/*
+	$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb 
+		    FROM countries c, spotter_archive s
+		    WHERE Within(GeomFromText(CONCAT('POINT(',s.longitude,' ',s.latitude,')')), ogc_geom) ";
+	*/
+	$query = "SELECT s.airline_icao,c.name, c.iso3, c.iso2, count(c.name) as nb
+		    FROM countries c, spotter_archive s
+		    WHERE c.iso2 = s.over_country ";
+                if ($olderthanmonths > 0) {
+            		if ($globalDBdriver == 'mysql') {
+				$query .= 'AND date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+			} else {
+				$query .= "AND date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+			}
+		}
+                if ($sincedate != '') $query .= "AND date > '".$sincedate."' ";
+	$query .= "GROUP BY s.airline_icao,c.name, c.iso3, c.iso2 ORDER BY nb DESC";
+	if ($limit) $query .= " LIMIT 0,10";
+      
+	
+	$sth = $this->db->prepare($query);
+	$sth->execute();
+ 
+	$flight_array = array();
+	$temp_array = array();
+        
+	while($row = $sth->fetch(PDO::FETCH_ASSOC))
+	{
+	    $temp_array['airline_icao'] = $row['airline_icao'];
+	    $temp_array['flight_count'] = $row['nb'];
+	    $temp_array['flight_country'] = $row['name'];
+	    $temp_array['flight_country_iso3'] = $row['iso3'];
+	    $temp_array['flight_country_iso2'] = $row['iso2'];
+	    $flight_array[] = $temp_array;
+	}
+	return $flight_array;
+    }
+
+    /**
     * Gets last spotter information based on a particular callsign
     *
     * @return Array the spotter information

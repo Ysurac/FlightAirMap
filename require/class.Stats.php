@@ -1138,22 +1138,22 @@ class Stats {
                         return "error : ".$e->getMessage();
                 }
         }
-	public function addStatCountry($iso2,$iso3,$name,$cnt,$filter_name = '',$reset = false) {
+	public function addStatCountry($iso2,$iso3,$name,$cnt,$airline_icao = '',$filter_name = '',$reset = false) {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			if ($reset) {
-				$query = "INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) VALUES (:iso2,:iso3,:name,:cnt,:filter_name) ON DUPLICATE KEY UPDATE cnt = :cnt";
+				$query = "INSERT INTO stats_country (iso2,iso3,name,cnt,stats_airline,filter_name) VALUES (:iso2,:iso3,:name,:cnt,:airline,:filter_name) ON DUPLICATE KEY UPDATE cnt = :cnt";
 			} else {
-				$query = "INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) VALUES (:iso2,:iso3,:name,:cnt,:filter_name) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+				$query = "INSERT INTO stats_country (iso2,iso3,name,cnt,stats_airline,filter_name) VALUES (:iso2,:iso3,:name,:cnt,:airline,:filter_name) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
 			}
 		} else {
 			if ($reset) {
-				$query = "UPDATE stats_country SET cnt = :cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
+				$query = "UPDATE stats_country SET cnt = :cnt WHERE iso2 = :iso2 AND filter_name = :filter_name AND stats_airline = :airline; INSERT INTO stats_country (iso2,iso3,name,cnt,stats_airline,filter_name) SELECT :iso2,:iso3,:name,:cnt,:airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name AND stats_airline = :airline);"; 
 			} else {
-				$query = "UPDATE stats_country SET cnt = cnt+:cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
+				$query = "UPDATE stats_country SET cnt = cnt+:cnt WHERE iso2 = :iso2 AND filter_name = :filter_name AND stats_airline = :airline; INSERT INTO stats_country (iso2,iso3,name,cnt,stats_airline,filter_name) SELECT :iso2,:iso3,:name,:cnt,:airline,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name AND stats_airline = :airline);"; 
 			}
 		}
-                $query_values = array(':iso2' => $iso2,':iso3' => $iso3,':name' => $name,':cnt' => $cnt,':filter_name' => $filter_name);
+                $query_values = array(':iso2' => $iso2,':iso3' => $iso3,':name' => $name,':cnt' => $cnt,':filter_name' => $filter_name,':airline' => $airline_icao);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
@@ -1471,7 +1471,7 @@ class Stats {
 				$SpotterArchive = new SpotterArchive();
 				$alldata = $SpotterArchive->countAllFlightOverCountries(false,0,$last_update_day);
 				foreach ($alldata as $number) {
-					$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count'],'',$reset);
+					$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count'],'','',$reset);
 				}
 			}
 			
@@ -1638,6 +1638,14 @@ class Stats {
 
 			// Count by airlines
 			echo '--- Stats by airlines ---'."\n";
+			if ($Connection->tableExists('countries')) {
+				if ($globalDebug) echo 'Count all flights by countries by airlines...'."\n";
+				$SpotterArchive = new SpotterArchive();
+				$alldata = $SpotterArchive->countAllFlightOverCountriesByAirlines(false,0,$last_update_day);
+				foreach ($alldata as $number) {
+					$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count'],$number['airline_icao'],'',$reset);
+				}
+			}
 			if ($globalDebug) echo 'Count all aircraft types by airlines...'."\n";
 			$Spotter = new Spotter($this->db);
 			$alldata = $Spotter->countAllAircraftTypesByAirlines(false,0,$last_update_day);

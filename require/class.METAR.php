@@ -325,7 +325,7 @@ class METAR {
         }
         
         public function addMETARCycle() {
-    		global $globalDebug, $globalIVAO;
+    		global $globalDebug, $globalIVAO, $globalTransaction;
     		if (isset($globalDebug) && $globalDebug) echo "Downloading METAR cycle...";
     		date_default_timezone_set("UTC");
     		$Common = new Common();
@@ -342,6 +342,7 @@ class METAR {
 			if (isset($globalDebug) && $globalDebug) echo "Done - Updating DB...";
 			$date = '';
     			//foreach(explode("\n",$cycle) as $line) {
+    			if ($globalTransaction) $this->db->beginTransaction();
 	    		while(($line = fgets($handle,4096)) !== false) {
 				if (preg_match('#^([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{2}):([0-9]{2})$#',$line)) {
 					$date = $line;
@@ -357,6 +358,7 @@ class METAR {
     				}
     			}
     			fclose($handle);
+    			if ($globalTransaction) $this->db->commit();
     		}
     		if (isset($globalDebug) && $globalDebug) echo "Done\n";
         
