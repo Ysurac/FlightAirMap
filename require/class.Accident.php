@@ -54,16 +54,28 @@ class Accident {
 				if (preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/",$date)) {
 					$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND date = :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
 					//$query = "SELECT accidents.registration, accidents.ident, accidents.date, accidents.url, accidents.country, accidents.place, accidents.title, accidents.fatalities, accidents.type, accidents.ident, accidents.aircraft_manufacturer, accidents.aircraft_name, accidents.airline_name, accidents.airline_icao, spotter_output.flightaware_id FROM accidents LEFT OUTER JOIN spotter_output ON accidents.registration = spotter_output.registration WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND date = :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+					$query_values = array(':type' => $type,':date' => $date);
+				} elseif (preg_match("/^[0-9]{4}-[0-9]{2}$/",$date)) {
+					$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND date BETWEEN :dated AND :datef GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+					$query_values = array(':type' => $type,':dated' => $date.'-01', ':datef' => $date.'-31');
+				} elseif (preg_match("/^[0-9]{4}$/",$date)) {
+					if ($globalDBdriver == 'mysql') {
+						$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND YEAR(date) = :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+					} else {
+						$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND EXTRACT(YEAR FROM date) = :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+					}
+					$query_values = array(':type' => $type,':date' => $date);
 				} else {
 					$date = $date.'%';
 					if ($globalDBdriver == 'mysql') {
 						$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND DATE_FORMAT(date,'%Y-%m-%d') LIKE :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+						$query_values = array(':type' => $type,':date' => $date);
 					} else {
 						$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND to_char(date,'YYYY-MM-DD') LIKE :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
 						//$query = "SELECT accidents.registration, accidents.ident, accidents.date, accidents.url, accidents.country, accidents.place, accidents.title, accidents.fatalities, accidents.type, accidents.ident, accidents.aircraft_manufacturer, accidents.aircraft_name, accidents.airline_name, accidents.airline_icao, spotter_output.flightaware_id FROM accidents LEFT OUTER JOIN spotter_output ON accidents.registration = spotter_output.registration WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type AND to_char(date,'YYYY-MM-DD') LIKE :date GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+						$query_values = array(':type' => $type,':date' => $date);
 					}
 				}
-				$query_values = array(':type' => $type,':date' => $date);
 			} else {
 				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
 				//$query = "SELECT accidents.registration, accidents.ident, accidents.date, accidents.url, accidents.country, accidents.place, accidents.title, accidents.fatalities, accidents.type, accidents.ident, accidents.aircraft_manufacturer, accidents.aircraft_name, accidents.airline_name, accidents.airline_icao, spotter_output.flightaware_id FROM accidents LEFT OUTER JOIN spotter_output ON accidents.registration = spotter_output.registration WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
