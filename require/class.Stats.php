@@ -751,8 +751,17 @@ class Stats {
 	public function countOverallAircrafts($stats_airline = '',$filter_name = '',$year = '', $month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '') $year = date('Y');
-		$all = $this->getSumStats('aircrafts_bymonth',$year,$stats_airline,$filter_name,$month);
+		if ($year == '' && $month == '') {
+			$query = "SELECT COUNT(*) AS nb FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
+			try {
+				$sth = $this->db->prepare($query);
+				$sth->execute(array(':filter_name' => $filter_name,':stats_airline' => $stats_airline));
+			} catch(PDOException $e) {
+				echo "error : ".$e->getMessage();
+			}
+			$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+			$all = $result[0]['nb'];
+		} else $all = $this->getSumStats('aircrafts_bymonth',$year,$stats_airline,$filter_name,$month);
 		if (empty($all)) {
 			$filters = array('airlines' => array($stats_airline));
 			if ($filter_name != '') {
@@ -790,19 +799,20 @@ class Stats {
 	public function countOverallOwners($stats_airline = '',$filter_name = '',$year = '', $month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '') $year = date('Y');
-		/*
-		$query = "SELECT COUNT(*) AS nb_owner FROM stats_owner";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $result = $sth->fetchAll(PDO::FETCH_ASSOC);
-                $all = $result[0]['nb_owner'];
-                */
-		$all = $this->getSumStats('owners_bymonth',$year,$stats_airline,$filter_name,$month);
+		if ($year == '' && $month == '') {
+			$query = "SELECT count(*) as nb FROM stats_owner WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
+			$query_values = array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name);
+			try {
+				$sth = $this->db->prepare($query);
+				$sth->execute($query_values);
+			} catch(PDOException $e) {
+				echo "error : ".$e->getMessage();
+			}
+			$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+			$all = $result[0]['nb'];
+		} else {
+			$all = $this->getSumStats('owners_bymonth',$year,$stats_airline,$filter_name,$month);
+		}
 		if (empty($all)) {
 			$filters = array('airlines' => array($stats_airline));
 			if ($filter_name != '') {
@@ -816,8 +826,21 @@ class Stats {
 	public function countOverallPilots($stats_airline = '',$filter_name = '',$year = '',$month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '') $year = date('Y');
-		$all = $this->getSumStats('pilots_bymonth',$year,$stats_airline,$filter_name,$month);
+		//if ($year == '') $year = date('Y');
+		if ($year == '' && $month == '') {
+			$query = "SELECT count(*) as nb FROM stats_pilot WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
+			$query_values = array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name);
+			try {
+				$sth = $this->db->prepare($query);
+				$sth->execute($query_values);
+			} catch(PDOException $e) {
+				echo "error : ".$e->getMessage();
+			}
+			$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+			$all = $result[0]['nb'];
+		} else {
+			$all = $this->getSumStats('pilots_bymonth',$year,$stats_airline,$filter_name,$month);
+		}
 		if (empty($all)) {
 			$filters = array('airlines' => array($stats_airline));
 			if ($filter_name != '') {
