@@ -976,6 +976,20 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all[0]['total'];
         }
+	public function getStatsOwner($owner_name,$filter_name = '') {
+    		global $globalArchiveMonths, $globalDBdriver;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		$query = "SELECT cnt FROM stats_owner WHERE filter_name = :filter_name AND owner_name = :owner_name";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute(array(':filter_name' => $filter_name,':owner_name' => $owner_name));
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                if (isset($all[0]['cnt'])) return $all[0]['cnt'];
+                else return 0;
+        }
 	public function getStatsPilotTotal($filter_name = '') {
     		global $globalArchiveMonths, $globalDBdriver;
 		if ($filter_name == '') $filter_name = $this->filter_name;
@@ -992,6 +1006,20 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 return $all[0]['total'];
+        }
+	public function getStatsPilot($pilot,$filter_name = '') {
+    		global $globalArchiveMonths, $globalDBdriver;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		$query = "SELECT cnt FROM stats_pilot WHERE filter_name = :filter_name AND (pilot_name = :pilot OR pilot_id = :pilot)";
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute(array(':filter_name' => $filter_name,':pilot' => $pilot));
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                if (isset($all[0]['cnt'])) return $all[0]['cnt'];
+                else return 0;
         }
 
 	public function addStat($type,$cnt,$stats_date,$stats_airline = '',$filter_name = '') {

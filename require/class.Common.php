@@ -299,6 +299,29 @@ class Common {
 		}
 		return $arraya;
 	}
+
+	/*
+	* Check if a key exist in an array
+	* Come from http://stackoverflow.com/a/19420866
+	* @param Array array to check
+	* @param String key to check
+	* @return Bool true if exist, else false
+	*/
+	public function multiKeyExists(array $arr, $key) {
+		// is in base array?
+		if (array_key_exists($key, $arr)) {
+			return true;
+		}
+		// check arrays contained in this array
+		foreach ($arr as $element) {
+			if (is_array($element)) {
+				if ($this->multiKeyExists($element, $key)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	
 	/**
 	* Returns list of available locales

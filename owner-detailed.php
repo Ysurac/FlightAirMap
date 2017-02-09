@@ -2,7 +2,8 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
-require_once('require/class.Translation.php');
+//require_once('require/class.Translation.php');
+require_once('require/class.Stats.php');
 //require_once('require/class.SpotterLive.php');
 require_once('require/class.SpotterArchive.php');
 
@@ -11,7 +12,7 @@ if (!isset($_GET['owner'])){
 } else {
 	$Spotter = new Spotter();
 	$SpotterArchive = new SpotterArchive();
-	$Translation = new Translation();
+	//$Translation = new Translation();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
@@ -108,6 +109,19 @@ if (!isset($_GET['owner'])){
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['aircraft_owner'].'</h1>';
 		//print '<div><span class="label">'._("Owner").'</span>'.$spotter_array[0]['aircraft_owner'].'</div>';
+		$Stats = new Stats();
+		$flights = $Stats->getStatsOwner($owner);
+		print '<div><span class="label">'._("Flights").'</span>'.$flights.'</div>';
+		$aircraft_type = count($Spotter->countAllAircraftTypesByOwner($owner));
+		print '<div><span class="label">'._("Aircrafts type").'</span>'.$aircraft_type.'</div>';
+		$aircraft_registration = count($Spotter->countAllAircraftRegistrationByOwner($owner));
+		print '<div><span class="label">'._("Aircrafts").'</span>'.$aircraft_registration.'</div>';
+		$aircraft_manufacturer = count($Spotter->countAllAircraftManufacturerByOwner($owner));
+		print '<div><span class="label">'._("Manufacturers").'</span>'.$aircraft_manufacturer.'</div>';
+		$airlines = count($Spotter->countAllAirlinesByOwner($owner));
+		print '<div><span class="label">'._("Airlines").'</span>'.$airlines.'</div>';
+		$duration = $Spotter->getFlightDurationByOwner($owner);
+		print '<div><span class="label">'._("Total flights spotted duration").'</span>'.$duration.'</div>';
 		print '</div>';
 	
 		include('owner-sub-menu.php');

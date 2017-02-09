@@ -39,7 +39,6 @@ if (!isset($_GET['date'])){
 		$spotter_array = $Spotter->getSpotterDataByDate($date,$limit_start.",".$absolute_difference);
 	}
 	
-	
 	if (!empty($spotter_array))
 	{
 		date_default_timezone_set($globalTimezone);

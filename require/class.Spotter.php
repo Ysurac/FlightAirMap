@@ -219,21 +219,18 @@ class Spotter{
 			*/
 			if (isset($row['waypoints'])) $temp_array['waypoints'] = $row['waypoints'];
 			if (isset($row['format_source'])) $temp_array['format_source'] = $row['format_source'];
-			if (isset($row['route_stop'])) {
+			if (isset($row['route_stop']) && $row['route_stop'] != '') {
 				$temp_array['route_stop'] = $row['route_stop'];
-				if ($row['route_stop'] != '') {
-					$allroute = explode(' ',$row['route_stop']);
-			
-					foreach ($allroute as $route) {
-						$route_airport_array = $this->getAllAirportInfo($route);
-						if (isset($route_airport_array[0]['name'])) {
-							$route_stop_details = array();
-							$route_stop_details['airport_name'] = $route_airport_array[0]['name'];
-							$route_stop_details['airport_city'] = $route_airport_array[0]['city'];
-							$route_stop_details['airport_country'] = $route_airport_array[0]['country'];
-							$route_stop_details['airport_icao'] = $route_airport_array[0]['icao'];
-							$temp_array['route_stop_details'][] = $route_stop_details;
-						}
+				$allroute = explode(' ',$row['route_stop']);
+				foreach ($allroute as $route) {
+					$route_airport_array = $this->getAllAirportInfo($route);
+					if (isset($route_airport_array[0]['name'])) {
+						$route_stop_details = array();
+						$route_stop_details['airport_name'] = $route_airport_array[0]['name'];
+						$route_stop_details['airport_city'] = $route_airport_array[0]['city'];
+						$route_stop_details['airport_country'] = $route_airport_array[0]['country'];
+						$route_stop_details['airport_icao'] = $route_airport_array[0]['icao'];
+						$temp_array['route_stop_details'][] = $route_stop_details;
 					}
 				}
 			}
@@ -283,6 +280,12 @@ class Spotter{
 				$temp_array['date_iso_8601'] = date("c",strtotime($row['date']." UTC"));
 				$temp_array['date_rfc_2822'] = date("r",strtotime($row['date']." UTC"));
 				$temp_array['date_unix'] = strtotime($row['date']." UTC");
+				if (isset($row['last_seen']) && $row['last_seen'] != '') {
+					$temp_array['duration'] = strtotime($row['last_seen']) - strtotime($row['date']);
+					$temp_array['last_seen_date_iso_8601'] = date("c",strtotime($row['last_seen']." UTC"));
+					$temp_array['last_seen_date_rfc_2822'] = date("r",strtotime($row['last_seen']." UTC"));
+					$temp_array['last_seen_date_unix'] = strtotime($row['last_seen']." UTC");
+				}
 			}
 			
 			if (isset($row['aircraft_name']) && $row['aircraft_name'] != '' && isset($row['aircraft_shadow']) && $row['aircraft_shadow'] != '') {
@@ -4594,6 +4597,44 @@ class Spotter{
 	}
 
 	/**
+	* Gets flight duration by owner
+	*
+	* @return String Duration of all flights
+	*
+	*/
+	public function getFlightDurationByOwner($owner,$filters = array())
+	{
+		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT SUM(last_seen - date) AS duration 
+		 		FROM spotter_output".$filter_query." spotter_output.owner_name = :owner";
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':owner' => $owner));
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (is_int($result[0]['duration'])) return gmdate('H:i:s',$result[0]['duration']);
+		else return $result[0]['duration'];
+	}
+
+	/**
+	* Gets flight duration by pilot
+	*
+	* @return String Duration of all flights
+	*
+	*/
+	public function getFlightDurationByPilot($pilot,$filters = array())
+	{
+		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT SUM(last_seen - date) AS duration 
+		 		FROM spotter_output".$filter_query." (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot)";
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':pilot' => $pilot));
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (is_int($result[0]['duration'])) return gmdate('H:i:s',$result[0]['duration']);
+		else return $result[0]['duration'];
+	}
+
+	/**
 	* Gets all airlines used by pilot
 	*
 	* @return Array the airline list
@@ -5616,7 +5657,6 @@ class Spotter{
 		$sth->execute(array(':owner' => $owner));
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
-
 
 	/**
 	* Gets all aircraft registration that have flown over by ident/callsign

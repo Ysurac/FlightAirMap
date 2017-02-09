@@ -108,6 +108,19 @@ if (!isset($_GET['pilot'])){
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['pilot_name'].'</h1>';
 		if (isset($spotter_array[0]['pilot_id']) && $spotter_array[0]['pilot_id'] != '') print '<div><span class="label">'._("Pilot ID").'</span>'.$spotter_array[0]['pilot_id'].'</div>';
+		$Stats = new Stats();
+		$flights = $Stats->getStatsPilot($pilot);
+		print '<div><span class="label">'._("Flights").'</span>'.$flights.'</div>';
+		$aircraft_type = count($Spotter->countAllAircraftTypesByPilot($pilot));
+		print '<div><span class="label">'._("Aircrafts type").'</span>'.$aircraft_type.'</div>';
+		$aircraft_registration = count($Spotter->countAllAircraftRegistrationByPilot($pilot));
+		print '<div><span class="label">'._("Aircrafts").'</span>'.$aircraft_registration.'</div>';
+		$aircraft_manufacturer = count($Spotter->countAllAircraftManufacturerByPilot($pilot));
+		print '<div><span class="label">'._("Manufacturers").'</span>'.$aircraft_manufacturer.'</div>';
+		$airlines = count($Spotter->countAllAirlinesByPilot($pilot));
+		print '<div><span class="label">'._("Airlines").'</span>'.$airlines.'</div>';
+		$duration = $Spotter->getFlightDurationByPilot($pilot);
+		print '<div><span class="label">'._("Total flights spotted duration").'</span>'.$duration.'</div>';
 		print '</div>';
 	
 		include('owner-sub-menu.php');

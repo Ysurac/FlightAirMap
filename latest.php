@@ -38,7 +38,6 @@ $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $sql_begin = microtime(true);
 $spotter_array = $Spotter->getLatestSpotterData($limit_start.",".$absolute_difference, $sort);
 $sql_time = microtime(true)-$sql_begin;
-
 $page_begin = microtime(true);
 if (!empty($spotter_array))
 {
