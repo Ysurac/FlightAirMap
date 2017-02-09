@@ -1404,7 +1404,7 @@ class update_schema {
 				} catch(PDOException $e) {
 					return "error (delete default timestamp spotter_output) : ".$e->getMessage()."\n";
 				}
-				$query = "SELECT date,last_seen FROM spotter_output WHERE last_seen < date ORDER BY date DESC LIMIT 50";
+				$query = "SELECT date,last_seen FROM spotter_output WHERE last_seen < date ORDER BY date DESC LIMIT 150";
 				try {
 					$sth = $Connection->db->prepare($query);
 					$sth->execute();
@@ -1414,14 +1414,17 @@ class update_schema {
 				$stats = array();
 				while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 					$hours = gmdate('H',strtotime($row['last_seen']) - strtotime($row['date']));
-					if (isset($stats[$hours])) $stats[$hours] = $stats[$hours] + 1;
-					else $stats[$hours] = 1;
+					if ($hours < 12) {
+						if (isset($stats[$hours])) $stats[$hours] = $stats[$hours] + 1;
+						else $stats[$hours] = 1;
+					}
 				}
 				if (!empty($stats)) {
 					asort($stats);
 					reset($stats);
 					$hour = key($stats);
 					$i = 1;
+					$j = 0;
 					$query_chk = "SELECT count(*) as nb FROM spotter_output WHERE last_seen < date";
 					while ($i > 0) {
 						$query = "UPDATE spotter_output SET last_seen = DATE_ADD(last_seen, INTERVAL ".$hour." HOUR) WHERE last_seen < date";
@@ -1440,6 +1443,8 @@ class update_schema {
 						}
 						$i = $result[0]['nb'];
 						$hour = 1;
+						$j++;
+						if ($j > 12) $i = 0;
 					}
 				}
 			}
@@ -1458,7 +1463,7 @@ class update_schema {
 				} catch(PDOException $e) {
 					return "error (delete default timestamp spotter_output) : ".$e->getMessage()."\n";
 				}
-				$query = "SELECT date,last_seen FROM spotter_archive_output WHERE last_seen < date ORDER BY date DESC LIMIT 50";
+				$query = "SELECT date,last_seen FROM spotter_archive_output WHERE last_seen < date ORDER BY date DESC LIMIT 150";
 				try {
 					$sth = $Connection->db->prepare($query);
 					$sth->execute();
@@ -1468,14 +1473,17 @@ class update_schema {
 				$stats = array();
 				while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 					$hours = gmdate('H',strtotime($row['last_seen']) - strtotime($row['date']));
-					if (isset($stats[$hours])) $stats[$hours] = $stats[$hours] + 1;
-					else $stats[$hours] = 1;
+					if ($hours < 12) {
+						if (isset($stats[$hours])) $stats[$hours] = $stats[$hours] + 1;
+						else $stats[$hours] = 1;
+					}
 				}
 				if (!empty($stats)) {
 					asort($stats);
 					reset($stats);
 					$hour = key($stats);
 					$i = 1;
+					$j = 0;
 					$query_chk = "SELECT count(*) as nb FROM spotter_archive_output WHERE last_seen < date";
 					while ($i > 0) {
 						$query = "UPDATE spotter_archive_output SET last_seen = DATE_ADD(last_seen, INTERVAL ".$hour." HOUR) WHERE last_seen < date";
@@ -1494,6 +1502,8 @@ class update_schema {
 						}
 						$i = $result[0]['nb'];
 						$hour = 1;
+						$j++;
+						if ($j > 12) $i = 0;
 					}
 				}
 			}
