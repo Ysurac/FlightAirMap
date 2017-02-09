@@ -3740,7 +3740,7 @@ class Spotter{
 		}
 
     
-		if ($date == "" || strtotime($date) < time()-20*60))
+		if ($date == "" || strtotime($date) < time()-20*60)
 		{
 			$date = date("Y-m-d H:i:s", time());
 		}
