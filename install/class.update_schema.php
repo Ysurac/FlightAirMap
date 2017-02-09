@@ -1388,19 +1388,26 @@ class update_schema {
 		$Connection = new Connection();
 		$error = '';
 		if ($globalDBdriver == 'mysql') {
-			$query = "ALTER TABLE spotter_output MODIFY COLUMN last_seen timestamp";
+			$query = "ALTER TABLE spotter_output MODIFY COLUMN last_seen timestamp not null default current_timestamp()";
 			try {
 				$sth = $Connection->db->prepare($query);
 				$sth->execute();
 			} catch(PDOException $e) {
 				return "error (convert spotter_output last_seen to timestamp) : ".$e->getMessage()."\n";
 			}
-			$query = "ALTER TABLE spotter_archive_output MODIFY COLUMN last_seen timestamp";
+			$query = "ALTER TABLE spotter_archive_output MODIFY COLUMN last_seen timestamp not null default current_timestamp()";
 			try {
 				$sth = $Connection->db->prepare($query);
 				$sth->execute();
 			} catch(PDOException $e) {
 				return "error (convert spotter_archive_output last_seen to timestamp) : ".$e->getMessage()."\n";
+			}
+			$query = "ALTER TABLE spotter_output ALTER COLUMN last_seen DROP DEFAULT; ALTER TABLE spotter_archive_output ALTER COLUMN last_seen DROP DEFAULT;";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (delete default timestamp spotter_output) : ".$e->getMessage()."\n";
 			}
 			$query = "SELECT date,last_seen FROM spotter_output WHERE last_seen < date ORDER BY date DESC LIMIT 50";
 			try {
