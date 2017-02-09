@@ -133,11 +133,11 @@ require_once('header.php');
             	    <?php
             		if ($year != '' && $month != '') {
             	    ?>
-            	    <a href="<?php print $globalURL; ?>/statistics/aircraft/<?php echo $year; ?>/<?php echo $month ?>/" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+            	    <a href="<?php print $globalURL; ?>/statistics/aircraft<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>/<?php echo $year; ?>/<?php echo $month ?>/" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
             	    <?php
             		} else {
             	    ?>
-            	    <a href="<?php print $globalURL; ?>/statistics/aircraft" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+            	    <a href="<?php print $globalURL; ?>/statistics/aircraft<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
             	    <?php
             		}
             	    ?>
@@ -181,9 +181,13 @@ require_once('header.php');
                             });
                   </script>';
 	    if ($year != '' && $month != '') {
-		print '<div class="more"><a href="'.$globalURL.'/statistics/airline/'.$year.'/'.$month.'/" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
+		print '<div class="more"><a href="'.$globalURL.'/statistics/airline';
+		if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao;
+		print '/'.$year.'/'.$month.'/" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
 	    } else {
-		print '<div class="more"><a href="'.$globalURL.'/statistics/airline" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
+		print '<div class="more"><a href="'.$globalURL.'/statistics/airline';
+		if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao;
+		print '" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
 	    }
     	    print '</div>';
 	}
@@ -239,7 +243,9 @@ require_once('header.php');
                   </script>';
         }
         print '<div class="more">';
-	print '<a href="'.$globalURL.'/statistics/pilot" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a>';
+	print '<a href="'.$globalURL.'/statistics/pilot'; 
+	if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao;
+	print'" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a>';
 	print '</div>';
 ?>
             </div>
@@ -286,7 +292,7 @@ require_once('header.php');
 	}
 ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/owner" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/owner<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
         
@@ -335,7 +341,7 @@ require_once('header.php');
 	}
 ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/country" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/country<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
 <?php
@@ -387,7 +393,9 @@ require_once('header.php');
                 chart.draw(data, options);
               }
                 </script>';
-	print '<div class="more"><a href="'.$globalURL.'/statistics/airport-departure" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
+	print '<div class="more"><a href="'.$globalURL.'/statistics/airport-departure'; 
+	if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao;
+	print '" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
     }
 ?>
             </div>
@@ -432,7 +440,9 @@ require_once('header.php');
                 chart.draw(data, options);
               }
                 </script>';
-	print '<div class="more"><a href="'.$globalURL.'/statistics/airport-arrival" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
+	print '<div class="more"><a href="'.$globalURL.'/statistics/airport-arrival';
+	if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao;
+	print '" class="btn btn-default btn" role="button">'._("See full statistic").'&raquo;</a></div>';
     }
 ?>
             </div>
@@ -483,7 +493,7 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/year" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/year<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
@@ -528,7 +538,7 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/month" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/month<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
@@ -575,7 +585,7 @@ require_once('header.php');
                   }
                   ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/date" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/date<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
@@ -621,7 +631,7 @@ require_once('header.php');
                   }
                 ?>
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/time" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/statistics/time<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
