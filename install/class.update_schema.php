@@ -1388,101 +1388,113 @@ class update_schema {
 		$Connection = new Connection();
 		$error = '';
 		if ($globalDBdriver == 'mysql') {
-			$query = "ALTER TABLE spotter_output MODIFY COLUMN last_seen timestamp not null default current_timestamp()";
-			try {
-				$sth = $Connection->db->prepare($query);
-				$sth->execute();
-			} catch(PDOException $e) {
-				return "error (convert spotter_output last_seen to timestamp) : ".$e->getMessage()."\n";
-			}
-			$query = "ALTER TABLE spotter_archive_output MODIFY COLUMN last_seen timestamp not null default current_timestamp()";
-			try {
-				$sth = $Connection->db->prepare($query);
-				$sth->execute();
-			} catch(PDOException $e) {
-				return "error (convert spotter_archive_output last_seen to timestamp) : ".$e->getMessage()."\n";
-			}
-			$query = "ALTER TABLE spotter_output ALTER COLUMN last_seen DROP DEFAULT; ALTER TABLE spotter_archive_output ALTER COLUMN last_seen DROP DEFAULT;";
-			try {
-				$sth = $Connection->db->prepare($query);
-				$sth->execute();
-			} catch(PDOException $e) {
-				return "error (delete default timestamp spotter_output) : ".$e->getMessage()."\n";
-			}
-			$query = "SELECT date,last_seen FROM spotter_output WHERE last_seen < date ORDER BY date DESC LIMIT 50";
-			try {
-				$sth = $Connection->db->prepare($query);
-				$sth->execute();
-			} catch(PDOException $e) {
-				return "error (get date diff from spotter_output) : ".$e->getMessage()."\n";
-			}
-			$stats = array();
-			while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-				$hours = gmdate('H',strtotime($row['last_seen']) - strtotime($row['date']));
-				if (isset($stats[$hours])) $stats[$hours] = $stats[$hours] + 1;
-				else $stats[$hours] = 1;
-			}
-			if (!empty($stats)) {
-				asort($stats);
-				reset($stats);
-				$hour = key($stats);
-				$i = 1;
-				$query_chk = "SELECT count(*) as nb FROM spotter_output WHERE last_seen < date";
-				while ($i > 0) {
-					$query = "UPDATE spotter_output SET last_seen = DATE_ADD(last_seen, INTERVAL ".$hour." HOUR) WHERE last_seen < date";
-					try {
-						$sth = $Connection->db->prepare($query);
-						$sth->execute();
-					} catch(PDOException $e) {
-						return "error (fix date) : ".$e->getMessage()."\n";
+			if ($Connection->getColumnType('spotter_output','date') == 'TIMESTAMP' && $Connection->getColumnType('spotter_output','last_seen') != 'TIMESTAMP') {
+				$query = "ALTER TABLE spotter_output MODIFY COLUMN last_seen timestamp not null default current_timestamp()";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (convert spotter_output last_seen to timestamp) : ".$e->getMessage()."\n";
+				}
+				
+				$query = "ALTER TABLE spotter_output ALTER COLUMN last_seen DROP DEFAULT";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (delete default timestamp spotter_output) : ".$e->getMessage()."\n";
+				}
+				$query = "SELECT date,last_seen FROM spotter_output WHERE last_seen < date ORDER BY date DESC LIMIT 50";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (get date diff from spotter_output) : ".$e->getMessage()."\n";
+				}
+				$stats = array();
+				while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+					$hours = gmdate('H',strtotime($row['last_seen']) - strtotime($row['date']));
+					if (isset($stats[$hours])) $stats[$hours] = $stats[$hours] + 1;
+					else $stats[$hours] = 1;
+				}
+				if (!empty($stats)) {
+					asort($stats);
+					reset($stats);
+					$hour = key($stats);
+					$i = 1;
+					$query_chk = "SELECT count(*) as nb FROM spotter_output WHERE last_seen < date";
+					while ($i > 0) {
+						$query = "UPDATE spotter_output SET last_seen = DATE_ADD(last_seen, INTERVAL ".$hour." HOUR) WHERE last_seen < date";
+						try {
+							$sth = $Connection->db->prepare($query);
+							$sth->execute();
+						} catch(PDOException $e) {
+							return "error (fix date) : ".$e->getMessage()."\n";
+						}
+						try {
+							$sth_chk = $Connection->db->prepare($query_chk);
+							$sth_chk->execute();
+							$result = $sth_chk->fetchAll(PDO::FETCH_ASSOC);
+						} catch(PDOException $e) {
+							return "error (fix date chk) : ".$e->getMessage()."\n";
+						}
+						$i = $result[0]['nb'];
+						$hour = 1;
 					}
-					try {
-						$sth_chk = $Connection->db->prepare($query_chk);
-						$sth_chk->execute();
-						$result = $sth_chk->fetchAll(PDO::FETCH_ASSOC);
-					} catch(PDOException $e) {
-						return "error (fix date chk) : ".$e->getMessage()."\n";
-					}
-					$i = $result[0]['nb'];
-					$hour = 1;
 				}
 			}
-			$query = "SELECT date,last_seen FROM spotter_archive_output WHERE last_seen < date ORDER BY date DESC LIMIT 50";
-			try {
-				$sth = $Connection->db->prepare($query);
-				$sth->execute();
-			} catch(PDOException $e) {
-				return "error (get diff from spotter_archive_output) : ".$e->getMessage()."\n";
-			}
-			$stats = array();
-			while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-				$hours = gmdate('H',strtotime($row['last_seen']) - strtotime($row['date']));
-				if (isset($stats[$hours])) $stats[$hours] = $stats[$hours] + 1;
-				else $stats[$hours] = 1;
-			}
-			if (!empty($stats)) {
-				asort($stats);
-				reset($stats);
-				$hour = key($stats);
-				$i = 1;
-				$query_chk = "SELECT count(*) as nb FROM spotter_archive_output WHERE last_seen < date";
-				while ($i > 0) {
-					$query = "UPDATE spotter_archive_output SET last_seen = DATE_ADD(last_seen, INTERVAL ".$hour." HOUR) WHERE last_seen < date";
-					try {
-						$sth = $Connection->db->prepare($query);
-						$sth->execute();
-					} catch(PDOException $e) {
-						return "error (fix date) : ".$e->getMessage()."\n";
+			if ($Connection->getColumnType('spotter_archive_output','date') == 'TIMESTAMP' && $Connection->getColumnType('spotter_archive_output','last_seen') != 'TIMESTAMP') {
+				$query = "ALTER TABLE spotter_archive_output MODIFY COLUMN last_seen timestamp not null default current_timestamp()";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (convert spotter_archive_output last_seen to timestamp) : ".$e->getMessage()."\n";
+				}
+				$query = "ALTER TABLE spotter_archive_output ALTER COLUMN last_seen DROP DEFAULT";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (delete default timestamp spotter_output) : ".$e->getMessage()."\n";
+				}
+				$query = "SELECT date,last_seen FROM spotter_archive_output WHERE last_seen < date ORDER BY date DESC LIMIT 50";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (get diff from spotter_archive_output) : ".$e->getMessage()."\n";
+				}
+				$stats = array();
+				while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+					$hours = gmdate('H',strtotime($row['last_seen']) - strtotime($row['date']));
+					if (isset($stats[$hours])) $stats[$hours] = $stats[$hours] + 1;
+					else $stats[$hours] = 1;
+				}
+				if (!empty($stats)) {
+					asort($stats);
+					reset($stats);
+					$hour = key($stats);
+					$i = 1;
+					$query_chk = "SELECT count(*) as nb FROM spotter_archive_output WHERE last_seen < date";
+					while ($i > 0) {
+						$query = "UPDATE spotter_archive_output SET last_seen = DATE_ADD(last_seen, INTERVAL ".$hour." HOUR) WHERE last_seen < date";
+						try {
+							$sth = $Connection->db->prepare($query);
+							$sth->execute();
+						} catch(PDOException $e) {
+							return "error (fix date) : ".$e->getMessage()."\n";
+						}
+						try {
+							$sth_chk = $Connection->db->prepare($query_chk);
+							$sth_chk->execute();
+							$result = $sth_chk->fetchAll(PDO::FETCH_ASSOC);
+						} catch(PDOException $e) {
+							return "error (fix date chk) : ".$e->getMessage()."\n";
+						}
+						$i = $result[0]['nb'];
+						$hour = 1;
 					}
-					try {
-						$sth_chk = $Connection->db->prepare($query_chk);
-						$sth_chk->execute();
-						$result = $sth_chk->fetchAll(PDO::FETCH_ASSOC);
-					} catch(PDOException $e) {
-						return "error (fix date chk) : ".$e->getMessage()."\n";
-					}
-					$i = $result[0]['nb'];
-					$hour = 1;
 				}
 			}
 		}

@@ -223,6 +223,12 @@ class Connection{
 		return $columns;
 	}
 
+	public function getColumnType($table,$column) {
+		$select = $this->db->query('SELECT '.$column.' FROM '.$table);
+		$tomet = $select->getColumnMeta(0);
+		return $tomet['native_type'];
+	}
+
 	/*
 	* Check if a column name exist in a table
 	* @return Boolean column exist or not
