@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `spotter_archive_output` (
   `source_name` varchar(255) DEFAULT NULL,
   `ground` tinyint(1) NOT NULL DEFAULT '0',
   `last_ground` tinyint(1) NOT NULL DEFAULT '0',
-  `last_seen` datetime DEFAULT NULL,
+  `last_seen` timestamp DEFAULT NULL,
   `last_latitude` float DEFAULT NULL,
   `last_longitude` float DEFAULT NULL,
   `last_altitude` int(11) DEFAULT NULL,
