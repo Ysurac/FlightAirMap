@@ -294,7 +294,8 @@ class SpotterImport {
 		    if ($globalAllFlights !== FALSE) $dataFound = true;
 		}
 		
-		if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
+		//if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
+		if (isset($line['datetime']) && strtotime($line['datetime']) > time()-20*60) {
 		    if (!isset($this->all_flights[$id]['datetime']) || strtotime($line['datetime']) >= strtotime($this->all_flights[$id]['datetime'])) {
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
 		    } else {
@@ -307,7 +308,10 @@ class SpotterImport {
 				*/
 				return '';
 		    }
-		} else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
+		} else {
+			date_default_timezone_set('UTC');
+			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
+		}
 
 		if (isset($line['registration']) && $line['registration'] != '' && $line['registration'] != 'z.NO-REG') {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('registration' => $line['registration']));
