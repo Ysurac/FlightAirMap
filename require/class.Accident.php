@@ -165,6 +165,7 @@ class Accident {
 				$data['flightaware_id'] = $ids[$date]['flightaware_id'];
 				$data['spotter_id'] = $ids[$date]['spotter_id'];
 			} elseif (isset($ids[0])) {
+				$data['spotted_registration'] = TRUE;
 				$data['flightaware_id'] = $ids[0]['flightaware_id'];
 				//$data['spotter_id'] = $ids[0]['spotter_id'];
 			}

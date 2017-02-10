@@ -393,7 +393,11 @@ foreach($spotter_array as $spotter_item)
 	{
 		print '<tr class="currentHour">';
 	} else {
-		print '<tr>';
+		if (isset($spotter_item['spotted'])) {
+			print '<tr class="active">';
+		} elseif (isset($spotter_item['spotted_registration'])) {
+			print '<tr class="info">';
+		} else print '<tr>';
 	}
 	if (strtolower($current_page) == "acars-latest" || strtolower($current_page) == "acars-archive" || strtolower($current_page) == "currently" || strtolower($current_page) == "accident-latest" || strtolower($current_page) == "incident-latest" || strtolower($current_page) == "accident-detailed" || strtolower($current_page) == "incident-detailed") {
 		if ($spotter_item['image_thumbnail'] != "")
