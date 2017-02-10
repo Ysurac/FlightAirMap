@@ -338,6 +338,7 @@ while ($i > 0) {
     
     //foreach ($formats as $id => $value) {
     foreach ($globalSources as $id => $value) {
+	date_default_timezone_set('UTC');
 	if (!isset($last_exec[$id]['last'])) $last_exec[$id]['last'] = 0;
 	if ($value['format'] == 'deltadbtxt' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    //$buffer = $Common->getData($hosts[$id]);
@@ -381,7 +382,8 @@ while ($i > 0) {
     		    $line = explode(':', $line);
     		    if (count($line) > 30 && $line[0] != 'callsign') {
 			$data = array();
-			$data['id'] = $value['format'].'-'.$line[1].'-'.$line[0];
+			if (isset($line[37]) && $line[37] != '') $data['id'] = $value['format'].'-'.$line[1].'-'.$line[0].'-'.$line[37];
+			else $data['id'] = $value['format'].'-'.$line[1].'-'.$line[0];
 			$data['pilot_id'] = $line[1];
 			$data['pilot_name'] = $line[2];
 			$data['hex'] = str_pad(dechex($line[1]),6,'000000',STR_PAD_LEFT);
@@ -398,7 +400,7 @@ while ($i > 0) {
 	        	$data['waypoints'] = $line[30];
 			$data['datetime'] = date('Y-m-d H:i:s');
 			//$data['datetime'] = date('Y-m-d H:i:s',strtotime($line[37]));
-			if (isset($line[37])) $data['last_update'] = $line[37];
+			//if (isset($line[37])) $data['last_update'] = $line[37];
 		        $data['departure_airport_icao'] = $line[11];
 		        $data['departure_airport_time'] = rtrim(chunk_split($line[22],2,':'),':');
 		        $data['arrival_airport_icao'] = $line[13];
