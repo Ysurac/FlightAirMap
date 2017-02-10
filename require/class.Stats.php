@@ -273,7 +273,7 @@ class Stats {
 	}
 
 	public function countAllAirlines($limit = true,$filter_name = '',$year = '',$month = '') {
-		global $globalStatsFilters;
+		global $globalStatsFilters, $globalVATSIM, $globalIVAO;
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($year == '' && $month == '') {
 			if ($globalVATSIM) $forsource = 'vatsim';
