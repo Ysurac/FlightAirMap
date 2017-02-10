@@ -4023,8 +4023,8 @@ class Spotter{
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
-		$query  = "SELECT DISTINCT spotter_output.pilot_id, spotter_output.pilot_name, COUNT(spotter_output.pilot_id) AS pilot_count, spotter_output.format_source
-		 			FROM spotter_output".$filter_query." spotter_output.pilot_id <> ''";
+		$query  = "SELECT DISTINCT spotter_output.pilot_id, s.pilot_name, COUNT(spotter_output.pilot_id) AS pilot_count, spotter_output.format_source
+			FROM spotter_output LEFT JOIN (SELECT DISTINCT pilot_id, pilot_name FROM spotter_output ORDER BY date) s ON s.pilot_id = spotter_output.pilot_id".$filter_query." spotter_output.pilot_id <> ''";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
 				$query .= ' AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH)';
@@ -4068,7 +4068,7 @@ class Spotter{
 			}
 		}
 		
-		$query .= " GROUP BY spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.format_source ORDER BY pilot_count DESC";
+		$query .= " GROUP BY spotter_output.pilot_id,s.pilot_name,spotter_output.format_source ORDER BY pilot_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
 		
