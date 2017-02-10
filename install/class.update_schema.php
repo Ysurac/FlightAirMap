@@ -1404,7 +1404,7 @@ class update_schema {
 				} catch(PDOException $e) {
 					return "error (delete default timestamp spotter_output) : ".$e->getMessage()."\n";
 				}
-				$query = "SELECT date,last_seen FROM spotter_output WHERE last_seen < date ORDER BY date DESC LIMIT 150";
+				/*$query = "SELECT date,last_seen FROM spotter_output WHERE last_seen < date ORDER BY date DESC LIMIT 150";
 				try {
 					$sth = $Connection->db->prepare($query);
 					$sth->execute();
@@ -1447,6 +1447,14 @@ class update_schema {
 						if ($j > 12) $i = 0;
 					}
 				}
+				*/
+				$query = "UPDATE spotter_output SET last_seen = date WHERE last_seen < date";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (fix date) : ".$e->getMessage()."\n";
+				}
 			}
 			if ($Connection->getColumnType('spotter_archive_output','date') == 'TIMESTAMP' && $Connection->getColumnType('spotter_archive_output','last_seen') != 'TIMESTAMP') {
 				$query = "ALTER TABLE spotter_archive_output MODIFY COLUMN last_seen timestamp not null default current_timestamp()";
@@ -1463,6 +1471,7 @@ class update_schema {
 				} catch(PDOException $e) {
 					return "error (delete default timestamp spotter_output) : ".$e->getMessage()."\n";
 				}
+				/*
 				$query = "SELECT date,last_seen FROM spotter_archive_output WHERE last_seen < date ORDER BY date DESC LIMIT 150";
 				try {
 					$sth = $Connection->db->prepare($query);
@@ -1505,6 +1514,14 @@ class update_schema {
 						$j++;
 						if ($j > 12) $i = 0;
 					}
+				}
+				*/
+				$query = "UPDATE spotter_archive_output SET last_seen = date WHERE last_seen < date";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (fix date) : ".$e->getMessage()."\n";
 				}
 			}
 		}
