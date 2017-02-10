@@ -386,7 +386,7 @@ foreach($spotter_array as $spotter_item)
 	if ($showSpecial === true)
 	{
 		print '<tr class="special">'."\n";
-		print '<td colspan="9"><h4>'.$spotter_item['registration'].' - '.$spotter_item['highlight'].'</h4></td>'."\n";
+		print '<td colspan="10"><h4>'.$spotter_item['registration'].' - '.$spotter_item['highlight'].'</h4></td>'."\n";
 		print '</tr>'."\n";
 	}
 	if (strtolower($current_page) == "upcoming" && isset($spotter_item['date_iso_8601']) && date("ga") == date("ga", strtotime($spotter_item['date_iso_8601'])))
