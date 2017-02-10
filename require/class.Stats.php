@@ -276,11 +276,20 @@ class Stats {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT DISTINCT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = stats_airline.airline_icao AND filter_name = :filter_name ORDER BY airline_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT DISTINCT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = stats_airline.airline_icao AND filter_name = :filter_name ORDER BY airline_count DESC";
+			if ($globalVATSIM) $forsource = 'vatsim';
+			if ($globalIVAO) $forsource = 'ivao';
+			if (isset($forsource)) {
+				if ($limit) $query = "SELECT DISTINCT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = stats_airline.airline_icao AND filter_name = :filter_name AND airlines.forsource = :forsource ORDER BY airline_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT DISTINCT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = stats_airline.airline_icao AND filter_name = :filter_name AND airlines.forsource = :forsource ORDER BY airline_count DESC";
+				$query_values = array(':filter_name' => $filter_name,':forsource' => $forsource);
+			} else {
+				if ($limit) $query = "SELECT DISTINCT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = stats_airline.airline_icao AND filter_name = :filter_name AND airlines.forsource IS NULL ORDER BY airline_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT DISTINCT stats_airline.airline_icao, stats_airline.cnt AS airline_count, stats_airline.airline_name, airlines.country as airline_country FROM stats_airline, airlines WHERE stats_airline.airline_name <> '' AND stats_airline.airline_icao <> '' AND airlines.icao = stats_airline.airline_icao AND filter_name = :filter_name AND airlines.forsource IS NULL ORDER BY airline_count DESC";
+				$query_values = array(':filter_name' => $filter_name);
+			}
 			try {
 				$sth = $this->db->prepare($query);
-				$sth->execute(array(':filter_name' => $filter_name));
+				$sth->execute($query_values);
 			} catch(PDOException $e) {
 				echo "error : ".$e->getMessage();
 			}
@@ -292,7 +301,6 @@ class Stats {
             		if ($filter_name != '') {
             			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
-
     		        $all = $Spotter->countAllAirlines($limit,0,'',$filters,$year,$month);
                 }
                 return $all;
