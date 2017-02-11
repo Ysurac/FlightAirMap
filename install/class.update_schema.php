@@ -1389,7 +1389,7 @@ class update_schema {
 		$error = '';
 		if ($globalDBdriver == 'mysql') {
 			if ($Connection->getColumnType('spotter_output','date') == 'TIMESTAMP' && $Connection->getColumnType('spotter_output','last_seen') != 'TIMESTAMP') {
-				$query = "ALTER TABLE spotter_output ALTER COLUMN last_seen DROP DEFAULT";
+				$query = "ALTER TABLE spotter_output CHANGE date date TIMESTAMP NULL DEFAULT NULL";
 				try {
 					$sth = $Connection->db->prepare($query);
 					$sth->execute();
@@ -1464,7 +1464,7 @@ class update_schema {
 				}
 			}
 			if ($Connection->getColumnType('spotter_archive_output','date') == 'TIMESTAMP' && $Connection->getColumnType('spotter_archive_output','last_seen') != 'TIMESTAMP') {
-				$query = "ALTER TABLE spotter_archive_output ALTER COLUMN last_seen DROP DEFAULT";
+				$query = "ALTER TABLE spotter_archive_output CHANGE date date TIMESTAMP NULL DEFAULT NULL";
 				try {
 					$sth = $Connection->db->prepare($query);
 					$sth->execute();
