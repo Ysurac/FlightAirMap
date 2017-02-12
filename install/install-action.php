@@ -155,7 +155,7 @@ if (isset($_GET['reset'])) {
 	} else {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
-		$error .= update_db::update_ModeS();
+		$error .= update_db::update_ModeS_fam();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data for ADS-B'));
 
 		$_SESSION['install'] = 'populate_flarm';
@@ -171,7 +171,7 @@ if (isset($_GET['reset'])) {
 	} else {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
-		$error .= update_db::update_ModeS_flarm();
+		//$error .= update_db::update_ModeS_flarm();
 		$error .= update_db::update_ModeS_ogn();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate aircraft_modes table with externals data for FLARM'));
 
@@ -248,7 +248,7 @@ if (isset($_GET['reset'])) {
 	} else {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
-		$error = update_db::update_owner();
+		$error = update_db::update_owner_fam();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate owner table with externals data'));
 		$_SESSION['install'] = 'sources';
 		$_SESSION['next'] = 'Insert data in source table';

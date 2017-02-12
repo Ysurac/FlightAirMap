@@ -1,6 +1,7 @@
 <?php
 @session_start();
 header('Content-Encoding: none;');
+//print_r($_SESSION);
 if (isset($_SESSION['error'])) {
 	echo 'Error : '.$_SESSION['error'].' - Resetting install... You need to fix the problem and run install again.';
 	unset($_SESSION['error']);
@@ -98,7 +99,7 @@ if (count($error) > 0) {
 //	require('../footer.php');
 //	exit;
 }
-
+//if (isset($_SESSION['install'])) echo 'My session';
 if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) == 0)) {
 	?>
 	<div class="info column install">
@@ -1248,7 +1249,7 @@ if (isset($_POST['dbtype'])) {
 #		flush();
 #		@ob_flush();
 #		sleep(10);
-		print "<script>setTimeout(window.location = 'index.php?".rand()."&next=".$_SESSION['install']."',10000)</script>";
+		print "<script>console.log('Configuration writed...');setTimeout(window.location = 'index.php?".rand()."&next=".$_SESSION['install']."',10000);</script>";
 //		header("Location: index.php?".rand());
 //		require('../footer.php');
 	}
