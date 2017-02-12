@@ -1463,6 +1463,7 @@ class update_schema {
 					return "error (fix date) : ".$e->getMessage()."\n";
 				}
 			}
+			/*
 			if ($Connection->getColumnType('spotter_archive_output','date') == 'TIMESTAMP' && $Connection->getColumnType('spotter_archive_output','last_seen') != 'TIMESTAMP') {
 				$query = "ALTER TABLE spotter_archive_output CHANGE date date TIMESTAMP NULL DEFAULT NULL";
 				try {
@@ -1485,7 +1486,6 @@ class update_schema {
 				} catch(PDOException $e) {
 					return "error (delete default timestamp spotter_output) : ".$e->getMessage()."\n";
 				}
-				/*
 				$query = "SELECT date,last_seen FROM spotter_archive_output WHERE last_seen < date ORDER BY date DESC LIMIT 150";
 				try {
 					$sth = $Connection->db->prepare($query);
@@ -1529,7 +1529,6 @@ class update_schema {
 						if ($j > 12) $i = 0;
 					}
 				}
-				*/
 				$query = "UPDATE spotter_archive_output SET last_seen = date WHERE last_seen < date";
 				try {
 					$sth = $Connection->db->prepare($query);
@@ -1537,7 +1536,9 @@ class update_schema {
 				} catch(PDOException $e) {
 					return "error (fix date) : ".$e->getMessage()."\n";
 				}
+			
 			}
+			*/
 		}
 		$query = "UPDATE config SET value = '35' WHERE name = 'schema_version'";
 		try {
