@@ -287,16 +287,16 @@ if ($use_aprs) {
 	$aprs_keep = 120;
 	$aprs_last_tx = time();
 	if (isset($globalAPRSversion)) $aprs_version = $globalAPRSversion;
-	else $aprs_version = $globalName.' using FlightAirMap';
+	else $aprs_version = 'FlightAirMap '.str_replace(' ','_',$globalName);
 	//else $aprs_version = 'Perl Example App';
 	if (isset($globalAPRSssid)) $aprs_ssid = $globalAPRSssid;
-	else $aprs_ssid = 'FAM';
+	else $aprs_ssid = 'FAM-'.str_replace(' ','_',$globalName);
 	//else $aprs_ssid = 'PerlEx';
 	if (isset($globalAPRSfilter)) $aprs_filter = $globalAPRSfilter;
 	else $aprs_filter =  'r/'.$globalCenterLatitude.'/'.$globalCenterLongitude.'/250.0';
 	if ($aprs_full) $aprs_filter = '';
-	if ($aprs_filter != '') $aprs_login = "user {$aprs_ssid} appid {$aprs_version} filter {$aprs_filter}\n";
-	else $aprs_login = "user {$aprs_ssid} appid {$aprs_version}\n";
+	if ($aprs_filter != '') $aprs_login = "user {$aprs_ssid} vers {$aprs_version} filter {$aprs_filter}\n";
+	else $aprs_login = "user {$aprs_ssid} vers {$aprs_version}\n";
 }
 
 // connected - lets do some work
@@ -926,17 +926,20 @@ while ($i > 0) {
 				$send = @ socket_send( $r  , $aprs_login , strlen($aprs_login) , 0 );
 				$aprs_connect = 1;
 			    }
+			    
 			    if ( $aprs_keep>60 && time() - $aprs_last_tx > $aprs_keep ) {
 				$aprs_last_tx = time();
 				$data_aprs = "# Keep alive";
 				$send = @ socket_send( $r  , $data_aprs , strlen($data_aprs) , 0 );
 			    }
+			    
 			    //echo 'Connect : '.$aprs_connect.' '.$buffer."\n";
 			    $buffer = str_replace('APRS <- ','',$buffer);
 			    $buffer = str_replace('APRS -> ','',$buffer);
 			    if (substr($buffer,0,1) != '#' && substr($buffer,0,1) != '@' && substr($buffer,0,5) != 'APRS ') {
 				$line = $APRS->parse($buffer);
 				if (is_array($line) && isset($line['address']) && $line['address'] != '' && isset($line['ident'])) {
+				    $aprs_last_tx = time();
 				    $data = array();
 				    //print_r($line);
 				    $data['hex'] = $line['address'];
