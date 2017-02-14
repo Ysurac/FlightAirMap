@@ -9,7 +9,12 @@ if (!isset($_GET['owner'])) {
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $owner = filter_input(INPUT_GET,'owner',FILTER_SANITIZE_STRING);
-$spotter_array = $Spotter->getSpotterDataByOwner($owner,"0,1", $sort);
+$year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
+$month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
+$filter = array();
+if ($year != '') $filter = array_merge($filter,array('year' => $year));
+if ($month != '') $filter = array_merge($filter,array('month' => $month));
+$spotter_array = $Spotter->getSpotterDataByOwner($owner,"0,1", $sort,$filter);
 
 if (!empty($spotter_array))
 {
@@ -26,7 +31,7 @@ if (!empty($spotter_array))
 	print '<h2>'._("Most Common Routes").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common routes from flights owner by <strong>%s</strong>."),$spotter_array[0]['aircraft_owner']).'</p>';
 
-	$route_array = $Spotter->countAllRoutesByOwner($owner);
+	$route_array = $Spotter->countAllRoutesByOwner($owner,$filter);
 	if (!empty($route_array))
 	{
 		print '<div class="table-responsive">';

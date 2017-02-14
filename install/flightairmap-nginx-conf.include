@@ -202,15 +202,27 @@ location /ident {
 }
 
 location /owner {
+    rewrite ^/owner/statistics/aircraft/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ /owner-statistics-aircraft.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/aircraft/([^/]+)(/?)$ /owner-statistics-aircraft.php?owner=$1 last;
+    rewrite ^/owner/statistics/registration/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ /owner-statistics-registration.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/registration/([^/]+)(/?)$ /owner-statistics-registration.php?owner=$1 last;
+    rewrite ^/owner/statistics/manufacturer/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ /owner-statistics-manufacturer.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/manufacturer/([^/]+)(/?)$ /owner-statistics-manufacturer.php?owner=$1 last;
+    rewrite ^/owner/statistics/departure-airport/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ /owner-statistics-departure-airport.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/departure-airport/([^/]+)(/?)$ /owner-statistics-departure-airport.php?owner=$1 last;
+    rewrite ^/owner/statistics/departure-airport-country/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ /owner-statistics-departure-airport-country.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/departure-airport-country/([^/]+)(/?)$ /owner-statistics-departure-airport-country.php?owner=$1 last;
+    rewrite ^/owner/statistics/arrival-airport/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ /owner-statistics-arrival-airport.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/arrival-airport/([^/]+)(/?)$ /owner-statistics-arrival-airport.php?owner=$1 last;
+    rewrite ^/owner/statistics/arrival-airport-country/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ /owner-statistics-arrival-airport-country.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/arrival-airport-country/([^/]+)(/?)$ /owner-statistics-arrival-airport-country.php?owner=$1 last;
+    rewrite ^/owner/statistics/time/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ /owner-statistics-time.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/time/([^/]+)(/?)$ /owner-statistics-time.php?owner=$1 last;
+    rewrite ^/owner/statistics/route/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ /owner-statistics-route.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/route/([^/]+)(/?)$ /owner-statistics-route.php?owner=$1 last;
+    rewrite ^/owner/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)/([^/]+)(/?)$ /owner-detailed.php?owner=$1&year=$2&month=$3&limit=$4&sort=$5 last;
+    rewrite ^/owner/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)/([^/]+)(/?)$ /owner-detailed.php?owner=$1&year=$2&month=$3&limit=$4 last;
+    rewrite ^/owner/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)/([^/]+)(/?)$ /owner-detailed.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/([^/]+)/([^/]+)/([^/]+)(/?)$ /owner-detailed.php?owner=$1&limit=$2&sort=$3 last;
     rewrite ^/owner/([^/]+)/([^/]+)(/?)$ /owner-detailed.php?owner=$1&limit=$2 last;
     rewrite ^/owner/([^/]+)(/?)$ /owner-detailed.php?owner=$1 last;

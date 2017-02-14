@@ -36,16 +36,21 @@ if (!isset($_GET['pilot'])){
 	
 	$pilot = filter_input(INPUT_GET,'pilot',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+	$year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
+	$month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
+	$filter = array();
+	if ($year != '') $filter = array_merge($filter,array('year' => $year));
+	if ($month != '') $filter = array_merge($filter,array('month' => $month));
 	if ($sort != '') 
 	{
-		$spotter_array = $Spotter->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference, $sort);
+		$spotter_array = $Spotter->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference, $sort,$filter);
 		if (empty($spotter_array)) {
-			$spotter_array = $SpotterArchive->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference, $sort);
+			$spotter_array = $SpotterArchive->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference, $sort,$filter);
 		}
 	} else {
-		$spotter_array = $Spotter->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference);
+		$spotter_array = $Spotter->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference,'',$filter);
 		if (empty($spotter_array)) {
-			$spotter_array = $SpotterArchive->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference);
+			$spotter_array = $SpotterArchive->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference,'',$filter);
 		}
 	}
 
@@ -108,18 +113,21 @@ if (!isset($_GET['pilot'])){
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['pilot_name'].'</h1>';
 		if (isset($spotter_array[0]['pilot_id']) && $spotter_array[0]['pilot_id'] != '') print '<div><span class="label">'._("Pilot ID").'</span>'.$spotter_array[0]['pilot_id'].'</div>';
-		$Stats = new Stats();
-		$flights = $Stats->getStatsPilot($pilot);
+		if ($year == '' && $month == '') {
+			$Stats = new Stats();
+			$flights = $Stats->getStatsPilot($pilot);
+		} else $flights = 0;
+		if ($flight == 0) $flights = $Spotter->countFlightsByPilot($pilot,$filter);
 		print '<div><span class="label">'._("Flights").'</span>'.$flights.'</div>';
-		$aircraft_type = count($Spotter->countAllAircraftTypesByPilot($pilot));
+		$aircraft_type = count($Spotter->countAllAircraftTypesByPilot($pilot,$filter));
 		print '<div><span class="label">'._("Aircrafts type").'</span>'.$aircraft_type.'</div>';
-		$aircraft_registration = count($Spotter->countAllAircraftRegistrationByPilot($pilot));
+		$aircraft_registration = count($Spotter->countAllAircraftRegistrationByPilot($pilot,$filter));
 		print '<div><span class="label">'._("Aircrafts").'</span>'.$aircraft_registration.'</div>';
-		$aircraft_manufacturer = count($Spotter->countAllAircraftManufacturerByPilot($pilot));
+		$aircraft_manufacturer = count($Spotter->countAllAircraftManufacturerByPilot($pilot,$filter));
 		print '<div><span class="label">'._("Manufacturers").'</span>'.$aircraft_manufacturer.'</div>';
-		$airlines = count($Spotter->countAllAirlinesByPilot($pilot));
+		$airlines = count($Spotter->countAllAirlinesByPilot($pilot,$filter));
 		print '<div><span class="label">'._("Airlines").'</span>'.$airlines.'</div>';
-		$duration = $Spotter->getFlightDurationByPilot($pilot);
+		$duration = $Spotter->getFlightDurationByPilot($pilot,$filter);
 		print '<div><span class="label">'._("Total flights spotted duration").'</span>'.$duration.'</div>';
 		print '</div>';
 	

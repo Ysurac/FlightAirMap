@@ -167,12 +167,13 @@ class Stats {
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		} else $all = array();
                 if (empty($all)) {
-            	    $filters = array('airlines' => array($stats_airline));
+            	    $filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
             	    if ($filter_name != '') {
             		    $filters = array_merge($filters,$globalStatsFilters[$filter_name]);
             	    }
             	    $Spotter = new Spotter($this->db);
-            	    $all = $Spotter->countAllAircraftTypes($limit,0,'',$filters,$year,$month);
+            	    //$all = $Spotter->countAllAircraftTypes($limit,0,'',$filters,$year,$month);
+            	    $all = $Spotter->countAllAircraftTypes($limit,0,'',$filters);
                 }
                 return $all;
 	}
@@ -193,10 +194,12 @@ class Stats {
                 if (empty($all)) {
             		$Spotter = new Spotter($this->db);
             		$filters = array();
+            		$filters = array('year' => $year,'month' => $month);
             		if ($filter_name != '') {
             			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
-            		$all = $Spotter->countAllAirlineCountries($limit,$filters,$year,$month);
+            		//$all = $Spotter->countAllAirlineCountries($limit,$filters,$year,$month);
+            		$all = $Spotter->countAllAirlineCountries($limit,$filters);
                 }
                 return $all;
 	}
@@ -215,12 +218,13 @@ class Stats {
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		} else $all = array();
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countAllAircraftManufacturers($filters,$year,$month);
+			//$all = $Spotter->countAllAircraftManufacturers($filters,$year,$month);
+			$all = $Spotter->countAllAircraftManufacturers($filters);
 		}
 		return $all;
 	}
@@ -240,12 +244,13 @@ class Stats {
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		} else $all = array();
                 if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
             			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countAllArrivalCountries($limit,$filters,$year,$month);
+			//$all = $Spotter->countAllArrivalCountries($limit,$filters,$year,$month);
+			$all = $Spotter->countAllArrivalCountries($limit,$filters);
                 }
                 return $all;
 	}
@@ -262,12 +267,13 @@ class Stats {
                 }
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
             			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countAllDepartureCountries($filters,$year,$month);
+			//$all = $Spotter->countAllDepartureCountries($filters,$year,$month);
+			$all = $Spotter->countAllDepartureCountries($filters);
                 }
                 return $all;
 	}
@@ -298,10 +304,12 @@ class Stats {
                 if (empty($all)) {
 	                $Spotter = new Spotter($this->db);
             		$filters = array();
+			$filters = array('year' => $year,'month' => $month);
             		if ($filter_name != '') {
             			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
-    		        $all = $Spotter->countAllAirlines($limit,0,'',$filters,$year,$month);
+			//$all = $Spotter->countAllAirlines($limit,0,'',$filters,$year,$month);
+    		        $all = $Spotter->countAllAirlines($limit,0,'',$filters);
                 }
                 return $all;
 	}
@@ -320,12 +328,13 @@ class Stats {
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		} else $all = array();
                 if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 	                $Spotter = new Spotter($this->db);
-    		        $all = $Spotter->countAllAircraftRegistrations($limit,0,'',$filters,$year,$month);
+    		        //$all = $Spotter->countAllAircraftRegistrations($limit,0,'',$filters,$year,$month);
+    		        $all = $Spotter->countAllAircraftRegistrations($limit,0,'',$filters);
                 }
                 return $all;
 	}
@@ -344,12 +353,13 @@ class Stats {
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		} else $all = array();
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countAllCallsigns($limit,0,'',$filters,$year,$month);
+			//$all = $Spotter->countAllCallsigns($limit,0,'',$filters,$year,$month);
+			$all = $Spotter->countAllCallsigns($limit,0,'',$filters);
 		}
 		return $all;
 	}
@@ -394,12 +404,13 @@ class Stats {
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		} else $all = array();
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countAllPilots($limit,0,'',$filters,$year,$month);
+			//$all = $Spotter->countAllPilots($limit,0,'',$filters,$year,$month);
+			$all = $Spotter->countAllPilots($limit,0,'',$filters);
 		}
 		return $all;
 	}
@@ -419,12 +430,13 @@ class Stats {
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		} else $all = array();
                 if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
             		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllOwners($limit,0,'',$filters,$year,$month);
+            		//$all = $Spotter->countAllOwners($limit,0,'',$filters,$year,$month);
+            		$all = $Spotter->countAllOwners($limit,0,'',$filters);
                 }
                 return $all;
 	}
@@ -443,13 +455,15 @@ class Stats {
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		} else $all = array();
                 if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
             		if ($filter_name != '') {
             			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
             		$Spotter = new Spotter($this->db);
-            		$pall = $Spotter->countAllDepartureAirports($limit,0,'',$filters,$year,$month);
-        		$dall = $Spotter->countAllDetectedDepartureAirports($limit,0,'',$filters,$year,$month);
+//            		$pall = $Spotter->countAllDepartureAirports($limit,0,'',$filters,$year,$month);
+  //      		$dall = $Spotter->countAllDetectedDepartureAirports($limit,0,'',$filters,$year,$month);
+            		$pall = $Spotter->countAllDepartureAirports($limit,0,'',$filters);
+        		$dall = $Spotter->countAllDetectedDepartureAirports($limit,0,'',$filters);
         		$all = array();
         		foreach ($pall as $value) {
         			$icao = $value['airport_departure_icao'];
@@ -485,13 +499,15 @@ class Stats {
 			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		} else $all = array();
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$pall = $Spotter->countAllArrivalAirports($limit,0,'',false,$filters,$year,$month);
-			$dall = $Spotter->countAllDetectedArrivalAirports($limit,0,'',false,$filters,$year,$month);
+//			$pall = $Spotter->countAllArrivalAirports($limit,0,'',false,$filters,$year,$month);
+//			$dall = $Spotter->countAllDetectedArrivalAirports($limit,0,'',false,$filters,$year,$month);
+			$pall = $Spotter->countAllArrivalAirports($limit,0,'',false,$filters);
+			$dall = $Spotter->countAllDetectedArrivalAirports($limit,0,'',false,$filters);
         		$all = array();
         		foreach ($pall as $value) {
         			$icao = $value['airport_arrival_icao'];
@@ -717,12 +733,13 @@ class Stats {
 		if ($year == '') $year = date('Y');
 		$all = $this->getSumStats('flights_bymonth',$year,$stats_airline,$filter_name,$month);
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallFlights($filters,$year,$month);
+			//$all = $Spotter->countOverallFlights($filters,$year,$month);
+			$all = $Spotter->countOverallFlights($filters);
 		}
 		return $all;
 	}
@@ -733,11 +750,13 @@ class Stats {
 		$all = $this->getSumStats('military_flights_bymonth',$year,'',$filter_name,$month);
 		if (empty($all)) {
 		        $filters = array();
+			$filters = array('year' => $year,'month' => $month);
             		if ($filter_name != '') {
             			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallMilitaryFlights($filters,$year,$month);
+			//$all = $Spotter->countOverallMilitaryFlights($filters,$year,$month);
+			$all = $Spotter->countOverallMilitaryFlights($filters);
 		}
 		return $all;
 	}
@@ -747,12 +766,13 @@ class Stats {
 		if ($year == '') $year = date('Y');
 		$all = $this->getSumStats('realarrivals_bymonth',$year,$stats_airline,$filter_name,$month);
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallArrival($filters,$year,$month);
+			//$all = $Spotter->countOverallArrival($filters,$year,$month);
+			$all = $Spotter->countOverallArrival($filters);
 		}
 		return $all;
 	}
@@ -771,12 +791,13 @@ class Stats {
 			$all = $result[0]['nb'];
 		} else $all = $this->getSumStats('aircrafts_bymonth',$year,$stats_airline,$filter_name,$month);
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallAircrafts($filters,$year,$month);
+			//$all = $Spotter->countOverallAircrafts($filters,$year,$month);
+			$all = $Spotter->countOverallAircrafts($filters);
 		}
 		return $all;
 	}
@@ -796,11 +817,13 @@ class Stats {
 		} else $all = $this->getSumStats('airlines_bymonth',$year,'',$filter_name,$month);
 		if (empty($all)) {
             		$filters = array();
+			$filters = array('year' => $year,'month' => $month);
             		if ($filter_name != '') {
             			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallAirlines($filters,$year,$month);
+			//$all = $Spotter->countOverallAirlines($filters,$year,$month);
+			$all = $Spotter->countOverallAirlines($filters);
 		}
 		return $all;
 	}
@@ -822,12 +845,13 @@ class Stats {
 			$all = $this->getSumStats('owners_bymonth',$year,$stats_airline,$filter_name,$month);
 		}
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallOwners($filters,$year,$month);
+			//$all = $Spotter->countOverallOwners($filters,$year,$month);
+			$all = $Spotter->countOverallOwners($filters);
 		}
 		return $all;
 	}
@@ -850,12 +874,13 @@ class Stats {
 			$all = $this->getSumStats('pilots_bymonth',$year,$stats_airline,$filter_name,$month);
 		}
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
-			$all = $Spotter->countOverallPilots($filters,$year,$month);
+			//$all = $Spotter->countOverallPilots($filters,$year,$month);
+			$all = $Spotter->countOverallPilots($filters);
 		}
 		return $all;
 	}

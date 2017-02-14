@@ -9,7 +9,12 @@ if (!isset($_GET['pilot'])) {
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $pilot = filter_input(INPUT_GET,'pilot',FILTER_SANITIZE_STRING);
-$spotter_array = $Spotter->getSpotterDataByPilot($pilot,"0,1", $sort);
+$year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
+$month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
+$filter = array();
+if ($year != '') $filter = array_merge($filter,array('year' => $year));
+if ($month != '') $filter = array_merge($filter,array('month' => $month));
+$spotter_array = $Spotter->getSpotterDataByPilot($pilot,"0,1", $sort,$filter);
 
 if (!empty($spotter_array))
 {
@@ -26,7 +31,7 @@ if (!empty($spotter_array))
 	print '<h2>'._("Most Common Airlines").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common airlines of flights owned by <strong>%s</strong>."),$spotter_array[0]['pilot_name']).'</p>';
 
-	$airline_array = $Spotter->countAllAirlinesByPilot($pilot);
+	$airline_array = $Spotter->countAllAirlinesByPilot($pilot,$filter);
 	if (!empty($airline_array))
 	{
 		print '<div class="table-responsive">';

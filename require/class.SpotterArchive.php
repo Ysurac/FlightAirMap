@@ -957,7 +957,7 @@ class SpotterArchive {
     * @return Array the spotter information
     *
     */
-    public function getSpotterDataByOwner($owner = '', $limit = '', $sort = '')
+    public function getSpotterDataByOwner($owner = '', $limit = '', $sort = '', $filter = array())
     {
 	$global_query = "SELECT spotter_archive_output.* FROM spotter_archive_output";
 	
@@ -967,6 +967,7 @@ class SpotterArchive {
 	$query_values = array();
 	$limit_query = '';
 	$additional_query = '';
+	$filter_query = $this->getFilter($filter,true,true);
 	
 	if ($owner != "")
 	{
@@ -1001,7 +1002,7 @@ class SpotterArchive {
 	    $orderby_query = " ORDER BY spotter_archive_output.date DESC";
 	}
 
-	$query = $global_query." WHERE spotter_archive_output.owner_name <> '' ".$additional_query." ".$orderby_query;
+	$query = $global_query.$filter_query." spotter_archive_output.owner_name <> '' ".$additional_query." ".$orderby_query;
 
 	$spotter_array = $Spotter->getDataFromDB($query, $query_values, $limit_query);
 
@@ -1014,7 +1015,7 @@ class SpotterArchive {
     * @return Array the spotter information
     *
     */
-    public function getSpotterDataByPilot($pilot = '', $limit = '', $sort = '')
+    public function getSpotterDataByPilot($pilot = '', $limit = '', $sort = '', $filter = array())
     {
 	$global_query = "SELECT spotter_archive_output.* FROM spotter_archive_output";
 	
@@ -1024,6 +1025,7 @@ class SpotterArchive {
 	$query_values = array();
 	$limit_query = '';
 	$additional_query = '';
+	$filter_query = $this->getFilter($filter,true,true);
 	
 	if ($pilot != "")
 	{
@@ -1053,7 +1055,7 @@ class SpotterArchive {
 	    $orderby_query = " ORDER BY spotter_archive_output.date DESC";
 	}
 
-	$query = $global_query." WHERE spotter_archive_output.pilot_name <> '' ".$additional_query." ".$orderby_query;
+	$query = $global_query.$filter_query." spotter_archive_output.pilot_name <> '' ".$additional_query." ".$orderby_query;
 
 	$spotter_array = $Spotter->getDataFromDB($query, $query_values, $limit_query);
 

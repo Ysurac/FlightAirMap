@@ -9,10 +9,15 @@ if (!isset($_GET['owner'])) {
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $owner = filter_input(INPUT_GET,'owner',FILTER_SANITIZE_STRING);
+$year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
+$month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
+$filter = array();
+if ($year != '') $filter = array_merge($filter,array('year' => $year));
+if ($month != '') $filter = array_merge($filter,array('month' => $month));
 if ($sort != '') {
-	$spotter_array = $Spotter->getSpotterDataByOwner($owner,"0,1", $sort);
+	$spotter_array = $Spotter->getSpotterDataByOwner($owner,"0,1", $sort,$filter);
 } else {
-	$spotter_array = $Spotter->getSpotterDataByOwner($owner,"0,1", '');
+	$spotter_array = $Spotter->getSpotterDataByOwner($owner,"0,1", '',$filter);
 }
 
 if (!empty($spotter_array))
@@ -30,7 +35,7 @@ if (!empty($spotter_array))
 	print '<h2>'._("Most Common Aircraft").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights owned by <strong>%s</strong>."),$spotter_array[0]['aircraft_owner']).'</p>';
 
-	$aircraft_array = $Spotter->countAllAircraftTypesByOwner($owner);
+	$aircraft_array = $Spotter->countAllAircraftTypesByOwner($owner,$filter);
 	if (!empty($aircraft_array))
 	{
 		print '<div class="table-responsive">';

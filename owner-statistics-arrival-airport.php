@@ -9,7 +9,13 @@ if (!isset($_GET['owner'])) {
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $owner = filter_input(INPUT_GET,'owner',FILTER_SANITIZE_STRING);
-$spotter_array = $Spotter->getSpotterDataByOwner($owner,"0,1", $sort);
+$year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
+$month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
+$filter = array();
+if ($year != '') $filter = array_merge($filter,array('year' => $year));
+if ($month != '') $filter = array_merge($filter,array('month' => $month));
+
+$spotter_array = $Spotter->getSpotterDataByOwner($owner,"0,1", $sort,$filter);
 
 if (!empty($spotter_array))
 {
@@ -25,7 +31,7 @@ if (!empty($spotter_array))
 	print '<div class="column">';
 	print '<h2>'._("Most Common Arrival Airports").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows all arrival airports of flights owned by <strong>%s</strong>."),$spotter_array[0]['aircraft_owner']).'</p>';
-	$airport_airport_array = $Spotter->countAllArrivalAirportsByOwner($owner);
+	$airport_airport_array = $Spotter->countAllArrivalAirportsByOwner($owner,$filter);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
     	<script>
     	google.load("visualization", "1", {packages:["geochart"]});

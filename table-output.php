@@ -517,7 +517,7 @@ foreach($spotter_array as $spotter_item)
 			print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'.$spotter_item['ident'].'</a>'."\n";
 		}
 	} else {
-		print _("Not available")."\n";
+		print '<a href="'.$globalURL.'/ident/NA">'._("Not available").'</a>'."\n";
 	}
 	print '</td>'."\n";
 	// Aircraft type
@@ -863,7 +863,7 @@ foreach($spotter_array as $spotter_item)
 		print '<span class="mobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("j/n/Y g:i a", strtotime($spotter_item['date_iso_8601'])).'</a></span>'."\n";
 		if (isset($spotter_item['last_seen_date_iso_8601'])) {
 			print '<hr />';
-			print '<span class="nomobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("r", strtotime($spotter_item['last_seen_date_iso_8601'])).'</a></span>'."\n";
+			print '<span class="nomobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("r", $spotter_item['last_seen_date_unix']).'</a></span>'."\n";
 			print '<span class="mobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("j/n/Y g:i a", strtotime($spotter_item['last_seen_date_iso_8601'])).'</a></span>'."\n";
 		}
 		print '</td>'."\n";
