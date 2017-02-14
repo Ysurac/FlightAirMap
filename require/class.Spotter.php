@@ -4628,6 +4628,7 @@ class Spotter{
 	*/
 	public function getFlightDurationByOwner($owner,$filters = array(),$year = '',$month = '',$day = '')
 	{
+		global $globalDBdriver;
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT SUM(last_seen - date) AS duration 
@@ -4716,6 +4717,7 @@ class Spotter{
 	*/
 	public function getFlightDurationByPilot($pilot,$filters = array(),$year = '',$month = '',$day = '')
 	{
+		global $globalDBdriver;
 		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT SUM(last_seen - date) AS duration 
@@ -5748,6 +5750,7 @@ class Spotter{
 	*/
 	public function countAllAircraftTypesByPilot($pilot,$filters = array(),$year = '',$month = '',$day = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name  
@@ -5797,6 +5800,7 @@ class Spotter{
 	*/
 	public function countAllAircraftTypesByOwner($owner,$filters = array(),$year = '',$month = '',$day = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer 
@@ -5888,6 +5892,7 @@ class Spotter{
 	*/
 	public function countAllAircraftRegistrationByOwner($owner,$filters = array(),$year = '',$month = '',$day = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
@@ -5962,6 +5967,7 @@ class Spotter{
 	*/
 	public function countAllAircraftRegistrationByPilot($pilot,$filters = array(),$year = '',$month = '',$day = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
@@ -6066,6 +6072,7 @@ class Spotter{
 	*/
 	public function countAllAircraftManufacturerByOwner($owner,$filters = array(),$year = '',$month = '',$day = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
@@ -6117,6 +6124,7 @@ class Spotter{
 	*/
 	public function countAllAircraftManufacturerByPilot($pilot,$filters = array(),$year = '',$month = '',$day = '')
 	{
+		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_output.aircraft_manufacturer, COUNT(spotter_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
