@@ -4669,6 +4669,7 @@ class Spotter{
 		$sth->execute($query_values);
 		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (is_numeric($result[0]['duration'])) return gmdate('H:i:s',$result[0]['duration']);
+		elseif ($result[0]['duration'] == '') return 0;
 		else return $result[0]['duration'];
 	}
 

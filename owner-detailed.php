@@ -128,7 +128,7 @@ if (!isset($_GET['owner'])){
 		$airlines = count($Spotter->countAllAirlinesByOwner($owner,$filter));
 		print '<div><span class="label">'._("Airlines").'</span>'.$airlines.'</div>';
 		$duration = $Spotter->getFlightDurationByOwner($owner,$filter);
-		print '<div><span class="label">'._("Total flights spotted duration").'</span>'.$duration.'</div>';
+		if ($duration != '0') print '<div><span class="label">'._("Total flights spotted duration").'</span>'.$duration.'</div>';
 		print '</div>';
 	
 		include('owner-sub-menu.php');
