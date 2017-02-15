@@ -14,7 +14,7 @@ class SpotterArchive {
     * @return Array the SQL part
     */
     public function getFilter($filter = array(),$where = false,$and = false) {
-	global $globalFilter, $globalStatsFilters, $globalFilterName;
+	global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
 	$filters = array();
 	if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
 		if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
