@@ -301,10 +301,12 @@ class Spotter{
 				$temp_array['date_rfc_2822'] = date("r",strtotime($row['date']." UTC"));
 				$temp_array['date_unix'] = strtotime($row['date']." UTC");
 				if (isset($row['last_seen']) && $row['last_seen'] != '') {
-					$temp_array['duration'] = strtotime($row['last_seen']) - strtotime($row['date']);
-					$temp_array['last_seen_date_iso_8601'] = date("c",strtotime($row['last_seen']." UTC"));
-					$temp_array['last_seen_date_rfc_2822'] = date("r",strtotime($row['last_seen']." UTC"));
-					$temp_array['last_seen_date_unix'] = strtotime($row['last_seen']." UTC");
+					if (strtotime($row['last_seen']) > strtotime($row['date'])) {
+						$temp_array['duration'] = strtotime($row['last_seen']) - strtotime($row['date']);
+						$temp_array['last_seen_date_iso_8601'] = date("c",strtotime($row['last_seen']." UTC"));
+						$temp_array['last_seen_date_rfc_2822'] = date("r",strtotime($row['last_seen']." UTC"));
+						$temp_array['last_seen_date_unix'] = strtotime($row['last_seen']." UTC");
+					}
 				}
 			}
 			
@@ -4632,7 +4634,8 @@ class Spotter{
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT SUM(last_seen - date) AS duration 
-				FROM spotter_output".$filter_query." spotter_output.owner_name = :owner";
+				FROM spotter_output".$filter_query." spotter_output.owner_name = :owner 
+				AND last_seen > date";
 		$query_values = array();
 		if ($year != '') {
 			if ($globalDBdriver == 'mysql') {
@@ -4721,7 +4724,8 @@ class Spotter{
 		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT SUM(last_seen - date) AS duration 
-		 		FROM spotter_output".$filter_query." (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot)";
+		 		FROM spotter_output".$filter_query." (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) 
+		 		AND last_seen > date";
 		$query_values = array();
 		if ($year != '') {
 			if ($globalDBdriver == 'mysql') {
