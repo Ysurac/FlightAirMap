@@ -418,7 +418,7 @@ class SpotterImport {
 	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '' && is_numeric($line['latitude']) && is_numeric($line['longitude'])) {
 	    	    if (isset($this->all_flights[$id]['time_last_coord'])) $timediff = round(time()-$this->all_flights[$id]['time_last_coord']);
 	    	    else unset($timediff);
-	    	    if ($this->tmd > 5 || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || (isset($globalVAM) && $globalVAM) || !isset($timediff) || $timediff > 800 || ($timediff > 10 && isset($this->all_flights[$id]['latitude']) && isset($this->all_flights[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')))) {
+	    	    if ($this->tmd > 5 || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || (isset($globalVAM) && $globalVAM) || !isset($timediff) || $timediff > 2000 || ($timediff > 30 && isset($this->all_flights[$id]['latitude']) && isset($this->all_flights[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')))) {
 			if (isset($this->all_flights[$id]['archive_latitude']) && isset($this->all_flights[$id]['archive_longitude']) && isset($this->all_flights[$id]['livedb_latitude']) && isset($this->all_flights[$id]['livedb_longitude'])) {
 			    if (!$Common->checkLine($this->all_flights[$id]['archive_latitude'],$this->all_flights[$id]['archive_longitude'],$this->all_flights[$id]['livedb_latitude'],$this->all_flights[$id]['livedb_longitude'],$line['latitude'],$line['longitude'])) {
 				$this->all_flights[$id]['archive_latitude'] = $line['latitude'];
@@ -526,6 +526,7 @@ class SpotterImport {
 		}
 		if (isset($line['squawk']) && $line['squawk'] != '') {
 		    if (isset($this->all_flights[$id]['squawk']) && $this->all_flights[$id]['squawk'] != '7500' && $this->all_flights[$id]['squawk'] != '7600' && $this->all_flights[$id]['squawk'] != '7700' && isset($this->all_flights[$id]['id'])) {
+			    if ($this->all_flights[$id]['squawk'] != $line['squawk']) $this->all_flights[$id]['putinarchive'] = true;
 			    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('squawk' => $line['squawk']));
 			    $highlight = '';
 			    if ($this->all_flights[$id]['squawk'] == '7500') $highlight = 'Squawk 7500 : Hijack at '.date('Y-m-d G:i').' UTC';
@@ -538,7 +539,6 @@ class SpotterImport {
 				$Spotter->db = null;
 				if ($globalDebugTimeElapsed) echo 'Time elapsed for update sethighlightflight : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 
-				$this->all_flights[$id]['putinarchive'] = true;
 				//$putinarchive = true;
 				//$highlight = '';
 			    }
@@ -549,7 +549,7 @@ class SpotterImport {
 
 		if (isset($line['altitude']) && $line['altitude'] != '') {
 		    //if (!isset($this->all_flights[$id]['altitude']) || $this->all_flights[$id]['altitude'] == '' || ($this->all_flights[$id]['altitude'] > 0 && $line['altitude'] != 0)) {
-			if (is_int($this->all_flights[$id]['altitude']) && abs(round($line['altitude']/100)-$this->all_flights[$id]['altitude']) > 2) $this->all_flights[$id]['putinarchive'] = true;
+			if (is_int($this->all_flights[$id]['altitude']) && abs(round($line['altitude']/100)-$this->all_flights[$id]['altitude']) > 3) $this->all_flights[$id]['putinarchive'] = true;
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('altitude' => round($line['altitude']/100)));
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('altitude_real' => $line['altitude']));
 			//$dataFound = true;
@@ -561,14 +561,14 @@ class SpotterImport {
 		}
 		
 		if (isset($line['heading']) && $line['heading'] != '') {
-		    if (is_int($this->all_flights[$id]['heading']) && abs($this->all_flights[$id]['heading']-round($line['heading'])) > 2) $this->all_flights[$id]['putinarchive'] = true;
+		    if (is_int($this->all_flights[$id]['heading']) && abs($this->all_flights[$id]['heading']-round($line['heading'])) > 10) $this->all_flights[$id]['putinarchive'] = true;
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => round($line['heading'])));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading_fromsrc' => true));
 		    //$dataFound = true;
   		} elseif (!isset($this->all_flights[$id]['heading_fromsrc']) && isset($this->all_flights[$id]['archive_latitude']) && $this->all_flights[$id]['archive_latitude'] != $this->all_flights[$id]['latitude'] && isset($this->all_flights[$id]['archive_longitude']) && $this->all_flights[$id]['archive_longitude'] != $this->all_flights[$id]['longitude']) {
   		    $heading = $Common->getHeading($this->all_flights[$id]['archive_latitude'],$this->all_flights[$id]['archive_longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']);
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => round($heading)));
-		    if (abs($this->all_flights[$id]['heading']-round($heading)) > 2) $this->all_flights[$id]['putinarchive'] = true;
+		    if (abs($this->all_flights[$id]['heading']-round($heading)) > 10) $this->all_flights[$id]['putinarchive'] = true;
   		    if ($globalDebug) echo "ø Calculated Heading for ".$this->all_flights[$id]['hex']." : ".$heading."\n";
   		} elseif (isset($this->all_flights[$id]['format_source']) && $this->all_flights[$id]['format_source'] == 'ACARS') {
   		    // If not enough messages and ACARS set heading to 0
@@ -796,6 +796,7 @@ class SpotterImport {
 				$SpotterLive = new SpotterLive($this->db);
 				$result = $SpotterLive->addLiveSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'],$this->all_flights[$id]['datetime'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'], $this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$this->all_flights[$id]['hex'],$this->all_flights[$id]['putinarchive'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'], $this->all_flights[$id]['verticalrate'], $this->all_flights[$id]['noarchive'], $this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source'],$this->all_flights[$id]['source_name'],$this->all_flights[$id]['over_country']);
 				$SpotterLive->db = null;
+				$this->all_flights[$id]['putinarchive'] = false;
 				if ($globalDebugTimeElapsed) echo 'Time elapsed for update addlivespotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 
 				// Put statistics in $this->stats variable
