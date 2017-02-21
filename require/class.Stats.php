@@ -59,8 +59,11 @@ class Stats {
                 }
         }
         public function deleteOldStats($filter_name = '') {
-        	
-        	$query = "DELETE FROM config WHERE name = 'last_update_stats'";
+        	if ($filter_name == '') {
+        		$query = "DELETE FROM config WHERE name = 'last_update_stats'";
+        	} else {
+        		$query = "DELETE FROM config WHERE name = 'last_update_stats_".$filter_name."'";
+        	}
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
@@ -1464,6 +1467,7 @@ class Stats {
 				$last_update_day = $last_update[0]['value'];
 			} else $last_update_day = '2012-12-12 12:12:12';
 			$reset = false;
+			//if ($globalStatsResetYear && date('Y',strtotime($last_update_day)) != date('Y')) {
 			if ($globalStatsResetYear) {
 				$reset = true;
 				$last_update_day = date('Y').'-01-01 00:00:00';
@@ -1912,12 +1916,24 @@ class Stats {
 			foreach ($globalStatsFilters as $name => $filter) {
 				//$filter_name = $filter['name'];
 				$filter_name = $name;
-
+				$reset = false;
+				if (isset($filter['resetall'])) {
+					$this->deleteOldStats($filter_name);
+				}
 				$last_update = $this->getLastStatsUpdate('last_update_stats_'.$filter_name);
 				if (isset($last_update[0]['value'])) {
 					$last_update_day = $last_update[0]['value'];
-				} else $last_update_day = '2012-12-12 12:12:12';
-				$reset = false;
+				} else {
+					$last_update_day = '2012-12-12 12:12:12';
+					if (isset($filter['DeleteLastYearStats'])) {
+						$last_update_day = date('Y').'-01-01 00:00:00';
+					}
+				}
+				if (isset($filter['DeleteLastYearStats']) && date('Y',strtotime($last_update_day)) != date('Y')) {
+					$last_update_day = date('Y').'-01-01 00:00:00';
+					$reset = true;
+				}
+				
 
 				// Count by filter
 				if ($globalDebug) echo '--- Stats for filter '.$filter_name.' ---'."\n";

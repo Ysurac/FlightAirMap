@@ -288,15 +288,14 @@ if ($use_aprs) {
 	$aprs_last_tx = time();
 	if (isset($globalAPRSversion)) $aprs_version = $globalAPRSversion;
 	else $aprs_version = 'FlightAirMap '.str_replace(' ','_',$globalName);
-	//else $aprs_version = 'Perl Example App';
 	if (isset($globalAPRSssid)) $aprs_ssid = $globalAPRSssid;
-	else $aprs_ssid = 'FAM-'.str_replace(' ','_',$globalName);
-	//else $aprs_ssid = 'PerlEx';
+	else $aprs_ssid = substr('FAM'.strtoupper(str_replace(' ','_',$globalName)),0,8);
 	if (isset($globalAPRSfilter)) $aprs_filter = $globalAPRSfilter;
 	else $aprs_filter =  'r/'.$globalCenterLatitude.'/'.$globalCenterLongitude.'/250.0';
 	if ($aprs_full) $aprs_filter = '';
-	if ($aprs_filter != '') $aprs_login = "user {$aprs_ssid} vers {$aprs_version} filter {$aprs_filter}\n";
-	else $aprs_login = "user {$aprs_ssid} vers {$aprs_version}\n";
+
+	if ($aprs_filter != '') $aprs_login = "user {$aprs_ssid} pass -1 vers {$aprs_version} filter {$aprs_filter}\n";
+	else $aprs_login = "user {$aprs_ssid} pass -1 vers {$aprs_version}\n";
 }
 
 // connected - lets do some work
@@ -936,8 +935,10 @@ while ($i > 0) {
 			    //echo 'Connect : '.$aprs_connect.' '.$buffer."\n";
 			    $buffer = str_replace('APRS <- ','',$buffer);
 			    $buffer = str_replace('APRS -> ','',$buffer);
+			    //echo $buffer."\n";
 			    if (substr($buffer,0,1) != '#' && substr($buffer,0,1) != '@' && substr($buffer,0,5) != 'APRS ') {
 				$line = $APRS->parse($buffer);
+				//print_r($line);
 				if (is_array($line) && isset($line['address']) && $line['address'] != '' && isset($line['ident'])) {
 				    $aprs_last_tx = time();
 				    $data = array();
@@ -952,7 +953,7 @@ while ($i > 0) {
 				    if (isset($line['speed'])) $data['speed'] = $line['speed'];
 				    else $data['speed'] = 0;
 				    $data['altitude'] = $line['altitude'];
-				    if (isset($line['course'])) $data['heading'] = $line['course'];
+				    if (isset($line['heading'])) $data['heading'] = $line['heading'];
 				    //else $data['heading'] = 0;
 				    $data['aircraft_type'] = $line['stealth'];
 				    if (!isset($globalAPRSarchive) || (isset($globalAPRSarchive) && $globalAPRSarchive == FALSE)) $data['noarchive'] = true;
@@ -970,6 +971,9 @@ while ($i > 0) {
 				    }
 				    unset($data);
 				} 
+				elseif (is_array($line) && $globalDebug && isset($line['symbol']) && $line['symbol'] == 'Weather Station') {
+					echo '!! Weather Station not yet supported'."\n";
+				}
 				//elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
 				elseif ($line == true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
 			    }

@@ -1,5 +1,89 @@
 <?php
 class aprs {
+    protected $symbols = array('!' => 'Police',
+	'#' => 'DIGI',
+	'$' => 'Phone',
+	'%' => 'DX Cluster',
+	'&' => 'HF Gateway',
+	"'" => 'Aircraft (small)',
+	'(' => 'Cloudy',
+	'*' => 'Snowmobile',
+	'+' => 'Red Cross',
+	',' => 'Reverse L Shape',
+	'-' => 'House QTH (VHF)',
+	'.' => 'X',
+	'/' => 'Dot',
+	'0' => '0',
+	'1' => '1',
+	'2' => '2',
+	'3' => '3',
+	'4' => '4',
+	'5' => '5',
+	'6' => '6',
+	'7' => '7',
+	'8' => '8',
+	'9' => '9',
+	':' => 'Fire',
+	';' => 'Campground',
+	'<' => 'Motorcycle',
+	'=' => 'Railroad Engine',
+	'>' => 'Car',
+	'?' => 'Server for Files',
+	'@' => 'HC Future Predict',
+	'A' => 'Aid Station',
+	'B' => 'BBS',
+	'C' => 'Canoe',
+	'E' => 'Eyeball',
+	'G' => 'Grid Square',
+	'H' => 'Hotel',
+	'I' => 'TCP-IP',
+	'K' => 'School',
+	'M' => 'MacAPRS',
+	'N' => 'NTS Station',
+	'O' => 'Balloon',
+	'P' => 'Police',
+	'Q' => 'T.B.D.',
+	'R' => 'Recreational Vehicle',
+	'S' => 'Shuttle',
+	'T' => 'SSTV',
+	'U' => 'Bus',
+	'V' => 'ATV',
+	'W' => 'National Weather Service Site',
+	'X' => 'Helicopter',
+	'Y' => 'Yacht (Sail)',
+	'Z' => 'WinAPRS',
+	'[' => 'Jogger',
+	']' => 'PBBS',
+	'^' => 'Large Aircraft',
+	'_' => 'Weather Station',
+	'`' => 'Dish Antenna',
+	'a' => 'Ambulance',
+	'b' => 'Bike',
+	'c' => 'T.B.D.',
+	'd' => 'Dial Garage (Fire Department)',
+	'e' => 'Horse (Equestrian)',
+	'f' => 'Firetruck',
+	'g' => 'Glider',
+	'h' => 'Hospital',
+	'i' => 'IOTA (Islands On The Air)',
+	'j' => 'Jeep',
+	'k' => 'Truck',
+	'l' => 'Laptop',
+	'm' => 'Mic-Repeater',
+	'n' => 'Node',
+	'o' => 'EOC',
+	'p' => 'Rover (Puppy)',
+	'q' => 'Grid SQ Shown Above 128 Miles',
+	'r' => 'Antenna',
+	's' => 'Ship (Power Boat)',
+	't' => 'Truck Stop',
+	'u' => 'Truck (18 Wheeler)',
+	'v' => 'Van',
+	'w' => 'Water Station',
+	'x' => 'xAPRS (UNIX)',
+	'y' => 'Yagi At QTH');
+	
+
     private function urshift($n, $s) {
 	return ($n >= 0) ? ($n >> $s) :
     	    (($n & 0x7fffffff) >> $s) | 
@@ -56,8 +140,27 @@ class aprs {
 	    */
 	}
 	// Check for Timestamp
+	$find = false;
 	$body_parse = substr($body,1);
+	//echo 'Body : '.$body."\n";
+	if (preg_match('/^;(.){9}\*/',$body,$matches)) {
+	    $body_parse = substr($body_parse,10);
+	    $find = true;
+	    //echo $body_parse."\n";
+	}
+	if (preg_match('/^`(.*)\//',$body,$matches)) {
+	    $body_parse = substr($body_parse,strlen($matches[1])-1);
+	    $find = true;
+	    //echo $body_parse."\n";
+	}
+	if (preg_match("/^'(.*)\//",$body,$matches)) {
+	    $body_parse = substr($body_parse,strlen($matches[1])-1);
+	    $find = true;
+	    //echo $body_parse."\n";
+	}
 	if (preg_match('/^([0-9]{2})([0-9]{2})([0-9]{2})([zh\\/])/',$body_parse,$matches)) {
+	    $find = true;
+	    //print_r($matches);
 	    $timestamp = $matches[0];
 	    if ($matches[4] == 'h') {
 		$timestamp = strtotime($matches[1].':'.$matches[2].':'.$matches[3]);
@@ -68,13 +171,15 @@ class aprs {
 		*/
 	    } elseif ($matches[4] == 'z' || $matches[4] == '/') {
 		// This work or not ?
-		$timestamp = strtotime($matches[1].' '.$matches[2].':'.$matches[3]);
+		$timestamp = strtotime(date('Ym').$matches[1].' '.$matches[2].':'.$matches[3]);
 	    }
 	    $body_parse = substr($body_parse,7);
 	    $result['timestamp'] = $timestamp;
+	    //echo date('Ymd H:i:s',$timestamp);
 	}
-	if (strlen($body_parse) > 19) {
+	//if (strlen($body_parse) > 19) {
 	    if (preg_match('/^([0-9]{2})([0-7 ][0-9 ]\\.[0-9 ]{2})([NnSs])(.)([0-9]{3})([0-7 ][0-9 ]\\.[0-9 ]{2})([EeWw])(.)/',$body_parse,$matches)) {
+	    $find = true;
 		// 4658.70N/00707.78Ez
 		//print_r(str_split($body_parse));
 		
@@ -103,19 +208,44 @@ class aprs {
 		if ($wind == 'W') $longitude = 0-$longitude;
 		$result['latitude'] = $latitude;
 		$result['longitude'] = $longitude;
+		$body_parse = substr($body_parse,18);
+		$body_parse_len = strlen($body_parse);
 	    }
-	    if ($body_len > 19) {
-		$body_split = str_split($body_parse);
-		$symbol_code = $body_split[18];
+	    if ($body_len > 0) {
+		/*
+		if (!isset($result['timestamp']) && !isset($result['latitude'])) {
+			$body_split = str_split($body);
+			$symbol_code = $body_split[0];
+			$body_parse = substr($body,1);
+			$body_parse_len = strlen($body_parse);
+		} else { 
+		*/
+		/*
+		if ($find === false) {
+			$body_split = str_split($body);
+			$symbol_code = $body_split[0];
+			$body_parse = substr($body,1);
+			$body_parse_len = strlen($body_parse);
+		} else { 
+		*/
+			$body_split = str_split($body_parse);
+			$symbol_code = $body_split[0];
+			$body_parse = substr($body_parse,1);
+			$body_parse_len = strlen($body_parse);
+		//}
+		//echo $body_parse;
+		$result['symbol_code'] = $symbol_code;
+		if (isset($this->symbols[$symbol_code])) $result['symbol'] = $this->symbols[$symbol_code];
 		if ($symbol_code != '_') {
-		    $body_parse = substr($body_parse,19);
-		    $body_parse_len = strlen($body_parse);
+		    //$body_parse = substr($body_parse,1);
+		    //$body_parse = trim($body_parse);
+		    //$body_parse_len = strlen($body_parse);
 		    if ($body_parse_len >= 7) {
 			
 		        if (preg_match('/^([0-9\\. ]{3})\\/([0-9\\. ]{3})/',$body_parse)) {
 		    	    $course = substr($body_parse,0,3);
 		    	    $tmp_s = intval($course);
-		    	    if ($tmp_s >= 1 && $tmp_s <= 360) $result['course'] = intval($course);
+		    	    if ($tmp_s >= 1 && $tmp_s <= 360) $result['heading'] = intval($course);
 		    	    $speed = substr($body_parse,4,3);
 		    	    $result['speed'] = round($speed*1.852);
 		    	    $body_parse = substr($body_parse,7);
@@ -132,7 +262,7 @@ class aprs {
 		            $altitude = intval($matches[1]);
 		            //$result['altitude'] = round($altitude*0.3048);
 		            $result['altitude'] = $altitude;
-		            $body_parse = substr($body_parse,strlen($matches[0])+1);
+		            $body_parse = trim(substr($body_parse,strlen($matches[0])));
 		        }
 		    }
 		    
@@ -193,31 +323,31 @@ class aprs {
 		    }
 		    
 		    //Comment
-		    $result['comment'] = $body_parse;
+		    $result['comment'] = trim($body_parse);
 		} else {
 		    // parse weather
-		    $body_parse = substr($body_parse,19);
+		    //$body_parse = substr($body_parse,1);
 		    //$body_parse_len = strlen($body_parse);
 
 		    if (preg_match('/^_{0,1}([0-9 \\.\\-]{3})\\/([0-9 \\.]{3})g([0-9 \\.]+)t(-{0,1}[0-9 \\.]+)/',$body_parse,$matches)) {
-			$result['wind_dir'] = $matches[1];
-			$result['wind_speed'] = round($matches[2]*1.60934,1);
-			$result['wind_gust'] = round($matches[3]*1.60934,1);
-			$result['temp'] = round(5/9*(($matches[4])-32),1);
-		        $body_parse = substr($body_parse,strlen($matches[0])+1);
+			    $result['wind_dir'] = intval($matches[1]);
+			    $result['wind_speed'] = round(intval($matches[2])*1.60934,1);
+			    $result['wind_gust'] = round(intval($matches[3])*1.60934,1);
+			    $result['temp'] = round(5/9*(($matches[4])-32),1);
+		    	    $body_parse = substr($body_parse,strlen($matches[0])+1);
 		    } elseif (preg_match('/^_{0,1}c([0-9 \\.\\-]{3})s([0-9 \\.]{3})g([0-9 \\.]+)t(-{0,1}[0-9 \\.]+)/',$body_parse,$matches)) {
-			$result['wind_dir'] = $matches[1];
+			$result['wind_dir'] = intval($matches[1]);
 			$result['wind_speed'] = round($matches[2]*1.60934,1);
 			$result['wind_gust'] = round($matches[3]*1.60934,1);
 			$result['temp'] = round(5/9*(($matches[4])-32),1);
 		        $body_parse = substr($body_parse,strlen($matches[0])+1);
 		    } elseif (preg_match('/^_{0,1}([0-9 \\.\\-]{3})\\/([0-9 \\.]{3})t(-{0,1}[0-9 \\.]+)/',$body_parse,$matches)) {
-			$result['wind_dir'] = $matches[1];
+			$result['wind_dir'] = intval($matches[1]);
 			$result['wind_speed'] = round($matches[2]*1.60934,1);
 			$result['wind_gust'] = round($matches[3]*1.60934,1);
 		        $body_parse = substr($body_parse,strlen($matches[0])+1);
 		    } elseif (preg_match('/^_{0,1}([0-9 \\.\\-]{3})\\/([0-9 \\.]{3})g([0-9 \\.]+)/',$body_parse,$matches)) {
-			$result['wind_dir'] = $matches[1];
+			$result['wind_dir'] = intval($matches[1]);
 			$result['wind_speed'] = round($matches[2]*1.60934,1);
 			$result['wind_gust'] = round($matches[3]*1.60934,1);
 		        $body_parse = substr($body_parse,strlen($matches[0])+1);
@@ -227,7 +357,7 @@ class aprs {
 		    }
 		}
 	    }
-	}
+	//}
 	if (isset($result['latitude'])) $result['latitude'] = round($result['latitude'],4);
 	if (isset($result['longitude'])) $result['longitude'] = round($result['longitude'],4);
 	//print_r($result);

@@ -46,6 +46,13 @@ class SpotterLive {
 					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$flt['pilots_id'])."')) spi ON spi.flightaware_id = spotter_live.flightaware_id";
 				}
 			}
+			if (isset($flt['idents']) && !empty($flt['idents'])) {
+				if (isset($flt['source'])) {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.ident IN ('".implode("','",$flt['idents'])."') AND spotter_output.format_source IN ('".implode("','",$flt['source'])."')) spid ON spid.flightaware_id = spotter_live.flightaware_id";
+				} else {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.ident IN ('".implode("','",$flt['idents'])."')) spid ON spid.flightaware_id = spotter_live.flightaware_id";
+				}
+			}
 			if ((isset($flt['airlines']) && empty($flt['airlines']) && isset($flt['pilots_id']) && empty($flt['pilots_id'])) || (!isset($flt['airlines']) && !isset($flt['pilots_id']))) {
 				if (isset($flt['source'])) {
 					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.format_source IN ('".implode("','",$flt['source'])."')) ssf ON ssf.flightaware_id = spotter_live.flightaware_id";

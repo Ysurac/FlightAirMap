@@ -988,6 +988,24 @@ class NOTAM {
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
 	}
+	public function getAllNOTAMbyFir($fir) {
+		global $globalDBdriver;
+		//$query = "SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()";
+		if ($globalDBdriver == 'mysql') {
+			$query  = 'SELECT * FROM notam WHERE date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP() AND fir = :fir ORDER BY date_begin DESC';
+		} else {
+			$query  = "SELECT * FROM notam WHERE fir = :fir AND date_end > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AND date_begin < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' ORDER BY date_begin DESC";
+		}
+		$query_values = array(':fir' => $fir);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 	public function getAllNOTAMtext() {
 		$query  = 'SELECT full_notam FROM notam';
 		$query_values = array();
@@ -1095,7 +1113,7 @@ class NOTAM {
 		return $all;
 	}
 	public function getNOTAMbyRef($ref) {
-		$query = "SELECT * FROM notam WHERE ref = :ref";
+		$query = "SELECT * FROM notam WHERE ref = :ref LIMIT 1";
 		$query_values = array('ref' => $ref);
 		try {
 			$sth = $this->db->prepare($query);
