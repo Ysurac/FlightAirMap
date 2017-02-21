@@ -127,8 +127,9 @@ class aprs {
 	foreach ($elements as $element) {
 	    if (preg_match('/^([a-zA-Z0-9-]{1,9})([*]?)$/',$element)) {
 	        //echo "ok";
-	        if ($element == 'TCPIP*') return false;
+	        //if ($element == 'TCPIP*') return false;
 	    } elseif (!preg_match('/^([0-9A-F]{32})$/',$element)) {
+		echo 'element : '.$element."\n";
 		return false;
 	    }
 	    /*
@@ -177,6 +178,13 @@ class aprs {
 	    $result['timestamp'] = $timestamp;
 	    //echo date('Ymd H:i:s',$timestamp);
 	}
+	if (preg_match('/^([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})/',$body_parse,$matches)) {
+	    $find = true;
+	    $timestamp = strtotime(date('Y').$matches[1].$matches[2].' '.$matches[3].':'.$matches[4]);
+	    $body_parse = substr($body_parse,8);
+	    $result['timestamp'] = $timestamp;
+	    //echo date('Ymd H:i:s',$timestamp);
+	}
 	//if (strlen($body_parse) > 19) {
 	    if (preg_match('/^([0-9]{2})([0-7 ][0-9 ]\\.[0-9 ]{2})([NnSs])(.)([0-9]{3})([0-7 ][0-9 ]\\.[0-9 ]{2})([EeWw])(.)/',$body_parse,$matches)) {
 	    $find = true;
@@ -211,7 +219,8 @@ class aprs {
 		$body_parse = substr($body_parse,18);
 		$body_parse_len = strlen($body_parse);
 	    }
-	    if ($body_len > 0) {
+	    $body_parse_len = strlen($body_parse);
+	    if ($body_parse_len > 0) {
 		/*
 		if (!isset($result['timestamp']) && !isset($result['latitude'])) {
 			$body_split = str_split($body);
@@ -228,15 +237,16 @@ class aprs {
 			$body_parse_len = strlen($body_parse);
 		} else { 
 		*/
+		if ($find) {
 			$body_split = str_split($body_parse);
 			$symbol_code = $body_split[0];
 			$body_parse = substr($body_parse,1);
 			$body_parse_len = strlen($body_parse);
 		//}
 		//echo $body_parse;
-		$result['symbol_code'] = $symbol_code;
-		if (isset($this->symbols[$symbol_code])) $result['symbol'] = $this->symbols[$symbol_code];
-		if ($symbol_code != '_') {
+			$result['symbol_code'] = $symbol_code;
+			if (isset($this->symbols[$symbol_code])) $result['symbol'] = $this->symbols[$symbol_code];
+			if ($symbol_code != '_') {
 		    //$body_parse = substr($body_parse,1);
 		    //$body_parse = trim($body_parse);
 		    //$body_parse_len = strlen($body_parse);
@@ -290,7 +300,8 @@ class aprs {
 		    
 		    // OGN comment
 		   // echo "Before OGN : ".$body_parse."\n";
-		    if (preg_match('/^id([0-9A-F]{8}) ([+-])([0-9]{3,4})fpm ([+-])([0-9.]{3,4})rot (.*)$/',$body_parse,$matches)) {
+		    //if (preg_match('/^id([0-9A-F]{8}) ([+-])([0-9]{3,4})fpm ([+-])([0-9.]{3,4})rot (.*)$/',$body_parse,$matches)) {
+		    if (preg_match('/^id([0-9A-F]{8})/',$body_parse,$matches)) {
 			$id = $matches[1];
 			//$mode = substr($id,0,2);
 			$address = substr($id,2);
@@ -356,6 +367,8 @@ class aprs {
 			$result['temp'] = round(5/9*(($matches[1])-32),1);
 		    }
 		}
+		} else $result['comment'] = trim($body_parse);
+
 	    }
 	//}
 	if (isset($result['latitude'])) $result['latitude'] = round($result['latitude'],4);

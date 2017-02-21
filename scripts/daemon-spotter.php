@@ -964,8 +964,9 @@ while ($i > 0) {
 				    $currentdate = date('Y-m-d H:i:s');
 				    $aprsdate = strtotime($data['datetime']);
 				    // Accept data if time <= system time + 20s
-				    if ($line['stealth'] == 0 && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) $send = $SI->add($data);
-				    else {
+				    if (($line['stealth'] == 0 || $line['stealth'] == '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
+					$send = $SI->add($data);
+				    } else {
 					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";
 					else echo '--------- '.$data['ident'].' : Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
 				    }
@@ -975,7 +976,7 @@ while ($i > 0) {
 					echo '!! Weather Station not yet supported'."\n";
 				}
 				//elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
-				elseif ($line == true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
+				//elseif ($line == true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
 			    }
 			} else {
 			    $line = explode(',', $buffer);
