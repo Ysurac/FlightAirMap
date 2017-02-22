@@ -20,3 +20,4 @@ CREATE TABLE accidents (
 );
 CREATE INDEX registration_idx ON accidents USING btree(registration);
 CREATE INDEX rdts ON accidents USING btree(registration,date,type,source);
+CREATE INDEX type ON accidents USING btree(type,date);

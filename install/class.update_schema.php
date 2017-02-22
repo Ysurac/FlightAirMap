@@ -1549,6 +1549,29 @@ class update_schema {
 		}
 		return $error;
 	}
+	private static function update_from_35() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->indexExists('accidents','type')) {
+			// Add index key
+			$query = "create index type on accidents (type,date)";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add index type on accidents) : ".$e->getMessage()."\n";
+			}
+                }
+		$query = "UPDATE config SET value = '36' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
 
 
     	public static function check_version($update = false) {
@@ -1701,6 +1724,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '34') {
     			    $error = self::update_from_34();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '35') {
+    			    $error = self::update_from_35();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

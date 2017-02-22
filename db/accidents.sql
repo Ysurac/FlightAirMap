@@ -20,3 +20,4 @@ CREATE TABLE `accidents` (
 );
 CREATE INDEX `registration_idx` ON `accidents` (`registration`);
 CREATE INDEX `rdts` ON `accidents` (`registration`,`date`,`type`,`source`);
+CREATE INDEX `type` ON `accidents` (`type`,`date`);
