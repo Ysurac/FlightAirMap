@@ -1919,6 +1919,7 @@ class Stats {
 				$reset = false;
 				$last_update = $this->getLastStatsUpdate('last_update_stats_'.$filter_name);
 				if (isset($filter['resetall']) && isset($last_update[0]['value']) && strtotime($filter['resetall']) > strtotime($last_update[0]['value'])) {
+					if ($globalDebug) echo '! Delete stats for filter '.$filter_name.' ---'."\n";
 					$this->deleteOldStats($filter_name);
 					unset($last_update);
 				}

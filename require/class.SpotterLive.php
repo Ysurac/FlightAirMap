@@ -26,6 +26,9 @@ class SpotterLive {
 				$filter = array_merge($filter,$globalStatsFilters[$globalFilterName]);
 			}
 		}
+		if (isset($filter[0]['source'])) {
+			$filters = array_merge($filters,$filter);
+		}
 		if (is_array($globalFilter)) $filter = array_merge($filter,$globalFilter);
 		$filter_query_join = '';
 		$filter_query_where = '';
