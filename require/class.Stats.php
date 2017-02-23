@@ -1917,10 +1917,11 @@ class Stats {
 				//$filter_name = $filter['name'];
 				$filter_name = $name;
 				$reset = false;
-				if (isset($filter['resetall'])) {
-					$this->deleteOldStats($filter_name);
-				}
 				$last_update = $this->getLastStatsUpdate('last_update_stats_'.$filter_name);
+				if (isset($filter['resetall']) && isset($last_update[0]['value']) && strtotime($filter['resetall']) > strtotime($last_update[0]['value'])) {
+					$this->deleteOldStats($filter_name);
+					unset($last_update);
+				}
 				if (isset($last_update[0]['value'])) {
 					$last_update_day = $last_update[0]['value'];
 				} else {
