@@ -748,7 +748,7 @@ class Spotter{
 
 		if ($pilot_id != "")
 		{
-			$pilot_id = filter_var($pilot_id,FILTER_SANITIZE_NUMBER_INT);
+			$pilot_id = filter_var($pilot_id,FILTER_SANITIZE_STRING);
 			if (!is_string($pilot_id))
 			{
 				return false;

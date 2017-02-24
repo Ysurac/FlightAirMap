@@ -385,7 +385,7 @@ while ($i > 0) {
 			else $data['id'] = $value['format'].'-'.$line[1].'-'.$line[0];
 			$data['pilot_id'] = $line[1];
 			$data['pilot_name'] = $line[2];
-			$data['hex'] = str_pad(dechex($line[1]),6,'000000',STR_PAD_LEFT);
+			$data['hex'] = str_pad(dechex($Common->str2int($line[1])),6,'000000',STR_PAD_LEFT);
 			$data['ident'] = $line[0]; // ident
 			if ($line[7] != '' && $line[7] != 0) $data['altitude'] = $line[7]; // altitude
 			$data['speed'] = $line[8]; // speed
@@ -437,7 +437,7 @@ while ($i > 0) {
 				elseif ($typec == 'CTR') $data['type'] = 'Control Radar or Centre';
 				elseif ($data['type'] == '') $data['type'] = 'Observer';
 				if (!isset($data['source_name'])) $data['source_name'] = '';
-				echo $ATC->add($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source'],$data['source_name']);
+				if (isset($ATC)) echo $ATC->add($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source'],$data['source_name']);
 			}
     			unset($data);
     		    }
@@ -693,7 +693,7 @@ while ($i > 0) {
 			elseif ($typec == 'FSS') $data['type'] = 'Flight Service Station';
 			elseif ($typec == 'CTR') $data['type'] = 'Control Radar or Centre';
 			else $data['type'] = 'Observer';
-			echo $ATC->add($data['ident'],'',$data['latitude'],$data['longitude'],'0',$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source']);
+			if (isset($ATC)) echo $ATC->add($data['ident'],'',$data['latitude'],$data['longitude'],'0',$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source']);
 		    }
 		    unset($data);
 		}
@@ -944,7 +944,8 @@ while ($i > 0) {
 				    $data = array();
 				    //print_r($line);
 				    $data['hex'] = $line['address'];
-				    $data['datetime'] = date('Y-m-d H:i:s',$line['timestamp']);
+				    if (isset($line['timestamp'])) $data['datetime'] = date('Y-m-d H:i:s',$line['timestamp']);
+				    else $data['datetime'] = date('Y-m-d H:i:s');
 				    //$data['datetime'] = date('Y-m-d H:i:s');
 				    $data['ident'] = $line['ident'];
 				    $data['latitude'] = $line['latitude'];

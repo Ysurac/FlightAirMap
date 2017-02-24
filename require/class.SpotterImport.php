@@ -221,7 +221,7 @@ class SpotterImport {
 	// SBS format is CSV format
 	if(is_array($line) && isset($line['hex'])) {
 	    //print_r($line);
-  	    if ($line['hex'] != '' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) === 6) {
+  	    if (isset($line['id']) || (isset($line['hex']) && $line['hex'] != '' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) === 6)) {
 
 		// Increment message number
 		if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE) {
@@ -246,54 +246,62 @@ class SpotterImport {
 //		echo $this->nb++."\n";
 		//$this->db = $dbc;
 
-		$hex = trim($line['hex']);
+		//$hex = trim($line['hex']);
 	        if (!isset($line['id'])) $id = trim($line['hex']);
 	        else $id = trim($line['id']);
 		
-		//print_r($this->all_flights);
-		if (!isset($this->all_flights[$id]['hex']) && ctype_xdigit($hex)) {
-		    $this->all_flights[$id] = array('hex' => $hex);
+		if (!isset($this->all_flights[$id])) {
+		    $this->all_flights[$id] = array();
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('addedSpotter' => 0));
-		    //if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
-			//$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
-		    //} else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
-		    if (!isset($line['aircraft_name']) && (!isset($line['aircraft_icao']) || $line['aircraft_icao'] == '????')) {
-
-			$timeelapsed = microtime(true);
-			$Spotter = new Spotter($this->db);
-			$aircraft_icao = $Spotter->getAllAircraftType($hex);
-			$Spotter->db = null;
-			if ($globalDebugTimeElapsed) echo 'Time elapsed for update getallaircrattype : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
-
-			if ($aircraft_icao == '' && isset($line['aircraft_type'])) {
-			    if ($line['aircraft_type'] == 'PARA_GLIDER') $aircraft_icao = 'GLID';
-			    elseif ($line['aircraft_type'] == 'HELICOPTER_ROTORCRAFT') $aircraft_icao = 'UHEL';
-			    elseif ($line['aircraft_type'] == 'TOW_PLANE') $aircraft_icao = 'TOWPLANE';
-			    elseif ($line['aircraft_type'] == 'POWERED_AIRCRAFT') $aircraft_icao = 'POWAIRC';
-			}
-			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $aircraft_icao));
-		    } else if (isset($line['aircraft_name'])) {
-			// Get aircraft ICAO from aircraft name
-			$Spotter = new Spotter($this->db);
-			$aircraft_icao = $Spotter->getAircraftIcao($line['aircraft_name']);
-			$Spotter->db = null;
-			if ($aircraft_icao != '') $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $aircraft_icao));
-			else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => 'NA'));
-		    } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '','altitude_real' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','ground' => '0', 'format_source' => '','source_name' => '','over_country' => '','verticalrate' => '','noarchive' => false,'putinarchive' => true));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('lastupdate' => time()));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
 //			if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw') && $globalDaemon) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.$this->all_flights[$id]['ident'].'-'.date('YmdGi')));
 //			if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs') && $globalDaemon) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.date('YmdHi')));
-			if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs' || $line['format_source'] === 'aircraftlistjson' || $line['format_source'] === 'radarvirtueljson')) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.date('YmdHi')));
+			if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs' || $line['format_source'] === 'aircraftlistjson' || $line['format_source'] === 'radarvirtueljson')) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $id.'-'.date('YmdHi')));
 		        //else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.$this->all_flights[$id]['ident']));
 		     } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $line['id']));
-
-		    if ($globalDebug) echo "*********** New aircraft hex : ".$hex." ***********\n";
 		    if ($globalAllFlights !== FALSE) $dataFound = true;
 		}
 		
+		//print_r($this->all_flights);
+		if (isset($line['hex']) && !isset($this->all_flights[$id]['hex']) && ctype_xdigit($line['hex'])) {
+		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('hex' => trim($line['hex'])));
+		    //if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
+			//$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
+		    //} else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
+		    if (!isset($line['aircraft_name']) && (!isset($line['aircraft_icao']) || $line['aircraft_icao'] == '????') && $line['format_source'] != 'whazzup' && $line['format_source'] != 'vatsimtxt' && $line['format_source'] != 'pireps' && $line['format_source'] != 'phpvmacars' && $line['format_source'] != 'vam' && $line['format_source'] != 'flightgearsp' && $line['format_source'] != 'flightgearmp') {
+			$timeelapsed = microtime(true);
+			$Spotter = new Spotter($this->db);
+			$aircraft_icao = $Spotter->getAllAircraftType(trim($line['hex']));
+			$Spotter->db = null;
+			if ($globalDebugTimeElapsed) echo 'Time elapsed for update getallaircrattype : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+			if ($aircraft_icao != '') $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $aircraft_icao));
+		    }
+		    if ($globalAllFlights !== FALSE) $dataFound = true;
+		    if ($globalDebug) echo "*********** New aircraft hex : ".$line['hex']." ***********\n";
+		}
+		if (isset($line['aircraft_icao']) && $line['aircraft_icao'] != '') {
+			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
+		}
+		if (!isset($this->all_flights[$id]['aircraft_icao']) && isset($line['aircraft_name'])) {
+			// Get aircraft ICAO from aircraft name
+			$Spotter = new Spotter($this->db);
+			$aircraft_icao = $Spotter->getAircraftIcao($line['aircraft_name']);
+			$Spotter->db = null;
+			if ($aircraft_icao != '') $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $aircraft_icao));
+		}
+		if (!isset($this->all_flights[$id]['aircraft_icao']) && isset($line['aircraft_type'])) {
+			if ($line['aircraft_type'] == 'PARA_GLIDER') $aircraft_icao = 'GLID';
+			elseif ($line['aircraft_type'] == 'HELICOPTER_ROTORCRAFT') $aircraft_icao = 'UHEL';
+			elseif ($line['aircraft_type'] == 'TOW_PLANE') $aircraft_icao = 'TOWPLANE';
+			elseif ($line['aircraft_type'] == 'POWERED_AIRCRAFT') $aircraft_icao = 'POWAIRC';
+			if (isset($aircraft_icao)) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $aircraft_icao));
+		}
+		if (!isset($this->all_flights[$id]['aircraft_icao'])) {
+			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => 'NA'));
+		}
 		//if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
 		if (isset($line['datetime']) && strtotime($line['datetime']) > time()-20*60) {
 		    if (!isset($this->all_flights[$id]['datetime']) || strtotime($line['datetime']) >= strtotime($this->all_flights[$id]['datetime'])) {

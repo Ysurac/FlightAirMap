@@ -519,5 +519,24 @@ class Common {
 		$string = strtr($string, $chars);
 		return $string;
 	}
+	
+	/*
+	* Extract int from a string
+	* Come from http://php.net/manual/fr/function.intval.php comment by michiel ed thalent nl
+	*
+	* @param String Input string
+	* @return Integer integer from the string
+	*/
+	public function str2int($string, $concat = false) {
+		$length = strlen($string);    
+		for ($i = 0, $int = '', $concat_flag = true; $i < $length; $i++) {
+			if (is_numeric($string[$i]) && $concat_flag) {
+				$int .= $string[$i];
+			} elseif(!$concat && $concat_flag && strlen($int) > 0) {
+				$concat_flag = false;
+			}
+		}
+		return (int) $int;
+	}
 }
 ?>
