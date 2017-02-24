@@ -4,6 +4,7 @@
 */
 
 require_once(dirname(__FILE__).'/class.Spotter.php');
+require_once(dirname(__FILE__).'/class.Accident.php');
 require_once(dirname(__FILE__).'/class.SpotterArchive.php');
 require_once(dirname(__FILE__).'/class.Common.php');
 class Stats {
@@ -655,9 +656,13 @@ class Stats {
                 return $all;
 	}
 	public function countAllMonths($stats_airline = '',$filter_name = '') {
-		global $globalStatsFilters;
+		global $globalStatsFilters, $globalDBdriver;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-	    	$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+		} else {
+			$query = "SELECT EXTRACT(YEAR FROM stats_date) AS year_name,EXTRACT(MONTH FROM stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+		}
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name));
@@ -675,6 +680,48 @@ class Stats {
             		$all = $Spotter->countAllMonths($filters);
                 }
                 
+                return $all;
+	}
+	public function countFatalitiesLast12Months() {
+		global $globalStatsFilters, $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT YEAR(stats_date) AS year, MONTH(stats_date) as month,cnt as count FROM stats WHERE stats_type = 'fatalities_bymonth' ORDER BY stats_date";
+		} else {
+			$query = "SELECT EXTRACT(YEAR FROM stats_date) AS year, EXTRACT(MONTH FROM stats_date) as month,cnt as count FROM stats WHERE stats_type = 'fatalities_bymonth' ORDER BY stats_date";
+		}
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                
+                if (empty($all)) {
+            		$Accident = new Spotter($this->db);
+            		$all = $Accident->countFatalitiesLast12Months();
+                }
+                return $all;
+	}
+	public function countFatalitiesByYear() {
+		global $globalStatsFilters, $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT YEAR(stats_date) AS year, cnt as count FROM stats WHERE stats_type = 'fatalities_byyear' ORDER BY stats_date";
+		} else {
+			$query = "SELECT EXTRACT(YEAR FROM stats_date) AS year, cnt as count FROM stats WHERE stats_type = 'fatalities_byyear' ORDER BY stats_date";
+		}
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                
+                if (empty($all)) {
+            		$Accident = new Spotter($this->db);
+            		$all = $Accident->countFatalitiesByYear();
+                }
                 return $all;
 	}
 	public function countAllMilitaryMonths($filter_name = '') {
@@ -904,6 +951,19 @@ class Stats {
 	public function getStats($type,$stats_airline = '', $filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
                 $query = "SELECT * FROM stats WHERE stats_type = :type AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY stats_date";
+                $query_values = array(':type' => $type,':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        echo "error : ".$e->getMessage();
+                }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
+        }
+	public function deleteStatsByType($type,$stats_airline = '', $filter_name = '') {
+		if ($filter_name == '') $filter_name = $this->filter_name;
+                $query = "DELETE FROM stats WHERE stats_type = :type AND stats_airline = :stats_airline AND filter_name = :filter_name";
                 $query_values = array(':type' => $type,':stats_airline' => $stats_airline,':filter_name' => $filter_name);
                  try {
                         $sth = $this->db->prepare($query);
@@ -1563,6 +1623,19 @@ class Stats {
 				}
 			}
 			
+			if ($globalDebug) echo 'Count fatalities stats...'."\n";
+			$Accident = new Accident();
+			$this->deleteStatsByType('fatalities_byyear');
+			$alldata = $Accident->countFatalitiesByYear();
+			foreach ($alldata as $number) {
+				$this->addStat('fatalities_byyear',$number['count'],date('Y-m-d H:i:s',mktime(0,0,0,1,1,$number['year'])));
+			}
+			$this->deleteStatsByType('fatalities_bymonth');
+			$alldata = $Accident->countFatalitiesLast12Months();
+			foreach ($alldata as $number) {
+				$this->addStat('fatalities_bymonth',$number['count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month'],1,$number['year'])));
+			}
+
 
 			// Add by month using getstat if month finish...
 

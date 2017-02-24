@@ -647,9 +647,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Fatalities by Years"); ?></h2>
                 <?php
-		    require_once('require/class.Accident.php');
-            	    $Accident = new Accident();
-                  $year_array = $Accident->countFatalitiesByYear($filter_name);
+                  $year_array = $Stats->countFatalitiesByYear($filter_name);
 		    if (count($year_array) == 0) print _("No data available");
 		    else {
                   print '<div id="chart32" class="chart" width="100%"></div>
@@ -696,9 +694,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Fatalities last 12 Months"); ?></h2>
                 <?php
-		    require_once('require/class.Accident.php');
-            	    $Accident = new Accident();
-                  $year_array = $Accident->countFatalitiesLast12Months($filter_name);
+                  $year_array = $Stats->countFatalitiesLast12Months($filter_name);
 		    if (count($year_array) == 0) print _("No data available");
 		    else {
                   print '<div id="chart33" class="chart" width="100%"></div>
