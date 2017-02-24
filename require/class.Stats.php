@@ -698,7 +698,7 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 
                 if (empty($all)) {
-            		$Accident = new Spotter($this->db);
+            		$Accident = new Accident($this->db);
             		$all = $Accident->countFatalitiesLast12Months();
                 }
                 return $all;
@@ -719,7 +719,7 @@ class Stats {
                 $all = $sth->fetchAll(PDO::FETCH_ASSOC);
                 
                 if (empty($all)) {
-            		$Accident = new Spotter($this->db);
+            		$Accident = new Accident($this->db);
             		$all = $Accident->countFatalitiesByYear();
                 }
                 return $all;
