@@ -17,14 +17,18 @@ require_once('header.php');
 if (isset($_GET['start_date'])) {
 	//for the date manipulation into the query
 	if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
-		$start_date = $_GET['start_date']." 00:00:00";
-		$end_date = $_GET['end_date']." 00:00:00";
+		//$start_date = $_GET['start_date']." 00:00:00";
+		$start_date = date("Y-m-d",strtotime($_GET['start_date']))." 00:00:00";
+		//$end_date = $_GET['end_date']." 00:00:00";
+		$end_date = date("Y-m-d",strtotime($_GET['end_date']))." 00:00:00";
 		$sql_date = $start_date.",".$end_date;
 	} else if($_GET['start_date'] != ""){
-		$start_date = $_GET['start_date']." 00:00:00";
+		//$start_date = $_GET['start_date']." 00:00:00";
+		$start_date = date("Y-m-d",strtotime($_GET['start_date']))." 00:00:00";
 		$sql_date = $start_date;
 	} else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
-		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date']." 00:00:00";
+		//$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date']." 00:00:00";
+		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".date("Y-m-d",strtotime($_GET['end_date']))." 00:00:00";
 		$sql_date = $end_date;
 	} else $sql_date = '';
 } else $sql_date = '';
@@ -32,14 +36,14 @@ if (isset($_GET['start_date'])) {
 if (isset($_GET['highest_altitude'])) {
 	//for altitude manipulation
 	if($_GET['highest_altitude'] != "" && $_GET['lowest_altitude'] != ""){
-		$end_altitude = $_GET['highest_altitude'];
-		$start_altitude = $_GET['lowest_altitude'];
+		$end_altitude = filter_input(INPUT_GET,'highest_altitude',FILTER_SANITIZE_NUMBER_INT);
+		$start_altitude = filter_input(INPUT_GET,'lowest_altitude',FILTER_SANITIZE_NUMBER_INT);
 		$sql_altitude = $start_altitude.",".$end_altitude;
 	} else if($_GET['highest_altitude'] != ""){
-		$end_altitude = $_GET['highest_altitude'];
+		$end_altitude = filter_input(INPUT_GET,'highest_altitude',FILTER_SANITIZE_NUMBER_INT);
 		$sql_altitude = $end_altitude;
 	} else if($_GET['highest_altitude'] == "" && $_GET['lowest_altitude'] != ""){
-		$start_altitude = $_GET['lowest_altitude'].",60000";
+		$start_altitude = filter_input(INPUT_GET,'lowest_altitude',FILTER_SANITIZE_NUMBER_INT).",60000";
 		$sql_altitude = $start_altitude;
 	} else $sql_altitude = '';
 } else $sql_altitude = '';
@@ -57,13 +61,13 @@ if(!isset($_GET['limit']))
 			$_GET['number_results'] = 1000;
 		}
 		$limit_start = 0;
-		$limit_end = $_GET['number_results'];
-		$absolute_difference = $_GET['number_results'];
+		$limit_end = filter_input(INPUT_GET,'number_results',FILTER_SANITIZE_NUMBER_INT);
+		$absolute_difference = filter_input(INPUT_GET,'number_results',FILTER_SANITIZE_NUMBER_INT);
 	}
 }  else {
 	$limit_explode = explode(",", $_GET['limit']);
-	$limit_start = $limit_explode[0];
-	$limit_end = $limit_explode[1];
+	$limit_start = filter_var($limit_explode[0],FILTER_SANITIZE_NUMBER_INT);
+	$limit_end = filter_var($limit_explode[1],FILTER_SANITIZE_NUMBER_INT);
 }
 $absolute_difference = abs($limit_start - $limit_end);
 $limit_next = $limit_end + $absolute_difference;
@@ -160,30 +164,30 @@ if (!empty($_GET)){
 		print '<div class="column">';
 		print '<div class="info">';
 		print '<h1>'._("Search Results for").' ';
-		if (isset($_GET['q']) && $_GET['q'] != ""){ print _("Keyword:").' <span>'.$_GET['q'].'</span> '; }
-		if (isset($_GET['aircraft']) && $_GET['aircraft'] != ""){ print _("Aircraft:").' <span>'.$_GET['aircraft'].'</span> '; }
-		if (isset($_GET['manufacturer']) && $_GET['manufacturer'] != ""){ print _("Manufacturer:").' <span>'.$_GET['manufacturer'].'</span> '; }
-		if (isset($_GET['registration']) && $_GET['registration'] != ""){ print _("Registration:").' <span>'.$_GET['registration'].'</span> '; }
-		if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print _("Highlights:").' <span>'.$_GET['highlights'].'</span> '; }
-		if (isset($_GET['airline']) && $_GET['airline'] != ""){ print _("Airline:").' <span>'.$_GET['airline'].'</span> '; }
-		if (isset($_GET['airline_country']) && $_GET['airline_country'] != ""){ print _("Airline country:").' <span>'.$_GET['airline_country'].'</span> '; }
-		if (isset($_GET['airline_type']) && $_GET['airline_type'] != ""){ print _("Airline type:").' <span>'.$_GET['airline_type'].'</span> '; }
-		if (isset($_GET['airport']) && $_GET['airport'] != ""){ print _("Airport:").' <span>'.$_GET['airport'].'</span> '; }
-		if (isset($_GET['airport_country']) && $_GET['airport_country'] != ""){ print _("Airport country:").' <span>'.$_GET['airport_country'].'</span> '; }
-		if (isset($_GET['callsign']) && $_GET['callsign'] != ""){ print _("Callsign:").' <span>'.$_GET['callsign'].'</span> '; }
-		if (isset($_GET['owner']) && $_GET['owner'] != ""){ print _("Owner:").' <span>'.$_GET['owner'].'</span> '; }
-		if (isset($_GET['pilot_id']) && $_GET['pilot_id'] != ""){ print _("Pilot id:").' <span>'.$_GET['pilot_id'].'</span> '; }
-		if (isset($_GET['pilot_name']) && $_GET['pilot_name'] != ""){ print _("Pilot name:").' <span>'.$_GET['pilot_name'].'</span> '; }
-		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && (!isset($_GET['arrival_airport_route']) || $_GET['arrival_airport_route'] == "")){ print _("Route out of:").' <span>'.$_GET['departure_airport_route'].'</span> '; }
-		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] == "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print _("Route into:").' <span>'.$_GET['arrival_airport_route'].'</span> '; }
-		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print _("Route between:").' <span>'.$_GET['departure_airport_route'].'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
-		if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] == ""){ print _("Date starting at:").' <span>'.$_GET['start_date'].'</span> '; }
-		if (isset($_GET['start_date']) && $_GET['start_date'] == "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print _("Date ending at:").' <span>'.$_GET['end_date'].'</span> '; }
-		if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print _("Date between:").' <span>'.$_GET['start_date'].'</span> and <span>'.$_GET['end_date'].'</span> '; }
-		if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] != "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] == ""){ print _("Altitude starting at:").' <span>'.number_format($_GET['lowest_altitude']).' feet</span> '; }
-		if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] == "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] != ""){ print _("Altitude ending at:").' <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
-		if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] != "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] != ""){ print _("Altitude between:").' <span>'.number_format($_GET['lowest_altitude']).' feet</span> '._("and").' <span>'.number_format($_GET['highest_altitude']).' feet</span> '; }
-		if (isset($_GET['number_results']) && $_GET['number_results'] != ""){ print _("limit per page:").' <span>'.$_GET['number_results'].'</span> '; }
+		if (isset($_GET['q']) && $_GET['q'] != ""){ print _("Keyword:").' <span>'.$q.'</span> '; }
+		if (isset($_GET['aircraft']) && $_GET['aircraft'] != ""){ print _("Aircraft:").' <span>'.$aircraft.'</span> '; }
+		if (isset($_GET['manufacturer']) && $_GET['manufacturer'] != ""){ print _("Manufacturer:").' <span>'.$manufacturer.'</span> '; }
+		if (isset($_GET['registration']) && $_GET['registration'] != ""){ print _("Registration:").' <span>'.$registration.'</span> '; }
+		if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print _("Highlights:").' <span>'.$highlights.'</span> '; }
+		if (isset($_GET['airline']) && $_GET['airline'] != ""){ print _("Airline:").' <span>'.$airline.'</span> '; }
+		if (isset($_GET['airline_country']) && $_GET['airline_country'] != ""){ print _("Airline country:").' <span>'.$airline_country.'</span> '; }
+		if (isset($_GET['airline_type']) && $_GET['airline_type'] != ""){ print _("Airline type:").' <span>'.$airline_type.'</span> '; }
+		if (isset($_GET['airport']) && $_GET['airport'] != ""){ print _("Airport:").' <span>'.$airport.'</span> '; }
+		if (isset($_GET['airport_country']) && $_GET['airport_country'] != ""){ print _("Airport country:").' <span>'.$airport_country.'</span> '; }
+		if (isset($_GET['callsign']) && $_GET['callsign'] != ""){ print _("Callsign:").' <span>'.$callsign.'</span> '; }
+		if (isset($_GET['owner']) && $_GET['owner'] != ""){ print _("Owner:").' <span>'.$owner.'</span> '; }
+		if (isset($_GET['pilot_id']) && $_GET['pilot_id'] != ""){ print _("Pilot id:").' <span>'.$pilot_id.'</span> '; }
+		if (isset($_GET['pilot_name']) && $_GET['pilot_name'] != ""){ print _("Pilot name:").' <span>'.$pilot_name.'</span> '; }
+		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && (!isset($_GET['arrival_airport_route']) || $_GET['arrival_airport_route'] == "")){ print _("Route out of:").' <span>'.$departure_airport_route.'</span> '; }
+		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] == "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print _("Route into:").' <span>'.$arrival_airport_route.'</span> '; }
+		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print _("Route between:").' <span>'.$departure_airport_route.'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
+		if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] == ""){ print _("Date starting at:").' <span>'.$start_date.'</span> '; }
+		if (isset($_GET['start_date']) && $_GET['start_date'] == "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print _("Date ending at:").' <span>'.$end_date.'</span> '; }
+		if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print _("Date between:").' <span>'.$start_date.'</span> and <span>'.$end_date.'</span> '; }
+		if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] != "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] == ""){ print _("Altitude starting at:").' <span>'.number_format($lowest_altitude).' feet</span> '; }
+		if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] == "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] != ""){ print _("Altitude ending at:").' <span>'.number_format($highest_altitude).' feet</span> '; }
+		if (isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] != "" && isset($_GET['highest_altitude']) && $_GET['highest_altitude'] != ""){ print _("Altitude between:").' <span>'.number_format($lowest_altitude).' feet</span> '._("and").' <span>'.number_format($highest_altitude).' feet</span> '; }
+		if (isset($_GET['number_results']) && $_GET['number_results'] != ""){ print _("limit per page:").' <span>'.$number_results.'</span> '; }
 		print '</h1>';
 		print '</div>';
 
@@ -275,7 +279,7 @@ if (!empty($_GET)){
 			<div class="form-group">
 				<label class="control-label col-sm-2"><?php echo _("Keywords"); ?></label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="q" name="q" value="<?php if (isset($_GET['q'])) print $_GET['q']; ?>" size="10" placeholder="<?php echo _("Keywords"); ?>" />
+					<input type="text" class="form-control" id="q" name="q" value="<?php if (isset($_GET['q'])) print $q; ?>" size="10" placeholder="<?php echo _("Keywords"); ?>" />
 				</div>
 			</div>
 		</fieldset>
@@ -290,7 +294,7 @@ if (!empty($_GET)){
 					    </select>
 					</div>
 				</div>
-				<script type="text/javascript">getSelect('manufacturer','<?php if(isset($_GET['manufacturer'])) print $_GET['manufacturer']; ?>')</script>
+				<script type="text/javascript">getSelect('manufacturer','<?php if(isset($_GET['manufacturer'])) print $manufacturer; ?>')</script>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Type"); ?></label>
 						<div class="col-sm-10">
@@ -299,11 +303,11 @@ if (!empty($_GET)){
 							</select>
 						</div>
 				</div>
-				<script type="text/javascript">getSelect('aircrafttypes','<?php if(isset($_GET['aircraft_icao'])) print $_GET['aircraft_icao']; ?>');</script>
+				<script type="text/javascript">getSelect('aircrafttypes','<?php if(isset($_GET['aircraft_icao'])) print $aircraft_icao; ?>');</script>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Registration"); ?></label> 
 					<div class="col-sm-10">
-						<input type="text" class="form-control" name="registration" value="<?php if (isset($_GET['registration'])) print $_GET['registration']; ?>" size="8" />
+						<input type="text" class="form-control" name="registration" value="<?php if (isset($_GET['registration'])) print $registration; ?>" size="8" placeholder="<?php echo _("Registration"); ?>" />
 					</div>
 				</div>
 <?php
@@ -312,13 +316,13 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Pilot id"); ?></label> 
 					<div class="col-sm-10">
-						<input type="text" class="form-control" name="pilot_id" value="<?php if (isset($_GET['pilot_id'])) print $_GET['pilot_id']; ?>" size="15" />
+						<input type="text" class="form-control" name="pilot_id" value="<?php if (isset($_GET['pilot_id'])) print $pilot_id; ?>" size="15" placeholder="<?php echo _("Pilot id"); ?>" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Pilot name"); ?></label> 
 					<div class="col-sm-10">
-						<input type="text" class="form-control" name="pilot_name" value="<?php if (isset($_GET['pilot_name'])) print $_GET['pilot_name']; ?>" size="15" />
+						<input type="text" class="form-control" name="pilot_name" value="<?php if (isset($_GET['pilot_name'])) print $pilot_name; ?>" size="15" placeholder="<?php echo _("Pilot nmae"); ?>" />
 					</div>
 				</div>
 <?php
@@ -327,7 +331,7 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Owner name"); ?></label> 
 					<div class="col-sm-10">
-						<input type="text" class="form-control" name="owner" value="<?php if (isset($_GET['owner'])) print $_GET['owner']; ?>" size="15" />
+						<input type="text" class="form-control" name="owner" value="<?php if (isset($_GET['owner'])) print $owner; ?>" size="15" placeholder="<?php echo _("Owner name"); ?>" />
 					</div>
 				</div>
 <?php
@@ -350,7 +354,7 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 						</select>
 					</div>
 				</div>
-				<script type="text/javascript">getSelect('airlinenames','<?php if(isset($_GET['airline'])) print $_GET['airline']; ?>');</script>
+				<script type="text/javascript">getSelect('airlinenames','<?php if(isset($_GET['airline'])) print $airline; ?>');</script>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Country"); ?></label> 
 					<div class="col-sm-10">
@@ -359,11 +363,11 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 						</select>
 					</div>
 				</div>
-				<script type="text/javascript">getSelect('airlinecountries','<?php if(isset($_GET['airline_country'])) print $_GET['airline_country']; ?>');</script>
+				<script type="text/javascript">getSelect('airlinecountries','<?php if(isset($_GET['airline_country'])) print $airline_country; ?>');</script>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Callsign"); ?></label> 
 					<div class="col-sm-10">
-						<input type="text" name="callsign" class="form-control" value="<?php if (isset($_GET['callsign'])) print $_GET['callsign']; ?>" size="8" />
+						<input type="text" name="callsign" class="form-control" value="<?php if (isset($_GET['callsign'])) print $callsign; ?>" size="8" placeholder="<?php echo _("Callsign"); ?>" />
 					</div>
 				</div>
 				<div class="form-group">
@@ -385,7 +389,7 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 						</select>
 					</div>
 				</div>
-				<script type="text/javascript">getSelect('airportnames','<?php if(isset($_GET['airport_icao'])) print $_GET['airport_icao']; ?>');</script>
+				<script type="text/javascript">getSelect('airportnames','<?php if(isset($_GET['airport_icao'])) print $airport_icao; ?>');</script>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Country"); ?></label> 
 					<div class="col-sm-10">
@@ -394,7 +398,7 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 						</select>
 					</div>
 				</div>
-				<script type="text/javascript">getSelect('airportcountries','<?php if(isset($_GET['airport_country'])) print $_GET['airport_country']; ?>');</script>
+				<script type="text/javascript">getSelect('airportcountries','<?php if(isset($_GET['airport_country'])) print $airport_country; ?>');</script>
 			</fieldset>
 			<fieldset>
 				<legend><?php echo _("Route"); ?></legend>
@@ -406,7 +410,7 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 						</select>
 					</div>
 				</div>
-				<script type="text/javascript">getSelect('departureairportnames','<?php if(isset($_GET['departure_airport_route'])) print $_GET['departure_airport_route']; ?>');</script>
+				<script type="text/javascript">getSelect('departureairportnames','<?php if(isset($_GET['departure_airport_route'])) print $departure_airport_route; ?>');</script>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Arrival Airport"); ?></label> 
 					<div class="col-sm-10">
@@ -415,7 +419,7 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 						</select>
 					</div>
 				</div>
-				<script type="text/javascript">getSelect('arrivalairportnames','<?php if(isset($_GET['arrival_airport_route'])) print $_GET['arrival_airport_route']; ?>');</script>
+				<script type="text/javascript">getSelect('arrivalairportnames','<?php if(isset($_GET['arrival_airport_route'])) print $arrival_airport_route; ?>');</script>
 			</fieldset>
 			<fieldset>
 				<legend><?php echo _("Date"); ?></legend>
@@ -423,7 +427,7 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 					<label class="control-label col-sm-2"><?php echo _("Start Date"); ?></label>
 					<div class="col-sm-10">
 						<div class='input-group date' id='datetimepicker1'>
-							<input type='text' name="start_date" class="form-control" value="<?php if (isset($_GET['start_date'])) print $_GET['start_date']; ?>" placeholder="<?php echo _("Start Date/Time"); ?>" />
+							<input type='text' name="start_date" class="form-control" value="<?php if (isset($_GET['start_date'])) print $start_date; ?>" placeholder="<?php echo _("Start Date/Time"); ?>" />
 							<span class="input-group-addon">
 								<span class="glyphicon glyphicon-calendar"></span>
 							</span>
@@ -434,7 +438,7 @@ if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSI
 					<label class="control-label col-sm-2"><?php echo _("End Date"); ?></label>
 					<div class="col-sm-10">
 						<div class='input-group date' id='datetimepicker2'>
-						<input type='text' name="end_date" class="form-control" value="<?php if (isset($_GET['end_date'])) print $_GET['end_date']; ?>" placeholder="<?php echo _("End Date/Time"); ?>" />
+						<input type='text' name="end_date" class="form-control" value="<?php if (isset($_GET['end_date'])) print $end_date; ?>" placeholder="<?php echo _("End Date/Time"); ?>" />
 						<span class="input-group-addon">
 							<span class="glyphicon glyphicon-calendar"></span>
 						</span>
@@ -507,19 +511,19 @@ foreach($altitude_array as $altitude)
 			<div class="form-group">
 				<label class="control-label col-sm-2"><?php echo _("Latitude"); ?></label>
 				<div class="col-sm-10">
-					<input type="text" name="origlat" class="form-control" placeholder="<?php echo _("Center point latitude"); ?>" />
+					<input type="text" name="origlat" class="form-control" placeholder="<?php echo _("Center point latitude"); ?>" value="<?php if (isset($_GET['origlat'])) print $origlat; ?>" />
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2"><?php echo _("Longitude"); ?></label>
 				<div class="col-sm-10">
-					<input type="text" name="origlon" class="form-control" placeholder="<?php echo _("Center point longitude"); ?>" />
+					<input type="text" name="origlon" class="form-control" placeholder="<?php echo _("Center point longitude"); ?>" value="<?php if (isset($_GET['origlon'])) print $origlon; ?>" />
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2"><?php echo _("Distance").' ('; if (isset($globalDistanceUnit)) print $globalDistanceUnit; else print 'km'; print ')'; ?></label>
 				<div class="col-sm-10">
-					<input type="text" name="dist" class="form-control" placeholder="<?php echo _("Distance from center point"); ?>" />
+					<input type="text" name="dist" class="form-control" placeholder="<?php echo _("Distance from center point"); ?>" value="<?php if (isset($_GET['distance'])) print $distance; ?>" />
 				</div>
 			</div>
 		</fieldset>
