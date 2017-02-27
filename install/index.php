@@ -52,9 +52,11 @@ if (!extension_loaded('dom')) {
 if (!extension_loaded('PDO')) {
 	$error[] = "PDO is not loaded.";
 }
+/*
 if (!extension_loaded('pdo_sqlite')) {
 	$error[] = "PDO SQLite is not loaded. Needed to populate database for SBS.";
 }
+*/
 if (!extension_loaded('zip')) {
 	$error[] = "ZIP is not loaded. Needed to populate database for SBS.";
 }
