@@ -46,7 +46,21 @@ class SpotterArchive {
 		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.pilot_id IN ('".implode("','",$flt['pilots_id'])."')) sp ON sp.flightaware_id = spotter_archive_output.flightaware_id";
 		}
 	    }
-	    if ((isset($flt['airlines']) && empty($flt['airlines']) && isset($flt['pilots_id']) && empty($flt['pilots_id'])) || (!isset($flt['airlines']) && !isset($flt['pilots_id']))) {
+	    if (isset($flt['idents']) && !empty($flt['idents'])) {
+		if (isset($flt['source'])) {
+		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.ident IN ('".implode("','",$flt['idents'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) spi ON spi.flightaware_id = spotter_archive_output.flightaware_id";
+		} else {
+		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.ident IN ('".implode("','",$flt['idents'])."')) spi ON spi.flightaware_id = spotter_archive_output.flightaware_id";
+		}
+	    }
+	    if (isset($flt['registrations']) && !empty($flt['registrations'])) {
+		if (isset($flt['source'])) {
+		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.registration IN ('".implode("','",$flt['registrations'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) sre ON sre.flightaware_id = spotter_archive_output.flightaware_id";
+		} else {
+		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.registration IN ('".implode("','",$flt['registrations'])."')) sre ON sre.flightaware_id = spotter_archive_output.flightaware_id";
+		}
+	    }
+	    if ((isset($flt['airlines']) && empty($flt['airlines']) && isset($flt['pilots_id']) && empty($flt['pilots_id']) && isset($flt['idents']) && empty($flt['idents']) && isset($flt['registrations']) && empty($flt['registrations'])) || (!isset($flt['airlines']) && !isset($flt['pilots_id']) && !isset($flt['idents']) && !isset($flt['registrations']))) {
 		if (isset($flt['source'])) {
 		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.format_source IN ('".implode("','",$flt['source'])."')) saa ON saa.flightaware_id = spotter_archive_output.flightaware_id";
 		}
