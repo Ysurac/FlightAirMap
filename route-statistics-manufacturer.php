@@ -10,8 +10,10 @@ require_once('require/class.Language.php');
 
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$departure_airport = filter_input(INPUT_GET,'departure_airport',FILTER_SANITIZE_STRING);
+$arrival_airport = filter_input(INPUT_GET,'arrival_airport',FILTER_SANITIZE_STRING);
 if (isset($_GET['departure_airport']) && isset($_GET['arrival_airport'])) {
-	$spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $sort);
+	$spotter_array = $Spotter->getSpotterDataByRoute($departure_airport, $arrival_airport, "0,1", $sort);
 } else $spotter_array = array();  
 
 if (!empty($spotter_array))
@@ -29,7 +31,7 @@ if (!empty($spotter_array))
 	print '<h2>'._("Most Common Aircraft Manufacturer").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common Aircraft Manufacturer of flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."),$spotter_array[0]['departure_airport_name'],$spotter_array[0]['departure_airport_icao'],$spotter_array[0]['departure_airport_country'],$spotter_array[0]['arrival_airport_name'],$spotter_array[0]['arrival_airport_icao'],$spotter_array[0]['arrival_airport_country']).'</p>';
  
-	$manufacturers_array = $Spotter->countAllAircraftManufacturerByRoute($_GET['departure_airport'], $_GET['arrival_airport']);
+	$manufacturers_array = $Spotter->countAllAircraftManufacturerByRoute($departure_airport, $arrival_airport);
 	if (!empty($manufacturers_array))
 	{
 		print '<div class="table-responsive">';
@@ -52,7 +54,7 @@ if (!empty($spotter_array))
 			print '<td>';
 			print $manufacturer_item['aircraft_manufacturer_count'];
 			print '</td>';
-			print '<td><a href="'.$globalURL.'/search?manufacturer='.strtolower(str_replace(" ", "-", $manufacturer_item['aircraft_manufacturer'])).'&departure_airport_route='.$_GET['departure_airport'].'&arrival_airport_route='.$_GET['arrival_airport'].'">'._("Search flights").'</a></td>';
+			print '<td><a href="'.$globalURL.'/search?manufacturer='.strtolower(str_replace(" ", "-", $manufacturer_item['aircraft_manufacturer'])).'&departure_airport_route='.$departure_airport.'&arrival_airport_route='.$arrival_airport.'">'._("Search flights").'</a></td>';
 			print '</tr>';
 			$i++;
 		}

@@ -8,8 +8,10 @@ require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+$departure_airport = filter_input(INPUT_GET,'departure_airport',FILTER_SANITIZE_STRING);
+$arrival_airport = filter_input(INPUT_GET,'arrival_airport',FILTER_SANITIZE_STRING);
 $Spotter = new Spotter();
-$spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $sort);
+$spotter_array = $Spotter->getSpotterDataByRoute($departure_airport, $arrival_airport, "0,1", $sort);
   
 if (!empty($spotter_array))
 {
@@ -26,7 +28,7 @@ if (!empty($spotter_array))
 	print '<h2>'._("Most Common Aircraft").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."),$spotter_array[0]['departure_airport_name'],$spotter_array[0]['departure_airport_icao'],$spotter_array[0]['departure_airport_country'],$spotter_array[0]['arrival_airport_name'],$spotter_array[0]['arrival_airport_icao'],$spotter_array[0]['arrival_airport_country']).'</p>';
 
-	$aircraft_array = $Spotter->countAllAircraftTypesByRoute($_GET['departure_airport'], $_GET['arrival_airport']);
+	$aircraft_array = $Spotter->countAllAircraftTypesByRoute($departure_airport, $arrival_airport);
 	if (!empty($aircraft_array))
 	{
 		print '<div class="table-responsive">';
@@ -49,7 +51,7 @@ if (!empty($spotter_array))
 			print '<td>';
 			print $aircraft_item['aircraft_icao_count'];
 			print '</td>';
-			print '<td><a href="'.$globalURL.'/search?aircraft='.$aircraft_item['aircraft_icao'].'&departure_airport_route='.$_GET['departure_airport'].'&arrival_airport_route='.$_GET['arrival_airport'].'">'._("Search flights").'</a></td>';
+			print '<td><a href="'.$globalURL.'/search?aircraft='.$aircraft_item['aircraft_icao'].'&departure_airport_route='.$departure_airport.'&arrival_airport_route='.$arrival_airport.'">'._("Search flights").'</a></td>';
 			print '</tr>';
 			$i++;
 		}

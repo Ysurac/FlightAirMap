@@ -9,7 +9,9 @@ require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-$spotter_array = $Spotter->getSpotterDataByRoute($_GET['departure_airport'], $_GET['arrival_airport'], "0,1", $sort);
+$departure_airport = filter_input(INPUT_GET,'departure_airport',FILTER_SANITIZE_STRING);
+$arrival_airport = filter_input(INPUT_GET,'arrival_airport',FILTER_SANITIZE_STRING);
+$spotter_array = $Spotter->getSpotterDataByRoute($departure_airport, $arrival_airport, "0,1", $sort);
 
 if (!empty($spotter_array))
 {
@@ -26,7 +28,7 @@ if (!empty($spotter_array))
 	print '<h2>'._("Most Common Airlines by Country").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common airlines by Country of origin of flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."),$spotter_array[0]['departure_airport_name'],$spotter_array[0]['departure_airport_icao'],$spotter_array[0]['departure_airport_country'],$spotter_array[0]['arrival_airport_name'],$spotter_array[0]['arrival_airport_icao'],$spotter_array[0]['arrival_airport_country']).'</p>';
 
-	$airline_array = $Spotter->countAllAirlineCountriesByRoute($_GET['departure_airport'], $_GET['arrival_airport']);
+	$airline_array = $Spotter->countAllAirlineCountriesByRoute($departure_airport, $arrival_airport);
 	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<div id="chartCountry" class="chart" width="100%"></div>
       	<script> 
