@@ -86,8 +86,8 @@ class aprs {
 
     private function urshift($n, $s) {
 	return ($n >= 0) ? ($n >> $s) :
-    	    (($n & 0x7fffffff) >> $s) | 
-        	(0x40000000 >> ($s - 1));
+	    (($n & 0x7fffffff) >> $s) | 
+		(0x40000000 >> ($s - 1));
     }
 
     public function parse($input) {
@@ -106,6 +106,7 @@ class aprs {
 	    return false;
 	}
 	
+	if ($debug) echo 'input : '.$input."\n";
 	/* Save header and body. */
 	$body = substr($input,$splitpos+1,$input_len);
 	$body_len = strlen($body);
@@ -129,7 +130,7 @@ class aprs {
 	        //echo "ok";
 	        //if ($element == 'TCPIP*') return false;
 	    } elseif (!preg_match('/^([0-9A-F]{32})$/',$element)) {
-		echo 'element : '.$element."\n";
+		if ($debug) echo 'element : '.$element."\n";
 		return false;
 	    }
 	    /*
@@ -140,6 +141,16 @@ class aprs {
 	    }
 	    */
 	}
+	
+	$type = substr($body,0,1);
+	if ($debug) echo 'type : '.$type."\n";
+	if ($type == ';') {
+		$ident = trim(substr($body,1,9));
+	} elseif ($type == ',') {
+		// Invalid data or test data
+		return false;
+	}
+	
 	// Check for Timestamp
 	$find = false;
 	$body_parse = substr($body,1);
@@ -244,9 +255,11 @@ class aprs {
 			$body_parse_len = strlen($body_parse);
 		//}
 		//echo $body_parse;
+			if ($type != ';') {
 			$result['symbol_code'] = $symbol_code;
 			if (isset($this->symbols[$symbol_code])) $result['symbol'] = $this->symbols[$symbol_code];
 			if ($symbol_code != '_') {
+			}
 		    //$body_parse = substr($body_parse,1);
 		    //$body_parse = trim($body_parse);
 		    //$body_parse_len = strlen($body_parse);
@@ -257,7 +270,9 @@ class aprs {
 		    	    $tmp_s = intval($course);
 		    	    if ($tmp_s >= 1 && $tmp_s <= 360) $result['heading'] = intval($course);
 		    	    $speed = substr($body_parse,4,3);
-		    	    $result['speed'] = round($speed*1.852);
+		    	    if ($speed != '...') {
+		    		    $result['speed'] = round($speed*1.852);
+		    	    }
 		    	    $body_parse = substr($body_parse,7);
 		        }
 		        // Check PHGR, PHG, RNG
@@ -272,7 +287,8 @@ class aprs {
 		            $altitude = intval($matches[1]);
 		            //$result['altitude'] = round($altitude*0.3048);
 		            $result['altitude'] = $altitude;
-		            $body_parse = trim(substr($body_parse,strlen($matches[0])));
+		            //$body_parse = trim(substr($body_parse,strlen($matches[0])));
+		            $body_parse = trim(preg_replace('/\\/A=(-[0-9]{5}|[0-9]{6})/','',$body_parse));
 		        }
 		    }
 		    
@@ -344,7 +360,7 @@ class aprs {
 			    $result['wind_dir'] = intval($matches[1]);
 			    $result['wind_speed'] = round(intval($matches[2])*1.60934,1);
 			    $result['wind_gust'] = round(intval($matches[3])*1.60934,1);
-			    $result['temp'] = round(5/9*(($matches[4])-32),1);
+			    $result['temp'] = round(5/9*((intval($matches[4]))-32),1);
 		    	    $body_parse = substr($body_parse,strlen($matches[0])+1);
 		    } elseif (preg_match('/^_{0,1}c([0-9 \\.\\-]{3})s([0-9 \\.]{3})g([0-9 \\.]+)t(-{0,1}[0-9 \\.]+)/',$body_parse,$matches)) {
 			$result['wind_dir'] = intval($matches[1]);
@@ -373,7 +389,7 @@ class aprs {
 	//}
 	if (isset($result['latitude'])) $result['latitude'] = round($result['latitude'],4);
 	if (isset($result['longitude'])) $result['longitude'] = round($result['longitude'],4);
-	//print_r($result);
+	if ($debug) print_r($result);
 	return $result;
     }
 }
