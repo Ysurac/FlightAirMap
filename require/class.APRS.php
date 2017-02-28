@@ -92,7 +92,7 @@ class aprs {
 
     public function parse($input) {
 	global $globalDebug;
-	$debug = false;
+	$debug = true;
 	$result = array();
 	$input_len = strlen($input);
 	//$split_input = str_split($input);
@@ -145,7 +145,7 @@ class aprs {
 	$type = substr($body,0,1);
 	if ($debug) echo 'type : '.$type."\n";
 	if ($type == ';') {
-		$ident = trim(substr($body,1,9));
+		$result['ident'] = trim(substr($body,1,9));
 	} elseif ($type == ',') {
 		// Invalid data or test data
 		return false;
