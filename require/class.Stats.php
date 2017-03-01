@@ -971,8 +971,6 @@ class Stats {
                 } catch(PDOException $e) {
                         echo "error : ".$e->getMessage();
                 }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
         }
 	public function getSumStats($type,$year,$stats_airline = '',$filter_name = '',$month = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
