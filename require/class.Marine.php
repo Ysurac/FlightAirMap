@@ -500,10 +500,10 @@ class Marine{
 	
 	
 	/**
-	* Update ident spotter data
+	* Update ident tracker data
 	*
-	* @param String $flightaware_id the ID from flightaware
-	* @param String $ident the flight ident
+	* @param String $fammarine_id the ID
+	* @param String $ident the marine ident
 	* @return String success or false
 	*
 	*/	
@@ -524,11 +524,10 @@ class Marine{
 
 	}
 	/**
-	* Update latest spotter data
+	* Update latest marine data
 	*
-	* @param String $flightaware_id the ID from flightaware
-	* @param String $ident the flight ident
-	* @param String $arrival_airport_icao the arrival airport
+	* @param String $fammarine_id the ID
+	* @param String $ident the marine ident
 	* @return String success or false
 	*
 	*/	
@@ -551,9 +550,8 @@ class Marine{
 	/**
 	* Adds a new spotter data
 	*
-	* @param String $flightaware_id the ID from flightaware
-	* @param String $ident the flight ident
-	* @param String $aircraft_icao the aircraft type
+	* @param String $fammarine_id the ID
+	* @param String $ident the marine ident
 	* @param String $departure_airport_icao the departure airport
 	* @param String $arrival_airport_icao the arrival airport
 	* @param String $latitude latitude of flight

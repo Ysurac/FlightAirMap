@@ -28,7 +28,7 @@ class AIS {
 */
 
 	private function make_latf($temp) { // unsigned long 
-		$flat; // float
+		$flat = 0.0; // float
 		$temp = $temp & 0x07FFFFFF;
 		if ($temp & 0x04000000) {
 			$temp = $temp ^ 0x07FFFFFF;
@@ -40,7 +40,7 @@ class AIS {
 	}
 
 	private function make_lonf($temp) { // unsigned long
-		$flon; // float
+		$flon = 0.0; // float
 		$temp = $temp & 0x0FFFFFFF;
 		if ($temp & 0x08000000) {
 			$temp = $temp ^ 0x0FFFFFFF;
@@ -216,7 +216,8 @@ class AIS {
 			$aisdata168 .=$bit6;
 		}
 		//echo $aisdata168 . "<br/>";
-		return $this->decode_ais($aisdata168, $aux);
+		//return $this->decode_ais($aisdata168, $aux);
+		return $this->decode_ais($aisdata168);
 	}
 
 	// char* - AIS \r terminated string
