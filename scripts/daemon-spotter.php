@@ -204,7 +204,7 @@ function connect_all($hosts) {
         	if ($globalDebug) echo "Connect to tsv source (".$host.")...\n";
             }
         } elseif (filter_var($host,FILTER_VALIDATE_URL)) {
-    		if ($globalSources[$id]['format'] == 'nmeahttp') {
+    		if ($globalSources[$id]['format'] == 'aisnmeahttp') {
     		    $idf = fopen($globalSources[$id]['host'],'r',false,$context);
     		    if ($idf !== false) {
     			$httpfeeds[$id] = $idf;
@@ -424,7 +424,7 @@ while ($i > 0) {
 			$data['datetime'] = date('Y-m-d H:i:s');
 			$add = true;
 		    }
-		    $data['format_source'] = 'nmeatxt';
+		    $data['format_source'] = 'aisnmeatxt';
     		    $data['id_source'] = $id_source;
 		    print_r($data);
 		    echo 'Add...'."\n";
@@ -436,6 +436,8 @@ while ($i > 0) {
 	} elseif ($value['format'] == 'aisnmeahttp') {
 	    $arr = $httpfeeds;
 	    $w = $e = null;
+	    
+	    if (isset($arr[$id])) {
 	    $nn = stream_select($arr,$w,$e,$timeout);
 	    if ($nn > 0) {
 		foreach ($httpfeeds as $feed) {
@@ -458,12 +460,13 @@ while ($i > 0) {
 			    } else {
 				$data['datetime'] = date('Y-m-d H:i:s');
 			    }
-			    $data['format_source'] = 'nmeatxt';
+			    $data['format_source'] = 'aisnmeahttp';
 			    $data['id_source'] = $id_source;
 			    $MI->add($data);
 			    unset($data);
 			}
 		    }
+		}
 		}
 	    }
 	} elseif ($value['format'] == 'shipplotter' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
