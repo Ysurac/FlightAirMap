@@ -62,7 +62,7 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 			$Accident->insert_last_accidents_update();
 		} else echo "Accidents are updated once a day.\n";
 	}
-
+  
 }
 
 
@@ -121,6 +121,7 @@ if (isset($globalMap3D) && $globalMap3D) {
 		echo "Update 3D models...";
 		$update_db->update_models();
 		$update_db->update_space_models();
+		$update_db->update_vehicules_models();
 	}
 }
 ?>

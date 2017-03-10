@@ -2135,6 +2135,43 @@ class update_db {
 		return '';
 	}
 
+	public static function update_vehicules_models() {
+		global $tmp_dir, $globalDebug;
+		$error = '';
+		if ($globalDebug) echo "Vehicules models from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.fr/data/models/vehicules/vehicules_models.md5sum',$tmp_dir.'vehicules_models.md5sum');
+		if (file_exists($tmp_dir.'vehicules_models.md5sum')) {
+			if ($globalDebug) echo "Check files...\n";
+			$newmodelsdb = array();
+			if (($handle = fopen($tmp_dir.'vehicules_models.md5sum','r')) !== FALSE) {
+				while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+					$model = trim($row[2]);
+					$newmodelsdb[$model] = trim($row[0]);
+				}
+			}
+			$modelsdb = array();
+			if (file_exists(dirname(__FILE__).'/../models/vehicules/vehicules_models.md5sum')) {
+				if (($handle = fopen(dirname(__FILE__).'/../models/vehicules/vehicules_models.md5sum','r')) !== FALSE) {
+					while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+						$model = trim($row[2]);
+						$modelsdb[$model] = trim($row[0]);
+					}
+				}
+			}
+			$diff = array_diff($newmodelsdb,$modelsdb);
+			foreach ($diff as $key => $value) {
+				if ($globalDebug) echo 'Downloading vehicules model '.$key.' ...'."\n";
+				update_db::download('http://data.flightairmap.fr/data/models/vehicules/'.$key,dirname(__FILE__).'/../models/vehicules/'.$key);
+				
+			}
+			update_db::download('http://data.flightairmap.fr/data/models/vehicules/vehicules_models.md5sum',dirname(__FILE__).'/../models/vehicules/vehicules_models.md5sum');
+		} else $error = "File ".$tmp_dir.'models.md5sum'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+
 	public static function update_aircraft() {
 		global $tmp_dir, $globalDebug;
 		date_default_timezone_set('UTC');
