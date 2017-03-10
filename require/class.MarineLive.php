@@ -768,7 +768,7 @@ class MarineLive {
 	* @return String success or false
 	*
 	*/
-	public function addLiveMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$status = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '')
+	public function addLiveMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$imo = '', $callsign = '',$status = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '')
 	{
 		global $globalURL, $globalArchive, $globalDebug;
 		$Common = new Common();
@@ -832,14 +832,16 @@ class MarineLive {
 		$type = filter_var($type,FILTER_SANITIZE_STRING);
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_NUMBER_INT);
 		$status = filter_var($status,FILTER_SANITIZE_STRING);
+		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
+		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 
             	if ($groundspeed == '' || $Common->isInteger($groundspeed) === false ) $groundspeed = 0;
             	if ($heading == '' || $Common->isInteger($heading) === false ) $heading = 0;
             	
-		$query  = 'INSERT INTO marine_live (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,status) 
-		VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:status)';
+		$query  = 'INSERT INTO marine_live (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,status,imo) 
+		VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:status,:imo)';
 
-		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':mmsi' => $mmsi,':type' => $type,':status' => $status);
+		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':mmsi' => $mmsi,':type' => $type,':status' => $status,':imo' => $imo);
 		try {
 			
 			$sth = $this->db->prepare($query);

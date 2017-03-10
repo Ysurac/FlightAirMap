@@ -572,7 +572,7 @@ class Marine{
 	* @param String $verticalrate vertival rate of flight
 	* @return String success or false
 	*/
-	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$status = '',$format_source = '', $source_name = '')
+	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$imo = '',$callsign = '',$status = '',$format_source = '', $source_name = '')
 	{
 		global $globalURL;
 		
@@ -654,6 +654,8 @@ class Marine{
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_NUMBER_INT);
 		$type = filter_var($type,FILTER_SANITIZE_STRING);
 		$status = filter_var($status,FILTER_SANITIZE_STRING);
+		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
+		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 	
                 if ($latitude == '' && $longitude == '') {
             		$latitude = 0;
@@ -661,10 +663,10 @@ class Marine{
             	}
                 if ($heading == '' || $Common->isInteger($heading) === false) $heading = 0;
                 if ($groundspeed == '' || $Common->isInteger($groundspeed) === false) $groundspeed = 0;
-                $query  = "INSERT INTO marine_output (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, status) 
-                VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:speed,:date,:format_source, :source_name,:mmsi,:type,:status)";
+                $query  = "INSERT INTO marine_output (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, status,imo) 
+                VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:speed,:date,:format_source, :source_name,:mmsi,:type,:status,:imo)";
 
-                $query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':speed' => $groundspeed,':date' => $date,':format_source' => $format_source, ':source_name' => $source_name,':mmsi' => $mmsi,':type' => $type,':status' => $status);
+                $query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':speed' => $groundspeed,':date' => $date,':format_source' => $format_source, ':source_name' => $source_name,':mmsi' => $mmsi,':type' => $type,':status' => $status,':imo' => $imo);
 
 		try {
 		        

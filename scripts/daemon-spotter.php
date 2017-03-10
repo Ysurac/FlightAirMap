@@ -414,6 +414,9 @@ while ($i > 0) {
 		    if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
 		    if (isset($ais_data['longitude'])) $data['longitude'] = $ais_data['longitude'];
 		    if (isset($ais_data['status'])) $data['status'] = $ais_data['status'];
+		    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
+		    if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
+		    if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
 		    if (isset($ais_data['timestamp'])) {
 			$data['datetime'] = date('Y-m-d H:i:s',$ais_data['timestamp']);
 			if (!isset($last_exec[$id]['timestamp']) || $ais_data['timestamp'] >= $last_exec[$id]['timestamp']) {
@@ -455,6 +458,9 @@ while ($i > 0) {
 			    if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
 			    if (isset($ais_data['longitude'])) $data['longitude'] = $ais_data['longitude'];
 			    if (isset($ais_data['status'])) $data['status'] = $ais_data['status'];
+			    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
+			    if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
+			    if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
 			    if (isset($ais_data['timestamp'])) {
 				$data['datetime'] = date('Y-m-d H:i:s',$ais_data['timestamp']);
 			    } else {
@@ -993,6 +999,11 @@ while ($i > 0) {
 			    if (isset($ais_data['heading'])) $data['heading'] = $ais_data['heading'];
 			    if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
 			    if (isset($ais_data['longitude'])) $data['longitude'] = $ais_data['longitude'];
+			    if (isset($ais_data['status'])) $data['status'] = $ais_data['status'];
+			    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
+			    if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
+			    if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
+
 			    if (isset($ais_data['timestamp'])) {
 				$data['datetime'] = date('Y-m-d H:i:s',$ais_data['timestamp']);
 			    } else {
