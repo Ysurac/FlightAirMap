@@ -1,7 +1,7 @@
 CREATE TABLE spotter_live (
   spotter_live_id serial,
   flightaware_id varchar(50) NOT NULL,
-  ident varchar(255) NOT NULL,
+  ident varchar(255),
   registration varchar(20),
   airline_name varchar(255) NOT NULL,
   airline_icao varchar(20) NOT NULL,

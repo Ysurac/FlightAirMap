@@ -8,5 +8,6 @@ CREATE TABLE aircraft_modes (
   ICAOTypeCode varchar(4),
   type_flight varchar(50),
   Source varchar(255),
+  source_type varchar(255) DEFAULT 'modes',
   PRIMARY KEY (AircraftID)
 );

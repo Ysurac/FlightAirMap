@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(__FILE__).'/libs/simple_html_dom.php');
 require_once(dirname(__FILE__).'/libs/uagent/uagent.php');
+require_once(dirname(__FILE__).'/settings.php');
 
 class Common {
 	//protected $cookies = array();
@@ -14,8 +15,17 @@ class Common {
 	* @return String the result
 	*/
 	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '',$useragent = '') {
+		global $globalProxy, $globalForceIPv4;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
+		if (isset($globalForceIPv4) && $globalForceIPv4) {
+			if (defined('CURLOPT_IPRESOLVE') && defined('CURL_IPRESOLVE_V4')){
+				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+			}
+		}
+		if (isset($globalProxy) && $globalProxy != '') {
+			curl_setopt($ch, CURLOPT_PROXY, $globalProxy);
+		}
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true); 

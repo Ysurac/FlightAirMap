@@ -79,7 +79,11 @@ function statsdatechange(e) {
 			if (isNaN(pagename[i])) page = page +'/'+ pagename[i];
 		}
 	}
-	form.action = page+'/'+yearmonth[0]+'/'+yearmonth[1];
+	if (typeof yearmonth[1] != 'undefined') {
+		form.action = page+'/'+yearmonth[0]+'/'+yearmonth[1];
+	} else {
+		form.action = page;
+	}
 	form.submit();
 }
 function statsairlinechange(e) {

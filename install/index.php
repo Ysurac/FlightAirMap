@@ -352,6 +352,17 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="button" value="Remove last row" class="del-row-source" />
 			</center>
 		</fieldset>
+		<fieldset>
+			<legend>Source Type</legend>
+			<p>
+				<input type="checkbox" name="globalaircraft" id="aircraft" value="aircraft" <?php if (!isset($globalAircraft) || $globalAircraft) { ?>checked="checked" <?php } ?>/>
+				<label for="aircraft">Aircrafts</label>
+				<input type="checkbox" name="globaltracker" id="tracker" value="tracker" <?php if (isset($globalTracker) && $globalTracker) { ?>checked="checked" <?php } ?>/>
+				<label for="tracker">Trackers</label>
+				<input type="checkbox" name="globalmarine" id="marine" value="marine" <?php if (isset($globalMarine) && $globalMarine) { ?>checked="checked" <?php } ?>/>
+				<label for="marine">Ships/Vessels</label>
+			</p>
+		</fieldset>
 		<fieldset id="datasource">
 			<legend>Data source</legend>
 			<p>
@@ -463,7 +474,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="flightgearmp" <?php if (isset($source['format']) && $source['format'] == 'flightgearmp') print 'selected'; ?>>FlightGear Multiplayer</option>
 										<option value="flightgearsp" <?php if (isset($source['format']) && $source['format'] == 'flightgearsp') print 'selected'; ?>>FlightGear Singleplayer</option>
 										<option value="acars" <?php if (isset($source['format']) && $source['format'] == 'acars') print 'selected'; ?>>ACARS from acarsdec/acarsdeco2 over UDP</option>
-										<option value="acarssbs3" <?php if (isset($source['format']) && $source['format'] == 'acarssbs3') print 'selected'; ?>>ACARS over SBS-3 TCP</option>
+										<option value="acarssbs3" <?php if (isset($source['format']) && $source['format'] == 'acarssbs3') print 'selected'; ?>>ACARS SBS-3 over TCP</option>
+										<option value="ais" <?php if (isset($source['format']) && $source['format'] == 'ais') print 'selected'; ?>>NMEA AIS over TCP</option>
 									</select>
 								</td>
 								<td><input type="text" name="name[]" id="name" value="<?php if (isset($source['name'])) print $source['name']; ?>" /></td>
@@ -494,6 +506,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="flightgearsp">FlightGear Singleplayer</option>
 										<option value="acars">ACARS from acarsdec/acarsdeco2 over UDP</option>
 										<option value="acarssbs3">ACARS SBS-3 over TCP</option>
+										<option value="ais">NMEA AIS over TCP</option>
 									</select>
 								</td>
 								<td><input type="text" name="name[]" value="" id="name" /></td>
@@ -916,6 +929,16 @@ if (isset($_POST['dbtype'])) {
 	$globalsbs = filter_input(INPUT_POST,'globalsbs',FILTER_SANITIZE_STRING);
 	$globalaprs = filter_input(INPUT_POST,'globalaprs',FILTER_SANITIZE_STRING);
 	$datasource = filter_input(INPUT_POST,'datasource',FILTER_SANITIZE_STRING);
+
+	$globalaircraft = filter_input(INPUT_POST,'globalaircraft',FILTER_SANITIZE_STRING);
+	if ($globalaircraft == 'aircraft') $settings = array_merge($settings,array('globalAircraft' => 'TRUE'));
+	else $settings = array_merge($settings,array('globalAircraft' => 'FALSE'));
+	$globaltracker = filter_input(INPUT_POST,'globaltracker',FILTER_SANITIZE_STRING);
+	if ($globaltracker == 'tracker') $settings = array_merge($settings,array('globalTracker' => 'TRUE'));
+	else $settings = array_merge($settings,array('globalTracker' => 'FALSE'));
+	$globalmarine = filter_input(INPUT_POST,'globalmarine',FILTER_SANITIZE_STRING);
+	if ($globalmarine == 'marine') $settings = array_merge($settings,array('globalMarine' => 'TRUE'));
+	else $settings = array_merge($settings,array('globalMarine' => 'FALSE'));
 
 /*	
 	$globalSBS1Hosts = array();

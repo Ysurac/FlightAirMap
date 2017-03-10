@@ -251,11 +251,11 @@ class aprs {
 		if ($find) {
 			$body_split = str_split($body_parse);
 			$symbol_code = $body_split[0];
-			$body_parse = substr($body_parse,1);
-			$body_parse_len = strlen($body_parse);
 		//}
 		//echo $body_parse;
-			if ($type != ';') {
+			if ($type != ';' && $type != '>') {
+			$body_parse = substr($body_parse,1);
+			$body_parse_len = strlen($body_parse);
 			$result['symbol_code'] = $symbol_code;
 			if (isset($this->symbols[$symbol_code])) $result['symbol'] = $this->symbols[$symbol_code];
 			if ($symbol_code != '_') {

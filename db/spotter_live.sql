@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `spotter_live` (
   `spotter_live_id` int(11) NOT NULL AUTO_INCREMENT,
   `flightaware_id` varchar(25) NOT NULL,
-  `ident` varchar(255) NOT NULL,
+  `ident` varchar(255),
   `registration` varchar(255),
   `airline_name` varchar(255),
   `airline_icao` varchar(10),

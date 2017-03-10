@@ -1,7 +1,7 @@
 CREATE TABLE spotter_archive (
   spotter_archive_id serial,
   flightaware_id varchar(50) NOT NULL,
-  ident varchar(255) NOT NULL,
+  ident varchar(255) DEFAULT NULL,
   registration varchar(20),
   airline_name varchar(255) NOT NULL,
   airline_icao varchar(20) NOT NULL,

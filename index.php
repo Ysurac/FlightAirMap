@@ -41,6 +41,21 @@ require_once('header.php');
 ?>
 <script src="<?php echo $globalURL; ?>/js/map.3d.js.php"></script>
 <?php
+	if (!isset($globalAircraft) || $globalAircraft) {
+?>
+<script src="<?php echo $globalURL; ?>/js/map-aircraft.3d.js.php"></script>
+<?php
+	}
+	if (isset($globalTracker) && $globalTracker) {
+?>
+<script src="<?php echo $globalURL; ?>/js/map-tracker.3d.js.php"></script>
+<?php
+	}
+	if (isset($globalMarine) && $globalMarine) {
+?>
+<script src="<?php echo $globalURL; ?>/js/map-marine.3d.js.php"></script>
+<?php
+	}
     }
 ?>
 <div id="dialog" title="<?php echo _("Session has timed-out"); ?>">
@@ -209,7 +224,7 @@ require_once('header.php');
 		    <li><input type="submit" name="archive" value="Show archive" class="btn btn-primary" /></li>
 		</ul>
 	    </form>
-	    <form>
+	    <form method="post">
 		<ul>
 		    <li><input type="submit" name="noarchive" class="btn btn-primary" value="Back from archive view" /></li>
 		</ul>

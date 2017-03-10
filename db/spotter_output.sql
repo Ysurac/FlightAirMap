@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `spotter_output` (
   `spotter_id` int(11) NOT NULL AUTO_INCREMENT,
   `flightaware_id` varchar(50) NOT NULL,
-  `ident` varchar(255) NOT NULL,
+  `ident` varchar(255),
   `registration` varchar(255),
   `airline_name` varchar(255),
   `airline_icao` varchar(10),
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `spotter_output` (
   `ground_speed` int(11),
   `highlight` longtext,
   `squawk` int(11),
-  `ModeS` varchar(255) NOT NULL,
+  `ModeS` varchar(255),
   `pilot_id` varchar(255),
   `pilot_name` varchar(255),
   `owner_name` varchar(255),

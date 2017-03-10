@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `spotter_archive`;
 CREATE TABLE `spotter_archive` (
   `spotter_archive_id` int(11)  NULL,
   `flightaware_id` varchar(25) NOT NULL,
-  `ident` varchar(25) NOT NULL,
+  `ident` varchar(25),
   `registration` varchar(25),
   `airline_name` varchar(255),
   `airline_icao` varchar(10),

@@ -660,8 +660,6 @@ body span.airport_time{
 	display:none !important;
 }
 
-
-
 /* jQuery UI Datepicker */
 .ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
 .ui-timepicker-div dl { text-align: left; }
@@ -937,6 +935,9 @@ body.page-flightid-overview .details .detail.coordinates::before{
 }
 body.page-flightid-overview .details .detail.date::before{
     content: "\f073"; 
+}
+body.page-flightid-overview .details .detail.duration::before{
+    content: "\f017"; 
 }
 body.page-flightid-overview .details .detail.distance-departure::before{
     content: "\f148"; 

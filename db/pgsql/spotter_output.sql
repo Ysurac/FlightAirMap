@@ -1,7 +1,7 @@
 CREATE TABLE spotter_output (
   spotter_id serial,
   flightaware_id varchar(255) NOT NULL,
-  ident varchar(255) NOT NULL,
+  ident varchar(255) DEFAULT NULL,
   registration varchar(255),
   airline_name varchar(255) NOT NULL,
   airline_icao varchar(20) NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE spotter_output (
   ground_speed integer NOT NULL,
   highlight text NOT NULL,
   squawk integer,
-  ModeS varchar(255) NOT NULL,
+  ModeS varchar(255) DEFAULT NULL,
   pilot_id varchar(255),
   pilot_name varchar(255),
   owner_name varchar(255),

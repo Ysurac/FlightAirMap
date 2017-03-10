@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS spotter_archive_output (
   spotter_id serial NOT NULL,
   flightaware_id varchar(50) NOT NULL,
-  ident varchar(50) NOT NULL,
+  ident varchar(50) DEFAULT NULL,
   registration varchar(20) DEFAULT NULL,
   airline_name varchar(255) DEFAULT NULL,
   airline_icao varchar(10) DEFAULT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS spotter_archive_output (
   ground_speed integer DEFAULT NULL,
   highlight text,
   squawk integer DEFAULT NULL,
-  ModeS varchar(255) NOT NULL,
+  ModeS varchar(255) DEFAULT NULL,
   pilot_id varchar(255) DEFAULT NULL,
   pilot_name varchar(255) DEFAULT NULL,
   verticalrate integer DEFAULT NULL,

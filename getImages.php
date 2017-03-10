@@ -30,7 +30,13 @@ if (file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATO
     readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.$color.'-'.$filename);
     exit(0);
 }
-$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'aircrafts'.DIRECTORY_SEPARATOR.'new'.DIRECTORY_SEPARATOR.$filename;
+if (isset($_GET['tracker'])) {
+	$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.$filename;
+} elseif (isset($_GET['marine'])) {
+	$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.$filename;
+} else {
+	$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'aircrafts'.DIRECTORY_SEPARATOR.'new'.DIRECTORY_SEPARATOR.$filename;
+}
 if (!file_exists($original)) {
     echo "File not found";
 }
@@ -85,7 +91,13 @@ if (extension_loaded('gd') && function_exists('gd_info')) {
     }
 } else {
     header('Content-type: image/png');
-    if ($color == 'FF0000') readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/aircrafts/selected/'.$filename);
-    else readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/aircrafts/'.$filename);
+    if (isset($_GET['tracker'])) {
+        readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/vehicules/'.$filename);
+    } elseif (isset($_GET['marine'])) {
+        readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/vehicules/'.$filename);
+    } else {
+        if ($color == 'FF0000') readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/aircrafts/selected/'.$filename);
+	else readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/aircrafts/'.$filename);
+    }
 }
 ?>

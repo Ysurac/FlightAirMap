@@ -1573,6 +1573,73 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_36() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('aircraft_modes','source_type')) {
+			$query = "ALTER TABLE aircraft_modes ADD source_type VARCHAR(255) DEFAULT 'modes'";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add source_type column in aircraft_modes) : ".$e->getMessage()."\n";
+			}
+		}
+		if ($globalDBdriver == 'mysql') {
+			$query = "ALTER TABLE spotter_output MODIFY COLUMN ModeS VARCHAR(20) DEFAULT NULL; ALTER TABLE spotter_archive_output MODIFY COLUMN ModeS VARCHAR(20) DEFAULT NULL; ALTER TABLE spotter_live MODIFY COLUMN ModeS VARCHAR(20) DEFAULT NULL;ALTER TABLE spotter_archive MODIFY COLUMN ModeS VARCHAR(20) DEFAULT NULL;";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (change ModeS column in spotter_* to NULL) : ".$e->getMessage()."\n";
+			}
+		} else {
+			$query = "ALTER TABLE spotter_output ALTER COLUMN ModeS DROP NOT NULL;ALTER TABLE spotter_live ALTER COLUMN ModeS DROP NOT NULL;ALTER TABLE spotter_archive_output ALTER COLUMN ModeS DROP NOT NULL;ALTER TABLE spotter_archive ALTER COLUMN ModeS DROP NOT NULL;";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (change ModeS column in spotter_* to NULL) : ".$e->getMessage()."\n";
+			}
+		}
+		if ($globalDBdriver == 'mysql') {
+			$error .= create_db::import_file('../db/tracker_output.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/tracker_live.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/marine_output.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/marine_live.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/marine_identity.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/marine_mid.sql');
+			if ($error != '') return $error;
+		} else {
+			$error .= create_db::import_file('../db/pgsql/tracker_output.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/pgsql/tracker_live.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/pgsql/marine_output.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/pgsql/marine_live.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/pgsql/marine_identity.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/pgsql/marine_mid.sql');
+			if ($error != '') return $error;
+		}
+		$query = "UPDATE config SET value = '37' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
     	public static function check_version($update = false) {
     	    global $globalDBname;
@@ -1728,6 +1795,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '35') {
     			    $error = self::update_from_35();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '36') {
+    			    $error = self::update_from_36();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

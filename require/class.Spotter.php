@@ -2412,11 +2412,16 @@ class Spotter{
 	* @return String aircraft type
 	*
 	*/
-	public function getAllAircraftType($aircraft_modes)
+	public function getAllAircraftType($aircraft_modes,$source_type = '')
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
+		$source_type = filter_var($source_type,FILTER_SANITIZE_STRING);
 
-		$query  = "SELECT aircraft_modes.ICAOTypeCode FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes ORDER BY FirstCreated DESC LIMIT 1";
+		if ($source_type == '' || $source_type == 'modes') {
+			$query  = "SELECT aircraft_modes.ICAOTypeCode FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes AND aircraft_modes.source_type = 'modes' ORDER BY FirstCreated DESC LIMIT 1";
+		} else {
+			$query  = "SELECT aircraft_modes.ICAOTypeCode FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes AND aircraft_modes.source_type = 'flarm' ORDER BY FirstCreated DESC LIMIT 1";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
@@ -2427,7 +2432,9 @@ class Spotter{
 			$icao = $row['icaotypecode'];
 			if (isset($this->aircraft_correct_icaotype[$icao])) $icao = $this->aircraft_correct_icaotype[$icao];
 			return $icao;
-		} else return '';
+		} elseif ($source_type == 'flarm') {
+			return $this->getAllAircraftType($aircraft_modes);
+		} else  return '';
 	}
 
 	/**
@@ -3593,7 +3600,7 @@ class Spotter{
 	* @param String $verticalrate vertival rate of flight
 	* @return String success or false
 	*/
-	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '', $source_name = '')
+	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '', $source_name = '',$source_type = '')
 	{
 		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalDebugTimeElapsed, $globalAirlinesSource, $globalVAM;
 		
@@ -3616,13 +3623,13 @@ class Spotter{
 			} else {
 				if ($ModeS != '') {
 					$timeelapsed = microtime(true);
-					$registration = $this->getAircraftRegistrationBymodeS($ModeS);
+					$registration = $this->getAircraftRegistrationBymodeS($ModeS,$source_type);
 					if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAircraftRegistrationBymodes : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				} else {
 					$myhex = explode('-',$flightaware_id);
 					if (count($myhex) > 0) {
 						$timeelapsed = microtime(true);
-						$registration = $this->getAircraftRegistrationBymodeS($myhex[0]);
+						$registration = $this->getAircraftRegistrationBymodeS($myhex[0],$source_type);
 						if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAircraftRegistrationBymodes : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 					}
 				}
@@ -3689,7 +3696,7 @@ class Spotter{
 		} else {
 			if ($ModeS != '') {
 				$timeelapsed = microtime(true);
-				$aircraft_icao = $this->getAllAircraftType($ModeS);
+				$aircraft_icao = $this->getAllAircraftType($ModeS,$source_type);
 				if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getAllAircraftType : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				if ($aircraft_icao == "" || $aircraft_icao == "XXXX")
 				{
@@ -11440,12 +11447,15 @@ q	*
 	* @return String the aircraft registration
 	*
 	*/
-	public function getAircraftRegistrationBymodeS($aircraft_modes)
+	public function getAircraftRegistrationBymodeS($aircraft_modes, $source_type = '')
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
-	
-		$query  = "SELECT aircraft_modes.Registration FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes ORDER BY FirstCreated DESC LIMIT 1";
-		
+		$source_type = filter_var($source_type,FILTER_SANITIZE_STRING);
+		if ($source_type == '' || $source_type == 'modes') {
+			$query  = "SELECT aircraft_modes.Registration FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes AND aircraft_modes.source_type = 'modes' ORDER BY FirstCreated DESC LIMIT 1";
+		} else {
+			$query  = "SELECT aircraft_modes.Registration FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes AND aircraft_modes.source_type = 'flarm' ORDER BY FirstCreated DESC LIMIT 1";
+		}
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
     
@@ -11454,6 +11464,8 @@ q	*
 		if (count($row) > 0) {
 		    //return $row['Registration'];
 		    return $row['registration'];
+		} elseif ($source_type == 'flarm') {
+			return $this->getAircraftRegistrationBymodeS($aircraft_modes);
 		} else return '';
 	
 	}
@@ -11465,11 +11477,15 @@ q	*
 	* @return String the aircraft type
 	*
 	*/
-	public function getAircraftTypeBymodeS($aircraft_modes)
+	public function getAircraftTypeBymodeS($aircraft_modes,$source_type = '')
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
-	
-		$query  = "SELECT aircraft_modes.type_flight FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes ORDER BY FirstCreated DESC LIMIT 1";
+		$source_type = filter_var($source_type,FILTER_SANITIZE_STRING);
+		if ($source_type == '' || $source_type == 'modes') {
+			$query  = "SELECT aircraft_modes.type_flight FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes AND aircraft_modes.source_type = 'modes' ORDER BY FirstCreated DESC LIMIT 1";
+		} else {
+			$query  = "SELECT aircraft_modes.type_flight FROM aircraft_modes WHERE aircraft_modes.ModeS = :aircraft_modes AND aircraft_modes.source_type = 'flarm' ORDER BY FirstCreated DESC LIMIT 1";
+		}
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_modes' => $aircraft_modes));
@@ -11477,8 +11493,10 @@ q	*
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		$sth->closeCursor();
 		if (count($row) > 0) {
-		    if ($row['type_flight'] == null) return '';
-		    else return $row['type_flight'];
+			if ($row['type_flight'] == null) return '';
+			else return $row['type_flight'];
+		} elseif ($source_type == 'flarm') {
+			return $this->getAircraftTypeBymodeS($aircraft_modes);
 		} else return '';
 	
 	}

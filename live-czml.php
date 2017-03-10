@@ -2,14 +2,23 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Common.php');
 $tracker = false;
+$marine = false;
 if (isset($_GET['tracker'])) $tracker = true;
+if (isset($_GET['marine'])) $marine = true;
 if ($tracker) {
 	require_once('require/class.Tracker.php');
 	require_once('require/class.TrackerLive.php');
 	//require_once('require/class.SpotterArchive.php');
 	$TrackerLive = new TrackerLive();
 	$Tracker = new Tracker();
-//	$SpotterArchive = new SpotterArchive();
+//	$TrackerArchive = new TrackerArchive();
+} elseif ($marine) {
+	require_once('require/class.Marine.php');
+	require_once('require/class.MarineLive.php');
+	//require_once('require/class.MarineArchive.php');
+	$MarineLive = new MarineLive();
+	$Marine = new Marine();
+//	$MarineArchive = new MarineArchive();
 } else {
 	require_once('require/class.Spotter.php');
 	require_once('require/class.SpotterLive.php');
@@ -137,6 +146,8 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
 } elseif ($tracker) {
 	$spotter_array = $TrackerLive->getMinLastLiveTrackerData($filter);
+} elseif ($marine) {
+	$spotter_array = $MarineLive->getMinLastLiveMarineData($filter);
 } else {
 	$spotter_array = $SpotterLive->getMinLastLiveSpotterData($filter);
 }
@@ -146,6 +157,8 @@ if (!empty($spotter_array)) {
 		$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
 	} elseif ($tracker) {
 		$flightcnt = $TrackerLive->getLiveTrackerCount($filter);
+	} elseif ($marine) {
+		$flightcnt = $MarineLive->getLiveMarineCount($filter);
 	} else {
 		$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
 	}
@@ -177,6 +190,8 @@ if (isset($archivespeed)) $speed = $archivespeed;
 $output = '[';
 if ($tracker) {
 	$output .= '{"id" : "document", "name" : "tracker","version" : "1.0"';
+} elseif ($marine) {
+	$output .= '{"id" : "document", "name" : "marine","version" : "1.0"';
 } else {
 	$output .= '{"id" : "document", "name" : "fam","version" : "1.0"';
 }
@@ -207,7 +222,8 @@ if (!empty($spotter_array) && is_array($spotter_array))
 
                 if (isset($spotter_item['flightaware_id'])) $id = $spotter_item['flightaware_id'];
                 elseif (isset($spotter_item['famtrackid'])) $id = $spotter_item['famtrackid'];
-		if ($prev_flightaware_id != $id) {
+                elseif (isset($spotter_item['fammarine_id'])) $id = $spotter_item['fammarine_id'];
+                if ($prev_flightaware_id != $id) {
 			if ($prev_flightaware_id != '') {
 				$output .= ']';
 				$output .= '}';
@@ -415,6 +431,10 @@ if (!empty($spotter_array) && is_array($spotter_array))
 					$output .= ',"heightReference": "'.$heightrelative.'"';
 					$output .= '},';
 				}
+			} elseif ($marine) {
+				$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/boat.glb","scale" : 1.0,"minimumPixelSize": 20';
+				$output .= ',"heightReference": "'.$heightrelative.'"';
+				$output .= '},';
 			}
 	//		$output .= '"heightReference": "CLAMP_TO_GROUND",';
 			$output .= '"heightReference": "'.$heightrelative.'",';
@@ -433,7 +453,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$output .= $spotter_item['latitude'];
 			$prevlong = $spotter_item['longitude'];
 			$prevlat = $spotter_item['latitude'];
-			if (!$tracker) {
+			if (!$tracker && !$marine) {
 				$output .= ', '.round($spotter_item['altitude']*30.48);
 				$prevalt = round($spotter_item['altitude']*30.48);
 			} else $output .= ', 0';
@@ -447,12 +467,12 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			if ($spotter_item['ground_speed'] == 0) {
 				$output .= $prevlong.', ';
 				$output .= $prevlat;
-				if (!$tracker) $output .= ', '.$prevalt;
+				if (!$tracker && !$marine) $output .= ', '.$prevalt;
 				else $output .= ', 0';
 			} else {
 				$output .= $spotter_item['longitude'].', ';
 				$output .= $spotter_item['latitude'];
-				if (!$tracker) {
+				if (!$tracker && !$marine) {
 					if ($spotter_item['altitude'] == '') {
 						if ($prevalt != '') {
 							$output .= ', '.$prevalt;
