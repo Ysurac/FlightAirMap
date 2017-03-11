@@ -115,7 +115,7 @@ class MarineImport {
 		if (!isset($this->all_tracked[$id])) {
 		    $this->all_tracked[$id] = array();
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('addedMarine' => 0));
-		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'heading' => '', 'format_source' => '','source_name' => '','comment'=> '','type' => '','noarchive' => false,'putinarchive' => true,'over_country' => '','mmsi' => '','status' => '','imo' => '','callsign' => ''));
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'heading' => '', 'format_source' => '','source_name' => '','comment'=> '','type' => '','noarchive' => false,'putinarchive' => true,'over_country' => '','mmsi' => '','status' => '','imo' => '','callsign' => '','arrival_code' => '','arrival_date' => ''));
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('lastupdate' => time()));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
@@ -144,6 +144,12 @@ class MarineImport {
 		}
 		if (isset($line['callsign']) && $line['callsign'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('callsign' => $line['callsign']));
+		}
+		if (isset($line['arrival_code']) && $line['arrival_code'] != '') {
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('arrival_code' => $line['arrival_code']));
+		}
+		if (isset($line['arrival_date']) && $line['arrival_date'] != '') {
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('arrival_date' => $line['arrival_date']));
 		}
 
 
@@ -304,7 +310,7 @@ class MarineImport {
 				    if (!isset($this->all_tracked[$id]['id'])) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('id' => $this->all_tracked[$id]['mmsi'].'-'.date('YmdHi')));
 				    $timeelapsed = microtime(true);
 				    $Marine = new Marine($this->db);
-				    $result = $Marine->addMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'], $this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['mmsi'], $this->all_tracked[$id]['type'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'], $this->all_tracked[$id]['status'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name']);
+				    $result = $Marine->addMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'], $this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['mmsi'], $this->all_tracked[$id]['type'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'], $this->all_tracked[$id]['status'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name']);
 				    $Marine->db = null;
 				    if ($globalDebug && isset($result)) echo $result."\n";
 				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update addspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
@@ -372,7 +378,7 @@ class MarineImport {
 				if ($globalDebug) echo "\o/ Add ".$this->all_tracked[$id]['ident']." from ".$this->all_tracked[$id]['format_source']." in Live DB : ";
 				$timeelapsed = microtime(true);
 				$MarineLive = new MarineLive($this->db);
-				$result = $MarineLive->addLiveMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['putinarchive'],$this->all_tracked[$id]['mmsi'],$this->all_tracked[$id]['type'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['status'],$this->all_tracked[$id]['noarchive'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['over_country']);
+				$result = $MarineLive->addLiveMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['putinarchive'],$this->all_tracked[$id]['mmsi'],$this->all_tracked[$id]['type'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'],$this->all_tracked[$id]['status'],$this->all_tracked[$id]['noarchive'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['over_country']);
 				$MarineLive->db = null;
 				$this->all_tracked[$id]['putinarchive'] = false;
 				if ($globalDebugTimeElapsed) echo 'Time elapsed for update addlivespotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";

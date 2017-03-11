@@ -431,7 +431,7 @@ while ($i > 0) {
     		    $data['id_source'] = $id_source;
 		    print_r($data);
 		    echo 'Add...'."\n";
-		    if ($add) $MI->add($data);
+		    if ($add && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
 		    unset($data);
 		}
     	    }
@@ -461,6 +461,8 @@ while ($i > 0) {
 			    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
 			    if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
 			    if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
+			    if (isset($ais_data['destination'])) $data['arrival_code'] = $ais_data['destination'];
+			    if (isset($ais_data['eta_ts'])) $data['arrival_date'] = date('Y-m-d H:i:s',$ais_data['eta_ts']);
 			    if (isset($ais_data['timestamp'])) {
 				$data['datetime'] = date('Y-m-d H:i:s',$ais_data['timestamp']);
 			    } else {
@@ -468,7 +470,7 @@ while ($i > 0) {
 			    }
 			    $data['format_source'] = 'aisnmeahttp';
 			    $data['id_source'] = $id_source;
-			    $MI->add($data);
+			    if ($ais_data['mmsi_type'] == 'Ship') $MI->add($data);
 			    unset($data);
 			}
 		    }
@@ -1003,15 +1005,17 @@ while ($i > 0) {
 			    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
 			    if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
 			    if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
+			    if (isset($ais_data['destination'])) $data['arrival_code'] = $ais_data['destination'];
+			    if (isset($ais_data['eta_ts'])) $data['arrival_date'] = date('Y-m-d H:i:s',$ais_data['eta_ts']);
 
 			    if (isset($ais_data['timestamp'])) {
 				$data['datetime'] = date('Y-m-d H:i:s',$ais_data['timestamp']);
 			    } else {
 				$data['datetime'] = date('Y-m-d H:i:s');
 			    }
-			    $data['format_source'] = 'nmeatxt';
+			    $data['format_source'] = 'aisnmea';
     			    $data['id_source'] = $id_source;
-			    $MI->add($data);
+			    if (isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
 			    unset($data);
                         } elseif ($format == 'flightgearsp') {
                     	    //echo $buffer."\n";

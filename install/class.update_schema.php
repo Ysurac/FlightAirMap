@@ -1586,6 +1586,7 @@ class update_schema {
 				return "error (add source_type column in aircraft_modes) : ".$e->getMessage()."\n";
 			}
 		}
+		/*
 		if ($globalDBdriver == 'mysql') {
 			$query = "ALTER TABLE spotter_output MODIFY COLUMN ModeS VARCHAR(20) DEFAULT NULL; ALTER TABLE spotter_archive_output MODIFY COLUMN ModeS VARCHAR(20) DEFAULT NULL; ALTER TABLE spotter_live MODIFY COLUMN ModeS VARCHAR(20) DEFAULT NULL;ALTER TABLE spotter_archive MODIFY COLUMN ModeS VARCHAR(20) DEFAULT NULL;";
 			try {
@@ -1603,6 +1604,7 @@ class update_schema {
 				return "error (change ModeS column in spotter_* to NULL) : ".$e->getMessage()."\n";
 			}
 		}
+		*/
 		if ($globalDBdriver == 'mysql') {
 			$error .= create_db::import_file('../db/tracker_output.sql');
 			if ($error != '') return $error;

@@ -105,6 +105,7 @@ class AIS {
 		    '2', '3', '4', '5', '6', '7', '8', '9', ':', ';',
 		    '<', '=', '>', '?'
 		);
+		// "
 		$rv = '';
 		if ($_size % 6 == 0) {
 			$len = $_size / 6;
@@ -131,6 +132,11 @@ class AIS {
 		$ro->lon = 0.0;
 		$ro->lat = 0.0;
 		$ro->heading = '';
+		$ro->destination = '';
+		$ro->eta_month = '';
+		$ro->eta_day = '';
+		$ro->eta_hour = '';
+		$ro->eta_minute = '';
 		$ro->ts = time();
 		$ro->id = bindec(substr($_aisdata,0,6));
 		$ro->mmsi = bindec(substr($_aisdata,8,30));
@@ -154,12 +160,12 @@ class AIS {
 			//$ro->to_stern = bindec(substr($_aisdata,249,9));
 			//$ro->to_port = bindec(substr($_aisdata,258,6));
 			//$ro->to_starboard = bindec(substr($_aisdata,264,6));
-			//$ro->eta_month = bindec(substr($_aisdata,274,4));
-			//$ro->eta_day = bindec(substr($_aisdata,278,5));
-			//$ro->eta_hour = bindec(substr($_aisdata,283,5));
-			//$ro->eta_minute = bindec(substr($_aisdata,288,6));
+			$ro->eta_month = bindec(substr($_aisdata,274,4));
+			$ro->eta_day = bindec(substr($_aisdata,278,5));
+			$ro->eta_hour = bindec(substr($_aisdata,283,5));
+			$ro->eta_minute = bindec(substr($_aisdata,288,6));
 			//$ro->draught = bindec(substr($_aisdata,294,8));
-			//$ro->destination = $this->binchar($_aisdata,302,120);
+			$ro->destination = $this->binchar($_aisdata,302,120);
 			$ro->cls = 1; // class A
 		} else if ($ro->id == 9) {
 			// Search and Rescue aircraft position report
@@ -518,6 +524,7 @@ class AIS {
 		    '2'=>50, '3'=>51, '4'=>52, '5'=>53, '6'=>54, '7'=>55, '8'=>56, '9'=>57, ':'=>58, ';'=>59,
 		    '<'=>60, '='=>61, '>'=>62, '?'=>63
 		);
+		// "
 		$_a = str_split($name);
 		if ($_a) foreach ($_a as $_1) {
 			if (isset($ais_chars[$_1])) $dec = $ais_chars[$_1];
@@ -582,18 +589,40 @@ class AIS {
 		return $result;
 	}
 
+	public function mmsitype($mmsi) {
+		if (strlen($mmsi) == 9) {
+			if (substr($mmsi,0,3) == '974') return 'EPIRB (Emergency Position Indicating Radio Beacon) AIS';
+			elseif (substr($mmsi,0,3) == '972') return 'MOB (Man Overboard) device';
+			elseif (substr($mmsi,0,3) == '970') return 'AIS SART (Search and Rescue Transmitter)';
+			elseif (substr($mmsi,0,3) == '111') return 'SAR (Search and Rescue) aircraft';
+			elseif (substr($mmsi,0,2) == '98') return 'Auxiliary craft associated with a parent ship';
+			elseif (substr($mmsi,0,2) == '99') return 'Aids to Navigation';
+			elseif (substr($mmsi,0,2) == '00') return 'Coastal stations';
+			elseif (substr($mmsi,0,1) == '0') return 'Group of ships';
+			else return 'Ship';
+		}
+
+	
+	}
+
 	public function parse_line($buffer) {
+		global $globalDebug;
 		$result = array();
 		$data = new stdClass();
 		$start = strpos($buffer,"VDM");
 		$tst = substr($buffer, $start - 3);
 		$data = $this->process_ais_raw( $tst, "" );
-		if (!is_object($data)) return array();
+		if (!is_object($data)) {
+			//if ($globalDebug) echo '==== Line format not supported : '.$buffer."\n";
+			return array();
+		}
 		if ($data->lon != 0) $result['longitude'] = $data->lon;
 		if ($data->lat != 0) $result['latitude'] = $data->lat;
 		$result['ident'] = trim(str_replace('@','',$data->name));
 		$result['timestamp'] = $data->ts;
 		$result['mmsi'] = $data->mmsi;
+		if (strlen($result['mmsi']) == 8 && susbtr($result['mmsi'],0,3) == '669') $result['mmsi'] = '3'.$result['mmsi'];
+		$result['mmsi_type'] = $this->mmsitype($result['mmsi']);
 		if ($data->sog != -1.0) $result['speed'] = $data->sog;
 		if ($data->heading != '') $result['heading'] = $data->heading;
 		elseif ($data->cog != 0) $result['heading'] = $data->cog;
@@ -601,6 +630,10 @@ class AIS {
 		if ($data->type != '') $result['type'] = $data->type;
 		if ($data->imo != '') $result['imo'] = $data->imo;
 		if ($data->callsign != '') $result['callsign'] = $data->callsign;
+		if ($data->eta_month != '' && $data->eta_day != '' && $data->eta_hour != '' && $data->eta_minute != '') {
+			$result['eta_ts'] = strtotime(date('Y').'-'.$data->eta_month.'-'.$data->eta_day.' '.$data->eta_hour.':'.$data->eta_minute.':00');
+		}
+		if ($data->destination != '') $result['destination'] = $data->destination;
 		$result['all'] = (array) $data;
 		/*
 		    $ro->cls = 0; // AIS class undefined, also indicate unparsed msg
