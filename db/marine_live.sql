@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `marine_live` (
   `ground_speed` int(11),
   `format_source` varchar(255) DEFAULT NULL,
   `source_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`marine_id`)
+  PRIMARY KEY (`marine_live_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 
 ALTER TABLE `marine_output` ADD INDEX(`fammarine_id`);
