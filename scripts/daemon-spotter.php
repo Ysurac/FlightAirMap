@@ -65,6 +65,11 @@ else $id_source = 1;
 if (isset($globalServer) && $globalServer) {
     if ($globalDebug) echo "Using Server Mode\n";
     $SI=new SpotterServer();
+/*
+    require_once(dirname(__FILE__).'/../require/class.APRS.php');
+    $SI = new adsb2aprs();
+    $SI->connect();
+*/
 } else $SI=new SpotterImport($Connection->db);
 if (isset($globalTracker) && $globalTracker) $TI = new TrackerImport($Connection->db);
 if (isset($globalMarine) && $globalMarine) {
@@ -92,34 +97,6 @@ if ($globalDebug) echo "Connecting...\n";
 $use_aprs = false;
 $aprs_full = false;
 $reset = 0;
-
-function create_socket($host, $port, &$errno, &$errstr) {
-    $ip = gethostbyname($host);
-    $s = socket_create(AF_INET, SOCK_STREAM, 0);
-    $r = @socket_connect($s, $ip, $port);
-    if (!socket_set_nonblock($s)) echo "Unable to set nonblock on socket\n";
-    if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
-        return $s;
-    }
-    $errno = socket_last_error($s);
-    $errstr = socket_strerror($errno);
-    socket_close($s);
-    return false;
-}
-
-function create_socket_udp($host, $port, &$errno, &$errstr) {
-    echo "Create an UDP socket...\n";
-    $ip = gethostbyname($host);
-    $s = socket_create(AF_INET, SOCK_DGRAM, 0);
-    $r = @socket_bind($s, $ip, $port);
-    if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
-        return $s;
-    }
-    $errno = socket_last_error($s);
-    $errstr = socket_strerror($errno);
-    socket_close($s);
-    return false;
-}
 
 function connect_all($hosts) {
     //global $sockets, $formats, $globalDebug,$aprs_connect,$last_exec, $globalSourcesRights, $use_aprs;
@@ -197,6 +174,15 @@ function connect_all($hosts) {
         	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
         	    exit(0);
         	}
+            } else if (preg_match(':myshiptracking.com/:i',$host)) {
+        	//$formats[$id] = 'fr24json';
+        	$globalSources[$id]['format'] = 'myshiptracking';
+        	//$last_exec['fr24json'] = 0;
+        	if ($globalDebug) echo "Connect to myshiptracking source (".$host.")...\n";
+        	if (!isset($globalSourcesRights) || (isset($globalSourcesRights) && !$globalSourcesRights)) {
+        	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
+        	    exit(0);
+        	}
             //} else if (preg_match('/10001/',$host)) {
             } else if (preg_match('/10001/',$host) || (isset($globalSources[$id]['port']) && $globalSources[$id]['port'] == '10001')) {
         	//$formats[$id] = 'tsv';
@@ -221,15 +207,16 @@ function connect_all($hosts) {
 		$port = $globalSources[$id]['port'];
 		$hostn = $globalSources[$id]['host'];
 	    }
+	    $Common = new Common();
 	    if (!isset($globalSources[$id]['format']) || ($globalSources[$id]['format'] != 'acars' && $globalSources[$id]['format'] != 'flightgearsp')) {
-        	$s = create_socket($hostn,$port, $errno, $errstr);
+        	$s = $Common->create_socket($hostn,$port, $errno, $errstr);
     	    } else {
-        	$s = create_socket_udp($hostn,$port, $errno, $errstr);
+        	$s = $Common->create_socket_udp($hostn,$port, $errno, $errstr);
 	    }
 	    if ($s) {
     	        $sockets[$id] = $s;
     	        if (!isset($globalSources[$id]['format']) || strtolower($globalSources[$id]['format']) == 'auto') {
-		    if (preg_match('/aprs/',$hostn)) {
+		    if (preg_match('/aprs/',$hostn) || $port == '10152' || $port == '14580') {
 			//$formats[$id] = 'aprs';
 			$globalSources[$id]['format'] = 'aprs';
 			//$aprs_connect = 0;
@@ -317,9 +304,11 @@ if ($use_aprs) {
 	if (isset($globalAPRSfilter)) $aprs_filter = $globalAPRSfilter;
 	else $aprs_filter =  'r/'.$globalCenterLatitude.'/'.$globalCenterLongitude.'/250.0';
 	if ($aprs_full) $aprs_filter = '';
+	if (isset($globalAPRSpass)) $aprs_pass = $globalAPRSpass;
+	else $aprs_pass = '-1';
 
-	if ($aprs_filter != '') $aprs_login = "user {$aprs_ssid} pass -1 vers {$aprs_version} filter {$aprs_filter}\n";
-	else $aprs_login = "user {$aprs_ssid} pass -1 vers {$aprs_version}\n";
+	if ($aprs_filter != '') $aprs_login = "user {$aprs_ssid} pass {$aprs_pass} vers {$aprs_version} filter {$aprs_filter}\n";
+	else $aprs_login = "user {$aprs_ssid} pass {$aprs_pass} vers {$aprs_version}\n";
 }
 
 // connected - lets do some work
@@ -477,6 +466,68 @@ while ($i > 0) {
 		}
 		}
 	    }
+	} elseif ($value['format'] == 'myshiptracking' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
+	    $buffer = $Common->getData($value['host'],'get','','','','','20');
+	    if ($buffer != '') {
+		//echo $buffer;
+		$all_data = json_decode($buffer,true);
+		//print_r($all_data);
+		if (isset($all_data[0]['DATA'])) {
+		foreach ($all_data[0]['DATA'] as $line) {
+		    if ($line != '') {
+			$data = array();
+			$data['ident'] = $line['NAME'];
+			$data['mmsi'] = $line['MMSI'];
+			$data['speed'] = $line['SOG'];
+			$data['heading'] = $line['COG'];
+			$data['latitude'] = $line['LAT'];
+			$data['longitude'] = $line['LNG'];
+			//    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
+			$data['imo'] = $line['IMO'];
+			//$data['arrival_code'] = $ais_data['destination'];
+			$data['datetime'] = date('Y-m-d H:i:s',$line['T']);
+			$data['format_source'] = 'myshiptracking';
+			$data['id_source'] = $id_source;
+			$MI->add($data);
+			unset($data);
+		    }
+		}
+		}
+		
+	    }
+    	    $last_exec[$id]['last'] = time();
+	} elseif ($value['format'] == 'boatbeaconapp' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
+	    echo 'Try ?'."\n";
+	    $buffer = $Common->getData(str_replace('{timestamp}',time(),$value['host']));
+	    echo $buffer;
+	    if ($buffer != '') {
+		//echo $buffer;
+		$all_data = json_decode($buffer,true);
+		print_r($all_data);
+		if (isset($all_data[0]['mmsi'])) {
+		foreach ($all_data as $line) {
+		    if ($line != '') {
+			$data = array();
+			$data['ident'] = $line['shipname'];
+			$data['callsign'] = $line['callsign'];
+			$data['mmsi'] = $line['mmsi'];
+			$data['speed'] = $line['sog'];
+			if ($line['heading'] != '511') $data['heading'] = $line['heading'];
+			$data['latitude'] = $line['latitude'];
+			$data['longitude'] = $line['longitude'];
+			$data['type_id'] = $line['shiptype'];
+			$data['arrival_code'] = $line['destination'];
+			$data['datetime'] = $line['time'];
+			$data['format_source'] = 'boatbeaconapp';
+			$data['id_source'] = $id_source;
+			$MI->add($data);
+			unset($data);
+		    }
+		}
+		}
+		
+	    }
+    	    $last_exec[$id]['last'] = time();
 	} elseif ($value['format'] == 'shipplotter' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
 	    echo 'download...';
 	    $buffer = $Common->getData($value['host'],'post',$value['post'],'','','','','ShipPlotter');
@@ -1102,6 +1153,7 @@ while ($i > 0) {
 			    }
 			    
 			    //echo 'Connect : '.$aprs_connect.' '.$buffer."\n";
+			    //echo 'APRS data : '.$buffer."\n";
 			    $buffer = str_replace('APRS <- ','',$buffer);
 			    $buffer = str_replace('APRS -> ','',$buffer);
 			    //echo $buffer."\n";

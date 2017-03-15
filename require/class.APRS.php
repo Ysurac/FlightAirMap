@@ -1,5 +1,9 @@
 <?php
+require_once(dirname(__FILE__).'/settings.php');
+require_once(dirname(__FILE__).'/class.Common.php');
 class aprs {
+    private $socket;
+
     protected $symbols = array('!' => 'Police',
 	'#' => 'DIGI',
 	'$' => 'Phone',
@@ -92,7 +96,7 @@ class aprs {
 
     public function parse($input) {
 	global $globalDebug;
-	$debug = true;
+	$debug = false;
 	$result = array();
 	$input_len = strlen($input);
 	//$split_input = str_split($input);
@@ -314,6 +318,15 @@ class aprs {
 		            $body_parse = substr($body_parse,6);
 		    }
 		    
+		    if (preg_match('/CS=([0-9A-Z]*)/',$body_parse,$matches)) {
+			$result['callsign'] = $matches[1];
+		    }
+		    if (preg_match('/SQ=([0-9]{4})/',$body_parse,$matches)) {
+			$result['squawk'] = $matches[1];
+		    }
+		    if (preg_match('/AI=([0-9A-Z]{4})/',$body_parse,$matches)) {
+			$result['aircraft_icao'] = $matches[1];
+		    }
 		    // OGN comment
 		   // echo "Before OGN : ".$body_parse."\n";
 		    //if (preg_match('/^id([0-9A-F]{8}) ([+-])([0-9]{3,4})fpm ([+-])([0-9.]{3,4})rot (.*)$/',$body_parse,$matches)) {
@@ -392,9 +405,114 @@ class aprs {
 	if ($debug) print_r($result);
 	return $result;
     }
+    
+    function connect() {
+	global $globalAPRSversion, $globalServerAPRSssid, $globalServerAPRSpass,$globalName, $globalServerAPRShost, $globalServerAPRSport;
+	$aprs_connect = 0;
+	$aprs_keep = 120;
+	$aprs_last_tx = time();
+	if (isset($globalAPRSversion)) $aprs_version = $globalAPRSversion;
+	else $aprs_version = 'FlightAirMap '.str_replace(' ','_',$globalName);
+	if (isset($globalServerAPRSssid)) $aprs_ssid = $globalServerAPRSssid;
+	else $aprs_ssid = substr('FAM'.strtoupper(str_replace(' ','_',$globalName)),0,8);
+	if (isset($globalServerAPRSpass)) $aprs_pass = $globalServerAPRSpass;
+	else $aprs_pass = '-1';
+	
+	$aprs_filter  = '';
+	$aprs_login = "user {$aprs_ssid} pass {$aprs_pass} vers {$aprs_version}\n";
+	$Common = new Common();
+	$s = $Common->create_socket($globalServerAPRShost,$globalServerAPRSport,$errno,$errstr);
+	if ($s !== false) {
+		echo 'Connected to APRS server! '."\n";
+		$authstart = time();
+		$this->socket = $s;
+		$send = socket_send( $this->socket  , $aprs_login , strlen($aprs_login) , 0 );
+		while ($msgin = socket_read($this->socket, 1000,PHP_NORMAL_READ)) {
+			echo $msgin."\n";
+			if (strpos($msgin, "$aprs_ssid verified") !== FALSE) {
+			    echo 'Verified !';
+			    return true;
+			    break;
+			}
+			if (time()-$authstart > 5) {
+			    echo 'Timeout';
+			    break;
+			}
+		}
+	}
+    }
+    
+    function send($data) {
+	$send = socket_send( $this->socket  , $data , strlen($data),0);
+	if ($send === FALSE) $this->connect();
+    }
 }
-/*
-$aprs = new aprs();
-print_r($aprs->parse('ICA400EE9>APRS,qAS,UKHUN:/083216h5138.51N\00121.61W^279/050/A=003949 !W25! id21400EE9 -8988fpm -10.2rot 10.8dB 0e -6.9kHz gps5x7'));
-  */
+
+class APRSSpotter extends APRS {
+	function addLiveSpotterData($id,$ident,$aircraft_icao,$departure_airport,$arrival_airport,$latitude,$longitude,$waypoints,$altitude,$heading,$speed,$datetime,$departure_airport_time,$arrival_airport_time,$squawk,$route_stop,$hex,$putinarchive,$registration,$pilot_id,$pilot_name, $verticalrate, $noarchive, $ground,$format_source,$source_name,$over_country) {
+		$Common = new Common();
+		if ($latitude != '' && $longitude != '') {
+		$latitude = $Common->convertDM($latitude,'latitude');
+		$longitude = $Common->convertDM($longitude,'longitude');
+		$coordinate = str_pad($latitude['deg'].number_format($latitude['min'],2,'.',''),7,'0',STR_PAD_LEFT).$latitude['NSEW'].'/'.str_pad($longitude['deg'].number_format($longitude['min'],2,'.',''),8,'0',STR_PAD_LEFT).$longitude['NSEW'];
+		$w1 = abs(ceil(($latitude['min'] - number_format($latitude['min'],2,'.',''))*1000));
+		$w2 = abs(ceil(($longitude['min'] - number_format($longitude['min'],2,'.',''))*1000));
+		$w = $w1.$w2;
+		//$w = '00';
+		$custom = '';
+		if ($ident != '') {
+			if ($custom != '') $custom .= '/';
+			$custom .= 'CS='.$ident;
+		}
+		if ($squawk != '') {
+			if ($custom != '') $custom .= '/';
+			$custom .= 'SQ='.$squawk;
+		}
+		if ($aircraft_icao != '' && $aircraft_icao != 'NA') {
+			if ($custom != '') $custom .= '/';
+			$custom .= 'AI='.$aircraft_icao;
+		}
+		if ($custom != '') $custom = ' '.$custom;
+			$this->send('AIRCRAFT>APRS,TCPIP*:;'.$hex.'   *'.date('His',strtotime($datetime)).'h'.$coordinate.'s'.str_pad($heading,3,'0',STR_PAD_LEFT).'/'.str_pad($speed,3,'0',STR_PAD_LEFT).'/A='.str_pad($altitude,6,'0',STR_PAD_LEFT).' !W'.$w.'!'.$custom."\n");
+		}
+	}
+}
+class APRSMarine extends APRS {
+	function addLiveMarineData($id, $ident, $latitude, $longitude, $heading, $speed,$datetime, $putinarchive,$mmsi,$type,$typeid,$imo,$callsign,$arrival_code,$arrival_date,$status,$noarchive,$format_source,$source_name,$over_country) {
+		$Common = new Common();
+		if ($latitude != '' && $longitude != '') {
+		$latitude = $Common->convertDM($latitude,'latitude');
+		$longitude = $Common->convertDM($longitude,'longitude');
+		$coordinate = str_pad($latitude['deg'].number_format($latitude['min'],2,'.',''),7,'0',STR_PAD_LEFT).$latitude['NSEW'].'/'.str_pad($longitude['deg'].number_format($longitude['min'],2,'.',''),8,'0',STR_PAD_LEFT).$longitude['NSEW'];
+		$w1 = abs(ceil(($latitude['min'] - number_format($latitude['min'],2,'.',''))*1000));
+		$w2 = abs(ceil(($longitude['min'] - number_format($longitude['min'],2,'.',''))*1000));
+		$w = $w1.$w2;
+		//$w = '00';
+		$custom = '';
+		if ($ident != '') {
+			if ($custom != '') $custom .= '/';
+			$custom .= 'CS='.$ident;
+		}
+		if ($typeid != '') {
+			if ($custom != '') $custom .= '/';
+			$custom .= 'TI='.$typeid;
+		}
+		if ($imo != '') {
+			if ($custom != '') $custom .= '/';
+			$custom .= 'IMO='.$imo;
+		}
+		if ($arrival_date != '') {
+			if ($custom != '') $custom .= '/';
+			$custom .= 'AD='.$arrival_date;
+		}
+		if ($arrival_code != '') {
+			if ($custom != '') $custom .= '/';
+			$custom .= 'AC='.$arrival_code;
+		}
+		if ($custom != '') $custom = ' '.$custom;
+		$altitude = 0;
+			$this->send('MARINE>APRS,TCPIP*:;'.$mmsi.'*'.date('His',strtotime($datetime)).'h'.$coordinate.'s'.str_pad($heading,3,'0',STR_PAD_LEFT).'/'.str_pad($speed,3,'0',STR_PAD_LEFT).'/A='.str_pad($altitude,6,'0',STR_PAD_LEFT).' !W'.$w.'!'.$custom."\n");
+		}
+	}
+}
 ?>

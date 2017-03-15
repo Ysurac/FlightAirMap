@@ -572,7 +572,7 @@ class Marine{
 	* @param String $verticalrate vertival rate of flight
 	* @return String success or false
 	*/
-	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$format_source = '', $source_name = '')
+	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$typeid = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$format_source = '', $source_name = '')
 	{
 		global $globalURL;
 		

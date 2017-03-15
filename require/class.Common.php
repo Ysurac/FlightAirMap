@@ -67,6 +67,7 @@ class Common {
 		}
 		$result = curl_exec($ch);
 		$info = curl_getinfo($ch);
+		//var_dump($info);
 		curl_close($ch);
 		if ($info['http_code'] == '503' && strstr($result,'DDoS protection by CloudFlare')) {
 			echo "Cloudflare Detected\n";
@@ -77,7 +78,7 @@ class Common {
 				return $this->getData($url,'get',$data,$headers,$clearanceCookie,$referer,$timeout,$useragent);
 			}
 		} else {
-		    return $result;
+			return $result;
 		}
 	}
 	
@@ -221,6 +222,21 @@ class Common {
 			$min = substr($dms, 3, 5);
 		}
 		return $deg+(($min*60)/3600);
+	}
+	
+	public function convertDM($coord,$latlong) {
+		if ($latlong == 'latitude') {
+			if ($coord < 0) $NSEW = 'S';
+			else $NSEW = 'N';
+		} elseif ($latlong == 'longitude') {
+			if ($coord < 0) $NSEW = 'W';
+			else $NSEW = 'E';
+		}
+		$coord = abs($coord);
+		$deg = floor($coord);
+		$coord = ($coord-$deg)*60;
+		$min = $coord;
+		return array('deg' => $deg,'min' => $min,'NSEW' => $NSEW);
 	}
 	
 	/**
@@ -547,6 +563,33 @@ class Common {
 			}
 		}
 		return (int) $int;
+	}
+	
+	function create_socket($host, $port, &$errno, &$errstr) {
+		$ip = gethostbyname($host);
+		$s = socket_create(AF_INET, SOCK_STREAM, 0);
+		$r = @socket_connect($s, $ip, $port);
+		if (!socket_set_nonblock($s)) echo "Unable to set nonblock on socket\n";
+		if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
+			return $s;
+		}
+		$errno = socket_last_error($s);
+		$errstr = socket_strerror($errno);
+		socket_close($s);
+		return false;
+	}
+
+	function create_socket_udp($host, $port, &$errno, &$errstr) {
+		$ip = gethostbyname($host);
+		$s = socket_create(AF_INET, SOCK_DGRAM, 0);
+		$r = @socket_bind($s, $ip, $port);
+		if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
+			return $s;
+		}
+		$errno = socket_last_error($s);
+		$errstr = socket_strerror($errno);
+		socket_close($s);
+		return false;
 	}
 }
 ?>

@@ -628,6 +628,7 @@ class AIS {
 		elseif ($data->cog != 0) $result['heading'] = $data->cog;
 		if ($data->status != '') $result['status'] = $data->status;
 		if ($data->type != '') $result['type'] = $data->type;
+		if ($data->typeid != '') $result['typeid'] = $data->typeid;
 		if ($data->imo != '') $result['imo'] = $data->imo;
 		if ($data->callsign != '') $result['callsign'] = $data->callsign;
 		if ($data->eta_month != '' && $data->eta_day != '' && $data->eta_hour != '' && $data->eta_minute != '') {
