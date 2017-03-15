@@ -565,7 +565,7 @@ class Common {
 		return (int) $int;
 	}
 	
-	function create_socket($host, $port, &$errno, &$errstr) {
+	public function create_socket($host, $port, &$errno, &$errstr) {
 		$ip = gethostbyname($host);
 		$s = socket_create(AF_INET, SOCK_STREAM, 0);
 		$r = @socket_connect($s, $ip, $port);
@@ -579,7 +579,7 @@ class Common {
 		return false;
 	}
 
-	function create_socket_udp($host, $port, &$errno, &$errstr) {
+	public function create_socket_udp($host, $port, &$errno, &$errstr) {
 		$ip = gethostbyname($host);
 		$s = socket_create(AF_INET, SOCK_DGRAM, 0);
 		$r = @socket_bind($s, $ip, $port);
