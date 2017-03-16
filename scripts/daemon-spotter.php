@@ -309,6 +309,7 @@ if ($use_aprs) {
 
 	if ($aprs_filter != '') $aprs_login = "user {$aprs_ssid} pass {$aprs_pass} vers {$aprs_version} filter {$aprs_filter}\n";
 	else $aprs_login = "user {$aprs_ssid} pass {$aprs_pass} vers {$aprs_version}\n";
+	echo $aprs_login."\n";
 }
 
 // connected - lets do some work
@@ -497,33 +498,29 @@ while ($i > 0) {
 	    }
     	    $last_exec[$id]['last'] = time();
 	} elseif ($value['format'] == 'boatbeaconapp' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
-	    echo 'Try ?'."\n";
 	    $buffer = $Common->getData(str_replace('{timestamp}',time(),$value['host']));
-	    echo $buffer;
 	    if ($buffer != '') {
-		//echo $buffer;
 		$all_data = json_decode($buffer,true);
-		print_r($all_data);
 		if (isset($all_data[0]['mmsi'])) {
-		foreach ($all_data as $line) {
-		    if ($line != '') {
-			$data = array();
-			$data['ident'] = $line['shipname'];
-			$data['callsign'] = $line['callsign'];
-			$data['mmsi'] = $line['mmsi'];
-			$data['speed'] = $line['sog'];
-			if ($line['heading'] != '511') $data['heading'] = $line['heading'];
-			$data['latitude'] = $line['latitude'];
-			$data['longitude'] = $line['longitude'];
-			$data['type_id'] = $line['shiptype'];
-			$data['arrival_code'] = $line['destination'];
-			$data['datetime'] = $line['time'];
-			$data['format_source'] = 'boatbeaconapp';
-			$data['id_source'] = $id_source;
-			$MI->add($data);
-			unset($data);
+		    foreach ($all_data as $line) {
+			if ($line != '') {
+			    $data = array();
+			    $data['ident'] = $line['shipname'];
+			    $data['callsign'] = $line['callsign'];
+			    $data['mmsi'] = $line['mmsi'];
+			    $data['speed'] = $line['sog'];
+			    if ($line['heading'] != '511') $data['heading'] = $line['heading'];
+			    $data['latitude'] = $line['latitude'];
+			    $data['longitude'] = $line['longitude'];
+			    $data['type_id'] = $line['shiptype'];
+			    $data['arrival_code'] = $line['destination'];
+			    $data['datetime'] = $line['time'];
+			    $data['format_source'] = 'boatbeaconapp';
+			    $data['id_source'] = $id_source;
+			    $MI->add($data);
+			    unset($data);
+			}
 		    }
-		}
 		}
 		
 	    }
@@ -1183,14 +1180,16 @@ while ($i > 0) {
 				    if (isset($line['stealth'])) $data['aircraft_type'] = $line['stealth'];
 				    if (!isset($globalAPRSarchive) || (isset($globalAPRSarchive) && $globalAPRSarchive == FALSE)) $data['noarchive'] = true;
     				    $data['id_source'] = $id_source;
-				    $data['format_source'] = 'aprs';
+    				    if (isset($line['format_source'])) $data['format_source'] = $line['format_source'];
+				    else $data['format_source'] = 'aprs';
 				    $data['source_name'] = $line['source'];
-				    $data['source_type'] = 'flarm';
+				    if (isset($line['source_type'])) $data['source_type'] = $line['source_type'];
+				    else $data['source_type'] = 'flarm';
     				    if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
 				    $currentdate = date('Y-m-d H:i:s');
 				    $aprsdate = strtotime($data['datetime']);
 				    // Accept data if time <= system time + 20s
-				    if (isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
+				    if (($data['source_type'] == 'sbs') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
 					$send = $SI->add($data);
 				    } elseif (isset($line['stealth'])) {
 					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";

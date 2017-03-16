@@ -123,6 +123,13 @@ class aprs {
 	//FLRDF0A52>APRS,qAS,LSTB
 	if (preg_match('/^([A-Z0-9\\-]{1,9})>(.*)$/',$header,$matches)) {
 	    $ident = $matches[1];
+	    if ($ident == 'AIRCRAFT') {
+		$result['format_source'] = 'famaprs';
+		$result['source_type'] = 'sbs';
+	    } elseif ($ident == 'MARINE') {
+		$result['format_source'] = 'famaprs';
+		$result['source_type'] = 'ais';
+	    }
 	    $all_elements = $matches[2];
 	    if ($debug) echo 'ident : '.$ident."\n";
 	    $result['ident'] = $ident;
@@ -456,7 +463,7 @@ class aprs {
     }
     
     function send($data) {
-	if ($this->connected == false) $this->connect();
+	if ($this->connected === false) $this->connect();
 	$send = socket_send( $this->socket  , $data , strlen($data),0);
 	if ($send === FALSE) $this->connect();
     }
