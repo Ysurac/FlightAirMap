@@ -126,7 +126,7 @@ class aprs {
 	    $all_elements = $matches[2];
 	    if ($ident == 'AIRCRAFT') {
 		$result['format_source'] = 'famaprs';
-		$result['source_type'] = 'sbs';
+		$result['source_type'] = 'modes';
 	    } elseif ($ident == 'MARINE') {
 		$result['format_source'] = 'famaprs';
 		$result['source_type'] = 'ais';
@@ -158,7 +158,7 @@ class aprs {
 	$type = substr($body,0,1);
 	if ($debug) echo 'type : '.$type."\n";
 	if ($type == ';') {
-		if (isset($result['source_type']) && $result['source_type'] == 'sbs') {
+		if (isset($result['source_type']) && $result['source_type'] == 'modes') {
 			$result['address'] = trim(substr($body,1,9));
 		} else $result['ident'] = trim(substr($body,1,9));
 	} elseif ($type == ',') {

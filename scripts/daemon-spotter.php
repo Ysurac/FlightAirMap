@@ -1153,7 +1153,7 @@ while ($i > 0) {
 			    //echo 'APRS data : '.$buffer."\n";
 			    $buffer = str_replace('APRS <- ','',$buffer);
 			    $buffer = str_replace('APRS -> ','',$buffer);
-			    //echo $buffer."\n";
+			    echo $buffer."\n";
 			    if (substr($buffer,0,1) != '#' && substr($buffer,0,1) != '@' && substr($buffer,0,5) != 'APRS ') {
 				$line = $APRS->parse($buffer);
 				//print_r($line);
@@ -1189,7 +1189,7 @@ while ($i > 0) {
 				    $currentdate = date('Y-m-d H:i:s');
 				    $aprsdate = strtotime($data['datetime']);
 				    // Accept data if time <= system time + 20s
-				    if (($data['source_type'] == 'sbs') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
+				    if (($data['source_type'] == 'modes') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
 					$send = $SI->add($data);
 				    } elseif (isset($line['stealth'])) {
 					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";

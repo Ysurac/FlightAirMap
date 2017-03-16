@@ -449,16 +449,17 @@ class SpotterImport {
 				$this->all_flights[$id]['archive_latitude'] = $line['latitude'];
 				$this->all_flights[$id]['archive_longitude'] = $line['longitude'];
 				$this->all_flights[$id]['putinarchive'] = true;
-				
-				if ($globalDebug) echo "\n".' ------- Check Country for '.$this->all_flights[$id]['ident'].' with latitude : '.$line['latitude'].' and longitude : '.$line['longitude'].'.... ';
-				$timeelapsed = microtime(true);
-				$Spotter = new Spotter($this->db);
-				$all_country = $Spotter->getCountryFromLatitudeLongitude($line['latitude'],$line['longitude']);
-				if (!empty($all_country)) $this->all_flights[$id]['over_country'] = $all_country['iso2'];
-				$Spotter->db = null;
-				if ($globalDebugTimeElapsed) echo 'Time elapsed for update getCountryFromlatitudeLongitude : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				$this->tmd = 0;
-				if ($globalDebug) echo 'FOUND : '.$this->all_flights[$id]['over_country'].' ---------------'."\n";
+				if (!isset($globalNoImport) || $globalNoImport === FALSE) {
+				    if ($globalDebug) echo "\n".' ------- Check Country for '.$this->all_flights[$id]['ident'].' with latitude : '.$line['latitude'].' and longitude : '.$line['longitude'].'.... ';
+				    $timeelapsed = microtime(true);
+				    $Spotter = new Spotter($this->db);
+				    $all_country = $Spotter->getCountryFromLatitudeLongitude($line['latitude'],$line['longitude']);
+				    if (!empty($all_country)) $this->all_flights[$id]['over_country'] = $all_country['iso2'];
+				    $Spotter->db = null;
+				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update getCountryFromlatitudeLongitude : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+				    if ($globalDebug) echo 'FOUND : '.$this->all_flights[$id]['over_country'].' ---------------'."\n";
+				}
 			    }
 			}
 
