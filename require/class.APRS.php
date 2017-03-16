@@ -158,7 +158,7 @@ class aprs {
 	$type = substr($body,0,1);
 	if ($debug) echo 'type : '.$type."\n";
 	if ($type == ';') {
-		if (isset($result['source_type'] == 'sbs')) {
+		if (isset($result['source_type']) && $result['source_type'] == 'sbs') {
 			$result['hex'] = trim(substr($body,1,9));
 		} else $result['ident'] = trim(substr($body,1,9));
 	} elseif ($type == ',') {
