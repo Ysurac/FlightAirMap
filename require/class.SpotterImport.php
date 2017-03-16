@@ -609,7 +609,7 @@ class SpotterImport {
 		//if ($dataFound === true && isset($this->all_flights[$id]['hex']) && $this->all_flights[$id]['heading'] != '' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
 		if ($dataFound === true && isset($this->all_flights[$id]['hex'])) {
 		    $this->all_flights[$id]['lastupdate'] = time();
-		    if ($this->all_flights[$id]['addedSpotter'] == 0) {
+		    if ((!isset($globalNoImport) || $globalNoImport === FALSE) && $this->all_flights[$id]['addedSpotter'] == 0) {
 		        if (!isset($globalDistanceIgnore['latitude']) || $this->all_flights[$id]['longitude'] == ''  || $this->all_flights[$id]['latitude'] == '' || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 			    //print_r($this->all_flights);
 			    //echo $this->all_flights[$id]['id'].' - '.$this->all_flights[$id]['addedSpotter']."\n";
@@ -822,9 +822,9 @@ class SpotterImport {
 
 		    if (!$ignoreImport) {
 			if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
-				if ($globalDebug) echo "\o/ Add ".$this->all_flights[$id]['ident']." from ".$this->all_flights[$id]['format_source']." in Live DB : ";
 				$timeelapsed = microtime(true);
 				if (!isset($globalNoImport) || $globalNoImport === FALSE) {
+					if ($globalDebug) echo "\o/ Add ".$this->all_flights[$id]['ident']." from ".$this->all_flights[$id]['format_source']." in Live DB : ";
 					$SpotterLive = new SpotterLive($this->db);
 					$result = $SpotterLive->addLiveSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'],$this->all_flights[$id]['altitude_real'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'],$this->all_flights[$id]['datetime'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'], $this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$this->all_flights[$id]['hex'],$this->all_flights[$id]['putinarchive'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'], $this->all_flights[$id]['verticalrate'], $this->all_flights[$id]['noarchive'], $this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source'],$this->all_flights[$id]['source_name'],$this->all_flights[$id]['over_country']);
 					$SpotterLive->db = null;
@@ -896,15 +896,19 @@ class SpotterImport {
 			} elseif (isset($this->all_flights[$id]['latitude']) && isset($globalDistanceIgnore['latitude']) && $globalDebug) echo "!! Too far -> Distance : ".$Common->distance($this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
 			//$this->del();
 			
-			
 			if ($this->last_delete_hourly == 0 || time() - $this->last_delete_hourly > 900) {
-			    if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 2 hour...";
-			    $SpotterLive = new SpotterLive($this->db);
-			    $SpotterLive->deleteLiveSpotterDataNotUpdated();
-			    $SpotterLive->db = null;
-			    //SpotterLive->deleteLiveSpotterData();
-			    if ($globalDebug) echo " Done\n";
-			    $this->last_delete_hourly = time();
+			    if (!isset($globalNoImport) || $globalNoImport === FALSE) {
+				if ($globalDebug) echo "---- Deleting Live Spotter data Not updated since 2 hour...";
+				$SpotterLive = new SpotterLive($this->db);
+				$SpotterLive->deleteLiveSpotterDataNotUpdated();
+				$SpotterLive->db = null;
+				//SpotterLive->deleteLiveSpotterData();
+				if ($globalDebug) echo " Done\n";
+				$this->last_delete_hourly = time();
+			    } else {
+				$this->del();
+				$this->last_delete_hourly = time();
+			    }
 			}
 			
 		    }
