@@ -1158,7 +1158,7 @@ while ($i > 0) {
 				$line = $APRS->parse($buffer);
 				//print_r($line);
 				//if (is_array($line) && isset($line['address']) && $line['address'] != '' && isset($line['ident'])) {
-				if (is_array($line) && isset($line['latitude']) && isset($line['longitude']) && isset($line['ident'])) {
+				if (is_array($line) && isset($line['latitude']) && isset($line['longitude']) && (isset($line['ident']) || isset($line['address']))) {
 				    $aprs_last_tx = time();
 				    $data = array();
 				    //print_r($line);

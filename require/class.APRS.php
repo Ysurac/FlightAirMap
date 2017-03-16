@@ -159,7 +159,7 @@ class aprs {
 	if ($debug) echo 'type : '.$type."\n";
 	if ($type == ';') {
 		if (isset($result['source_type']) && $result['source_type'] == 'sbs') {
-			$result['hex'] = trim(substr($body,1,9));
+			$result['address'] = trim(substr($body,1,9));
 		} else $result['ident'] = trim(substr($body,1,9));
 	} elseif ($type == ',') {
 		// Invalid data or test data
