@@ -268,7 +268,8 @@ class aprs {
 			$symbol_code = $body_split[0];
 		//}
 		//echo $body_parse;
-			if ($type != ';' && $type != '>') {
+			//if ($type != ';' && $type != '>') {
+			if ($type != '') {
 			$body_parse = substr($body_parse,1);
 			$body_parse_len = strlen($body_parse);
 			$result['symbol_code'] = $symbol_code;
@@ -497,7 +498,7 @@ class APRSSpotter extends APRS {
 				$custom .= 'AI='.$aircraft_icao;
 			}
 			if ($custom != '') $custom = ' '.$custom;
-			$this->send('AIRCRAFT>APRS,TCPIP*:;'.$hex.'   *'.date('His',strtotime($datetime)).'h'.$coordinate.'s'.str_pad($heading,3,'0',STR_PAD_LEFT).'/'.str_pad($speed,3,'0',STR_PAD_LEFT).'/A='.str_pad($altitude_real,6,'0',STR_PAD_LEFT).' !W'.$w.'!'.$custom."\n");
+			$this->send('AIRCRAFT>APRS,TCPIP*:;'.$hex.'   *'.date('His',strtotime($datetime)).'h'.$coordinate.'^'.str_pad($heading,3,'0',STR_PAD_LEFT).'/'.str_pad($speed,3,'0',STR_PAD_LEFT).'/A='.str_pad($altitude_real,6,'0',STR_PAD_LEFT).' !W'.$w.'!'.$custom."\n");
 		}
 	}
 }
