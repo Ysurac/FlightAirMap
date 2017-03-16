@@ -1166,7 +1166,7 @@ while ($i > 0) {
 				    if (isset($line['timestamp'])) $data['datetime'] = date('Y-m-d H:i:s',$line['timestamp']);
 				    else $data['datetime'] = date('Y-m-d H:i:s');
 				    //$data['datetime'] = date('Y-m-d H:i:s');
-				    $data['ident'] = $line['ident'];
+				    if (isset($line['ident'])) $data['ident'] = $line['ident'];
 				    $data['latitude'] = $line['latitude'];
 				    $data['longitude'] = $line['longitude'];
 				    //$data['verticalrate'] = $line[16];

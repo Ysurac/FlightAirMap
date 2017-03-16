@@ -123,16 +123,17 @@ class aprs {
 	//FLRDF0A52>APRS,qAS,LSTB
 	if (preg_match('/^([A-Z0-9\\-]{1,9})>(.*)$/',$header,$matches)) {
 	    $ident = $matches[1];
+	    $all_elements = $matches[2];
 	    if ($ident == 'AIRCRAFT') {
 		$result['format_source'] = 'famaprs';
 		$result['source_type'] = 'sbs';
 	    } elseif ($ident == 'MARINE') {
 		$result['format_source'] = 'famaprs';
 		$result['source_type'] = 'ais';
+	    } else {
+		if ($debug) echo 'ident : '.$ident."\n";
+		$result['ident'] = $ident;
 	    }
-	    $all_elements = $matches[2];
-	    if ($debug) echo 'ident : '.$ident."\n";
-	    $result['ident'] = $ident;
 	} else return false;
 	$elements = explode(',',$all_elements);
 	$source = end($elements);
@@ -157,7 +158,9 @@ class aprs {
 	$type = substr($body,0,1);
 	if ($debug) echo 'type : '.$type."\n";
 	if ($type == ';') {
-		$result['ident'] = trim(substr($body,1,9));
+		if (isset($result['source_type'] == 'sbs')) {
+			$result['hex'] = trim(substr($body,1,9));
+		} else $result['ident'] = trim(substr($body,1,9));
 	} elseif ($type == ',') {
 		// Invalid data or test data
 		return false;
@@ -327,7 +330,7 @@ class aprs {
 		    }
 		    
 		    if (preg_match('/CS=([0-9A-Z]*)/',$body_parse,$matches)) {
-			$result['callsign'] = $matches[1];
+			$result['ident'] = $matches[1];
 		    }
 		    if (preg_match('/SQ=([0-9]{4})/',$body_parse,$matches)) {
 			$result['squawk'] = $matches[1];
