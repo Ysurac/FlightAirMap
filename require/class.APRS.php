@@ -287,7 +287,8 @@ class aprs {
 		    	    if ($tmp_s >= 1 && $tmp_s <= 360) $result['heading'] = intval($course);
 		    	    $speed = substr($body_parse,4,3);
 		    	    if ($speed != '...') {
-		    		    $result['speed'] = round($speed*1.852);
+		    		//$result['speed'] = round($speed*1.852);
+		    		$result['speed'] = intval($speed);
 		    	    }
 		    	    $body_parse = substr($body_parse,7);
 		        }
