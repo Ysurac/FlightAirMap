@@ -49,7 +49,7 @@ if (!isset($globalSources)) {
     }
 }
 
-$options = getopt('s::',array('source::','server','idsource::'));
+$options = getopt('s::',array('source::','server','nodaemon','idsource::'));
 //if (isset($options['s'])) $hosts = array($options['s']);
 //elseif (isset($options['source'])) $hosts = array($options['source']);
 if (isset($options['s'])) {
@@ -59,6 +59,7 @@ if (isset($options['s'])) {
     $globalSources = array();
     $globalSources[] = array('host' => $options['source']);
 }
+if (isset($options['nodaemon'])) $globalDaemon = FALSE;
 if (isset($options['server'])) $globalServer = TRUE;
 if (isset($options['idsource'])) $id_source = $options['idsource'];
 else $id_source = 1;
@@ -670,7 +671,7 @@ while ($i > 0) {
 		    if (isset($data['datetime'])) $SI->add($data);
 		    unset($data);
 		}
-	    } else {
+	    } elseif (is_array($all_data)) {
 		$reset = 0;
 		foreach ($all_data as $line) {
 		    $data = array();
