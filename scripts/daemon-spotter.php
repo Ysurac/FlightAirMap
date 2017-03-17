@@ -49,7 +49,7 @@ if (!isset($globalSources)) {
     }
 }
 
-$options = getopt('s::',array('source::','server','nodaemon','idsource::'));
+$options = getopt('s::',array('source::','server','nodaemon','idsource::','aprsserverssid::','aprsserverpass::'));
 //if (isset($options['s'])) $hosts = array($options['s']);
 //elseif (isset($options['source'])) $hosts = array($options['source']);
 if (isset($options['s'])) {
@@ -59,6 +59,8 @@ if (isset($options['s'])) {
     $globalSources = array();
     $globalSources[] = array('host' => $options['source']);
 }
+if (isset($options['aprsserverssid'])) $globalServerAPRSssid = $options['aprsserverssid'];
+if (isset($options['aprsserverpass'])) $globalServerAPRSpass = $options['aprsserverpass'];
 if (isset($options['nodaemon'])) $globalDaemon = FALSE;
 if (isset($options['server'])) $globalServer = TRUE;
 if (isset($options['idsource'])) $id_source = $options['idsource'];
@@ -1185,7 +1187,7 @@ while ($i > 0) {
 			    //echo 'APRS data : '.$buffer."\n";
 			    $buffer = str_replace('APRS <- ','',$buffer);
 			    $buffer = str_replace('APRS -> ','',$buffer);
-			    echo $buffer."\n";
+			    //echo $buffer."\n";
 			    if (substr($buffer,0,1) != '#' && substr($buffer,0,1) != '@' && substr($buffer,0,5) != 'APRS ') {
 				$line = $APRS->parse($buffer);
 				//print_r($line);
