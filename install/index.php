@@ -467,7 +467,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="aprs" <?php if (isset($source['format']) && $source['format'] == 'aprs') print 'selected'; ?>>APRS</option>
 										<option value="deltadbtxt" <?php if (isset($source['format']) && $source['format'] == 'deltadbtxt') print 'selected'; ?>>Radarcape deltadb.txt</option>
 										<option value="vatsimtxt" <?php if (isset($source['format']) && $source['format'] == 'vatsimtxt') print 'selected'; ?>>Vatsim</option>
-										<option value="aircraftlistjson" <?php if (isset($source['format']) && $source['format'] == 'aircraftlistjson') print 'selected'; ?>>Virtual Radar Server</option>
+										<option value="aircraftlistjson" <?php if (isset($source['format']) && $source['format'] == 'aircraftlistjson') print 'selected'; ?>>Virtual Radar Server AircraftList.json</option>
+										<option value="vrstcp" <?php if (isset($source['format']) && $source['format'] == 'vrstcp') print 'selected'; ?>>Virtual Radar Server TCP</option>
 										<option value="phpvmacars" <?php if (isset($source['format']) && $source['format'] == 'phpvmacars') print 'selected'; ?>>phpVMS</option>
 										<option value="vam" <?php if (isset($source['format']) && $source['format'] == 'vam') print 'selected'; ?>>Virtual Airlines Manager</option>
 										<option value="whazzup" <?php if (isset($source['format']) && $source['format'] == 'whazzup') print 'selected'; ?>>IVAO</option>
@@ -498,7 +499,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="aprs">APRS</option>
 										<option value="deltadbtxt">Radarcape deltadb.txt</option>
 										<option value="vatsimtxt">Vatsim</option>
-										<option value="aircraftlistjson">Virtual Radar Server</option>
+										<option value="aircraftlistjson">Virtual Radar Server AircraftList.json</option>
+										<option value="vrstcp">Virtual Radar Server TCP</option>
 										<option value="phpvmacars">phpVMS</option>
 										<option value="vam">Virtual Airlines Manager</option>
 										<option value="whazzup">IVAO</option>

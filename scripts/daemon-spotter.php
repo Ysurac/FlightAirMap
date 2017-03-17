@@ -222,6 +222,8 @@ function connect_all($hosts) {
 			$globalSources[$id]['format'] = 'aprs';
 			//$aprs_connect = 0;
 			//$use_aprs = true;
+		    } elseif (preg_match('/pub-vrs/',$hostn) || $port == '32001' || $port == '32005' || $port == '32010' || $port == '32015' || $port == '32030') {
+			$globalSources[$id]['format'] = 'vrstcp';
     		    } elseif ($port == '10001') {
         		//$formats[$id] = 'tsv';
         		$globalSources[$id]['format'] = 'tsv';
@@ -668,7 +670,7 @@ while ($i > 0) {
 	    	    $data['format_source'] = 'aircraftlistjson';
 		    $data['id_source'] = $id_source;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
-		    if (isset($data['datetime'])) $SI->add($data);
+		    if (isset($data['latitude'])) $SI->add($data);
 		    unset($data);
 		}
 	    } elseif (is_array($all_data)) {
@@ -997,7 +999,7 @@ while ($i > 0) {
     	    //$last_exec['phpvmacars'] = time();
     	    $last_exec[$id]['last'] = time();
 	//} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
-	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars' || $value['format'] == 'acarssbs3' || $value['format'] == 'ais') {
+	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars' || $value['format'] == 'acarssbs3' || $value['format'] == 'ais' || $value['format'] == 'vrstcp') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
     	    //$last_exec[$id]['last'] = time();
 
@@ -1012,7 +1014,7 @@ while ($i > 0) {
 		foreach ($read as $nb => $r) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
-        	    if ($format == 'sbs' || $format == 'aprs' || $format == 'raw' || $format == 'tsv' || $format == 'acarssbs3') {
+        	    if ($format == 'sbs' || $format == 'aprs' || $format == 'raw' || $format == 'tsv' || $format == 'acarssbs3' || $format == 'vrstcp') {
         		$buffer = socket_read($r, 6000,PHP_NORMAL_READ);
         	    } else {
 	    	        $az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
@@ -1023,7 +1025,9 @@ while ($i > 0) {
 		    //if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 		    $error = false;
 		    //$SI::del();
-		    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
+		    if ($format == 'vrstcp') {
+			$buffer = explode('},{',$buffer);
+		    } else $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
 		    // SBS format is CSV format
 		    if ($buffer != '') {
 			$tt[$format] = 0;
@@ -1113,6 +1117,33 @@ while ($i > 0) {
 			} elseif ($format == 'beast') {
 			    echo 'Beast Binary format not yet supported. Beast AVR format is supported in alpha state'."\n";
 			    die;
+			} elseif ($format == 'vrstcp') {
+			    foreach($buffer as $all_data) {
+				$line = json_decode('{'.$all_data.'}',true);
+				$data = array();
+				if (isset($line['Icao'])) $data['hex'] = $line['Icao']; // hex
+				if (isset($line['Call'])) $data['ident'] = $line['Call']; // ident
+				if (isset($line['Alt'])) $data['altitude'] = $line['Alt']; // altitude
+				if (isset($line['Spd'])) $data['speed'] = $line['Spd']; // speed
+				if (isset($line['Trak'])) $data['heading'] = $line['Trak']; // heading
+				if (isset($line['Lat'])) $data['latitude'] = $line['Lat']; // lat
+				if (isset($line['Long'])) $data['longitude'] = $line['Long']; // long
+				//$data['verticalrate'] = $line['']; // verticale rate
+				if (isset($line['Sqk'])) $data['squawk'] = $line['Sqk']; // squawk
+				$data['emergency'] = ''; // emergency
+				if (isset($line['Reg'])) $data['registration'] = $line['Reg'];
+				/*
+				if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',$line['PosTime']/1000);
+				else $data['datetime'] = date('Y-m-d H:i:s');
+				*/
+				$data['datetime'] = date('Y-m-d H:i:s');
+				if (isset($line['Type'])) $data['aircraft_icao'] = $line['Type'];
+		    		$data['format_source'] = 'vrstcp';
+				$data['id_source'] = $id_source;
+				if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+				if (isset($data['latitude']) && isset($data['hex'])) $SI->add($data);
+				unset($data);
+			    }
 			} elseif ($format == 'tsv' || substr($buffer,0,4) == 'clock') {
 			    $line = explode("\t", $buffer);
 			    for($k = 0; $k < count($line); $k=$k+2) {
