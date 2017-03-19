@@ -65,6 +65,9 @@ require_once('header.php');
 	<li>Waypoints icons from <a href="http://www.fatcow.com/free-icons/">http://www.fatcow.com/free-icons/</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 3.0 BY-SA</a>.</li>
 	<li><a href="https://www.iconfinder.com/icons/1031459/antenna_communication_gps_satelite_space_icon">Satellite icon</a> by Nazarrudin Ansyari</li>
     </ul>
+    
+    <h3>Models credits</h3>
+    <p>Credits for aircrafts models are <a href="models/sources.txt">here</a>, spaces models <a href="models/space/sources.txt">here</a> and vehicules models <a href="models/vehicules/sources.txt">here</a></p>
 
 </div>
 

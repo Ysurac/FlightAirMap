@@ -28,3 +28,9 @@ License : MIT
 Attribution : Author Shramov
 Source : https://github.com/shramov/leaflet-plugins
 
+File : models/*
+License : in sources.txt
+Attribution : various
+Source : various
+
+Keep credits if you fork or use this program.
