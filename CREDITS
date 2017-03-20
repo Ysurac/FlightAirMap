@@ -20,13 +20,23 @@ Source : http://github.com/Ysurac/FlightAirMap
 
 File : js/jquery-sidebar.js
 License : MIT
-Attribution : Author : Turbo87
+Attribution : Author: Turbo87
 Source : https://github.com/Turbo87/sidebar-v2
 
 File : js/Marker.Rotate.js
 License : MIT
-Attribution : Author Shramov
+Attribution : Author: Shramov
 Source : https://github.com/shramov/leaflet-plugins
+
+File : js/leaflet.js
+License : BSD-2-Clause
+Attribution : Original author: Validimir Agafonkin
+Source : https://github.com/Leaflet/Leaflet
+
+File : js/boostrap-*-dist
+License : MIT License
+Attribution : Original authors: Mark Otto, Jacob Thornton
+Source : http://getbootstrap.com/
 
 File : models/*
 License : in sources.txt
