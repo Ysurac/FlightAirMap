@@ -14,8 +14,8 @@ Attribution : Author : Bjorn Sandvik, thematicmapping.org
 Source : http://thematicmapping.org/downloads/world_borders.php
 
 File : images/aircrafts/*
-License : GPLv3
-Attribution : Author : Ycarus (Yannick Chabanois)
+License : Creative Commons Attribution-Share Alike 3.0 Unported license.
+Attribution : Author : Ycarus/Ysurac (Yannick Chabanois) for FlightAirMap
 Source : http://github.com/Ysurac/FlightAirMap
 
 File : js/jquery-sidebar.js
@@ -33,4 +33,4 @@ License : in sources.txt
 Attribution : various
 Source : various
 
-Keep credits if you fork or use this program.
+Credits for 3D models are in the sources.txt files in models directory and subdirectories
