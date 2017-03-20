@@ -177,7 +177,7 @@ class SpotterImport {
 
 
     public function del() {
-	global $globalDebug, $globalNoImport;
+	global $globalDebug, $globalNoImport, $globalNoDB;
 	// Delete old infos
 	if ($globalDebug) echo 'Delete old values and update latest data...'."\n";
 	foreach ($this->all_flights as $key => $flight) {
