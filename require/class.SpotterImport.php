@@ -523,7 +523,7 @@ class SpotterImport {
 			    */
 			}
 
-		    } else if ($globalDebug && $timediff > 20) {
+		    } else if ($globalDebug && $timediff > 30) {
 			$this->tmd = $this->tmd + 1;
 			echo '!!! Too much distance in short time... for '.$this->all_flights[$id]['ident']."\n";
 			echo 'Time : '.$timediff.'s - Distance : '.$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')."m -";
