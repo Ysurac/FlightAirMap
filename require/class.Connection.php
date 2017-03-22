@@ -8,42 +8,49 @@ class Connection{
 	
 	public function __construct($dbc = null,$dbname = null,$user = null,$pass = null) {
 	    global $globalDBdriver, $globalNoDB;
-	    if (isset($globalNoDB) && $globalNoDB === TRUE) return true;
-	    if ($dbc === null) {
-		if ($this->db === null && $dbname === null) {
-		    if ($user === null && $pass === null) {
-		        $this->createDBConnection();
+	    if (isset($globalNoDB) && $globalNoDB === TRUE) {
+		$this->db = null;
+	    } else {
+		if ($dbc === null) {
+		    if ($this->db === null && $dbname === null) {
+			if ($user === null && $pass === null) {
+			    $this->createDBConnection();
+			} else {
+			    $this->createDBConnection(null,$user,$pass);
+			}
 		    } else {
-		        $this->createDBConnection(null,$user,$pass);
+			$this->createDBConnection($dbname);
+		    }
+		} elseif ($dbname === null || $dbname === 'default') {
+	    	    $this->db = $dbc;
+	    	    if ($this->connectionExists() === false) {
+			/*
+			echo 'Restart Connection !!!'."\n";
+			$e = new \Exception;
+			var_dump($e->getTraceAsString());
+			*/
+			$this->createDBConnection();
 		    }
 		} else {
-		    $this->createDBConnection($dbname);
+		    //$this->connectionExists();
+		    $this->dbs[$dbname] = $dbc;
 		}
-	    } elseif ($dbname === null || $dbname === 'default') {
-	        $this->db = $dbc;
-	        if ($this->connectionExists() === false) {
-		    /*
-		    echo 'Restart Connection !!!'."\n";
-		    $e = new \Exception;
-		    var_dump($e->getTraceAsString());
-		    */
-		    $this->createDBConnection();
-		}
-	    } else {
-		//$this->connectionExists();
-		$this->dbs[$dbname] = $dbc;
 	    }
 	}
 
 	public function db() {
-		if ($this->db === null) {
-			$this->__construct();
-		}
-		if ($this->db === null) {
-			echo 'Can\'t connect to database. Check configuration and database status.';
-			die;
+		if (isset($globalNoDB) && $globalNoDB === TRUE) {
+			return null;
 		} else {
-			return $this->db;
+			if ($this->db === null) {
+				$this->__construct();
+			}
+			if ($this->db === null) {
+				echo 'Can\'t connect to database. Check configuration and database status.';
+				die;
+			} else {
+				return $this->db;
+			}
 		}
 	}
 
