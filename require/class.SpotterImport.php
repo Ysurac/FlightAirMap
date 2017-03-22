@@ -268,7 +268,7 @@ class SpotterImport {
 		    $this->all_flights[$id] = array();
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('addedSpotter' => 0));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '','altitude_real' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','ground' => '0', 'format_source' => '','source_name' => '','over_country' => '','verticalrate' => '','noarchive' => false,'putinarchive' => true,'source_type' => ''));
-		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('lastupdate' => time()));
+		    if (isset($globalDaemon) && $globalDaemon === FALSE) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('lastupdate' => time()));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
 //			if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw') && $globalDaemon) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.$this->all_flights[$id]['ident'].'-'.date('YmdGi')));
@@ -446,7 +446,7 @@ class SpotterImport {
 			$speed = $distance/(time() - $this->all_flights[$id]['time_last_coord']);
 			$speed = $speed*3.6;
 			if ($speed < 1000) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('speed' => round($speed)));
-  			if ($globalDebug) echo "ø Calculated Speed for ".$this->all_flights[$id]['hex']." : ".$speed." - distance : ".$distance."\n";
+  			if ($globalDebug) echo "ø Calculated Speed for ".$this->all_flights[$id]['hex']." : ".round($speed)." - distance : ".$distance."\n";
 		    }
 		}
 
