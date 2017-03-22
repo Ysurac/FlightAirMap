@@ -22,24 +22,26 @@ class SpotterImport {
     public $nb = 0;
 
     public function __construct($dbc = null) {
-	global $globalBeta, $globalServerAPRS, $APRSSpotter;
-	$Connection = new Connection($dbc);
-	$this->db = $Connection->db();
-	date_default_timezone_set('UTC');
+	global $globalBeta, $globalServerAPRS, $APRSSpotter, $globalNoDB;
+	if (!(isset($globalNoDB) && $globalNoDB)) {
+		$Connection = new Connection($dbc);
+		$this->db = $Connection->db();
+		date_default_timezone_set('UTC');
 
-	// Get previous source stats
-	$Stats = new Stats($dbc);
-	$currentdate = date('Y-m-d');
-	$sourcestat = $Stats->getStatsSource($currentdate);
-	if (!empty($sourcestat)) {
-	    foreach($sourcestat as $srcst) {
-	    	$type = $srcst['stats_type'];
-		if ($type == 'polar' || $type == 'hist') {
-		    $source = $srcst['source_name'];
-		    $data = $srcst['source_data'];
-		    $this->stats[$currentdate][$source][$type] = json_decode($data,true);
-	        }
-	    }
+		// Get previous source stats
+		$Stats = new Stats($dbc);
+		$currentdate = date('Y-m-d');
+		$sourcestat = $Stats->getStatsSource($currentdate);
+		if (!empty($sourcestat)) {
+		    foreach($sourcestat as $srcst) {
+		    	$type = $srcst['stats_type'];
+			if ($type == 'polar' || $type == 'hist') {
+			    $source = $srcst['source_name'];
+			    $data = $srcst['source_data'];
+			    $this->stats[$currentdate][$source][$type] = json_decode($data,true);
+	    		}
+		    }
+		}
 	}
 	if (isset($globalServerAPRS) && $globalServerAPRS) {
 		$APRSSpotter = new APRSSpotter();
