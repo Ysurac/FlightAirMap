@@ -14,8 +14,10 @@ if ($airline_icao == '' && isset($globalFilter)) {
 require_once('header.php');
 include('statistics-sub-menu.php'); 
 
-print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<div class="info">
+print '<link href="'.$globalURL.'/css/c3.min.css" rel="stylesheet" type="text/css">';
+print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
+print '<script type="text/javascript" src="'.$globalURL.'/js/c3.min.js"></script>';
+print '<div class="info">
 	  	<h1>'._("Busiest Day").'</h1>
 	  </div>
       <p>'._("Below is a chart that plots the busiest day during the <strong>last 7 days</strong>.").'</p>';
@@ -24,39 +26,22 @@ $date_array = $Stats->countAllDatesLast7Days($airline_icao,$filter_name);
 if (count($date_array) == 0) {
 	print _("No data available");
 } else {
-print '<div id="chart" class="chart" width="100%"></div>
-      	<script> 
-      		google.load("visualization", "1", {packages:["corechart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-            	["'._("Date").'", "'._("# of Flights").'"], ';
-
+print '<div id="chart" class="chart" width="100%"></div><script>';
 $date_data = '';
+$date_cnt = '';
 foreach($date_array as $date_item)
 {
-	$date_data .= '[ "'.date("F j, Y", strtotime($date_item['date_name'])).'",'.$date_item['date_count'].'],';
+	$date_data .= '"'.$date_item['date_name'].'",';
+	$date_cnt .= $date_item['date_count'].',';
 }
-$date_data = substr($date_data, 0, -1);
-print $date_data;
-print ']);
-    
-            var options = {
-            	legend: {position: "none"},
-            	chartArea: {"width": "80%", "height": "60%"},
-            	vAxis: {title: "'._("# of Flights").'"},
-            	hAxis: {showTextEvery: 2},
-            	height:300,
-            	colors: ["#1a3151"]
-            };
-    
-            var chart = new google.visualization.AreaChart(document.getElementById("chart"));
-            chart.draw(data, options);
-          }
-          $(window).resize(function(){
-    			  drawChart();
-    			});
-      </script>';
+$date_data = "['x',".substr($date_data, 0, -1)."]";
+$date_cnt = "['flights',".substr($date_cnt,0,-1)."]";
+print 'c3.generate({
+    bindto: "#chart",
+    data: { x: "x",
+     columns: ['.$date_data.','.$date_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
+     axis: { x: { type: "timeseries",tick: { format: "%Y-%m-%d"}}, y: { label: "# of Flights"}},legend: { show: false }});';
+print '</script>';
 }
 if (isset($globalDBArchiveMonths) && $globalDBArchiveMonths > 0) {
 	print '<p>'.sprintf(_("Below are the <strong>Top 10</strong> most busiest dates of last %d month(s)."),$globalDBArchiveMonths).'</p>';

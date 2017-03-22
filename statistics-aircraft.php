@@ -16,42 +16,29 @@ $month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
 require_once('header.php');
 
 include('statistics-sub-menu.php');
-print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<div class="info">
+print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
+print '<script type="text/javascript" src="'.$globalURL.'/js/d3pie.min.js"></script>';
+print '<div class="info">
 	 	<h1>'._("Most common Aircraft").'</h1>
 	</div>
 	<p>'._("Below are the <strong>Top 10</strong> most common aircraft types.").'</p>';
 	  
 $aircraft_array = $Stats->countAllAircraftTypes(true,$airline_icao,$filter_name,$year,$month);
-print '<div id="chart" class="chart" width="100%"></div>
-      	<script> 
-      		google.load("visualization", "1", {packages:["corechart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-            	["'._("Aircraft").'", "'._("# of times").'"], ';
+print '<div id="chart" class="chart" width="100%"></div><script>';
 $aircraft_data = '';
 foreach($aircraft_array as $aircraft_item)
 {
-	$aircraft_data .= '[ "'.$aircraft_item['aircraft_manufacturer'].' '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')",'.$aircraft_item['aircraft_icao_count'].'],';
+	$aircraft_data .= '["'.$aircraft_item['aircraft_manufacturer'].' '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')",'.$aircraft_item['aircraft_icao_count'].'],';
 }
 $aircraft_data = substr($aircraft_data, 0, -1);
-print $aircraft_data;
-print ']);
-    
-            var options = {
-            	chartArea: {"width": "80%", "height": "60%"},
-            	height:500,
-            	 is3D: true
-            };
-    
-            var chart = new google.visualization.PieChart(document.getElementById("chart"));
-            chart.draw(data, options);
-          }
-          $(window).resize(function(){
-    			  drawChart();
-    			});
-      </script>';
+print 'var series = ['.$aircraft_data.'];';
+print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#e6e6f6","#1a3151"]);';
+print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
+print 'var aircraftype = new d3pie("chart",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"80%"},"data":{"sortOrder":"value-desc","content":';
+print 'dataset';
+print '},"labels":{"outer":{"pieDistance":32},"inner":{"hideWhenLessThanPercentage":3},"mainLabel":{"fontSize":11},"percentage":{"color":"#ffffff","decimalPlaces":0},"value":{"color":"#adadad","fontSize":11},"lines":{"enabled":true},"truncation":{"enabled":true}},"effects":{"pullOutSegmentOnClick":{"effect":"linear","speed":400,"size":8}},"misc":{"gradient":{"enabled":true,"percentage":100}}});';
+print '</script>';
 
 if (!empty($aircraft_array))
 {

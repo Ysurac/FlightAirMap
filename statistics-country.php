@@ -14,8 +14,10 @@ if ($airline_icao == '' && isset($globalFilter)) {
 require_once('header.php');
 include('statistics-sub-menu.php'); 
 
-print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<div class="info">
+print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
+print '<script type="text/javascript" src="'.$globalURL.'/js/topojson.v2.min.js"></script>';
+print '<script type="text/javascript" src="'.$globalURL.'/js/datamaps.world.min.js"></script>';
+print '<div class="info">
 	  	<h1>'._("Most common Country a flight was over").'</h1>
 	  </div>
 	<p>'._("Below are the <strong>Top 10</strong> most common country a flight was over.").'</p>';
@@ -26,37 +28,46 @@ require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
 $flightover_array = $Spotter->countAllFlightOverCountries(true,$airline_icao,$filter_name);
 */
-print '<div id="chart" class="chart" width="100%"></div>
-      	<script> 
-      		google.load("visualization", "1", {packages:["corechart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-            	["'._("Country").'", "'._("# of times").'"], ';
-$flightover_data = '';
+print '<div id="chart" class="chart" width="100%"></div><script>';
+print 'var series = [';
+            $flightover_data = '';
 foreach($flightover_array as $flightover_item)
 {
-	$flightover_data .= '[ "'.$flightover_item['flight_country'].' ('.$flightover_item['flight_country_iso2'].')",'.$flightover_item['flight_count'].'],';
+	$flightover_data .= '[ "'.$flightover_item['flight_country_iso3'].'",'.$flightover_item['flight_count'].'],';
 }
 $flightover_data = substr($flightover_data, 0, -1);
 print $flightover_data;
-print ']);
-    
-            var options = {
-            	chartArea: {"width": "80%", "height": "60%"},
-            	height:500,
-            	 is3D: true,
-                colors: ["#8BA9D0","#1a3151"]
-            };
-    
-            //var chart = new google.visualization.PieChart(document.getElementById("chart"));
-	    var chart = new google.visualization.GeoChart(document.getElementById("chart"));
-            chart.draw(data, options);
-          }
-          $(window).resize(function(){
-    			  drawChart();
-    			});
-      </script>';
+print '];';
+print 'var dataset = {};var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+print 'series.forEach(function(item){var iso = item[0], value = item[1]; dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };});';
+print 'new Datamap({
+    element: document.getElementById("chart"),
+    projection: "mercator", // big world map
+    fills: { defaultFill: "#F5F5F5" },
+    data: dataset,
+    responsive: true,
+    geographyConfig: {
+    borderColor: "#DEDEDE",
+    highlightBorderWidth: 2,
+    highlightFillColor: function(geo) {
+    return geo["fillColor"] || "#F5F5F5";
+    },
+    highlightBorderColor: "#B7B7B7",
+    done: function(datamap) {
+    datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+    function redraw() {
+        datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
+    },
+    popupTemplate: function(geo, data) {
+    if (!data) { return ; }
+    return ['."'".'<div class="hoverinfo">'."','<strong>', geo.properties.name, '</strong>','<br>Count: <strong>', data.numberOfThings, '</strong>','</div>'].join('');
+    }
+}
+});";
+
+print '</script>';
 
 if (!empty($flightover_array))
 {

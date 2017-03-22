@@ -7,26 +7,27 @@ class Connection{
 	public $latest_schema = 37;
 	
 	public function __construct($dbc = null,$dbname = null,$user = null,$pass = null) {
-	    global $globalDBdriver;
+	    global $globalDBdriver, $globalNoDB;
+	    if (isset($globalNoDB) && $globalNoDB === TRUE) return true;
 	    if ($dbc === null) {
 		if ($this->db === null && $dbname === null) {
 		    if ($user === null && $pass === null) {
-			$this->createDBConnection();
+		        $this->createDBConnection();
 		    } else {
-			$this->createDBConnection(null,$user,$pass);
+		        $this->createDBConnection(null,$user,$pass);
 		    }
 		} else {
 		    $this->createDBConnection($dbname);
 		}
 	    } elseif ($dbname === null || $dbname === 'default') {
-		$this->db = $dbc;
-		if ($this->connectionExists() === false) {
-			/*
-			echo 'Restart Connection !!!'."\n";
-			$e = new \Exception;
-			var_dump($e->getTraceAsString());
-			*/
-			$this->createDBConnection();
+	        $this->db = $dbc;
+	        if ($this->connectionExists() === false) {
+		    /*
+		    echo 'Restart Connection !!!'."\n";
+		    $e = new \Exception;
+		    var_dump($e->getTraceAsString());
+		    */
+		    $this->createDBConnection();
 		}
 	    } else {
 		//$this->connectionExists();
@@ -298,6 +299,8 @@ class Connection{
 	* @return Boolean if latest version or not
 	*/
 	public function latest() {
+	    global $globalNoDB;
+	    if (isset($globalNoDB) && $globalNoDB === TRUE) return true;
 	    if ($this->check_schema_version() == $this->latest_schema) return true;
 	    else return false;
 	}

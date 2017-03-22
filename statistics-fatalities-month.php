@@ -7,46 +7,32 @@ $title = _("Statistics").' - '._("Fatalities last 12 months");
 
 require_once('header.php');
 include('statistics-sub-menu.php');
-print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<div class="info">
+print '<link href="'.$globalURL.'/css/c3.min.css" rel="stylesheet" type="text/css">';
+print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
+print '<script type="text/javascript" src="'.$globalURL.'/js/c3.min.js"></script>';
+
+print '<div class="info">
 	  	<h1>'._("Fatalities last 12 months").'</h1>
 	</div>
       <p>'._("Below is a chart that plots the fatalities <strong>last 12 months</strong>.").'</p>';
 
 $date_array = $Accident->countFatalitiesLast12Months();
-print '<div id="chart" class="chart" width="100%"></div>
-      	<script> 
-      		google.load("visualization", "1", {packages:["corechart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-            	["'._("Month").'", "'._("# of Fatalities").'"], ';
-
-$date_data = '';
-foreach($date_array as $date_item)
+print '<div id="chart" class="chart" width="100%"></div><script>';
+$year_data = '';
+$year_cnt = '';
+foreach($date_array as $year_item)
 {
-	$date_data .= '[ "'.date('F, Y',strtotime($date_item['year'].'-'.$date_item['month'].'-01')).'",'.$date_item['count'].'],';
+	$year_data .= '"'.$year_item['year'].'-'.$year_item['month'].'-01",';
+	$year_cnt .= $year_item['count'].',';
 }
-$date_data = substr($date_data, 0, -1);
-print $date_data;
-print ']);
-    
-            var options = {
-            	legend: {position: "none"},
-            	chartArea: {"width": "80%", "height": "60%"},
-            	vAxis: {title: "'._("# of Fatalities").'"},
-            	hAxis: {showTextEvery: 2},
-            	height:300,
-            	colors: ["#1a3151"]
-            };
-    
-            var chart = new google.visualization.AreaChart(document.getElementById("chart"));
-            chart.draw(data, options);
-          }
-          $(window).resize(function(){
-    			  drawChart();
-    			});
-      </script>';
+$year_data = "['x',".substr($year_data, 0, -1)."]";
+$year_cnt = "['flights',".substr($year_cnt,0,-1)."]";
+print 'c3.generate({
+    bindto: "#chart",
+    data: { x: "x",
+    columns: ['.$year_data.','.$year_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
+    axis: { x: { type: "timeseries",tick: { format: "%Y-%m"}}, y: { label: "# of Flights"}},legend: { show: false }});';
+print '</script>';
 
 if (!empty($date_array))
 {

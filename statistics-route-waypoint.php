@@ -8,8 +8,7 @@ require_once('header.php');
 if (!isset($filter_name)) $filter_name = '';
 include('statistics-sub-menu.php'); 
 
-print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<div class="info">
+print '<div class="info">
 	  	<h1>'._("Most common Route by Waypoint").'</h1>
 	  </div>
       <p>'._("Below are the <strong>Top 10</strong> most common routes, based on the waypoint data. Theoretically, since the waypoint data is the full 'planned flight route' this statistic would show the actual most common route.").'</p>';

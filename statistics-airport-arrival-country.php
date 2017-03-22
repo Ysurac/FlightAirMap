@@ -15,51 +15,55 @@ $month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
 require_once('header.php');
 include('statistics-sub-menu.php'); 
 
-print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<div class="info">
+print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
+print '<script type="text/javascript" src="'.$globalURL.'/js/topojson.v2.min.js"></script>';
+print '<script type="text/javascript" src="'.$globalURL.'/js/datamaps.world.min.js"></script>';
+print '<div class="info">
 	  	<h1>'._("Most common Arrival Airport by Country").'</h1>
 	  </div>
     	 <p>'._("Below are the <strong>Top 10</strong> most common countries of all the arrival airports.").'</p>';
+print '<div id="chartCountry" class="chart" width="100%"></div>';
 
 $airport_country_array = $Stats->countAllArrivalCountries(true,$airline_icao,$filter_name,$year,$month);
-
-print '<script>
-    	google.load("visualization", "1", {packages:["geochart"]});
-    	google.setOnLoadCallback(drawCharts);
-    	$(window).resize(function(){
-    		drawCharts();
-    	});
-    	function drawCharts() {
-        
-        var data = google.visualization.arrayToDataTable([ 
-        	["'._("Country").'", "'._("# of times").'"],';
-
+print '<script>';
+print 'var series = [';
 $country_data = '';
 foreach($airport_country_array as $airport_item)
 {
-	$country_data .= '[ "'.$airport_item['airport_arrival_country'].'",'.$airport_item['airport_arrival_country_count'].'],';
+	$country_data .= '[ "'.$airport_item['airport_arrival_country_iso3'].'",'.$airport_item['airport_arrival_country_count'].'],';
 }
 $country_data = substr($country_data, 0, -1);
 print $country_data;
-?>
-
-        ]);
-    
-        var options = {
-        	legend: {position: "none"},
-        	chartArea: {"width": "80%", "height": "60%"},
-        	height:500,
-        	colors: ["#8BA9D0","#1a3151"]
-        };
-    
-        var chartCountry = new google.visualization.GeoChart(document.getElementById("chartCountry"));
-        chartCountry.draw(data, options);
-      }
-    	</script>
-    
-    	<div id="chartCountry" class="chart" width="100%"></div>
-    	
-<?php
+print '];';
+print 'var dataset = {};var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+print 'series.forEach(function(item){var iso = item[0], value = item[1]; dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };});';
+print 'new Datamap({
+	    element: document.getElementById("chartCountry"),
+	    projection: "mercator", // big world map
+	    fills: { defaultFill: "#F5F5F5" },
+	    data: dataset,
+	    responsive: true,
+	    geographyConfig: {
+	    borderColor: "#DEDEDE",
+	    highlightBorderWidth: 2,
+	    highlightFillColor: function(geo) {
+	    return geo["fillColor"] || "#F5F5F5";
+	    },
+	    highlightBorderColor: "#B7B7B7",
+	    done: function(datamap) {
+	    datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+	    function redraw() {
+	        datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+	    }
+	    },
+	    popupTemplate: function(geo, data) {
+	    if (!data) { return ; }
+	    return ['."'".'<div class="hoverinfo">'."','<strong>', geo.properties.name, '</strong>','<br>Count: <strong>', data.numberOfThings, '</strong>','</div>'].join('');
+    	    }
+	}
+        });";
+print '</script>';
 
 print '<div class="table-responsive">';
 print '<table class="common-country table-striped">';

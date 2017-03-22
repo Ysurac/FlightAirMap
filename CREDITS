@@ -38,6 +38,25 @@ License : MIT License
 Attribution : Original authors: Mark Otto, Jacob Thornton
 Source : http://getbootstrap.com/
 
+File : js/d3.min.js
+License : BSD 3-clause
+Attribution : Original Author: Mike Bostock
+Source : https://d3js.org/
+
+File : js/c3.min.js
+License : MIT
+Source : https://github.com/c3js/c3
+
+File : js/d3pie.min.js
+License : MIT
+Attribution : Original Author: Ben Keen
+Source : https://github.com/benkeen/d3pie
+
+File : js/datamaps.world.min.js
+License : MIT
+Attribution : Original Author: Mark DiMarco
+Source : https://github.com/markmarkoh/datamaps
+
 File : models/*
 License : in sources.txt
 Attribution : various

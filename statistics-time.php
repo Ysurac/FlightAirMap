@@ -14,52 +14,31 @@ if ($airline_icao == '' && isset($globalFilter)) {
 require_once('header.php');
 include('statistics-sub-menu.php');
 
-print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<div class="info">
+print '<link href="'.$globalURL.'/css/c3.min.css" rel="stylesheet" type="text/css">';
+print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
+print '<script type="text/javascript" src="'.$globalURL.'/js/c3.min.js"></script>';
+print '<div class="info">
 	    <h1>'._("Busiest Time of the Day").'</h1>
 	</div>
 	<p>'._("Below is a list of the most common <strong>time of day</strong>.").'</p>';
 
 $hour_array = $Stats->countAllHours('hour',true,$airline_icao,$filter_name);
-print '<div id="chartHour" class="chart" width="100%"></div>
-      	<script> 
-      		google.load("visualization", "1", {packages:["corechart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-            	["'._("Hour").'", "'._("# of Flights").'"], ';
-
+print '<div id="chartHour" class="chart" width="100%"></div><script>';
 $hour_data = '';
-if (isset($globalTimezone)) {
-	date_default_timezone_set($globalTimezone);
-} else {
-	date_default_timezone_set('UTC');
-}
-//print_r($hour_array);
+$hour_cnt = '';
 foreach($hour_array as $hour_item)
 {
-	$hour_data .= '[ "'.$hour_item['hour_name'].':00",'.$hour_item['hour_count'].'],';
+	$hour_data .= '"'.$hour_item['hour_name'].':00",';
+	$hour_cnt .= $hour_item['hour_count'].',';
 }
-$hour_data = substr($hour_data, 0, -1);
-print $hour_data;
-print ']);
-    
-            var options = {
-            	legend: {position: "none"},
-            	chartArea: {"width": "80%", "height": "60%"},
-            	vAxis: {title: "'._("# of Flights").'"},
-            	hAxis: {showTextEvery: 2},
-            	height:300,
-            	colors: ["#1a3151"]
-            };
-    
-            var chart = new google.visualization.AreaChart(document.getElementById("chartHour"));
-            chart.draw(data, options);
-          }
-          $(window).resize(function(){
-    			  drawChart();
-    			});
-      </script>';
+$hour_data = "[".substr($hour_data, 0, -1)."]";
+$hour_cnt = "['flights',".substr($hour_cnt,0,-1)."]";
+print 'c3.generate({
+    bindto: "#chartHour",
+    data: {
+    columns: ['.$hour_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
+    axis: { x: { type: "category", categories: '.$hour_data.'},y: { label: "# of Flights"}},legend: { show: false }});';
+print '</script>';
 
 $hour_array = $Stats->countAllHours('count',true,$airline_icao,$filter_name);
 if (!empty($hour_array))

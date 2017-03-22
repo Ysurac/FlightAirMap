@@ -185,8 +185,8 @@ class Stats {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao AND filter_name = :filter_name GROUP BY airline_country ORDER BY airline_country_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count FROM stats_airline,airlines WHERE stats_airline.airline_icao=airlines.icao AND filter_name = :filter_name GROUP BY airline_country ORDER BY airline_country_count DESC";
+			if ($limit) $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count, countries.iso3 AS airline_country_iso3 FROM stats_airline,airlines,countries WHERE countries.name = airlines.country AND stats_airline.airline_icao=airlines.icao AND filter_name = :filter_name GROUP BY airline_country, countries.iso3 ORDER BY airline_country_count DESC LIMIT 10 OFFSET 0";
+			else $query = "SELECT airlines.country AS airline_country, SUM(stats_airline.cnt) as airline_country_count, countries.iso3 AS airline_country_iso3 FROM stats_airline,airlines,countries WHERE countries.name = airlines.country AND stats_airline.airline_icao=airlines.icao AND filter_name = :filter_name GROUP BY airline_country, countries.iso3 ORDER BY airline_country_count DESC";
 			try {
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':filter_name' => $filter_name));
@@ -237,8 +237,8 @@ class Stats {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_arrival_country ORDER BY airport_arrival_country_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_arrival_country ORDER BY airport_arrival_country_count DESC";
+			if ($limit) $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count, countries.iso3 AS airport_arrival_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_arrival_country, countries.iso3 ORDER BY airport_arrival_country_count DESC LIMIT 10 OFFSET 0";
+			else $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count, countries.iso3 AS airport_arrival_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_aiport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_arrival_country, countries.iso3 ORDER BY airport_arrival_country_count DESC";
 			try {
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
@@ -261,8 +261,8 @@ class Stats {
 	public function countAllDepartureCountries($limit = true, $stats_airline = '', $filter_name = '', $year = '', $month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($limit) $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_departure_country ORDER BY airport_departure_country_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count FROM stats_airport WHERE stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_departure_country ORDER BY airport_departure_country_count DESC";
+		if ($limit) $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count, countries.iso3 as airport_departure_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_departure_country, countries.iso3 ORDER BY airport_departure_country_count DESC LIMIT 10 OFFSET 0";
+		else $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count, countries.iso3 as airport_departure_country_iso3 FROM stats_airport, countries WHERE countries.iso3 = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_departure_country, countries.iso3 ORDER BY airport_departure_country_count DESC";
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
@@ -448,8 +448,8 @@ class Stats {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE departure > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count FROM stats_airport WHERE departure > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC";
+			if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count, airport.latitude AS airport_departure_latitude, airport.longitude AS airport_departure_longitude FROM stats_airport,airport WHERE airport.icao = stats_airport.airport_icao AND departure > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC LIMIT 10 OFFSET 0";
+			else $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count, airport.latitude AS airport_departure_latitude, airport.longitude AS airport_departure_longitude FROM stats_airport,airport WHERE airport.icao = stats_airport.airport_icao AND departure > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC";
 			try {
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
@@ -492,8 +492,8 @@ class Stats {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE arrival > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count FROM stats_airport WHERE arrival > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC";
+			if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count, airport.latitude AS airport_arrival_latitude, airport.longitude AS airport_arrival_longitude FROM stats_airport, airport WHERE airport.icao = stats_airport.airport_icao AND arrival > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC LIMIT 10 OFFSET 0";
+			else $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count, airport.latitude AS airport_arrival_latitude, airport.longitude AS airport_arrival_longitude FROM stats_airport, airport WHERE airport.icao = stats_airport.airport_icao AND arrival > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC";
 			try {
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
