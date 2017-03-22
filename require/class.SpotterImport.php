@@ -615,8 +615,8 @@ class SpotterImport {
   		    // If not enough messages and ACARS set heading to 0
   		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => 0));
   		}
-		if (isset($globalSourcesupdate) && $globalSourcesupdate != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSourcesupdate) $dataFound = false;
-		elseif (isset($globalSBS1update) && $globalSBS1update != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSBS1update) $dataFound = false;
+		if ($globalDaemon === TRUE && isset($globalSourcesupdate) && $globalSourcesupdate != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSourcesupdate) $dataFound = false;
+		elseif ($globalDaemon === TRUE && isset($globalSBS1update) && $globalSBS1update != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSBS1update) $dataFound = false;
 
 //		print_r($this->all_flights[$id]);
 		//gets the callsign from the last hour
