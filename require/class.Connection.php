@@ -39,6 +39,7 @@ class Connection{
 	}
 
 	public function db() {
+		global $globalNoDB;
 		if (isset($globalNoDB) && $globalNoDB === TRUE) {
 			return null;
 		} else {
