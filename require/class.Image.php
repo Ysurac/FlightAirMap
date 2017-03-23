@@ -145,6 +145,7 @@ class Image {
 			if ($source == 'customsources') $images_array = $this->fromCustomSource($aircraft_registration,$aircraft_name);
 			if (isset($images_array) && $images_array['original'] != '') return $images_array;
 		}
+		if (isset($aircraft_icao)) return $this->findAircraftImage($aircraft_icao);
 		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
