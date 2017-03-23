@@ -112,7 +112,7 @@ class Image {
 	*/
 	public function findAircraftImage($aircraft_registration, $aircraft_icao = '', $airline_icao = '')
 	{
-		global $globalAircraftImageSources, $globalIVAO;
+		global $globalAircraftImageSources, $globalIVAO, $globalAircraftImageCheckICAO;
 		$Spotter = new Spotter($this->db);
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
@@ -127,8 +127,10 @@ class Image {
 			if (isset($aircraft_info[0]['airline_icao'])) $airline_icao = $aircraft_info[0]['airline_icao'];
 			else $airline_icao = '';
 		} elseif ($aircraft_icao != '') {
+			$aircraft_info = $Spotter->getAllAircraftInfo($aircraft_icao);
+			if (isset($aircraft_info[0]['type'])) $aircraft_name = $aircraft_info[0]['type'];
+			else $aircraft_name = '';
 			$aircraft_registration = $aircraft_icao;
-			$aircraft_name = '';
 		} else return array('thumbnail' => '','original' => '', 'copyright' => '', 'source' => '','source_website' => '');
 		if (!isset($globalAircraftImageSources)) $globalAircraftImageSources = array('ivaomtl','wikimedia','airportdata','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
 		foreach ($globalAircraftImageSources as $source) {
@@ -145,7 +147,7 @@ class Image {
 			if ($source == 'customsources') $images_array = $this->fromCustomSource($aircraft_registration,$aircraft_name);
 			if (isset($images_array) && $images_array['original'] != '') return $images_array;
 		}
-		if (isset($aircraft_icao)) return $this->findAircraftImage($aircraft_icao);
+		if ((!isset($globalAircraftImageCheckICAO) || $globalAircraftImageCheckICAO === TRUE) && isset($aircraft_icao)) return $this->findAircraftImage($aircraft_icao);
 		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
