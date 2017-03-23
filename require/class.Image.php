@@ -482,7 +482,8 @@ class Image {
 					if ($source['exif'] && exif_imagetype($url) == IMAGETYPE_JPEG) $exifCopyright = $this->getExifCopyright($url);
 					else $exifCopyright = '';
 					if ($exifCopyright  != '') $image_url['copyright'] = $exifCopyright;
-					else $image_url['copyright'] = $source['copyright'];
+					elseif (isset($source['copyright'])) $image_url['copyright'] = $source['copyright'];
+					else $image_url['copyright'] = $source['source_website'];
 					$image_url['source_website'] = $source['source_website'];
 					$image_url['source'] = $source['source'];
 					return $image_url;
