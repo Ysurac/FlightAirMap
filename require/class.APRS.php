@@ -464,13 +464,17 @@ class aprs {
 			    break;
 			}
 		}
+		socket_set_option($this->socket,SOL_SOCKET,SO_KEEPALIVE);
 	}
     }
     
     function send($data) {
 	if ($this->connected === false) $this->connect();
 	$send = socket_send( $this->socket  , $data , strlen($data),0);
-	if ($send === FALSE) $this->connect();
+	if ($send === FALSE) {
+		socket_close($this->socket);
+		$this->connect();
+	}
     }
 }
 

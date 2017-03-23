@@ -857,7 +857,7 @@ class SpotterImport {
 					if ($globalDebug) echo $result."\n";
 				    }
 				}
-				if (isset($globalServerAPRS) && $globalServerAPRS) {
+				if (isset($globalServerAPRS) && $globalServerAPRS && $this->all_flights[$id]['putinarchive']) {
 					$APRSSpotter->addLiveSpotterData($this->all_flights[$id]['id'], $this->all_flights[$id]['ident'], $this->all_flights[$id]['aircraft_icao'], $this->all_flights[$id]['departure_airport'], $this->all_flights[$id]['arrival_airport'], $this->all_flights[$id]['latitude'], $this->all_flights[$id]['longitude'], $this->all_flights[$id]['waypoints'], $this->all_flights[$id]['altitude'], $this->all_flights[$id]['altitude_real'], $this->all_flights[$id]['heading'], $this->all_flights[$id]['speed'],$this->all_flights[$id]['datetime'], $this->all_flights[$id]['departure_airport_time'], $this->all_flights[$id]['arrival_airport_time'], $this->all_flights[$id]['squawk'],$this->all_flights[$id]['route_stop'],$this->all_flights[$id]['hex'],$this->all_flights[$id]['putinarchive'],$this->all_flights[$id]['registration'],$this->all_flights[$id]['pilot_id'],$this->all_flights[$id]['pilot_name'], $this->all_flights[$id]['verticalrate'], $this->all_flights[$id]['noarchive'], $this->all_flights[$id]['ground'],$this->all_flights[$id]['format_source'],$this->all_flights[$id]['source_name'],$this->all_flights[$id]['over_country']);
 				}
 				$this->all_flights[$id]['putinarchive'] = false;
