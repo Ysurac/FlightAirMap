@@ -316,7 +316,9 @@ class aprs {
 		    }
 		    */
 		    // DAO
+		    
 		    if (preg_match('/^!([0-9A-Z]{3})/',$body_parse,$matches)) {
+			    
 			    $dao = $matches[1];
 			    if (preg_match('/^([A-Z])([0-9]{2})/',$dao)) {
 				$dao_split = str_split($dao);
@@ -328,6 +330,7 @@ class aprs {
 				if ($result['longitude'] < 0) $result['longitude'] -= $lon_off;
 				else $result['longitude'] += $lon_off;
 			    }
+			    
 		            $body_parse = substr($body_parse,6);
 		    }
 		    
@@ -484,7 +487,7 @@ class APRSSpotter extends APRS {
 		if ($latitude != '' && $longitude != '') {
 			$latitude = $Common->convertDM($latitude,'latitude');
 			$longitude = $Common->convertDM($longitude,'longitude');
-			$coordinate = str_pad($latitude['deg'].number_format($latitude['min'],2,'.',''),7,'0',STR_PAD_LEFT).$latitude['NSEW'].'/'.str_pad($longitude['deg'].number_format($longitude['min'],2,'.',''),8,'0',STR_PAD_LEFT).$longitude['NSEW'];
+			$coordinate = sprintf("%02d",$latitude['deg']).str_pad(number_format($latitude['min'],2,'.',''),5,'0',STR_PAD_LEFT).$latitude['NSEW'].'/'.sprintf("%03d",$longitude['deg']).str_pad(number_format($longitude['min'],2,'.',''),5,'0',STR_PAD_LEFT).$longitude['NSEW'];
 			$w1 = abs(ceil(($latitude['min'] - number_format($latitude['min'],2,'.',''))*1000));
 			$w2 = abs(ceil(($longitude['min'] - number_format($longitude['min'],2,'.',''))*1000));
 			$w = $w1.$w2;
