@@ -29,6 +29,7 @@ if (!isset($_GET['airport'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	$airport_icao = filter_input(INPUT_GET,'airport',FILTER_SANITIZE_STRING);
+	$airport = $airport_icao;
 	$page_url = $globalURL.'/airport/'.$airport_icao;
 	
 	if (isset($_GET['sort'])) {

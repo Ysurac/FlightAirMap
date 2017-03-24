@@ -60,37 +60,48 @@ if (!empty($airport_array))
 	print '<p>'.sprintf(_("The statistic below shows the most common airlines by Country of origin of flights to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
 
 	$airline_array = $Spotter->countAllAirlineCountriesByAirport($airport);
-	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
-	print '<div id="chartCountry" class="chart" width="100%"></div>
-	<script> 
-      		google.load("visualization", "1", {packages:["geochart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-            	["'._("Country").'", "'._("# of times").'"], ';
-            	$country_data = '';
+	print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
+	print '<script type="text/javascript" src="'.$globalURL.'/js/topojson.v2.min.js"></script>';
+	print '<script type="text/javascript" src="'.$globalURL.'/js/datamaps.world.min.js"></script>';
+	print '<div id="chartCountry" class="chart" width="100%"></div><script>';
+	print 'var series = [';
+	$country_data = '';
 	foreach($airline_array as $airline_item)
 	{
-		$country_data .= '[ "'.$airline_item['airline_country'].'",'.$airline_item['airline_country_count'].'],';
+		$country_data .= '[ "'.$airline_item['airline_country_iso3'].'",'.$airline_item['airline_country_count'].'],';
 	}
 	$country_data = substr($country_data, 0, -1);
 	print $country_data;
-	print ']);
-    
-            var options = {
-            	legend: {position: "none"},
-            	chartArea: {"width": "80%", "height": "60%"},
-            	height:500,
-            	colors: ["#8BA9D0","#1a3151"]
-            };
-    
-            var chart = new google.visualization.GeoChart(document.getElementById("chartCountry"));
-            chart.draw(data, options);
-          }
-          $(window).resize(function(){
-    			  drawChart();
-    			});
-      </script>';
+	print '];';
+	print 'var dataset = {};var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+	print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+	print 'series.forEach(function(item){var iso = item[0], value = item[1]; dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };});';
+	print 'new Datamap({
+	    element: document.getElementById("chartCountry"),
+	    projection: "mercator", // big world map
+	    fills: { defaultFill: "#F5F5F5" },
+	    data: dataset,
+	    responsive: true,
+	    geographyConfig: {
+	    borderColor: "#DEDEDE",
+	    highlightBorderWidth: 2,
+	    highlightFillColor: function(geo) {
+	    return geo["fillColor"] || "#F5F5F5";
+	    },
+	    highlightBorderColor: "#B7B7B7",
+	    done: function(datamap) {
+	    datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+	    function redraw() {
+	        datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+	    }
+	    },
+	    popupTemplate: function(geo, data) {
+	    if (!data) { return ; }
+	    return ['."'".'<div class="hoverinfo">'."','<strong>', geo.properties.name, '</strong>','<br>Count: <strong>', data.numberOfThings, '</strong>','</div>'].join('');
+    	    }
+	}
+        });";
+	print '</script>';
 
 	if (!empty($airline_array))
 	{
