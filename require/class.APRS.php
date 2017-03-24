@@ -434,7 +434,7 @@ class aprs {
 	return $result;
     }
     
-    function connect() {
+    public function connect() {
 	global $globalAPRSversion, $globalServerAPRSssid, $globalServerAPRSpass,$globalName, $globalServerAPRShost, $globalServerAPRSport;
 	$aprs_connect = 0;
 	$aprs_keep = 120;
@@ -470,8 +470,12 @@ class aprs {
 		socket_set_option($this->socket,SOL_SOCKET,SO_KEEPALIVE);
 	}
     }
+
+    public function disconnect() {
+	socket_close($this->socket);
+    }
     
-    function send($data) {
+    public function send($data) {
 	if ($this->connected === false) $this->connect();
 	$send = socket_send( $this->socket  , $data , strlen($data),0);
 	if ($send === FALSE) {
@@ -482,7 +486,7 @@ class aprs {
 }
 
 class APRSSpotter extends APRS {
-	function addLiveSpotterData($id,$ident,$aircraft_icao,$departure_airport,$arrival_airport,$latitude,$longitude,$waypoints,$altitude,$altitude_real,$heading,$speed,$datetime,$departure_airport_time,$arrival_airport_time,$squawk,$route_stop,$hex,$putinarchive,$registration,$pilot_id,$pilot_name, $verticalrate, $noarchive, $ground,$format_source,$source_name,$over_country) {
+	public function addLiveSpotterData($id,$ident,$aircraft_icao,$departure_airport,$arrival_airport,$latitude,$longitude,$waypoints,$altitude,$altitude_real,$heading,$speed,$datetime,$departure_airport_time,$arrival_airport_time,$squawk,$route_stop,$hex,$putinarchive,$registration,$pilot_id,$pilot_name, $verticalrate, $noarchive, $ground,$format_source,$source_name,$over_country) {
 		$Common = new Common();
 		if ($latitude != '' && $longitude != '') {
 			$latitude = $Common->convertDM($latitude,'latitude');
@@ -511,12 +515,12 @@ class APRSSpotter extends APRS {
 	}
 }
 class APRSMarine extends APRS {
-	function addLiveMarineData($id, $ident, $latitude, $longitude, $heading, $speed,$datetime, $putinarchive,$mmsi,$type,$typeid,$imo,$callsign,$arrival_code,$arrival_date,$status,$noarchive,$format_source,$source_name,$over_country) {
+	public function addLiveMarineData($id, $ident, $latitude, $longitude, $heading, $speed,$datetime, $putinarchive,$mmsi,$type,$typeid,$imo,$callsign,$arrival_code,$arrival_date,$status,$noarchive,$format_source,$source_name,$over_country) {
 		$Common = new Common();
 		if ($latitude != '' && $longitude != '') {
 			$latitude = $Common->convertDM($latitude,'latitude');
 			$longitude = $Common->convertDM($longitude,'longitude');
-			$coordinate = str_pad($latitude['deg'].number_format($latitude['min'],2,'.',''),7,'0',STR_PAD_LEFT).$latitude['NSEW'].'/'.str_pad($longitude['deg'].number_format($longitude['min'],2,'.',''),8,'0',STR_PAD_LEFT).$longitude['NSEW'];
+			$coordinate = sprintf("%02d",$latitude['deg']).str_pad(number_format($latitude['min'],2,'.',''),5,'0',STR_PAD_LEFT).$latitude['NSEW'].'/'.sprintf("%03d",$longitude['deg']).str_pad(number_format($longitude['min'],2,'.',''),5,'0',STR_PAD_LEFT).$longitude['NSEW'];
 			$w1 = abs(ceil(($latitude['min'] - number_format($latitude['min'],2,'.',''))*1000));
 			$w2 = abs(ceil(($longitude['min'] - number_format($longitude['min'],2,'.',''))*1000));
 			$w = $w1.$w2;
