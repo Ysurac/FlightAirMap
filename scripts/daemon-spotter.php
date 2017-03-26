@@ -314,7 +314,6 @@ if ($use_aprs) {
 
 	if ($aprs_filter != '') $aprs_login = "user {$aprs_ssid} pass {$aprs_pass} vers {$aprs_version} filter {$aprs_filter}\n";
 	else $aprs_login = "user {$aprs_ssid} pass {$aprs_pass} vers {$aprs_version}\n";
-	echo $aprs_login."\n";
 }
 
 // connected - lets do some work
@@ -1031,7 +1030,7 @@ while ($i > 0) {
 			$buffer = explode('},{',$buffer);
 		    } else $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
 		    // SBS format is CSV format
-		    if ($buffer != '') {
+		    if ($buffer !== FALSE && $buffer != '') {
 			$tt[$format] = 0;
 			if ($format == 'acarssbs3') {
                     	    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
