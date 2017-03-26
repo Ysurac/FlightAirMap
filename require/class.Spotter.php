@@ -7711,7 +7711,7 @@ class Spotter{
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
-		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country, country.iso3 AS arrival_airport_country_iso3 
+		$query  = "SELECT DISTINCT spotter_output.airline_icao, spotter_output.arrival_airport_icao, COUNT(spotter_output.arrival_airport_icao) AS airport_arrival_icao_count, spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country, countries.iso3 AS arrival_airport_country_iso3 
 			FROM countries,spotter_output".$filter_query." countries.name = spotter_output.arrival_airport_country AND spotter_output.airline_icao <> '' AND spotter_output.arrival_airport_name <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> '' ";
                 if ($olderthanmonths > 0) {
             		if ($globalDBdriver == 'mysql') {
