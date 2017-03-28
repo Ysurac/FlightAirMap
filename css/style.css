@@ -1110,6 +1110,9 @@ body.page-upcoming table tr td.logo img{
     a.tablet{
 		display:inline-block !important;
 	}
+    .navbar .search {
+	display:none;
+    }
     
     /* FLIGHT ID */
 	body.page-flightid-overview .image{
@@ -1144,6 +1147,10 @@ body.page-upcoming table tr td.logo img{
 	.navbar form input[type="text"]{
 		width:75%;
 	}
+    .navbar .search {
+	display:none;
+    }
+
     span.notablet,
     a.notablet{
 		display:none !important;
@@ -1254,6 +1261,9 @@ body.page-upcoming table tr td.logo img{
 		.column{
 			padding:10px;
 		}
+    .navbar .search {
+	display:none;
+    }
     .info div{
 		margin-right:0px;
 		padding-right:0px;
@@ -1458,6 +1468,9 @@ body.page-upcoming table tr td.logo img{
     }
     body.page-highlights-display .dispay-view div img{
         width:170px;
+    }
+    .navbar .search {
+	display:none;
     }
 
 
