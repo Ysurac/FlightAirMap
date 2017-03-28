@@ -4927,12 +4927,11 @@ class Spotter{
 	{
 		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count
-		 		FROM spotter_output".$filter_query." spotter_output.airline_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
-				GROUP BY spotter_output.airline_country
-				ORDER BY airline_country_count DESC
-				LIMIT 10 OFFSET 0";
-      
+		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count, countries.iso3 AS airline_country_iso3
+			FROM countries,spotter_output".$filter_query." countries.name = spotter_output.airline_country AND spotter_output.airline_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country) OR spotter_output.airline_country = :country) 
+			GROUP BY spotter_output.airline_country, countries.iso3
+			ORDER BY airline_country_count DESC
+			LIMIT 10 OFFSET 0";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
@@ -4943,7 +4942,7 @@ class Spotter{
 		{
 			$temp_array['airline_country_count'] = $row['airline_country_count'];
 			$temp_array['airline_country'] = $row['airline_country'];
-
+			$temp_array['airline_country_iso3'] = $row['airline_country_iso3'];
 			$airline_country_array[] = $temp_array;
 		}
 		return $airline_country_array;
@@ -7588,26 +7587,22 @@ class Spotter{
 	{
 		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count 
-			FROM spotter_output".$filter_query." spotter_output.departure_airport_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
-                    GROUP BY spotter_output.departure_airport_country
-					ORDER BY airport_departure_country_count DESC";
-      
+		$query  = "SELECT DISTINCT spotter_output.departure_airport_country, COUNT(spotter_output.departure_airport_country) AS airport_departure_country_count, countries.iso3 AS departure_airport_country_iso3 
+			FROM countries,spotter_output".$filter_query." countries.name = spotter_output.departure_airport_country AND spotter_output.departure_airport_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country) OR spotter_output.airline_country = :country) 
+			GROUP BY spotter_output.departure_airport_country, countries.iso3
+			ORDER BY airport_departure_country_count DESC";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
-      
 		$airport_array = array();
 		$temp_array = array();
-        
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['departure_airport_country'] = $row['departure_airport_country'];
+			$temp_array['departure_airport_country_iso3'] = $row['departure_airport_country_iso3'];
 			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
-          
 			$airport_array[] = $temp_array;
 		}
-
 		return $airport_array;
 	}
 	
@@ -8583,26 +8578,22 @@ class Spotter{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
-		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count 
-			FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country)) OR spotter_output.airline_country = :country 
-                    GROUP BY spotter_output.arrival_airport_country
-					ORDER BY airport_arrival_country_count DESC";
-      
+		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count, countries.iso3 AS arrival_airport_country_iso3 
+			FROM countries,spotter_output".$filter_query." countries.name = spotter_output.arrival_airport_country AND spotter_output.arrival_airport_country <> '' AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country) OR spotter_output.airline_country = :country) 
+			GROUP BY spotter_output.arrival_airport_country, countries.iso3
+			ORDER BY airport_arrival_country_count DESC";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':country' => $country));
-      
 		$airport_array = array();
 		$temp_array = array();
-        
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['arrival_airport_country'] = $row['arrival_airport_country'];
+			$temp_array['arrival_airport_country_iso3'] = $row['arrival_airport_country_iso3'];
 			$temp_array['airport_arrival_country_count'] = $row['airport_arrival_country_count'];
-          
 			$airport_array[] = $temp_array;
 		}
-
 		return $airport_array;
 	}
 
