@@ -1606,18 +1606,30 @@ class update_schema {
 		}
 		*/
 		if ($globalDBdriver == 'mysql') {
-			$error .= create_db::import_file('../db/tracker_output.sql');
-			if ($error != '') return $error;
-			$error .= create_db::import_file('../db/tracker_live.sql');
-			if ($error != '') return $error;
-			$error .= create_db::import_file('../db/marine_output.sql');
-			if ($error != '') return $error;
-			$error .= create_db::import_file('../db/marine_live.sql');
-			if ($error != '') return $error;
-			$error .= create_db::import_file('../db/marine_identity.sql');
-			if ($error != '') return $error;
-			$error .= create_db::import_file('../db/marine_mid.sql');
-			if ($error != '') return $error;
+			if (!$Connection->tableExists('tracker_output')) {
+				$error .= create_db::import_file('../db/tracker_output.sql');
+				if ($error != '') return $error;
+			}
+			if (!$Connection->tableExists('tracker_live')) {
+				$error .= create_db::import_file('../db/tracker_live.sql');
+				if ($error != '') return $error;
+			}
+			if (!$Connection->tableExists('marine_output')) {
+				$error .= create_db::import_file('../db/marine_output.sql');
+				if ($error != '') return $error;
+			}
+			if (!$Connection->tableExists('marine_live')) {
+				$error .= create_db::import_file('../db/marine_live.sql');
+				if ($error != '') return $error;
+			}
+			if (!$Connection->tableExists('marine_identity')) {
+				$error .= create_db::import_file('../db/marine_identity.sql');
+				if ($error != '') return $error;
+			}
+			if (!$Connection->tableExists('marine_mid')) {
+				$error .= create_db::import_file('../db/marine_mid.sql');
+				if ($error != '') return $error;
+			}
 		} else {
 			$error .= create_db::import_file('../db/pgsql/tracker_output.sql');
 			if ($error != '') return $error;
