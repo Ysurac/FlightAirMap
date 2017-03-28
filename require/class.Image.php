@@ -22,33 +22,17 @@ class Image {
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
-		if ($registration == '' && $aircraft_icao != '') $registration = $aircraft_icao.$airline_icao;
-		$registration = trim($registration);
+		$reg = $registration;
+		if ($reg == '' && $aircraft_icao != '') $reg = $aircraft_icao.$airline_icao;
+		$reg = trim($reg);
 		$query  = "SELECT spotter_image.image, spotter_image.image_thumbnail, spotter_image.image_source, spotter_image.image_source_website,spotter_image.image_copyright, spotter_image.registration 
 			FROM spotter_image 
-			WHERE spotter_image.registration = :registration";
+			WHERE spotter_image.registration = :registration LIMIT 1";
 		$sth = $this->db->prepare($query);
-		$sth->execute(array(':registration' => $registration));
-          /*
-        $images_array = array();
-	$temp_array = array();
-
-        while($row = $sth->fetch(PDO::FETCH_ASSOC))
-	{
-	    //$temp_array['spotter_image_id'] = $row['spotter_image_id'];
-            $temp_array['registration'] = $row['registration'];
-            $temp_array['image'] = $row['image'];
-            $temp_array['image_thumbnail'] = $row['image_thumbnail'];
-            $temp_array['image_source'] = $row['image_source'];
-            $temp_array['image_source_website'] = $row['image_source_website'];
-            $temp_array['image_copyright'] = $row['image_copyright'];
-          
-            $images_array[] = $temp_array;
-	}
-        
-        return $images_array;
-        */
-		return $sth->fetchAll(PDO::FETCH_ASSOC);
+		$sth->execute(array(':registration' => $reg));
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (!empty($result)) return $result;
+		elseif ($registration != '') return $this->getSpotterImage('',$aircraft_icao,$airline_icao);
 	}
 
 	/**
