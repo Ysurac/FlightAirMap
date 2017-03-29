@@ -392,6 +392,13 @@ require_once('header.php');
 			</div>
 		    </li>
 <?php
+    } elseif (isset($_COOKIE['MapFormat']) || $_COOKIE['MapFOrmat'] == '3d') {
+?>
+		    <li><input type="checkbox" name="aircraftcolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Aircraft color"); ?></li>
+		    <li><?php echo _("Aircraft icon color:"); ?>
+			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print 'ff0000'; ?>">
+		    </li>
+<?php
     }
 ?>
 		    <li><?php echo _("Distance unit:"); ?>

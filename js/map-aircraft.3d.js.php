@@ -672,4 +672,12 @@ if (getCookie('displayairports') == 'true') {
 	update_airportsLayer();
 }
 
+function iconColor(color) {
+    document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    if (getCookie('IconColorForce') == 'true') window.location.reload();
+}
+function iconColorForce(val) {
+    document.cookie =  'IconColorForce='+val.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    if (getCookie('IconColor') != '') document.cookie =  'IconColor=ff0000; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
 

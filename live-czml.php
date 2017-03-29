@@ -256,6 +256,10 @@ if (!empty($spotter_array) && is_array($spotter_array))
 				if (isset($modelsdb[$aircraft_icao])) {
 					$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$aircraft_icao].'","scale" : 1.0,"minimumPixelSize": 20';
 					$output .= ',"heightReference": "'.$heightrelative.'"';
+					if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+						$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+						$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+					}
 					$output .= '},';
 				} elseif ($aircraft_icao != '') {
 					$aircraft_info = $Spotter->getAllAircraftInfo($aircraft_icao);
@@ -269,6 +273,10 @@ if (!empty($spotter_array) && is_array($spotter_array))
 						if (isset($modelsdb[$aircraft_shadow])) {
 							$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$aircraft_shadow].'","scale" : 1.0,"minimumPixelSize": 20';
 							$output .= ',"heightReference": "'.$heightrelative.'"';
+							if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+								$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+								$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+							}
 							$output .= '},';
 							$modelsdb[$aircraft_icao] = $modelsdb[$aircraft_shadow];
 						} elseif ($spotter_item['engine_type'] == 'Jet') {
@@ -302,11 +310,19 @@ if (!empty($spotter_array) && is_array($spotter_array))
 							if (isset($modelsdb[$model])) {
 								$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$model].'","scale" : 1.0,"minimumPixelSize": 20';
 								$output .= ',"heightReference": "'.$heightrelative.'"';
+								if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+									$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+									$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+								}
 								$output .= '},';
 								$modelsdb[$aircraft_icao] = $modelsdb[$model];
 							} else {
 								$output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20';
 								$output .= ',"heightReference": "'.$heightrelative.'"';
+								if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+									$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+									$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+								}
 								$output .= '},';
 								$modelsdb[$aircraft_icao] = 'Cesium_Air.glb';
 							}
@@ -330,11 +346,19 @@ if (!empty($spotter_array) && is_array($spotter_array))
 							if (isset($modelsdb[$model])) {
 								$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$model].'","scale" : 1.0,"minimumPixelSize": 20';
 								$output .= ',"heightReference": "'.$heightrelative.'"';
+								if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+									$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+									$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+								}
 								$output .= '},';
 								$modelsdb[$aircraft_icao] = $modelsdb[$model];
 							} else {
 								$output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20';
 								$output .= ',"heightReference": "'.$heightrelative.'"';
+								if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+									$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+									$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+								}
 								$output .= '},';
 								$modelsdb[$aircraft_icao] = 'Cesium_Air.glb';
 							}
@@ -356,17 +380,29 @@ if (!empty($spotter_array) && is_array($spotter_array))
 							if (isset($modelsdb[$model])) {
 								$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$model].'","scale" : 1.0,"minimumPixelSize": 20';
 								$output .= ',"heightReference": "'.$heightrelative.'"';
+								if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+									$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+									$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+								}
 								$output .= '},';
 								$modelsdb[$aircraft_icao] = $modelsdb[$model];
 							} else {
 								$output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20';
 								$output .= ',"heightReference": "'.$heightrelative.'"';
+								if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+									$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+									$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+								}
 								$output .= '},';
 								$modelsdb[$aircraft_icao] = 'Cesium_Air.glb';
 							}
 						} else {
 							$output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20';
 							$output .= ',"heightReference": "'.$heightrelative.'"';
+							if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+								$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+								$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+							}
 							$output .= '},';
 								//if ($spotter_item['aircraft_shadow'] != '') $output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
 							if ($spotter_item['aircraft_icao'] != '') $output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
@@ -376,11 +412,19 @@ if (!empty($spotter_array) && is_array($spotter_array))
 						$aircraft_shadow = 'PA18';
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$aircraft_shadow].'","scale" : 1.0,"minimumPixelSize": 20';
 						$output .= ',"heightReference": "'.$heightrelative.'"';
+						if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+							$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+						}
 						$output .= '},';
 						$modelsdb[$aircraft_icao] = $modelsdb[$aircraft_shadow];
 					} else {
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20';
 						$output .= ',"heightReference": "'.$heightrelative.'"';
+						if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+							$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+						}
 						$output .= '},';
 						//if ($spotter_item['aircraft_shadow'] != '') $output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
 						if ($spotter_item['aircraft_icao'] != '') $output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
@@ -389,6 +433,11 @@ if (!empty($spotter_array) && is_array($spotter_array))
 				} else {
 					$output .= '"model": {"gltf" : "'.$globalURL.'/models/Cesium_Air.glb","scale" : 1.0,"minimumPixelSize": 20';
 					$output .= ',"heightReference": "'.$heightrelative.'"';
+					//$output .= ',"color": {"rgba" : [255,0,0,255]}';
+					if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] && isset($_COOKIE['IconColor'])) {
+						$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
+						$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+					}
 					$output .= '},';
 					//if ($spotter_item['aircraft_shadow'] != '') $output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
 					if ($spotter_item['aircraft_icao'] != '') $output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';

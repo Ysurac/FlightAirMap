@@ -277,6 +277,15 @@ class Common {
 		return $str;
 	}
 	
+	/**
+	* Convert hexa color to rgb
+	* @param	String $hex data in hexa
+	* @return	String Return result
+	*/
+	public function hex2rgb($hex) {
+		$hex = str_replace('#','',$hex);
+		return sscanf($hex, "%02x%02x%02x"); 
+	}
 	
 	public function getHeading($lat1, $lon1, $lat2, $lon2) {
 		//difference in longitudinal coordinates
