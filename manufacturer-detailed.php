@@ -29,7 +29,7 @@ if (!isset($_GET['aircraft_manufacturer'])){
 	
 	$manufacturer = ucwords(str_replace("-", " ", filter_input(INPUT_GET,'aircraft_manufacturer',FILTER_SANITIZE_STRING)));
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-	$page_url = $globalURL.'/manufacturer/'.$_GET['aircraft_manufacturer'];
+	$page_url = $globalURL.'/manufacturer/'.$manufacturer;
 	
 	if ($sort != '') {
 		$spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,$limit_start.",".$absolute_difference, $sort);

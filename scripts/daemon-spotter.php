@@ -933,12 +933,12 @@ while ($i > 0) {
 			$line['aircraftname'] = strtoupper($line['aircraftname']);
 			$line['aircraftname'] = str_replace('BOEING ','B',$line['aircraftname']);
 	    		$aircraft_data = explode('-',$line['aircraftname']);
-	    		if (isset($aircraft_data[1]) && strlen($aircraft_data[0]) < 5) $data['aircraft_icao'] = $aircraft_data[0];
-	    		elseif (isset($aircraft_data[1]) && strlen($aircraft_data[1]) < 5) $data['aircraft_icao'] = $aircraft_data[1];
+	    		if (isset($aircraft_data[1]) && strlen($aircraft_data[0]) >= 3 && strlen($aircraft_data[0]) <= 4) $data['aircraft_icao'] = $aircraft_data[0];
+	    		elseif (isset($aircraft_data[1]) && strlen($aircraft_data[1]) >= 3 && strlen($aircraft_data[1]) <= 4) $data['aircraft_icao'] = $aircraft_data[1];
 	    		else {
 	    		    $aircraft_data = explode(' ',$line['aircraftname']);
-	    		    if (isset($aircraft_data[1])) $data['aircraft_icao'] = $aircraft_data[1];
-	    		    else $data['aircraft_icao'] = $line['aircraftname'];
+	    		    if (isset($aircraft_data[1])) $data['aircraft_icao'] = str_replace('-','',$aircraft_data[1]);
+	    		    else $data['aircraft_icao'] = str_replace('-','',$line['aircraftname']);
 	    		}
 	    	    }
     		    if (isset($line['route'])) $data['waypoints'] = $line['route'];
@@ -1015,13 +1015,15 @@ while ($i > 0) {
 		foreach ($read as $nb => $r) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
-        	    if ($format == 'sbs' || $format == 'aprs' || $format == 'raw' || $format == 'tsv' || $format == 'acarssbs3' || $format == 'vrstcp') {
-        		$buffer = socket_read($r, 6000,PHP_NORMAL_READ);
-        	    } else {
-	    	        $az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
-	    	    }
-        	    //$buffer = socket_read($r, 60000,PHP_NORMAL_READ);
-        	    //echo $buffer."\n";
+		    if ($format == 'sbs' || $format == 'aprs' || $format == 'raw' || $format == 'tsv' || $format == 'acarssbs3') {
+			$buffer = @socket_read($r, 6000,PHP_NORMAL_READ);
+		    } elseif ($format == 'vrstcp') {
+			$buffer = @socket_read($r, 6000);
+		    } else {
+			$az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
+		    }
+		    //$buffer = socket_read($r, 60000,PHP_NORMAL_READ);
+		    //echo $buffer."\n";
 		    // lets play nice and handle signals such as ctrl-c/kill properly
 		    //if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 		    $error = false;
@@ -1033,7 +1035,7 @@ while ($i > 0) {
 		    if ($buffer !== FALSE && $buffer != '') {
 			$tt[$format] = 0;
 			if ($format == 'acarssbs3') {
-                    	    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
+			    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
 			    $ACARS->add(trim($buffer));
 			    $ACARS->deleteLiveAcarsData();
 			} elseif ($format == 'raw') {
@@ -1043,10 +1045,10 @@ while ($i > 0) {
 				$data['datetime'] = date('Y-m-d H:i:s');
 				$data['format_source'] = 'raw';
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
-    				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
-                                if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
-                            }
-                        } elseif ($format == 'ais') {
+				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
+				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
+			    }
+			} elseif ($format == 'ais') {
 			    $ais_data = $AIS->parse_line(trim($buffer));
 			    $data = array();
 			    if (isset($ais_data['ident'])) $data['ident'] = $ais_data['ident'];
