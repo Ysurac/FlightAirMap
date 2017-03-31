@@ -59,9 +59,8 @@ if (!empty($spotter_array))
 		    $output .= '}';
 		$output .= '},';
 	}
+	$output  = substr($output, 0, -1);
 }
-$output  = substr($output, 0, -1);
 $output .= ']}';
-
 print $output;
 ?>

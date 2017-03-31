@@ -3,6 +3,7 @@ require_once('require/class.Connection.php');
 require_once('require/class.Common.php');
 $tracker = false;
 $marine = false;
+$usecoord = false;
 if (isset($_GET['tracker'])) {
     $tracker = true;
 }
@@ -100,7 +101,8 @@ if (isset($_GET['ident'])) {
 	$spotter_array = $MarineLive->getLastLiveMarineDataById($fammarine_id);
 	$allhistory = true;
 } elseif (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true'))) {
-//if (isset($_GET['coord'])) {
+//} elseif (isset($_GET['coord'])) {
+	$usecoord = true;
 	$coord = explode(',',$_GET['coord']);
 	if ($tracker) {
 		$spotter_array = $TrackerLive->getLiveTrackerDatabyCoord($coord,$filter);
@@ -109,8 +111,16 @@ if (isset($_GET['ident'])) {
 	} else {
 		$spotter_array = $SpotterLive->getLiveSpotterDatabyCoord($coord,$filter);
 	}
-
-#} elseif (isset($globalMapPopup) && !$globalMapPopup) {
+} elseif (isset($globalMapUseBbox) && $globalMapUseBbox && isset($_GET['coord']) && $min) {
+	$usecoord = true;
+	$coord = explode(',',$_GET['coord']);
+	if ($tracker) {
+		$spotter_array = $TrackerLive->getMinLiveTrackerDatabyCoord($coord,$filter);
+	} elseif ($marine) {
+		$spotter_array = $MarineLive->getMinLiveMarineDatabyCoord($coord,$filter);
+	} else {
+		$spotter_array = $SpotterLive->getMinLiveSpotterDatabyCoord($coord,$filter);
+	}
 } elseif (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate']) && isset($_GET['speed']) && !isset($_GET['tracker']) && !isset($_GET['marine'])) {
 	$from_archive = true;
 //	$begindate = filter_input(INPUT_GET,'begindate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
@@ -140,15 +150,14 @@ if (isset($_GET['ident'])) {
 	}
 }
 
-if (!empty($spotter_array)) {
-/*
-	if (isset($_GET['archive'])) {
-		$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
-	} else {
-		$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
-	}
-*/
-	$flightcnt = count($spotter_array);
+if (!empty($spotter_array) || $usecoord) {
+	if ($usecoord) {
+		if (isset($_GET['archive'])) {
+			$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
+		} else {
+			$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
+		}
+	} else $flightcnt = count($spotter_array);
 	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;
 
@@ -486,11 +495,14 @@ $output = '{';
 				$history = filter_input(INPUT_GET,'history',FILTER_SANITIZE_STRING);
 				if ($history == '' && isset($_COOKIE['history'])) $history = $_COOKIE['history'];
 				
-				if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') 
-				|| (!isset($_COOKIE['flightpath']) 
-				    && (!isset($globalMapHistory) || $globalMapHistory || $allhistory)
-				    || (isset($history) && $history != '' && $history != 'NA' && ($history == $spotter_item['ident'] || $history == $spotter_item['flightaware_id']))) 
-				|| (isset($history) && $history == '' && isset($_GET['flightaware_id']) && $_GET['flightaware_id'] == $spotter_item['flightaware_id'])) {
+				if (
+				    (isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') 
+				    || ((isset($globalMapHistory) && $globalMapHistory) || $allhistory)
+				//    || (isset($history) && $history != '' && $history != 'NA' && ($history == $spotter_item['ident'] || $history == $spotter_item['flightaware_id']))
+				//    || (isset($history) && $history != '' && $history != 'NA' && $history == $spotter_item['ident'])
+				    || (isset($history) && $history != '' && $history != 'NA' && str_replace('-','',$history) == str_replace('-','',$spotter_item['flightaware_id']))
+				    || (isset($history) && $history == '' && isset($_GET['flightaware_id']) && $_GET['flightaware_id'] == $spotter_item['flightaware_id'])
+				    ) {
 					if ($tracker) {
 						$spotter_history_array = $TrackerLive->getAllLiveTrackerDataById($spotter_item['famtrackid']);
 					} elseif ($marine) {
@@ -502,45 +514,44 @@ $output = '{';
 							$spotter_history_array = $SpotterLive->getAllLiveSpotterDataById($spotter_item['flightaware_id']);
 						}
 					}
-                            	$d = false;
-				foreach ($spotter_history_array as $key => $spotter_history)
-				{
-					if (isset($spotter_history['altitude'])) {
-						$alt = round($spotter_history['altitude']/10)*10;
-						if (!isset($prev_alt) || $prev_alt != $alt) {
-						    if (isset($prev_alt)) {
-							$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].', '.$spotter_history['altitude'].']';
-							$output_history .= ']}},';
-							$output .= $output_history;
-						    }
-						    if ($compress) $output_history = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "history","a": "'.$alt.'"},"geometry": {"type": "LineString","coordinates": [';
-						    else $output_history = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "history","altitude": "'.$alt.'"},"geometry": {"type": "LineString","coordinates": [';
+					$d = false;
+					foreach ($spotter_history_array as $key => $spotter_history)
+					{
+						if (isset($spotter_history['altitude'])) {
+							$alt = round($spotter_history['altitude']/10)*10;
+							if (!isset($prev_alt) || $prev_alt != $alt) {
+								if (isset($prev_alt)) {
+									$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].', '.$spotter_history['altitude'].']';
+									$output_history .= ']}},';
+									$output .= $output_history;
+								}
+								if ($compress) $output_history = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "history","a": "'.$alt.'"},"geometry": {"type": "LineString","coordinates": [';
+								else $output_history = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "history","altitude": "'.$alt.'"},"geometry": {"type": "LineString","coordinates": [';
+							}
+							$output_history .= '[';
+							$output_history .=  $spotter_history['longitude'].', ';
+							$output_history .=  $spotter_history['latitude'].', ';
+							$output_history .=  $spotter_history['altitude']*30.48;
+							$output_history .= '],';
+							$prev_alt = $alt;
+						} else {
+							if ($d == false) {
+								if ($compress) $output_history = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "history"},"geometry": {"type": "LineString","coordinates": [';
+								else $output_history = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "history"},"geometry": {"type": "LineString","coordinates": [';
+							} else $d = true;
+							$output_history .= '[';
+							$output_history .=  $spotter_history['longitude'].', ';
+							$output_history .=  $spotter_history['latitude'];
+							$output_history .= '],';
 						}
-						$output_history .= '[';
-						$output_history .=  $spotter_history['longitude'].', ';
-						$output_history .=  $spotter_history['latitude'].', ';
-						$output_history .=  $spotter_history['altitude']*30.48;
-						$output_history .= '],';
-						$prev_alt = $alt;
-					} else {
-						if ($d == false) {
-							if ($compress) $output_history = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "history"},"geometry": {"type": "LineString","coordinates": [';
-							else $output_history = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "history"},"geometry": {"type": "LineString","coordinates": [';
-						} else $d = true;
-						$output_history .= '[';
-						$output_history .=  $spotter_history['longitude'].', ';
-						$output_history .=  $spotter_history['latitude'];
-						$output_history .= '],';
 					}
-				    //}
-				}
-				if (isset($output_history)) {
-				    $output_history  = substr($output_history, 0, -1);
-				    $output_history .= ']}},';
-				    $output .= $output_history;
-				    unset($prev_alt);
-				    unset($output_history);
-				}
+					if (isset($output_history)) {
+						$output_history  = substr($output_history, 0, -1);
+						$output_history .= ']}},';
+						$output .= $output_history;
+						unset($prev_alt);
+						unset($output_history);
+					}
 				}
 				
 				if (isset($history) && $history == $spotter_item['ident'] && isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != 'NA' && isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != 'NA' && ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == "true") || (!isset($_COOKIE['MapRoute']) && (!isset($globalMapRoute) || (isset($globalMapRoute) && $globalMapRoute))))) {
