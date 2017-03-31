@@ -116,7 +116,9 @@ function update_airportsLayer() {
 	}
 };
 
+
 $( document ).ready(function() {
+	var zoom = map.getZoom();
 	map.on('moveend', function() {
 		if (map.getZoom() > 7) {
 			update_airportsLayer();
@@ -148,9 +150,25 @@ $( document ).ready(function() {
 			map.removeLayer(notamLayer);
 			update_notamLayer();
 		}
+<?php
+	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+?>
+		getLiveData(1);
+<?php
+	}
+?>
 	});
 	map.on('zoomend', function() {
-		getLiveData(1);
+<?php
+	if (!isset($globalMapUseBbox) || $globalMapUseBbox === FALSE) {
+?>
+		if ((map.getZoom() > 7 && zoom < 7) || (map.getZoom() < 7 && zoom > 7)) {
+			zoom = map.getZoom();
+			getLiveData(1);
+		}
+<?php
+	}
+?>
 	});
 
 	//update_waypointsLayer();

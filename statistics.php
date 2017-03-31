@@ -457,7 +457,7 @@ require_once('header.php');
 			print 'c3.generate({
                 	    bindto: "#chart8",
                 	    data: { x: "x",
-                	     columns: ['.$year_data.','.$year_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
+                	     columns: ['.$year_data.','.$year_cnt.'], types: { flights: "area"}, colors: { flights: "#1a3151"}},
                 	     axis: { x: { type: "timeseries", localtime: false,tick: { format: "%Y-%m"}}, y: { label: "# of Flights"}},legend: { show: false }});';
 			print '</script>';
                     }
@@ -486,7 +486,7 @@ require_once('header.php');
 			print 'c3.generate({
                 	    bindto: "#chart9",
                 	    data: { x: "x",
-                	     columns: ['.$month_data.','.$month_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
+                	     columns: ['.$month_data.','.$month_cnt.'], types: { flights: "area"}, colors: { flights: "#1a3151"}},
                 	     axis: { x: { type: "timeseries", localtime: false,tick: { format: "%Y-%m-%d"}}, y: { label: "# of Flights"}},legend: { show: false }});';
 			
             		print '</script>';
@@ -517,7 +517,7 @@ require_once('header.php');
 			print 'c3.generate({
                 	    bindto: "#chart5",
                 	    data: { x: "x",
-                	     columns: ['.$date_data.','.$date_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
+                	     columns: ['.$date_data.','.$date_cnt.'], types: { flights: "area"}, colors: { flights: "#1a3151"}},
                 	     axis: { x: { type: "timeseries",tick: { format: "%Y-%m-%d"}}, y: { label: "# of Flights"}},legend: { show: false }});';
 			
                 	print '</script>';
@@ -547,7 +547,7 @@ require_once('header.php');
 			print 'c3.generate({
                 	    bindto: "#chart6",
                 	    data: {
-                	     columns: ['.$hour_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
+                	     columns: ['.$hour_cnt.'], types: { flights: "area"}, colors: { flights: "#1a3151"}},
                 	     axis: { x: { type: "category", categories: '.$hour_data.'},y: { label: "# of Flights"}},legend: { show: false }});';
 
             	     print '</script>';
@@ -586,8 +586,8 @@ require_once('header.php');
 			print 'c3.generate({
                 	    bindto: "#chart32",
                 	    data: { x: "x",
-                	     columns: ['.$year_data.','.$year_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
-                	     axis: { x: { type: "timeseries",tick: { format: "%Y"}}, y: { label: "# of Flights"}},legend: { show: false }});';
+                	     columns: ['.$year_data.','.$year_cnt.'], types: { flights: "area"}, colors: { flights: "#1a3151"}},
+                	     axis: { x: { type: "timeseries",tick: { format: "%Y"}}, y: { label: "# of Fatalities"}},legend: { show: false }});';
 
 			print '</script>';
 		    }
@@ -618,8 +618,8 @@ require_once('header.php');
 			print 'c3.generate({
                 	    bindto: "#chart33",
                 	    data: { x: "x",
-                	     columns: ['.$year_data.','.$year_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
-                	     axis: { x: { type: "timeseries",tick: { format: "%Y-%m"}}, y: { label: "# of Flights"}},legend: { show: false }});';
+                	     columns: ['.$year_data.','.$year_cnt.'], types: { flights: "area"}, colors: { flights: "#1a3151"}},
+                	     axis: { x: { type: "timeseries",tick: { format: "%Y-%m"}}, y: { label: "# of Fatalities"}},legend: { show: false }});';
 			print '</script>';
 		    }
                   ?>
@@ -783,7 +783,7 @@ require_once('header.php');
 		    print 'c3.generate({
 			bindto: "#charthist-'.str_replace(' ','_',strtolower($source)).'",
 			data: { x: "x",
-			columns: ['.$distance_data.','.$nb_data.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
+			columns: ['.$distance_data.','.$nb_data.'], types: { flights: "area"}, colors: { flights: "#1a3151"}},
 			axis: { x: {label : { text: "Distance in '.$unit.'", position: "outer-right"}}, y: { label: "# of Flights"}},legend: { show: false }});';
 		    print '</script>';
         	?>
