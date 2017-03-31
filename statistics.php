@@ -111,7 +111,7 @@ require_once('header.php');
                     $aircraft_data = substr($aircraft_data, 0, -1);
 		    print 'var series = ['.$aircraft_data.'];';
 		    print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
-		    print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#e6e6f6","#1a3151"]);';
+		    print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#e6e6f6","#1a3151"]);';
 		    print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
                     print 'var aircraftype = new d3pie("chart1",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"60%"},"data":{"sortOrder":"value-desc","content":';
                     print 'dataset';
@@ -150,7 +150,7 @@ require_once('header.php');
 	    $airline_data = substr($airline_data, 0, -1);
 	    print 'var series = ['.$airline_data.'];';
 	    print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
-	    print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+	    print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
 	    print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
             print 'var airlinescnt = new d3pie("chart2",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"60%"},"data":{"sortOrder":"value-desc","content":';
 	    print 'dataset';
@@ -197,7 +197,7 @@ require_once('header.php');
 	    $pilot_data = substr($pilot_data, 0, -1);
 	    print 'var series = ['.$pilot_data.'];';
 	    print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
-	    print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+	    print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
 	    print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
             print 'var pilotcnt = new d3pie("chart7",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"60%"},"data":{"sortOrder":"value-desc","content":';
 	    print 'dataset';
@@ -231,7 +231,7 @@ require_once('header.php');
 	    $owner_data = substr($owner_data, 0, -1);
 	    print 'var series = ['.$owner_data.'];';
 	    print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
-	    print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+	    print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
 	    print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
             print 'var ownercnt = new d3pie("chart7",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"60%"},"data":{"sortOrder":"value-desc","content":';
 	    print 'dataset';
@@ -266,15 +266,15 @@ require_once('header.php');
 	    print $flightover_data;
 	    print '];';
 	    print 'var dataset = {};var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
-	    print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+	    print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
 	    print 'series.forEach(function(item){var iso = item[0], value = item[1]; dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };});';
 	    print 'new Datamap({
-    		element: document.getElementById("chart10"),
-    		projection: "mercator", // big world map
-    		fills: { defaultFill: "#F5F5F5" },
-    		data: dataset,
-    		responsive: true,
-    		geographyConfig: {
+		element: document.getElementById("chart10"),
+		projection: "mercator", // big world map
+		fills: { defaultFill: "#F5F5F5" },
+		data: dataset,
+		responsive: true,
+		geographyConfig: {
 		    borderColor: "#DEDEDE",
 		    highlightBorderWidth: 2,
 		    highlightFillColor: function(geo) {
@@ -326,8 +326,8 @@ require_once('header.php');
 	print $airport_data;
 	print '];'."\n";
 	print 'var onlyValues = series.map(function(obj){ return obj[0]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);'."\n";
-	print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);'."\n";
-	print 'var radiusScale = d3.scale.linear().domain([minValue,maxValue]).range([0,10]);'."\n";
+	print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);'."\n";
+	print 'var radiusScale = d3.scale.log().domain([minValue,maxValue]).range([0,10]);'."\n";
 	print 'var dataset = [];'."\n";
 	print 'var colorset = [];'."\n";
 	print 'colorset["defaultFill"] = "#F5F5F5";';
@@ -388,8 +388,8 @@ require_once('header.php');
 	print $airport_data;
 	print '];'."\n";
 	print 'var onlyValues = series.map(function(obj){ return obj[0]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);'."\n";
-	print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);'."\n";
-	print 'var radiusScale = d3.scale.linear().domain([minValue,maxValue]).range([0,10]);'."\n";
+	print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);'."\n";
+	print 'var radiusScale = d3.scale.log().domain([minValue,maxValue]).range([0,10]);'."\n";
 	print 'var dataset = [];'."\n";
 	print 'var colorset = [];'."\n";
 	print 'colorset["defaultFill"] = "#F5F5F5";';

@@ -22,7 +22,7 @@ print '<div class="info">
 	  </div>
 	<p>'._("Below are the <strong>Top 10</strong> most common country a flight was over.").'</p>';
 
-$flightover_array = $Stats->countAllFlightOverCountries(true,$airline_icao,$filter_name);
+$flightover_array = $Stats->countAllFlightOverCountries(false,$airline_icao,$filter_name);
 /*
 require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
@@ -30,7 +30,7 @@ $flightover_array = $Spotter->countAllFlightOverCountries(true,$airline_icao,$fi
 */
 print '<div id="chart" class="chart" width="100%"></div><script>';
 print 'var series = [';
-            $flightover_data = '';
+$flightover_data = '';
 foreach($flightover_array as $flightover_item)
 {
 	$flightover_data .= '[ "'.$flightover_item['flight_country_iso3'].'",'.$flightover_item['flight_count'].'],';
@@ -39,7 +39,7 @@ $flightover_data = substr($flightover_data, 0, -1);
 print $flightover_data;
 print '];';
 print 'var dataset = {};var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
-print 'var paletteScale = d3.scale.linear().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
 print 'series.forEach(function(item){var iso = item[0], value = item[1]; dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };});';
 print 'new Datamap({
     element: document.getElementById("chart"),
@@ -80,6 +80,7 @@ if (!empty($flightover_array))
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;
+	array_splice($flightover_array,10);
 	foreach($flightover_array as $flightover_item)
 	{
 		print '<tr>';
