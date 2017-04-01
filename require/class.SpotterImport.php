@@ -306,7 +306,11 @@ class SpotterImport {
 		    if ($globalDebug) echo "*********** New aircraft hex : ".$line['hex']." ***********\n";
 		}
 		if (isset($line['aircraft_icao']) && $line['aircraft_icao'] != '') {
-			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $line['aircraft_icao']));
+			$icao = $line['aircraft_icao'];
+			$Spotter = new Spotter($this->db);
+			if (isset($Spotter->aircraft_correct_icaotype[$icao])) $icao = $Spotter->aircraft_correct_icaotype[$icao];
+			$Spotter->db = null;
+			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $icao));
 		}
 		if (!isset($this->all_flights[$id]['aircraft_icao']) && isset($line['aircraft_name'])) {
 			if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
