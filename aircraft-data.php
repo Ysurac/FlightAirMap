@@ -93,13 +93,13 @@ print '<div class="details"><div class="mobile airports"><div class="airport">';
 print '<span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'" target="_blank">'.$spotter_item['departure_airport'].'</a></span>'.$spotter_item['departure_airport_city'].' '.$spotter_item['departure_airport_country'];
 print '</div><i class="fa fa-long-arrow-right"></i><div class="airport">';
 print '<span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'" target="_blank">'.$spotter_item['arrival_airport'].'</a></span>'.$spotter_item['arrival_airport_city'].' '.$spotter_item['arrival_airport_country'];
-print '</div></div><div>';
+print '</div></div><div id="aircraft">';
 print '<span>'._("Aircraft").'</span>';
 if (isset($spotter_item['aircraft_wiki'])) print '<a href="'.$spotter_item['aircraft_wiki'].'">'.$spotter_item['aircraft_name'].'</a>';
 if (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
 else print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
 print '</div>';
-print '<div><span>'._("Altitude").'</span>';
+print '<div id ="altitude"><span>'._("Altitude").'</span>';
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
 	print $spotter_item['altitude'].'00 feet (FL'.$spotter_item['altitude'].')';
 } else {
@@ -107,7 +107,7 @@ if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUn
 }
 print '</div>';
 if (isset($spotter_item['registration']) && $spotter_item['registration'] != '') print '<div><span>'._("Registration").'</span><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'" target="_blank">'.$spotter_item['registration'].'</a></div>';
-print '<div><span>'._("Speed").'</span>';
+print '<div id="speed"><span>'._("Speed").'</span>';
 if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
 	print round($spotter_item['ground_speed']*1.15078).' mph';
 } elseif ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) {
@@ -116,35 +116,37 @@ if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpee
 	print round($spotter_item['ground_speed']*1.852).' km/h';
 }
 print '</div>';
-print '<div><span>'._("Coordinates").'</span>'.$spotter_item['latitude'].', '.$spotter_item['longitude'].'</div>';
-print '<div><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
+print '<div id="coordinates"><span>'._("Coordinates").'</span>'.$spotter_item['latitude'].', '.$spotter_item['longitude'].'</div>';
+print '<div id="heading"><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
 if (isset($spotter_item['pilot_name']) && $spotter_item['pilot_name'] != '') {
-	print '<div><span>'._("Pilot").'</span>';
+	print '<div id="pilot"><span>'._("Pilot").'</span>';
 	if (isset($spotter_item['pilot_id'])) print $spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')';
 	else print $spotter_item['pilot_name'];
 	print '</div>';
 }
 
 if (isset($spotter_item['aircraft_owner']) && $spotter_item['aircraft_owner'] != '') {
-	print '<div><span>'._("Owner").'</span>';
+	print '<div id="owner"><span>'._("Owner").'</span>';
 	print $spotter_item['aircraft_owner'];
 	print '</div>';
 }
 if (isset($spotter_item['over_country']) && $spotter_item['over_country'] != '') {
-	print '<div><span>'._("Over country").'</span>';
+	print '<div id="overcountry"><span>'._("Over country").'</span>';
 	print $spotter_item['over_country'];
 	print '</div>';
 }
 if (isset($spotter_item['source_name']) && $spotter_item['source_name'] != '') {
-	print '<div><span>'._("Source").'</span>';
+	print '<div id="source"><span>'._("Source").'</span>';
 	print $spotter_item['source_name'];
 	print '</div>';
 }
+print '<div id="trackit">';
 if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 	print '<a href="?3d&trackid='.$spotter_item['flightaware_id'].'">Track it link !</a>';
 } else {
 	print '<a href="?2d&trackid='.$spotter_item['flightaware_id'].'">Track it link !</a>';
 }
+print '</div>';
 print '</div>';
 
 if (isset($globalphpVMS) && $globalphpVMS && isset($globalVATSIM) && $globalVATSIM && isset($globalIVAO) && $globalIVAO && isset($spotter_item['format_source']) && $spotter_item['format_source'] != '' && $spotter_item['format_source'] != 'pireps') print '<div class="waypoints"><span>'._("Source").'</span>'.$spotter_item['format_source'].'</div>';

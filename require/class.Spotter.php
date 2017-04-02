@@ -219,7 +219,6 @@ class Spotter{
 			}
 		}
 
-		
 		try {
 			$sth = $this->db->prepare($query.$limitQuery);
 			$sth->execute($params);
@@ -257,8 +256,14 @@ class Spotter{
 			} elseif (isset($temp_array['modes'])) {
 				$temp_array['registration'] = $this->getAircraftRegistrationBymodeS($temp_array['modes']);
 			} else $temp_array['registration'] = '';
-			if (isset($row['aircraft_icao'])) $temp_array['aircraft_type'] = $row['aircraft_icao'];
-			
+			if (isset($row['aircraft_icao'])) {
+				$icao = $row['aircraft_icao'];
+				if (isset($this->aircraft_correct_icaotype[$icao])) {
+					$aircraft_array = $this->getAllAircraftInfo($this->aircraft_correct_icaotype[$icao]);
+				} else {
+					$temp_array['aircraft_type'] = $row['aircraft_icao'];
+				}
+			}
 			$temp_array['departure_airport'] = $row['departure_airport_icao'];
 			$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
 			if (isset($row['real_arrival_airport_icao']) && $row['real_arrival_airport_icao'] != NULL) $temp_array['real_arrival_airport'] = $row['real_arrival_airport_icao'];
@@ -353,7 +358,12 @@ class Spotter{
 					$temp_array['aircraft_shadow'] = $row['aircraft_shadow'];
 				}
 			} elseif (isset($row['aircraft_icao'])) {
-				$aircraft_array = $this->getAllAircraftInfo($row['aircraft_icao']);
+				$icao = $row['aircraft_icao'];
+				if (!isset($this->aircraft_correct_icaotype[$icao])) {
+					$aircraft_array = $this->getAllAircraftInfo($row['aircraft_icao']);
+				} else {
+					$aircraft_array = $this->getAllAircraftInfo($this->aircraft_correct_icaotype[$icao]);
+				}
 				if (count($aircraft_array) > 0) {
 					$temp_array['aircraft_name'] = $aircraft_array[0]['type'];
 					$temp_array['aircraft_manufacturer'] = $aircraft_array[0]['manufacturer'];
