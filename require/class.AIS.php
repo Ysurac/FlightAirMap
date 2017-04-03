@@ -621,7 +621,7 @@ class AIS {
 		$result['ident'] = trim(str_replace('@','',$data->name));
 		$result['timestamp'] = $data->ts;
 		$result['mmsi'] = $data->mmsi;
-		if (strlen($result['mmsi']) == 8 && susbtr($result['mmsi'],0,3) == '669') $result['mmsi'] = '3'.$result['mmsi'];
+		if (strlen($result['mmsi']) == 8 && substr($result['mmsi'],0,3) == '669') $result['mmsi'] = '3'.$result['mmsi'];
 		$result['mmsi_type'] = $this->mmsitype($result['mmsi']);
 		if ($data->sog != -1.0) $result['speed'] = $data->sog;
 		if ($data->heading != '') $result['heading'] = $data->heading;
