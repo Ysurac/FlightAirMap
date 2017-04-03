@@ -49,7 +49,7 @@ if (!isset($globalSources)) {
     }
 }
 
-$options = getopt('s::',array('source::','server','nodaemon','idsource::','aprsserverssid::','aprsserverpass::'));
+$options = getopt('s::',array('source::','server','nodaemon','idsource::','aprsserverssid::','aprsserverpass::','aprsserverhost::','aprsserverport::'));
 //if (isset($options['s'])) $hosts = array($options['s']);
 //elseif (isset($options['source'])) $hosts = array($options['source']);
 if (isset($options['s'])) {
@@ -59,6 +59,8 @@ if (isset($options['s'])) {
     $globalSources = array();
     $globalSources[] = array('host' => $options['source']);
 }
+if (isset($options['aprsserverhost'])) $globalServerAPRShost = $options['aprsserverhost'];
+if (isset($options['aprsserverport'])) $globalServerAPRSport = $options['aprsserverport'];
 if (isset($options['aprsserverssid'])) $globalServerAPRSssid = $options['aprsserverssid'];
 if (isset($options['aprsserverpass'])) $globalServerAPRSpass = $options['aprsserverpass'];
 if (isset($options['nodaemon'])) $globalDaemon = FALSE;
@@ -1347,7 +1349,10 @@ while ($i > 0) {
 			$time = time();
 			//connect_all($hosts);
 			$aprs_connect = 0;
-			if ($reset > 40) exit('Too many attempts...');
+			if ($reset%5 == 0) sleep(20);
+			if ($reset%10 == 0) sleep(100);
+			if ($reset%20 == 0) sleep(200);
+			if ($reset > 100) exit('Too many attempts...');
 			connect_all($globalSources);
 		}
 	    }
