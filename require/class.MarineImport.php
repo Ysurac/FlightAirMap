@@ -23,7 +23,7 @@ class MarineImport {
     public $nb = 0;
 
     public function __construct($dbc = null) {
-	global $globalBeta, $globalServerAPRS, $APRSSpotter, $globalNoDB;
+	global $globalBeta, $globalServerAPRS, $APRSMarine, $globalNoDB;
 	if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
 	    $Connection = new Connection($dbc);
 	    $this->db = $Connection->db();
@@ -93,7 +93,7 @@ class MarineImport {
     }
 
     public function add($line) {
-	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked, $globalNoImport, $globalNoDB;
+	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked, $globalNoImport, $globalNoDB, $globalServerAPRS,$APRSMarine;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
 	date_default_timezone_set('UTC');
 	$dataFound = false;
@@ -416,13 +416,13 @@ class MarineImport {
 					$result = $MarineLive->addLiveMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['putinarchive'],$this->all_tracked[$id]['mmsi'],$this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'],$this->all_tracked[$id]['status'],$this->all_tracked[$id]['noarchive'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['over_country']);
 					$MarineLive->db = null;
 					if ($globalDebug) echo $result."\n";
+					if ($globalDebugTimeElapsed) echo 'Time elapsed for update addlivespotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				    }
 				}
-				if (isset($globalServerAPRS) && $globalServerAPRS && $this->all_flights[$id]['putinarchive']) {
+				if (isset($globalServerAPRS) && $globalServerAPRS && $this->all_tracked[$id]['putinarchive']) {
 				    $APRSMarine->addLiveMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['putinarchive'],$this->all_tracked[$id]['mmsi'],$this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'],$this->all_tracked[$id]['status'],$this->all_tracked[$id]['noarchive'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['over_country']);
 				}
 				$this->all_tracked[$id]['putinarchive'] = false;
-				if ($globalDebugTimeElapsed) echo 'Time elapsed for update addlivespotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 
 				// Put statistics in $this->stats variable
 				/*
