@@ -125,7 +125,7 @@ class MarineImport {
 		if (!isset($this->all_tracked[$id])) {
 		    $this->all_tracked[$id] = array();
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('addedMarine' => 0));
-		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'heading' => '', 'format_source' => '','source_name' => '','comment'=> '','type' => '','typeid' => '','noarchive' => false,'putinarchive' => true,'over_country' => '','mmsi' => '','status' => '','imo' => '','callsign' => '','arrival_code' => '','arrival_date' => ''));
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'heading' => '', 'format_source' => '','source_name' => '','comment'=> '','type' => '','typeid' => '','noarchive' => false,'putinarchive' => true,'over_country' => '','mmsi' => '','status' => '','imo' => '','callsign' => '','arrival_code' => '','arrival_date' => '','mmsi_type' => ''));
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('lastupdate' => time()));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
@@ -153,6 +153,9 @@ class MarineImport {
 		}
 		if (isset($line['type']) && $line['type'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('type' => $line['type']));
+		}
+		if (isset($line['mmsi_type']) && $line['mmsi_type'] != '') {
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('mmsi_type' => $line['mmsi_type']));
 		}
 		if (isset($line['imo']) && $line['imo'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('imo' => $line['imo']));
