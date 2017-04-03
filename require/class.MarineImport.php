@@ -375,7 +375,7 @@ class MarineImport {
 				if ($this->last_delete == 0 || time() - $this->last_delete > 1800) {
 				    if ($globalDebug) echo "---- Deleting Live Marine data older than 9 hours...";
 				    //MarineLive->deleteLiveMarineDataNotUpdated();
-				    if (!isset($globaNoDB) || $globalNoDB !== TRUE) {
+				    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
 					$MarineLive = new MarineLive($this->db);
 					$MarineLive->deleteLiveMarineData();
 					$MarineLive->db=null;
