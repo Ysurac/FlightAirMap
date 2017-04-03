@@ -429,7 +429,7 @@ while ($i > 0) {
     		    $data['id_source'] = $id_source;
 		    print_r($data);
 		    echo 'Add...'."\n";
-		    if ($add && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
+		    if ($add && isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
 		    unset($data);
 		}
     	    }
@@ -468,7 +468,7 @@ while ($i > 0) {
 			    }
 			    $data['format_source'] = 'aisnmeahttp';
 			    $data['id_source'] = $id_source;
-			    if ($ais_data['mmsi_type'] == 'Ship') $MI->add($data);
+			    if (isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
 			    unset($data);
 			}
 		    }
