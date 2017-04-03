@@ -8,6 +8,9 @@ require_once(dirname(__FILE__).'/class.Scheduler.php');
 require_once(dirname(__FILE__).'/class.Translation.php');
 require_once(dirname(__FILE__).'/class.Stats.php');
 require_once(dirname(__FILE__).'/class.Source.php');
+if (isset($globalServerAPRS) && $globalServerAPRS) {
+    require_once(dirname(__FILE__).'/class.APRS.php');
+}
 
 class MarineImport {
     private $all_tracked = array();
@@ -20,11 +23,12 @@ class MarineImport {
     public $nb = 0;
 
     public function __construct($dbc = null) {
-	global $globalBeta;
-	$Connection = new Connection($dbc);
-	$this->db = $Connection->db();
-	date_default_timezone_set('UTC');
-
+	global $globalBeta, $globalServerAPRS, $APRSSpotter, $globalNoDB;
+	if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+	    $Connection = new Connection($dbc);
+	    $this->db = $Connection->db();
+	    date_default_timezone_set('UTC');
+	}
 	// Get previous source stats
 	/*
 	$Stats = new Stats($dbc);
@@ -41,6 +45,10 @@ class MarineImport {
 	    }
 	}
 	*/
+	if (isset($globalServerAPRS) && $globalServerAPRS) {
+	    $APRSMarine = new APRSMarine();
+	    //$APRSSpotter->connect();
+	}
     }
 
     public function checkAll() {
@@ -85,7 +93,7 @@ class MarineImport {
     }
 
     public function add($line) {
-	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked;
+	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked, $globalNoImport, $globalNoDB;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
 	date_default_timezone_set('UTC');
 	$dataFound = false;
@@ -128,15 +136,17 @@ class MarineImport {
 		
 		if (isset($line['mmsi']) && $line['mmsi'] != '' && $line['mmsi'] != $this->all_tracked[$id]['mmsi']) {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('mmsi' => $line['mmsi']));
-		    $Marine = new Marine($this->db);
-		    $identity = $Marine->getIdentity($line['mmsi']);
-		    if (!empty($identity)) {
-			$this->all_tracked[$id]['ident'] = $identity['ship_name'];
-			$this->all_tracked[$id]['type'] = $identity['type'];
+		    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+			$Marine = new Marine($this->db);
+			$identity = $Marine->getIdentity($line['mmsi']);
+			if (!empty($identity)) {
+			    $this->all_tracked[$id]['ident'] = $identity['ship_name'];
+			    $this->all_tracked[$id]['type'] = $identity['type'];
+			}
+			//print_r($identity);
+			unset($Marine);
+			//$dataFound = true;
 		    }
-		    //print_r($identity);
-		    unset($Marine);
-		    //$dataFound = true;
 		}
 		if (isset($line['type_id']) && $line['type_id'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('type' => $AIS->getShipType($line['type_id'])));
@@ -162,13 +172,17 @@ class MarineImport {
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_tracked[$id]['ident'] != trim($line['ident']))) {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => trim($line['ident'])));
 		    if ($this->all_tracked[$id]['addedMarine'] == 1) {
-			$timeelapsed = microtime(true);
-            		$Marine = new Marine($this->db);
-            		$fromsource = NULL;
-            		$result = $Marine->updateIdentMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$fromsource);
-			if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
-			$Marine->db = null;
-			if ($globalDebugTimeElapsed) echo 'Time elapsed for update identspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+			if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
+			    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+				$timeelapsed = microtime(true);
+				$Marine = new Marine($this->db);
+				$fromsource = NULL;
+				$result = $Marine->updateIdentMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$fromsource);
+				if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
+				$Marine->db = null;
+				if ($globalDebugTimeElapsed) echo 'Time elapsed for update identspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+			    }
+			}
 		    }
 		    if (!isset($this->all_tracked[$id]['id'])) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('id' => $this->all_tracked[$id]['ident']));
 		}
@@ -198,11 +212,13 @@ class MarineImport {
 				
 				if ($globalDebug) echo "\n".' ------- Check Country for '.$this->all_tracked[$id]['ident'].' with latitude : '.$line['latitude'].' and longitude : '.$line['longitude'].'.... ';
 				$timeelapsed = microtime(true);
-				$Marine = new Marine($this->db);
-				$all_country = $Marine->getCountryFromLatitudeLongitude($line['latitude'],$line['longitude']);
-				if (!empty($all_country)) $this->all_tracked[$id]['over_country'] = $all_country['iso2'];
-				$Marine->db = null;
-				if ($globalDebugTimeElapsed) echo 'Time elapsed for update getCountryFromlatitudeLongitude : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+				if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+				    $Marine = new Marine($this->db);
+				    $all_country = $Marine->getCountryFromLatitudeLongitude($line['latitude'],$line['longitude']);
+				    if (!empty($all_country)) $this->all_tracked[$id]['over_country'] = $all_country['iso2'];
+				    $Marine->db = null;
+				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update getCountryFromlatitudeLongitude : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+				}
 				$this->tmd = 0;
 				if ($globalDebug) echo 'FOUND : '.$this->all_tracked[$id]['over_country'].' ---------------'."\n";
 			    }
@@ -286,22 +302,24 @@ class MarineImport {
 		    if ($this->all_tracked[$id]['addedMarine'] == 0) {
 		        if (!isset($globalDistanceIgnore['latitude']) || $this->all_tracked[$id]['longitude'] == ''  || $this->all_tracked[$id]['latitude'] == '' || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 			    if (!isset($this->all_tracked[$id]['forcenew']) || $this->all_tracked[$id]['forcenew'] == 0) {
-				if ($globalDebug) echo "Check if aircraft is already in DB...";
-				$timeelapsed = microtime(true);
-				$MarineLive = new MarineLive($this->db);
-				if (isset($line['id'])) {
-				    $recent_ident = $MarineLive->checkIdRecent($line['id']);
-				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update checkIdRecent : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
-				} elseif (isset($this->all_tracked[$id]['mmsi']) && $this->all_tracked[$id]['mmsi'] != '') {
-				    $recent_ident = $MarineLive->checkMMSIRecent($this->all_tracked[$id]['mmsi']);
-				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update checkIdentRecent : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
-				} elseif (isset($this->all_tracked[$id]['ident']) && $this->all_tracked[$id]['ident'] != '') {
-				    $recent_ident = $MarineLive->checkIdentRecent($this->all_tracked[$id]['ident']);
-				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update checkIdentRecent : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+				if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+				    if ($globalDebug) echo "Check if aircraft is already in DB...";
+				    $timeelapsed = microtime(true);
+				    $MarineLive = new MarineLive($this->db);
+				    if (isset($line['id'])) {
+					$recent_ident = $MarineLive->checkIdRecent($line['id']);
+					if ($globalDebugTimeElapsed) echo 'Time elapsed for update checkIdRecent : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+				    } elseif (isset($this->all_tracked[$id]['mmsi']) && $this->all_tracked[$id]['mmsi'] != '') {
+					$recent_ident = $MarineLive->checkMMSIRecent($this->all_tracked[$id]['mmsi']);
+					if ($globalDebugTimeElapsed) echo 'Time elapsed for update checkIdentRecent : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+				    } elseif (isset($this->all_tracked[$id]['ident']) && $this->all_tracked[$id]['ident'] != '') {
+					$recent_ident = $MarineLive->checkIdentRecent($this->all_tracked[$id]['ident']);
+					if ($globalDebugTimeElapsed) echo 'Time elapsed for update checkIdentRecent : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+				    } else $recent_ident = '';
+				    $MarineLive->db=null;
+				    if ($globalDebug && $recent_ident == '') echo " Not in DB.\n";
+				    elseif ($globalDebug && $recent_ident != '') echo " Already in DB.\n";
 				} else $recent_ident = '';
-				$MarineLive->db=null;
-				if ($globalDebug && $recent_ident == '') echo " Not in DB.\n";
-				elseif ($globalDebug && $recent_ident != '') echo " Already in DB.\n";
 			    } else {
 				$recent_ident = '';
 				$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('forcenew' => 0));
@@ -313,13 +331,16 @@ class MarineImport {
 				//adds the spotter data for the archive
 				    $highlight = '';
 				    if (!isset($this->all_tracked[$id]['id'])) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('id' => $this->all_tracked[$id]['mmsi'].'-'.date('YmdHi')));
-				    $timeelapsed = microtime(true);
-				    $Marine = new Marine($this->db);
-				    $result = $Marine->addMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'], $this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['mmsi'], $this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'], $this->all_tracked[$id]['status'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name']);
-				    $Marine->db = null;
-				    if ($globalDebug && isset($result)) echo $result."\n";
-				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update addspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
-				    
+				    if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
+					if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+					    $timeelapsed = microtime(true);
+					    $Marine = new Marine($this->db);
+					    $result = $Marine->addMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'], $this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['mmsi'], $this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'], $this->all_tracked[$id]['status'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name']);
+					    $Marine->db = null;
+					    if ($globalDebug && isset($result)) echo $result."\n";
+					    if ($globalDebugTimeElapsed) echo 'Time elapsed for update addspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+					}
+				    }
 				    /*
 				    // Add source stat in DB
 				    $Stats = new Stats($this->db);
@@ -354,19 +375,23 @@ class MarineImport {
 				if ($this->last_delete == 0 || time() - $this->last_delete > 1800) {
 				    if ($globalDebug) echo "---- Deleting Live Marine data older than 9 hours...";
 				    //MarineLive->deleteLiveMarineDataNotUpdated();
-				    $MarineLive = new MarineLive($this->db);
-				    $MarineLive->deleteLiveMarineData();
-				    $MarineLive->db=null;
-				    if ($globalDebug) echo " Done\n";
+				    if (!isset($globaNoDB) || $globalNoDB !== TRUE) {
+					$MarineLive = new MarineLive($this->db);
+					$MarineLive->deleteLiveMarineData();
+					$MarineLive->db=null;
+					if ($globalDebug) echo " Done\n";
+				    }
 				    $this->last_delete = time();
 				}
 			    } elseif ($recent_ident != '') {
 				$this->all_tracked[$id]['id'] = $recent_ident;
 				$this->all_tracked[$id]['addedMarine'] = 1;
-				if (isset($globalDaemon) && !$globalDaemon) {
+				if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+				    if (isset($globalDaemon) && !$globalDaemon) {
 					$Marine = new Marine($this->db);
 					$Marine->updateLatestMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime']);
 					$Marine->db = null;
+				    }
 				}
 				
 			    }
@@ -381,10 +406,18 @@ class MarineImport {
 		    if (!$ignoreImport) {
 			if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 				if ($globalDebug) echo "\o/ Add ".$this->all_tracked[$id]['ident']." from ".$this->all_tracked[$id]['format_source']." in Live DB : ";
-				$timeelapsed = microtime(true);
-				$MarineLive = new MarineLive($this->db);
-				$result = $MarineLive->addLiveMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['putinarchive'],$this->all_tracked[$id]['mmsi'],$this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'],$this->all_tracked[$id]['status'],$this->all_tracked[$id]['noarchive'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['over_country']);
-				$MarineLive->db = null;
+				if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
+				    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+					$timeelapsed = microtime(true);
+					$MarineLive = new MarineLive($this->db);
+					$result = $MarineLive->addLiveMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['putinarchive'],$this->all_tracked[$id]['mmsi'],$this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'],$this->all_tracked[$id]['status'],$this->all_tracked[$id]['noarchive'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['over_country']);
+					$MarineLive->db = null;
+					if ($globalDebug) echo $result."\n";
+				    }
+				}
+				if (isset($globalServerAPRS) && $globalServerAPRS && $this->all_flights[$id]['putinarchive']) {
+				    $APRSMarine->addLiveMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['putinarchive'],$this->all_tracked[$id]['mmsi'],$this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'],$this->all_tracked[$id]['status'],$this->all_tracked[$id]['noarchive'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['over_country']);
+				}
 				$this->all_tracked[$id]['putinarchive'] = false;
 				if ($globalDebugTimeElapsed) echo 'Time elapsed for update addlivespotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 
@@ -444,18 +477,19 @@ class MarineImport {
 
 				$this->all_tracked[$id]['lastupdate'] = time();
 				if ($this->all_tracked[$id]['putinarchive']) $send = true;
-				if ($globalDebug) echo $result."\n";
 			} elseif (isset($this->all_tracked[$id]['latitude']) && isset($globalDistanceIgnore['latitude']) && $globalDebug) echo "!! Too far -> Distance : ".$Common->distance($this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude'])."\n";
 			//$this->del();
 			
 			
 			if ($this->last_delete_hourly == 0 || time() - $this->last_delete_hourly > 900) {
-			    if ($globalDebug) echo "---- Deleting Live Marine data Not updated since 2 hour...";
-			    $MarineLive = new MarineLive($this->db);
-			    $MarineLive->deleteLiveMarineDataNotUpdated();
-			    $MarineLive->db = null;
-			    //MarineLive->deleteLiveMarineData();
-			    if ($globalDebug) echo " Done\n";
+			    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+				if ($globalDebug) echo "---- Deleting Live Marine data Not updated since 2 hour...";
+				$MarineLive = new MarineLive($this->db);
+				$MarineLive->deleteLiveMarineDataNotUpdated();
+				$MarineLive->db = null;
+				//MarineLive->deleteLiveMarineData();
+				if ($globalDebug) echo " Done\n";
+			    }
 			    $this->last_delete_hourly = time();
 			}
 			
