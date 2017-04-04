@@ -160,6 +160,8 @@ class aprs {
 	if ($type == ';') {
 		if (isset($result['source_type']) && $result['source_type'] == 'modes') {
 			$result['address'] = trim(substr($body,1,9));
+		} elseif (isset($result['source_type']) && $result['source_type'] == 'ais') {
+			$result['mmsi'] = trim(substr($body,1,9));
 		} else $result['ident'] = trim(substr($body,1,9));
 	} elseif ($type == ',') {
 		// Invalid data or test data

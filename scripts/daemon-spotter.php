@@ -1195,13 +1195,13 @@ while ($i > 0) {
 			    //echo $buffer."\n";
 			    if (substr($buffer,0,1) != '#' && substr($buffer,0,1) != '@' && substr($buffer,0,5) != 'APRS ') {
 				$line = $APRS->parse($buffer);
-				//print_r($line);
 				//if (is_array($line) && isset($line['address']) && $line['address'] != '' && isset($line['ident'])) {
-				if (is_array($line) && isset($line['latitude']) && isset($line['longitude']) && (isset($line['ident']) || isset($line['address']))) {
+				if (is_array($line) && isset($line['latitude']) && isset($line['longitude']) && (isset($line['ident']) || isset($line['address']) || isset($line['mmsi']))) {
 				    $aprs_last_tx = time();
 				    $data = array();
 				    //print_r($line);
 				    if (isset($line['address'])) $data['hex'] = $line['address'];
+				    if (isset($line['mmsi'])) $data['mmsi'] = $line['mmsi'];
 				    if (isset($line['timestamp'])) $data['datetime'] = date('Y-m-d H:i:s',$line['timestamp']);
 				    else $data['datetime'] = date('Y-m-d H:i:s');
 				    //$data['datetime'] = date('Y-m-d H:i:s');
@@ -1230,6 +1230,9 @@ while ($i > 0) {
 				    // Accept data if time <= system time + 20s
 				    if (($data['source_type'] == 'modes') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
 					$send = $SI->add($data);
+				    } elseif ($data['source_type'] == 'ais') {
+					echo 'add...'."\n";
+					$send = $MI->add($data);
 				    } elseif (isset($line['stealth'])) {
 					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";
 					else echo '--------- '.$data['ident'].' : Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
@@ -1290,7 +1293,7 @@ while ($i > 0) {
 					if ($globalDebug) echo "Wrong line format. Ignoring... \n";
 					if ($globalDebug) {
 						echo $buffer;
-						print_r($line);
+						//print_r($line);
 					}
 					//socket_close($r);
 					if ($globalDebug) echo "Reconnect after an error...\n";
