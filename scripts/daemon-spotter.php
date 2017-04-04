@@ -49,7 +49,7 @@ if (!isset($globalSources)) {
     }
 }
 
-$options = getopt('s::',array('source::','server','nodaemon','idsource::','aprsserverssid::','aprsserverpass::','aprsserverhost::','aprsserverport::','format::'));
+$options = getopt('s::',array('source::','server','nodaemon','idsource::','aprsserverssid::','aprsserverpass::','aprsserverhost::','aprsserverport::','format::','noaprsserver'));
 //if (isset($options['s'])) $hosts = array($options['s']);
 //elseif (isset($options['source'])) $hosts = array($options['source']);
 if (isset($options['s'])) {
@@ -61,10 +61,14 @@ if (isset($options['s'])) {
     if (isset($options['format'])) $globalSources[] = array('host' => $options['source'],'format' => $options['format']);
     else $globalSources[] = array('host' => $options['source']);
 }
-if (isset($options['aprsserverhost'])) $globalServerAPRShost = $options['aprsserverhost'];
+if (isset($options['aprsserverhost'])) {
+	$globalServerAPRS = TRUE;
+	$globalServerAPRShost = $options['aprsserverhost'];
+}
 if (isset($options['aprsserverport'])) $globalServerAPRSport = $options['aprsserverport'];
 if (isset($options['aprsserverssid'])) $globalServerAPRSssid = $options['aprsserverssid'];
 if (isset($options['aprsserverpass'])) $globalServerAPRSpass = $options['aprsserverpass'];
+if (isset($options['noaprsserver'])) $globalServerAPRS = FALSE; 
 if (isset($options['nodaemon'])) $globalDaemon = FALSE;
 if (isset($options['server'])) $globalServer = TRUE;
 if (isset($options['idsource'])) $id_source = $options['idsource'];
