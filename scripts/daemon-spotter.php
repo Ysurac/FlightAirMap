@@ -390,6 +390,7 @@ while ($i > 0) {
 		    $data['format_source'] = 'deltadbtxt';
     		    $data['id_source'] = $id_source;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($value['sourcestats'])) $data['sourcestats'] = $value['sourcestats'];
     		    $SI->add($data);
 		    unset($data);
@@ -431,8 +432,9 @@ while ($i > 0) {
 		    }
 		    $data['format_source'] = 'aisnmeatxt';
     		    $data['id_source'] = $id_source;
-		    print_r($data);
+		    //print_r($data);
 		    echo 'Add...'."\n";
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if ($add && isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
 		    unset($data);
 		}
@@ -472,6 +474,7 @@ while ($i > 0) {
 			    }
 			    $data['format_source'] = 'aisnmeahttp';
 			    $data['id_source'] = $id_source;
+			    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 			    if (isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
 			    unset($data);
 			}
@@ -501,6 +504,7 @@ while ($i > 0) {
 			$data['datetime'] = date('Y-m-d H:i:s',$line['T']);
 			$data['format_source'] = 'myshiptracking';
 			$data['id_source'] = $id_source;
+			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 			$MI->add($data);
 			unset($data);
 		    }
@@ -529,6 +533,7 @@ while ($i > 0) {
 			    $data['datetime'] = $line['time'];
 			    $data['format_source'] = 'boatbeaconapp';
 			    $data['id_source'] = $id_source;
+			    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 			    $MI->add($data);
 			    unset($data);
 			}
@@ -566,7 +571,8 @@ while ($i > 0) {
 		    //$data['etaTime'] = substr($line,135,5);
 		    $data['format_source'] = 'shipplotter';
     		    $data['id_source'] = $id_source;
-		    print_r($data);
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+		    //print_r($data);
 		    echo 'Add...'."\n";
 		    $MI->add($data);
 		    unset($data);
@@ -624,6 +630,7 @@ while ($i > 0) {
 	    		elseif ($value == 'vatsimtxt') $data['format_source'] = 'vatsimtxt';
 	    		*/
 	    		$data['format_source'] = $value['format'];
+			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 			if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
     			if ($line[3] == 'PILOT') $SI->add($data);
 			elseif ($line[3] == 'ATC') {
@@ -679,6 +686,7 @@ while ($i > 0) {
 	    	    $data['format_source'] = 'aircraftlistjson';
 		    $data['id_source'] = $id_source;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($data['latitude'])) $SI->add($data);
 		    unset($data);
 		}
@@ -699,6 +707,7 @@ while ($i > 0) {
 		    $data['datetime'] = date('Y-m-d H:i:s');
 	    	    $data['format_source'] = 'aircraftlistjson';
     		    $data['id_source'] = $id_source;
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    $SI->add($data);
 		    unset($data);
@@ -735,6 +744,7 @@ while ($i > 0) {
 		    $data['datetime'] = date('Y-m-d H:i:s',$line[9]);
 	    	    $data['format_source'] = 'planeupdatefaa';
     		    $data['id_source'] = $id_source;
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    $SI->add($data);
 		    unset($data);
@@ -764,6 +774,7 @@ while ($i > 0) {
 		    $data['datetime'] = date('Y-m-d H:i:s',$line[3]);
 	    	    $data['format_source'] = 'opensky';
     		    $data['id_source'] = $id_source;
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    $SI->add($data);
 		    unset($data);
 		}
@@ -796,6 +807,7 @@ while ($i > 0) {
 		    $data['datetime'] = date('Y-m-d H:i:s'); //$line[10]
 	    	    $data['format_source'] = 'fr24json';
     		    $data['id_source'] = $id_source;
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    $SI->add($data);
 		    unset($data);
@@ -836,6 +848,7 @@ while ($i > 0) {
 			$data['datetime'] = date('Y-m-d H:i:s',$line['inf']['dt']); //$line[10]
 	    		$data['format_source'] = 'radarvirtueljson';
     			$data['id_source'] = $id_source;
+			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 			if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 			$SI->add($data);
 			unset($data);
@@ -879,6 +892,7 @@ while ($i > 0) {
 		    $data['format_source'] = 'pireps';
     		    $data['id_source'] = $id_source;
 		    $data['datetime'] = date('Y-m-d H:i:s');
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    if ($line['icon'] == 'plane') {
 			$SI->add($data);
@@ -936,6 +950,7 @@ while ($i > 0) {
 	    	    $data['arrival_airport_icao'] = $line['arricao'];
     		    $data['arrival_airport_time'] = $line['arrtime'];
     		    $data['registration'] = $line['aircraft'];
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($line['route'])) $data['waypoints'] = $line['route']; // route
 		    if (isset($line['aircraftname'])) {
 			$line['aircraftname'] = strtoupper($line['aircraftname']);
@@ -997,6 +1012,7 @@ while ($i > 0) {
 	    	    $data['aircraft_icao'] = $line['plane_type'];
     		    $data['id_source'] = $id_source;
 	    	    $data['format_source'] = 'vam';
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    $SI->add($data);
 		    unset($data);
@@ -1054,6 +1070,7 @@ while ($i > 0) {
 				$data['format_source'] = 'raw';
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
 				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
+				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
 				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
 			    }
 			} elseif ($format == 'ais') {
@@ -1071,6 +1088,7 @@ while ($i > 0) {
 			    if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
 			    if (isset($ais_data['destination'])) $data['arrival_code'] = $ais_data['destination'];
 			    if (isset($ais_data['eta_ts'])) $data['arrival_date'] = date('Y-m-d H:i:s',$ais_data['eta_ts']);
+			    if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
 
 			    if (isset($ais_data['timestamp'])) {
 				$data['datetime'] = date('Y-m-d H:i:s',$ais_data['timestamp']);
@@ -1097,6 +1115,7 @@ while ($i > 0) {
 				$data['speed'] = round($line[5]*1.94384);
 				$data['datetime'] = date('Y-m-d H:i:s');
 				$data['format_source'] = 'flightgearsp';
+				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
 				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
 				$send = @ socket_send( $r  , $data_aprs , strlen($data_aprs) , 0 );
 			    }
@@ -1122,6 +1141,7 @@ while ($i > 0) {
 				    $aircraft_type = $line[10];
 				    $aircraft_type = preg_split(':/:',$aircraft_type);
 				    $data['aircraft_name'] = substr(end($aircraft_type),0,-4);
+				    if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
 				    if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
 				}
 			    }
@@ -1151,6 +1171,7 @@ while ($i > 0) {
 				if (isset($line['Type'])) $data['aircraft_icao'] = $line['Type'];
 		    		$data['format_source'] = 'vrstcp';
 				$data['id_source'] = $id_source;
+				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
 				if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 				if (isset($data['latitude']) && isset($data['hex'])) $SI->add($data);
 				unset($data);
@@ -1176,6 +1197,7 @@ while ($i > 0) {
     				$data['format_source'] = 'tsv';
     				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
+				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
     				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
     				unset($lined);
     				unset($data);
@@ -1286,6 +1308,7 @@ while ($i > 0) {
     				$data['format_source'] = 'sbs';
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
+				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
     				$data['id_source'] = $id_source;
     				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $send = $SI->add($data);
     				else $error = true;
