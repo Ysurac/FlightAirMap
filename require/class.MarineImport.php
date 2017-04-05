@@ -64,27 +64,29 @@ class MarineImport {
     }
 
     public function del() {
-	global $globalDebug;
+	global $globalDebug, $globalNoDB;
 	// Delete old infos
 	if ($globalDebug) echo 'Delete old values and update latest data...'."\n";
 	foreach ($this->all_tracked as $key => $flight) {
     	    if (isset($flight['lastupdate'])) {
         	if ($flight['lastupdate'] < (time()-3000)) {
-            	    if (isset($this->all_tracked[$key]['id'])) {
-            		if ($globalDebug) echo "--- Delete old values with id ".$this->all_tracked[$key]['id']."\n";
-			/*
-			$MarineLive = new MarineLive();
-            		$MarineLive->deleteLiveMarineDataById($this->all_tracked[$key]['id']);
-			$MarineLive->db = null;
-			*/
-            		//$real_arrival = $this->arrival($key);
-            		$Marine = new Marine($this->db);
-            		if ($this->all_tracked[$key]['latitude'] != '' && $this->all_tracked[$key]['longitude'] != '') {
+            	    if ((!isset($globalNoImport) || $globalNoImport !== TRUE) && (!isset($globalNoDB) || $globalNoDB !== TRUE)) {
+            		if (isset($this->all_tracked[$key]['id'])) {
+            		    if ($globalDebug) echo "--- Delete old values with id ".$this->all_tracked[$key]['id']."\n";
+			    /*
+			    $MarineLive = new MarineLive();
+            		    $MarineLive->deleteLiveMarineDataById($this->all_tracked[$key]['id']);
+			    $MarineLive->db = null;
+			    */
+            		    //$real_arrival = $this->arrival($key);
+            		    $Marine = new Marine($this->db);
+            		    if ($this->all_tracked[$key]['latitude'] != '' && $this->all_tracked[$key]['longitude'] != '') {
 				$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed']);
 				if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
+			    }
+			    // Put in archive
+//				$Marine->db = null;
 			}
-			// Put in archive
-//			$Marine->db = null;
             	    }
             	    unset($this->all_tracked[$key]);
     	        }
