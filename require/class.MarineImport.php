@@ -64,7 +64,7 @@ class MarineImport {
     }
 
     public function del() {
-	global $globalDebug, $globalNoDB;
+	global $globalDebug, $globalNoDB, $globalNoImport;
 	// Delete old infos
 	if ($globalDebug) echo 'Delete old values and update latest data...'."\n";
 	foreach ($this->all_tracked as $key => $flight) {
