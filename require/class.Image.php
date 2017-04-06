@@ -219,7 +219,7 @@ class Image {
 	*/
 	public function findMarineImage($mmsi,$imo = '',$name = '')
 	{
-		global $globalMarineSources;
+		global $globalMarineImageSources;
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
 		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
 		$name = filter_var($name,FILTER_SANITIZE_STRING);
