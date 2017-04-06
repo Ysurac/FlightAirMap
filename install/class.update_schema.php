@@ -1691,14 +1691,14 @@ class update_schema {
 			$error .= create_db::import_file('../db/pgsql/tracker_archive_output.sql');
 			if ($error != '') return $error;
 		}
-		if (!$Connection->indexExists('spotter_archive','flightaware_id_date_idx')) {
+		if (!$Connection->indexExists('spotter_archive','flightaware_id_date_idx') && !$Connection->indexExists('spotter_archive','flightaware_id')) {
 			// Add index key
 			$query = "create index flightaware_id_date_idx on spotter_archive (flightaware_id,date)";
 			try {
 				$sth = $Connection->db->prepare($query);
 				$sth->execute();
 			} catch(PDOException $e) {
-				return "error (add index flightaware_id, datee on spotter_archive) : ".$e->getMessage()."\n";
+				return "error (add index flightaware_id, date on spotter_archive) : ".$e->getMessage()."\n";
 			}
                 }
 		$query = "UPDATE config SET value = '38' WHERE name = 'schema_version'";
