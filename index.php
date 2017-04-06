@@ -410,7 +410,7 @@ require_once('header.php');
 			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print 'ff0000'; ?>">
 		    </li>
 <?php
-	if (isset($globalMarine) && $globalMarine) {
+	if (isset($globalMarine) && $globalMarine === TRUE) {
 ?>
 		    <li><input type="checkbox" name="marinecolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['MarineIconColorForce']) && $_COOKIE['MarineIconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Marine color"); ?></li>
 		    <li><?php echo _("Marine icon color:"); ?>
