@@ -192,7 +192,7 @@ class aprs {
 	    //print_r($matches);
 	    $timestamp = $matches[0];
 	    if ($matches[4] == 'h') {
-		$timestamp = strtotime($matches[1].':'.$matches[2].':'.$matches[3]);
+		$timestamp = strtotime(date('Ymd').' '.$matches[1].':'.$matches[2].':'.$matches[3]);
 		//echo 'timestamp : '.$timestamp.' - now : '.time()."\n";
 		/*
 		if (time() + 3900 < $timestamp) $timestamp -= 86400;
