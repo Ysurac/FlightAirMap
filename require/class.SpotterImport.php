@@ -332,7 +332,7 @@ class SpotterImport {
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => 'NA'));
 		}
 		//if (isset($line['datetime']) && preg_match('/^(\d{4}(?:\-\d{2}){2} \d{2}(?:\:\d{2}){2})$/',$line['datetime'])) {
-		if (isset($line['datetime']) && strtotime($line['datetime']) > time()-20*60) {
+		if (isset($line['datetime']) && strtotime($line['datetime']) > time()-20*60 && strtotime($line['datetime']) < time()+20*60) {
 		    if (!isset($this->all_flights[$id]['datetime']) || strtotime($line['datetime']) >= strtotime($this->all_flights[$id]['datetime'])) {
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => $line['datetime']));
 		    } else {
