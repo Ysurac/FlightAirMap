@@ -144,6 +144,7 @@ class SpotterArchive {
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
+			$sth->closeCursor();
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}

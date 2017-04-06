@@ -3633,7 +3633,7 @@ class Spotter{
 	*/
 	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $altitude_real = '',$heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '', $source_name = '',$source_type = '')
 	{
-		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalDebugTimeElapsed, $globalAirlinesSource, $globalVAM;
+		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalDebugTimeElapsed, $globalAirlinesSource, $globalVAM, $globalAircraftImageFetch;
 		
 		//if (isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 		$Image = new Image($this->db);
@@ -3829,13 +3829,15 @@ class Spotter{
 		//getting the aircraft image
 		if (($registration != "" || $registration != 'NA') && !$globalIVAO && !$globalVATSIM && !$globalphpVMS && !$globalVAM)
 		{
-			$timeelapsed = microtime(true);
-			$image_array = $Image->getSpotterImage($registration);
-			if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getSpotterImage : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
-			if (!isset($image_array[0]['registration']))
-			{
-				//echo "Add image !!!! \n";
-				$Image->addSpotterImage($registration);
+			if (isset($globalAircraftImageFetch) && $globalAircraftImageFetch === TRUE) {
+				$timeelapsed = microtime(true);
+				$image_array = $Image->getSpotterImage($registration);
+				if ($globalDebugTimeElapsed) echo 'ADD SPOTTER DATA : Time elapsed for getSpotterImage : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
+				if (!isset($image_array[0]['registration']))
+				{
+					//echo "Add image !!!! \n";
+					$Image->addSpotterImage($registration);
+				}
 			}
 			$timeelapsed = microtime(true);
 			$owner_info = $this->getAircraftOwnerByRegistration($registration);
@@ -3843,7 +3845,7 @@ class Spotter{
 			if ($owner_info['owner'] != '') $aircraft_owner = ucwords(strtolower($owner_info['owner']));
 		}
     
-		if (($globalIVAO || $globalVATSIM || $globalphpVMS || $globalVAM) && $aircraft_icao != '')
+		if (($globalIVAO || $globalVATSIM || $globalphpVMS || $globalVAM) && $aircraft_icao != '' && isset($globalAircraftImageFetch) && $globalAircraftImageFetch === TRUE)
 		{
             		if (isset($airline_array[0]['icao'])) $airline_icao = $airline_array[0]['icao'];
             		else $airline_icao = '';
@@ -3929,6 +3931,7 @@ class Spotter{
 		        
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
+			$sth->closeCursor();
 			$this->db = null;
 		} catch (PDOException $e) {
 		    return "error : ".$e->getMessage();
