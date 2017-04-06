@@ -386,12 +386,14 @@ require_once('header.php');
 		        }
 		    ?>
 		    <?php
-		        if (extension_loaded('gd') && function_exists('gd_info')) {
+			if (isset($globalMarine) && $globalMarine === TRUE) {
+			    if (extension_loaded('gd') && function_exists('gd_info')) {
 		    ?>
 		    <li><?php echo _("Marine icon color:"); ?>
 			<input type="color" name="marinecolor" id="html5colorpicker" onchange="iconColor(marinecolor.value);" value="#<?php if (isset($_COOKIE['MarineIconColor'])) print $_COOKIE['MarineIconColor']; elseif (isset($globalMarineIconColor)) print $globalMarineIconColor; else print '1a3151'; ?>">
 		    </li>
 		    <?php
+			    }
 		        }
 		    ?>
 		    <li><?php echo _("Show airport icon at zoom level:"); ?>
