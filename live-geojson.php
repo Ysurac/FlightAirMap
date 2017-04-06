@@ -508,7 +508,7 @@ $output = '{';
 					} elseif ($marine) {
 						$spotter_history_array = $MarineLive->getAllLiveMarineDataById($spotter_item['fammarine_id']);
 					} else {
-						if ($from_archive) {
+						if ($from_archive || $globalArchive) {
 							$spotter_history_array = $SpotterArchive->getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
 						} else {
 							$spotter_history_array = $SpotterLive->getAllLiveSpotterDataById($spotter_item['flightaware_id']);
@@ -533,6 +533,15 @@ $output = '{';
 							$output_history .=  $spotter_history['latitude'].', ';
 							$output_history .=  $spotter_history['altitude']*30.48;
 							$output_history .= '],';
+							/*
+							if ($from_archive === false) {
+								$output_history .= '[';
+								$output_history .=  $spotter_item['longitude'].', ';
+								$output_history .=  $spotter_item['latitude'].', ';
+								$output_history .=  $spotter_item['altitude']*30.48;
+								$output_history .= '],';
+							}
+							*/
 							$prev_alt = $alt;
 						} else {
 							if ($d == false) {
@@ -543,9 +552,28 @@ $output = '{';
 							$output_history .=  $spotter_history['longitude'].', ';
 							$output_history .=  $spotter_history['latitude'];
 							$output_history .= '],';
+							/*
+							if ($from_archive === false) {
+								$output_history .= '[';
+								$output_history .=  $spotter_item['longitude'].', ';
+								$output_history .=  $spotter_item['latitude'];
+								$output_history .= '],';
+							}
+							*/
 						}
 					}
 					if (isset($output_history)) {
+					
+						if ($from_archive === false) {
+							$output_historyd = '[';
+							$output_historyd .=  $spotter_item['longitude'].', ';
+							$output_historyd .=  $spotter_item['latitude'];
+							if (isset($spotter_history['altitude'])) $output_historyd .=  ','.$spotter_item['altitude']*30.48;
+							$output_historyd .= '],';
+							//$output_history = $output_historyd.$output_history;
+							$output_history = $output_history.$output_historyd;
+						}
+						
 						$output_history  = substr($output_history, 0, -1);
 						$output_history .= ']}},';
 						$output .= $output_history;
