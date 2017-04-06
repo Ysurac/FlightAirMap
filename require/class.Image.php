@@ -221,7 +221,7 @@ class Image {
 	{
 		global $globalMarineImageSources;
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
-		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
+		//$imo = filter_var($imo,FILTER_SANITIZE_STRING);
 		$name = filter_var($name,FILTER_SANITIZE_STRING);
 		$name = trim($name);
 		if (strlen($name) < 4) return array('thumbnail' => '','original' => '', 'copyright' => '', 'source' => '','source_website' => '');
