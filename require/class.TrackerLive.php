@@ -262,6 +262,37 @@ class TrackerLive {
 	}
 
 	/**
+	* Gets all the spotter information based on the latest data entry and coord
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public function getMinLiveTrackerDatabyCoord($coord, $filter = array())
+	{
+		global $globalDBdriver, $globalLiveInterval;
+		$Spotter = new Spotter($this->db);
+		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
+		$filter_query = $this->getFilter($filter);
+
+		if (is_array($coord)) {
+			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		} else return array();
+		if ($globalDBdriver == 'mysql') {
+			$query  = 'SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
+			FROM tracker_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= tracker_live.date AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0' AND tracker_live.latitude BETWEEN ".$minlat.' AND '.$maxlat.' AND tracker_live.longitude BETWEEN '.$minlong.' AND '.$maxlong."
+			ORDER BY tracker_live.famtrackid, tracker_live.date";
+		} else {
+			$query  = "SELECT tracker_live.ident, tracker_live.type,tracker_live.famtrackid, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
+			FROM tracker_live INNER JOIN (SELECT l.famtrackid, max(l.date) as maxdate FROM tracker_live l WHERE CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date l.latitude BETWEEN ".$minlat." AND ".$maxlat." AND l.longitude BETWEEN ".$minlong." AND ".$maxlong." GROUP BY l.famtrackid) s on tracker_live.famtrackid = s.famtrackid AND tracker_live.date = s.maxdate".$filter_query." tracker_live.latitude <> '0' AND tracker_live.longitude <> '0'";
+		}
+		$spotter_array = $Spotter->getDataFromDB($query);
+		return $spotter_array;
+	}
+
+	/**
 	* Gets all the spotter information based on a user's latitude and longitude
 	*
 	* @return Array the spotter information

@@ -258,6 +258,38 @@ class MarineLive {
 	}
 
 	/**
+	* Gets all the spotter information based on the latest data entry and coord
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public function getMinLiveMarineDatabyCoord($coord, $filter = array())
+	{
+		global $globalDBdriver, $globalLiveInterval;
+		$Spotter = new Spotter($this->db);
+		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
+		$filter_query = $this->getFilter($filter);
+
+		if (is_array($coord)) {
+			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		} else return array();
+		if ($globalDBdriver == 'mysql') {
+			$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+			FROM marine_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= marine_live.date AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' AND marine_live.latitude BETWEEN ".$minlat.' AND '.$maxlat.' AND marine_live.longitude BETWEEN '.$minlong.' AND '.$maxlong."
+			ORDER BY marine_live.fammarine_id, marine_live.date";
+		} else {
+			$query  = "SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+			FROM marine_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong."
+			ORDER BY marine_live.fammarine_id, marine_live.date";
+		}
+		$spotter_array = $Spotter->getDataFromDB($query);
+		return $spotter_array;
+	}
+
+	/**
 	* Gets all the spotter information based on a user's latitude and longitude
 	*
 	* @return Array the spotter information

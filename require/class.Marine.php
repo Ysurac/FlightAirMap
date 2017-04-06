@@ -1,6 +1,4 @@
 <?php
-require_once(dirname(__FILE__).'/class.Scheduler.php');
-require_once(dirname(__FILE__).'/class.ACARS.php');
 require_once(dirname(__FILE__).'/class.Image.php');
 $global_query = "SELECT marine_output.* FROM marine_output";
 
@@ -134,7 +132,7 @@ class Marine{
 			if (isset($row['fammarine_id'])) $temp_array['fammarine_id'] = $row['fammarine_id'];
 			if (isset($row['mmsi'])) $temp_array['mmsi'] = $row['mmsi'];
 			if (isset($row['type'])) $temp_array['type'] = $row['type'];
-			$temp_array['ident'] = $row['ident'];
+			if (isset($row['ident'])) $temp_array['ident'] = $row['ident'];
 			if (isset($row['latitude'])) $temp_array['latitude'] = $row['latitude'];
 			if (isset($row['longitude'])) $temp_array['longitude'] = $row['longitude'];
 			if (isset($row['format_source'])) $temp_array['format_source'] = $row['format_source'];
@@ -144,6 +142,21 @@ class Marine{
 				if (isset($heading_direction[0]['direction_fullname'])) $temp_array['heading_name'] = $heading_direction[0]['direction_fullname'];
 			}
 			if (isset($row['ground_speed'])) $temp_array['ground_speed'] = $row['ground_speed'];
+
+			if($temp_array['mmsi'] != "" && isset($globalMarineImageFetch) && $globalMarineImageFetch === TRUE)
+			{
+				$Image = new Image($this->db);
+				if (isset($temp_array['ident']) && $temp_array['ident'] != '') $image_array = $Image->getMarineImage($temp_array['mmsi'],'',$temp_array['ident']);
+				else $image_array = $Image->getMarineImage($temp_array['mmsi']);
+				unset($Image);
+				if (count($image_array) > 0) {
+					$temp_array['image'] = $image_array[0]['image'];
+					$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+					$temp_array['image_source'] = $image_array[0]['image_source'];
+					$temp_array['image_source_website'] = $image_array[0]['image_source_website'];
+					$temp_array['image_copyright'] = $image_array[0]['image_copyright'];
+				}
+			}
 			
 			if (isset($row['date'])) {
 				$dateArray = $this->parseDateString($row['date']);
@@ -316,7 +329,7 @@ class Marine{
 		return $spotter_array;
 	}
 	
-	public function getSpotterDataByDate($date = '', $limit = '', $sort = '',$filter = array())
+	public function getMarineDataByDate($date = '', $limit = '', $sort = '',$filter = array())
 	{
 		global $global_query, $globalTimezone, $globalDBdriver;
 		
@@ -574,7 +587,7 @@ class Marine{
 	*/
 	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$typeid = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$format_source = '', $source_name = '')
 	{
-		global $globalURL;
+		global $globalURL, $globalMarineImageFetch;
 		
 		//$Image = new Image($this->db);
 		$Common = new Common();
@@ -651,7 +664,7 @@ class Marine{
 		$heading = filter_var($heading,FILTER_SANITIZE_NUMBER_INT);
 		$groundspeed = filter_var($groundspeed,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$format_source = filter_var($format_source,FILTER_SANITIZE_STRING);
-		$mmsi = filter_var($mmsi,FILTER_SANITIZE_NUMBER_INT);
+		$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
 		$type = filter_var($type,FILTER_SANITIZE_STRING);
 		$status = filter_var($status,FILTER_SANITIZE_STRING);
 		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
@@ -659,6 +672,15 @@ class Marine{
 		$arrival_code = filter_var($arrival_code,FILTER_SANITIZE_STRING);
 		$arrival_date = filter_var($arrival_date,FILTER_SANITIZE_STRING);
 	
+		if (isset($globalMarineImageFetch) && $globalMarineImageFetch === TRUE) {
+			$Image = new Image($this->db);
+			$image_array = $Image->getMarineImage($mmsi,$imo,$ident);
+			if (!isset($image_array[0]['mmsi'])) {
+				$Image->addMarineImage($mmsi,$imo,$ident);
+			}
+			unset($Image);
+		}
+		
                 if ($latitude == '' && $longitude == '') {
             		$latitude = 0;
             		$longitude = 0;

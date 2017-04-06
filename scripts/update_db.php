@@ -42,6 +42,11 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 		echo $update_db->update_airspace_fam();
 		$update_db->insert_last_airspace_update();
 	}
+	if (isset($globalMarine) && $globalMarine && $update_db->check_last_marine_identity_update()) {
+		echo "Check if new marine identity version exist...";
+		echo $update_db->update_marine_identity_fam();
+		$update_db->insert_last_marine_identity_update();
+	}
 	if ($update_db->check_last_owner_update() && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
 		echo "Updating aircraft's owners...\n";
 		if (isset($globalMasterSource) && $globalMasterSource) {

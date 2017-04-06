@@ -142,9 +142,9 @@ function getLiveMarineData(click)
 		    if (callsign != ""){ markerMarineLabel += callsign; }
 		    if (type != ""){ markerMarineLabel += ' - '+type; }
 <?php
-	if (isset($_COOKIE['IconColor'])) $IconColor = $_COOKIE['IconColor'];
-	elseif (isset($globalAircraftIconColor)) $IconColor = $globalAircraftIconColor;
-	else $IconColor = '1a3151';
+	if (isset($_COOKIE['MarineIconColor'])) $MarineIconColor = $_COOKIE['MarineIconColor'];
+	elseif (isset($globalMarineIconColor)) $MarineIconColor = $globalMarineIconColor;
+	else $MarineIconColor = '1a3151';
 	if (!isset($ident) && !isset($fammarine_id)) {
 ?>
 		    info_marine_update(feature.properties.fc);
@@ -156,16 +156,17 @@ function getLiveMarineData(click)
 		}
 ?>
 		    if (document.getElementById('aircraft_ident').className == callsign || document.getElementById('aircraft_ident').className == fammarine_id) {
+		    //if (document.getElementById('aircraft_ident').className == fammarine_id) {
 			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?marine&color=FF0000&filename='+aircraft_shadow;
 			    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?marine&color=8D93B9&filename='+aircraft_shadow;
 		    } else {
-			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?marine&color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
+			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?marine&color=<?php print $MarineIconColor; ?>&filename='+aircraft_shadow;
 			    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?marine&color=8D93B9&filename='+aircraft_shadow;
 		    }
 <?php
 	} else {
 ?>
-		    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?marine&color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
+		    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?marine&color=<?php print $MarineIconColor; ?>&filename='+aircraft_shadow;
 		    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?marine&color=8D93B9&filename='+aircraft_shadow;
 <?php
 	}

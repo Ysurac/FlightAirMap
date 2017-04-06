@@ -328,7 +328,7 @@ require_once('header.php');
 ?>
 		    
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightpopup" value="1" onclick="clickFlightPopup(this)" <?php if (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true') print 'checked'; ?> ><?php echo _("Display flight info as popup"); ?></label></div></li>
-		    <li><div class="checkbox"><label><input type="checkbox" name="flightpath" value="1" onclick="clickFlightPath(this)" <?php if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true') || !isset($_COOKIE['flightpath'])) print 'checked'; ?> ><?php echo _("Display flight path"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="flightpath" value="1" onclick="clickFlightPath(this)" <?php if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true')) print 'checked'; ?> ><?php echo _("Display flight path"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightroute" value="1" onclick="clickFlightRoute(this)" <?php if ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == 'true') || !isset($_COOKIE['MapRoute'])) print 'checked'; ?> ><?php echo _("Display flight route on click"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightestimation" value="1" onclick="clickFlightEstimation(this)" <?php if ((isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'true') || (!isset($_COOKIE['flightestimation']) && !isset($globalMapEstimation)) || (!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation)) print 'checked'; ?> ><?php echo _("Planes animate between updates"); ?></label></div></li>
 <?php
@@ -385,6 +385,15 @@ require_once('header.php');
 			    }
 		        }
 		    ?>
+		    <?php
+		        if (extension_loaded('gd') && function_exists('gd_info')) {
+		    ?>
+		    <li><?php echo _("Marine icon color:"); ?>
+			<input type="color" name="marinecolor" id="html5colorpicker" onchange="iconColor(marinecolor.value);" value="#<?php if (isset($_COOKIE['MarineIconColor'])) print $_COOKIE['MarineIconColor']; elseif (isset($globalMarineIconColor)) print $globalMarineIconColor; else print '1a3151'; ?>">
+		    </li>
+		    <?php
+		        }
+		    ?>
 		    <li><?php echo _("Show airport icon at zoom level:"); ?>
 			<div class="range">
 			    <input type="range" min="0" max="19" step="1" name="airportzoom" onchange="range.value=value;airportDisplayZoom(airportzoom.value);" value="<?php if (isset($_COOKIE['AirportZoom'])) print $_COOKIE['AirportZoom']; elseif (isset($globalAirportZoom)) print $globalAirportZoom; else print '7'; ?>">
@@ -399,6 +408,14 @@ require_once('header.php');
 			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print 'ff0000'; ?>">
 		    </li>
 <?php
+	if (isset($globalMarine) && $globalMarine) {
+?>
+		    <li><input type="checkbox" name="marinecolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['MarineIconColorForce']) && $_COOKIE['MarineIconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Marine color"); ?></li>
+		    <li><?php echo _("Marine icon color:"); ?>
+			<input type="color" name="marinecolor" id="html5colorpicker" onchange="iconColor(marinecolor.value);" value="#<?php if (isset($_COOKIE['MarineIconColor'])) print $_COOKIE['MarineIconColor']; elseif (isset($globalMarineIconColor)) print $globalMarineIconColor; else print 'ff0000'; ?>">
+		    </li>
+<?php
+	}
     }
 ?>
 		    <li><?php echo _("Distance unit:"); ?>

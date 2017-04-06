@@ -1201,6 +1201,46 @@ class update_db {
 		return '';
         }
 
+	public static function marine_identity_fam() {
+		global $tmp_dir, $globalTransaction;
+		$query = "TRUNCATE TABLE marine_identity";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+
+		
+		//update_db::unzip($out_file);
+		$delimiter = "\t";
+		$Connection = new Connection();
+		if (($handle = fopen($tmp_dir.'marine_identity.tsv', 'r')) !== FALSE)
+		{
+			$i = 0;
+			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
+			//$Connection->db->beginTransaction();
+			if ($globalTransaction) $Connection->db->beginTransaction();
+			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				if ($i > 0) {
+					$query = 'INSERT INTO marine_identity (mmsi,imo,call_sign,ship_name,length,gross_tonnage,dead_weight,width,country,engine_power,type) VALUES (:mmsi,:imo,:call_sign,:ship_name,:length,:gross_tonnage,:dead_weight,:width,:country,:engine_power,:type)';
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':mmsi' => $data[0],':imo' => $data[1],':call_sign' => $data[2],':ship_name' => $data[3], ':length' => $data[4],':gross_tonnage' => $data[5],':dead_weight' => $data[6],':width' => $data[7],':country' => $data[8],':engine_power' => $data[9],':type' => $data[10]));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				}
+				$i++;
+			}
+			fclose($handle);
+			if ($globalTransaction) $Connection->db->commit();
+		}
+		return '';
+        }
+
 	public static function banned_fam() {
 		global $tmp_dir, $globalTransaction;
 		$query = "UPDATE airlines SET ban_eu = 0";
@@ -1981,6 +2021,31 @@ class update_db {
 		} elseif ($globalDebug) echo "Done\n";
 		return '';
 	}
+	public static function update_marine_identity_fam() {
+		global $tmp_dir, $globalDebug;
+		update_db::download('http://data.flightairmap.fr/data/marine_identity.tsv.gz.md5',$tmp_dir.'marine_identity.tsv.gz.md5');
+		if (file_exists($tmp_dir.'marine_identity.tsv.gz.md5')) {
+			$marine_identity_md5_file = explode(' ',file_get_contents($tmp_dir.'marine_identity.tsv.gz.md5'));
+			$marine_identity_md5 = $marine_identity_md5_file[0];
+			if (!update_db::check_marine_identity_version($marine_identity_md5)) {
+				if ($globalDebug) echo "Marine identity from FlightAirMap website : Download...";
+				update_db::download('http://data.flightairmap.fr/data/marine_identity.tsv.gz',$tmp_dir.'marine_identity.tsv.gz');
+				if (file_exists($tmp_dir.'marine_identity.tsv.gz')) {
+					if ($globalDebug) echo "Gunzip...";
+					update_db::gunzip($tmp_dir.'marine_identity.tsv.gz');
+					if ($globalDebug) echo "Add to DB...";
+					$error = update_db::marine_identity_fam();
+				} else $error = "File ".$tmp_dir.'marine_identity.tsv.gz'." doesn't exist. Download failed.";
+				if ($error != '') {
+					return $error;
+				} elseif ($globalDebug) {
+					update_db::insert_marine_identity_version($marine_identity_md5);
+					echo "Done\n";
+				}
+			}
+		}
+		return '';
+	}
 	public static function update_banned_fam() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Banned airlines in Europe from FlightAirMap website : Download...";
@@ -2374,10 +2439,36 @@ class update_db {
                 else return false;
 	}
 
+	public static function check_marine_identity_version($version) {
+		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'marine_identity_version' AND value = :version";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':version' => $version));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return true;
+                else return false;
+	}
+
 
 	public static function insert_airspace_version($version) {
 		$query = "DELETE FROM config WHERE name = 'airspace_version';
 			INSERT INTO config (name,value) VALUES ('airspace_version',:version);";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':version' => $version));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
+
+	public static function insert_marine_identity_version($version) {
+		$query = "DELETE FROM config WHERE name = 'marine_identity_version';
+			INSERT INTO config (name,value) VALUES ('marine_identity_version',:version);";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
@@ -2530,6 +2621,36 @@ class update_db {
 	public static function insert_last_tle_update() {
 		$query = "DELETE FROM config WHERE name = 'last_update_tle';
 			INSERT INTO config (name,value) VALUES ('last_update_tle',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
+	public static function check_last_marine_identity_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_marine_identity' AND value > DATE_SUB(NOW(), INTERVAL 7 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_marine_identity' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '7 DAYS'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return false;
+                else return true;
+	}
+
+	public static function insert_last_marine_identity_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_marine_identity';
+			INSERT INTO config (name,value) VALUES ('last_update_marine_identity',NOW());";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);

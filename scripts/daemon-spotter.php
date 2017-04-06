@@ -445,41 +445,51 @@ while ($i > 0) {
 	    $w = $e = null;
 	    
 	    if (isset($arr[$id])) {
-	    $nn = stream_select($arr,$w,$e,$timeout);
-	    if ($nn > 0) {
-		foreach ($httpfeeds as $feed) {
-		    $buffer = stream_get_line($feed,2000,"\n");
-		    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
-		    $buffer = explode('\n',$buffer);
-		    foreach ($buffer as $line) {
-			if ($line != '') {
-			    $ais_data = $AIS->parse_line(trim($line));
-			    $data = array();
-			    if (isset($ais_data['ident'])) $data['ident'] = $ais_data['ident'];
-			    if (isset($ais_data['mmsi'])) $data['mmsi'] = $ais_data['mmsi'];
-			    if (isset($ais_data['speed'])) $data['speed'] = $ais_data['speed'];
-			    if (isset($ais_data['heading'])) $data['heading'] = $ais_data['heading'];
-			    if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
-			    if (isset($ais_data['longitude'])) $data['longitude'] = $ais_data['longitude'];
-			    if (isset($ais_data['status'])) $data['status'] = $ais_data['status'];
-			    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
-			    if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
-			    if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
-			    if (isset($ais_data['destination'])) $data['arrival_code'] = $ais_data['destination'];
-			    if (isset($ais_data['eta_ts'])) $data['arrival_date'] = date('Y-m-d H:i:s',$ais_data['eta_ts']);
-			    if (isset($ais_data['timestamp'])) {
-				$data['datetime'] = date('Y-m-d H:i:s',$ais_data['timestamp']);
-			    } else {
-				$data['datetime'] = date('Y-m-d H:i:s');
+		$nn = stream_select($arr,$w,$e,$timeout);
+		if ($nn > 0) {
+		    foreach ($httpfeeds as $feed) {
+			$buffer = stream_get_line($feed,2000,"\n");
+			$buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
+			$buffer = explode('\n',$buffer);
+			foreach ($buffer as $line) {
+			    if ($line != '') {
+				$ais_data = $AIS->parse_line(trim($line));
+				$data = array();
+				if (isset($ais_data['ident'])) $data['ident'] = $ais_data['ident'];
+				if (isset($ais_data['mmsi'])) $data['mmsi'] = $ais_data['mmsi'];
+				if (isset($ais_data['speed'])) $data['speed'] = $ais_data['speed'];
+				if (isset($ais_data['heading'])) $data['heading'] = $ais_data['heading'];
+				if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
+				if (isset($ais_data['longitude'])) $data['longitude'] = $ais_data['longitude'];
+				if (isset($ais_data['status'])) $data['status'] = $ais_data['status'];
+				if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
+				if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
+				if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
+				if (isset($ais_data['destination'])) $data['arrival_code'] = $ais_data['destination'];
+				if (isset($ais_data['eta_ts'])) $data['arrival_date'] = date('Y-m-d H:i:s',$ais_data['eta_ts']);
+				if (isset($ais_data['timestamp'])) {
+				    $data['datetime'] = date('Y-m-d H:i:s',$ais_data['timestamp']);
+				} else {
+				    $data['datetime'] = date('Y-m-d H:i:s');
+				}
+				$data['format_source'] = 'aisnmeahttp';
+				$data['id_source'] = $id_source;
+				if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+				if (isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
+				unset($data);
 			    }
-			    $data['format_source'] = 'aisnmeahttp';
-			    $data['id_source'] = $id_source;
-			    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
-			    if (isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
-			    unset($data);
 			}
 		    }
-		}
+		} else {
+		    $format = $value['format'];
+		    if (isset($tt[$format])) $tt[$format]++;
+		    else $tt[$format] = 0;
+		    if ($tt[$format] > 30) {
+			sleep(2);
+			$sourceeen[] = $value;
+			connect_all($sourceeen);
+			$sourceeen = array();
+		    }
 		}
 	    }
 	} elseif ($value['format'] == 'myshiptracking' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {

@@ -72,7 +72,7 @@ if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] 
 
 print '<div class="top">';
 if (isset($image)) {
-	print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].'" title="'.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' Image &copy; '.$spotter_item['image_copyright'].'"/><br />Image &copy; '.$spotter_item['image_copyright'].'</div>';
+	print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['mmsi'].' '.$spotter_item['ident'].'" title="'.$spotter_item['mmsi'].' '.$spotter_item['ident'].' Image &copy; '.$spotter_item['image_copyright'].'"/><br />Image &copy; '.$spotter_item['image_copyright'].'</div>';
 }
 //print '<div class="right"><div class="callsign-details"><div class="callsign"><a href="'.$globalURL.'/redirect/'.$spotter_item['famtrackid'].'" target="_blank">'.$spotter_item['ident'].'</a></div>';
 print '<div class="right"><div class="callsign-details"><div class="callsign">'.$spotter_item['ident'].'</div>';

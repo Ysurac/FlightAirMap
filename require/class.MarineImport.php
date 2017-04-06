@@ -81,7 +81,7 @@ class MarineImport {
             		    //$real_arrival = $this->arrival($key);
             		    $Marine = new Marine($this->db);
             		    if ($this->all_tracked[$key]['latitude'] != '' && $this->all_tracked[$key]['longitude'] != '') {
-				$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed']);
+				$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime']);
 				if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
 			    }
 			    // Put in archive

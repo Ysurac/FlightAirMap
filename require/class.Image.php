@@ -33,6 +33,38 @@ class Image {
 		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (!empty($result)) return $result;
 		elseif ($registration != '') return $this->getSpotterImage('',$aircraft_icao,$airline_icao);
+		else return array();
+	}
+
+	/**
+	* Gets the images based on the ship name
+	*
+	* @return Array the images list
+	*
+	*/
+	public function getMarineImage($mmsi,$imo = '',$name = '')
+	{
+		$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
+		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
+		$name = filter_var($name,FILTER_SANITIZE_STRING);
+		$name = trim($name);
+		$query  = "SELECT marine_image.image, marine_image.image_thumbnail, marine_image.image_source, marine_image.image_source_website,marine_image.image_copyright, marine_image.mmsi, marine_image.imo, marine_image.name 
+			FROM marine_image 
+			WHERE marine_image.mmsi = :mmsi";
+		$query_data = array(':mmsi' => $mmsi);
+		if ($imo != '') {
+			$query .= " AND marine_image.imo = :imo";
+			$query_data = array_merge($query_data,array(':imo' => $imo));
+		}
+		if ($name != '') {
+			$query .= " AND marine_image.name = :name";
+			$query_data = array_merge($query_data,array(':name' => $name));
+		}
+		$query .= " LIMIT 1";
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_data);
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $result;
 	}
 
 	/**
@@ -70,7 +102,6 @@ class Image {
 		if ($globalDebug && $registration != '') echo 'Try to find an aircraft image for '.$registration.'...';
 		elseif ($globalDebug && $aircraft_icao != '') echo 'Try to find an aircraft image for '.$aircraft_icao.'...';
 		elseif ($globalDebug && $airline_icao != '') echo 'Try to find an aircraft image for '.$airline_icao.'...';
-		else return "success";
 		$image_url = $this->findAircraftImage($registration,$aircraft_icao,$airline_icao);
 		if ($registration == '' && $aircraft_icao != '') $registration = $aircraft_icao.$airline_icao;
 		if ($image_url['original'] != '') {
@@ -79,6 +110,47 @@ class Image {
 			try {
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':registration' => $registration,':image' => $image_url['original'],':image_thumbnail' => $image_url['thumbnail'], ':copyright' => $image_url['copyright'],':source' => $image_url['source'],':source_website' => $image_url['source_website']));
+			} catch(PDOException $e) {
+				echo $e->getMessage()."\n";
+				return "error";
+			}
+		} elseif ($globalDebug) echo "Not found :'(\n";
+		return "success";
+	}
+
+	/**
+	* Adds the images based on the marine name
+	*
+	* @return String either success or error
+	*
+	*/
+	public function addMarineImage($mmsi,$imo = '',$name = '')
+	{
+		global $globalDebug,$globalMarineImageFetch;
+		if (isset($globalMarineImageFetch) && !$globalMarineImageFetch) return '';
+		$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
+		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
+		$name = filter_var($name,FILTER_SANITIZE_STRING);
+		$name = trim($name);
+		$Marine = new Marine($this->db);
+		if ($imo == '' || $name == '') {
+			$identity = $Marine->getIdentity($mmsi);
+			if (isset($identity[0]['mmsi'])) {
+				$imo = $identity[0]['imo'];
+				if ($identity[0]['ship_name'] != '') $name = $identity[0]['ship_name'];
+			}
+		}
+		unset($Marine);
+
+		//getting the aircraft image
+		if ($globalDebug && $name != '') echo 'Try to find an vessel image for '.$name.'...';
+		$image_url = $this->findMarineImage($mmsi,$imo,$name);
+		if ($image_url['original'] != '') {
+			if ($globalDebug) echo 'Found !'."\n";
+			$query  = "INSERT INTO marine_image (mmsi,imo,name, image, image_thumbnail, image_copyright, image_source,image_source_website) VALUES (:mmsi,:imo,:name,:image,:image_thumbnail,:copyright,:source,:source_website)";
+			try {
+				$sth = $this->db->prepare($query);
+				$sth->execute(array(':mmsi' => $mmsi,':imo' => $imo,':name' => $name,':image' => $image_url['original'],':image_thumbnail' => $image_url['thumbnail'], ':copyright' => $image_url['copyright'],':source' => $image_url['source'],':source_website' => $image_url['source_website']));
 			} catch(PDOException $e) {
 				echo $e->getMessage()."\n";
 				return "error";
@@ -116,22 +188,64 @@ class Image {
 			else $aircraft_name = '';
 			$aircraft_registration = $aircraft_icao;
 		} else return array('thumbnail' => '','original' => '', 'copyright' => '', 'source' => '','source_website' => '');
+		unset($Spotter);
 		if (!isset($globalAircraftImageSources)) $globalAircraftImageSources = array('ivaomtl','wikimedia','airportdata','deviantart','flickr','bing','jetphotos','planepictures','planespotters');
 		foreach ($globalAircraftImageSources as $source) {
 			$source = strtolower($source);
-			if ($source == 'ivaomtl' && $globalIVAO && $aircraft_icao != '' && $airline_icao != '') $images_array = $this->fromIvaoMtl($aircraft_icao,$airline_icao);
-			if ($source == 'planespotters' && !$globalIVAO) $images_array = $this->fromPlanespotters($aircraft_registration,$aircraft_name);
-			if ($source == 'flickr') $images_array = $this->fromFlickr($aircraft_registration,$aircraft_name);
-			if ($source == 'bing') $images_array = $this->fromBing($aircraft_registration,$aircraft_name);
-			if ($source == 'deviantart') $images_array = $this->fromDeviantart($aircraft_registration,$aircraft_name);
-			if ($source == 'wikimedia') $images_array = $this->fromWikimedia($aircraft_registration,$aircraft_name);
-			if ($source == 'jetphotos' && !$globalIVAO) $images_array = $this->fromJetPhotos($aircraft_registration,$aircraft_name);
-			if ($source == 'planepictures' && !$globalIVAO) $images_array = $this->fromPlanePictures($aircraft_registration,$aircraft_name);
-			if ($source == 'airportdata' && !$globalIVAO) $images_array = $this->fromAirportData($aircraft_registration,$aircraft_name);
-			if ($source == 'customsources') $images_array = $this->fromCustomSource($aircraft_registration,$aircraft_name);
+			if ($source == 'ivaomtl' && $globalIVAO && $aircraft_icao != '' && $airline_icao != '') $images_array = $this->fromIvaoMtl('aircraft',$aircraft_icao,$airline_icao);
+			if ($source == 'planespotters' && !$globalIVAO) $images_array = $this->fromPlanespotters('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'flickr') $images_array = $this->fromFlickr('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'bing') $images_array = $this->fromBing('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'deviantart') $images_array = $this->fromDeviantart('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'wikimedia') $images_array = $this->fromWikimedia('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'jetphotos' && !$globalIVAO) $images_array = $this->fromJetPhotos('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'planepictures' && !$globalIVAO) $images_array = $this->fromPlanePictures('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'airportdata' && !$globalIVAO) $images_array = $this->fromAirportData('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'customsources') $images_array = $this->fromCustomSource('aircraft',$aircraft_registration,$aircraft_name);
 			if (isset($images_array) && $images_array['original'] != '') return $images_array;
 		}
 		if ((!isset($globalAircraftImageCheckICAO) || $globalAircraftImageCheckICAO === TRUE) && isset($aircraft_icao)) return $this->findAircraftImage($aircraft_icao);
+		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
+	}
+
+	/**
+	* Gets the vessel image
+	*
+	* @param String $mmsi the vessel mmsi
+	* @param String $imo the vessel imo
+	* @param String $name the vessel name
+	* @return Array the aircraft thumbnail, orignal url and copyright
+	*
+	*/
+	public function findMarineImage($mmsi,$imo = '',$name = '')
+	{
+		global $globalMarineSources;
+		$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
+		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
+		$name = filter_var($name,FILTER_SANITIZE_STRING);
+		$name = trim($name);
+		if (strlen($name) < 4) return array('thumbnail' => '','original' => '', 'copyright' => '', 'source' => '','source_website' => '');
+		/*
+		$Marine = new Marine($this->db);
+		if ($imo == '' || $name == '') {
+			$identity = $Marine->getIdentity($mmsi);
+			if (isset($identity[0]['mmsi'])) {
+				$imo = $identity[0]['imo'];
+				$name = $identity[0]['ship_name'];
+			}
+		}
+		unset($Marine);
+		*/
+		if (!isset($globalMarineImageSources)) $globalMarineImageSources = array('wikimedia','deviantart','flickr','bing');
+		foreach ($globalMarineImageSources as $source) {
+			$source = strtolower($source);
+			if ($source == 'flickr') $images_array = $this->fromFlickr('marine',$mmsi,$name);
+			if ($source == 'bing') $images_array = $this->fromBing('marine',$mmsi,$name);
+			if ($source == 'deviantart') $images_array = $this->fromDeviantart('marine',$mmsi,$name);
+			if ($source == 'wikimedia') $images_array = $this->fromWikimedia('marine',$mmsi,$name);
+			if ($source == 'customsources') $images_array = $this->fromCustomSource('marine',$mmsi,$name);
+			if (isset($images_array) && $images_array['original'] != '') return $images_array;
+		}
 		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
@@ -143,7 +257,7 @@ class Image {
 	* @return Array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromPlanespotters($aircraft_registration, $aircraft_name='') {
+	public function fromPlanespotters($type,$aircraft_registration, $aircraft_name='') {
 		$Common = new Common();
 		// If aircraft registration is only number, also check with aircraft model
 		if (preg_match('/^[[:digit]]+$/',$aircraft_registration) && $aircraft_name != '') {
@@ -171,18 +285,22 @@ class Image {
 	/**
 	* Gets the aircraft image from Deviantart
 	*
-	* @param String $aircraft_registration the registration of the aircraft
-	* @param String $aircraft_name type of the aircraft
+	* @param String $registration the registration of the aircraft
+	* @param String $name type of the aircraft
 	* @return Array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromDeviantart($aircraft_registration, $aircraft_name='') {
+	public function fromDeviantart($type,$registration, $name='') {
 		$Common = new Common();
-		// If aircraft registration is only number, also check with aircraft model
-		if (preg_match('/^[[:digit]]+$/',$aircraft_registration) && $aircraft_name != '') {
-			$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q='.$aircraft_registration.'%20'.urlencode($aircraft_name);
-		} else {
-			$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q=aircraft%20'.$aircraft_registration;
+		if ($type == 'aircraft') {
+			// If aircraft registration is only number, also check with aircraft model
+			if (preg_match('/^[[:digit]]+$/',$registration) && $name != '') {
+				$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q='.$registration.'%20'.urlencode($name);
+			} else {
+				$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q=aircraft%20'.$registration;
+			}
+		} elseif ($type == 'marine') {
+			$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q="'.urlencode($name).'"';
 		}
 
 		$data = $Common->getData($url);
@@ -210,7 +328,7 @@ class Image {
 	* @return Array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromJetPhotos($aircraft_registration, $aircraft_name='') {
+	public function fromJetPhotos($type,$aircraft_registration, $aircraft_name='') {
 		$Common = new Common();
 		$url= 'http://jetphotos.net/showphotos.php?displaymode=2&regsearch='.$aircraft_registration;
 		$data = $Common->getData($url);
@@ -252,7 +370,7 @@ class Image {
 	* @return Array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromPlanePictures($aircraft_registration, $aircraft_name='') {
+	public function fromPlanePictures($type,$aircraft_registration, $aircraft_name='') {
 		$Common = new Common();
 		$url= 'http://www.planepictures.net/netsearch4.cgi?srch='.$aircraft_registration.'&stype=reg&srng=2';
 		$data = $Common->getData($url);
@@ -281,15 +399,20 @@ class Image {
 	/**
 	* Gets the aircraft image from Flickr
 	*
-	* @param String $aircraft_registration the registration of the aircraft
-	* @param String $aircraft_name type of the aircraft
+	* @param String $registration the registration of the aircraft
+	* @param String $name type of the aircraft
 	* @return Array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromFlickr($aircraft_registration,$aircraft_name='') {
+	public function fromFlickr($type,$registration,$name='') {
 		$Common = new Common();
-		if ($aircraft_name != '') $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$aircraft_registration.','.urlencode($aircraft_name);
-		else $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$aircraft_registration.',aircraft';
+		if ($type == 'aircraft') {
+			if ($name != '') $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$registration.','.urlencode($name);
+			else $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$registration.',aircraft';
+		} elseif ($type == 'marine') {
+			if ($name != '') $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.urlencode($name);
+			else $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$registration.',vessel';
+		}
 		$data = $Common->getData($url);
 		if ($xml = simplexml_load_string($data)) {
 			if (isset($xml->channel->item)) {
@@ -306,7 +429,7 @@ class Image {
 		return false;
 	}
 
-	public function fromIvaoMtl($aircraft_icao,$airline_icao) {
+	public function fromIvaoMtl($type,$aircraft_icao,$airline_icao) {
 		$Common = new Common();
 		//echo "\n".'SEARCH IMAGE : http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
 		if ($Common->urlexist('http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg')) {
@@ -330,7 +453,7 @@ class Image {
 	* @return Array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromBing($aircraft_registration,$aircraft_name='') {
+	public function fromBing($type,$aircraft_registration,$aircraft_name='') {
 		global $globalImageBingKey;
 		$Common = new Common();
 		if (!isset($globalImageBingKey) || $globalImageBingKey == '') return false;
@@ -362,7 +485,7 @@ class Image {
 	* @return Array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromAirportData($aircraft_registration,$aircraft_name='') {
+	public function fromAirportData($type,$aircraft_registration,$aircraft_name='') {
 		$Common = new Common();
 		$url = 'http://www.airport-data.com/api/ac_thumb.json?&n=1&r='.$aircraft_registration;
 		$data = $Common->getData($url);
@@ -380,17 +503,22 @@ class Image {
 	}
 
 	/**
-	* Gets the aircraft image from WikiMedia
+	* Gets image from WikiMedia
 	*
-	* @param String $aircraft_registration the registration of the aircraft
-	* @param String $aircraft_name type of the aircraft
+	* @param String $registration the registration of the aircraft/mmsi
+	* @param String $name name
 	* @return Array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromWikimedia($aircraft_registration,$aircraft_name='') {
+	public function fromWikimedia($type,$registration,$name='') {
 		$Common = new Common();
-		if ($aircraft_name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$aircraft_registration.'"%20'.urlencode($aircraft_name);
-		else $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$aircraft_registration.'"%20aircraft';
+		if ($type == 'aircraft') {
+			if ($name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$registration.'"%20'.urlencode($name);
+			else $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$registration.'"%20aircraft';
+		} elseif ($type == 'marine') {
+			if ($name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.urlencode($name).'"';
+			else return false;
+		}
 		$data = $Common->getData($url);
 		$result = json_decode($data);
 		if (isset($result->query->search[0]->title)) {
@@ -443,7 +571,7 @@ class Image {
 	* @return Array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromCustomSource($aircraft_registration,$aircraft_name='') {
+	public function fromCustomSource($type,$aircraft_registration,$aircraft_name='') {
 		global $globalAircraftImageCustomSources, $globalDebug;
 		//$globalAircraftImageCustomSource[] = array('thumbnail' => '','original' => '', 'copyright' => '', 'source_website' => '', 'source' => '','exif' => true);
 		if (!empty($globalAircraftImageCustomSources)) {
