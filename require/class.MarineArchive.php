@@ -8,91 +8,79 @@ class MarineArchive {
 		$this->db = $Connection->db;
 	}
 
-    /**
-    * Get SQL query part for filter used
-    * @param Array $filter the filter
-    * @return Array the SQL part
-    */
-/*
-    public function getFilter($filter = array(),$where = false,$and = false) {
-	global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
-	$filters = array();
-	if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
-		if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
-			$filters = $globalStatsFilters[$globalFilterName];
-		} else {
-			$filter = array_merge($filter,$globalStatsFilters[$globalFilterName]);
+	/**
+	* Get SQL query part for filter used
+	* @param Array $filter the filter
+	* @return Array the SQL part
+	*/
+	public function getFilter($filter = array(),$where = false,$and = false) {
+		global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
+		$filters = array();
+		if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
+			if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
+				$filters = $globalStatsFilters[$globalFilterName];
+			} else {
+				$filter = array_merge($filter,$globalStatsFilters[$globalFilterName]);
+			}
 		}
-	}
-	if (isset($filter[0]['source'])) {
-		$filters = array_merge($filters,$filter);
-	}
-	if (is_array($globalFilter)) $filter = array_merge($filter,$globalFilter);
-	$filter_query_join = '';
-	$filter_query_where = '';
-	foreach($filters as $flt) {
-	    if ((isset($flt['airlines']) && empty($flt['airlines']) && isset($flt['pilots_id']) && empty($flt['pilots_id']) && isset($flt['idents']) && empty($flt['idents']) && isset($flt['registrations']) && empty($flt['registrations'])) || (!isset($flt['airlines']) && !isset($flt['pilots_id']) && !isset($flt['idents']) && !isset($flt['registrations']))) {
-		if (isset($flt['source'])) {
-		    $filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_archive_output WHERE spotter_output.format_source IN ('".implode("','",$flt['source'])."')) saa ON saa.fammarine_id = marine_archive_output.fammarine_id";
+		if (isset($filter[0]['source'])) {
+			$filters = array_merge($filters,$filter);
 		}
-	    }
-	}
-	if (isset($filter['airlines']) && !empty($filter['airlines'])) {
-	    if ($filter['airlines'][0] != '') {
-		$filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_archive_output WHERE marine_archive_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) saf ON saf.fammarine_id = marine_archive_output.fammarine_id";
-	    }
-	}
-	
-	if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
-	    $filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_archive_output WHERE marine_archive_output.airline_type = '".$filter['airlinestype']."') sa ON sa.fammarine_id = marine_archive_output.fammarine_id ";
-	}
-	if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
-	    $filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_archive_output WHERE marine_archive_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) spi ON spi.fammarine_id = marine_archive_output.fammarine_id";
-	}
-	if (isset($filter['source']) && !empty($filter['source'])) {
-	    $filter_query_where .= " AND format_source IN ('".implode("','",$filter['source'])."')";
-	}
-	if (isset($filter['ident']) && !empty($filter['ident'])) {
-	    $filter_query_where .= " AND ident = '".$filter['ident']."'";
-	}
-	if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
-		$filter_query_where .= " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
-	}
-	if ((isset($filter['year']) && $filter['year'] != '') || (isset($filter['month']) && $filter['month'] != '') || (isset($filter['day']) && $filter['day'] != '')) {
-	    $filter_query_date = '';
-	    
-	    if (isset($filter['year']) && $filter['year'] != '') {
-		if ($globalDBdriver == 'mysql') {
-		    $filter_query_date .= " AND YEAR(marine_archive_output.date) = '".$filter['year']."'";
-		} else {
-		    $filter_query_date .= " AND EXTRACT(YEAR FROM marine_archive_output.date) = '".$filter['year']."'";
+		if (is_array($globalFilter)) $filter = array_merge($filter,$globalFilter);
+		$filter_query_join = '';
+		$filter_query_where = '';
+		foreach($filters as $flt) {
+			if (isset($flt['idents']) && !empty($flt['idents'])) {
+				if (isset($flt['source'])) {
+					$filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_archive_output WHERE marine_archive_output.ident IN ('".implode("','",$flt['idents'])."') AND marine_archive_output.format_source IN ('".implode("','",$flt['source'])."')) spid ON spid.fammarine_id = marine_archive.fammarine_id";
+				} else {
+					$filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_archive_output WHERE marine_archive_output.ident IN ('".implode("','",$flt['idents'])."')) spid ON spid.fammarine_id = marine_archive.fammarine_id";
+				}
+			}
 		}
-	    }
-	    if (isset($filter['month']) && $filter['month'] != '') {
-		if ($globalDBdriver == 'mysql') {
-		    $filter_query_date .= " AND MONTH(marine_archive_output.date) = '".$filter['month']."'";
-		} else {
-		    $filter_query_date .= " AND EXTRACT(MONTH FROM marine_archive_output.date) = '".$filter['month']."'";
+		if (isset($filter['source']) && !empty($filter['source'])) {
+			$filter_query_where .= " AND format_source IN ('".implode("','",$filter['source'])."')";
 		}
-	    }
-	    if (isset($filter['day']) && $filter['day'] != '') {
-		if ($globalDBdriver == 'mysql') {
-		    $filter_query_date .= " AND DAY(marine_archive_output.date) = '".$filter['day']."'";
-		} else {
-		    $filter_query_date .= " AND EXTRACT(DAY FROM marine_archive_output.date) = '".$filter['day']."'";
+		if (isset($filter['ident']) && !empty($filter['ident'])) {
+			$filter_query_where .= " AND ident = '".$filter['ident']."'";
 		}
-	    }
-	    $filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_archive_output".preg_replace('/^ AND/',' WHERE',$filter_query_date).") sd ON sd.fammarine_id = marine_archive_output.fammarine_id";
+		if ((isset($filter['year']) && $filter['year'] != '') || (isset($filter['month']) && $filter['month'] != '') || (isset($filter['day']) && $filter['day'] != '')) {
+			$filter_query_date = '';
+			if (isset($filter['year']) && $filter['year'] != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query_date .= " AND YEAR(marine_archive_output.date) = '".$filter['year']."'";
+				} else {
+					$filter_query_date .= " AND EXTRACT(YEAR FROM marine_archive_output.date) = '".$filter['year']."'";
+				}
+			}
+			if (isset($filter['month']) && $filter['month'] != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query_date .= " AND MONTH(marine_archive_output.date) = '".$filter['month']."'";
+				} else {
+					$filter_query_date .= " AND EXTRACT(MONTH FROM marine_archive_output.date) = '".$filter['month']."'";
+				}
+			}
+			if (isset($filter['day']) && $filter['day'] != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query_date .= " AND DAY(marine_archive_output.date) = '".$filter['day']."'";
+				} else {
+					$filter_query_date .= " AND EXTRACT(DAY FROM marine_archive_output.date) = '".$filter['day']."'";
+				}
+			}
+			$filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_archive_output".preg_replace('/^ AND/',' WHERE',$filter_query_date).") sd ON sd.fammarine_id = marine_archive.fammarine_id";
+		}
+		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+			$filter_query_where .= " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
+		}
+		if ($filter_query_where == '' && $where) $filter_query_where = ' WHERE';
+		elseif ($filter_query_where != '' && $and) $filter_query_where .= ' AND';
+		if ($filter_query_where != '') {
+			$filter_query_where = preg_replace('/^ AND/',' WHERE',$filter_query_where);
+		}
+		$filter_query = $filter_query_join.$filter_query_where;
+		return $filter_query;
 	}
-	if ($filter_query_where == '' && $where) $filter_query_where = ' WHERE';
-	elseif ($filter_query_where != '' && $and) $filter_query_where .= ' AND';
-	if ($filter_query_where != '') {
-		$filter_query_where = preg_replace('/^ AND/',' WHERE',$filter_query_where);
-	}
-	$filter_query = $filter_query_join.$filter_query_where;
-	return $filter_query;
-    }
-*/
+
 	// marine_archive
 	public function addMarineArchiveData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '') {
 		/*
