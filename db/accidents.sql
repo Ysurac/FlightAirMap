@@ -17,7 +17,7 @@ CREATE TABLE `accidents` (
     `airline_name` varchar(255) DEFAULT NULL,
     `airline_icao` varchar(10) DEFAULT NULL,
     PRIMARY KEY (`accidents_id`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 CREATE INDEX `registration_idx` ON `accidents` (`registration`);
 CREATE INDEX `rdts` ON `accidents` (`registration`,`date`,`type`,`source`);
 CREATE INDEX `type` ON `accidents` (`type`,`date`);
