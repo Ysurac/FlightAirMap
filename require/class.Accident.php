@@ -109,67 +109,69 @@ class Accident {
 		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 			//print_r($row);
 			//echo $row['flightaware_id'];
-			$data = array();
-			if ($row['registration'] != '' && preg_match('/^[\w\-]+$/',$row['registration'])) {
-				$image_array = $Image->getSpotterImage($row['registration']);
-				if (count($image_array) > 0) $data = array_merge($data,array('image' => $image_array[0]['image'],'image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright'],'image_source' => $image_array[0]['image_source'],'image_source_website' => $image_array[0]['image_source_website']));
-				else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
-				$aircraft_type = $Spotter->getAllAircraftTypeByRegistration($row['registration']);
-				$aircraft_info = $Spotter->getAllAircraftInfo($aircraft_type);
-				if (!empty($aircraft_info)) {
-					$data['aircraft_type'] = $aircraft_info[0]['icao'];
-					$data['aircraft_name'] = $aircraft_info[0]['type'];
-					$data['aircraft_manufacturer'] = $aircraft_info[0]['manufacturer'];
-				} else {
-					$data = array_merge($data,array('aircraft_type' => 'NA'));
+			if (preg_match('/^[\w\-]+$/',$row['registration'])) {
+				$data = array();
+				if ($row['registration'] != '') {
+					$image_array = $Image->getSpotterImage($row['registration']);
+					if (count($image_array) > 0) $data = array_merge($data,array('image' => $image_array[0]['image'],'image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright'],'image_source' => $image_array[0]['image_source'],'image_source_website' => $image_array[0]['image_source_website']));
+					else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
+					$aircraft_type = $Spotter->getAllAircraftTypeByRegistration($row['registration']);
+					$aircraft_info = $Spotter->getAllAircraftInfo($aircraft_type);
+					if (!empty($aircraft_info)) {
+						$data['aircraft_type'] = $aircraft_info[0]['icao'];
+						$data['aircraft_name'] = $aircraft_info[0]['type'];
+						$data['aircraft_manufacturer'] = $aircraft_info[0]['manufacturer'];
+					} else {
+						$data = array_merge($data,array('aircraft_type' => 'NA'));
+					}
+					$owner_data = $Spotter->getAircraftOwnerByRegistration($row['registration']);
+					if (!empty($owner_data)) {
+						$data['aircraft_owner'] = $owner_data['owner'];
+						$data['aircraft_base'] = $owner_data['base'];
+						$data['aircraft_date_first_reg'] = $owner_data['date_first_reg'];
+					}
+				} else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
+				if ($row['registration'] == '') $row['registration'] = 'NA';
+				if ($row['ident'] == '') $row['ident'] = 'NA';
+				$identicao = $Spotter->getAllAirlineInfo(substr($row['ident'],0,3));
+				if (isset($identicao[0])) {
+					if (substr($row['ident'],0,2) == 'AF') {
+						if (filter_var(substr($row['ident'],2),FILTER_VALIDATE_INT,array("flags"=>FILTER_FLAG_ALLOW_OCTAL))) $icao = $row['ident'];
+						else $icao = 'AFR'.ltrim(substr($row['ident'],2),'0');
+					} else $icao = $identicao[0]['icao'].ltrim(substr($row['ident'],2),'0');
+					$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
+				} else $icao = $row['ident'];
+				$icao = $Translation->checkTranslation($icao,false);
+				//$data = array_merge($data,array('registration' => $row['registration'], 'date' => $row['date'], 'ident' => $icao,'url' => $row['url']));
+				if ($row['airline_name'] != '' && !isset($data['airline_name'])) {
+					//echo 'Check airline info... for '.$row['airline_name'].' ';
+					//echo $row['airline_name'];
+					$airline_info = $Spotter->getAllAirlineInfoByName($row['airline_name']);
+					if (!empty($airline_info)) {
+						//echo 'data found !'."\n";
+						//print_r($airline_info);
+						$data = array_merge($data,$airline_info);
+					} 
+					//else echo 'No data...'."\n";
 				}
-				$owner_data = $Spotter->getAircraftOwnerByRegistration($row['registration']);
-				if (!empty($owner_data)) {
-					$data['aircraft_owner'] = $owner_data['owner'];
-					$data['aircraft_base'] = $owner_data['base'];
-					$data['aircraft_date_first_reg'] = $owner_data['date_first_reg'];
+				$data = array_merge($row,$data);
+				if ($data['ident'] == null) $data['ident'] = $icao;
+				if ($data['title'] == null) {
+					$data['message'] = $row['type'].' of '.$row['registration'].' at '.$row['place'].','.$row['country'];
+				} else $data['message'] = strtolower($data['title']);
+				$ids = $Spotter->getAllIDByRegistration($data['registration']);
+				$date = $data['date'];
+				if (isset($ids[$date])) {
+					$data['spotted'] = TRUE;
+					$data['flightaware_id'] = $ids[$date]['flightaware_id'];
+					$data['spotter_id'] = $ids[$date]['spotter_id'];
+				} elseif (isset($ids[0])) {
+					$data['spotted_registration'] = TRUE;
+					$data['flightaware_id'] = $ids[0]['flightaware_id'];
+					//$data['spotter_id'] = $ids[0]['spotter_id'];
 				}
-			} else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
-			if ($row['registration'] == '') $row['registration'] = 'NA';
-			if ($row['ident'] == '') $row['ident'] = 'NA';
-			$identicao = $Spotter->getAllAirlineInfo(substr($row['ident'],0,3));
-			if (isset($identicao[0])) {
-				if (substr($row['ident'],0,2) == 'AF') {
-					if (filter_var(substr($row['ident'],2),FILTER_VALIDATE_INT,array("flags"=>FILTER_FLAG_ALLOW_OCTAL))) $icao = $row['ident'];
-					else $icao = 'AFR'.ltrim(substr($row['ident'],2),'0');
-				} else $icao = $identicao[0]['icao'].ltrim(substr($row['ident'],2),'0');
-				$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
-			} else $icao = $row['ident'];
-			$icao = $Translation->checkTranslation($icao,false);
-			//$data = array_merge($data,array('registration' => $row['registration'], 'date' => $row['date'], 'ident' => $icao,'url' => $row['url']));
-			if ($row['airline_name'] != '' && !isset($data['airline_name'])) {
-				//echo 'Check airline info... for '.$row['airline_name'].' ';
-				//echo $row['airline_name'];
-				$airline_info = $Spotter->getAllAirlineInfoByName($row['airline_name']);
-				if (!empty($airline_info)) {
-					//echo 'data found !'."\n";
-					//print_r($airline_info);
-					$data = array_merge($data,$airline_info);
-				} 
-				//else echo 'No data...'."\n";
+				$result[] = $data;
 			}
-			$data = array_merge($row,$data);
-			if ($data['ident'] == null) $data['ident'] = $icao;
-			if ($data['title'] == null) {
-				$data['message'] = $row['type'].' of '.$row['registration'].' at '.$row['place'].','.$row['country'];
-			} else $data['message'] = strtolower($data['title']);
-			$ids = $Spotter->getAllIDByRegistration($data['registration']);
-			$date = $data['date'];
-			if (isset($ids[$date])) {
-				$data['spotted'] = TRUE;
-				$data['flightaware_id'] = $ids[$date]['flightaware_id'];
-				$data['spotter_id'] = $ids[$date]['spotter_id'];
-			} elseif (isset($ids[0])) {
-				$data['spotted_registration'] = TRUE;
-				$data['flightaware_id'] = $ids[0]['flightaware_id'];
-				//$data['spotter_id'] = $ids[0]['spotter_id'];
-			}
-			$result[] = $data;
 			$i++;
 		}
 		if (isset($result)) {
