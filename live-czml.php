@@ -202,7 +202,11 @@ if ($tracker) {
 if ($from_archive === true) {
 	$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER","interval": "%minitime%/%maxitime%"}';
 } else {
-	$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
+	if (isset($globalArchive) && $globalArchive === TRUE) {
+		$output .= ',"clock": {"currentTime" : "'.date("c",time()-$globalLiveInterval).'","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
+	} else {
+		$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
+	}
 }
 
 //	$output .= ',"clock": {"interval" : "'.date("c",time()-$globalLiveInterval).'/'.date("c").'","currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"step": "SYSTEM_CLOCK_MULTIPLIER"}';
