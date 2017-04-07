@@ -347,11 +347,16 @@ class SpotterImport {
 		    }
 		} elseif (isset($line['datetime']) && strtotime($line['datetime']) < time()-20*60) {
 			if ($globalDebug) echo "!!! Date is too old ".$this->all_flights[$id]['hex']." - format : ".$line['format_source']."!!!";
+			return '';
 		} elseif (isset($line['datetime']) && strtotime($line['datetime']) > time()+20*60) {
 			if ($globalDebug) echo "!!! Date is in the future ".$this->all_flights[$id]['hex']." - format : ".$line['format_source']."!!!";
+			return '';
 		} elseif (!isset($line['datetime'])) {
 			date_default_timezone_set('UTC');
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('datetime' => date('Y-m-d H:i:s')));
+		} else {
+			if ($globalDebug) echo "!!! Unknow date error ".$this->all_flights[$id]['hex']." - format : ".$line['format_source']."!!!";
+			return '';
 		}
 
 		if (isset($line['registration']) && $line['registration'] != '' && $line['registration'] != 'z.NO-REG') {
