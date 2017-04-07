@@ -566,15 +566,15 @@ class Image {
 	/**
 	* Gets the aircraft image from custom url
 	*
-	* @param String $aircraft_registration the registration of the aircraft
-	* @param String $aircraft_name type of the aircraft
+	* @param String $registration the registration of the aircraft
+	* @param String $name type of the aircraft
 	* @return Array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromCustomSource($type,$aircraft_registration,$aircraft_name='') {
-		global $globalAircraftImageCustomSources, $globalDebug;
+	public function fromCustomSource($type,$registration,$name='') {
+		global $globalAircraftImageCustomSources, $globalMarineImageCustomSources, $globalDebug;
 		//$globalAircraftImageCustomSource[] = array('thumbnail' => '','original' => '', 'copyright' => '', 'source_website' => '', 'source' => '','exif' => true);
-		if (!empty($globalAircraftImageCustomSources)) {
+		if (!empty($globalAircraftImageCustomSources) && $type == 'aircraft') {
 			$customsources = array();
 			if (!isset($globalAircraftImageCustomSources[0])) {
 				$customsources[] = $globalAircraftImageCustomSources;
@@ -588,8 +588,44 @@ class Image {
 					print_r($source);
 					print_r($customsources);
 				}
-				$url = str_replace('{registration}',$aircraft_registration,$source['original']);
-				$url_thumbnail = str_replace('{registration}',$aircraft_registration,$source['thumbnail']);
+				$url = str_replace('{registration}',$registration,$source['original']);
+				$url_thumbnail = str_replace('{registration}',$registration,$source['thumbnail']);
+				if ($Common->urlexist($url)) {
+					$image_url = array();
+					$image_url['thumbnail'] = $url_thumbnail;
+					$image_url['original'] = $url;
+					if ($source['exif'] && exif_imagetype($url) == IMAGETYPE_JPEG) $exifCopyright = $this->getExifCopyright($url);
+					else $exifCopyright = '';
+					if ($exifCopyright  != '') $image_url['copyright'] = $exifCopyright;
+					elseif (isset($source['copyright'])) $image_url['copyright'] = $source['copyright'];
+					else $image_url['copyright'] = $source['source_website'];
+					$image_url['source_website'] = $source['source_website'];
+					$image_url['source'] = $source['source'];
+					return $image_url;
+				}
+			}
+			return false;
+		} else return false;
+		if (!empty($globalMarineImageCustomSources) && $type == 'marine') {
+			$customsources = array();
+			if (!isset($globalMarineImageCustomSources[0])) {
+				$customsources[] = $globalMarineImageCustomSources;
+			} else {
+				$customsources = $globalMarineImageCustomSources;
+			}
+			foreach ($customsources as $source) {
+				$Common = new Common();
+				if (!isset($source['original']) && $globalDebug) {
+					echo 'original entry not found for $globalMarineImageCustomSources.';
+					print_r($source);
+					print_r($customsources);
+				}
+				$url = str_replace('{registration}',$registration,$source['original']);
+				$url = str_replace('{mmsi}',$registration,$url);
+				$url = str_replace('{name}',$name,$url);
+				$url_thumbnail = str_replace('{registration}',$registration,$source['thumbnail']);
+				$url_thumbnail = str_replace('{mmsi}',$registration,$url_thumbnail);
+				$url_thumbnail = str_replace('{name}',$name,$url_thumbnail);
 				if ($Common->urlexist($url)) {
 					$image_url = array();
 					$image_url['thumbnail'] = $url_thumbnail;

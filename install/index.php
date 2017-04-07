@@ -417,6 +417,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								<th>Format</th>
 								<th>Name</th>
 								<th>Source Stats</th>
+								<th>No archive</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -481,6 +482,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								</td>
 								<td><input type="text" name="name[]" id="name" value="<?php if (isset($source['name'])) print $source['name']; ?>" /></td>
 								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" title="Create statistics for the source like number of messages, distance,..." value="1" <?php if (isset($source['sourcestats']) && $source['sourcestats']) print 'checked'; ?> /></td>
+								<td><input type="checkbox" name="noarchive[]" id="noarchive" title="Don't archive this source" value="1" <?php if (isset($source['noarchive']) && $source['noarchive']) print 'checked'; ?> /></td>
 								<td><input type="button" id="delhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
 							</tr>
 <?php
@@ -513,6 +515,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								</td>
 								<td><input type="text" name="name[]" value="" id="name" /></td>
 								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" title="Create statistics for the source like number of messages, distance,..." value="1" /></td>
+								<td><input type="checkbox" name="noarchive[]" id="noarchive" title="Don't archive this source" value="1" /></td>
 								<td><input type="button" id="addhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
 							</tr>
 						</tbody>
@@ -774,6 +777,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="number" name="mapidle" id="mapidle" value="<?php if (isset($globalMapIdleTimeout)) echo $globalMapIdleTimeout; else echo '30'; ?>" />
 				<p class="help-block">0 to disable</p>
 			</p>
+			<p>
+				<label for="bbox">Only display flights that we can see on screen (boarding box)</label>
+				<input type="checkbox" name="bbox" id="bbox" value="bbox"<?php if (isset($globalMapUseBbox) && $globalMapUseBbox) { ?> checked="checked"<?php } ?> />
+			</p>
 			<br />
 			<p>
 				<label for="closestmindist">Distance to airport set as arrival (in km)</label>
@@ -963,11 +970,15 @@ if (isset($_POST['dbtype'])) {
 	$format = $_POST['format'];
 	if (isset($_POST['sourcestats'])) $sourcestats = $_POST['sourcestats'];
 	else $sourcestats = array();
+	if (isset($_POST['noarchive'])) $noarchive = $_POST['noarchive'];
+	else $noarchive = array();
 	$gSources = array();
 	foreach ($host as $key => $h) {
 		if (isset($sourcestats[$key]) && $sourcestats[$key] == 1) $cov = 'TRUE';
 		else $cov = 'FALSE';
-		if ($h != '') $gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov);
+		if (isset($noarchive[$key]) && $noarchive[$key] == 1) $arch = 'TRUE';
+		else $arch = 'FALSE';
+		if ($h != '') $gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch);
 	}
 	$settings = array_merge($settings,array('globalSources' => $gSources));
 
@@ -1216,6 +1227,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalAllFlights' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalAllFlights' => 'FALSE'));
+	}
+	$bbox = filter_input(INPUT_POST,'bbox',FILTER_SANITIZE_STRING);
+	if ($bbox == 'bbox') {
+		$settings = array_merge($settings,array('globalMapUseBbox' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMapUseBbox' => 'FALSE'));
 	}
 	$waypoints = filter_input(INPUT_POST,'waypoints',FILTER_SANITIZE_STRING);
 	if ($waypoints == 'waypoints') {
