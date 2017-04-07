@@ -687,11 +687,11 @@ while ($i > 0) {
 		    if (isset($line['Sqk'])) $data['squawk'] = $line['Sqk']; // squawk
 		    $data['emergency'] = ''; // emergency
 		    if (isset($line['Reg'])) $data['registration'] = $line['Reg'];
-		    /*
-		    if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',$line['PosTime']/1000);
+		    
+		    if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',round($line['PosTime']/1000));
 		    else $data['datetime'] = date('Y-m-d H:i:s');
-		    */
-		    $data['datetime'] = date('Y-m-d H:i:s');
+		    
+		    //$data['datetime'] = date('Y-m-d H:i:s');
 		    if (isset($line['Type'])) $data['aircraft_icao'] = $line['Type'];
 	    	    $data['format_source'] = 'aircraftlistjson';
 		    $data['id_source'] = $id_source;
@@ -714,7 +714,8 @@ while ($i > 0) {
 		    $data['verticalrate'] = $line['vrt']; // verticale rate
 		    $data['squawk'] = $line['squawk']; // squawk
 		    $data['emergency'] = ''; // emergency
-		    $data['datetime'] = date('Y-m-d H:i:s');
+		    if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',round($line['PosTime']/1000));
+		    else $data['datetime'] = date('Y-m-d H:i:s');
 	    	    $data['format_source'] = 'aircraftlistjson';
     		    $data['id_source'] = $id_source;
 		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
