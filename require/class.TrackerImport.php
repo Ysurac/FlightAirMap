@@ -132,11 +132,20 @@ class TrackerImport {
 				elseif (strtotime($line['datetime']) > strtotime($this->all_tracked[$id]['datetime']) && $globalDebug) echo "!!! Date previous latest data (".$line['datetime']." > ".$this->all_tracked[$id]['datetime'].") !!! for ".$this->all_tracked[$id]['hex']." - format : ".$line['format_source']."\n";
 				return '';
 		    }
-		} else {
+		} elseif (isset($line['datetime']) && strtotime($line['datetime']) < time()-20*60) {
+			if ($globalDebug) echo "!!! Date is too old ".$this->all_tracked[$id]['hex']." - format : ".$line['format_source']."!!!";
+			return '';
+		} elseif (isset($line['datetime']) && strtotime($line['datetime']) > time()+20*60) {
+			if ($globalDebug) echo "!!! Date is in the future ".$this->all_tracked[$id]['hex']." - format : ".$line['format_source']."!!!";
+			return '';
+		} elseif (!isset($line['datetime'])) {
 			date_default_timezone_set('UTC');
 			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('datetime' => date('Y-m-d H:i:s')));
+		} else {
+			if ($globalDebug) echo "!!! Unknow date error ".$this->all_tracked[$id]['hex']." - format : ".$line['format_source']."!!!";
+			return '';
 		}
-
+		
 		//if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_tracked[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9-]+$/', $line['ident'])) {
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_tracked[$id]['ident'] != trim($line['ident']))) {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => trim($line['ident'])));

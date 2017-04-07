@@ -192,6 +192,29 @@ class MarineImport {
 		    if (!isset($this->all_tracked[$id]['id'])) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('id' => $this->all_tracked[$id]['ident']));
 		}
 
+		if (isset($line['datetime']) && strtotime($line['datetime']) > time()-20*60 && strtotime($line['datetime']) < time()+20*60) {
+		    if (!isset($this->all_tracked[$id]['datetime']) || strtotime($line['datetime']) > strtotime($this->all_tracked[$id]['datetime'])) {
+			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('datetime' => $line['datetime']));
+		    } else {
+				if (strtotime($line['datetime']) == strtotime($this->all_tracked[$id]['datetime']) && $globalDebug) echo "!!! Date is the same as previous data for ".$this->all_tracked[$id]['mmsi']."\n";
+				elseif (strtotime($line['datetime']) > strtotime($this->all_tracked[$id]['datetime']) && $globalDebug) echo "!!! Date previous latest data (".$line['datetime']." > ".$this->all_tracked[$id]['datetime'].") !!! for ".$this->all_tracked[$id]['hex']." - format : ".$line['format_source']."\n";
+				return '';
+		    }
+		} elseif (isset($line['datetime']) && strtotime($line['datetime']) < time()-20*60) {
+			if ($globalDebug) echo "!!! Date is too old ".$this->all_tracked[$id]['mmsi']." - format : ".$line['format_source']."!!!";
+			return '';
+		} elseif (isset($line['datetime']) && strtotime($line['datetime']) > time()+20*60) {
+			if ($globalDebug) echo "!!! Date is in the future ".$this->all_tracked[$id]['mmsi']." - format : ".$line['format_source']."!!!";
+			return '';
+		} elseif (!isset($line['datetime'])) {
+			date_default_timezone_set('UTC');
+			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('datetime' => date('Y-m-d H:i:s')));
+		} else {
+			if ($globalDebug) echo "!!! Unknow date error ".$this->all_tracked[$id]['mmsi']." - format : ".$line['format_source']."!!!";
+			return '';
+		}
+
+
 		if (isset($line['speed']) && $line['speed'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed' => round($line['speed'])));
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed_fromsrc' => true));
@@ -288,18 +311,6 @@ class MarineImport {
   		}
 		//if (isset($globalSourcesupdate) && $globalSourcesupdate != '' && isset($this->all_tracked[$id]['lastupdate']) && time()-$this->all_tracked[$id]['lastupdate'] < $globalSourcesupdate) $dataFound = false;
 
-		if (isset($line['datetime'])) {
-		    if (!isset($this->all_tracked[$id]['datetime']) || strtotime($line['datetime']) > strtotime($this->all_tracked[$id]['datetime'])) {
-			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('datetime' => $line['datetime']));
-		    } else {
-				if (strtotime($line['datetime']) == strtotime($this->all_tracked[$id]['datetime']) && $globalDebug) echo "!!! Date is the same as previous data for ".$this->all_tracked[$id]['mmsi']."\n";
-				elseif (strtotime($line['datetime']) > strtotime($this->all_tracked[$id]['datetime']) && $globalDebug) echo "!!! Date previous latest data (".$line['datetime']." > ".$this->all_tracked[$id]['datetime'].") !!! for ".$this->all_tracked[$id]['hex']." - format : ".$line['format_source']."\n";
-				return '';
-		    }
-		} else {
-			date_default_timezone_set('UTC');
-			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('datetime' => date('Y-m-d H:i:s')));
-		}
 
 
 		if ($dataFound === true && isset($this->all_tracked[$id]['mmsi'])) {

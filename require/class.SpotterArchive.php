@@ -211,7 +211,7 @@ class SpotterArchive {
         *
         */
         public function getAllArchiveSpotterDataById($id)
-        {
+	{
                 date_default_timezone_set('UTC');
                 $id = filter_var($id, FILTER_SANITIZE_STRING);
                 $query  = $this->global_query." WHERE spotter_archive.flightaware_id = :id ORDER BY date";
