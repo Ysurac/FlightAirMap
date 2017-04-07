@@ -1254,7 +1254,7 @@ while ($i > 0) {
 				    if (isset($line['heading'])) $data['heading'] = $line['heading'];
 				    //else $data['heading'] = 0;
 				    if (isset($line['stealth'])) $data['aircraft_type'] = $line['stealth'];
-				    if (!isset($globalAPRSarchive) || (isset($globalAPRSarchive) && $globalAPRSarchive === FALSE)) $data['noarchive'] = true;
+				    if (!isset($line['source_type']) && (!isset($globalAPRSarchive) || (isset($globalAPRSarchive) && $globalAPRSarchive === FALSE))) $data['noarchive'] = true;
 				    if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
     				    $data['id_source'] = $id_source;
     				    if (isset($line['format_source'])) $data['format_source'] = $line['format_source'];
@@ -1266,7 +1266,8 @@ while ($i > 0) {
 				    $currentdate = date('Y-m-d H:i:s');
 				    $aprsdate = strtotime($data['datetime']);
 				    // Accept data if time <= system time + 20s
-				    if (($data['source_type'] == 'modes') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
+				    //if (($data['source_type'] == 'modes') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
+				    if (($data['source_type'] == 'modes') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
 					$send = $SI->add($data);
 				    } elseif ($data['source_type'] == 'ais') {
 					echo 'add...'."\n";
@@ -1388,7 +1389,7 @@ while ($i > 0) {
 			    }
 			    
 			}
-			if ($globalDebug) echo "Restart all connections...";
+			if ($globalDebug) echo "Waiting...";
 			sleep(2);
 			$time = time();
 			//connect_all($hosts);
@@ -1397,6 +1398,7 @@ while ($i > 0) {
 			if ($reset%10 == 0) sleep(100);
 			if ($reset%20 == 0) sleep(200);
 			if ($reset > 100) exit('Too many attempts...');
+			if ($globalDebug) echo "Restart all connections...";
 			connect_all($globalSources);
 		}
 	    }
