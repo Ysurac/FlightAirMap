@@ -110,7 +110,7 @@ class Accident {
 			//print_r($row);
 			//echo $row['flightaware_id'];
 			$data = array();
-			if ($row['registration'] != '') {
+			if ($row['registration'] != '' && preg_match('/^[\w\-]+$/',$row['registration'])) {
 				$image_array = $Image->getSpotterImage($row['registration']);
 				if (count($image_array) > 0) $data = array_merge($data,array('image' => $image_array[0]['image'],'image_thumbnail' => $image_array[0]['image_thumbnail'],'image_copyright' => $image_array[0]['image_copyright'],'image_source' => $image_array[0]['image_source'],'image_source_website' => $image_array[0]['image_source_website']));
 				else $data = array_merge($data,array('image' => '','image_thumbnail' => '','image_copyright' => '','image_source' => '','image_source_website' => ''));
