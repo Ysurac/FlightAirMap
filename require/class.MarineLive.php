@@ -873,27 +873,29 @@ class MarineLive {
             	if ($groundspeed == '' || $Common->isInteger($groundspeed) === false ) $groundspeed = 0;
             	if ($heading == '' || $Common->isInteger($heading) === false ) $heading = 0;
             	if ($arrival_date == '') $arrival_date = NULL;
-		$query  = 'INSERT INTO marine_live (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,status,imo,arrival_port_name,arrival_port_date) 
+            	$query = '';
+		if ($globalArchive) {
+			if ($globalDebug) echo '-- Delete previous data -- ';
+			$query .= 'DELETE FROM marine_live WHERE fammarine_id = :fammarine_id;';
+		}
+		$query .= 'INSERT INTO marine_live (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,status,imo,arrival_port_name,arrival_port_date) 
 		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:status,:imo,:arrival_port_name,:arrival_port_date)';
 
 		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':mmsi' => $mmsi,':type' => $type,':status' => $status,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
 		try {
-			
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
-                } catch(PDOException $e) {
-                	return "error : ".$e->getMessage();
-                }
-		/*
-		if (isset($globalArchive) && $globalArchive && $putinarchive && $noarchive !== true) {
-		    if ($globalDebug) echo '(Add to SBS archive : ';
-		    $MarineArchive = new MarineArchive($this->db);
-		    $result =  $MarineArchive->addMarineArchiveData($fammarine_id, $ident, $registration, $airline_name, $airline_icao, $airline_country, $airline_type, $aircraft_icao, $aircraft_shadow, $aircraft_name, $aircraft_manufacturer, $departure_airport_icao, $departure_airport_name, $departure_airport_city, $departure_airport_country, $departure_airport_time,$arrival_airport_icao, $arrival_airport_name, $arrival_airport_city, $arrival_airport_country, $arrival_airport_time, $route_stop, $date,$latitude, $longitude, $waypoints, $heading, $groundspeed, $squawk, $ModeS, $pilot_id, $pilot_name,$verticalrate,$format_source,$source_name, $over_country);
-		    if ($globalDebug) echo $result.')';
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
 		}
-		*/
+		
+		if (isset($globalArchive) && $globalArchive && $putinarchive && $noarchive !== true) {
+			if ($globalDebug) echo '(Add to Marine archive : ';
+			$MarineArchive = new MarineArchive($this->db);
+			$result =  $MarineArchive->addMarineArchiveData($fammarine_id, $ident, $latitude, $longitude, $heading, $groundspeed, $date, $putinarchive, $mmsi,$type,$typeid,$imo, $callsign,$arrival_code,$arrival_date,$status,$noarchive,$format_source, $source_name, $over_country);
+			if ($globalDebug) echo $result.')';
+		}
 		return "success";
-
 	}
 
 	public function getOrderBy()

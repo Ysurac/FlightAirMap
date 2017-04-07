@@ -3,7 +3,7 @@ require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.AIS.php');
 require_once(dirname(__FILE__).'/class.Marine.php');
 require_once(dirname(__FILE__).'/class.MarineLive.php');
-//require_once(dirname(__FILE__).'/class.MarineArchive.php');
+require_once(dirname(__FILE__).'/class.MarineArchive.php');
 require_once(dirname(__FILE__).'/class.Scheduler.php');
 require_once(dirname(__FILE__).'/class.Translation.php');
 require_once(dirname(__FILE__).'/class.Stats.php');

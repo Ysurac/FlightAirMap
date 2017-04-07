@@ -234,8 +234,9 @@ $output = '{';
 */
 							//$output .= '"fc": "'.$spotter_item['nb'].'",';
 						if (isset($spotter_item['ident']) && $spotter_item['ident'] != '') {
-							if ($compress) $output .= '"c": "'.$spotter_item['ident'].'",';
-							else $output .= '"callsign": "'.$spotter_item['ident'].'",';
+							if ($compress) $output .= '"c": "'.str_replace('\\','',$spotter_item['ident']).'",';
+							else $output .= '"callsign": "'.str_replace('\\','',$spotter_item['ident']).'",';
+							//"
 						} else {
 							if ($compress) $output .= '"c": "NA",';
 							else $output .= '"callsign": "NA",';
@@ -500,13 +501,21 @@ $output = '{';
 				    || ((isset($globalMapHistory) && $globalMapHistory) || $allhistory)
 				//    || (isset($history) && $history != '' && $history != 'NA' && ($history == $spotter_item['ident'] || $history == $spotter_item['flightaware_id']))
 				//    || (isset($history) && $history != '' && $history != 'NA' && $history == $spotter_item['ident'])
-				    || (isset($history) && $history != '' && $history != 'NA' && str_replace('-','',$history) == str_replace('-','',$spotter_item['flightaware_id']))
-				    || (isset($history) && $history == '' && isset($_GET['flightaware_id']) && $_GET['flightaware_id'] == $spotter_item['flightaware_id'])
+				    || (isset($history) && $history != '' && $history != 'NA' && isset($spotter_item['flightaware_id']) && str_replace('-','',$history) == str_replace('-','',$spotter_item['flightaware_id']))
+				    || (isset($history) && $history == '' && isset($spotter_item['flightaware_id']) && isset($_GET['flightaware_id']) && $_GET['flightaware_id'] == $spotter_item['flightaware_id'])
+				    || (isset($history) && $history != '' && $history != 'NA' && isset($spotter_item['fammarine_id']) && str_replace('-','',$history) == str_replace('-','',$spotter_item['fammarine_id']))
+				    || (isset($history) && $history == '' && isset($spotter_item['flightaware_id']) && isset($_GET['fammarine_id']) && $_GET['fammarine_id'] == $spotter_item['fammarine_id'])
+				    || (isset($history) && $history != '' && $history != 'NA' && isset($spotter_item['famtrackid']) && str_replace('-','',$history) == str_replace('-','',$spotter_item['famtrackid']))
+				    || (isset($history) && $history == '' && isset($spotter_item['flightaware_id']) && isset($_GET['famtrackid']) && $_GET['famtrackid'] == $spotter_item['famtrackid'])
 				    ) {
 					if ($tracker) {
 						$spotter_history_array = $TrackerLive->getAllLiveTrackerDataById($spotter_item['famtrackid']);
 					} elseif ($marine) {
-						$spotter_history_array = $MarineLive->getAllLiveMarineDataById($spotter_item['fammarine_id']);
+						if ($from_archive || $globalArchive) {
+							$spotter_history_array = $MarineArchive->getAllArchiveMarineDataById($spotter_item['fammarine_id']);
+						} else {
+							$spotter_history_array = $MarineLive->getAllLiveMarineDataById($spotter_item['fammarine_id']);
+						}
 					} else {
 						if ($from_archive || $globalArchive) {
 							$spotter_history_array = $SpotterArchive->getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
