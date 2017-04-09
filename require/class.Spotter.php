@@ -257,12 +257,14 @@ class Spotter{
 				$temp_array['registration'] = $this->getAircraftRegistrationBymodeS($temp_array['modes']);
 			} else $temp_array['registration'] = '';
 			if (isset($row['aircraft_icao'])) {
+				/*
 				$icao = $row['aircraft_icao'];
 				if (isset($this->aircraft_correct_icaotype[$icao])) {
 					$aircraft_array = $this->getAllAircraftInfo($this->aircraft_correct_icaotype[$icao]);
 				} else {
+				*/
 					$temp_array['aircraft_type'] = $row['aircraft_icao'];
-				}
+				//}
 			}
 			$temp_array['departure_airport'] = $row['departure_airport_icao'];
 			$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
