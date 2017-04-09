@@ -126,7 +126,9 @@ if (isset($globalMap3D) && $globalMap3D) {
 		echo "Update 3D models...";
 		$update_db->update_models();
 		$update_db->update_space_models();
-		$update_db->update_vehicules_models();
+		if ((isset($globalTracker) && $globalTracker) || (isset($globalMarine) && $globalMarine)) {
+			$update_db->update_vehicules_models();
+		}
 	}
 }
 ?>
