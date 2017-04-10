@@ -168,11 +168,11 @@ class Image {
 	*/
 	public function findAircraftImage($aircraft_registration, $aircraft_icao = '', $airline_icao = '')
 	{
-		global $globalAircraftImageSources, $globalIVAO, $globalAircraftImageCheckICAO;
+		global $globalAircraftImageSources, $globalIVAO, $globalAircraftImageCheckICAO, $globalVA;
 		$Spotter = new Spotter($this->db);
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
-		if ($aircraft_registration != '') {
+		if ($aircraft_registration != '' && (!isset($globalVA) || $globalVA !== TRUE)) {
 			if (strpos($aircraft_registration,'/') !== false) return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 			$aircraft_registration = urlencode(trim($aircraft_registration));
 			$aircraft_info = $Spotter->getAircraftInfoByRegistration($aircraft_registration);
