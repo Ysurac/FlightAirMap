@@ -196,7 +196,7 @@ class Spotter{
 	*/
 	public function getDataFromDB($query, $params = array(), $limitQuery = '',$schedules = false)
 	{
-		global $globalSquawkCountry, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalAirlinesSource, $globalVAM, $globalVA;
+		global $globalSquawkCountry, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalAirlinesSource, $globalVAM, $globalVA, $globalNoAirlines;
 		$Image = new Image($this->db);
 		$Schedule = new Schedule($this->db);
 		$ACARS = new ACARS($this->db);
@@ -387,7 +387,7 @@ class Spotter{
 			elseif (isset($globalVATSIM) && $globalVATSIM) $fromsource = 'vatsim';
 			elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';
 			if (!isset($row['airline_name']) || $row['airline_name'] == '') {
-				if (!is_numeric(substr($row['ident'], 0, 3))) {
+				if ((!isset($globalNoAirlines) || $globalNoAirlines === FALSE) && !is_numeric(substr($row['ident'], 0, 3))) {
 					if (is_numeric(substr($row['ident'], 2, 1))) {
 						$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 2),$fromsource);
 					} elseif (is_numeric(substr($row['ident'], 3, 1))) {

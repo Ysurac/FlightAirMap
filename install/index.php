@@ -369,6 +369,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<b>Virtual flights</b>
 				<p>
 				<p><i>If you choose IVAO, airlines names and logos will come from ivao.aero (you have to run install/populate_ivao.php to populate table with IVAO data)</i></p>
+				<input type="checkbox" name="globalva" id="va" value="va" onClick="datasource_js()" <?php if (isset($globalVA) && $globalVA) { ?>checked="checked" <?php } ?>/>
+				<label for="va">Virtual Airlines</label>
 				<input type="checkbox" name="globalivao" id="ivao" value="ivao" onClick="datasource_js()" <?php if (isset($globalIVAO) && $globalIVAO) { ?>checked="checked" <?php } ?>/>
 				<label for="ivao">IVAO</label>
 				<input type="checkbox" name="globalvatsim" id="vatsim" value="vatsim" onClick="datasource_js()" <?php if (isset($globalVATSIM) && $globalVATSIM) { ?>checked="checked" <?php } ?>/>
@@ -793,6 +795,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<br />
 			<p>
+				<label for="noairlines">No airlines check (can be used for OGN or Virtual Flights without airlines)</label>
+				<input type="checkbox" name="noairlines" id="noairlines" value="noairlines"<?php if (isset($globalNoAirlines) && $globalNoAirlines) { ?> checked="checked"<?php } ?> />
+			</p>
+			<br />
+			<p>
 			<?php 
 			    if (extension_loaded('gd') && function_exists('gd_info')) {
 			?>
@@ -932,6 +939,7 @@ if (isset($_POST['dbtype'])) {
 	*/
 
 	$globalvatsim = filter_input(INPUT_POST,'globalvatsim',FILTER_SANITIZE_STRING);
+	$globalva = filter_input(INPUT_POST,'globalva',FILTER_SANITIZE_STRING);
 	$globalivao = filter_input(INPUT_POST,'globalivao',FILTER_SANITIZE_STRING);
 	$globalphpvms = filter_input(INPUT_POST,'globalphpvms',FILTER_SANITIZE_STRING);
 	$globalvam = filter_input(INPUT_POST,'globalvam',FILTER_SANITIZE_STRING);
@@ -1083,6 +1091,10 @@ if (isset($_POST['dbtype'])) {
 	else $settings = array_merge($settings,array('globalSBS1' => 'FALSE'));
 	if ($globalaprs == 'aprs') $settings = array_merge($settings,array('globalAPRS' => 'TRUE'));
 	else $settings = array_merge($settings,array('globalAPRS' => 'FALSE'));
+	if ($globalva == 'va') {
+		//$settings = array_merge($settings,array('globalIVAO' => 'TRUE','globalVATSIM' => 'FALSE'));
+		$settings = array_merge($settings,array('globalVA' => 'TRUE'));
+	} else $settings = array_merge($settings,array('globalVA' => 'FALSE'));
 	if ($globalivao == 'ivao') {
 		//$settings = array_merge($settings,array('globalIVAO' => 'TRUE','globalVATSIM' => 'FALSE'));
 		$settings = array_merge($settings,array('globalIVAO' => 'TRUE'));
@@ -1239,6 +1251,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalWaypoints' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalWaypoints' => 'FALSE'));
+	}
+	$noairlines = filter_input(INPUT_POST,'noairlines',FILTER_SANITIZE_STRING);
+	if ($noairlines == 'noairlines') {
+		$settings = array_merge($settings,array('globalNoAirlines' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalNoAirlines' => 'FALSE'));
 	}
 
 	if (!isset($globalTransaction)) $settings = array_merge($settings,array('globalTransaction' => 'TRUE'));

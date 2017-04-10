@@ -11,6 +11,7 @@ class update_db {
 	public static $db_sqlite;
 
 	public static function download($url, $file, $referer = '') {
+		//$file = str_replace('/',DIRECTORY_SEPARATOR,$file);
 		$fp = fopen($file, 'w+');
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
