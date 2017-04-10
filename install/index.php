@@ -1091,27 +1091,29 @@ if (isset($_POST['dbtype'])) {
 	else $settings = array_merge($settings,array('globalSBS1' => 'FALSE'));
 	if ($globalaprs == 'aprs') $settings = array_merge($settings,array('globalAPRS' => 'TRUE'));
 	else $settings = array_merge($settings,array('globalAPRS' => 'FALSE'));
-	if ($globalva == 'va') {
-		//$settings = array_merge($settings,array('globalIVAO' => 'TRUE','globalVATSIM' => 'FALSE'));
-		$settings = array_merge($settings,array('globalVA' => 'TRUE'));
-	} else $settings = array_merge($settings,array('globalVA' => 'FALSE'));
+	$va = false;
 	if ($globalivao == 'ivao') {
-		//$settings = array_merge($settings,array('globalIVAO' => 'TRUE','globalVATSIM' => 'FALSE'));
 		$settings = array_merge($settings,array('globalIVAO' => 'TRUE'));
+		$va = true;
 	} else $settings = array_merge($settings,array('globalIVAO' => 'FALSE'));
 	if ($globalvatsim == 'vatsim') {
-		//$settings = array_merge($settings,array('globalVATSIM' => 'TRUE','globalIVAO' => 'FALSE'));
 		$settings = array_merge($settings,array('globalVATSIM' => 'TRUE'));
+		$va = true;
 	} else $settings = array_merge($settings,array('globalVATSIM' => 'FALSE'));
 	if ($globalphpvms == 'phpvms') {
 		$settings = array_merge($settings,array('globalphpVMS' => 'TRUE'));
+		$va = true;
 	} else $settings = array_merge($settings,array('globalphpVMS' => 'FALSE'));
 	if ($globalvam == 'vam') {
 		$settings = array_merge($settings,array('globalVAM' => 'TRUE'));
+		$va = true;
 	} else $settings = array_merge($settings,array('globalVAM' => 'FALSE'));
-	if ($globalvatsim == 'vatsim' || $globalivao == 'ivao' || $globalphpvms == 'phpvms') {
+	if ($va) {
 		$settings = array_merge($settings,array('globalSchedulesFetch' => 'FALSE','globalTranslationFetch' => 'FALSE'));
 	} else $settings = array_merge($settings,array('globalSchedulesFetch' => 'TRUE','globalTranslationFetch' => 'TRUE'));
+	if ($globalva == 'va' || $va) {
+		$settings = array_merge($settings,array('globalVA' => 'TRUE'));
+	} else $settings = array_merge($settings,array('globalVA' => 'FALSE'));
 	
 
 
