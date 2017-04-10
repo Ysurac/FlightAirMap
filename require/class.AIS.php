@@ -630,11 +630,18 @@ class AIS {
 		if ($data->type != '') $result['type'] = $data->type;
 		if ($data->typeid != '') $result['typeid'] = $data->typeid;
 		if ($data->imo != '') $result['imo'] = $data->imo;
-		if ($data->callsign != '') $result['callsign'] = $data->callsign;
-		if ($data->eta_month != '' && $data->eta_day != '' && $data->eta_hour != '' && $data->eta_minute != '') {
-			$result['eta_ts'] = strtotime(date('Y').'-'.$data->eta_month.'-'.$data->eta_day.' '.$data->eta_hour.':'.$data->eta_minute.':00');
+		if ($data->callsign != '') $result['callsign'] = trim(str_replace('@','',$data->callsign));
+		if (is_numeric($data->eta_month) && $data->eta_month != 0 && is_numeric($data->eta_day) && $data->eta_day != 0 && $data->eta_hour !== '' && $data->eta_minute !== '') {
+			$eta_ts = strtotime(date('Y').'-'.sprintf("%02d",$data->eta_month).'-'.sprintf("%02d",$data->eta_day).' '.sprintf("%02d",$data->eta_hour).':'.sprintf("%02d",$data->eta_minute).':00');
+			if ($eta_ts != '') $result['eta_ts'] = $eta_ts;
+		} elseif (is_numeric($data->eta_hour) && is_numeric($data->eta_minute)) {
+			$eta_ts = strtotime(date('Y-m-d').' '.sprintf("%02d",$data->eta_hour).':'.sprintf("%02d",$data->eta_minute).':00');
+			if ($eta_ts != '') $result['eta_ts'] = $eta_ts;
 		}
-		if ($data->destination != '') $result['destination'] = $data->destination;
+		if ($data->destination != '') {
+			$dest = trim(str_replace('@','',$data->destination));
+			if ($dest != '') $result['destination'] = $dest;
+		}
 		$result['all'] = (array) $data;
 		/*
 		    $ro->cls = 0; // AIS class undefined, also indicate unparsed msg
