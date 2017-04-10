@@ -380,7 +380,7 @@ if ($facebook_meta_image != "")
 			<li><a href="<?php print $globalURL; ?>/airline"><?php echo _("Airlines"); ?></a></li>
 			<li><a href="<?php print $globalURL; ?>/airport"><?php echo _("Airports"); ?></a></li>
 <?php
-    if ((!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM)) {
+    if ((!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM)) {
 ?>
 			<li><a href="<?php print $globalURL; ?>/owner"><?php echo _("Owners"); ?></a></li>
 <?php

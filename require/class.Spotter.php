@@ -196,7 +196,7 @@ class Spotter{
 	*/
 	public function getDataFromDB($query, $params = array(), $limitQuery = '',$schedules = false)
 	{
-		global $globalSquawkCountry, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalAirlinesSource, $globalVAM;
+		global $globalSquawkCountry, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalAirlinesSource, $globalVAM, $globalVA;
 		$Image = new Image($this->db);
 		$Schedule = new Schedule($this->db);
 		$ACARS = new ACARS($this->db);
@@ -204,6 +204,7 @@ class Spotter{
 		if (!isset($globalVATSIM)) $globalVATSIM = FALSE;
 		if (!isset($globalphpVMS)) $globalphpVMS = FALSE;
 		if (!isset($globalVAM)) $globalVAM = FALSE;
+		if (!isset($globalVA)) $globalVA = FALSE;
 		date_default_timezone_set('UTC');
 		
 		if (!is_string($query))
@@ -437,14 +438,14 @@ class Spotter{
 			if (isset($row['owner_name']) && $row['owner_name'] != '' && $row['owner_name'] != NULL) {
 				$temp_array['aircraft_owner'] = $row['owner_name'];
 			}
-			if ($temp_array['registration'] != "" && !$globalIVAO && !$globalVATSIM && !$globalphpVMS && !$globalVAM && !isset($temp_array['aircraft_owner'])) {
+			if ($temp_array['registration'] != "" && !$globalVA && !$globalIVAO && !$globalVATSIM && !$globalphpVMS && !$globalVAM && !isset($temp_array['aircraft_owner'])) {
 				$owner_info = $this->getAircraftOwnerByRegistration($temp_array['registration']);
 				if ($owner_info['owner'] != '') $temp_array['aircraft_owner'] = ucwords(strtolower($owner_info['owner']));
 				$temp_array['aircraft_base'] = $owner_info['base'];
 				$temp_array['aircraft_date_first_reg'] = $owner_info['date_first_reg'];
 			}
 
-			if($temp_array['registration'] != "" || (($globalIVAO || $globalVATSIM || $globalphpVMS || $globalVAM) && isset($temp_array['aircraft_type']) && $temp_array['aircraft_type'] != ''))
+			if($temp_array['registration'] != "" || (($globalVA || $globalIVAO || $globalVATSIM || $globalphpVMS || $globalVAM) && isset($temp_array['aircraft_type']) && $temp_array['aircraft_type'] != ''))
 			{
 				if ($globalIVAO) {
 					if (isset($temp_array['airline_icao']))	$image_array = $Image->getSpotterImage('',$temp_array['aircraft_type'],$temp_array['airline_icao']);
@@ -474,7 +475,7 @@ class Spotter{
 				$temp_array['arrival_airport_time'] = $row['arrival_airport_time'];
 			}
 			
-			if ((!isset($globalIVAO) || ! $globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM)) {
+			if ((!isset($globalVA) || ! $globalVA) && (!isset($globalIVAO) || ! $globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM)) {
 				if ($schedules === true) {
 					$schedule_array = $Schedule->getSchedule($temp_array['ident']);
 					//print_r($schedule_array);
@@ -2278,7 +2279,8 @@ class Spotter{
 	*/
 	public function getAllAirlineInfo($airline_icao, $fromsource = NULL)
 	{
-		global $globalUseRealAirlines;
+		global $globalUseRealAirlines, $globalNoAirlines;
+		if (isset($globalNoAirlines) && $globalNoAirlines) return array();
 		if (isset($globalUseRealAirlines) && $globalUseRealAirlines) $fromsource = NULL;
 		$airline_icao = strtoupper(filter_var($airline_icao,FILTER_SANITIZE_STRING));
 		if ($airline_icao == 'NA') {
@@ -2347,7 +2349,8 @@ class Spotter{
 	*/
 	public function getAllAirlineInfoByName($airline_name, $fromsource = NULL)
 	{
-		global $globalUseRealAirlines;
+		global $globalUseRealAirlines, $globalNoAirlines;
+		if (isset($globalNoAirlines) && $globalNoAirlines) return array();
 		if (isset($globalUseRealAirlines) && $globalUseRealAirlines) $fromsource = NULL;
 		$airline_name = strtolower(filter_var($airline_name,FILTER_SANITIZE_STRING));
 		$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE lower(airlines.name) = :airline_name AND airlines.active = 'Y' AND airlines.forsource IS NULL LIMIT 1";
@@ -2795,16 +2798,11 @@ class Spotter{
 	*/
 	public function getAllAirlineNames($airline_type = '',$forsource = NULL,$filters = array())
 	{
-		global $globalAirlinesSource,$globalVATSIM, $globalIVAO;
+		global $globalAirlinesSource,$globalVATSIM, $globalIVAO, $globalNoAirlines;
+		if (isset($globalNoAirlines) && $globalNoAirlines) return array();
 		$filter_query = $this->getFilter($filters,true,true);
 		$airline_type = filter_var($airline_type,FILTER_SANITIZE_STRING);
 		if ($airline_type == '' || $airline_type == 'all') {
-			/*
-			$query  = "SELECT DISTINCT spotter_output.airline_icao AS airline_icao, spotter_output.airline_name AS airline_name, spotter_output.airline_type AS airline_type
-								FROM spotter_output
-								WHERE spotter_output.airline_icao <> '' 
-								ORDER BY spotter_output.airline_name ASC";
-			*/
 			if (isset($globalAirlinesSource) && $globalAirlinesSource != '') $forsource = $globalAirlinesSource;
 			elseif (isset($globalVATSIM) && $globalVATSIM) $forsource = 'vatsim';
 			elseif (isset($globalIVAO) && $globalIVAO) $forsource = 'ivao';
@@ -2848,7 +2846,8 @@ class Spotter{
 	*/
 	public function getAllAllianceNames($forsource = NULL,$filters = array())
 	{
-		global $globalAirlinesSource,$globalVATSIM, $globalIVAO;
+		global $globalAirlinesSource,$globalVATSIM, $globalIVAO, $globalNoAirlines;
+		if (isset($globalNoAirlines) && $globalNoAirlines) return array();
 		$filter_query = $this->getFilter($filters,true,true);
 		if (isset($globalAirlinesSource) && $globalAirlinesSource != '') $forsource = $globalAirlinesSource;
 		elseif (isset($globalVATSIM) && $globalVATSIM) $forsource = 'vatsim';
@@ -3635,7 +3634,7 @@ class Spotter{
 	*/
 	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $altitude_real = '',$heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '', $source_name = '',$source_type = '')
 	{
-		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalDebugTimeElapsed, $globalAirlinesSource, $globalVAM, $globalAircraftImageFetch;
+		global $globalURL, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalDebugTimeElapsed, $globalAirlinesSource, $globalVAM, $globalAircraftImageFetch, $globalVA;
 		
 		//if (isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 		$Image = new Image($this->db);
@@ -3645,6 +3644,7 @@ class Spotter{
 		if (!isset($globalVATSIM)) $globalVATSIM = FALSE;
 		if (!isset($globalphpVMS)) $globalphpVMS = FALSE;
 		if (!isset($globalVAM)) $globalVAM = FALSE;
+		if (!isset($globalVA)) $globalVA = FALSE;
 		date_default_timezone_set('UTC');
 		
 		//getting the registration
@@ -3829,7 +3829,7 @@ class Spotter{
 		}
 
 		//getting the aircraft image
-		if (($registration != "" || $registration != 'NA') && !$globalIVAO && !$globalVATSIM && !$globalphpVMS && !$globalVAM)
+		if (($registration != "" || $registration != 'NA') && !$globalVA && !$globalIVAO && !$globalVATSIM && !$globalphpVMS && !$globalVAM)
 		{
 			if (isset($globalAircraftImageFetch) && $globalAircraftImageFetch === TRUE) {
 				$timeelapsed = microtime(true);
@@ -3847,7 +3847,7 @@ class Spotter{
 			if ($owner_info['owner'] != '') $aircraft_owner = ucwords(strtolower($owner_info['owner']));
 		}
     
-		if (($globalIVAO || $globalVATSIM || $globalphpVMS || $globalVAM) && $aircraft_icao != '' && isset($globalAircraftImageFetch) && $globalAircraftImageFetch === TRUE)
+		if (($globalVA || $globalIVAO || $globalVATSIM || $globalphpVMS || $globalVAM) && $aircraft_icao != '' && isset($globalAircraftImageFetch) && $globalAircraftImageFetch === TRUE)
 		{
             		if (isset($airline_array[0]['icao'])) $airline_icao = $airline_array[0]['icao'];
             		else $airline_icao = '';

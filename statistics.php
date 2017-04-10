@@ -60,7 +60,7 @@ require_once('header.php');
         <span><span class="badge"><?php print number_format($Stats->countOverallArrival($airline_icao,$filter_name,$year,$month)); ?></span> <?php echo _("Arrivals seen"); ?></span>
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
-	    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+	    if ((isset($globalVA) && $globalVA) ||(isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 	?>
     	    <span><span class="badge"><?php print number_format($Stats->countOverallPilots($airline_icao,$filter_name,$year,$month)); ?></span> <?php echo _("Pilots"); ?></span>
 	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
@@ -176,7 +176,7 @@ require_once('header.php');
         <div class="row column">
 <?php
     $flightover_array = $Stats->countAllFlightOverCountries(false,$airline_icao,$filter_name,$year,$month);
-    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+    if ((isset($globalVA) && $globalVA) ||(isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 	if (empty($flightover_array)) {
 	    print '<div class="col-md-12">';
 	} else {

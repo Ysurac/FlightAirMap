@@ -149,7 +149,7 @@ if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 print '</div>';
 print '</div>';
 
-if (isset($globalphpVMS) && $globalphpVMS && isset($globalVATSIM) && $globalVATSIM && isset($globalIVAO) && $globalIVAO && isset($spotter_item['format_source']) && $spotter_item['format_source'] != '' && $spotter_item['format_source'] != 'pireps') print '<div class="waypoints"><span>'._("Source").'</span>'.$spotter_item['format_source'].'</div>';
+if (isset($globalVA) && $globalVA && isset($globalphpVMS) && $globalphpVMS && isset($globalVATSIM) && $globalVATSIM && isset($globalIVAO) && $globalIVAO && isset($spotter_item['format_source']) && $spotter_item['format_source'] != '' && $spotter_item['format_source'] != 'pireps') print '<div class="waypoints"><span>'._("Source").'</span>'.$spotter_item['format_source'].'</div>';
 if (isset($spotter_item['waypoints']) && $spotter_item['waypoints'] != '') print '<div class="waypoints"><span>'._("Route").'</span>'.$spotter_item['waypoints'].'</div>';
 if (isset($spotter_item['acars']['message'])) print '<div class="acars"><span>'._("Latest ACARS message").'</span>'.trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'<br/>',$spotter_item['acars']['message'])).'</div>';
 if (isset($spotter_item['squawk']) && $spotter_item['squawk'] != '' && $spotter_item['squawk'] != 0) print '<div class="bottom">'._("Squawk:").' '.$spotter_item['squawk'].' - '.$spotter_item['squawk_usage'].'</div>';

@@ -311,7 +311,7 @@ if (!empty($_GET)){
 					</div>
 				</div>
 <?php
-if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 ?>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Pilot id"); ?></label> 

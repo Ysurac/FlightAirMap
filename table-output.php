@@ -69,7 +69,7 @@ if (strtolower($current_page) == "search")
 	} else {
 		print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
 	}
-	if ((isset($globalIvAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
+	if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
 		print '<th class="routestop"><span class="nomobile">'._("Route stop").'</span><span class="mobile">'._("Stop").'</span></a></th>';
 	}
 	if (isset($_GET['dist']) && $_GET['dist'] != '') {
@@ -83,7 +83,7 @@ if (strtolower($current_page) == "search")
 			print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-sort small"></i></th>';
 		}
 	}
-	if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+	if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 		print '<th class="pilot"><span class="nomobile">'._("Pilot name").'</span><span class="mobile">'._("Pilot").'</span></a></th>';
 	} else {
 		print '<th class="owner"><span class="nomobile">'._("Owner name").'</span><span class="mobile">'._("Owner").'</span></a></th>';
@@ -234,7 +234,7 @@ if (strtolower($current_page) == "search")
 		} else {
 			print '<th class="arrival"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></th>';
 		}                                               
-		if ((isset($globalIvAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
+		if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
 			print '<th class="pilot"><span class="nomobile">'._("Pilot name").'</span><span class="mobile">'._("Pilot").'</span></a></th>';
 		} else {
 			print '<th class="owner"><span class="nomobile">'._("Owner name").'</span><span class="mobile">'._("Owner").'</span></a></th>';
@@ -328,7 +328,7 @@ if (strtolower($current_page) == "search")
 		} else {
 			print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
 		}
-		if ((isset($globalIvAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
+		if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
 			print '<th class="pilot"><span class="nomobile">'._("Pilot name").'</span><span class="mobile">'._("Pilot").'</span></a></th>';
 		} else {
 			print '<th class="owner"><span class="nomobile">'._("Owner name").'</span><span class="mobile">'._("Owner").'</span></a></th>';
@@ -678,7 +678,7 @@ foreach($spotter_array as $spotter_item)
 			print '</td>'."\n";
 		}
 		if(strtolower($current_page) != "upcoming"){
-			if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+			if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 				print '<td class="pilot">'."\n";
 				if ((!isset($spotter_item['pilot_id']) || $spotter_item['pilot_id'] == '') && (!isset($spotter_item['pilot_name']) || $spotter_item['pilot_name'] == '')) {
 					print '<span class="nomobile">-</span>'."\n";
