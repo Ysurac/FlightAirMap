@@ -588,15 +588,28 @@ foreach($spotter_array as $spotter_item)
 	}
 	// Aircraft ident
 	print '<td class="ident">'."\n";
-	if ($spotter_item['ident'] != "")
-	{
-		if ($spotter_item['ident'] == "NA") {
-			print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'._("Not available").'</a>'."\n";
+	if ($type == 'aircraft') {
+		if ($spotter_item['ident'] != "")
+		{
+			if ($spotter_item['ident'] == "NA") {
+				print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'._("Not available").'</a>'."\n";
+			} else {
+				print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'.$spotter_item['ident'].'</a>'."\n";
+			}
 		} else {
-			print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'.$spotter_item['ident'].'</a>'."\n";
+			print '<a href="'.$globalURL.'/ident/NA">'._("Not available").'</a>'."\n";
 		}
-	} else {
-		print '<a href="'.$globalURL.'/ident/NA">'._("Not available").'</a>'."\n";
+	} elseif ($type == 'marine') {
+		if ($spotter_item['ident'] != "")
+		{
+			if ($spotter_item['ident'] == "NA") {
+				print '<a href="'.$globalURL.'/marine/ident/'.$spotter_item['ident'].'">'._("Not available").'</a>'."\n";
+			} else {
+				print '<a href="'.$globalURL.'/marine/ident/'.$spotter_item['ident'].'">'.$spotter_item['ident'].'</a>'."\n";
+			}
+		} else {
+			print '<a href="'.$globalURL.'/marine/ident/NA">'._("Not available").'</a>'."\n";
+		}
 	}
 	print '</td>'."\n";
 	// Aircraft type
@@ -758,11 +771,15 @@ foreach($spotter_array as $spotter_item)
 		} elseif ($type == 'marine') {
 			print '<td class="arrival_airport">'."\n";
 			if (!isset($spotter_item['arrival_port_name'])) {
-				print '<span class="nomobile"><a href="'.$globalURL.'/port/NA">'._("Not available").'</a></span>'."\n";
-				print '<span class="mobile"><a href="'.$globalURL.'/port/NA">'._("Not available").'</a></span>'."\n";
+				//print '<span class="nomobile"><a href="'.$globalURL.'/marine/port/NA">'._("Not available").'</a></span>'."\n";
+				//print '<span class="mobile"><a href="'.$globalURL.'/marine/port/NA">'._("Not available").'</a></span>'."\n";
+				print '<span class="nomobile">'._("Not available").'</span>'."\n";
+				print '<span class="mobile">'._("Not available").'</span>'."\n";
 			} else {
-				print '<span class="nomobile"><a href="'.$globalURL.'/port/'.urlencode($spotter_item['arrival_port_name']).'">'.$spotter_item['arrival_port_name'].'</a></span>'."\n";
-				print '<span class="mobile"><a href="'.$globalURL.'/port/'.urlencode($spotter_item['arrival_port_name']).'">'.$spotter_item['arrival_port_name'].'</a></span>'."\n";
+				//print '<span class="nomobile"><a href="'.$globalURL.'/marine/port/'.urlencode($spotter_item['arrival_port_name']).'">'.$spotter_item['arrival_port_name'].'</a></span>'."\n";
+				//print '<span class="mobile"><a href="'.$globalURL.'/marine/port/'.urlencode($spotter_item['arrival_port_name']).'">'.$spotter_item['arrival_port_name'].'</a></span>'."\n";
+				print '<span class="nomobile">'.$spotter_item['arrival_port_name'].'</span>'."\n";
+				print '<span class="mobile">'.$spotter_item['arrival_port_name'].'</span>'."\n";
 			}
 			print '</td>'."\n";
 		}

@@ -1,8 +1,12 @@
 <?php
 require_once(dirname(__FILE__).'/require/settings.php');
-if (isset($_POST['ident']) && $_POST['ident'] != "")
+$ident = '';
+if (isset($_POST['ident'])) $ident = filter_input(INPUT_POST,'ident',FILTER_SANITIZE_STRING);
+if (isset($_GET['ident'])) $ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+if ($ident != '')
 {
-	header('Location: '.$globalURL.'/ident/'.$_POST['ident']);
+	if (isset($_GET['marine'])) header('Location: '.$globalURL.'/marine/ident/'.$ident);
+	else header('Location: '.$globalURL.'/ident/'.$ident);
 } else {
 	header('Location: '.$globalURL);
 }

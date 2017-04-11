@@ -315,7 +315,7 @@ class Marine{
 		}
 
 		$query = $global_query.$filter_query." marine_output.ident <> '' ".$additional_query." ".$orderby_query;
-
+		//echo $query."\n";
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;

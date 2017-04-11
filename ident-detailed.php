@@ -1,16 +1,27 @@
 <?php
 require_once('require/class.Connection.php');
-require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 require_once('require/class.Translation.php');
-require_once('require/class.SpotterLive.php');
-require_once('require/class.SpotterArchive.php');
+$type = '';
+if (isset($_GET['marine'])) {
+	require_once('require/class.Marine.php');
+	require_once('require/class.MarineLive.php');
+	require_once('require/class.MarineArchive.php');
+	$Marine = new Marine();
+	$MarineArchive = new MarineArchive();
+	$type = 'marine';
+} else {
+	require_once('require/class.Spotter.php');
+	require_once('require/class.SpotterLive.php');
+	require_once('require/class.SpotterArchive.php');
+	$Spotter = new Spotter();
+	$SpotterArchive = new SpotterArchive();
+	$type = 'aircraft';
+}
 
 if (!isset($_GET['ident'])){
 	header('Location: '.$globalURL.'');
 } else {
-	$Spotter = new Spotter();
-	$SpotterArchive = new SpotterArchive();
 	$Translation = new Translation();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
@@ -34,35 +45,50 @@ if (!isset($_GET['ident'])){
 	
 	$page_url = $globalURL.'/ident/'.$_GET['ident'];
 	
-	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+	$ident = urldecode(filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING));
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-	if ($sort != '') 
-	{
-		$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
-		if (empty($spotter_array)) {
-			$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+	if ($type == 'aircraft') {
+		if ($sort != '') 
+		{
+			$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+			if (empty($spotter_array)) {
+				$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+			}
+		} else {
+			$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
+			if (empty($spotter_array)) {
+				$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
+			}
 		}
-	} else {
-		$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
 		if (empty($spotter_array)) {
-			$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
+			$new_ident = $Translation->checkTranslation($ident);
+			if ($new_ident != $ident) {
+				$ident = $new_ident;
+				if ($sort != '') 
+				{
+					$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+					if (empty($spotter_array)) {
+						$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+					}
+				} else {
+					$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
+					if (empty($spotter_array)) {
+						$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
+					}
+				}
+			}
 		}
-	}
-	if (empty($spotter_array)) {
-		$new_ident = $Translation->checkTranslation($ident);
-		if ($new_ident != $ident) {
-			$ident = $new_ident;
-			if ($sort != '') 
-			{
-				$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
-				if (empty($spotter_array)) {
-					$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
-				}
-			} else {
-				$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
-				if (empty($spotter_array)) {
-					$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
-				}
+	} elseif ($type == 'marine') {
+		if ($sort != '') 
+		{
+			$spotter_array = $Marine->getMarineDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+			if (empty($spotter_array)) {
+				$spotter_array = $MarineArchive->getMarineDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+			}
+		} else {
+			$spotter_array = $Marine->getMarineDataByIdent($ident,$limit_start.",".$absolute_difference);
+			if (empty($spotter_array)) {
+				$spotter_array = $MarineArchive->getMarineDataByIdent($ident,$limit_start.",".$absolute_difference);
 			}
 		}
 	}
@@ -74,7 +100,7 @@ if (!isset($_GET['ident'])){
 		if (isset($spotter_array[0]['latitude'])) $latitude = $spotter_array[0]['latitude'];
 		if (isset($spotter_array[0]['longitude'])) $longitude = $spotter_array[0]['longitude'];
 		require_once('header.php');
-		if (isset($globalArchive) && $globalArchive) {
+		if (isset($globalArchive) && $globalArchive && $type == 'aircraft') {
 			// Requirement for altitude graph
 			print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 			$all_data = $SpotterArchive->getAltitudeSpeedArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
@@ -127,12 +153,13 @@ if (!isset($_GET['ident'])){
 		if (isset($spotter_array[0]['airline_icao'])) {
 			print '<div><span class="label">'._("Airline").'</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
 		}
-		print '<div><span class="label">'._("Flight History").'</span><a href="http://flightaware.com/live/flight/'.$spotter_array[0]['ident'].'" target="_blank">'._("View the Flight History of this callsign").'</a></div>';
+		if ($type == 'aircraft') print '<div><span class="label">'._("Flight History").'</span><a href="http://flightaware.com/live/flight/'.$spotter_array[0]['ident'].'" target="_blank">'._("View the Flight History of this callsign").'</a></div>';
 		print '</div>';
 	
-		include('ident-sub-menu.php');
+		if ($type == 'aircraft') include('ident-sub-menu.php');
 		print '<div class="table column">';
-		print '<p>'.sprintf(_("The table below shows the detailed information of all flights with the ident/callsign of <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
+		if ($type == 'aircraft') print '<p>'.sprintf(_("The table below shows the detailed information of all flights with the ident/callsign of <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
+		elseif ($type == 'marine') print '<p>'.sprintf(_("The table below shows the detailed information of all vessels with the ident/callsign of <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
 
 		include('table-output.php'); 
 		print '<div class="pagination">';

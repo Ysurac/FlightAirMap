@@ -211,6 +211,13 @@ location /ident {
     rewrite ^/ident(/?)$ /ident.php last;
 }
 
+location /marine/ident {
+    rewrite ^/marine/ident/([^/]+)/([^/]+)/([^/]+)(/?)$ /ident-detailed.php?marine&ident=$1&limit=$2&sort=$3 last;
+    rewrite ^/marine/ident/([^/]+)/([^/]+)(/?)$ /ident-detailed.php?marine&ident=$1&limit=$2 last;
+    rewrite ^/marine/ident/([^/]+)(/?)$ /ident-detailed.php?marine&ident=$1 last;
+    rewrite ^/marine/ident(/?)$ /ident.php?marine last;
+}
+
 location /owner {
     rewrite "^/owner/statistics/aircraft/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$" /owner-statistics-aircraft.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/aircraft/([^/]+)(/?)$ /owner-statistics-aircraft.php?owner=$1 last;

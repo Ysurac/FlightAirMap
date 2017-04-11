@@ -181,6 +181,13 @@ RewriteRule ^ident/([^/]+)/([^/]+)(/?)$ ident-detailed.php?ident=$1&limit=$2 [L,
 RewriteRule ^ident/([^/]+)(/?)$ ident-detailed.php?ident=$1 [L,NC]
 RewriteRule ^ident(/?)$ ident.php [L,NC]
 
+#---------- MARINE ---------
+RewriteRule ^marine/ident/([^/]+)/([^/]+)/([^/]+)(/?)$ ident-detailed.php?marine&ident=$1&limit=$2&sort=$3 [L,NC]
+RewriteRule ^marine/ident/([^/]+)/([^/]+)(/?)$ ident-detailed.php?marine&ident=$1&limit=$2 [L,NC]
+RewriteRule ^marine/ident/([^/]+)(/?)$ ident-detailed.php?marine&ident=$1 [L,NC]
+RewriteRule ^marine/ident(/?)$ ident.php?marine [L,NC]
+
+
 ########### OWNER ###########
 
 RewriteRule ^owner/statistics/aircraft/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ owner-statistics-aircraft.php?owner=$1&year=$2&month=$3 [L,NC]
