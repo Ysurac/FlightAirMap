@@ -300,7 +300,7 @@ class Image {
 				$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q=aircraft%20'.$registration;
 			}
 		} elseif ($type == 'marine') {
-			$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q="'.urlencode($name).'"';
+			$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q=ship%20"'.urlencode($name).'"';
 		}
 
 		$data = $Common->getData($url);
@@ -410,8 +410,8 @@ class Image {
 			if ($name != '') $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$registration.','.urlencode($name);
 			else $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$registration.',aircraft';
 		} elseif ($type == 'marine') {
-			if ($name != '') $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.urlencode($name);
-			else $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$registration.',vessel';
+			if ($name != '') $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags=ship,'.urlencode($name);
+			else $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$registration.',ship';
 		}
 		$data = $Common->getData($url);
 		if ($xml = simplexml_load_string($data)) {
@@ -457,8 +457,13 @@ class Image {
 		global $globalImageBingKey;
 		$Common = new Common();
 		if (!isset($globalImageBingKey) || $globalImageBingKey == '') return false;
-		if ($aircraft_name != '') $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27'.$aircraft_registration.'%20'.urlencode($aircraft_name).'%20-site:planespotters.com%20-site:flickr.com%27';
-		else $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27%2B'.$aircraft_registration.'%20%2Baircraft%20-site:planespotters.com%20-site:flickr.com%27';
+		if ($type == 'aircraft') {
+			if ($aircraft_name != '') $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27'.$aircraft_registration.'%20'.urlencode($aircraft_name).'%20-site:planespotters.com%20-site:flickr.com%27';
+			else $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27%2B'.$aircraft_registration.'%20%2Baircraft%20-site:planespotters.com%20-site:flickr.com%27';
+		} elseif ($type == 'marine') {
+			if ($aircraft_name != '') $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27'.urlencode($aircraft_name).'%20%2Bship%20-site:flickr.com%27';
+			else $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27%2B'.$aircraft_registration.'%20%2Bship%20-site:flickr.com%27';
+		}
 		$headers = array("Authorization: Basic " . base64_encode("ignored:".$globalImageBingKey));
 		$data = $Common->getData($url,'get','',$headers);
 		$result = json_decode($data);

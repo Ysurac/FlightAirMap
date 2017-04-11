@@ -336,8 +336,8 @@ class aprs {
 		            $body_parse = substr($body_parse,6);
 		    }
 		    
-		    if (preg_match('/CS=([0-9A-Z]*)/',$body_parse,$matches)) {
-			$result['ident'] = $matches[1];
+		    if (preg_match('/CS=([0-9A-Z_]*)/',$body_parse,$matches)) {
+			$result['ident'] = str_replace('_',' ',$matches[1]);
 		    }
 		    if (preg_match('/SQ=([0-9]{4})/',$body_parse,$matches)) {
 			$result['squawk'] = $matches[1];
@@ -357,8 +357,8 @@ class aprs {
 		    if (preg_match('/AD=([0-9]*)/',$body_parse,$matches)) {
 			$result['arrival_date'] = $matches[1];
 		    }
-		    if (preg_match('/AC=([0-9A-Z]*)/',$body_parse,$matches)) {
-			$result['arrival_code'] = $matches[1];
+		    if (preg_match('/AC=([0-9A-Z_]*)/',$body_parse,$matches)) {
+			$result['arrival_code'] = str_replace('_',' ',$matches[1]);
 		    }
 		    // OGN comment
 		   // echo "Before OGN : ".$body_parse."\n";
@@ -533,7 +533,7 @@ class APRSMarine extends APRS {
 			$custom = '';
 			if ($ident != '') {
 				if ($custom != '') $custom .= '/';
-				$custom .= 'CS='.$ident;
+				$custom .= 'CS='.str_replace(' ','_',$ident);
 			}
 			if ($typeid != '') {
 				if ($custom != '') $custom .= '/';
@@ -553,7 +553,7 @@ class APRSMarine extends APRS {
 			}
 			if ($arrival_code != '') {
 				if ($custom != '') $custom .= '/';
-				$custom .= 'AC='.$arrival_code;
+				$custom .= 'AC='.str_replace(' ','_',$arrival_code);
 			}
 			if ($custom != '') $custom = ' '.$custom;
 			$altitude = 0;

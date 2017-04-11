@@ -160,6 +160,7 @@ class SpotterLive {
 				$orderby_query = ' '.$search_orderby_array[$sort]['sql'];
 			}
 		}
+		if ($orderby_query == '') $orderby_query = ' ORDER BY date DESC';
 
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		if ($globalDBdriver == 'mysql') {

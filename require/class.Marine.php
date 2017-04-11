@@ -125,9 +125,9 @@ class Marine{
 				$temp_array['spotter_id'] = $row['spotter_archive_output_id'];
 			*/} 
 			elseif (isset($row['marineid'])) {
-				$temp_array['marineid'] = $row['marineid'];
+				$temp_array['marine_id'] = $row['marineid'];
 			} else {
-				$temp_array['marineid'] = '';
+				$temp_array['marine_id'] = '';
 			}
 			if (isset($row['fammarine_id'])) $temp_array['fammarine_id'] = $row['fammarine_id'];
 			if (isset($row['mmsi'])) $temp_array['mmsi'] = $row['mmsi'];
@@ -144,7 +144,7 @@ class Marine{
 			}
 			if (isset($row['ground_speed'])) $temp_array['ground_speed'] = $row['ground_speed'];
 
-			if($temp_array['mmsi'] != "" && isset($globalMarineImageFetch) && $globalMarineImageFetch === TRUE)
+			if($temp_array['mmsi'] != "")
 			{
 				$Image = new Image($this->db);
 				if (isset($temp_array['ident']) && $temp_array['ident'] != '') $image_array = $Image->getMarineImage($temp_array['mmsi'],'',$temp_array['ident']);
@@ -221,25 +221,19 @@ class Marine{
 	public function getLatestMarineData($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
-		
 		date_default_timezone_set('UTC');
-
 		$filter_query = $this->getFilter($filter);
-		
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
-			
 			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
 			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
-			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
 				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
 				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			} else $limit_query = "";
 		} else $limit_query = "";
-		
 		if ($sort != "")
 		{
 			$search_orderby_array = $this->getOrderBy();
@@ -247,11 +241,8 @@ class Marine{
 		} else {
 			$orderby_query = " ORDER BY marine_output.date DESC";
 		}
-
 		$query  = $global_query.$filter_query." ".$orderby_query;
-
 		$spotter_array = $this->getDataFromDB($query, array(),$limit_query,true);
-
 		return $spotter_array;
 	}
     
