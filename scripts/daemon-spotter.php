@@ -464,6 +464,7 @@ while ($i > 0) {
 				if (isset($ais_data['status'])) $data['status'] = $ais_data['status'];
 				if (isset($ais_data['statusid'])) $data['status_id'] = $ais_data['statusid'];
 				if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
+				if (isset($ais_data['typeid'])) $data['type_id'] = $ais_data['typeid'];
 				if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
 				if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
 				if (isset($ais_data['destination'])) $data['arrival_code'] = $ais_data['destination'];

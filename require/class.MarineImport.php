@@ -150,7 +150,7 @@ class MarineImport {
 			//$dataFound = true;
 		    }
 		}
-		if (isset($line['type_id']) && $line['type_id'] != '') {
+		if (isset($line['type_id'])) {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('type' => $AIS->getShipType($line['type_id'])));
 		}
 		if (isset($line['type']) && $line['type'] != '') {
@@ -215,7 +215,7 @@ class MarineImport {
 		}
 
 
-		if (isset($line['speed']) && $line['speed'] != '') {
+		if (isset($line['speed'])) {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed' => round($line['speed'])));
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed_fromsrc' => true));
 		} else if (!isset($this->all_tracked[$id]['speed_fromsrc']) && isset($this->all_tracked[$id]['time_last_coord']) && $this->all_tracked[$id]['time_last_coord'] != time() && isset($line['latitude']) && isset($line['longitude'])) {
@@ -293,7 +293,7 @@ class MarineImport {
 		if (isset($line['status']) && $line['status'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('status' => $line['status']));
 		}
-		if (isset($line['status_id']) && $line['status_id'] != '') {
+		if (isset($line['status_id'])) {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('status_id' => $line['status_id']));
 		}
 

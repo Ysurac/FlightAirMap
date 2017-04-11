@@ -624,14 +624,14 @@ class AIS {
 		if (strlen($result['mmsi']) == 8 && substr($result['mmsi'],0,3) == '669') $result['mmsi'] = '3'.$result['mmsi'];
 		$result['mmsi_type'] = $this->mmsitype($result['mmsi']);
 		if ($data->sog != -1.0) $result['speed'] = $data->sog;
-		if ($data->heading != '') $result['heading'] = $data->heading;
+		if ($data->heading !== '') $result['heading'] = $data->heading;
 		elseif ($data->cog != 0) $result['heading'] = $data->cog;
 		if ($data->status != '') $result['status'] = $data->status;
-		if ($data->statusid != '') $result['statusid'] = $data->statusid;
-		if ($data->type != '') $result['type'] = $data->type;
-		if ($data->typeid != '') $result['typeid'] = $data->typeid;
-		if ($data->imo != '') $result['imo'] = $data->imo;
-		if ($data->callsign != '') $result['callsign'] = trim(str_replace('@','',$data->callsign));
+		if ($data->statusid !== '') $result['statusid'] = $data->statusid;
+		if ($data->type !== '') $result['type'] = $data->type;
+		if ($data->typeid !== '') $result['typeid'] = $data->typeid;
+		if ($data->imo !== '') $result['imo'] = $data->imo;
+		if ($data->callsign !== '') $result['callsign'] = trim(str_replace('@','',$data->callsign));
 		if (is_numeric($data->eta_month) && $data->eta_month != 0 && is_numeric($data->eta_day) && $data->eta_day != 0 && $data->eta_hour !== '' && $data->eta_minute !== '') {
 			$eta_ts = strtotime(date('Y').'-'.sprintf("%02d",$data->eta_month).'-'.sprintf("%02d",$data->eta_day).' '.sprintf("%02d",$data->eta_hour).':'.sprintf("%02d",$data->eta_minute).':00');
 			if ($eta_ts != '') $result['eta_ts'] = $eta_ts;

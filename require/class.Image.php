@@ -521,7 +521,7 @@ class Image {
 			if ($name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$registration.'"%20'.urlencode($name);
 			else $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$registration.'"%20aircraft';
 		} elseif ($type == 'marine') {
-			if ($name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.urlencode($name).'"';
+			if ($name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.urlencode($name).'%20ship"';
 			else return false;
 		}
 		$data = $Common->getData($url);
