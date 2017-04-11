@@ -528,6 +528,32 @@ class Marine{
 		return "success";
 
 	}
+
+	/**
+	* Update Status data
+	*
+	* @param String $fammarine_id the ID
+	* @param String $status_id the marine status id
+	* @param String $status the marine status
+	* @return String success or false
+	*
+	*/	
+	public function updateStatusMarineData($fammarine_id = '', $status_id = '',$status = '')
+	{
+
+		$query = 'UPDATE marine_output SET status = :status, status_id = :status_id WHERE fammarine_id = :fammarine_id';
+                $query_values = array(':fammarine_id' => $fammarine_id,':status' => $status,':status_id' => $status_id);
+
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch (PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		
+		return "success";
+
+	}
 	/**
 	* Update latest marine data
 	*

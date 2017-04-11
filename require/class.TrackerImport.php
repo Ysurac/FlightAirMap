@@ -124,7 +124,7 @@ class TrackerImport {
 		    if ($globalAllTracked !== FALSE) $dataFound = true;
 		}
 		
-		if (isset($line['datetime']) && strtotime($line['datetime']) > time()-20*60) {
+		if (isset($line['datetime']) && strtotime($line['datetime']) > time()-20*60 && strtotime($line['datetime']) < time()+20*60) {
 		    if (!isset($this->all_tracked[$id]['datetime']) || strtotime($line['datetime']) >= strtotime($this->all_tracked[$id]['datetime'])) {
 			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('datetime' => $line['datetime']));
 		    } else {
@@ -170,7 +170,7 @@ class TrackerImport {
 			$speed = $distance/(time() - $this->all_tracked[$id]['time_last_coord']);
 			$speed = $speed*3.6;
 			if ($speed < 1000) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed' => round($speed)));
-  			if ($globalDebug) echo "ø Calculated Speed for ".$this->all_tracked[$id]['hex']." : ".$speed." - distance : ".$distance."\n";
+  			if ($globalDebug) echo "ø Calculated Speed for ".$this->all_tracked[$id]['ident']." : ".$speed." - distance : ".$distance."\n";
 		    }
 		}
 

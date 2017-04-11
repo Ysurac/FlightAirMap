@@ -231,6 +231,16 @@ if (strtolower($current_page) == "search")
 			} else {
 				print '<th class="type">'._("Type").'</th>';
 			}
+		} elseif ($type == 'tracker') {
+			if ($_GET['sort'] == "type_asc")
+			{
+				print '<th class="type">'._("Type").'</th>';
+			} else if ($_GET['sort'] == "type_desc")
+			{
+				print '<th class="type">'._("Type").'</th>';
+			} else {
+				print '<th class="type">'._("Type").'</th>';
+			}
 		}
 		if ($type == 'aircraft') {
 			if ($_GET['sort'] == "airport_departure_asc")
@@ -243,16 +253,18 @@ if (strtolower($current_page) == "search")
 				print '<th class="departure"><span class="nomobile">'._("Coming from").'</span><span class="mobile">'._("From").'</span></th>';
 			}
 		}
-		if ($_GET['sort'] == "airport_arrival_asc")
-		{
-			print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
-		} else if ($_GET['sort'] == "airport_arrival_desc")
-		{
-			print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
-		} else {
-			print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
+		if ($type == 'aircraft' || $type == 'marine') {
+			if ($_GET['sort'] == "airport_arrival_asc")
+			{
+				print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
+			} else if ($_GET['sort'] == "airport_arrival_desc")
+			{
+				print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
+			} else {
+				print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
+			}
 		}
-		if ($type == 'aircraft') {
+    		if ($type == 'aircraft') {
 			if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
 				print '<th class="pilot"><span class="nomobile">'._("Pilot name").'</span><span class="mobile">'._("Pilot").'</span></a></th>';
 			} else {
@@ -261,6 +273,9 @@ if (strtolower($current_page) == "search")
 			if ($showRouteStop) {
 				print '<th class="route"><span class="nomobile">'._("Route").'</span><span class="mobile">'._("Route").'</span></th>';
 			}
+		}
+		if ($type == 'tracker') {
+			print '<th class="comment"><span class="nomobile">'._("Comment").'</span><span class="mobile">'._("Comment").'</span></th>';
 		}
 		if ($showDuration) {
 			print '<th class="duration"><span class="nomobile">'._("Spotted duration").'</span><span class="mobile">'._("Duration").'</span></th>';
@@ -333,7 +348,7 @@ if (strtolower($current_page) == "search")
 			} else {
 				print '<th class="type"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/aircraft_asc">'._("Aircraft").'</a> <i class="fa fa-sort small"></i></th>';
 			}
-		} elseif ($type == 'marine') {
+		} elseif ($type == 'marine' || $type == 'tracker') {
 			if ($_GET['sort'] == "type_asc")
 			{
 				print '<th class="type"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/type_desc" class="active">'._("Type").'</a> <i class="fa fa-caret-up"></i></th>';
@@ -355,14 +370,16 @@ if (strtolower($current_page) == "search")
 				print '<th class="departure"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_departure_asc"><span class="nomobile">'._("Coming from").'</span><span class="mobile">'._("From").'</span></a> <i class="fa fa-sort small"></i></th>';
 			}
 		}
-		if ($_GET['sort'] == "airport_arrival_asc")
-		{
-			print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_desc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-up"></i></th>';
-		} else if ($_GET['sort'] == "airport_arrival_desc")
-		{
-			print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-down"></i></th>';
-		} else {
-			print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
+		if ($type == 'aircraft' || $type == 'marine') {
+			if ($_GET['sort'] == "airport_arrival_asc")
+			{
+				print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_desc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-up"></i></th>';
+			} else if ($_GET['sort'] == "airport_arrival_desc")
+			{
+				print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-down"></i></th>';
+			} else {
+				print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
+			}
 		}
 		if ($type == 'aircraft') {
 			if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
@@ -373,6 +390,9 @@ if (strtolower($current_page) == "search")
 			if ($showRouteStop) {
 				print '<th class="route"><span class="nomobile">'._("Route").'</span><span class="mobile">'._("Route").'</span></th>';
 			}
+		}
+		if ($type == 'tracker') {
+			print '<th class="comment"><span class="nomobile">'._("Comment").'</span><span class="mobile">'._("Comment").'</span></th>';
 		}
 		if ($showDuration) {
 			print '<th class="duration"><span class="nomobile">'._("Spotted duration").'</span><span class="mobile">'._("Duration").'</span></th>';
@@ -488,6 +508,24 @@ foreach($spotter_array as $spotter_item)
 				print '<img src="'.$globalURL.'/images/placeholder_marine_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n";
 				print '</td>'."\n";
 			}
+		} elseif ($type == 'tracker') {
+			if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
+			{
+				print '<td class="aircraft_thumbnail">'."\n";
+				if ($spotter_item['image_source'] == 'wikimedia' || $spotter_item['image_source'] == 'devianart' || $spotter_item['image_source'] == 'flickr') {
+					$image_thumbnail = preg_replace("/^http:/i","https:",$spotter_item['image_thumbnail']);
+				} else 	$image_thumbnail = $spotter_item['image_thumbnail'];
+				if (isset($spotter_item['airline_name'])) {
+					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
+				} else {
+					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
+				}
+				print '</td>'."\n";
+			} else {
+				print '<td class="aircraft_thumbnail">'."\n";
+				print '<img src="'.$globalURL.'/images/placeholder_truck_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				print '</td>'."\n";
+			}
 		}
 	} elseif(strtolower($current_page) != "currently" && strtolower($current_page) != "upcoming" && strtolower($current_page) != "acars-latest" && strtolower($current_page) != "acars-archive" && strtolower($current_page) != "accident-latest" && strtolower($current_page) != "incident-latest" && strtolower($current_page) != "accident-detailed" && strtolower($current_page) != "incident-detailed"){
 		if ($type == 'aircraft') {
@@ -551,15 +589,25 @@ foreach($spotter_array as $spotter_item)
 				if ($spotter_item['image_source'] == 'wikimedia' || $spotter_item['image_source'] == 'devianart' || $spotter_item['image_source'] == 'flickr') {
 					$image_thumbnail = preg_replace("/^http:/i","https:",$spotter_item['image_thumbnail']);
 				} else 	$image_thumbnail = $spotter_item['image_thumbnail'];
-				if (isset($spotter_item['airline_name'])) {
-					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
-				} else {
-					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
-				}
+				print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
 				print '</td>'."\n";
 			} else {
 				print '<td class="aircraft_thumbnail">'."\n";
 				print '<img src="'.$globalURL.'/images/placeholder_marine_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n";
+				print '</td>'."\n";
+			}
+		} elseif ($type == 'tracker') {
+			if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
+			{
+				print '<td class="aircraft_thumbnail">'."\n";
+				if ($spotter_item['image_source'] == 'wikimedia' || $spotter_item['image_source'] == 'devianart' || $spotter_item['image_source'] == 'flickr') {
+					$image_thumbnail = preg_replace("/^http:/i","https:",$spotter_item['image_thumbnail']);
+				} else 	$image_thumbnail = $spotter_item['image_thumbnail'];
+				print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
+				print '</td>'."\n";
+			} else {
+				print '<td class="aircraft_thumbnail">'."\n";
+				print '<img src="'.$globalURL.'/images/placeholder_truck_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
 				print '</td>'."\n";
 			}
 		}
@@ -610,6 +658,17 @@ foreach($spotter_array as $spotter_item)
 		} else {
 			print '<a href="'.$globalURL.'/marine/ident/NA">'._("Not available").'</a>'."\n";
 		}
+	} elseif ($type == 'tracker') {
+		if ($spotter_item['ident'] != "")
+		{
+			if ($spotter_item['ident'] == "NA") {
+				print '<a href="'.$globalURL.'/tracker/ident/'.$spotter_item['ident'].'">'._("Not available").'</a>'."\n";
+			} else {
+				print '<a href="'.$globalURL.'/tracker/ident/'.$spotter_item['ident'].'">'.$spotter_item['ident'].'</a>'."\n";
+			}
+		} else {
+			print '<a href="'.$globalURL.'/tracker/ident/NA">'._("Not available").'</a>'."\n";
+		}
 	}
 	print '</td>'."\n";
 	// Aircraft type
@@ -627,11 +686,11 @@ foreach($spotter_array as $spotter_item)
 		} elseif ($type == 'marine') {
 			if (isset($spotter_item['type_id'])) {
 				if ($spotter_item['type'] == '') {
-					print '<span class="nomobile"><a href="'.$globalURL.'/vessel/'.$spotter_item['type_id'].'">'._("Not available").'</a></span>'."\n";
+					print '<span class="nomobile"><a href="'.$globalURL.'/marine/vessel/'.$spotter_item['type_id'].'">'._("Not available").'</a></span>'."\n";
 				} else {
-					print '<span class="nomobile"><a href="'.$globalURL.'/vessel/'.$spotter_item['type_id'].'">'.$spotter_item['type'].'</a></span>'."\n";
+					print '<span class="nomobile"><a href="'.$globalURL.'/marine/vessel/'.$spotter_item['type_id'].'">'.$spotter_item['type'].'</a></span>'."\n";
 				}
-				print '<span class="mobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['type_id'].'">'.$spotter_item['type'].'</a></span>'."\n";
+				print '<span class="mobile"><a href="'.$globalURL.'/marine/vessel/'.$spotter_item['type_id'].'">'.$spotter_item['type'].'</a></span>'."\n";
 			} else {
 				if ($spotter_item['type'] == '') {
 					print '<span class="nomobile">'._("Not available").'</span>'."\n";
@@ -640,6 +699,13 @@ foreach($spotter_array as $spotter_item)
 				}
 				print '<span class="mobile">'.$spotter_item['type'].'</span>'."\n";
 			}
+		} elseif ($type == 'tracker') {
+			if ($spotter_item['type'] == '') {
+				print '<span class="nomobile">'._("Not available").'</span>'."\n";
+			} else {
+				print '<span class="nomobile">'.$spotter_item['type'].'</span>'."\n";
+			}
+			print '<span class="mobile">'.$spotter_item['type'].'</span>'."\n";
 		}
 		print '</td>'."\n";
 	}
@@ -781,6 +847,12 @@ foreach($spotter_array as $spotter_item)
 				print '<span class="nomobile">'.$spotter_item['arrival_port_name'].'</span>'."\n";
 				print '<span class="mobile">'.$spotter_item['arrival_port_name'].'</span>'."\n";
 			}
+			print '</td>'."\n";
+		}
+		
+		if ($type == 'tracker') {
+			print '<td class="comment">'."\n";
+			print $spotter_item['comment'];
 			print '</td>'."\n";
 		}
 
@@ -995,7 +1067,7 @@ foreach($spotter_array as $spotter_item)
 				print '<span class="mobile"><a href="'.$globalURL.'/flightid/'.$spotter_item['spotter_id'].'">'.date("j/n/Y g:i a", strtotime($spotter_item['last_seen_date_iso_8601'])).'</a></span>'."\n";
 			}
 			print '</td>'."\n";
-		} elseif ($type == 'marine') {
+		} elseif ($type == 'marine' || $type == 'tracker') {
 			/*
 			print '<td class="date">'."\n";
 			print '<span class="nomobile"><a href="'.$globalURL.'/marineid/'.$spotter_item['marine_id'].'">'.date("r", $spotter_item['date_unix']).'</a></span>'."\n";
@@ -1018,7 +1090,7 @@ foreach($spotter_array as $spotter_item)
 			print '</td>'."\n";
 		}
 	}
-	if ($type == 'marine') {
+	if ($type == 'marine' || $type == 'tracker') {
 		print '<td class="more"></td>';
 	} elseif (strtolower($current_page) != "upcoming")
 	{

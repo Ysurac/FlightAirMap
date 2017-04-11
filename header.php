@@ -377,7 +377,7 @@ if ($facebook_meta_image != "")
 
 <?php 
     $sub = false;
-    if ((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft === TRUE)) && (isset($globalMarine) && $globalMarine === TRUE)) {
+    if (((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft === TRUE)) && ((isset($globalMarine) && $globalMarine === TRUE)) || (isset($globalTracker) && $globalTracker === TRUE)) || (isset($globalMarine) && $globalMarine === TRUE && isset($globalTracker) && $globalTracker === TRUE)) {
 	$sub = true;
     }
 ?>
@@ -487,6 +487,37 @@ if ($facebook_meta_image != "")
 		    <li><a href="<?php print $globalURL; ?>/marine/currently"><?php echo _("Current Activity"); ?></a></li>
 		    <li><a href="<?php print $globalURL; ?>/marine/latest"><?php echo _("Latest Activity"); ?></a></li>
 		    <li><a href="<?php print $globalURL; ?>/marine/date/<?php print date("Y-m-d"); ?>"><?php echo _("Today's Activity"); ?></a></li>
+		</ul>
+	    </li>
+<?php
+	if ($sub) {
+?>
+	</ul>
+    </li>
+<?php
+	}
+?>
+<?php
+    }
+?>
+<?php
+    if (isset($globalTracker) && $globalTracker) {
+?>
+    <li class="dropdown">
+<?php
+        if ($sub) {
+?>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Trackers"); ?> <b class="caret"></b></a>
+	<ul class="dropdown-menu multi-level">
+	    <li class="dropdown-submenu">
+<?php
+	}
+?>
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="<?php if ($sub) echo 'right-'; ?>caret"></b></a>
+		<ul class="dropdown-menu">
+		    <li><a href="<?php print $globalURL; ?>/tracker/currently"><?php echo _("Current Activity"); ?></a></li>
+		    <li><a href="<?php print $globalURL; ?>/tracker/latest"><?php echo _("Latest Activity"); ?></a></li>
+		    <li><a href="<?php print $globalURL; ?>/tracker/date/<?php print date("Y-m-d"); ?>"><?php echo _("Today's Activity"); ?></a></li>
 		</ul>
 	    </li>
 <?php

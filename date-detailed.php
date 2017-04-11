@@ -2,14 +2,22 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Language.php');
 $type = '';
+$date = filter_input(INPUT_GET,'date',FILTER_SANITIZE_STRING);
 if (isset($_GET['marine'])) {
 	require_once('require/class.Marine.php');;
 	$Marine = new Marine();
 	$type = 'marine';
+	$page_url = $globalURL.'/marine/date/'.$date;
+} elseif (isset($_GET['tracker'])) {
+	require_once('require/class.Tracker.php');;
+	$Tracker = new Tracker();
+	$type = 'tracker';
+	$page_url = $globalURL.'/tracker/date/'.$date;
 } else {
 	require_once('require/class.Spotter.php');;
 	$Spotter = new Spotter();
 	$type = 'aircraft';
+	$page_url = $globalURL.'/date/'.$date;
 }
 
 if (!isset($_GET['date'])){
@@ -35,16 +43,15 @@ if (!isset($_GET['date'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$date = filter_input(INPUT_GET,'date',FILTER_SANITIZE_STRING);
-	$page_url = $globalURL.'/date/'.$date;
-	
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	if ($sort != '') 
 	{
 		if ($type == 'marine') $spotter_array = $Marine->getMarineDataByDate($date,$limit_start.",".$absolute_difference, $sort);
+		elseif ($type == 'tracker') $spotter_array = $Tracker->getTrackerDataByDate($date,$limit_start.",".$absolute_difference, $sort);
 		else $spotter_array = $Spotter->getSpotterDataByDate($date,$limit_start.",".$absolute_difference, $sort);
 	} else {
 		if ($type == 'marine') $spotter_array = $Marine->getMarineDataByDate($date,$limit_start.",".$absolute_difference);
+		elseif ($type == 'tracker') $spotter_array = $Tracker->getTrackerDataByDate($date,$limit_start.",".$absolute_difference);
 		else $spotter_array = $Spotter->getSpotterDataByDate($date,$limit_start.",".$absolute_difference);
 	}
 	
@@ -52,6 +59,7 @@ if (!isset($_GET['date'])){
 	{
 		date_default_timezone_set($globalTimezone);
 		if ($type == 'marine') $title = sprintf(_("Detailed View for vessels from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])));
+		elseif ($type == 'tracker') $title = sprintf(_("Detailed View for trackers from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])));
 		else $title = sprintf(_("Detailed View for flights from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])));
 
 		require_once('header.php');
@@ -77,6 +85,7 @@ if (!isset($_GET['date'])){
 		if ($type == 'aircraft') include('date-sub-menu.php');
 		print '<div class="table column">';
 		if ($type == 'marine') print '<p>'.sprintf(_("The table below shows the detailed information of all vessels on <strong>%s</strong>."),date("l M j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
+		elseif ($type == 'tracker') print '<p>'.sprintf(_("The table below shows the detailed information of all trackers on <strong>%s</strong>."),date("l M j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
 		else print '<p>'.sprintf(_("The table below shows the detailed information of all flights on <strong>%s</strong>."),date("l M j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
  
 		include('table-output.php');

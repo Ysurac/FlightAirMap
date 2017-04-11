@@ -3,6 +3,7 @@ require_once('require/class.Connection.php');
 require_once('require/class.Language.php');
 require_once('require/class.Translation.php');
 $type = '';
+$ident = urldecode(filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING));
 if (isset($_GET['marine'])) {
 	require_once('require/class.Marine.php');
 	require_once('require/class.MarineLive.php');
@@ -10,6 +11,15 @@ if (isset($_GET['marine'])) {
 	$Marine = new Marine();
 	$MarineArchive = new MarineArchive();
 	$type = 'marine';
+	$page_url = $globalURL.'/marine/ident/'.$_GET['ident'];
+} elseif (isset($_GET['tracker'])) {
+	require_once('require/class.Tracker.php');
+	require_once('require/class.TrackerLive.php');
+	require_once('require/class.TrackerArchive.php');
+	$Tracker = new Tracker();
+	$TrackerArchive = new TrackerArchive();
+	$type = 'tracker';
+	$page_url = $globalURL.'/tracker/ident/'.$_GET['ident'];
 } else {
 	require_once('require/class.Spotter.php');
 	require_once('require/class.SpotterLive.php');
@@ -17,6 +27,7 @@ if (isset($_GET['marine'])) {
 	$Spotter = new Spotter();
 	$SpotterArchive = new SpotterArchive();
 	$type = 'aircraft';
+	$page_url = $globalURL.'/ident/'.$_GET['ident'];
 }
 
 if (!isset($_GET['ident'])){
@@ -43,9 +54,6 @@ if (!isset($_GET['ident'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/ident/'.$_GET['ident'];
-	
-	$ident = urldecode(filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING));
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	if ($type == 'aircraft') {
 		if ($sort != '') 
@@ -89,6 +97,19 @@ if (!isset($_GET['ident'])){
 			$spotter_array = $Marine->getMarineDataByIdent($ident,$limit_start.",".$absolute_difference);
 			if (empty($spotter_array)) {
 				$spotter_array = $MarineArchive->getMarineDataByIdent($ident,$limit_start.",".$absolute_difference);
+			}
+		}
+	} elseif ($type == 'tracker') {
+		if ($sort != '') 
+		{
+			$spotter_array = $Tracker->getTrackerDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+			if (empty($spotter_array)) {
+				$spotter_array = $TrackerArchive->getTrackerDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
+			}
+		} else {
+			$spotter_array = $Tracker->getTrackerDataByIdent($ident,$limit_start.",".$absolute_difference);
+			if (empty($spotter_array)) {
+				$spotter_array = $TrackerArchive->getTrackerDataByIdent($ident,$limit_start.",".$absolute_difference);
 			}
 		}
 	}
@@ -160,6 +181,7 @@ if (!isset($_GET['ident'])){
 		print '<div class="table column">';
 		if ($type == 'aircraft') print '<p>'.sprintf(_("The table below shows the detailed information of all flights with the ident/callsign of <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
 		elseif ($type == 'marine') print '<p>'.sprintf(_("The table below shows the detailed information of all vessels with the ident/callsign of <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
+		elseif ($type == 'tracker') print '<p>'.sprintf(_("The table below shows the detailed information of all trackers with the ident/callsign of <strong>%s</strong>."),$spotter_array[0]['ident']).'</p>';
 
 		include('table-output.php'); 
 		print '<div class="pagination">';

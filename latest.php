@@ -6,10 +6,17 @@ if (isset($_GET['marine'])) {
 	require_once('require/class.Marine.php');
 	$Marine = new Marine();
 	$type = 'marine';
+	$page_url = $globalURL.'/marine/latest';
+} elseif (isset($_GET['tracker'])) {
+	require_once('require/class.Tracker.php');
+	$Tracker = new Tracker();
+	$type = 'tracker';
+	$page_url = $globalURL.'/tracker/latest';
 } else {
 	require_once('require/class.Spotter.php');
 	$Spotter = new Spotter();
 	$type = 'aircraft';
+	$page_url = $globalURL.'/latest';
 }
 
 $title = _("Latest Activity");
@@ -35,19 +42,21 @@ $limit_next = $limit_end + $absolute_difference;
 $limit_previous_1 = $limit_start - $absolute_difference;
 $limit_previous_2 = $limit_end - $absolute_difference;
 
-$page_url = $globalURL.'/latest';
 
 print '<div class="info column">';
 print '<h1>'._("Latest Activity").'</h1>';
 print '</div>';
 print '<div class="table column">';
 if ($type == 'marine') print '<p>'._("The table below shows the detailed information of all recent vessels.").'</p>';
+if ($type == 'tracker') print '<p>'._("The table below shows the detailed information of all recent trackers.").'</p>';
 else print '<p>'._("The table below shows the detailed information of all recent flights.").'</p>';
 
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $sql_begin = microtime(true);
 if ($type == 'marine') {
 	$spotter_array = $Marine->getLatestMarineData($limit_start.",".$absolute_difference, $sort);
+} elseif ($type == 'tracker') {
+	$spotter_array = $Tracker->getLatestTrackerData($limit_start.",".$absolute_difference, $sort);
 } else {
 	$spotter_array = $Spotter->getLatestSpotterData($limit_start.",".$absolute_difference, $sort);
 }

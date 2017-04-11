@@ -293,8 +293,17 @@ class MarineImport {
 		if (isset($line['status']) && $line['status'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('status' => $line['status']));
 		}
-		if (isset($line['status_id'])) {
+		if (isset($line['status_id']) && (!isset($this->all_tracked[$id]['status_id']) || $this->all_tracked[$id]['status_id'] != $line['status_id'])) {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('status_id' => $line['status_id']));
+		    if ($this->all_tracked[$id]['addedMarine'] == 1) {
+			if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
+			    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+				$Marine = new Marine($this->db);
+				$Marine->updateStatusMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['status_id'],$this->all_tracked[$id]['status']);
+				unset($Marine);
+			    }
+			}
+		    }
 		}
 
 		if (isset($line['noarchive']) && $line['noarchive'] === true) {

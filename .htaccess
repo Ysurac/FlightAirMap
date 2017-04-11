@@ -40,6 +40,14 @@ RewriteRule ^marine/currently/([^/]+)/([^/]+)(/?)$ currently.php?marine&limit=$1
 RewriteRule ^marine/currently/([^/]+)(/?)$ currently.php?marine&limit=$1 [L,NC]
 RewriteRule ^marine/currently(/?)$ currently.php?marine [L,NC]
 
+#---------- TRACKER ---------
+RewriteRule ^tracker/latest/([^/]+)/([^/]+)(/?)$ latest.php?tracker&limit=$1&sort=$2 [L,NC]
+RewriteRule ^tracker/latest/([^/]+)(/?)$ latest.php?tracker&limit=$1 [L,NC]
+RewriteRule ^tracker/latest(/?)$ latest.php?tracker [L,NC]
+RewriteRule ^tracker/currently/([^/]+)/([^/]+)(/?)$ currently.php?tracker&limit=$1&sort=$2 [L,NC]
+RewriteRule ^tracker/currently/([^/]+)(/?)$ currently.php?tracker&limit=$1 [L,NC]
+RewriteRule ^tracker/currently(/?)$ currently.php?tracker [L,NC]
+
 
 ########### LIVE ###########
 
@@ -187,6 +195,12 @@ RewriteRule ^marine/ident/([^/]+)/([^/]+)(/?)$ ident-detailed.php?marine&ident=$
 RewriteRule ^marine/ident/([^/]+)(/?)$ ident-detailed.php?marine&ident=$1 [L,NC]
 RewriteRule ^marine/ident(/?)$ ident.php?marine [L,NC]
 
+#---------- TRACKER ---------
+RewriteRule ^tracker/ident/([^/]+)/([^/]+)/([^/]+)(/?)$ ident-detailed.php?tracker&ident=$1&limit=$2&sort=$3 [L,NC]
+RewriteRule ^tracker/ident/([^/]+)/([^/]+)(/?)$ ident-detailed.php?tracker&ident=$1&limit=$2 [L,NC]
+RewriteRule ^tracker/ident/([^/]+)(/?)$ ident-detailed.php?tracker&ident=$1 [L,NC]
+RewriteRule ^tracker/ident(/?)$ ident.php?tracker [L,NC]
+
 
 ########### OWNER ###########
 
@@ -285,6 +299,12 @@ RewriteRule ^marine/date/([^/]+)/([^/]+)/([^/]+)(/?)$ date-detailed.php?marine&d
 RewriteRule ^marine/date/([^/]+)/([^/]+)(/?)$ date-detailed.php?marine&date=$1&limit=$2 [L,NC]
 RewriteRule ^marine/date/([^/]+)(/?)$ date-detailed.php?marine&date=$1 [L,NC]
 RewriteRule ^marine/date(/?)$ date.php?marine [L,NC]
+
+#---------- TRACKER ---------
+RewriteRule ^tracker/date/([^/]+)/([^/]+)/([^/]+)(/?)$ date-detailed.php?tracker&date=$1&limit=$2&sort=$3 [L,NC]
+RewriteRule ^tracker/date/([^/]+)/([^/]+)(/?)$ date-detailed.php?tracker&date=$1&limit=$2 [L,NC]
+RewriteRule ^tracker/date/([^/]+)(/?)$ date-detailed.php?tracker&date=$1 [L,NC]
+RewriteRule ^tracker/date(/?)$ date.php?tracker [L,NC]
 
 
 ########### ARCHIVE ###########

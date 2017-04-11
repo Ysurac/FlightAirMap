@@ -317,7 +317,7 @@ class Tracker{
 		return $spotter_array;
 	}
 	
-	public function getSpotterDataByDate($date = '', $limit = '', $sort = '',$filter = array())
+	public function getTrackerDataByDate($date = '', $limit = '', $sort = '',$filter = array())
 	{
 		global $global_query, $globalTimezone, $globalDBdriver;
 		
