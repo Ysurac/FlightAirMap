@@ -433,7 +433,6 @@ while ($i > 0) {
 		    $data['format_source'] = 'aisnmeatxt';
     		    $data['id_source'] = $id_source;
 		    //print_r($data);
-		    echo 'Add...'."\n";
 		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if ($add && isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
 		    unset($data);
@@ -487,6 +486,7 @@ while ($i > 0) {
 		    if (isset($tt[$format])) $tt[$format]++;
 		    else $tt[$format] = 0;
 		    if ($tt[$format] > 30) {
+			if ($globalDebug) echo 'Reconnect...'."\n";
 			sleep(2);
 			$sourceeen[] = $value;
 			connect_all($sourceeen);
