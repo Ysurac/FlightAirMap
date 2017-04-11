@@ -1241,6 +1241,9 @@ while ($i > 0) {
 				    //print_r($line);
 				    if (isset($line['address'])) $data['hex'] = $line['address'];
 				    if (isset($line['mmsi'])) $data['mmsi'] = $line['mmsi'];
+				    if (isset($line['imo'])) $data['imo'] = $line['imo'];
+				    if (isset($line['arrival_code'])) $data['arrical_code'] = $line['arrival_code'];
+				    if (isset($line['arrival_date'])) $data['arrical_date'] = $line['arrival_date'];
 				    if (isset($line['type_id'])) $data['type_id'] = $line['typeid'];
 				    if (isset($line['status_id'])) $data['status_id'] = $line['statusid'];
 				    if (isset($line['timestamp'])) $data['datetime'] = date('Y-m-d H:i:s',$line['timestamp']);
