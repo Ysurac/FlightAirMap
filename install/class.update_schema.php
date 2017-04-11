@@ -1711,6 +1711,167 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_38() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if ($globalDBdriver == 'mysql') {
+			if (!$Connection->checkColumnName('marine_output','type_id')) {
+				$query = "ALTER TABLE marine_output ADD COLUMN type_id int(11) DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column type_id in marine_output) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_live','type_id')) {
+				$query = "ALTER TABLE marine_live ADD COLUMN type_id int(11) DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column type_id in marine_live) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_archive','type_id')) {
+				$query = "ALTER TABLE marine_archive ADD COLUMN type_id int(11) DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column type_id in marine_archive) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_archive_output','type_id')) {
+				$query = "ALTER TABLE marine_archive_output ADD COLUMN type_id int(11) DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column type_id in marine_archive_output) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_output','status_id')) {
+				$query = "ALTER TABLE marine_output ADD COLUMN status_id int(11) DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column status_id in marine_output) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_live','status_id')) {
+				$query = "ALTER TABLE marine_live ADD COLUMN status_id int(11) DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column status_id in marine_live) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_archive','status_id')) {
+				$query = "ALTER TABLE marine_archive ADD COLUMN status_id int(11) DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column status_id in marine_archive) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_archive_output','status_id')) {
+				$query = "ALTER TABLE marine_archive_output ADD COLUMN status_id int(11) DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column status_id in marine_archive_output) : ".$e->getMessage()."\n";
+				}
+			}
+		} else {
+			if (!$Connection->checkColumnName('marine_output','type_id')) {
+				$query = "ALTER TABLE marine_output ADD COLUMN type_id integer DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column type_id in marine_output) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_live','type_id')) {
+				$query = "ALTER TABLE marine_live ADD COLUMN type_id integer DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column type_id in marine_live) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_archive','type_id')) {
+				$query = "ALTER TABLE marine_archive ADD COLUMN type_id integer DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column type_id in marine_archive) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_archive_output','type_id')) {
+				$query = "ALTER TABLE marine_archive_output ADD COLUMN type_id integer DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column type_id in marine_archive_output) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_output','status_id')) {
+				$query = "ALTER TABLE marine_output ADD COLUMN status_id integer DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column status_id in marine_output) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_live','status_id')) {
+				$query = "ALTER TABLE marine_live ADD COLUMN status_id integer DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column status_id in marine_live) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_archive','status_id')) {
+				$query = "ALTER TABLE marine_archive ADD COLUMN status_id integer DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column status_id in marine_archive) : ".$e->getMessage()."\n";
+				}
+			}
+			if (!$Connection->checkColumnName('marine_archive_output','status_id')) {
+				$query = "ALTER TABLE marine_archive_output ADD COLUMN status_id integer DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column status_id in marine_archive_output) : ".$e->getMessage()."\n";
+				}
+			}
+		}
+		$query = "UPDATE config SET value = '39' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
     	public static function check_version($update = false) {
     	    global $globalDBname;
@@ -1874,6 +2035,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '37') {
     			    $error = self::update_from_37();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '38') {
+    			    $error = self::update_from_38();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

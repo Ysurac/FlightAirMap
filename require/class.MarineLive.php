@@ -800,7 +800,7 @@ class MarineLive {
 	* @return String success or false
 	*
 	*/
-	public function addLiveMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '')
+	public function addLiveMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '')
 	{
 		global $globalURL, $globalArchive, $globalDebug;
 		$Common = new Common();

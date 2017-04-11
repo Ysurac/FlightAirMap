@@ -462,6 +462,7 @@ while ($i > 0) {
 				if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
 				if (isset($ais_data['longitude'])) $data['longitude'] = $ais_data['longitude'];
 				if (isset($ais_data['status'])) $data['status'] = $ais_data['status'];
+				if (isset($ais_data['statusid'])) $data['status_id'] = $ais_data['statusid'];
 				if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
 				if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
 				if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
@@ -1094,6 +1095,7 @@ while ($i > 0) {
 			    if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
 			    if (isset($ais_data['longitude'])) $data['longitude'] = $ais_data['longitude'];
 			    if (isset($ais_data['status'])) $data['status'] = $ais_data['status'];
+			    if (isset($ais_data['statusid'])) $data['status_id'] = $ais_data['statusid'];
 			    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
 			    if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
 			    if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
@@ -1239,6 +1241,8 @@ while ($i > 0) {
 				    //print_r($line);
 				    if (isset($line['address'])) $data['hex'] = $line['address'];
 				    if (isset($line['mmsi'])) $data['mmsi'] = $line['mmsi'];
+				    if (isset($line['type_id'])) $data['type_id'] = $line['typeid'];
+				    if (isset($line['status_id'])) $data['status_id'] = $line['statusid'];
 				    if (isset($line['timestamp'])) $data['datetime'] = date('Y-m-d H:i:s',$line['timestamp']);
 				    else $data['datetime'] = date('Y-m-d H:i:s');
 				    //$data['datetime'] = date('Y-m-d H:i:s');

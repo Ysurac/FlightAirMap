@@ -348,6 +348,9 @@ class aprs {
 		    if (preg_match('/TI=([0-9]*)/',$body_parse,$matches)) {
 			$result['typeid'] = $matches[1];
 		    }
+		    if (preg_match('/SI=([0-9]*)/',$body_parse,$matches)) {
+			$result['statusid'] = $matches[1];
+		    }
 		    if (preg_match('/IMO=([0-9]{7})/',$body_parse,$matches)) {
 			$result['imo'] = $matches[1];
 		    }
@@ -517,7 +520,7 @@ class APRSSpotter extends APRS {
 	}
 }
 class APRSMarine extends APRS {
-	public function addLiveMarineData($id, $ident, $latitude, $longitude, $heading, $speed,$datetime, $putinarchive,$mmsi,$type,$typeid,$imo,$callsign,$arrival_code,$arrival_date,$status,$noarchive,$format_source,$source_name,$over_country) {
+	public function addLiveMarineData($id, $ident, $latitude, $longitude, $heading, $speed,$datetime, $putinarchive,$mmsi,$type,$typeid,$imo,$callsign,$arrival_code,$arrival_date,$status,$statusid,$noarchive,$format_source,$source_name,$over_country) {
 		$Common = new Common();
 		if ($latitude != '' && $longitude != '') {
 			$latitude = $Common->convertDM($latitude,'latitude');
@@ -535,6 +538,10 @@ class APRSMarine extends APRS {
 			if ($typeid != '') {
 				if ($custom != '') $custom .= '/';
 				$custom .= 'TI='.$typeid;
+			}
+			if ($statusid != '') {
+				if ($custom != '') $custom .= '/';
+				$custom .= 'SI='.$statusid;
 			}
 			if ($imo != '') {
 				if ($custom != '') $custom .= '/';

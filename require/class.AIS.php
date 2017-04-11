@@ -627,6 +627,7 @@ class AIS {
 		if ($data->heading != '') $result['heading'] = $data->heading;
 		elseif ($data->cog != 0) $result['heading'] = $data->cog;
 		if ($data->status != '') $result['status'] = $data->status;
+		if ($data->statusid != '') $result['statusid'] = $data->statusid;
 		if ($data->type != '') $result['type'] = $data->type;
 		if ($data->typeid != '') $result['typeid'] = $data->typeid;
 		if ($data->imo != '') $result['imo'] = $data->imo;

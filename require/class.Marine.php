@@ -132,6 +132,7 @@ class Marine{
 			if (isset($row['fammarine_id'])) $temp_array['fammarine_id'] = $row['fammarine_id'];
 			if (isset($row['mmsi'])) $temp_array['mmsi'] = $row['mmsi'];
 			if (isset($row['type'])) $temp_array['type'] = $row['type'];
+			if (isset($row['type_id'])) $temp_array['type_id'] = $row['type_id'];
 			if (isset($row['ident'])) $temp_array['ident'] = $row['ident'];
 			if (isset($row['latitude'])) $temp_array['latitude'] = $row['latitude'];
 			if (isset($row['longitude'])) $temp_array['longitude'] = $row['longitude'];
@@ -585,7 +586,7 @@ class Marine{
 	* @param String $verticalrate vertival rate of flight
 	* @return String success or false
 	*/
-	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$typeid = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$format_source = '', $source_name = '')
+	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$typeid = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$format_source = '', $source_name = '')
 	{
 		global $globalURL, $globalMarineImageFetch;
 		

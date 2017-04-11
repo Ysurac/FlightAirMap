@@ -273,7 +273,7 @@ class SpotterImport {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
 //			if (isset($line['format_source']) && ($line['format_source'] == 'sbs' || $line['format_source'] == 'tsv' || $line['format_source'] == 'raw') && $globalDaemon) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.$this->all_flights[$id]['ident'].'-'.date('YmdGi')));
 //			if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs') && $globalDaemon) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.date('YmdHi')));
-			if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs' || $line['format_source'] === 'aircraftlistjson' || $line['format_source'] === 'radarvirtueljson')) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $id.'-'.date('YmdHi')));
+			if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs' || $line['format_source'] === 'aircraftlistjson' || $line['format_source'] === 'radarvirtueljson' || $line['format_source'] === 'famaprs')) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $id.'-'.date('YmdHi')));
 		        //else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $this->all_flights[$id]['hex'].'-'.$this->all_flights[$id]['ident']));
 		     } else $this->all_flights[$id] = array_merge($this->all_flights[$id],array('id' => $line['id']));
 		    if ($globalAllFlights !== FALSE) $dataFound = true;
@@ -648,7 +648,7 @@ class SpotterImport {
 				    if ($globalDebug) echo "Check if aircraft is already in DB...";
 				    $timeelapsed = microtime(true);
 				    $SpotterLive = new SpotterLive($this->db);
-				    if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs' || $line['format_source'] === 'aircraftlistjson' || $line['format_source'] === 'radarvirtueljson')) {
+				    if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt' || $line['format_source'] === 'planeupdatefaa' || $line['format_source'] === 'aprs' || $line['format_source'] === 'aircraftlistjson' || $line['format_source'] === 'radarvirtueljson' || $line['format_source'] === 'famaprs')) {
 					$recent_ident = $SpotterLive->checkModeSRecent($this->all_flights[$id]['hex']);
 					if ($globalDebugTimeElapsed) echo 'Time elapsed for update checkModeSRecent : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				    } elseif (isset($line['id'])) {
@@ -786,7 +786,7 @@ class SpotterImport {
 				    $this->last_delete = time();
 				}
 			    } else {
-				if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt'|| $line['format_source'] === 'planeupdatefaa'  || $line['format_source'] === 'aprs' || $line['format_source'] === 'aircraftlistjson')) {
+				if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt'|| $line['format_source'] === 'planeupdatefaa'  || $line['format_source'] === 'aprs' || $line['format_source'] === 'aircraftlistjson' || $line['format_source'] === 'famaprs')) {
 				    $this->all_flights[$id]['id'] = $recent_ident;
 				    $this->all_flights[$id]['addedSpotter'] = 1;
 				}
