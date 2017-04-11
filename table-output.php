@@ -996,6 +996,7 @@ foreach($spotter_array as $spotter_item)
 			}
 			print '</td>'."\n";
 		} elseif ($type == 'marine') {
+			/*
 			print '<td class="date">'."\n";
 			print '<span class="nomobile"><a href="'.$globalURL.'/marineid/'.$spotter_item['marine_id'].'">'.date("r", $spotter_item['date_unix']).'</a></span>'."\n";
 			print '<span class="mobile"><a href="'.$globalURL.'/marineid/'.$spotter_item['marine_id'].'">'.date("j/n/Y g:i a", strtotime($spotter_item['date_iso_8601'])).'</a></span>'."\n";
@@ -1005,9 +1006,21 @@ foreach($spotter_array as $spotter_item)
 				print '<span class="mobile"><a href="'.$globalURL.'/marineid/'.$spotter_item['marine_id'].'">'.date("j/n/Y g:i a", strtotime($spotter_item['last_seen_date_iso_8601'])).'</a></span>'."\n";
 			}
 			print '</td>'."\n";
+			*/
+			print '<td class="date">'."\n";
+			print '<span class="nomobile">'.date("r", $spotter_item['date_unix']).'</span>'."\n";
+			print '<span class="mobile">'.date("j/n/Y g:i a", strtotime($spotter_item['date_iso_8601'])).'</span>'."\n";
+			if (isset($spotter_item['last_seen_date_iso_8601'])) {
+				print '<hr />';
+				print '<span class="nomobile">'.date("r", $spotter_item['last_seen_date_unix']).'</span>'."\n";
+				print '<span class="mobile">'.date("j/n/Y g:i a", strtotime($spotter_item['last_seen_date_iso_8601'])).'</span>'."\n";
+			}
+			print '</td>'."\n";
 		}
 	}
-	if (strtolower($current_page) != "upcoming")
+	if ($type == 'marine') {
+		print '<td class="more"></td>';
+	} elseif (strtolower($current_page) != "upcoming")
 	{
 		print '<td class="more">';
 		print '<ul class="nav nav-pills">';
