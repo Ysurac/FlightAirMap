@@ -372,9 +372,30 @@ if ($facebook_meta_image != "")
       <a class="navbar-brand" href="<?php if ($globalURL == '') print '/'; else print $globalURL; ?>"><img src="<?php print $globalURL.$logoURL; ?>" height="30px" /></a>
     </div>
     <div class="collapse navbar-collapse">
+
       <ul class="nav navbar-nav">
+
+<?php 
+    $sub = false;
+    if ((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft === TRUE)) && (isset($globalMarine) && $globalMarine === TRUE)) {
+	$sub = true;
+    }
+?>
+<?php
+    if (!isset($globalAircraft) || $globalAircraft === TRUE) {
+?>
+    <li class="dropdown">
+<?php
+    if ($sub) {
+?>
       	<li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Aircrafts"); ?> <b class="caret"></b></a>
+	<ul class="dropdown-menu multi-level">
+      	<li class="dropdown-submenu">
+<?php
+    }
+?>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="<?php if ($sub) echo 'right-'; ?>caret"></b></a>
           <ul class="dropdown-menu">
           	<li><a href="<?php print $globalURL; ?>/aircraft"><?php echo _("Aircrafts Types"); ?></a></li>
 			<li><a href="<?php print $globalURL; ?>/airline"><?php echo _("Airlines"); ?></a></li>
@@ -431,14 +452,55 @@ if ($facebook_meta_image != "")
         </li>
       	<li><a href="<?php print $globalURL; ?>/search"><?php echo _("Search"); ?></a></li>
       	<li><a href="<?php print $globalURL; ?>/statistics"><?php echo _("Statistics"); ?></a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Tools"); ?> <b class="caret"></b></a>
+        <li class="dropdown<?php if ($sub) echo '-submenu'; ?>">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Tools"); ?> <b class="<?php if ($sub) echo 'right-'; ?>caret"></b></a>
           <ul class="dropdown-menu">
           	<li><a href="<?php print $globalURL; ?>/tools/acars"><?php echo _("ACARS translator"); ?></a></li>
           	<li><a href="<?php print $globalURL; ?>/tools/metar"><?php echo _("METAR translator"); ?></a></li>
           	<li><a href="<?php print $globalURL; ?>/tools/notam"><?php echo _("NOTAM translator"); ?></a></li>
           </ul>
         </li>
+<?php 
+	if ($sub) {
+?>
+    </li>
+    </ul>
+<?php
+	}
+    }
+?>
+<?php
+    if (isset($globalMarine) && $globalMarine) {
+?>
+    <li class="dropdown">
+<?php
+        if ($sub) {
+?>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Vessels"); ?> <b class="caret"></b></a>
+	<ul class="dropdown-menu multi-level">
+	    <li class="dropdown-submenu">
+<?php
+	}
+?>
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="<?php if ($sub) echo 'right-'; ?>caret"></b></a>
+		<ul class="dropdown-menu">
+		    <li><a href="<?php print $globalURL; ?>/marine/currently"><?php echo _("Current Activity"); ?></a></li>
+		    <li><a href="<?php print $globalURL; ?>/marine/latest"><?php echo _("Latest Activity"); ?></a></li>
+		    <li><a href="<?php print $globalURL; ?>/marine/date/<?php print date("Y-m-d"); ?>"><?php echo _("Today's Activity"); ?></a></li>
+		</ul>
+	    </li>
+<?php
+	if ($sub) {
+?>
+	</ul>
+    </li>
+<?php
+	}
+?>
+<?php
+    }
+?>
+
         <li class="dropdown">
           <a href="<?php print $globalURL; ?>/about" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("About"); ?> <b class="caret"></b></a>
           <ul class="dropdown-menu">

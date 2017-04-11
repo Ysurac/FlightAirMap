@@ -1,8 +1,17 @@
 <?php
 require_once('require/class.Connection.php');
-require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
-$Spotter = new Spotter();
+$type = '';
+if (isset($_GET['marine'])) {
+	require_once('require/class.Marine.php');
+	$Marine = new Marine();
+	$type = 'marine';
+} else {
+	require_once('require/class.Spotter.php');
+	$Spotter = new Spotter();
+	$type = 'aircraft';
+}
+
 $title = _("Latest Activity");
 require_once('header.php');
 
@@ -32,11 +41,16 @@ print '<div class="info column">';
 print '<h1>'._("Latest Activity").'</h1>';
 print '</div>';
 print '<div class="table column">';
-print '<p>'._("The table below shows the detailed information of all recent flights.").'</p>';
+if ($type == 'marine') print '<p>'._("The table below shows the detailed information of all recent vessels.").'</p>';
+else print '<p>'._("The table below shows the detailed information of all recent flights.").'</p>';
 
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $sql_begin = microtime(true);
-$spotter_array = $Spotter->getLatestSpotterData($limit_start.",".$absolute_difference, $sort);
+if ($type == 'marine') {
+	$spotter_array = $Marine->getLatestMarineData($limit_start.",".$absolute_difference, $sort);
+} else {
+	$spotter_array = $Spotter->getLatestSpotterData($limit_start.",".$absolute_difference, $sort);
+}
 $sql_time = microtime(true)-$sql_begin;
 $page_begin = microtime(true);
 if (!empty($spotter_array))

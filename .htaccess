@@ -32,6 +32,14 @@ RewriteRule ^tv/([^/]+)(/?)$ tv.php?q=$1 [L,NC]
 RewriteRule ^tv(/?)$ tv.php [L,NC]
 RewriteRule ^redirect/([^/]+)(/?)$ redirect.php?flightaware_id=$1 [L,NC]
 
+#---------- MARINE ---------
+RewriteRule ^marine/latest/([^/]+)/([^/]+)(/?)$ latest.php?marine&limit=$1&sort=$2 [L,NC]
+RewriteRule ^marine/latest/([^/]+)(/?)$ latest.php?marine&limit=$1 [L,NC]
+RewriteRule ^marine/latest(/?)$ latest.php?marine [L,NC]
+RewriteRule ^marine/currently/([^/]+)/([^/]+)(/?)$ currently.php?marine&limit=$1&sort=$2 [L,NC]
+RewriteRule ^marine/currently/([^/]+)(/?)$ currently.php?marine&limit=$1 [L,NC]
+RewriteRule ^marine/currently(/?)$ currently.php?marine [L,NC]
+
 
 ########### LIVE ###########
 
@@ -264,6 +272,13 @@ RewriteRule ^date/([^/]+)/([^/]+)/([^/]+)(/?)$ date-detailed.php?date=$1&limit=$
 RewriteRule ^date/([^/]+)/([^/]+)(/?)$ date-detailed.php?date=$1&limit=$2 [L,NC]
 RewriteRule ^date/([^/]+)(/?)$ date-detailed.php?date=$1 [L,NC]
 RewriteRule ^date(/?)$ date.php [L,NC]
+
+#---------- MARINE ---------
+RewriteRule ^marine/date/([^/]+)/([^/]+)/([^/]+)(/?)$ date-detailed.php?marine&date=$1&limit=$2&sort=$3 [L,NC]
+RewriteRule ^marine/date/([^/]+)/([^/]+)(/?)$ date-detailed.php?marine&date=$1&limit=$2 [L,NC]
+RewriteRule ^marine/date/([^/]+)(/?)$ date-detailed.php?marine&date=$1 [L,NC]
+RewriteRule ^marine/date(/?)$ date.php?marine [L,NC]
+
 
 ########### ARCHIVE ###########
 

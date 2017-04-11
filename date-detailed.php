@@ -1,13 +1,20 @@
 <?php
 require_once('require/class.Connection.php');
-require_once('require/class.Spotter.php');;
 require_once('require/class.Language.php');
+$type = '';
+if (isset($_GET['marine'])) {
+	require_once('require/class.Marine.php');;
+	$Marine = new Marine();
+	$type = 'marine';
+} else {
+	require_once('require/class.Spotter.php');;
+	$Spotter = new Spotter();
+	$type = 'aircraft';
+}
 
 if (!isset($_GET['date'])){
 	header('Location: '.$globalURL.'');
 } else {
-	$Spotter = new Spotter();
-	
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
@@ -34,15 +41,18 @@ if (!isset($_GET['date'])){
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	if ($sort != '') 
 	{
-		$spotter_array = $Spotter->getSpotterDataByDate($date,$limit_start.",".$absolute_difference, $sort);
+		if ($type == 'marine') $spotter_array = $Marine->getMarineDataByDate($date,$limit_start.",".$absolute_difference, $sort);
+		else $spotter_array = $Spotter->getSpotterDataByDate($date,$limit_start.",".$absolute_difference, $sort);
 	} else {
-		$spotter_array = $Spotter->getSpotterDataByDate($date,$limit_start.",".$absolute_difference);
+		if ($type == 'marine') $spotter_array = $Marine->getMarineDataByDate($date,$limit_start.",".$absolute_difference);
+		else $spotter_array = $Spotter->getSpotterDataByDate($date,$limit_start.",".$absolute_difference);
 	}
 	
 	if (!empty($spotter_array))
 	{
 		date_default_timezone_set($globalTimezone);
-		$title = sprintf(_("Detailed View for flights from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])));
+		if ($type == 'marine') $title = sprintf(_("Detailed View for vessels from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])));
+		else $title = sprintf(_("Detailed View for flights from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601'])));
 
 		require_once('header.php');
 		print '<div class="select-item">';
@@ -60,12 +70,14 @@ if (!isset($_GET['date'])){
 		print '<script type="text/javascript">$(function () { $("#datepicker").datetimepicker({ format: "YYYY-MM-DD", defaultDate: "'.$date.'" }); }); </script>';
 		print '<br />';
 		print '<div class="info column">';
-		print '<h1>'.sprintf(_("Flights from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</h1>';
+		if ($type == 'marine') print '<h1>'.sprintf(_("Vessels from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</h1>';
+		else print '<h1>'.sprintf(_("Flights from %s"),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</h1>';
 		print '</div>';
 
-		include('date-sub-menu.php');
+		if ($type == 'aircraft') include('date-sub-menu.php');
 		print '<div class="table column">';
-		print '<p>'.sprintf(_("The table below shows the detailed information of all flights on <strong>%s</strong>."),date("l M j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
+		if ($type == 'marine') print '<p>'.sprintf(_("The table below shows the detailed information of all vessels on <strong>%s</strong>."),date("l M j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
+		else print '<p>'.sprintf(_("The table below shows the detailed information of all flights on <strong>%s</strong>."),date("l M j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
  
 		include('table-output.php');
 		print '<div class="pagination">';

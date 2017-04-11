@@ -1,12 +1,22 @@
 <?php
 require_once('require/class.Connection.php');
-require_once('require/class.Spotter.php');;
 require_once('require/class.Language.php');
-require_once('require/class.SpotterLive.php');
+
+$type = '';
+if (isset($_GET['marine'])) {
+	require_once('require/class.Marine.php');;
+	require_once('require/class.MarineLive.php');
+	$MarineLive=new MarineLive();
+	$type = 'marine';
+} else {
+	require_once('require/class.Spotter.php');;
+	require_once('require/class.SpotterLive.php');
+	$SpotterLive=new SpotterLive();
+	$type = 'aircraft';
+}
 
 $title = "Current Activity";
 require_once('header.php');
-$SpotterLive=new SpotterLive();
 //calculuation for the pagination
 if(!isset($_GET['limit']))
 {
@@ -34,13 +44,16 @@ print '<h1>'._("Current Activity").'</h1>';
 print '</div>';
 
 print '<div class="table column">';
-print '<p>'._("The table below shows the detailed information of all current flights.").'</p>';
+if ($type == 'aircraft') print '<p>'._("The table below shows the detailed information of all current flights.").'</p>';
+elseif ($type == 'marine') print '<p>'._("The table below shows the detailed information of all current vessels.").'</p>';
 
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 if ($sort != '') {
-	$spotter_array = $SpotterLive->getLiveSpotterData($limit_start.",".$absolute_difference, $sort);
+	if ($type == 'aircraft') $spotter_array = $SpotterLive->getLiveSpotterData($limit_start.",".$absolute_difference, $sort);
+	elseif ($type == 'marine') $spotter_array = $MarineLive->getLiveMarineData($limit_start.",".$absolute_difference, $sort);
 } else {
-	$spotter_array = $SpotterLive->getLiveSpotterData($limit_start.",".$absolute_difference);
+	if ($type == 'aircraft') $spotter_array = $SpotterLive->getLiveSpotterData($limit_start.",".$absolute_difference);
+	elseif ($type == 'marine') $spotter_array = $MarineLive->getLiveMarineData($limit_start.",".$absolute_difference);
 }
 
 if (!empty($spotter_array))
