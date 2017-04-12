@@ -48,7 +48,7 @@ print '<h1>'._("Latest Activity").'</h1>';
 print '</div>';
 print '<div class="table column">';
 if ($type == 'marine') print '<p>'._("The table below shows the detailed information of all recent vessels.").'</p>';
-if ($type == 'tracker') print '<p>'._("The table below shows the detailed information of all recent trackers.").'</p>';
+elseif ($type == 'tracker') print '<p>'._("The table below shows the detailed information of all recent trackers.").'</p>';
 else print '<p>'._("The table below shows the detailed information of all recent flights.").'</p>';
 
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
