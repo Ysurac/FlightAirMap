@@ -887,6 +887,8 @@ class TrackerLive {
                 } catch(PDOException $e) {
                 	return "error : ".$e->getMessage();
                 }
+                echo 'putinarchive : '.$putinarchive."\n";
+                echo 'noarchive : '.$noarchive."\n";
 		if (isset($globalArchive) && $globalArchive && $putinarchive && $noarchive !== true) {
 		    if ($globalDebug) echo '(Add to SBS archive : ';
 		    $TrackerArchive = new TrackerArchive($this->db);

@@ -549,6 +549,8 @@ foreach($spotter_array as $spotter_item)
 					print '<img src="'.$globalURL.'/images/placeholder_police_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
 				} elseif ($spotter_item['type'] == 'Van') {
 					print '<img src="'.$globalURL.'/images/placeholder_van_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Railroad Engine') {
+					print '<img src="'.$globalURL.'/images/placeholder_rail_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
 				} else {
 					print '<img src="'.$globalURL.'/images/placeholder_antenna_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
 				}
@@ -665,6 +667,8 @@ foreach($spotter_array as $spotter_item)
 					print '<img src="'.$globalURL.'/images/placeholder_police_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
 				} elseif ($spotter_item['type'] == 'Van') {
 					print '<img src="'.$globalURL.'/images/placeholder_van_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Railroad Engine') {
+					print '<img src="'.$globalURL.'/images/placeholder_rail_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
 				} else {
 					print '<img src="'.$globalURL.'/images/placeholder_antenna_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
 				}

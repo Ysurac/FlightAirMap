@@ -13,11 +13,11 @@ if (isset($_GET['marine'])) {
 if ($tracker) {
     require_once('require/class.Tracker.php');
     require_once('require/class.TrackerLive.php');
-    //require_once('require/class.TrackerArchive.php');
+    require_once('require/class.TrackerArchive.php');
 } elseif ($marine) {
     require_once('require/class.Marine.php');
     require_once('require/class.MarineLive.php');
-    //require_once('require/class.MarineArchive.php');
+    require_once('require/class.MarineArchive.php');
 } else {
     require_once('require/class.Spotter.php');
     require_once('require/class.SpotterLive.php');
@@ -28,11 +28,11 @@ $begintime = microtime(true);
 if ($tracker) {
 	$TrackerLive = new TrackerLive();
 	$Tracker = new Tracker();
-	//$TrackerArchive = new TrackerArchive();
+	$TrackerArchive = new TrackerArchive();
 } elseif ($marine) {
 	$MarineLive = new MarineLive();
 	$Marine = new Marine();
-	//$MarineArchive = new MarineArchive();
+	$MarineArchive = new MarineArchive();
 } else {
 	$SpotterLive = new SpotterLive();
 	$Spotter = new Spotter();
@@ -509,7 +509,11 @@ $output = '{';
 				    || (isset($history) && $history == '' && isset($spotter_item['flightaware_id']) && isset($_GET['famtrackid']) && $_GET['famtrackid'] == $spotter_item['famtrackid'])
 				    ) {
 					if ($tracker) {
-						$spotter_history_array = $TrackerLive->getAllLiveTrackerDataById($spotter_item['famtrackid']);
+						if ($from_archive || $globalArchive) {
+							$spotter_history_array = $TrackerArchive->getAllArchiveTrackerDataById($spotter_item['famtrackid']);
+						} else {
+							$spotter_history_array = $TrackerLive->getAllLiveTrackerDataById($spotter_item['famtrackid']);
+						}
 					} elseif ($marine) {
 						if ($from_archive || $globalArchive) {
 							$spotter_history_array = $MarineArchive->getAllArchiveMarineDataById($spotter_item['fammarine_id']);
