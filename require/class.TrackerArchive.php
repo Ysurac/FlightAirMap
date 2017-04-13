@@ -94,7 +94,7 @@ class TrackerArchive {
 		*/
 		$country = $over_country;
 		// Route is not added in tracker_archive
-		$query  .= 'INSERT INTO tracker_archive (famtrackid, ident, latitude, longitude, altitude, heading, ground_speed, date, format_source, source_name, over_country, comment, type) 
+		$query  = 'INSERT INTO tracker_archive (famtrackid, ident, latitude, longitude, altitude, heading, ground_speed, date, format_source, source_name, over_country, comment, type) 
 		    VALUES (:famtrackid,:ident,:latitude,:longitude,:altitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:comment,:type)';
 		$query_values = array(':famtrackid' => $famtrackid,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':comment' => $comment,':type' => $type);
 		try {
