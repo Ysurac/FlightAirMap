@@ -552,8 +552,14 @@ if ($facebook_meta_image != "")
           <ul class="dropdown-menu">
           	<li><a href="<?php print $globalURL; ?>/about"><?php echo _("About The Project"); ?></a></li>
           	<li><a href="<?php print $globalURL; ?>/about/export"><?php echo _("Exporting Data"); ?></a></li>
-            <li><hr /></li>
-			<li><a href="<?php print $globalURL; ?>/about/tv"><?php echo _("Spotter TV"); ?></a></li>
+<?php
+    if (!isset($globalAircraft) || $globalAircraft === TRUE) {
+?>
+		<li><hr /></li>
+		<li><a href="<?php print $globalURL; ?>/about/tv"><?php echo _("Spotter TV"); ?></a></li>
+<?php
+    }
+?>
 	    <?php if (isset($globalContribute) && $globalContribute) { ?>
                 <li><hr /></li>
                 <li><a href="<?php print $globalURL; ?>/contribute"><?php echo _("Contribute"); ?></a></li>
