@@ -25,7 +25,7 @@ layer_tracker_data = L.layerGroup();
 	if (!isset($ident) && !isset($famtrackid)) {
 ?>
 	function info_tracker_update (props) {
-		$("#tracker").html('<h4><?php echo _("Trackers detected"); ?></h4>' +  '<b>' + props + '</b>');
+		$("#ibxtracker").html('<h4><?php echo _("Trackers detected"); ?></h4>' +  '<b>' + props + '</b>');
 	}
 <?php
 	}

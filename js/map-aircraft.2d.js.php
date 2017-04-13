@@ -177,7 +177,7 @@ $( document ).ready(function() {
 	if (!isset($ident) && !isset($flightaware_id)) {
 ?>
 	function info_update (props) {
-		$("#aircraft").html('<h4><?php echo _("Aircrafts detected"); ?></h4>' +  '<b>' + props + '</b>');
+		$("#ibxaircraft").html('<h4><?php echo _("Aircrafts detected"); ?></h4>' +  '<b>' + props + '</b>');
 	}
 
 <?php

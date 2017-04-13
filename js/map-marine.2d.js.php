@@ -24,7 +24,7 @@ layer_marine_data = L.layerGroup();
 	if (!isset($ident) && !isset($fammarine_id)) {
 ?>
 	function info_marine_update (props) {
-		$("#marine").html('<h4><?php echo _("Vessels detected"); ?></h4>' +  '<b>' + props + '</b>');
+		$("#ibxmarine").html('<h4><?php echo _("Vessels detected"); ?></h4>' +  '<b>' + props + '</b>');
 	}
 <?php
 	}
