@@ -871,7 +871,12 @@ class TrackerLive {
             	if ($groundspeed == '' || $Common->isInteger($groundspeed) === false ) $groundspeed = 0;
             	if ($heading == '' || $Common->isInteger($heading) === false ) $heading = 0;
             	
-		$query  = 'INSERT INTO tracker_live (famtrackid, ident, latitude, longitude, altitude, heading, ground_speed, date, format_source, source_name, over_country, comment, type) 
+		$query = '';
+		if ($globalArchive) {
+			if ($globalDebug) echo '-- Delete previous data -- ';
+			$query .= 'DELETE FROM tracker_live WHERE famtrackid = :famtrackid;';
+		}
+		$query  .= 'INSERT INTO tracker_live (famtrackid, ident, latitude, longitude, altitude, heading, ground_speed, date, format_source, source_name, over_country, comment, type) 
 		VALUES (:famtrackid,:ident,:latitude,:longitude,:altitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:comment,:type)';
 
 		$query_values = array(':famtrackid' => $famtrackid,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':comment' => $comment,':type' => $type);
@@ -882,14 +887,13 @@ class TrackerLive {
                 } catch(PDOException $e) {
                 	return "error : ".$e->getMessage();
                 }
-		/*
 		if (isset($globalArchive) && $globalArchive && $putinarchive && $noarchive !== true) {
 		    if ($globalDebug) echo '(Add to SBS archive : ';
 		    $TrackerArchive = new TrackerArchive($this->db);
-		    $result =  $TrackerArchive->addTrackerArchiveData($famtrackid, $ident, $registration, $airline_name, $airline_icao, $airline_country, $airline_type, $aircraft_icao, $aircraft_shadow, $aircraft_name, $aircraft_manufacturer, $departure_airport_icao, $departure_airport_name, $departure_airport_city, $departure_airport_country, $departure_airport_time,$arrival_airport_icao, $arrival_airport_name, $arrival_airport_city, $arrival_airport_country, $arrival_airport_time, $route_stop, $date,$latitude, $longitude, $waypoints, $altitude, $heading, $groundspeed, $squawk, $ModeS, $pilot_id, $pilot_name,$verticalrate,$format_source,$source_name, $over_country);
+		    $result =  $TrackerArchive->addTrackerArchiveData($famtrackid, $ident,$latitude, $longitude, $altitude, $heading, $groundspeed, $date, $putinarchive, $comment, $type,$noarchive,$format_source, $source_name, $over_country);
 		    if ($globalDebug) echo $result.')';
 		}
-		*/
+
 		return "success";
 
 	}

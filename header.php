@@ -35,7 +35,6 @@ if (isset($_POST['removefilters'])) {
 		setcookie($filt,null,-1);
 	}
 }
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -241,7 +240,22 @@ if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($gl
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.common.js"></script>
-<script src="<?php print $globalURL; ?>/js/map.js.php?ident=<?php print $ident; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
+<script src="<?php print $globalURL; ?>/js/map.2d.js.php?ident=<?php print $ident; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
+<?php
+		if (!isset($type) || $type == 'aircraft') {
+?>
+<script src="<?php print $globalURL; ?>/js/map-aircraft.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
+<?php
+		} elseif (isset($type) && $type == 'marine') {
+?>
+<script src="<?php print $globalURL; ?>/js/map-marine.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
+<?php
+		} elseif (isset($type) && $type == 'tracker') {
+?>
+<script src="<?php print $globalURL; ?>/js/map-tracker.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
+<?php
+		}
+?>
 <?php
 		if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
 ?>
@@ -296,7 +310,8 @@ if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) &&
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.common.js"></script>
-<script src="<?php print $globalURL; ?>/js/map.js.php?flightaware_id=<?php print $flightaware_id; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
+<script src="<?php print $globalURL; ?>/js/map.2d.js.php?flightaware_id=<?php print $flightaware_id; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
+<script src="<?php print $globalURL; ?>/js/map-aircraft.2d.js.php?flightaware_id=<?php print $flightaware_id; ?>&<?php print time(); ?>"></script>
 <?php
 		if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
 ?>

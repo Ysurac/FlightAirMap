@@ -515,15 +515,43 @@ foreach($spotter_array as $spotter_item)
 				if ($spotter_item['image_source'] == 'wikimedia' || $spotter_item['image_source'] == 'devianart' || $spotter_item['image_source'] == 'flickr') {
 					$image_thumbnail = preg_replace("/^http:/i","https:",$spotter_item['image_thumbnail']);
 				} else 	$image_thumbnail = $spotter_item['image_thumbnail'];
-				if (isset($spotter_item['airline_name'])) {
-					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
-				} else {
-					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
-				}
+				print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
 				print '</td>'."\n";
 			} else {
 				print '<td class="aircraft_thumbnail">'."\n";
-				print '<img src="'.$globalURL.'/images/placeholder_truck_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				if ($spotter_item['type'] == 'Truck' || $spotter_item['type'] == 'Truck (18 Wheeler)') {
+					print '<img src="'.$globalURL.'/images/placeholder_truck_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Car') {
+					print '<img src="'.$globalURL.'/images/placeholder_car_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Jogger') {
+					print '<img src="'.$globalURL.'/images/placeholder_pedestrian_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Phone') {
+					print '<img src="'.$globalURL.'/images/placeholder_phone_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Jeep') {
+					print '<img src="'.$globalURL.'/images/placeholder_jeep_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Laptop') {
+					print '<img src="'.$globalURL.'/images/placeholder_laptop_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Snowmobile') {
+					print '<img src="'.$globalURL.'/images/placeholder_snowmobile_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Helicopter') {
+					print '<img src="'.$globalURL.'/images/placeholder_helicopter_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Bike') {
+					print '<img src="'.$globalURL.'/images/placeholder_bike_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Motorcycle') {
+					print '<img src="'.$globalURL.'/images/placeholder_motorbike_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Balloon') {
+					print '<img src="'.$globalURL.'/images/placeholder_balloon_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Bus') {
+					print '<img src="'.$globalURL.'/images/placeholder_bus_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Ambulance') {
+					print '<img src="'.$globalURL.'/images/placeholder_ambulance_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Police') {
+					print '<img src="'.$globalURL.'/images/placeholder_police_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Van') {
+					print '<img src="'.$globalURL.'/images/placeholder_van_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} else {
+					print '<img src="'.$globalURL.'/images/placeholder_antenna_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				}
 				print '</td>'."\n";
 			}
 		}
@@ -607,7 +635,39 @@ foreach($spotter_array as $spotter_item)
 				print '</td>'."\n";
 			} else {
 				print '<td class="aircraft_thumbnail">'."\n";
-				print '<img src="'.$globalURL.'/images/placeholder_truck_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				if ($spotter_item['type'] == 'Truck' || $spotter_item['type'] == 'Truck (18 Wheeler)') {
+					print '<img src="'.$globalURL.'/images/placeholder_truck_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Car') {
+					print '<img src="'.$globalURL.'/images/placeholder_car_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Jogger') {
+					print '<img src="'.$globalURL.'/images/placeholder_pedestrian_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Phone') {
+					print '<img src="'.$globalURL.'/images/placeholder_phone_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Jeep') {
+					print '<img src="'.$globalURL.'/images/placeholder_jeep_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Laptop') {
+					print '<img src="'.$globalURL.'/images/placeholder_laptop_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Snowmobile') {
+					print '<img src="'.$globalURL.'/images/placeholder_snowmobile_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Helicopter') {
+					print '<img src="'.$globalURL.'/images/placeholder_helicopter_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Bike') {
+					print '<img src="'.$globalURL.'/images/placeholder_bike_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Motorcycle') {
+					print '<img src="'.$globalURL.'/images/placeholder_motorbike_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Balloon') {
+					print '<img src="'.$globalURL.'/images/placeholder_balloon_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Bus') {
+					print '<img src="'.$globalURL.'/images/placeholder_bus_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Ambulance') {
+					print '<img src="'.$globalURL.'/images/placeholder_ambulance_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Police') {
+					print '<img src="'.$globalURL.'/images/placeholder_police_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} elseif ($spotter_item['type'] == 'Van') {
+					print '<img src="'.$globalURL.'/images/placeholder_van_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				} else {
+					print '<img src="'.$globalURL.'/images/placeholder_antenna_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['type'].'" data-content="'._("Type:").' '.$spotter_item['type'].'" data-html="true" width="100px" />'."\n";
+				}
 				print '</td>'."\n";
 			}
 		}
