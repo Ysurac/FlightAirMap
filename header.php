@@ -392,7 +392,7 @@ if ($facebook_meta_image != "")
 
 <?php 
     $sub = false;
-    if (((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft === TRUE)) && ((isset($globalMarine) && $globalMarine === TRUE)) || (isset($globalTracker) && $globalTracker === TRUE)) || (isset($globalMarine) && $globalMarine === TRUE && isset($globalTracker) && $globalTracker === TRUE)) {
+    if (((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft === TRUE)) && ((isset($globalMarine) && $globalMarine === TRUE) || (isset($globalTracker) && $globalTracker === TRUE))) || (isset($globalMarine) && $globalMarine === TRUE && isset($globalTracker) && $globalTracker === TRUE)) {
 	$sub = true;
     }
 ?>

@@ -18,6 +18,9 @@ layer_marine_data = L.layerGroup();
 	if (isset($_GET['fammarine_id'])) {
 		$fammarine_id = filter_input(INPUT_GET,'fammarine_id',FILTER_SANITIZE_STRING);
 	}
+	if (isset($_GET['ident'])) {
+		$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+	}
 	if (!isset($ident) && !isset($fammarine_id)) {
 ?>
 	function info_marine_update (props) {

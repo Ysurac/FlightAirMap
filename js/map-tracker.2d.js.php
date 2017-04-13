@@ -19,6 +19,9 @@ layer_tracker_data = L.layerGroup();
 	if (isset($_GET['famtrackid'])) {
 		$famtrackid = filter_input(INPUT_GET,'famtrackid',FILTER_SANITIZE_STRING);
 	}
+	if (isset($_GET['ident'])) {
+		$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+	}
 	if (!isset($ident) && !isset($famtrackid)) {
 ?>
 	function info_tracker_update (props) {

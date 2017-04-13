@@ -34,11 +34,11 @@ require_once('header.php');
 <div id="waypoints"></div>
 <div id="archivebox" class="archivebox"></div>
 <div id="showdetails" class="showdetails"></div>
-<div id="infobox" class="infobox">
-    <?php if ((isset($globalAircraft) && $globalAircraft) || !isset($globalAircraft)) { ?><div id="aircraft"><h4><?php echo _("Aircrafts Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div><br />
-    <?php }; if (isset($globalMarine) && $globalMarine) { ?><div id="marine"><h4><?php echo _("Vessels Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div><br />
-    <?php }; if (isset($globalTracker) && $globalTracker) { ?><div id="tracker"><h4><?php echo _("Trackers Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div><?php } ?>
-</div>
+<div id="infobox" class="infobox"><table><tr>
+    <?php if ((isset($globalAircraft) && $globalAircraft) || !isset($globalAircraft)) { ?><td><div id="aircraft"><h4><?php echo _("Aircrafts Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td>
+    <?php }; if (isset($globalMarine) && $globalMarine) { ?><td><div id="marine"><h4><?php echo _("Vessels Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td>
+    <?php }; if (isset($globalTracker) && $globalTracker) { ?><td><div id="tracker"><h4><?php echo _("Trackers Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td><?php } ?>
+</tr></table></div>
 <?php
     if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 

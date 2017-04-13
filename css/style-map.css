@@ -118,6 +118,9 @@ body {
     margin: 0 0 5px;
     color: #777;
 }
+.infobox td {
+    width: initial;
+}
 .archivebox {
     top: 55px;
     right: 220px;
