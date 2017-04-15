@@ -1037,7 +1037,7 @@ while ($i > 0) {
     	    //$last_exec['phpvmacars'] = time();
     	    $last_exec[$id]['last'] = time();
 	//} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
-	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars' || $value['format'] == 'acarssbs3' || $value['format'] == 'ais' || $value['format'] == 'vrstcp') {
+	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'famaprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars' || $value['format'] == 'acarssbs3' || $value['format'] == 'ais' || $value['format'] == 'vrstcp') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
     	    //$last_exec[$id]['last'] = time();
 
@@ -1243,6 +1243,7 @@ while ($i > 0) {
 				    if (isset($line['address'])) $data['hex'] = $line['address'];
 				    if (isset($line['mmsi'])) $data['mmsi'] = $line['mmsi'];
 				    if (isset($line['imo'])) $data['imo'] = $line['imo'];
+				    if (isset($line['squawk'])) $data['squawk'] = $line['squawk'];
 				    if (isset($line['arrival_code'])) $data['arrical_code'] = $line['arrival_code'];
 				    if (isset($line['arrival_date'])) $data['arrical_date'] = $line['arrival_date'];
 				    if (isset($line['type_id'])) $data['type_id'] = $line['typeid'];
@@ -1264,6 +1265,7 @@ while ($i > 0) {
 				    if (isset($line['stealth'])) $data['aircraft_type'] = $line['stealth'];
 				    if (!isset($line['source_type']) && (!isset($globalAPRSarchive) || (isset($globalAPRSarchive) && $globalAPRSarchive === FALSE))) $data['noarchive'] = true;
 				    if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
+				    elseif (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === FALSE) $data['noarchive'] = false;
     				    $data['id_source'] = $id_source;
     				    if (isset($line['format_source'])) $data['format_source'] = $line['format_source'];
 				    else $data['format_source'] = 'aprs';
@@ -1278,8 +1280,7 @@ while ($i > 0) {
 				    if (($data['source_type'] == 'modes') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
 					$send = $SI->add($data);
 				    } elseif ($data['source_type'] == 'ais') {
-					echo 'add...'."\n";
-					$send = $MI->add($data);
+					if (isset($globalMarine) && $globalMarine) $send = $MI->add($data);
 				    } elseif (isset($line['stealth'])) {
 					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";
 					else echo '--------- '.$data['ident'].' : Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
