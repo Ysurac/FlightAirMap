@@ -1691,6 +1691,25 @@ class update_schema {
 			$error .= create_db::import_file('../db/pgsql/tracker_archive_output.sql');
 			if ($error != '') return $error;
 		}
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT ENGINE FROM information_schema.TABLES where TABLE_SCHEMA = '".$globalDBname."' AND TABLE_NAME = 'spotter_archive'";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (problem when select engine for spotter_engine) : ".$e->getMessage()."\n";
+			}
+			$row = $sth->fetch(PDO::FETCH_ASSOC);
+			if ($row['engine'] == 'ARCHIVE') {
+				$query = "ALTER TABLE spotter_archive ENGINE=InnoDB";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (Change table format from archive to InnoDB for spotter_archive) : ".$e->getMessage()."\n";
+				}
+			}
+		}
 		if (!$Connection->indexExists('spotter_archive','flightaware_id_date_idx') && !$Connection->indexExists('spotter_archive','flightaware_id')) {
 			// Add index key
 			$query = "create index flightaware_id_date_idx on spotter_archive (flightaware_id,date)";
