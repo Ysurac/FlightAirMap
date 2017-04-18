@@ -5052,7 +5052,7 @@ class Spotter{
 	*/
 	public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
-		global $globalDBdriver;
+		global $globalDBdriver, $globalArchive;
 		//$filter_query = $this->getFilter($filters,true,true);
 		$Connection= new Connection($this->db);
 		if (!$Connection->tableExists('countries')) return array();
@@ -5067,25 +5067,48 @@ class Spotter{
 					WHERE c.iso2 = s.over_country ";
 		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spottrer_live) l ON c.iso2 = l.over_country ";
 */
-		require_once('class.SpotterLive.php');
-		$SpotterLive = new SpotterLive();
-		$filter_query = $SpotterLive->getFilter($filters,true,true);
-		$filter_query .= ' over_country IS NOT NULL';
-                if ($olderthanmonths > 0) {
-			if ($globalDBdriver == 'mysql') {
-				$filter_query .= ' AND spotter_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-			} else {
-				$filter_query .= " AND spotter_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+		if (!isset($globalArchive) || $globalArchive === FALSE) {
+			require_once('class.SpotterLive.php');
+			$SpotterLive = new SpotterLive();
+			$filter_query = $SpotterLive->getFilter($filters,true,true);
+			$filter_query .= ' over_country IS NOT NULL';
+			if ($olderthanmonths > 0) {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= ' AND spotter_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+				} else {
+					$filter_query .= " AND spotter_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+				}
 			}
-		}
-                if ($sincedate != '') {
-            		if ($globalDBdriver == 'mysql') {
-				$filter_query .= " AND spotter_live.date > '".$sincedate."' ";
-			} else {
-				$filter_query .= " AND spotter_live.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			if ($sincedate != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= " AND spotter_live.date > '".$sincedate."' ";
+				} else {
+					$filter_query .= " AND spotter_live.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				}
 			}
+			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_live".$filter_query.") l ON c.iso2 = l.over_country ";
+		} else {
+			require_once('class.SpotterArchive.php');
+			$SpotterArchive = new SpotterArchive();
+			$filter_query = $SpotterArchive->getFilter($filters,true,true);
+			$filter_query .= ' over_country IS NOT NULL';
+			if ($olderthanmonths > 0) {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= ' AND spotter_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+				} else {
+					$filter_query .= " AND spotter_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+				}
+			}
+			if ($sincedate != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= " AND spotter_archive.date > '".$sincedate."' ";
+				} else {
+					$filter_query .= " AND spotter_archive.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				}
+			}
+			//$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_archive".$filter_query.") l ON c.iso2 = l.over_country ";
+			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_output".$filter_query.") l ON c.iso2 = l.over_country ";
 		}
-		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_live".$filter_query.") l ON c.iso2 = l.over_country ";
 		$query .= "GROUP BY c.name,c.iso3,c.iso2 ORDER BY nb DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
