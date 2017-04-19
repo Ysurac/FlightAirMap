@@ -345,6 +345,9 @@ class aprs {
 		    if (preg_match('/AI=([0-9A-Z]{4})/',$body_parse,$matches)) {
 			$result['aircraft_icao'] = $matches[1];
 		    }
+		    if (preg_match('/VR=([0-9]*)/',$body_parse,$matches)) {
+			$result['verticalrate'] = $matches[1];
+		    }
 		    if (preg_match('/TI=([0-9]*)/',$body_parse,$matches)) {
 			$result['typeid'] = $matches[1];
 		    }
@@ -509,6 +512,10 @@ class APRSSpotter extends APRS {
 			if ($squawk != '') {
 				if ($custom != '') $custom .= '/';
 				$custom .= 'SQ='.$squawk;
+			}
+			if ($verticalrate != '') {
+				if ($custom != '') $custom .= '/';
+				$custom .= 'VR='.$verticalrate;
 			}
 			if ($aircraft_icao != '' && $aircraft_icao != 'NA') {
 				if ($custom != '') $custom .= '/';

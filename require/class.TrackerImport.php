@@ -3,8 +3,6 @@ require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.Tracker.php');
 require_once(dirname(__FILE__).'/class.TrackerLive.php');
 require_once(dirname(__FILE__).'/class.TrackerArchive.php');
-require_once(dirname(__FILE__).'/class.Scheduler.php');
-require_once(dirname(__FILE__).'/class.Translation.php');
 require_once(dirname(__FILE__).'/class.Stats.php');
 require_once(dirname(__FILE__).'/class.Source.php');
 
@@ -166,7 +164,7 @@ class TrackerImport {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed_fromsrc' => true));
 		} else if (!isset($this->all_tracked[$id]['speed_fromsrc']) && isset($this->all_tracked[$id]['time_last_coord']) && $this->all_tracked[$id]['time_last_coord'] != time() && isset($line['latitude']) && isset($line['longitude'])) {
 		    $distance = $Common->distance($line['latitude'],$line['longitude'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],'m');
-		    if ($distance > 1000 && $distance < 10000) {
+		    if ($distance > 100 && $distance < 10000) {
 			$speed = $distance/(time() - $this->all_tracked[$id]['time_last_coord']);
 			$speed = $speed*3.6;
 			if ($speed < 1000) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed' => round($speed)));
@@ -177,7 +175,7 @@ class TrackerImport {
 	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '' && is_numeric($line['latitude']) && is_numeric($line['longitude'])) {
 	    	    if (isset($this->all_tracked[$id]['time_last_coord'])) $timediff = round(time()-$this->all_tracked[$id]['time_last_coord']);
 	    	    else unset($timediff);
-	    	    if ($this->tmd > 5 || !isset($timediff) || $timediff > 2000 || ($timediff > 30 && isset($this->all_tracked[$id]['latitude']) && isset($this->all_tracked[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],'m')))) {
+	    	    if ($this->tmd > 5 || !isset($timediff) || $timediff > 100 || ($timediff > 30 && isset($this->all_tracked[$id]['latitude']) && isset($this->all_tracked[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],'m')))) {
 			if (isset($this->all_tracked[$id]['archive_latitude']) && isset($this->all_tracked[$id]['archive_longitude']) && isset($this->all_tracked[$id]['livedb_latitude']) && isset($this->all_tracked[$id]['livedb_longitude'])) {
 			    if (!$Common->checkLine($this->all_tracked[$id]['archive_latitude'],$this->all_tracked[$id]['archive_longitude'],$this->all_tracked[$id]['livedb_latitude'],$this->all_tracked[$id]['livedb_longitude'],$line['latitude'],$line['longitude'])) {
 				$this->all_tracked[$id]['archive_latitude'] = $line['latitude'];

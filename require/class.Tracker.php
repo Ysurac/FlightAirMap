@@ -751,32 +751,54 @@ class Tracker{
 	* @return Array the airline country list
 	*
 	*/
-/*
-	public function countAllTrackedOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
+
+	public function countAllTrackerOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
-		global $globalDBdriver;
+		global $globalDBdriver, $globalArchive;
 		//$filter_query = $this->getFilter($filters,true,true);
 		$Connection= new Connection($this->db);
 		if (!$Connection->tableExists('countries')) return array();
-		require_once('class.SpotterLive.php');
-		$SpotterLive = new SpotterLive();
-		$filter_query = $SpotterLive->getFilter($filters,true,true);
-		$filter_query .= ' over_country IS NOT NULL';
-                if ($olderthanmonths > 0) {
-			if ($globalDBdriver == 'mysql') {
-				$filter_query .= ' AND spotter_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-			} else {
-				$filter_query .= " AND spotter_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+		if (!isset($globalArchive) || $globalArchive !== TRUE) {
+			require_once('class.TrackerLive.php');
+			$TrackerLive = new TrackerLive();
+			$filter_query = $TrackerLive->getFilter($filters,true,true);
+			$filter_query .= ' over_country IS NOT NULL';
+			if ($olderthanmonths > 0) {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= ' AND tracker_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+				} else {
+					$filter_query .= " AND tracker_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+				}
 			}
-		}
-                if ($sincedate != '') {
-            		if ($globalDBdriver == 'mysql') {
-				$filter_query .= " AND spotter_live.date > '".$sincedate."' ";
-			} else {
-				$filter_query .= " AND spotter_live.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			if ($sincedate != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= " AND tracker_live.date > '".$sincedate."' ";
+				} else {
+					$filter_query .= " AND tracker_live.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				}
 			}
+			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT famtrackid,over_country FROM tracker_live".$filter_query.") l ON c.iso2 = l.over_country ";
+		} else {
+			require_once('class.TrackerArchive.php');
+			$TrackerArchive = new TrackerArchive();
+			$filter_query = $TrackerArchive->getFilter($filters,true,true);
+			$filter_query .= ' over_country IS NOT NULL';
+			if ($olderthanmonths > 0) {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= ' AND tracker_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+				} else {
+					$filter_query .= " AND tracker_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+				}
+			}
+			if ($sincedate != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= " AND tracker_archive.date > '".$sincedate."' ";
+				} else {
+					$filter_query .= " AND tracker_archive.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				}
+			}
+			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT famtrackid,over_country FROM tracker_archive".$filter_query.") l ON c.iso2 = l.over_country ";
 		}
-		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_live".$filter_query.") l ON c.iso2 = l.over_country ";
 		$query .= "GROUP BY c.name,c.iso3,c.iso2 ORDER BY nb DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -797,8 +819,6 @@ class Tracker{
 		}
 		return $flight_array;
 	}
-*/	
-	
 	
 	/**
 	* Gets all callsigns that have flown over
@@ -1283,10 +1303,11 @@ class Tracker{
 	* @return Integer the number of flights
 	*
 	*/
-	public function countOverallTracked($filters = array(),$year = '',$month = '')
+	public function countOverallTracker($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
-		$queryi  = "SELECT COUNT(tracker_output.tracker_id) AS flight_count FROM tracker_output";
+		//$queryi  = "SELECT COUNT(tracker_output.tracker_id) AS flight_count FROM tracker_output";
+		$queryi  = "SELECT COUNT(DISTINCT tracker_output.ident) AS flight_count FROM tracker_output";
 		$query_values = array();
 		$query = '';
 		if ($year != '') {

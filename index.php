@@ -376,16 +376,18 @@ require_once('header.php');
 ?>
 
 		    <?php
-		        if (extension_loaded('gd') && function_exists('gd_info')) {
+			if (!isset($globalAircraft) || $globalAircraft === TRUE) {
+		    	    if (extension_loaded('gd') && function_exists('gd_info')) {
 		    ?>
 		    <li><input type="checkbox" name="aircraftcoloraltitude" value="1" onclick="iconColorAltitude(this)" <?php if (isset($_COOKIE['IconColorAltitude']) && $_COOKIE['IconColorAltitude'] == 'true') print 'checked'; ?> ><?php echo _("Aircraft icon color based on altitude"); ?></li>
 		    <?php 
-			if (!isset($_COOKIE['IconColorAltitude']) || $_COOKIE['IconColorAltitude'] == 'false') {
+				if (!isset($_COOKIE['IconColorAltitude']) || $_COOKIE['IconColorAltitude'] == 'false') {
 		    ?>
 		    <li><?php echo _("Aircraft icon color:"); ?>
 			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print '1a3151'; ?>">
 		    </li>
 		    <?php
+				}
 			    }
 		        }
 		    ?>
@@ -400,19 +402,31 @@ require_once('header.php');
 			    }
 		        }
 		    ?>
+		    <?php
+			if (!isset($globalAircraft) || $globalAircraft === TRUE) {
+		    ?>
 		    <li><?php echo _("Show airport icon at zoom level:"); ?>
 			<div class="range">
 			    <input type="range" min="0" max="19" step="1" name="airportzoom" onchange="range.value=value;airportDisplayZoom(airportzoom.value);" value="<?php if (isset($_COOKIE['AirportZoom'])) print $_COOKIE['AirportZoom']; elseif (isset($globalAirportZoom)) print $globalAirportZoom; else print '7'; ?>">
 			    <output id="range"><?php if (isset($_COOKIE['AirportZoom'])) print $_COOKIE['AirportZoom']; elseif (isset($globalAirportZoom)) print $globalAirportZoom; else print '7'; ?></output>
 			</div>
 		    </li>
+		    <?php
+			}
+		    ?>
 <?php
     } elseif (isset($_COOKIE['MapFormat']) || $_COOKIE['MapFOrmat'] == '3d') {
+?>
+<?php
+	if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 ?>
 		    <li><input type="checkbox" name="aircraftcolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Aircraft color"); ?></li>
 		    <li><?php echo _("Aircraft icon color:"); ?>
 			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print 'ff0000'; ?>">
 		    </li>
+<?php
+	}
+?>
 <?php
 	if (isset($globalMarine) && $globalMarine === TRUE) {
 ?>
@@ -453,6 +467,9 @@ require_once('header.php');
 	    <h1 class="sidebar-header"><?php echo _("Filters"); ?><span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
 		<form>
 		    <ul>
+		    <?php
+			if (!isset($globalAircraft) || $globalAircraft) {
+		    ?>
 		    <?php
 			if (((isset($globalVATSIM) && $globalVATSIM) || isset($globalIVAO) && $globalIVAO || isset($globalphpVMS) && $globalphpVMS) && (!isset($globalMapVAchoose) || $globalMapVAchoose)) {
 		    ?>
@@ -521,6 +538,9 @@ require_once('header.php');
 			}
 		    ?>
 		    <?php
+			}
+		    ?>
+		    <?php
 			if (isset($globalAPRS) && $globalAPRS) {
 		    ?>
 		    <li><?php echo _("Display APRS sources name:"); ?>
@@ -541,6 +561,9 @@ require_once('header.php');
 			}
 		    ?>
 		    <?php
+			if (!isset($globalAircraft) && $globalAircraft) {
+		    ?>
+		    <?php
 			if (!(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalphpVMS) && $globalphpVMS)) {
 		    ?>
 		    <li><?php echo _("Display airlines of type:"); ?><br/>
@@ -558,6 +581,9 @@ require_once('header.php');
 			<?php echo _("Display flight with ident:"); ?>
 			<input type="text" name="identfilter" onchange="identfilter();" id="identfilter" value="<?php if (isset($_COOKIE['filter_ident'])) print $_COOKIE['filter_ident']; ?>" />
 		    </li>
+		    <?php
+			}
+		    ?>
 		</ul>
 	    </form>
 	    <form method="post">

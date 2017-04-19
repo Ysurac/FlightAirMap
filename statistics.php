@@ -1,10 +1,22 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
-require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 $beginpage = microtime(true);
 $Stats = new Stats();
+
+$type = 'aircraft';
+if (isset($_GET['tracker'])) {
+	require_once('require/class.Tracker.php');
+	$Tracker = new Tracker();
+	$type = 'tracker';
+} elseif (isset($_GET['marine'])) {
+	require_once('require/class.Marine.php');
+	$Marine = new Marine();
+	$type = 'marine';
+} else {
+	require_once('require/class.Spotter.php');
+}
 
 if (!isset($filter_name)) $filter_name = '';
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
@@ -55,6 +67,9 @@ require_once('header.php');
     </div>
     <?php include('statistics-sub-menu.php'); ?>
     <p class="global-stats">
+<?php
+    if ($type == 'aircraft') {
+?>
         <span><span class="badge"><?php print number_format($Stats->countOverallFlights($airline_icao,$filter_name,$year,$month)); ?></span> <?php echo _("Flights"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <span><span class="badge"><?php print number_format($Stats->countOverallArrival($airline_icao,$filter_name,$year,$month)); ?></span> <?php echo _("Arrivals seen"); ?></span>
@@ -92,6 +107,19 @@ require_once('header.php');
 			}
 		}
 	?>
+<?php
+    } elseif ($type == 'marine') {
+?>
+	<span><span class="badge"><?php print number_format($Marine->countOverallMarine($filter_name,$year,$month)); ?></span> <?php echo _("Vessels"); ?></span>
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+<?php
+    } elseif ($type == 'tracker') {
+?>
+	<span><span class="badge"><?php print number_format($Tracker->countOverallTracker($filter_name,$year,$month)); ?></span> <?php echo _("Trackers"); ?></span>
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+<?php
+    }
+?>
     </p>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
     <div class="specific-stats">

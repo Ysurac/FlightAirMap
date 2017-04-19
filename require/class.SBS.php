@@ -216,5 +216,67 @@ $modes_checksum_table = array(
 	    return false;
 	}
     }
+    
+    public function famaprs_to_basestation($data) {
+	$result = array();
+        if (isset($data['ident']) && $data['ident'] != '') {
+	    $msg = array();
+	    $msg['msg_type'] = 'MSG';
+	    $msg['transmission_type'] = 1;
+	    $msg['session_id'] = 5;
+	    $msg['aircraftid'] = hexdec($data['address']);
+	    $msg['hex'] = $data['address'];
+	    $msg['flightid'] = hexdec($data['address']);
+	    $msg['date_gen'] = date('Y/m/d',$data['timestamp']);
+	    $msg['time_gen'] = date('H:i:s',$data['timestamp']).'.180';
+	    $msg['date_log'] = date('Y/m/d',$data['timestamp']);
+	    $msg['time_log'] = date('H:i:s',$data['timestamp']).'.180';
+	    $msg['callsign'] = $data['ident'];
+	    $msg['altitude'] = '';
+	    $msg['speed'] = '';
+	    $msg['track'] = '';
+	    $msg['latitude'] = '';
+	    $msg['longitude'] = '';
+	    $msg['verticalrate'] = '';
+	    $msg['squawk'] = '';
+	    $msg['alert'] = '';
+	    $msg['emergency'] = '';
+	    $msg['SPI'] = '';
+	    $msg['ground'] = '';
+    	    $result[] = implode(',',$msg);
+    	}
+    	if (isset($data['latitude']) && $data['latitude'] != 0) {
+	    $msg = array();
+	    $msg['msg_type'] = 'MSG';
+	    $msg['transmission_type'] = 2;
+	    $msg['session_id'] = 5;
+	    $msg['aircraftid'] = hexdec($data['address']);
+	    $msg['hex'] = $data['address'];
+	    $msg['flightid'] = hexdec($data['address']);
+	    $msg['date_gen'] = date('Y/m/d',$data['timestamp']);
+	    $msg['time_gen'] = date('H:i:s',$data['timestamp']).'.180';
+	    $msg['date_log'] = date('Y/m/d',$data['timestamp']);
+	    $msg['time_log'] = date('H:i:s',$data['timestamp']).'.180';
+	    $msg['callsign'] = '';
+	    if (isset($data['altitude'])) $msg['altitude'] = $data['altitude'];
+	    else $msg['altitude'] = '';
+	    $msg['speed'] = $data['speed'];
+	    if (isset($data['heading'])) $msg['track'] = $data['heading'];
+	    else $msg['track'] = '';
+	    $msg['latitude'] = $data['latitude'];
+	    $msg['longitude'] = $data['longitude'];
+	    if (isset($data['verticalrate'])) $msg['verticalrate'] = $data['verticalrate'];
+	    else $msg['verticalrate'] = '';
+	    if (isset($data['squawk'])) $msg['squawk'] = $data['squawk'];
+	    else $msg['squawk'] = 0;
+	    $msg['alert'] = 0;
+	    $msg['emergency'] = 0;
+	    $msg['SPI'] = 0;
+	    if (isset($data['ground'])) $msg['ground'] = 1;
+	    else $msg['ground'] = 0;
+    	    $result[] = implode(',',$msg);
+        }
+        return $result;
+    }
 }
 ?>

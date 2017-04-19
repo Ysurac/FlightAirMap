@@ -807,32 +807,53 @@ class Marine{
 	* @return Array the airline country list
 	*
 	*/
-/*
-	public function countAllTrackedOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
+
+	public function countAllMarineOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
-		global $globalDBdriver;
+		global $globalDBdriver, $globalArchive;
 		//$filter_query = $this->getFilter($filters,true,true);
 		$Connection= new Connection($this->db);
 		if (!$Connection->tableExists('countries')) return array();
 		require_once('class.SpotterLive.php');
-		$SpotterLive = new SpotterLive();
-		$filter_query = $SpotterLive->getFilter($filters,true,true);
-		$filter_query .= ' over_country IS NOT NULL';
-                if ($olderthanmonths > 0) {
-			if ($globalDBdriver == 'mysql') {
-				$filter_query .= ' AND spotter_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-			} else {
-				$filter_query .= " AND spotter_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+		if (!isset($globalArchive) || $globalArchive !== TRUE) {
+			$MarineLive = new MarineLive();
+			$filter_query = $MarineLive->getFilter($filters,true,true);
+			$filter_query .= ' over_country IS NOT NULL';
+			if ($olderthanmonths > 0) {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= ' AND marine_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+				} else {
+					$filter_query .= " AND marine_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+				}
 			}
-		}
-                if ($sincedate != '') {
-            		if ($globalDBdriver == 'mysql') {
-				$filter_query .= " AND spotter_live.date > '".$sincedate."' ";
-			} else {
-				$filter_query .= " AND spotter_live.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			if ($sincedate != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= " AND marine_live.date > '".$sincedate."' ";
+				} else {
+					$filter_query .= " AND marine_live.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				}
 			}
+			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM marine_live".$filter_query.") l ON c.iso2 = l.over_country ";
+		} else {
+			$MarineArchive = new MarineArchive();
+			$filter_query = $MarineLive->getFilter($filters,true,true);
+			$filter_query .= ' over_country IS NOT NULL';
+			if ($olderthanmonths > 0) {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= ' AND marine_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+				} else {
+					$filter_query .= " AND marine_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+				}
+			}
+			if ($sincedate != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query .= " AND marine_archive.date > '".$sincedate."' ";
+				} else {
+					$filter_query .= " AND marine_archive.date > CAST('".$sincedate."' AS TIMESTAMP)";
+				}
+			}
+			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM marine_archive".$filter_query.") l ON c.iso2 = l.over_country ";
 		}
-		$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_live".$filter_query.") l ON c.iso2 = l.over_country ";
 		$query .= "GROUP BY c.name,c.iso3,c.iso2 ORDER BY nb DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
       
@@ -853,7 +874,7 @@ class Marine{
 		}
 		return $flight_array;
 	}
-*/	
+	
 	
 	
 	/**
@@ -1339,10 +1360,11 @@ class Marine{
 	* @return Integer the number of flights
 	*
 	*/
-	public function countOverallTracked($filters = array(),$year = '',$month = '')
+	public function countOverallMarine($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
-		$queryi  = "SELECT COUNT(marine_output.marine_id) AS flight_count FROM marine_output";
+		//$queryi  = "SELECT COUNT(marine_output.marine_id) AS flight_count FROM marine_output";
+		$queryi  = "SELECT COUNT(DISTINCT marine_output.mmsi) AS flight_count FROM marine_output";
 		$query_values = array();
 		$query = '';
 		if ($year != '') {
