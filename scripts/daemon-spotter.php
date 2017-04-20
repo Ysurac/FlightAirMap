@@ -1052,7 +1052,7 @@ while ($i > 0) {
 		foreach ($read as $nb => $r) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
-		    if ($format == 'sbs' || $format == 'aprs' || $format == 'raw' || $format == 'tsv' || $format == 'acarssbs3') {
+		    if ($format == 'sbs' || $format == 'aprs' || $format == 'famaprs' || $format == 'raw' || $format == 'tsv' || $format == 'acarssbs3') {
 			$buffer = @socket_read($r, 6000,PHP_NORMAL_READ);
 		    } elseif ($format == 'vrstcp') {
 			$buffer = @socket_read($r, 6000);
