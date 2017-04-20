@@ -78,3 +78,16 @@ Use install/index.php
 
 ### Virtual Airlines Manager (virtual flights)
 * You need to copy the file **install/VAM/VAM-json.php** in your VAM directory, and use it as source 
+
+## License
+
+FlightAirMap is licensed under GNU Affero General Public License (AGPL) version 3.
+"The GNU Affero General Public License is a modified version of the ordinary GNU GPL version 3. It has one added requirement: if you run a modified program on a server and let other users communicate with it there, your server must also allow them to download the source code corresponding to the modified version running there."
+
+Some work can be used under other licenses, check file CREDITS
+
+## Contribution
+
+When submitting a pull request for the first time, you will need to agree to the contributor license agreement (for [individuals](https://github.com/Ysurac/FlightAirMap/blob/master/CLA-individual.md) or [entities](https://github.com/Ysurac/FlightAirMap/blob/master/CLA-entity.md)). To do this, in the pull request please create a file with a name like `/contributors/{github_username}.md`, and in the content of that file indicate your agreement. An example of what that file should contain can be seen in [example agreement file](https://github.com/Ysurac/FlightAirMap/blob/master/contributors/example.md).
+
+(This method of CLA "signing" is borrowed from [Medium's open source project](https://github.com/medium/opensource).)
