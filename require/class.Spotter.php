@@ -5088,31 +5088,26 @@ class Spotter{
 			}
 			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_live".$filter_query.") l ON c.iso2 = l.over_country ";
 		} else {
-			//require_once('class.SpotterArchive.php');
-			//$SpotterArchive = new SpotterArchive();
-			//$filter_query = $SpotterArchive->getFilter($filters,true,true);
-			$filter_query = $this->getFilter($filters,true,true);
+			require_once('class.SpotterArchive.php');
+			$SpotterArchive = new SpotterArchive();
+			$filter_query = $SpotterArchive->getFilter($filters,true,true);
 			$filter_query .= ' over_country IS NOT NULL';
 			if ($olderthanmonths > 0) {
 				if ($globalDBdriver == 'mysql') {
-					//$filter_query .= ' AND spotter_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
-					$filter_query .= ' AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
+					$filter_query .= ' AND spotter_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
 				} else {
-					//$filter_query .= " AND spotter_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
-					$filter_query .= " AND spotter_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+					$filter_query .= " AND spotter_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
 				}
 			}
 			if ($sincedate != '') {
 				if ($globalDBdriver == 'mysql') {
-					//$filter_query .= " AND spotter_archive.date > '".$sincedate."' ";
-					$filter_query .= " AND spotter_output.date > '".$sincedate."' ";
+					$filter_query .= " AND spotter_archive.date > '".$sincedate."' ";
 				} else {
-					//$filter_query .= " AND spotter_archive.date > CAST('".$sincedate."' AS TIMESTAMP)";
-					$filter_query .= " AND spotter_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+					$filter_query .= " AND spotter_archive.date > CAST('".$sincedate."' AS TIMESTAMP)";
 				}
 			}
-			//$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_archive".$filter_query.") l ON c.iso2 = l.over_country ";
-			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_output".$filter_query.") l ON c.iso2 = l.over_country ";
+			$filter_query .= " LIMIT 100 OFFSET 0"; 
+			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_archive".$filter_query.") l ON c.iso2 = l.over_country ";
 		}
 		$query .= "GROUP BY c.name,c.iso3,c.iso2 ORDER BY nb DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";

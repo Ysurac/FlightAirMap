@@ -833,10 +833,11 @@ class Marine{
 					$filter_query .= " AND marine_live.date > CAST('".$sincedate."' AS TIMESTAMP)";
 				}
 			}
-			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM marine_live".$filter_query.") l ON c.iso2 = l.over_country ";
+			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT fammarine_id,over_country FROM marine_live".$filter_query.") l ON c.iso2 = l.over_country ";
 		} else {
+			require_once(dirname(__FILE__)."/class.MarineArchive.php");
 			$MarineArchive = new MarineArchive();
-			$filter_query = $MarineLive->getFilter($filters,true,true);
+			$filter_query = $MarineArchive->getFilter($filters,true,true);
 			$filter_query .= ' over_country IS NOT NULL';
 			if ($olderthanmonths > 0) {
 				if ($globalDBdriver == 'mysql') {
@@ -852,7 +853,8 @@ class Marine{
 					$filter_query .= " AND marine_archive.date > CAST('".$sincedate."' AS TIMESTAMP)";
 				}
 			}
-			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM marine_archive".$filter_query.") l ON c.iso2 = l.over_country ";
+			$filter_query .= " LIMIT 100 OFFSET 0";
+			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT fammarine_id,over_country FROM marine_archive".$filter_query.") l ON c.iso2 = l.over_country ";
 		}
 		$query .= "GROUP BY c.name,c.iso3,c.iso2 ORDER BY nb DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
