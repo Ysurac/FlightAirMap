@@ -388,6 +388,12 @@ RewriteRule ^statistics/([A-Z]{3})/([0-9]+)/([0-9]+)(/?)$ statistics.php?airline
 RewriteRule ^statistics/([A-Z]{3})(/?)$ statistics.php?airline=$1 [L,NC]
 RewriteRule ^statistics(/?)$ statistics.php [L,NC]
 
+#---------- MARINE ---------
+RewriteRule ^marine/statistics(/?)$ statistics.php?marine [L,NC]
+
+#---------- TRACKER ---------
+RewriteRule ^tracker/statistics(/?)$ statistics.php?tracker [L,NC]
+
 
 ########### UPCOMING ###########
 

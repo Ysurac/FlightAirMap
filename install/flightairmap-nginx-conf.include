@@ -399,6 +399,12 @@ location /statistics {
     rewrite "^/statistics/fatalities/year(/?)$" /statistics-fatalities-year.php last;
     rewrite "^/statistics/fatalities/month(/?)$" /statistics-fatalities-month.php last;
 }
+location /marine/statistics {
+    rewrite "^/marine/statistics(/?)$" /statistics.php?marine last;
+}
+location /tracker/statistics {
+    rewrite "^/tracker/statistics(/?)$" /statistics.php?tracker last;
+}
 
 location /upcoming {
     rewrite ^/upcoming/([^/]+)/([^/]+)(/?)$ /upcoming.php?limit=$1&sort=$2 last;
