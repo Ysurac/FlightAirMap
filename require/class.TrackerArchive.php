@@ -83,7 +83,6 @@ class TrackerArchive {
 
 	// tracker_archive
 	public function addTrackerArchiveData($famtrackid = '', $ident = '', $latitude = '', $longitude = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $comment = '', $type = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '') {
-		/*
 		require_once(dirname(__FILE__).'/class.Tracker.php');
 		if ($over_country == '') {
 			$Tracker = new Tracker($this->db);
@@ -91,8 +90,6 @@ class TrackerArchive {
 			if (!empty($data_country)) $country = $data_country['iso2'];
 			else $country = '';
 		} else $country = $over_country;
-		*/
-		$country = $over_country;
 		// Route is not added in tracker_archive
 		$query  = 'INSERT INTO tracker_archive (famtrackid, ident, latitude, longitude, altitude, heading, ground_speed, date, format_source, source_name, over_country, comment, type) 
 		    VALUES (:famtrackid,:ident,:latitude,:longitude,:altitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:comment,:type)';

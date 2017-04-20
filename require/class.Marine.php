@@ -858,8 +858,7 @@ class Marine{
 		}
 		$query .= "GROUP BY c.name,c.iso3,c.iso2 ORDER BY nb DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
-      
-		
+
 		$sth = $this->db->prepare($query);
 		$sth->execute();
  
@@ -1695,6 +1694,75 @@ q	*
 		return $bitly_url;
 	}
 
+	
+	/**
+	* Gets all vessels types that have flown over
+	*
+	* @return Array the vessel type list
+	*
+	*/
+	public function countAllMarineTypes($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
+	{
+		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT marine_output.type AS marine_type, COUNT(marine_output.type) AS marine_type_count 
+		    FROM marine_output ".$filter_query." marine_output.type  <> ''";
+		if ($olderthanmonths > 0) {
+			if ($globalDBdriver == 'mysql') {
+				$query .= ' AND marine_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH)';
+			} else {
+				$query .= " AND marine_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+			}
+		}
+		if ($sincedate != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND marine_output.date > '".$sincedate."'";
+			} else {
+				$query .= " AND marine_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(marine_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM marine_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query .= " GROUP BY marine_output.type ORDER BY marine_type_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		$marine_array = array();
+		$temp_array = array();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['marine_type'] = $row['marine_type'];
+			$temp_array['marine_type_count'] = $row['marine_type_count'];
+			$marine_array[] = $temp_array;
+		}
+		return $marine_array;
+	}
 
 	public function getOrderBy()
 	{

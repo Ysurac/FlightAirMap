@@ -83,7 +83,7 @@ class MarineArchive {
 
 	// marine_archive
 	public function addMarineArchiveData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '') {
-		/*
+		
 		require_once(dirname(__FILE__).'/class.Marine.php');
 		if ($over_country == '') {
 			$Marine = new Marine($this->db);
@@ -91,8 +91,8 @@ class MarineArchive {
 			if (!empty($data_country)) $country = $data_country['iso2'];
 			else $country = '';
 		} else $country = $over_country;
-		*/
-		$country = $over_country;
+		
+		//$country = $over_country;
 		// Route is not added in marine_archive
 		$query  = 'INSERT INTO marine_archive (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,status,imo,arrival_port_name,arrival_port_date) 
 		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:status,:imo,:arrival_port_name,:arrival_port_date)';
