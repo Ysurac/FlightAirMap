@@ -1655,7 +1655,7 @@ class update_schema {
 	}
 
 	private static function update_from_37() {
-		global $globalDBdriver;
+		global $globalDBdriver, $globalDBname;
 		$Connection = new Connection();
 		$error = '';
 		if ($globalDBdriver == 'mysql') {
