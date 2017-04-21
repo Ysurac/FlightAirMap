@@ -25,7 +25,7 @@ if ($airline_icao == '' && isset($globalFilter)) {
 }
 
 require_once('header.php');
-if ($type == 'aircraft') include('statistics-sub-menu.php'); 
+include('statistics-sub-menu.php'); 
 
 print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
 print '<script type="text/javascript" src="'.$globalURL.'/js/topojson.v2.min.js"></script>';

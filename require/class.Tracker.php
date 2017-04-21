@@ -1298,16 +1298,54 @@ class Tracker{
 	
 	
 	/**
-	* Counts all flights that have flown over
+	* Counts all trackers that have flown over
 	*
-	* @return Integer the number of flights
+	* @return Integer the number of trackers
 	*
 	*/
 	public function countOverallTracker($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
 		//$queryi  = "SELECT COUNT(tracker_output.tracker_id) AS flight_count FROM tracker_output";
-		$queryi  = "SELECT COUNT(DISTINCT tracker_output.ident) AS flight_count FROM tracker_output";
+		$queryi  = "SELECT COUNT(DISTINCT tracker_output.ident) AS tracker_count FROM tracker_output";
+		$query_values = array();
+		$query = '';
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(tracker_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM tracker_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(tracker_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM tracker_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if (empty($query_values)) $queryi .= $this->getFilter($filters);
+		else $queryi .= $this->getFilter($filters,true,true).substr($query,4);
+		
+		$sth = $this->db->prepare($queryi);
+		$sth->execute($query_values);
+		return $sth->fetchColumn();
+	}
+	
+	/**
+	* Counts all trackers type that have flown over
+	*
+	* @return Integer the number of flights
+	*
+	*/
+	public function countOverallTrackerTypes($filters = array(),$year = '',$month = '')
+	{
+		global $globalDBdriver;
+		$queryi  = "SELECT COUNT(DISTINCT tracker_output.type) AS tracker_count FROM tracker_output";
 		$query_values = array();
 		$query = '';
 		if ($year != '') {
@@ -1603,6 +1641,76 @@ q	*
 		}
 	
 	}
+
+	/**
+	* Gets all vessels types that have flown over
+	*
+	* @return Array the vessel type list
+	*
+	*/
+	public function countAllTrackerTypes($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
+	{
+		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT tracker_output.type AS tracker_type, COUNT(tracker_output.type) AS tracker_type_count 
+		    FROM tracker_output ".$filter_query." tracker_output.type  <> ''";
+		if ($olderthanmonths > 0) {
+			if ($globalDBdriver == 'mysql') {
+				$query .= ' AND tracker_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH)';
+			} else {
+				$query .= " AND tracker_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+			}
+		}
+		if ($sincedate != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND tracker_output.date > '".$sincedate."'";
+			} else {
+				$query .= " AND tracker_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(tracker_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM tracker_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(tracker_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM tracker_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(tracker_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM tracker_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query .= " GROUP BY tracker_output.type ORDER BY tracker_type_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		$tracker_array = array();
+		$temp_array = array();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['tracker_type'] = $row['tracker_type'];
+			$temp_array['tracker_type_count'] = $row['tracker_type_count'];
+			$tracker_array[] = $temp_array;
+		}
+		return $tracker_array;
+	}
+
 
 	
 	/**

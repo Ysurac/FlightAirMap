@@ -6,7 +6,9 @@
 		<form id="changedate" method="post">
 			<input type="month" name="date" onchange="statsdatechange(this);" value="<?php if (isset($year) && $year != '') echo $year.'-'; ?><?php if (isset($month) && $month != '') echo $month; ?>" />
 		</form>
-	
+<?php
+	if (!isset($type) || $type == 'aircraft') {
+?>
 		<form id="changeairline" method="post">
 			<!--<select name="airline" class="selectpicker" onchange="this.form.submit()">-->
 			<select name="airline" class="selectpicker" onchange="statsairlinechange(this)">
@@ -30,12 +32,18 @@
 				?>
 			</select>
 		</form>
+<?php
+	}
+?>
 	</div>
 <?php 
     if (!isset($year) || (isset($year) && $year == '') && !isset($month) || (isset($month) && $month == '')) {
 ?>
 <div class="sub-menu sub-menu-container">
 	<ul class="nav">
+<?php
+	if (!isset($type) || $type == 'aircraft') {
+?>
 		<li class="dropdown">
 		    <a class="dropdown-toggle <?php if(strtolower($current_page) == "statistics-aircraft" || strtolower($current_page) == "statistics-registration" || strtolower($current_page) == "statistics-manufacturer"){ print 'active'; } ?>" data-toggle="dropdown" href="#" >
 		      <?php echo _("Aircraft"); ?> <span class="caret"></span>
@@ -101,6 +109,21 @@
 		<?php
 		    }
 		?>
+<?php
+	} elseif ($type == 'marine' || $type == 'tracker') {
+?>
+		<li class="dropdown">
+		    <a class="dropdown-toggle <?php if(strtolower($current_page) == "statistics-date" || strtolower($current_page) == "statistics-time"){ print 'active'; } ?>" data-toggle="dropdown" href="#">
+		      <?php echo _("Date &amp; Time"); ?> <span class="caret"></span>
+		    </a>
+		    <ul class="dropdown-menu" role="menu">
+		      <li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/date"><?php echo _("Date"); ?></a></li>
+			  <li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/time"><?php echo _("Time"); ?></a></li>
+		    </ul>
+		</li>
+<?php
+	}
+?>
 	</ul>
 </div>
 <?php
@@ -108,6 +131,9 @@
 ?>
 <div class="sub-menu sub-menu-container">
 	<ul class="nav">
+<?php
+	if (!isset($type) || $type == 'aircraft') {
+?>
 		<li class="dropdown">
 		    <a class="dropdown-toggle <?php if(strtolower($current_page) == "statistics-aircraft" || strtolower($current_page) == "statistics-registration" || strtolower($current_page) == "statistics-manufacturer"){ print 'active'; } ?>" data-toggle="dropdown" href="#" >
 		      <?php echo _("Aircraft"); ?> <span class="caret"></span>
@@ -179,6 +205,22 @@
 		<?php
 		    }
 		?>
+<?php
+	} elseif ($type == 'marine' || $type == 'tracker') {
+?>
+		<li class="dropdown">
+		    <a class="dropdown-toggle <?php if(strtolower($current_page) == "statistics-date" || strtolower($current_page) == "statistics-time"){ print 'active'; } ?>" data-toggle="dropdown" href="#">
+		      <?php echo _("Date &amp; Time"); ?> <span class="caret"></span>
+		    </a>
+		    <ul class="dropdown-menu" role="menu">
+		      <li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/date"><?php echo _("Date"); ?></a></li>
+			  <li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/time"><?php echo _("Time"); ?></a></li>
+		    </ul>
+		</li>
+
+<?php
+	}
+?>
 	</ul>
 </div>
 <?php

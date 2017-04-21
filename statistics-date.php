@@ -5,6 +5,17 @@ require_once('require/class.Language.php');
 $Stats = new Stats();
 $title = _("Statistics").' - '._("Busiest Day");
 
+$type = 'aircraft';
+if (isset($_GET['marine'])) {
+	$type = 'marine';
+	require_once('require/class.Marine.php');
+	$Marine = new Marine();
+} elseif (isset($_GET['tracker'])) {
+	$type = 'tracker';
+	require_once('require/class.Tracker.php');
+	$Tracker = new Tracker();
+}
+
 if (!isset($filter_name)) $filter_name = '';
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 if ($airline_icao == '' && isset($globalFilter)) {
@@ -22,7 +33,9 @@ print '<div class="info">
 	  </div>
       <p>'._("Below is a chart that plots the busiest day during the <strong>last 7 days</strong>.").'</p>';
 
-$date_array = $Stats->countAllDatesLast7Days($airline_icao,$filter_name);
+if ($type == 'aircraft') $date_array = $Stats->countAllDatesLast7Days($airline_icao,$filter_name);
+elseif ($type == 'marine') $date_array = $Marine->countAllDatesLast7Days();
+elseif ($type == 'tracker') $date_array = $Tracker->countAllDatesLast7Days();
 if (count($date_array) == 0) {
 	print _("No data available");
 } else {
@@ -48,7 +61,9 @@ if (isset($globalDBArchiveMonths) && $globalDBArchiveMonths > 0) {
 } else {
 	print '<p>'._("Below are the <strong>Top 10</strong> most busiest dates.").'</p>';
 }
-$date_array = $Stats->countAllDates($airline_icao,$filter_name);
+if ($type == 'aircraft') $date_array = $Stats->countAllDates($airline_icao,$filter_name);
+elseif ($type == 'marine') $date_array = $Marine->countAllDates();
+elseif ($type == 'tracker') $date_array = $Tracker->countAllDates();
 if (!empty($date_array))
 {
 	print '<div class="table-responsive">';

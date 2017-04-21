@@ -68,9 +68,7 @@ require_once('header.php');
 ?>
     </div>
 <?php 
-	if ($type == 'aircraft') {
-		include('statistics-sub-menu.php'); 
-	}
+	include('statistics-sub-menu.php'); 
 ?>
     <p class="global-stats">
 <?php
@@ -118,10 +116,14 @@ require_once('header.php');
 ?>
 	<span><span class="badge"><?php print number_format($Marine->countOverallMarine($filter_name,$year,$month)); ?></span> <?php echo _("Vessels"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+	<span><span class="badge"><?php print number_format($Marine->countOverallMarineTypes($filter_name,$year,$month)); ?></span> <?php echo _("Types"); ?></span>
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
 	} elseif ($type == 'tracker') {
 ?>
 	<span><span class="badge"><?php print number_format($Tracker->countOverallTracker($filter_name,$year,$month)); ?></span> <?php echo _("Trackers"); ?></span>
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+	<span><span class="badge"><?php print number_format($Tracker->countOverallTrackerTypes($filter_name,$year,$month)); ?></span> <?php echo _("Types"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
 	}
@@ -257,7 +259,55 @@ require_once('header.php');
                 </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-	</div>
+<!--	</div>-->
+<?php
+	}
+?>
+<?php
+	if ($type == 'tracker') {
+?>
+        <div class="row column">
+            <div class="col-md-6">
+                <h2><?php echo _("Top 10 Most Common Tracker Type"); ?></h2>
+                 <?php
+                  $tracker_array = $Tracker->countAllTrackerTypes();
+		    if (count($tracker_array) == 0) print _("No data available");
+		    else {
+                    print '<div id="chart1" class="chart" width="100%"></div><script>';
+                    $tracker_data = '';
+                    foreach($tracker_array as $tracker_item)
+                    {
+                        $tracker_data .= '["'.$tracker_item['tracker_type'].'",'.$tracker_item['tracker_type_count'].'],';
+                    }
+                    $tracker_data = substr($tracker_data, 0, -1);
+		    print 'var series = ['.$tracker_data.'];';
+		    print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+		    print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#e6e6f6","#1a3151"]);';
+		    print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
+                    print 'var trackertype = new d3pie("chart1",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"60%"},"data":{"sortOrder":"value-desc","content":';
+                    print 'dataset';
+                    print '},"labels":{"outer":{"pieDistance":32},"inner":{"hideWhenLessThanPercentage":3},"mainLabel":{"fontSize":11},"percentage":{"color":"#ffffff","decimalPlaces":0},"value":{"color":"#adadad","fontSize":11},"lines":{"enabled":true},"truncation":{"enabled":true}},"effects":{"pullOutSegmentOnClick":{"effect":"linear","speed":400,"size":8}},"misc":{"gradient":{"enabled":true,"percentage":100}}});';
+                    print '</script>';
+                  }
+                  ?>
+                <div class="more">
+            	    <?php
+            	    /*
+            		if ($year != '' && $month != '') {
+            	    ?>
+            	    <a href="<?php print $globalURL; ?>/marine/statistics/type/<?php echo $year; ?>/<?php echo $month ?>/" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+            	    <?php
+            		} else {
+            	    ?>
+            	    <a href="<?php print $globalURL; ?>/marine/statistics/type" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+            	    <?php
+            		}
+            		*/
+            	    ?>
+                </div>
+            </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+<!--	</div>-->
 <?php
 	}
 ?>
@@ -406,7 +456,7 @@ require_once('header.php');
 	if ($type == 'marine') {
 		$flightover_array = $Marine->countAllMarineOverCountries(true);
 ?>
-    <div class="row column">
+<!--    <div class="row column">-->
 	<div class="col-md-6">
             <h2><?php echo _("Top 20 Most Common Country a Vessel was inside"); ?></h2>
 <?php
@@ -466,7 +516,7 @@ require_once('header.php');
 	if ($type == 'tracker') {
 		$flightover_array = $Tracker->countAllTrackerOverCountries(true);
 ?>
-    <div class="row column">
+<!--    <div class="row column">-->
 	<div class="col-md-6">
             <h2><?php echo _("Top 20 Most Common Country a Tracker was inside"); ?></h2>
 <?php

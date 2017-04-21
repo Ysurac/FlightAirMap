@@ -24,7 +24,7 @@ if ($airline_icao == '' && isset($globalFilter)) {
 }
 
 require_once('header.php');
-if ($type == 'aircraft') include('statistics-sub-menu.php');
+include('statistics-sub-menu.php');
 print '<link href="'.$globalURL.'/css/c3.min.css" rel="stylesheet" type="text/css">';
 print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
 print '<script type="text/javascript" src="'.$globalURL.'/js/c3.min.js"></script>';

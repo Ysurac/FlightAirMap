@@ -614,7 +614,7 @@ class Stats {
 	public function countAllDates($stats_airline = '',$filter_name = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'date' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'date' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date_count DESC";
 		$query_data = array(':stats_airline' => $stats_airline,':filter_name' => $filter_name);
                  try {
                         $sth = $this->db->prepare($query);

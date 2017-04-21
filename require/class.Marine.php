@@ -1356,9 +1356,9 @@ class Marine{
 	
 	
 	/**
-	* Counts all flights that have flown over
+	* Counts all vessels
 	*
-	* @return Integer the number of flights
+	* @return Integer the number of vessels
 	*
 	*/
 	public function countOverallMarine($filters = array(),$year = '',$month = '')
@@ -1366,6 +1366,44 @@ class Marine{
 		global $globalDBdriver;
 		//$queryi  = "SELECT COUNT(marine_output.marine_id) AS flight_count FROM marine_output";
 		$queryi  = "SELECT COUNT(DISTINCT marine_output.mmsi) AS flight_count FROM marine_output";
+		$query_values = array();
+		$query = '';
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if (empty($query_values)) $queryi .= $this->getFilter($filters);
+		else $queryi .= $this->getFilter($filters,true,true).substr($query,4);
+		
+		$sth = $this->db->prepare($queryi);
+		$sth->execute($query_values);
+		return $sth->fetchColumn();
+	}
+	
+	/**
+	* Counts all vessel type
+	*
+	* @return Integer the number of vessels
+	*
+	*/
+	public function countOverallMarineTypes($filters = array(),$year = '',$month = '')
+	{
+		global $globalDBdriver;
+		$queryi  = "SELECT COUNT(DISTINCT marine_output.type) AS marine_count FROM marine_output";
 		$query_values = array();
 		$query = '';
 		if ($year != '') {
