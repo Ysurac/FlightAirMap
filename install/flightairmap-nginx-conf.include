@@ -400,9 +400,19 @@ location /statistics {
     rewrite "^/statistics/fatalities/month(/?)$" /statistics-fatalities-month.php last;
 }
 location /marine/statistics {
+    rewrite "^/marine/statistics/date(/?)$" /statistics-date.php?marine last;
+    rewrite "^/marine/statistics/time(/?)$" /statistics-time.php?marine last;
+    rewrite "^/marine/statistics/month(/?)$" /statistics-month.php?marine last;
+    rewrite "^/marine/statistics/year(/?)$" /statistics-year.php?marine last;
+    rewrite "^/marine/statistics/country(/?)$" /statistics-country.php?marine last;
     rewrite "^/marine/statistics(/?)$" /statistics.php?marine last;
 }
 location /tracker/statistics {
+    rewrite "^/tracker/statistics/date(/?)$" /statistics-date.php?tracker last;
+    rewrite "^/tracker/statistics/time(/?)$" /statistics-time.php?tracker last;
+    rewrite "^/tracker/statistics/month(/?)$" /statistics-month.php?tracker last;
+    rewrite "^/tracker/statistics/year(/?)$" /statistics-year.php?tracker last;
+    rewrite "^/tracker/statistics/country(/?)$" /statistics-country.php?tracker last;
     rewrite "^/tracker/statistics(/?)$" /statistics.php?tracker last;
 }
 

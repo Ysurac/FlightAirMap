@@ -5,6 +5,17 @@ require_once('require/class.Language.php');
 $Stats = new Stats();
 $title = _("Statistics").' - '._("Busiest Time of the Day");
 
+$type = 'aircraft';
+if (isset($_GET['marine'])) {
+	$type = 'marine';
+	require_once('require/class.Marine.php');
+	$Marine = new Marine();
+} elseif (isset($_GET['tracker'])) {
+	$type = 'tracker';
+	require_once('require/class.Tracker.php');
+	$Tracker = new Tracker();
+}
+
 if (!isset($filter_name)) $filter_name = '';
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 if ($airline_icao == '' && isset($globalFilter)) {
@@ -12,7 +23,7 @@ if ($airline_icao == '' && isset($globalFilter)) {
 }
 
 require_once('header.php');
-include('statistics-sub-menu.php');
+if ($type == 'aircraft') include('statistics-sub-menu.php');
 
 print '<link href="'.$globalURL.'/css/c3.min.css" rel="stylesheet" type="text/css">';
 print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
@@ -22,7 +33,9 @@ print '<div class="info">
 	</div>
 	<p>'._("Below is a list of the most common <strong>time of day</strong>.").'</p>';
 
-$hour_array = $Stats->countAllHours('hour',true,$airline_icao,$filter_name);
+if ($type == 'aircraft') $hour_array = $Stats->countAllHours('hour',true,$airline_icao,$filter_name);
+elseif ($type == 'marine') $hour_array = $Marine->countAllHours('hour',true);
+elseif ($type == 'tracker') $hour_array = $Tracker->countAllHours('hour',true);
 print '<div id="chartHour" class="chart" width="100%"></div><script>';
 $hour_data = '';
 $hour_cnt = '';
@@ -40,7 +53,9 @@ print 'c3.generate({
     axis: { x: { type: "category", categories: '.$hour_data.'},y: { label: "# of Flights"}},legend: { show: false }});';
 print '</script>';
 
-$hour_array = $Stats->countAllHours('count',true,$airline_icao,$filter_name);
+if ($type == 'aircraft') $hour_array = $Stats->countAllHours('count',true,$airline_icao,$filter_name);
+elseif ($type == 'marine') $hour_array = $Marine->countAllHours('count',true);
+elseif ($type == 'tracker') $hour_array = $Tracker->countAllHours('count',true);
 if (!empty($hour_array))
 {
 	print '<div class="table-responsive">';
@@ -48,7 +63,7 @@ if (!empty($hour_array))
 	print '<thead>';
 	print '<th></th>';
 	print '<th>'._("Hour").'</th>';
-	print '<th>'._("# of Flights").'</th>';
+	print '<th>'._("Number").'</th>';
 	print '</thead>';
 	print '<tbody>';
 	$i = 1;

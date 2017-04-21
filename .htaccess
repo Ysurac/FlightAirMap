@@ -389,9 +389,19 @@ RewriteRule ^statistics/([A-Z]{3})(/?)$ statistics.php?airline=$1 [L,NC]
 RewriteRule ^statistics(/?)$ statistics.php [L,NC]
 
 #---------- MARINE ---------
+RewriteRule ^marine/statistics/date(/?)$ statistics-date.php?marine [L,NC]
+RewriteRule ^marine/statistics/time(/?)$ statistics-time.php?marine [L,NC]
+RewriteRule ^marine/statistics/month(/?)$ statistics-month.php?marine [L,NC]
+RewriteRule ^marine/statistics/year(/?)$ statistics-year.php?marine [L,NC]
+RewriteRule ^marine/statistics/country(/?)$ statistics-country.php?marine [L,NC]
 RewriteRule ^marine/statistics(/?)$ statistics.php?marine [L,NC]
 
 #---------- TRACKER ---------
+RewriteRule ^tracker/statistics/date(/?)$ statistics-date.php?tracker [L,NC]
+RewriteRule ^tracker/statistics/time(/?)$ statistics-time.php?tracker [L,NC]
+RewriteRule ^tracker/statistics/month(/?)$ statistics-month.php?tracker [L,NC]
+RewriteRule ^tracker/statistics/year(/?)$ statistics-year.php?tracker [L,NC]
+RewriteRule ^tracker/statistics/country(/?)$ statistics-country.php?tracker [L,NC]
 RewriteRule ^tracker/statistics(/?)$ statistics.php?tracker [L,NC]
 
 

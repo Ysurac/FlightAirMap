@@ -659,9 +659,9 @@ class Stats {
 		global $globalStatsFilters, $globalDBdriver;
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date_count DESC";
 		} else {
-			$query = "SELECT EXTRACT(YEAR FROM stats_date) AS year_name,EXTRACT(MONTH FROM stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			$query = "SELECT EXTRACT(YEAR FROM stats_date) AS year_name,EXTRACT(MONTH FROM stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date_count DESC";
 		}
                  try {
                         $sth = $this->db->prepare($query);

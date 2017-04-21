@@ -408,7 +408,7 @@ require_once('header.php');
 ?>
     <div class="row column">
 	<div class="col-md-6">
-            <h2><?php echo _("Top 20 Most Common Country a Flight was Over"); ?></h2>
+            <h2><?php echo _("Top 20 Most Common Country a Vessel was inside"); ?></h2>
 <?php
 		if (count($flightover_array) == 0) print _("No data available");
 		else {
@@ -453,11 +453,69 @@ require_once('header.php');
 			print '</script>';
 		}
 ?>
-                <!--
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/country<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/marine/statistics/country" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
-                -->
+            </div>
+        </div>
+
+<?php
+	}
+?>
+<?php
+	if ($type == 'tracker') {
+		$flightover_array = $Tracker->countAllTrackerOverCountries(true);
+?>
+    <div class="row column">
+	<div class="col-md-6">
+            <h2><?php echo _("Top 20 Most Common Country a Tracker was inside"); ?></h2>
+<?php
+		if (count($flightover_array) == 0) print _("No data available");
+		else {
+			print '<div id="chart10" class="chart" width="100%"></div><script>';
+			print 'var series = [';
+			$flightover_data = '';
+			foreach($flightover_array as $flightover_item)
+			{
+				$flightover_data .= '[ "'.$flightover_item['flight_country_iso3'].'",'.$flightover_item['flight_count'].'],';
+			}
+			$flightover_data = substr($flightover_data, 0, -1);
+			print $flightover_data;
+			print '];';
+			print 'var dataset = {};var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+			print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+			print 'series.forEach(function(item){var iso = item[0], value = item[1]; dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };});';
+			print 'new Datamap({
+			    element: document.getElementById("chart10"),
+			    projection: "mercator", // big world map
+			    fills: { defaultFill: "#F5F5F5" },
+			    data: dataset,
+			    responsive: true,
+			    geographyConfig: {
+				borderColor: "#DEDEDE",
+				highlightBorderWidth: 2,
+				highlightFillColor: function(geo) {
+				    return geo["fillColor"] || "#F5F5F5";
+				},
+				highlightBorderColor: "#B7B7B7",
+				done: function(datamap) {
+				    datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+				    function redraw() {
+					datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+				    }
+				},
+				popupTemplate: function(geo, data) {
+				    if (!data) { return ; }
+				    return ['."'".'<div class="hoverinfo">'."','<strong>', geo.properties.name, '</strong>','<br>Count: <strong>', data.numberOfThings, '</strong>','</div>'].join('');
+				}
+			    }
+			});";
+			print '</script>';
+		}
+?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/tracker/statistics/country" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
             </div>
         </div>
 
@@ -757,11 +815,9 @@ require_once('header.php');
 				print '</script>';
 			}
 ?>
-	    <!--
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/year<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/marine/statistics/year" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
-                -->
             </div>
             
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
@@ -789,12 +845,9 @@ require_once('header.php');
 				print '</script>';
 			}
 ?>
-               <!--
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/month<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/marine/statistics/month" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
-                -->
-                
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 
@@ -822,11 +875,9 @@ require_once('header.php');
 				print '</script>';
 			}
 ?>
-                <!--
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/date<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/marine/statistics/date" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
-                -->
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
             <div class="col-md-6">
@@ -853,11 +904,141 @@ require_once('header.php');
 				print '</script>';
 			}
 ?>
-                <!--
                 <div class="more">
-                    <a href="<?php print $globalURL; ?>/statistics/time<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                    <a href="<?php print $globalURL; ?>/marine/statistics/time" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
-                -->
+            </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+        </div>
+<?php
+		}
+?>
+<?php
+	}
+?>
+<?php
+	if ($type == 'tracker') {
+?>
+<?php
+		if ($year == '' && $month == '') {
+?>
+        <div class="row column">
+            <div class="col-md-6">
+                <h2><?php echo _("Busiest Months of the last 12 Months"); ?></h2>
+<?php
+			$year_array = $Tracker->countAllMonthsLastYear(true);
+			if (count($year_array) == 0) print _("No data available");
+			else {
+				print '<div id="chart8" class="chart" width="100%"></div><script>';
+				$year_data = '';
+				$year_cnt = '';
+				foreach($year_array as $year_item)
+				{
+					$year_data .= '"'.$year_item['year_name'].'-'.$year_item['month_name'].'-01'.'",';
+					$year_cnt .= $year_item['date_count'].',';
+				}
+				$year_data = "['x',".substr($year_data, 0, -1)."]";
+				$year_cnt = "['trackers',".substr($year_cnt,0,-1)."]";
+				print 'c3.generate({
+				    bindto: "#chart8",
+				    data: { x: "x",
+				     columns: ['.$year_data.','.$year_cnt.'], types: { trackers: "area"}, colors: { trackers: "#1a3151"}},
+				     axis: { x: { type: "timeseries", localtime: false,tick: { format: "%Y-%m"}}, y: { label: "# of Trackers"}},legend: { show: false }});';
+				print '</script>';
+			}
+?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/tracker/statistics/year" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
+            </div>
+            
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+            <div class="col-md-6">
+                <h2><?php echo _("Busiest Day in the last Month"); ?></h2>
+<?php
+			$month_array = $Tracker->countAllDatesLastMonth();
+			if (count($month_array) == 0) print _("No data available");
+			else {
+				print '<div id="chart9" class="chart" width="100%"></div><script>';
+				$month_data = '';
+				$month_cnt = '';
+				foreach($month_array as $month_item)
+				{
+					$month_data .= '"'.$month_item['date_name'].'",';
+					$month_cnt .= $month_item['date_count'].',';
+				}
+				$month_data = "['x',".substr($month_data, 0, -1)."]";
+				$month_cnt = "['trackers',".substr($month_cnt,0,-1)."]";
+				print 'c3.generate({
+				    bindto: "#chart9",
+				    data: { x: "x",
+				     columns: ['.$month_data.','.$month_cnt.'], types: { trackers: "area"}, colors: { trackers: "#1a3151"}},
+				     axis: { x: { type: "timeseries", localtime: false,tick: { format: "%Y-%m-%d"}}, y: { label: "# of Trackers"}},legend: { show: false }});';
+				print '</script>';
+			}
+?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/tracker/statistics/month" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
+            </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+
+            <div class="col-md-6">
+                <h2><?php echo _("Busiest Day in the last 7 Days"); ?></h2>
+<?php
+			$date_array = $Tracker->countAllDatesLast7Days();
+			if (empty($date_array)) print _("No data available");
+			else {
+				print '<div id="chart5" class="chart" width="100%"></div><script>';
+				$date_data = '';
+				$date_cnt = '';
+				foreach($date_array as $date_item)
+				{
+					$date_data .= '"'.$date_item['date_name'].'",';
+					$date_cnt .= $date_item['date_count'].',';
+				}
+				$date_data = "['x',".substr($date_data, 0, -1)."]";
+				$date_cnt = "['trackers',".substr($date_cnt,0,-1)."]";
+				print 'c3.generate({
+				    bindto: "#chart5",
+				    data: { x: "x",
+				     columns: ['.$date_data.','.$date_cnt.'], types: { trackers: "area"}, colors: { trackers: "#1a3151"}},
+				     axis: { x: { type: "timeseries",tick: { format: "%Y-%m-%d"}}, y: { label: "# of Trackers"}},legend: { show: false }});';
+				print '</script>';
+			}
+?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/marine/statistics/date" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
+            </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+            <div class="col-md-6">
+                <h2><?php echo _("Busiest Time of the Day"); ?></h2>
+<?php
+			$hour_array = $Tracker->countAllHours('hour',true);
+			if (empty($hour_array)) print _("No data available");
+			else {
+				print '<div id="chart6" class="chart" width="100%"></div><script>';
+				$hour_data = '';
+				$hour_cnt = '';
+				foreach($hour_array as $hour_item)
+				{
+					$hour_data .= '"'.$hour_item['hour_name'].':00",';
+					$hour_cnt .= $hour_item['hour_count'].',';
+				}
+				$hour_data = "[".substr($hour_data, 0, -1)."]";
+				$hour_cnt = "['trackers',".substr($hour_cnt,0,-1)."]";
+				print 'c3.generate({
+				    bindto: "#chart6",
+				    data: {
+				     columns: ['.$hour_cnt.'], types: { trackers: "area"}, colors: { trackers: "#1a3151"}},
+				     axis: { x: { type: "category", categories: '.$hour_data.'},y: { label: "# of Trackers"}},legend: { show: false }});';
+				print '</script>';
+			}
+?>
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/tracker/statistics/time" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         </div>

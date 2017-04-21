@@ -3,26 +3,57 @@ require_once('require/class.Connection.php');
 require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
 $Stats = new Stats();
-$title = _("Statistics").' - '._("Most common Country a flight was over");
 
 if (!isset($filter_name)) $filter_name = '';
+$type = 'aircraft';
+if (isset($_GET['marine'])) {
+	$type = 'marine';
+	$title = _("Statistics").' - '._("Most common Country a vessel was inside");
+	require_once('require/class.Marine.php');
+	$Marine = new Marine();
+} elseif (isset($_GET['tracker'])) {
+	$type = 'tracker';
+	$title = _("Statistics").' - '._("Most common Country a tracker was inside");
+	require_once('require/class.Tracker.php');
+	$Tracker = new Tracker();
+} else {
+	$title = _("Statistics").' - '._("Most common Country a flight was over");
+}
 $airline_icao = (string)filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 if ($airline_icao == '' && isset($globalFilter)) {
     if (isset($globalFilter['airline'])) $airline_icao = $globalFilter['airline'][0];
 }
 
 require_once('header.php');
-include('statistics-sub-menu.php'); 
+if ($type == 'aircraft') include('statistics-sub-menu.php'); 
 
 print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
 print '<script type="text/javascript" src="'.$globalURL.'/js/topojson.v2.min.js"></script>';
 print '<script type="text/javascript" src="'.$globalURL.'/js/datamaps.world.min.js"></script>';
-print '<div class="info">
-	  	<h1>'._("Most common Country a flight was over").'</h1>
-	  </div>
-	<p>'._("Below are the <strong>Top 10</strong> most common country a flight was over.").'</p>';
+print '<div class="info">';
+if ($type == 'aircraft') {
+	print '<h1>'._("Most common Country a flight was over").'</h1>';
+} elseif ($type == 'marine') {
+	print '<h1>'._("Most common Country a vessel was inside").'</h1>';
+} elseif ($type == 'tracker') {
+	print '<h1>'._("Most common Country a tracker was inside").'</h1>';
+}
+print '</div>';
+if ($type == 'aircraft') {
+	print '<p>'._("Below are the <strong>Top 10</strong> most common country a flight was over.").'</p>';
+} elseif ($type == 'marine') {
+	print '<p>'._("Below are the <strong>Top 10</strong> most common country a vessel was inside.").'</p>';
+} elseif ($type == 'tracker') {
+	print '<p>'._("Below are the <strong>Top 10</strong> most common country a tracker was inside.").'</p>';
+}
 
-$flightover_array = $Stats->countAllFlightOverCountries(false,$airline_icao,$filter_name);
+if ($type == 'aircraft') {
+	$flightover_array = $Stats->countAllFlightOverCountries(false,$airline_icao,$filter_name);
+} elseif ($type == 'marine') {
+	$flightover_array = $Marine->countAllMarineOverCountries();
+} elseif ($type == 'tracker') {
+	$flightover_array = $Tracker->countAllTrackerOverCountries();
+}
 /*
 require_once('require/class.Spotter.php');
 $Spotter = new Spotter();
