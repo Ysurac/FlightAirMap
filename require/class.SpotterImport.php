@@ -366,10 +366,10 @@ class SpotterImport {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('waypoints' => $line['waypoints']));
 		}
 		if (isset($line['pilot_id']) && $line['pilot_id'] != '') {
-		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('pilot_id' => $line['pilot_id']));
+		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('pilot_id' => trim($line['pilot_id'])));
 		}
 		if (isset($line['pilot_name']) && $line['pilot_name'] != '') {
-		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('pilot_name' => $line['pilot_name']));
+		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('pilot_name' => trim($line['pilot_name'])));
 		}
  
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_flights[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9]+$/', $line['ident'])) {

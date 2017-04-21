@@ -5071,7 +5071,7 @@ class Spotter{
 			require_once('class.SpotterLive.php');
 			$SpotterLive = new SpotterLive();
 			$filter_query = $SpotterLive->getFilter($filters,true,true);
-			$filter_query .= ' over_country IS NOT NULL';
+			$filter_query .= " over_country IS NOT NULL AND over_country <> ''";
 			if ($olderthanmonths > 0) {
 				if ($globalDBdriver == 'mysql') {
 					$filter_query .= ' AND spotter_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -5091,7 +5091,7 @@ class Spotter{
 			require_once('class.SpotterArchive.php');
 			$SpotterArchive = new SpotterArchive();
 			$filter_query = $SpotterArchive->getFilter($filters,true,true);
-			$filter_query .= ' over_country IS NOT NULL';
+			$filter_query .= " over_country IS NOT NULL AND over_country <> ''";
 			if ($olderthanmonths > 0) {
 				if ($globalDBdriver == 'mysql') {
 					$filter_query .= ' AND spotter_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';

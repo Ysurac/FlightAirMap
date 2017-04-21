@@ -467,7 +467,7 @@ require_once('header.php');
 			$flightover_data = '';
 			foreach($flightover_array as $flightover_item)
 			{
-				$flightover_data .= '[ "'.$flightover_item['flight_country_iso3'].'",'.$flightover_item['flight_count'].'],';
+				$flightover_data .= '[ "'.$flightover_item['marine_country_iso3'].'",'.$flightover_item['marine_count'].'],';
 			}
 			$flightover_data = substr($flightover_data, 0, -1);
 			print $flightover_data;

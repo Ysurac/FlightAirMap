@@ -83,7 +83,6 @@ class MarineArchive {
 
 	// marine_archive
 	public function addMarineArchiveData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '') {
-		
 		require_once(dirname(__FILE__).'/class.Marine.php');
 		if ($over_country == '') {
 			$Marine = new Marine($this->db);

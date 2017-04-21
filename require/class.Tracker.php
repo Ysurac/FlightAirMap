@@ -762,7 +762,7 @@ class Tracker{
 			require_once('class.TrackerLive.php');
 			$TrackerLive = new TrackerLive();
 			$filter_query = $TrackerLive->getFilter($filters,true,true);
-			$filter_query .= ' over_country IS NOT NULL';
+			$filter_query .= " over_country IS NOT NULL AND over_country <> ''";
 			if ($olderthanmonths > 0) {
 				if ($globalDBdriver == 'mysql') {
 					$filter_query .= ' AND tracker_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -782,7 +782,7 @@ class Tracker{
 			require_once('class.TrackerArchive.php');
 			$TrackerArchive = new TrackerArchive();
 			$filter_query = $TrackerArchive->getFilter($filters,true,true);
-			$filter_query .= ' over_country IS NOT NULL';
+			$filter_query .= " over_country IS NOT NULL AND over_country <> ''";
 			if ($olderthanmonths > 0) {
 				if ($globalDBdriver == 'mysql') {
 					$filter_query .= ' AND tracker_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';

@@ -818,7 +818,7 @@ class Marine{
 		if (!isset($globalArchive) || $globalArchive !== TRUE) {
 			$MarineLive = new MarineLive();
 			$filter_query = $MarineLive->getFilter($filters,true,true);
-			$filter_query .= ' over_country IS NOT NULL';
+			$filter_query .= " over_country IS NOT NULL AND over_country <> ''";
 			if ($olderthanmonths > 0) {
 				if ($globalDBdriver == 'mysql') {
 					$filter_query .= ' AND marine_live.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -838,7 +838,7 @@ class Marine{
 			require_once(dirname(__FILE__)."/class.MarineArchive.php");
 			$MarineArchive = new MarineArchive();
 			$filter_query = $MarineArchive->getFilter($filters,true,true);
-			$filter_query .= ' over_country IS NOT NULL';
+			$filter_query .= " over_country <> ''";
 			if ($olderthanmonths > 0) {
 				if ($globalDBdriver == 'mysql') {
 					$filter_query .= ' AND marine_archive.date < DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$olderthanmonths.' MONTH) ';
@@ -867,10 +867,10 @@ class Marine{
         
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			$temp_array['flight_count'] = $row['nb'];
-			$temp_array['flight_country'] = $row['name'];
-			$temp_array['flight_country_iso3'] = $row['iso3'];
-			$temp_array['flight_country_iso2'] = $row['iso2'];
+			$temp_array['marine_count'] = $row['nb'];
+			$temp_array['marine_country'] = $row['name'];
+			$temp_array['marine_country_iso3'] = $row['iso3'];
+			$temp_array['marine_country_iso2'] = $row['iso2'];
 			$flight_array[] = $temp_array;
 		}
 		return $flight_array;
