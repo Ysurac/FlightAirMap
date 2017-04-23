@@ -369,33 +369,33 @@ class MarineImport {
 					    if ($globalDebugTimeElapsed) echo 'Time elapsed for update addspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 					}
 				    }
-				    /*
-				    // Add source stat in DB
-				    $Stats = new Stats($this->db);
-				    if (!empty($this->stats)) {
-					if ($globalDebug) echo 'Add source stats : ';
-				        foreach($this->stats as $date => $data) {
-					    foreach($data as $source => $sourced) {
-					        //print_r($sourced);
-				    	        if (isset($sourced['polar'])) echo $Stats->addStatSource(json_encode($sourced['polar']),$source,'polar',$date);
-				    	        if (isset($sourced['hist'])) echo $Stats->addStatSource(json_encode($sourced['hist']),$source,'hist',$date);
-				    		if (isset($sourced['msg'])) {
-				    		    if (time() - $sourced['msg']['date'] > 10) {
-				    		        $nbmsg = round($sourced['msg']['nb']/(time() - $sourced['msg']['date']));
-				    		        echo $Stats->addStatSource($nbmsg,$source,'msg',$date);
-			    			        unset($this->stats[$date][$source]['msg']);
+				    if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE && $this->all_tracked[$id]['latitude'] != '' && $this->all_tracked[$id]['longitude'] != '') {
+					// Add source stat in DB
+					$Stats = new Stats($this->db);
+					if (!empty($this->stats)) {
+					    if ($globalDebug) echo 'Add source stats : ';
+				    	    foreach($this->stats as $date => $data) {
+						foreach($data as $source => $sourced) {
+					    	    //print_r($sourced);
+				    	    	    if (isset($sourced['polar'])) echo $Stats->addStatSource(json_encode($sourced['polar']),$source,'polar_marine',$date);
+				    	    	    if (isset($sourced['hist'])) echo $Stats->addStatSource(json_encode($sourced['hist']),$source,'hist_marine',$date);
+				    		    if (isset($sourced['msg'])) {
+				    			if (time() - $sourced['msg']['date'] > 10) {
+				    		    	    $nbmsg = round($sourced['msg']['nb']/(time() - $sourced['msg']['date']));
+				    		    	    echo $Stats->addStatSource($nbmsg,$source,'msg_marine',$date);
+			    			    	    unset($this->stats[$date][$source]['msg']);
+			    				}
 			    			    }
 			    			}
-			    		    }
-			    		    if ($date != date('Y-m-d')) {
-			    			unset($this->stats[$date]);
-			    		    }
-				    	}
-				    	if ($globalDebug) echo 'Done'."\n";
-
+			    			if ($date != date('Y-m-d')) {
+			    			    unset($this->stats[$date]);
+			    			}
+				    	    }
+				    	    if ($globalDebug) echo 'Done'."\n";
+					}
+					$Stats->db = null;
 				    }
-				    $Stats->db = null;
-				    */
+				    
 				    $this->del();
 				//$ignoreImport = false;
 				$this->all_tracked[$id]['addedMarine'] = 1;
@@ -450,7 +450,7 @@ class MarineImport {
 				$this->all_tracked[$id]['putinarchive'] = false;
 
 				// Put statistics in $this->stats variable
-				/*
+				
 				if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE && $line['format_source'] != 'aprs' && $this->all_tracked[$id]['latitude'] != '' && $this->all_tracked[$id]['longitude'] != '') {
 					$source = $this->all_tracked[$id]['source_name'];
 					if ($source == '') $source = $this->all_tracked[$id]['format_source'];
@@ -501,7 +501,7 @@ class MarineImport {
 						$this->stats[$current_date][$source]['hist'][$distance] += 1;
 					}
 				}
-				*/
+				
 
 				$this->all_tracked[$id]['lastupdate'] = time();
 				if ($this->all_tracked[$id]['putinarchive']) $send = true;

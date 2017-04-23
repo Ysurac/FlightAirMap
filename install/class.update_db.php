@@ -2050,7 +2050,7 @@ class update_db {
 	public static function update_banned_fam() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Banned airlines in Europe from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/ban_eu.csv',$tmp_dir.'ban_eu.csv');
+		update_db::download('http://data.flightairmap.fr/data/ban-eu.csv',$tmp_dir.'ban_eu.csv');
 		if (file_exists($tmp_dir.'ban_eu.csv')) {
 			//if ($globalDebug) echo "Gunzip...";
 			//update_db::gunzip($tmp_dir.'ban_ue.csv');

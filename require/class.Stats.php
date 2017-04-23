@@ -1801,10 +1801,10 @@ class Stats {
 			echo '--- Stats by airlines ---'."\n";
 			if ($Connection->tableExists('countries')) {
 				if ($globalDebug) echo 'Count all flights by countries by airlines...'."\n";
-				//$SpotterArchive = new SpotterArchive();
-				$Spotter = new Spotter($this->db);
-				//$alldata = $SpotterArchive->countAllFlightOverCountriesByAirlines(false,0,$last_update_day);
-				$alldata = $Spotter->countAllFlightOverCountriesByAirlines(false,0,$last_update_day);
+				$SpotterArchive = new SpotterArchive();
+				//$Spotter = new Spotter($this->db);
+				$alldata = $SpotterArchive->countAllFlightOverCountriesByAirlines(false,0,$last_update_day);
+				//$alldata = $Spotter->countAllFlightOverCountriesByAirlines(false,0,$last_update_day);
 				foreach ($alldata as $number) {
 					$this->addStatCountry($number['flight_country_iso2'],$number['flight_country_iso3'],$number['flight_country'],$number['flight_count'],$number['airline_icao'],'',$reset);
 				}
