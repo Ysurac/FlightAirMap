@@ -30,7 +30,7 @@ $year_cnt = "['flights',".substr($year_cnt,0,-1)."]";
 print 'c3.generate({
     bindto: "#chart",
     data: { x: "x",
-    columns: ['.$year_data.','.$year_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
+    columns: ['.$year_data.','.$year_cnt.'], types: { flights: "area"}, colors: { flights: "#1a3151"}},
     axis: { x: { type: "timeseries",tick: { format: "%Y-%m"}}, y: { label: "# of Flights"}},legend: { show: false }});';
 print '</script>';
 

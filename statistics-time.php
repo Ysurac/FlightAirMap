@@ -49,7 +49,7 @@ $hour_cnt = "['flights',".substr($hour_cnt,0,-1)."]";
 print 'c3.generate({
     bindto: "#chartHour",
     data: {
-    columns: ['.$hour_cnt.'], types: { flights: "area-spline"}, colors: { flights: "#1a3151"}},
+    columns: ['.$hour_cnt.'], types: { flights: "area"}, colors: { flights: "#1a3151"}},
     axis: { x: { type: "category", categories: '.$hour_data.'},y: { label: "# of Flights"}},legend: { show: false }});';
 print '</script>';
 

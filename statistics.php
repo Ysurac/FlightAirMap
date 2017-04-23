@@ -114,16 +114,16 @@ require_once('header.php');
 <?php
 	} elseif ($type == 'marine') {
 ?>
-	<span><span class="badge"><?php print number_format($Marine->countOverallMarine($filter_name,$year,$month)); ?></span> <?php echo _("Vessels"); ?></span>
+	<span><span class="badge"><?php print number_format($Marine->countOverallMarine(array(),$year,$month)); ?></span> <?php echo _("Vessels"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-	<span><span class="badge"><?php print number_format($Marine->countOverallMarineTypes($filter_name,$year,$month)); ?></span> <?php echo _("Types"); ?></span>
+	<span><span class="badge"><?php print number_format($Marine->countOverallMarineTypes(array(),$year,$month)); ?></span> <?php echo _("Types"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
 	} elseif ($type == 'tracker') {
 ?>
-	<span><span class="badge"><?php print number_format($Tracker->countOverallTracker($filter_name,$year,$month)); ?></span> <?php echo _("Trackers"); ?></span>
+	<span><span class="badge"><?php print number_format($Tracker->countOverallTracker(array(),$year,$month)); ?></span> <?php echo _("Trackers"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-	<span><span class="badge"><?php print number_format($Tracker->countOverallTrackerTypes($filter_name,$year,$month)); ?></span> <?php echo _("Types"); ?></span>
+	<span><span class="badge"><?php print number_format($Tracker->countOverallTrackerTypes(array(),$year,$month)); ?></span> <?php echo _("Types"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
 	}
@@ -222,7 +222,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Vessel Type"); ?></h2>
                  <?php
-                  $marine_array = $Marine->countAllMarineTypes();
+                  $marine_array = $Marine->countAllMarineTypes(true,0,'',array(),$year,$month,$day);
 		    if (count($marine_array) == 0) print _("No data available");
 		    else {
                     print '<div id="chart1" class="chart" width="100%"></div><script>';
@@ -270,7 +270,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Tracker Type"); ?></h2>
                  <?php
-                  $tracker_array = $Tracker->countAllTrackerTypes();
+                  $tracker_array = $Tracker->countAllTrackerTypes(true,0,'',array(),$year,$month,$day);
 		    if (count($tracker_array) == 0) print _("No data available");
 		    else {
                     print '<div id="chart1" class="chart" width="100%"></div><script>';
