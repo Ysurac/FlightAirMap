@@ -93,18 +93,19 @@ class TrackerImport {
 	    //print_r($line);
   	    if (isset($line['ident'])) {
 
-		/*
+		
 		// Increment message number
 		if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE) {
 		    $current_date = date('Y-m-d');
-		    $source = $line['source_name'];
+		    if (isset($line['source_name'])) $source = $line['source_name'];
+		    else $source = '';
 		    if ($source == '' || $line['format_source'] == 'aprs') $source = $line['format_source'];
 		    if (!isset($this->stats[$current_date][$source]['msg'])) {
 		    	$this->stats[$current_date][$source]['msg']['date'] = time();
 		    	$this->stats[$current_date][$source]['msg']['nb'] = 1;
 		    } else $this->stats[$current_date][$source]['msg']['nb'] += 1;
 		}
-		*/
+		
 		
 		$Common = new Common();
 	        if (!isset($line['id'])) $id = trim($line['ident']);
@@ -304,7 +305,7 @@ class TrackerImport {
 				    if ($globalDebug && isset($result)) echo $result."\n";
 				    if ($globalDebugTimeElapsed) echo 'Time elapsed for update addspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 				    
-				    /*
+				    
 				    // Add source stat in DB
 				    $Stats = new Stats($this->db);
 				    if (!empty($this->stats)) {
@@ -312,12 +313,12 @@ class TrackerImport {
 				        foreach($this->stats as $date => $data) {
 					    foreach($data as $source => $sourced) {
 					        //print_r($sourced);
-				    	        if (isset($sourced['polar'])) echo $Stats->addStatSource(json_encode($sourced['polar']),$source,'polar',$date);
-				    	        if (isset($sourced['hist'])) echo $Stats->addStatSource(json_encode($sourced['hist']),$source,'hist',$date);
+				    	        if (isset($sourced['polar'])) echo $Stats->addStatSource(json_encode($sourced['polar']),$source,'polar_tracker',$date);
+				    	        if (isset($sourced['hist'])) echo $Stats->addStatSource(json_encode($sourced['hist']),$source,'hist_tracker',$date);
 				    		if (isset($sourced['msg'])) {
 				    		    if (time() - $sourced['msg']['date'] > 10) {
 				    		        $nbmsg = round($sourced['msg']['nb']/(time() - $sourced['msg']['date']));
-				    		        echo $Stats->addStatSource($nbmsg,$source,'msg',$date);
+				    		        echo $Stats->addStatSource($nbmsg,$source,'msg_tracker',$date);
 			    			        unset($this->stats[$date][$source]['msg']);
 			    			    }
 			    			}
@@ -373,8 +374,8 @@ class TrackerImport {
 				if ($globalDebugTimeElapsed) echo 'Time elapsed for update addlivespotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 
 				// Put statistics in $this->stats variable
-				/*
-				if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE && $line['format_source'] != 'aprs' && $this->all_tracked[$id]['latitude'] != '' && $this->all_tracked[$id]['longitude'] != '') {
+				
+				if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE && $this->all_tracked[$id]['latitude'] != '' && $this->all_tracked[$id]['longitude'] != '') {
 					$source = $this->all_tracked[$id]['source_name'];
 					if ($source == '') $source = $this->all_tracked[$id]['format_source'];
 					if (!isset($this->source_location[$source])) {
@@ -424,7 +425,6 @@ class TrackerImport {
 						$this->stats[$current_date][$source]['hist'][$distance] += 1;
 					}
 				}
-				*/
 
 				$this->all_tracked[$id]['lastupdate'] = time();
 				if ($this->all_tracked[$id]['putinarchive']) $send = true;

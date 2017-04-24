@@ -1184,12 +1184,16 @@ require_once('header.php');
 					$polar = $Stats->getStatsSource('polar',date('Y'),date('m'),date('d'));
 				} elseif ($type == 'marine') {
 					$polar = $Stats->getStatsSource('polar_marine',date('Y'),date('m'),date('d'));
+				} elseif ($type == 'tracker') {
+					$polar = $Stats->getStatsSource('polar_tracker',date('Y'),date('m'),date('d'));
 				}
 			} else {
 				if ($type == 'aircraft') {
 					$polar = $Stats->getStatsSource('polar',$year,$month);
 				} elseif ($type == 'marine') {
 					$polar = $Stats->getStatsSource('polar_marine',$year,$month);
+				} elseif ($type == 'tracker') {
+					$polar = $Stats->getStatsSource('polar_tracker',$year,$month);
 				}
 			}
 			if (!empty($polar)) {
@@ -1260,12 +1264,16 @@ require_once('header.php');
 					$msg = $Stats->getStatsSource('msg',date('Y'),date('m'),date('d'));
 				} elseif ($type == 'marine') {
 					$msg = $Stats->getStatsSource('msg_marine',date('Y'),date('m'),date('d'));
+				} elseif ($type == 'tracker') {
+					$msg = $Stats->getStatsSource('msg_tracker',date('Y'),date('m'),date('d'));
 				}
 			} else {
 				if ($type == 'aircraft') {
 					$msg = $Stats->getStatsSource('msg',$year,$month);
 				} elseif ($type == 'marine') {
 					$msg = $Stats->getStatsSource('msg_marine',$year,$month);
+				} elseif ($type == 'tracker') {
+					$msg = $Stats->getStatsSource('msg_tracker',$year,$month);
 				}
 			}
 			if (!empty($msg)) {
@@ -1304,12 +1312,16 @@ require_once('header.php');
 					$hist = $Stats->getStatsSource('hist',date('Y'),date('m'),date('d'));
 				} elseif ($type == 'marine') {
 					$hist = $Stats->getStatsSource('hist_marine',date('Y'),date('m'),date('d'));
+				} elseif ($type == 'tracker') {
+					$hist = $Stats->getStatsSource('hist_tracker',date('Y'),date('m'),date('d'));
 				}
 			} else {
 				if ($type == 'aircraft') {
 					$hist = $Stats->getStatsSource('hist',$year,$month);
 				} elseif ($type == 'marine') {
 					$hist = $Stats->getStatsSource('hist_marine',$year,$month);
+				} elseif ($type == 'tracker') {
+					$hist = $Stats->getStatsSource('hist_tracker',$year,$month);
 				}
 			}
 			foreach ($hist as $hists) {

@@ -240,7 +240,8 @@ class SpotterImport {
 		// Increment message number
 		if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE) {
 		    $current_date = date('Y-m-d');
-		    $source = $line['source_name'];
+		    if (isset($line['source_name'])) $source = $line['source_name'];
+		    else $source = '';
 		    if ($source == '' || $line['format_source'] == 'aprs') $source = $line['format_source'];
 		    if (!isset($this->stats[$current_date][$source]['msg'])) {
 		    	$this->stats[$current_date][$source]['msg']['date'] = time();
