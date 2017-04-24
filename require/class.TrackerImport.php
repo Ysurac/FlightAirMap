@@ -331,7 +331,7 @@ class TrackerImport {
 
 				    }
 				    $Stats->db = null;
-				    */
+				    
 				    $this->del();
 				//$ignoreImport = false;
 				$this->all_tracked[$id]['addedTracker'] = 1;
