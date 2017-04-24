@@ -1226,6 +1226,7 @@ class update_db {
 			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				if ($i > 0) {
+					$data = array_map(function($v) { return $v === 'NULL' ? NULL : $v; },$data);
 					$query = 'INSERT INTO marine_identity (mmsi,imo,call_sign,ship_name,length,gross_tonnage,dead_weight,width,country,engine_power,type) VALUES (:mmsi,:imo,:call_sign,:ship_name,:length,:gross_tonnage,:dead_weight,:width,:country,:engine_power,:type)';
 					try {
 						$sth = $Connection->db->prepare($query);

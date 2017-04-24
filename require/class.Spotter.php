@@ -5130,7 +5130,6 @@ class Spotter{
 		return $flight_array;
 	}
 	
-	
 	/**
 	* Gets all aircraft types that have flown over
 	*

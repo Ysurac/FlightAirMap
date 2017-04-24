@@ -28,7 +28,7 @@ CREATE TABLE spotter_output (
   altitude integer NOT NULL,
   heading integer NOT NULL,
   ground_speed integer NOT NULL,
-  highlight text NOT NULL,
+  highlight text,
   squawk integer,
   ModeS varchar(255) DEFAULT NULL,
   pilot_id varchar(255),
