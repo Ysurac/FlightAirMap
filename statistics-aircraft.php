@@ -28,7 +28,8 @@ print '<div id="chart" class="chart" width="100%"></div><script>';
 $aircraft_data = '';
 foreach($aircraft_array as $aircraft_item)
 {
-	$aircraft_data .= '["'.$aircraft_item['aircraft_manufacturer'].' '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')",'.$aircraft_item['aircraft_icao_count'].'],';
+	if ($aircraft_item['aircraft_manufacturer'] == 'Not Available') $aircraft_data .= '[" ('.$aircraft_item['aircraft_icao'].')",'.$aircraft_item['aircraft_icao_count'].'],';
+	else $aircraft_data .= '["'.$aircraft_item['aircraft_manufacturer'].' '.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')",'.$aircraft_item['aircraft_icao_count'].'],';
 }
 $aircraft_data = substr($aircraft_data, 0, -1);
 print 'var series = ['.$aircraft_data.'];';
