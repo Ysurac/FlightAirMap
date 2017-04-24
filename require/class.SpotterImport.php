@@ -881,7 +881,7 @@ class SpotterImport {
 				//if ($line['format_source'] != 'aprs') {
 				//if (isset($line['format_source']) && ($line['format_source'] === 'sbs' || $line['format_source'] === 'tsv' || $line['format_source'] === 'raw' || $line['format_source'] === 'deltadbtxt')) {
 				if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
-				    if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE && $line['format_source'] != 'aprs' && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
+				    if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE && $this->all_flights[$id]['latitude'] != '' && $this->all_flights[$id]['longitude'] != '') {
 					$source = $this->all_flights[$id]['source_name'];
 					if ($source == '') $source = $this->all_flights[$id]['format_source'];
 					if (!isset($this->source_location[$source])) {
