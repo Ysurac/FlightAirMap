@@ -223,7 +223,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Vessel Type"); ?></h2>
                  <?php
-                  $marine_array = $Marine->countAllMarineTypes(true,0,'',array(),$year,$month,$day);
+                    $marine_array = $Marine->countAllMarineTypes(true,0,'',array(),$year,$month);
 		    if (count($marine_array) == 0) print _("No data available");
 		    else {
                     print '<div id="chart1" class="chart" width="100%"></div><script>';
@@ -271,7 +271,7 @@ require_once('header.php');
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Tracker Type"); ?></h2>
                  <?php
-                  $tracker_array = $Tracker->countAllTrackerTypes(true,0,'',array(),$year,$month,$day);
+                  $tracker_array = $Tracker->countAllTrackerTypes(true,0,'',array(),$year,$month);
 		    if (count($tracker_array) == 0) print _("No data available");
 		    else {
                     print '<div id="chart1" class="chart" width="100%"></div><script>';
@@ -1174,18 +1174,23 @@ require_once('header.php');
 	}
 ?>
 <?php
-	if ($type == 'aircraft') {
-?>
-<?php
 		if (($airline_icao == '' || $airline_icao == 'all') && $filter_name == '' && $year == '' && $month == '') {
 ?>
         <div class="row column">
 <?php
 			//$polar = $Stats->getStatsSource(date('Y-m-d'),'polar');
 			if ($year == '' && $month == '') {
-				$polar = $Stats->getStatsSource('polar',date('Y'),date('m'),date('d'));
+				if ($type == 'aircraft') {
+					$polar = $Stats->getStatsSource('polar',date('Y'),date('m'),date('d'));
+				} elseif ($type == 'marine') {
+					$polar = $Stats->getStatsSource('polar_marine',date('Y'),date('m'),date('d'));
+				}
 			} else {
-				$polar = $Stats->getStatsSource('polar',$year,$month);
+				if ($type == 'aircraft') {
+					$polar = $Stats->getStatsSource('polar',$year,$month);
+				} elseif ($type == 'marine') {
+					$polar = $Stats->getStatsSource('polar_marine',$year,$month);
+				}
 			}
 			if (!empty($polar)) {
 				print '<h2>'._("Coverage pattern").'</h2>';
@@ -1251,9 +1256,17 @@ require_once('header.php');
 <?php
 			//$msg = $Stats->getStatsSource(date('Y-m-d'),'msg');
 			if ($year == '' && $month == '') {
-				$msg = $Stats->getStatsSource('msg',date('Y'),date('m'),date('d'));
+				if ($type == 'aircraft') {
+					$msg = $Stats->getStatsSource('msg',date('Y'),date('m'),date('d'));
+				} elseif ($type == 'marine') {
+					$msg = $Stats->getStatsSource('msg_marine',date('Y'),date('m'),date('d'));
+				}
 			} else {
-				$msg = $Stats->getStatsSource('msg',$year,$month);
+				if ($type == 'aircraft') {
+					$msg = $Stats->getStatsSource('msg',$year,$month);
+				} elseif ($type == 'marine') {
+					$msg = $Stats->getStatsSource('msg_marine',$year,$month);
+				}
 			}
 			if (!empty($msg)) {
 				print '<h2>'._("Messages received").'</h2>';
@@ -1287,9 +1300,17 @@ require_once('header.php');
 <?php
 		//$hist = $Stats->getStatsSource(date('Y-m-d'),'hist');
 			if ($year == '' && $month == '') {
-				$hist = $Stats->getStatsSource('hist',date('Y'),date('m'),date('d'));
+				if ($type == 'aircraft') {
+					$hist = $Stats->getStatsSource('hist',date('Y'),date('m'),date('d'));
+				} elseif ($type == 'marine') {
+					$hist = $Stats->getStatsSource('hist_marine',date('Y'),date('m'),date('d'));
+				}
 			} else {
-				$hist = $Stats->getStatsSource('hist',$year,$month);
+				if ($type == 'aircraft') {
+					$hist = $Stats->getStatsSource('hist',$year,$month);
+				} elseif ($type == 'marine') {
+					$hist = $Stats->getStatsSource('hist_marine',$year,$month);
+				}
 			}
 			foreach ($hist as $hists) {
 				//$hist_data = '';
@@ -1319,7 +1340,7 @@ require_once('header.php');
 				$nb_data = "['flights',".substr($nb_data, 0, -1)."]";
 ?>
             <div class="col-md-6">
-                <h2><?php echo sprintf(_("Flights Distance for %s"),$source); ?></h2>
+                <h2><?php echo sprintf(_("Distance for %s"),$source); ?></h2>
 <?php
 				print '<div id="charthist-'.str_replace(' ','_',strtolower($source)).'" class="chart" width="100%"></div><script>';
 				print 'c3.generate({
@@ -1337,9 +1358,6 @@ require_once('header.php');
         </div>
 <?php
 		}
-?>
-<?php
-	}
 ?>
     </div>
 </div>  
