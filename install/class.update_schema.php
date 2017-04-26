@@ -1891,6 +1891,51 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_39() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if ($globalDBdriver == 'mysql') {
+			$query = "ALTER TABLE stats_pilot MODIFY COLUMN pilot_id varchar(255) NOT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (change pilot_id type to varchar in stats_pilot) : ".$e->getMessage()."\n";
+			}
+			$query = "ALTER TABLE marine_identity MODIFY COLUMN mmsi varchar(255) DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (change mmsi type to varchar in marine_identity) : ".$e->getMessage()."\n";
+			}
+		} else {
+			$query = "alter table stats_pilot alter column pilot_id type varchar(255)";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (change pilot_id type to varchar in stats_pilot) : ".$e->getMessage()."\n";
+			}
+			$query = "alter table marine_identity alter column mmsi type varchar(255)";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (change mmsi type to varchar in marine_identity) : ".$e->getMessage()."\n";
+			}
+		}
+		$query = "UPDATE config SET value = '40' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
     	public static function check_version($update = false) {
     	    global $globalDBname;
@@ -2058,6 +2103,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '38') {
     			    $error = self::update_from_38();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '39') {
+    			    $error = self::update_from_39();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

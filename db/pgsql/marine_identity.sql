@@ -1,6 +1,6 @@
 CREATE TABLE marine_identity (
   marid serial,
-  mmsi varchar(20) DEFAULT NULL,
+  mmsi varchar(255) DEFAULT NULL,
   imo varchar(20) DEFAULT NULL,
   call_sign varchar(255) DEFAULT NULL,
   ship_name varchar(255) DEFAULT NULL,
