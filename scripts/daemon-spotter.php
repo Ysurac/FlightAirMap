@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 /**
-* This script is used to retrieve message from SBS source like Dump1090, Radarcape,.. or from phpvms, wazzup files,...
+* This script is used to retrieve message from SBS source like Dump1090, Radarcape,.. or from phpvms, wazzup files,AIS, APRS,...
 * This script can be used as cron job with $globalDaemon = FALSE
 */
 
@@ -777,8 +777,8 @@ while ($i > 0) {
 		    $data['altitude'] = round($line[7]*3.28084); // altitude
 		    $data['speed'] = round($line[9]*1.94384); // speed
 		    $data['heading'] = round($line[10]); // heading
-		    $data['latitude'] = $line[5]; // lat
-		    $data['longitude'] = $line[6]; // long
+		    $data['latitude'] = $line[6]; // lat
+		    $data['longitude'] = $line[5]; // long
 		    $data['verticalrate'] = $line[11]; // verticale rate
 		    //$data['squawk'] = $line[10]; // squawk
 		    //$data['emergency'] = ''; // emergency
@@ -1103,6 +1103,8 @@ while ($i > 0) {
 			    if (isset($ais_data['destination'])) $data['arrival_code'] = $ais_data['destination'];
 			    if (isset($ais_data['eta_ts'])) $data['arrival_date'] = date('Y-m-d H:i:s',$ais_data['eta_ts']);
 			    if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
+			    if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
+			    if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
 
 			    if (isset($ais_data['timestamp'])) {
 				$data['datetime'] = date('Y-m-d H:i:s',$ais_data['timestamp']);
