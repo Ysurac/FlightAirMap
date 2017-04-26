@@ -1560,6 +1560,7 @@ class Stats {
 			if ($globalDebug) echo 'Count all pilots...'."\n";
 			$alldata = $Spotter->countAllPilots(false,0,$last_update_day);
 			foreach ($alldata as $number) {
+				if ($number['pilot_id'] == 0 || $number['pilot_id'] == '') $number['pilot_id'] = $number['pilot_name'];
 				$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name'],'','',$number['format_source'],$reset);
 			}
 			

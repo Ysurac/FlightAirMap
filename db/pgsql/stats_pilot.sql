@@ -1,6 +1,6 @@
 CREATE TABLE stats_pilot (
   stats_pilot_id serial,
-  pilot_id integer NOT NULL,
+  pilot_id varchar(255) NOT NULL,
   cnt integer NOT NULL,
   pilot_name varchar(255) DEFAULT NULL,
   stats_airline varchar(255) DEFAULT '',
