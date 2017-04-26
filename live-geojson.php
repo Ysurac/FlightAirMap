@@ -595,7 +595,7 @@ $output = '{';
 					}
 				}
 				
-				if (isset($history) && $history == $spotter_item['ident'] && isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != 'NA' && isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != 'NA' && ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == "true") || (!isset($_COOKIE['MapRoute']) && (!isset($globalMapRoute) || (isset($globalMapRoute) && $globalMapRoute))))) {
+				if (isset($history) && $history != '' && $history == $spotter_item['ident'] && isset($spotter_item['departure_airport']) && $spotter_item['departure_airport'] != 'NA' && isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != 'NA' && ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == "true") || (!isset($_COOKIE['MapRoute']) && (!isset($globalMapRoute) || (isset($globalMapRoute) && $globalMapRoute))))) {
 				    $output_air = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "route"},"geometry": {"type": "LineString","coordinates": [';
 				    if (isset($spotter_item['departure_airport_latitude'])) {
 					$output_air .= '['.$spotter_item['departure_airport_longitude'].','.$spotter_item['departure_airport_latitude'].'],';
@@ -606,13 +606,14 @@ $output = '{';
 					}
 				    }
 				    if (isset($spotter_item['arrival_airport_latitude'])) {
-					$output_air .= '['.$spotter_item['arrival_airport_longitude'].','.$spotter_item['arrival_airport_latitude'].']';
+					$output_air .= '['.$spotter_item['arrival_airport_longitude'].','.$spotter_item['arrival_airport_latitude'].'],';
 				    } elseif (isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != 'NA') {
 					$aairport = $Spotter->getAllAirportInfo($spotter_item['arrival_airport']);
 					if (isset($aairport[0]['latitude'])) {
-					    $output_air .= '['.$aairport[0]['longitude'].','.$aairport[0]['latitude'].']';
+					    $output_air .= '['.$aairport[0]['longitude'].','.$aairport[0]['latitude'].'],';
 					}
 				    }
+				    $output_air  = substr($output_air, 0, -1);
 				    $output_air .= ']}},';
 				    $output .= $output_air;
 				    unset($output_air);
