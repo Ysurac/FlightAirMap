@@ -139,7 +139,9 @@ function connect_all($hosts) {
         	$globalSources[$id]['format'] = 'opensky';
         	//$last_exec['aircraftlistjson'] = 0;
         	if ($globalDebug) echo "Connect to opensky source (".$host.")...\n";
-    	    } else if (preg_match('/radarvirtuel.com\/file.json$/i',$host)) {
+    	    /*
+    	    // Disabled for now, site change source format
+    	    } else if (preg_match('/radarvirtuel.com\/list_aircrafts$/i',$host)) {
         	//$formats[$id] = 'radarvirtueljson';
         	$globalSources[$id]['format'] = 'radarvirtueljson';
         	//$last_exec['radarvirtueljson'] = 0;
@@ -148,6 +150,7 @@ function connect_all($hosts) {
         	    echo '!!! You MUST set $globalSourcesRights = TRUE in settings.php if you have the right to use this feed !!!'."\n";
         	    exit(0);
         	}
+    	    */
     	    } else if (preg_match('/planeUpdateFAA.php$/i',$host)) {
         	//$formats[$id] = 'planeupdatefaa';
         	$globalSources[$id]['format'] = 'planeupdatefaa';
