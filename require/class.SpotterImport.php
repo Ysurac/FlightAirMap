@@ -653,7 +653,7 @@ class SpotterImport {
   		}
 		if ($globalDaemon === TRUE && isset($globalSourcesupdate) && $globalSourcesupdate != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSourcesupdate) $dataFound = false;
 		elseif ($globalDaemon === TRUE && isset($globalSBS1update) && $globalSBS1update != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSBS1update) $dataFound = false;
-		elseif ($globalDaemon === TRUE && isset($globalAircraftMinupdate) && $globalAircraftMinupdate != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalMinupdate) $dataFound = false;
+		elseif ($globalDaemon === TRUE && isset($globalAircraftMinUpdate) && $globalAircraftMinUpdate != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalMinupdate) $dataFound = false;
 
 //		print_r($this->all_flights[$id]);
 		//gets the callsign from the last hour
