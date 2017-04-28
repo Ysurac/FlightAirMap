@@ -59,6 +59,9 @@ require_once('header.php');
 
     <p>The data published by <?php print $globalName; ?> is made available under the Open Database License: <a href="http://opendatacommons.org/licenses/odbl/1.0/" target="_blank">http://opendatacommons.org/licenses/odbl/1.0/</a>. Any rights in individual contents of the database are licensed under the Database Contents License: <a href="http://opendatacommons.org/licenses/dbcl/1.0/" target="_blank">http://opendatacommons.org/licenses/dbcl/1.0/</a> - See more at: <a href="http://opendatacommons.org/licenses/odbl/" target="_blank">http://opendatacommons.org/licenses/odbl/</a></p>
     
+    <h3>Source Code License</h3>
+    <img src="images/AGPLv3_Logo.png"/><p>The <a href="https://github.com/Ysurac/FlightAirMap/">source code</a> is available under <a href="https://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License version 3 (AGPL v3)</a></p>
+    
     <h3>Image Credits</h3>
     <ul>
 	<li>Airports and location icons from <a href="http://mapicons.nicolasmollet.com/">http://mapicons.nicolasmollet.com/</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 3.0 BY-SA</a>.</li>
