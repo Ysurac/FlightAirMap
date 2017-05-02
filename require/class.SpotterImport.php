@@ -235,6 +235,7 @@ class SpotterImport {
 	// SBS format is CSV format
 	if(is_array($line) && (isset($line['hex']) || isset($line['id']))) {
 	    //print_r($line);
+	    if (isset($line['hex'])) $line['hex'] = strtoupper($line['hex']);
   	    if (isset($line['id']) || (isset($line['hex']) && $line['hex'] != '' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) === 6)) {
 
 		// Increment message number
