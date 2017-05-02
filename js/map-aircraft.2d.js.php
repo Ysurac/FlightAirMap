@@ -634,10 +634,10 @@ function getLiveData(click)
 						}
 						if (type == "routedest"){
 							var styled = {
-								"color": "#ffbc50",
+								"color": "#945add",
 								"weight": 2,
-								"opacity": 0.5,
-								"dashArray": "4"
+								"opacity": 1.0,
+								"dashArray": "6"
 							};
 							layer.setStyle(styled);
 							layer_data.addLayer(layer);
