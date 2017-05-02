@@ -13,8 +13,12 @@ It also support glidernet APRS source.
 Satellites can be displayed on 3D map.
 On december, you can track Santa's flight.
 
+For vessels, AIS is a supported source, so ships can be displayed on both 2D and 3D map, statistics are generated,...
+For trackers, APRS is a supported source, so cars, trucks, mobile phones,... can be displayed on both 2D and 3D map, statistics are generated,...
+
 ## Demo
 * From ADS-B : [https://www.flightairmap.fr/](https://www.flightairmap.fr/)
+* From Open Glider Network : [https://ogn.flightairmap.fr/](https://ogn.flightairmap.fr/)
 * From IVAO : [https://ivao.flightairmap.fr/](https://ivao.flightairmap.fr/)
 * From VATSIM : [https://vatsim.flightairmap.fr/](https://vatsim.flightairmap.fr/)
 
@@ -78,6 +82,10 @@ Use install/index.php
 
 ### Virtual Airlines Manager (virtual flights)
 * You need to copy the file **install/VAM/VAM-json.php** in your VAM directory, and use it as source 
+
+### AIS NMEA (real ships)
+* You can use AISHub [http://www.aishub.net](http://www.aishub.net) feed, or rtl_ais [https://github.com/dgiardini/rtl-ais](https://github.com/dgiardini/rtl-ais) as TCP listener.
+
 
 ## License
 
