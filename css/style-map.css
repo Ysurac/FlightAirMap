@@ -155,7 +155,9 @@ body {
     font-size:0.8em;
     opacity:0.7 !important;
 }
-
+.maptooltip{
+    font-size: 0.8em;
+}
 .satellite {
     display: inline-block;
     content:url(../images/satellite.png);

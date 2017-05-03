@@ -750,6 +750,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="checkbox" name="airportpopup" id="airportpopup" value="airportpopup"<?php if ((isset($globalAirportPopup) && $globalAirportPopup)) { ?> checked="checked"<?php } ?> />
 			</p>
 -->
+			<p>
+				<label for="maptooltip">Always display callsign (only in 2D and can be slow)</label>
+				<input type="checkbox" name="maptooltip" id="maptooltip" value="maptooltip"<?php if ((isset($globalMapPermanentTooltip) && $globalMapPermanentTooltip)) { ?> checked="checked"<?php } ?> />
+			</p>
 			<br />
 			<p>
 				<label for="maphistory">Always show path of flights (else only when flight is selected)</label>
@@ -1229,6 +1233,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapHistory' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapHistory' => 'FALSE'));
+	}
+	$maptooltip = filter_input(INPUT_POST,'maptooltip',FILTER_SANITIZE_STRING);
+	if ($maptooltip == 'maptooltip') {
+		$settings = array_merge($settings,array('globalMapTooltip' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMapTooltip' => 'FALSE'));
 	}
 	$flightroute = filter_input(INPUT_POST,'flightroute',FILTER_SANITIZE_STRING);
 	if ($flightroute == 'flightroute') {
