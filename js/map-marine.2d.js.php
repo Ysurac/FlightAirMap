@@ -203,6 +203,13 @@ function getLiveMarineData(click)
 			})
 		    })
 <?php
+	if (isset($globalMapPermanentTooltip) && $globalMapPermanentTooltip) {
+?>
+		    .bindTooltip(callsign, {permanent: true, className: "maptooltip", direction: "bottom"})
+<?php
+	}
+?>
+<?php
 		if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 ?>
 		    .on('click', function() {
@@ -253,6 +260,13 @@ function getLiveMarineData(click)
 				})
 			    })
 <?php
+	if (isset($globalMapPermanentTooltip) && $globalMapPermanentTooltip) {
+?>
+			    .bindTooltip(callsign, {permanent: true, className: "maptooltip", direction: "bottom"})
+<?php
+	}
+?>
+<?php
 		if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 ?>
 			    .on('click', function() {
@@ -301,6 +315,12 @@ function getLiveMarineData(click)
 				})
 			    })
 <?php
+	if (isset($globalMapPermanentTooltip) && $globalMapPermanentTooltip) {
+?>
+			    .bindTooltip(callsign, {permanent: true, className: "maptooltip", direction: "bottom"})
+<?php
+	}
+?><?php
 		if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 ?>
 			    .on('click', function() {
