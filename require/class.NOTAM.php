@@ -1274,7 +1274,7 @@ class NOTAM {
 			$line = trim($line);
 			if (preg_match('#Q\) (.*)#',$line,$matches)) {
 				$line = str_replace(' ','',$line);
-				if (preg_match('#Q\)([A-Z]{4})\/([A-Z]{5})\/(IV|I|V)\/([A-Z]{1,3})\/([A-Z]{1,2})\/([0-9]{3})\/([0-9]{3})\/([0-9]{4})(N|S)([0-9]{5})(E|W)([0-9]{3})#',$line,$matches)) {
+				if (preg_match('#Q\)([A-Z]{3,4})\/([A-Z]{5})\/(IV|I|V)\/([A-Z]{1,3})\/([A-Z]{1,2})\/([0-9]{3})\/([0-9]{3})\/([0-9]{4})(N|S)([0-9]{5})(E|W)([0-9]{3}|)#',$line,$matches)) {
 				//if (preg_match('#Q\)([A-Z]{4})\/([A-Z]{5})\/(IV|I|V)\/([A-Z]{1,3})\/([A-Z]{1,2})\/([0-9]{3})\/([0-9]{3})\/([0-9]{4})(N|S)([0-9]{5})(E|W)([0-9]{3})#',$line,$matches)) {
 					//print_r($matches);
 					$result['fir'] = $matches[1];
@@ -1326,7 +1326,8 @@ class NOTAM {
 					if ($matches[11] == 'W') $longitude = -$longitude;
 					$result['latitude'] = $latitude;
 					$result['longitude'] = $longitude;
-					$result['radius'] = intval($matches[12]);
+					if ($matches[12] != '') $result['radius'] = intval($matches[12]);
+					else $result['radius'] = 0;
 				} else echo 'ERROR : '.$line."\n";
 			}
 			elseif (preg_match('#A\) (.*)#',$line,$matches)) {
