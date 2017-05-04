@@ -27,8 +27,7 @@ if (!empty($spotter_array))
 		    $output .= '"properties": {';
 			$output .= '"ident": "'.$spotter_item['ident'].'",';
 			$output .= '"frequency": "'.$spotter_item['frequency'].'",';
-			$radius = $spotter_item['atc_range']*100;
-			$output .= '"atc_range": "'.$radius.'",';
+			$output .= '"atc_range": "0",';
 			$output .= '"ivao_id": "'.$spotter_item['ivao_id'].'",';
 			$output .= '"ivao_name": "'.$spotter_item['ivao_name'].'",';
 			$output .= '"info": "'.$spotter_item['info'].'",';
@@ -41,6 +40,26 @@ if (!empty($spotter_array))
 			$output .= ']';
 		    $output .= '}';
 		$output .= '},';
+		$radius = $spotter_item['atc_range']*100;
+		if ($radius > 0) {
+			$output .= '{"type": "Feature",';
+			    $output .= '"properties": {';
+				$output .= '"ident": "'.$spotter_item['ident'].'",';
+				$output .= '"frequency": "'.$spotter_item['frequency'].'",';
+				$output .= '"atc_range": "'.$radius.'",';
+				$output .= '"ivao_id": "'.$spotter_item['ivao_id'].'",';
+				$output .= '"ivao_name": "'.$spotter_item['ivao_name'].'",';
+				$output .= '"info": "'.$spotter_item['info'].'",';
+				$output .= '"type": "'.$spotter_item['type'].'"';
+			    $output .= '},';
+			    $output .= '"geometry": {';
+				$output .= '"type": "Point",';
+				$output .= '"coordinates": [';
+				    $output .= $spotter_item['longitude'].', '.$spotter_item['latitude'];
+				$output .= ']';
+			    $output .= '}';
+			$output .= '},';
+		}
 	}
 	$output  = substr($output, 0, -1);
 } else {

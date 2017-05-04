@@ -504,30 +504,29 @@ while ($i > 0) {
 		$all_data = json_decode($buffer,true);
 		//print_r($all_data);
 		if (isset($all_data[0]['DATA'])) {
-		foreach ($all_data[0]['DATA'] as $line) {
-		    if ($line != '') {
-			$data = array();
-			$data['ident'] = $line['NAME'];
-			$data['mmsi'] = $line['MMSI'];
-			$data['speed'] = $line['SOG'];
-			$data['heading'] = $line['COG'];
-			$data['latitude'] = $line['LAT'];
-			$data['longitude'] = $line['LNG'];
-			//    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
-			$data['imo'] = $line['IMO'];
-			//$data['arrival_code'] = $ais_data['destination'];
-			$data['datetime'] = date('Y-m-d H:i:s',$line['T']);
-			$data['format_source'] = 'myshiptracking';
-			$data['id_source'] = $id_source;
-			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
-			$MI->add($data);
-			unset($data);
+		    foreach ($all_data[0]['DATA'] as $line) {
+			if ($line != '') {
+			    $data = array();
+			    $data['ident'] = $line['NAME'];
+			    $data['mmsi'] = $line['MMSI'];
+			    $data['speed'] = $line['SOG'];
+			    $data['heading'] = $line['COG'];
+			    $data['latitude'] = $line['LAT'];
+			    $data['longitude'] = $line['LNG'];
+			    //    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
+			    $data['imo'] = $line['IMO'];
+			    //$data['arrival_code'] = $ais_data['destination'];
+			    $data['datetime'] = date('Y-m-d H:i:s',$line['T']);
+			    $data['format_source'] = 'myshiptracking';
+			    $data['id_source'] = $id_source;
+			    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+			    $MI->add($data);
+			    unset($data);
+			}
 		    }
 		}
-		}
-		
 	    }
-    	    $last_exec[$id]['last'] = time();
+	    $last_exec[$id]['last'] = time();
 	} elseif ($value['format'] == 'boatbeaconapp' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
 	    $buffer = $Common->getData(str_replace('{timestamp}',time(),$value['host']));
 	    if ($buffer != '') {
@@ -552,6 +551,35 @@ while ($i > 0) {
 			    $MI->add($data);
 			    unset($data);
 			}
+		    }
+		}
+		
+	    }
+    	    $last_exec[$id]['last'] = time();
+	} elseif ($value['format'] == 'boatnerd' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
+	    $buffer = $Common->getData($value['host']);
+	    if ($buffer != '') {
+		$all_data = json_decode($buffer,true);
+		if (isset($all_data['features'][0]['id'])) {
+		    foreach ($all_data['features'] as $line) {
+			$data = array();
+			if (isset($line['properties']['name'])) $data['ident'] = $line['properties']['name'];
+			if (isset($line['properties']['callsign'])) $data['callsign'] = $line['properties']['callsign'];
+			if (isset($line['properties']['mmsi'])) $data['mmsi'] = $line['properties']['mmsi'];
+			if (isset($line['properties']['imo'])) $data['mmsi'] = $line['properties']['imo'];
+			if (isset($line['properties']['speed'])) $data['speed'] = $line['properties']['speed'];
+			if (isset($line['properties']['heading'])) $data['heading'] = $line['properties']['heading'];
+			$data['latitude'] = $line['geometry']['coordinates'][1];
+			$data['longitude'] = $line['geometry']['coordinates'][0];
+			if (isset($line['properties']['vesselType'])) $data['type'] = $line['properties']['vesselType'];
+			if (isset($line['properties']['destination'])) $data['arrival_code'] = $line['properties']['destination'];
+			if (isset($line['properties']['eta']) && $line['properties']['eta'] != '') $data['arrival_date'] = $line['properties']['eta'];
+			$data['format_source'] = 'boatnerd';
+			$data['id_source'] = $id_source;
+			$data['datetime'] = date('Y-m-d H:i:s');
+			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+			if ($line['properties']['vesselType'] != 'Navigation Aid') $MI->add($data);
+			unset($data);
 		    }
 		}
 		
@@ -663,7 +691,10 @@ while ($i > 0) {
 				elseif ($typec == 'CTR') $data['type'] = 'Control Radar or Centre';
 				elseif ($data['type'] == '') $data['type'] = 'Observer';
 				if (!isset($data['source_name'])) $data['source_name'] = '';
-				if (isset($ATC)) echo $ATC->add($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source'],$data['source_name']);
+				if (isset($ATC)) {
+					$ATC->deleteByIdent($data['ident'],$data['format_source']);
+					echo $ATC->add($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source'],$data['source_name']);
+				}
 			}
     			unset($data);
     		    }

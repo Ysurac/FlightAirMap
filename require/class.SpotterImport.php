@@ -239,7 +239,7 @@ class SpotterImport {
   	    if (isset($line['id']) || (isset($line['hex']) && $line['hex'] != '' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) === 6)) {
 
 		// Increment message number
-		if (isset($line['sourcestats']) && $line['sourcestats'] == TRUE) {
+		if (isset($line['sourcestats']) && $line['sourcestats'] === TRUE) {
 		    $current_date = date('Y-m-d');
 		    if (isset($line['source_name'])) $source = $line['source_name'];
 		    else $source = '';

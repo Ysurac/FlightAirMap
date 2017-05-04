@@ -79,6 +79,17 @@ class ATC {
                 }
         }
 
+       public function deleteByIdent($ident,$format_source) {
+                $query = "DELETE FROM atc WHERE ident = :ident AND format_source = :format_source";
+                $query_values = array(':ident' => $ident,':format_source' => $format_source);
+                 try {
+                        $sth = $this->db->prepare($query);
+                        $sth->execute($query_values);
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+        }
+
        public function deleteAll() {
                 $query = "DELETE FROM atc";
                 $query_values = array();
@@ -95,7 +106,7 @@ class ATC {
                 if ($globalDBdriver == 'mysql') {
                         $query  = "DELETE FROM atc WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) >= atc.atc_lastseen";
                 } else {
-                        $query  = "DELETE FROM atc WHERE NOW() AT TIME ZONE 'UTC' - '1 HOUR'->INTERVAL >= atc.atc_lastseen";
+                        $query  = "DELETE FROM atc WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '1 HOUR' >= atc.atc_lastseen";
                 }
                 try {
                         $sth = $this->db->prepare($query);
