@@ -408,7 +408,12 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
     color:#333;
 }
 
-
+.atcname{
+  background-color:#3d76bf;
+  color:#fff;
+  padding:5px;
+  border-radius: 12px 12px 0 0;
+}
 
 /* Mobile (Portrait/Landscape) */
 @media only screen and (max-width: 767px) {

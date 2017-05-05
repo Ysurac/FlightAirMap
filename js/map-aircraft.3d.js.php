@@ -69,6 +69,52 @@ function update_airportsLayer() {
 	});
 }
 
+function update_atcLayer() {
+	var atcnb;
+	for (var i =0; i < viewer.dataSources.length; i++) {
+		if (viewer.dataSources.get(i).name == 'atc') {
+			atcnb = i;
+			break;
+		}
+	}
+
+	var atc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/atc-geojson.php");
+	atc_geojson.then(function(geojsondata) {
+		atc = new Cesium.CustomDataSource('atc');
+		for (var i =0;i < geojsondata.features.length; i++) {
+			data = geojsondata.features[i].properties;
+			console.log('id : '+data.ref);
+			if (data.atc_range > 0) {
+				var entity = atc.entities.add({
+					ref: data.ref,
+					ident: data.ident,
+					position: Cesium.Cartesian3.fromDegrees(geojsondata.features[i].geometry.coordinates[0],geojsondata.features[i].geometry.coordinates[1]),
+					ellipse : {
+						semiMinorAxis : data.atc_range,
+						semiMajorAxis : data.atc_range,
+						rotation : Cesium.Math.toRadians(30.0),
+						material : Cesium.Color.fromCssColorString(data.atccolor).withAlpha(0.5)
+					},
+					type: 'atc'
+				});
+			} else {
+				var entity = atc.entities.add({
+					ref: data.ref,
+					ident: data.ident,
+					position: Cesium.Cartesian3.fromDegrees(geojsondata.features[i].geometry.coordinates[0],geojsondata.features[i].geometry.coordinates[1]),
+					billboard: {
+						image: data.icon,
+						verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+					},
+					type: 'atc'
+				});
+			}
+		}
+		if (typeof atcnb != 'undefined') var remove = viewer.dataSources.remove(viewer.dataSources.get(atcnb));
+		viewer.dataSources.add(atc);
+	});
+}
+
 $(".showdetails").on("click",".close",function(){
 	$(".showdetails").empty();
 	$("#aircraft_ident").attr('class','');
@@ -262,7 +308,7 @@ function updateData() {
 //    var dataSource = geojsonSource.load('/live/geojson');
 //    var dataSource = new Cesium.CzmlDataSource.load('/live-czml.php');
 //     var czmlds = new Cesium.CzmlDataSource();
-	var livedata = czmlds.process('<?php print $globalURL; ?>/live-czml.php?' + Date.now());
+	var livedata = czmlds.process('<?php print $globalURL; ?>/live-czml.php?' + Date.now()+'&bbox='+bbox());
 //    viewer.dataSources.add(dataSource);
     
 	livedata.then(function (data) { 
@@ -596,6 +642,8 @@ handler.setInputAction(function(click) {
 			//lastid = flightaware_id;
 		} else if (pickedObject.id.type == 'sat') {
 			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(pickedObject.id.id));
+		} else if (pickedObject.id.type == 'atc') {
+			$(".showdetails").load("<?php print $globalURL; ?>/atc-data.php?"+Math.random()+"&atcid="+encodeURI(pickedObject.id.ref)+"&atcident="+encodeURI(pickedObject.id.ident));
 		} else if (pickedObject.id.type == 'notam') {
 			$(".showdetails").load("<?php print $globalURL; ?>/notam-data.php?"+Math.random()+"&notam="+encodeURI(pickedObject.id.id));
 		} else if (pickedObject.id.type == 'airspace') {
@@ -671,6 +719,14 @@ if (archive == false) {
 if (getCookie('displayairports') == 'true') {
 	update_airportsLayer();
 }
+<?php
+    if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+?>
+update_atcLayer();
+setInterval(function(){update_atcLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
+<?php
+    }
+?>
 
 function iconColor(color) {
     document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'

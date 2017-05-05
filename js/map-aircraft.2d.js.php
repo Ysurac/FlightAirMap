@@ -849,7 +849,7 @@ function getLiveData(click)
 function atcPopup (feature, layer) {
 	var output = '';
 	output += '<div class="top">';
-	output += '&nbsp;'+feature.properties.ident+'<br /> ';
+	output += '<div class="atcname">'+feature.properties.ident+'</div>';
 	output += '&nbsp;'+feature.properties.info+'<br /> ';
 	output += '</div>';
 	layer.bindPopup(output);
@@ -859,35 +859,19 @@ function atcPopup (feature, layer) {
 function update_atcLayer() {
     var bbox = map.getBounds().toBBoxString();
     atcLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/atc-geojson.php?coord="+bbox,{
-    onEachFeature: atcPopup,
+	onEachFeature: atcPopup,
 	pointToLayer: function (feature, latlng) {
 	    if (feature.properties.atc_range > 0) {
-        	if (feature.properties.type == 'Delivery') {
-        	    var atccolor = '#781212';
-        	} else if (feature.properties.type == 'Ground') {
-        	    var atccolor = '#682213';
-        	} else if (feature.properties.type == 'Tower') {
-        	    var atccolor = '#583214';
-        	} else if (feature.properties.type == 'Approach') {
-        	    var atccolor = '#484215';
-        	} else if (feature.properties.type == 'Departure') {
-        	    var atccolor = '#385216';
-        	} else if (feature.properties.type == 'Observer') {
-        	    var atccolor = '#286217';
-        	} else if (feature.properties.type == 'Control Radar or Centre') {
-        	    var atccolor = '#187218';
-        	} else {
-        	    var atccolor = '#888219';
-		}
+		var atccolor = feature.properties.atccolor;
 		return L.circle(latlng, feature.properties.atc_range*1, {
-            	    fillColor: atccolor,
-            	    color: atccolor,
-            	    weight: 1,
-            	    opacity: 0.3,
-            	    fillOpacity: 0.3
+		    fillColor: atccolor,
+		    color: atccolor,
+		    weight: 1,
+		    opacity: 0.3,
+		    fillOpacity: 0.3
 		});
-            } else {
-        	if (feature.properties.type == 'Delivery') {
+	    } else {
+		if (feature.properties.type == 'Delivery') {
 		    return L.marker(latlng, {icon: L.icon({
 			    iconUrl: '<?php print $globalURL; ?>/images/atc_del.png',
 			    iconSize: [15, 15],
@@ -937,7 +921,7 @@ function update_atcLayer() {
 			})
 		    });
 		}
-            }
+	    }
 	}
     }).addTo(map);
 };

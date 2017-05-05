@@ -52,21 +52,70 @@ class ATC {
                 return $all;
         }
 
-       public function add($ident,$frequency,$latitude,$longitude,$range,$info,$date,$type = '',$ivao_id = '',$ivao_name = '',$format_source = '',$source_name = '') {
-    		$info = preg_replace('/[^(\x20-\x7F)]*/','',$info);
-    		$info = str_replace('^','<br />',$info);
-    		$info = str_replace('&amp;sect;','',$info);
-    		$info = str_replace('"','',$info);
-    		if ($type == '') $type = NULL;
-                $query = "INSERT INTO atc (ident,frequency,latitude,longitude,atc_range,info,atc_lastseen,type,ivao_id,ivao_name,format_source,source_name) VALUES (:ident,:frequency,:latitude,:longitude,:range,:info,:date,:type,:ivao_id,:ivao_name,:format_source,:source_name)";
-                $query_values = array(':ident' => $ident,':frequency' => $frequency,':latitude' => $latitude,':longitude' => $longitude,':range' => $range,':info' => $info,':date' => $date,':ivao_id' => $ivao_id,':ivao_name' => $ivao_name, ':type' => $type,':format_source' => $format_source,':source_name' => $source_name);
+	public function getById($id) {
+    		$filter_query = $this->getFilter(array(),true);
+                $query = "SELECT * FROM atc".$filter_query." atc_id = :id";
+                $query_values = array(':id' => $id);
                  try {
                         $sth = $this->db->prepare($query);
                         $sth->execute($query_values);
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
+                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
+                return $all;
         }
+
+	public function getByIdent($ident,$format_source = '') {
+		$filter_query = $this->getFilter(array(),true);
+		if ($format_source == '') {
+			$query = "SELECT * FROM atc".$filter_query." ident = :ident";
+			$query_values = array(':ident' => $ident);
+		} else {
+			$query = "SELECT * FROM atc".$filter_query." ident = :ident AND format_source = :format_source";
+			$query_values = array(':ident' => $ident,':format_source' => $format_source);
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
+
+	public function add($ident,$frequency,$latitude,$longitude,$range,$info,$date,$type = '',$ivao_id = '',$ivao_name = '',$format_source = '',$source_name = '') {
+		$info = preg_replace('/[^(\x20-\x7F)]*/','',$info);
+		$info = str_replace('^','<br />',$info);
+		$info = str_replace('&amp;sect;','',$info);
+		$info = str_replace('"','',$info);
+		if ($type == '') $type = NULL;
+		$query = "INSERT INTO atc (ident,frequency,latitude,longitude,atc_range,info,atc_lastseen,type,ivao_id,ivao_name,format_source,source_name) VALUES (:ident,:frequency,:latitude,:longitude,:range,:info,:date,:type,:ivao_id,:ivao_name,:format_source,:source_name)";
+		$query_values = array(':ident' => $ident,':frequency' => $frequency,':latitude' => $latitude,':longitude' => $longitude,':range' => $range,':info' => $info,':date' => $date,':ivao_id' => $ivao_id,':ivao_name' => $ivao_name, ':type' => $type,':format_source' => $format_source,':source_name' => $source_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
+	public function update($ident,$frequency,$latitude,$longitude,$range,$info,$date,$type = '',$ivao_id = '',$ivao_name = '',$format_source = '',$source_name = '') {
+		$info = preg_replace('/[^(\x20-\x7F)]*/','',$info);
+		$info = str_replace('^','<br />',$info);
+		$info = str_replace('&amp;sect;','',$info);
+		$info = str_replace('"','',$info);
+		if ($type == '') $type = NULL;
+		$query = "UPDATE atc SET frequency = :frequency,latitude = :latitude,longitude = :longitude,atc_range = :range,info = :info,atc_lastseen = :date,type = :type,ivao_id = :ivao_id,ivao_name = :ivao_name WHERE ident = :ident AND format_source = :format_source AND source_name = :source_name";
+		$query_values = array(':ident' => $ident,':frequency' => $frequency,':latitude' => $latitude,':longitude' => $longitude,':range' => $range,':info' => $info,':date' => $date,':ivao_id' => $ivao_id,':ivao_name' => $ivao_name, ':type' => $type,':format_source' => $format_source,':source_name' => $source_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
 
        public function deleteById($id) {
                 $query = "DELETE FROM atc WHERE atc_id = :id";

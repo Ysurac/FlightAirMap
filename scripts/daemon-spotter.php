@@ -692,8 +692,8 @@ while ($i > 0) {
 				elseif ($data['type'] == '') $data['type'] = 'Observer';
 				if (!isset($data['source_name'])) $data['source_name'] = '';
 				if (isset($ATC)) {
-					$ATC->deleteByIdent($data['ident'],$data['format_source']);
-					echo $ATC->add($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source'],$data['source_name']);
+					if (count($ATC->getByIdent($data['ident'],$data['format_source'])) > 0) echo $ATC->update($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source'],$data['source_name']);
+					else echo $ATC->add($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source'],$data['source_name']);
 				}
 			}
     			unset($data);
