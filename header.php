@@ -368,6 +368,13 @@ if ($facebook_meta_image != "")
 }
 */
 ?>
+<?php
+if (isset($globalCustomCSS) && $glocalCustomCSS != '') {
+?>
+<link rel="stylesheet" href="<?php print $globalCustomCSS; ?>" />
+<?php
+}
+?>
 <meta property="og:title" content="<?php print $title; ?> | <?php print $globalName; ?>"/>
 <meta property="og:url" content="<?php print $globalURL.$_SERVER['REQUEST_URI']; ?>"/>
 <meta property="og:site_name" content="<?php print $globalName; ?>"/>

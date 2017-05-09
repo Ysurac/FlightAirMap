@@ -830,6 +830,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<output id="range"><?php if (isset($globalAirportZoom)) echo $globalAirportZoom; else echo '7'; ?></output>
 				</div>
 			</p>
+			<br />
+			<p>
+				<label for="customcss">Custom CSS web path</label>
+				<input type="text" name="customcss" id="customcss" value="<?php if (isset($globalCustomCSS)) echo $globalCustomCSS; ?>" />
+			</p>
 		</fieldset>
 		<input type="submit" name="submit" value="Create/Update database & write setup" />
 	</form>
@@ -1004,6 +1009,9 @@ if (isset($_POST['dbtype'])) {
 
 	$bitly = filter_input(INPUT_POST,'bitly',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalBitlyAccessToken' => $bitly));
+
+	$customcss = filter_input(INPUT_POST,'customcss',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalCustomCSS' => $customcss));
 
 	$notamsource = filter_input(INPUT_POST,'notamsource',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalNOTAMSource' => $notamsource));
