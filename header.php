@@ -302,8 +302,8 @@ if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) &&
 {
 ?>
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print date("H"); ?>" />
-<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
-<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
@@ -369,9 +369,9 @@ if ($facebook_meta_image != "")
 */
 ?>
 <?php
-if (isset($globalCustomCSS) && $glocalCustomCSS != '') {
+if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 ?>
-<link rel="stylesheet" href="<?php print $globalCustomCSS; ?>" />
+<link type="text/css" rel="stylesheet" href="<?php print $globalCustomCSS; ?>" />
 <?php
 }
 ?>
