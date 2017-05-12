@@ -463,6 +463,7 @@ class aprs {
 		$authstart = time();
 		$this->socket = $s;
 		$send = socket_send( $this->socket  , $aprs_login , strlen($aprs_login) , 0 );
+		socket_set_option($this->socket,SOL_SOCKET,SO_KEEPALIVE,1);
 		while ($msgin = socket_read($this->socket, 1000,PHP_NORMAL_READ)) {
 			if (strpos($msgin, "$aprs_ssid verified") !== FALSE) {
 			    echo 'APRS user verified !'."\n";
@@ -475,7 +476,6 @@ class aprs {
 			    break;
 			}
 		}
-		socket_set_option($this->socket,SOL_SOCKET,SO_KEEPALIVE);
 	}
     }
 
@@ -484,9 +484,11 @@ class aprs {
     }
     
     public function send($data) {
+	global $globalDebug;
 	if ($this->connected === false) $this->connect();
 	$send = socket_send( $this->socket  , $data , strlen($data),0);
 	if ($send === FALSE) {
+		if ($globalDebug) echo 'Reconnect...';
 		socket_close($this->socket);
 		$this->connect();
 	}
