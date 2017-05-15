@@ -70,7 +70,7 @@ print '<div class="right"><div class="callsign-details"><div class="callsign"><a
 if (isset($spotter_item['airline_name'])) print '<div class="airline">'.$spotter_item['airline_name'].'</div>';
 print '</div>';
 print '<div class="nomobile airports"><div class="airport"><span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'" target="_blank">'.$spotter_item['departure_airport'].'</a></span>'.$spotter_item['departure_airport_city'].' '.$spotter_item['departure_airport_country'];
-if (isset($spotter_item['departure_airport_time'])) {
+if (isset($spotter_item['departure_airport_time']) && $spotter_item['departure_airport_time'] != 'NULL') {
 	if ($spotter_item['departure_airport_time'] > 2460) {
 		print '<br /><span class="time">'.date('H:m',$spotter_item['departure_airport_time']).'</span>';
 	} else {
@@ -79,7 +79,7 @@ if (isset($spotter_item['departure_airport_time'])) {
 }
 print '</div><i class="fa fa-long-arrow-right"></i><div class="airport">';
 print '<span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'" target="_blank">'.$spotter_item['arrival_airport'].'</a></span>'.$spotter_item['arrival_airport_city'].' '.$spotter_item['arrival_airport_country'];
-if (isset($spotter_item['arrival_airport_time'])) {
+if (isset($spotter_item['arrival_airport_time']) && $spotter_item['arrival_airport_time'] != 'NULL') {
 	if ($spotter_item['arrival_airport_time'] > 2460) {
 		print '<br /><span class="time">'.date('H:m',$spotter_item['arrival_airport_time']).'</span>';
 	} else {

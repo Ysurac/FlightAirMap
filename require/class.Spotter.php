@@ -482,10 +482,12 @@ class Spotter{
 					if (count($schedule_array) > 0) {
 						if ($schedule_array['departure_airport_icao'] != '') {
 							$row['departure_airport_icao'] = $schedule_array['departure_airport_icao'];
+							if (strlen($row['departure_airport_icao']) == 3) $row['departure_airport_icao'] = $this->getAirportIcao($row['departure_airport_icao']);
 							$temp_array['departure_airport'] = $row['departure_airport_icao'];
 						}
 						if ($schedule_array['arrival_airport_icao'] != '') {
 							$row['arrival_airport_icao'] = $schedule_array['arrival_airport_icao'];
+							if (strlen($row['arrival_airport_icao']) == 3) $row['arrival_airport_icao'] = $this->getAirportIcao($row['arrival_airport_icao']);
 							$temp_array['arrival_airport'] = $row['arrival_airport_icao'];
 						}
 						$temp_array['departure_airport_time'] = $schedule_array['departure_airport_time'];
@@ -503,6 +505,7 @@ class Spotter{
 			
 			//if ($row['departure_airport_icao'] != '' && $row['departure_airport_name'] == '') {
 			if ($row['departure_airport_icao'] != '') {
+				if (strlen($row['departure_airport_icao']) == 3) $row['departure_airport_icao'] = $this->getAirportIcao($row['departure_airport_icao']);
 				$departure_airport_array = $this->getAllAirportInfo($row['departure_airport_icao']);
 				if (!isset($departure_airport_array[0]['name'])) $departure_airport_array = $this->getAllAirportInfo('NA');
 			/*
@@ -531,6 +534,7 @@ class Spotter{
 			*/
 			
 			if ($row['arrival_airport_icao'] != '') {
+				if (strlen($row['arrival_airport_icao']) == 3) $row['arrival_airport_icao'] = $this->getAirportIcao($row['arrival_airport_icao']);
 				$arrival_airport_array = $this->getAllAirportInfo($row['arrival_airport_icao']);
 				if (count($arrival_airport_array) == 0) $arrival_airport_array = $this->getAllAirportInfo('NA');
 			} else $arrival_airport_array = $this->getAllAirportInfo('NA');
