@@ -99,6 +99,12 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 		key: '<?php print $globalBingMapKey; ?>',
 		mapStyle: Cesium.BingMapsStyle.ROAD});
 <?php
+	} elseif ($MapType == 'offline') {
+?>
+	var imProv = new Cesium.createTileMapServiceImageryProvider({
+		url : Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
+	});
+<?php
 /*
 	} elseif ($MapType == 'Here-Roadmap') {
 ?>
@@ -116,6 +122,18 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	map.addLayer(hereLayer);
 <?php
 */
+?>
+<?php
+	}  elseif (isset($globalMapCustomLayer[$MapType])) {
+		$customid = $MapType;
+?>
+	var imProv = Cesium.createOpenStreetMapImageryProvider({
+		url : '<?php print $globalMapCustomLayer[$customid]['url']; ?>',
+		maximumLevel: <?php if (isset($globalMapCustomLayer[$customid]['maxZoom'])) print $globalMapCustomLayer[$customid]['maxZoom']; else print '99'; ?>,
+		minimumLevel: <?php if (isset($globalMapCustomLayer[$customid]['minZoom'])) print $globalMapCustomLayer[$customid]['minZoom']; else print '0'; ?>,
+		credit: '<?php print $globalMapCustomLayer[$customid]['attribution']; ?>'
+	});
+<?php
 	}
 ?>
 
@@ -136,13 +154,14 @@ function zoomOutMap() {
 	camera.moveBackward();
 }
 
-function bbox () {
+function bbox() {
 	var position = viewer.camera.positionCartographic;
 	var pitch = viewer.camera.pitch;
 //	console.log('height: '+position.height);
 //	console.log('pitch: '+Math.degrees(pitch));
 	if (position.height < 1000000 && pitch < Math.radians(-25)) { 
-		var rectangle = camera.computeViewRectangle();
+		
+		var rectangle = camera.computeViewRectangle(viewer.scene.globe.ellipsoid);
 		var west = Math.degrees(rectangle.west);
 		var south = Math.degrees(rectangle.south);
 		var east = Math.degrees(rectangle.east);

@@ -244,6 +244,17 @@ $( document ).ready(function() {
 	var hereLayer = new L.tileLayer.here({appId: '<?php print $globalHereappId; ?>',appcode: '<?php print $globalHereappCode; ?>',scheme: 'hybrid.day'});
 	map.addLayer(hereLayer);
 <?php
+	} elseif (isset($globalMapCustomLayer[$MapType])) {
+		$customid = $MapType;
+?>
+	L.tileLayer('<?php print $globalMapCustomLayer[$customid]['url']; ?>/{z}/{x}/{y}.png', {
+	    maxZoom: <?php if (isset($globalMapCustomLayer[$customid]['maxZoom'])) print $globalMapCustomLayer[$customid]['maxZoom']; else print '18'; ?>,
+	    minZoom: <?php if (isset($globalMapCustomLayer[$customid]['minZoom'])) print $globalMapCustomLayer[$customid]['minZoom']; else print '0'; ?>,
+	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
+	    attribution: '<?php print $globalMapCustomLayer[$customid]['attribution']; ?>'
+	}).addTo(map);
+
+<?php
 	}
 ?>
 

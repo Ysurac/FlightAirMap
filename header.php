@@ -109,7 +109,7 @@ if (strtolower($current_page) == "index")
 	if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 ?>
 <?php 
-	if (isset($globalBeta) && $globalBeta) {
+	if (isset($globalOffline) && $globalOffline) {
 ?>
 <link rel="stylesheet" href="<?php print $globalURL; ?>/js/Cesium/Widgets/widgets.css" />
 <script src="<?php print $globalURL; ?>/js/Cesium/Cesium.js"></script>
@@ -690,14 +690,6 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
     token : '<?php print $globalMapboxToken; ?>'
   }).addTo(map);
 <?php
-    } elseif ($globalMapProvider == 'OpenStreetMap') {
-?>
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="http://www.openstreetmap.org/copyright">Open Database Licence</a>'
-  }).addTo(map);
-<?php
     } elseif ($globalMapProvider == 'MapQuest-OSM') {
 ?>
   L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
@@ -735,6 +727,26 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
 ?>
     var googleLayer = new L.Google('Terrain');
     map.addLayer(googleLayer);
+<?php
+    } elseif (isset($globalMapCustomLayer[$globalMapProvider])) {
+	$customid = $globalMapProvider;
+?>
+    L.tileLayer('<?php print $globalMapCustomLayer[$customid]['url']; ?>/{z}/{x}/{y}.png', {
+        maxZoom: <?php if (isset($globalMapCustomLayer[$customid]['maxZoom'])) print $globalMapCustomLayer[$customid]['maxZoom']; else print '18'; ?>,
+        minZoom: <?php if (isset($globalMapCustomLayer[$customid]['minZoom'])) print $globalMapCustomLayer[$customid]['minZoom']; else print '0'; ?>,
+        noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
+        attribution: '<?php print $globalMapCustomLayer[$customid]['attribution']; ?>'
+    }).addTo(map);
+<?php
+    //} elseif ($globalMapProvider == 'OpenStreetMap') {
+    } else {
+?>
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+      '<a href="http://www.openstreetmap.org/copyright">Open Database Licence</a>'
+  }).addTo(map);
+
 <?php
     }
 ?>
