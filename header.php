@@ -427,7 +427,8 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 ?>
 			<li><a href="<?php print $globalURL; ?>/owner"><?php echo _("Owners"); ?></a></li>
 <?php
-    } elseif ((isset($globalUsePilot) && $globalUsePilot) || (!isset($globalUsePilot) && (isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || (isset($globalVAM) && $globalVAM))) {
+    } 
+    if ((isset($globalUsePilot) && $globalUsePilot) || !isset($globalUsePilot) && ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || (isset($globalVAM) && $globalVAM))) {
 
 ?>
 			<li><a href="<?php print $globalURL; ?>/pilot"><?php echo _("Pilots"); ?></a></li>

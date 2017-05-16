@@ -79,12 +79,13 @@ require_once('header.php');
         <span><span class="badge"><?php print number_format($Stats->countOverallArrival($airline_icao,$filter_name,$year,$month)); ?></span> <?php echo _("Arrivals seen"); ?></span>
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<?php
-	    if ((isset($globalVA) && $globalVA) ||(isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
-	?>
+	    if ((isset($globalUsePilot) && $globalUsePilot) || !isset($globalUsePilot) && ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || (isset($globalVAM) && $globalVAM))) {
+ 	?>
     	    <span><span class="badge"><?php print number_format($Stats->countOverallPilots($airline_icao,$filter_name,$year,$month)); ?></span> <?php echo _("Pilots"); ?></span>
 	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
         <?php
-    	    } else {
+    	    }
+	    if ((isset($globalUseOwner) && $globalUseOwner) || (!isset($globalUseOwner) && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM))) {
     	?>
     	    <span><span class="badge"><?php print number_format($Stats->countOverallOwners($airline_icao,$filter_name,$year,$month)); ?></span> <?php echo _("Owners"); ?></span>
 	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
@@ -102,7 +103,7 @@ require_once('header.php');
 		}
 	?>
 	<?php
-		if (!(isset($globalIVAO) && $globalIVAO) && !(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalphpVMS) && $globalphpVMS)) {
+		if (!(isset($globalVA) && $globalVA) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalphpVMS) && $globalphpVMS) && !(isset($globalVAM) && $globalVAM)) {
 			if ($airline_icao == '' || $airline_icao == 'all') {
 	?>
         <span><span class="badge"><?php print number_format($Stats->countOverallMilitaryFlights($filter_name,$year,$month)); ?></span> <?php echo _("Military"); ?></span>
@@ -318,7 +319,8 @@ require_once('header.php');
         <div class="row column">
 <?php
 		$flightover_array = $Stats->countAllFlightOverCountries(false,$airline_icao,$filter_name,$year,$month);
-		if ((isset($globalVA) && $globalVA) ||(isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+		//if ((isset($globalVA) && $globalVA) ||(isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+		if ((isset($globalUsePilot) && $globalUsePilot) || !isset($globalUsePilot) && ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || (isset($globalVAM) && $globalVAM))) {
 			if (empty($flightover_array)) {
 				print '<div class="col-md-12">';
 			} else {
@@ -356,7 +358,9 @@ require_once('header.php');
         
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
-		} else {
+		}
+		// else {
+		if ((isset($globalUseOwner) && $globalUseOwner) || (!isset($globalUseOwner) && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM))) {
 ?>
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Owners"); ?></h2>
