@@ -762,7 +762,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<br />
 			<p>
 				<label for="flightroute">Show route of flights when selected</label>
-				<input type="checkbox" name="flightroute" id="flightroute" value="flightroute"<?php if ((isset($globalMapRoute) && $globalMapRoute) || !isset($globalMapRoute)) { ?> checked="checked"<?php } ?> />
+				<input type="checkbox" name="flightroute" id="flightroute" value="flightroute"<?php if (isset($globalMapRoute) && $globalMapRoute) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="flightremainingroute">Show remaining route of flights when selected</label>
+				<input type="checkbox" name="flightremainingroute" id="flightremainingroute" value="flightremainingroute"<?php if ((isset($globalMapRemainingRoute) && $globalMapRemainingRoute) || !isset($globalMapRemainingRoute)) { ?> checked="checked"<?php } ?> />
 			</p>
 			<br />
 			<p>
@@ -1253,6 +1257,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapRoute' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapRoute' => 'FALSE'));
+	}
+	$flightremainingroute = filter_input(INPUT_POST,'flightremainingroute',FILTER_SANITIZE_STRING);
+	if ($flightremainingroute == 'flightremainingroute') {
+		$settings = array_merge($settings,array('globalMapRemainingRoute' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMapRemainingRoute' => 'FALSE'));
 	}
 	$allflights = filter_input(INPUT_POST,'allflights',FILTER_SANITIZE_STRING);
 	if ($allflights == 'allflights') {

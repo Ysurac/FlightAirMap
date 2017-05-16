@@ -1015,6 +1015,10 @@ function clickFlightRoute(cb) {
     document.cookie =  'MapRoute='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
 }
+function clickFlightRemainingRoute(cb) {
+    document.cookie =  'MapRemainingRoute='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
 function clickFlightEstimation(cb) {
     document.cookie =  'flightestimation='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();

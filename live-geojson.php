@@ -602,8 +602,7 @@ $output = '{';
 				        && isset($spotter_item['arrival_airport']) 
 				        && $spotter_item['arrival_airport'] != 'NA' 
 				        && ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == "true") 
-				    	    || (!isset($_COOKIE['MapRoute']) && (!isset($globalMapRoute) 
-				    	    || (isset($globalMapRoute) && $globalMapRoute)))))) {
+				    	    || (isset($globalMapRoute) && $globalMapRoute)))) {
 				    if ($compress) $output_air = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "route"},"geometry": {"type": "LineString","coordinates": [';
 				    else $output_air = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "route"},"geometry": {"type": "LineString","coordinates": [';
 				    if (isset($spotter_item['departure_airport_latitude'])) {
@@ -634,9 +633,9 @@ $output = '{';
 				    || (isset($history) && $history == '' && isset($spotter_item['flightaware_id']) && isset($_GET['flightaware_id']) && $_GET['flightaware_id'] == $spotter_item['flightaware_id']))
 				     && (isset($spotter_item['arrival_airport']) 
 				        && $spotter_item['arrival_airport'] != 'NA' 
-				        && ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == "true") 
-				    	    || (!isset($_COOKIE['MapRoute']) && (!isset($globalMapRoute) 
-				    	    || (isset($globalMapRoute) && $globalMapRoute)))))) {
+				        && ((isset($_COOKIE['MapRemainingRoute']) && $_COOKIE['MapRemainingRoute'] == "true") 
+				    	    || (!isset($_COOKIE['MapRemainaingRoute']) && (!isset($globalMapRemainingRoute) 
+				    	    || (isset($globalMapRemainingRoute) && $globalMapRemainingRoute)))))) {
 				    $havedata = false;
 				    if ($compress) $output_dest = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "routedest"},"geometry": {"type": "LineString","coordinates": [';
 				    else $output_dest = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "routedest"},"geometry": {"type": "LineString","coordinates": [';
