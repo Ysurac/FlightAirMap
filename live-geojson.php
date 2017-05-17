@@ -262,6 +262,7 @@ $output = '{';
 									$aircraft_info = $Spotter->getAllAircraftInfo($spotter_item['aircraft_icao']);
 									if (count($aircraft_info) > 0) $spotter_item['aircraft_shadow'] = $aircraft_info[0]['aircraft_shadow'];
 									elseif (isset($spotter_item['format_source']) && $spotter_item['format_source'] == 'aprs') $spotter_item['aircraft_shadow'] = 'PA18.png';
+									elseif ($aircraft_icao == 'PARAGLIDER') $spotter_item['aircraft_shadow'] = 'PARAGLIDER.png';
 									else $spotter_item['aircraft_shadow'] = '';
 									$aircrafts_shadow[$aircraft_icao] = $spotter_item['aircraft_shadow'];
 								}
@@ -602,7 +603,7 @@ $output = '{';
 				        && isset($spotter_item['arrival_airport']) 
 				        && $spotter_item['arrival_airport'] != 'NA' 
 				        && ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == "true") 
-				    	    || (isset($globalMapRoute) && $globalMapRoute)))) {
+				    	    || (!isset($_COOKIE['MapRoute']) && isset($globalMapRoute) && $globalMapRoute)))) {
 				    if ($compress) $output_air = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "route"},"geometry": {"type": "LineString","coordinates": [';
 				    else $output_air = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "route"},"geometry": {"type": "LineString","coordinates": [';
 				    if (isset($spotter_item['departure_airport_latitude'])) {
