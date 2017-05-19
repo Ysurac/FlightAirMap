@@ -317,7 +317,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			if ($Connection->tableExists('source_location')) {
 			    require_once(dirname(__FILE__).'/../require/class.Source.php');
 			    $Source = new Source();
-			    $alllocations = $Source->getAllLocationInfo();
+			    //$alllocations = $Source->getAllLocationInfo();
+			    $alllocations = $Source->getLocationInfobyType('');
 			    foreach ($alllocations as $location) {
 		?>
 				<tr>
@@ -480,6 +481,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="acars" <?php if (isset($source['format']) && $source['format'] == 'acars') print 'selected'; ?>>ACARS from acarsdec/acarsdeco2 over UDP</option>
 										<option value="acarssbs3" <?php if (isset($source['format']) && $source['format'] == 'acarssbs3') print 'selected'; ?>>ACARS SBS-3 over TCP</option>
 										<option value="ais" <?php if (isset($source['format']) && $source['format'] == 'ais') print 'selected'; ?>>NMEA AIS over TCP</option>
+										<option value="airwhere" <?php if (isset($source['format']) && $source['format'] == 'airwhere') print 'selected'; ?>>AirWhere website</option>
 									</select>
 								</td>
 								<td><input type="text" name="name[]" id="name" value="<?php if (isset($source['name'])) print $source['name']; ?>" /></td>
@@ -513,6 +515,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="acars">ACARS from acarsdec/acarsdeco2 over UDP</option>
 										<option value="acarssbs3">ACARS SBS-3 over TCP</option>
 										<option value="ais">NMEA AIS over TCP</option>
+										<option value="airwhere">AirWhere website</option>
 									</select>
 								</td>
 								<td><input type="text" name="name[]" value="" id="name" /></td>
@@ -803,7 +806,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<br />
 			<p>
-				<label for="noairlines">No airlines check (can be used for OGN or Virtual Flights without airlines)</label>
+				<label for="noairlines">No airlines check and display (can be used for OGN or Virtual Flights without airlines)</label>
 				<input type="checkbox" name="noairlines" id="noairlines" value="noairlines"<?php if (isset($globalNoAirlines) && $globalNoAirlines) { ?> checked="checked"<?php } ?> />
 			</p>
 			<br />

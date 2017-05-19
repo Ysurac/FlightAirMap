@@ -156,7 +156,7 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 } else {
 	$spotter_array = $SpotterLive->getMinLastLiveSpotterData($filter);
 }
-
+//print_r($spotter_array);
 if (!empty($spotter_array)) {
 	if (isset($_GET['archive'])) {
 		$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
@@ -207,11 +207,7 @@ if ($tracker) {
 if ($from_archive === true) {
 	$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER","interval": "%minitime%/%maxitime%"}';
 } else {
-	if (isset($globalArchive) && $globalArchive === TRUE) {
-		$output .= ',"clock": {"currentTime" : "'.date("c",time()-$globalLiveInterval).'","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
-	} else {
-		$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
-	}
+	$output .= ',"clock": {"currentTime" : "%minitime%","multiplier" : '.$speed.',"range" : "UNBOUNDED","step": "SYSTEM_CLOCK_MULTIPLIER"}';
 }
 
 //	$output .= ',"clock": {"interval" : "'.date("c",time()-$globalLiveInterval).'/'.date("c").'","currentTime" : "'.date("c",time() - $globalLiveInterval).'","multiplier" : 1,"step": "SYSTEM_CLOCK_MULTIPLIER"}';
@@ -584,7 +580,10 @@ if (!empty($spotter_array) && is_array($spotter_array))
 	$output  = substr($output, 0, -1);
 }
 $output .= ']';
-$output = str_replace('%minitime%',date("c",$minitime),$output);
+if (isset($globalArchive) && $globalArchive === TRUE) {
+		if (time()-$globalLiveInterval < $minitime) $output = str_replace('%minitime%',date("c",time()-$globalLiveInterval),$output);
+		else $output = str_replace('%minitime%',date("c",$minitime),$output);
+} else $output = str_replace('%minitime%',date("c",$minitime),$output);
 $output = str_replace('%maxitime%',date("c",$maxitime),$output);
 print $output;
 ?>

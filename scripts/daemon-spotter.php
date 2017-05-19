@@ -11,6 +11,7 @@ require_once(dirname(__FILE__).'/../require/class.SpotterServer.php');
 require_once(dirname(__FILE__).'/../require/class.ATC.php');
 require_once(dirname(__FILE__).'/../require/class.ACARS.php');
 require_once(dirname(__FILE__).'/../require/class.SBS.php');
+require_once(dirname(__FILE__).'/../require/class.Source.php');
 require_once(dirname(__FILE__).'/../require/class.Connection.php');
 require_once(dirname(__FILE__).'/../require/class.Common.php');
 if (isset($globalTracker) && $globalTracker) require_once(dirname(__FILE__).'/../require/class.TrackerImport.php');
@@ -90,6 +91,7 @@ if (isset($globalMarine) && $globalMarine) {
 //$APRS=new APRS($Connection->db);
 $SBS=new SBS();
 $ACARS=new ACARS($Connection->db);
+$Source=new Source($Connection->db);
 $Common=new Common();
 date_default_timezone_set('UTC');
 //$servertz = system('date +%Z');
@@ -174,6 +176,9 @@ function connect_all($hosts) {
         	$globalSources[$id]['format'] = 'whazzup';
         	//$last_exec['whazzup'] = 0;
         	if ($globalDebug) echo "Connect to whazzup source (".$host.")...\n";
+            } else if (preg_match('/airwhere/i',$host)) {
+        	$globalSources[$id]['format'] = 'airwhere';
+        	if ($globalDebug) echo "Connect to airwhere source (".$host.")...\n";
             } else if (preg_match('/recentpireps/i',$host)) {
         	//$formats[$id] = 'pirepsjson';
         	$globalSources[$id]['format'] = 'pirepsjson';
@@ -339,7 +344,7 @@ $tt = array();
 if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
 	$ATC=new ATC($Connection->db);
 }
-if (!$globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
+if (!$globalDaemon && ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
 	$ATC->deleteAll();
 }
 
@@ -347,12 +352,11 @@ if (!$globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATS
 while ($i > 0) {
     if (!$globalDaemon) $i = $endtime-time();
     // Delete old ATC
-    if ($globalDaemon && ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
+    if ($globalDaemon && ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
 	if ($globalDebug) echo 'Delete old ATC...'."\n";
         $ATC->deleteOldATC();
     }
     
-    //if (count($last_exec) > 0) {
     if (count($last_exec) == count($globalSources)) {
 	$max = $globalMinFetch;
 	foreach ($last_exec as $last) {
@@ -703,8 +707,57 @@ while ($i > 0) {
     	    //if ($value == 'whazzup') $last_exec['whazzup'] = time();
     	    //elseif ($value == 'vatsimtxt') $last_exec['vatsimtxt'] = time();
     	    $last_exec[$id]['last'] = time();
-    	//} elseif ($value == 'aircraftlistjson' && (time() - $last_exec['aircraftlistjson'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'aircraftlistjson' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'airwhere' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	    $buffer = $Common->getData('http://www.airwhere.co.uk/pilots.php','get','','','','','20');
+	    echo 'buffer : '.$buffer."\n";
+	    echo 'length : '.strlen($buffer)."\n";
+	    if ($buffer != '') {
+		$all_data = simplexml_load_string($buffer);
+		foreach($all_data->children() as $childdata) {
+			$data = array();
+			$line = $childdata;
+			//$data['hex'] = str_pad(dechex((int)$line['pktPilotID']),6,'000000',STR_PAD_LEFT);
+			$data['id'] = date('Ymd').(int)$line['pktPilotID'];
+			$data['datetime'] = date('Y-m-d H:i:s',strtotime((string)$line['entryTime'].' BST'));
+			$data['latitude'] = (float)$line['pktLatitude'];
+			$data['longitude'] = (float)$line['pktLongitude'];
+			if ((float)$line['pktTrack'] != 0) $data['heading'] = (float)$line['pktTrack'];
+			if ((int)$line['pktSpeed'] != 0) $data['speed'] = (int)$line['pktSpeed'];
+			$data['altitude'] = (int)$line['pktAltitude'];
+			$data['pilot_id'] = (int)$line['pktPilotID'];
+			$data['aircraft_icao'] = 'PARAGLIDER';
+			$pilot_data = explode(',',$Common->getData('http://www.airwhere.co.uk/pilotdetails.php?pilot='.$data['pilot_id']));
+			if (isset($pilot_data[4])) $data['pilot_name'] = $pilot_data[4];
+			$data['format_source'] = $value['format'];
+			print_r($data);
+			$SI->add($data);
+			unset($data);
+		}
+	    }
+	    $Source->deleteOldLocationByType('gs');
+	    $buffer = $Common->getData('http://www.airwhere.co.uk/gspositions.php','get','','','','','20');
+	    echo 'buffer : '.$buffer."\n";
+	    echo 'length : '.strlen($buffer)."\n";
+	    if ($buffer != '') {
+		$all_data = simplexml_load_string($buffer);
+		foreach($all_data->children() as $childdata) {
+			$data = array();
+			$line = $childdata;
+			$data['id'] = (int)$line['gsID'];
+			$data['latitude'] = (float)$line['gsLatitude'];
+			$data['longitude'] = (float)$line['gsLongitude'];
+			$data['altitude'] = (int)$line['gsHeight'];
+			$data['datetime'] = date('Y-m-d H:i:s',strtotime((string)$line['gsLastUpdate'].' BST'));
+			if (count($Source->getLocationInfoByLocationID($data['id'])) > 0) {
+				$Source->updateLocationByLocationID('',$data['latitude'],$data['longitude'],$data['altitude'],'','','airwhere','antenna.png','gs',$id,$data['id'],$data['datetime']);
+			} else {
+				$Source->addLocation('',$data['latitude'],$data['longitude'],$data['altitude'],'','','airwhere','antenna.png','gs',$id,$data['id'],$data['datetime']);
+			}
+			unset($data);
+		}
+	    }
+	    $last_exec[$id]['last'] = time();
+	} elseif ($value['format'] == 'aircraftlistjson' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    $buffer = $Common->getData($value['host'],'get','','','','','20');
 	    if ($buffer != '') {
 	    $all_data = json_decode($buffer,true);

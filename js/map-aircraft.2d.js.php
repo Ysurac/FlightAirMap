@@ -122,7 +122,6 @@ $( document ).ready(function() {
 	map.on('moveend', function() {
 		if (map.getZoom() > 7) {
 			update_airportsLayer();
-			map.removeLayer(locationsLayer);
 			if ($("#airspace").hasClass("active"))
 			{
 				map.removeLayer(airspaceLayer);
@@ -135,7 +134,6 @@ $( document ).ready(function() {
 			}
 		} else {
 			update_airportsLayer();
-			map.removeLayer(locationsLayer);
 			if ($("#airspace").hasClass("active"))
 			{
 				map.removeLayer(airspaceLayer);

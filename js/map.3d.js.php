@@ -280,6 +280,65 @@ function capture_orientation (event) {
 	$("#live-map").css({'-ms-transform': css});
 }
 
+function update_airportsLayer() {
+    var getZoom = getCookie('AirportZoom');
+    if (getZoom == '') getZoom = 7;
+//		if (map.getZoom() > getZoom) {
+	    //if (typeof airportsLayer == 'undefined' || map.hasLayer(airportsLayer) == false) {
+//			var bbox = map.getBounds().toBBoxString();
+//			airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
+//		$(".showdetails").load("airport-data.php?"+Math.random()+"&airport_icao="+feature.properties.icao);
+
+	
+    
+    //var airport_geojson = new Cesium.GeoJsonDataSource.load("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox());
+    var airport_geojson = new Cesium.GeoJsonDataSource.load("<?php print $globalURL; ?>/airport-geojson.php");
+    airport_geojson.then(function(data) {
+	for (var i =0;i < data.entities.values.length; i++) {
+	    var billboard = new Cesium.BillboardGraphics();
+	    billboard.image = data.entities.values[i].properties.icon;
+	    billboard.scaleByDistance = new Cesium.NearFarScalar(1.0e2, 1, 2.0e6, 0.0);
+//			billboard.distanceDisplayCondition = new DistanceDisplayCondition(0.0,7000.0);
+	    data.entities.values[i].billboard = billboard;
+	    data.entities.values[i].addProperty('type');
+	    data.entities.values[i].type = 'airport';
+	}
+	viewer.dataSources.add(data);
+    });
+}
+
+function update_locationsLayer() {
+    var locnb;
+    for (var i =0; i < viewer.dataSources.length; i++) {
+	if (viewer.dataSources.get(i).name == 'location') {
+	    locnb = i;
+	    break;
+	}
+    }
+
+    var loc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/location-geojson.php");
+    loc_geojson.then(function(geojsondata) {
+	loc = new Cesium.CustomDataSource('location');
+	for (var i =0;i < geojsondata.features.length; i++) {
+	    data = geojsondata.features[i].properties;
+	    console.log('id : '+data.id);
+		var entity = loc.entities.add({
+		    id: data.id,
+		    //ident: data.ident,
+		    position: Cesium.Cartesian3.fromDegrees(geojsondata.features[i].geometry.coordinates[0],geojsondata.features[i].geometry.coordinates[1]),
+		    billboard: {
+			image: data.icon,
+			verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+		    },
+		    type: 'loc'
+		});
+	}
+	if (typeof locnb != 'undefined') var remove = viewer.dataSources.remove(viewer.dataSources.get(locnb));
+	viewer.dataSources.add(loc);
+    });
+}
+
+
 $(".showdetails").on("click",".close",function(){
 	$(".showdetails").empty();
 	$("#aircraft_ident").attr('class','');
@@ -400,4 +459,4 @@ if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') 
 	CesiumMiniMap(viewer);
 }
 
-
+update_locationsLayer();

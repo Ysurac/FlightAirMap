@@ -1936,6 +1936,51 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_40() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('source_location','last_seen')) {
+			$query = "ALTER TABLE source_location ADD COLUMN last_seen timestamp NULL DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add column last_seen in source_location) : ".$e->getMessage()."\n";
+			}
+		}
+		if ($globalDBdriver == 'mysql') {
+			if (!$Connection->checkColumnName('source_location','location_id')) {
+				$query = "ALTER TABLE source_location ADD COLUMN location_id int(11) DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column location_id in source_location) : ".$e->getMessage()."\n";
+				}
+			}
+		} else {
+			if (!$Connection->checkColumnName('source_location','location_id')) {
+				$query = "ALTER TABLE source_location ADD COLUMN location_id integer DEFAULT NULL";
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error (add column location_id in source_location) : ".$e->getMessage()."\n";
+				}
+			}
+		}
+		$query = "UPDATE config SET value = '41' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
+
 
     	public static function check_version($update = false) {
     	    global $globalDBname;
@@ -2107,6 +2152,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '39') {
     			    $error = self::update_from_39();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '40') {
+    			    $error = self::update_from_40();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

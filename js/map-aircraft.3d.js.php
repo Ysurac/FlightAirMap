@@ -646,6 +646,8 @@ handler.setInputAction(function(click) {
 			$(".showdetails").load("<?php print $globalURL; ?>/atc-data.php?"+Math.random()+"&atcid="+encodeURI(pickedObject.id.ref)+"&atcident="+encodeURI(pickedObject.id.ident));
 		} else if (pickedObject.id.type == 'notam') {
 			$(".showdetails").load("<?php print $globalURL; ?>/notam-data.php?"+Math.random()+"&notam="+encodeURI(pickedObject.id.id));
+		} else if (pickedObject.id.type == 'loc') {
+			$(".showdetails").load("<?php print $globalURL; ?>/location-data.php?"+Math.random()+"&sourceid="+encodeURI(pickedObject.id.id));
 		} else if (pickedObject.id.type == 'airspace') {
 			$(".showdetails").load("<?php print $globalURL; ?>/airspace-data.php?"+Math.random()+"&airspace="+encodeURI(pickedObject.id.id));
 //		} else if (pickedObject.id.name == 'iss') {

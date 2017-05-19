@@ -420,7 +420,13 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="<?php if ($sub) echo 'right-'; ?>caret"></b></a>
           <ul class="dropdown-menu">
           	<li><a href="<?php print $globalURL; ?>/aircraft"><?php echo _("Aircrafts Types"); ?></a></li>
+<?php
+    if (!isset($globalNoAirlines) || $globalNoAirlines === FALSE) {
+?>
 			<li><a href="<?php print $globalURL; ?>/airline"><?php echo _("Airlines"); ?></a></li>
+<?php
+    }
+?>
 			<li><a href="<?php print $globalURL; ?>/airport"><?php echo _("Airports"); ?></a></li>
 <?php
     if ((isset($globalUseOwner) && $globalUseOwner) || (!isset($globalUseOwner) && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM))) {
@@ -471,7 +477,13 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
     	    ?>
             <li><hr /></li>
             <li><a href="<?php print $globalURL; ?>/highlights/table"><?php echo _("Special Highlights"); ?></a></li>
+            <?php
+		if (!isset($globalNoUpcoming) || $globalNoUpcoming === FALSE) {
+	    ?>
             <li><a href="<?php print $globalURL; ?>/upcoming"><?php echo _("Upcoming Flights"); ?></a></li>
+	    <?php
+		}
+	    ?>
           </ul>
         </li>
       	<li><a href="<?php print $globalURL; ?>/search"><?php echo _("Search"); ?></a></li>

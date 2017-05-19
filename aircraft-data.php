@@ -66,37 +66,44 @@ print '<div class="top">';
 if (isset($image)) {
 	print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].'" title="'.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' Image &copy; '.$spotter_item['image_copyright'].'"/><br />Image &copy; '.$spotter_item['image_copyright'].'</div>';
 }
-print '<div class="right"><div class="callsign-details"><div class="callsign"><a href="'.$globalURL.'/redirect/'.$spotter_item['flightaware_id'].'" target="_blank">'.$spotter_item['ident'].'</a></div>';
-if (isset($spotter_item['airline_name'])) print '<div class="airline">'.$spotter_item['airline_name'].'</div>';
+print '<div class="right">';
+print '<div class="callsign-details">';
+if ($spotter_item['ident'] != 'Not Available') print '<div class="callsign"><a href="'.$globalURL.'/redirect/'.$spotter_item['flightaware_id'].'" target="_blank">'.$spotter_item['ident'].'</a></div>';
+if (isset($spotter_item['airline_name']) && $spotter_item['airline_name'] != 'Not Available') print '<div class="airline">'.$spotter_item['airline_name'].'</div>';
 print '</div>';
-print '<div class="nomobile airports"><div class="airport"><span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'" target="_blank">'.$spotter_item['departure_airport'].'</a></span>'.$spotter_item['departure_airport_city'].' '.$spotter_item['departure_airport_country'];
-if (isset($spotter_item['departure_airport_time']) && $spotter_item['departure_airport_time'] != 'NULL') {
-	if ($spotter_item['departure_airport_time'] > 2460) {
-		print '<br /><span class="time">'.date('H:m',$spotter_item['departure_airport_time']).'</span>';
-	} else {
-		print '<br /><span class="time">'.$spotter_item['departure_airport_time'].'</span>';
+if ($spotter_item['departure_airport'] != 'NA' && $spotter_item['arrival_airport'] != 'NA') {
+	print '<div class="nomobile airports"><div class="airport"><span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'" target="_blank">'.$spotter_item['departure_airport'].'</a></span>'.$spotter_item['departure_airport_city'].' '.$spotter_item['departure_airport_country'];
+	if (isset($spotter_item['departure_airport_time']) && $spotter_item['departure_airport_time'] != 'NULL') {
+		if ($spotter_item['departure_airport_time'] > 2460) {
+			print '<br /><span class="time">'.date('H:m',$spotter_item['departure_airport_time']).'</span>';
+		} else {
+			print '<br /><span class="time">'.$spotter_item['departure_airport_time'].'</span>';
+		}
 	}
-}
-print '</div><i class="fa fa-long-arrow-right"></i><div class="airport">';
-print '<span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'" target="_blank">'.$spotter_item['arrival_airport'].'</a></span>'.$spotter_item['arrival_airport_city'].' '.$spotter_item['arrival_airport_country'];
-if (isset($spotter_item['arrival_airport_time']) && $spotter_item['arrival_airport_time'] != 'NULL') {
-	if ($spotter_item['arrival_airport_time'] > 2460) {
-		print '<br /><span class="time">'.date('H:m',$spotter_item['arrival_airport_time']).'</span>';
-	} else {
-		print '<br /><span class="time">'.$spotter_item['arrival_airport_time'].'</span>';
+	print '</div><i class="fa fa-long-arrow-right"></i><div class="airport">';
+	print '<span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'" target="_blank">'.$spotter_item['arrival_airport'].'</a></span>'.$spotter_item['arrival_airport_city'].' '.$spotter_item['arrival_airport_country'];
+	if (isset($spotter_item['arrival_airport_time']) && $spotter_item['arrival_airport_time'] != 'NULL') {
+		if ($spotter_item['arrival_airport_time'] > 2460) {
+			print '<br /><span class="time">'.date('H:m',$spotter_item['arrival_airport_time']).'</span>';
+		} else {
+			print '<br /><span class="time">'.$spotter_item['arrival_airport_time'].'</span>';
+		}
 	}
+	print '</div></div>';
+	//if (isset($spotter_item['route_stop'])) print 'Route stop : '.$spotter_item['route_stop'];
+	print '</div></div>';
 }
-print '</div></div>';
-//if (isset($spotter_item['route_stop'])) print 'Route stop : '.$spotter_item['route_stop'];
-print '</div></div>';
 print '<div class="details"><div class="mobile airports"><div class="airport">';
 print '<span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['departure_airport'].'" target="_blank">'.$spotter_item['departure_airport'].'</a></span>'.$spotter_item['departure_airport_city'].' '.$spotter_item['departure_airport_country'];
 print '</div><i class="fa fa-long-arrow-right"></i><div class="airport">';
 print '<span class="code"><a href="'.$globalURL.'/airport/'.$spotter_item['arrival_airport'].'" target="_blank">'.$spotter_item['arrival_airport'].'</a></span>'.$spotter_item['arrival_airport_city'].' '.$spotter_item['arrival_airport_country'];
-print '</div></div><div id="aircraft">';
+print '</div>';
+print '</div>';
+print '<div id="aircraft">';
 print '<span>'._("Aircraft").'</span>';
 if (isset($spotter_item['aircraft_wiki'])) print '<a href="'.$spotter_item['aircraft_wiki'].'">'.$spotter_item['aircraft_name'].'</a>';
-if (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
+if (isset($spotter_item['aircraft_type']) && isset($spotter_item['aircraft_manufacturer']) && $spotter_item['aircraft_manufacturer'] != 'N/A' && isset($spotter_item['aircraft_name']) && $spotter_item['aircraft_name'] != 'N/A') print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
+if (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a>';
 else print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
 print '</div>';
 print '<div id ="altitude"><span>'._("Altitude").'</span>';

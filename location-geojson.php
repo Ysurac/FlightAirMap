@@ -29,12 +29,17 @@ if (!empty($spotter_array) && count($spotter_array) > 0)
 		//waypoint plotting
 		$output .= '{"type": "Feature",';
 		    $output .= '"properties": {';
+			$output .= '"id": "'.$spotter_item['id'].'",';
+			$output .= '"location_id": "'.$spotter_item['location_id'].'",';
 			$output .= '"name": "'.$spotter_item['name'].'",';
 			$output .= '"city": "'.$spotter_item['city'].'",';
 			$output .= '"country": "'.$spotter_item['country'].'",';
 			$output .= '"altitude": "'.$spotter_item['altitude'].'",';
-			$output .= '"popupContent": "'.$spotter_item['name'].' : '.$spotter_item['city'].', '.$spotter_item['country'].'",';
-			$output .= '"icon": "'.$globalURL.'/images/antenna.png",';
+			if ($spotter_item['name'] != '' && $spotter_item['city'] != '' && $spotter_item['country'] != '')
+				$output .= '"popupContent": "'.$spotter_item['name'].' : '.$spotter_item['city'].', '.$spotter_item['country'].'",';
+			elseif ($spotter_item['location_id'] != '')
+				$output .= '"popupContent": "'.$spotter_item['location_id'].'",';
+			$output .= '"icon": "'.$globalURL.'/images/'.$spotter_item['logo'].'",';
 			$output .= '"type": "'.$spotter_item['type'].'",';
 			$output .= '"image_thumb": "'.$spotter_item['image_thumb'].'"';
 		    $output .= '},';

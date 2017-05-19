@@ -303,7 +303,11 @@ $( document ).ready(function() {
 		    output += '</div>';
 		    output += '<div class="right">';
 			output += '<div class="callsign-details">';
+			if (feature.properties.name == "") {
+			    output += '<div class="callsign">'+feature.properties.location_id+'</div>';
+			} else {
 			    output += '<div class="callsign">'+feature.properties.name+'</div>';
+			}
 			output += '</div>';
 		     output += '</div>';
 		output += '</div>';
@@ -338,7 +342,7 @@ $( document ).ready(function() {
 		//var bbox = map.getBounds().toBBoxString();
 		//locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox,{
 		locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php",{
-		onEachFeature: locationPopup,
+		    //onEachFeature: locationPopup,
 		    pointToLayer: function (feature, latlng) {
 			return L.marker(latlng, {
 			    icon: L.icon({
@@ -347,19 +351,21 @@ $( document ).ready(function() {
 				//iconAnchor: [0, 0],
 				//popupAnchor: [0, -28]
 			    })
+			}).on('click', function() {
+			    $(".showdetails").load("location-data.php?"+Math.random()+"&sourceid="+encodeURI(feature.properties.id));
 			});
 		    }
 		}).addTo(map);
 	};
 
 	map.on('moveend', function() {
-		if (map.getZoom() > 7) {
+		//if (map.getZoom() > 7) {
+		//	map.removeLayer(locationsLayer);
+		//	update_locationsLayer();
+		//} else {
 			map.removeLayer(locationsLayer);
 			update_locationsLayer();
-		} else {
-			map.removeLayer(locationsLayer);
-			update_locationsLayer();
-		}
+		//}
 	});
 update_locationsLayer();
 <?php
