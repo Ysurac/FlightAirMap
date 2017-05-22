@@ -997,12 +997,14 @@ if (isset($_POST['dbtype'])) {
 	if (isset($_POST['noarchive'])) $noarchive = $_POST['noarchive'];
 	else $noarchive = array();
 	$gSources = array();
+	$forcepilots == false;
 	foreach ($host as $key => $h) {
 		if (isset($sourcestats[$key]) && $sourcestats[$key] == 1) $cov = 'TRUE';
 		else $cov = 'FALSE';
 		if (isset($noarchive[$key]) && $noarchive[$key] == 1) $arch = 'TRUE';
 		else $arch = 'FALSE';
 		if ($h != '') $gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch);
+		if ($format[$key] == 'airwhere') $forcepilots = true;
 	}
 	$settings = array_merge($settings,array('globalSources' => $gSources));
 
@@ -1132,9 +1134,14 @@ if (isset($_POST['dbtype'])) {
 	} else $settings = array_merge($settings,array('globalSchedulesFetch' => 'TRUE','globalTranslationFetch' => 'TRUE'));
 	if ($globalva == 'va' || $va) {
 		$settings = array_merge($settings,array('globalVA' => 'TRUE'));
-	} else $settings = array_merge($settings,array('globalVA' => 'FALSE'));
+		$settings = array_merge($settings,array('globalUsePilot' => 'TRUE','globalUseOwner' => 'FALSE'));
+	} else {
+		$settings = array_merge($settings,array('globalVA' => 'FALSE'));
+		if ($forcepilots) $settings = array_merge($settings,array('globalUsePilot' => 'TRUE','globalUseOwner' => 'FALSE'));
+		else $settings = array_merge($settings,array('globalUsePilot' => 'FALSE','globalUseOwner' => 'TRUE'));
+	}
 	
-
+	
 
 	$notam = filter_input(INPUT_POST,'notam',FILTER_SANITIZE_STRING);
 	if ($notam == 'notam') {
