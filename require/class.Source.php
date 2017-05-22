@@ -87,10 +87,10 @@ class Source {
 		return $all;
 	}
 
-	public function addLocation($name,$latitude,$longitude,$altitude,$city,$country,$source,$logo = 'antenna.png',$type = '',$source_id = 0,$location_id = 0,$last_seen = '') {
+	public function addLocation($name,$latitude,$longitude,$altitude,$city,$country,$source,$logo = 'antenna.png',$type = '',$source_id = 0,$location_id = 0,$last_seen = '', $description = '') {
 		if ($last_seen == '') $last_seen = date('Y-m-d H:i:s');
-		$query = "INSERT INTO source_location (name,latitude,longitude,altitude,country,city,logo,source,type,source_id,last_seen,location_id) VALUES (:name,:latitude,:longitude,:altitude,:country,:city,:logo,:source,:type,:source_id,:last_seen,:location_id)";
-		$query_values = array(':name' => $name,':latitude' => $latitude, ':longitude' => $longitude,':altitude' => $altitude,':city' => $city,':country' => $country,':logo' => $logo,':source' => $source,':type' => $type,':source_id' => $source_id,':last_seen' => $last_seen,':location_id' => $location_id);
+		$query = "INSERT INTO source_location (name,latitude,longitude,altitude,country,city,logo,source,type,source_id,last_seen,location_id,description) VALUES (:name,:latitude,:longitude,:altitude,:country,:city,:logo,:source,:type,:source_id,:last_seen,:location_id,:description)";
+		$query_values = array(':name' => $name,':latitude' => $latitude, ':longitude' => $longitude,':altitude' => $altitude,':city' => $city,':country' => $country,':logo' => $logo,':source' => $source,':type' => $type,':source_id' => $source_id,':last_seen' => $last_seen,':location_id' => $location_id,':description' => $description);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -99,10 +99,10 @@ class Source {
 		}
 	}
 
-	public function updateLocation($name,$latitude,$longitude,$altitude,$city,$country,$source,$logo = 'antenna.png',$type = '',$source_id = 0,$location_id = 0,$last_seen = '') {
+	public function updateLocation($name,$latitude,$longitude,$altitude,$city,$country,$source,$logo = 'antenna.png',$type = '',$source_id = 0,$location_id = 0,$last_seen = '',$description = '') {
 		if ($last_seen == '') $last_seen = date('Y-m-d H:i:s');
-		$query = "UPDATE source_location SET latitude = :latitude,longitude = :longitude,altitude = :altitude,country = :country,city = :city,logo = :logo,type = :type, source_id = :source_id, last_seen = :last_seen,location_id = :location_id WHERE name = :name AND source = :source";
-		$query_values = array(':name' => $name,':latitude' => $latitude, ':longitude' => $longitude,':altitude' => $altitude,':city' => $city,':country' => $country,':logo' => $logo,':source' => $source,':type' => $type,':source_id' => $source_id,':last_seen' => $last_seen,':location_id' => $location_id);
+		$query = "UPDATE source_location SET latitude = :latitude,longitude = :longitude,altitude = :altitude,country = :country,city = :city,logo = :logo,type = :type, source_id = :source_id, last_seen = :last_seen,location_id = :location_id, description = :description WHERE name = :name AND source = :source";
+		$query_values = array(':name' => $name,':latitude' => $latitude, ':longitude' => $longitude,':altitude' => $altitude,':city' => $city,':country' => $country,':logo' => $logo,':source' => $source,':type' => $type,':source_id' => $source_id,':last_seen' => $last_seen,':location_id' => $location_id,':description' => $description);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -111,10 +111,22 @@ class Source {
 		}
 	}
 
-	public function updateLocationByLocationID($name,$latitude,$longitude,$altitude,$city,$country,$source,$logo = 'antenna.png',$type = '',$source_id = 0, $location_id,$last_seen = '') {
+	public function updateLocationDescByName($name,$source,$source_id = 0,$description = '') {
 		if ($last_seen == '') $last_seen = date('Y-m-d H:i:s');
-		$query = "UPDATE source_location SET latitude = :latitude,longitude = :longitude,altitude = :altitude,country = :country,city = :city,logo = :logo,type = :type, last_seen = :last_seen WHERE location_id = :location_id AND source = :source AND source_id = :source_id";
-		$query_values = array(':source_id' => $source_id,':latitude' => $latitude, ':longitude' => $longitude,':altitude' => $altitude,':city' => $city,':country' => $country,':logo' => $logo,':source' => $source,':type' => $type,':last_seen' => $last_seen,':location_id' => $location_id);
+		$query = "UPDATE source_location SET description = :description WHERE source_id = :source_id AND name = :name AND source = :source";
+		$query_values = array(':name' => $name,':source' => $source,':source_id' => $source_id,':description' => $description);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
+	public function updateLocationByLocationID($name,$latitude,$longitude,$altitude,$city,$country,$source,$logo = 'antenna.png',$type = '',$source_id = 0, $location_id,$last_seen = '',$description = '') {
+		if ($last_seen == '') $last_seen = date('Y-m-d H:i:s');
+		$query = "UPDATE source_location SET latitude = :latitude,longitude = :longitude,altitude = :altitude,country = :country,city = :city,logo = :logo,type = :type, last_seen = :last_seen, description = :description WHERE location_id = :location_id AND source = :source AND source_id = :source_id";
+		$query_values = array(':source_id' => $source_id,':latitude' => $latitude, ':longitude' => $longitude,':altitude' => $altitude,':city' => $city,':country' => $country,':logo' => $logo,':source' => $source,':type' => $type,':last_seen' => $last_seen,':location_id' => $location_id,':description' => $description);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);

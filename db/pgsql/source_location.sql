@@ -13,5 +13,6 @@ CREATE TABLE IF NOT EXISTS source_location (
   country varchar(255) DEFAULT NULL,
   city varchar(255) DEFAULT NULL,
   last_seen timestamp NULL DEFAULT NULL,
+  description text DEFAULT NULL,
   PRIMARY KEY(id)
 );

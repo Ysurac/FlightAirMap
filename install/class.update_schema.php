@@ -1980,6 +1980,29 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_41() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('source_location','description')) {
+			$query = "ALTER TABLE source_location ADD COLUMN description text DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add column description in source_location) : ".$e->getMessage()."\n";
+			}
+		}
+		$query = "UPDATE config SET value = '42' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
 
     	public static function check_version($update = false) {
@@ -2156,6 +2179,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '40') {
     			    $error = self::update_from_40();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '41') {
+    			    $error = self::update_from_41();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

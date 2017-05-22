@@ -1215,7 +1215,7 @@ while ($i > 0) {
 				$data['format_source'] = 'flightgearsp';
 				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
 				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
-				$send = @ socket_send( $r  , $data_aprs , strlen($data_aprs) , 0 );
+				//$send = @ socket_send( $r  , $data_aprs , strlen($data_aprs) , 0 );
 			    }
                         } elseif ($format == 'acars') {
                     	    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
@@ -1372,17 +1372,29 @@ while ($i > 0) {
 				    } elseif (isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && isset($line['speed']) && $line['symbol'] != 'Weather Station' && $line['symbol'] != 'House QTH (VHF)' && $line['symbol'] != 'Dot' && $line['symbol'] != 'TCP-IP' && $line['symbol'] != 'xAPRS (UNIX)' && $line['symbol'] != 'Antenna' && $line['symbol'] != 'Cloudy' && $line['symbol'] != 'HF Gateway' && $line['symbol'] != 'Yagi At QTH' && $line['symbol'] != 'Digi' && $line['symbol'] != '8' && $line['symbol'] != 'MacAPRS') {
 					//echo '!!!!!!!!!!!!!!!! SEND !!!!!!!!!!!!!!!!!!!!'."\n";
 					if (isset($globalTracker) && $globalTracker) $send = $TI->add($data);
+				    } elseif (!isset($line['stealth']) && is_numeric($data['latitude']) && is_numeric($data['longitude']) && isset($data['ident'])) {
+					$Source->deleteOldLocationByType('gs');
+					if (count($Source->getLocationInfoByName($data['ident'])) > 0) {
+						$Source->updateLocation($data['ident'],$data['latitude'],$data['longitude'],$data['altitude'],'','',$data['source_name'],'antenna.png','gs',$id,0,$data['datetime']);
+					} else {
+						$Source->addLocation($data['ident'],$data['latitude'],$data['longitude'],$data['altitude'],'','',$data['source_name'],'antenna.png','gs',$id,0,$data['datetime']);
+					}
+				    } else {
+				    	echo '/!\ Not added'."\n";
+				    	print_r($data);
 				    }
 				    unset($data);
 				} 
 				elseif (is_array($line) && $globalDebug && isset($line['symbol']) && $line['symbol'] == 'Weather Station') {
 					echo '!! Weather Station not yet supported'."\n";
 				}
+				/*
 				elseif (is_array($line) && $globalDebug && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && ($line['symbol'] == 'Car' || $line['symbol'] == 'Ambulance' || $line['symbol'] == 'Van' || $line['symbol'] == 'Truck' || $line['symbol'] == 'Truck (18 Wheeler)' || $line['symbol'] == 'Motorcycle')) {
 					echo '!! Car & Trucks not yet supported'."\n";
 				}
-				//elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
-				//elseif ($line == true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
+				*/
+				elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
+				elseif ($line == true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
 			    }
 			} else {
 			    $line = explode(',', $buffer);

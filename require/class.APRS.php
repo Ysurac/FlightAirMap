@@ -134,7 +134,10 @@ class aprs {
 		if ($debug) echo 'ident : '.$ident."\n";
 		$result['ident'] = $ident;
 	    }
-	} else return false;
+	} else {
+	    if ($debug) 'No ident'."\n";
+	    return false;
+	}
 	$elements = explode(',',$all_elements);
 	$source = end($elements);
 	$result['source'] = $source;
