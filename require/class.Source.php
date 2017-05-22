@@ -112,7 +112,6 @@ class Source {
 	}
 
 	public function updateLocationDescByName($name,$source,$source_id = 0,$description = '') {
-		if ($last_seen == '') $last_seen = date('Y-m-d H:i:s');
 		$query = "UPDATE source_location SET description = :description WHERE source_id = :source_id AND name = :name AND source = :source";
 		$query_values = array(':name' => $name,':source' => $source,':source_id' => $source_id,':description' => $description);
 		try {
