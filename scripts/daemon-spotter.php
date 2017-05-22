@@ -709,8 +709,6 @@ while ($i > 0) {
     	    $last_exec[$id]['last'] = time();
     	} elseif ($value['format'] == 'airwhere' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
 	    $buffer = $Common->getData('http://www.airwhere.co.uk/pilots.php','get','','','','','20');
-	    echo 'buffer : '.$buffer."\n";
-	    echo 'length : '.strlen($buffer)."\n";
 	    if ($buffer != '') {
 		$all_data = simplexml_load_string($buffer);
 		foreach($all_data->children() as $childdata) {
@@ -729,15 +727,12 @@ while ($i > 0) {
 			$pilot_data = explode(',',$Common->getData('http://www.airwhere.co.uk/pilotdetails.php?pilot='.$data['pilot_id']));
 			if (isset($pilot_data[4])) $data['pilot_name'] = $pilot_data[4];
 			$data['format_source'] = $value['format'];
-			print_r($data);
 			$SI->add($data);
 			unset($data);
 		}
 	    }
 	    $Source->deleteOldLocationByType('gs');
 	    $buffer = $Common->getData('http://www.airwhere.co.uk/gspositions.php','get','','','','','20');
-	    echo 'buffer : '.$buffer."\n";
-	    echo 'length : '.strlen($buffer)."\n";
 	    if ($buffer != '') {
 		$all_data = simplexml_load_string($buffer);
 		foreach($all_data->children() as $childdata) {
