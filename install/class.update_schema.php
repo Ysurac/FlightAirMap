@@ -2003,6 +2003,56 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_42() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('spotter_live','real_altitude')) {
+			$query = "ALTER TABLE spotter_live ADD COLUMN real_altitude float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add column real_altitude in spotter_live) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('spotter_output','real_altitude')) {
+			$query = "ALTER TABLE spotter_output ADD COLUMN real_altitude float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add column real_altitude in spotter_output) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('spotter_archive_output','real_altitude')) {
+			$query = "ALTER TABLE spotter_archive_output ADD COLUMN real_altitude float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add column real_altitude in spotter_archive_output) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('spotter_archive','real_altitude')) {
+			$query = "ALTER TABLE spotter_archive ADD COLUMN real_altitude float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add column real_altitude in spotter_archive) : ".$e->getMessage()."\n";
+			}
+		}
+		$query = "UPDATE config SET value = '43' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
 
     	public static function check_version($update = false) {
@@ -2183,6 +2233,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '41') {
     			    $error = self::update_from_41();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '42') {
+    			    $error = self::update_from_42();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

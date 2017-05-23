@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `spotter_output` (
   `longitude` float NOT NULL,
   `waypoints` longtext NOT NULL,
   `altitude` int(11) NOT NULL,
+  `real_altitude` float DEFAULT NULL,
   `heading` int(11) NOT NULL,
   `ground_speed` int(11),
   `highlight` longtext,
@@ -49,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `spotter_output` (
   `real_departure_airport_icao` varchar(10) DEFAULT NULL,
   `real_departure_airport_time` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`spotter_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
 
 ALTER TABLE `spotter_output` ADD INDEX(`flightaware_id`);
 ALTER TABLE `spotter_output` ADD INDEX(`date`);

@@ -108,9 +108,11 @@ else print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_na
 print '</div>';
 print '<div id ="altitude"><span>'._("Altitude").'</span>';
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
-	print $spotter_item['altitude'].'00 feet (FL'.$spotter_item['altitude'].')';
+	if (isset($spotter_item['real_altitude']) && $spotter_item['real_altitude'] != '') print $spotter_item['real_altitude'].' feet (FL'.$spotter_item['altitude'].')';
+	else print $spotter_item['altitude'].'00 feet (FL'.$spotter_item['altitude'].')';
 } else {
-	print round($spotter_item['altitude']*30.48).' m (FL'.$spotter_item['altitude'].')';
+	if (isset($spotter_item['real_altitude']) && $spotter_item['real_altitude'] != '') print round($spotter_item['real_altitude']*0.3048).' m (FL'.$spotter_item['altitude'].')';
+	else print round($spotter_item['altitude']*30.48).' m (FL'.$spotter_item['altitude'].')';
 }
 print '</div>';
 if (isset($spotter_item['registration']) && $spotter_item['registration'] != '') print '<div><span>'._("Registration").'</span><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'" target="_blank">'.$spotter_item['registration'].'</a></div>';

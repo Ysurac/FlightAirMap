@@ -27,6 +27,7 @@ CREATE TABLE spotter_archive (
   longitude float NOT NULL,
   waypoints text NOT NULL,
   altitude integer NOT NULL,
+  real_altitude float DEFAULT NULL,
   heading integer NOT NULL,
   ground_speed integer NOT NULL,
   squawk integer,

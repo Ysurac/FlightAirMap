@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `spotter_archive_output` (
   `longitude` float NOT NULL,
   `waypoints` longtext NOT NULL,
   `altitude` int(11) NOT NULL,
+  `real_altitude` float DEFAULT NULL,
   `heading` int(11) NOT NULL,
   `ground_speed` int(11) DEFAULT NULL,
   `highlight` longtext,
@@ -48,4 +49,4 @@ CREATE TABLE IF NOT EXISTS `spotter_archive_output` (
   `real_departure_airport_time` varchar(20) DEFAULT NULL,
   `real_arrival_airport_icao` varchar(10) DEFAULT NULL,
   `real_arrival_airport_time` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

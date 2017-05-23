@@ -997,7 +997,7 @@ if (isset($_POST['dbtype'])) {
 	if (isset($_POST['noarchive'])) $noarchive = $_POST['noarchive'];
 	else $noarchive = array();
 	$gSources = array();
-	$forcepilots == false;
+	$forcepilots = false;
 	foreach ($host as $key => $h) {
 		if (isset($sourcestats[$key]) && $sourcestats[$key] == 1) $cov = 'TRUE';
 		else $cov = 'FALSE';
@@ -1446,6 +1446,8 @@ if (isset($_POST['dbtype'])) {
 	print '<br /><p>All is now installed ! Thanks</p>';
 	if ($globalSBS1) {
 		print '<p>You need to run <b>scripts/daemon-spotter.php</b> as a daemon. You can use init script in the install/init directory.</p>';
+	} else {
+		print '<p>You need to run <b>scripts/daemon-spotter.php</b>. You can use init script in the install/init directory to run it as daemon.</p>';
 	}
 	if ($globalACARS) {
 		print '<p>You need to run <b>scripts/daemon-acars.php</b> as a daemon. You can use init script in the install/init directory.</p>';

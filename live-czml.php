@@ -541,8 +541,13 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$prevlong = $spotter_item['longitude'];
 			$prevlat = $spotter_item['latitude'];
 			if (!$tracker && !$marine) {
-				$output .= ', '.round($spotter_item['altitude']*30.48);
-				$prevalt = round($spotter_item['altitude']*30.48);
+				if (isset($spotter_item['real_altitude']) && $spotter_item['real_altitude'] != '') {
+					$output .= ', '.round($spotter_item['real_altitude']*0.3048);
+					$prevalt = round($spotter_item['real_altitude']*30.48);
+				} else {
+					$output .= ', '.round($spotter_item['altitude']*30.48);
+					$prevalt = round($spotter_item['altitude']*30.48);
+				}
 			} else $output .= ', 0';
 			//$orientation = '"orientation" : { ';
 			//$orientation .= '"unitQuaternion": [';
@@ -567,7 +572,8 @@ if (!empty($spotter_array) && is_array($spotter_array))
 							$output .= ', 0';
 						}
 					} else {
-						$output .= ', '.round($spotter_item['altitude']*30.48);
+						if (isset($spotter_item['real_altitude']) && $spotter_item['real_altitude'] != '') $output .= ', '.round($spotter_item['real_altitude']*0.3048);
+						else $output .= ', '.round($spotter_item['altitude']*30.48);
 					}
 				} else $output .= ', 0';
 			}

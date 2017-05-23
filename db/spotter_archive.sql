@@ -28,6 +28,7 @@ CREATE TABLE `spotter_archive` (
   `longitude` float NOT NULL,
   `waypoints` longtext,
   `altitude` int(11) NOT NULL,
+  `real_altitude` float(11) DEFAULT NULL,
   `heading` int(11) NOT NULL,
   `ground_speed` int(11),
   `squawk` int(11),
@@ -40,5 +41,5 @@ CREATE TABLE `spotter_archive` (
   `source_name` varchar(255) DEFAULT NULL,
   `ground` tinyint(1) NOT NULL DEFAULT '0',
   `over_country` varchar(5) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
 ALTER TABLE `spotter_archive` ADD INDEX(`flightaware_id`,`date`);
