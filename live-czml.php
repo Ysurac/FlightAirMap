@@ -187,7 +187,8 @@ if (file_exists('models/modelsdb')) {
 		fclose($handle);
 	}
 }
-$heightrelative = 'NONE';
+//$heightrelative = 'NONE';
+$heightrelative = 'RELATIVE_TO_GROUND';
 $j = 0;
 $prev_flightaware_id = '';
 $speed = 1;
