@@ -83,7 +83,7 @@ function update_atcLayer() {
 		atc = new Cesium.CustomDataSource('atc');
 		for (var i =0;i < geojsondata.features.length; i++) {
 			data = geojsondata.features[i].properties;
-			console.log('id : '+data.ref);
+			//console.log('id : '+data.ref);
 			if (data.atc_range > 0) {
 				var entity = atc.entities.add({
 					ref: data.ref,

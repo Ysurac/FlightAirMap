@@ -44,13 +44,13 @@ if ($spotter_item['atc_range'] > 0) {
 }
 */
 print '</div>';
-/*
-if ($spotter_item['info'] != '') {
+
+if ($spotter_item['description'] != '') {
     print '<div class="notamtext"><span>'._("Info").'</span>';
-    print $spotter_item['info'];
+    print $spotter_item['description'];
     print '</div>';
 }
-*/
+
 print '</div>';
 }
 print '</div>';

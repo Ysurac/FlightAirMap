@@ -1388,6 +1388,10 @@ while ($i > 0) {
 				elseif (is_array($line) && $globalDebug && isset($line['symbol']) && $line['symbol'] == 'Weather Station') {
 					echo '!! Weather Station not yet supported'."\n";
 				}
+				 
+				elseif (is_array($line) && isset($line['ident']) && $line['ident'] != '') {
+					$Source->updateLocationDescByName($line['ident'],$line['source'],$id,$line['comment']);
+				}
 				/*
 				elseif (is_array($line) && $globalDebug && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && ($line['symbol'] == 'Car' || $line['symbol'] == 'Ambulance' || $line['symbol'] == 'Van' || $line['symbol'] == 'Truck' || $line['symbol'] == 'Truck (18 Wheeler)' || $line['symbol'] == 'Motorcycle')) {
 					echo '!! Car & Trucks not yet supported'."\n";

@@ -321,17 +321,17 @@ function update_locationsLayer() {
 	loc = new Cesium.CustomDataSource('location');
 	for (var i =0;i < geojsondata.features.length; i++) {
 	    data = geojsondata.features[i].properties;
-	    console.log('id : '+data.id);
-		var entity = loc.entities.add({
-		    id: data.id,
-		    //ident: data.ident,
-		    position: Cesium.Cartesian3.fromDegrees(geojsondata.features[i].geometry.coordinates[0],geojsondata.features[i].geometry.coordinates[1]),
-		    billboard: {
-			image: data.icon,
-			verticalOrigin: Cesium.VerticalOrigin.BOTTOM
-		    },
-		    type: 'loc'
-		});
+	    //console.log('id : '+data.id);
+	    var entity = loc.entities.add({
+		id: data.id,
+		//ident: data.ident,
+		position: Cesium.Cartesian3.fromDegrees(geojsondata.features[i].geometry.coordinates[0],geojsondata.features[i].geometry.coordinates[1]),
+		billboard: {
+		    image: data.icon,
+		    verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+		},
+		type: 'loc'
+	    });
 	}
 	if (typeof locnb != 'undefined') var remove = viewer.dataSources.remove(viewer.dataSources.get(locnb));
 	viewer.dataSources.add(loc);
