@@ -482,8 +482,8 @@ class SpotterImport {
 
 
 	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '' && is_numeric($line['latitude']) && is_numeric($line['longitude']) && !is_int($line['latitude']) && !is_int($line['longitude'])) {
-	    	    if (is_int($line['latitude']) || is_int($line['longitude'])) {
-	    	    	if ($globalDebug) echo "/!\ Invalide latitude or/and longitude data : lat: ".$line['latitude']." - lng: ".$line['longitude']."\n";
+	    	    if (ctype_digit(strval($line['latitude'])) || ctype_digit(strval($line['longitude']))) {
+	    	    	if ($globalDebug) echo "/!\ Invalid latitude or/and longitude data : lat: ".$line['latitude']." - lng: ".$line['longitude']."\n";
 	    	    	return false;
 	    	    }
 	    	    if (isset($this->all_flights[$id]['time_last_coord'])) $timediff = round(time()-$this->all_flights[$id]['time_last_coord']);
