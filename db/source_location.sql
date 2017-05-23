@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `source_location` (
   `country` varchar(255) DEFAULT NULL,
   `city` varchar(255) DEFAULT NULL,
   `last_seen` timestamp NULL DEFAULT NULL,
+  `location_id` int(11) DEFAULT NULL,
   `description` text DEFAULT NULL,
   PRIMARY KEY(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
