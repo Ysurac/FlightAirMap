@@ -721,7 +721,7 @@ while ($i > 0) {
 			$data['longitude'] = (float)$line['pktLongitude'];
 			if ((float)$line['pktTrack'] != 0) $data['heading'] = (float)$line['pktTrack'];
 			if ((int)$line['pktSpeed'] != 0) $data['speed'] = (int)$line['pktSpeed'];
-			$data['altitude'] = (int)$line['pktAltitude'];
+			$data['altitude'] = round((int)$line['pktAltitude']*3.28084);
 			$data['pilot_id'] = (int)$line['pktPilotID'];
 			$data['aircraft_icao'] = 'PARAGLIDER';
 			$pilot_data = explode(',',$Common->getData('http://www.airwhere.co.uk/pilotdetails.php?pilot='.$data['pilot_id']));
@@ -741,7 +741,7 @@ while ($i > 0) {
 			$data['id'] = (int)$line['gsID'];
 			$data['latitude'] = (float)$line['gsLatitude'];
 			$data['longitude'] = (float)$line['gsLongitude'];
-			$data['altitude'] = (int)$line['gsHeight'];
+			$data['altitude'] = round((int)$line['gsHeight']*3.28084);
 			$data['datetime'] = date('Y-m-d H:i:s',strtotime((string)$line['gsLastUpdate'].' BST'));
 			if (count($Source->getLocationInfoByLocationID($data['id'])) > 0) {
 				$Source->updateLocationByLocationID('',$data['latitude'],$data['longitude'],$data['altitude'],'','','airwhere','antenna.png','gs',$id,$data['id'],$data['datetime']);
