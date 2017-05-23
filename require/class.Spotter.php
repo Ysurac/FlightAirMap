@@ -235,7 +235,6 @@ class Spotter{
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$num_rows++;
-			print_r($row);
 			$temp_array = array();
 			if (isset($row['spotter_live_id'])) {
 				//$temp_array['spotter_id'] = $row['spotter_live_id'];
