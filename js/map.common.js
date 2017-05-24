@@ -157,6 +157,10 @@ function clickAPRS(cb) {
     //document.cookie =  'filter_ShowAPRS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
     createCookie('filter_ShowAPRS',cb.checked,2);
 }
+function clickDisplayGroundStation(cb) {
+    createCookie('show_GroundStation',cb.checked,2);
+    window.location.reload();
+}
 function unitdistance(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;
