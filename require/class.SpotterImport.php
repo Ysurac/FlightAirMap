@@ -488,9 +488,32 @@ class SpotterImport {
 	    	    }
 	    	    if (isset($this->all_flights[$id]['time_last_coord'])) $timediff = round(time()-$this->all_flights[$id]['time_last_coord']);
 	    	    else unset($timediff);
-	    	    if ($this->tmd > 5 || isset($line['format_source']) && $line['format_source'] == 'airwhere' && ((!isset($this->all_flights[$id]['latitude']) || !isset($this->all_flights[$id]['longitude'])) || (isset($this->all_flights[$id]['latitude']) && isset($this->all_flights[$id]['longitude']) && $this->all_flights[$id]['latitude'] != $line['latitude'] && $this->all_flights[$id]['longitude'] != $line['longitude'])) || (isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || (isset($globalVAM) && $globalVAM) || !isset($timediff) || $timediff > 2000 || ($timediff > 30 && isset($this->all_flights[$id]['latitude']) && isset($this->all_flights[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')))) {
+	    	    if ($this->tmd > 5
+	    	        || (isset($line['format_source']) 
+	    	    	    && $line['format_source'] == 'airwhere' 
+	    	    	    && ((!isset($this->all_flights[$id]['latitude']) 
+	    	    		|| !isset($this->all_flights[$id]['longitude'])) 
+	    	    		|| (isset($this->all_flights[$id]['latitude']) 
+	    	    		    && isset($this->all_flights[$id]['longitude']) 
+	    	    		    && $this->all_flights[$id]['latitude'] != $line['latitude'] 
+	    	    		    && $this->all_flights[$id]['longitude'] != $line['longitude'])))
+	    		|| (isset($globalVA) && $globalVA) 
+	    	    	|| (isset($globalIVAO) && $globalIVAO)
+	    	    	|| (isset($globalVATSIM) && $globalVATSIM)
+	    	    	|| (isset($globalphpVMS) && $globalphpVMS)
+	    	    	|| (isset($globalVAM) && $globalVAM)
+	    	    	|| !isset($timediff)
+	    	    	|| $timediff > 2000
+	    	    	|| ($timediff > 30 
+	    	    	    && isset($this->all_flights[$id]['latitude']) 
+	    	    	    && isset($this->all_flights[$id]['longitude']) 
+	    	    	    && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m')))) {
+
 			if (isset($this->all_flights[$id]['archive_latitude']) && isset($this->all_flights[$id]['archive_longitude']) && isset($this->all_flights[$id]['livedb_latitude']) && isset($this->all_flights[$id]['livedb_longitude'])) {
-			    if ((isset($timediff) && $timediff > $globalAircraftMaxUpdate) || isset($line['format_source']) && $line['format_source'] == 'airwhere' || !$Common->checkLine($this->all_flights[$id]['archive_latitude'],$this->all_flights[$id]['archive_longitude'],$this->all_flights[$id]['livedb_latitude'],$this->all_flights[$id]['livedb_longitude'],$line['latitude'],$line['longitude'])) {
+			    if ((isset($timediff) && $timediff > $globalAircraftMaxUpdate)
+				|| (isset($line['format_source']) && $line['format_source'] == 'airwhere') 
+				|| !$Common->checkLine($this->all_flights[$id]['archive_latitude'],$this->all_flights[$id]['archive_longitude'],$this->all_flights[$id]['livedb_latitude'],$this->all_flights[$id]['livedb_longitude'],$line['latitude'],$line['longitude'])) {
+
 				$this->all_flights[$id]['archive_latitude'] = $line['latitude'];
 				$this->all_flights[$id]['archive_longitude'] = $line['longitude'];
 				$this->all_flights[$id]['putinarchive'] = true;

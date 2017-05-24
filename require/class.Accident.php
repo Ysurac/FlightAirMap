@@ -324,8 +324,9 @@ class Accident {
 						$sth->execute($query_values);
 						if ($cr['date'] > time()-(30*86400)) {
 							if (empty($Image->getSpotterImage($cr['registration']))) {
-								//if ($globalDebug) echo 'Get image...'."\n";
+								if ($globalDebug) echo "\t".'Get image for '.$cr['registration'].'...';
 								$Image->addSpotterImage($cr['registration']);
+								if ($globalDebug) echo "\t".'Done'."\n";
 							}
 							// elseif ($globalDebug) echo 'Image already in DB'."\n";
 						}

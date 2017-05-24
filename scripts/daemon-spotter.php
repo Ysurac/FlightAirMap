@@ -1347,7 +1347,9 @@ while ($i > 0) {
 				    if (isset($line['heading'])) $data['heading'] = $line['heading'];
 				    //else $data['heading'] = 0;
 				    if (isset($line['stealth'])) $data['aircraft_type'] = $line['stealth'];
-				    if (!isset($line['source_type']) && (!isset($globalAPRSarchive) || (isset($globalAPRSarchive) && $globalAPRSarchive === FALSE))) $data['noarchive'] = true;
+				    //if (!isset($line['source_type']) && (!isset($globalAPRSarchive) || (isset($globalAPRSarchive) && $globalAPRSarchive === FALSE))) $data['noarchive'] = true;
+				    if (isset($globalAPRSarchive) && $globalAPRSarchive === FALSE) $data['noarchive'] = true;
+				    elseif (isset($globalAPRSarchive) && $globalAPRSarchive === TRUE) $data['noarchive'] = false;
 				    if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
 				    elseif (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === FALSE) $data['noarchive'] = false;
     				    $data['id_source'] = $id_source;

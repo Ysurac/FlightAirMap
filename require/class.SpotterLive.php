@@ -245,13 +245,13 @@ class SpotterLive {
 				FROM spotter_archive INNER JOIN (SELECT flightaware_id FROM spotter_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= spotter_live.date) l ON l.flightaware_id = spotter_archive.flightaware_id 
 				WHERE spotter_archive.latitude <> '0' AND spotter_archive.longitude <> '0' 
 				ORDER BY spotter_archive.flightaware_id, spotter_archive.date";
+				//AND CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".round($globalLiveInterval*1000)." SECONDS' <= spotter_archive.date
 			} else {
 				$query  = "SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source 
 				FROM spotter_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= spotter_live.date AND spotter_live.latitude <> '0' AND spotter_live.longitude <> '0' 
 				ORDER BY spotter_live.flightaware_id, spotter_live.date";
 			}
 		}
-
     		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute();
@@ -1002,6 +1002,13 @@ class SpotterLive {
 				return false;
 			}
 		} else $altitude = 0;
+		if ($altitude_real != '')
+		{
+			if (!is_numeric($altitude_real))
+			{
+				return false;
+			}
+		} else $altitude_real = 0;
 
 		if ($heading != '')
 		{
@@ -1092,6 +1099,10 @@ class SpotterLive {
 		    $SpotterArchive = new SpotterArchive($this->db);
 		    $result =  $SpotterArchive->addSpotterArchiveData($flightaware_id, $ident, $registration, $airline_name, $airline_icao, $airline_country, $airline_type, $aircraft_icao, $aircraft_shadow, $aircraft_name, $aircraft_manufacturer, $departure_airport_icao, $departure_airport_name, $departure_airport_city, $departure_airport_country, $departure_airport_time,$arrival_airport_icao, $arrival_airport_name, $arrival_airport_city, $arrival_airport_country, $arrival_airport_time, $route_stop, $date,$latitude, $longitude, $waypoints, $altitude, $altitude_real,$heading, $groundspeed, $squawk, $ModeS, $pilot_id, $pilot_name,$verticalrate,$format_source,$source_name, $over_country);
 		    if ($globalDebug) echo $result.')';
+		} elseif ($globalDebug && $putinarchive !== true) {
+			echo '(Not adding to archive)';
+		} elseif ($globalDebug && $noarchive === true) {
+			echo '(No archive)';
 		}
 		return "success";
 
