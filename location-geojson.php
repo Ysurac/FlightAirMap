@@ -1,4 +1,3 @@
-
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Source.php');
