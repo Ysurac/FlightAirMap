@@ -209,10 +209,10 @@ class SpotterImport {
     }
 
     public function add($line) {
-	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource, $globalVAM, $globalAllFlights, $globalServerAPRS, $APRSSpotter, $globalNoImport, $globalNoDB, $globalVA, $globalAircraftMaxUpdate, $globalAircraftMinUpdate;
+	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource, $globalVAM, $globalAllFlights, $globalServerAPRS, $APRSSpotter, $globalNoImport, $globalNoDB, $globalVA, $globalAircraftMaxUpdate, $globalAircraftMinUpdate, $globalLiveInterval;
 	//if (!isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
-	if (!isset($globalAircraftMaxUpdate) || $globalAircraftMaxUpdate == '') $globalAircraftMaxUpdate = 2300;
+	if (!isset($globalAircraftMaxUpdate) || $globalAircraftMaxUpdate == '') $globalAircraftMaxUpdate = 1300;
 /*
 	$Spotter = new Spotter();
 	$dbc = $Spotter->db;
@@ -481,7 +481,7 @@ class SpotterImport {
 
 
 
-	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '' && is_numeric($line['latitude']) && is_numeric($line['longitude']) && !is_int($line['latitude']) && !is_int($line['longitude'])) {
+	        if (isset($line['latitude']) && isset($line['longitude']) && $line['latitude'] != '' && $line['longitude'] != '' && is_numeric($line['latitude']) && is_numeric($line['longitude'])) {
 	    	    if (ctype_digit(strval($line['latitude'])) || ctype_digit(strval($line['longitude']))) {
 	    	    	if ($globalDebug) echo "/!\ Invalid latitude or/and longitude data : lat: ".$line['latitude']." - lng: ".$line['longitude']."\n";
 	    	    	return false;
@@ -503,7 +503,7 @@ class SpotterImport {
 	    	    	|| (isset($globalphpVMS) && $globalphpVMS)
 	    	    	|| (isset($globalVAM) && $globalVAM)
 	    	    	|| !isset($timediff)
-	    	    	|| $timediff > 2000
+	    	    	|| $timediff > $globalLiveInterval*2
 	    	    	|| ($timediff > 30 
 	    	    	    && isset($this->all_flights[$id]['latitude']) 
 	    	    	    && isset($this->all_flights[$id]['longitude']) 
