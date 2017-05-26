@@ -1399,7 +1399,7 @@ while ($i > 0) {
 					echo '!! Car & Trucks not yet supported'."\n";
 				}
 				*/
-				elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
+				//elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
 				elseif ($line == true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
 			    }
 			} else {

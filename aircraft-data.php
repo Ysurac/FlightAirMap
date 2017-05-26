@@ -103,7 +103,7 @@ print '<div id="aircraft">';
 print '<span>'._("Aircraft").'</span>';
 if (isset($spotter_item['aircraft_wiki'])) print '<a href="'.$spotter_item['aircraft_wiki'].'">'.$spotter_item['aircraft_name'].'</a>';
 if (isset($spotter_item['aircraft_type']) && isset($spotter_item['aircraft_manufacturer']) && $spotter_item['aircraft_manufacturer'] != 'N/A' && isset($spotter_item['aircraft_name']) && $spotter_item['aircraft_name'] != 'N/A') print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
-if (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a>';
+elseif (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a>';
 else print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
 print '</div>';
 print '<div id ="altitude"><span>'._("Altitude").'</span>';
