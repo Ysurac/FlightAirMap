@@ -234,6 +234,15 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</p>
 				<p class="help-block">Get a key <a href="https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/quick-start.html">here</a></p>
 			</div>
+			<br />
+			<div id="openweathermap_data">
+				<p>
+					<label for="openweathermapkey">OpenWeatherMap key</label>
+					<input type="text" name="oepnweathermapkey" id="openweathermapkey" value="<?php if (isset($globalOpenWeatherMapKey)) print $globalOpenWeatherMapKey; ?>" />
+					<p class="help-block">Get a key <a href="https://openweathermap.org/">here</a></p>
+				</p>
+			</div>
+			<br />
 		</fieldset>
 		<fieldset id="coverage">
 			<legend>Coverage area</legend>
@@ -898,10 +907,11 @@ if (isset($_POST['dbtype'])) {
 	$mapboxtoken = filter_input(INPUT_POST,'mapboxtoken',FILTER_SANITIZE_STRING);
 	$googlekey = filter_input(INPUT_POST,'googlekey',FILTER_SANITIZE_STRING);
 	$bingkey = filter_input(INPUT_POST,'bingkey',FILTER_SANITIZE_STRING);
+	$openweathermapkey = filter_input(INPUT_POST,'openweathermapkey',FILTER_SANITIZE_STRING);
 	$mapquestkey = filter_input(INPUT_POST,'mapquestkey',FILTER_SANITIZE_STRING);
 	$hereappid = filter_input(INPUT_POST,'hereappid',FILTER_SANITIZE_STRING);
 	$hereappcode = filter_input(INPUT_POST,'hereappcode',FILTER_SANITIZE_STRING);
-	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid,'globalMapboxToken' => $mapboxtoken,'globalGoogleAPIKey' => $googlekey,'globalBingMapKey' => $bingkey,'globalHereappID' => $hereappid,'globalHereappCode' => $hereappcode,'globalMapQuestKey' => $mapquestkey));
+	$settings = array_merge($settings,array('globalMapProvider' => $mapprovider,'globalMapboxId' => $mapboxid,'globalMapboxToken' => $mapboxtoken,'globalGoogleAPIKey' => $googlekey,'globalBingMapKey' => $bingkey,'globalHereappID' => $hereappid,'globalHereappCode' => $hereappcode,'globalMapQuestKey' => $mapquestkey,'globalOpenWeatherMapKey' => $openweathermapkey));
 	
 	$latitudemax = filter_input(INPUT_POST,'latitudemax',FILTER_SANITIZE_STRING);
 	$latitudemin = filter_input(INPUT_POST,'latitudemin',FILTER_SANITIZE_STRING);

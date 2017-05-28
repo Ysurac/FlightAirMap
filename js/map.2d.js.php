@@ -668,7 +668,7 @@ function loadWeatherPrecipitation()
       map.removeLayer(weatherprecipitation);  
     }
     
-    weatherprecipitation = L.tileLayer('http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png', {
+    weatherprecipitation = L.tileLayer('http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png?appid=<?php print $globalOpenWeatherMapKey; ?>', {
 	attribution: 'Map data © OpenWeatherMap',
         maxZoom: 18,
         transparent: true,
@@ -684,7 +684,7 @@ function loadWeatherRain()
       map.removeLayer(weatherrain);
     }
     
-    weatherrain = L.tileLayer('http://{s}.tile.openweathermap.org/map/rain/{z}/{x}/{y}.png', {
+    weatherrain = L.tileLayer('http://{s}.tile.openweathermap.org/map/rain/{z}/{x}/{y}.png?appid=<?php print $globalOpenWeatherMapKey; ?>', {
 	attribution: 'Map data © OpenWeatherMap',
         maxZoom: 18,
         transparent: true,
@@ -700,7 +700,7 @@ function loadWeatherClouds()
       map.removeLayer(weatherclouds);
     }
     
-    weatherclouds = L.tileLayer('http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png', {
+    weatherclouds = L.tileLayer('http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png?appid=<?php print $globalOpenWeatherMapKey; ?>', {
 	attribution: 'Map data © OpenWeatherMap',
         maxZoom: 18,
         transparent: true,
