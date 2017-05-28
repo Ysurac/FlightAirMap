@@ -4,6 +4,7 @@ require_once('../require/class.Language.php');
 
 setcookie("MapFormat",'2d');
 
+if (!isset($globalOpenWeatherMapKey)) $globalOpenWeatherMapKey = '';
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
 else $compress = $globalJsonCompress;
@@ -615,7 +616,7 @@ function showWeatherRain(){
       $(".weatherrain").removeClass("active");
       //remove the auto refresh
       clearInterval(weatherrainrefresh);
-  }       
+  }
 }
 //adds a new weather radar layer on to the map
 function showWeatherClouds(){
@@ -635,7 +636,7 @@ function showWeatherClouds(){
       $(".weatherclouds").removeClass("active");
       //remove the auto refresh
       clearInterval(weathercloudsrefresh);
-  }       
+  }
 }
 
 //adds a new weather radar layer on to the map
