@@ -1267,8 +1267,13 @@ class NOTAM {
 		$Common = new Common();
 		$result = array();
 		$result['full_notam'] = $data;
+		$result['text'] = '';
+		$result['permanent'] = '';
+		$result['date_begin'] = NULL;
+		$result['date_end'] = NULL;
 		$data = str_ireplace(array("\r","\n",'\r','\n'),' ',$data);
-		$data = preg_split('#(?=([A-Z]\)\s))#',$data);
+		//echo $data."\n";
+		$data = preg_split('#\s(?=([A-Z]\)\s))#',$data);
 		//print_r($data);
 		foreach ($data as $line) {
 			$line = trim($line);
@@ -1474,7 +1479,8 @@ $NOTAM = new NOTAM();
 //$NOTAM->deleteAllNOTAM();
 //$NOTAM->updateNOTAMallAirports();
 //echo $NOTAM->parse_code('QFATT');
-$NOTAM->createNOTAMtextFile('../install/tmp/notam.txt');
+//$NOTAM->createNOTAMtextFile('../install/tmp/notam.txt');
 $NOTAM->updateNOTAMfromTextFile('../install/tmp/notam.txt');
 */
+
 ?>
