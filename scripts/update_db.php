@@ -107,6 +107,7 @@ if (isset($globalArchive) && $globalArchive) {
 		require_once(dirname(__FILE__).'/../require/class.SpotterArchive.php');
 		$SpotterArchive = new SpotterArchive();
 		$SpotterArchive->deleteSpotterArchiveTrackData();
+		echo "Done\n";
 	}
 }
 if (isset($globalACARSArchiveKeepMonths) && $globalACARSArchiveKeepMonths > 0) {
@@ -114,6 +115,7 @@ if (isset($globalACARSArchiveKeepMonths) && $globalACARSArchiveKeepMonths > 0) {
 	require_once(dirname(__FILE__).'/../require/class.ACARS.php');
 	$ACARS = new ACARS();
 	$ACARS->deleteArchiveAcarsData();
+	echo "Done\n";
 }
 
 if (isset($globalMap3D) && $globalMap3D) {
@@ -121,6 +123,7 @@ if (isset($globalMap3D) && $globalMap3D) {
 		echo "Updating tle for satellites position...";
 		$update_db->update_tle();
 		$update_db->insert_last_tle_update();
+		echo "Done\n";
 	}
 	if (!isset($globalMasterServer) || !$globalMasterServer) {
 		echo "Update 3D models...";
@@ -129,6 +132,7 @@ if (isset($globalMap3D) && $globalMap3D) {
 		if ((isset($globalTracker) && $globalTracker) || (isset($globalMarine) && $globalMarine)) {
 			$update_db->update_vehicules_models();
 		}
+		echo "Done\n";
 	}
 }
 ?>

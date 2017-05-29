@@ -384,9 +384,12 @@ class SpotterArchive {
         
         public function deleteSpotterArchiveTrackData()
         {
-		global $globalArchiveKeepTrackMonths;
-                date_default_timezone_set('UTC');
-		$query = 'DELETE FROM spotter_archive WHERE spotter_archive.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepTrackMonths.' MONTH)';
+		global $globalArchiveKeepTrackMonths, $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = 'DELETE FROM spotter_archive WHERE spotter_archive.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepTrackMonths.' MONTH)';
+		} else {
+			$query = "DELETE FROM spotter_archive WHERE spotter_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveKeepTrackMonths." MONTH'";
+		}
                 try {
                         $sth = $this->db->prepare($query);
                         $sth->execute();
