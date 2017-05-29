@@ -34,6 +34,7 @@ require_once('header.php');
 <div id="waypoints"></div>
 <div id="archivebox" class="archivebox"></div>
 <div id="showdetails" class="showdetails"></div>
+<duv class="geocode"></div><div class="compass"></div>
 <div class="weatherrain"></div><div class="weatherprecipitation"></div><div class="weatherclouds"></div><div class="weatherradar"></div>
 <div id="infobox" class="infobox"><table><tr>
     <?php if ((isset($globalAircraft) && $globalAircraft) || !isset($globalAircraft)) { ?><td><div id="ibxaircraft"><h4><?php echo _("Aircrafts Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td>

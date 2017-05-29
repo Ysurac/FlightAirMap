@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-29 09:49+0200\n"
+"POT-Creation-Date: 2017-05-29 14:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -166,19 +166,19 @@ msgstr ""
 msgid "Airlines"
 msgstr ""
 
-#: airline.php:28 index.php:527 index.php:574
+#: airline.php:28 index.php:529 index.php:576
 msgid "All"
 msgstr ""
 
-#: airline.php:30 index.php:575
+#: airline.php:30 index.php:577
 msgid "Passenger"
 msgstr ""
 
-#: airline.php:32 index.php:576
+#: airline.php:32 index.php:578
 msgid "Cargo"
 msgstr ""
 
-#: airline.php:34 index.php:577 statistics.php:109
+#: airline.php:34 index.php:579 statistics.php:109
 msgid "Military"
 msgstr ""
 
@@ -326,7 +326,7 @@ msgid "Compass is not supported by this browser."
 msgstr ""
 
 #: js/map-tracker.3d.js.php:134 js/map-marine.3d.js.php:134
-#: js/map-aircraft.3d.js.php:794 index.php:81
+#: js/map-aircraft.3d.js.php:794 index.php:82
 msgid "Archive"
 msgstr ""
 
@@ -504,7 +504,7 @@ msgid "Title:"
 msgstr ""
 
 #: js/map-aircraft.2d.js.php:1165 js/map.new.js.php:2110 js/map.js.php:1944
-#: index.php:605 table-output.php:537 table-output.php:542 table-output.php:544
+#: index.php:607 table-output.php:537 table-output.php:542 table-output.php:544
 #: table-output.php:546 table-output.php:548 table-output.php:550
 #: table-output.php:552 table-output.php:554 table-output.php:556
 #: table-output.php:558 table-output.php:560 table-output.php:562
@@ -1984,229 +1984,225 @@ msgstr ""
 msgid "JavaScript <b>MUST</b> be enabled"
 msgstr ""
 
-#: index.php:39
+#: index.php:40
 msgid "Aircrafts Detected"
 msgstr ""
 
-#: index.php:40
+#: index.php:41
 msgid "Vessels Detected"
 msgstr ""
 
-#: index.php:41
+#: index.php:42
 msgid "Trackers Detected"
 msgstr ""
 
-#: index.php:66
+#: index.php:67
 msgid "Session has timed-out"
 msgstr ""
 
-#: index.php:67
+#: index.php:68
 msgid ""
 "In order to save data consumption web page times out after 30 minutes. Close "
 "this dialog to continue."
 msgstr ""
 
-#: index.php:73
+#: index.php:74
 msgid "Zoom in"
 msgstr ""
 
-#: index.php:74
+#: index.php:75
 msgid "Zoom out"
 msgstr ""
 
-#: index.php:75
+#: index.php:76
 msgid "Plot your Location"
 msgstr ""
 
-#: index.php:76
+#: index.php:77
 msgid "Compass Mode"
 msgstr ""
 
-#: index.php:86
+#: index.php:87
 msgid "Layers"
 msgstr ""
 
-#: index.php:87 index.php:470
+#: index.php:88 index.php:472
 msgid "Filters"
 msgstr ""
 
-#: index.php:88 index.php:242
+#: index.php:89 index.php:244
 msgid "Settings"
 msgstr ""
 
-#: index.php:98 index.php:601
+#: index.php:99 index.php:603
 msgid "Satellites"
 msgstr ""
 
-#: index.php:119
+#: index.php:121
 msgid "Weather Precipitation"
 msgstr ""
 
-#: index.php:120
-msgid "Weather Rain"
-msgstr ""
-
-#: index.php:121
+#: index.php:122
 msgid "Weather Clouds"
 msgstr ""
 
-#: index.php:134 index.php:143
+#: index.php:136 index.php:145
 msgid "Display waypoints"
 msgstr ""
 
-#: index.php:135 index.php:144
+#: index.php:137 index.php:146
 msgid "Display airspace"
 msgstr ""
 
-#: index.php:155
+#: index.php:157
 msgid "Display NOTAM"
 msgstr ""
 
-#: index.php:156
+#: index.php:158
 msgid "NOTAM scope:"
 msgstr ""
 
-#: index.php:182
+#: index.php:184
 msgid "Playback"
 msgstr ""
 
-#: index.php:223
+#: index.php:225
 msgid "Playback speed:"
 msgstr ""
 
-#: index.php:245
+#: index.php:247
 msgid "Type of Map:"
 msgstr ""
 
-#: index.php:321
+#: index.php:323
 msgid "Type of Terrain:"
 msgstr ""
 
-#: index.php:335
+#: index.php:337
 msgid "Display flight info as popup"
 msgstr ""
 
-#: index.php:336
+#: index.php:338
 msgid "Display flight path"
 msgstr ""
 
-#: index.php:337
+#: index.php:339
 msgid "Display flight route on click"
 msgstr ""
 
-#: index.php:338
+#: index.php:340
 msgid "Display flight remaining route on click"
 msgstr ""
 
-#: index.php:339
+#: index.php:341
 msgid "Planes animate between updates"
 msgstr ""
 
-#: index.php:343
+#: index.php:345
 msgid "Display airports on map"
 msgstr ""
 
-#: index.php:344
+#: index.php:346
 msgid "Display ground station on map"
 msgstr ""
 
-#: index.php:348
+#: index.php:350
 msgid "Show mini-map"
 msgstr ""
 
-#: index.php:353
+#: index.php:355
 msgid "Show Santa Claus now"
 msgstr ""
 
-#: index.php:362 index.php:372
+#: index.php:364 index.php:374
 msgid "Display polar on map"
 msgstr ""
 
-#: index.php:385
+#: index.php:387
 msgid "Aircraft icon color based on altitude"
 msgstr ""
 
-#: index.php:389 index.php:427
+#: index.php:391 index.php:429
 msgid "Aircraft icon color:"
 msgstr ""
 
-#: index.php:401 index.php:437
+#: index.php:403 index.php:439
 msgid "Marine icon color:"
 msgstr ""
 
-#: index.php:411
+#: index.php:413
 msgid "Show airport icon at zoom level:"
 msgstr ""
 
-#: index.php:426
+#: index.php:428
 msgid "Force Aircraft color"
 msgstr ""
 
-#: index.php:436
+#: index.php:438
 msgid "Force Marine color"
 msgstr ""
 
-#: index.php:444
+#: index.php:446
 msgid "Distance unit:"
 msgstr ""
 
-#: index.php:451
+#: index.php:453
 msgid "Altitude unit:"
 msgstr ""
 
-#: index.php:457
+#: index.php:459
 msgid "Speed unit:"
 msgstr ""
 
-#: index.php:467
+#: index.php:469
 msgid "Any change in settings reload page"
 msgstr ""
 
-#: index.php:479
+#: index.php:481
 msgid "Display VATSIM data"
 msgstr ""
 
-#: index.php:480
+#: index.php:482
 msgid "Display IVAO data"
 msgstr ""
 
-#: index.php:481
+#: index.php:483
 msgid "Display phpVMS data"
 msgstr ""
 
-#: index.php:489
+#: index.php:491
 msgid "Display ADS-B data"
 msgstr ""
 
-#: index.php:492
+#: index.php:494
 msgid "Display APRS data"
 msgstr ""
 
-#: index.php:497
+#: index.php:499
 msgid "Display airlines:"
 msgstr ""
 
-#: index.php:524
+#: index.php:526
 msgid "Display alliance:"
 msgstr ""
 
-#: index.php:549
+#: index.php:551
 msgid "Display APRS sources name:"
 msgstr ""
 
-#: index.php:572
+#: index.php:574
 msgid "Display airlines of type:"
 msgstr ""
 
-#: index.php:584
+#: index.php:586
 msgid "Display flight with ident:"
 msgstr ""
 
-#: index.php:593 index.php:594
+#: index.php:595 index.php:596
 msgid "Remove all filters"
 msgstr ""
 
-#: index.php:604
+#: index.php:606
 msgid "Show ISS, Tiangong-1 and Tiangong-2 on map"
 msgstr ""
 
@@ -2663,6 +2659,7 @@ msgid "Distance"
 msgstr ""
 
 #: table-output.php:93 table-output.php:282 table-output.php:404 search.php:323
+#: search.php:325
 msgid "Pilot name"
 msgstr ""
 
@@ -3094,10 +3091,6 @@ msgstr ""
 
 #: search.php:317 search.php:319
 msgid "Pilot id"
-msgstr ""
-
-#: search.php:325
-msgid "Pilot nmae"
 msgstr ""
 
 #: search.php:342 search.php:343

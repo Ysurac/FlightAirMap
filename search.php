@@ -322,7 +322,7 @@ if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (i
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Pilot name"); ?></label> 
 					<div class="col-sm-10">
-						<input type="text" class="form-control" name="pilot_name" value="<?php if (isset($_GET['pilot_name'])) print $pilot_name; ?>" size="15" placeholder="<?php echo _("Pilot nmae"); ?>" />
+						<input type="text" class="form-control" name="pilot_name" value="<?php if (isset($_GET['pilot_name'])) print $pilot_name; ?>" size="15" placeholder="<?php echo _("Pilot name"); ?>" />
 					</div>
 				</div>
 <?php

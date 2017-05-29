@@ -237,7 +237,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<br />
 			<div id="openweathermap_data">
 				<p>
-					<label for="openweathermapkey">OpenWeatherMap key</label>
+					<label for="openweathermapkey">OpenWeatherMap key (weather layer)</label>
 					<input type="text" name="oepnweathermapkey" id="openweathermapkey" value="<?php if (isset($globalOpenWeatherMapKey)) print $globalOpenWeatherMapKey; ?>" />
 					<p class="help-block">Get a key <a href="https://openweathermap.org/">here</a></p>
 				</p>
