@@ -433,7 +433,7 @@ if (strtolower($current_page) == "search")
 				print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_desc" class="active">'._("Date last seen").'</a> <i class="fa fa-caret-up"></i></th>';
 			} else if ($_GET['sort'] == "date_desc")
 			{
-				print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_asc" class="active">'._("Date lastt seen").'</a> <i class="fa fa-caret-down"></i></th>';
+				print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_asc" class="active">'._("Date last seen").'</a> <i class="fa fa-caret-down"></i></th>';
 			} else {
 				print '<th class="time"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/date_asc">'._("Date last seen").'</a> <i class="fa fa-sort small"></i></th>';
 			}

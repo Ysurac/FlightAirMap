@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-29 09:27+0200\n"
+"POT-Creation-Date: 2017-05-29 09:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2709,12 +2709,8 @@ msgid "Duration"
 msgstr ""
 
 #: table-output.php:312 table-output.php:315 table-output.php:317
-#: table-output.php:433 table-output.php:438
+#: table-output.php:433 table-output.php:436 table-output.php:438
 msgid "Date last seen"
-msgstr ""
-
-#: table-output.php:436
-msgid "Date lastt seen"
 msgstr ""
 
 #: table-output.php:494 table-output.php:503 table-output.php:509
@@ -3477,12 +3473,8 @@ msgid ""
 "(%s)</strong>."
 msgstr ""
 
-#: incident-latest.php:6 incident-detailed.php:6
+#: incident-latest.php:6 incident-latest.php:32 incident-detailed.php:6
 msgid "Latest incidents"
-msgstr ""
-
-#: incident-latest.php:32
-msgid "Latest Incidents"
 msgstr ""
 
 #: incident-latest.php:36

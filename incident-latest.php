@@ -29,7 +29,7 @@ $limit_previous_2 = $limit_end - $absolute_difference;
     
 
 print '<div class="info column">';
-print '<h1>'._("Latest Incidents").'</h1>';
+print '<h1>'._("Latest incidents").'</h1>';
 print '</div>';
 
 print '<div class="table column">';
