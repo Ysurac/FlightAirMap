@@ -356,6 +356,7 @@ class update_db {
 					//print_r($line);
             				$values['ModeS'] = $line[1];
             				$values['Registration'] = $line[3];
+            				$values['ICAOTypeCode'] = '';
             				$aircraft_name = $line[2];
             				// Check if we can find ICAO, else set it to GLID
             				$aircraft_name_split = explode(' ',$aircraft_name);

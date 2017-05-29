@@ -1264,6 +1264,7 @@ class NOTAM {
 	}
 
 	public function parse($data) {
+		global $globalDebug;
 		$Common = new Common();
 		$result = array();
 		$result['full_notam'] = $data;
@@ -1333,7 +1334,10 @@ class NOTAM {
 					$result['longitude'] = $longitude;
 					if ($matches[12] != '') $result['radius'] = intval($matches[12]);
 					else $result['radius'] = 0;
-				} else echo 'ERROR : '.$line."\n";
+				} elseif ($globalDebug) {
+					echo 'ERROR NOTAM : '.$notam."\n";
+					echo "Can't parse : ".$line."\n";
+				}
 			}
 			elseif (preg_match('#A\) (.*)#',$line,$matches)) {
 				$result['icao'] = $matches[1];

@@ -330,6 +330,7 @@ class Accident {
 							}
 							// elseif ($globalDebug) echo 'Image already in DB'."\n";
 						}
+						if ($cr['title'] == '') $cr['title'] = $cr['registration'].' '.$cr['type'];
 						$Spotter->setHighlightFlightByRegistration($cr['registration'],$cr['title'],date('Y-m-d',$cr['date']));
 					}
 				}
