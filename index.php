@@ -113,18 +113,19 @@ require_once('header.php');
 		<form>
 <?php
 	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
+		if (isset($globalOpenWeatherMapKey) && $globalOpenWeatherMapKey != '') {
 ?>
 		<h1>Weather</h1>
 			<ul>
 				<li><div class="checkbox"><label><input type="checkbox" name="weatherprecipitation" value="1" onclick="showWeatherPrecipitation();" /><?php echo _("Weather Precipitation"); ?></label></div></li>
-				<li><div class="checkbox"><label><input type="checkbox" name="weatherrain" value="1" onclick="showWeatherRain();"  /><?php echo _("Weather Rain"); ?></label></div></li>
 				<li><div class="checkbox"><label><input type="checkbox" name="weatherclouds" value="1" onclick="showWeatherClouds();" /><?php echo _("Weather Clouds"); ?></label></div></li>
 			</ul>
-                </form>
-                <br />
 <?php
+		}
 	}
 ?>
+                </form>
+                <br />
 		<h1>Others Layers</h1>
 <?php
 	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
