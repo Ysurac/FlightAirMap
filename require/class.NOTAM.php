@@ -1335,7 +1335,7 @@ class NOTAM {
 					if ($matches[12] != '') $result['radius'] = intval($matches[12]);
 					else $result['radius'] = 0;
 				} elseif ($globalDebug) {
-					echo 'ERROR NOTAM : '.$notam."\n";
+					echo 'ERROR NOTAM : '.$data."\n";
 					echo "Can't parse : ".$line."\n";
 				}
 			}
