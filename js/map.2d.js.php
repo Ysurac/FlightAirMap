@@ -590,12 +590,12 @@ function showWeatherPrecipitation(){
     //add the active class
     $(".weatherprecipitation").addClass("active");
   } else {
+      //remove the auto refresh
+      clearInterval(weatherprecipitationrefresh);
       //remove the weather radar layer
       map.removeLayer(weatherprecipitation);
       //remove the active class
       $(".weatherprecipitation").removeClass("active");
-      //remove the auto refresh
-      clearInterval(weatherprecipitationrefresh);
   }       
 }
 //adds a new weather radar layer on to the map
@@ -610,12 +610,12 @@ function showWeatherRain(){
     //add the active class
     $(".weatherrain").addClass("active");
   } else {
+      //remove the auto refresh
+      clearInterval(weatherrainrefresh);
       //remove the weather radar layer
       map.removeLayer(weatherrain);
       //remove the active class
       $(".weatherrain").removeClass("active");
-      //remove the auto refresh
-      clearInterval(weatherrainrefresh);
   }
 }
 //adds a new weather radar layer on to the map
@@ -630,12 +630,12 @@ function showWeatherClouds(){
     //add the active class
     $(".weatherclouds").addClass("active");
   } else {
+      //remove the auto refresh
+      clearInterval(weathercloudsrefresh);
       //remove the weather radar layer
       map.removeLayer(weatherclouds);
       //remove the active class
       $(".weatherclouds").removeClass("active");
-      //remove the auto refresh
-      clearInterval(weathercloudsrefresh);
   }
 }
 
@@ -651,13 +651,13 @@ function showWeatherRadar(){
     //add the active class
     $(".weatherradar").addClass("active");
   } else {
+      //remove the auto refresh
+      clearInterval(weatherradarrefresh);
       //remove the weather radar layer
       map.removeLayer(weatherradar);
       //remove the active class
       $(".weatherradar").removeClass("active");
-      //remove the auto refresh
-      clearInterval(weatherradarrefresh);
-  }       
+  }
 }
 
 //actually loads the weather radar
