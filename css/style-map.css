@@ -464,3 +464,4 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
     }
     
 }
+.ui-dialog { z-index: 3000 !important ;}
