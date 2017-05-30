@@ -586,12 +586,12 @@ function showWeatherPrecipitation(){
     //loads the function to load the weather radar
     loadWeatherPrecipitation();
     //automatically refresh radar every 2 minutes
-    weatherprecipirationrefresh = setInterval(function(){loadWeatherPrecipitation()}, 120000);
+    //weatherprecipirationrefresh = setInterval(function(){loadWeatherPrecipitation()}, 120000);
     //add the active class
     $(".weatherprecipitation").addClass("active");
   } else {
       //remove the auto refresh
-      clearInterval(weatherprecipitationrefresh);
+     // clearInterval(weatherprecipitationrefresh);
       //remove the weather radar layer
       map.removeLayer(weatherprecipitation);
       //remove the active class
@@ -606,12 +606,12 @@ function showWeatherRain(){
     //loads the function to load the weather radar
     loadWeatherRain();
     //automatically refresh radar every 2 minutes
-    weatherrainrefresh = setInterval(function(){loadWeatherRain()}, 120000);
+    //weatherrainrefresh = setInterval(function(){loadWeatherRain()}, 120000);
     //add the active class
     $(".weatherrain").addClass("active");
   } else {
       //remove the auto refresh
-      clearInterval(weatherrainrefresh);
+      //clearInterval(weatherrainrefresh);
       //remove the weather radar layer
       map.removeLayer(weatherrain);
       //remove the active class
@@ -626,12 +626,12 @@ function showWeatherClouds(){
     //loads the function to load the weather radar
     loadWeatherClouds();
     //automatically refresh radar every 2 minutes
-    weathercloudsrefresh = setInterval(function(){loadWeatherClouds()}, 120000);
+    //weathercloudsrefresh = setInterval(function(){loadWeatherClouds()}, 120000);
     //add the active class
     $(".weatherclouds").addClass("active");
   } else {
       //remove the auto refresh
-      clearInterval(weathercloudsrefresh);
+      //clearInterval(weathercloudsrefresh);
       //remove the weather radar layer
       map.removeLayer(weatherclouds);
       //remove the active class
@@ -647,12 +647,12 @@ function showWeatherRadar(){
     //loads the function to load the weather radar
     loadWeatherRadar();
     //automatically refresh radar every 2 minutes
-    weatherradarrefresh = setInterval(function(){loadWeatherRadar()}, 120000);
+    //weatherradarrefresh = setInterval(function(){loadWeatherRadar()}, 120000);
     //add the active class
     $(".weatherradar").addClass("active");
   } else {
       //remove the auto refresh
-      clearInterval(weatherradarrefresh);
+      //clearInterval(weatherradarrefresh);
       //remove the weather radar layer
       map.removeLayer(weatherradar);
       //remove the active class
