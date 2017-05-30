@@ -116,6 +116,15 @@ function getLiveTrackerData(click)
 ?>
 	    success: function(data) {
 		map.removeLayer(layer_tracker_data);
+<?php
+	if (!isset($archive) || !$archive) {
+?>
+		if (document.getElementById('aircraft_ident').className != "") {
+			$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+document.getElementById('aircraft_ident').className);
+		}
+<?php
+	}
+?>
 		layer_tracker_data = L.layerGroup();
 		var live_tracker_data = L.geoJson(data, {
 		    pointToLayer: function (feature, latLng) {
