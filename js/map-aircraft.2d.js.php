@@ -101,6 +101,7 @@ function update_airportsLayer() {
 	if (!isset($globalAirportPopup) || $globalAirportPopup == FALSE) {
 ?>
 				}).on('click', function() {
+					$("#aircraft_ident").attr('class','');
 					$(".showdetails").load("airport-data.php?"+Math.random()+"&airport_icao="+feature.properties.icao);
 				});
 			}
@@ -951,7 +952,10 @@ function update_santaLayer(nows) {
 	onEachFeature: function(feature,layer) {
 	    var playbackOptions = {
 		orientIcons: true,
-		clickCallback: function() { $(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat=santaclaus"); },
+		clickCallback: function() { 
+			$("#aircraft_ident").attr('class','');
+			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat=santaclaus"); 
+		},
 		marker: function(){
 		    return {
 			icon: L.icon({
@@ -1078,6 +1082,7 @@ function update_notamLayer() {
                     opacity: 0.3,
                     fillOpacity: 0.3
 		}).on('click', function() {
+			$("#aircraft_ident").attr('class','');
 			$(".showdetails").load("notam-data.php?"+Math.random()+"&notam="+encodeURI(feature.properties.ref));
 		});
             return circle;
