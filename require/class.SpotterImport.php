@@ -464,7 +464,7 @@ class SpotterImport {
 		    }
 		}
 
-		if (isset($line['speed']) && $line['speed'] != '') {
+		if (isset($line['speed']) && $line['speed'] != '' && $line['speed'] != 0) {
 		//    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('speed' => $line[12]));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('speed' => round($line['speed'])));
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('speed_fromsrc' => true));
@@ -475,8 +475,12 @@ class SpotterImport {
 		    // use datetime
 			$speed = $distance/(time() - $this->all_flights[$id]['time_last_coord']);
 			$speed = $speed*3.6;
-			if ($speed < 1000) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('speed' => round($speed)));
-  			if ($globalDebug) echo "ø Calculated Speed for ".$this->all_flights[$id]['hex']." : ".round($speed)." - distance : ".$distance."\n";
+			if ($speed < 1000) {
+				$this->all_flights[$id] = array_merge($this->all_flights[$id],array('speed' => round($speed)));
+	  			if ($globalDebug) echo "ø Calculated Speed for ".$this->all_flights[$id]['hex']." : ".round($speed)." - distance : ".$distance."\n";
+	  		} else {
+	  			if ($globalDebug) echo "ø IGNORED : Calculated Speed for ".$this->all_flights[$id]['hex']." : ".round($speed)." - distance : ".$distance."\n";
+	  		}
 		    }
 		}
 

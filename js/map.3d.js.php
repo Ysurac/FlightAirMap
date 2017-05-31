@@ -448,7 +448,7 @@ if (MapTerrain == 'stk' || MapTerrain == '') {
 //	}
 ?>
 viewer.scene.globe.enableLighting = true;
-viewer.scene.globe.depthTestAgainstTerrain = true;
+//viewer.scene.globe.depthTestAgainstTerrain = true;
 //var dataSource = new Cesium.CzmlDataSource.load('/live-czml.php');
 //dataSource.then(function (data) { 
 //    displayData(data);
@@ -460,3 +460,19 @@ if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') 
 }
 
 update_locationsLayer();
+
+/*
+var handlera = new Cesium.ScreenSpaceEventHandler(viewer.canvas, false);
+handlera.setInputAction(
+    function(movement) {
+	console.log('move');
+        var ray = viewer.camera.getPickRay(movement.endPosition);
+        var position = viewer.scene.globe.pick(ray, viewer.scene);
+        if (Cesium.defined(position)) {
+            var positionCartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(position);
+            console.log(positionCartographic.height.toFixed(2));
+        }
+    },
+    Cesium.ScreenSpaceEventType.MOUSE_MOVE
+);
+*/

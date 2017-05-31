@@ -218,7 +218,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 	foreach($spotter_array as $spotter_item)
 	{
 		$j++;
-		if (isset($spotter_item['format_source']) && $spotter_item['format_source'] == 'airwhere') $heightrelative = 'RELATIVE_TO_GROUND';
+		//if (isset($spotter_item['format_source']) && $spotter_item['format_source'] == 'airwhere') $heightrelative = 'RELATIVE_TO_GROUND';
 		date_default_timezone_set('UTC');
 		if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
 		{

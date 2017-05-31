@@ -124,7 +124,6 @@ $(".showdetails").on("click",".close",function(){
 
 
 function displayData(data) {
-	
 	var dsn;
 	for (var i =0; i < viewer.dataSources.length; i++) {
 		if (viewer.dataSources.get(i).name == 'fam') {
@@ -132,31 +131,87 @@ function displayData(data) {
 			break;
 		}
 	}
-	//console.log('dsn : '+dsn);
-	
 	var entities = data.entities.values;
-//	j = 0;
 	for (var i = 0; i < entities.length; i++) {
+		var fromground = 0;
 		var entity = entities[i];
+		//console.log(entity.properties.valueOf('format'));
 		if (typeof dsn != 'undefined') var existing = viewer.dataSources.get(dsn);
 		else var existing;
+		//	var billboard = new Cesium.BillboardGraphics();
+		//	var iconURLpath = '/getImages.php?color=FF0000&resize=15&filename='+aircraft_shadow+'&heading='+heading;
+		//	entity.point = undefined;
+		//	billboard.image = iconURLpath;
+		//	entity.billboard = billboard;
+		//	entity.billboard = undefined;
+		var position = entity.position; 
 
-//    	var billboard = new Cesium.BillboardGraphics();
-//	var iconURLpath = '/getImages.php?color=FF0000&resize=15&filename='+aircraft_shadow+'&heading='+heading;
-	//var iconURLpath = '/getImages.php?color=FF0000&resize=15&filename='+aircraft_shadow;
-//    	entity.point = undefined;
-//    	billboard.image = iconURLpath;
-//	entity.billboard = billboard;
-//	entity.billboard = undefined;
-		//console.log(entity.position);
-		//var positionCartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(entity.position);
-		//console.log(positionCartographic.height.toFixed(2));
+/*
+		var position = entity.position; 
+		console.log('convert');
+		var positioncart = Cesium.Ellipsoid.WGS84.cartesianArrayToCartographicArray(position);
+		console.log('ok');
+		try {
+			Cesium.sampleTerrain(viewer.terrainProvider, 9, positioncart).then(function(result) {
+				console.log(result);
+			});
+		} catch(e) { console.log(e); }
+		console.log('next');
+*/
+
+		var times = position._property._times;
+		var positionArray = [];
+		var timeArray = [];
+		for (var k = 0; k < times.length; k++) {
+			var cartesian = position.getValue(times[k]);
+			try {
+				var cartographic = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+			} catch(e) { console.log(e); }
+			
+			// Check if altitude < ground altitude
+			if (fromground != 0 || cartographic.height < 8850) {
+				try {
+					var cartesian2 = new Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(cartographic.longitude),Cesium.Math.toDegrees(cartographic.latitude));
+				} catch(e) { console.log(e); }
+				try {
+					var height = viewer.scene.globe.getHeight(Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian2));
+					//console.log(entity.id+' height: '+height);
+				} catch(e) { console.log(e); }
+				/*
+				var cartographicPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian2);
+				var height = 100;
+				//var promise = Cesium.sampleTerrain(viewer.terrainProvider, 9, cartographicPosition);
+				//Cesium.then(promise, function(result) {
+				Cesium.sampleTerrain(viewer.terrainProvider, 9, cartographicPosition).then(function(result) {
+					console.log('Then ?');
+					height = result.height;
+				});
+				console.log("height:");
+				console.log(height);
+				console.log('carto: ');
+				console.log(cartographic.height);
+				*/
+				if (!Cesium.defined(height)) height = cartographic.height;
+				if (fromground != 0 || cartographic.height < height) {
+					if (fromground == 0 || height < fromground) fromground = height;
+					var finalHeight = cartographic.height+fromground;
+				} else var finalHeight = cartographic.height;
+			} else var finalHeight = cartographic.height;
+			positionArray.push(new Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(cartographic.longitude),Cesium.Math.toDegrees(cartographic.latitude), finalHeight));
+			timeArray.push(times[k]);
+		}
+
+		var newPosition = new Cesium.SampledPositionProperty();
+		try {
+			newPosition.addSamples(timeArray, positionArray);
+		} catch(e) { console.log(e); }
+		entity.position = newPosition;
 
 		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
 		entity.orientation = orientation;
+		
 		//var hpRoll = new Cesium.HeadingPitchRoll();
 		//entity.modelMatrix = Cesium.Transforms.aircraftHeadingPitchRollToFixedFrame(entity.position,hpRoll);
-		//console.log(entity);
 
 		if (typeof existing != 'undefined') {
 			// console.log(entity.id);
@@ -181,8 +236,6 @@ function displayData(data) {
 			entity.type = 'flight';
 		}
 	}
-
-	//console.log('end data');
 
 	if (typeof dsn == 'undefined') {
 		viewer.dataSources.add(data);
@@ -311,10 +364,12 @@ function updateData() {
 	var livedata = czmlds.process('<?php print $globalURL; ?>/live-czml.php?' + Date.now()+'&bbox='+bbox());
 //    viewer.dataSources.add(dataSource);
     
-	livedata.then(function (data) { 
-//		console.log(data);
-		displayData(data);
-	});
+//	Cesium.when(Cesium.sampleTerrain(viewer.terrainProvider, 14, terrainSamplePositions),function() {
+ 		livedata.then(function (data) { 
+//			console.log(data);
+			displayData(data);
+		});
+//	});
 //    viewer.zoomTo(dataSource);
 }
 
@@ -588,7 +643,8 @@ function deleteWaypoints() {
 }
 
 var czmlds = new Cesium.CzmlDataSource();
-updateData();
+Cesium.when(viewer.terrainProvider.ready,function() {updateData(); });
+//updateData();
 <?php
 	if (isset($globalMapSatellites) && $globalMapSatellites) {
 ?>
