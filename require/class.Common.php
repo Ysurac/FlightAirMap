@@ -105,7 +105,28 @@ class Common {
 		curl_close($ch);
 		fclose($fp);
 	}
-	
+
+	public static function gunzip($in_file,$out_file_name = '') {
+		//echo $in_file.' -> '.$out_file_name."\n";
+		$buffer_size = 4096; // read 4kb at a time
+		if ($out_file_name == '') $out_file_name = str_replace('.gz', '', $in_file); 
+		if ($in_file != '' && file_exists($in_file)) {
+			// PHP version of Ubuntu use gzopen64 instead of gzopen
+			if (function_exists('gzopen')) $file = gzopen($in_file,'rb');
+			elseif (function_exists('gzopen64')) $file = gzopen64($in_file,'rb');
+			else {
+				echo 'gzopen not available';
+				die;
+			}
+			$out_file = fopen($out_file_name, 'wb'); 
+			while(!gzeof($file)) {
+				fwrite($out_file, gzread($file, $buffer_size));
+			}  
+			fclose($out_file);
+			gzclose($file);
+		}
+	}
+
 	/**
 	* Convert a HTML table to an array
 	* @param String $data HTML page
