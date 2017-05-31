@@ -51,7 +51,7 @@ if (isset($_POST['removefilters'])) {
   <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
   <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
-<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.5-dist/css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui.min.css" />
 <!--<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui-timepicker-addon.min.css" />-->
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-datetimepicker.min.css" />  
@@ -61,12 +61,12 @@ if (isset($_POST['removefilters'])) {
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css" />
 
 <!--<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-2.2.3.min.js"></script>-->
-<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-3.2.1.min.js"></script>
 
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-ui.min.js"></script>
 
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/moment.min.js"></script>
-<script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-datetimepicker.min.js"></script>
 <!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-select.min.js"></script>
