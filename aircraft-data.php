@@ -4,8 +4,10 @@ require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 require_once('require/class.SpotterLive.php');
 require_once('require/class.SpotterArchive.php');
+require_once('require/class.Elevation.php');
 $SpotterLive = new SpotterLive();
 $SpotterArchive = new SpotterArchive();
+$Elevation = new Elevation();
 
 $from_archive = false;
 if (isset($_GET['ident'])) {
@@ -107,6 +109,13 @@ elseif (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/ai
 else print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
 print '</div>';
 print '<div id ="altitude"><span>'._("Altitude").'</span>';
+if (isset($globalGroundAltitude) && $globalGroundAltitude) {
+	try {
+		$groundAltitude = $Elevation->getElevation($spotter_item['latitude'],$spotter_item['longitude']);
+	} catch(Exception $e) {
+	}
+}
+
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
 	if (isset($spotter_item['real_altitude']) && $spotter_item['real_altitude'] != '') print $spotter_item['real_altitude'].' feet (FL'.$spotter_item['altitude'].')';
 	else print $spotter_item['altitude'].'00 feet (FL'.$spotter_item['altitude'].')';
@@ -114,6 +123,18 @@ if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUn
 	if (isset($spotter_item['real_altitude']) && $spotter_item['real_altitude'] != '') print round($spotter_item['real_altitude']*0.3048).' m (FL'.$spotter_item['altitude'].')';
 	else print round($spotter_item['altitude']*30.48).' m (FL'.$spotter_item['altitude'].')';
 }
+
+if (isset($groundAltitude) && $groundAltitude < $spotter_item['altitude']*30.48) {
+	print '<br>';
+	print '<span>'._("Ground Altitude").'</span>';
+	if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
+		print round($groundAltitude*3.28084).' feet';
+	} else {
+		print round($groundAltitude).' m';
+	}
+	print '</i>';
+}
+
 print '</div>';
 if (isset($spotter_item['registration']) && $spotter_item['registration'] != '') print '<div><span>'._("Registration").'</span><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'" target="_blank">'.$spotter_item['registration'].'</a></div>';
 print '<div id="speed"><span>'._("Speed").'</span>';

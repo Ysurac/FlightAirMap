@@ -805,6 +805,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<br />
 			<p>
+				<label for="groundaltitude">Display and calculate ground altitude (can take lot of disk space)</label>
+				<input type="checkbox" name="groundaltitude" id="groundaltitude" value="groundaltitude"<?php if (isset($globalGroundAltitude) && $globalGroundAltitude) { ?> checked="checked"<?php } ?> />
+			</p>
+			<br />
+			<p>
 				<label for="closestmindist">Distance to airport set as arrival (in km)</label>
 				<input type="number" name="closestmindist" id="closestmindist" value="<?php if (isset($globalClosestMinDist)) echo $globalClosestMinDist; else echo '50'; ?>" />
 			</p>
@@ -1295,6 +1300,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapUseBbox' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapUseBbox' => 'FALSE'));
+	}
+	$groundaltitude = filter_input(INPUT_POST,'groundaltitude',FILTER_SANITIZE_STRING);
+	if ($groundaltitude == 'groundaltitude') {
+		$settings = array_merge($settings,array('globalGroundAltitude' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalGroundAltitude' => 'FALSE'));
 	}
 	$waypoints = filter_input(INPUT_POST,'waypoints',FILTER_SANITIZE_STRING);
 	if ($waypoints == 'waypoints') {

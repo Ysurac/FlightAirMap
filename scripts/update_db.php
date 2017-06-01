@@ -117,6 +117,13 @@ if (isset($globalACARSArchiveKeepMonths) && $globalACARSArchiveKeepMonths > 0) {
 	$ACARS->deleteArchiveAcarsData();
 	echo "Done\n";
 }
+if (isset($globalGroundAltitude) && $globalGroundAltitude) {
+	echo "Adding ground altitude files...\n";
+	require_once(dirname(__FILE__).'/../require/class.Altitude.php');
+	$Altitude = new Altitude();
+	$Altitude->downloadNeeded();
+	//echo "Done\n";
+}
 
 if (isset($globalMap3D) && $globalMap3D) {
 	if (isset($globalMapSatellites) && $globalMapSatellites && $update_db->check_last_tle_update()) {

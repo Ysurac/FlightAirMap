@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__FILE__).'/class.Common.php');
+require_once(dirname(__FILE__).'/class.Connection.php');
 /*
 Copyright 2017 Jozef Môstka <jozef@mostka.com>
 
@@ -68,7 +69,7 @@ class Elevation {
 
 		if ($row > $this->measPerDeg || $column > $this->measPerDeg) {
 			//TODO:open next file
-			throw new \Exception("Mot implemented yet");
+			throw new \Exception("Not implemented yet");
 		}
 		$aRow     = $this->measPerDeg - $row;
 		$position = ($this->measPerDeg * ($aRow - 1)) + $column;
@@ -164,20 +165,41 @@ class Elevation {
 		return ($m * 60) + $s;
 	}
 
-	public function download($lat,$lon) {
+	public function download($lat,$lon, $debug = false) {
 		$N      = $this->getDeg($lat, 2);
 		$E      = $this->getDeg($lon, 3);
 		$fileName  = "N{$N}E{$E}.hgt";
 		if (!file_exists($this->htgFilesDestination . DIRECTORY_SEPARATOR . $fileName)) {
 			$Common = new Common();
+			if ($debug) echo 'Downloading '.$fileName.'.gz ...';
 			$Common->download('https://s3.amazonaws.com/elevation-tiles-prod/skadi/N'.$N.'/'.$fileName.'.gz',$this->htgFilesDestination . DIRECTORY_SEPARATOR . $fileName . '.gz');
 			if (!file_exists($this->htgFilesDestination . DIRECTORY_SEPARATOR . $fileName . '.gz')) {
-				throw new \Exception("File '{$fileName}.gz' not exists.");
+				if ($debug) echo "File '{$fileName}.gz' not exists.";
+				return false;
 			}
+			if ($debug) echo 'Done'."\n";
+			if ($debug) echo 'Decompress '.$fileName.' ....';
 			$Common->gunzip($this->htgFilesDestination . DIRECTORY_SEPARATOR . $fileName . '.gz',$this->htgFilesDestination . DIRECTORY_SEPARATOR . $fileName);
+			if ($debug) echo 'Done'."\n";
 			unlink($this->htgFilesDestination . DIRECTORY_SEPARATOR . $fileName . '.gz');
 		}
 		return true;
+	}
+	
+	public function downloadNeeded() {
+		$Connection = new Connection();
+		$db = $Connection->db;
+		$query = 'SELECT latitude, longitude FROM spotter_output WHERE latitude <> 0 AND longitude <> 0 ORDER BY date DESC LIMIT 100';
+		$query_values = array();
+		try {
+			$sth = $db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		while ($data = $sth->fetch(PDO::FETCH_ASSOC)) {
+			$this->download($data['latitude'],$data['longitude'],true);
+		}
 	}
 }
 /*
@@ -186,4 +208,8 @@ $lon = 5.2941;
 $Elevation = new Elevation();
 $Elevation->download($lat,$lon);
 echo($Elevation->getElevation($lat,$lon));
+*/
+/*
+$Elevation = new Elevation();
+$Elevation->downloadNeeded();
 */
