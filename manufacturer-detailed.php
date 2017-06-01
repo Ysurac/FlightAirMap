@@ -67,7 +67,7 @@ if (!isset($_GET['aircraft_manufacturer'])){
 		print '</div>';
 
 		print '<div class="table column">';
-		print '<p>'.sprintf(_("The table below shows the detailed information of all flights from <strong>%s</strong."),$manufacturer).'</p>';
+		print '<p>'.sprintf(_("The table below shows the detailed information of all flights from <strong>%s</strong>."),$manufacturer).'</p>';
 
 		include('manufacturer-sub-menu.php');
 		include('table-output.php'); 
