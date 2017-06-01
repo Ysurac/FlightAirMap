@@ -341,7 +341,7 @@ $endtime = time()+$globalCronEnd;
 $i = 1;
 $tt = array();
 // Delete all ATC
-if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
+if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
 	$ATC=new ATC($Connection->db);
 }
 if (!$globalDaemon && ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
