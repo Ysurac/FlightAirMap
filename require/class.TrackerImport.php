@@ -245,7 +245,7 @@ class TrackerImport {
 		if (isset($line['altitude']) && $line['altitude'] != '') {
 		    //if (!isset($this->all_tracked[$id]['altitude']) || $this->all_tracked[$id]['altitude'] == '' || ($this->all_tracked[$id]['altitude'] > 0 && $line['altitude'] != 0)) {
 			if (is_int($this->all_tracked[$id]['altitude']) && abs(round($line['altitude']/100)-$this->all_tracked[$id]['altitude']) > 3) $this->all_tracked[$id]['putinarchive'] = true;
-			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('altitude' => round($line['altitude']/100)));
+			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('altitude' => $line['altitude']));
 			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('altitude_real' => $line['altitude']));
 			//$dataFound = true;
 		    //} elseif ($globalDebug) echo "!!! Strange altitude data... not added.\n";

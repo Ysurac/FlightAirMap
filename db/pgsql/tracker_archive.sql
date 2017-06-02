@@ -6,7 +6,7 @@ CREATE TABLE tracker_archive (
   longitude float NOT NULL,
   heading integer DEFAULT NULL,
   ground_speed integer DEFAULT NULL,
-  altitude integer DEFAULT NULL,
+  altitude float DEFAULT NULL,
   comment varchar(255) DEFAULT NULL,
   over_country varchar(255) DEFAULT NULL,
   type varchar(255) DEFAULT NULL,

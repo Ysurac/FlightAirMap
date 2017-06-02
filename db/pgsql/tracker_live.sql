@@ -6,7 +6,7 @@ CREATE TABLE tracker_live (
   longitude float NOT NULL,
   heading integer DEFAULT NULL,
   speed integer DEFAULT NULL,
-  altitude integer DEFAULT NULL,
+  altitude float DEFAULT NULL,
   comment varchar(255) DEFAULT NULL,
   over_country varchar(255) DEFAULT NULL,
   type varchar(255) DEFAULT NULL,

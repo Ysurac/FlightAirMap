@@ -1675,6 +1675,10 @@ class update_schema {
 				$error .= create_db::import_file('../db/tracker_archive.sql');
 				if ($error != '') return $error;
 			}
+			if (!$Connection->tableExists('tracker_archive_output')) {
+				$error .= create_db::import_file('../db/tracker_archive_output.sql');
+				if ($error != '') return $error;
+			}
 			if (!$Connection->tableExists('marine_archive_output')) {
 				$error .= create_db::import_file('../db/tracker_archive_output.sql');
 				if ($error != '') return $error;
@@ -2053,6 +2057,35 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_43() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if ($globalDBdriver == 'mysql') {
+			if (!$Connection->tableExists('tracker_archive_output')) {
+				$error .= create_db::import_file('../db/tracker_archive_output.sql');
+				if ($error != '') return $error;
+			}
+			$query = "ALTER TABLE tracker_live MODIFY COLUMN altitude float DEFAULT NULL;ALTER TABLE tracker_output MODIFY COLUMN last_altitude float DEFAULT NULL;ALTER TABLE tracker_output MODIFY COLUMN altitude float DEFAULT NULL;ALTER TABLE tracker_archive MODIFY COLUMN altitude float DEFAULT NULL;ALTER TABLE tracker_archive_output MODIFY COLUMN last_altitude float DEFAULT NULL;ALTER TABLE tracker_output MODIFY COLUMN altitude float DEFAULT NULL;";
+		} else {
+			$query = "ALTER TABLE tracker_live ALTER COLUMN altitude TYPE float;ALTER TABLE tracker_output ALTER COLUMN last_altitude TYPE float;ALTER TABLE tracker_output ALTER COLUMN altitude TYPE float;ALTER TABLE tracker_archive ALTER COLUMN altitude TYPE float;ALTER TABLE tracker_archive_output ALTER COLUMN last_altitude TYPE float;ALTER TABLE tracker_output ALTER COLUMN altitude TYPE float;";
+		}
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (modify column altitude in tracker_*) : ".$e->getMessage()."\n";
+		}
+		$query = "UPDATE config SET value = '44' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
 
     	public static function check_version($update = false) {
@@ -2237,6 +2270,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '42') {
     			    $error = self::update_from_42();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '43') {
+    			    $error = self::update_from_43();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';

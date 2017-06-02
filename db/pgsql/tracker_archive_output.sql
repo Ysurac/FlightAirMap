@@ -6,7 +6,7 @@ CREATE TABLE tracker_archive_output (
   longitude float NOT NULL,
   heading integer DEFAULT NULL,
   ground_speed integer DEFAULT NULL,
-  altitude integer DEFAULT NULL,
+  altitude float DEFAULT NULL,
   comment varchar(255) DEFAULT NULL,
   type varchar(255) DEFAULT NULL,
   departure_code varchar(10) DEFAULT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE tracker_archive_output (
   last_seen timestamp NULL DEFAULT NULL,
   last_latitude float DEFAULT NULL,
   last_longitude float DEFAULT NULL,
-  last_altitude integer DEFAULT NULL,
+  last_altitude float DEFAULT NULL,
   last_speed integer DEFAULT NULL
 );
 
