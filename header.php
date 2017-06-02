@@ -1,7 +1,5 @@
 <?php
 
-require_once('require/class.Connection.php');
-if (!isset($Connection)) $Connection = new Connection();
 //gets the page file and stores it in a variable
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
 $current_page = $file_path['filename'];
@@ -381,7 +379,6 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 <meta property="og:url" content="<?php print $globalURL.$_SERVER['REQUEST_URI']; ?>"/>
 <meta property="og:site_name" content="<?php print $globalName; ?>"/>
 </head>
-<!-- FlightAirMap schema version : <?php print $Connection->latest_schema; ?> -->
 <body class="page-<?php print strtolower($current_page); ?>">
 <div class="navbar navbar-fixed-top" role="navigation">
   <div class="container">

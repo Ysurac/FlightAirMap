@@ -7,6 +7,7 @@ $title = "About";
 $top_header = "about.jpg";
 require_once('header.php');
 ?>
+<!-- FlightAirMap Schema version : <?php print $Connection->latest_schema; ?> -->
 <div class="info column">
     <h1>About <?php print $globalName; ?></h1>
 <?php
