@@ -200,6 +200,17 @@ class Elevation {
 		while ($data = $sth->fetch(PDO::FETCH_ASSOC)) {
 			$this->download($data['latitude'],$data['longitude'],true);
 		}
+		$query = 'SELECT latitude, longitude FROM tracker_output WHERE latitude <> 0 AND longitude <> 0 ORDER BY date DESC LIMIT 100';
+		$query_values = array();
+		try {
+			$sth = $db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		while ($data = $sth->fetch(PDO::FETCH_ASSOC)) {
+			$this->download($data['latitude'],$data['longitude'],true);
+		}
 	}
 }
 /*
@@ -211,5 +222,5 @@ echo($Elevation->getElevation($lat,$lon));
 */
 /*
 $Elevation = new Elevation();
-$Elevation->downloadNeeded();
+echo $Elevation->downloadNeeded();
 */

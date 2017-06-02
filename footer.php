@@ -1,5 +1,9 @@
 </section>
-
+<div class="pub onmap">
+<?php
+	if (isset($globalPub)) print $globalPub;
+?>
+</div>
 <footer class="container">
 	<?php
 	    if (isset($sql_time)) {
@@ -13,7 +17,8 @@
 </footer>
 
 <div class="notifications bottom-left"></div>
-<table id="header-fixed"></table>
+<table id="header-fixed">
+</table>
 
 </body>
 </html>

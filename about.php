@@ -7,7 +7,6 @@ $title = "About";
 $top_header = "about.jpg";
 require_once('header.php');
 ?>
-
 <div class="info column">
     <h1>About <?php print $globalName; ?></h1>
 <?php
