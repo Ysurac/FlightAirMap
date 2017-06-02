@@ -1340,7 +1340,7 @@ while ($i > 0) {
 				    $data['longitude'] = $line['longitude'];
 				    //$data['verticalrate'] = $line[16];
 				    if (isset($line['speed'])) $data['speed'] = $line['speed'];
-				    else $data['speed'] = 0;
+				    //else $data['speed'] = 0;
 				    if (isset($line['altitude'])) $data['altitude'] = $line['altitude'];
 				    if (isset($line['comment'])) $data['comment'] = $line['comment'];
 				    if (isset($line['symbol'])) $data['type'] = $line['symbol'];
@@ -1374,7 +1374,8 @@ while ($i > 0) {
 				    } elseif (isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && isset($line['speed']) && $line['symbol'] != 'Weather Station' && $line['symbol'] != 'House QTH (VHF)' && $line['symbol'] != 'Dot' && $line['symbol'] != 'TCP-IP' && $line['symbol'] != 'xAPRS (UNIX)' && $line['symbol'] != 'Antenna' && $line['symbol'] != 'Cloudy' && $line['symbol'] != 'HF Gateway' && $line['symbol'] != 'Yagi At QTH' && $line['symbol'] != 'Digi' && $line['symbol'] != '8' && $line['symbol'] != 'MacAPRS') {
 					//echo '!!!!!!!!!!!!!!!! SEND !!!!!!!!!!!!!!!!!!!!'."\n";
 					if (isset($globalTracker) && $globalTracker) $send = $TI->add($data);
-				    } elseif (!isset($line['stealth']) && is_numeric($data['latitude']) && is_numeric($data['longitude']) && isset($data['ident'])) {
+				    } elseif (!isset($line['stealth']) && is_numeric($data['latitude']) && is_numeric($data['longitude']) && isset($data['ident']) && isset($data['altitude'])) {
+					if (!isset($data['altitude'])) $data['altitude'] = 0;
 					$Source->deleteOldLocationByType('gs');
 					if (count($Source->getLocationInfoByName($data['ident'])) > 0) {
 						$Source->updateLocation($data['ident'],$data['latitude'],$data['longitude'],$data['altitude'],'','',$data['source_name'],'antenna.png','gs',$id,0,$data['datetime']);
@@ -1383,7 +1384,7 @@ while ($i > 0) {
 					}
 				    } else {
 				    	echo '/!\ Not added'."\n";
-				    	print_r($data);
+				    	print_r($line);
 				    }
 				    unset($data);
 				} 
