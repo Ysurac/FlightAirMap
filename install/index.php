@@ -502,16 +502,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								<td>
 									<select name="timezone[]" id="timezone">
 								<?php
-									foreach(timezone_abbreviations_list() as $abbr => $timezone){
-										foreach($timezone as $val){
-											if(isset($val['timezone_id'])){
-												if (isset($source['timezone']) && $source['timezone'] == $val['timezone_id']) {
-													print '<option selected>'.$val['timezone_id'].'</option>';
-												} elseif (!isset($source['timezone']) && $val['timezone_id'] == 'UTC') {
-													print '<option selected>'.$val['timezone_id'].'</option>';
-												} else print '<option>'.$val['timezone_id'].'</option>';
-											}
-										}
+									$timezonelist = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+									foreach($timezonelist as $timezone){
+										if (isset($source['timezone']) && $source['timezone'] == $timezone) {
+											print '<option selected>'.$timezone.'</option>';
+										} elseif (!isset($source['timezone']) && $timezone == 'UTC') {
+											print '<option selected>'.$timezone.'</option>';
+										} else print '<option>'.$timezone.'</option>';
 									}
 								?>
 									</select>
@@ -555,14 +552,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								<td>
 									<select name="timezone[]" id="timezone">
 								<?php
-									foreach(timezone_abbreviations_list() as $abbr => $timezone){
-										foreach($timezone as $val){
-											if(isset($val['timezone_id'])){
-												if ($val['timezone_id'] == 'UTC') {
-													print '<option selected>'.$val['timezone_id'].'</option>';
-												} else print '<option>'.$val['timezone_id'].'</option>';
-											}
-										}
+									$timezonelist = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+									foreach($timezonelist as $timezone){
+										if ($timezone == 'UTC') {
+											print '<option selected>'.$timezone.'</option>';
+										} else print '<option>'.$timezone.'</option>';
 									}
 								?>
 									</select>
