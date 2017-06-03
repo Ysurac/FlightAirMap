@@ -1037,9 +1037,9 @@ while ($i > 0) {
 	    	    $data['verticalrate'] = ''; // verticale rate
 	    	    $data['squawk'] = ''; // squawk
 	    	    $data['emergency'] = ''; // emergency
-	    	    $data['datetime'] = $line['lastupdate'];
+	    	    //$data['datetime'] = $line['lastupdate'];
 	    	    //$data['last_update'] = $line['lastupdate'];
-		    //$data['datetime'] = date('Y-m-d H:i:s');
+		    $data['datetime'] = date('Y-m-d H:i:s');
 	    	    $data['departure_airport_icao'] = $line['depicao'];
 	    	    $data['departure_airport_time'] = $line['deptime'];
 	    	    $data['arrival_airport_icao'] = $line['arricao'];
