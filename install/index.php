@@ -421,7 +421,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 -->
 				<fieldset id="sources">
 					<legend>Sources</legend>
-					<table id="SourceTable">
+					<table id="SourceTable" class="table">
 						<thead>
 							<tr>
 								<th>Host/URL</th>
@@ -430,6 +430,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								<th>Name</th>
 								<th>Source Stats</th>
 								<th>No archive</th>
+								<th>Source TimeZone</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -454,7 +455,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								    if (filter_var($source['host'],FILTER_VALIDATE_URL)) {
 								?>
 								<td><input type="text" name="host[]" id="host" value="<?php print $source['host']; ?>" /></td>
-								<td><input type="number" name="port[]" id="port" value="<?php print $source['port']; ?>" /></td>
+								<td><input type="number" name="port[]" class="col-xs-2" id="port" value="<?php if (isset($source['port'])) print $source['port']; ?>" /></td>
 								<?php
 								    } else {
 									$hostport = explode(':',$source['host']);
@@ -467,7 +468,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 									}
 								?>
 								<td><input type="text" name="host[]" id="host" value="<?php print $host; ?>" /></td>
-								<td><input type="number" name="port[]" id="port" value="<?php print $port; ?>" /></td>
+								<td><input type="number" name="port[]" id="port" class="col-xs-2" value="<?php print $port; ?>" /></td>
 								<?php
 								    }
 								?>
@@ -493,9 +494,28 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="airwhere" <?php if (isset($source['format']) && $source['format'] == 'airwhere') print 'selected'; ?>>AirWhere website</option>
 									</select>
 								</td>
-								<td><input type="text" name="name[]" id="name" value="<?php if (isset($source['name'])) print $source['name']; ?>" /></td>
+								<td>
+									<input type="text" name="name[]" id="name" value="<?php if (isset($source['name'])) print $source['name']; ?>" />
+								</td>
 								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" title="Create statistics for the source like number of messages, distance,..." value="1" <?php if (isset($source['sourcestats']) && $source['sourcestats']) print 'checked'; ?> /></td>
 								<td><input type="checkbox" name="noarchive[]" id="noarchive" title="Don't archive this source" value="1" <?php if (isset($source['noarchive']) && $source['noarchive']) print 'checked'; ?> /></td>
+								<td>
+									<select name="timezone[]" id="timezone">
+								<?php
+									foreach(timezone_abbreviations_list() as $abbr => $timezone){
+										foreach($timezone as $val){
+											if(isset($val['timezone_id'])){
+												if (isset($source['timezone']) && $source['timezone'] == $val['timezone_id']) {
+													print '<option selected>'.$val['timezone_id'].'</option>';
+												} elseif (!isset($source['timezone']) && $val['timezone_id'] == 'UTC') {
+													print '<option selected>'.$val['timezone_id'].'</option>';
+												} else print '<option>'.$val['timezone_id'].'</option>';
+											}
+										}
+									}
+								?>
+									</select>
+								</td>
 								<td><input type="button" id="delhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
 							</tr>
 <?php
@@ -504,7 +524,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 ?>
 							<tr>
 								<td><input type="text" id="host" name="host[]" value="" /></td>
-								<td><input type="number" id="port" name="port[]" value="" /></td>
+								<td><input type="number" id="port" name="port[]" class="col-xs-2" value="" /></td>
 								<td>
 									<select name="format[]" id="format">
 										<option value="auto">Auto</option>
@@ -527,9 +547,26 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="airwhere">AirWhere website</option>
 									</select>
 								</td>
-								<td><input type="text" name="name[]" value="" id="name" /></td>
+								<td>
+									<input type="text" name="name[]" value="" id="name" />
+								</td>
 								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" title="Create statistics for the source like number of messages, distance,..." value="1" /></td>
 								<td><input type="checkbox" name="noarchive[]" id="noarchive" title="Don't archive this source" value="1" /></td>
+								<td>
+									<select name="timezone[]" id="timezone">
+								<?php
+									foreach(timezone_abbreviations_list() as $abbr => $timezone){
+										foreach($timezone as $val){
+											if(isset($val['timezone_id'])){
+												if ($val['timezone_id'] == 'UTC') {
+													print '<option selected>'.$val['timezone_id'].'</option>';
+												} else print '<option>'.$val['timezone_id'].'</option>';
+											}
+										}
+									}
+								?>
+									</select>
+								</td>
 								<td><input type="button" id="addhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
 							</tr>
 						</tbody>
@@ -1007,6 +1044,7 @@ if (isset($_POST['dbtype'])) {
 	$port = $_POST['port'];
 	$name = $_POST['name'];
 	$format = $_POST['format'];
+	$timezone = $_POST['timezone'];
 	if (isset($_POST['sourcestats'])) $sourcestats = $_POST['sourcestats'];
 	else $sourcestats = array();
 	if (isset($_POST['noarchive'])) $noarchive = $_POST['noarchive'];
@@ -1018,7 +1056,7 @@ if (isset($_POST['dbtype'])) {
 		else $cov = 'FALSE';
 		if (isset($noarchive[$key]) && $noarchive[$key] == 1) $arch = 'TRUE';
 		else $arch = 'FALSE';
-		if ($h != '') $gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch);
+		if ($h != '') $gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch,'timezone' => $timezone[$key]);
 		if ($format[$key] == 'airwhere') $forcepilots = true;
 	}
 	$settings = array_merge($settings,array('globalSources' => $gSources));

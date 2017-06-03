@@ -1039,7 +1039,11 @@ while ($i > 0) {
 	    	    $data['emergency'] = ''; // emergency
 	    	    //$data['datetime'] = $line['lastupdate'];
 	    	    //$data['last_update'] = $line['lastupdate'];
-		    $data['datetime'] = date('Y-m-d H:i:s');
+	    	    if (isset($value['timezone'])) {
+	    		$datetime = new DateTime($line['lastupdate'],new DateTimeZone($value['timezone']));
+	    		$datetime->setTimeZone(new DateTimeZone('UTC'));
+	    		$data['datetime'] = $datetime->format('Y-m-d H:i:s');
+	    	    } else $data['datetime'] = date('Y-m-d H:i:s');
 	    	    $data['departure_airport_icao'] = $line['depicao'];
 	    	    $data['departure_airport_time'] = $line['deptime'];
 	    	    $data['arrival_airport_icao'] = $line['arricao'];
