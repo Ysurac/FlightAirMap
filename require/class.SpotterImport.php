@@ -131,7 +131,7 @@ class SpotterImport {
 		    //echo $this->all_flights[$key]['id'].' - '.$this->all_flights[$key]['latitude'].'  '.$this->all_flights[$key]['longitude']."\n";
     		    $Spotter = new Spotter($this->db);
         	    $real_arrival = $this->arrival($key);
-        	    if (isset($this->all_flights[$key]['altitude'])) $Spotter->updateLatestSpotterData($this->all_flights[$key]['id'],$this->all_flights[$key]['ident'],$this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$this->all_flights[$key]['altitude'],$this->all_flights[$key]['ground'],$this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'],$real_arrival['airport_icao'],$real_arrival['airport_time']);
+        	    if (isset($this->all_flights[$key]['altitude']) && isset($this->all_flights[$key]['datetime'])) $Spotter->updateLatestSpotterData($this->all_flights[$key]['id'],$this->all_flights[$key]['ident'],$this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$this->all_flights[$key]['altitude'],$this->all_flights[$key]['ground'],$this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'],$real_arrival['airport_icao'],$real_arrival['airport_time']);
         	}
 	    }
 	}
@@ -355,8 +355,7 @@ class SpotterImport {
 			if ($globalDebug) echo "!!! Date is too old ".$line['datetime']." for ".$this->all_flights[$id]['id']." - format : ".$line['format_source']."!!!\n";
 			return '';
 		} elseif (isset($line['datetime']) && strtotime($line['datetime']) > time()+20*60) {
-			if ($globalDebug) echo "!!! Date is in the future ".$line['datetime']." for ".$this->all_flights[$id]['id']." - format : ".$line['format_source']."!!!\n
-			";
+			if ($globalDebug) echo "!!! Date is in the future ".$line['datetime']." for ".$this->all_flights[$id]['id']." - format : ".$line['format_source']."!!!\n";
 			return '';
 		} elseif (!isset($line['datetime'])) {
 			date_default_timezone_set('UTC');
