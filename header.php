@@ -115,8 +115,8 @@ if (strtolower($current_page) == "index")
 <?php
 	} else {
 ?>
-<link rel="stylesheet" href="https://cesiumjs.org/releases/1.33/Build/Cesium/Widgets/widgets.css" />
-<script src="https://cesiumjs.org/releases/1.33/Build/Cesium/Cesium.js"></script>
+<link rel="stylesheet" href="https://cesiumjs.org/releases/1.34/Build/Cesium/Widgets/widgets.css" />
+<script src="https://cesiumjs.org/releases/1.34/Build/Cesium/Cesium.js"></script>
 <?php
 	}
 ?>
@@ -136,7 +136,7 @@ if (strtolower($current_page) == "index")
 <?php
 		if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 ?>
-<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
+<!--<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>-->
 <script src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
 <?php
 		}
@@ -266,7 +266,7 @@ if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($gl
 <?php
 		if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 ?>
-<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
+<!--<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>-->
 <script src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
 <?php
 		}
@@ -322,7 +322,7 @@ if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) &&
 <?php
 		if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 ?>
-<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
+<!--<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>-->
 <script src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
 <?php
 		}
