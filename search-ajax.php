@@ -2,12 +2,26 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
-require_once('require/class.SpotterArchive.php');
 $Spotter = new Spotter();
 $orderby = $Spotter->getOrderBy();
 
 $ask = filter_input(INPUT_GET,'ask',FILTER_SANITIZE_STRING);
-if ($ask == 'manufacturer') {
+if ($ask == 'aircraftsdetected') {
+	require_once('require/class.SpotterLive.php');
+	$SpotterLive = new SpotterLive();
+	$flightcnt = $SpotterLive->getLiveSpotterCount();
+	echo json_encode($flightcnt);
+} elseif ($ask == 'trackersdetected') {
+	require_once('require/class.TrackerLive.php');
+	$TrackerLive = new TrackerLive();
+	$trackercnt = $TrackerLive->getLiveTrackerCount();
+	echo json_encode($trackercnt);
+} elseif ($ask == 'marinesdetected') {
+	require_once('require/class.MarineLive.php');
+	$MarineLive = new MarineLive();
+	$marinecnt = $MarineLive->getLiveMarineCount();
+	echo json_encode($marinecnt);
+} elseif ($ask == 'manufacturer') {
 	$manufacturers = $Spotter->getAllManufacturers();
 	$all_manufacturers = array();
 	foreach($manufacturers as $manufacturer)
