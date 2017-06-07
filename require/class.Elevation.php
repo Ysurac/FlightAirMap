@@ -200,6 +200,7 @@ class Elevation {
 		while ($data = $sth->fetch(PDO::FETCH_ASSOC)) {
 			$this->download($data['latitude'],$data['longitude'],true);
 		}
+		$db = $Connection->db;
 		$query = 'SELECT latitude, longitude FROM tracker_output WHERE latitude <> 0 AND longitude <> 0 ORDER BY date DESC LIMIT 100';
 		$query_values = array();
 		try {
