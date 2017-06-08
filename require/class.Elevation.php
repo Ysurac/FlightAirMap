@@ -28,7 +28,7 @@ class Elevation {
 	private $openedFiles = [];
 
 	public function __construct($htgFilesDestination = '', $resolution = 3) {
-		if ($htgFilesDestination == '') $htgFilesDestination = dirname(__FILE__).'/../install/tmp/';
+		if ($htgFilesDestination == '') $htgFilesDestination = dirname(__FILE__).'/../data/';
 		$this->htgFilesDestination = $htgFilesDestination;
 		$this->resolution          = $resolution;
 		switch ($resolution) {

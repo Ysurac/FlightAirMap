@@ -7,6 +7,7 @@ require_once(dirname(__FILE__).'/class.Scheduler.php');
 require_once(dirname(__FILE__).'/class.Translation.php');
 require_once(dirname(__FILE__).'/class.Stats.php');
 require_once(dirname(__FILE__).'/class.Source.php');
+require_once(dirname(__FILE__).'/class.GeoidHeight.php');
 if (isset($globalServerAPRS) && $globalServerAPRS) {
     require_once(dirname(__FILE__).'/class.APRS.php');
 }
@@ -22,7 +23,7 @@ class SpotterImport {
     public $nb = 0;
 
     public function __construct($dbc = null) {
-	global $globalBeta, $globalServerAPRS, $APRSSpotter, $globalNoDB;
+	global $globalBeta, $globalServerAPRS, $APRSSpotter, $globalNoDB, $GeoidClass, $globalDebug, $globalGeoid;
 	if (!(isset($globalNoDB) && $globalNoDB)) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
@@ -47,7 +48,14 @@ class SpotterImport {
 		$APRSSpotter = new APRSSpotter();
 		//$APRSSpotter->connect();
 	}
-
+	if (isset($globalGeoid) && $globalGeoid) {
+		try {
+			$GeoidClass = new GeoidHeight();
+		} catch(Exception $e) {
+			if ($globalDebug) echo "Can't calculate geoid : $e \n";
+			$GeoidClass = FALSE;
+		}
+	}
     }
 
     public function get_Schedule($id,$ident) {
@@ -209,7 +217,7 @@ class SpotterImport {
     }
 
     public function add($line) {
-	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource, $globalVAM, $globalAllFlights, $globalServerAPRS, $APRSSpotter, $globalNoImport, $globalNoDB, $globalVA, $globalAircraftMaxUpdate, $globalAircraftMinUpdate, $globalLiveInterval;
+	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource, $globalVAM, $globalAllFlights, $globalServerAPRS, $APRSSpotter, $globalNoImport, $globalNoDB, $globalVA, $globalAircraftMaxUpdate, $globalAircraftMinUpdate, $globalLiveInterval, $GeoidClass;
 	//if (!isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
 	if (!isset($globalAircraftMaxUpdate) || $globalAircraftMaxUpdate == '') $globalAircraftMaxUpdate = 3000;
@@ -676,6 +684,13 @@ class SpotterImport {
 		}
 
 		if (isset($line['altitude']) && $line['altitude'] != '') {
+			if (isset($line['altitude_relative']) && isset($GeoidClass) && is_object($GeoidClass)) {
+				if ($line['altitude_relative'] == 'AMSL' || $line['altitude_relative'] == 'MSL') {
+					$geoid = round($GeoidClass->get($this->all_flights[$id]['livedb_latitude'],$this->all_flights[$id]['livedb_longitude'])*3.28084,2);
+					//if ($globalDebug) echo '=> Set altitude to WGS84 Ellipsoid, add '.$geoid.' to '.$line['altitude']."\n";
+					$line['altitude'] = $line['altitude'] + $geoid;
+				}
+			}
 		    //if (!isset($this->all_flights[$id]['altitude']) || $this->all_flights[$id]['altitude'] == '' || ($this->all_flights[$id]['altitude'] > 0 && $line['altitude'] != 0)) {
 			if (is_int($this->all_flights[$id]['altitude']) && abs(round($line['altitude']/100)-$this->all_flights[$id]['altitude']) > 3) $this->all_flights[$id]['putinarchive'] = true;
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('altitude' => round($line['altitude']/100)));

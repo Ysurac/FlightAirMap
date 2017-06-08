@@ -1,6 +1,6 @@
 <?php
 /*
- * Calculate the height of the WGS84 geoid above the
+ * Calculate the height of the geoid above the WGS84
  * ellipsoid at any given latitude and longitude
  *
  * Copyright (c) Charles Karney (2009-2015) <charles@karney.com> and licensed
@@ -28,10 +28,15 @@ class GeoidHeight  {
 	private $rlatres = null;
 	private $ix = null;
 	private $iy = null;
+	private $t = null;
 
 	public function __construct($name='') {
+		global $globalGeoidSource;
 		//if ($name == '') $name = dirname(__FILE__).'/../install/tmp/egm2008-1.pgm';
-		if ($name == '') $name = dirname(__FILE__).'/../data/egm96-15.pgm';
+		if ($name == '') {
+			if (isset($globalGeoidSource) && $globalGeoidSource != '') $name = dirname(__FILE__).'/../data/'.$globalGeoidSource.'.pgm';
+			else $name = dirname(__FILE__).'/../data/egm96-15.pgm';
+		}
 
 		$f = @fopen($name,"r");
 		if ($f === FALSE) {
@@ -145,12 +150,14 @@ class GeoidHeight  {
 					$t[$i] /= $c0x;
 				}
 			}
+			$this->t = $t;
 		}
 		if (!($cubic)) {
 			$a = (((1 - $fx) * $v00) + ($fx * $v01));
 			$b = (((1 - $fx) * $v10) + ($fx * $v11));
 			$h = (((1 - $fy) * $a) + ($fy * $b));
 		} else {
+			$t = $this->t;
 			$h = (($t[0] + ($fx * ($t[1] + ($fx * ($t[3] + ($fx * $t[6])))))) + ($fy * (($t[2] + ($fx * ($t[4] + ($fx * $t[7])))) + ($fy * (($t[5] + ($fx * $t[8])) + ($fy * $t[9]))))));
 		}
 		return ((float)$this->offset + ((float)$this->scale * (float)$h));

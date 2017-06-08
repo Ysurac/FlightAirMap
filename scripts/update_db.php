@@ -42,6 +42,11 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 		echo $update_db->update_airspace_fam();
 		$update_db->insert_last_airspace_update();
 	}
+	if (isset($globalGeoid) && $globalGeoid && $update_db->check_last_geoid_update()) {
+		echo "Check if new geoid version exist...";
+		echo $update_db->update_geoid_fam();
+		$update_db->insert_last_geoid_update();
+	}
 	if (isset($globalMarine) && $globalMarine && $update_db->check_last_marine_identity_update()) {
 		echo "Check if new marine identity version exist...";
 		echo $update_db->update_marine_identity_fam();
@@ -119,9 +124,9 @@ if (isset($globalACARSArchiveKeepMonths) && $globalACARSArchiveKeepMonths > 0) {
 }
 if (isset($globalGroundAltitude) && $globalGroundAltitude) {
 	echo "Adding ground altitude files...\n";
-	require_once(dirname(__FILE__).'/../require/class.Altitude.php');
-	$Altitude = new Altitude();
-	$Altitude->downloadNeeded();
+	require_once(dirname(__FILE__).'/../require/class.Elevation.php');
+	$Elevation = new Elevation();
+	$Elevation->downloadNeeded();
 	//echo "Done\n";
 }
 

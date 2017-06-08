@@ -568,6 +568,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">For working source statistics, the name of the source <b>MUST</b> be the same as the source name of a source location, else center coverage latitude and longitude is used as source position. This is not available/usable with virtual airlines.</p>
 				<p class="help-block">FlightGear Singleplayer open an UDP server, the host should be <i>0.0.0.0</i>.</p>
 				<p class="help-block">Virtual Airlines Manager need to use the file <i>install/vAM/VAM-json.php</i> and the url <i>http://yourvaminstall/VAM-json.php</i>.</p>
+				<p class="help-block">HTTP and TCP sources can't be used at the same time.</p>
 				</fieldset>
 			</fieldset>
 			<div id="acars_data">
@@ -727,6 +728,23 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="waypoints">Add Waypoints, Airspace and countries data (about 45Mio in DB) <i>Need PostGIS if you use PostgreSQL</i></label>
 				<input type="checkbox" name="waypoints" id="waypoints" value="waypoints"<?php if (!isset($globalWaypoints) || (isset($globalWaypoints) && $globalWaypoints)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<br />
+			<p>
+				<label for="geoid">Geoid support</label>
+				<input type="checkbox" name="geoid" id="geoid" value="geoid"<?php if (!isset($globalGeoid) || (isset($globalGeoid) && $globalGeoid)) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Calculate the height of the geoid above WGS84 ellipsoid. Needed when source give altitute based on above mean sea level.</p>
+			</p>
+			<p>
+				<label for="geoid_source">Geoid Source</label>
+				<select name="geoid_source" id="geoid_source">
+					<option value="egm96-15"<?php if (isset($globalGeoidSource) && $globalGeoidSource == 'egm96-15') print ' selected="selected"'; ?>>EGM96 15' (2.1MB)</option>
+					<option value="egm96-5"<?php if (isset($globalGeoidSource) && $globalGeoidSource == 'egm96-5') print ' selected="selected"'; ?>>EGM96 5' (19MB)</option>
+					<option value="egm2008-5"<?php if (isset($globalGeoidSource) && $globalGeoidSource == 'egm2008-5') print ' selected="selected"'; ?>>EGM2008 5' (19MB)</option>
+					<option value="egm2008-2_5"<?php if (isset($globalGeoidSource) && $globalGeoidSource == 'egm2008-2_5') print ' selected="selected"'; ?>>EGM2008 2.5' (75MB)</option>
+					<option value="egm2008-1"<?php if (isset($globalGeoidSource) && $globalGeoidSource == 'egm2008-1') print ' selected="selected"'; ?>>EGM2008 1' (470MB)</option>
+				</select>
+				<p class="help-block">The geoid is approximated by an "earth gravity model" (EGM).</p>
 			</p>
 			<br />
 			<p>
@@ -1345,6 +1363,15 @@ if (isset($_POST['dbtype'])) {
 	} else {
 		$settings = array_merge($settings,array('globalWaypoints' => 'FALSE'));
 	}
+	$geoid = filter_input(INPUT_POST,'geoid',FILTER_SANITIZE_STRING);
+	if ($geoid == 'geoid') {
+		$settings = array_merge($settings,array('globalGeoid' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalGeoid' => 'FALSE'));
+	}
+	$geoid_source = filter_input(INPUT_POST,'geoid_source',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalGeoidSource' => $geoid_source));
+
 	$noairlines = filter_input(INPUT_POST,'noairlines',FILTER_SANITIZE_STRING);
 	if ($noairlines == 'noairlines') {
 		$settings = array_merge($settings,array('globalNoAirlines' => 'TRUE'));

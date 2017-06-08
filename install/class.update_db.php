@@ -2109,6 +2109,29 @@ class update_db {
 		return '';
 	}
 
+	public static function update_geoid_fam() {
+		global $tmp_dir, $globalDebug, $globalGeoidSource;
+		$error = '';
+		if ($globalDebug) echo "Geoid from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.fr/data/geoid/'.$globalGeoidSource.'.pgm.gz.md5',$tmp_dir.$globalGeoidSource.'.pgm.gz.md5');
+		if (file_exists($tmp_dir.$globalGeoidSource.'.pgm.gz.md5')) {
+			$geoid_md5_file = explode(' ',file_get_contents($tmp_dir.$globalGeoidSource.'.pgm.gz.md5'));
+			$geoid_md5 = $geoid_md5_file[0];
+			if (!update_db::check_geoid_version($geoid_md5)) {
+				update_db::download('http://data.flightairmap.fr/data/geoid/'.$globalGeoidSource.'.pgm.gz',$tmp_dir.$globalGeoidSource.'.pgm.gz');
+				if (file_exists($tmp_dir.$globalGeoidSource.'.pgm.gz')) {
+					if ($globalDebug) echo "Gunzip...";
+					update_db::gunzip($tmp_dir.$globalGeoidSource.'.pgm.gz',dirname(__FILE__).'/../data/'.$globalGeoidSource.'.pgm');
+					update_db::insert_geoid_version($geoid_md5);
+				} else $error = "File ".$tmp_dir.$globalGeoidSource.'.pgm.gz'." doesn't exist. Download failed.";
+			}
+		} else $error = "File ".$tmp_dir.$globalGeoidSource.'.pgm.gz.md5'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+
 	public static function update_tle() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Download TLE : Download...";
@@ -2442,6 +2465,20 @@ class update_db {
                 else return false;
 	}
 
+	public static function check_geoid_version($version) {
+		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'geoid_version' AND value = :version";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute(array(':version' => $version));
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return true;
+                else return false;
+	}
+
 	public static function check_marine_identity_version($version) {
 		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'marine_identity_version' AND value = :version";
 		try {
@@ -2460,6 +2497,18 @@ class update_db {
 	public static function insert_airspace_version($version) {
 		$query = "DELETE FROM config WHERE name = 'airspace_version';
 			INSERT INTO config (name,value) VALUES ('airspace_version',:version);";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+	
+	public static function insert_geoid_version($version) {
+		$query = "DELETE FROM config WHERE name = 'geoid_version';
+			INSERT INTO config (name,value) VALUES ('geoid_version',:version);";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
@@ -2511,6 +2560,7 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 	}
+
 	public static function check_last_airspace_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
@@ -2533,6 +2583,37 @@ class update_db {
 	public static function insert_last_airspace_update() {
 		$query = "DELETE FROM config WHERE name = 'last_update_airspace_db';
 			INSERT INTO config (name,value) VALUES ('last_update_airspace_db',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+	}
+
+	public static function check_last_geoid_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_geoid_db' AND value > DATE_SUB(NOW(), INTERVAL 7 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_geoid_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '7 DAYS'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+                        $sth->execute();
+                } catch(PDOException $e) {
+                        return "error : ".$e->getMessage();
+                }
+                $row = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($row['nb'] > 0) return false;
+                else return true;
+	}
+
+	public static function insert_last_geoid_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_geoid_db';
+			INSERT INTO config (name,value) VALUES ('last_update_geoid_db',NOW());";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
