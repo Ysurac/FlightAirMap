@@ -2148,7 +2148,9 @@ class update_db {
 				if (file_exists($tmp_dir.$globalGeoidSource.'.pgm.gz')) {
 					if ($globalDebug) echo "Gunzip...";
 					update_db::gunzip($tmp_dir.$globalGeoidSource.'.pgm.gz',dirname(__FILE__).'/../data/'.$globalGeoidSource.'.pgm');
-					update_db::insert_geoid_version($geoid_md5);
+					if (file_exists(dirname(__FILE__).'/../data/'.$globalGeoidSource.'.pgm')) {
+						update_db::insert_geoid_version($geoid_md5);
+					}
 				} else $error = "File ".$tmp_dir.$globalGeoidSource.'.pgm.gz'." doesn't exist. Download failed.";
 			}
 		} else $error = "File ".$tmp_dir.$globalGeoidSource.'.pgm.gz.md5'." doesn't exist. Download failed.";

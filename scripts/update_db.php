@@ -44,8 +44,9 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 	}
 	if (isset($globalGeoid) && $globalGeoid && $update_db->check_last_geoid_update()) {
 		echo "Check if new geoid version exist...";
-		echo $update_db->update_geoid_fam();
-		$update_db->insert_last_geoid_update();
+		$error = $update_db->update_geoid_fam();
+		if ($error == '') $update_db->insert_last_geoid_update();
+		else echo $error;
 	}
 	if (isset($globalMarine) && $globalMarine && $update_db->check_last_marine_identity_update()) {
 		echo "Check if new marine identity version exist...";
