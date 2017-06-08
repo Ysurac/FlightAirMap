@@ -3809,6 +3809,13 @@ class Spotter{
 				return false;
 			}
 		} else $altitude = 0;
+		if ($altitude_real != "")
+		{
+			if (!is_numeric($altitude_real))
+			{
+				return false;
+			}
+		} else $altitude_real = 0;
 		
 		if ($heading != "")
 		{
