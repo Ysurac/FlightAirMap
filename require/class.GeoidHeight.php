@@ -29,6 +29,10 @@ class GeoidHeight  {
 	private $ix = null;
 	private $iy = null;
 	private $t = null;
+	private $v00 = null;
+	private $v01 = null;
+	private $v10 = null;
+	private $v11 = null;
 
 	public function __construct($name='') {
 		global $globalGeoidSource;
@@ -119,6 +123,7 @@ class GeoidHeight  {
 		$ix = (int)$fx;
 		$fx -= $ix;
 		$fy -= $iy;
+		$t = array();
 		if (($iy == ($this->height - 1))) {
 			$iy -= 1;
 		}
@@ -126,10 +131,10 @@ class GeoidHeight  {
 			$this->ix = $ix;
 			$this->iy = $iy;
 			if (!($cubic)) {
-				$v00 = $this->_rawval($ix, $iy);
-				$v01 = $this->_rawval(($ix + 1), $iy);
-				$v10 = $this->_rawval($ix, ($iy + 1));
-				$v11 = $this->_rawval(($ix + 1), ($iy + 1));
+				$this->v00 = $this->_rawval($ix, $iy);
+				$this->v01 = $this->_rawval(($ix + 1), $iy);
+				$this->v10 = $this->_rawval($ix, ($iy + 1));
+				$this->v11 = $this->_rawval(($ix + 1), ($iy + 1));
 			} else {
 				$v = [$this->_rawval($ix, ($iy - 1)), $this->_rawval(($ix + 1), ($iy - 1)), $this->_rawval(($ix - 1), $iy), $this->_rawval($ix, $iy), $this->_rawval(($ix + 1), $iy), $this->_rawval(($ix + 2), $iy), $this->_rawval(($ix - 1), ($iy + 1)), $this->_rawval($ix, ($iy + 1)), $this->_rawval(($ix + 1), ($iy + 1)), $this->_rawval(($ix + 2), ($iy + 1)), $this->_rawval($ix, ($iy + 2)), $this->_rawval(($ix + 1), ($iy + 2))];
 				if (($iy == 0)) {
@@ -151,13 +156,12 @@ class GeoidHeight  {
 				}
 			}
 			$this->t = $t;
-		}
+		} else $t = $this->t;
 		if (!($cubic)) {
-			$a = (((1 - $fx) * $v00) + ($fx * $v01));
-			$b = (((1 - $fx) * $v10) + ($fx * $v11));
+			$a = (((1 - $fx) * $this->v00) + ($fx * $this->v01));
+			$b = (((1 - $fx) * $this->v10) + ($fx * $this->v11));
 			$h = (((1 - $fy) * $a) + ($fy * $b));
 		} else {
-			$t = $this->t;
 			$h = (($t[0] + ($fx * ($t[1] + ($fx * ($t[3] + ($fx * $t[6])))))) + ($fy * (($t[2] + ($fx * ($t[4] + ($fx * $t[7])))) + ($fy * (($t[5] + ($fx * $t[8])) + ($fy * $t[9]))))));
 		}
 		return ((float)$this->offset + ((float)$this->scale * (float)$h));
