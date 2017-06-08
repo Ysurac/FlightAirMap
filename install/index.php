@@ -756,6 +756,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="archive">Archive all flights data</label>
 				<input type="checkbox" name="archive" id="archive" value="archive"<?php if ((isset($globalArchive) && $globalArchive) || !isset($globalArchive)) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">You will need to put <i>update_db.php</i> in cron. But all should be faster when archive is enabled.</p>
 			</p>
 			<p>
 				<label for="archivemonths">Generate statistics, delete or put in archive flights older than xx months</label>
@@ -1546,6 +1547,9 @@ if (isset($_POST['dbtype'])) {
 	}
 	if (isset($globalVAM) && $globalVAM) {
 		print '<p>You need to copy <b>install/VAM/VAM-json.php</b> to your Virtual Airline Manager directory and use this URL as source.</p>';
+	}
+	if (isset($globalGeoid) && $globalGeoid) {
+		print '<p>You need to run <b>scripts/update_db.php</b> to update Geoid file if needed (or first time).</p>';
 	}
 	print '<p>If you want to keep external data updated, you have to add <b>scripts/update_db.php</b> in cron (every hour or 30 minutes if computer is fast enough).</p>';
 	print '<p>If <b>scripts/daemon-spotter.php</b> is already running, you have to restart it.</p>';

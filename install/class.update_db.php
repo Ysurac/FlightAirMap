@@ -663,6 +663,7 @@ class update_db {
 		';
 		$result = sparql_query($query);
   
+		/*
 		$query = 'TRUNCATE TABLE airport';
 		try {
 			$Connection = new Connection();
@@ -671,8 +672,8 @@ class update_db {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
-
-
+                */
+                /*
 		$query = 'ALTER TABLE airport DROP INDEX icaoidx';
 		try {
 			$Connection = new Connection();
@@ -681,9 +682,10 @@ class update_db {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
+                */
 
-		$query_dest = "INSERT INTO airport (`airport_id`,`name`,`city`,`country`,`iata`,`icao`,`latitude`,`longitude`,`altitude`,`type`,`home_link`,`wikipedia_link`,`image_thumb`,`image`)
-		    VALUES (:airport_id, :name, :city, :country, :iata, :icao, :latitude, :longitude, :altitude, :type, :home_link, :wikipedia_link, :image_thumb, :image)";
+		$query_dest = "INSERT INTO airport (name,city,country,iata,icao,latitude,longitude,altitude,type,home_link,wikipedia_link,image_thumb,image)
+		    VALUES (:name, :city, :country, :iata, :icao, :latitude, :longitude, :altitude, :type, :home_link, :wikipedia_link, :image_thumb, :image)";
 		$Connection = new Connection();
 		$sth_dest = $Connection->db->prepare($query_dest);
 		if ($globalTransaction) $Connection->db->beginTransaction();
@@ -722,25 +724,46 @@ class update_db {
 			
 			$row['type'] = trim($row['type']);
 			if ($row['type'] == 'Military: Naval Auxiliary Air Station' || $row['type'] == 'http://dbpedia.org/resource/Naval_air_station' || $row['type'] == 'Military: Naval Air Station' || $row['type'] == 'Military Northern Fleet' || $row['type'] == 'Military and industrial' || $row['type'] == 'Military: Royal Air Force station' || $row['type'] == 'http://dbpedia.org/resource/Military_airbase' || $row['type'] == 'Military: Naval air station' || preg_match('/air base/i',$row['name'])) {
-				$row['type'] = 'Military';
+				$row['type'] = 'military';
 			} elseif ($row['type'] == 'http://dbpedia.org/resource/Airport' || $row['type'] == 'Civil' || $row['type'] == 'Public use' || $row['type'] == 'Public' || $row['type'] == 'http://dbpedia.org/resource/Civilian' || $row['type'] == 'Public, Civilian' || $row['type'] == 'Public / Military' || $row['type'] == 'Private & Civilian' || $row['type'] == 'Civilian and Military' || $row['type'] == 'Public/military' || $row['type'] == 'Active With Few Facilities' || $row['type'] == '?ivilian' || $row['type'] == 'Civil/Military' || $row['type'] == 'NA' || $row['type'] == 'Public/Military') {
 				$row['type'] = 'small_airport';
 			}
 			
 			$row['city'] = urldecode(str_replace('_',' ',str_replace('http://dbpedia.org/resource/','',$row['city'])));
-			$query_dest_values = array(':airport_id' => $i, ':name' => $row['name'],':iata' => $row['iata'],':icao' => $row['icao'],':latitude' => $row['latitude'],':longitude' => $row['longitude'],':altitude' => $row['altitude'],':type' => $row['type'],':city' => $row['city'],':country' => $row['country'],':home_link' => $row['homepage'],':wikipedia_link' => $row['wikipedia_page'],':image' => $row['image'],':image_thumb' => $row['image_thumb']);
+			$query_dest_values = array(':name' => $row['name'],':iata' => $row['iata'],':icao' => $row['icao'],':latitude' => $row['latitude'],':longitude' => $row['longitude'],':altitude' => round($row['altitude']),':type' => $row['type'],':city' => $row['city'],':country' => $row['country'],':home_link' => $row['homepage'],':wikipedia_link' => $row['wikipedia_page'],':image' => $row['image'],':image_thumb' => $row['image_thumb']);
 			//print_r($query_dest_values);
 			
-			try {
-				$sth_dest->execute($query_dest_values);
-			} catch(PDOException $e) {
-				return "error : ".$e->getMessage();
-			}
+			if ($row['icao'] != '') {
+				try {
+					$sth = $Connection->db->prepare('SELECT COUNT(*) FROM airport WHERE icao = :icao');
+					$sth->execute(array(':icao' => $row['icao']));
+				} catch(PDOException $e) {
+					return "error : ".$e->getMessage();
+				}
+					if ($sth->fetchColumn() > 0) {
+						// Update ?
+						$query = 'UPDATE airport SET type = :type WHERE icao = :icao';
+						try {
+							$sth = $Connection->db->prepare($query);
+							$sth->execute(array(':icao' => $row['icao'],':type' => $row['type']));
+						} catch(PDOException $e) {
+							return "error : ".$e->getMessage();
+						}
+						echo $row['icao'].' : '.$row['type']."\n";
+					} else {
+						try {
+							$sth_dest->execute($query_dest_values);
+						} catch(PDOException $e) {
+							return "error : ".$e->getMessage();
+						}
+					}
+				}
 			}
 
 			$i++;
 		}
 		if ($globalTransaction) $Connection->db->commit();
+		/*
 		echo "Delete duplicate rows...\n";
 		$query = 'ALTER IGNORE TABLE airport ADD UNIQUE INDEX icaoidx (icao)';
 		try {
@@ -750,10 +773,12 @@ class update_db {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
+                */
 
 
+		/*
 		if ($globalDebug) echo "Insert Not available Airport...\n";
-		$query = "INSERT INTO airport (`airport_id`,`name`,`city`,`country`,`iata`,`icao`,`latitude`,`longitude`,`altitude`,`type`,`home_link`,`wikipedia_link`,`image`,`image_thumb`)
+		$query = "INSERT INTO airport (airport_id,name,city,country,iata,icao,latitude,longitude,altitude,type,home_link,wikipedia_link,image,image_thumb)
 		    VALUES (:airport_id, :name, :city, :country, :iata, :icao, :latitude, :longitude, :altitude, :type, :home_link, :wikipedia_link, :image, :image_thumb)";
 		$query_values = array(':airport_id' => $i, ':name' => 'Not available',':iata' => 'NA',':icao' => 'NA',':latitude' => '0',':longitude' => '0',':altitude' => '0',':type' => 'NA',':city' => 'N/A',':country' => 'N/A',':home_link' => '',':wikipedia_link' => '',':image' => '',':image_thumb' => '');
 		try {
@@ -763,6 +788,7 @@ class update_db {
                 } catch(PDOException $e) {
                         return "error : ".$e->getMessage();
                 }
+                */
 		$i++;
 /*
 		$query = 'DELETE FROM airport WHERE airport_id IN (SELECT * FROM (SELECT min(a.airport_id) FROM airport a GROUP BY a.icao) x)';
@@ -774,7 +800,7 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 */
-
+                
 		echo "Download data from ourairports.com...\n";
 		$delimiter = ',';
 		$out_file = $tmp_dir.'airports.csv';
@@ -794,23 +820,24 @@ class update_db {
 					$data = array();
 					$data = array_combine($header, $row);
 					try {
-						$sth = $Connection->db->prepare('SELECT COUNT(*) FROM airport WHERE `icao` = :icao');
-						$sth->execute(array(':icao' => $data['gps_code']));
+						$sth = $Connection->db->prepare('SELECT COUNT(*) FROM airport WHERE icao = :icao');
+						$sth->execute(array(':icao' => $data['ident']));
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage();
 					}
 					if ($sth->fetchColumn() > 0) {
-						$query = 'UPDATE airport SET `type` = :type WHERE icao = :icao';
+						$query = 'UPDATE airport SET type = :type WHERE icao = :icao';
 						try {
 							$sth = $Connection->db->prepare($query);
-							$sth->execute(array(':icao' => $data['gps_code'],':type' => $data['type']));
+							$sth->execute(array(':icao' => $data['ident'],':type' => $data['type']));
 						} catch(PDOException $e) {
 							return "error : ".$e->getMessage();
 						}
 					} else {
-						$query = "INSERT INTO airport (`airport_id`,`name`,`city`,`country`,`iata`,`icao`,`latitude`,`longitude`,`altitude`,`type`,`home_link`,`wikipedia_link`)
-						    VALUES (:airport_id, :name, :city, :country, :iata, :icao, :latitude, :longitude, :altitude, :type, :home_link, :wikipedia_link)";
-						$query_values = array(':airport_id' => $i, ':name' => $data['name'],':iata' => $data['iata_code'],':icao' => $data['gps_code'],':latitude' => $data['latitude_deg'],':longitude' => $data['longitude_deg'],':altitude' => $data['elevation_ft'],':type' => $data['type'],':city' => $data['municipality'],':country' => $data['iso_country'],':home_link' => $data['home_link'],':wikipedia_link' => $data['wikipedia_link']);
+						if ($data['gps_code'] == $data['ident']) {
+						$query = "INSERT INTO airport (name,city,country,iata,icao,latitude,longitude,altitude,type,home_link,wikipedia_link)
+						    VALUES (:name, :city, :country, :iata, :icao, :latitude, :longitude, :altitude, :type, :home_link, :wikipedia_link)";
+						$query_values = array(':name' => $data['name'],':iata' => $data['iata_code'],':icao' => $data['gps_code'],':latitude' => $data['latitude_deg'],':longitude' => $data['longitude_deg'],':altitude' => round($data['elevation_ft']),':type' => $data['type'],':city' => $data['municipality'],':country' => $data['iso_country'],':home_link' => $data['home_link'],':wikipedia_link' => $data['wikipedia_link']);
 						try {
 							$sth = $Connection->db->prepare($query);
 							$sth->execute($query_values);
@@ -818,13 +845,15 @@ class update_db {
 							return "error : ".$e->getMessage();
 						}
 						$i++;
+						}
 					}
 				}
 			}
 			fclose($handle);
 			//$Connection->db->commit();
 		}
-
+		
+		
 		echo "Download data from another free database...\n";
 		$out_file = $tmp_dir.'GlobalAirportDatabase.zip';
 		update_db::download('http://www.partow.net/downloads/GlobalAirportDatabase.zip',$out_file);
@@ -843,7 +872,7 @@ class update_db {
 				else {
 					$data = $row;
 
-					$query = 'UPDATE airport SET `city` = :city, `country` = :country WHERE icao = :icao';
+					$query = 'UPDATE airport SET city = :city, country = :country WHERE icao = :icao';
 					try {
 						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':icao' => $data[0],':city' => ucwords(strtolower($data[3])),':country' => ucwords(strtolower($data[4]))));
@@ -859,13 +888,13 @@ class update_db {
 		echo "Put type military for all air base";
 		$Connection = new Connection();
 		try {
-			$sth = $Connection->db->prepare("SELECT icao FROM airport WHERE `name` LIKE '%Air Base%'");
+			$sth = $Connection->db->prepare("SELECT icao FROM airport WHERE name LIKE '%Air Base%'");
 			$sth->execute();
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
 		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-			$query2 = 'UPDATE airport SET `type` = :type WHERE icao = :icao';
+			$query2 = 'UPDATE airport SET type = :type WHERE icao = :icao';
 			try {
 				$sth2 = $Connection->db->prepare($query2);
 				$sth2->execute(array(':icao' => $row['icao'],':type' => 'military'));
@@ -873,10 +902,7 @@ class update_db {
 				return "error : ".$e->getMessage();
 			}
 		}
-
-
-
-                return "success";
+		return "success";
 	}
 	
 	public static function translation() {
@@ -1387,7 +1413,7 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 
-		$query_dest = 'INSERT INTO waypoints (`ident`,`latitude`,`longitude`,`control`,`usage`) VALUES (:ident, :latitude, :longitude, :control, :usage)';
+		$query_dest = 'INSERT INTO waypoints (ident,latitude,longitude,control,usage) VALUES (:ident, :latitude, :longitude, :control, :usage)';
 		$Connection = new Connection();
 		$sth_dest = $Connection->db->prepare($query_dest);
 		$Connection->db->beginTransaction();
@@ -2805,7 +2831,7 @@ class update_db {
 	}
 }
 
-//echo update_db::update_airports();
+echo update_db::update_airports();
 //echo update_db::translation();
 //echo update_db::update_waypoints();
 //echo update_db::update_airspace();

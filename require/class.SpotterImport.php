@@ -52,7 +52,7 @@ class SpotterImport {
 		try {
 			$GeoidClass = new GeoidHeight();
 		} catch(Exception $e) {
-			if ($globalDebug) echo "Can't calculate geoid : $e \n";
+			if ($globalDebug) echo "Can't calculate geoid, check that you downloaded it via update_db.php \n";
 			$GeoidClass = FALSE;
 		}
 	}
