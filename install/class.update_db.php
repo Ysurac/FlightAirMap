@@ -2621,9 +2621,9 @@ class update_db {
 	public static function check_last_geoid_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_geoid_db' AND value > DATE_SUB(NOW(), INTERVAL 7 DAY)";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_geoid' AND value > DATE_SUB(NOW(), INTERVAL 7 DAY)";
 		} else {
-			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_geoid_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '7 DAYS'";
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_geoid' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '7 DAYS'";
 		}
 		try {
 			$Connection = new Connection();
@@ -2638,8 +2638,8 @@ class update_db {
 	}
 
 	public static function insert_last_geoid_update() {
-		$query = "DELETE FROM config WHERE name = 'last_update_geoid_db';
-			INSERT INTO config (name,value) VALUES ('last_update_geoid_db',NOW());";
+		$query = "DELETE FROM config WHERE name = 'last_update_geoid';
+			INSERT INTO config (name,value) VALUES ('last_update_geoid',NOW());";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
