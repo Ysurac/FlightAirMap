@@ -1515,7 +1515,7 @@ class Stats {
         }
         
         public function addOldStats() {
-    		global $globalDebug, $globalArchiveMonths, $globalArchive, $globalArchiveYear, $globalDBdriver, $globalStatsFilters,$globalDeleteLastYearStats,$globalStatsReset,$globalStatsResetYear;
+    		global $globalDebug, $globalArchiveMonths, $globalArchive, $globalArchiveYear, $globalDBdriver, $globalStatsFilters,$globalDeleteLastYearStats,$globalStatsReset,$globalStatsResetYear, $globalAccidents;
     		$Common = new Common();
     		$Connection = new Connection();
     		date_default_timezone_set('UTC');
@@ -1624,17 +1624,19 @@ class Stats {
 				}
 			}
 			
-			if ($globalDebug) echo 'Count fatalities stats...'."\n";
-			$Accident = new Accident();
-			$this->deleteStatsByType('fatalities_byyear');
-			$alldata = $Accident->countFatalitiesByYear();
-			foreach ($alldata as $number) {
-				$this->addStat('fatalities_byyear',$number['count'],date('Y-m-d H:i:s',mktime(0,0,0,1,1,$number['year'])));
-			}
-			$this->deleteStatsByType('fatalities_bymonth');
-			$alldata = $Accident->countFatalitiesLast12Months();
-			foreach ($alldata as $number) {
-				$this->addStat('fatalities_bymonth',$number['count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month'],1,$number['year'])));
+			if (isset($globalAccidents) && $globalAccidents) {
+				if ($globalDebug) echo 'Count fatalities stats...'."\n";
+				$Accident = new Accident();
+				$this->deleteStatsByType('fatalities_byyear');
+				$alldata = $Accident->countFatalitiesByYear();
+				foreach ($alldata as $number) {
+					$this->addStat('fatalities_byyear',$number['count'],date('Y-m-d H:i:s',mktime(0,0,0,1,1,$number['year'])));
+				}
+				$this->deleteStatsByType('fatalities_bymonth');
+				$alldata = $Accident->countFatalitiesLast12Months();
+				foreach ($alldata as $number) {
+					$this->addStat('fatalities_bymonth',$number['count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month'],1,$number['year'])));
+				}
 			}
 
 
