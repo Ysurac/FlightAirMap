@@ -2087,7 +2087,7 @@ class update_schema {
 	}
 
 	private static function update_from_44() {
-		global $globalDBdriver;
+		global $globalDBdriver, $globalVATSIM, $globalIVAO;
 		$Connection = new Connection();
 		$error = '';
 		if ($globalDBdriver == 'mysql') {
