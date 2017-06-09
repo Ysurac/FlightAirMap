@@ -26,6 +26,9 @@ $globalBingMapKey = '';
 $globalHereappID = '';
 $globalHereappCode = '';
 $globalMapQuestKey = '';
+$globalOpenWeatherMapKey = '';
+// Customs layers source must be configured this way:
+//$globalMapCustomLayer = array('custom' => array('url' => 'http://myownserver','maxZoom' => 18, 'minZoom' => 0,'attribution' => 'MySelf'));
 
 // MAP 3D
 $globalMap3D = TRUE; // User can choose 3D map
@@ -58,7 +61,7 @@ $globalDBport = '3306'; //database port
 $globalTransaction = TRUE; //Activate database transaction support
 
 
-//FLIGHTAWARE API INFO
+//FLIGHTAWARE API INFO (not supported)
 $globalFlightAware = FALSE; //set to TRUE to use FlightAware as data import
 $globalFlightAwareUsername = ''; //FlightAware Username
 $globalFlightAwarePassword = ''; //FlightAware Password/API key
@@ -84,6 +87,9 @@ $globalCoordMinChange = '0.02'; // minimal change since last message for latitud
 
 // LIVE MAP REFRESH (in seconds)
 $globalMapRefresh = '30';
+
+// ADD FLIGHTS THAT ARE VISIBLE (boarding box)
+$globalMapUseBbox = FALSE;
 
 // IDLE TIMEOUT (in minutes)
 $globalMapIdleTimeout = '30';
@@ -112,6 +118,11 @@ $globalTranslate = TRUE;
 $globalUnitDistance = 'km'; // km, nm or mi
 $globalUnitAltitude = 'm'; // m or feet
 $globalUnitSpeed = 'kmh'; // kmh, knots or mph
+
+// *** Pilots/Owners ***
+// Force the display of owners or/and pilots. Can be used for paragliding.
+//$globalUseOwner = TRUE;
+//$globalUsePilot = TRUE;
 
 // *** Virtual flights ***
 //IVAO
@@ -211,6 +222,12 @@ $globalArchiveKeepTrackMonths = '0';
 $globalArchiveKeepMonths = '0';
 // ************************
 
+// Reset stats every year
+$globalDeleteLastYearStats = TRUE;
+
+//Calculate height of the geoid above the WGS84 ellipsoid (for source that give altitude based on AMSL)
+$globalGeoid = TRUE;
+$globalGeoidSource = 'egm96-15';
 
 //NOTAM
 $globalNOTAM = TRUE;
@@ -228,10 +245,21 @@ $globalOwner = FALSE;
 // *** Aircraft pics ***
 //Retrieve Image from externals sources
 $globalAircraftImageFetch = TRUE;
+//Check by aircraft ICAO if image is not found by registration
+$globalAircraftImageCheckICAO = TRUE;
 //Sources for Aircraft image
 $globalAircraftImageSources = array('ivaomtl','wikimedia','airportdata','deviantart','flickr','bing','jetphotos','planepictures','planespotters','customsources');
 // Custom source configuration {registration} will be replaced by aircraft registration (exif get copyright from exif data for each pic)
-// example of config : $globalAircraftImageCustomSources = array('thumbnail' => 'http://pics.myurl.com/thumbnail/{registration}.jpg','original' => 'http://myurl/original/{registration}.jpg','source_website' => 'https://www.myurl.com', 'source' => 'customsite', 'exif' => true);
+// example of config : $globalAircraftImageCustomSources = array('thumbnail' => 'http://pics.myurl.com/thumbnail/{registration}.jpg','original' => 'http://myurl/original/{registration}.jpg','source_website' => 'https://www.myurl.com', 'source' => 'customsite', 'copyright' => 'myself','exif' => true);
+// ************************
+
+// *** Marine pics ***
+//Retrieve Image from externals sources
+$globalMarineImageFetch = TRUE;
+//Sources for Marine image
+$globalMarineImageSources = array('wikimedia','flickr','deviantart','bing','customsources');
+// Custom source configuration {mmsi} will be replaced by vessel mmsi, {name} by it's name (exif get copyright from exif data for each pic)
+// example of config : $globalMarineImageCustomSources = array('thumbnail' => 'http://pics.myurl.com/thumbnail/{name}.jpg','original' => 'http://myurl/original/{name}.jpg','source_website' => 'https://www.myurl.com', 'source' => 'customsite', 'copyright' => 'myself','exif' => true);
 // ************************
 
 //Retrieve schedules from externals sources (set to FALSE for IVAO or if $globalFork = FALSE)
@@ -244,4 +272,23 @@ $globalTranslationFetch = TRUE;
 //Sources for translation, to find name of flight from callsign
 $globalTranslationSources = array();
 
+//Don't display upcoming page
+$globalNoUpcoming = FALSE;
+//Don't display idents
+$globalNoIdents = FALSE;
+//Don't display and try to retrieve airlines
+$globalNoAirlines = FALSE;
+//Display Owners
+$globalUseOwner = TRUE;
+//Display Pilots
+$globalUsePilot = FALSE;
+
+//Show a tooltip for each flights
+$globalMapTooltip = FALSE;
+
+//Display ground station on map
+$globalMapGroundStation = TRUE;
+
+//Display ground altitude
+$globalGroundAltitude = FALSE;
 ?>
