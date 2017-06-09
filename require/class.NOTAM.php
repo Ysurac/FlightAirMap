@@ -1276,9 +1276,14 @@ class NOTAM {
 		//echo $data."\n";
 		$data = preg_split('#\s(?=([A-Z]\)\s))#',$data);
 		//print_r($data);
+		$q = false;
+		$a = false;
+		$b = false;
+		$c = false;
+		$e = false;
 		foreach ($data as $line) {
 			$line = trim($line);
-			if (preg_match('#Q\) (.*)#',$line,$matches)) {
+			if (preg_match('#(^|\s)Q\) (.*)#',$line,$matches) && $q === false) {
 				$line = str_replace(' ','',$line);
 				if (preg_match('#Q\)([A-Z]{3,4})\/([A-Z]{5})\/(IV|I|V)\/([A-Z]{1,3})\/([A-Z]{1,2})\/([0-9]{3})\/([0-9]{3})\/([0-9]{4})(N|S)([0-9]{5})(E|W)([0-9]{3}|)#',$line,$matches)) {
 				//if (preg_match('#Q\)([A-Z]{4})\/([A-Z]{5})\/(IV|I|V)\/([A-Z]{1,3})\/([A-Z]{1,2})\/([0-9]{3})\/([0-9]{3})\/([0-9]{4})(N|S)([0-9]{5})(E|W)([0-9]{3})#',$line,$matches)) {
@@ -1334,50 +1339,57 @@ class NOTAM {
 					$result['longitude'] = $longitude;
 					if ($matches[12] != '') $result['radius'] = intval($matches[12]);
 					else $result['radius'] = 0;
+					$q = true;
 				} elseif ($globalDebug) {
-					echo 'ERROR NOTAM : '.$data."\n";
+					echo 'NOTAM error : '.$result['full_notam']."\n";
 					echo "Can't parse : ".$line."\n";
 				}
 			}
-			elseif (preg_match('#A\) (.*)#',$line,$matches)) {
-				$result['icao'] = $matches[1];
+			elseif (preg_match('#(^|\s)A\) (.*)#',$line,$matches) && $a === false) {
+				$result['icao'] = $matches[2];
+				$a = true;
 			}
-			elseif (preg_match('#B\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})#',$line,$matches)) {
-				if ($matches[1] > 50) $year = '19'.$matches[1];
-				else $year = '20'.$matches[1];
-				$result['date_begin'] = $year.'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
+			elseif (preg_match('#(^|\s)B\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})#',$line,$matches) && $b === false) {
+				if ($matches[1] > 50) $year = '19'.$matches[2];
+				else $year = '20'.$matches[2];
+				$result['date_begin'] = $year.'/'.$matches[3].'/'.$matches[4].' '.$matches[5].':'.$matches[6];
+				$b = true;
 			}
-			elseif (preg_match('#C\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})$#',$line,$matches)) {
-				if ($matches[1] > 50) $year = '19'.$matches[1];
-				else $year = '20'.$matches[1];
-				$result['date_end'] = $year.'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
+			elseif (preg_match('#(^|\s)C\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})$#',$line,$matches) && $c === false) {
+				if ($matches[2] > 50) $year = '19'.$matches[2];
+				else $year = '20'.$matches[2];
+				$result['date_end'] = $year.'/'.$matches[3].'/'.$matches[4].' '.$matches[5].':'.$matches[6];
 				$result['permanent'] = 0;
+				$c = true;
 			}
-			elseif (preg_match('#C\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2}) (EST|PERM)$#',$line,$matches)) {
-				if ($matches[1] > 50) $year = '19'.$matches[1];
-				else $year = '20'.$matches[1];
-				$result['date_end'] = $year.'/'.$matches[2].'/'.$matches[3].' '.$matches[4].':'.$matches[5];
-				if ($matches[6] == 'EST') $result['estimated'] = 1;
+			elseif (preg_match('#(^|\s)C\) ([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2}) (EST|PERM)$#',$line,$matches) && $c === false) {
+				if ($matches[2] > 50) $year = '19'.$matches[2];
+				else $year = '20'.$matches[2];
+				$result['date_end'] = $year.'/'.$matches[3].'/'.$matches[4].' '.$matches[5].':'.$matches[6];
+				if ($matches[7] == 'EST') $result['estimated'] = 1;
 				else $result['estimated'] = 0;
-				if ($matches[6] == 'PERM') $result['permanent'] = 1;
+				if ($matches[7] == 'PERM') $result['permanent'] = 1;
 				else $result['permanent'] = 0;
+				$c = true;
 			}
-			elseif (preg_match('#C\) (EST|PERM)$#',$line,$matches)) {
+			elseif (preg_match('#(^|\s)C\) (EST|PERM)$#',$line,$matches) && $c === false) {
 				$result['date_end'] = '2030/12/20 12:00';
-				if ($matches[1] == 'EST') $result['estimated'] = 1;
+				if ($matches[2] == 'EST') $result['estimated'] = 1;
 				else $result['estimated'] = 0;
-				if ($matches[1] == 'PERM') $result['permanent'] = 1;
+				if ($matches[2] == 'PERM') $result['permanent'] = 1;
 				else $result['permanent'] = 0;
+				$c = true;
 			}
-			elseif (preg_match('#E\) (.*)#',$line,$matches)) {
+			elseif (preg_match('#(^|\s)E\) (.*)#',$line,$matches) && $e === false) {
 				$rtext = array();
-				$text = explode(' ',$matches[1]);
+				$text = explode(' ',$matches[2]);
 				foreach ($text as $word) {
 					if (isset($this->abbr[$word])) $rtext[] = strtoupper($this->abbr[$word]);
 					elseif (ctype_digit(strval(substr($word,3))) && isset($this->abbr[substr($word,0,3)])) $rtext[] = strtoupper($this->abbr[substr($word,0,3)]).' '.substr($word,3);
 					else $rtext[] = $word;
 				}
 				$result['text'] = implode(' ',$rtext);
+				$e = true;
 			//} elseif (preg_match('#F\) (.*)#',$line,$matches)) {
 			//} elseif (preg_match('#G\) (.*)#',$line,$matches)) {
 			} elseif (preg_match('#(NOTAMN|NOTAMR|NOTAMC)#',$line,$matches)) {

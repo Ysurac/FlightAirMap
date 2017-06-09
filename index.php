@@ -25,8 +25,11 @@ $title = _("Home");
 require_once('header.php');
 ?>
 <noscript><div class="alert alert-danger" role="alert"><?php echo _("JavaScript <b>MUST</b> be enabled"); ?></div></noscript>
+<div id="dialog" title="<?php echo _("Session has timed-out"); ?>">
+  <p><?php echo _("In order to save data consumption web page times out after 30 minutes. Close this dialog to continue."); ?></p>
+</div>
 <div id="live-map"></div>
-<div id="loadingOverlay"><h1>Loading...</h1></div>
+<!--<div id="loadingOverlay"><h1>Loading...</h1></div>-->
 <div id="toolbar"></div>
 <div id="aircraft_ident"></div>
 <div id="airspace"></div>
@@ -64,9 +67,6 @@ require_once('header.php');
 	}
     }
 ?>
-<div id="dialog" title="<?php echo _("Session has timed-out"); ?>">
-  <p><?php echo _("In order to save data consumption web page times out after 30 minutes. Close this dialog to continue."); ?></p>
-</div>
 
 <div id="sidebar" class="sidebar collapsed">
     <!-- Nav tabs -->

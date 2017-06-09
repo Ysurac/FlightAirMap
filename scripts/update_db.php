@@ -23,7 +23,7 @@ $update_db = new update_db();
 if (!isset($globalMasterServer) || !$globalMasterServer) {
 	if (isset($globalNOTAM) && $globalNOTAM && $update_db->check_last_notam_update()) {
 		echo "updating NOTAM...";
-		if ($globalNOTAMSource == '') {
+		if (!isset($globalNOTAMSource) || $globalNOTAMSource == '') {
 			$update_db->update_notam_fam();
 		} else {
 			$update_db->update_notam();
