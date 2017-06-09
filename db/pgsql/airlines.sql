@@ -143,7 +143,7 @@ INSERT INTO airlines VALUES(7791, 0, 'Centre-Avia', '', 'J7', 'CVC', '', '', 'Y'
 INSERT INTO airlines VALUES(1713, 1714, 'Centurion Air Cargo', 'N', 'WE', 'CWC', 'CHALLENGE CARGO', 'United States', 'Y', 'cargo', 'http://www.centurioncargo.com', 'http://en.wikipedia.org/wiki/Centurion_Air_Cargo', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7792, 0, 'Chabahar Airlines', '', '', 'IRU', '', '', 'Y', 'passenger', 'http://www.iranair.com/site/468/default.aspx', 'http://en.wikipedia.org/wiki/Chabahar_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(1719, 1720, 'Chalair Aviation', 'N', 'CE', 'CLG', 'CHALLAIR', 'France', 'Y', 'passenger', 'http://www.chalair.eu/index.php/en', 'http://en.wikipedia.org/wiki/Chalair_Aviation', NULL, NULL, 0);
-INSERT INTO airlines VALUES(7793, 0, 'Chalk\'s International Airlines', '', 'OP', 'CHK', '', '', 'Y', 'passenger', 'http://web.archive.org/*/www.flychalks.com', 'http://en.wikipedia.org/wiki/Chalk\'s_International_Airlines', NULL, NULL, 0);
+INSERT INTO airlines VALUES(7793, 0, 'Chalk`s International Airlines', '', 'OP', 'CHK', '', '', 'Y', 'passenger', 'http://web.archive.org/*/www.flychalks.com', 'http://en.wikipedia.org/wiki/Chalk`s_International_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7794, 0, 'Challenge Aero', '', '', 'CHG', '', '', 'Y', 'passenger', 'http://www.challenge.aero/', 'http://en.wikipedia.org/wiki/Challenge_Aero', NULL, NULL, 0);
 INSERT INTO airlines VALUES(4313, 4321, 'Cham Wings Airlines', 'N', '6Q', 'SAW', 'SHAMWING', 'Syrian Arab Republic', 'Y', 'passenger', 'http://www.chamwings.com/', 'http://en.wikipedia.org/wiki/Cham_Wings_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7795, 0, 'Chanchangi Airlines', '', '5B', 'NCH', '', '', 'Y', 'passenger', 'http://www.flychanchangiair.com/', 'http://en.wikipedia.org/wiki/Chanchangi_Airlines', NULL, NULL, 0);
@@ -199,7 +199,7 @@ INSERT INTO airlines VALUES(7810, 0, 'Command Airways (South Africa)', '', 'CT',
 INSERT INTO airlines VALUES(7226, 0, 'Community Express Airlines', '', '5V', 'UNI', '-', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Community_Express_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(1842, 1843, 'CommutAir', 'N', 'C5', 'UCA', 'COMMUTAIR', 'United States', 'Y', 'passenger', 'http://www.commutair.com/', 'http://en.wikipedia.org/wiki/CommutAir', NULL, 'Star Alliance', 0);
 INSERT INTO airlines VALUES(7227, 0, 'Comores Aviation International', '', 'O5', 'KMZ', 'COMORES AVIATION INTERNATIONAL', '', 'Y', 'passenger', 'http://www.comoresaviation.com/', 'http://en.wikipedia.org/wiki/Comores_Aviation_International', NULL, NULL, 0);
-INSERT INTO airlines VALUES(888, 888, 'flyCAA', 'N', 'BU', 'FPY', 'AFRICOMPANY', 'Democratic Republic of the Congo', 'Y', 'passenger', 'http://www.caacongo.com/', 'http://en.wikipedia.org/wiki/Compagnie_Africaine_d\'Aviation', NULL, NULL, 0);
+INSERT INTO airlines VALUES(888, 888, 'flyCAA', 'N', 'BU', 'FPY', 'AFRICOMPANY', 'Democratic Republic of the Congo', 'Y', 'passenger', 'http://www.caacongo.com/', 'http://en.wikipedia.org/wiki/Compagnie_Africaine_d`Aviation', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7656, 0, 'Airways International Cymru', '', 'AK', 'CYM', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Compass_Airlines_(Australia)', NULL, NULL, 0);
 INSERT INTO airlines VALUES(1859, 1860, 'Compass Airlines', 'N', 'CP', 'CPZ', 'Compass Rose', 'United States', 'Y', 'passenger', 'http://www.compassairline.com/', 'http://en.wikipedia.org/wiki/Compass_Airlines_(North_America)', NULL, 'SkyTeam', 0);
 INSERT INTO airlines VALUES(5854, 16921, 'Comtel Air', '', '', 'COE', '', 'Austria', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Comtel_Air', NULL, NULL, 0);
@@ -378,7 +378,7 @@ INSERT INTO airlines VALUES(7244, 0, 'Fiji Link', '', 'FJ', 'FJA', 'LINK FIJI', 
 INSERT INTO airlines VALUES(7871, 0, 'Fil-Asian Airways', '', 'R1', 'RDV', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Fil-Asian_Airways', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7418, 0, 'Filipinas Orient Airways', '', '', 'FOA', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Filipinas_Orient_Airways', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7872, 0, 'Fine Air', '', '', 'FBF', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Fine_Air', NULL, NULL, 0);
-INSERT INTO airlines VALUES(7873, 0, 'Finist\'air', '', '', 'FTR', '', '', 'Y', 'passenger', 'http://www.finistair.fr', 'http://en.wikipedia.org/wiki/Finist\'air', NULL, NULL, 0);
+INSERT INTO airlines VALUES(7873, 0, 'Finist`air', '', '', 'FTR', '', '', 'Y', 'passenger', 'http://www.finistair.fr', 'http://en.wikipedia.org/wiki/Finist`air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(5974, 18952, 'Nordic Regional Airlines', '', 'FC', 'FCM', 'FINNCOMM', 'Finland', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Finncomm_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(2352, 2353, 'Firefly', 'N', 'FY', 'FFM', 'FIREFLY', 'Malaysia', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Firefly_(airline)', NULL, NULL, 0);
 INSERT INTO airlines VALUES(2353, 2354, 'First Air', 'N', '7F', 'FAB', '', 'Canada', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/First_Air', NULL, NULL, 0);
@@ -540,7 +540,7 @@ INSERT INTO airlines VALUES(7928, 0, 'Haïti Trans Air', '', 'TV', 'HTC', '', ''
 INSERT INTO airlines VALUES(7929, 0, 'HeavyLift Cargo Airlines', '', 'HN', 'HVY', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/HeavyLift_Cargo_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(5936, 18475, 'Hebei Airlines', '', 'NS', 'HBH', 'Hebei Air', 'China', 'Y', 'passenger', 'http://www.hbhk.com.cn', 'http://en.wikipedia.org/wiki/Hebei_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(2708, 2710, 'Heli Air Monaco', 'N', 'YO', 'MCM', 'HELI AIR', 'Monaco', 'Y', 'passenger', 'http://www.heliairmonaco.com', 'http://en.wikipedia.org/wiki/Heli_Air_Monaco', NULL, NULL, 0);
-INSERT INTO airlines VALUES(2755, 2757, 'Hex Air', 'N', 'UD', 'HER', 'HEX AIRLINE', 'France', 'Y', 'passenger', 'http://www.hexair.com/', 'http://en.wikipedia.org/wiki/Hex\'Air', NULL, NULL, 0);
+INSERT INTO airlines VALUES(2755, 2757, 'Hex Air', 'N', 'UD', 'HER', 'HEX AIRLINE', 'France', 'Y', 'passenger', 'http://www.hexair.com/', 'http://en.wikipedia.org/wiki/Hex`Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(2757, 2759, 'Hi Fly', 'N', '5K', 'HFY', 'SKY FLYER', 'Portugal', 'Y', 'passenger', 'http://www.hifly.aero/en/', 'http://en.wikipedia.org/wiki/Hi_Fly_(airline)', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7256, 0, 'Hi Fly Malta', '', '5M', 'HFM', 'MOONRAKER', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Hi_Fly_Malta', NULL, NULL, 0);
 INSERT INTO airlines VALUES(2, 2, '135 Airways', 'N', '', 'GNL', 'GENERAL', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -580,7 +580,7 @@ INSERT INTO airlines VALUES(2856, 2858, 'Indonesian Airlines', 'N', 'IO', 'IAA',
 INSERT INTO airlines VALUES(7690, 0, 'Archana Airways', '', '', 'ACY', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Indus_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7114, 0, 'Insel Air Aruba', '', '8I', 'NLU', '', '', 'Y', 'passenger', 'http://www.fly-inselair.com/', 'http://en.wikipedia.org/wiki/Insel_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(2862, 2864, 'Insel Air', 'N', '7I', 'INC', 'INSELAIR', 'Netherlands Antilles', 'Y', 'passenger', 'http://www.fly-inselair.com/', 'http://en.wikipedia.org/wiki/Insel_Air', NULL, NULL, 0);
-INSERT INTO airlines VALUES(5760, 16084, 'AIR INDOCHINE', '', '', 'IIA', '', 'Vietnam', 'Y', 'passenger', 'http://www.inter-iles-air.com/', 'http://en.wikipedia.org/wiki/Int\'Air_Îles', NULL, 'Vanilla Alliance', 0);
+INSERT INTO airlines VALUES(5760, 16084, 'AIR INDOCHINE', '', '', 'IIA', '', 'Vietnam', 'Y', 'passenger', 'http://www.inter-iles-air.com/', 'http://en.wikipedia.org/wiki/Int`Air_Îles', NULL, 'Vanilla Alliance', 0);
 INSERT INTO airlines VALUES(7945, 0, 'Integra Air', '', '', 'AII', '', '', 'Y', 'passenger', 'http://www.integraair.com/', 'http://en.wikipedia.org/wiki/Integra_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(19, 19, 'Aero Biniza', 'N', '', 'BZS', 'BINIZA', 'Mexico', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5169, 5180, 'Air Canada Rouge', 'N', 'RV', 'ROU', 'ROUGE', 'Canada', 'Y', 'passenger', 'http://flyrouge.com/', 'http://en.wikipedia.org/wiki/Air_Canada_Rouge', NULL, 'Star Alliance', 0);
@@ -992,7 +992,7 @@ INSERT INTO airlines VALUES(7138, 0, 'Myanmar Airways International', '', '8M', 
 INSERT INTO airlines VALUES(3564, 3569, 'Myanmar National Airlines', 'N', 'UB', 'UBA', 'UNIONAIR', 'Myanmar', 'Y', 'passenger', 'http://flymna.com/', 'http://en.wikipedia.org/wiki/Myanmar_National_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(3566, 3571, 'Myflug', 'N', '', 'MYA', 'MYFLUG', 'Iceland', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Mýflug', NULL, NULL, 0);
 INSERT INTO airlines VALUES(263, 263, 'Air Kiribati', 'N', 'IK', 'AKL', '', 'Kiribati', 'Y', 'passenger', 'http://www.airkiribati.com.ki', 'http://en.wikipedia.org/wiki/Air_Kiribati', NULL, NULL, 0);
-INSERT INTO airlines VALUES(998, 998, 'Air Koryo', 'N', 'JS', 'KOR', 'AIR KORYO', 'Democratic People\'s Republic of Korea', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Air_Koryo', NULL, NULL, 0);
+INSERT INTO airlines VALUES(998, 998, 'Air Koryo', 'N', 'JS', 'KOR', 'AIR KORYO', 'Democratic People`s Republic of Korea', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Air_Koryo', NULL, NULL, 0);
 INSERT INTO airlines VALUES(3689, 3694, 'North American Charters', 'N', '', 'HMR', 'HAMMER', 'Canada', 'Y', 'passenger', 'http://www.nacair.ca/', 'http://en.wikipedia.org/wiki/NAC_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7285, 0, 'Nam Air', '', 'IN', 'NIH', 'NAM', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/NAM_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8073, 0, 'Naganagani', '', '', 'BFN', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Naganagani', NULL, NULL, 0);
@@ -1180,7 +1180,7 @@ INSERT INTO airlines VALUES(8125, 0, 'Pelita Air Service', '', '6D', 'PAS', '', 
 INSERT INTO airlines VALUES(8126, 0, 'Pem-Air', '', 'PD', 'PEM', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Pem-Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8127, 0, 'Penas Air', '', '', 'PNS', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Penas_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8128, 0, 'Pentastar Aviation', '', '', 'DCX', '', '', 'Y', 'passenger', 'http://www.pentastaraviation.com', 'http://en.wikipedia.org/wiki/Pentastar_Aviation', NULL, NULL, 0);
-INSERT INTO airlines VALUES(3921, 3927, 'People\'s Viennaline', 'N', 'PE', 'PEV', 'PEGAVIATION', 'Greece', 'Y', 'passenger', 'http://www.peoples.ch/', 'http://en.wikipedia.org/wiki/People\'s_Viennaline', NULL, NULL, 0);
+INSERT INTO airlines VALUES(3921, 3927, 'People`s Viennaline', 'N', 'PE', 'PEV', 'PEGAVIATION', 'Greece', 'Y', 'passenger', 'http://www.peoples.ch/', 'http://en.wikipedia.org/wiki/People`s_Viennaline', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8129, 0, 'People Express Airlines (1980s)', '', 'PE', 'PEX', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/People_Express_Airlines_(1980s)', NULL, NULL, 0);
 INSERT INTO airlines VALUES(3934, 3940, 'Perimeter Aviation', 'N', 'YP', 'PAG', 'PERIMETER', 'Canada', 'Y', 'passenger', 'http://www.perimeter.ca', 'http://en.wikipedia.org/wiki/Perimeter_Aviation', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8130, 0, 'Perm Airlines', '', '9D', 'PGP', '', '', 'Y', 'passenger', 'http://www.aviaperm.ru/', 'http://en.wikipedia.org/wiki/Perm_Airlines', NULL, NULL, 0);
@@ -1381,7 +1381,7 @@ INSERT INTO airlines VALUES(4402, 4410, 'Saga Airlines', 'N', '', 'SGX', '', 'Tu
 INSERT INTO airlines VALUES(4406, 4414, 'Sahara Airlines', 'N', '', 'SHD', '', 'Algeria', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Sahara_Airlines_(Algeria)', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8192, 0, 'Sakha Avia', '', 'K7', 'SKH', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Sakha_Avia', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8193, 0, 'Salmon Air', '', 'S6', 'MBI', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Salmon_Air', NULL, NULL, 0);
-INSERT INTO airlines VALUES(5845, 16860, 'Salsa d\\\'Haiti', '', 'SO', 'SLC', 'SALSA', 'Haiti', 'Y', 'passenger', 'http://www.flysalsa.com', 'http://en.wikipedia.org/wiki/Salsa_d\'Haïti', NULL, NULL, 0);
+INSERT INTO airlines VALUES(5845, 16860, 'Salsa d\\`Haiti', '', 'SO', 'SLC', 'SALSA', 'Haiti', 'Y', 'passenger', 'http://www.flysalsa.com', 'http://en.wikipedia.org/wiki/Salsa_d`Haïti', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7473, 0, 'Samair', '', '9C', 'CCS', '', '', 'Y', 'passenger', 'http://www.samair.sk/web/', 'http://en.wikipedia.org/wiki/Samair', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8194, 0, 'Samar Airlines', '', '', 'SMQ', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Samar_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(5588, 10371, 'Aerolineas heredas santa maria', '', '', 'SZB', '', 'Dominican Republic', 'Y', 'passenger', 'http://www.samoaair.ws', 'http://en.wikipedia.org/wiki/Samoa_Air', NULL, NULL, 0);
@@ -1572,7 +1572,7 @@ INSERT INTO airlines VALUES(7000, 0, 'SunExpress Deutschland', '', 'XG', 'SXD', 
 INSERT INTO airlines VALUES(7322, 0, 'Sun Air (Sudan)', '', '1Y', 'SNR', 'SUN GROUP', '', 'Y', 'passenger', 'http://www.sunairgroup.com/', 'http://en.wikipedia.org/wiki/Sun_Air_(Sudan)', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7492, 0, 'Sun Air Express', '', '6G', 'FDY', '', '', 'Y', 'passenger', 'http://www.flysunairexpress.com', 'http://en.wikipedia.org/wiki/Sun_Air_Express', NULL, NULL, 0);
 INSERT INTO airlines VALUES(4348, 4356, 'Sun Country Airlines', 'N', 'SY', 'SCX', 'SUN COUNTRY', 'United States', 'Y', 'passenger', 'http://www.suncountry.com/', 'http://en.wikipedia.org/wiki/Sun_Country_Airlines', NULL, NULL, 0);
-INSERT INTO airlines VALUES(4611, 4619, 'Sun D\'Or', 'N', '7L', 'ERO', 'ECHO ROMEO', 'Israel', 'Y', 'passenger', 'http://www.sundor.co.il/sundor/init.do?LANG=EN', 'http://en.wikipedia.org/wiki/Sun_D\'Or', NULL, NULL, 0);
+INSERT INTO airlines VALUES(4611, 4619, 'Sun D`Or', 'N', '7L', 'ERO', 'ECHO ROMEO', 'Israel', 'Y', 'passenger', 'http://www.sundor.co.il/sundor/init.do?LANG=EN', 'http://en.wikipedia.org/wiki/Sun_D`Or', NULL, NULL, 0);
 INSERT INTO airlines VALUES(4312, 4320, 'Sunair Aviation', 'N', 'ZU', 'SAV', '', 'Kazakhstan', 'Y', 'passenger', 'http://www.sunair.co.nz/', 'http://en.wikipedia.org/wiki/Sunair', NULL, NULL, 0);
 INSERT INTO airlines VALUES(4524, 4532, 'Sundance Air Venezuela', 'N', 'R8', 'SUV', 'DANCEAIR', 'Venezuela', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Sundance_Air_Venezuela', NULL, NULL, 0);
 INSERT INTO airlines VALUES(4832, 4840, 'SCAT', '', 'DV', 'VSV', 'VLASTA', 'Kazakhstan', 'Y', 'passenger', 'http://www.scat.kz/', 'http://en.wikipedia.org/wiki/Sunday_Airlines', NULL, NULL, 0);
@@ -1613,7 +1613,7 @@ INSERT INTO airlines VALUES(7007, 0, 'Syphax Airlines', '', 'FS', 'SYA', 'SYPHAX
 INSERT INTO airlines VALUES(4578, 4586, 'Syrian Air', 'N', 'RB', 'SYR', 'SYRIANAIR', 'Syrian Arab Republic', 'Y', 'passenger', 'http://www.syriaair.com', 'http://en.wikipedia.org/wiki/Syrian_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(5696, 13217, 'Syrian Pearl Airlines', '', '', 'PSB', '', 'Syria', 'Y', 'passenger', 'http://www.flysyrianpearl.com/', 'http://en.wikipedia.org/wiki/Syrian_Pearl_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7325, 0, 'Sólyom Hungarian Airways', '', '', 'HUN', 'HUNGARIAN', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Sólyom_Hungarian_Airways', NULL, NULL, 0);
-INSERT INTO airlines VALUES(5811, 16624, 'T\'way Air', '', 'TW', 'TWB', 'TWAY AIR', 'South Korea', 'Y', 'passenger', 'http://www.twayair.com/', 'http://en.wikipedia.org/wiki/T\'way_Airlines', NULL, NULL, 0);
+INSERT INTO airlines VALUES(5811, 16624, 'T`way Air', '', 'TW', 'TWB', 'TWAY AIR', 'South Korea', 'Y', 'passenger', 'http://www.twayair.com/', 'http://en.wikipedia.org/wiki/T`way_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8257, 0, 'TAC Colombia', '', '', 'TCC', '', '', 'Y', 'passenger', 'http://www.taccolombia.com/inicio.html', 'http://en.wikipedia.org/wiki/TAC_Colombia', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7485, 0, 'TAESA Lineas Aéreas', '', 'GD', 'TEJ', '', '', 'Y', 'passenger', 'http://www.taesa.com.mx', 'http://en.wikipedia.org/wiki/TAESA_Lineas_Aéreas', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8258, 0, 'TAF Linhas Aéreas', '', 'R9', 'TSD', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/TAF_Linhas_Aéreas', NULL, NULL, 0);
@@ -1850,7 +1850,7 @@ INSERT INTO airlines VALUES(7146, 0, 'Norwegian Long Haul', '', 'DU', 'NLH', '',
 INSERT INTO airlines VALUES(3738, 3743, 'Novair', 'N', 'N9', 'NVR', 'NAVIGATOR', 'Sweden', 'Y', 'passenger', 'http://www.novair.net/en/', 'http://en.wikipedia.org/wiki/Novair', NULL, NULL, 0);
 INSERT INTO airlines VALUES(317, 317, 'AMC Airlines', 'N', '', 'AMV', '', 'Egypt', 'Y', 'passenger', 'http://www.amcairlines.com/', 'http://en.wikipedia.org/wiki/AMC_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(33, 33, 'Afrinat International Airlines', 'N', 'Q9', 'AFU', '', 'Gambia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(34, 34, 'Afric\'air Express', 'N', '', 'AAX', 'AFREX', 'Ivory Coast', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(34, 34, 'Afric`air Express', 'N', '', 'AAX', 'AFREX', 'Ivory Coast', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5651, 11836, 'Amsterdam Airlines', '', 'WD', 'AAN', 'AMSTEL', 'Netherlands', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Oasis_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8095, 0, 'Ocean Airlines', '', 'VC', 'VCX', '', '', 'Y', 'passenger', 'http://www.oceanairlines.com/', 'http://en.wikipedia.org/wiki/Ocean_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8096, 0, 'Ocean Sky UK', '', '', 'OCS', '', '', 'Y', 'passenger', 'http://www.oceansky.com', 'http://en.wikipedia.org/wiki/Ocean_Sky_UK', NULL, NULL, 0);
@@ -2302,7 +2302,7 @@ INSERT INTO airlines VALUES(722, 722, 'Airline Operations Services', 'N', '', 'X
 INSERT INTO airlines VALUES(737, 737, 'Avia Trans Air Transport', 'N', '', 'VTT', 'VIATRANSPORT', 'Sudan', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(738, 738, 'Aviostart AS', 'N', '', 'VSR', 'AVIOSTART', 'Bulgaria', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(739, 739, 'Aviacao Transportes Aereos e Cargas', 'N', '', 'VTG', 'ATACARGO', 'Angola', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(740, 740, 'Assistance Aeroportuaire de L\'Aeroport de Paris', 'N', '', 'XJA', '', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(740, 740, 'Assistance Aeroportuaire de L`Aeroport de Paris', 'N', '', 'XJA', '', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(741, 741, 'American Flight Service Systems', 'N', '', 'XFS', '', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(742, 742, 'AASANA', 'N', '', 'XXV', '', 'Bolivia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(743, 743, 'Australian air Express', 'N', '', 'XME', 'AUS-CARGO', 'Australia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -2433,7 +2433,7 @@ INSERT INTO airlines VALUES(886, 886, 'Aero Fenix', 'N', '', 'FNX', 'AERO FENIX'
 INSERT INTO airlines VALUES(887, 887, 'Ford Motor Company', 'N', '', 'FRD', 'FORD', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(889, 889, 'Afrijet Airlines', 'N', '', 'FRJ', 'AFRIJET', 'Nigeria', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(890, 890, 'Afrika Aviation Handlers', 'N', '', 'FRK', 'AFRIFAST', 'Kenya', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(891, 891, 'Afrique Chart\'air', 'N', '', 'FRQ', 'CHARTER AFRIQUE', 'Cameroon', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(891, 891, 'Afrique Chart`air', 'N', '', 'FRQ', 'CHARTER AFRIQUE', 'Cameroon', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(892, 892, 'Aerofreight Airlines', 'N', '', 'FRT', '', 'Russia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(893, 893, 'Aereos Limited', 'N', '', 'FST', 'FAST TRACK', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(894, 894, 'Air Affaires Tchad', 'N', '', 'FTC', 'AFFAIRES TCHAD', 'Chad', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -2470,7 +2470,7 @@ INSERT INTO airlines VALUES(927, 927, 'Altin Havayolu Tasimaciligi Turizm Ve Tic
 INSERT INTO airlines VALUES(929, 929, 'Aerotaxi Grupo Tampico', 'N', '', 'GTP', 'GRUPOTAMPICO', 'Mexico', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(930, 930, 'Aerotaxis de Aguascalientes', 'N', '', 'GUA', 'AGUASCALIENTES', 'Mexico', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(932, 932, 'Air Victoria Georgia', 'N', '', 'GVI', 'IRINA', 'Georgia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(933, 933, 'Air D\'Ayiti', 'N', 'H9', 'HAD', 'HAITI AVIA', 'Haiti', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(933, 933, 'Air D`Ayiti', 'N', 'H9', 'HAD', 'HAITI AVIA', 'Haiti', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(934, 934, 'Air Comores International', 'N', 'GG', 'HAH', 'AIR COMORES', 'Comoros', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(935, 935, 'Air Horizont', 'N', '', 'HAT', 'TAXI BIRD', 'France', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(7598, 0, 'Air Ecosse', '', 'EC', 'ECS', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Air_Ecosse', NULL, NULL, 0);
@@ -2579,7 +2579,7 @@ INSERT INTO airlines VALUES(5087, 5097, 'Travel Service', 'N', 'QS', 'TVS', 'SKY
 INSERT INTO airlines VALUES(7513, 0, 'Aeolian Airlines', '', '', 'AOL', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Aeolian_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(132, 132, 'Air Bosna', 'N', 'JA', 'BON', 'AIR BOSNA', 'Bosnia and Herzegovina', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(133, 133, 'Air Bravo', 'N', '', 'BRF', 'AIR BRAVO', 'Uganda', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(134, 134, 'Air Brasd\'or', 'N', '', 'BRL', 'BRASD\'OR', 'Canada', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(134, 134, 'Air Brasd`or', 'N', '', 'BRL', 'BRASD`OR', 'Canada', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(135, 135, 'Air 500', 'N', '', 'BRM', 'BOOMERANG', 'Canada', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(136, 136, 'Alba Servizi Aerotrasporti', 'N', '', 'AFQ', 'ALBA', 'Italy', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(270, 270, 'Aeroalas Colombia', 'N', '', 'ALE', 'AEROALAS', 'Colombia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -3112,7 +3112,7 @@ INSERT INTO airlines VALUES(364, 364, 'VivaAerobus', 'N', 'VB', 'VIV', 'AEROENLA
 INSERT INTO airlines VALUES(5336, 5353, 'Vladivostok Air', 'N', 'XF', 'VLK', 'VLADAIR', 'Russia', 'Y', 'passenger', 'http://www.vladivostokavia.ru/en', 'http://en.wikipedia.org/wiki/Vladivostok_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7487, 0, 'Vnukovo Airlines', '', 'V5', 'VKO', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Vnukovo_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7410, 0, 'Drenair', '', '', 'DRS', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Volar_Airlines', NULL, NULL, 0);
-INSERT INTO airlines VALUES(5349, 5366, 'Air Cote d\'Ivoire', 'N', 'HF', 'VRE', 'UKRAINE VOLARE', 'Ukraine', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Volare_Airlines_(Ukraine)', NULL, NULL, 0);
+INSERT INTO airlines VALUES(5349, 5366, 'Air Cote d`Ivoire', 'N', 'HF', 'VRE', 'UKRAINE VOLARE', 'Ukraine', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Volare_Airlines_(Ukraine)', NULL, NULL, 0);
 INSERT INTO airlines VALUES(5308, 5325, 'Volaris', 'N', 'Y4', 'VOI', 'VOLARIS', 'Mexico', 'Y', 'passenger', 'http://www.volaris.mx', 'http://en.wikipedia.org/wiki/Volaris', NULL, NULL, 0);
 INSERT INTO airlines VALUES(349, 349, 'AVCOM', 'N', 'J6', 'AOC', 'AERO AVCOM', 'Russia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(350, 350, 'Aero Vodochody', 'N', '', 'AOD', 'AERO CZECH', 'Czech Republic', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -3129,7 +3129,7 @@ INSERT INTO airlines VALUES(8325, 0, 'WIKING Helikopter Service', '', '', 'WHS',
 INSERT INTO airlines VALUES(492, 492, 'WOW Air', 'N', 'WW', 'WOW', 'WOW AIR', 'ICELAND', 'Y', 'passenger', 'http://www.wowair.com', 'http://en.wikipedia.org/wiki/WOW_air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(643, 643, 'Wamos Air', 'N', 'EB', 'PLM', 'PULLMANTUR', 'Spain', 'Y', 'passenger', 'http://www.wamosair.com/', 'http://en.wikipedia.org/wiki/Wamos_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7067, 0, 'Avantair', '', '', 'VNR', '', '', 'Y', 'passenger', 'http://www.wanair.pf/', 'http://en.wikipedia.org/wiki/Wan_Air', NULL, NULL, 0);
-INSERT INTO airlines VALUES(5377, 5394, 'Warbelows Air Ventures', 'N', '4W', 'WAV', 'WARBELOW', 'United States', 'Y', 'passenger', 'http://www.warbelows.com/', 'http://en.wikipedia.org/wiki/Warbelow\'s_Air_Ventures', NULL, NULL, 0);
+INSERT INTO airlines VALUES(5377, 5394, 'Warbelows Air Ventures', 'N', '4W', 'WAV', 'WARBELOW', 'United States', 'Y', 'passenger', 'http://www.warbelows.com/', 'http://en.wikipedia.org/wiki/Warbelow`s_Air_Ventures', NULL, NULL, 0);
 INSERT INTO airlines VALUES(5379, 5396, 'Wasaya Airways', 'N', '', 'WSG', 'WASAYA', 'Canada', 'Y', 'passenger', 'http://www.wasaya.com/default.asp', 'http://en.wikipedia.org/wiki/Wasaya_Airways', NULL, NULL, 0);
 INSERT INTO airlines VALUES(5382, 5399, 'WebJet Linhas A', 'N', 'WJ', 'WEB', 'WEB-BRASIL', 'Brazil', 'Y', 'passenger', 'http://www.webjet.com.br', 'http://en.wikipedia.org/wiki/WebJet_Linhas_Aéreas', NULL, NULL, 0);
 INSERT INTO airlines VALUES(5384, 5401, 'Welcome Air', 'N', '2W', 'WLC', 'WELCOMEAIR', 'Austria', 'Y', 'passenger', 'http://www.welcomeair.com/', 'http://en.wikipedia.org/wiki/Welcome_Air', NULL, NULL, 0);
@@ -3177,14 +3177,14 @@ INSERT INTO airlines VALUES(7488, 0, 'Yeongnam Air', '', 'OE', 'ONA', '', '', 'Y
 INSERT INTO airlines VALUES(394, 394, 'Aspen Aviation', 'N', '', 'APQ', 'ASPEN BASE', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(8337, 0, 'Yerevan-Avia', '', '', 'ERV', '', '', 'Y', 'passenger', 'http://www.yer-avia.am/', 'http://en.wikipedia.org/wiki/Yerevan-Avia', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7193, 0, 'Yeti Airlines', '', 'YT', 'NYT', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Yeti_Airlines', NULL, NULL, 0);
-INSERT INTO airlines VALUES(7489, 0, 'Ying\'an Airlines', '', '', 'AYE', '', '', 'Y', 'passenger', 'http://yingair.yndinghao.com/', 'http://en.wikipedia.org/wiki/Ying\'an_Airlines', NULL, NULL, 0);
+INSERT INTO airlines VALUES(7489, 0, 'Ying`an Airlines', '', '', 'AYE', '', '', 'Y', 'passenger', 'http://yingair.yndinghao.com/', 'http://en.wikipedia.org/wiki/Ying`an_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(5480, 5501, 'Yuzhmashavia', 'N', '', 'UMK', 'YUZMASH', 'Ukraine', 'Y', 'passenger', 'http://www.yuzmashair.com.ua/indexen.html', 'http://en.wikipedia.org/wiki/Yuzhmashavia', NULL, NULL, 0);
 INSERT INTO airlines VALUES(8338, 0, 'ZAS Airline of Egypt', '', 'ZA', 'ZAS', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/ZAS_Airline_of_Egypt', NULL, NULL, 0);
 INSERT INTO airlines VALUES(395, 395, 'Aeropuma', 'N', '', 'APU', ' S.A.', 'AEROPUMA', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(396, 396, 'Air Plan International', 'N', '', 'APV', 'AIR PLAN', 'Democratic Republic of the Congo', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(397, 397, 'Arrow Air', 'N', 'JW', 'APW', 'BIG A', 'United States', 'Y', 'passenger', 'http://www.arrowcargo.com/', 'http://en.wikipedia.org/wiki/Arrow_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7560, 0, 'Afra Airlines', '', '', 'UAG', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Afra_Airlines', NULL, NULL, 0);
-INSERT INTO airlines VALUES(7376, 0, 'Afric\'Air Charter', '', '7A', 'AFF', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Afric\'Air_Charter', NULL, NULL, 0);
+INSERT INTO airlines VALUES(7376, 0, 'Afric`Air Charter', '', '7A', 'AFF', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Afric`Air_Charter', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7561, 0, 'Africa One', '', '', 'CFR', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Africa_One', NULL, NULL, 0);
 INSERT INTO airlines VALUES(715, 715, 'Africa West', 'N', 'FK', 'WTA', 'WEST TOGO', 'Togo', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Africa_West_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(157, 157, 'Africa World Airlines', 'N', 'AW', 'AFW', 'AFRAIR', 'Ivory Coast', 'Y', 'passenger', 'http://www.flyafricaworld.com/', 'http://en.wikipedia.org/wiki/Africa_World_Airlines', NULL, NULL, 0);
@@ -3287,7 +3287,7 @@ INSERT INTO airlines VALUES(1908, 1909, 'Air Corsica', 'N', 'XK', 'CCM', 'CORSIC
 INSERT INTO airlines VALUES(801, 801, 'Astar Air Cargo', 'N', 'ER', 'DHL', 'DAHL', 'United States', 'Y', 'cargo', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(802, 802, 'Archer Aviation', 'N', '', 'DHM', 'ARCHER', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(803, 803, 'Aeromedica', 'N', '', 'DIC', 'AEROMEDICA', 'Mexico', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(7596, 0, 'Air D\'Ayiti', '', 'H8', 'HAD', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Air_D\'Ayiti', NULL, NULL, 0);
+INSERT INTO airlines VALUES(7596, 0, 'Air D`Ayiti', '', 'H8', 'HAD', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Air_D`Ayiti', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7597, 0, 'Air Djibouti', '', 'DY', 'DJU', '', '', 'Y', 'passenger', 'http://air-djibouti.com/', 'http://en.wikipedia.org/wiki/Air_Djibouti', NULL, NULL, 0);
 INSERT INTO airlines VALUES(2763, 2765, 'Air Do', 'N', 'HD', 'ADO', 'AIR DO', 'Japan', 'Y', 'passenger', 'http://www.airdo.jp/', 'http://en.wikipedia.org/wiki/Air_Do', NULL, NULL, 0);
 INSERT INTO airlines VALUES(870, 870, 'Aerofrisco', 'N', '', 'FCO', 'AEROFRISCO', 'Mexico', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -3530,7 +3530,7 @@ INSERT INTO airlines VALUES(1684, 1685, 'Cega Aviation', 'N', '', 'CEG', 'CEGA',
 INSERT INTO airlines VALUES(1685, 1686, 'Celtic Airways', 'N', '', 'CEC', 'CELTAIR', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(1686, 1687, 'Celtic West', 'N', '', 'CWE', 'CELTIC', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(1687, 1688, 'Centavia', 'N', '7N', 'CNA', '', 'Serbia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(1688, 1689, 'Direction générale de l\'Armement', 'N', '', 'CEV', 'CENTEV', 'France', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(1688, 1689, 'Direction générale de l`Armement', 'N', '', 'CEV', 'CENTEV', 'France', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(1689, 1690, 'Centennial Airlines', 'N', '', 'CNL', 'WYO-AIR', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(1691, 1692, 'Center Vol', 'N', '', 'CVO', 'CENTERVOL', 'Spain', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(1692, 1693, 'Center-South', 'N', '', 'CTS', 'CENTER-SOUTH', 'Russia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -3556,7 +3556,7 @@ INSERT INTO airlines VALUES(1715, 1716, 'Century Aviation International', 'N', '
 INSERT INTO airlines VALUES(1716, 1717, 'Certified Air Dispatch', 'N', '', 'XAD', '', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(1717, 1718, 'Cetraca Aviation Service', 'N', '', 'CER', 'CETRACA', 'Democratic Republic of the Congo', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(1718, 1719, 'Chabahar Airlines', 'N', '', 'IRU', 'CHABAHAR', 'Iran', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(1720, 1721, 'Chalk\'s Ocean Airways', 'N', 'OP', 'CHK', 'CHALKS', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(1720, 1721, 'Chalk`s Ocean Airways', 'N', 'OP', 'CHK', 'CHALKS', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(1721, 1722, 'Challenge Air Transport', 'N', '', 'CLS', 'AIRISTO', 'Germany', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(1722, 1723, 'Challenge Aviation', 'N', '', 'CHS', 'CHALLENGE AVIATION', 'Australia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(1723, 1724, 'Challenge International Airlines', 'N', '', 'OFF', 'CHALLENGE AIR', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -3852,7 +3852,7 @@ INSERT INTO airlines VALUES(2060, 2061, 'Dubrovnik Air', 'N', '', 'DBK', 'SEAGUL
 INSERT INTO airlines VALUES(2061, 2062, 'Ducair', 'N', '', 'DUK', 'LION KING', 'Luxembourg', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2062, 2063, 'Duchess of Britany (Jersey) Limited', 'N', '', 'DBJ', 'DUCHESS', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2063, 2064, 'UK Royal/HRH Duke of York', 'N', '', 'LPD', 'LEOPARD', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(2064, 2065, 'Dun\'Air', 'N', '', 'DUN', 'DUNAIR', 'Mauritania', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(2064, 2065, 'Dun`Air', 'N', '', 'DUN', 'DUNAIR', 'Mauritania', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3502, 3507, 'Mimino', 'N', '', 'MIM', 'MIMINO', 'Russia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(7676, 0, 'Amber Air', '', '0A', 'GNT', '', '', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/Amber_Air', NULL, NULL, 0);
 INSERT INTO airlines VALUES(2065, 2066, 'Duncan Aviation', 'N', '', 'PHD', 'PANHANDLE', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -3941,7 +3941,7 @@ INSERT INTO airlines VALUES(2163, 2164, 'Elilario Italia', 'N', '', 'ELH', 'LARI
 INSERT INTO airlines VALUES(2164, 2165, 'Elilombarda', 'N', '', 'EOA', 'LOMBARDA', 'Italy', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2165, 2166, 'Elimediterranea', 'N', '', 'MEE', 'ELIMEDITERRANEA', 'Italy', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2166, 2167, 'Elios', 'N', '', 'VUL', 'ELIOS', 'Italy', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(2167, 2168, 'Elipiu\'', 'N', '', 'IEP', 'ELIPIU', 'Italy', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(2167, 2168, 'Elipiu`', 'N', '', 'IEP', 'ELIPIU', 'Italy', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2168, 2169, 'Elisra Airlines', 'N', '', 'RSA', 'ESRA', 'Sudan', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2169, 2170, 'Elite Air', 'N', '', 'EAI', 'ELAIR', 'Togo', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2170, 2171, 'Elite Jets', 'N', '', 'EJD', 'ELITE DUBAI', 'United Arab Emirates', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -3959,7 +3959,7 @@ INSERT INTO airlines VALUES(2181, 2182, 'Emetebe', 'N', '', 'EMT', 'EMETEBE', 'E
 INSERT INTO airlines VALUES(2183, 2184, 'Emoyeni Air Charter', 'N', '', 'SBC', 'SABIAN AIR', 'South Africa', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2184, 2185, 'Empire Air Service', 'N', '', 'EMP', 'EMPIRE', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2186, 2187, 'Empire Aviation Services', 'N', '', 'MPR', '', 'Nigeria', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(2187, 2188, 'Empire Test Pilots\' School', 'N', '', 'ETP', 'TESTER', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(2187, 2188, 'Empire Test Pilots` School', 'N', '', 'ETP', 'TESTER', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2188, 2189, 'Empresa (Aero Uruguay)', 'N', '', 'AUO', ' S.A.', 'UNIFORM OSCAR', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2189, 2190, 'Empresa Aero-Servicios Parrague', 'N', '', 'PRG', 'ASPAR', 'Chile', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2191, 2192, 'Empresa Aviacion Interamericana', 'N', '', 'VNA', 'EBBA', 'Uruguay', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -4092,7 +4092,7 @@ INSERT INTO airlines VALUES(4836, 4844, 'Skyrover CC', 'N', '', 'WLK', 'SKYWATCH
 INSERT INTO airlines VALUES(2345, 2346, 'Finalair Congo', 'N', '4S', 'FNC', 'FINALAIR CONGO', 'Republic of the Congo', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2346, 2347, 'Financial Airxpress', 'N', '', 'FAK', 'FACTS', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2347, 2348, 'Fine Airlines', 'N', '', 'FBF', 'FINE AIR', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(2348, 2349, 'Finist\'air', 'N', '', 'FTR', 'FINISTAIR', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(2348, 2349, 'Finist`air', 'N', '', 'FTR', 'FINISTAIR', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2350, 2351, 'Finncomm Airlines', 'N', 'FC', 'WBA', 'WESTBIRD', 'Finland', 'Y', 'passenger', 'http://flynorra.com/?lang=en', 'http://en.wikipedia.org/wiki/Nordic_Regional_Airlines', NULL, NULL, 0);
 INSERT INTO airlines VALUES(2351, 2352, 'Finnish Air Force', 'N', '', 'FNF', 'FINNFORCE', 'Finland', 'N', 'military', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2354, 2355, 'First Air Transport', 'N', '', 'JRF', '', 'Japan', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -4189,7 +4189,7 @@ INSERT INTO airlines VALUES(2455, 2456, 'Freedom Airlines', 'N', '', 'FRL', 'FRE
 INSERT INTO airlines VALUES(2456, 2457, 'Freedom Airways', 'N', '', 'FAS', 'FREEDOM AIRWAYS', 'Cyprus', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2457, 2458, 'Freeway Air', 'N', '', 'FWC', 'FREEWAY', 'Netherlands', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2459, 2460, 'Force Aerienne Francaise', 'N', '', 'FAF', 'FRENCH AIR FORCE', 'France', 'Y', 'military', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(2460, 2461, 'Aviation Legere De L\'Armee De Terre', 'N', '', 'FMY', 'FRENCH ARMY', 'France', 'N', 'military', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(2460, 2461, 'Aviation Legere De L`Armee De Terre', 'N', '', 'FMY', 'FRENCH ARMY', 'France', 'N', 'military', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2461, 2462, 'France Marine Nationale', 'N', '', 'FNY', 'FRENCH NAVY', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2462, 2463, 'Fresh Air', 'N', '', 'FRR', 'FRESH AIR', 'Nigeria', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2463, 2464, 'Freshaer', 'N', '', 'FAE', 'WILDGOOSE', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -4269,7 +4269,7 @@ INSERT INTO airlines VALUES(2542, 2543, 'German Air Force', 'N', '', 'GAF', 'GER
 INSERT INTO airlines VALUES(2543, 2544, 'German Army', 'N', '', 'GAM', 'GERMAN ARMY', 'Germany', 'N', 'military', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2544, 2545, 'German Navy', 'N', '', 'GNY', 'GERMAN NAVY', 'Germany', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2545, 2546, 'German Sky Airlines', 'N', '', 'GHY', 'GERMAN SKY', 'Germany', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(2548, 2549, 'Gerry\'s Dnata', 'N', '', 'GDN', '', 'Pakistan', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(2548, 2549, 'Gerry`s Dnata', 'N', '', 'GDN', '', 'Pakistan', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2549, 2550, 'Gesekkschaft Fur Flugzieldarstellung', 'N', '', 'GFD', 'KITE', 'Germany', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2550, 2551, 'Gestair', 'N', 'GP', 'GES', 'GESTAIR', 'Spain', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2551, 2552, 'Gestar', 'N', '', 'GTR', 'STAR GESTAR', 'Chile', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -4454,7 +4454,7 @@ INSERT INTO airlines VALUES(2747, 2749, 'Helog', 'N', '', 'HLG', 'HELOG', 'Switz
 INSERT INTO airlines VALUES(2749, 2751, 'Hemus Air', 'N', 'DU', 'HMS', 'HEMUS AIR', 'Bulgaria', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2750, 2752, 'Henebury Aviation', 'N', '', 'HAC', '', 'Australia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2751, 2753, 'Heritiage Flight (Valley Air Services)', 'N', '', 'SSH', 'SNOWSHOE', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(2752, 2754, 'Herman\'s Markair Express', 'N', '', 'MRX', 'SPEEDMARK', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(2752, 2754, 'Herman`s Markair Express', 'N', '', 'MRX', 'SPEEDMARK', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2753, 2755, 'Herritage Aviation Developments', 'N', '', 'HED', 'FLAPJACK', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2756, 2758, 'Hi-Jet Helicopter Services', 'N', '', 'HHS', 'HIJET', 'Suriname', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(2758, 2760, 'High-Line Airways', 'N', '', 'HLB', 'HIGH-LINE', 'Canada', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -4742,7 +4742,7 @@ INSERT INTO airlines VALUES(3091, 3093, 'KaiserAir', 'N', 'KI', 'KAI', 'KAISER',
 INSERT INTO airlines VALUES(3094, 3096, 'Kallat El Saker Air Company', 'N', '', 'KES', 'KALLAT EL SKER', 'Libya', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3096, 3098, 'Kampuchea Airlines', 'N', 'E2', 'KMP', 'KAMPUCHEA', 'Cambodia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3097, 3099, 'Kanaf-Arkia Airlines', 'N', '', 'KIZ', '', 'Israel', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(3098, 3100, 'Kanfey Ha\'emek Aviation', 'N', '', 'KHE', 'KANFEY HAEMEK', 'Israel', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(3098, 3100, 'Kanfey Ha`emek Aviation', 'N', '', 'KHE', 'KANFEY HAEMEK', 'Israel', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3099, 3101, 'Kansas State University', 'N', '', 'KSU', 'K-STATE', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3100, 3102, 'Karat', 'N', 'V2', 'AKT', 'AVIAKARAT', 'Russia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3101, 3103, 'Karibu Airways Company', 'N', '', 'KRB', 'KARIBU AIR', 'Tanzania', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -4817,7 +4817,7 @@ INSERT INTO airlines VALUES(3188, 3190, 'L A Helicopter', 'N', '', 'LAH', 'STAR 
 INSERT INTO airlines VALUES(3189, 3191, 'L J Aviation', 'N', '', 'LJY', 'ELJAY', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3190, 3192, 'L R Airlines', 'N', '', 'LRB', 'LADY RACINE', 'Czech Republic', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3191, 3193, 'L&L Flygbildteknik', 'N', '', 'PHO', 'PHOTOFLIGHT', 'Sweden', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(3192, 3194, 'L\'Express', 'N', '', 'LEX', 'LEX', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(3192, 3194, 'L`Express', 'N', '', 'LEX', 'LEX', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3193, 3195, 'L-3 Communications Flight Internation Aviation', 'N', '', 'FNT', 'FLIGHT INTERNATIONAL', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3194, 3196, 'L.A.B. Flying Service', 'N', 'JF', 'LAB', 'LAB', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3876, 3881, 'Pan Air', 'N', '', 'PAX', 'PANNEX', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -4939,7 +4939,7 @@ INSERT INTO airlines VALUES(3338, 3342, 'L', 'N', 'MJ', 'LPR', 'LAPA', 'Argentin
 INSERT INTO airlines VALUES(3339, 3343, 'L', 'N', '', 'LAU', 'SURAMERICANO', 'Colombia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3340, 3344, 'M & N Aviation', 'N', '', 'JNH', 'JONAH', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3341, 3345, 'MAC Fotografica', 'N', '', 'MCF', 'MAC FOTO', 'Spain', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(3342, 3346, 'MANAG\'AIR', 'N', '', 'MRG', 'MANAG\'AIR', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(3342, 3346, 'MANAG`AIR', 'N', '', 'MRG', 'MANAG`AIR', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3343, 3347, 'MAP-Management and Planung', 'N', '', 'MPJ', 'MAPJET', 'Austria', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3344, 3348, 'MAS Airways', 'N', '', 'TFG', 'TRAFALGAR', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3347, 3351, 'MCC Aviation', 'N', '', 'MCC', 'DISCOVERY', 'South Africa', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -5250,7 +5250,7 @@ INSERT INTO airlines VALUES(3757, 3762, 'Ocean Sky (UK)', 'N', '', 'OCS', 'OCEAN
 INSERT INTO airlines VALUES(3758, 3763, 'Ocean Wings Commuter Service', 'N', '', 'TUK', 'TUCKERNUCK', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3761, 3766, 'Odessa Airlines', 'N', '', 'ODS', 'ODESSA AIR', 'Ukraine', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3762, 3767, 'Odyssey International', 'N', '', 'ODY', 'ODYSSEY', 'Canada', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(3763, 3768, 'Office Federal De\'Aviation Civile', 'N', '', 'FOC', 'FOCA', 'Switzerland', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(3763, 3768, 'Office Federal De`Aviation Civile', 'N', '', 'FOC', 'FOCA', 'Switzerland', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3764, 3769, 'Ogooue Air Cargo', 'N', '', 'GBO', '', 'Gabon', 'N', 'cargo', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3765, 3770, 'Okada Airlines', 'N', '', 'OKJ', 'OKADA AIR', 'Nigeria', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3766, 3771, 'Okapi Airways', 'N', '', 'OKP', 'OKAPI', 'Democratic Republic of Congo', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -5342,7 +5342,7 @@ INSERT INTO airlines VALUES(3746, 3751, 'Nunasi-Central Airlines', 'N', '', 'NUN
 INSERT INTO airlines VALUES(3747, 3752, 'Nurman Avia Indopura', 'N', '', 'NIN', 'NURVINDO', 'Indonesia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3748, 3753, 'Nyasa Express', 'N', '', 'NYS', 'NYASA', 'Malawi', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3750, 3755, 'O Air', 'N', '', 'OCN', 'O-BIRD', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(3751, 3756, 'O\'Connor Airlines', 'N', 'UQ', 'OCM', 'OCONNOR', 'Australia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(3751, 3756, 'O`Connor Airlines', 'N', 'UQ', 'OCM', 'OCONNOR', 'Australia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3752, 3757, 'OAG', 'N', 'CR', '', '', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3753, 3758, 'OSACOM', 'N', '', 'JPA', 'J-PAT', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3755, 3760, 'Ocean Air', 'N', '', 'BCN', 'BLUE OCEAN', 'Mauritania', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -5437,7 +5437,7 @@ INSERT INTO airlines VALUES(3926, 3932, 'Pelita Air Service', 'N', '', 'PAS', 'P
 INSERT INTO airlines VALUES(3927, 3933, 'Pem-Air', 'N', '', 'PEM', 'PEM-AIR', 'Canada', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3928, 3934, 'Pen-Avia', 'N', '', 'PDY', 'PENDLEY', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3930, 3936, 'Peninter Aerea', 'N', '', 'PNE', 'PENINTER', 'Mexico', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(3931, 3937, 'Penya De L\'Aire', 'N', '', 'PCA', 'PENA DEL AIRE', 'Spain', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(3931, 3937, 'Penya De L`Aire', 'N', '', 'PCA', 'PENA DEL AIRE', 'Spain', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3932, 3938, 'Peran', 'N', '', 'CVT', 'CVETA', 'Kazakhstan', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3933, 3939, 'Perforadora Central', 'N', '', 'PCC', 'PERFORADORA CENTRAL', 'Mexico', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(3935, 3941, 'Perm Airlines', 'N', 'P9', 'PGP', 'PERM AIR', 'Russia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -5664,7 +5664,7 @@ INSERT INTO airlines VALUES(4185, 4191, 'Rhoades Aviation', 'N', '', 'RDS', 'RHO
 INSERT INTO airlines VALUES(4186, 4192, 'Riau Airlines', 'N', '', 'RIU', 'RIAU AIR', 'Indonesia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(4187, 4193, 'Rich International Airways', 'N', '', 'RIA', 'RICHAIR', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(4188, 4194, 'Richards Aviation', 'N', '', 'RVC', 'RIVER CITY', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(4189, 4195, 'Richardson\'s Airway', 'N', '', 'RIC', 'RICHARDSON', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(4189, 4195, 'Richardson`s Airway', 'N', '', 'RIC', 'RICHARDSON', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(4190, 4196, 'Richland Aviation', 'N', '', 'RCA', 'RICHLAND', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(4191, 4197, 'Rick Lucas Helicopters', 'N', '', 'HPR', 'HELIPRO', 'New Zealand', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(4192, 4198, 'Rico Linhas A', 'N', 'C7', 'RLE', 'RICO', 'Brazil', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -5846,7 +5846,7 @@ INSERT INTO airlines VALUES(4404, 4412, 'Shabair', 'N', '', 'SHB', 'SHABAIR', 'D
 INSERT INTO airlines VALUES(4405, 4413, 'Sky Harbor Air Service', 'N', '', 'SHC', 'SKY HARBOR CHEYENNE', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(4408, 4416, 'Shoprite Group', 'N', '', 'SHG', 'SHOP AIR', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(4409, 4417, 'Seoul Air International', 'N', '', 'SHI', 'SEOUL AIR', 'Republic of Korea', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(4410, 4418, 'Sharjah Ruler\'s Flight', 'N', '', 'SHJ', 'SHARJAH', 'United Arab Emirates', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(4410, 4418, 'Sharjah Ruler`s Flight', 'N', '', 'SHJ', 'SHARJAH', 'United Arab Emirates', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(4411, 4419, 'Shorouk Air', 'N', '', 'SHK', '', 'Egypt', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(4412, 4420, 'Samson Aviation', 'N', '', 'SHL', 'SAMSON', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(4413, 4421, 'Sheltam Aviation', 'N', '', 'SHM', 'SHELTAM', 'South Africa', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -6375,7 +6375,7 @@ INSERT INTO airlines VALUES(5044, 5054, 'TransMeridian Airlines', 'N', 'T9', 'TR
 INSERT INTO airlines VALUES(5045, 5055, 'Transair France', 'N', '', 'TSA', 'AIRTRAF', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5046, 5056, 'TAF-Linhas Aereas', 'N', '', 'TSD', 'TAFI', 'Brazil', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5047, 5057, 'Transmile Air Services', 'N', 'TH', 'TSE', 'TRANSMILE', 'Malaysia', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(5049, 5059, 'Transport\'air', 'N', '', 'TSI', 'TRANSPORTAIR', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(5049, 5059, 'Transport`air', 'N', '', 'TSI', 'TRANSPORTAIR', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5050, 5060, 'Trast Aero', 'N', 'S5', 'TSJ', 'TRAST AERO', 'Kyrgyzstan', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5051, 5061, 'Trast Aero', 'N', '', 'TSK', 'TOMSK-AVIA', 'Kyrgyzstan', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5052, 5062, 'Thai Aviation Services', 'N', '', 'TSL', 'THAI AVIATION', 'Thailand', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -6667,7 +6667,7 @@ INSERT INTO airlines VALUES(5395, 5412, 'West Coast Airlines', 'N', '', 'WCG', '
 INSERT INTO airlines VALUES(5396, 5413, 'West Coast Airways', 'N', '', 'WCA', 'WEST-LEONE', 'Sierra Leone', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5397, 5414, 'West Freugh DTEO', 'N', '', 'TEE', 'TEEBIRD', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5400, 5417, 'Westair Aviation', 'N', '', 'WAA', 'WESTAIR WINGS', 'Namibia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(5401, 5418, 'Westair Cargo Airlines', 'N', '', 'WSC', 'WESTCAR', 'Cote d\'Ivoire', 'N', 'cargo', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(5401, 5418, 'Westair Cargo Airlines', 'N', '', 'WSC', 'WESTCAR', 'Cote d`Ivoire', 'N', 'cargo', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5403, 5420, 'Westcoast Energy', 'N', '', 'BLK', 'BLUE FLAME', 'Canada', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5405, 5422, 'Western Air Couriers', 'N', '', 'NPC', 'NORPAC', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5406, 5423, 'Western Air Express', 'N', '', 'WAE', 'WESTERN EXPRESS', 'United States', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -6684,7 +6684,7 @@ INSERT INTO airlines VALUES(5419, 5436, 'White Eagle Aviation', 'N', '', 'WEA', 
 INSERT INTO airlines VALUES(5420, 5437, 'White River Air Services', 'N', '', 'WRA', '', 'Canada', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5421, 5438, 'Whyalla Airlines', 'N', '', 'WWL', '', 'Australia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5424, 5441, 'Wiking Helikopter Service', 'N', '', 'WHS', 'WEEKING', 'Germany', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(5425, 5442, 'Wilbur\'s Flight Operations', 'N', '', 'WFO', 'WILBURS', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(5425, 5442, 'Wilbur`s Flight Operations', 'N', '', 'WFO', 'WILBURS', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5426, 5443, 'Williams Air', 'N', '', 'WLS', 'WILLIAMS AIR', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5427, 5444, 'Williams Grand Prix Engineering', 'N', '', 'WGP', 'GRAND PRIX', 'United Kingdom', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5428, 5445, 'Wimbi Dira Airways', 'N', '', 'WDA', 'WIMBI DIRA', 'Democratic Republic of Congo', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -6843,7 +6843,7 @@ INSERT INTO airlines VALUES(5633, 11794, 'Catovair', '', 'OC', 'N', 'CATOVAIR', 
 INSERT INTO airlines VALUES(5634, 11795, 'Andalus Lineas Aereas', '', '', 'ANU', 'Andalus', 'Spain', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5638, 11804, 'Halcyonair', '', '7Z', 'N', 'CREOLE', 'Cape Verde', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5639, 11805, 'Business Aviation', '', '4P', 'N', 'AFRICAN BUSINESS', 'Congo (Kinshasa)', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(5640, 11806, 'Compagnie Africaine d\\\'Aviation', '', 'E9', 'N', 'AFRICOMPANY', 'Congo (Kinshasa)', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(5640, 11806, 'Compagnie Africaine d\\`Aviation', '', 'E9', 'N', 'AFRICOMPANY', 'Congo (Kinshasa)', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5641, 11808, 'Zambia Skyways', '', 'K8', 'N', 'ZAMBIA SKIES', 'Zambia', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5644, 11814, 'SmartLynx Airlines', '', '6Y', 'N', '', 'Latvia', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5646, 11816, 'KoralBlue Airlines', '', 'K7', 'KBR', 'KORAL BLUE', 'Egypt', 'Y', 'passenger', '', 'http://en.wikipedia.org/wiki/KoralBlue_Airlines', NULL, NULL, 0);
@@ -6899,7 +6899,7 @@ INSERT INTO airlines VALUES(5722, 13899, 'Cambodia Angkor Air (K6)', '', 'K6', '
 INSERT INTO airlines VALUES(5723, 13905, 'Skyline nepc', '', 'D5', 'N', '', 'India', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5724, 13923, 'THREE', '', 'H3', 'T33', '', 'China', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5725, 13936, 'Royal European Airlines', '', '69', 'N', '', 'United Kingdom', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(5726, 13947, 'Tom\\\'s & co airliners', 'Tom\\\'s air', '&T', 'T&O', 'T&', 'France', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO airlines VALUES(5726, 13947, 'Tom\\`s & co airliners', 'Tom\\`s air', '&T', 'T&O', 'T&', 'France', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5728, 14061, 'LSM Airlines', 'slowbird', 'PQ', 'LOO', 'slowbird', 'Russia', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5730, 14073, 'Finlandian', '', '', 'FN1', '', 'Finland', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(5732, 14109, 'Nik Airways', '', 'X1', 'N', '', 'Saudi Arabia', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
@@ -7150,7 +7150,7 @@ INSERT INTO airlines VALUES(7117, 0, 'Jetalliance East', '', '', 'PLS', '', '', 
 INSERT INTO airlines VALUES(7118, 0, 'JetLite', '', 'S2', 'JLL', '', '', 'Y', 'passenger', 'http://www.jetkonnect.com', 'http://en.wikipedia.org/wiki/JetKonnect', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7121, 0, 'Jubba Airways', '', 'JZ', 'JBW', '', '', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(7123, 0, 'Kharkiv Airlines', '', 'KW', 'KHK', '', '', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO airlines VALUES(7124, 0, 'L\'Avion', '', 'A0', 'AVI', '', '', 'Y', 'passenger', 'http://www.lavion.com/', 'http://en.wikipedia.org/wiki/L\'Avion', NULL, NULL, 0);
+INSERT INTO airlines VALUES(7124, 0, 'L`Avion', '', 'A0', 'AVI', '', '', 'Y', 'passenger', 'http://www.lavion.com/', 'http://en.wikipedia.org/wiki/LAvion', NULL, NULL, 0);
 INSERT INTO airlines VALUES(7133, 0, 'MHS Aviation', '', 'M2', 'MHV', '', '', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(7139, 0, 'Network Aviation', '', '', 'NHF', '', '', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO airlines VALUES(7142, 0, 'Norsk Helikopterservice', '', '', 'NKH', '', '', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);

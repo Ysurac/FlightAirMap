@@ -2086,6 +2086,47 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_44() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if ($globalDBdriver == 'mysql') {
+			$error .= create_db::import_file('../db/airport.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/airlines.sql');
+			if ($error != '') return $error;
+		} else {
+			$error .= create_db::import_file('../db/pgsql/airport.sql');
+			if ($error != '') return $error;
+			$error .= create_db::import_file('../db/pgsql/airlines.sql');
+			if ($error != '') return $error;
+		}
+		if ((isset($globalVATSIM) && $globalVATSIM) && (isset($globalIVAO) && $globalIVAO)) {
+			if (file_exists('tmp/ivae_feb2013.zip')) {
+				$error .= update_db::update_IVAO();
+			} else {
+				$error .= update_db::update_vatsim();
+			}
+		} elseif (isset($globalVATSIM) && $globalVATSIM) {
+			$error .= update_db::update_vatsim();
+		} elseif (isset($globalIVAO) && $globalIVAO) {
+			if (file_exists('tmp/ivae_feb2013.zip')) {
+				$error .= update_db::update_IVAO();
+			} else {
+				$error .= update_db::update_vatsim();
+			}
+		}
+		if ($error != '') return $error;
+		$query = "UPDATE config SET value = '45' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 
 
     	public static function check_version($update = false) {
@@ -2274,6 +2315,10 @@ class update_schema {
     			    else return self::check_version(true);
     			} elseif ($result['value'] == '43') {
     			    $error = self::update_from_43();
+    			    if ($error != '') return $error;
+    			    else return self::check_version(true);
+    			} elseif ($result['value'] == '44') {
+    			    $error = self::update_from_44();
     			    if ($error != '') return $error;
     			    else return self::check_version(true);
     			} else return '';
