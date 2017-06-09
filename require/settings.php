@@ -278,10 +278,6 @@ $globalNoUpcoming = FALSE;
 $globalNoIdents = FALSE;
 //Don't display and try to retrieve airlines
 $globalNoAirlines = FALSE;
-//Display Owners
-$globalUseOwner = TRUE;
-//Display Pilots
-$globalUsePilot = FALSE;
 
 //Show a tooltip for each flights
 $globalMapTooltip = FALSE;
