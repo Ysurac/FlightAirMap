@@ -176,6 +176,9 @@ class Spotter{
 				$filter_query_where .= " AND EXTRACT(DAY FROM spotter_output.date) = '".$filter['day']."'";
 			}
 		}
+		if (isset($filter['since_date']) && $filter['since_date'] != '') {
+			$filter_query_where .= " AND spotter_output.date >= '".$filter['since_date']."'";
+		}
 		if ($filter_query_where == '' && $where) $filter_query_where = ' WHERE';
 		elseif ($filter_query_where != '' && $and) $filter_query_where .= ' AND';
 		if ($filter_query_where != '') {
@@ -9642,7 +9645,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonths($filters = array())
+	public function countAllMonths($filters = array(),$sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -9653,13 +9656,23 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(*) as date_count
-								FROM spotter_output";
-			$query .= $this->getFilter($filters);
+				FROM spotter_output";
+			if ($sincedate == '') {
+				$query .= $this->getFilter($filters);
+			} else {
+				$query .= $this->getFilter($filters,true,true);
+				$query .= " spotter_output.date > '".$sincedate."'";
+			}
 			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(*) as date_count
 								FROM spotter_output";
-			$query .= $this->getFilter($filters);
+			if ($sincedate == '') {
+				$query .= $this->getFilter($filters);
+			} else {
+				$query .= $this->getFilter($filters,true,true);
+				$query .= " spotter_output.date > '".$sincedate."'";
+			}
 			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		}
       
@@ -9688,7 +9701,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsByAirlines($filters = array())
+	public function countAllMonthsByAirlines($filters = array(),$sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9700,14 +9713,16 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(*) as date_count
-								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' 
-								GROUP BY spotter_output.airline_icao, year_name, month_name 
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY spotter_output.airline_icao, year_name, month_name 
 								ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(*) as date_count
 								FROM spotter_output 
-								WHERE spotter_output.airline_icao <> '' 
-								GROUP BY spotter_output.airline_icao, year_name, month_name 
+								WHERE spotter_output.airline_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY spotter_output.airline_icao, year_name, month_name 
 								ORDER BY date_count DESC";
 		}
       
@@ -9737,7 +9752,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMilitaryMonths($filters = array())
+	public function countAllMilitaryMonths($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -9748,13 +9763,15 @@ class Spotter{
 		$filter_query = $this->getFilter($filters,true,true);
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(*) as date_count
-								FROM spotter_output".$filter_query." spotter_output.airline_type = 'military'
-								GROUP BY year_name, month_name 
+								FROM spotter_output".$filter_query." spotter_output.airline_type = 'military'";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name 
 								ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(*) as date_count
-								FROM spotter_output".$filter_query." spotter_output.airline_type = 'military'
-								GROUP BY year_name, month_name 
+								FROM spotter_output".$filter_query." spotter_output.airline_type = 'military'";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name 
 								ORDER BY date_count DESC";
 		}
 		
@@ -9782,7 +9799,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsOwners($filters = array())
+	public function countAllMonthsOwners($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -9794,14 +9811,14 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct owner_name) as date_count
-								FROM spotter_output".$filter_query." owner_name <> ''
-								GROUP BY year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." owner_name <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct owner_name) as date_count
-								FROM spotter_output".$filter_query." owner_name <> ''
-								GROUP BY year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." owner_name <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -9828,7 +9845,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsOwnersByAirlines($filters = array())
+	public function countAllMonthsOwnersByAirlines($filters = array(),$sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9840,14 +9857,14 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct owner_name) as date_count
-								FROM spotter_output".$filter_query." owner_name <> '' AND spotter_output.airline_icao <> '' 
-								GROUP BY spotter_output.airline_icao, year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." owner_name <> '' AND spotter_output.airline_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY spotter_output.airline_icao, year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct owner_name) as date_count
-								FROM spotter_output".$filter_query." owner_name <> '' AND spotter_output.airline_icao <> '' 
-								GROUP BY spotter_output.airline_icao, year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." owner_name <> '' AND spotter_output.airline_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY spotter_output.airline_icao, year_name, month_name ORDER BY date_count DESC";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -9875,7 +9892,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsPilots($filters = array())
+	public function countAllMonthsPilots($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -9887,14 +9904,14 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct pilot_id) as date_count
-								FROM spotter_output".$filter_query." pilot_id <> '' AND pilot_id IS NOT NULL
-								GROUP BY year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." pilot_id <> '' AND pilot_id IS NOT NULL";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct pilot_id) as date_count
-								FROM spotter_output".$filter_query." pilot_id <> '' AND pilot_id IS NOT NULL
-								GROUP BY year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." pilot_id <> '' AND pilot_id IS NOT NULL";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -9921,7 +9938,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsPilotsByAirlines($filters = array())
+	public function countAllMonthsPilotsByAirlines($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9933,14 +9950,14 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct pilot_id) as date_count
-								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND pilot_id <> '' AND pilot_id IS NOT NULL
-								GROUP BY spotter_output.airline_icao,year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND pilot_id <> '' AND pilot_id IS NOT NULL";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY spotter_output.airline_icao,year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct pilot_id) as date_count
-								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND pilot_id <> '' AND pilot_id IS NOT NULL
-								GROUP BY spotter_output.airline_icao, year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' AND pilot_id <> '' AND pilot_id IS NOT NULL";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY spotter_output.airline_icao, year_name, month_name ORDER BY date_count DESC";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -9968,7 +9985,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsAirlines($filters = array())
+	public function countAllMonthsAirlines($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9980,14 +9997,14 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct airline_icao) as date_count
-								FROM spotter_output".$filter_query." airline_icao <> '' 
-								GROUP BY year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." airline_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct airline_icao) as date_count
-								FROM spotter_output".$filter_query." airline_icao <> '' 
-								GROUP BY year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." airline_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -10014,7 +10031,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsAircrafts($filters = array())
+	public function countAllMonthsAircrafts($filters = array(),$sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -10026,14 +10043,14 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct aircraft_icao) as date_count
-								FROM spotter_output".$filter_query." aircraft_icao <> '' 
-								GROUP BY year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." aircraft_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct aircraft_icao) as date_count
-								FROM spotter_output".$filter_query." aircraft_icao <> '' 
-								GROUP BY year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." aircraft_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -10061,7 +10078,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsAircraftsByAirlines($filters = array())
+	public function countAllMonthsAircraftsByAirlines($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -10073,14 +10090,14 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao,YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(distinct aircraft_icao) as date_count
-								FROM spotter_output".$filter_query." aircraft_icao <> ''  AND spotter_output.airline_icao <> '' 
-								GROUP BY spotter_output.airline_icao, year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." aircraft_icao <> ''  AND spotter_output.airline_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY spotter_output.airline_icao, year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(distinct aircraft_icao) as date_count
-								FROM spotter_output".$filter_query." aircraft_icao <> '' AND spotter_output.airline_icao <> '' 
-								GROUP BY spotter_output.airline_icao, year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." aircraft_icao <> '' AND spotter_output.airline_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY spotter_output.airline_icao, year_name, month_name ORDER BY date_count DESC";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -10108,7 +10125,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsRealArrivals($filters = array())
+	public function countAllMonthsRealArrivals($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -10120,14 +10137,14 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(real_arrival_airport_icao) as date_count
-								FROM spotter_output".$filter_query." real_arrival_airport_icao <> '' 
-								GROUP BY year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." real_arrival_airport_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(real_arrival_airport_icao) as date_count
-								FROM spotter_output".$filter_query." real_arrival_airport_icao <> '' 
-								GROUP BY year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." real_arrival_airport_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name ORDER BY date_count DESC";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -10155,7 +10172,7 @@ class Spotter{
 	* @return Array the month list
 	*
 	*/
-	public function countAllMonthsRealArrivalsByAirlines($filters = array())
+	public function countAllMonthsRealArrivalsByAirlines($filters = array(),$sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -10167,14 +10184,14 @@ class Spotter{
 
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT spotter_output.airline_icao, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name,MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, count(real_arrival_airport_icao) as date_count
-								FROM spotter_output".$filter_query." real_arrival_airport_icao <> '' AND spotter_output.airline_icao <> '' 
-								GROUP BY spotter_output.airline_icao, year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." real_arrival_airport_icao <> '' AND spotter_output.airline_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY spotter_output.airline_icao, year_name, month_name ORDER BY date_count DESC";
 		} else {
 			$query  = "SELECT spotter_output.airline_icao, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name,EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, count(real_arrival_airport_icao) as date_count
-								FROM spotter_output".$filter_query." real_arrival_airport_icao <> '' AND spotter_output.airline_icao <> '' 
-								GROUP BY spotter_output.airline_icao, year_name, month_name
-								ORDER BY date_count DESC";
+								FROM spotter_output".$filter_query." real_arrival_airport_icao <> '' AND spotter_output.airline_icao <> ''";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
+			$query .= " GROUP BY spotter_output.airline_icao, year_name, month_name ORDER BY date_count DESC";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -10203,7 +10220,7 @@ class Spotter{
 	* @return Array the date list
 	*
 	*/
-	public function countAllMonthsLastYear($filters)
+	public function countAllMonthsLastYear($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -10215,12 +10232,14 @@ class Spotter{
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT MONTH(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS month_name, YEAR(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS year_name, count(*) as date_count
 								FROM spotter_output".$filter_query." spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 YEAR)";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
 			$query .= " GROUP BY year_name, month_name
 								ORDER BY year_name, month_name ASC";
 			$query_data = array(':offset' => $offset);
 		} else {
 			$query  = "SELECT EXTRACT(MONTH FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS month_name, EXTRACT(YEAR FROM spotter_output.date AT TIME ZONE INTERVAL :offset) AS year_name, count(*) as date_count
 								FROM spotter_output".$filter_query." spotter_output.date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 YEARS'";
+			if ($sincedate != '') $query .= " AND spotter_output.date > '".$sincedate."'";
 			$query .= " GROUP BY year_name, month_name
 								ORDER BY year_name, month_name ASC";
 			$query_data = array(':offset' => $offset);

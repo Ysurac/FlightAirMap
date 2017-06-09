@@ -186,7 +186,8 @@ class Accident {
 	* @return Array number of fatalities by year
 	*/
 	public function countFatalitiesByYear() {
-		$query = 'SELECT EXTRACT(year FROM date) AS year, SUM(fatalities) as count FROM accidents WHERE accidents_id IN (SELECT MAX(accidents_id) FROM accidents WHERE fatalities > 0 AND EXTRACT(year FROM date) > 2006 GROUP BY registration) GROUP BY EXTRACT(year FROM date) ORDER BY year';
+		//$query = 'SELECT EXTRACT(year FROM date) AS year, SUM(fatalities) as count FROM accidents WHERE accidents_id IN (SELECT MAX(accidents_id) FROM accidents WHERE fatalities > 0 AND EXTRACT(year FROM date) > 2006 GROUP BY registration) GROUP BY EXTRACT(year FROM date) ORDER BY year';
+		$query = "SELECT EXTRACT(year FROM date) AS year, SUM(fatalities) as count FROM accidents WHERE accidents_id IN (SELECT MAX(accidents_id) FROM accidents WHERE fatalities > 0 AND date > '2006-01-01 00:00:00' GROUP BY registration) GROUP BY EXTRACT(year FROM date) ORDER BY year";
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute();
