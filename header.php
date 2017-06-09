@@ -3,6 +3,7 @@
 //gets the page file and stores it in a variable
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
 $current_page = $file_path['filename'];
+if ($globalTimezone == '') $globalTimezone = 'UTC';
 date_default_timezone_set($globalTimezone);
 if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] != '') $MapType = $_COOKIE['MapType'];
 else $MapType = $globalMapProvider;

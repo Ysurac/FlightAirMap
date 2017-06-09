@@ -887,10 +887,12 @@ class TrackerLive {
                 } catch(PDOException $e) {
                 	return "error : ".$e->getMessage();
                 }
+                /*
                 echo 'putinarchive : '.$putinarchive."\n";
                 echo 'noarchive : '.$noarchive."\n";
+                */
 		if (isset($globalArchive) && $globalArchive && $putinarchive && $noarchive !== true) {
-		    if ($globalDebug) echo '(Add to SBS archive : ';
+		    if ($globalDebug) echo '(Add to Tracker archive '.$famtrackid.' : ';
 		    $TrackerArchive = new TrackerArchive($this->db);
 		    $result =  $TrackerArchive->addTrackerArchiveData($famtrackid, $ident,$latitude, $longitude, $altitude, $heading, $groundspeed, $date, $putinarchive, $comment, $type,$noarchive,$format_source, $source_name, $over_country);
 		    if ($globalDebug) echo $result.')';

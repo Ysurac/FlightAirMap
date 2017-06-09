@@ -888,7 +888,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				}
 			    } else {
 			?>
-				<b>PHP GD is not installed, you can t change color of aircraft icon on map</b>
+				<b>PHP GD is not installed, you can't change color of aircraft icon on map</b>
 			<?php
 			    }
 			?>

@@ -63,7 +63,7 @@ function displayTrackerData(data) {
 	var MapTrack = getCookie('MapTrack');
 	if (MapTrack != '') {
 		viewer.trackedEntity = viewer.dataSources.get(dsn).entities.getById(MapTrack);
-		$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
+		$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+encodeURI(flightaware_id)+"&currenttime="+Date.parse(currenttime.toString()));
 		$("#aircraft_ident").attr('class',flightaware_id);
 		//lastid = MapTrack;
 	}
@@ -101,7 +101,7 @@ handler.setInputAction(function(click) {
 		delCookie('MapTrack');
 		if (pickedObject.id.type == 'tracker') {
 			flightaware_id = pickedObject.id.id;
-			$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
+			$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+encodeURI(flightaware_id)+"&currenttime="+Date.parse(currenttime.toString()));
 			var dsn;
 			for (var i =0; i < viewer.dataSources.length; i++) {
 				if (viewer.dataSources.get(i).name == 'tracker') {

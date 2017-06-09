@@ -71,7 +71,7 @@ if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup'
 } else $min = false;
 
 if (isset($_GET['ident'])) {
-	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
+	$ident = urldecode(filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING));
 	if ($tracker) {
 		$spotter_array = $TrackerLive->getLastLiveTrackerDataByIdent($ident);
 	} elseif ($marine) {
@@ -93,11 +93,11 @@ if (isset($_GET['ident'])) {
 	}
 	$allhistory = true;
 } elseif (isset($_GET['famtrack_id'])) {
-	$famtrack_id = filter_input(INPUT_GET,'famtrack_id',FILTER_SANITIZE_STRING);
+	$famtrack_id = urldecode(filter_input(INPUT_GET,'famtrack_id',FILTER_SANITIZE_STRING));
 	$spotter_array = $TrackerLive->getLastLiveTrackerDataById($famtrack_id);
 	$allhistory = true;
 } elseif (isset($_GET['fammarine_id'])) {
-	$fammarine_id = filter_input(INPUT_GET,'fammarine_id',FILTER_SANITIZE_STRING);
+	$fammarine_id = urldecode(filter_input(INPUT_GET,'fammarine_id',FILTER_SANITIZE_STRING));
 	$spotter_array = $MarineLive->getLastLiveMarineDataById($fammarine_id);
 	$allhistory = true;
 } elseif (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true'))) {

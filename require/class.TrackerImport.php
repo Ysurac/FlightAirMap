@@ -132,16 +132,16 @@ class TrackerImport {
 				return '';
 		    }
 		} elseif (isset($line['datetime']) && strtotime($line['datetime']) < time()-20*60) {
-			if ($globalDebug) echo "!!! Date is too old ".$this->all_tracked[$id]['ident']." - format : ".$line['format_source']."!!!";
+			if ($globalDebug) echo "!!! Date is too old ".$this->all_tracked[$id]['ident']." - format : ".$line['format_source']."!!!\n";
 			return '';
 		} elseif (isset($line['datetime']) && strtotime($line['datetime']) > time()+20*60) {
-			if ($globalDebug) echo "!!! Date is in the future ".$this->all_tracked[$id]['ident']." - format : ".$line['format_source']."!!!";
+			if ($globalDebug) echo "!!! Date is in the future ".$this->all_tracked[$id]['ident']." - format : ".$line['format_source']."!!!\n";
 			return '';
 		} elseif (!isset($line['datetime'])) {
 			date_default_timezone_set('UTC');
 			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('datetime' => date('Y-m-d H:i:s')));
 		} else {
-			if ($globalDebug) echo "!!! Unknow date error ".$this->all_tracked[$id]['ident']." - format : ".$line['format_source']."!!!";
+			if ($globalDebug) echo "!!! Unknow date error ".$this->all_tracked[$id]['ident']." - format : ".$line['format_source']."!!!\n";
 			return '';
 		}
 		
@@ -217,10 +217,12 @@ class TrackerImport {
 
 		    } else if ($globalDebug && $timediff > 20) {
 			$this->tmd = $this->tmd + 1;
-			echo '!!! Too much distance in short time... for '.$this->all_tracked[$id]['ident']."\n";
-			echo 'Time : '.$timediff.'s - Distance : '.$Common->distance($line['latitude'],$line['longitude'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],'m')."m -";
-			echo 'Speed : '.(($Common->distance($line['latitude'],$line['longitude'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],'m')/$timediff)*3.6)." km/h - ";
-			echo 'Lat : '.$line['latitude'].' - long : '.$line['longitude'].' - prev lat : '.$this->all_tracked[$id]['latitude'].' - prev long : '.$this->all_tracked[$id]['longitude']." \n";
+			if ($line['latitude'] != $this->all_tracked[$id]['latitude'] && $line['longitude'] != $this->all_tracked[$id]['longitude']) {
+				echo '!!! Too much distance in short time... for '.$this->all_tracked[$id]['ident']."\n";
+				echo 'Time : '.$timediff.'s - Distance : '.$Common->distance($line['latitude'],$line['longitude'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],'m')."m -";
+				echo 'Speed : '.(($Common->distance($line['latitude'],$line['longitude'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],'m')/$timediff)*3.6)." km/h - ";
+				echo 'Lat : '.$line['latitude'].' - long : '.$line['longitude'].' - prev lat : '.$this->all_tracked[$id]['latitude'].' - prev long : '.$this->all_tracked[$id]['longitude']." \n";
+			}
 		    }
 		}
 		if (isset($line['last_update']) && $line['last_update'] != '') {

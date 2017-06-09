@@ -98,19 +98,19 @@ function getLiveTrackerData(click)
 <?php
 	if (isset($ident)) {
 ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&ident=<?php print $ident; ?>&history",
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&ident="+encodeURI(<?php print $ident; ?>)+"&history",
 <?php
 	} elseif (isset($famtrackid)) {
 ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&famtrackid=<?php print $famtrackid; ?>&history",
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&famtrackid="+encodeURI(<?php print $famtrackid; ?>)+"&history",
 <?php
 	} elseif (isset($archive) && $archive) {
 ?>
-            url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
+            url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&coord="+bbox+"&history="+encodeURI(document.getElementById('aircraft_ident').className)+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
 <?php
 	} else {
 ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className,
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&coord="+bbox+"&history="+encodeURI(document.getElementById('aircraft_ident').className),
 <?php 
 	}
 ?>
@@ -120,7 +120,7 @@ function getLiveTrackerData(click)
 	if (!isset($archive) || !$archive) {
 ?>
 		if (document.getElementById('aircraft_ident').className != "") {
-			$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+document.getElementById('aircraft_ident').className);
+			$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+encodeURI(document.getElementById('aircraft_ident').className));
 		}
 <?php
 	}
@@ -135,7 +135,7 @@ function getLiveTrackerData(click)
 	if ($compress) {
 ?>
 		    var callsign = feature.properties.c;
-		    var famtrackid = feature.properties.fti;
+		    var famtrackid = encodeURI(feature.properties.fti);
 		    var aircraft_shadow = feature.properties.as;
 		    var altitude = feature.properties.a;
 		    var heading = feature.properties.h;
@@ -144,7 +144,7 @@ function getLiveTrackerData(click)
 	} else {
 ?>
 		    var callsign = feature.properties.callsign;
-		    var famtrackid = feature.properties.famtrackid;
+		    var famtrackid = encodeURI(feature.properties.famtrackid);
 		    var aircraft_shadow = feature.properties.aircraft_shadow;
 		    var altitude = feature.properties.altitude;
 		    var heading = feature.properties.heading;
