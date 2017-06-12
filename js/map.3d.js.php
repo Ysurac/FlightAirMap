@@ -363,6 +363,7 @@ if (getCookie('archive') == '' || getCookie('archive') == 'false') {
 
 var viewer = new Cesium.Viewer('live-map', {
     sceneMode : Cesium.SceneMode.SCENE3D,
+    baseLayerPicker: false,
     imageryProvider : imProv,
 //    imageryProvider : Cesium.createTileMapServiceImageryProvider({
 //        url : Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
@@ -371,12 +372,11 @@ var viewer = new Cesium.Viewer('live-map', {
     animation : false,
     shadows : true,
 //    selectionIndicator : false,
-    baseLayerPicker: false,
-    infoBox: false,
-   navigationHelpButton: false,
-    geocoder: false,
+    infoBox : false,
+   navigationHelpButton : false,
+    geocoder : false,
 //    scene3DOnly: true,
-    fullscreenButton: false,
+    fullscreenButton : false,
 //    terrainProvider : new Cesium.CesiumTerrainProvider({
 //        url : 'https://assets.agi.com/stk-terrain/world',
 //	requestWaterMask : true,
@@ -423,6 +423,13 @@ if (MapTerrain == 'stk' || MapTerrain == '') {
 	    requestVertexNormals : true
 	});
 	viewer.terrainProvider = cesiumTerrainProviderMeshes;
+} else if (MapTerrain == 'articdem') {
+	var cesiumTerrainProviderMeshesArtic = new Cesium.CesiumTerrainProvider({
+	    url : 'https://assets.agi.com/stk-terrain/v1/tilesets/ArticDEM/tiles',
+	    requestWaterMask : true,
+	    requestVertexNormals : true
+	});
+	viewer.terrainProvider = cesiumTerrainProviderMeshesArtic;
 } else if (MapTerrain == 'ellipsoid') {
 <?php
 //	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'ellipsoid') {
