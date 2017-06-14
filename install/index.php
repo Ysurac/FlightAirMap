@@ -425,7 +425,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 						<thead>
 							<tr>
 								<th>Host/URL</th>
-								<th>Port</th>
+								<th>Port/Callback pass</th>
 								<th>Format</th>
 								<th>Name</th>
 								<th>Source Stats</th>
@@ -492,6 +492,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="acarssbs3" <?php if (isset($source['format']) && $source['format'] == 'acarssbs3') print 'selected'; ?>>ACARS SBS-3 over TCP</option>
 										<option value="ais" <?php if (isset($source['format']) && $source['format'] == 'ais') print 'selected'; ?>>NMEA AIS over TCP</option>
 										<option value="airwhere" <?php if (isset($source['format']) && $source['format'] == 'airwhere') print 'selected'; ?>>AirWhere website</option>
+										<option value="hidnseek_callback" <?php if (isset($source['format']) && $source['format'] == 'hidnseek_callback') print 'selected'; ?>>HidnSeek Callback</option>
 									</select>
 								</td>
 								<td>
@@ -542,6 +543,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="acarssbs3">ACARS SBS-3 over TCP</option>
 										<option value="ais">NMEA AIS over TCP</option>
 										<option value="airwhere">AirWhere website</option>
+										<option value="hidnseek_callback">HidnSeek Callback</option>
 									</select>
 								</td>
 								<td>
@@ -565,10 +567,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 							</tr>
 						</tbody>
 					</table>
-				<p class="help-block">For working source statistics, the name of the source <b>MUST</b> be the same as the source name of a source location, else center coverage latitude and longitude is used as source position. This is not available/usable with virtual airlines.</p>
-				<p class="help-block">FlightGear Singleplayer open an UDP server, the host should be <i>0.0.0.0</i>.</p>
-				<p class="help-block">Virtual Airlines Manager need to use the file <i>install/vAM/VAM-json.php</i> and the url <i>http://yourvaminstall/VAM-json.php</i>.</p>
-				<p class="help-block">HTTP and TCP sources can't be used at the same time.</p>
+					<p class="help-block">For working source statistics, the name of the source <b>MUST</b> be the same as the source name of a source location, else center coverage latitude and longitude is used as source position. This is not available/usable with virtual airlines.</p>
+					<p class="help-block">FlightGear Singleplayer open an UDP server, the host should be <i>0.0.0.0</i>.</p>
+					<p class="help-block">Virtual Airlines Manager need to use the file <i>install/vAM/VAM-json.php</i> and the url <i>http://yourvaminstall/VAM-json.php</i>.</p>
+					<p class="help-block">HTTP and TCP sources can't be used at the same time.</p>
+					<p class="help-block">Callback script is in <i>import/callback.php</i>. In host you can restrict access to some IP, Callback pass to restrict by a pass using <i>import/callback.php?pass=yourpass</i>.</p>
 				</fieldset>
 			</fieldset>
 			<div id="acars_data">
@@ -890,6 +893,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			?>
 				<b>PHP GD is not installed, you can't change color of aircraft icon on map</b>
 			<?php
+			    // '
 			    }
 			?>
 			</p>
@@ -1069,7 +1073,11 @@ if (isset($_POST['dbtype'])) {
 		else $cov = 'FALSE';
 		if (isset($noarchive[$key]) && $noarchive[$key] == 1) $arch = 'TRUE';
 		else $arch = 'FALSE';
-		if ($h != '') $gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch,'timezone' => $timezone[$key]);
+		if (strpos($format[$key],'_callback')) {
+			$gSources[] = array('host' => $h, 'pass' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch,'timezone' => $timezone[$key],'callback' => 'TRUE');
+		} elseif ($h != '' || $name[$key] != '') {
+			$gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch,'timezone' => $timezone[$key],'callback' => 'FALSE');
+		}
 		if ($format[$key] == 'airwhere') $forcepilots = true;
 	}
 	$settings = array_merge($settings,array('globalSources' => $gSources));

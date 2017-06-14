@@ -642,7 +642,7 @@ class Common {
 		return false;
 	}
 
-	function getUserIP() { 
+	public function getUserIP() { 
 		$client = @$_SERVER['HTTP_CLIENT_IP'];
 		$forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
 		return filter_var($client, FILTER_VALIDATE_IP) ? $client : filter_var($forward, FILTER_VALIDATE_IP) ? $forward : $_SERVER['REMOTE_ADDR']; 

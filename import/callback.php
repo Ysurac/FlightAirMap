@@ -20,7 +20,7 @@ foreach ($globalSources as $key => $cb) {
 			$authorize = true;
 			break;
 		}
-		if ($userip != '' && isset($cb['host']) && in_array($userip,explode(',',$cb['host'])) {
+		if ($userip != '' && isset($cb['host']) && in_array($userip,explode(',',$cb['host']))) {
 			$params = $globalSources[$key];
 			$authorize = true;
 			break;
