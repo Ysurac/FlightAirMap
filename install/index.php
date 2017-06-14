@@ -455,7 +455,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								    if (filter_var($source['host'],FILTER_VALIDATE_URL)) {
 								?>
 								<td><input type="text" name="host[]" id="host" value="<?php print $source['host']; ?>" /></td>
-								<td><input type="number" name="port[]" class="col-xs-2" id="port" value="<?php if (isset($source['port'])) print $source['port']; ?>" /></td>
+								<td><input type="text" name="port[]" class="col-xs-2" id="port" value="<?php if (isset($source['port'])) print $source['port']; ?>" /></td>
 								<?php
 								    } else {
 									$hostport = explode(':',$source['host']);
@@ -468,7 +468,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 									}
 								?>
 								<td><input type="text" name="host[]" id="host" value="<?php print $host; ?>" /></td>
-								<td><input type="number" name="port[]" id="port" class="col-xs-2" value="<?php print $port; ?>" /></td>
+								<td><input type="text" name="port[]" class="col-xs-2" id="port" value="<?php print $port; ?>" /></td>
 								<?php
 								    }
 								?>
@@ -522,7 +522,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 ?>
 							<tr>
 								<td><input type="text" id="host" name="host[]" value="" /></td>
-								<td><input type="number" id="port" name="port[]" class="col-xs-2" value="" /></td>
+								<td><input type="text" id="port" name="port[]" class="col-xs-2" value="" /></td>
 								<td>
 									<select name="format[]" id="format">
 										<option value="auto">Auto</option>
@@ -893,7 +893,6 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			?>
 				<b>PHP GD is not installed, you can't change color of aircraft icon on map</b>
 			<?php
-			    // '
 			    }
 			?>
 			</p>

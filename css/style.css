@@ -395,16 +395,19 @@ a.tablet{
   margin-bottom:10px;
   vertical-align: top;
 }
+
 .install form input[type="text"],
 .install form input[type="password"],
 .install form textarea,
 .install form select{
-	width:350px;
+	width:50em;
 	padding:5px;
 	border:1px solid #ddd;
 }
-.install form .sources input[type="text"] {
-	width:auto;
+
+.install form #sources input[type="text"],
+.install form #sources select{
+	width:10em !important;
 }
 .install form .radio label{
 	display:inline-block;
