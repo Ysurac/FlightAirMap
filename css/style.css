@@ -406,6 +406,7 @@ a.tablet{
 }
 
 .install form #sources input[type="text"],
+.install form .sources input[type="text"],
 .install form #sources select{
 	width:10em !important;
 }
