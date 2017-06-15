@@ -688,7 +688,7 @@ class SpotterImport {
 				if ($line['altitude_relative'] == 'AMSL' || $line['altitude_relative'] == 'MSL') {
 					$geoid = round($GeoidClass->get($this->all_flights[$id]['livedb_latitude'],$this->all_flights[$id]['livedb_longitude'])*3.28084,2);
 					//if ($globalDebug) echo '=> Set altitude to WGS84 Ellipsoid, add '.$geoid.' to '.$line['altitude']."\n";
-					$line['altitude'] = $line['altitude'] + $geoid;
+					$line['altitude'] = $line['altitude'] - $geoid;
 				}
 			}
 		    //if (!isset($this->all_flights[$id]['altitude']) || $this->all_flights[$id]['altitude'] == '' || ($this->all_flights[$id]['altitude'] > 0 && $line['altitude'] != 0)) {
