@@ -426,6 +426,7 @@ location /tools {
     rewrite ^/tools/acars(/?)$ /tools-acars.php last;
     rewrite ^/tools/metar(/?)$ /tools-metar.php last;
     rewrite ^/tools/notam(/?)$ /tools-notam.php last;
+    rewrite ^/tools/geoid(/?)$ /tools-geoid.php last;
 }
 
 location /scripts {

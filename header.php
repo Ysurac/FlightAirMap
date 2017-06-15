@@ -53,24 +53,19 @@ if (isset($_POST['removefilters'])) {
 <![endif]-->
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui.min.css" />
-<!--<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui-timepicker-addon.min.css" />-->
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-datetimepicker.min.css" />  
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/font-awesome-4.7.0/css/font-awesome.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/bootstrap-select.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/print.css" />
 
-<!--<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-2.2.3.min.js"></script>-->
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-3.2.1.min.js"></script>
-
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-ui.min.js"></script>
 
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/moment.min.js"></script>
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-datetimepicker.min.js"></script>
-<!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-select.min.js"></script>
-<!--<script src="<?php print $globalURL; ?>/js/jquery-ui-timepicker-addon.js"></script>-->
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/script.js"></script>
 
 <?php
@@ -99,7 +94,6 @@ if (strtolower($current_page) == "index")
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
-<!--<script src="<?php print $globalURL; ?>/js/leaflet-sidebar.js"></script>-->
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
@@ -198,7 +192,6 @@ if (strtolower($current_page) == "index")
 <?php
 //		}
 ?>
-<!-- <script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>"></script> -->
 <script src="<?php print $globalURL; ?>/js/map.2d.js.php?<?php print time(); ?>"></script>
 <?php
 		if (!isset($globalAircraft) || $globalAircraft) {
@@ -494,6 +487,13 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
           	<li><a href="<?php print $globalURL; ?>/tools/acars"><?php echo _("ACARS translator"); ?></a></li>
           	<li><a href="<?php print $globalURL; ?>/tools/metar"><?php echo _("METAR translator"); ?></a></li>
           	<li><a href="<?php print $globalURL; ?>/tools/notam"><?php echo _("NOTAM translator"); ?></a></li>
+<?php
+	if (isset($globalGeoid) && $globalGeoid) {
+?>
+          	<li><a href="<?php print $globalURL; ?>/tools/geoid"><?php echo _("Geoid Height Calculator"); ?></a></li>
+<?php
+	}
+?>
           </ul>
         </li>
 <?php 
