@@ -37,79 +37,77 @@ class METAR {
 	    'SS' => 'Sandstorm',
 	    'DS' => 'Duststorm'
 	);
-	
-	public function __construct($dbc = null) {
-                $Connection = new Connection($dbc);
-                $this->db = $Connection->db;
-        }
 
-       public static function check_last_update() {
-    		global $globalDBdriver;
-    		if ($globalDBdriver == 'mysql') {
+	public function __construct($dbc = null) {
+		$Connection = new Connection($dbc);
+		$this->db = $Connection->db;
+	}
+
+	public static function check_last_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value > DATE_SUB(NOW(), INTERVAL 20 MINUTE)";
 		} else {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '20 MINUTES'";
 		}
-                try {
-                        $Connection = new Connection();
-                        $sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-                $row = $sth->fetch(PDO::FETCH_ASSOC);
-                $sth->closeCursor();
-                if ($row['nb'] > 0) return false;
-                else return true;
-        }
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
+		if ($row['nb'] > 0) return false;
+		else return true;
+	}
 
-        public static function insert_last_update() {
-                $query = "DELETE FROM config WHERE name = 'last_update_metar';
-                        INSERT INTO config (name,value) VALUES ('last_update_metar',NOW());";
-                try {
-                        $Connection = new Connection();
-                        $sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-        }
+	public static function insert_last_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_metar';
+		        INSERT INTO config (name,value) VALUES ('last_update_metar',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
 
-
-        
-        public function parse($data) {
-    		//$data = str_replace(array('\n','\r','\r','\n'),'',$data);
-    		$codes = implode('|', array_keys($this->texts));
-    		$regWeather = '#^(\+|\-|VC)?(' . $codes . ')(' . $codes . ')?$#';
-    		//$pieces = explode(' ',$data);
-    		$pieces = preg_split('/\s/',$data);
-    		$pos = 0;
-    		if ($pieces[0] == 'METAR') $pos++;
-    		elseif ($pieces[0] == 'SPECI') $pos++;
-    		if (strlen($pieces[$pos]) != 4) $pos++;
-    		$result = array();
-    		$result['location'] = $pieces[$pos];
-    		$pos++;
-    		$result['dayofmonth'] = substr($pieces[$pos],0,2);
-    		$result['time'] = substr($pieces[$pos],2,4);
-    		$c = count($pieces);
-    		for($pos++; $pos < $c; $pos++) {
-    			$piece = $pieces[$pos];
-    			if ($piece == 'RMK') break;
-    			if ($piece == 'AUTO') $result['auto'] = true;
-    			if ($piece == 'COR') $result['correction'] = true;
-    			// Wind Speed
-    			if (preg_match('#(VRB|\d\d\d)(\d\d)(?:G(\d\d))?(KT|MPS|KPH)(?: (\d{1,3})V(\d{1,3}))?$#', $piece, $matches)) {
-    				$result['wind']['direction'] = (float)$matches[1];
+	public function parse($data) {
+		//$data = str_replace(array('\n','\r','\r','\n'),'',$data);
+		$codes = implode('|', array_keys($this->texts));
+		$regWeather = '#^(\+|\-|VC)?(' . $codes . ')(' . $codes . ')?$#';
+		//$pieces = explode(' ',$data);
+		$pieces = preg_split('/\s/',$data);
+		$pos = 0;
+		if ($pieces[0] == 'METAR') $pos++;
+		elseif ($pieces[0] == 'SPECI') $pos++;
+		if (strlen($pieces[$pos]) != 4) $pos++;
+		$result = array();
+		$result['location'] = $pieces[$pos];
+		$pos++;
+		$result['dayofmonth'] = substr($pieces[$pos],0,2);
+		$result['time'] = substr($pieces[$pos],2,4);
+		$c = count($pieces);
+		for($pos++; $pos < $c; $pos++) {
+			$piece = $pieces[$pos];
+			if ($piece == 'RMK') break;
+			if ($piece == 'AUTO') $result['auto'] = true;
+			if ($piece == 'COR') $result['correction'] = true;
+			// Wind Speed
+			if (preg_match('#(VRB|\d\d\d)(\d\d)(?:G(\d\d))?(KT|MPS|KPH)(?: (\d{1,3})V(\d{1,3}))?$#', $piece, $matches)) {
+				$result['wind']['direction'] = (float)$matches[1];
 				$result['wind']['unit'] = $matches[4];
-    				if ($result['wind']['unit'] == 'KT') $result['wind']['speed'] = round(((float)$matches[2])*0.51444444444,2);
-    				elseif ($result['wind']['unit'] == 'KPH') $result['wind']['speed'] = round(((float)$matches[2])*1000,2);
-    				elseif ($result['wind']['unit'] == 'MPS') $result['wind']['speed'] = round(((float)$matches[2]),2);
+				if ($result['wind']['unit'] == 'KT') $result['wind']['speed'] = round(((float)$matches[2])*0.51444444444,2);
+				elseif ($result['wind']['unit'] == 'KPH') $result['wind']['speed'] = round(((float)$matches[2])*1000,2);
+				elseif ($result['wind']['unit'] == 'MPS') $result['wind']['speed'] = round(((float)$matches[2]),2);
 				$result['wind']['gust'] = (float)$matches[3];
 				$result['wind']['unit'] = $matches[4];
 				$result['wind']['min_variation'] = array_key_exists(5,$matches) ? $matches[5] : 0;
 				$result['wind']['max_variation'] = array_key_exists(6,$matches) ? $matches[6] : 0;
-    			}
+			}
 
 /*    			if (preg_match('#^([0-9]{3})([0-9]{2})(G([0-9]{2}))?(KT|MPS)$#', $piece, $matches)) {
     				$result['wind_direction'] = (float)$matches[1];
@@ -126,34 +124,35 @@ class METAR {
     				}
     			}
     			*/
-    			// Temperature
-    			if (preg_match('#^(M?[0-9]{2,})/(M?[0-9]{2,})$#', $piece, $matches)) {
-    				$temp = (float)$matches[1];
+
+			// Temperature
+			if (preg_match('#^(M?[0-9]{2,})/(M?[0-9]{2,})$#', $piece, $matches)) {
+				$temp = (float)$matches[1];
 				if ($matches[1]{0} == 'M') {
 					$temp = ((float)substr($matches[1], 1)) * -1;
 				}
-    				$result['temperature'] = $temp;
-    				$dew = (float)$matches[2];
+				$result['temperature'] = $temp;
+				$dew = (float)$matches[2];
 				if ($matches[2]{0} == 'M') {
 					$dew = ((float)substr($matches[2], 1)) * -1;
 				}
 				$result['dew'] = $dew;
-    			}
-    			// QNH
-    			if (preg_match('#^(A|Q)([0-9]{4})$#', $piece, $matches)) {
-    			// #^(Q|A)(////|[0-9]{4})( )#
-    				if ($matches[1] == 'Q') {
-    					// hPa
-    					$result['QNH'] = $matches[2];
-    				} else {
-    					// inHg
-    					$result['QNH'] = round(($matches[2] / 100)*33.86389,2);
+			}
+			// QNH
+			if (preg_match('#^(A|Q)([0-9]{4})$#', $piece, $matches)) {
+			// #^(Q|A)(////|[0-9]{4})( )#
+				if ($matches[1] == 'Q') {
+					// hPa
+					$result['QNH'] = $matches[2];
+				} else {
+					// inHg
+					$result['QNH'] = round(($matches[2] / 100)*33.86389,2);
 				}
-    				/*
+				/*
     				$result['QNH'] = $matches[1] == 'Q' ? $matches[2] : ($matches[2] / 100);
     				$result['QNH_format'] = $matches[1] == 'Q' ? 'hPa' : 'inHg';
     				*/
-    			}
+			}
                      /*
     			// Wind Direction
     			if (preg_match('#^([0-9]{3})V([0-9]{3})$#', $piece, $matches)) {
@@ -166,8 +165,8 @@ class METAR {
     			}
     			*/
     			// Visibility
-    			if (preg_match('#^([0-9]{4})|(([0-9]{1,4})SM)$#', $piece, $matches)) {
-    				if (isset($matches[3]) && strlen($matches[3]) > 0) {
+			if (preg_match('#^([0-9]{4})|(([0-9]{1,4})SM)$#', $piece, $matches)) {
+				if (isset($matches[3]) && strlen($matches[3]) > 0) {
 					$result['visibility'] = (float)$matches[3] * 1609.34;
 				} else {
 					if ($matches[1] == '9999') {
@@ -180,28 +179,28 @@ class METAR {
 					$result['visibility'] = '> 10000';
 					$result['weather'] = "CAVOK";
 				}
-    			}
-    			// Cloud Coverage
-    			if (preg_match('#^(SKC|CLR|FEW|SCT|BKN|OVC|VV)([0-9]{3})(CB|TCU|CU|CI)?$#', $piece, $matches)) {
-    				//$this->addCloudCover($matches[1], ((float)$matches[2]) * 100, isset($matches[3]) ? $matches[3] : '');
-    				$type = $matches[1];
-    				$cloud = array();
-    				if ($type == 'SKC') $cloud['type'] = 'No cloud/Sky clear';
-    				elseif ($type == 'CLR') $cloud['type'] = 'No cloud below 12,000ft (3700m)';
-    				elseif ($type == 'NSC') $cloud['type'] = 'No significant cloud';
-    				elseif ($type == 'FEW') $cloud['type'] = 'Few';
-    				elseif ($type == 'SCT') $cloud['type'] = 'Scattered';
-    				elseif ($type == 'BKN') $cloud['type'] = 'Broken';
-    				elseif ($type == 'OVC') $cloud['type'] = 'Overcast/Full cloud coverage';
-    				elseif ($type == 'VV') $cloud['type'] = 'Vertical visibility';
-    				$cloud['type_code'] = $type;
-    				$cloud['level'] = round(((float)$matches[2]) * 100 * 0.3048);
-    				$cloud['significant'] = isset($matches[3]) ? $matches[3] : '';
-    				$result['cloud'][] = $cloud;
-    			}
-    			// RVR
-    			 if (preg_match('#^(R.+)/([M|P])?(\d{4})(?:V(\d+)|[UDN])?(FT)?$#', $piece, $matches)) {
-    				$rvr = array();
+			}
+			// Cloud Coverage
+			if (preg_match('#^(SKC|CLR|FEW|SCT|BKN|OVC|VV)([0-9]{3})(CB|TCU|CU|CI)?$#', $piece, $matches)) {
+				//$this->addCloudCover($matches[1], ((float)$matches[2]) * 100, isset($matches[3]) ? $matches[3] : '');
+				$type = $matches[1];
+				$cloud = array();
+				if ($type == 'SKC') $cloud['type'] = 'No cloud/Sky clear';
+				elseif ($type == 'CLR') $cloud['type'] = 'No cloud below 12,000ft (3700m)';
+				elseif ($type == 'NSC') $cloud['type'] = 'No significant cloud';
+				elseif ($type == 'FEW') $cloud['type'] = 'Few';
+				elseif ($type == 'SCT') $cloud['type'] = 'Scattered';
+				elseif ($type == 'BKN') $cloud['type'] = 'Broken';
+				elseif ($type == 'OVC') $cloud['type'] = 'Overcast/Full cloud coverage';
+				elseif ($type == 'VV') $cloud['type'] = 'Vertical visibility';
+				$cloud['type_code'] = $type;
+				$cloud['level'] = round(((float)$matches[2]) * 100 * 0.3048);
+				$cloud['significant'] = isset($matches[3]) ? $matches[3] : '';
+				$result['cloud'][] = $cloud;
+			}
+			// RVR
+			if (preg_match('#^(R.+)/([M|P])?(\d{4})(?:V(\d+)|[UDN])?(FT)?$#', $piece, $matches)) {
+				$rvr = array();
 				$rvr['runway'] = $matches[1];
 				$rvr['assessment'] = $matches[2];
 				$rvr['rvr'] = $matches[3];
@@ -209,22 +208,18 @@ class METAR {
 				$rvr['unit'] = array_key_exists(5,$matches) ? $matches[5] : '';
 				$result['RVR'] = $rvr;
 			}
-    			
-    			//if (preg_match('#^(R[A-Z0-9]{2,3})/([0-9]{4})(V([0-9]{4}))?(FT)?$#', $piece, $matches)) {
-    			if (preg_match('#^R(\d{2}[LRC]?)/([\d/])([\d/])([\d/]{2})([\d/]{2})$#', $piece, $matches)) {
-    				//print_r($matches);
-    				// https://github.com/davidmegginson/metar-taf/blob/master/Metar.php
-    				$result['RVR']['runway'] = $matches[1];
-        			$result['RVR']['deposits'] = $matches[2];
-        			$result['RVR']['extent'] = $matches[3];
-        			$result['RVR']['depth'] = $matches[4];
-        			$result['RVR']['friction'] = $matches[5];
-    			}
-    			if (preg_match('#^(R[A-Z0-9]{2,3})/([0-9]{4})(V([0-9]{4}))?(FT)?$#', $piece, $matches)) {
-    				//echo $piece;
-    				//print_r($matches);
-    				if (isset($matches[5])) $range = array('exact' => (float)$matches[2], 'unit' => $matches[5] ? 'FT' : 'M');
-    				else $range = array('exact' => (float)$matches[2], 'unit' => 'M');
+			//if (preg_match('#^(R[A-Z0-9]{2,3})/([0-9]{4})(V([0-9]{4}))?(FT)?$#', $piece, $matches)) {
+			if (preg_match('#^R(\d{2}[LRC]?)/([\d/])([\d/])([\d/]{2})([\d/]{2})$#', $piece, $matches)) {
+				// https://github.com/davidmegginson/metar-taf/blob/master/Metar.php
+				$result['RVR']['runway'] = $matches[1];
+				$result['RVR']['deposits'] = $matches[2];
+				$result['RVR']['extent'] = $matches[3];
+				$result['RVR']['depth'] = $matches[4];
+				$result['RVR']['friction'] = $matches[5];
+			}
+			if (preg_match('#^(R[A-Z0-9]{2,3})/([0-9]{4})(V([0-9]{4}))?(FT)?$#', $piece, $matches)) {
+				if (isset($matches[5])) $range = array('exact' => (float)$matches[2], 'unit' => $matches[5] ? 'FT' : 'M');
+				else $range = array('exact' => (float)$matches[2], 'unit' => 'M');
 				if (isset($matches[3])) {
 					$range = Array(
 					    'from' => (float)$matches[2],
@@ -234,9 +229,9 @@ class METAR {
 				}
 				$result['RVR'] = $matches[1];
 				$result['RVR_range'] = $range;
-    			}
-    			// Weather
-    			if (preg_match($regWeather, $piece, $matches)) {
+			}
+			// Weather
+			if (preg_match($regWeather, $piece, $matches)) {
 				$text = Array();
 				switch ($matches[1]) {
 					case '+':
@@ -259,35 +254,34 @@ class METAR {
 				}
 				if (!isset($result['weather'])) $result['weather'] = implode(' ', $text);
 				else $result['weather'] = $result['weather'].' / '.implode(' ', $text);
-    			}
-    		}
-    		return $result;
-        
-        }
-        
-	public function getMETAR($icao) {
-    		global $globalMETARcycle, $globalDBdriver;
-    		if (isset($globalMETARcycle) && $globalMETARcycle) {
-            		$query = "SELECT * FROM metar WHERE metar_location = :icao";
-                } else {
-            		if ($globalDBdriver == 'mysql') $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 10 HOUR) LIMIT 1";
-            		else $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= now() AT TIMEZONE 'UTC' - '10 HOUR'->INTERVAL LIMIT 0,1";
-                }
-                $query_values = array(':icao' => $icao);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if ((!isset($globalMETARcycle) || $globalMETARcycle === false) && count($all) == 0) {
-            		$all = $this->downloadMETAR($icao);
-                }
-                return $all;
+			}
+		}
+		return $result;
         }
 
-       public function addMETAR($location,$metar,$date) {
+	public function getMETAR($icao) {
+		global $globalMETARcycle, $globalDBdriver;
+		if (isset($globalMETARcycle) && $globalMETARcycle) {
+			$query = "SELECT * FROM metar WHERE metar_location = :icao";
+		} else {
+			if ($globalDBdriver == 'mysql') $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 10 HOUR) LIMIT 1";
+			else $query = "SELECT * FROM metar WHERE metar_location = :icao AND metar_date >= now() AT TIMEZONE 'UTC' - '10 HOUR'->INTERVAL LIMIT 0,1";
+		}
+		$query_values = array(':icao' => $icao);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if ((!isset($globalMETARcycle) || $globalMETARcycle === false) && count($all) == 0) {
+			$all = $this->downloadMETAR($icao);
+		}
+		return $all;
+	}
+
+	public function addMETAR($location,$metar,$date) {
 		global $globalDBdriver;
 		$date = date('Y-m-d H:i:s',strtotime($date));
 		if ($globalDBdriver == 'mysql') {
@@ -295,106 +289,98 @@ class METAR {
 		} else {
 			$query = "UPDATE metar SET metar_date = :date, metar = metar WHERE metar_location = :location;INSERT INTO metar (metar_location,metar_date,metar) SELECT :location,:date,:metar WHERE NOT EXISTS (SELECT 1 FROM metar WHERE metar_location = :location);";
 		}
-                $query_values = array(':location' => $location,':date' => $date,':metar' => utf8_encode($metar));
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-        }
+		$query_values = array(':location' => $location,':date' => $date,':metar' => utf8_encode($metar));
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
 
-       public function deleteMETAR($id) {
-                $query = "DELETE FROM metar WHERE id = :id";
-                $query_values = array(':id' => $id);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-        }
-       public function deleteAllMETARLocation() {
-                $query = "DELETE FROM metar";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-        }
-        
-        public function addMETARCycle() {
-    		global $globalDebug, $globalIVAO, $globalTransaction;
-    		if (isset($globalDebug) && $globalDebug) echo "Downloading METAR cycle...";
-    		date_default_timezone_set("UTC");
-    		$Common = new Common();
-    		if (isset($globalIVAO) && $globalIVAO) {
-        		//$cycle = $Common->getData('http://wx.ivao.aero/metar.php');
+	public function deleteMETAR($id) {
+		$query = "DELETE FROM metar WHERE id = :id";
+		$query_values = array(':id' => $id);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
+	public function deleteAllMETARLocation() {
+		$query = "DELETE FROM metar";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
+	public function addMETARCycle() {
+		global $globalDebug, $globalIVAO, $globalTransaction;
+		if (isset($globalDebug) && $globalDebug) echo "Downloading METAR cycle...";
+		date_default_timezone_set("UTC");
+		$Common = new Common();
+		if (isset($globalIVAO) && $globalIVAO) {
 			$Common->download('http://wx.ivao.aero/metar.php',dirname(__FILE__).'/../install/tmp/ivaometar.txt');
-    			$handle = fopen(dirname(__FILE__).'/../install/tmp/ivaometar.txt',"r");
-    		} else {
-			//$cycle = $Common->getData('http://tgftp.nws.noaa.gov/data/observations/metar/cycles/'.date('H').'Z.TXT');
+			$handle = fopen(dirname(__FILE__).'/../install/tmp/ivaometar.txt',"r");
+		} else {
 			$Common->download('http://tgftp.nws.noaa.gov/data/observations/metar/cycles/'.date('H').'Z.TXT',dirname(__FILE__).'/../install/tmp/'.date('H').'Z.TXT');
-    			$handle = fopen(dirname(__FILE__).'/../install/tmp/'.date('H').'Z.TXT',"r");
-    		}
-    		if ($handle) {
+			$handle = fopen(dirname(__FILE__).'/../install/tmp/'.date('H').'Z.TXT',"r");
+		}
+		if ($handle) {
 			if (isset($globalDebug) && $globalDebug) echo "Done - Updating DB...";
 			$date = '';
-    			//foreach(explode("\n",$cycle) as $line) {
-    			if ($globalTransaction) $this->db->beginTransaction();
-	    		while(($line = fgets($handle,4096)) !== false) {
+			if ($globalTransaction) $this->db->beginTransaction();
+			while(($line = fgets($handle,4096)) !== false) {
 				if (preg_match('#^([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{2}):([0-9]{2})$#',$line)) {
 					$date = $line;
-    				} elseif ($line != '') {
-    				    //$this->parse($line);
-    				    if ($date == '') $date = date('Y/m/d H:m');
-        			    $pos = 0;
-        			    $pieces = preg_split('/\s/',$line);
-        			    if ($pieces[0] == 'METAR') $pos++;
-        			    if (strlen($pieces[$pos]) != 4) $pos++;
-		        	    $location = $pieces[$pos];
-        	        	    echo $this->addMETAR($location,$line,$date);
-    				}
-    			}
-    			fclose($handle);
-    			if ($globalTransaction) $this->db->commit();
-    		}
-    		if (isset($globalDebug) && $globalDebug) echo "Done\n";
-        
-        }
-        public function downloadMETAR($icao) {
-    		global $globalMETARurl;
-    		if ($globalMETARurl == '') return array();
-    		date_default_timezone_set("UTC");
-    		$Common = new Common();
-    		$url = str_replace('{icao}',$icao,$globalMETARurl);
-    		$cycle = $Common->getData($url);
-    		$date = '';
-    		foreach(explode("\n",$cycle) as $line) {
-    			if (preg_match('#^([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{2}):([0-9]{2})$#',$line)) {
-    				//echo "date : ".$line."\n";
-    				$date = $line;
-    			} 
-    			if ($line != '') {
-    			    //$this->parse($line);
-    			    //echo $line;
-    			    if ($date == '') $date = date('Y/m/d H:m');
-    			    $pos = 0;
-    			    $pieces = preg_split('/\s/',$line);
-    			    if ($pieces[0] == 'METAR') $pos++;
-    			    if (strlen($pieces[$pos]) != 4) $pos++;
-	        	    $location = $pieces[$pos];
-	        	    if (strlen($location == 4)) {
-	        		$this->addMETAR($location,$line,$date);
-	        		return array('0' => array('metar_date' => $date, 'metar_location' => $location, 'metar' => $line));
-	        	    } else return array();
-    			}
-    			//echo $line."\n";
-    		}
-    		return array();
-        
-        }
+				} elseif ($line != '') {
+					if ($date == '') $date = date('Y/m/d H:m');
+					$pos = 0;
+					$pieces = preg_split('/\s/',$line);
+					if ($pieces[0] == 'METAR') $pos++;
+					if (strlen($pieces[$pos]) != 4) $pos++;
+					$location = $pieces[$pos];
+					echo $this->addMETAR($location,$line,$date);
+				}
+			}
+			fclose($handle);
+			if ($globalTransaction) $this->db->commit();
+		}
+		if (isset($globalDebug) && $globalDebug) echo "Done\n";
+	}
+
+	public function downloadMETAR($icao) {
+		global $globalMETARurl;
+		if ($globalMETARurl == '') return array();
+		date_default_timezone_set("UTC");
+		$Common = new Common();
+		$url = str_replace('{icao}',$icao,$globalMETARurl);
+		$cycle = $Common->getData($url);
+		$date = '';
+		foreach(explode("\n",$cycle) as $line) {
+			if (preg_match('#^([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{2}):([0-9]{2})$#',$line)) {
+				$date = $line;
+			} 
+			if ($line != '') {
+				if ($date == '') $date = date('Y/m/d H:m');
+				$pos = 0;
+				$pieces = preg_split('/\s/',$line);
+				if ($pieces[0] == 'METAR') $pos++;
+				if (strlen($pieces[$pos]) != 4) $pos++;
+				$location = $pieces[$pos];
+				if (strlen($location == 4)) {
+					$this->addMETAR($location,$line,$date);
+					return array('0' => array('metar_date' => $date, 'metar_location' => $location, 'metar' => $line));
+				} else return array();
+			}
+		}
+		return array();
+	}
 }
 /*
 $METAR = new METAR();

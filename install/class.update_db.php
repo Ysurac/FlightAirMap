@@ -1190,25 +1190,20 @@ class update_db {
         }
 
 	public static function routes_fam() {
-		global $tmp_dir, $globalTransaction;
+		global $tmp_dir, $globalTransaction, $globalDebug;
 		$query = "DELETE FROM routes WHERE Source = '' OR Source = :source";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute(array(':source' => 'website_fam'));
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-
-		
-		//update_db::unzip($out_file);
+			$sth->execute(array(':source' => 'website_fam'));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
 		$delimiter = "\t";
 		$Connection = new Connection();
 		if (($handle = fopen($tmp_dir.'routes.tsv', 'r')) !== FALSE)
 		{
 			$i = 0;
-			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
-			//$Connection->db->beginTransaction();
 			if ($globalTransaction) $Connection->db->beginTransaction();
 			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
@@ -1218,7 +1213,7 @@ class update_db {
 						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':CallSign' => $data[0],':Operator_ICAO' => $data[1],':FromAirport_ICAO' => $data[2],':FromAirport_Time' => $data[3], ':ToAirport_ICAO' => $data[4],':ToAirport_Time' => $data[5],':RouteStop' => $data[6],':source' => 'website_fam'));
 					} catch(PDOException $e) {
-						return "error : ".$e->getMessage();
+						if ($globalDebug) echo "error: ".$e->getMessage()." - data: ".implode(',',$data);
 					}
 				}
 				$i++;

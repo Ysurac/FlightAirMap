@@ -8,14 +8,8 @@ if (!function_exists("gettext")) {
 	if (isset($_COOKIE['language']) && $_COOKIE['language'] != 'en_GB' && (isset($globalTranslate) && $globalTranslate)) {
 		$Language = new Language();
 		$lang = $_COOKIE['language'];
-		//setlocale(LC_MESSAGES, $_COOKIE['language']);
 
 		putenv("LC_ALL=$lang");
-/*
-		setlocale(LC_MESSAGES, $lang);
-		setlocale(LC_ALL, $lang);
-		setlocale(LC_TIME, "");
-		*/
 		setlocale(LC_ALL, $Language->getLocale($lang));
 		bindtextdomain("fam", dirname(__FILE__).'/../locale');
 		textdomain("fam");

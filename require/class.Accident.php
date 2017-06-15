@@ -12,8 +12,6 @@ class Accident {
 		$this->db = $Connection->db();
 	}
 
-
-	
 	public function get() {
 		$query = 'SELECT DISTINCT registration FROM accidents ORDER BY date DESC';
 		$sth = $this->db->prepare($query);
@@ -21,7 +19,7 @@ class Accident {
 		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $result;
 	}
-	
+
 	/**
 	* Get Accidents data from DB
 	* @param String $limit Limit
@@ -98,7 +96,6 @@ class Accident {
 				$query_values = array();
 			}
 		}
-
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -180,7 +177,7 @@ class Accident {
 		}
 		else return array();
 	}
-	
+
 	/*
 	* Get fatalities by year
 	* @return Array number of fatalities by year
@@ -216,7 +213,7 @@ class Accident {
 		}
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
-	
+
 	/*
 	* Import csv accidents file into the DB
 	* @param String $file filename of the file to import

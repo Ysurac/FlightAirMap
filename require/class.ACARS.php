@@ -400,7 +400,7 @@ class ACARS {
 				AB7757,
 				DABNK,10100,  7100,02:46, 200, 44068,52.4, 77000, 62500, 66000,3, 4,
 				*/
-//    	    $n = sscanf($message, "%*[0-9A-Z],,\n%*[0-9A-Z],%*[0-9A-Z],%4s,%4s,.%*6s,\n%*4[A-Z],\n%[0-9A-Z],", $dair, $darr, $aident);
+				// $n = sscanf($message, "%*[0-9A-Z],,\n%*[0-9A-Z],%*[0-9A-Z],%4s,%4s,.%*6s,\n%*4[A-Z],\n%[0-9A-Z],", $dair, $darr, $aident);
 				$dair = '';
 				$darr = '';
 				$aident = '';
@@ -425,7 +425,6 @@ class ACARS {
 				if ($n == 5) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 					//$icao = $Translation->checkTranslation($ident);
-
 					//$Schedule->addSchedule($icao,$dair,'',$darr,'','ACARS');
 					$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
 					$found = true;
@@ -441,7 +440,6 @@ class ACARS {
 				if ($n == 3) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 					//$icao = $Translation->checkTranslation($ident);
-
 					//$Schedule->addSchedule($icao,$dair,'',$darr,'','ACARS');
 					$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
 					$found = true;
@@ -457,7 +455,6 @@ class ACARS {
 				if ($n == 3) {
 					if ($globalDebug) echo 'airport depart : '.$dair.' - airport arrival : '.$darr."\n";
 					//$icao = $Translation->checkTranslation($ident);
-
 					//$Schedule->addSchedule($icao,$dair,'',$darr,'','ACARS');
 					$decode = array('Departure airport' => $dair, 'Arrival airport' => $darr);
 					$found = true;
@@ -471,7 +468,6 @@ class ACARS {
 					$found = true;
 				}
 			}
-
 			if ($label == 'H1') {
 				if (preg_match('/^#CFBFLR/',$message) || preg_match('/^#CFBWRN/',$message)) {
 					$decode = array_merge(array('Message nature' => 'Equipment failure'),$decode);
@@ -708,7 +704,6 @@ class ACARS {
 
 			$title = $this->getTitlefromLabel($label);
 			if ($title != '') $decode = array_merge(array('Message title' => $title),$decode);
-
 			/*
 			// Business jets always use GS0001
 			if ($ident != 'GS0001') $info = $this->addModeSData($ident,$registration,$icao,$airicao,$latitude,$longitude);
@@ -720,10 +715,8 @@ class ACARS {
 			*/
 			$result['decode'] = $decode;
 //		}
-		
 		return $result;
 	}
-
 
 	/**
 	* Add ACARS data
@@ -736,10 +729,8 @@ class ACARS {
 		$Image = new Image($this->db);
 		$Schedule = new Schedule($this->db);
 		$Translation = new Translation($this->db);
-
 		$message = $this->parse($data);
 		if (isset($message['registration']) && $message['registration'] != '' && $message['ident'] != '' && $message['registration'] != '!') {
-		
 			$ident = (string)$message['ident'];
 			$label = $message['label'];
 			$block_id = $message['block_id'];
@@ -747,7 +738,6 @@ class ACARS {
 			$msg = $message['message'];
 			$decode = $message['decode'];
 			$registration = (string)$message['registration'];
-		
 			if (isset($decode['latitude'])) $latitude = $decode['latitude'];
 			else $latitude = '';
 			if (isset($decode['longitude'])) $longitude = $decode['longitude'];
@@ -756,16 +746,13 @@ class ACARS {
 			else $airicao = '';
 			if (isset($decode['icao'])) $icao = $decode['icao'];
 			else $icao = $Translation->checkTranslation($ident);
-		
 			$image_array = $Image->getSpotterImage($registration);
 			if (!isset($image_array[0]['registration'])) {
 				$Image->addSpotterImage($registration);
 			}
-		
 			// Business jets always use GS0001
 			if ($ident != 'GS0001') $info = $this->addModeSData($ident,$registration,$icao,$airicao,$latitude,$longitude);
 			if ($globalDebug && isset($info) && $info != '') echo $info;
-
 			if (count($decode) > 0) $decode_json = json_encode($decode);
 			else $decode_json = '';
 			if (isset($decode['Departure airport']) && isset($decode['Departure hour']) && isset($decode['Arrival airport']) && isset($decode['Arrival hour'])) {
@@ -773,11 +760,9 @@ class ACARS {
 			} elseif (isset($decode['Departure airport']) && isset($decode['Arrival airport'])) {
 				$Schedule->addSchedule($icao,$decode['Departure airport'],'',$decode['Arrival airport'],'','ACARS');
 			}
-
 			$result = $this->addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$msg,$decode_json);
 			if (!isset($globalACARSArchive)) $globalACARSArchive = array('10','80','81','82','3F');
 			if ($result && in_array($label,$globalACARSArchive)) $this->addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$msg,$decode_json);
-
 			if ($globalDebug && count($decode) > 0) {
 				echo "Human readable data : ".implode(' - ',$decode)."\n";
 			}
@@ -800,7 +785,6 @@ class ACARS {
 		if ($label != 'SQ' && $label != 'Q0' && $label != '_d' && $message != '') {
 			$Connection = new Connection($this->db);
 			$this->db = $Connection->db;
-
 			if ($globalDebug) echo "Test if not already in Live ACARS table...";
 			$query_test = "SELECT COUNT(*) as nb FROM acars_live WHERE ident = :ident AND registration = :registration AND message = :message";
 			$query_test_values = array(':ident' => $ident,':registration' => $registration, ':message' => $message);
@@ -815,7 +799,6 @@ class ACARS {
 				$query = "INSERT INTO acars_live (ident,registration,label,block_id,msg_no,message,decode,date) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode,:date)";
 				$query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode,':date' => date("Y-m-d H:i:s"));
 				try {
-
 					$sth = $this->db->prepare($query);
 					$sth->execute($query_values);
 				} catch(PDOException $e) {
@@ -849,7 +832,6 @@ class ACARS {
 			    	    $query_test = "SELECT COUNT(*) as nb FROM acars_archive WHERE ident = :ident AND registration = :registration AND message = :message";
 			    	    $query_test_values = array(':ident' => $ident,':registration' => $registration, ':message' => $message);
 			    	    try {
-
 			        	$stht = Connection->$db->prepare($query_test);
 			            	$stht->execute($query_test_values);
 			    	    } catch(PDOException $e) {
@@ -861,13 +843,11 @@ class ACARS {
 			$query = "INSERT INTO acars_archive (ident,registration,label,block_id,msg_no,message,decode) VALUES (:ident,:registration,:label,:block_id,:msg_no,:message,:decode)";
 			$query_values = array(':ident' => $ident,':registration' => $registration, ':label' => $label,':block_id' => $block_id, ':msg_no' => $msg_no, ':message' => $message, ':decode' => $decode);
 			try {
-
 				$sth = $this->db->prepare($query);
 				$sth->execute($query_values);
 			} catch(PDOException $e) {
 				return "error : ".$e->getMessage();
 			}
-//    	    }
 			if ($globalDebug) echo "Done\n";
 		}
 	}
@@ -884,7 +864,6 @@ class ACARS {
 		$query = "SELECT * FROM acars_label WHERE label = :label";
 		$query_values = array(':label' => $label);
 		try {
-
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
@@ -905,7 +884,6 @@ class ACARS {
 		$query = "SELECT * FROM acars_label ORDER BY title";
 		$query_values = array();
 		try {
-
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
@@ -927,7 +905,6 @@ class ACARS {
 		$query = "SELECT * FROM acars_live WHERE ident = :ident ORDER BY acars_live_id DESC";
 		$query_values = array(':ident' => $ident);
 		try {
-
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
@@ -955,19 +932,13 @@ class ACARS {
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
-
 			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
 			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
-
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-//		$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
 				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
-
-		//$query = "SELECT *, name as airline_name FROM acars_live a, spotter_image i, airlines l WHERE i.registration = a.registration AND l.icao = a.airline_icao AND l.icao != '' ORDER BY acars_live_id DESC LIMIT 25";
-
 		if ($label != '') {
 			$query = "SELECT * FROM acars_live WHERE label = :label ORDER BY acars_live_id DESC".$limit_query;
 			$query_values = array(':label' => $label);
@@ -976,7 +947,6 @@ class ACARS {
 			$query_values = array();
 		}
 		try {
-
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
@@ -999,11 +969,9 @@ class ACARS {
 					if (filter_var(substr($row['ident'],2),FILTER_VALIDATE_INT,array("flags"=>FILTER_FLAG_ALLOW_OCTAL))) $icao = $row['ident'];
 					else $icao = 'AFR'.ltrim(substr($row['ident'],2),'0');
 				} else $icao = $identicao[0]['icao'].ltrim(substr($row['ident'],2),'0');
-
 				$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
 			} else $icao = $row['ident'];
 			$icao = $Translation->checkTranslation($icao,false);
-
 			$decode = json_decode($row['decode'],true);
 			$found = false;
 			if ($decode != '' && array_key_exists('Departure airport',$decode)) {
@@ -1050,25 +1018,17 @@ class ACARS {
 		$Spotter = new Spotter($this->db);
 		$Translation = new Translation($this->db);
 		date_default_timezone_set('UTC');
-
 		$limit_query = '';
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
-
 			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
 			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
-
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
 				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
-
-
-		//$query = "SELECT *, name as airline_name FROM acars_live a, spotter_image i, airlines l WHERE i.registration = a.registration AND l.icao = a.airline_icao AND l.icao != '' ORDER BY acars_live_id DESC LIMIT 25";
-
 		if ($label != '') {
 			if ($label == 'undefined') {
 				$query = "SELECT * FROM acars_archive WHERE label NOT IN (SELECT label FROM acars_label) ORDER BY acars_archive_id DESC".$limit_query;
@@ -1081,10 +1041,7 @@ class ACARS {
 			$query = "SELECT * FROM acars_archive ORDER BY acars_archive_id DESC".$limit_query;
 			$query_values = array();
 		}
-
-
 		try {
-
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
@@ -1111,8 +1068,6 @@ class ACARS {
 				$data = array_merge($data,array('airline_icao' => $identicao[0]['icao'],'airline_name' => $identicao[0]['name']));
 			} else $icao = $row['ident'];
 			$icao = $Translation->checkTranslation($icao);
-
-
 			$decode = json_decode($row['decode'],true);
 			$found = false;
 			if ($decode != '' && array_key_exists('Departure airport',$decode)) {
@@ -1133,7 +1088,6 @@ class ACARS {
 				}
 			}
 			if ($found) $row['decode'] = json_encode($decode);
-
 			$data = array_merge($data,array('registration' => $row['registration'],'message' => $row['message'], 'date' => $row['date'], 'ident' => $icao, 'decode' => $row['decode']));
 			$result[] = $data;
 			$i++;
@@ -1165,7 +1119,6 @@ class ACARS {
 			if ($globalDebug) echo "Ident or registration null, exit\n";
 			return '';
 		}
-
 		$registration = str_replace('.','',$registration);
 		$ident = $Translation->ident2icao($ident);
 		// Check if a flight with same registration is flying now, if ok check if callsign = name in ACARS, else add it to translation
@@ -1173,7 +1126,6 @@ class ACARS {
 		$querysi = "SELECT ident FROM spotter_live s,aircraft_modes a WHERE a.ModeS = s.ModeS AND a.Registration = :registration AND s.format_source <> 'ACARS' LIMIT 1";
 		$querysi_values = array(':registration' => $registration);
 		try {
-
 			$sthsi = $this->db->prepare($querysi);
 			$sthsi->execute($querysi_values);
 		} catch(PDOException $e) {
@@ -1182,7 +1134,6 @@ class ACARS {
 		}
 		$resultsi = $sthsi->fetch(PDO::FETCH_ASSOC);
 		$sthsi->closeCursor();
-		//print_r($resultsi);
 		if (count($resultsi) > 0 && $resultsi['ident'] != $ident && $resultsi['ident'] != '') {
 			$Translation = new Translation($this->db);
 			$trans_ident = $Translation->getOperator($resultsi['ident']);
@@ -1209,11 +1160,9 @@ class ACARS {
 			}
 		}
 		if ($globalDebug) echo 'Done'."\n";
-
 		$query = "SELECT flightaware_id, ModeS FROM spotter_output WHERE ident = :ident AND format_source <> 'ACARS' ORDER BY spotter_id DESC LIMIT 1";
 		$query_values = array(':ident' => $icao);
 		try {
-
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
@@ -1222,7 +1171,6 @@ class ACARS {
 		}
 		$result = $sth->fetch(PDO::FETCH_ASSOC);
 		$sth->closeCursor();
-		//print_r($result);
 		if (isset($result['flightaware_id'])) {
 			if (isset($result['ModeS'])) $ModeS = $result['ModeS'];
 			else $ModeS = '';
@@ -1235,7 +1183,6 @@ class ACARS {
 				$queryc = "SELECT * FROM aircraft_modes WHERE ModeS = :modes LIMIT 1";
 				$queryc_values = array(':modes' => $ModeS);
 				try {
-
 					$sthc = $this->db->prepare($queryc);
 					$sthc->execute($queryc_values);
 				} catch(PDOException $e) {
@@ -1249,7 +1196,6 @@ class ACARS {
 					$queryi = "INSERT INTO aircraft_modes (ModeS,ModeSCountry,Registration,ICAOTypeCode,Source) VALUES (:ModeS,:ModeSCountry,:Registration, :ICAOTypeCode,'ACARS')";
 					$queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration, ':ICAOTypeCode' => $ICAOTypeCode);
 					try {
-
 						$sthi = $this->db->prepare($queryi);
 						$sthi->execute($queryi_values);
 					} catch(PDOException $e) {
@@ -1266,7 +1212,6 @@ class ACARS {
 						$queryi_values = array(':ModeS' => $ModeS,':ModeSCountry' => $country,':Registration' => $registration);
 					}
 					try {
-
 						$sthi = $this->db->prepare($queryi);
 						$sthi->execute($queryi_values);
 					} catch(PDOException $e) {
@@ -1284,7 +1229,6 @@ class ACARS {
 				    $queryi_values = array(':Registration' => $registration,':ident' => $icao);
 				}
 				try {
-
 				    $sthi = $this->db->prepare($queryi);
 					    $sthi->execute($queryi_values);
 				} catch(PDOException $e) {
@@ -1310,14 +1254,12 @@ class ACARS {
 					$queryi_values = array(':Registration' => $registration,':ident' => $icao);
 				}
 				try {
-
 					$sthi = $this->db->prepare($queryi);
 					$sthi->execute($queryi_values);
 				} catch(PDOException $e) {
 					if ($globalDebug) echo $e->getMessage();
 					return "error : ".$e->getMessage();
 				}
-
 			}
 		} else {
 			if ($globalDebug) echo " Can't find ModeS in spotter_output - ";

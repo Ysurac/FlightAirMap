@@ -8,63 +8,62 @@ class ATC {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db;
 	}
-	
-	
-    /**
-    * Get SQL query part for filter used
-    * @param Array $filter the filter
-    * @return Array the SQL part
-    */
-    public function getFilter($filter = array(),$where = false,$and = false) {
-	global $globalFilter, $globalStatsFilters, $globalFilterName;
-	if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
-	    if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
-		foreach($globalStatsFilters[$globalFilterName] as $source) {
-			if (isset($source['source'])) $filter['source'][] = $source['source'];
-		}
-	    } else {
-		$filter = $globalStatsFilters[$globalFilterName];
-	    }
-	}
-	if (is_array($globalFilter)) $filter = array_merge($filter,$globalFilter);
-	$filter_query_join = '';
-	$filter_query_where = '';
-	if (isset($filter['source']) && !empty($filter['source'])) {
-	    $filter_query_where = " WHERE format_source IN ('".implode("','",$filter['source'])."')";
-	}
-	if ($filter_query_where == '' && $where) $filter_query_where = ' WHERE';
-	elseif ($filter_query_where != '' && $and) $filter_query_where .= ' AND';
-	$filter_query = $filter_query_join.$filter_query_where;
-	return $filter_query;
-    }
 
-       public function getAll() {
-    		$filter_query = $this->getFilter(array());
-                $query = "SELECT * FROM atc".$filter_query;
-                $query_values = array();
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
-        }
+	/**
+	* Get SQL query part for filter used
+	* @param Array $filter the filter
+	* @return Array the SQL part
+	*/
+	public function getFilter($filter = array(),$where = false,$and = false) {
+		global $globalFilter, $globalStatsFilters, $globalFilterName;
+		if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
+			if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
+				foreach($globalStatsFilters[$globalFilterName] as $source) {
+					if (isset($source['source'])) $filter['source'][] = $source['source'];
+				}
+			} else {
+				$filter = $globalStatsFilters[$globalFilterName];
+			}
+		}
+		if (is_array($globalFilter)) $filter = array_merge($filter,$globalFilter);
+		$filter_query_join = '';
+		$filter_query_where = '';
+		if (isset($filter['source']) && !empty($filter['source'])) {
+			$filter_query_where = " WHERE format_source IN ('".implode("','",$filter['source'])."')";
+		}
+		if ($filter_query_where == '' && $where) $filter_query_where = ' WHERE';
+		elseif ($filter_query_where != '' && $and) $filter_query_where .= ' AND';
+		$filter_query = $filter_query_join.$filter_query_where;
+		return $filter_query;
+	}
+
+	public function getAll() {
+		$filter_query = $this->getFilter(array());
+		$query = "SELECT * FROM atc".$filter_query;
+		$query_values = array();
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 
 	public function getById($id) {
-    		$filter_query = $this->getFilter(array(),true);
-                $query = "SELECT * FROM atc".$filter_query." atc_id = :id";
-                $query_values = array(':id' => $id);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
-        }
+		$filter_query = $this->getFilter(array(),true);
+		$query = "SELECT * FROM atc".$filter_query." atc_id = :id";
+		$query_values = array(':id' => $id);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 
 	public function getByIdent($ident,$format_source = '') {
 		$filter_query = $this->getFilter(array(),true);
@@ -117,53 +116,53 @@ class ATC {
 		}
 	}
 
-       public function deleteById($id) {
-                $query = "DELETE FROM atc WHERE atc_id = :id";
-                $query_values = array(':id' => $id);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-        }
+	public function deleteById($id) {
+		$query = "DELETE FROM atc WHERE atc_id = :id";
+		$query_values = array(':id' => $id);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
 
-       public function deleteByIdent($ident,$format_source) {
-                $query = "DELETE FROM atc WHERE ident = :ident AND format_source = :format_source";
-                $query_values = array(':ident' => $ident,':format_source' => $format_source);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-        }
+	public function deleteByIdent($ident,$format_source) {
+		$query = "DELETE FROM atc WHERE ident = :ident AND format_source = :format_source";
+		$query_values = array(':ident' => $ident,':format_source' => $format_source);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
 
-       public function deleteAll() {
-                $query = "DELETE FROM atc";
-                $query_values = array();
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-        }
+	public function deleteAll() {
+		$query = "DELETE FROM atc";
+		$query_values = array();
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
 
 	public function deleteOldATC() {
-                global $globalDBdriver;
-                if ($globalDBdriver == 'mysql') {
-                        $query  = "DELETE FROM atc WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) >= atc.atc_lastseen";
-                } else {
-                        $query  = "DELETE FROM atc WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '1 HOUR' >= atc.atc_lastseen";
-                }
-                try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error";
-                }
-                return "success";
-        }
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query  = "DELETE FROM atc WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) >= atc.atc_lastseen";
+		} else {
+			$query  = "DELETE FROM atc WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '1 HOUR' >= atc.atc_lastseen";
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error";
+		}
+		return "success";
+	}
 }
 ?>

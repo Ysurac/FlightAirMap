@@ -301,6 +301,9 @@ foreach ($globalSources as $key => $source) {
     if (!isset($source['format'])) {
         $globalSources[$key]['format'] = 'auto';
     }
+    if (isset($source['callback'])) {
+        unset($globalSources[$key]);
+    }
 }
 connect_all($globalSources);
 foreach ($globalSources as $key => $source) {
@@ -1377,9 +1380,38 @@ while ($i > 0) {
 				    } elseif (isset($line['stealth'])) {
 					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";
 					else echo '--------- '.$data['ident'].' : Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
-				    //} elseif (isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && ($line['symbol'] == 'Car' || $line['symbol'] == 'Ambulance' || $line['symbol'] == 'Van' || $line['symbol'] == 'Truck' || $line['symbol'] == 'Truck (18 Wheeler)' || $line['symbol'] == 'Motorcycle' || $line['symbol'] == 'Police' || $line['symbol'] == 'Bike' || $line['symbol'] == 'Jogger' || $line['symbol'] == 'Bus' || $line['symbol'] == 'Jeep' || $line['symbol'] == 'Recreational Vehicle' || $line['symbol'] == 'Yacht (Sail)' || $line['symbol'] == 'Ship (Power Boat)' || $line['symbol'] == 'Firetruck' || $line['symbol'] == 'Balloon' || $line['symbol'] == 'Aircraft (small)' || $line['symbol'] == 'Helicopter')) {
+				    } elseif (isset($globalAircraft) && $globalAircraft && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && (
+					    $line['symbol'] == 'Balloon' || $line['symbol'] == 'Glider' || 
+					    $line['symbol'] == 'Aircraft (small)' || $line['symbol'] == 'Helicopter')) {
+					    $send = $SI->add($data);
+				    } elseif (isset($globalMarine) && $globalMarine && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && (
+					    $line['symbol'] == 'Yacht (Sail)' || 
+					    $line['symbol'] == 'Ship (Power Boat)')) {
+					    $send = $MI->add($data);
+				    } elseif (isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && (
+					    $line['symbol'] == 'Car' || 
+					    $line['symbol'] == 'Ambulance' || 
+					    $line['symbol'] == 'Van' || 
+					    $line['symbol'] == 'Truck' || $line['symbol'] == 'Truck (18 Wheeler)' || 
+					    $line['symbol'] == 'Motorcycle' || 
+					    $line['symbol'] == 'Tractor' || 
+					    $line['symbol'] == 'Police' || 
+					    $line['symbol'] == 'Bike' || 
+					    $line['symbol'] == 'Jogger' || 
+					    $line['symbol'] == 'Horse' || 
+					    $line['symbol'] == 'Bus' || 
+					    $line['symbol'] == 'Jeep' || 
+					    $line['symbol'] == 'Recreational Vehicle' || 
+					    $line['symbol'] == 'Yacht (Sail)' || 
+					    $line['symbol'] == 'Ship (Power Boat)' || 
+					    $line['symbol'] == 'Firetruck' || 
+					    $line['symbol'] == 'Balloon' || $line['symbol'] == 'Glider' || 
+					    $line['symbol'] == 'Aircraft (small)' || $line['symbol'] == 'Helicopter' || 
+					    $line['symbol'] == 'SUV' ||
+					    $line['symbol'] == 'Snowmobile' ||
+					    $line['symbol'] == 'Mobile Satellite Station')) {
 				    //} elseif (isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && isset($line['speed']) && $line['symbol'] != 'Weather Station' && $line['symbol'] != 'House QTH (VHF)' && $line['symbol'] != 'Dot' && $line['symbol'] != 'TCP-IP' && $line['symbol'] != 'xAPRS (UNIX)' && $line['symbol'] != 'Antenna' && $line['symbol'] != 'Cloudy' && $line['symbol'] != 'HF Gateway' && $line['symbol'] != 'Yagi At QTH' && $line['symbol'] != 'Digi' && $line['symbol'] != '8' && $line['symbol'] != 'MacAPRS') {
-				    } elseif (isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && $line['symbol'] != 'Weather Station' && $line['symbol'] != 'House QTH (VHF)' && $line['symbol'] != 'Dot' && $line['symbol'] != 'TCP-IP' && $line['symbol'] != 'xAPRS (UNIX)' && $line['symbol'] != 'Antenna' && $line['symbol'] != 'Cloudy' && $line['symbol'] != 'HF Gateway' && $line['symbol'] != 'Yagi At QTH' && $line['symbol'] != 'Digi' && $line['symbol'] != '8' && $line['symbol'] != 'MacAPRS') {
+				//    } elseif (isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && $line['symbol'] != 'Weather Station' && $line['symbol'] != 'House QTH (VHF)' && $line['symbol'] != 'Dot' && $line['symbol'] != 'TCP-IP' && $line['symbol'] != 'xAPRS (UNIX)' && $line['symbol'] != 'Antenna' && $line['symbol'] != 'Cloudy' && $line['symbol'] != 'HF Gateway' && $line['symbol'] != 'Yagi At QTH' && $line['symbol'] != 'Digi' && $line['symbol'] != '8' && $line['symbol'] != 'MacAPRS') {
 					//echo '!!!!!!!!!!!!!!!! SEND !!!!!!!!!!!!!!!!!!!!'."\n";
 					if (isset($globalTracker) && $globalTracker) $send = $TI->add($data);
 				    } elseif (!isset($line['stealth']) && is_numeric($data['latitude']) && is_numeric($data['longitude']) && isset($data['ident']) && isset($data['altitude'])) {
@@ -1525,7 +1557,9 @@ while ($i > 0) {
 	}
 	if ($globalDaemon === false) {
 	    if ($globalDebug) echo 'Check all...'."\n";
-	    $SI->checkAll();
+	    if (isset($SI)) $SI->checkAll();
+	    if (isset($TI)) $TI->checkAll();
+	    if (isset($MI)) $MI->checkAll();
 	}
     }
 }
