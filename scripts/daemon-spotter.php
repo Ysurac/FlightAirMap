@@ -301,7 +301,7 @@ foreach ($globalSources as $key => $source) {
     if (!isset($source['format'])) {
         $globalSources[$key]['format'] = 'auto';
     }
-    if (isset($source['callback'])) {
+    if (isset($source['callback']) && $source['callback'] === TRUE) {
         unset($globalSources[$key]);
     }
 }
@@ -1381,8 +1381,11 @@ while ($i > 0) {
 					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";
 					else echo '--------- '.$data['ident'].' : Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
 				    } elseif (isset($globalAircraft) && $globalAircraft && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && (
-					    $line['symbol'] == 'Balloon' || $line['symbol'] == 'Glider' || 
+					    //$line['symbol'] == 'Balloon' ||
+					    $line['symbol'] == 'Glider' || 
 					    $line['symbol'] == 'Aircraft (small)' || $line['symbol'] == 'Helicopter')) {
+					    if ($line['symbol'] == 'Ballon') $data['aircraft_icao'] = 'BALL';
+					    if ($line['symbol'] == 'Glider') $data['aircraft_icao'] = 'PARAGLIDER';
 					    $send = $SI->add($data);
 				    } elseif (isset($globalMarine) && $globalMarine && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && (
 					    $line['symbol'] == 'Yacht (Sail)' || 
