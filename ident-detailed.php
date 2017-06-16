@@ -123,52 +123,82 @@ if (!isset($_GET['ident'])){
 		require_once('header.php');
 		if (isset($globalArchive) && $globalArchive && $type == 'aircraft') {
 			// Requirement for altitude graph
-			print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+			//print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 			$all_data = $SpotterArchive->getAltitudeSpeedArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
 			if (isset($globalTimezone)) {
 				date_default_timezone_set($globalTimezone);
 			} else date_default_timezone_set('UTC');
-			if (count($all_data) > 0) {
-				print '<div id="chart6" class="chart" width="100%"></div>
-                    <script> 
-                        google.load("visualization", "1.1", {packages:["line","corechart"]});
-                      google.setOnLoadCallback(drawChart6);
-                      function drawChart6() {
-                        var data = google.visualization.arrayToDataTable([
-                            ["Hour","'._("Altitude").'","'._("Speed").'"], ';
-                            $altitude_data = '';
+			if (is_array($all_data) && count($all_data) > 1) {
+				print '<link href="'.$globalURL.'/css/c3.min.css" rel="stylesheet" type="text/css">';
+				print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
+				print '<script type="text/javascript" src="'.$globalURL.'/js/c3.min.js"></script>';
+				print '<div id="chart" class="chart" width="100%"></div><script>';
+				$altitude_data = '';
+				$hour_data = '';
+				$speed_data = '';
 				foreach($all_data as $data)
 				{
-					$altitude_data .= '[ "'.date("G:i",strtotime($data['date']." UTC")).'",'.$data['altitude'].','.$data['ground_speed'].'],';
+					$hour_data .= '"'.$data['date'].'",';
+					if (isset($data['real_altitude']) && $data['real_altitude'] != '') {
+						$altitude = $data['real_altitude'];
+					} else {
+						$altitude = $data['altitude'].'00';
+					}
+					if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
+						$unit = 'feet';
+					} else {
+						$unit = 'm';
+						$altitude = round($altitude*0.3048);
+					}
+					$altitude_data .= $altitude.',';
+					$speed = $data['ground_speed'];
+					if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
+						$speed = round($speed*1.15078);
+						$units = 'mph';
+					} elseif ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) {
+						$units = 'knots';
+					} else {
+						$speed = round($speed*1.852);
+						$units = 'km/h';
+					}
+					$speed_data .= $speed.',';
 				}
-				$altitude_data = substr($altitude_data, 0, -1);
-				print $altitude_data.']);
-
-                        var options = {
-                            legend: {position: "none"},
-                            series: {
-                                0: {axis: "Altitude"},
-                                1: {axis: "Speed"}
-                            },
-                            axes: {
-                                y: {
-                                    Altitude: {label: "'._("Altitude (FL)").'"},
-                                    Speed: {label: "'._("Speed (knots)").'"},
-                                }
-                            },
-                            height:210
-                        };
-
-                        var chart = new google.charts.Line(document.getElementById("chart6"));
-                        chart.draw(data, options);
-                      }
-                      $(window).resize(function(){
-                              drawChart6();
-                            });
-				 </script>';
+				$hour_data = "['x',".substr($hour_data, 0, -1)."]";
+				$altitude_data = "['altitude',".substr($altitude_data,0,-1)."]";
+				$speed_data = "['speed',".substr($speed_data,0,-1)."]";
+				print 'c3.generate({
+				    bindto: "#chart",
+				    data: {
+					x: "x",
+					axes: {
+					    altitude: "y",
+					    speed: "y2"
+					},
+					xFormat: "%Y-%m-%d %H:%M:%S",
+					columns: ['.$hour_data.','.$altitude_data.','.$speed_data.'],
+					colors: { 
+					    altitude: "#1a3151",
+					    speed: "#aa0000"
+					}
+				    },
+				    axis: { 
+					x: { 
+					    type: "timeseries", tick: { format: "%H:%M:%S"}
+					},
+					y: {
+					    label: "Altitude ('.$unit.')"
+					},
+					y2: { 
+					    label: "Speed ('.$units.')",
+					    show: true
+					}
+				    },
+				    legend: { show: false }});';
+				print '</script>';
   			}
 		}
 		print '<div class="info column">';
+		print '<br/><br/><br/>';
 		print '<h1>'.$spotter_array[0]['ident'].'</h1>';
 		print '<div><span class="label">'._("Ident").'</span>'.$spotter_array[0]['ident'].'</div>';
 		if (isset($spotter_array[0]['airline_icao'])) {
