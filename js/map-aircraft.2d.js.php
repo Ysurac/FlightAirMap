@@ -276,7 +276,7 @@ function getLiveData(click)
 <?php
 	if (!isset($archive) || !$archive) {
 ?>
-			if (document.getElementById('aircraft_ident').className != "") {
+			if (document.getElementById('aircraft_ident') && document.getElementById('aircraft_ident').className != "") {
 				$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+document.getElementById('aircraft_ident').className);
 			}
 <?php

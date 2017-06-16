@@ -274,6 +274,8 @@ class Spotter{
 			if (isset($row['real_arrival_airport_icao']) && $row['real_arrival_airport_icao'] != NULL) $temp_array['real_arrival_airport'] = $row['real_arrival_airport_icao'];
 			if (isset($row['latitude'])) $temp_array['latitude'] = $row['latitude'];
 			if (isset($row['longitude'])) $temp_array['longitude'] = $row['longitude'];
+			if (isset($row['last_latitude'])) $temp_array['last_latitude'] = $row['last_latitude'];
+			if (isset($row['last_longitude'])) $temp_array['last_longitude'] = $row['last_longitude'];
 			/*
 			if (Connection->tableExists('countries')) {
 				$country_info = $this->getCountryFromLatitudeLongitude($temp_array['latitude'],$temp_array['longitude']);
@@ -1286,12 +1288,9 @@ class Spotter{
 		if ($id == '') return array();
 		$additional_query = "spotter_output.spotter_id = :id";
 		$query_values = array(':id' => $id);
-
 		//$query  = $global_query." WHERE spotter_output.ident <> '' ".$additional_query." ";
 		$query  = $global_query." WHERE ".$additional_query." ";
-
 		$spotter_array = $this->getDataFromDB($query,$query_values);
-
 		return $spotter_array;
 	}
 
