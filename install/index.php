@@ -501,15 +501,15 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" title="Create statistics for the source like number of messages, distance,..." value="1" <?php if (isset($source['sourcestats']) && $source['sourcestats']) print 'checked'; ?> /></td>
 								<td><input type="checkbox" name="noarchive[]" id="noarchive" title="Don't archive this source" value="1" <?php if (isset($source['noarchive']) && $source['noarchive']) print 'checked'; ?> /></td>
 								<td>
-									<select name="timezone[]" id="timezone">
+									<select name="timezones[]" id="timezones">
 								<?php
 									$timezonelist = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
-									foreach($timezonelist as $timezone){
-										if (isset($source['timezone']) && $source['timezone'] == $timezone) {
-											print '<option selected>'.$timezone.'</option>';
-										} elseif (!isset($source['timezone']) && $timezone == 'UTC') {
-											print '<option selected>'.$timezone.'</option>';
-										} else print '<option>'.$timezone.'</option>';
+									foreach($timezonelist as $timezones){
+										if (isset($source['timezone']) && $source['timezone'] == $timezones) {
+											print '<option selected>'.$timezones.'</option>';
+										} elseif (!isset($source['timezone']) && $timezones == 'UTC') {
+											print '<option selected>'.$timezones.'</option>';
+										} else print '<option>'.$timezones.'</option>';
 									}
 								?>
 									</select>
@@ -552,13 +552,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" title="Create statistics for the source like number of messages, distance,..." value="1" /></td>
 								<td><input type="checkbox" name="noarchive[]" id="noarchive" title="Don't archive this source" value="1" /></td>
 								<td>
-									<select name="timezone[]" id="timezone">
+									<select name="timezones[]" id="timezones">
 								<?php
 									$timezonelist = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
-									foreach($timezonelist as $timezone){
-										if ($timezone == 'UTC') {
-											print '<option selected>'.$timezone.'</option>';
-										} else print '<option>'.$timezone.'</option>';
+									foreach($timezonelist as $timezones){
+										if ($timezones == 'UTC') {
+											print '<option selected>'.$timezones.'</option>';
+										} else print '<option>'.$timezones.'</option>';
 									}
 								?>
 									</select>
@@ -920,7 +920,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 	require('../footer.php');
         exit;
 }
-	
+// '	
 $settings = array();
 $settings_comment = array();
 $error = '';
@@ -1061,7 +1061,7 @@ if (isset($_POST['dbtype'])) {
 	$port = $_POST['port'];
 	$name = $_POST['name'];
 	$format = $_POST['format'];
-	$timezone = $_POST['timezone'];
+	$timezones = $_POST['timezones'];
 	if (isset($_POST['sourcestats'])) $sourcestats = $_POST['sourcestats'];
 	else $sourcestats = array();
 	if (isset($_POST['noarchive'])) $noarchive = $_POST['noarchive'];
@@ -1074,9 +1074,9 @@ if (isset($_POST['dbtype'])) {
 		if (isset($noarchive[$key]) && $noarchive[$key] == 1) $arch = 'TRUE';
 		else $arch = 'FALSE';
 		if (strpos($format[$key],'_callback')) {
-			$gSources[] = array('host' => $h, 'pass' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch,'timezone' => $timezone[$key],'callback' => 'TRUE');
+			$gSources[] = array('host' => $h, 'pass' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch,'timezone' => $timezones[$key],'callback' => 'TRUE');
 		} elseif ($h != '' || $name[$key] != '') {
-			$gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch,'timezone' => $timezone[$key],'callback' => 'FALSE');
+			$gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch,'timezone' => $timezones[$key],'callback' => 'FALSE');
 		}
 		if ($format[$key] == 'airwhere') $forcepilots = true;
 	}
@@ -1437,12 +1437,7 @@ if (isset($_POST['dbtype'])) {
 		*/
 		$_SESSION['done'] = array('Write configuration');
 		print '<li>Write configuration....<img src="../images/loading.gif" /></li></ul></div>';
-#		flush();
-#		@ob_flush();
-#		sleep(10);
 		print "<script>console.log('Configuration writed...');setTimeout(window.location = 'index.php?".rand()."&next=".$_SESSION['install']."',10000);</script>";
-//		header("Location: index.php?".rand());
-//		require('../footer.php');
 	}
 } else if (isset($_SESSION['install']) && $_SESSION['install'] != 'finish') {
 	print '<div class="info column">';
