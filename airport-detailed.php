@@ -97,7 +97,6 @@ if (!isset($_GET['airport'])){
 			print '<div><span class="label">'._("Live Air Traffic").'</span><a href="http://www.liveatc.net/search/?icao='.$airport_array[0]['icao'].'" target="_blank">LiveATC.net<i class="fa fa-angle-double-right"></i></a></div>';
 			print '</div>';
 			
-			print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 			$Stats = new Stats();
 			$all_data = $Stats->getLast7DaysAirports($airport_icao);
 			// Use spotter also
@@ -105,36 +104,47 @@ if (!isset($_GET['airport'])){
 				date_default_timezone_set($globalTimezone);
 			} else date_default_timezone_set('UTC');
 			if (count($all_data) > 0) {
-				print '<div id="chart6" class="chart" width="100%"></div>
-                    <script> 
-                        google.load("visualization", "1.1", {packages:["line","corechart"]});
-                      google.setOnLoadCallback(drawChart6);
-                      function drawChart6() {
-                        var data = google.visualization.arrayToDataTable([
-                            ["'._("Date").'","'._("Departure").'","'._("Arrival").'"], ';
-                            $airport_data = '';
-                                foreach($all_data as $data)
-                                {
-                                        $airport_data .= '[ "'.$data['date'].'",'.$data['departure'].','.$data['arrival'].'],';
-                                }
-                                $airport_data = substr($airport_data, 0, -1);
-                                print $airport_data.']);
-
-                        var options = {
-                    	    legend: {position: "none"},
-                    	    chart: {
-                    		title: "'._("Last week flights departure/arrival").'"
-                    	    },
-                            height:210
-                        };
-
-                        var chart = new google.charts.Line(document.getElementById("chart6"));
-                        chart.draw(data, options);
-                      }
-                      $(window).resize(function(){
-                              drawChart6();
-                            });
-                                 </script>';
+				print '<link href="'.$globalURL.'/css/c3.min.css" rel="stylesheet" type="text/css">';
+				print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
+				print '<script type="text/javascript" src="'.$globalURL.'/js/c3.min.js"></script>';
+				print '<div id="chart" class="chart" width="100%"></div><script>';
+				$date_data = '';
+				$departure_data = '';
+				$arrival_data = '';
+				foreach($all_data as $data)
+				{
+					$date_data .= '"'.$data['date'].'",';
+					$departure_data .= $data['departure'].',';
+					$arrival_data .= $data['arrival'].',';
+				}
+				$date_data = "['x',".substr($date_data,0,-1)."]";
+				$departure_data = "['departure',".substr($departure_data,0,-1)."]";
+				$arrival_data = "['arrival',".substr($arrival_data,0,-1)."]";
+				print 'c3.generate({
+				    bindto: "#chart",
+				    data: {
+					x: "x",
+					axes: {
+					    departure: "y",
+					    speed: "y2"
+					},
+					xFormat: "%Y-%m-%d",
+					columns: ['.$date_data.','.$departure_data.','.$arrival_data.'],
+					colors: { 
+					    departure: "#1a3151",
+					    arrival: "#aa0000"
+					}
+				    },
+				    axis: { 
+					x: { 
+					    type: "timeseries", tick: { format: "%Y-%m-%d"}
+					},
+					y: {
+					    label: "# of Flights",tick: { format: d3.format("d") }
+					}
+				    },
+				    legend: { show: false }});';
+				print '</script>';
 			}
 			print '<div class="info column">';
 			if (isset($metar_parse)) {

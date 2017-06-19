@@ -62,8 +62,15 @@ if (!empty($spotter_array))
 	print '<div id="chartHour" class="chart" width="100%"></div><script>';
 	$hour_data = '';
 	$hour_cnt = '';
+	$last = 0;
 	foreach($hour_array as $hour_item)
 	{
+		while($last != $hour_item['hour_name']) {
+			$hour_data .= '"'.$last.':00",';
+			$hour_cnt .= '0,';
+			$last++;
+		}
+		$last++;
 		$hour_data .= '"'.$hour_item['hour_name'].':00",';
 		$hour_cnt .= $hour_item['hour_count'].',';
 	}

@@ -35,42 +35,10 @@ if (!empty($spotter_array))
 	print '<p>'.sprintf(_("The statistic below shows all arrival airports by Country of origin of flights on <strong>%s</strong>."),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
 
 	$airport_country_array = $Spotter->countAllArrivalAirportCountriesByDate($date);
-	//print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/topojson.v2.min.js"></script>';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/datamaps.world.min.js"></script>';
-
 	print '<div id="chartCountry" class="chart" width="100%"></div><script>';
-/*
-	print 'google.load("visualization", "1", {packages:["geochart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-            	["'._("Country").'", "'._("# of times").'"], ';
-
-	$country_data = '';
-	foreach($airport_country_array as $airport_item)
-	{
-		$country_data .= '[ "'.$airport_item['arrival_airport_country'].'",'.$airport_item['airport_arrival_country_count'].'],';
-	}
-	$country_data = substr($country_data, 0, -1);
-	print $country_data;
-	print ']);
-    
-            var options = {
-            	legend: {position: "none"},
-            	chartArea: {"width": "80%", "height": "60%"},
-            	height:500,
-            	colors: ["#8BA9D0","#1a3151"]
-            };
-    
-            var chart = new google.visualization.GeoChart(document.getElementById("chartCountry"));
-            chart.draw(data, options);
-          }
-          $(window).resize(function(){
-    			  drawChart();
-    			});';
-*/
 	print 'var series = [';
 	$country_data = '';
 	foreach($airport_country_array as $airport_item)
