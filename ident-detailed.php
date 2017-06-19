@@ -123,7 +123,6 @@ if (!isset($_GET['ident'])){
 		require_once('header.php');
 		if (isset($globalArchive) && $globalArchive && $type == 'aircraft') {
 			// Requirement for altitude graph
-			//print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
 			$all_data = $SpotterArchive->getAltitudeSpeedArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
 			if (isset($globalTimezone)) {
 				date_default_timezone_set($globalTimezone);

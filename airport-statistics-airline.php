@@ -60,37 +60,23 @@ if (!empty($airport_array))
 	print '<p>'.sprintf(_("The statistic below shows the most common airlines of flights to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
 
 	$airline_array = $Spotter->countAllAirlinesByAirport($airport);
-	print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
-	print '<div id="chart" class="chart" width="100%"></div>
-      	<script> 
-      		google.load("visualization", "1", {packages:["corechart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-            	["'._("Aircraft").'", "'._("# of times").'"], ';
-            	$airline_data = '';
+	print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
+	print '<script type="text/javascript" src="'.$globalURL.'/js/d3pie.min.js"></script>';
+	print '<div id="chart" class="chart" width="100%"></div><script>';
+	$airline_data = '';
 	foreach($airline_array as $airline_item)
 	{
-		$airline_data .= '[ "'.$airline_item['airline_name'].'",'.$airline_item['airline_count'].'],';
+		$airline_data .= '["'.$airline_item['airline_name'].' ('.$airline_item['airline_icao'].')",'.$airline_item['airline_count'].'],';
 	}
 	$airline_data = substr($airline_data, 0, -1);
-	print $airline_data;
-	print ']);
-    
-            var options = {
-            	chartArea: {"width": "80%", "height": "60%"},
-            	height:500,
-            	 is3D: true
-            };
-    
-            var chart = new google.visualization.PieChart(document.getElementById("chart"));
-            chart.draw(data, options);
-          }
-          $(window).resize(function(){
-    			  drawChart();
-    			});
-      </script>';
-
+	print 'var series = ['.$airline_data.'];';
+	print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+	print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+	print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
+	print 'var airlinescnt = new d3pie("chart",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"60%"},"data":{"sortOrder":"value-desc","content":';
+	print 'dataset';
+	print '},"labels":{"outer":{"pieDistance":32},"inner":{"hideWhenLessThanPercentage":3},"mainLabel":{"fontSize":11},"percentage":{"color":"#ffffff","decimalPlaces":0},"value":{"color":"#adadad","fontSize":11},"lines":{"enabled":true},"truncation":{"enabled":true}},"effects":{"pullOutSegmentOnClick":{"effect":"linear","speed":400,"size":8}},"misc":{"gradient":{"enabled":true,"percentage":100}}});';
+	print '</script>';
 	if (!empty($airline_array))
 	{
 		print '<div class="table-responsive">';
