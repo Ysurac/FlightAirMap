@@ -25,6 +25,38 @@ function displayTrackerData(data) {
 		if (typeof dsn != 'undefined') var existing = viewer.dataSources.get(dsn);
 		else var existing;
 
+		var position = entity.position; 
+		var times = position._property._times;
+		var positionArray = [];
+		var timeArray = [];
+		for (var k = 0; k < times.length; k++) {
+			var cartesian = position.getValue(times[k]);
+			try {
+				var cartographic = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+			} catch(e) { console.log(e); }
+			// Check if altitude < ground altitude
+			if (fromground != 0 || cartographic.height < 8850) {
+				try {
+					var cartesian2 = new Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(cartographic.longitude),Cesium.Math.toDegrees(cartographic.latitude));
+				} catch(e) { console.log(e); }
+				try {
+					var height = viewer.scene.globe.getHeight(Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian2));
+				} catch(e) { console.log(e); }
+				if (!Cesium.defined(height)) height = cartographic.height;
+				if (fromground != 0 || cartographic.height < height) {
+					if (fromground == 0 || height < fromground) fromground = height;
+					var finalHeight = cartographic.height+fromground;
+				} else var finalHeight = cartographic.height;
+			} else var finalHeight = cartographic.height;
+			positionArray.push(new Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(cartographic.longitude),Cesium.Math.toDegrees(cartographic.latitude), finalHeight));
+			timeArray.push(times[k]);
+		}
+		var newPosition = new Cesium.SampledPositionProperty();
+		try {
+			newPosition.addSamples(timeArray, positionArray);
+		} catch(e) { console.log(e); }
+		entity.position = newPosition;
+
 		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
 		entity.orientation = orientation;
 
@@ -73,7 +105,7 @@ function displayTrackerData(data) {
 
 //    }
     //console.log(viewer.dataSources.get(dsn).name);
-	$(".infobox").html("<h4>Trackers detected</h4><br /><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
+	$("#ibxtracker").html("<h4>Trackers detected</h4><br /><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
     //console.log(viewer.dataSources.get(dsn).entities.values.length);
     //console.log(viewer.dataSources.length);
     //console.log(dsn);

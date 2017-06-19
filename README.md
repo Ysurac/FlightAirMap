@@ -53,7 +53,11 @@ Check https://github.com/Ysurac/FlightAirMap/wiki/Installation for detailed inst
 ### Web install/Update ###
 (This is the recommanded way to install)
 
+git pull https://github.com/Ysurac/FlightAirMap or get latest release https://github.com/Ysurac/FlightAirMap/releases
+
 Use install/index.php
+
+(You can always keep scripts/settings.php when you update)
 
 ### Console install ###
 * Create a mysql database.

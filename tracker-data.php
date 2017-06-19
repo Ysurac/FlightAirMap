@@ -39,14 +39,14 @@ if (isset($_GET['famtrackid'])) {
 		if (empty($spotter_array)) {
 			$from_archive = true;
 //			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
-			$spotter_array = $TrackerArchive->getDateArchiveTrackerDataById($flightaware_id,$currenttime);
+			$spotter_array = $TrackerArchive->getDateArchiveTrackerDataById($famtrackid,$currenttime);
 		}
 		
 	} else {
 		$spotter_array = $TrackerLive->getLastLiveTrackerDataById($famtrackid);
 		if (empty($spotter_array)) {
 			$from_archive = true;
-			$spotter_array = $TrackerArchive->getLastArchiveTrackerDataById($flightaware_id);
+			$spotter_array = $TrackerArchive->getLastArchiveTrackerDataById($famtrackid);
 		}
 	}
 }

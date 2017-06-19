@@ -135,6 +135,8 @@ function displayData(data) {
 	for (var i = 0; i < entities.length; i++) {
 		var fromground = 0;
 		var entity = entities[i];
+		//console.log(entity.id);
+		//console.log(entity.model.uri);
 		//console.log(entity.properties.valueOf('format'));
 		if (typeof dsn != 'undefined') var existing = viewer.dataSources.get(dsn);
 		else var existing;
@@ -279,7 +281,7 @@ function displayData(data) {
 
 //    }
     //console.log(viewer.dataSources.get(dsn).name);
-	$(".infobox").html("<h4>Aircrafts detected</h4><br /><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
+	$("#ibxaircraft").html("<h4>Aircrafts detected</h4><br /><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
     //console.log(viewer.dataSources.get(dsn).entities.values.length);
     //console.log(viewer.dataSources.length);
     //console.log(dsn);

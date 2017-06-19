@@ -73,7 +73,7 @@ function displayMarineData(data) {
 
 //    }
     //console.log(viewer.dataSources.get(dsn).name);
-	$(".infobox").html("<h4>Marines detected</h4><br /><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
+	$("#ibxmarine").html("<h4>Marines detected</h4><br /><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
     //console.log(viewer.dataSources.get(dsn).entities.values.length);
     //console.log(viewer.dataSources.length);
     //console.log(dsn);
