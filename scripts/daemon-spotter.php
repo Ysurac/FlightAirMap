@@ -1420,21 +1420,28 @@ while ($i > 0) {
 				    } elseif (!isset($line['stealth']) && is_numeric($data['latitude']) && is_numeric($data['longitude']) && isset($data['ident']) && isset($data['altitude'])) {
 					if (!isset($data['altitude'])) $data['altitude'] = 0;
 					$Source->deleteOldLocationByType('gs');
-					if (count($Source->getLocationInfoByName($data['ident'])) > 0) {
+					if (count($Source->getLocationInfoByNameType($data['ident'],'gs')) > 0) {
 						$Source->updateLocation($data['ident'],$data['latitude'],$data['longitude'],$data['altitude'],'','',$data['source_name'],'antenna.png','gs',$id,0,$data['datetime']);
 					} else {
 						$Source->addLocation($data['ident'],$data['latitude'],$data['longitude'],$data['altitude'],'','',$data['source_name'],'antenna.png','gs',$id,0,$data['datetime']);
 					}
-				    } else {
+				    } elseif (isset($line['symbol']) && $line['symbol'] == 'Weather Station') {
+					//if ($globalDebug) echo '!! Weather Station not yet supported'."\n";
+					//if ($globalDebug) echo '# Weather Station added'."\n";
+					$Source->deleteOldLocationByType('wx');
+					$weather_data = json_encode($line);
+					if (count($Source->getLocationInfoByNameType($data['ident'],'wx')) > 0) {
+						$Source->updateLocation($data['ident'],$data['latitude'],$data['longitude'],0,'','',$data['source_name'],'wx.png','wx',$id,0,$data['datetime'],$weather_data);
+					} else {
+						$Source->addLocation($data['ident'],$data['latitude'],$data['longitude'],0,'','',$data['source_name'],'wx.png','wx',$id,0,$data['datetime'],$weather_data);
+					}
+					unset($data);
+				    
+				    } elseif ($globalDebug) {
 				    	echo '/!\ Not added: '.$buffer."\n";
 				    	print_r($line);
 				    }
-				    unset($data);
-				} 
-				elseif (is_array($line) && $globalDebug && isset($line['symbol']) && $line['symbol'] == 'Weather Station') {
-					echo '!! Weather Station not yet supported'."\n";
 				}
-				 
 				elseif (is_array($line) && isset($line['ident']) && $line['ident'] != '') {
 					$Source->updateLocationDescByName($line['ident'],$line['source'],$id,$line['comment']);
 				}

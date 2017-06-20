@@ -345,16 +345,29 @@ $( document ).ready(function() {
 		locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php",{
 		    //onEachFeature: locationPopup,
 		    pointToLayer: function (feature, latlng) {
-			return L.marker(latlng, {
-			    icon: L.icon({
-				iconUrl: feature.properties.icon,
-				iconSize: [16, 18]
-				//iconAnchor: [0, 0],
-				//popupAnchor: [0, -28]
-			    })
-			}).on('click', function() {
-			    $(".showdetails").load("location-data.php?"+Math.random()+"&sourceid="+encodeURI(feature.properties.id));
-			});
+			if (feature.properties.type == 'wx' && typeof feature.properties.temp != 'undefined') {
+			    return L.marker(latlng, {
+				icon: new L.DivIcon({
+				    className: 'map-temp',
+				    html: feature.properties.temp+'°C'
+				    //html: '<img class="my-div-image" src="http://png-3.vector.me/files/images/4/0/402272/aiga_air_transportation_bg_thumb"/>'+
+				    //	'<span class="my-div-span">RAF Banff Airfield</span>'
+				})
+			    }).on('click', function() {
+				$(".showdetails").load("location-data.php?"+Math.random()+"&sourceid="+encodeURI(feature.properties.id));
+			    });
+			} else {
+			    return L.marker(latlng, {
+				icon: L.icon({
+				    iconUrl: feature.properties.icon,
+				    iconSize: [16, 18]
+				    //iconAnchor: [0, 0],
+				    //popupAnchor: [0, -28]
+				})
+			    }).on('click', function() {
+				$(".showdetails").load("location-data.php?"+Math.random()+"&sourceid="+encodeURI(feature.properties.id));
+			    });
+			}
 		    }
 		}).addTo(map);
 	};

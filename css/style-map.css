@@ -414,6 +414,12 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
   padding:5px;
   border-radius: 12px 12px 0 0;
 }
+.map-temp{
+    color:#ff2731;
+    font-size:1.4em;
+    font-weight:bold;
+}
+
 
 /* Mobile (Portrait/Landscape) */
 @media only screen and (max-width: 767px) {

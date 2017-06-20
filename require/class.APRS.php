@@ -294,7 +294,7 @@ class aprs {
 	}
 	//if (strlen($body_parse) > 19) {
 	    if (preg_match('/^([0-9]{2})([0-7 ][0-9 ]\\.[0-9 ]{2})([NnSs])(.)([0-9]{3})([0-7 ][0-9 ]\\.[0-9 ]{2})([EeWw])(.)/',$body_parse,$matches)) {
-	    $find = true;
+		$find = true;
 		// 4658.70N/00707.78Ez
 		//print_r(str_split($body_parse));
 		
@@ -346,10 +346,12 @@ class aprs {
 		} else { 
 		*/
 		if ($find) {
+			//echo 'find'."\n";
 			$body_split = str_split($body_parse);
 			$symbol_code = $body_split[0];
 			if (!isset($symbolll) || $symbolll == '/') $symbol_code = '/'.$symbol_code;
 			else $symbol_code = '\\'.$symbol_code;
+		//'
 		//}
 		//echo $body_parse;
 			//if ($type != ';' && $type != '>') {
@@ -482,11 +484,11 @@ class aprs {
 		    
 		    //Comment
 		    $result['comment'] = trim($body_parse);
-		} else {
+		//} else {
 		    // parse weather
 		    //$body_parse = substr($body_parse,1);
 		    //$body_parse_len = strlen($body_parse);
-
+		    //echo 'weather'."\n";
 		    if (preg_match('/^_{0,1}([0-9 \\.\\-]{3})\\/([0-9 \\.]{3})g([0-9 \\.]+)t(-{0,1}[0-9 \\.]+)/',$body_parse,$matches)) {
 			    $result['wind_dir'] = intval($matches[1]);
 			    $result['wind_speed'] = round(intval($matches[2])*1.60934,1);
@@ -510,9 +512,75 @@ class aprs {
 			$result['wind_gust'] = round($matches[3]*1.60934,1);
 		        $body_parse = substr($body_parse,strlen($matches[0])+1);
 		    }
-		    if (!isset($result['temp']) && strlen($body_parse) > 0 && preg_match('/^g([0-9]+)t(-?[0-9 \\.]{1,3})/',$body_parse,$matches)) {
-			$result['temp'] = round(5/9*(($matches[1])-32),1);
+		    //if (!isset($result['temp']) && strlen($body_parse) > 0 && preg_match('/^g([0-9]+)t(-?[0-9 \\.]{1,3})/',$body_parse,$matches)) {
+		    //g012t088r000p000P000h38b10110
+		    //g011t086r000p000P000h29b10198
+		    if (!isset($result['temp']) && strlen($body_parse) > 0 && preg_match('/^g([0-9 \\.]{3})t([0-9 \\.]{3,4})r([0-9 \\.]{3})p([0-9 \\.]{3})P([0-9 \\.]{3})h([0-9 \\.]{2,3})b([0-9 \\.]{5})/',$body_parse,$matches)) {
+			if ($matches[1] != '...') $result['wind_gust'] = round($matches[1]*1.60934,1);
+			if ($matches[2] != '...') $result['temp'] = round(5/9*((intval($matches[2]))-32),1);
+			if ($matches[3] != '...') $result['rain'] = round((intval($matches[3])/100)*25.1,1);
+			if ($matches[4] != '...') $result['precipitation'] = round((intval($matches[4])/100)*25.1,1);
+			if ($matches[5] != '...') $result['precipitation24h'] = round((intval($matches[5])/100)*25.1,1);
+			if ($matches[6] != '...') $result['humidity'] = intval($matches[6]);
+			if ($matches[7] != '...') $result['pressure'] = round((intval($matches[7])/10),1);
+		        $body_parse = substr($body_parse,strlen($matches[0]));
+		    } elseif (!isset($result['temp']) && strlen($body_parse) > 0 && preg_match('/^g([0-9 \\.]{3})t([0-9 \\.]{3,4})r([0-9 \\.]{3})P([0-9 \\.]{3})p([0-9 \\.]{3})h([0-9 \\.]{2,3})b([0-9 \\.]{5})/',$body_parse,$matches)) {
+			if ($matches[1] != '...') $result['wind_gust'] = round($matches[1]*1.60934,1);
+			if ($matches[2] != '...') $result['temp'] = round(5/9*((intval($matches[2]))-32),1);
+			if ($matches[3] != '...') $result['rain'] = round((intval($matches[3])/100)*25.1,1);
+			if ($matches[5] != '...') $result['precipitation'] = round((intval($matches[5])/100)*25.1,1);
+			if ($matches[4] != '...') $result['precipitation24h'] = round((intval($matches[4])/100)*25.1,1);
+			if ($matches[6] != '...') $result['humidity'] = intval($matches[6]);
+			if ($matches[7] != '...') $result['pressure'] = round((intval($matches[7])/10),1);
+		        $body_parse = substr($body_parse,strlen($matches[0]));
+		    } elseif (!isset($result['temp']) && strlen($body_parse) > 0 && preg_match('/^g([0-9 \\.]{3})t([0-9 \\.]{3})r([0-9 \\.]{3})p([0-9 \\.]{3})P([0-9 \\.]{3})b([0-9 \\.]{5})h([0-9 \\.]{2})/',$body_parse,$matches)) {
+			if ($matches[1] != '...') $result['wind_gust'] = round($matches[1]*1.60934,1);
+			if ($matches[2] != '...') $result['temp'] = round(5/9*((intval($matches[2]))-32),1);
+			if ($matches[3] != '...') $result['rain'] = round((intval($matches[3])/100)*25.1,1);
+			if ($matches[4] != '...') $result['precipitation'] = round((intval($matches[4])/100)*25.1,1);
+			if ($matches[5] != '...') $result['precipitation24h'] = round((intval($matches[5])/100)*25.1,1);
+			if ($matches[7] != '...') $result['humidity'] = intval($matches[7]);
+			if ($matches[6] != '...') $result['pressure'] = round((intval($matches[6])/10),1);
+		        $body_parse = substr($body_parse,strlen($matches[0]));
+		    } elseif (!isset($result['temp']) && strlen($body_parse) > 0 && preg_match('/^g([0-9 \\.]{3})t([0-9 \\.]{3})r([0-9 \\.]{3})P([0-9 \\.]{3})b([0-9 \\.]{5})h([0-9 \\.]{2})/',$body_parse,$matches)) {
+			if ($matches[1] != '...') $result['wind_gust'] = round($matches[1]*1.60934,1);
+			if ($matches[2] != '...') $result['temp'] = round(5/9*((intval($matches[2]))-32),1);
+			if ($matches[3] != '...') $result['rain'] = round((intval($matches[3])/100)*25.1,1);
+			if ($matches[4] != '...') $result['precipitation24h'] = round((intval($matches[4])/100)*25.1,1);
+			if ($matches[6] != '...') $result['humidity'] = intval($matches[6]);
+			if ($matches[5] != '...') $result['pressure'] = round((intval($matches[5])/10),1);
+		        $body_parse = substr($body_parse,strlen($matches[0]));
+		    } elseif (!isset($result['temp']) && strlen($body_parse) > 0 && preg_match('/^g([0-9 \\.]{3})t([0-9 \\.]{3})r([0-9 \\.]{3})p([0-9 \\.]{3})b([0-9 \\.]{5})h([0-9 \\.]{2})/',$body_parse,$matches)) {
+			if ($matches[1] != '...') $result['wind_gust'] = round($matches[1]*1.60934,1);
+			if ($matches[2] != '...') $result['temp'] = round(5/9*((intval($matches[2]))-32),1);
+			if ($matches[3] != '...') $result['rain'] = round((intval($matches[3])/100)*25.1,1);
+			if ($matches[4] != '...') $result['precipitation'] = round((intval($matches[4])/100)*25.1,1);
+			if ($matches[6] != '...') $result['humidity'] = intval($matches[6]);
+			if ($matches[5] != '...') $result['pressure'] = round((intval($matches[5])/10),1);
+		        $body_parse = substr($body_parse,strlen($matches[0]));
+		    } elseif (!isset($result['temp']) && strlen($body_parse) > 0 && preg_match('/^g([0-9 \\.]{3})t([0-9 \\.]{3})r([0-9 \\.]{3})p([0-9 \\.]{3})h([0-9 \\.]{2})b([0-9 \\.]{5})/',$body_parse,$matches)) {
+			if ($matches[1] != '...') $result['wind_gust'] = round($matches[1]*1.60934,1);
+			if ($matches[2] != '...') $result['temp'] = round(5/9*((intval($matches[2]))-32),1);
+			if ($matches[3] != '...') $result['rain'] = round((intval($matches[3])/100)*25.1,1);
+			if ($matches[4] != '...') $result['precipitation'] = round((intval($matches[4])/100)*25.1,1);
+			if ($matches[5] != '...') $result['humidity'] = intval($matches[5]);
+			if ($matches[6] != '...') $result['pressure'] = round((intval($matches[6])/10),1);
+		        $body_parse = substr($body_parse,strlen($matches[0]));
+		    } elseif (!isset($result['temp']) && strlen($body_parse) > 0 && preg_match('/^g([0-9 \\.]{3})t([0-9 \\.]{3})h([0-9 \\.]{2})b([0-9 \\.]{5})/',$body_parse,$matches)) {
+			if ($matches[1] != '...') $result['wind_gust'] = round($matches[1]*1.60934,1);
+			if ($matches[2] != '...') $result['temp'] = round(5/9*((intval($matches[2]))-32),1);
+			if ($matches[2] != '...') $result['humidity'] = intval($matches[3]);
+			if ($matches[4] != '...') $result['pressure'] = round((intval($matches[4])/10),1);
+		        $body_parse = substr($body_parse,strlen($matches[0]));
+		    } elseif (!isset($result['temp']) && strlen($body_parse) > 0 && preg_match('/^g([0-9 \\.]{3})t([0-9 \\.]{3})r([0-9 \\.]{2,3})h([0-9 \\.]{2})b([0-9 \\.]{5})/',$body_parse,$matches)) {
+			if ($matches[1] != '...') $result['wind_gust'] = round($matches[1]*1.60934,1);
+			if ($matches[2] != '...') $result['temp'] = round(5/9*((intval($matches[2]))-32),1);
+			if ($matches[3] != '...') $result['rain'] = round((intval($matches[3])/100)*25.1,1);
+			if ($matches[4] != '...') $result['humidity'] = intval($matches[4]);
+			if ($matches[5] != '...') $result['pressure'] = round((intval($matches[5])/10),1);
+		        $body_parse = substr($body_parse,strlen($matches[0]));
 		    }
+		    $result['comment'] = trim($body_parse);
 		}
 		} else $result['comment'] = trim($body_parse);
 

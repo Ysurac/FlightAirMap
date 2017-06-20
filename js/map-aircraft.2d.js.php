@@ -122,7 +122,7 @@ $( document ).ready(function() {
 	var zoom = map.getZoom();
 	map.on('moveend', function() {
 		if (map.getZoom() > 7) {
-			update_airportsLayer();
+			if (getCookie(displayairports) == 'true') update_airportsLayer();
 			if ($("#airspace").hasClass("active"))
 			{
 				map.removeLayer(airspaceLayer);
@@ -134,7 +134,7 @@ $( document ).ready(function() {
 				update_waypointsLayer();
 			}
 		} else {
-			update_airportsLayer();
+			if (getCookie(displayairports) == 'true') update_airportsLayer();
 			if ($("#airspace").hasClass("active"))
 			{
 				map.removeLayer(airspaceLayer);
@@ -171,7 +171,7 @@ $( document ).ready(function() {
 	});
 
 	//update_waypointsLayer();
-	update_airportsLayer();
+	if (getCookie(displayairports) == 'true') update_airportsLayer();
 <?php
 	if (!isset($ident) && !isset($flightaware_id)) {
 ?>

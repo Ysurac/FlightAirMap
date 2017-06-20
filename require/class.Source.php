@@ -35,6 +35,19 @@ class Source {
 		return $all;
 	}
 
+	public function getLocationInfobyNameType($name,$type) {
+		$query = "SELECT * FROM source_location WHERE name = :name AND type = :type";
+		$query_values = array(':name' => $name,':type' => $type);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
+
 	public function getLocationInfobySourceName($name) {
 		$query = "SELECT * FROM source_location WHERE source = :name";
 		$query_values = array(':name' => $name);
@@ -168,10 +181,18 @@ class Source {
 
 	public function deleteOldLocationByType($type) {
 		global $globalDBdriver;
-		if ($globalDBdriver == 'mysql') {
-			$query  = "DELETE FROM source_location WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 WEEK) >= source_location.last_seen AND type = :type";
+		if ($type == 'wx') {
+			if ($globalDBdriver == 'mysql') {
+				$query  = "DELETE FROM source_location WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 DAY) >= source_location.last_seen AND type = :type";
+			} else {
+				$query  = "DELETE FROM source_location WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '1 DAY' >= source_location.last_seen AND type = :type";
+			}
 		} else {
-			$query  = "DELETE FROM source_location WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '1 WEEK' >= source_location.last_seen AND type = :type";
+			if ($globalDBdriver == 'mysql') {
+				$query  = "DELETE FROM source_location WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 WEEK) >= source_location.last_seen AND type = :type";
+			} else {
+				$query  = "DELETE FROM source_location WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '1 WEEK' >= source_location.last_seen AND type = :type";
+			}
 		}
 		try {
 			$sth = $this->db->prepare($query);

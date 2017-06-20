@@ -486,7 +486,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 						$modelsdb[$aircraft_icao] = 'Cesium_Air.glb';
 					}
 				} elseif ($tracker && isset($spotter_item['type'])) {
-					if ($spotter_item['type'] == 'Car') {
+					if ($spotter_item['type'] == 'Car' || $spotter_item['type'] == 'Van') {
 						//$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/car.glb","scale" : 1.0,"minimumPixelSize": 20,';
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/car.gltf","scale" : 1.0,"minimumPixelSize": 20';
 						$output .= ',"heightReference": "'.$heightrelative.'"';

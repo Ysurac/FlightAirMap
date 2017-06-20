@@ -51,6 +51,10 @@ if (!empty($spotter_array) && count($spotter_array) > 0)
 				$output .= '"popupContent": "'.$spotter_item['location_id'].'",';
 			$output .= '"icon": "'.$globalURL.'/images/'.$spotter_item['logo'].'",';
 			$output .= '"type": "'.$spotter_item['type'].'",';
+			if ($spotter_item['type'] == 'wx') {
+				$weather = json_decode($spotter_item['description'],true);
+				if (isset($weather['temp'])) $output.= '"temp": "'.$weather['temp'].'",';
+			}
 			$output .= '"image_thumb": "'.$spotter_item['image_thumb'].'"';
 		    $output .= '},';
 		    $output .= '"geometry": {';

@@ -30,7 +30,7 @@ print $spotter_item['altitude'];
 print '</div>';
 
 print '<div><span>'._("Last Seen").'</span>';
-print $spotter_item['last_seen'];
+print $spotter_item['last_seen'].' UTC';
 print '</div>';
 
 if ($spotter_item['city'] != '') print '<div><span>'._("City").'</span>'.$spotter_item['city'].'</div>';
@@ -43,13 +43,25 @@ if ($spotter_item['atc_range'] > 0) {
     print '</div>';
 }
 */
-print '</div>';
-
-if ($spotter_item['description'] != '') {
-    print '<div class="notamtext"><span>'._("Info").'</span>';
-    print $spotter_item['description'];
-    print '</div>';
+if ($spotter_item['type'] == 'wx') {
+	$weather = json_decode($spotter_item['description'],true);
+	//print_r($weather);
+	if (isset($weather['temp'])) print '<div><span>'._("Temperature").'</span>'.$weather['temp'].'°C</div>';
+	if (isset($weather['pressure'])) print '<div><span>'._("Pressure").'</span>'.$weather['pressure'].'°hPa</div>';
+	if (isset($weather['wind_gust'])) print '<div><span>'._("Wind Gust").'</span>'.$weather['wind_gust'].' km/h</div>';
+	if (isset($weather['humidity'])) print '<div><span>'._("Humidity").'</span>'.$weather['humidity'].'%</div>';
+	if (isset($weather['rain'])) print '<div><span>'._("Rain").'</span>'.$weather['rain'].' mm</div>';
+	if (isset($weather['precipitation'])) print '<div><span>'._("Precipitation 24H").'</span>'.$weather['precipitation'].' mm</div>';
+	if (isset($weather['precipitation24h'])) print '<div><span>'._("Precipitation Today").'</span>'.$weather['precipitation24h'].' mm</div>';
+	$spotter_item['description'] = $weather['comment'];
 }
+print '</div>';
+if ($spotter_item['description'] != '') {
+	print '<div class="notamtext"><span>'._("Info").'</span>';
+	print $spotter_item['description'];
+	print '</div>';
+}
+
 
 print '</div>';
 }
