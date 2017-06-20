@@ -122,7 +122,7 @@ $( document ).ready(function() {
 	var zoom = map.getZoom();
 	map.on('moveend', function() {
 		if (map.getZoom() > 7) {
-			if (getCookie(displayairports) == 'true') update_airportsLayer();
+			if (getCookie("displayairports") == 'true') update_airportsLayer();
 			if ($("#airspace").hasClass("active"))
 			{
 				map.removeLayer(airspaceLayer);
@@ -134,7 +134,7 @@ $( document ).ready(function() {
 				update_waypointsLayer();
 			}
 		} else {
-			if (getCookie(displayairports) == 'true') update_airportsLayer();
+			if (getCookie("displayairports") == 'true') update_airportsLayer();
 			if ($("#airspace").hasClass("active"))
 			{
 				map.removeLayer(airspaceLayer);
@@ -171,7 +171,7 @@ $( document ).ready(function() {
 	});
 
 	//update_waypointsLayer();
-	if (getCookie(displayairports) == 'true') update_airportsLayer();
+	if (getCookie("displayairports") == 'true') update_airportsLayer();
 <?php
 	if (!isset($ident) && !isset($flightaware_id)) {
 ?>
@@ -1069,7 +1069,7 @@ function update_notamLayer() {
 	if (getCookie('notamscope') == '' || getCookie('notamscope') == 'All') {
 		url = "<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox;
 	} else {
-		url = "<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox+"&scope="+getCookie(notamscope);
+		url = "<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox+"&scope="+getCookie("notamscope");
 	}
 	//notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
 	notamLayer = new L.GeoJSON.AJAX(url,{
