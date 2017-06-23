@@ -47,7 +47,7 @@ if ($spotter_item['type'] == 'wx') {
 	$weather = json_decode($spotter_item['description'],true);
 	//print_r($weather);
 	if (isset($weather['temp'])) print '<div><span>'._("Temperature").'</span>'.$weather['temp'].'°C</div>';
-	if (isset($weather['pressure'])) print '<div><span>'._("Pressure").'</span>'.$weather['pressure'].'°hPa</div>';
+	if (isset($weather['pressure'])) print '<div><span>'._("Pressure").'</span>'.$weather['pressure'].'hPa</div>';
 	if (isset($weather['wind_gust'])) print '<div><span>'._("Wind Gust").'</span>'.$weather['wind_gust'].' km/h</div>';
 	if (isset($weather['humidity'])) print '<div><span>'._("Humidity").'</span>'.$weather['humidity'].'%</div>';
 	if (isset($weather['rain'])) print '<div><span>'._("Rain").'</span>'.$weather['rain'].' mm</div>';

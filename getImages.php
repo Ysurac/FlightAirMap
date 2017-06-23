@@ -31,7 +31,10 @@ if (file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATO
     exit(0);
 }
 if (isset($_GET['tracker'])) {
-	$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.$filename;
+	$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.'color'.DIRECTORY_SEPARATOR.$filename;
+	if (!file_exists($original)) {
+		$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.$filename;
+	}
 } elseif (isset($_GET['marine'])) {
 	//$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.$filename;
 	$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.'color'.DIRECTORY_SEPARATOR.$filename;

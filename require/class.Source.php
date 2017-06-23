@@ -187,6 +187,12 @@ class Source {
 			} else {
 				$query  = "DELETE FROM source_location WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '1 DAY' >= source_location.last_seen AND type = :type";
 			}
+		} elseif ($type == 'lightning') {
+			if ($globalDBdriver == 'mysql') {
+				$query  = "DELETE FROM source_location WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 20 MINUTE) >= source_location.last_seen AND type = :type";
+			} else {
+				$query  = "DELETE FROM source_location WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '20 MINUTE' >= source_location.last_seen AND type = :type";
+			}
 		} else {
 			if ($globalDBdriver == 'mysql') {
 				$query  = "DELETE FROM source_location WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 WEEK) >= source_location.last_seen AND type = :type";

@@ -1427,7 +1427,7 @@ while ($i > 0) {
 					}
 				    } elseif (isset($line['symbol']) && $line['symbol'] == 'Weather Station') {
 					//if ($globalDebug) echo '!! Weather Station not yet supported'."\n";
-					//if ($globalDebug) echo '# Weather Station added'."\n";
+					if ($globalDebug) echo '# Weather Station added'."\n";
 					$Source->deleteOldLocationByType('wx');
 					$weather_data = json_encode($line);
 					if (count($Source->getLocationInfoByNameType($data['ident'],'wx')) > 0) {
@@ -1435,12 +1435,20 @@ while ($i > 0) {
 					} else {
 						$Source->addLocation($data['ident'],$data['latitude'],$data['longitude'],0,'','',$data['source_name'],'wx.png','wx',$id,0,$data['datetime'],$weather_data);
 					}
-					unset($data);
-				    
+				    } elseif (isset($line['symbol']) && $line['symbol'] == 'Lightning') {
+					//if ($globalDebug) echo '!! Weather Station not yet supported'."\n";
+					if ($globalDebug) echo '☈ Lightning added'."\n";
+					$Source->deleteOldLocationByType('lightning');
+					if (count($Source->getLocationInfoByNameType($data['ident'],'lightning')) > 0) {
+						$Source->updateLocation($data['ident'],$data['latitude'],$data['longitude'],0,'','',$data['source_name'],'weather/thunderstorm.png','lightning',$id,0,$data['datetime'],$data['comment']);
+					} else {
+						$Source->addLocation($data['ident'],$data['latitude'],$data['longitude'],0,'','',$data['source_name'],'weather/thunderstorm.png','lightning',$id,0,$data['datetime'],$data['comment']);
+					}
 				    } elseif ($globalDebug) {
 				    	echo '/!\ Not added: '.$buffer."\n";
 				    	print_r($line);
 				    }
+				    unset($data);
 				}
 				elseif (is_array($line) && isset($line['ident']) && $line['ident'] != '') {
 					$Source->updateLocationDescByName($line['ident'],$line['source'],$id,$line['comment']);
@@ -1452,6 +1460,13 @@ while ($i > 0) {
 				*/
 				//elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
 				elseif ($line == true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
+				if (isset($globalSources[$nb]['last_weather_clean']) && time()-$globalSources[$nb]['last_weather_clean'] > 60*5) {
+					$Source->deleteOldLocationByType('lightning');
+					$Source->deleteOldLocationByType('wx');
+					$globalSources[$nb]['last_weather_clean'] = time();
+				} elseif (!isset($globalSources[$nb]['last_weather_clean'])) {
+					$globalSources[$nb]['last_weather_clean'] = time();
+				}
 			    }
 			} else {
 			    $line = explode(',', $buffer);

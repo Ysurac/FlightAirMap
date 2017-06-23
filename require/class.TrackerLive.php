@@ -177,23 +177,48 @@ class TrackerLive {
 	*/
 	public function getMinLastLiveTrackerData($filter = array())
 	{
-		global $globalDBdriver, $globalLiveInterval;
+		global $globalDBdriver, $globalLiveInterval, $globalArchive;
 		date_default_timezone_set('UTC');
 
 		$filter_query = $this->getFilter($filter,true,true);
 
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		if ($globalDBdriver == 'mysql') {
-			$query  = 'SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
-			FROM tracker_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= tracker_live.date AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0' 
-			ORDER BY tracker_live.famtrackid, tracker_live.date";
-                } else {
-			$query  = "SELECT tracker_live.ident, tracker_live.famtrackid, tracker_live.type,tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
-			FROM tracker_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= tracker_live.date AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0' 
-			ORDER BY tracker_live.famtrackid, tracker_live.date";
+			if (isset($globalArchive) && $globalArchive) {
+				$query  = "SELECT * FROM (
+					SELECT tracker_archive.ident, tracker_archive.famtrackid,tracker_archive.type,tracker_archive.latitude, tracker_archive.longitude, tracker_archive.altitude, tracker_archive.heading, tracker_archive.ground_speed, tracker_archive.date, tracker_archive.format_source 
+					FROM tracker_archive INNER JOIN (SELECT famtrackid FROM tracker_live".$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= tracker_live.date) l ON l.famtrackid = tracker_archive.famtrackid 
+				    UNION
+					SELECT tracker_live.ident, tracker_live.famtrackid, tracker_live.type,tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
+					FROM tracker_live".$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= tracker_live.date
+				    ) AS tracker
+				    WHERE latitude <> '0' AND longitude <> '0' 
+				    ORDER BY famtrackid, date";
+			} else {
+				$query  = 'SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
+				    FROM tracker_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= tracker_live.date 
+				    AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0' 
+				    ORDER BY tracker_live.famtrackid, tracker_live.date";
+			}
+		} else {
+			if (isset($globalArchive) && $globalArchive) {
+				$query  = "SELECT * FROM (
+					SELECT tracker_archive.ident, tracker_archive.famtrackid,tracker_archive.type,tracker_archive.latitude, tracker_archive.longitude, tracker_archive.altitude, tracker_archive.heading, tracker_archive.ground_speed, tracker_archive.date, tracker_archive.format_source 
+					FROM tracker_archive INNER JOIN (SELECT famtrackid FROM tracker_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= tracker_live.date) l ON l.famtrackid = tracker_archive.famtrackid 
+				    UNION
+					SELECT tracker_live.ident, tracker_live.famtrackid, tracker_live.type,tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
+					FROM tracker_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= tracker_live.date
+				    ) AS tracker
+				    WHERE latitude <> '0' AND longitude <> '0' 
+				    ORDER BY famtrackid, date";
+			} else {
+				$query  = "SELECT tracker_live.ident, tracker_live.famtrackid, tracker_live.type,tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
+				    FROM tracker_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= tracker_live.date AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0' 
+				    ORDER BY tracker_live.famtrackid, tracker_live.date";
+			}
 		}
 
-    		try {
+		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {

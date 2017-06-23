@@ -155,8 +155,8 @@ function getLiveTrackerData(click)
 		    if (callsign != ""){ markerTrackerLabel += callsign; }
 		    if (type != ""){ markerTrackerLabel += ' - '+type; }
 <?php
-	if (isset($_COOKIE['IconColor'])) $IconColor = $_COOKIE['IconColor'];
-	elseif (isset($globalAircraftIconColor)) $IconColor = $globalAircraftIconColor;
+	if (isset($_COOKIE['TrackerIconColor'])) $IconColor = $_COOKIE['TrackerIconColor'];
+	elseif (isset($globalTrackerIconColor)) $IconColor = $globalTrackerIconColor;
 	else $IconColor = '1a3151';
 	if (!isset($ident) && !isset($famtrackid)) {
 ?>
@@ -603,4 +603,8 @@ reloadTrackerPage = setInterval(
 <?php
 	}
 ?>
+function TrackericonColor(color) {
+    document.cookie =  'TrackerIconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
 });

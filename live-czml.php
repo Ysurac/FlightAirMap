@@ -174,7 +174,6 @@ $sqltime = round(microtime(true)-$begintime,2);
 $minitime = time();
 $maxitime = 0;
 
-
 $modelsdb = array();
 if (file_exists(dirname(__FILE__).'/models/modelsdb')) {
 	if (($handle = fopen(dirname(__FILE__).'/models/modelsdb','r')) !== FALSE) {
@@ -242,7 +241,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$output .= '{';
 			$output .= '"id": "'.$id.'",';
 			$output .= '"properties": {';
-			// Not yet supported in CZML with Cesium
+			$output .= '"onground": %onground%,';
 			$output .= '"format": "'.$spotter_item['format_source'].'"';
 			$output .= '},';
 
@@ -487,46 +486,108 @@ if (!empty($spotter_array) && is_array($spotter_array))
 					}
 				} elseif ($tracker && isset($spotter_item['type'])) {
 					if ($spotter_item['type'] == 'Car' || $spotter_item['type'] == 'Van') {
+						$onground = true;
 						//$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/car.glb","scale" : 1.0,"minimumPixelSize": 20,';
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/car.gltf","scale" : 1.0,"minimumPixelSize": 20';
-						$output .= ',"heightReference": "'.$heightrelative.'"';
+						//$output .= ',"heightReference": "'.$heightrelative.'"';
+						$output .= ',"heightReference": "CLAMP_TO_GROUND"';
+						if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] && isset($_COOKIE['TrackerIconColor'])) {
+							$rgb = $Common->hex2rgb($_COOKIE['TrackerIconColor']);
+							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+							$output .= ',"colorBlendMode" : "MIX"';
+						}
 						$output .= '},';
 					} elseif ($spotter_item['type'] == 'Truck' || $spotter_item['type'] == 'Truck (18 Wheeler)') {
-						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/truck.gltf","scale" : 1.0,"minimumPixelSize": 20';
-						$output .= ',"heightReference": "'.$heightrelative.'"';
+						$onground = true;
+						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/truck.gltf","scale" : 1.0,"minimumPixelSize": 10';
+						//$output .= ',"heightReference": "'.$heightrelative.'"';
+						$output .= ',"heightReference": "CLAMP_TO_GROUND"';
+						if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] && isset($_COOKIE['TrackerIconColor'])) {
+							$rgb = $Common->hex2rgb($_COOKIE['TrackerIconColor']);
+							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+							$output .= ',"colorBlendMode" : "MIX"';
+						}
 						$output .= '},';
 					} elseif ($spotter_item['type'] == 'Firetruck') {
-						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/firetruck.glb","scale" : 1.0,"minimumPixelSize": 20';
-						$output .= ',"heightReference": "'.$heightrelative.'"';
+						$onground = true;
+						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/firetruck.glb","scale" : 1.0,"minimumPixelSize": 0';
+						//$output .= ',"heightReference": "'.$heightrelative.'"';
+						$output .= ',"heightReference": "CLAMP_TO_GROUND"';
+						if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] && isset($_COOKIE['TrackerIconColor'])) {
+							$rgb = $Common->hex2rgb($_COOKIE['TrackerIconColor']);
+							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+							$output .= ',"colorBlendMode" : "MIX"';
+						}
 						$output .= '},';
 					} elseif ($spotter_item['type'] == 'Bike') {
+						$onground = true;
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/cycle.glb","scale" : 1.0,"minimumPixelSize": 20';
-						$output .= ',"heightReference": "'.$heightrelative.'"';
+						//$output .= ',"heightReference": "'.$heightrelative.'"';
+						$output .= ',"heightReference": "CLAMP_TO_GROUND"';
+						if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] && isset($_COOKIE['TrackerIconColor'])) {
+							$rgb = $Common->hex2rgb($_COOKIE['TrackerIconColor']);
+							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+							$output .= ',"colorBlendMode" : "MIX"';
+						}
 						$output .= '},';
 					} elseif ($spotter_item['type'] == 'Police') {
+						$onground = true;
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/police.glb","scale" : 1.0,"minimumPixelSize": 20';
-						$output .= ',"heightReference": "'.$heightrelative.'"';
+						//$output .= ',"heightReference": "'.$heightrelative.'"';
+						$output .= ',"heightReference": "CLAMP_TO_GROUND"';
+						if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] && isset($_COOKIE['TrackerIconColor'])) {
+							$rgb = $Common->hex2rgb($_COOKIE['TrackerIconColor']);
+							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+							$output .= ',"colorBlendMode" : "MIX"';
+						}
 						$output .= '},';
 					} elseif ($spotter_item['type'] == 'Balloon') {
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/ball.glb","scale" : 1.0,"minimumPixelSize": 20';
 						$output .= ',"heightReference": "'.$heightrelative.'"';
+						if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] && isset($_COOKIE['TrackerIconColor'])) {
+							$rgb = $Common->hex2rgb($_COOKIE['TrackerIconColor']);
+							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+							$output .= ',"colorBlendMode" : "MIX"';
+						}
 						$output .= '},';
 					} elseif ($spotter_item['type'] == 'Ship (Power Boat)' || $spotter_item['type'] == 'Yatch (Sail)') {
+						$onground = true;
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/boat.glb","scale" : 1.0,"minimumPixelSize": 20';
-						$output .= ',"heightReference": "'.$heightrelative.'"';
+						//$output .= ',"heightReference": "'.$heightrelative.'"';
+						$output .= ',"heightReference": "CLAMP_TO_GROUND"';
+						if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] && isset($_COOKIE['TrackerIconColor'])) {
+							$rgb = $Common->hex2rgb($_COOKIE['TrackerIconColor']);
+							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+							$output .= ',"colorBlendMode" : "MIX"';
+						}
 						$output .= '},';
 					} else {
-						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/truck.gltf","scale" : 1.0,"minimumPixelSize": 20';
+						$onground = true;
+						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/car.gltf","scale" : 1.0,"minimumPixelSize": 20';
 						//$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/Cesium_Ground.glb","scale" : 1.0,"minimumPixelSize": 20';
 						$output .= ',"heightReference": "'.$heightrelative.'"';
+						if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] && isset($_COOKIE['TrackerIconColor'])) {
+							$rgb = $Common->hex2rgb($_COOKIE['TrackerIconColor']);
+							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+							$output .= ',"colorBlendMode" : "MIX"';
+						}
 						$output .= '},';
 					}
 				} elseif ($marine) {
 					$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/boat.glb","scale" : 1.0,"minimumPixelSize": 20';
 					$output .= ',"heightReference": "'.$heightrelative.'"';
+					//$output .= ',"heightReference": "CLAMP_TO_GROUND"';
+					if (isset($_COOKIE['MarineIconColorForce']) && $_COOKIE['MarineIconColorForce'] && isset($_COOKIE['MarineIconColor'])) {
+						$rgb = $Common->hex2rgb($_COOKIE['MarineIconColor']);
+						$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
+						$output .= ',"colorBlendMode" : "MIX"';
+					}
 					$output .= '},';
 				}
 			}
+			if ($onground) $output = str_replace('%onground%','true',$output);
+			else $output = str_replace('%onground%','false',$output);
+
 	//		$output .= '"heightReference": "CLAMP_TO_GROUND",';
 			//$output .= '"heightReference": "'.$heightrelative.'",';
 	//		$output .= '"heightReference": "NONE",';
@@ -545,10 +606,19 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$output .= $spotter_item['latitude'];
 			$prevlong = $spotter_item['longitude'];
 			$prevlat = $spotter_item['latitude'];
-			if (!$tracker && !$marine) {
+			//if (!$tracker && !$marine) {
+			//if (!$marine && (!isset($onground) || !$onground)) {
+			if (!$marine) {
 				if (isset($spotter_item['real_altitude']) && $spotter_item['real_altitude'] != '') {
 					$output .= ', '.round($spotter_item['real_altitude']*0.3048);
-					$prevalt = round($spotter_item['real_altitude']*30.48);
+					if ($tracker) {
+						$prevalt = round($spotter_item['real_altitude']*0.3048);
+					} else {
+						$prevalt = round($spotter_item['real_altitude']*30.48);
+					}
+				} elseif ($tracker) {
+					$output .= ', '.round($spotter_item['altitude']*0.3048);
+					$prevalt = round($spotter_item['altitude']*0.3048);
 				} else {
 					$output .= ', '.round($spotter_item['altitude']*30.48);
 					$prevalt = round($spotter_item['altitude']*30.48);
@@ -564,12 +634,14 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			if ($spotter_item['ground_speed'] == 0) {
 				$output .= $prevlong.', ';
 				$output .= $prevlat;
-				if (!$tracker && !$marine) $output .= ', '.$prevalt;
+				//if (!$marine && (!isset($onground) || !$onground)) $output .= ', '.$prevalt;
+				if (!$marine) $output .= ', '.$prevalt;
 				else $output .= ', 0';
 			} else {
 				$output .= $spotter_item['longitude'].', ';
 				$output .= $spotter_item['latitude'];
-				if (!$tracker && !$marine) {
+				//if (!$marine && (!isset($onground) || !$onground)) {
+				if (!$marine) {
 					if ($spotter_item['altitude'] == '') {
 						if ($prevalt != '') {
 							$output .= ', '.$prevalt;
@@ -578,7 +650,11 @@ if (!empty($spotter_array) && is_array($spotter_array))
 						}
 					} else {
 						if (isset($spotter_item['real_altitude']) && $spotter_item['real_altitude'] != '') $output .= ', '.round($spotter_item['real_altitude']*0.3048);
-						else $output .= ', '.round($spotter_item['altitude']*30.48);
+						elseif ($tracker) {
+							$output .= ', '.round($spotter_item['altitude']*0.3048);
+						} else {
+							$output .= ', '.round($spotter_item['altitude']*30.48);
+						}
 					}
 				} else $output .= ', 0';
 			}
@@ -593,7 +669,13 @@ if (!empty($spotter_array) && is_array($spotter_array))
 }
 $output .= ']';
 if (isset($globalArchive) && $globalArchive === TRUE) {
-	if ((time()-$globalLiveInterval) > $minitime) $output = str_replace('%minitime%',date("c",time()-$globalLiveInterval),$output);
+	if ((time()-$globalLiveInterval) > $minitime) {
+		if (time()-$globalLiveInterval > $maxitime) {
+			$output = str_replace('%minitime%',date("c",$maxitime),$output);
+		} else {
+			$output = str_replace('%minitime%',date("c",time()-$globalLiveInterval),$output);
+		}
+	}
 	else $output = str_replace('%minitime%',date("c",$minitime),$output);
 } else $output = str_replace('%minitime%',date("c",$minitime),$output);
 $output = str_replace('%maxitime%',date("c",$maxitime),$output);

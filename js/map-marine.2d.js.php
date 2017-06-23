@@ -602,4 +602,8 @@ reloadMarinePage = setInterval(
 <?php
 	}
 ?>
+function MarineiconColor(color) {
+    document.cookie =  'MarineIconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
 });

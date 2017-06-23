@@ -82,8 +82,8 @@ class TrackerImport {
     }
 
     public function add($line) {
-	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked;
-	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
+	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChangeTracker, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked;
+	if (!isset($globalCoordMinChangeTracker) || $globalCoordMinChangeTracker == '') $globalCoordMinChange = '0.015';
 	date_default_timezone_set('UTC');
 	$dataFound = false;
 	$send = false;
@@ -178,7 +178,7 @@ class TrackerImport {
 	    	    else unset($timediff);
 	    	    if ($this->tmd > 5 || !isset($timediff) || $timediff > 100 || ($timediff > 30 && isset($this->all_tracked[$id]['latitude']) && isset($this->all_tracked[$id]['longitude']) && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],'m')))) {
 			if (isset($this->all_tracked[$id]['archive_latitude']) && isset($this->all_tracked[$id]['archive_longitude']) && isset($this->all_tracked[$id]['livedb_latitude']) && isset($this->all_tracked[$id]['livedb_longitude'])) {
-			    if (!$Common->checkLine($this->all_tracked[$id]['archive_latitude'],$this->all_tracked[$id]['archive_longitude'],$this->all_tracked[$id]['livedb_latitude'],$this->all_tracked[$id]['livedb_longitude'],$line['latitude'],$line['longitude'])) {
+			    if (!$Common->checkLine($this->all_tracked[$id]['archive_latitude'],$this->all_tracked[$id]['archive_longitude'],$this->all_tracked[$id]['livedb_latitude'],$this->all_tracked[$id]['livedb_longitude'],$line['latitude'],$line['longitude'],0.1)) {
 				$this->all_tracked[$id]['archive_latitude'] = $line['latitude'];
 				$this->all_tracked[$id]['archive_longitude'] = $line['longitude'];
 				$this->all_tracked[$id]['putinarchive'] = true;
@@ -197,7 +197,7 @@ class TrackerImport {
 
 			if (isset($line['latitude']) && $line['latitude'] != '' && $line['latitude'] != 0 && $line['latitude'] < 91 && $line['latitude'] > -90) {
 				if (!isset($this->all_tracked[$id]['archive_latitude'])) $this->all_tracked[$id]['archive_latitude'] = $line['latitude'];
-				if (!isset($this->all_tracked[$id]['livedb_latitude']) || abs($this->all_tracked[$id]['livedb_latitude']-$line['latitude']) > $globalCoordMinChange || $this->all_tracked[$id]['format_source'] == 'aprs') {
+				if (!isset($this->all_tracked[$id]['livedb_latitude']) || abs($this->all_tracked[$id]['livedb_latitude']-$line['latitude']) > $globalCoordMinChangeTracker || $this->all_tracked[$id]['format_source'] == 'aprs') {
 				    $this->all_tracked[$id]['livedb_latitude'] = $line['latitude'];
 				    $dataFound = true;
 				    $this->all_tracked[$id]['time_last_coord'] = time();
@@ -207,7 +207,7 @@ class TrackerImport {
 			if (isset($line['longitude']) && $line['longitude'] != '' && $line['longitude'] != 0 && $line['longitude'] < 360 && $line['longitude'] > -180) {
 			    if ($line['longitude'] > 180) $line['longitude'] = $line['longitude'] - 360;
 				if (!isset($this->all_tracked[$id]['archive_longitude'])) $this->all_tracked[$id]['archive_longitude'] = $line['longitude'];
-				if (!isset($this->all_tracked[$id]['livedb_longitude']) || abs($this->all_tracked[$id]['livedb_longitude']-$line['longitude']) > $globalCoordMinChange || $this->all_tracked[$id]['format_source'] == 'aprs') {
+				if (!isset($this->all_tracked[$id]['livedb_longitude']) || abs($this->all_tracked[$id]['livedb_longitude']-$line['longitude']) > $globalCoordMinChangeTracker || $this->all_tracked[$id]['format_source'] == 'aprs') {
 				    $this->all_tracked[$id]['livedb_longitude'] = $line['longitude'];
 				    $dataFound = true;
 				    $this->all_tracked[$id]['time_last_coord'] = time();

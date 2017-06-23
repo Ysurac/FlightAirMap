@@ -402,7 +402,18 @@ require_once('header.php');
 			    if (extension_loaded('gd') && function_exists('gd_info')) {
 		    ?>
 		    <li><?php echo _("Marine icon color:"); ?>
-			<input type="color" name="marinecolor" id="html5colorpicker" onchange="iconColor(marinecolor.value);" value="#<?php if (isset($_COOKIE['MarineIconColor'])) print $_COOKIE['MarineIconColor']; elseif (isset($globalMarineIconColor)) print $globalMarineIconColor; else print '1a3151'; ?>">
+			<input type="color" name="marinecolor" id="html5colorpicker" onchange="MarineiconColor(marinecolor.value);" value="#<?php if (isset($_COOKIE['MarineIconColor'])) print $_COOKIE['MarineIconColor']; elseif (isset($globalMarineIconColor)) print $globalMarineIconColor; else print '1a3151'; ?>">
+		    </li>
+		    <?php
+			    }
+		        }
+		    ?>
+		    <?php
+			if (isset($globalTracker) && $globalTracker === TRUE) {
+			    if (extension_loaded('gd') && function_exists('gd_info')) {
+		    ?>
+		    <li><?php echo _("Tracker icon color:"); ?>
+			<input type="color" name="trackercolor" id="html5colorpicker" onchange="TrackericonColor(trackercolor.value);" value="#<?php if (isset($_COOKIE['TrackerIconColor'])) print $_COOKIE['TrackerIconColor']; elseif (isset($globalTrackerIconColor)) print $globalTrackerIconColor; else print '1a3151'; ?>">
 		    </li>
 		    <?php
 			    }
@@ -436,9 +447,19 @@ require_once('header.php');
 <?php
 	if (isset($globalMarine) && $globalMarine === TRUE) {
 ?>
-		    <li><input type="checkbox" name="marinecolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['MarineIconColorForce']) && $_COOKIE['MarineIconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Marine color"); ?></li>
+		    <li><input type="checkbox" name="marinecolorforce" value="1" onclick="MarineiconColorForce(this)" <?php if (isset($_COOKIE['MarineIconColorForce']) && $_COOKIE['MarineIconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Marine color"); ?></li>
 		    <li><?php echo _("Marine icon color:"); ?>
-			<input type="color" name="marinecolor" id="html5colorpicker" onchange="iconColor(marinecolor.value);" value="#<?php if (isset($_COOKIE['MarineIconColor'])) print $_COOKIE['MarineIconColor']; elseif (isset($globalMarineIconColor)) print $globalMarineIconColor; else print 'ff0000'; ?>">
+			<input type="color" name="marinecolor" id="html5colorpicker" onchange="MarineiconColor(marinecolor.value);" value="#<?php if (isset($_COOKIE['MarineIconColor'])) print $_COOKIE['MarineIconColor']; elseif (isset($globalMarineIconColor)) print $globalMarineIconColor; else print 'ff0000'; ?>">
+		    </li>
+<?php
+	}
+?>
+<?php
+	if (isset($globalTracker) && $globalTracker === TRUE) {
+?>
+		    <li><input type="checkbox" name="trackercolorforce" value="1" onclick="TrackericonColorForce(this)" <?php if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Tracker color"); ?></li>
+		    <li><?php echo _("Tracker icon color:"); ?>
+			<input type="color" name="trackercolor" id="html5colorpicker" onchange="TrackericonColor(trackercolor.value);" value="#<?php if (isset($_COOKIE['TrackerIconColor'])) print $_COOKIE['TrackerIconColor']; elseif (isset($globalTrackerIconColor)) print $globalTrackerIconColor; else print 'ff0000'; ?>">
 		    </li>
 <?php
 	}
