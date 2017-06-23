@@ -169,6 +169,17 @@ class Source {
 		}
 	}
 
+	public function deleteLocationBySource($source) {
+		$query = "DELETE FROM source_location WHERE source = :source";
+		$query_values = array(':source' => $source);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
 	public function deleteAllLocation() {
 		$query = "DELETE FROM source_location";
 		try {

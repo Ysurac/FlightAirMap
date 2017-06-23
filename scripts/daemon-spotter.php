@@ -176,6 +176,9 @@ function connect_all($hosts) {
         	$globalSources[$id]['format'] = 'whazzup';
         	//$last_exec['whazzup'] = 0;
         	if ($globalDebug) echo "Connect to whazzup source (".$host.")...\n";
+            } else if (preg_match('/blitzortung/i',$host)) {
+        	$globalSources[$id]['format'] = 'blitzortung';
+        	if ($globalDebug) echo "Connect to blitzortung source (".$host.")...\n";
             } else if (preg_match('/airwhere/i',$host)) {
         	$globalSources[$id]['format'] = 'airwhere';
         	if ($globalDebug) echo "Connect to airwhere source (".$host.")...\n";
@@ -1127,6 +1130,35 @@ while ($i > 0) {
 	    }
     	    //$last_exec['phpvmacars'] = time();
     	    $last_exec[$id]['last'] = time();
+    	} elseif ($value['format'] == 'blitzortung' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	    //$buffer = $Common->getData($hosts[$id]);
+	    if ($globalDebug) echo 'Get Data...'."\n";
+	    $buffer = $Common->getData($value['host']);
+	    $all_data = json_decode($buffer,true);
+	    if ($buffer != '') {
+		$Source->deleteLocationBySource('blitzortung');
+		$buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
+		$buffer = explode('\n',$buffer);
+		foreach ($buffer as $buffer_line) {
+		    $line = json_decode($buffer_line,true);
+		    if (isset($line['time'])) {
+			$data = array();
+			$data['altitude'] = $line['alt']; // altitude
+			$data['latitude'] = $line['lat']; // lat
+			$data['longitude'] = $line['lon']; // long
+			$data['datetime'] = date('Y-m-d H:i:s',substr($line['time'],0,10));
+			$data['id_source'] = $id_source;
+			$data['format_source'] = 'blitzortung';
+			$SI->add($data);
+			if ($globalDebug) echo '☈ Lightning added'."\n";
+			$Source->addLocation('',$data['latitude'],$data['longitude'],0,'','','blitzortung','weather/thunderstorm.png','lightning',$id,0,$data['datetime']);
+			unset($data);
+		    }
+		}
+		if ($globalDebug) echo 'No more data...'."\n";
+		unset($buffer);
+	    }
+	    $last_exec[$id]['last'] = time();
 	//} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
 	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'famaprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars' || $value['format'] == 'acarssbs3' || $value['format'] == 'ais' || $value['format'] == 'vrstcp') {
 	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();

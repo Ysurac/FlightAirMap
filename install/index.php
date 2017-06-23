@@ -493,6 +493,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="ais" <?php if (isset($source['format']) && $source['format'] == 'ais') print 'selected'; ?>>NMEA AIS over TCP</option>
 										<option value="airwhere" <?php if (isset($source['format']) && $source['format'] == 'airwhere') print 'selected'; ?>>AirWhere website</option>
 										<option value="hidnseek_callback" <?php if (isset($source['format']) && $source['format'] == 'hidnseek_callback') print 'selected'; ?>>HidnSeek Callback</option>
+										<option value="blitzortung" <?php if (isset($source['format']) && $source['format'] == 'blitzortung') print 'selected'; ?>>Blitzortung</option>
 									</select>
 								</td>
 								<td>
@@ -544,6 +545,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="ais">NMEA AIS over TCP</option>
 										<option value="airwhere">AirWhere website</option>
 										<option value="hidnseek_callback">HidnSeek Callback</option>
+										<option value="blitzortung">Blitzortung</option>
 									</select>
 								</td>
 								<td>

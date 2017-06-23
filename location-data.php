@@ -18,7 +18,8 @@ date_default_timezone_set('UTC');
 
 print '<div class="top">';
 if ($spotter_item['name'] != '') print '<div class="right"><div class="callsign-details"><div class="callsign">'.$spotter_item['name'].'</div>';
-else print '<div class="right"><div class="callsign-details"><div class="callsign">'.$spotter_item['location_id'].'</div>';
+elseif ($spotter_item['location_id'] != 0) print '<div class="right"><div class="callsign-details"><div class="callsign">'.$spotter_item['location_id'].'</div>';
+else print '<div class="right"><div class="callsign-details"><div class="callsign"></div>';
 print '</div>';
 
 print '</div></div>';
