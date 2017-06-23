@@ -83,7 +83,7 @@ class TrackerImport {
 
     public function add($line) {
 	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChangeTracker, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked;
-	if (!isset($globalCoordMinChangeTracker) || $globalCoordMinChangeTracker == '') $globalCoordMinChange = '0.015';
+	if (!isset($globalCoordMinChangeTracker) || $globalCoordMinChangeTracker == '') $globalCoordMinChangeTracker = '0.015';
 	date_default_timezone_set('UTC');
 	$dataFound = false;
 	$send = false;
