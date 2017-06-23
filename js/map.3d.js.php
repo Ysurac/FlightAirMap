@@ -467,7 +467,7 @@ if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') 
 }
 
 update_locationsLayer();
-
+setInterval(function(){update_locationsLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
 /*
 var handlera = new Cesium.ScreenSpaceEventHandler(viewer.canvas, false);
 handlera.setInputAction(

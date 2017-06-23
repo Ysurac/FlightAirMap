@@ -161,6 +161,14 @@ function clickDisplayGroundStation(cb) {
     createCookie('show_GroundStation',cb.checked,2);
     window.location.reload();
 }
+function clickDisplayWeatherStation(cb) {
+    createCookie('show_WeatherStation',cb.checked,2);
+    window.location.reload();
+}
+function clickDisplayLightning(cb) {
+    createCookie('show_Lightning',cb.checked,2);
+    window.location.reload();
+}
 function unitdistance(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;

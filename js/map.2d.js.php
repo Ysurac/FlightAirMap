@@ -382,6 +382,8 @@ $( document ).ready(function() {
 		//}
 	});
 update_locationsLayer();
+setInterval(function(){update_locationsLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
+
 <?php
     // Add support for custom json via $globalMapJson
     if (isset($globalMapJson) && is_array($globalMapJson)) {
