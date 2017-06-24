@@ -27,5 +27,5 @@ CREATE TABLE IF NOT EXISTS `marine_live` (
   PRIMARY KEY (`marine_live_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
 
-ALTER TABLE `marine_output` ADD INDEX(`fammarine_id`);
-ALTER TABLE `marine_output` ADD INDEX(`date`);
+ALTER TABLE `marine_live` ADD INDEX(`fammarine_id`);
+ALTER TABLE `marine_live` ADD INDEX(`date`);
