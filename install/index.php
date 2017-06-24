@@ -766,7 +766,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<p>
 				<label for="archivemonths">Generate statistics, delete or put in archive flights older than xx months</label>
-				<input type="number" name="archivemonths" id="archivemonths" value="<?php if (isset($globalArchiveMonths)) print $globalArchiveMonths; else echo '0'; ?>" />
+				<input type="number" name="archivemonths" id="archivemonths" value="<?php if (isset($globalArchiveMonths)) print $globalArchiveMonths; else echo '1'; ?>" />
 				<p class="help-block">0 to disable, delete old flight if <i>Archive all flights data</i> is disabled</p>
 			</p>
 			<p>
@@ -776,12 +776,12 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<p>
 				<label for="archivekeepmonths">Keep flights data for xx months in archive</label>
-				<input type="number" name="archivekeepmonths" id="archivekeepmonths" value="<?php if (isset($globalArchiveKeepMonths)) print $globalArchiveKeepMonths; else echo '0'; ?>" />
+				<input type="number" name="archivekeepmonths" id="archivekeepmonths" value="<?php if (isset($globalArchiveKeepMonths)) print $globalArchiveKeepMonths; else echo '1'; ?>" />
 				<p class="help-block">0 to disable</p>
 			</p>
 			<p>
 				<label for="archivekeeptrackmonths">Keep flights track data for xx months in archive</label>
-				<input type="number" name="archivekeeptrackmonths" id="archivekeeptrackmonths" value="<?php if (isset($globalArchiveKeepTrackMonths)) print $globalArchiveKeepTrackMonths; else echo '0'; ?>" />
+				<input type="number" name="archivekeeptrackmonths" id="archivekeeptrackmonths" value="<?php if (isset($globalArchiveKeepTrackMonths)) print $globalArchiveKeepTrackMonths; else echo '1'; ?>" />
 				<p class="help-block">0 to disable, should be less or egal to <i>Keep flights data</i> value</p>
 			</p>
 			<br />
