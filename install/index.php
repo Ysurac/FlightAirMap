@@ -1,8 +1,8 @@
 <?php
 @session_start();
-header('Content-Encoding: none;');
 //print_r($_SESSION);
 if (isset($_SESSION['error'])) {
+	header('Content-Encoding: none;');
 	echo 'Error : '.$_SESSION['error'].' - Resetting install... You need to fix the problem and run install again.';
 	unset($_SESSION['error']);
 	unset($_SESSION['install']);
