@@ -378,8 +378,14 @@ while ($i > 0) {
     //foreach ($formats as $id => $value) {
     foreach ($globalSources as $id => $value) {
 	date_default_timezone_set('UTC');
+	//if ($globalDebug) echo 'Source host : '.$value['host'].' - Source format: '.$value['format']."\n";
 	if (!isset($last_exec[$id]['last'])) $last_exec[$id]['last'] = 0;
-	if ($value['format'] == 'deltadbtxt' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	if ($value['format'] == 'deltadbtxt' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host']);
 	    if ($buffer != '') $reset = 0;
@@ -410,7 +416,12 @@ while ($i > 0) {
     		}
     	    }
     	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'aisnmeatxt' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
+	} elseif ($value['format'] == 'aisnmeatxt' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
+	    )
+	) {
 	    date_default_timezone_set('CET');
 	    $buffer = $Common->getData(str_replace('{date}',date('Ymd'),$value['host']));
 	    date_default_timezone_set('UTC');
@@ -507,7 +518,12 @@ while ($i > 0) {
 		    }
 		}
 	    }
-	} elseif ($value['format'] == 'myshiptracking' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
+	} elseif ($value['format'] == 'myshiptracking' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
+	    )
+	) {
 	    $buffer = $Common->getData($value['host'],'get','','','','','20');
 	    if ($buffer != '') {
 		//echo $buffer;
@@ -537,7 +553,12 @@ while ($i > 0) {
 		}
 	    }
 	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'boatbeaconapp' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
+	} elseif ($value['format'] == 'boatbeaconapp' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
+	    )
+	) {
 	    $buffer = $Common->getData(str_replace('{timestamp}',time(),$value['host']));
 	    if ($buffer != '') {
 		$all_data = json_decode($buffer,true);
@@ -566,7 +587,12 @@ while ($i > 0) {
 		
 	    }
     	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'boatnerd' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
+	} elseif ($value['format'] == 'boatnerd' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
+	    )
+	) {
 	    $buffer = $Common->getData($value['host']);
 	    if ($buffer != '') {
 		$all_data = json_decode($buffer,true);
@@ -595,7 +621,12 @@ while ($i > 0) {
 		
 	    }
     	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'shipplotter' && (time() - $last_exec[$id]['last'] > $globalMinFetch*3)) {
+	} elseif ($value['format'] == 'shipplotter' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
+	    )
+	) {
 	    echo 'download...';
 	    $buffer = $Common->getData($value['host'],'post',$value['post'],'','','','','ShipPlotter');
 	    echo 'done !'."\n";
@@ -633,7 +664,21 @@ while ($i > 0) {
     	    }
     	    $last_exec[$id]['last'] = time();
 	//} elseif (($value == 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value == 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {
-	} elseif (($value['format'] == 'whazzup' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) || ($value['format'] == 'vatsimtxt' && (time() - $last_exec[$id]['last'] > $globalMinFetch))) {
+	} elseif (
+	    (
+		$value['format'] == 'whazzup' && 
+		(
+		    (isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		    (!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+		)
+	    ) || (
+		$value['format'] == 'vatsimtxt' && 
+		(
+		    (isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		    (!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+		)
+	    )
+	) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host']);
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
@@ -713,7 +758,12 @@ while ($i > 0) {
     	    //if ($value == 'whazzup') $last_exec['whazzup'] = time();
     	    //elseif ($value == 'vatsimtxt') $last_exec['vatsimtxt'] = time();
     	    $last_exec[$id]['last'] = time();
-    	} elseif ($value['format'] == 'airwhere' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'airwhere' && 
+    	    (
+    		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
+    		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+    	    )
+    	) {
 	    $buffer = $Common->getData('http://www.airwhere.co.uk/pilots.php','get','','','','','20');
 	    if ($buffer != '') {
 		$all_data = simplexml_load_string($buffer);
@@ -760,67 +810,81 @@ while ($i > 0) {
 		}
 	    }
 	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'aircraftlistjson' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	/*
+	} if ($value['format'] == 'aircraftlistjson') {
+	    print_r($globalSources);
+	    print_r($last_exec);
+	    echo $globalMinFetch;
+	*/
+	} elseif ($value['format'] == 'aircraftlistjson' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
 	    $buffer = $Common->getData($value['host'],'get','','','','','20');
 	    if ($buffer != '') {
-	    $all_data = json_decode($buffer,true);
-	    if (isset($all_data['acList'])) {
-		$reset = 0;
-		foreach ($all_data['acList'] as $line) {
-		    $data = array();
-		    $data['hex'] = $line['Icao']; // hex
-		    if (isset($line['Call'])) $data['ident'] = $line['Call']; // ident
-		    if (isset($line['Alt'])) $data['altitude'] = $line['Alt']; // altitude
-		    if (isset($line['Spd'])) $data['speed'] = $line['Spd']; // speed
-		    if (isset($line['Trak'])) $data['heading'] = $line['Trak']; // heading
-		    if (isset($line['Lat'])) $data['latitude'] = $line['Lat']; // lat
-		    if (isset($line['Long'])) $data['longitude'] = $line['Long']; // long
-		    //$data['verticalrate'] = $line['']; // verticale rate
-		    if (isset($line['Sqk'])) $data['squawk'] = $line['Sqk']; // squawk
-		    $data['emergency'] = ''; // emergency
-		    if (isset($line['Reg'])) $data['registration'] = $line['Reg'];
-		    
-		    if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',round($line['PosTime']/1000));
-		    else $data['datetime'] = date('Y-m-d H:i:s');
-		    
-		    //$data['datetime'] = date('Y-m-d H:i:s');
-		    if (isset($line['Type'])) $data['aircraft_icao'] = $line['Type'];
-	    	    $data['format_source'] = 'aircraftlistjson';
-		    $data['id_source'] = $id_source;
-		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
-		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
-		    if (isset($data['latitude'])) $SI->add($data);
-		    unset($data);
+	        $all_data = json_decode($buffer,true);
+		if (isset($all_data['acList'])) {
+		    $reset = 0;
+		    foreach ($all_data['acList'] as $line) {
+			$data = array();
+			$data['hex'] = $line['Icao']; // hex
+			if (isset($line['Call'])) $data['ident'] = $line['Call']; // ident
+			if (isset($line['Alt'])) $data['altitude'] = $line['Alt']; // altitude
+			if (isset($line['Spd'])) $data['speed'] = $line['Spd']; // speed
+			if (isset($line['Trak'])) $data['heading'] = $line['Trak']; // heading
+			if (isset($line['Lat'])) $data['latitude'] = $line['Lat']; // lat
+			if (isset($line['Long'])) $data['longitude'] = $line['Long']; // long
+			//$data['verticalrate'] = $line['']; // verticale rate
+			if (isset($line['Sqk'])) $data['squawk'] = $line['Sqk']; // squawk
+			$data['emergency'] = ''; // emergency
+			if (isset($line['Reg'])) $data['registration'] = $line['Reg'];
+			if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',round($line['PosTime']/1000));
+			else $data['datetime'] = date('Y-m-d H:i:s');
+			//$data['datetime'] = date('Y-m-d H:i:s');
+			if (isset($line['Type'])) $data['aircraft_icao'] = $line['Type'];
+			$data['format_source'] = 'aircraftlistjson';
+			$data['id_source'] = $id_source;
+			if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+			if (isset($data['latitude'])) $SI->add($data);
+			unset($data);
+		    }
+		} elseif (is_array($all_data)) {
+		    $reset = 0;
+		    foreach ($all_data as $line) {
+			$data = array();
+			$data['hex'] = $line['hex']; // hex
+			$data['ident'] = $line['flight']; // ident
+			$data['altitude'] = $line['altitude']; // altitude
+			$data['speed'] = $line['speed']; // speed
+			$data['heading'] = $line['track']; // heading
+			$data['latitude'] = $line['lat']; // lat
+			$data['longitude'] = $line['lon']; // long
+			$data['verticalrate'] = $line['vrt']; // verticale rate
+			$data['squawk'] = $line['squawk']; // squawk
+			$data['emergency'] = ''; // emergency
+			if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',round($line['PosTime']/1000));
+			else $data['datetime'] = date('Y-m-d H:i:s');
+			$data['format_source'] = 'aircraftlistjson';
+			$data['id_source'] = $id_source;
+			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+			if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+			$SI->add($data);
+			unset($data);
+		    }
 		}
-	    } elseif (is_array($all_data)) {
-		$reset = 0;
-		foreach ($all_data as $line) {
-		    $data = array();
-		    $data['hex'] = $line['hex']; // hex
-		    $data['ident'] = $line['flight']; // ident
-		    $data['altitude'] = $line['altitude']; // altitude
-		    $data['speed'] = $line['speed']; // speed
-		    $data['heading'] = $line['track']; // heading
-		    $data['latitude'] = $line['lat']; // lat
-		    $data['longitude'] = $line['lon']; // long
-		    $data['verticalrate'] = $line['vrt']; // verticale rate
-		    $data['squawk'] = $line['squawk']; // squawk
-		    $data['emergency'] = ''; // emergency
-		    if (isset($line['PosTime'])) $data['datetime'] = date('Y-m-d H:i:s',round($line['PosTime']/1000));
-		    else $data['datetime'] = date('Y-m-d H:i:s');
-	    	    $data['format_source'] = 'aircraftlistjson';
-    		    $data['id_source'] = $id_source;
-		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
-		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
-		    $SI->add($data);
-		    unset($data);
-		}
-	    }
-	    }
+	    } elseif ($globalDebug) echo 'No data'."\n";
     	    //$last_exec['aircraftlistjson'] = time();
     	    $last_exec[$id]['last'] = time();
     	//} elseif ($value == 'planeupdatefaa' && (time() - $last_exec['planeupdatefaa'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'planeupdatefaa' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+    	} elseif ($value['format'] == 'planeupdatefaa' && 
+    	    (
+    		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+    		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+    	    )
+    	) {
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['planes'])) {
@@ -853,9 +917,14 @@ while ($i > 0) {
 		    unset($data);
 		}
 	    }
-    	    //$last_exec['planeupdatefaa'] = time();
-    	    $last_exec[$id]['last'] = time();
-    	} elseif ($value['format'] == 'opensky' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	    //$last_exec['planeupdatefaa'] = time();
+	    $last_exec[$id]['last'] = time();
+	} elseif ($value['format'] == 'opensky' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
 	    if (isset($all_data['states'])) {
@@ -875,17 +944,22 @@ while ($i > 0) {
 		    //$data['registration'] = $line[2];
 		    //$data['aircraft_icao'] = $line[0];
 		    $data['datetime'] = date('Y-m-d H:i:s',$line[3]);
-	    	    $data['format_source'] = 'opensky';
-    		    $data['id_source'] = $id_source;
+		    $data['format_source'] = 'opensky';
+		    $data['id_source'] = $id_source;
 		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    $SI->add($data);
 		    unset($data);
 		}
 	    }
-    	    //$last_exec['planeupdatefaa'] = time();
-    	    $last_exec[$id]['last'] = time();
-    	//} elseif ($value == 'fr24json' && (time() - $last_exec['fr24json'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'fr24json' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	    //$last_exec['planeupdatefaa'] = time();
+	    $last_exec[$id]['last'] = time();
+	//} elseif ($value == 'fr24json' && (time() - $last_exec['fr24json'] > $globalMinFetch)) {
+	} elseif ($value['format'] == 'fr24json' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
@@ -916,10 +990,15 @@ while ($i > 0) {
 		    unset($data);
 		}
 	    }
-    	    //$last_exec['fr24json'] = time();
-    	    $last_exec[$id]['last'] = time();
-    	//} elseif ($value == 'radarvirtueljson' && (time() - $last_exec['radarvirtueljson'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'radarvirtueljson' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	    //$last_exec['fr24json'] = time();
+	    $last_exec[$id]['last'] = time();
+	//} elseif ($value == 'radarvirtueljson' && (time() - $last_exec['radarvirtueljson'] > $globalMinFetch)) {
+	} elseif ($value['format'] == 'radarvirtueljson' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
 	    //$buffer = $Common->getData($hosts[$id],'get','','','','','150');
 	    $buffer = $Common->getData($value['host'],'get','','','','','150');
 	    //echo $buffer;
@@ -958,10 +1037,15 @@ while ($i > 0) {
 		    }
 		}
 	    }
-    	    //$last_exec['radarvirtueljson'] = time();
-    	    $last_exec[$id]['last'] = time();
-    	//} elseif ($value == 'pirepsjson' && (time() - $last_exec['pirepsjson'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'pirepsjson' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	    //$last_exec['radarvirtueljson'] = time();
+	    $last_exec[$id]['last'] = time();
+	//} elseif ($value == 'pirepsjson' && (time() - $last_exec['pirepsjson'] > $globalMinFetch)) {
+	} elseif ($value['format'] == 'pirepsjson' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    $buffer = $Common->getData($value['host'].'?'.time());
 	    $all_data = json_decode(utf8_encode($buffer),true);
@@ -1019,10 +1103,15 @@ while ($i > 0) {
 		    unset($data);
 		}
 	    }
-    	    //$last_exec['pirepsjson'] = time();
-    	    $last_exec[$id]['last'] = time();
-    	//} elseif ($value == 'phpvmacars' && (time() - $last_exec['phpvmacars'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'phpvmacars' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	    //$last_exec['pirepsjson'] = time();
+	    $last_exec[$id]['last'] = time();
+	//} elseif ($value == 'phpvmacars' && (time() - $last_exec['phpvmacars'] > $globalMinFetch)) {
+	} elseif ($value['format'] == 'phpvmacars' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    if ($globalDebug) echo 'Get Data...'."\n";
 	    $buffer = $Common->getData($value['host']);
@@ -1082,9 +1171,14 @@ while ($i > 0) {
 		unset($buffer);
 		unset($all_data);
 	    }
-    	    //$last_exec['phpvmacars'] = time();
-    	    $last_exec[$id]['last'] = time();
-    	} elseif ($value['format'] == 'vam' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	    //$last_exec['phpvmacars'] = time();
+	    $last_exec[$id]['last'] = time();
+	} elseif ($value['format'] == 'vam' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    if ($globalDebug) echo 'Get Data...'."\n";
 	    $buffer = $Common->getData($value['host']);
@@ -1128,9 +1222,14 @@ while ($i > 0) {
 		unset($buffer);
 		unset($all_data);
 	    }
-    	    //$last_exec['phpvmacars'] = time();
-    	    $last_exec[$id]['last'] = time();
-    	} elseif ($value['format'] == 'blitzortung' && (time() - $last_exec[$id]['last'] > $globalMinFetch)) {
+	    //$last_exec['phpvmacars'] = time();
+	    $last_exec[$id]['last'] = time();
+	} elseif ($value['format'] == 'blitzortung' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
 	    //$buffer = $Common->getData($hosts[$id]);
 	    if ($globalDebug) echo 'Get Data...'."\n";
 	    $buffer = $Common->getData($value['host']);

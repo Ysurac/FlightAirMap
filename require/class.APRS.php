@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(__FILE__).'/settings.php');
 require_once(dirname(__FILE__).'/class.Common.php');
+require_once(dirname(__FILE__).'/class.GeoidHeight.php');
 class aprs {
     private $socket;
     private $connected = false;
@@ -649,6 +650,8 @@ class APRSSpotter extends APRS {
 	public function addLiveSpotterData($id,$ident,$aircraft_icao,$departure_airport,$arrival_airport,$latitude,$longitude,$waypoints,$altitude,$altitude_real,$heading,$speed,$datetime,$departure_airport_time,$arrival_airport_time,$squawk,$route_stop,$hex,$putinarchive,$registration,$pilot_id,$pilot_name, $verticalrate, $noarchive, $ground,$format_source,$source_name,$over_country) {
 		$Common = new Common();
 		if ($latitude != '' && $longitude != '') {
+			$lat = $latitude;
+			$long = $longitude;
 			$latitude = $Common->convertDM($latitude,'latitude');
 			$longitude = $Common->convertDM($longitude,'longitude');
 			$coordinate = sprintf("%02d",$latitude['deg']).str_pad(number_format($latitude['min'],2,'.',''),5,'0',STR_PAD_LEFT).$latitude['NSEW'].'/'.sprintf("%03d",$longitude['deg']).str_pad(number_format($longitude['min'],2,'.',''),5,'0',STR_PAD_LEFT).$longitude['NSEW'];
@@ -674,6 +677,12 @@ class APRSSpotter extends APRS {
 				$custom .= 'AI='.$aircraft_icao;
 			}
 			if ($custom != '') $custom = ' '.$custom;
+			/*
+			// Use AMSL altitude
+			$GeoidClass = new GeoidHeight();
+			$geoid= round($GeoidClass->get($lat,$long)*3.28084,2);
+			$altitude_real = round($altitude_real + $geoid);
+			*/
 			$this->send('AIRCRAFT>APRS,TCPIP*:;'.$hex.'   *'.date('His',strtotime($datetime)).'h'.$coordinate.'^'.str_pad($heading,3,'0',STR_PAD_LEFT).'/'.str_pad($speed,3,'0',STR_PAD_LEFT).'/A='.str_pad($altitude_real,6,'0',STR_PAD_LEFT).' !W'.$w.'!'.$custom."\n");
 		}
 	}
