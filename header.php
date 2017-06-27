@@ -93,7 +93,6 @@ if (strtolower($current_page) == "index")
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
@@ -228,7 +227,6 @@ if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($gl
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
@@ -298,7 +296,6 @@ if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) &&
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet.ajax.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>

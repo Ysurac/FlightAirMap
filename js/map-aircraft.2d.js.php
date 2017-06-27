@@ -82,38 +82,40 @@ function update_airportsLayer() {
 	}
 	if (map.getZoom() > <?php print $getZoom; ?>) {
 		var bbox = map.getBounds().toBBoxString();
-		airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
+		var airportsLayerQuery = $.getJSON("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,function(data) {
+			airportsLayer = L.geoJson(data,{
 <?php
 	if (isset($globalAirportPopup) && $globalAirportPopup) {
 ?>
-			onEachFeature: airportPopup,
+				onEachFeature: airportPopup,
 <?php
 	}
 ?>
-			pointToLayer: function (feature, latlng) {
-				return L.marker(latlng, {
-					icon: L.icon({
-						iconUrl: feature.properties.icon,
-						iconSize: [16, 18]
-						//popupAnchor: [0, -28]
-					})
+				pointToLayer: function (feature, latlng) {
+					return L.marker(latlng, {
+						icon: L.icon({
+							iconUrl: feature.properties.icon,
+							iconSize: [16, 18]
+							//popupAnchor: [0, -28]
+						})
 <?php
 	if (!isset($globalAirportPopup) || $globalAirportPopup == FALSE) {
 ?>
-				}).on('click', function() {
-					$("#aircraft_ident").attr('class','');
-					$(".showdetails").load("airport-data.php?"+Math.random()+"&airport_icao="+feature.properties.icao);
-				});
-			}
+					}).on('click', function() {
+						$("#aircraft_ident").attr('class','');
+						$(".showdetails").load("airport-data.php?"+Math.random()+"&airport_icao="+feature.properties.icao);
+					});
+				}
 <?php
 	} else {
 ?>
-				})
-			}
+					})
+				}
 <?php
 	}
 ?>
-		}).addTo(map);
+			}).addTo(map);
+		});
 	}
 };
 
@@ -865,113 +867,126 @@ function atcPopup (feature, layer) {
 
 
 function update_atcLayer() {
-    var bbox = map.getBounds().toBBoxString();
-    atcLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/atc-geojson.php?coord="+bbox,{
-	onEachFeature: atcPopup,
-	pointToLayer: function (feature, latlng) {
-	    if (feature.properties.atc_range > 0) {
-		var atccolor = feature.properties.atccolor;
-		return L.circle(latlng, feature.properties.atc_range*1, {
-		    fillColor: atccolor,
-		    color: atccolor,
-		    weight: 1,
-		    opacity: 0.3,
-		    fillOpacity: 0.3
-		});
-	    } else {
-		if (feature.properties.type == 'Delivery') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_del.png',
-			    iconSize: [15, 15],
-			    iconAnchor: [7, 7]
-			})
-		    });
-		} else if (feature.properties.type == 'Ground') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_gnd.png',
-			    iconSize: [20, 20],
-			    iconAnchor: [10, 10]
-			})
-		    });
-		} else if (feature.properties.type == 'Tower') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_twr.png',
-			    iconSize: [25, 25],
-			    iconAnchor: [12, 12]
-			})
-		    });
-		} else if (feature.properties.type == 'Approach') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_app.png',
-			    iconSize: [30, 30],
-			    iconAnchor: [15, 15]
-			})
-		    });
-		} else if (feature.properties.type == 'Departure') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_dep.png',
-			    iconSize: [35, 35],
-			    iconAnchor: [17, 17]
-			})
-		    });
-		} else if (feature.properties.type == 'Control Radar or Centre') {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc_ctr.png',
-			    iconSize: [40, 40],
-			    iconAnchor: [20, 20]
-			})
-		    });
-		} else {
-		    return L.marker(latlng, {icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/atc.png',
-			    iconSize: [30, 30],
-			    iconAnchor: [15, 30]
-			})
-		    });
-		}
-	    }
-	}
-    }).addTo(map);
+	var bbox = map.getBounds().toBBoxString();
+	var atcLayerQuery = $.getJSON("<?php print $globalURL; ?>/atc-geojson.php?coord="+bbox,function(data) {
+		atcLayer = L.geoJson(data, {
+			onEachFeature: atcPopup,
+			pointToLayer: function (feature, latlng) {
+				if (feature.properties.atc_range > 0) {
+					var atccolor = feature.properties.atccolor;
+					return L.circle(latlng, feature.properties.atc_range*1, {
+						fillColor: atccolor,
+						color: atccolor,
+						weight: 1,
+						opacity: 0.3,
+						fillOpacity: 0.3
+					});
+				} else {
+					if (feature.properties.type == 'Delivery') {
+						return L.marker(latlng, {
+							icon: L.icon({
+								iconUrl: '<?php print $globalURL; ?>/images/atc_del.png',
+								iconSize: [15, 15],
+								iconAnchor: [7, 7]
+							})
+						});
+					} else if (feature.properties.type == 'Ground') {
+						return L.marker(latlng, {
+							icon: L.icon({
+								iconUrl: '<?php print $globalURL; ?>/images/atc_gnd.png',
+								iconSize: [20, 20],
+								iconAnchor: [10, 10]
+							})
+						});
+					} else if (feature.properties.type == 'Tower') {
+						return L.marker(latlng, {
+							icon: L.icon({
+								iconUrl: '<?php print $globalURL; ?>/images/atc_twr.png',
+								iconSize: [25, 25],
+								iconAnchor: [12, 12]
+							})
+						});
+					} else if (feature.properties.type == 'Approach') {
+						return L.marker(latlng, {
+							icon: L.icon({
+								iconUrl: '<?php print $globalURL; ?>/images/atc_app.png',
+								iconSize: [30, 30],
+								iconAnchor: [15, 15]
+							})
+						});
+					} else if (feature.properties.type == 'Departure') {
+						return L.marker(latlng, {
+							icon: L.icon({
+								iconUrl: '<?php print $globalURL; ?>/images/atc_dep.png',
+								iconSize: [35, 35],
+								iconAnchor: [17, 17]
+							})
+						});
+					} else if (feature.properties.type == 'Control Radar or Centre') {
+						return L.marker(latlng, {
+							icon: L.icon({
+								iconUrl: '<?php print $globalURL; ?>/images/atc_ctr.png',
+								iconSize: [40, 40],
+								iconAnchor: [20, 20]
+							})
+						});
+					} else {
+						return L.marker(latlng, {
+							icon: L.icon({
+								iconUrl: '<?php print $globalURL; ?>/images/atc.png',
+								iconSize: [30, 30],
+								iconAnchor: [15, 30]
+							})
+						});
+					}
+				}
+			}
+		}).addTo(map);
+	});
 };
 
 function update_polarLayer() {
-    polarLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/polar-geojson.php",{
-	style: function(feature) {
-	    return feature.properties.style
-	}
-    }).addTo(map);
+	var polarLayerQuery = $.getJSON("<?php print $globalURL; ?>/polar-geojson.php", function(data){
+		polarLayer = L.geoJson(data, {
+			style: function(feature) {
+				return feature.properties.style
+			}
+		}).addTo(map);
+	});
 };
 
 
 
 
 function update_santaLayer(nows) {
-    if (nows) var url = "<?php print $globalURL; ?>/live-santa-geojson.php?now";
-    else var url = "<?php print $globalURL; ?>/live-santa-geojson.php";
-    var santageoJSON = new L.GeoJSON.AJAX(url,{
-	onEachFeature: function(feature,layer) {
-	    var playbackOptions = {
-		orientIcons: true,
-		clickCallback: function() { 
-			$("#aircraft_ident").attr('class','');
-			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat=santaclaus"); 
-		},
-		marker: function(){
-		    return {
-			icon: L.icon({
-			    iconUrl: '<?php print $globalURL; ?>/images/santa.png',
-			    iconSize: [60, 60],
-			    iconAnchor: [30, 30]
-			})
-		    }
-    		}
-	    };
-	    var santaplayback = new L.Playback(map,feature,null,playbackOptions);
-	    santaplayback.start();
-	    var now = new Date(); 
-	    if (nows == false) santaplayback.setCursor(now.getTime());
-	}
-    });
+	if (nows) var url = "<?php print $globalURL; ?>/live-santa-geojson.php?now";
+	else var url = "<?php print $globalURL; ?>/live-santa-geojson.php";
+	var santageoJSONQuery = $.getJSON(url, function(data) {
+		santageoJSON = L.geoJson(data, {
+			onEachFeature: function(feature,layer) {
+				var playbackOptions = {
+					orientIcons: true,
+					clickCallback: function() { 
+						$("#aircraft_ident").attr('class','');
+						$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat=santaclaus"); 
+					},
+					marker: function(){
+						return {
+							icon: L.icon({
+								iconUrl: '<?php print $globalURL; ?>/images/santa.png',
+								iconSize: [60, 60],
+								iconAnchor: [30, 30]
+							})
+						}
+					}
+				};
+				var santaplayback = new L.Playback(map,feature,null,playbackOptions);
+				santaplayback.start();
+				var now = new Date(); 
+				if (nows == false) santaplayback.setCursor(now.getTime());
+			}
+		});
+	});
 };
 
 
@@ -1072,45 +1087,50 @@ function update_notamLayer() {
 		url = "<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox+"&scope="+getCookie("notamscope");
 	}
 	//notamLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/notam-geojson.php?coord="+bbox,{
-	notamLayer = new L.GeoJSON.AJAX(url,{
-//	onEachFeature: notamPopup,
-	pointToLayer: function (feature, latlng) {
-	    var circle = L.circle(latlng, feature.properties.radius, {
-                    fillColor: feature.properties.color,
-                    color: feature.properties.color,
-                    weight: 1,
-                    opacity: 0.3,
-                    fillOpacity: 0.3
-		}).on('click', function() {
-			$("#aircraft_ident").attr('class','');
-			$(".showdetails").load("notam-data.php?"+Math.random()+"&notam="+encodeURI(feature.properties.ref));
-		});
-            return circle;
-	}
-    }).addTo(map);
+	var notamLayerQuery = $.getJSON(url,function(data) {
+		notamLayer = L.geoJson(data, {
+			//	onEachFeature: notamPopup,
+			pointToLayer: function (feature, latlng) {
+				var circle = L.circle(latlng, feature.properties.radius, {
+					fillColor: feature.properties.color,
+					color: feature.properties.color,
+					weight: 1,
+					opacity: 0.3,
+					fillOpacity: 0.3
+				}).on('click', function() {
+					$("#aircraft_ident").attr('class','');
+					$(".showdetails").load("notam-data.php?"+Math.random()+"&notam="+encodeURI(feature.properties.ref));
+				});
+				return circle;
+			}
+		}).addTo(map);
+	});
 };
 
 function update_waypointsLayer() {
-    var bbox = map.getBounds().toBBoxString();
-    var lineStyle = {
-	"color": "#ff7800",
-	"weight": 1,
-	"opacity": 0.65
-    };
+	var bbox = map.getBounds().toBBoxString();
+	var lineStyle = {
+		"color": "#ff7800",
+		"weight": 1,
+		"opacity": 0.65
+	};
 
-    waypointsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/waypoints-geojson.php?coord="+bbox,{
-    onEachFeature: waypointsPopup,
-	pointToLayer: function (feature, latlng) {
-	    return L.marker(latlng, {icon: L.icon({
-		iconUrl: feature.properties.icon,
-		iconSize: [12, 13],
-		iconAnchor: [2, 13]
-		//popupAnchor: [0, -28]
-		})
-            });
-	},
-	style: lineStyle
-    }).addTo(map);
+	var waypointsLayerQuery = $.getJSON("<?php print $globalURL; ?>/waypoints-geojson.php?coord="+bbox,function(data) {
+		waypointsLayer = L.geoJson(data, {
+			onEachFeature: waypointsPopup,
+			pointToLayer: function (feature, latlng) {
+				return L.marker(latlng, {
+					icon: L.icon({
+						iconUrl: feature.properties.icon,
+						iconSize: [12, 13],
+						iconAnchor: [2, 13]
+						//popupAnchor: [0, -28]
+					})
+				});
+			},
+			style: lineStyle
+		}).addTo(map);
+	});
 };
 
 function showWaypoints() {
@@ -1189,25 +1209,18 @@ function airspacePopup (feature, layer) {
 };
 
 function update_airspaceLayer() {
-    var bbox = map.getBounds().toBBoxString();
-    airspaceLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airspace-geojson.php?coord="+bbox,{
-    onEachFeature: airspacePopup,
-	pointToLayer: function (feature, latlng) {
-/*	    return L.marker(latlng, {icon: L.icon({
-	//	iconUrl: feature.properties.icon,
-		iconSize: [12, 13],
-		iconAnchor: [2, 13]
-//		//popupAnchor: [0, -28]
-		})
-            });
-            */
-	},
-	style: function(feature) {
-		return {
-		    "color": feature.properties.color,
-		    "weight": 1,
-		    "opacity": 0.2
-		};
+	var bbox = map.getBounds().toBBoxString();
+	var airspaceLayerQuery = $.getJSON("<?php print $globalURL; ?>/airspace-geojson.php?coord="+bbox,function(data) {
+		airspaceLayer = L.geoJson(data,{
+			onEachFeature: airspacePopup,
+			pointToLayer: function (feature, latlng) {
+			},
+			style: function(feature) {
+				return {
+					"color": feature.properties.color,
+					"weight": 1,
+					"opacity": 0.2
+				};
 /*		
 	    if (feature.properties.type == 'RESTRICTED') {
 		return {
@@ -1265,8 +1278,9 @@ function update_airspaceLayer() {
 		};
 	    }
 	*/
-	}
-    }).addTo(map);
+			}
+		}).addTo(map);
+	});
 };
 
 function getAltitudeColor(x) {
