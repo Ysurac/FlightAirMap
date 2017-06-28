@@ -1,6 +1,6 @@
 <?php
 @session_start();
-header('Content-Encoding: none;');
+//header('Content-Encoding: none;');
 require_once(dirname(__FILE__).'/class.create_db.php');
 require_once(dirname(__FILE__).'/class.update_schema.php');
 require_once(dirname(__FILE__).'/class.settings.php');
