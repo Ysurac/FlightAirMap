@@ -301,8 +301,9 @@ class Image {
 			}
 		} elseif ($type == 'marine') {
 			$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q=ship%20"'.urlencode($name).'"';
+		} else {
+			$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q="'.urlencode($name).'"';
 		}
-
 		$data = $Common->getData($url);
 		if ($xml = simplexml_load_string($data)) {
 			if (isset($xml->channel->item->link)) {

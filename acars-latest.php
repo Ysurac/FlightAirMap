@@ -8,7 +8,7 @@ require_once('header.php');
 
 $page_url = $globalURL.'/acars-latest';
 
-if(!isset($_GET['limit']))
+if (!isset($_GET['limit']))
 {
 	$limit_start = 0;
 	$limit_end = 25;
@@ -38,8 +38,12 @@ $spotter_array = $ACARS->getLatestAcarsData($limit_start.",".$absolute_differenc
 if (!empty($spotter_array) && $spotter_array[0]['query_number_rows'] != 0) {
 	include('table-output.php');
 	print '<div class="pagination">';
-	if ($limit_previous_1 >= 0) print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';
-	if ($spotter_array[0]['query_number_rows'] == $absolute_difference) print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'">'._("Next Page").'&raquo;</a>';
+	if ($limit_previous_1 >= 0) {
+		print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';
+	}
+	if ($spotter_array[0]['query_number_rows'] == $absolute_difference) {
+		print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'">'._("Next Page").'&raquo;</a>';
+	}
 	print '</div>';
 }
 print '</div>';

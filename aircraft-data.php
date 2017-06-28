@@ -113,6 +113,7 @@ if (isset($globalGroundAltitude) && $globalGroundAltitude) {
 	try {
 		$groundAltitude = $Elevation->getElevation($spotter_item['latitude'],$spotter_item['longitude']);
 	} catch(Exception $e) {
+		// If catched not exist
 	}
 }
 

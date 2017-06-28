@@ -10,7 +10,6 @@ if ($registration != '') {
 	$aircraft_array = $Spotter->getAircraftInfoByRegistration($registration);
 } else $spotter_array=array();
 
-
 if (!empty($spotter_array))
 {
 	$title = sprintf(_("Most Common Arrival Airports by Country of aircraft with registration %s"),$registration);
@@ -69,7 +68,6 @@ if (!empty($spotter_array))
     }
         });";
 	print '</script>';
-
 	if (!empty($airport_country_array))
 	{
 		print '<div class="table-responsive">';

@@ -3,8 +3,8 @@ require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 if (!isset($_GET['country'])) {
-        header('Location: '.$globalURL.'/country');
-        die();
+	header('Location: '.$globalURL.'/country');
+	die();
 }
 $Spotter = new Spotter();
 $country = ucwords(str_replace("-", " ", filter_input(INPUT_GET,'country',FILTER_SANITIZE_STRING)));

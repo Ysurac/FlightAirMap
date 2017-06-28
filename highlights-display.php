@@ -12,10 +12,10 @@ if(!isset($_GET['limit']))
 	$limit_start = 0;
 	$limit_end = 28;
 	$absolute_difference = 28;
-}  else {
+} else {
 	$limit_explode = explode(",", $_GET['limit']);
-	$limit_start = $limit_explode[0];
-	$limit_end = $limit_explode[1];
+	$limit_start = filter_var($limit_explode[0],FILTER_SANITIZE_NUMBER_INT);
+	$limit_end = filter_var($limit_explode[1],FILTER_SANITIZE_NUMBER_INT);
 	if (!ctype_digit(strval($limit_start)) || !ctype_digit(strval($limit_end))) {
 		$limit_start = 0;
 		$limit_end = 25;

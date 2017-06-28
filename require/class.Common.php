@@ -269,7 +269,7 @@ class Common {
 		if ($latlong == 'latitude') {
 			if ($coord < 0) $NSEW = 'S';
 			else $NSEW = 'N';
-		} elseif ($latlong == 'longitude') {
+		} else {
 			if ($coord < 0) $NSEW = 'W';
 			else $NSEW = 'E';
 		}
