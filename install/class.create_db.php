@@ -29,9 +29,9 @@ class create_db {
 			}
 			fclose($handle);
 		}
-                //Connection::$db->commit();
-                $Connection->db = null;
-                return '';
+		//Connection::$db->commit();
+		$Connection->db = null;
+		return '';
 	}
 
 	public static function import_all_db($directory) {
@@ -40,7 +40,7 @@ class create_db {
 		//foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $filename)
 		while(false !== ($filename = readdir($dh)))
 		{
-		    if (preg_match('/\.sql$/',$filename)) $error .= create_db::import_file($directory.$filename);
+			if (preg_match('/\.sql$/',$filename)) $error .= create_db::import_file($directory.$filename);
 		}
 		return $error;
 	}
@@ -55,7 +55,7 @@ class create_db {
 		$host = filter_var($host,FILTER_SANITIZE_STRING);
 		// Dirty hack
 		if ($host != 'localhost' && $host != '127.0.0.1') {
-		    $grantright = $_SERVER['SERVER_ADDR'];
+			$grantright = $_SERVER['SERVER_ADDR'];
 		} else $grantright = 'localhost';
 		try {
 			$dbh = new PDO($db_type.':host='.$host,$root,$root_pass);

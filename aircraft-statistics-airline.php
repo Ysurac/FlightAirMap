@@ -5,8 +5,8 @@ require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
 
 if (!isset($_GET['aircraft_type'])) {
-        header('Location: '.$globalURL.'/aircraft');
-        die();
+	header('Location: '.$globalURL.'/aircraft');
+	die();
 }
 $aircraft_type = filter_input(INPUT_GET,'aircraft_type',FILTER_SANITIZE_STRING);
 $Spotter = new Spotter();

@@ -5,55 +5,54 @@ require_once('require/class.Language.php');
 $Spotter = new Spotter();
 
 if (isset($_GET['start_date'])) {
-        //for the date manipulation into the query
-        if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
-                $start_date = $_GET['start_date'].":00";
-                $end_date = $_GET['end_date'].":00";
-                $sql_date = $start_date.",".$end_date;
-        } else if($_GET['start_date'] != ""){
-                $start_date = $_GET['start_date'].":00";
-                $sql_date = $start_date;
-        } else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
-                $end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date'].":00";
-                $sql_date = $end_date;
-        } else $sql_date = '';
+	//for the date manipulation into the query
+	if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
+		$start_date = $_GET['start_date'].":00";
+		$end_date = $_GET['end_date'].":00";
+		$sql_date = $start_date.",".$end_date;
+	} else if($_GET['start_date'] != ""){
+		$start_date = $_GET['start_date'].":00";
+		$sql_date = $start_date;
+	} else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
+		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date'].":00";
+		$sql_date = $end_date;
+	} else $sql_date = '';
 } else $sql_date = '';
 
 if (isset($_GET['highest_altitude'])) {
-        //for altitude manipulation
-        if($_GET['highest_altitude'] != "" && $_GET['lowest_altitude'] != ""){
-                $end_altitude = $_GET['highest_altitude'];
-                $start_altitude = $_GET['lowest_altitude'];
-                $sql_altitude = $start_altitude.",".$end_altitude;
-        } else if($_GET['highest_altitude'] != ""){
-                $end_altitude = $_GET['highest_altitude'];
-                $sql_altitude = $end_altitude;
-        } else if($_GET['highest_altitude'] == "" && $_GET['lowest_altitude'] != ""){
-                $start_altitude = $_GET['lowest_altitude'].",60000";
-                $sql_altitude = $start_altitude;
-        } else $sql_altitude = '';
+	//for altitude manipulation
+	if($_GET['highest_altitude'] != "" && $_GET['lowest_altitude'] != ""){
+		$end_altitude = $_GET['highest_altitude'];
+		$start_altitude = $_GET['lowest_altitude'];
+		$sql_altitude = $start_altitude.",".$end_altitude;
+	} else if($_GET['highest_altitude'] != ""){
+		$end_altitude = $_GET['highest_altitude'];
+		$sql_altitude = $end_altitude;
+	} else if($_GET['highest_altitude'] == "" && $_GET['lowest_altitude'] != ""){
+		$start_altitude = $_GET['lowest_altitude'].",60000";
+		$sql_altitude = $start_altitude;
+	} else $sql_altitude = '';
 } else $sql_altitude = '';
 
 //calculuation for the pagination
 if(!isset($_GET['limit']))
 {
-        if (!isset($_GET['number_results']))
-        {
-                $limit_start = 0;
-                $limit_end = 25;
-                $absolute_difference = 25;
-        } else {
-                if ($_GET['number_results'] > 1000){
-                        $_GET['number_results'] = 1000;
-                }
-                $limit_start = 0;
-                $limit_end = $_GET['number_results'];
-                $absolute_difference = $_GET['number_results'];
-        }
+	if (!isset($_GET['number_results'])) {
+		$limit_start = 0;
+		$limit_end = 25;
+		$absolute_difference = 25;
+	} else {
+		if ($_GET['number_results'] > 1000){
+			$_GET['number_results'] = 1000;
+		}
+		$limit_start = 0;
+		$limit_end = filter_input(INPUT_GET,'number_results',FILTER_SANITIZE_NUMBER_INT);
+		$absolute_difference = filter_input(INPUT_GET,'number_results',FILTER_SANITIZE_NUMBER_INT);
+	}
 }  else {
-        $limit_explode = explode(",", $_GET['limit']);
-        $limit_start = $limit_explode[0];
-        $limit_end = $limit_explode[1];
+	$limit_explode = explode(",", $_GET['limit']);
+	$limit_start = filter_var($limit_explode[0],FILTER_SANITIZE_NUMBER_INT);
+	$limit_end = filter_var($limit_explode[1],FILTER_SANITIZE_NUMBER_INT);
 }
 $absolute_difference = abs($limit_start - $limit_end);
 $limit_next = $limit_end + $absolute_difference;
@@ -91,49 +90,44 @@ $spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolow
       
 $output = "id,ident,registration,aircraft_icao,aircraft_name,aircraft_manufacturer,airline,airline_icao,airline_iata,airline_country,airline_callsign,airline_type,departure_airport_city,departure_airport_country,departure_airport_iata,departure_airport_icao,departure_airport_latitude,departure_airport_longitude,departure_airport_altitude,arrival_airport_city,arrival_airport_country,arrival_airport_iata,arrival_airport_icao,arrival_airport_latitude,arrival_airport_longitude,arrival_airport_altitude,latitude,longitude,altitude,ground_speed,heading,heading_name,waypoints,date\n";
 
-if (!empty($spotter_array))
-{
-  foreach($spotter_array as $spotter_item)
-  {
-       	
-    $output .= $spotter_item['spotter_id'].',';
-    $output .= $spotter_item['ident'].',';
-    $output .= $spotter_item['registration'].',';
-    $output .= $spotter_item['aircraft_type'].',';
-    $output .= $spotter_item['aircraft_name'].',';
-    $output .= $spotter_item['aircraft_manufacturer'].',';
-    $output .= $spotter_item['airline_name'].',';
-    $output .= $spotter_item['airline_icao'].',';
-    $output .= $spotter_item['airline_iata'].',';
-    $output .= $spotter_item['airline_country'].',';
-    $output .= $spotter_item['airline_callsign'].',';
-    $output .= $spotter_item['airline_type'].',';
-    $output .= $spotter_item['departure_airport_city'].',';
-    $output .= $spotter_item['departure_airport_country'].',';
-    $output .= $spotter_item['departure_airport_iata'].',';
-    $output .= $spotter_item['departure_airport_icao'].',';
-    $output .= $spotter_item['departure_airport_latitude'].',';
-    $output .= $spotter_item['departure_airport_longitude'].',';
-    $output .= $spotter_item['departure_airport_altitude'].',';
-    $output .= $spotter_item['arrival_airport_city'].',';
-    $output .= $spotter_item['arrival_airport_country'].',';
-    $output .= $spotter_item['arrival_airport_iata'].',';
-    $output .= $spotter_item['arrival_airport_icao'].',';
-    $output .= $spotter_item['arrival_airport_latitude'].',';
-    $output .= $spotter_item['arrival_airport_longitude'].',';
-    $output .= $spotter_item['arrival_airport_altitude'].',';
-    $output .= $spotter_item['latitude'].',';
-    $output .= $spotter_item['longitude'].',';
-    $output .= $spotter_item['altitude'].',';
-    $output .= $spotter_item['ground_speed'].',';
-    $output .= $spotter_item['heading'].',';
-    $output .= $spotter_item['heading_name'].',';
-    $output .= $spotter_item['waypoints'].',';
-    $output .= date("c", strtotime($spotter_item['date_iso_8601']));
-    $output .= "\n";
-  }
- }
-
+if (!empty($spotter_array)) {
+	foreach($spotter_array as $spotter_item) {
+		$output .= $spotter_item['spotter_id'].',';
+		$output .= $spotter_item['ident'].',';
+		$output .= $spotter_item['registration'].',';
+		$output .= $spotter_item['aircraft_type'].',';
+		$output .= $spotter_item['aircraft_name'].',';
+		$output .= $spotter_item['aircraft_manufacturer'].',';
+		$output .= $spotter_item['airline_name'].',';
+		$output .= $spotter_item['airline_icao'].',';
+		$output .= $spotter_item['airline_iata'].',';
+		$output .= $spotter_item['airline_country'].',';
+		$output .= $spotter_item['airline_callsign'].',';
+		$output .= $spotter_item['airline_type'].',';
+		$output .= $spotter_item['departure_airport_city'].',';
+		$output .= $spotter_item['departure_airport_country'].',';
+		$output .= $spotter_item['departure_airport_iata'].',';
+		$output .= $spotter_item['departure_airport_icao'].',';
+		$output .= $spotter_item['departure_airport_latitude'].',';
+		$output .= $spotter_item['departure_airport_longitude'].',';
+		$output .= $spotter_item['departure_airport_altitude'].',';
+		$output .= $spotter_item['arrival_airport_city'].',';
+		$output .= $spotter_item['arrival_airport_country'].',';
+		$output .= $spotter_item['arrival_airport_iata'].',';
+		$output .= $spotter_item['arrival_airport_icao'].',';
+		$output .= $spotter_item['arrival_airport_latitude'].',';
+		$output .= $spotter_item['arrival_airport_longitude'].',';
+		$output .= $spotter_item['arrival_airport_altitude'].',';
+		$output .= $spotter_item['latitude'].',';
+		$output .= $spotter_item['longitude'].',';
+		$output .= $spotter_item['altitude'].',';
+		$output .= $spotter_item['ground_speed'].',';
+		$output .= $spotter_item['heading'].',';
+		$output .= $spotter_item['heading_name'].',';
+		$output .= $spotter_item['waypoints'].',';
+		$output .= date("c", strtotime($spotter_item['date_iso_8601']));
+		$output .= "\n";
+	}
+}
 print $output;
-
 ?>

@@ -1,14 +1,13 @@
 <?php
 
 if (!function_exists("gettext")) {
-        function _($text) {
-                return $text;
-        }
+	function _($text) {
+		return $text;
+	}
 } else {
 	if (isset($_COOKIE['language']) && $_COOKIE['language'] != 'en_GB' && (isset($globalTranslate) && $globalTranslate)) {
 		$Language = new Language();
 		$lang = $_COOKIE['language'];
-
 		putenv("LC_ALL=$lang");
 		setlocale(LC_ALL, $Language->getLocale($lang));
 		bindtextdomain("fam", dirname(__FILE__).'/../locale');
@@ -72,7 +71,7 @@ class Language {
 	* Returns list of available locales
 	*
 	* @return array
-	 */
+	*/
 	public function listLocaleDir()
 	{
 		$result = array('en_GB');

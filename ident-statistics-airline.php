@@ -3,8 +3,8 @@ require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 if (!isset($_GET['ident'])) {
-        header('Location: '.$globalURL.'/ident');
-        die();
+	header('Location: '.$globalURL.'/ident');
+	die();
 }
 $Spotter = new Spotter();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);

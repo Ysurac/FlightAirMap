@@ -4,55 +4,54 @@ require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 $Spotter = new Spotter();
 if (isset($_GET['start_date'])) {
-        //for the date manipulation into the query
-        if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
-                $start_date = $_GET['start_date'].":00";
-                $end_date = $_GET['end_date'].":00";
-                $sql_date = $start_date.",".$end_date;
-        } else if($_GET['start_date'] != ""){
-                $start_date = $_GET['start_date'].":00";
-                $sql_date = $start_date;
-        } else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
-                $end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date'].":00";
-                $sql_date = $end_date;
-        } else $sql_date = '';
+	//for the date manipulation into the query
+	if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
+		$start_date = $_GET['start_date'].":00";
+		$end_date = $_GET['end_date'].":00";
+		$sql_date = $start_date.",".$end_date;
+	} else if($_GET['start_date'] != ""){
+		$start_date = $_GET['start_date'].":00";
+		$sql_date = $start_date;
+	} else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
+		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date'].":00";
+		$sql_date = $end_date;
+	} else $sql_date = '';
 } else $sql_date = '';
 
 if (isset($_GET['highest_altitude'])) {
-        //for altitude manipulation
-        if($_GET['highest_altitude'] != "" && $_GET['lowest_altitude'] != ""){
-                $end_altitude = $_GET['highest_altitude'];
-                $start_altitude = $_GET['lowest_altitude'];
-                $sql_altitude = $start_altitude.",".$end_altitude;
-        } else if($_GET['highest_altitude'] != ""){
-                $end_altitude = $_GET['highest_altitude'];
-                $sql_altitude = $end_altitude;
-        } else if($_GET['highest_altitude'] == "" && $_GET['lowest_altitude'] != ""){
-                $start_altitude = $_GET['lowest_altitude'].",60000";
-                $sql_altitude = $start_altitude;
-        } else $sql_altitude = '';
+	//for altitude manipulation
+	if($_GET['highest_altitude'] != "" && $_GET['lowest_altitude'] != ""){
+		$end_altitude = filter_input(INPUT_GET,'highest_altitude',FILTER_SANITIZE_NUMBER_INT);
+		$start_altitude = filter_input(INPUT_GET,'lowest_altitude',FILTER_SANITIZE_NUMBER_INT);
+		$sql_altitude = $start_altitude.",".$end_altitude;
+	} else if($_GET['highest_altitude'] != ""){
+		$end_altitude = filter_input(INPUT_GET,'highest_altitude',FILTER_SANITIZE_NUMBER_INT);
+		$sql_altitude = $end_altitude;
+	} else if($_GET['highest_altitude'] == "" && $_GET['lowest_altitude'] != ""){
+		$start_altitude = filter_input(INPUT_GET,'lowest_altitude',FILTER_SANITIZE_NUMBER_INT).",60000";
+		$sql_altitude = $start_altitude;
+	} else $sql_altitude = '';
 } else $sql_altitude = '';
 
 //calculuation for the pagination
 if(!isset($_GET['limit']))
 {
-        if (!isset($_GET['number_results']))
-        {
-                $limit_start = 0;
-                $limit_end = 25;
-                $absolute_difference = 25;
-        } else {
-                if ($_GET['number_results'] > 1000){
-                        $_GET['number_results'] = 1000;
-                }
-                $limit_start = 0;
-                $limit_end = $_GET['number_results'];
-                $absolute_difference = $_GET['number_results'];
-        }
+	if (!isset($_GET['number_results'])) {
+		$limit_start = 0;
+		$limit_end = 25;
+		$absolute_difference = 25;
+	} else {
+		if ($_GET['number_results'] > 1000){
+			$_GET['number_results'] = 1000;
+		}
+		$limit_start = 0;
+		$limit_end = filter_input(INPUT_GET,'number_results',FILTER_SANITIZE_NUMBER_INT);
+		$absolute_difference = filter_input(INPUT_GET,'number_results',FILTER_SANITIZE_NUMBER_INT);
+	}
 }  else {
-        $limit_explode = explode(",", $_GET['limit']);
-        $limit_start = $limit_explode[0];
-        $limit_end = $limit_explode[1];
+	$limit_explode = explode(",", $_GET['limit']);
+	$limit_start = filter_var($limit_explode[0],FILTER_SANITIZE_NUMBER_INT);
+	$limit_end = filter_var($limit_explode[1],FILTER_SANITIZE_NUMBER_INT);
 }
 
 $absolute_difference = abs($limit_start - $limit_end);
@@ -86,18 +85,14 @@ $pilot_name = filter_input(INPUT_GET,'pilot_name',FILTER_SANITIZE_STRING);
 $departure_airport_route = filter_input(INPUT_GET,'departure_airport_route',FILTER_SANITIZE_STRING);
 $arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_SANITIZE_STRING);
 $spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
-       
-      
 $output = '<?xml version="1.0" encoding="UTF-8"?>';
-	$output .= '<gpx version="1.0">';
-		$output .= '<name>FlightAirMap GPX Feed</name>';
-		
+$output .= '<gpx version="1.0">';
+$output .= '<name>FlightAirMap GPX Feed</name>';
 if (!empty($spotter_array))
 {
 	foreach($spotter_array as $spotter_item)
 	{
 		$altitude = $spotter_item['altitude'].'00';
-
 		//waypoint plotting
 		$output .= '<trk>';
 		$output .= '<name>'.$spotter_item['ident'].' '.$spotter_item['airline_name'].' | '.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | '.$spotter_item['departure_airport'].' - '.$spotter_item['arrival_airport'].'</name>';
@@ -113,7 +108,6 @@ if (!empty($spotter_array))
 			$output .= '</trkseg>';
 		}
 		$output .= '</trk>';
-
 		//location of aircraft
 		$output .= '<wpt lat="'.$spotter_item['latitude'].'" lon="'.$spotter_item['longitude'].'">';
 		$output .= '<ele>'.$altitude.'</ele>';

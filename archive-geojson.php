@@ -9,10 +9,9 @@ $SpotterArchive = new SpotterArchive();
 $Common = new Common();
 
 if (isset($_GET['download'])) {
-    if ($_GET['download'] == "true")
-    {
-	header('Content-disposition: attachment; filename="flightairmap.json"');
-    }
+	if ($_GET['download'] == "true") {
+		header('Content-disposition: attachment; filename="flightairmap.json"');
+	}
 }
 header('Content-Type: text/javascript');
 
