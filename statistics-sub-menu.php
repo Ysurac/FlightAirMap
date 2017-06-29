@@ -13,15 +13,28 @@
 			<!--<select name="airline" class="selectpicker" onchange="this.form.submit()">-->
 			<select name="airline" class="selectpicker" onchange="statsairlinechange(this)">
 				<?php
-					require_once('require/class.Stats.php');
-					$Stats = new Stats();
-					if (!isset($filter_name)) $filter_name = '';
-					$airlines = $Stats->getAllAirlineNames($filter_name);
 					if (isset($airline_icao) && ($airline_icao == '' || $airline_icao == 'all')) {
 						print '<option value="all" selected>All</option>';
 					} else {
 						print '<option value="all">All</option>';
 					}
+					print '<option disabled>──────────</option>';
+					require_once('require/class.Stats.php');
+					$Spotter = new Spotter();
+					$alliances = $Spotter->getAllAllianceNames();
+					if (!empty($alliances)) {
+						foreach($alliances as $alliance) {
+							if (isset($airline_icao) && str_replace('_',' ',$airline_icao) == $alliance['alliance']) {
+								print '<option value="'.str_replace(' ','_',$alliance['alliance']).'" selected>'.$alliance['alliance'].'</option>';
+							} else {
+								print '<option value="'.str_replace(' ','_',$alliance['alliance']).'">'.$alliance['alliance'].'</option>';
+							}
+						}
+						print '<option disabled>──────────</option>';
+					}
+					$Stats = new Stats();
+					if (!isset($filter_name)) $filter_name = '';
+					$airlines = $Stats->getAllAirlineNames($filter_name);
 					foreach($airlines as $airline) {
 						if (isset($airline_icao) && $airline_icao == $airline['airline_icao']) {
 							print '<option value="'.$airline['airline_icao'].'" selected>'.$airline['airline_name'].'</option>';
@@ -60,8 +73,14 @@
 		      <?php echo _("Airline"); ?> <span class="caret"></span>
 		    </a>
 		    <ul class="dropdown-menu" role="menu">
+<?php
+		if (!isset($airline_icao) || $airline_icao == 'all') {
+?>
 		      <li><a href="<?php print $globalURL; ?>/statistics/airline<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>"><?php echo _("Airline"); ?></a></li>
 		      <li><a href="<?php print $globalURL; ?>/statistics/airline-country<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>"><?php echo _("Airline by Country"); ?></a></li>
+<?php
+		}
+?>
 		      <li><a href="<?php print $globalURL; ?>/statistics/callsign<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>"><?php echo _("Callsign"); ?></a></li>
 		    </ul>
 		</li>
@@ -150,8 +169,14 @@
 		      <?php echo _("Airline"); ?> <span class="caret"></span>
 		    </a>
 		    <ul class="dropdown-menu" role="menu">
+<?php
+		if (!isset($airline_icao) || $airline_icao == 'all') {
+?>
 		      <li><a href="<?php print $globalURL; ?>/statistics/airline<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>/<?php echo $year.'/'.$month.'/'; ?>"><?php echo _("Airline"); ?></a></li>
 		      <li><a href="<?php print $globalURL; ?>/statistics/airline-country<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>/<?php echo $year.'/'.$month.'/'; ?>"><?php echo _("Airline by Country"); ?></a></li>
+<?php
+		}
+?>
 		      <li><a href="<?php print $globalURL; ?>/statistics/callsign<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>/<?php echo $year.'/'.$month.'/'; ?>"><?php echo _("Callsign"); ?></a></li>
 		    </ul>
 		</li>

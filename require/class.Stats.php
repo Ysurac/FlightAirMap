@@ -82,104 +82,136 @@ class Stats {
         }
 	public function getAllAirlineNames($filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-                $query = "SELECT * FROM stats_airline WHERE filter_name = :filter_name ORDER BY airline_name ASC";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':filter_name' => $filter_name));
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
-        }
+		$query = "SELECT * FROM stats_airline WHERE filter_name = :filter_name ORDER BY airline_name ASC";
+		 try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':filter_name' => $filter_name));
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			$filters = array();
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->getAllAirlineNames('',NULL,$filters);
+		}
+		return $all;
+	}
 	public function getAllAircraftTypes($stats_airline = '',$filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-                $query = "SELECT * FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_manufacturer ASC";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
-        }
+		$query = "SELECT * FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_manufacturer ASC";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 	public function getAllManufacturers($stats_airline = '',$filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-                $query = "SELECT DISTINCT(aircraft_manufacturer) FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name AND aircraft_manufacturer <> '' ORDER BY aircraft_manufacturer ASC";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
-        }
+		$query = "SELECT DISTINCT(aircraft_manufacturer) FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name AND aircraft_manufacturer <> '' ORDER BY aircraft_manufacturer ASC";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 	public function getAllAirportNames($stats_airline = '',$filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-                $query = "SELECT airport_icao, airport_name,airport_city,airport_country FROM stats_airport WHERE stats_airline = :stats_airline AND filter_name = :filter_name AND stats_type = 'daily' GROUP BY airport_icao,airport_name,airport_city,airport_country ORDER BY airport_city ASC";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
-        }
+		$query = "SELECT airport_icao, airport_name,airport_city,airport_country FROM stats_airport WHERE stats_airline = :stats_airline AND filter_name = :filter_name AND stats_type = 'daily' GROUP BY airport_icao,airport_name,airport_city,airport_country ORDER BY airport_city ASC";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 
 	public function getAllOwnerNames($stats_airline = '',$filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-                $query = "SELECT owner_name FROM stats_owner WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY owner_name ASC";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
-        }
+		$query = "SELECT owner_name FROM stats_owner WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY owner_name ASC";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 
 	public function getAllPilotNames($stats_airline = '',$filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-                $query = "SELECT pilot_id,pilot_name FROM stats_pilot WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY pilot_name ASC";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
-        }
+		$query = "SELECT pilot_id,pilot_name FROM stats_pilot WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY pilot_name ASC";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 
 
 	public function countAllAircraftTypes($limit = true, $stats_airline = '', $filter_name = '',$year = '', $month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC";
-			try {
-				$sth = $this->db->prepare($query);
-				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-			} catch(PDOException $e) {
-				echo "error : ".$e->getMessage();
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
 			}
-			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-		} else $all = array();
-                if (empty($all)) {
-            	    $filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
-            	    if ($filter_name != '') {
-            		    $filters = array_merge($filters,$globalStatsFilters[$filter_name]);
-            	    }
-            	    $Spotter = new Spotter($this->db);
-            	    //$all = $Spotter->countAllAircraftTypes($limit,0,'',$filters,$year,$month);
-            	    $all = $Spotter->countAllAircraftTypes($limit,0,'',$filters);
-                }
-                return $all;
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		} else {
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		}
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Spotter = new Spotter($this->db);
+			//$all = $Spotter->countAllAircraftTypes($limit,0,'',$filters,$year,$month);
+			$all = $Spotter->countAllAircraftTypes($limit,0,'',$filters);
+		}
+		return $all;
 	}
 	public function countAllAirlineCountries($limit = true,$filter_name = '',$year = '',$month = '') {
 		global $globalStatsFilters;
@@ -210,19 +242,43 @@ class Stats {
 	public function countAllAircraftManufacturers($limit = true,$stats_airline = '', $filter_name = '',$year = '', $month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC";
-			try {
-				$sth = $this->db->prepare($query);
-				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-			} catch(PDOException $e) {
-				echo "error : ".$e->getMessage();
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
 			}
-			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-		} else $all = array();
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft WHERE stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft WHERE stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		} else {
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT aircraft_manufacturer, SUM(stats_aircraft.cnt) as aircraft_manufacturer_count FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY aircraft_manufacturer ORDER BY aircraft_manufacturer_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		}
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
@@ -236,50 +292,91 @@ class Stats {
 	public function countAllArrivalCountries($limit = true, $stats_airline = '', $filter_name = '',$year = '', $month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count, countries.iso3 AS airport_arrival_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_arrival_country, countries.iso3 ORDER BY airport_arrival_country_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count, countries.iso3 AS airport_arrival_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_aiport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_arrival_country, countries.iso3 ORDER BY airport_arrival_country_count DESC";
-			try {
-				$sth = $this->db->prepare($query);
-				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-			} catch(PDOException $e) {
-				echo "error : ".$e->getMessage();
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
 			}
-			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-		} else $all = array();
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count, countries.iso3 AS airport_arrival_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY airport_arrival_country, countries.iso3 ORDER BY airport_arrival_country_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count, countries.iso3 AS airport_arrival_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_aiport.airport_country AND stats_type = 'yearly' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY airport_arrival_country, countries.iso3 ORDER BY airport_arrival_country_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		} else {
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count, countries.iso3 AS airport_arrival_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_arrival_country, countries.iso3 ORDER BY airport_arrival_country_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT airport_country AS airport_arrival_country, SUM(arrival) as airport_arrival_country_count, countries.iso3 AS airport_arrival_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_aiport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_arrival_country, countries.iso3 ORDER BY airport_arrival_country_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		}
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
 			if ($filter_name != '') {
-            			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
 			//$all = $Spotter->countAllArrivalCountries($limit,$filters,$year,$month);
 			$all = $Spotter->countAllArrivalCountries($limit,$filters);
-                }
-                return $all;
+		}
+		return $all;
 	}
 	public function countAllDepartureCountries($limit = true, $stats_airline = '', $filter_name = '', $year = '', $month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($limit) $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count, countries.iso3 as airport_departure_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_departure_country, countries.iso3 ORDER BY airport_departure_country_count DESC LIMIT 10 OFFSET 0";
-		else $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count, countries.iso3 as airport_departure_country_iso3 FROM stats_airport, countries WHERE countries.iso3 = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_departure_country, countries.iso3 ORDER BY airport_departure_country_count DESC";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+			}
+			if ($limit) $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count, countries.iso3 as airport_departure_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY airport_departure_country, countries.iso3 ORDER BY airport_departure_country_count DESC LIMIT 10 OFFSET 0";
+			else $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count, countries.iso3 as airport_departure_country_iso3 FROM stats_airport, countries WHERE countries.iso3 = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY airport_departure_country, countries.iso3 ORDER BY airport_departure_country_count DESC";
+			$query_values = array(':filter_name' => $filter_name);
+		} else {
+			if ($limit) $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count, countries.iso3 as airport_departure_country_iso3 FROM stats_airport, countries WHERE countries.name = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_departure_country, countries.iso3 ORDER BY airport_departure_country_count DESC LIMIT 10 OFFSET 0";
+			else $query = "SELECT airport_country AS airport_departure_country, SUM(departure) as airport_departure_country_count, countries.iso3 as airport_departure_country_iso3 FROM stats_airport, countries WHERE countries.iso3 = stats_airport.airport_country AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name GROUP BY airport_departure_country, countries.iso3 ORDER BY airport_departure_country_count DESC";
+			$query_values = array(':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
 			if ($filter_name != '') {
-            			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
 			$Spotter = new Spotter($this->db);
 			//$all = $Spotter->countAllDepartureCountries($filters,$year,$month);
 			$all = $Spotter->countAllDepartureCountries($filters);
-                }
-                return $all;
+		}
+		return $all;
 	}
 
 	public function countAllAirlines($limit = true,$filter_name = '',$year = '',$month = '') {
@@ -320,44 +417,92 @@ class Stats {
 	public function countAllAircraftRegistrations($limit = true,$stats_airline = '',$filter_name = '',$year = '',$month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_registration_count DESC";
-			try {
-				$sth = $this->db->prepare($query);
-				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-			} catch(PDOException $e) {
-				echo "error : ".$e->getMessage();
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
 			}
-			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-		} else $all = array();
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY aircraft_registration_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		} else {
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_registration_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		}
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
-	                $Spotter = new Spotter($this->db);
-    		        //$all = $Spotter->countAllAircraftRegistrations($limit,0,'',$filters,$year,$month);
-    		        $all = $Spotter->countAllAircraftRegistrations($limit,0,'',$filters);
-                }
-                return $all;
+			$Spotter = new Spotter($this->db);
+			//$all = $Spotter->countAllAircraftRegistrations($limit,0,'',$filters,$year,$month);
+			$all = $Spotter->countAllAircraftRegistrations($limit,0,'',$filters);
+		}
+		return $all;
 	}
 	public function countAllCallsigns($limit = true,$stats_airline = '',$filter_name = '',$year = '',$month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.airline_icao = :stats_airline AND filter_name = :filter_name ORDER BY callsign_icao_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.airline_icao = :stats_airline AND filter_name = :filter_name ORDER BY callsign_icao_count DESC";
-			 try {
-				$sth = $this->db->prepare($query);
-				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-			} catch(PDOException $e) {
-				echo "error : ".$e->getMessage();
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
 			}
-			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-		} else $all = array();
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.airline_icao IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY callsign_icao_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.airline_icao IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY callsign_icao_count DESC";
+				 try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		} else {
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.airline_icao = :stats_airline AND filter_name = :filter_name ORDER BY callsign_icao_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT s.callsign_icao, s.cnt AS callsign_icao_count, a.name AS airline_name, a.icao as airline_icao FROM stats_callsign s, airlines a WHERE s.callsign_icao <> '' AND a.icao = s.airline_icao AND s.airline_icao = :stats_airline AND filter_name = :filter_name ORDER BY callsign_icao_count DESC";
+				 try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		}
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
@@ -371,25 +516,46 @@ class Stats {
 		$Connection = new Connection();
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($Connection->tableExists('countries')) {
-			if ($year == '' && $month == '') {
-				if ($limit) $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 AND stats_country.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY flight_count DESC LIMIT 20 OFFSET 0";
-				else $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 AND stats_country.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY flight_count DESC";
-				 try {
-					$sth = $this->db->prepare($query);
-					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-				} catch(PDOException $e) {
-					echo "error : ".$e->getMessage();
-				}
-				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                /*
-                if (empty($all)) {
-	                $Spotter = new Spotter($this->db);
-    		        $all = $Spotter->countAllFlightOverCountries($limit);
-                }
-                */
-				return $all;
-			} else return array();
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$Spotter = new Spotter($this->db);
+				$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+				if ($year == '' && $month == '') {
+					$alliance_airlines = array();
+					foreach ($airlines as $airline) {
+						$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+					}
+					if ($limit) $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 AND stats_country.stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY flight_count DESC LIMIT 20 OFFSET 0";
+					else $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 AND stats_country.stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY flight_count DESC";
+					 try {
+						$sth = $this->db->prepare($query);
+						$sth->execute(array(':filter_name' => $filter_name));
+					} catch(PDOException $e) {
+						echo "error : ".$e->getMessage();
+					}
+					$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+					return $all;
+				} else return array();
+			} else {
+				if ($year == '' && $month == '') {
+					if ($limit) $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 AND stats_country.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY flight_count DESC LIMIT 20 OFFSET 0";
+					else $query = "SELECT countries.iso3 as flight_country_iso3, countries.iso2 as flight_country_iso2, countries.name as flight_country, cnt as flight_count, lat as flight_country_latitude, lon as flight_country_longitude FROM stats_country, countries WHERE stats_country.iso2 = countries.iso2 AND stats_country.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY flight_count DESC";
+					 try {
+						$sth = $this->db->prepare($query);
+						$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+					} catch(PDOException $e) {
+						echo "error : ".$e->getMessage();
+					}
+					$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+					return $all;
+				} else return array();
+			}
 		} else {
+			/*
+			if (empty($all)) {
+				$Spotter = new Spotter($this->db);
+				$all = $Spotter->countAllFlightOverCountries($limit);
+			}
+			*/
 			return array();
 		}
 	}
@@ -422,88 +588,159 @@ class Stats {
 	public function countAllOwners($limit = true,$stats_airline = '', $filter_name = '',$year = '',$month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY owner_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY owner_count DESC";
-			try {
-				$sth = $this->db->prepare($query);
-				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-			} catch(PDOException $e) {
-				echo "error : ".$e->getMessage();
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			if ($year == '' && $month == '') {
+				$alliance_airlines = array();
+				foreach ($airlines as $airline) {
+					$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+				}
+				if ($limit) $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner WHERE stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY owner_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner WHERE stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY owner_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		} else {
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY owner_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT owner_name, cnt AS owner_count FROM stats_owner WHERE stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY owner_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		}
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			}
-			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-		} else $all = array();
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
-            		$Spotter = new Spotter($this->db);
-            		//$all = $Spotter->countAllOwners($limit,0,'',$filters,$year,$month);
-            		$all = $Spotter->countAllOwners($limit,0,'',$filters);
-                }
-                return $all;
+			$Spotter = new Spotter($this->db);
+			//$all = $Spotter->countAllOwners($limit,0,'',$filters,$year,$month);
+			$all = $Spotter->countAllOwners($limit,0,'',$filters);
+		}
+		return $all;
 	}
 	public function countAllDepartureAirports($limit = true,$stats_airline = '',$filter_name = '',$year = '',$month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count, airport.latitude AS airport_departure_latitude, airport.longitude AS airport_departure_longitude FROM stats_airport,airport WHERE airport.icao = stats_airport.airport_icao AND departure > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count, airport.latitude AS airport_departure_latitude, airport.longitude AS airport_departure_longitude FROM stats_airport,airport WHERE airport.icao = stats_airport.airport_icao AND departure > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC";
-			try {
-				$sth = $this->db->prepare($query);
-				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-			} catch(PDOException $e) {
-				echo "error : ".$e->getMessage();
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			if ($year == '' && $month == '') {
+				$alliance_airlines = array();
+				foreach ($airlines as $airline) {
+					$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+				}
+				if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count, airport.latitude AS airport_departure_latitude, airport.longitude AS airport_departure_longitude FROM stats_airport,airport WHERE airport.icao = stats_airport.airport_icao AND departure > 0 AND stats_type = 'yearly' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count, airport.latitude AS airport_departure_latitude, airport.longitude AS airport_departure_longitude FROM stats_airport,airport WHERE airport.icao = stats_airport.airport_icao AND departure > 0 AND stats_type = 'yearly' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		} else {
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count, airport.latitude AS airport_departure_latitude, airport.longitude AS airport_departure_longitude FROM stats_airport,airport WHERE airport.icao = stats_airport.airport_icao AND departure > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT DISTINCT airport_icao AS airport_departure_icao,airport_city AS airport_departure_city,airport_country AS airport_departure_country,departure AS airport_departure_icao_count, airport.latitude AS airport_departure_latitude, airport.longitude AS airport_departure_longitude FROM stats_airport,airport WHERE airport.icao = stats_airport.airport_icao AND departure > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_departure_icao_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		}
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
 			}
-			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-		} else $all = array();
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
-            		if ($filter_name != '') {
-            			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
-            		$Spotter = new Spotter($this->db);
+			$Spotter = new Spotter($this->db);
 //            		$pall = $Spotter->countAllDepartureAirports($limit,0,'',$filters,$year,$month);
   //      		$dall = $Spotter->countAllDetectedDepartureAirports($limit,0,'',$filters,$year,$month);
-            		$pall = $Spotter->countAllDepartureAirports($limit,0,'',$filters);
-        		$dall = $Spotter->countAllDetectedDepartureAirports($limit,0,'',$filters);
-        		$all = array();
-        		foreach ($pall as $value) {
-        			$icao = $value['airport_departure_icao'];
-        			$all[$icao] = $value;
-        		}
-        		
-        		foreach ($dall as $value) {
-        			$icao = $value['airport_departure_icao'];
-        			if (isset($all[$icao])) {
-        				$all[$icao]['airport_departure_icao_count'] = $all[$icao]['airport_departure_icao_count'] + $value['airport_departure_icao_count'];
-        			} else $all[$icao] = $value;
-        		}
-        		$count = array();
-        		foreach ($all as $key => $row) {
-        			$count[$key] = $row['airport_departure_icao_count'];
-        		}
-        		array_multisort($count,SORT_DESC,$all);
-                }
-                return $all;
+			$pall = $Spotter->countAllDepartureAirports($limit,0,'',$filters);
+			$dall = $Spotter->countAllDetectedDepartureAirports($limit,0,'',$filters);
+			$all = array();
+			foreach ($pall as $value) {
+				$icao = $value['airport_departure_icao'];
+				$all[$icao] = $value;
+			}
+			foreach ($dall as $value) {
+				$icao = $value['airport_departure_icao'];
+				if (isset($all[$icao])) {
+					$all[$icao]['airport_departure_icao_count'] = $all[$icao]['airport_departure_icao_count'] + $value['airport_departure_icao_count'];
+				} else $all[$icao] = $value;
+			}
+			$count = array();
+			foreach ($all as $key => $row) {
+				$count[$key] = $row['airport_departure_icao_count'];
+			}
+			array_multisort($count,SORT_DESC,$all);
+		}
+		return $all;
 	}
 	public function countAllArrivalAirports($limit = true,$stats_airline = '',$filter_name = '',$year = '',$month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
-			if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count, airport.latitude AS airport_arrival_latitude, airport.longitude AS airport_arrival_longitude FROM stats_airport, airport WHERE airport.icao = stats_airport.airport_icao AND arrival > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC LIMIT 10 OFFSET 0";
-			else $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count, airport.latitude AS airport_arrival_latitude, airport.longitude AS airport_arrival_longitude FROM stats_airport, airport WHERE airport.icao = stats_airport.airport_icao AND arrival > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC";
-			try {
-				$sth = $this->db->prepare($query);
-				$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
-			} catch(PDOException $e) {
-				echo "error : ".$e->getMessage();
-			}
-			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-		} else $all = array();
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			if ($year == '' && $month == '') {
+				$alliance_airlines = array();
+				foreach ($airlines as $airline) {
+					$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+				}
+				if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count, airport.latitude AS airport_arrival_latitude, airport.longitude AS airport_arrival_longitude FROM stats_airport, airport WHERE airport.icao = stats_airport.airport_icao AND arrival > 0 AND stats_type = 'yearly' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count, airport.latitude AS airport_arrival_latitude, airport.longitude AS airport_arrival_longitude FROM stats_airport, airport WHERE airport.icao = stats_airport.airport_icao AND arrival > 0 AND stats_type = 'yearly' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		} else {
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count, airport.latitude AS airport_arrival_latitude, airport.longitude AS airport_arrival_longitude FROM stats_airport, airport WHERE airport.icao = stats_airport.airport_icao AND arrival > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT DISTINCT airport_icao AS airport_arrival_icao,airport_city AS airport_arrival_city,airport_country AS airport_arrival_country,arrival AS airport_arrival_icao_count, airport.latitude AS airport_arrival_latitude, airport.longitude AS airport_arrival_longitude FROM stats_airport, airport WHERE airport.icao = stats_airport.airport_icao AND arrival > 0 AND stats_type = 'yearly' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY airport_arrival_icao_count DESC";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+			} else $all = array();
+		}
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
@@ -512,126 +749,193 @@ class Stats {
 //			$dall = $Spotter->countAllDetectedArrivalAirports($limit,0,'',false,$filters,$year,$month);
 			$pall = $Spotter->countAllArrivalAirports($limit,0,'',false,$filters);
 			$dall = $Spotter->countAllDetectedArrivalAirports($limit,0,'',false,$filters);
-        		$all = array();
-        		foreach ($pall as $value) {
-        			$icao = $value['airport_arrival_icao'];
-        			$all[$icao] = $value;
-        		}
-        		
-        		foreach ($dall as $value) {
-        			$icao = $value['airport_arrival_icao'];
-        			if (isset($all[$icao])) {
-        				$all[$icao]['airport_arrival_icao_count'] = $all[$icao]['airport_arrival_icao_count'] + $value['airport_arrival_icao_count'];
-        			} else $all[$icao] = $value;
-        		}
-        		$count = array();
-        		foreach ($all as $key => $row) {
-        			$count[$key] = $row['airport_arrival_icao_count'];
-        		}
-        		array_multisort($count,SORT_DESC,$all);
-                }
- 
-                return $all;
+			$all = array();
+			foreach ($pall as $value) {
+				$icao = $value['airport_arrival_icao'];
+				$all[$icao] = $value;
+			}
+			foreach ($dall as $value) {
+				$icao = $value['airport_arrival_icao'];
+				if (isset($all[$icao])) {
+					$all[$icao]['airport_arrival_icao_count'] = $all[$icao]['airport_arrival_icao_count'] + $value['airport_arrival_icao_count'];
+				} else $all[$icao] = $value;
+			}
+			$count = array();
+			foreach ($all as $key => $row) {
+				$count[$key] = $row['airport_arrival_icao_count'];
+			}
+			array_multisort($count,SORT_DESC,$all);
+		}
+		return $all;
 	}
 	public function countAllMonthsLastYear($limit = true,$stats_airline = '',$filter_name = '') {
 		global $globalDBdriver, $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($globalDBdriver == 'mysql') {
-			if ($limit) $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 MONTH) AND stats_airline = :stats_airline AND filter_name = :filter_name";
-			else $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+			}
+			if ($globalDBdriver == 'mysql') {
+				if ($limit) $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, SUM(cnt) as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 MONTH) AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY stats_date";
+				else $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, SUM(cnt) as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY stats_date";
+			} else {
+				if ($limit) $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, SUM(cnt) as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '12 MONTHS' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY stats_date";
+				else $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, SUM(cnt) as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY stats_date";
+			}
+			$query_data = array(':filter_name' => $filter_name);
 		} else {
-			if ($limit) $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '12 MONTHS' AND stats_airline = :stats_airline AND filter_name = :filter_name";
-			else $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			if ($globalDBdriver == 'mysql') {
+				if ($limit) $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 MONTH) AND stats_airline = :stats_airline AND filter_name = :filter_name";
+				else $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			} else {
+				if ($limit) $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '12 MONTHS' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+				else $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			}
+			$query_data = array(':stats_airline' => $stats_airline,':filter_name' => $filter_name);
 		}
-		$query_data = array(':stats_airline' => $stats_airline,':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_data);
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			} else {
+				$filters = array('airlines' => array($stats_airline));
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
-            		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllMonthsLastYear($filters);
-                }
-                
-                return $all;
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->countAllMonthsLastYear($filters);
+		}
+		return $all;
 	}
 	
 	public function countAllDatesLastMonth($stats_airline = '',$filter_name = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND stats_airline = :stats_airline AND filter_name = :filter_name";
-		$query_data = array(':stats_airline' => $stats_airline,':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_data);
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+			}
+			$query = "SELECT flight_date as date_name, SUM(cnt) as date_count FROM stats_flight WHERE stats_type = 'month' AND stats_airline  IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY flight_date";
+			$query_data = array(':filter_name' => $filter_name);
+		} else {
+			$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			$query_data = array(':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			} else {
+				$filters = array('airlines' => array($stats_airline));
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
-            		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllDatesLastMonth($filters);
-                }
-                return $all;
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->countAllDatesLastMonth($filters);
+		}
+		return $all;
 	}
 	public function countAllDatesLast7Days($stats_airline = '',$filter_name = '') {
 		global $globalDBdriver, $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY) AND stats_airline = :stats_airline AND filter_name = :filter_name";
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+			}
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT flight_date as date_name, SUM(cnt) as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY) AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY flight_date";
+			} else {
+				$query = "SELECT flight_date as date_name, SUM(cnt) as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date::timestamp >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY flight_date";
+			}
+			$query_data = array(':filter_name' => $filter_name);
 		} else {
-			$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date::timestamp >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY) AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			} else {
+				$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'month' AND flight_date::timestamp >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			}
+			$query_data = array(':stats_airline' => $stats_airline,':filter_name' => $filter_name);
 		}
-		$query_data = array(':stats_airline' => $stats_airline,':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_data);
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			} else {
+				$filters = array('airlines' => array($stats_airline));
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
-            		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllDatesLast7Days($filters);
-                }
-                return $all;
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->countAllDatesLast7Days($filters);
+		}
+		return $all;
 	}
 	public function countAllDates($stats_airline = '',$filter_name = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'date' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date_count DESC";
-		$query_data = array(':stats_airline' => $stats_airline,':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_data);
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
-			if ($filter_name != '') {
-            			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
 			}
-            		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllDates($filters);
-                }
-                return $all;
+			$query = "SELECT flight_date as date_name, SUM(cnt) as date_count FROM stats_flight WHERE stats_type = 'date' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY flight_date ORDER BY date_count DESC";
+			$query_data = array(':filter_name' => $filter_name);
+		} else {
+			$query = "SELECT flight_date as date_name, cnt as date_count FROM stats_flight WHERE stats_type = 'date' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date_count DESC";
+			$query_data = array(':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			} else {
+				$filters = array('airlines' => array($stats_airline));
+			}
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->countAllDates($filters);
+		}
+		return $all;
 	}
 	public function countAllDatesByAirlines($filter_name = '') {
 		global $globalStatsFilters;
@@ -658,29 +962,47 @@ class Stats {
 	public function countAllMonths($stats_airline = '',$filter_name = '') {
 		global $globalStatsFilters, $globalDBdriver;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date_count DESC";
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+			}
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, SUM(cnt) as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY stats_date ORDER BY date_count DESC";
+			} else {
+				$query = "SELECT EXTRACT(YEAR FROM stats_date) AS year_name,EXTRACT(MONTH FROM stats_date) AS month_name, SUM(cnt) as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY stats_date ORDER BY date_count DESC";
+			}
+			$query_data = array(':filter_name' => $filter_name);
 		} else {
-			$query = "SELECT EXTRACT(YEAR FROM stats_date) AS year_name,EXTRACT(MONTH FROM stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date_count DESC";
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT YEAR(stats_date) AS year_name,MONTH(stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date_count DESC";
+			} else {
+				$query = "SELECT EXTRACT(YEAR FROM stats_date) AS year_name,EXTRACT(MONTH FROM stats_date) AS month_name, cnt as date_count FROM stats WHERE stats_type = 'flights_bymonth' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date_count DESC";
+			}
+			$query_data = array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name);
 		}
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name));
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			} else {
+				$filters = array('airlines' => array($stats_airline));
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
-            		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllMonths($filters);
-                }
-                
-                return $all;
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->countAllMonths($filters);
+		}
+		return $all;
 	}
 	public function countFatalitiesLast12Months() {
 		global $globalStatsFilters, $globalDBdriver;
@@ -748,42 +1070,61 @@ class Stats {
 	public function countAllHours($orderby = 'hour',$limit = true,$stats_airline = '',$filter_name = '') {
 		global $globalTimezone, $globalDBdriver, $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($limit) $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour' AND stats_airline = :stats_airline AND filter_name = :filter_name";
-		else $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+			}
+			if ($limit) $query = "SELECT flight_date as hour_name, SUM(cnt) as hour_count FROM stats_flight WHERE stats_type = 'hour' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY flight_date";
+			else $query = "SELECT flight_date as hour_name, SUM(cnt) as hour_count FROM stats_flight WHERE stats_type = 'hour' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name GROUP BY flight_date";
+			$query_data = array(':filter_name' => $filter_name);
+		} else {
+			if ($limit) $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			else $query = "SELECT flight_date as hour_name, cnt as hour_count FROM stats_flight WHERE stats_type = 'hour' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			$query_data = array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name);
+		}
 		if ($orderby == 'hour') {
 			if ($globalDBdriver == 'mysql') {
-				//$query .= " ORDER BY flight_date ASC";
 				$query .= " ORDER BY CAST(flight_date AS UNSIGNED) ASC";
 			} else {
 				$query .= " ORDER BY CAST(flight_date AS integer) ASC";
 			}
 		}
 		if ($orderby == 'count') $query .= " ORDER BY hour_count DESC";
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name));
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline));
-			if ($filter_name != '') {
-            			$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			} else {
+				$filters = array('airlines' => array($stats_airline));
 			}
-            		$Spotter = new Spotter($this->db);
-            		$all = $Spotter->countAllHours($orderby,$filters);
-                }
-                return $all;
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Spotter = new Spotter($this->db);
+			$all = $Spotter->countAllHours($orderby,$filters);
+		}
+		return $all;
 	}
-	
 	public function countOverallFlights($stats_airline = '', $filter_name = '',$year = '',$month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($year == '') $year = date('Y');
 		$all = $this->getSumStats('flights_bymonth',$year,$stats_airline,$filter_name,$month);
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
@@ -816,7 +1157,11 @@ class Stats {
 		if ($year == '') $year = date('Y');
 		$all = $this->getSumStats('realarrivals_bymonth',$year,$stats_airline,$filter_name,$month);
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
@@ -829,19 +1174,43 @@ class Stats {
 	public function countOverallAircrafts($stats_airline = '',$filter_name = '',$year = '', $month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
-			$query = "SELECT COUNT(*) AS nb FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
-			try {
-				$sth = $this->db->prepare($query);
-				$sth->execute(array(':filter_name' => $filter_name,':stats_airline' => $stats_airline));
-			} catch(PDOException $e) {
-				echo "error : ".$e->getMessage();
-			}
-			$result = $sth->fetchAll(PDO::FETCH_ASSOC);
-			$all = $result[0]['nb'];
-		} else $all = $this->getSumStats('aircrafts_bymonth',$year,$stats_airline,$filter_name,$month);
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			if ($year == '' && $month == '') {
+				$alliance_airlines = array();
+				foreach ($airlines as $airline) {
+					$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+				}
+				$query = "SELECT COUNT(*) AS nb FROM stats_aircraft WHERE stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+				$all = $result[0]['nb'];
+			} else $all = $this->getSumStats('aircrafts_bymonth',$year,$stats_airline,$filter_name,$month);
+		} else {
+			if ($year == '' && $month == '') {
+				$query = "SELECT COUNT(*) AS nb FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name,':stats_airline' => $stats_airline));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+				$all = $result[0]['nb'];
+			} else $all = $this->getSumStats('aircrafts_bymonth',$year,$stats_airline,$filter_name,$month);
+		}
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
@@ -880,22 +1249,49 @@ class Stats {
 	public function countOverallOwners($stats_airline = '',$filter_name = '',$year = '', $month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
-			$query = "SELECT count(*) as nb FROM stats_owner WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
-			$query_values = array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name);
-			try {
-				$sth = $this->db->prepare($query);
-				$sth->execute($query_values);
-			} catch(PDOException $e) {
-				echo "error : ".$e->getMessage();
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			if ($year == '' && $month == '') {
+				$alliance_airlines = array();
+				foreach ($airlines as $airline) {
+					$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+				}
+				$query = "SELECT count(*) as nb FROM stats_owner WHERE stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name";
+				$query_values = array(':filter_name' => $filter_name);
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute($query_values);
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+				$all = $result[0]['nb'];
+			} else {
+				$all = $this->getSumStats('owners_bymonth',$year,$stats_airline,$filter_name,$month);
 			}
-			$result = $sth->fetchAll(PDO::FETCH_ASSOC);
-			$all = $result[0]['nb'];
 		} else {
-			$all = $this->getSumStats('owners_bymonth',$year,$stats_airline,$filter_name,$month);
+			if ($year == '' && $month == '') {
+				$query = "SELECT count(*) as nb FROM stats_owner WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
+				$query_values = array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name);
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute($query_values);
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+				$all = $result[0]['nb'];
+			} else {
+				$all = $this->getSumStats('owners_bymonth',$year,$stats_airline,$filter_name,$month);
+			}
 		}
 		if (empty($all)) {
-			$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			if (strpos($stats_airline,'alliance_') !== FALSE) {
+				$filters = array('alliance' => str_replace('_',' ',str_replace('alliance_','',$stats_airline)),'year' => $year,'month' => $month);
+			} else {
+				$filters = array('airlines' => array($stats_airline),'year' => $year,'month' => $month);
+			}
 			if ($filter_name != '') {
 				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
 			}
@@ -937,105 +1333,171 @@ class Stats {
 
 	public function getLast7DaysAirports($airport_icao = '', $stats_airline = '',$filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		$query = "SELECT * FROM stats_airport WHERE stats_type = 'daily' AND airport_icao = :airport_icao AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date";
-		$query_values = array(':airport_icao' => $airport_icao,':stats_airline' => $stats_airline, ':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+			}
+			$query = "SELECT * FROM stats_airport WHERE stats_type = 'daily' AND airport_icao = :airport_icao AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY date";
+			$query_values = array(':airport_icao' => $airport_icao,':filter_name' => $filter_name);
+		} else {
+			$query = "SELECT * FROM stats_airport WHERE stats_type = 'daily' AND airport_icao = :airport_icao AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY date";
+			$query_values = array(':airport_icao' => $airport_icao,':stats_airline' => $stats_airline, ':filter_name' => $filter_name);
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
 	}
 	public function getStats($type,$stats_airline = '', $filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-                $query = "SELECT * FROM stats WHERE stats_type = :type AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY stats_date";
-                $query_values = array(':type' => $type,':stats_airline' => $stats_airline,':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all;
-        }
+		$query = "SELECT * FROM stats WHERE stats_type = :type AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY stats_date";
+		$query_values = array(':type' => $type,':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all;
+	}
 	public function deleteStatsByType($type,$stats_airline = '', $filter_name = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-                $query = "DELETE FROM stats WHERE stats_type = :type AND stats_airline = :stats_airline AND filter_name = :filter_name";
-                $query_values = array(':type' => $type,':stats_airline' => $stats_airline,':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-        }
+		$query = "DELETE FROM stats WHERE stats_type = :type AND stats_airline = :stats_airline AND filter_name = :filter_name";
+		$query_values = array(':type' => $type,':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+	}
 	public function getSumStats($type,$year,$stats_airline = '',$filter_name = '',$month = '') {
 		if ($filter_name == '') $filter_name = $this->filter_name;
-    		global $globalArchiveMonths, $globalDBdriver;
-    		if ($globalDBdriver == 'mysql') {
-    			if ($month == '') {
-				$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year AND stats_airline = :stats_airline AND filter_name = :filter_name";
-				$query_values = array(':type' => $type, ':year' => $year, ':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+		global $globalArchiveMonths, $globalDBdriver;
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+			}
+			if ($globalDBdriver == 'mysql') {
+				if ($month == '') {
+					$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name";
+					$query_values = array(':type' => $type, ':year' => $year, ':filter_name' => $filter_name);
+				} else {
+					$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year AND MONTH(stats_date) = :month AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name";
+					$query_values = array(':type' => $type, ':year' => $year, ':filter_name' => $filter_name,':month' => $month);
+				}
 			} else {
-				$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year AND MONTH(stats_date) = :month AND stats_airline = :stats_airline AND filter_name = :filter_name";
-				$query_values = array(':type' => $type, ':year' => $year, ':stats_airline' => $stats_airline,':filter_name' => $filter_name,':month' => $month);
+				if ($month == '') {
+					$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND EXTRACT(YEAR FROM stats_date) = :year AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name";
+					$query_values = array(':type' => $type, ':year' => $year, ':filter_name' => $filter_name);
+				} else {
+					$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND EXTRACT(YEAR FROM stats_date) = :year AND EXTRACT(MONTH FROM stats_date) = :month AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name";
+					$query_values = array(':type' => $type, ':year' => $year, ':filter_name' => $filter_name,':month' => $month);
+				}
 			}
 		} else {
-			if ($month == '') {
-				$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND EXTRACT(YEAR FROM stats_date) = :year AND stats_airline = :stats_airline AND filter_name = :filter_name";
-				$query_values = array(':type' => $type, ':year' => $year, ':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+			if ($globalDBdriver == 'mysql') {
+				if ($month == '') {
+					$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year AND stats_airline = :stats_airline AND filter_name = :filter_name";
+					$query_values = array(':type' => $type, ':year' => $year, ':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+				} else {
+					$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND YEAR(stats_date) = :year AND MONTH(stats_date) = :month AND stats_airline = :stats_airline AND filter_name = :filter_name";
+					$query_values = array(':type' => $type, ':year' => $year, ':stats_airline' => $stats_airline,':filter_name' => $filter_name,':month' => $month);
+				}
 			} else {
-				$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND EXTRACT(YEAR FROM stats_date) = :year AND EXTRACT(MONTH FROM stats_date) = :month AND stats_airline = :stats_airline AND filter_name = :filter_name";
-				$query_values = array(':type' => $type, ':year' => $year, ':stats_airline' => $stats_airline,':filter_name' => $filter_name,':month' => $month);
+				if ($month == '') {
+					$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND EXTRACT(YEAR FROM stats_date) = :year AND stats_airline = :stats_airline AND filter_name = :filter_name";
+					$query_values = array(':type' => $type, ':year' => $year, ':stats_airline' => $stats_airline,':filter_name' => $filter_name);
+				} else {
+					$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND EXTRACT(YEAR FROM stats_date) = :year AND EXTRACT(MONTH FROM stats_date) = :month AND stats_airline = :stats_airline AND filter_name = :filter_name";
+					$query_values = array(':type' => $type, ':year' => $year, ':stats_airline' => $stats_airline,':filter_name' => $filter_name,':month' => $month);
+				}
 			}
-                }
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all[0]['total'];
-        }
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all[0]['total'];
+	}
 	public function getStatsTotal($type, $stats_airline = '', $filter_name = '') {
-    		global $globalArchiveMonths, $globalDBdriver;
+		global $globalArchiveMonths, $globalDBdriver;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-    		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH) AND stats_airline = :stats_airline AND filter_name = :filter_name";
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+			}
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH) AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name";
+			} else {
+				$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name";
+			}
+			$query_values = array(':type' => $type, ':filter_name' => $filter_name);
 		} else {
-			$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS' AND stats_airline = :stats_airline AND filter_name = :filter_name";
-                }
-                $query_values = array(':type' => $type, ':stats_airline' => $stats_airline, ':filter_name' => $filter_name);
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute($query_values);
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all[0]['total'];
-        }
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL ".$globalArchiveMonths." MONTH) AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			} else {
+				$query = "SELECT SUM(cnt) as total FROM stats WHERE stats_type = :type AND stats_date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS' AND stats_airline = :stats_airline AND filter_name = :filter_name";
+			}
+			$query_values = array(':type' => $type, ':stats_airline' => $stats_airline, ':filter_name' => $filter_name);
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all[0]['total'];
+	}
 	public function getStatsAircraftTotal($stats_airline = '', $filter_name = '') {
-    		global $globalArchiveMonths, $globalDBdriver;
+		global $globalArchiveMonths, $globalDBdriver;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-    		if ($globalDBdriver == 'mysql') {
-			$query = "SELECT SUM(cnt) as total FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
-                } else {
-			$query = "SELECT SUM(cnt) as total FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
-                }
-                 try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name));
-                } catch(PDOException $e) {
-                        echo "error : ".$e->getMessage();
-                }
-                $all = $sth->fetchAll(PDO::FETCH_ASSOC);
-                return $all[0]['total'];
-        }
+		if (strpos($stats_airline,'alliance_') !== FALSE) {
+			$Spotter = new Spotter($this->db);
+			$airlines = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',str_replace('alliance_','',$stats_airline)));
+			$alliance_airlines = array();
+			foreach ($airlines as $airline) {
+				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
+			}
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT SUM(cnt) as total FROM stats_aircraft WHERE stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name";
+			} else {
+				$query = "SELECT SUM(cnt) as total FROM stats_aircraft WHERE stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name";
+			}
+		} else {
+			if ($globalDBdriver == 'mysql') {
+				$query = "SELECT SUM(cnt) as total FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
+			} else {
+				$query = "SELECT SUM(cnt) as total FROM stats_aircraft WHERE stats_airline = :stats_airline AND filter_name = :filter_name";
+			}
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':stats_airline' => $stats_airline, ':filter_name' => $filter_name));
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $all[0]['total'];
+	}
 	public function getStatsAirlineTotal($filter_name = '') {
     		global $globalArchiveMonths, $globalDBdriver;
 		if ($filter_name == '') $filter_name = $this->filter_name;

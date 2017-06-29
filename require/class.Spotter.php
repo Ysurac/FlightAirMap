@@ -2863,8 +2863,41 @@ class Spotter{
 			$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND forsource IS NULL ORDER BY alliance ASC";
 			$query_data = array();
 		} else {
-			$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND  forsource = :forsource ORDER BY alliance ASC";
+			$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND forsource = :forsource ORDER BY alliance ASC";
 			$query_data = array(':forsource' => $forsource);
+		}
+		
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_data);
+    
+		$alliance_array = array();
+		$alliance_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $alliance_array;
+	}
+
+	/**
+	* Gets a list of all airlines in an alliance
+	*
+	* @return Array list of airline names
+	*
+	*/
+	public function getAllAirlineNamesByAlliance($alliance,$forsource = NULL,$filters = array())
+	{
+		global $globalAirlinesSource,$globalVATSIM, $globalIVAO, $globalNoAirlines;
+		if (isset($globalNoAirlines) && $globalNoAirlines) return array();
+		$alliance = filter_var($alliance,FILTER_SANITIZE_STRING);
+		$filter_query = $this->getFilter($filters,true,true);
+		if (isset($globalAirlinesSource) && $globalAirlinesSource != '') $forsource = $globalAirlinesSource;
+		elseif (isset($globalVATSIM) && $globalVATSIM) $forsource = 'vatsim';
+		elseif (isset($globalIVAO) && $globalIVAO) $forsource = 'ivao';
+		if ($forsource === NULL) {
+			//$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND forsource IS NULL ORDER BY alliance ASC";
+			$query = "SELECT DISTINCT icao AS airline_icao, name AS airline_name, type AS airline_type FROM airlines WHERE alliance = :alliance AND forsource IS NULL ORDER BY name ASC";
+			$query_data = array(':alliance' => $alliance);
+		} else {
+			//$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND forsource = :forsource ORDER BY alliance ASC";
+			$query = "SELECT DISTINCT icao AS airline_icao, name AS airline_name, type AS airline_type FROM airlines WHERE alliance = :alliance AND forsource = :forsource ORDER BY name ASC";
+			$query_data = array(':forsource' => $forsource, ':alliance' => $alliance);
 		}
 		
 		$sth = $this->db->prepare($query);
