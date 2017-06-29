@@ -16,8 +16,8 @@ if (!isset($_GET['airline'])){
 		$absolute_difference = 25;
 	}  else {
 		$limit_explode = explode(",", $_GET['limit']);
-		$limit_start = $limit_explode[0];
-		$limit_end = $limit_explode[1];
+		$limit_start = filter_var($limit_explode[0],FILTER_SANITIZE_NUMBER_INT);
+		$limit_end = filter_var($limit_explode[1],FILTER_SANITIZE_NUMBER_INT);
 		if (!ctype_digit(strval($limit_start)) || !ctype_digit(strval($limit_end))) {
 			$limit_start = 0;
 			$limit_end = 25;
@@ -32,7 +32,7 @@ if (!isset($_GET['airline'])){
 	$page_url = $globalURL.'/airline/'.$airline;
 	
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-	$spotter_array = $Spotter->getSpotterDataByAirline($_GET['airline'],$limit_start.",".$absolute_difference, $sort);
+	$spotter_array = $Spotter->getSpotterDataByAirline($airline,$limit_start.",".$absolute_difference, $sort);
 	
 	if (!empty($spotter_array))
 	{
