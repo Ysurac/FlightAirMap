@@ -105,7 +105,7 @@ if (!isset($_GET['airline'])){
 			} else {
 				print '<div class="info column">';
 				print '<h1>'.str_replace('_',' ',str_replace('alliance_','',$airline)).'</h1>';
-				if (@getimagesize($globalURL.'/images/airlines/'.str_replace('alliance_','',$airline).'.png'))
+				if (@getimagesize($globalURL.'/images/airlines/'.str_replace('alliance_','',$airline).'.png') || @getimagesize('images/airlines/'.str_replace('alliance_','',$airline).'.png'))
 				{
 					print '<img src="'.$globalURL.'/images/airlines/'.str_replace('alliance_','',$airline).'.png" alt="'.str_replace('_',' ',str_replace('alliance_','',$airline)).'" title="'.str_replace('_',' ',str_replace('alliance_','',$airline)).'" class="logo" />';
 				}
