@@ -37,7 +37,7 @@ if (!empty($spotter_array) || $alliance === true)
 				print '<option value="'.str_replace(' ','_',$al['alliance']).'">'.$al['alliance'].'</option>';
 			}
 		}
-		print '<option disabled>-----------</option>';
+		print '<option disabled>─────────────────</option>';
 	}
 	$Stats = new Stats();
 	$airline_names = $Stats->getAllAirlineNames();
@@ -98,11 +98,14 @@ if (!empty($spotter_array) || $alliance === true)
 	} else {
 		print '<p>'.sprintf(_("The statistic below shows all arrival airports by Country of origin of flights from <strong>%s</strong>."),$spotter_array[0]['airline_name']).'</p>';
 	}
+	/*
 	if ($alliance) {
 		$airport_country_array = $Spotter->countAllArrivalAirportCountriesByAirline('',array('alliance' => str_replace('_',' ',str_replace('alliance_','',$airline))));
 	} else {
 		$airport_country_array = $Spotter->countAllArrivalAirportCountriesByAirline($airline);
 	}
+	*/
+	$airport_country_array = $Stats->countAllArrivalCountries(true,$airline);
 	print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/topojson.v2.min.js"></script>';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/datamaps.world.min.js"></script>';

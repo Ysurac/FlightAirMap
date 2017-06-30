@@ -38,7 +38,7 @@ if (!empty($spotter_array) || $alliance === true)
 				print '<option value="'.str_replace(' ','_',$al['alliance']).'">'.$al['alliance'].'</option>';
 			}
 		}
-		print '<option disabled>-----------</option>';
+		print '<option disabled>──────────────────</option>';
 	}
 	$Stats = new Stats();
 	$airline_names = $Stats->getAllAirlineNames();
@@ -99,12 +99,14 @@ if (!empty($spotter_array) || $alliance === true)
 	} else {
 		print '<p>'.sprintf(_("The statistic below shows the most common aircraft by their registration of flights from <strong>%s</strong>."),$spotter_array[0]['airline_name']).'</p>';
 	}
-
+	/*
 	if ($alliance) {
 		$aircraft_array = $Spotter->countAllAircraftRegistrationByAirline('',array('alliance' => str_replace('_',' ',str_replace('alliance_','',$airline))));
 	} else {
 		$aircraft_array = $Spotter->countAllAircraftRegistrationByAirline($airline);
 	}
+	*/
+	$aircraft_array = $Stats->countAllAircraftRegistrations(true,$airline);
 	if (!empty($aircraft_array))
 	{
 		print '<div class="table-responsive">';

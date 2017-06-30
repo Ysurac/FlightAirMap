@@ -38,7 +38,7 @@ if (!empty($spotter_array) || $alliance === true)
 				print '<option value="'.str_replace(' ','_',$al['alliance']).'">'.$al['alliance'].'</option>';
 			}
 		}
-		print '<option disabled>-----------</option>';
+		print '<option disabled>────────────────</option>';
 	}
 	$Stats = new Stats();
 	$airline_names = $Stats->getAllAirlineNames();
@@ -99,11 +99,14 @@ if (!empty($spotter_array) || $alliance === true)
 	} else {
 		print '<p>'.sprintf(_("The statistic below shows the most common time of day from <strong>%s</strong>."),$spotter_array[0]['airline_name']).'</p>';
 	}
+	/*
 	if ($alliance) {
 		$hour_array = $Spotter->countAllHoursByAirline('',array('alliance' => str_replace('_',' ',str_replace('alliance_','',$airline))));
 	} else {
 		$hour_array = $Spotter->countAllHoursByAirline($airline);
 	}
+	*/
+	$hour_array = $Stats->countAllHours('hour',true,$airline);
 	print '<link href="'.$globalURL.'/css/c3.min.css" rel="stylesheet" type="text/css">';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/c3.min.js"></script>';

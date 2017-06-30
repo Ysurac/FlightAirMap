@@ -37,7 +37,7 @@ if (!empty($spotter_array) || $alliance === true)
 				print '<option value="'.str_replace(' ','_',$al['alliance']).'">'.$al['alliance'].'</option>';
 			}
 		}
-		print '<option disabled>-----------</option>';
+		print '<option disabled>───────────────────</option>';
 	}
 	$Stats = new Stats();
 	$airline_names = $Stats->getAllAirlineNames();
@@ -103,6 +103,7 @@ if (!empty($spotter_array) || $alliance === true)
 	} else {
 		$manufacturers_array = $Spotter->countAllAircraftManufacturerByAirline($airline);
 	}
+	$manufacturers_array = $Stats->countAllAircraftManufacturers(true,$airline);
 	if (!empty($manufacturers_array))
 	{
 		print '<div class="table-responsive">';

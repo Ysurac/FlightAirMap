@@ -63,7 +63,7 @@ if (!isset($_GET['airline'])){
 					print '<option value="'.str_replace(' ','_',$al['alliance']).'">'.$al['alliance'].'</option>';
 				}
 			}
-			print '<option disabled>-----------</option>';
+			print '<option disabled>───────────────</option>';
 		}
 		$Stats = new Stats();
 		$airline_names = $Stats->getAllAirlineNames();
