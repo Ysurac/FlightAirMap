@@ -24,10 +24,10 @@
 					$alliances = $Spotter->getAllAllianceNames();
 					if (!empty($alliances)) {
 						foreach($alliances as $alliance) {
-							if (isset($airline_icao) && str_replace('_',' ',$airline_icao) == $alliance['alliance']) {
-								print '<option value="'.str_replace(' ','_',$alliance['alliance']).'" selected>'.$alliance['alliance'].'</option>';
+							if (isset($airline_icao) && str_replace('_',' ',str_replace('alliance_','',$airline_icao)) == $alliance['alliance']) {
+								print '<option value="alliance_'.str_replace(' ','_',$alliance['alliance']).'" selected>'.$alliance['alliance'].'</option>';
 							} else {
-								print '<option value="'.str_replace(' ','_',$alliance['alliance']).'">'.$alliance['alliance'].'</option>';
+								print '<option value="alliance_'.str_replace(' ','_',$alliance['alliance']).'">'.$alliance['alliance'].'</option>';
 							}
 						}
 						print '<option disabled>──────────</option>';

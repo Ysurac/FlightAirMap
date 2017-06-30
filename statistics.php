@@ -28,12 +28,8 @@ if ($type == 'aircraft' && $airline_icao != '' && $airline_icao != 'all') {
 	$airline_info = $Spotter->getAllAirlineInfo($airline_icao);
 	if (isset($airline_info[0]['name'])) {
 		$airline_name = $airline_info[0]['name'];
-	} else {
-		$alliances = $Spotter->getAllAirlineNamesByAlliance(str_replace('_',' ',$airline_icao));
-		if (!empty($alliances)) {
-			$alliance_name = $airline_icao;
-			$airline_icao = 'alliance_'.$airline_icao;
-		}
+	} elseif (strpos($airline_icao,'alliance_') !== FALSE) {
+		$alliance_name = $airline_icao;
 	}
 }
 if ($type == 'aircraft' && isset($airline_name)) {
