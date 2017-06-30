@@ -1,3 +1,5 @@
+[![Build Status](https://scrutinizer-ci.com/g/Ysurac/FlightAirMap/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Ysurac/FlightAirMap/build-status/master)
+
 # FlightAirMap
 
 FlightAirMap is a fork of Barrie Spotter [https://github.com/barriespotter/Web_App](https://github.com/barriespotter/Web_App) with map, airspaces, METAR, PDO and ADS-B support.

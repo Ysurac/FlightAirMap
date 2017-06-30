@@ -21,7 +21,23 @@ if (isset($_POST['airline']))
 		//$airline_names = $Spotter->getAllAirlineNames();
 		$airline_type = 'all';
 	}
-
+	$alliances = $Spotter->getAllAllianceNames();
+	if (!empty($alliances)) {
+		print '<h5>'._("Alliances").'</h5>';
+		print '<div class="alphabet">';
+		foreach ($alliances as $alliance) {
+			print '<div class="alphabet-airline alphabet-item">';
+			print '<a href="'.$globalURL.'/airline/alliance_'.str_replace(' ','_',$alliance['alliance']).'">';
+			if (@getimagesize('images/airlines/'.str_replace(' ','_',$alliance['alliance']).'.png') || @getimagesize($globalURL.'/images/airlines/'.str_replace(' ','_',$alliance['alliance']).'.png'))
+			{
+				print '<img src="'.$globalURL.'/images/airlines/'.str_replace(' ','_',$alliance['alliance']).'.png" alt="'._("Click to see alliance activity").'" title="'._("Click to see alliance activity").'" /> ';
+			} else print $alliance['alliance'];
+			print '</a>';
+			print '</div>';
+		}
+		print '</div>';
+		print '<h5>'._("Airlines").'</h5>';
+	}
 	print '<div class="select-item"><form action="'.$globalURL.'/airline" method="post"><select name="airline_type" class="selectpicker" data-live-search="true">';
 	print '<option value="all"';
 	if ($airline_type == 'all') print 'selected="selected" ';

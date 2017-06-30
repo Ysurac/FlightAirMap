@@ -2461,7 +2461,7 @@ class Stats {
 				if (isset($last_update[0]['value'])) {
 					$last_update_day = $last_update[0]['value'];
 				} else {
-					$last_update_day = '2012-12-12 12:12:12';
+				$last_update_day = '2012-12-12 12:12:12';
 					if (isset($filter['DeleteLastYearStats'])) {
 						$last_update_day = date('Y').'-01-01 00:00:00';
 					}

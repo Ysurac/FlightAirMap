@@ -9,16 +9,36 @@ if (!isset($_GET['airline'])) {
 }
 $airline = filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
 $Spotter = new Spotter();
-$spotter_array = $Spotter->getSpotterDataByAirline($airline,"0,1","");
+$alliance = false;
+if (strpos($airline,'alliance_') !== FALSE) {
+	$alliance = true;
+} else {
+	$spotter_array = $Spotter->getSpotterDataByAirline($airline,"0,1","");
+}
 
-if (!empty($spotter_array))
+if (!empty($spotter_array) || $alliance === true)
 {
-	$title = sprintf(_("Most Common Departure Airports by Country from %s (%s)"),$spotter_array[0]['airline_name'],$spotter_array[0]['airline_icao']);
+	if ($alliance) {
+		$title = sprintf(_("Most Common Departure Airports by Country from %s"),str_replace('_',' ',str_replace('alliance_','',$airline)));
+	} else {
+		$title = sprintf(_("Most Common Departure Airports by Country from %s (%s)"),$spotter_array[0]['airline_name'],$spotter_array[0]['airline_icao']);
+	}
 	require_once('header.php');
 	print '<div class="select-item">';
 	print '<form action="'.$globalURL.'/airline" method="post">';
 	print '<select name="airline" class="selectpicker" data-live-search="true">';
 	print '<option></option>';
+	$alliances = $Spotter->getAllAllianceNames();
+	if (!empty($alliances)) {
+		foreach ($alliances as $al) {
+			if ($alliance && str_replace('_',' ',str_replace('alliance_','',$airline)) == $al['alliance']) {
+				print '<option value="'.str_replace(' ','_',$al['alliance']).'" selected>'.$al['alliance'].'</option>';
+			} else {
+				print '<option value="'.str_replace(' ','_',$al['alliance']).'">'.$al['alliance'].'</option>';
+			}
+		}
+		print '<option disabled>-----------</option>';
+	}
 	$Stats = new Stats();
 	$airline_names = $Stats->getAllAirlineNames();
 	if (empty($airline_names)) $airline_names = $Spotter->getAllAirlineNames();
@@ -38,7 +58,8 @@ if (!empty($spotter_array))
 
 	if ($airline != "NA")
 	{
-		print '<div class="info column">';
+		if ($alliance === false) {
+			print '<div class="info column">';
 			print '<h1>'.$spotter_array[0]['airline_name'].' ('.$spotter_array[0]['airline_icao'].')</h1>';
 			if ($globalIVAO && @getimagesize($globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.gif'))
 			{
@@ -54,16 +75,34 @@ if (!empty($spotter_array))
 			print '<div><span class="label">'._("IATA").'</span>'.$spotter_array[0]['airline_iata'].'</div>';
 			print '<div><span class="label">'._("Callsign").'</span>'.$spotter_array[0]['airline_callsign'].'</div>'; 
 			print '<div><span class="label">'._("Type").'</span>'.ucwords($spotter_array[0]['airline_type']).'</div>';        
-		print '</div>';
+			print '</div>';
+		} else {
+			print '<div class="info column">';
+			print '<h1>'.str_replace('_',' ',str_replace('alliance_','',$airline)).'</h1>';
+			if (@getimagesize($globalURL.'/images/airlines/'.str_replace('alliance_','',$airline).'.png'))
+			{
+				print '<img src="'.$globalURL.'/images/airlines/'.str_replace('alliance_','',$airline).'.png" alt="'.str_replace('_',' ',str_replace('alliance_','',$airline)).'" title="'.str_replace('_',' ',str_replace('alliance_','',$airline)).'" class="logo" />';
+			}
+			print '<div><span class="label">'._("Name").'</span>'.str_replace('_',' ',str_replace('alliance_','',$airline)).'</div>';
+			print '</div>';
+		}
 	} else {
-	print '<div class="alert alert-warning">'._("This special airline profile shows all flights that do <u>not</u> have a airline associated with them.").'</div>';
+		print '<div class="alert alert-warning">'._("This special airline profile shows all flights that do <u>not</u> have a airline associated with them.").'</div>';
 	}
 
 	include('airline-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Departure Airports by Country").'</h2>';
-	print '<p>'.sprintf(_("The statistic below shows all departure airports by Country of origin of flights from <strong>%s</strong>."),$spotter_array[0]['airline_name']).'</p>';
-	$airport_country_array = $Spotter->countAllDepartureAirportCountriesByAirline($airline);
+	if ($alliance) {
+		print '<p>'.sprintf(_("The statistic below shows all departure airports by Country of origin of flights from <strong>%s</strong>."),str_replace('_',' ',str_replace('alliance_','',$airline))).'</p>';
+	} else {
+		print '<p>'.sprintf(_("The statistic below shows all departure airports by Country of origin of flights from <strong>%s</strong>."),$spotter_array[0]['airline_name']).'</p>';
+	}
+	if ($alliance) {
+		$airport_country_array = $Spotter->countAllDepartureAirportCountriesByAirline('',array('alliance' => str_replace('_',' ',str_replace('alliance_','',$airline))));
+	} else {
+		$airport_country_array = $Spotter->countAllDepartureAirportCountriesByAirline($airline);
+	}
 	print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/topojson.v2.min.js"></script>';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/datamaps.world.min.js"></script>';
