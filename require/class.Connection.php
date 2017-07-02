@@ -7,7 +7,7 @@ class Connection{
 	public $latest_schema = 45;
 	
 	public function __construct($dbc = null,$dbname = null,$user = null,$pass = null) {
-	    global $globalDBdriver, $globalNoDB;
+	    global $globalNoDB;
 	    if (isset($globalNoDB) && $globalNoDB === TRUE) {
 		$this->db = null;
 	    } else {

@@ -971,19 +971,15 @@ class update_db {
         }
 	
 	public static function translation_fam() {
-		require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 		global $tmp_dir, $globalTransaction;
-		$Spotter = new Spotter();
 		$query = "DELETE FROM translation WHERE Source = '' OR Source = :source";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute(array(':source' => 'website_fam'));
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-
-		
+			$sth->execute(array(':source' => 'website_fam'));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
 		//update_db::unzip($out_file);
 		$header = NULL;
 		$delimiter = "\t";
@@ -1108,7 +1104,7 @@ class update_db {
 			fclose($handle);
 			if ($globalTransaction) $Connection->db->commit();
 		}
-		print_r($mfr);
+		//print_r($mfr);
 		return '';
         }
 	public static function modes_fam() {
@@ -1177,7 +1173,7 @@ class update_db {
 						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':registration' => $data[0],':base' => $data[1],':owner' => $data[2], ':source' => 'website_fam'));
 					} catch(PDOException $e) {
-						print_r($data);
+						//print_r($data);
 						return "error : ".$e->getMessage();
 					}
 				}
@@ -1353,6 +1349,7 @@ class update_db {
         * @param String $data HTML page
         * @return Array array of the tables in HTML page
         */
+/*
         private static function table2array($data) {
                 $html = str_get_html($data);
                 $tabledata=array();
@@ -1380,12 +1377,13 @@ class update_db {
                 }
                 return(array_filter($tabledata));
         }
-
+*/
        /**
         * Get data from form result
         * @param String $url form URL
         * @return String the result
         */
+/*
         private static function getData($url) {
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $url);
@@ -1394,6 +1392,7 @@ class update_db {
                 curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
                 return curl_exec($ch);
         }
+*/
 /*
 	public static function waypoints() {
 		$data = update_db::getData('http://www.fallingrain.com/world/FR/waypoints.html');

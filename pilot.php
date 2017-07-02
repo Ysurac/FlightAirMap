@@ -6,7 +6,7 @@ require_once('require/class.Stats.php');
 
 if (isset($_POST['pilot']))
 {
-	header('Location: '.$globalURL.'/pilot/'.$_POST['pilot']);
+	header('Location: '.$globalURL.'/pilot/'.filter_input(INPUT_POST,'pilot',FILTER_SANITIZE_STRING));
 //} else if (isset($_GET['airport'])){
 } else {
 	$Spotter= new Spotter();

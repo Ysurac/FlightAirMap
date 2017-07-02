@@ -868,7 +868,7 @@ class ACARS {
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
-			die;
+			return '';
 		}
 		$row = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (count($row) > 0) return $row[0]['title'];
@@ -888,7 +888,7 @@ class ACARS {
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
-			die;
+			return array();
 		}
 		$row = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (count($row) > 0) return $row;
@@ -909,7 +909,7 @@ class ACARS {
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
-			die;
+			return array();
 		}
 		$row = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (count($row) > 0) return $row[0];

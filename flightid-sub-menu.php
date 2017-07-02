@@ -16,13 +16,13 @@
 			<li><a href="<?php print $globalURL; ?>/search/csv?q=<?php print $spotter_array[0]['spotter_id']; ?>&download=true">CSV</a></li>
 			<li><a href="<?php print $globalURL; ?>/search/rss?q=<?php print $spotter_array[0]['spotter_id']; ?>&download=true">RSS</a></li>
 			<li><hr /></li>
-			<li><span>For Advanced Users</strong></li>
+			<li><span><?php echo _("For Advanced Users"); ?></span></li>
 			<li><a href="<?php print $globalURL; ?>/search/json?q=<?php print $spotter_array[0]['spotter_id']; ?>&download=true">JSON</a></li>
 			<li><a href="<?php print $globalURL; ?>/search/xml?q=<?php print $spotter_array[0]['spotter_id']; ?>&download=true">XML</a></li>
 			<li><a href="<?php print $globalURL; ?>/search/yaml?q=<?php print $spotter_array[0]['spotter_id']; ?>&download=true">YAML</a></li>
 			<li><a href="<?php print $globalURL; ?>/search/php?q=<?php print $spotter_array[0]['spotter_id']; ?>&download=true">PHP (serialized array)</a></li>
 			<li><hr /></li>
-			<li><span>For Geo/Map Users</span></li>
+			<li><span><?php echo _("For Geo/Map Users"); ?></span></li>
 			<li><a href="<?php print $globalURL; ?>/search/kml?q=<?php print $spotter_array[0]['spotter_id']; ?>">KML</a></li>
 			<li><a href="<?php print $globalURL; ?>/search/geojson?q=<?php print $spotter_array[0]['spotter_id']; ?>&download=true">GeoJSON</a></li>
 			<li><a href="<?php print $globalURL; ?>/search/georss?q=<?php print $spotter_array[0]['spotter_id']; ?>&download=true">GeoRSS</a></li>
