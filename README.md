@@ -1,4 +1,5 @@
 [![Build Status](https://scrutinizer-ci.com/g/Ysurac/FlightAirMap/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Ysurac/FlightAirMap/build-status/master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/dd8cce1cf0d74442a8cba7d003240b24)](https://www.codacy.com/app/Ysurac/FlightAirMap?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ysurac/FlightAirMap&amp;utm_campaign=Badge_Grade)
 
 # FlightAirMap
 
