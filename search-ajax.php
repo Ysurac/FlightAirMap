@@ -1,7 +1,9 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
+$Stats = new Stats();
 $Spotter = new Spotter();
 $orderby = $Spotter->getOrderBy();
 
@@ -22,7 +24,8 @@ if ($ask == 'aircraftsdetected') {
 	$marinecnt = $MarineLive->getLiveMarineCount();
 	echo json_encode($marinecnt);
 } elseif ($ask == 'manufacturer') {
-	$manufacturers = $Spotter->getAllManufacturers();
+	$manufacturers = $Stats->getAllManufacturers();
+	if (empty($manufacturers)) $manufacturers = $Spotter->getAllManufacturers();
 	$all_manufacturers = array();
 	foreach($manufacturers as $manufacturer)
 	{
@@ -30,7 +33,8 @@ if ($ask == 'aircraftsdetected') {
 	}
 	echo json_encode($all_manufacturers);
 } elseif ($ask == 'aircrafttypes') {
-	$aircraft_types = $Spotter->getAllAircraftTypes();
+	$aircraft_types = $Stats->getAllAircraftTypes();
+	if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();
 	$all_aircraft_types = array();
 	foreach($aircraft_types as $aircraft_type)
 	{
@@ -38,7 +42,7 @@ if ($ask == 'aircraftsdetected') {
 	}
 	echo json_encode($all_aircraft_types);
 } elseif ($ask == 'airlinenames') {
-	$airline_names = $Spotter->getAllAirlineNames();
+	$airline_names = $Stats->getAllAirlineNames();
 	$all_airline_names = array();
 	foreach($airline_names as $airline_name)
 	{
@@ -54,7 +58,8 @@ if ($ask == 'aircraftsdetected') {
 	}
 	echo json_encode($all_airline_countries);
 } elseif ($ask == 'airportnames' || $ask == 'departureairportnames' || $ask == 'arrivalairportnames') {
-	$airport_names = $Spotter->getAllAirportNames();
+	$airport_names = $Stats->getAllAirportNames();
+	if (empty($airport_names)) $airport_names = $Spotter->getAllAirportNames();
 	ksort($airport_names);
 	$all_airport_names = array();
 	foreach($airport_names as $airport_name)

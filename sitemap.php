@@ -1,7 +1,9 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Stats.php');
 $Spotter = new Spotter();
+$Stats = new Stats();
 header('Content-Type: text/xml');
 
 date_default_timezone_set('UTC');
@@ -28,7 +30,8 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$aircraft_types = $Spotter->getAllAircraftTypes();
+		$aircraft_types = $Stats->getAllAircraftTypes();
+		if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();
 		foreach($aircraft_types as $aircraft_item)
 		{
 			$output .= '<url>';
@@ -61,7 +64,7 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$airline_names = $Spotter->getAllAirlineNames();
+		$airline_names = $Stats->getAllAirlineNames();
 		foreach($airline_names as $airline_item)
 		{
 			$output .= '<url>';
@@ -77,7 +80,8 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$airport_names = $Spotter->getAllAirportNames();
+		$airport_names = $Stats->getAllAirportNames();
+		if (empty($airport_names)) $airport_names = $Spotter->getAllAirportNames();
 		foreach($airport_names as $airport_item)
 		{
 			$output .= '<url>';
@@ -93,7 +97,8 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
-		$manufacturer_names = $Spotter->getAllManufacturers();
+		$manufacturer_names = $Stats->getAllManufacturers();
+		if (empty($manufacturer_names)) $manufacturer_names = $Spotter->getAllManufacturers();
 		foreach($manufacturer_names as $manufacturer_item)
 		{
 			$output .= '<url>';
