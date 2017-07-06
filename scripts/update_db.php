@@ -59,7 +59,9 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 			$update_db->update_owner();
 		} else {
 			$update_db->update_owner_fam();
-			$update_db->delete_duplicateowner();
+			//echo "Delete duplicate owner...";
+			//$update_db->delete_duplicateowner();
+			//echo "Done";
 		}
 		$update_db->insert_last_owner_update();
 	} elseif (isset($globalDebug) && $globalDebug && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Owner are only updated every 15 days.\n";
@@ -132,7 +134,7 @@ if (isset($globalGroundAltitude) && $globalGroundAltitude) {
 }
 
 if (isset($globalMap3D) && $globalMap3D) {
-	if (isset($globalMapSatellites) && $globalMapSatellites && $update_db->check_last_tle_update()) {
+	if (isset($globalSatellite) && $globalSatellite && $update_db->check_last_tle_update()) {
 		echo "Updating tle for satellites position...";
 		$update_db->update_tle();
 		$update_db->insert_last_tle_update();
