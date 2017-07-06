@@ -7,3 +7,6 @@ CREATE TABLE IF NOT EXISTS `aircraft_owner` (
   `Source` varchar(255) NOT NULL,
   PRIMARY KEY (`owner_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `aircraft_owner` ADD INDEX(`registration`);
+ALTER TABLE `aircraft_owner` ADD INDEX(`owner`);
