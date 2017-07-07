@@ -25,7 +25,7 @@ if (!isset($_GET['filename']) || !preg_match('/^[a-z0-9-_]+\.png$/', strtolower(
     exit(0);
 }
 $filename = $_GET['filename'];
-if (file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.$color.'-'.$filename)) {
+if (file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.$color.'-'.$filename) && is_readable(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.$color.'-'.$filename)) {
     header('Content-type: image/png');
     readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.$color.'-'.$filename);
     exit(0);
