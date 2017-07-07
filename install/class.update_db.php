@@ -1594,7 +1594,7 @@ class update_db {
 				*/
 				
 				$owner_code = trim(substr($data,49,5));
-				if ($owner != 'TBD') {
+				if ($owner_code != 'TBD') {
 					$result['country_owner'] = $satcat_sources[$owner_code]['country'];
 					$result['owner'] = $satcat_sources[$owner_code]['owner'];
 					$result['launch_date'] = trim(substr($data,56,10));
