@@ -95,7 +95,7 @@ class Connection{
 			else $globalDBSport = 3306;
 		}
 		// Set number of try to connect to DB
-		if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry === NULL) $globalDBretry = 5;
+		if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry === NULL) $globalDBretry = 10;
 		$i = 0;
 		while (true) {
 			try {
@@ -133,10 +133,10 @@ class Connection{
 				$i++;
 				if (isset($globalDebug) && $globalDebug) echo 'Error connecting to DB: '.$globalDBSname.' - Error: '.$e->getMessage()."\n";
 				//exit;
-				sleep(5);
 				if ($i > $globalDBretry) return false;
 				//return false;
 			}
+			sleep(5);
 		}
 		if ($DBname === 'default') $this->db = $this->dbs['default'];
 		return true;
