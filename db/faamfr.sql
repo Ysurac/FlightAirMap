@@ -4,4 +4,4 @@ CREATE TABLE `faamfr` (
     `mfr` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`faamfr_id`),
     UNIQUE (`mfr`)
-) ENGINE = InnoDB;
+) ENGINE = InnoDB DEFAULT CHARSET=utf8;
