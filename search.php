@@ -13,25 +13,31 @@ $page_url = $_SERVER['REQUEST_URI'];
 
 //$title = "Search";
 require_once('header.php');
-
+$sql_date = '';
 if (isset($_GET['start_date'])) {
 	//for the date manipulation into the query
 	if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
-		//$start_date = $_GET['start_date']." 00:00:00";
-		$start_date = date("Y-m-d",strtotime($_GET['start_date']))." 00:00:00";
-		//$end_date = $_GET['end_date']." 00:00:00";
-		$end_date = date("Y-m-d",strtotime($_GET['end_date']))." 00:00:00";
-		$sql_date = $start_date.",".$end_date;
+		if (strtotime($_GET['start_date']) !== false && strtotime($_GET['end_date']) !== false) {
+			//$start_date = $_GET['start_date']." 00:00:00";
+			$start_date = date("Y-m-d",strtotime($_GET['start_date']))." 00:00:00";
+			//$end_date = $_GET['end_date']." 00:00:00";
+			$end_date = date("Y-m-d",strtotime($_GET['end_date']))." 00:00:00";
+			$sql_date = $start_date.",".$end_date;
+		}
 	} else if($_GET['start_date'] != ""){
-		//$start_date = $_GET['start_date']." 00:00:00";
-		$start_date = date("Y-m-d",strtotime($_GET['start_date']))." 00:00:00";
-		$sql_date = $start_date;
+		if (strtotime($_GET['start_date']) !== false) {
+			//$start_date = $_GET['start_date']." 00:00:00";
+			$start_date = date("Y-m-d",strtotime($_GET['start_date']))." 00:00:00";
+			$sql_date = $start_date;
+		}
 	} else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
-		//$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date']." 00:00:00";
-		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".date("Y-m-d",strtotime($_GET['end_date']))." 00:00:00";
-		$sql_date = $end_date;
+		if (strtotime($_GET['end_date']) !== false) {
+			//$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date']." 00:00:00";
+			$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".date("Y-m-d",strtotime($_GET['end_date']))." 00:00:00";
+			$sql_date = $end_date;
+		}
 	} else $sql_date = '';
-} else $sql_date = '';
+}
 
 if (isset($_GET['highest_altitude'])) {
 	//for altitude manipulation
@@ -93,8 +99,8 @@ if (!empty($_GET)){
 	$arrival_airport_route = filter_input(INPUT_GET, 'arrival_airport_route',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	$archive = filter_input(INPUT_GET,'archive',FILTER_SANITIZE_NUMBER_INT);
-	$origlat = filter_input(INPUT_GET,'origlat',FILTER_SANITIZE_STRING);
-	$origlon = filter_input(INPUT_GET,'origlon',FILTER_SANITIZE_STRING);
+	$origlat = filter_input(INPUT_GET,'origlat',FILTER_SANITIZE_NUMBER_FLOAT);
+	$origlon = filter_input(INPUT_GET,'origlon',FILTER_SANITIZE_NUMBER_FLOAT);
 	$dist = filter_input(INPUT_GET,'dist',FILTER_SANITIZE_NUMBER_INT);
 	if ($dist != '') {
 		if (isset($globalDistanceUnit) && $globalDistanceUnit == 'mi') $dist = $dist*1.60934;
