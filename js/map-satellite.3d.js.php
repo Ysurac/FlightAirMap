@@ -100,7 +100,7 @@ function updateISS() {
 }
 
 <?php
-	if (isset($globalSatellites) && $globalSatellites) {
+	if (isset($globalSatellite) && $globalSatellite) {
 ?>
 var czmldssat = new Cesium.CzmlDataSource();
 updateSat();
