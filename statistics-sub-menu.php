@@ -2,10 +2,15 @@
 	<a href="#" onclick="showSubMenu(); return false;"><?php echo _("Statistics"); ?> <i class="fa fa-plus"></i></a>
 </span>
 	<div class="stats_airline">
-	
+<?php
+	if (!isset($type) || $type != 'satellite') {
+?>
 		<form id="changedate" method="post">
 			<input type="month" name="date" onchange="statsdatechange(this);" value="<?php if (isset($year) && $year != '') echo $year.'-'; ?><?php if (isset($month) && $month != '') echo $month; ?>" />
 		</form>
+<?php
+	}
+?>
 <?php
 	if (!isset($type) || $type == 'aircraft') {
 ?>

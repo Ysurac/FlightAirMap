@@ -281,71 +281,12 @@ function displayData(data) {
 
 //    }
     //console.log(viewer.dataSources.get(dsn).name);
-	$("#ibxaircraft").html("<h4>Aircrafts detected</h4><br /><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
+	$("#ibxaircraft").html('<h4><?php echo _("Aircrafts detected"); ?></h4><br /><b>'+viewer.dataSources.get(dsn).entities.values.length+'</b>');
     //console.log(viewer.dataSources.get(dsn).entities.values.length);
     //console.log(viewer.dataSources.length);
     //console.log(dsn);
 };
 
-function displayDataSat(data) {
-	
-	var dsn;
-	for (var i =0; i < viewer.dataSources.length; i++) {
-		if (viewer.dataSources.get(i).name == 'famsat') {
-			dsn = i;
-			break;
-		}
-	}
-	var entities = data.entities.values;
-	for (var i = 0; i < entities.length; i++) {
-		var entity = entities[i];
-		if (typeof dsn != 'undefined') var existing = viewer.dataSources.get(dsn);
-		else var existing;
-		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
-		entity.orientation = orientation;
-		if (typeof existing != 'undefined') {
-			var last = viewer.dataSources.get(dsn).entities.getById(entity.id);
-			if (typeof last == 'undefined') {
-				entity.addProperty('type');
-				entity.type = 'sat';
-				entity.addProperty('lastupdatesat');
-				entity.lastupdatesat = Date.now();
-				viewer.dataSources.get(dsn).entities.add(entity);
-			} else {
-				last.lastupdatesat = Date.now();
-				last.addProperty('type');
-				last.type = 'sat';
-			}
-		} else {
-			//console.log('First time');
-			entity.addProperty('type');
-			entity.type = 'sat';
-			entity.addProperty('lastupdatesat');
-			entity.lastupdatesat = Date.now();
-		}
-	}
-
-	if (typeof dsn == 'undefined') {
-		viewer.dataSources.add(data);
-		dsn = viewer.dataSources.indexOf(data);
-	} else {
-		for (var i = 0; i < viewer.dataSources.get(dsn).entities.values.length; i++) {
-			var entity = viewer.dataSources.get(dsn).entities.values[i];
-			if (parseInt(entity.lastupdatesat) < Math.floor(Date.now()-<?php if (isset($globalMapRefresh)) print $globalMapRefresh*2000; else print '60000'; ?>)) {
-				viewer.dataSources.get(dsn).entities.remove(entity);
-			}
-		}
-	}
-	
-//    viewer.dataSources.add(data);
-
-//    }
-    //console.log(viewer.dataSources.get(dsn).name);
-//	$(".infobox").html("<h4>Aircrafts detected</h4><br /><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
-    //console.log(viewer.dataSources.get(dsn).entities.values.length);
-    //console.log(viewer.dataSources.length);
-    //console.log(dsn);
-};
 function displayDataSanta(data) {
 	var entities = data.entities.values;
 	for (var i = 0; i < entities.length; i++) {
@@ -375,60 +316,11 @@ function updateData() {
 //    viewer.zoomTo(dataSource);
 }
 
-function updateSat() {
-	var livesatdata = czmldssat.process('<?php print $globalURL; ?>/live-sat-czml.php?' + Date.now());
-	livesatdata.then(function (data) { 
-		displayDataSat(data);
-	});
-}
-
 function updateSanta() {
 	var livesantadata = czmldssanta.process('<?php print $globalURL; ?>/live-santa-czml.php?' + Date.now());
 	livesantadata.then(function (data) {
 		console.log('Add santa !');
 		displayDataSanta(data);
-	});
-}
-
-function updateISS() {
-	var issdata = Cesium.loadJson('https://api.wheretheiss.at/v1/satellites/25544');
-	issdata.then(function (data) {
-		//console.log(data);
-		var altitude = Math.round(data.altitude*10000)/10;
-		var entity = viewer.entities.getById('iss');
-		if (typeof entity == 'undefined') {
-			//var time = Cesium.JulianDate.now();
-			var property = new Cesium.SampledPositionProperty();
-			var currenttime = viewer.clock.currentTime;
-			var time = currenttime;
-    			var position = Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,altitude);
-			property.addSample(time, position);
-
-			entity = viewer.entities.add({
-			    id: 'iss',
-			    name: 'iss',
-			    position: property,
-			    model : {
-		                uri : '<?php print $globalURL; ?>/models/iss.glb',
-	        		minimumPixelSize : 5000,
-	            		maximumScale : 30000
-	    		    }
-			});
-			
-			//entity.position.setInterpolationOptions({
-			//    interpolationDegree : 30,
-			//    interpolationAlgorithm : Cesium.HermitePolynomialApproximation
-			//});
-		} else {
-			var property = entity.position;
-			var currenttime = viewer.clock.currentTime;
-			var time = Cesium.JulianDate.addSeconds(currenttime, 30, new Cesium.JulianDate());
-    			var position = Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,altitude);
-			property.addSample(time, position);
-			entity.position = property;
-			//entity.position = Cesium.Cartesian3.fromDegrees(data.longitude,data.latitude,altitude);
-		}
-		//viewer.trackedEntity = entity;
 	});
 }
 
@@ -647,18 +539,6 @@ function deleteWaypoints() {
 var czmlds = new Cesium.CzmlDataSource();
 Cesium.when(viewer.terrainProvider.ready,function() {updateData(); });
 //updateData();
-<?php
-	if (isset($globalMapSatellites) && $globalMapSatellites) {
-?>
-var czmldssat = new Cesium.CzmlDataSource();
-updateSat();
-setInterval(function(){updateSat()},'20000');
-//updateISS();
-//setInterval(function(){updateISS()},'10000');
-<?php
-	}
-?>
-
 
 <?php
 		if (!((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) && (isset($_COOKIE['polar']) && $_COOKIE['polar'] == 'true')) {
@@ -669,8 +549,8 @@ setInterval(function(){update_polarLayer()},<?php if (isset($globalMapRefresh)) 
 		}
 ?>
 		
-//var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-handler.setInputAction(function(click) {
+var handler_aircraft = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+handler_aircraft.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
 	if (Cesium.defined(pickedObject)) {
 		//console.log(pickedObject.id);
@@ -698,8 +578,6 @@ handler.setInputAction(function(click) {
 			pnew.path.show = true;
 			$("#aircraft_ident").attr('class',flightaware_id);
 			//lastid = flightaware_id;
-		} else if (pickedObject.id.type == 'sat') {
-			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(pickedObject.id.id));
 		} else if (pickedObject.id.type == 'atc') {
 			$(".showdetails").load("<?php print $globalURL; ?>/atc-data.php?"+Math.random()+"&atcid="+encodeURI(pickedObject.id.ref)+"&atcident="+encodeURI(pickedObject.id.ident));
 		} else if (pickedObject.id.type == 'notam') {

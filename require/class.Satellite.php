@@ -82,14 +82,13 @@ class Satellite {
 		}
 		return $result;
 	}
-	
+
 	public function position($name,$timestamp_begin = '',$timestamp_end = '',$second = 10) {
 		$qth = new Predict_QTH();
 		$qth->lat = floatval(37.790252);
 		$qth->lon = floatval(-122.419968);
 	
 		$tle_file = $this->get_tle($name);
-		//print_r($tle_file);
 		$type = $tle_file['tle_type'];
 		$tle = new Predict_TLE($tle_file['tle_name'],$tle_file['tle_tle1'],$tle_file['tle_tle2']);
 		$sat = new Predict_Sat($tle);
@@ -98,20 +97,206 @@ class Satellite {
 		if ($timestamp_begin == '') $timestamp_begin = time();
 		if ($timestamp_end == '') {
 			$now = Predict_Time::unix2daynum($timestamp_begin);
-			//echo $now;
 			$predict->predict_calc($sat,$qth,$now);
 			return array('name' => $name, 'latitude' => $sat->ssplat,'longitude' => $sat->ssplon, 'altitude' => $sat->alt,'speed' => $sat->velo*60*60,'timestamp' => $timestamp_begin,'type' => $type);
 		} else {
 			$result = array();
 			for ($timestamp = $timestamp_begin; $timestamp <= $timestamp_end; $timestamp=$timestamp+$second) {
-				//echo $timestamp."\n";
 				$now = Predict_Time::unix2daynum($timestamp);
-				//echo $now;
 				$predict->predict_calc($sat,$qth,$now);
 				$result[] = array('name' => $name,'latitude' => $sat->ssplat,'longitude' => $sat->ssplon, 'altitude' => $sat->alt,'speed' => $sat->velo*60*60,'timestamp' => $timestamp,'type' => $type);
 			}
 			return $result;
 		}
+	}
+
+	public function get_info($name) {
+		$query = 'SELECT * FROM satellite WHERE LOWER(name) LIKE :name OR LOWER(name_alternate) LIKE :name LIMIT 1';
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':name' => $name.'%'));
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+		}
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (isset($result[0])) return $result[0];
+		else return array();
+	}
+
+	/**
+	* Gets all launch site
+	*
+	* @return Array the launch site list
+	*
+	*/
+	public function countAllLaunchSite($limit = true, $filters = array())
+	{
+		global $globalDBdriver;
+		//$filter_query = $this->getFilter($filters,true,true);
+		$filter_query = ' WHERE';
+		$query  = "SELECT DISTINCT satellite.launch_site AS launch_site, COUNT(satellite.launch_site) AS launch_site_count
+		    FROM satellite".$filter_query." satellite.launch_site <> '' AND satellite.launch_site IS NOT NULL";
+		$query_values = array();
+		$query .= " GROUP BY satellite.launch_site ORDER BY launch_site_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		$launch_site_array = array();
+		$temp_array = array();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['launch_site'] = $row['launch_site'];
+			$temp_array['launch_site_count'] = $row['launch_site_count'];
+			$launch_site_array[] = $temp_array;
+		}
+		return $launch_site_array;
+	}
+
+	/**
+	* Gets all owners
+	*
+	* @return Array the owners list
+	*
+	*/
+	public function countAllOwners($limit = true, $filters = array())
+	{
+		global $globalDBdriver;
+		//$filter_query = $this->getFilter($filters,true,true);
+		$filter_query = ' WHERE';
+		$query  = "SELECT DISTINCT satellite.owner AS owner_name, COUNT(satellite.owner) AS owner_count
+		    FROM satellite".$filter_query." satellite.owner <> '' AND satellite.owner IS NOT NULL";
+		$query_values = array();
+		$query .= " GROUP BY satellite.owner ORDER BY owner_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		$owner_array = array();
+		$temp_array = array();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['owner_name'] = $row['owner_name'];
+			$temp_array['owner_count'] = $row['owner_count'];
+			$owner_array[] = $temp_array;
+		}
+		return $owner_array;
+	}
+
+	/**
+	* Gets all countries owners
+	*
+	* @return Array the countries list
+	*
+	*/
+	public function countAllCountriesOwners($limit = true, $filters = array())
+	{
+		global $globalDBdriver;
+		//$filter_query = $this->getFilter($filters,true,true);
+		$filter_query = ' WHERE';
+		$query  = "SELECT DISTINCT satellite.country_owner AS country_name, COUNT(satellite.country_owner) AS country_count
+		    FROM satellite".$filter_query." satellite.country_owner <> '' AND satellite.country_owner IS NOT NULL";
+		$query_values = array();
+		$query .= " GROUP BY satellite.country_owner ORDER BY country_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		$owner_array = array();
+		$temp_array = array();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['country_name'] = $row['country_name'];
+			$temp_array['country_count'] = $row['country_count'];
+			$owner_array[] = $temp_array;
+		}
+		return $owner_array;
+	}
+
+	/**
+	* Counts all launch dates during the last year
+	*
+	* @return Array the launch date list
+	*
+	*/
+	public function countAllMonthsLastYear($filters = array(), $sincedate = '')
+	{
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		//$filter_query = $this->getFilter($filters,true,true);
+		$filter_query = ' WHERE';
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT MONTH(CONVERT_TZ(satellite.launch_date,'+00:00', :offset)) AS month_name, YEAR(CONVERT_TZ(satellite.launch_date,'+00:00', :offset)) AS year_name, count(*) as date_count
+				FROM satellite".$filter_query." satellite.launch_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 YEAR)";
+			if ($sincedate != '') $query .= " AND satellite.launch_date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name
+				ORDER BY year_name, month_name ASC";
+			$query_data = array(':offset' => $offset);
+		} else {
+			$query  = "SELECT EXTRACT(MONTH FROM satellite.launch_date AT TIME ZONE INTERVAL :offset) AS month_name, EXTRACT(YEAR FROM satellite.launch_date AT TIME ZONE INTERVAL :offset) AS year_name, count(*) as date_count
+				FROM satellite".$filter_query." satellite.launch_date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '1 YEARS'";
+			if ($sincedate != '') $query .= " AND satellite.launch_date > '".$sincedate."'";
+			$query .= " GROUP BY year_name, month_name
+				ORDER BY year_name, month_name ASC";
+			$query_data = array(':offset' => $offset);
+		}
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_data);
+		$date_array = array();
+		$temp_array = array();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['year_name'] = $row['year_name'];
+			$temp_array['month_name'] = $row['month_name'];
+			$temp_array['date_count'] = $row['date_count'];
+			$date_array[] = $temp_array;
+		}
+		return $date_array;
+	}
+
+	/**
+	* Counts all dates during the last 10 years
+	*
+	* @return Array the date list
+	*
+	*/
+	public function countAllYears($filters = array(), $sincedate = '')
+	{
+		global $globalTimezone, $globalDBdriver;
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		//$filter_query = $this->getFilter($filters,true,true);
+		$filter_query = ' WHERE';
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT YEAR(CONVERT_TZ(satellite.launch_date,'+00:00', :offset)) AS year_name, count(*) as date_count
+				FROM satellite".$filter_query." satellite.launch_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 10 YEAR)";
+			if ($sincedate != '') $query .= " AND satellite.launch_date > '".$sincedate."'";
+			$query .= " GROUP BY year_name
+				ORDER BY year_name ASC";
+			$query_data = array(':offset' => $offset);
+		} else {
+			$query  = "SELECT EXTRACT(YEAR FROM satellite.launch_date AT TIME ZONE INTERVAL :offset) AS year_name, count(*) as date_count
+				FROM satellite".$filter_query." satellite.launch_date >= CURRENT_TIMESTAMP AT TIME ZONE INTERVAL :offset - INTERVAL '10 YEARS'";
+			if ($sincedate != '') $query .= " AND satellite.launch_date > '".$sincedate."'";
+			$query .= " GROUP BY year_name
+				ORDER BY year_name ASC";
+			$query_data = array(':offset' => $offset);
+		}
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_data);
+		$date_array = array();
+		$temp_array = array();
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['year_name'] = $row['year_name'];
+			$temp_array['date_count'] = $row['date_count'];
+			$date_array[] = $temp_array;
+		}
+		return $date_array;
 	}
 }
 /*

@@ -4,7 +4,7 @@ require_once(dirname(__FILE__).'/settings.php');
 class Connection{
 	public $db = null;
 	public $dbs = array();
-	public $latest_schema = 45;
+	public $latest_schema = 46;
 	
 	public function __construct($dbc = null,$dbname = null,$user = null,$pass = null) {
 	    global $globalNoDB;
@@ -133,6 +133,7 @@ class Connection{
 				$i++;
 				if (isset($globalDebug) && $globalDebug) echo 'Error connecting to DB: '.$globalDBSname.' - Error: '.$e->getMessage()."\n";
 				//exit;
+				sleep(5);
 				if ($i > $globalDBretry) return false;
 				//return false;
 			}
@@ -164,8 +165,9 @@ class Connection{
 
 	public function connectionExists()
 	{
-		global $globalDBdriver, $globalDBCheckConnection;
+		global $globalDBdriver, $globalDBCheckConnection, $globalNoDB;
 		if (isset($globalDBCheckConnection) && $globalDBCheckConnection === FALSE) return true;
+		if (isset($globalNoDB) && $globalNoDB === TRUE) return true;
 		$query = "SELECT 1 + 1";
 		if ($this->db === null) return false;
 		try {

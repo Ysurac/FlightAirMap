@@ -14,6 +14,10 @@ if (isset($_GET['tracker'])) {
 	require_once('require/class.Marine.php');
 	$Marine = new Marine();
 	$type = 'marine';
+} elseif (isset($_GET['satellite'])) {
+	require_once('require/class.Satellite.php');
+	$Satellite = new Satellite();
+	$type = 'satellite';
 } else {
 	require_once('require/class.Spotter.php');
 }
@@ -306,6 +310,101 @@ if ($type == 'tracker') {
             </div>
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <!--	</div>-->
+<?php
+}
+if ($type == 'satellite') {
+?>
+        <div class="row column">
+            <div class="col-md-6">
+                <h2><?php echo _("Top 10 Most Common Owners"); ?></h2>
+<?php
+		$owner_array = $Satellite->countAllOwners(true);
+		if (count($owner_array) == 0) print _("No data available");
+		else {
+			print '<div id="chart7" class="chart" width="100%"></div><script>';
+			$owner_data = '';
+			foreach($owner_array as $owner_item) {
+				$owner_data .= '["'.$owner_item['owner_name'].'",'.$owner_item['owner_count'].'],';
+			}
+			$owner_data = substr($owner_data, 0, -1);
+			print 'var series = ['.$owner_data.'];';
+			print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+			print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+			print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
+			print 'var ownercnt = new d3pie("chart7",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"60%"},"data":{"sortOrder":"value-desc","content":';
+			print 'dataset';
+			print '},"labels":{"outer":{"pieDistance":32},"inner":{"hideWhenLessThanPercentage":3},"mainLabel":{"fontSize":11},"percentage":{"color":"#ffffff","decimalPlaces":0},"value":{"color":"#adadad","fontSize":11},"lines":{"enabled":true},"truncation":{"enabled":true}},"effects":{"pullOutSegmentOnClick":{"effect":"linear","speed":400,"size":8}},"misc":{"gradient":{"enabled":true,"percentage":100}}});';
+			print '</script>';
+		}
+?>
+               <!--
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/statistics/owner<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
+                -->
+            </div>
+	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+            <div class="col-md-6">
+                <h2><?php echo _("Top 10 Most Common Countries Owners"); ?></h2>
+<?php
+		$countries_array = $Satellite->countAllCountriesOwners(true);
+		if (count($countries_array) == 0) print _("No data available");
+		else {
+			print '<div id="chart8" class="chart" width="100%"></div><script>';
+			$owner_data = '';
+			foreach($countries_array as $owner_item) {
+				$owner_data .= '["'.$owner_item['country_name'].'",'.$owner_item['country_count'].'],';
+			}
+			$owner_data = substr($owner_data, 0, -1);
+			print 'var series = ['.$owner_data.'];';
+			print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+			print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+			print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
+			print 'var ownercnt = new d3pie("chart8",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"60%"},"data":{"sortOrder":"value-desc","content":';
+			print 'dataset';
+			print '},"labels":{"outer":{"pieDistance":32},"inner":{"hideWhenLessThanPercentage":3},"mainLabel":{"fontSize":11},"percentage":{"color":"#ffffff","decimalPlaces":0},"value":{"color":"#adadad","fontSize":11},"lines":{"enabled":true},"truncation":{"enabled":true}},"effects":{"pullOutSegmentOnClick":{"effect":"linear","speed":400,"size":8}},"misc":{"gradient":{"enabled":true,"percentage":100}}});';
+			print '</script>';
+		}
+?>
+	    <!--
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/statistics/owner<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
+                -->
+            </div>
+            
+	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+²	</div>
+        <div class="row column">
+            <div class="col-md-6">
+                <h2><?php echo _("Top 10 Most Common Launch Sites"); ?></h2>
+<?php
+		$launch_site_array = $Satellite->countAllLaunchSite(true);
+		if (count($launch_site_array) == 0) print _("No data available");
+		else {
+			print '<div id="chart9" class="chart" width="100%"></div><script>';
+			$launch_site_data = '';
+			foreach($launch_site_array as $launch_site_item) {
+				$launch_site_data .= '["'.$launch_site_item['launch_site'].'",'.$launch_site_item['launch_site_count'].'],';
+			}
+			$launch_site_data = substr($launch_site_data, 0, -1);
+			print 'var series = ['.$launch_site_data.'];';
+			print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+			print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#EFEFFF","#001830"]);';
+			print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
+			print 'var ownercnt = new d3pie("chart9",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"60%"},"data":{"sortOrder":"value-desc","content":';
+			print 'dataset';
+			print '},"labels":{"outer":{"pieDistance":32},"inner":{"hideWhenLessThanPercentage":3},"mainLabel":{"fontSize":11},"percentage":{"color":"#ffffff","decimalPlaces":0},"value":{"color":"#adadad","fontSize":11},"lines":{"enabled":true},"truncation":{"enabled":true}},"effects":{"pullOutSegmentOnClick":{"effect":"linear","speed":400,"size":8}},"misc":{"gradient":{"enabled":true,"percentage":100}}});';
+			print '</script>';
+		}
+?>
+               <!--
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/statistics/owner<?php if (isset($airline_icao) && $airline_icao != '' && $airline_icao != 'all') echo '/'.$airline_icao; ?>" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
+                -->
+            </div>
+        </div>
 <?php
 }
 if ($type == 'aircraft') {
@@ -1064,6 +1163,80 @@ if ($type == 'tracker') {
 }
 ?>
 <?php
+if ($type == 'satellite') {
+?>
+<?php
+	if ($year == '' && $month == '') {
+?>
+        <div class="row column">
+            <div class="col-md-6">
+                <h2><?php echo _("Busiest Launch Months of the last 12 Months"); ?></h2>
+<?php
+		$year_array = $Satellite->countAllMonthsLastYear(true);
+		if (count($year_array) == 0) print _("No data available");
+		else {
+			print '<div id="chart21" class="chart" width="100%"></div><script>';
+			$year_data = '';
+			$year_cnt = '';
+			foreach($year_array as $year_item) {
+				$year_data .= '"'.$year_item['year_name'].'-'.$year_item['month_name'].'-01'.'",';
+				$year_cnt .= $year_item['date_count'].',';
+			}
+			$year_data = "['x',".substr($year_data, 0, -1)."]";
+			$year_cnt = "['satellite',".substr($year_cnt,0,-1)."]";
+			print 'c3.generate({
+			    bindto: "#chart21",
+			    data: { x: "x",
+			     columns: ['.$year_data.','.$year_cnt.'], types: { trackers: "area"}, colors: { satellite: "#1a3151"}},
+			     axis: { x: { type: "timeseries", localtime: false,tick: { format: "%Y-%m"}}, y: { label: "# of Satellite"}},legend: { show: false }});';
+			print '</script>';
+		}
+?>
+	    <!--
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/tracker/statistics/year" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
+            -->
+            </div>
+            
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+            <div class="col-md-6">
+                <h2><?php echo _("Busiest Launch Years of the last 10 Years"); ?></h2>
+<?php
+		$year_array = $Satellite->countAllYears(true);
+		if (count($year_array) == 0) print _("No data available");
+		else {
+			print '<div id="chart22" class="chart" width="100%"></div><script>';
+			$year_data = '';
+			$year_cnt = '';
+			foreach($year_array as $year_item) {
+				$year_data .= '"'.$year_item['year_name'].'-01-01'.'",';
+				$year_cnt .= $year_item['date_count'].',';
+			}
+			$year_data = "['x',".substr($year_data, 0, -1)."]";
+			$year_cnt = "['satellite',".substr($year_cnt,0,-1)."]";
+			print 'c3.generate({
+			    bindto: "#chart22",
+			    data: { x: "x",
+			     columns: ['.$year_data.','.$year_cnt.'], types: { trackers: "area"}, colors: { satellite: "#1a3151"}},
+			     axis: { x: { type: "timeseries", localtime: false,tick: { format: "%Y"}}, y: { label: "# of Satellite"}},legend: { show: false }});';
+			print '</script>';
+		}
+?>
+	    <!--
+                <div class="more">
+                    <a href="<?php print $globalURL; ?>/tracker/statistics/year" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+                </div>
+            -->
+            </div>
+            
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+        </div>
+<?php
+	}
+}
+?>
+<?php
 if ($type == 'aircraft') {
 ?>
 <?php
@@ -1134,7 +1307,7 @@ if ($type == 'aircraft') {
 }
 ?>
 <?php
-if (($airline_icao == '' || $airline_icao == 'all') && $filter_name == '' && $year == '' && $month == '') {
+if (($airline_icao == '' || $airline_icao == 'all') && $filter_name == '' && $year == '' && $month == '' && (!isset($globalSatellite) || $globalSatellite === FALSE)) {
 ?>
         <div class="row column">
 <?php

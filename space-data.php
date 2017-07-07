@@ -1,6 +1,8 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Language.php');
+require_once('require/class.Satellite.php');
+$Satellite = new Satellite();
 
 ?>
 <div class="alldetails">
@@ -9,19 +11,22 @@ require_once('require/class.Language.php');
 
 $sat = filter_input(INPUT_GET,'sat',FILTER_SANITIZE_STRING);
 $sat = urldecode($sat);
-
+//$info = $Satellite->get_info(str_replace(' ','-',$sat));
+//print_r($info);
 if ($sat == 'ISS (ZARYA)') {
 	$image = 'https://upload.wikimedia.org/wikipedia/commons/0/04/International_Space_Station_after_undocking_of_STS-132.jpg';
 	$image_copyright = 'NASA/Crew of STS-132';
 	$ident = 'International Space Station';
+	$satname = 'International Space Station';
 	$aircraft_wiki = 'https://en.wikipedia.org/wiki/International_Space_Station';
 	$aircraft_name = 'ISS';
-	$ground_speed = 14970;
+//	$ground_speed = 14970;
 	$launch_date = '20 November 1998';
 } elseif ($sat == 'TIANGONG 1') {
 	$image = 'https://upload.wikimedia.org/wikipedia/commons/6/64/Tiangong_1_drawing_%28cropped%29.png';
 	$image_copyright = 'Craigboy';
 	$ident = 'Tiangong 1';
+	$satname = 'Tiangong-1';
 	$aircraft_wiki = 'https://en.wikipedia.org/wiki/Tiangong-1';
 	$aircraft_name = 'Tiangong-1';
 //	$ground_speed = 14970;
@@ -30,9 +35,10 @@ if ($sat == 'ISS (ZARYA)') {
 	$image = 'https://en.wikipedia.org/wiki/Tiangong-2#/media/File:Model_of_the_Chinese_Tiangong_Shenzhou.jpg';
 	$image_copyright = 'Leebrandoncremer';
 	$ident = 'Tiangong-2';
+	$satname = 'Tiangong-2';
 	$aircraft_wiki = 'https://en.wikipedia.org/wiki/Tiangong-2';
 	$aircraft_name = 'Tiangong-2';
-	$ground_speed = 27648;
+//	$ground_speed = 27648;
 	$launch_date = '15 September 2016';
 } elseif ($sat == 'INTEGRAL') {
 	$image = 'https://upload.wikimedia.org/wikipedia/en/0/02/INTEGRAL.jpg';
@@ -58,6 +64,7 @@ if ($sat == 'ISS (ZARYA)') {
 	$ident = 'Globalstar';
 	$aircraft_wiki = 'https://en.wikipedia.org/wiki/Globalstar';
 	$aircraft_name = $sat;
+	$satname = str_replace(array('[+]','[-]'),'',$sat);
 } elseif (strpos($sat,'OSCAR 7') !== false) {
 	$image = 'https://upload.wikimedia.org/wikipedia/en/a/ad/AMSAT-OSCAR_7.jpg';
 	$image_copyright = 'Amsat.org';
@@ -74,7 +81,14 @@ if ($sat == 'ISS (ZARYA)') {
 //	$launch_date = '15 November 1974';
 } else {
 	$ident = $sat;
+	if (strpos($sat,'(')) $satname = $sat;
+	else $satname = str_replace(array(' '),'-',$sat);
 }
+if (!isset($satname)) $satname = $sat;
+$info = $Satellite->get_info(strtolower(trim($satname)));
+$position = $Satellite->position($sat);
+$ground_speed = $position['speed'];
+$altitude = $position['altitude'];
 date_default_timezone_set('UTC');
 print '<div class="top">';
 if (isset($image)) {
@@ -85,27 +99,27 @@ print '</div>';
 print '<div class="details">';
 if (isset($aircraft_wiki)) {
 	print '<div>';
-	print '<span>'._("Aircraft").'</span>';
+	print '<span>'._("Spacecraft").'</span>';
 	print '<a href="'.$aircraft_wiki.'">'.$aircraft_name.'</a>';
 	print '</div>';
 }
-/*
+
 print '<div><span>'._("Altitude").'</span>';
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
-	print $spotter_item['altitude'].'00 feet (FL'.$spotter_item['altitude'].')';
+	print round($altitude*3280.84).' feet';
 } else {
-	print round($spotter_item['altitude']*30.48).' m (FL'.$spotter_item['altitude'].')';
+	print round($altitude).' km';
 }
 print '</div>';
-*/
+
 if (isset($ground_speed)) {
 	print '<div><span>'._("Speed").'</span>';
 	if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
-		print round($ground_speed*1.15078).' mph';
+		print round($ground_speed*0.621371).' mph';
 	} elseif ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) {
-		print $ground_speed.' knots';
+		print round($ground_speed*0.539957).' knots';
 	} else {
-		print round($ground_speed*1.852).' km/h';
+		print round($ground_speed).' km/h';
 	}
 	print '</div>';
 }
@@ -113,6 +127,32 @@ if (isset($ground_speed)) {
 //print '<div><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
 if (isset($launch_date)) {
 	print '<div><span>'._("Launch Date").'</span>'.$launch_date.'</div>';
+} 
+if (!empty($info)) {
+	if ($info['country_owner'] != '') {
+		print '<div><span>'._("Owner Country").'</span>'.$info['country_owner'].'</div>';
+	}
+	if ($info['owner'] != '') {
+		print '<div><span>'._("Owner").'</span>'.$info['owner'].'</div>';
+	}
+	if ($info['users'] != '') {
+		print '<div><span>'._("Users").'</span>'.$info['users'].'</div>';
+	}
+	if ($info['purpose'] != '') {
+		print '<div><span>'._("Purpose").'</span>'.$info['purpose'].'</div>';
+	}
+	if ($info['orbit'] != '') {
+		print '<div><span>'._("Orbit").'</span>'.$info['orbit'].'</div>';
+	}
+	if ($info['launch_date'] != '') {
+		print '<div><span>'._("Launch Date").'</span>'.date('Y-m-d',strtotime($info['launch_date'])).'</div>';
+	}
+	if ($info['launch_site'] != '') {
+		print '<div><span>'._("Launch Site").'</span>'.$info['launch_site'].'</div>';
+	}
+	if ($info['launch_vehicule'] != '') {
+		print '<div><span>'._("Launch Vehicule").'</span>'.$info['launch_vehicule'].'</div>';
+	}
 }
 /*
 if (isset($spotter_item['aircraft_owner']) && $spotter_item['aircraft_owner'] != '') {

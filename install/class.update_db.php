@@ -1261,6 +1261,43 @@ class update_db {
 		return '';
         }
 
+	public static function satellite_fam() {
+		global $tmp_dir, $globalTransaction;
+		$query = "TRUNCATE TABLE satellite";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$delimiter = "\t";
+		$Connection = new Connection();
+		if (($handle = fopen($tmp_dir.'satellite.tsv', 'r')) !== FALSE)
+		{
+			$i = 0;
+			if ($globalTransaction) $Connection->db->beginTransaction();
+			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				if ($i > 0) {
+					$data = array_map(function($v) { return $v === 'NULL' ? NULL : $v; },$data);
+					$query = 'INSERT INTO satellite (name, name_alternate, country_un, country_owner, owner, users, purpose, purpose_detailed, orbit, type, longitude_geo, perigee, apogee, eccentricity, inclination, period, launch_mass, dry_mass, power, launch_date, lifetime, contractor, country_contractor, launch_site, launch_vehicule, cospar, norad, comments, source_orbital, sources) 
+					    VALUES (:name, :name_alternate, :country_un, :country_owner, :owner, :users, :purpose, :purpose_detailed, :orbit, :type, :longitude_geo, :perigee, :apogee, :eccentricity, :inclination, :period, :launch_mass, :dry_mass, :power, :launch_date, :lifetime, :contractor, :country_contractor, :launch_site, :launch_vehicule, :cospar, :norad, :comments, :source_orbital, :sources)';
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':name' => $data[0], ':name_alternate' => $data[1], ':country_un' => $data[2], ':country_owner' => $data[3], ':owner' => $data[4], ':users' => $data[5], ':purpose' => $data[6], ':purpose_detailed' => $data[7], ':orbit' => $data[8], ':type' => $data[9], ':longitude_geo' => $data[10], ':perigee' => !empty($data[11]) ? $data[11] : NULL, ':apogee' => !empty($data[12]) ? $data[12] : NULL, ':eccentricity' => $data[13], ':inclination' => $data[14], ':period' => !empty($data[15]) ? $data[15] : NULL, ':launch_mass' => !empty($data[16]) ? $data[16] : NULL, ':dry_mass' => !empty($data[17]) ? $data[17] : NULL, ':power' => !empty($data[18]) ? $data[18] : NULL, ':launch_date' => $data[19], ':lifetime' => $data[20], ':contractor' => $data[21],':country_contractor' => $data[22], ':launch_site' => $data[23], ':launch_vehicule' => $data[24], ':cospar' => $data[25], ':norad' => $data[26], ':comments' => $data[27], ':source_orbital' => $data[28], ':sources' => $data[29]));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				}
+				$i++;
+			}
+			fclose($handle);
+			if ($globalTransaction) $Connection->db->commit();
+		}
+		return '';
+	}
+
 	public static function banned_fam() {
 		global $tmp_dir, $globalTransaction;
 		$query = "UPDATE airlines SET ban_eu = 0";
@@ -1337,6 +1374,282 @@ class update_db {
 
 					$i = 0;
 				}
+			}
+			fclose($handle);
+			//$Connection->db->commit();
+		}
+		return '';
+        }
+
+	public static function satellite_ucsdb($filename) {
+		global $tmp_dir, $globalTransaction;
+		$query = "DELETE FROM satellite";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':source' => $filename));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		
+		$Connection = new Connection();
+		if (($handle = fopen($filename, 'r')) !== FALSE)
+		{
+			$i = 0;
+			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
+			//$Connection->db->beginTransaction();
+			$dbdata = array();
+			while (($data = fgetcsv($handle, 1000,"\t")) !== FALSE)
+			{
+				if ($i > 0 && $data[0] != '') {
+					$sources = trim($data[28].' '.$data[29].' '.$data[30].' '.$data[31].' '.$data[32].' '.$data[33]);
+					$period = str_replace(',','',$data[14]);
+					if (!empty($period) && strpos($period,'days')) $period = str_replace(' days','',$period)*24*60;
+					if ($data[18] != '') $launch_date = date('Y-m-d',strtotime($data[18]));
+					else $launch_date = NULL;
+					$data = array_map(function($value) {
+						return trim($value) === '' ? null : $value;
+					}, $data);
+					//print_r($data);
+					$query = 'INSERT INTO satellite (name, name_alternate, country_un, country_owner, owner, users, purpose, purpose_detailed, orbit, type, longitude_geo, perigee, apogee, eccentricity, inclination, period, launch_mass, dry_mass, power, launch_date, lifetime, contractor, country_contractor, launch_site, launch_vehicule, cospar, norad, comments, source_orbital, sources) 
+					    VALUES (:name, :name_alternate, :country_un, :country_owner, :owner, :users, :purpose, :purpose_detailed, :orbit, :type, :longitude_geo, :perigee, :apogee, :eccentricity, :inclination, :period, :launch_mass, :dry_mass, :power, :launch_date, :lifetime, :contractor, :country_contractor, :launch_site, :launch_vehicule, :cospar, :norad, :comments, :source_orbital, :sources)';
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':name' => $data[0], ':name_alternate' => '', ':country_un' => $data[1], ':country_owner' => $data[2], ':owner' => $data[3], ':users' => $data[4], ':purpose' => $data[5], ':purpose_detailed' => $data[6], ':orbit' => $data[7], ':type' => $data[8], ':longitude_geo' => $data[9], ':perigee' => !empty($data[10]) ? str_replace(',','',$data[10]) : NULL, ':apogee' => !empty($data[11]) ? str_replace(',','',$data[11]) : NULL, ':eccentricity' => $data[12], ':inclination' => $data[13], ':period' => !empty($period) ? $period : NULL, ':launch_mass' => !empty($data[15]) ? str_replace(array('+',','),'',$data[15]) : NULL, ':dry_mass' => !empty($data[16]) ? str_replace(array(',','-1900',' (BOL)',' (EOL)'),'',$data[16]) : NULL, ':power' => !empty($data[17]) ? str_replace(array(',',' (BOL)',' (EOL)'),'',$data[17]) : NULL, ':launch_date' => $launch_date, ':lifetime' => $data[19], ':contractor' => $data[20],':country_contractor' => $data[21], ':launch_site' => $data[22], ':launch_vehicule' => $data[23], ':cospar' => $data[24], ':norad' => $data[25], ':comments' => $data[26], ':source_orbital' => $data[27], ':sources' => $sources));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				}
+				$i++;
+			}
+			fclose($handle);
+			//$Connection->db->commit();
+		}
+		return '';
+	}
+
+	public static function satellite_celestrak($filename) {
+		global $tmp_dir, $globalTransaction;
+		$satcat_sources = array(
+			'AB' => array('country' => 'Multinational', 'owner' => 'Arab Satellite Communications Org. (ASCO)'),
+			'ABS' => array('country' => 'Multinational', 'owner' => 'Asia Broadcast Satellite Ltd.'),
+			'AC' => array('country' => 'China', 'owner' => 'Asia Satellite Telecommunications Co. Ltd.'),
+			'ALG' => array('country' => 'Algeria', 'owner' => ''),
+			'ARGN' => array('country' => 'Argentina', 'owner' => ''),
+			'ASRA' => array('country' => 'Austria', 'owner' => ''),
+			'AUS' => array('country' => 'Australia', 'owner' => ''),
+			'AZER' => array('country' => 'Azerbaijan', 'owner' => ''),
+			'BEL' => array('country' => 'Belgium', 'owner' => ''),
+			'BELA' => array('country' => 'Belarus', 'owner' => ''),
+			'BERM' => array('country' => 'Bermuda', 'owner' => ''),
+			'BOL' => array('country' => 'Bolivia', 'owner' => ''),
+			'BRAZ' => array('country' => 'Brazil', 'owner' => ''),
+			'CA' => array('country' => 'Canada', 'owner' => ''),
+			'CHBZ' => array('country' => 'China/Brazil', 'owner' => ''),
+			'CHLE' => array('country' => 'Chile', 'owner' => ''),
+			'CIS' => array('country' => 'Russia', 'owner' => ''),
+			'COL' => array('country' => 'Colombia', 'owner' => ''),
+			'CZCH' => array('country' => 'Czech Republic (former Czechoslovakia)', 'owner' => ''),
+			'DEN' => array('country' => 'Denmark', 'owner' => ''),
+			'ECU' => array('country' => 'Ecuador', 'owner' => ''),
+			'EGYP' => array('country' => 'Egypt', 'owner' => ''),
+			'ESA' => array('country' => 'Multinational', 'owner' => 'European Space Agency'),
+			'ESRO' => array('country' => 'Multinational', 'owner' => 'European Space Research Organization'),
+			'EST' => array('country' => 'Estonia','owner' => ''),
+			'EUME' => array('country' => 'Multinational', 'owner' => 'EUMETSAT (European Organization for the Exploitation of Meteorological Satellites)'),
+			'EUTE' => array('country' => 'Multinational', 'owner' => 'European Telecommunications Satellite Consortium (EUTELSAT)'),
+			'FGER' => array('country' => 'France/Germany', 'owner' => ''),
+			'FIN' => array('country' => 'Finland', 'owner' => ''),
+			'FR' => array('country' => 'France', 'owner' => ''),
+			'FRIT' => array('country' => 'France/Italy', 'owner' => ''),
+			'GER' => array('country' => 'Germany', 'owner' => ''),
+			'GLOB' => array('country' => 'USA', 'owner' => 'Globalstar'),
+			'GREC' => array('country' => 'Greece', 'owner' => ''),
+			'HUN' => array('country' => 'Hungary', 'owner' => ''),
+			'IM' => array('country' => 'United Kingdom', 'owner' => 'INMARSAT, Ltd.'),
+			'IND' => array('country' => 'India', 'owner' => ''),
+			'INDO' => array('country' => 'Indonesia', 'owner' => ''),
+			'IRAN' => array('country' => 'Iran', 'owner' => ''),
+			'IRAQ' => array('country' => 'Iraq', 'owner' => ''),
+			'IRID' => array('country' => 'USA', 'owner' => 'Iridium Satellite LLC'),
+			'ISRA' => array('country' => 'Israel', 'owner' => ''),
+			'ISRO' => array('country' => 'India', 'owner' => 'Indian Space Research Organisation (ISRO)'),
+			'ISS' => array('country' => 'Multinational', 'owner' => 'NASA/Multinational'),
+			'IT' => array('country' => 'Italy', 'owner' => ''),
+			'ITSO' => array('country' => 'USA', 'owner' => 'Intelsat, S.A.'),
+			'JPN' => array('country' => 'Japan', 'owner' => ''),
+			'KAZ' => array('country' => 'Kazakhstan', 'owner' => ''),
+			'LAOS' => array('country' => 'Laos', 'owner' => ''),
+			'LTU' => array('country' => 'Lithuania', 'owner' => ''),
+			'LUXE' => array('country' => 'Luxembourg', 'owner' => ''),
+			'MALA' => array('country' => 'Malaysia', 'owner' => ''),
+			'MEX' => array('country' => 'Mexico', 'owner' => ''),
+			'NATO' => array('country' => 'Multinational', 'owner' => 'North Atlantic Treaty Organization'),
+			'NETH' => array('country' => 'Netherlands', 'owner' => ''),
+			'NICO' => array('country' => 'USA', 'owner' => 'New ICO'),
+			'NIG' => array('country' => 'Nigeria', 'owner' => ''),
+			'NKOR' => array('country' => 'North Korea', 'owner' => ''),
+			'NOR' => array('country' => 'Norway', 'owner' => ''),
+			'O3B' => array('country' => 'United Kingdom', 'owner' => 'O3b Networks Ltd.'),
+			'ORB' => array('country' => 'USA', 'owner' => 'ORBCOMM Inc.'),
+			'PAKI' => array('country' => 'Pakistan', 'owner' => ''),
+			'PERU' => array('country' => 'Peru', 'owner' => ''),
+			'POL' => array('country' => 'Poland', 'owner' => ''),
+			'POR' => array('country' => 'Portugal', 'owner' => ''),
+			'PRC' => array('country' => 'China', 'owner' => ''),
+			'PRES' => array('country' => 'Multinational', 'owner' => 'China/ESA'),
+			'RASC' => array('country' => 'Multinational', 'owner' => 'Regional African Satellite Communications Organisation (RASCOM)'),
+			'ROC' => array('country' => 'Taiwan', 'owner' => ''),
+			'ROM' => array('country' => 'Romania', 'owner' => ''),
+			'RP' => array('country' => 'Philippines', 'owner' => ''),
+			'SAFR' => array('country' => 'South Africa', 'owner' => ''),
+			'SAUD' => array('country' => 'Saudi Arabia', 'owner' => ''),
+			'SEAL' => array('country' => 'USA', 'owner' => ''),
+			'SES' => array('country' => 'Multinational', 'owner' => 'SES World Skies'),
+			'SING' => array('country' => 'Singapore', 'owner' => ''),
+			'SKOR' => array('country' => 'South Korea', 'owner' => ''),
+			'SPN' => array('country' => 'Spain', 'owner' => ''),
+			'STCT' => array('country' => 'Singapore/Taiwan', 'owner' => ''),
+			'SWED' => array('country' => 'Sweden', 'owner' => ''),
+			'SWTZ' => array('country' => 'Switzerland', 'owner' => ''),
+			'THAI' => array('country' => 'Thailand', 'owner' => ''),
+			'TMMC' => array('country' => 'Turkmenistan/Monaco', 'owner' => ''),
+			'TURK' => array('country' => 'Turkey', 'owner' => ''),
+			'UAE' => array('country' => 'United Arab Emirates', 'owner' => ''),
+			'UK' => array('country' => 'United Kingdom', 'owner' => ''),
+			'UKR' => array('country' => 'Ukraine', 'owner' => ''),
+			'URY' => array('country' => 'Uruguay', 'owner' => ''),
+			'US' => array('country' => 'USA', 'owner' => ''),
+			'USBZ' => array('country' => 'USA/Brazil', 'owner' => ''),
+			'VENZ' => array('country' => 'Venezuela', 'owner' => ''),
+			'VTNM' => array('country' => 'Vietnam', 'owner' => '')
+		);
+		$satcat_launch_site = array(
+			'AFETR' => 'Cape Canaveral',
+			'AFWTR' => 'Vandenberg AFB',
+			'CAS' => 'Canaries Airspace',
+			'DLS' => 'Dombarovsky Air Base',
+			'ERAS' => 'Eastern Range Airspace',
+			'FRGUI' => 'Guiana Space Center',
+			'HGSTR' => 'Hammaguira Space Track Range, Algeria',
+			'JSC' => 'Jiuquan Satellite Launch Center',
+			'KODAK' => 'Kodiak Launch Complex',
+			'KSCUT' => 'Uchinoura Space Center',
+			'KWAJ' => 'Kwajalein Island',
+			'KYMSC' => 'Kapustin Yar Missile and Space Complex, Russia',
+			'NSC' => 'Naro Space Center',
+			'PLMSC' => 'Plesetsk Cosmodrome',
+			'SEAL' => 'Sea Launch',
+			'SEMLS' => 'Semnan Satellite Launch Site, Iran',
+			'SNMLP' => 'San Marco Launch Platform, Indian Ocean (Kenya)',
+			'SRILR' => 'Satish Dhawan Space Center',
+			'SUBL' => 'Submarine Launch Platform (mobile), Russia',
+			'SVOBO' => 'Svobodny Cosmodrome',
+			'TAISC' => 'Taiyuan Launch Center',
+			'TANSC' => 'Tanegashima Space Center',
+			'TYMSC' => 'Baikonur Cosmodrome',
+			'VOSTO' => 'Vostochny Cosmodrome',
+			'WLPIS' => 'Wallops Island Flight Facility',
+			'WOMRA' => 'Woomera, Australia',
+			'WRAS' => 'Western Range Airspace',
+			'WSC' => 'Wenchang Satellite Launch Center',
+			'XICLF' => 'Xichang Satellite Launch Center',
+			'YAVNE' => 'Palmachim Launch Complex',
+			'YUN' => 'Yunsong Launch Site'
+		);
+
+		/*
+		$query = "DELETE FROM satellite";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':source' => $filename));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		*/
+		
+		$Connection = new Connection();
+		if (($handle = fopen($filename, 'r')) !== FALSE)
+		{
+			$i = 0;
+			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
+			//$Connection->db->beginTransaction();
+			$dbdata = array();
+			while (($data = fgets($handle, 1000)) !== FALSE)
+			{
+				$result = array();
+				$result['cospar'] = trim(substr($data,0,11));
+				$result['norad'] = trim(substr($data,13,6));
+				$result['operational'] = trim(substr($data,21,1));
+				$result['name'] = trim(substr($data,23,24));
+				/*
+				    * R/B(1) = Rocket body, first stage
+				    * R/B(2) = Rocket body, second stage
+				    * DEB = Debris
+				    * PLAT = Platform
+				    * Items in parentheses are alternate names
+				    * Items in brackets indicate type of object
+				    (e.g., BREEZE-M DEB [TANK] = tank)
+				    * An ampersand (&) indicates two or more objects are attached
+				*/
+				
+				$owner_code = trim(substr($data,49,5));
+				$result['country_owner'] = $satcat_sources[$owner_code]['country'];
+				$result['owner'] = $satcat_sources[$owner_code]['owner'];
+				$result['launch_date'] = trim(substr($data,56,10));
+				$launch_site_code = trim(substr($data,68,5));
+				$result['launch_site'] = $satcat_launch_site[$launch_site_code];
+				$result['lifetime'] = trim(substr($data,75,10));
+				$result['period'] = trim(substr($data,87,7));
+				$result['inclination'] = trim(substr($data,96,5));
+				$result['apogee'] = trim(substr($data,103,6));
+				$result['perigee'] = trim(substr($data,111,6));
+				//$result['radarcross'] = trim(substr($data,119,8));
+				$result['status'] = trim(substr($data,129,3));
+				print_r($result);
+				$result = array_map(function($value) {
+					return trim($value) === '' ? null : $value;
+				}, $result);
+				//print_r($data);
+				if ($result['operational'] != 'D') {
+					$query = "SELECT * FROM satellite WHERE cospar = :cospar LIMIT 1";
+					try {
+						$Connection = new Connection();
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':cospar' => $result['cospar']));
+						$exist = $sth->fetchAll(PDO::FETCH_ASSOC);
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+					if (empty($exist)) {
+						$query = 'INSERT INTO satellite (name, name_alternate, country_un, country_owner, owner, users, purpose, purpose_detailed, orbit, type, longitude_geo, perigee, apogee, eccentricity, inclination, period, launch_mass, dry_mass, power, launch_date, lifetime, contractor, country_contractor, launch_site, launch_vehicule, cospar, norad, comments, source_orbital, sources) 
+						    VALUES (:name, :name_alternate, :country_un, :country_owner, :owner, :users, :purpose, :purpose_detailed, :orbit, :type, :longitude_geo, :perigee, :apogee, :eccentricity, :inclination, :period, :launch_mass, :dry_mass, :power, :launch_date, :lifetime, :contractor, :country_contractor, :launch_site, :launch_vehicule, :cospar, :norad, :comments, :source_orbital, :sources)';
+						try {
+							$sth = $Connection->db->prepare($query);
+							$sth->execute(array(
+							    ':name' => $result['name'], ':name_alternate' => '', ':country_un' => '', ':country_owner' => $result['country_owner'], ':owner' => $result['owner'], ':users' => '', ':purpose' => '', ':purpose_detailed' => '', ':orbit' => $result['status'],
+							    ':type' => '', ':longitude_geo' => NULL, ':perigee' => !empty($result['perigee']) ? $result['perigee'] : NULL, ':apogee' => !empty($result['apogee']) ? $result['apogee'] : NULL, ':eccentricity' => NULL, ':inclination' => $result['inclination'],
+							    ':period' => !empty($result['period']) ? $result['period'] : NULL, ':launch_mass' => NULL, ':dry_mass' => NULL, ':power' => NULL, ':launch_date' => $result['launch_date'], ':lifetime' => $result['lifetime'], 
+							    ':contractor' => '',':country_contractor' => '', ':launch_site' => $result['launch_site'], ':launch_vehicule' => '', ':cospar' => $result['cospar'], ':norad' => $result['norad'], ':comments' => '', ':source_orbital' => '', ':sources' => ''
+							    )
+							);
+						} catch(PDOException $e) {
+							return "error : ".$e->getMessage();
+						}
+					} elseif ($exist[0]['name'] != $result['name'] && $exist[0]['name_alternate'] != $result['name']) {
+						$query = "UPDATE satellite SET name_alternate = :name_alternate WHERE cospar = :cospar";
+						try {
+							$Connection = new Connection();
+							$sth = $Connection->db->prepare($query);
+							$sth->execute(array(':name_alternate' => $result['name'],':cospar' => $result['cospar']));
+						} catch(PDOException $e) {
+							return "error : ".$e->getMessage();
+						}
+					}
+				}
+				
+				$i++;
 			}
 			fclose($handle);
 			//$Connection->db->commit();
@@ -2069,6 +2382,32 @@ class update_db {
 		}
 		return '';
 	}
+
+	public static function update_satellite_fam() {
+		global $tmp_dir, $globalDebug;
+		update_db::download('http://data.flightairmap.fr/data/satellite.tsv.gz.md5',$tmp_dir.'satellite.tsv.gz.md5');
+		if (file_exists($tmp_dir.'satellite.tsv.gz.md5')) {
+			$satellite_md5_file = explode(' ',file_get_contents($tmp_dir.'satellite.tsv.gz.md5'));
+			$satellite_md5 = $satellite_md5_file[0];
+			if (!update_db::check_satellite_version($marine_identity_md5)) {
+				if ($globalDebug) echo "Satellite from FlightAirMap website : Download...";
+				update_db::download('http://data.flightairmap.fr/data/satellite.tsv.gz',$tmp_dir.'satellite.tsv.gz');
+				if (file_exists($tmp_dir.'satellite.tsv.gz')) {
+					if ($globalDebug) echo "Gunzip...";
+					update_db::gunzip($tmp_dir.'satellite.tsv.gz');
+					if ($globalDebug) echo "Add to DB...";
+					$error = update_db::satellite_fam();
+				} else $error = "File ".$tmp_dir.'satellite.tsv.gz'." doesn't exist. Download failed.";
+				if ($error != '') {
+					return $error;
+				} elseif ($globalDebug) {
+					update_db::insert_satellite_version($satellite_md5);
+					echo "Done\n";
+				}
+			}
+		}
+		return '';
+	}
 	public static function update_banned_fam() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Banned airlines in Europe from FlightAirMap website : Download...";
@@ -2159,7 +2498,7 @@ class update_db {
 		if ($globalDebug) echo "Download TLE : Download...";
 		$alltle = array('stations.txt','gps-ops.txt','glo-ops.txt','galileo.txt','weather.txt','noaa.txt','goes.txt','resource.txt','dmc.txt','tdrss.txt','geo.txt','intelsat.txt','gorizont.txt',
 		'raduga.txt','molniya.txt','iridium.txt','orbcomm.txt','globalstar.txt','amateur.txt','x-comm.txt','other-comm.txt','sbas.txt','nnss.txt','musson.txt','science.txt','geodetic.txt',
-		'engineering.txt','education.txt','military.txt','radar.txt','cubesat.txt','other.txt','tle-new.txt');
+		'engineering.txt','education.txt','military.txt','radar.txt','cubesat.txt','other.txt','tle-new.txt','visual.txt','sarsat.txt','argos.txt','ses.txt','iridium-NEXT.txt','beidou.txt');
 		foreach ($alltle as $filename) {
 			if ($globalDebug) echo "downloading ".$filename.'...';
 			update_db::download('http://celestrak.com/NORAD/elements/'.$filename,$tmp_dir.$filename);
@@ -2171,6 +2510,34 @@ class update_db {
 				echo $error."\n";
 			} elseif ($globalDebug) echo "Done\n";
 		}
+		return '';
+	}
+
+	public static function update_ucsdb() {
+		global $tmp_dir, $globalDebug;
+		if ($globalDebug) echo "Download UCS DB : Download...";
+		update_db::download('https://s3.amazonaws.com/ucs-documents/nuclear-weapons/sat-database/4-11-17-update/UCS_Satellite_Database_officialname_1-1-17.txt',$tmp_dir.'UCS_Satellite_Database_officialname_1-1-17.txt');
+		if (file_exists($tmp_dir.'UCS_Satellite_Database_officialname_1-1-17.txt')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::satellite_ucsdb($tmp_dir.'UCS_Satellite_Database_officialname_1-1-17.txt');
+		} else $error = "File ".$tmp_dir.'UCS_Satellite_Database_officialname_1-1-17.txt'." doesn't exist. Download failed.";
+		if ($error != '') {
+			echo $error."\n";
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+
+	public static function update_celestrak() {
+		global $tmp_dir, $globalDebug;
+		if ($globalDebug) echo "Download Celestrak DB : Download...";
+		update_db::download('https://celestrak.com/pub/satcat.txt',$tmp_dir.'satcat.txt');
+		if (file_exists($tmp_dir.'satcat.txt')) {
+			if ($globalDebug) echo "Add to DB...";
+			$error = update_db::satellite_celestrak($tmp_dir.'satcat.txt');
+		} else $error = "File ".$tmp_dir.'satcat.txt'." doesn't exist. Download failed.";
+		if ($error != '') {
+			echo $error."\n";
+		} elseif ($globalDebug) echo "Done\n";
 		return '';
 	}
 
@@ -2506,13 +2873,27 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute(array(':version' => $version));
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-                $row = $sth->fetch(PDO::FETCH_ASSOC);
-                if ($row['nb'] > 0) return true;
-                else return false;
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return true;
+		else return false;
+	}
+
+	public static function check_satellite_version($version) {
+		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'satellite_version' AND value = :version";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return true;
+		else return false;
 	}
 
 
@@ -2546,10 +2927,22 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute(array(':version' => $version));
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
+	public static function insert_satellite_version($version) {
+		$query = "DELETE FROM config WHERE name = 'satellite_version';
+			INSERT INTO config (name,value) VALUES ('satellite_version',:version);";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
 	}
 
 	public static function check_last_notam_update() {
@@ -2700,11 +3093,12 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
 	}
+
 	public static function check_last_tle_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
@@ -2715,13 +3109,13 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-                $row = $sth->fetch(PDO::FETCH_ASSOC);
-                if ($row['nb'] > 0) return false;
-                else return true;
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return false;
+		else return true;
 	}
 
 	public static function insert_last_tle_update() {
@@ -2730,11 +3124,74 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
 	}
+
+	public static function check_last_ucsdb_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_ucsdb' AND value > DATE_SUB(NOW(), INTERVAL 1 MONTH)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_ucsdb' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '1 MONTH'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return false;
+		else return true;
+	}
+
+	public static function insert_last_ucsdb_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_ucsdb';
+			INSERT INTO config (name,value) VALUES ('last_update_ucsdb',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
+	public static function check_last_celestrak_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_celestrak' AND value > DATE_SUB(NOW(), INTERVAL 7 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_celestrak' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '7 DAYS'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return false;
+		else return true;
+	}
+
+	public static function insert_last_celestrak_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_celestrak';
+			INSERT INTO config (name,value) VALUES ('last_update_celestrak',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
 	public static function check_last_marine_identity_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
@@ -2745,13 +3202,32 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-                $row = $sth->fetch(PDO::FETCH_ASSOC);
-                if ($row['nb'] > 0) return false;
-                else return true;
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return false;
+		else return true;
+	}
+
+	public static function check_last_satellite_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_satellite' AND value > DATE_SUB(NOW(), INTERVAL 1 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_satellite' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '1 DAYS'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return false;
+		else return true;
 	}
 
 	public static function insert_last_marine_identity_update() {
@@ -2760,11 +3236,24 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
 	}
+
+	public static function insert_last_satellite_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_satellite';
+			INSERT INTO config (name,value) VALUES ('last_update_satellite',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
 	public static function delete_duplicatemodes() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
@@ -2809,6 +3298,7 @@ class update_db {
 				echo update_db::update_ModeS_faa();
 				echo update_db::fix_icaotype();
 				echo update_db::update_banned_fam();
+				echo update_db::update_celestrak();
 				//echo update_db::delete_duplicatemodes();
 			} else {
 				//echo update_db::update_routes();
@@ -2854,4 +3344,6 @@ class update_db {
 //echo update_db::update_owner_fam();
 //echo update_db::delete_duplicateowner();
 //echo update_db::fix_icaotype();
+//echo update_db::satellite_ucsdb('tmp/UCS_Satellite_Database_officialname_1-1-17.txt');
+//echo update_db::satellite_celestrak('tmp/satcat.txt');
 ?>

@@ -42,17 +42,22 @@ require_once('header.php');
 <div id="infobox" class="infobox"><table><tr>
     <?php if ((isset($globalAircraft) && $globalAircraft) || !isset($globalAircraft)) { ?><td><div id="ibxaircraft"><h4><?php echo _("Aircrafts Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td>
     <?php }; if (isset($globalMarine) && $globalMarine) { ?><td><div id="ibxmarine"><h4><?php echo _("Vessels Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td>
-    <?php }; if (isset($globalTracker) && $globalTracker) { ?><td><div id="ibxtracker"><h4><?php echo _("Trackers Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td><?php } ?>
+    <?php }; if (isset($globalTracker) && $globalTracker) { ?><td><div id="ibxtracker"><h4><?php echo _("Trackers Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td>
+    <?php }; if (isset($globalSatellite) && $globalSatellite) { ?><td><div id="ibxsatellite"><h4><?php echo _("Satellites Displayed"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td><?php } ?>
 </tr></table></div>
 <?php
     if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
-
 ?>
 <script src="<?php echo $globalURL; ?>/js/map.3d.js.php"></script>
 <?php
 	if (!isset($globalAircraft) || $globalAircraft) {
 ?>
 <script src="<?php echo $globalURL; ?>/js/map-aircraft.3d.js.php"></script>
+<?php
+	}
+	if (!isset($globalSatellite) || $globalSatellite) {
+?>
+<script src="<?php echo $globalURL; ?>/js/map-satellite.3d.js.php"></script>
 <?php
 	}
 	if (isset($globalTracker) && $globalTracker) {
@@ -94,7 +99,7 @@ require_once('header.php');
 	<li><a href="#" onclick="show3D(); return false;" role="tab" title="3D"><b>3D</b></a></li>
 <?php
         } else {
-    	    if (isset($globalMapSatellites) && $globalMapSatellites) {
+    	    if (isset($globalSatellite) && $globalSatellite) {
 ?>
 	<li><a href="#satellites" role="tab" title="<?php echo _("Satellites"); ?>"><i class="satellite"></i></a></li>
 <?php
@@ -621,7 +626,7 @@ require_once('header.php');
 	    </form>
     	</div>
 <?php
-    if (isset($globalMapSatellites) && $globalMapSatellites && isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+    if (isset($globalSatellite) && $globalSatellite && isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 ?>
         <div class="sidebar-pane" id="satellites">
 	    <h1 class="sidebar-header"><?php echo _("Satellites"); ?><span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>

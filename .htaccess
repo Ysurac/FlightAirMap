@@ -404,6 +404,14 @@ RewriteRule ^tracker/statistics/year(/?)$ statistics-year.php?tracker [L,NC]
 RewriteRule ^tracker/statistics/country(/?)$ statistics-country.php?tracker [L,NC]
 RewriteRule ^tracker/statistics(/?)$ statistics.php?tracker [L,NC]
 
+#---------- SATELLITE ---------
+RewriteRule ^satellite/statistics/date(/?)$ statistics-date.php?satellite [L,NC]
+RewriteRule ^satellite/statistics/time(/?)$ statistics-time.php?satellite [L,NC]
+RewriteRule ^satellite/statistics/month(/?)$ statistics-month.php?satellite [L,NC]
+RewriteRule ^satellite/statistics/year(/?)$ statistics-year.php?satellite [L,NC]
+RewriteRule ^satellite/statistics/country(/?)$ statistics-country.php?satellite [L,NC]
+RewriteRule ^satellite/statistics(/?)$ statistics.php?satellite [L,NC]
+
 
 ########### UPCOMING ###########
 

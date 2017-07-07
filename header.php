@@ -389,7 +389,20 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 
 <?php 
     $sub = false;
-    if (((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft === TRUE)) && ((isset($globalMarine) && $globalMarine === TRUE) || (isset($globalTracker) && $globalTracker === TRUE))) || (isset($globalMarine) && $globalMarine === TRUE && isset($globalTracker) && $globalTracker === TRUE)) {
+    if (
+	(
+	    (!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft === TRUE)) && ((isset($globalMarine) && $globalMarine === TRUE) || (isset($globalTracker) && $globalTracker === TRUE) || (isset($globalSatellite) && $globalSatellite === TRUE))
+	) || 
+	(
+	    isset($globalMarine) && $globalMarine === TRUE && ((isset($globalTracker) && $globalTracker === TRUE) || (isset($globalSatellite) && $globalSatellite === TRUE))
+	) || 
+	(
+	    isset($globalTracker) && $globalTracker === TRUE && ((isset($globalMarine) && $globalMarine === TRUE) || (isset($globalSatellite) && $globalSatellite === TRUE))
+	) || 
+	(
+	    isset($globalSatellite) && $globalSatellite === TRUE && ((isset($globalMarine) && $globalMarine === TRUE) || (isset($globalTracker) && $globalTracker === TRUE))
+	)
+    ) {
 	$sub = true;
     }
 ?>
@@ -555,6 +568,40 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 		</ul>
 	    </li>
 	    <li><a href="<?php print $globalURL; ?>/tracker/statistics"><?php echo _("Statistics"); ?></a></li>
+<?php
+	if ($sub) {
+?>
+	</ul>
+    </li>
+<?php
+	}
+?>
+<?php
+    }
+?>
+<?php
+    if (isset($globalSatellite) && $globalSatellite) {
+?>
+    <li class="dropdown">
+<?php
+        if ($sub) {
+?>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Satellite"); ?> <b class="caret"></b></a>
+	<ul class="dropdown-menu multi-level">
+	    <li class="dropdown-submenu">
+<?php
+	}
+?>
+<!--
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="<?php if ($sub) echo 'right-'; ?>caret"></b></a>
+		<ul class="dropdown-menu">
+		    <li><a href="<?php print $globalURL; ?>/satellite/currently"><?php echo _("Current Activity"); ?></a></li>
+		    <li><a href="<?php print $globalURL; ?>/satellite/latest"><?php echo _("Latest Activity"); ?></a></li>
+		    <li><a href="<?php print $globalURL; ?>/satellite/date/<?php print date("Y-m-d"); ?>"><?php echo _("Today's Activity"); ?></a></li>
+		</ul>
+	    </li>
+-->
+	    <li><a href="<?php print $globalURL; ?>/satellite/statistics"><?php echo _("Statistics"); ?></a></li>
 <?php
 	if ($sub) {
 ?>

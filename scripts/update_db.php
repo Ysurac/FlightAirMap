@@ -140,6 +140,14 @@ if (isset($globalMap3D) && $globalMap3D) {
 		$update_db->insert_last_tle_update();
 		echo "Done\n";
 	}
+/*
+	if (isset($globalSatellite) && $globalSatellite && $update_db->check_last_satellite_update()) {
+		echo "Updating satellite data...";
+		echo $update_db->update_satellite_fam();
+		$update_db->insert_last_satellite_update();
+		echo "Done\n";
+	}
+*/
 	if (!isset($globalMasterServer) || !$globalMasterServer) {
 		echo "Update 3D models...";
 		$update_db->update_models();

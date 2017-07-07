@@ -117,7 +117,7 @@ function displayTrackerData(data) {
 //    }
     //console.log(viewer.dataSources.get(dsn).name);
 	//console.log('done');
-	$("#ibxtracker").html("<h4>Trackers detected</h4><br /><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
+	$("#ibxtracker").html('<h4><?php echo _("Trackers detected"); ?></h4><br /><b>'+viewer.dataSources.get(dsn).entities.values.length+'</b>');
     //console.log(viewer.dataSources.get(dsn).entities.values.length);
     //console.log(viewer.dataSources.length);
     //console.log(dsn);
@@ -133,8 +133,8 @@ function updateTrackerData() {
 
 var czmldstracker = new Cesium.CzmlDataSource();
 Cesium.when(viewer.terrainProvider.ready,function() {updateTrackerData(); });
-
-handler.setInputAction(function(click) {
+var handler_tracker = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+handler_tracker.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
 	if (Cesium.defined(pickedObject)) {
 		//console.log(pickedObject.id);

@@ -24,6 +24,10 @@ if (!isset($globalDebug)) $globalDebug = FALSE;
 
 // Check if schema is at latest version
 $Connection = new Connection();
+if ($Connection->connectionExists() === false) {
+    echo "Can't connect to your database. Check DB is running, user/password and database logs.";
+    exit();
+}
 if ($Connection->latest() === false) {
     echo "You MUST update to latest schema. Run install/index.php";
     exit();

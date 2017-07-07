@@ -461,7 +461,6 @@ viewer.scene.globe.enableLighting = true;
 //    displayData(data);
 //});
 		
-var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
 	CesiumMiniMap(viewer);
 }

@@ -371,6 +371,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<label for="tracker">Trackers</label>
 				<input type="checkbox" name="globalmarine" id="marine" value="marine" <?php if (isset($globalMarine) && $globalMarine) { ?>checked="checked" <?php } ?>/>
 				<label for="marine">Ships/Vessels</label>
+				<input type="checkbox" name="globalsatellite" id="satellite" value="satellite" <?php if (isset($globalSatellite) && $globalSatellite) { ?>checked="checked" <?php } ?>/>
+				<label for="satellite">Satellites</label>
 			</p>
 		</fieldset>
 		<fieldset id="datasource">
@@ -609,11 +611,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<label for="map3ddefault">Default to map in 3D</label>
 				<input type="checkbox" name="map3ddefault" id="map3ddefault" value="map3ddefault"<?php if (isset($globalMap3Ddefault) && $globalMap3Ddefault) { ?> checked="checked"<?php } ?> />
 			</p>
+<!--
 			<p>
 				<label for="mapsatellites">Enable satellites in 3D map</label>
 				<input type="checkbox" name="mapsatellites" id="mapsatellites" value="mapsatellites"<?php if ((isset($globalMapSatellites) && $globalMapSatellites) || !isset($globalMapSatellites)) { ?> checked="checked"<?php } ?> />
 				<p class="help-block">Bing map key is needed.</p>
 			</p>
+-->
 			<br />
 			<p>
 				<label for="translate">Allow site translation</label>
@@ -1043,6 +1047,9 @@ if (isset($_POST['dbtype'])) {
 	$globalmarine = filter_input(INPUT_POST,'globalmarine',FILTER_SANITIZE_STRING);
 	if ($globalmarine == 'marine') $settings = array_merge($settings,array('globalMarine' => 'TRUE'));
 	else $settings = array_merge($settings,array('globalMarine' => 'FALSE'));
+	$globalsatellite = filter_input(INPUT_POST,'globalsatellite',FILTER_SANITIZE_STRING);
+	if ($globalsatellite == 'satellite') $settings = array_merge($settings,array('globalSatellite' => 'TRUE'));
+	else $settings = array_merge($settings,array('globalSatellite' => 'FALSE'));
 
 /*	
 	$globalSBS1Hosts = array();

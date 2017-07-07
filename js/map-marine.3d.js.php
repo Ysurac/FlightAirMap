@@ -73,7 +73,7 @@ function displayMarineData(data) {
 
 //    }
     //console.log(viewer.dataSources.get(dsn).name);
-	$("#ibxmarine").html("<h4>Marines detected</h4><br /><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
+	$("#ibxmarine").html('<h4><?php echo _("Marines detected"); ?></h4><br /><b>'+viewer.dataSources.get(dsn).entities.values.length+'</b>');
     //console.log(viewer.dataSources.get(dsn).entities.values.length);
     //console.log(viewer.dataSources.length);
     //console.log(dsn);
@@ -89,8 +89,8 @@ function updateMarineData() {
 
 var czmldsmarine = new Cesium.CzmlDataSource();
 updateMarineData();
-
-handler.setInputAction(function(click) {
+var handler_marine = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+handler_marine.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
 	if (Cesium.defined(pickedObject)) {
 		//console.log(pickedObject.id);

@@ -415,6 +415,14 @@ location /tracker/statistics {
     rewrite "^/tracker/statistics/country(/?)$" /statistics-country.php?tracker last;
     rewrite "^/tracker/statistics(/?)$" /statistics.php?tracker last;
 }
+location /satellite/statistics {
+    rewrite "^/satellite/statistics/date(/?)$" /statistics-date.php?satellite last;
+    rewrite "^/satellite/statistics/time(/?)$" /statistics-time.php?satellite last;
+    rewrite "^/satellite/statistics/month(/?)$" /statistics-month.php?satellite last;
+    rewrite "^/satellite/statistics/year(/?)$" /statistics-year.php?satellite last;
+    rewrite "^/satellite/statistics/country(/?)$" /statistics-country.php?satellite last;
+    rewrite "^/satellite/statistics(/?)$" /statistics.php?satellite last;
+}
 
 location /upcoming {
     rewrite ^/upcoming/([^/]+)/([^/]+)(/?)$ /upcoming.php?limit=$1&sort=$2 last;
