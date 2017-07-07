@@ -1607,7 +1607,7 @@ class update_db {
 				$result['perigee'] = trim(substr($data,111,6));
 				//$result['radarcross'] = trim(substr($data,119,8));
 				$result['status'] = trim(substr($data,129,3));
-				print_r($result);
+				//print_r($result);
 				$result = array_map(function($value) {
 					return trim($value) === '' ? null : $value;
 				}, $result);
@@ -2530,7 +2530,7 @@ class update_db {
 	public static function update_celestrak() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Download Celestrak DB : Download...";
-		update_db::download('https://celestrak.com/pub/satcat.txt',$tmp_dir.'satcat.txt');
+		update_db::download('http://celestrak.com/pub/satcat.txt',$tmp_dir.'satcat.txt');
 		if (file_exists($tmp_dir.'satcat.txt')) {
 			if ($globalDebug) echo "Add to DB...";
 			$error = update_db::satellite_celestrak($tmp_dir.'satcat.txt');
