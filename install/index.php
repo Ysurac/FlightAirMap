@@ -21,85 +21,90 @@ if ($globalInstalled && !isset($_SESSION['install'])) {
 }
 
 $writable = false;
-if (!is_writable('../require/settings.php')) {
-	print '<div class="info column"><p><strong>The file <i>require/settings</i> must be writable.</strong></p></div>';
-	require('../footer.php');
-	exit;
-}
-if (!is_writable('tmp')) {
-	print '<div class="info column"><p><strong>The directory <i>install/tmp</i> must be writable.</strong></p></div>';
-	require('../footer.php');
-	exit;
-}
-if (!is_writable('../images/airlines')) {
-	print '<div class="info column"><p><strong>The directory <i>images/airlines</i> must be writable for IVAO.</strong></p></div>';
-}
-if (!set_time_limit(0)) {
-	print '<div class="info column"><p><strong>You may need to update the maximum execution time.</strong></p></div>';
-}
-/*
-if (!function_exists('pcntl_fork')) {
-	print '<div class="info column"><p><strong>pcntl_fork is not available. Schedules will not be fetched.</strong></p></div>';
-}
-*/
 $error = array();
-if (!extension_loaded('SimpleXML')) {
-	$error[] = "SimpleXML is not loaded.";
-}
-if (!extension_loaded('dom')) {
-	$error[] = "Dom is not loaded. Needed for aircraft schedule";
-}
-if (!extension_loaded('PDO')) {
-	$error[] = "PDO is not loaded.";
-}
-/*
-if (!extension_loaded('pdo_sqlite')) {
-	$error[] = "PDO SQLite is not loaded. Needed to populate database for SBS.";
-}
-*/
-if (!extension_loaded('zip')) {
-	$error[] = "ZIP is not loaded. Needed to populate database for SBS.";
-}
-if (!extension_loaded('json')) {
-	$error[] = "Json is not loaded. Needed for aircraft schedule and bitly.";
-}
-if (!extension_loaded('sockets')) {
-	$error[] = "Sockets is not loaded. Needed to populate DB from spotter_daemon.php script.";
-}
-if (!extension_loaded('curl')) {
-	$error[] = "Curl is not loaded.";
-}
-if(function_exists('apache_get_modules') ){
-	if(!in_array('mod_rewrite',apache_get_modules())) {
-		$error[] = "mod_rewrite is not available.";
+if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
+	if (!is_writable('../require/settings.php')) {
+		print '<div class="info column"><p><strong>The file <i>require/settings.php</i> must be writable.</strong></p></div>';
+		require('../footer.php');
+		exit;
 	}
-/*
-	if (!isset($_SERVER['HTTP_FAMHTACCESS'])) {
-		$error[] = "htaccess is not interpreted. Check your Apache configuration";
+	if (!is_writable('tmp')) {
+		print '<div class="info column"><p><strong>The directory <i>install/tmp</i> must be writable.</strong></p></div>';
+		require('../footer.php');
+		exit;
 	}
-*/
-}
+	if (!is_writable('../data')) {
+		print '<div class="info column"><p><strong>The directory <i>data</i> must be writable to <i>scripts/update_db.php</i> user.</strong></p></div>';
+	}
+	if (!is_writable('../images/airlines')) {
+		print '<div class="info column"><p><strong>The directory <i>images/airlines</i> must be writable for IVAO.</strong></p></div>';
+	}
+	if (!set_time_limit(0)) {
+		print '<div class="info column"><p><strong>You may need to update the maximum execution time.</strong></p></div>';
+	}
+	/*
+	if (!function_exists('pcntl_fork')) {
+		print '<div class="info column"><p><strong>pcntl_fork is not available. Schedules will not be fetched.</strong></p></div>';
+	}
+	*/
+	if (!extension_loaded('SimpleXML')) {
+		$error[] = "SimpleXML is not loaded.";
+	}
+	if (!extension_loaded('dom')) {
+		$error[] = "Dom is not loaded. Needed for aircraft schedule";
+	}
+	if (!extension_loaded('PDO')) {
+		$error[] = "PDO is not loaded.";
+	}
+	/*
+	if (!extension_loaded('pdo_sqlite')) {
+		$error[] = "PDO SQLite is not loaded. Needed to populate database for SBS.";
+	}
+	*/
+	if (!extension_loaded('zip')) {
+		$error[] = "ZIP is not loaded. Needed to populate database for SBS.";
+	}
+	if (!extension_loaded('json')) {
+		$error[] = "Json is not loaded. Needed for aircraft schedule and bitly.";
+	}
+	if (!extension_loaded('sockets')) {
+		$error[] = "Sockets is not loaded. Needed to populate DB from spotter_daemon.php script.";
+	}
+	if (!extension_loaded('curl')) {
+		$error[] = "Curl is not loaded.";
+	}
+	if(function_exists('apache_get_modules') ){
+		if(!in_array('mod_rewrite',apache_get_modules())) {
+			$error[] = "mod_rewrite is not available.";
+		}
+	/*
+		if (!isset($_SERVER['HTTP_FAMHTACCESS'])) {
+			$error[] = "htaccess is not interpreted. Check your Apache configuration";
+		}
+	*/
+	}
 
-if (!function_exists("gettext")) {
-	print '<div class="info column"><p><strong>gettext doesn\'t exist. Site translation not available.</strong></p></div>';
-}
-print '<div class="info column"><p><strong>If you use MySQL or MariaDB, check that <i>max_allowed_packet</i> >= 8M, else import of some table can fail.</strong></p></div>';
-if (isset($_SERVER['REQUEST_SCHEME']) && isset($_SERVER['SERVER_NAME']) && isset($_SERVER['SERVER_PORT']) && isset($_SERVER['REQUEST_URI'])) {
-	if (function_exists('get_headers')) {
-		$check_header = @get_headers($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].str_replace('install/','search',str_replace('index.php',$_SERVER["REQUEST_URI"])));
-		if (isset($check_header[0]) && !stripos($check_header[0],"200 OK")) {
-			print '<div class="info column"><p><strong>Check your configuration, rewrite don\'t seems to work.</strong></p></div>';
+	if (!function_exists("gettext")) {
+		print '<div class="info column"><p><strong>gettext doesn\'t exist. Site translation not available.</strong></p></div>';
+	}
+	print '<div class="info column"><p><strong>If you use MySQL or MariaDB, check that <i>max_allowed_packet</i> >= 8M, else import of some table can fail.</strong></p></div>';
+	if (isset($_SERVER['REQUEST_SCHEME']) && isset($_SERVER['SERVER_NAME']) && isset($_SERVER['SERVER_PORT']) && isset($_SERVER['REQUEST_URI'])) {
+		if (function_exists('get_headers')) {
+			$check_header = @get_headers($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].str_replace('install/','search',str_replace('index.php',$_SERVER["REQUEST_URI"])));
+			if (isset($check_header[0]) && !stripos($check_header[0],"200 OK")) {
+				print '<div class="info column"><p><strong>Check your configuration, rewrite don\'t seems to work.</strong></p></div>';
+			}
 		}
 	}
-}
-if (count($error) > 0) {
-	print '<div class="info column"><ul>';
-	foreach ($error as $err) {
-		print '<li>'.$err.'</li>';
+	if (count($error) > 0) {
+		print '<div class="info column"><ul>';
+		foreach ($error as $err) {
+			print '<li>'.$err.'</li>';
+		}
+		print '</ul>You <strong>must</strong> add these modules/fix errors.</div>';
+	//	require('../footer.php');
+	//	exit;
 	}
-	print '</ul>You <strong>must</strong> add these modules/fix errors.</div>';
-//	require('../footer.php');
-//	exit;
 }
 //if (isset($_SESSION['install'])) echo 'My session';
 if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) == 0)) {
@@ -317,18 +322,19 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</tr>
 				<!--
 		<?php
-		    require_once(dirname(__FILE__).'/../require/class.Connection.php');
-		    $Connection = new Connection();
+		    if (isset($globalDBuser) && isset($globalDBpass) && $globalDBuser != '' && $globalDBpass != '') {
+			    require_once(dirname(__FILE__).'/../require/class.Connection.php');
+			    $Connection = new Connection();
 		?>
-				-->
+			-->
 		<?php
-		    if ($Connection->db != NULL) {
-			if ($Connection->tableExists('source_location')) {
-			    require_once(dirname(__FILE__).'/../require/class.Source.php');
-			    $Source = new Source();
-			    //$alllocations = $Source->getAllLocationInfo();
-			    $alllocations = $Source->getLocationInfobyType('');
-			    foreach ($alllocations as $location) {
+			if ($Connection->db != NULL) {
+			    if ($Connection->tableExists('source_location')) {
+				require_once(dirname(__FILE__).'/../require/class.Source.php');
+				$Source = new Source();
+				//$alllocations = $Source->getAllLocationInfo();
+				$alllocations = $Source->getLocationInfobyType('');
+				foreach ($alllocations as $location) {
 		?>
 				<tr>
 	    				<input type="hidden" name="source_id[]" value="<?php print $location['id']; ?>" />
@@ -342,6 +348,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</tr>
 		
 		<?php
+				}
 			    }
 			}
 		    }

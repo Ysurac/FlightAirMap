@@ -95,7 +95,7 @@ class Connection{
 			else $globalDBSport = 3306;
 		}
 		// Set number of try to connect to DB
-		if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry === NULL) $globalDBretry = 10;
+		if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry === NULL) $globalDBretry = 5;
 		$i = 0;
 		while (true) {
 			try {
@@ -136,7 +136,7 @@ class Connection{
 				if ($i > $globalDBretry) return false;
 				//return false;
 			}
-			sleep(5);
+			sleep(2);
 		}
 		if ($DBname === 'default') $this->db = $this->dbs['default'];
 		return true;
