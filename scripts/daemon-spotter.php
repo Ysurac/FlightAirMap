@@ -94,7 +94,7 @@ if (isset($globalMarine) && $globalMarine) {
 }
 //$APRS=new APRS($Connection->db);
 $SBS=new SBS();
-$ACARS=new ACARS($Connection->db);
+$ACARS=new ACARS($Connection->db,true);
 $Source=new Source($Connection->db);
 $Common=new Common();
 date_default_timezone_set('UTC');

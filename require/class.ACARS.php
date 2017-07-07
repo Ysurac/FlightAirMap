@@ -9,11 +9,14 @@ require_once(dirname(__FILE__).'/class.Translation.php');
 class ACARS {
 	public $db;
 	public $SI;
-
-	public function __construct($dbc = null) {
+	private $fromACARSscript = false;
+	public function __construct($dbc = null,$fromACARSscript = false) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
-		$this->SI = new SpotterImport($this->db);
+		if ($fromACARSscript) {
+			$this->fromACARSscript = true;
+			$this->SI = new SpotterImport($this->db);
+		}
 	}
 	/**
 	* Change IATA to ICAO value for ident
@@ -1156,7 +1159,7 @@ class ACARS {
 				if (isset($result['modes'])) $hex = $result['modes'];
 				else $hex = '';
 				$SI_data = array('hex' => $hex,'ident' => $ident,'aircraft_icao' => $ICAOTypeCode,'registration' => $registration,'latitude' => $latitude,'$longitude' => $longitude,'format_source' => 'ACARS');
-				$this->SI->add($SI_data);
+				if ($this->fromACARSscript) $this->SI->add($SI_data);
 			}
 		}
 		if ($globalDebug) echo 'Done'."\n";

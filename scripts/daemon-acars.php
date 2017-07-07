@@ -17,7 +17,7 @@ if ($schema->latest() === false) {
 
 $debug = true;
 
-$ACARS=new ACARS();
+$ACARS=new ACARS(null,true);
 date_default_timezone_set('UTC');
 // signal handler - playing nice with sockets and dump1090
 pcntl_signal(SIGINT,  function($signo) {
