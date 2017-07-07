@@ -2352,6 +2352,7 @@ class update_schema {
     		    } else {
     			if (isset($result['value']) && $result['value'] != '') return $result['value'];
     			else return 0;
+    		    }
 		}
 		
 	    } else return $version;
