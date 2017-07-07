@@ -16,6 +16,7 @@ class Stats {
 		if (isset($globalFilterName)) $this->filter_name = $globalFilterName;
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
+		if ($this->db === null) die('Error: No DB connection.');
 	}
 
 	public function addLastStatsUpdate($type,$stats_date) {

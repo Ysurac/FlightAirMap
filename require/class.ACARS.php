@@ -13,6 +13,7 @@ class ACARS {
 	public function __construct($dbc = null,$fromACARSscript = false) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
+		if ($this->db === null) die('Error: No DB connection.');
 		if ($fromACARSscript) {
 			$this->fromACARSscript = true;
 			$this->SI = new SpotterImport($this->db);

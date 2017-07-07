@@ -7,6 +7,7 @@ class ATC {
 	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db;
+		if ($this->db === null) die('Error: No DB connection.');
 	}
 
 	/**
