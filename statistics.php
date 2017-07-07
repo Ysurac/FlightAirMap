@@ -1172,7 +1172,7 @@ if ($type == 'satellite') {
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Launch Months of the last 12 Months"); ?></h2>
 <?php
-		$year_array = $Satellite->countAllMonthsLastYear(true);
+		$year_array = $Satellite->countAllMonthsLastYear();
 		if (count($year_array) == 0) print _("No data available");
 		else {
 			print '<div id="chart21" class="chart" width="100%"></div><script>';
@@ -1203,7 +1203,7 @@ if ($type == 'satellite') {
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Launch Years of the last 10 Years"); ?></h2>
 <?php
-		$year_array = $Satellite->countAllYears(true);
+		$year_array = $Satellite->countAllYears();
 		if (count($year_array) == 0) print _("No data available");
 		else {
 			print '<div id="chart22" class="chart" width="100%"></div><script>';

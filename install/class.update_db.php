@@ -1398,7 +1398,6 @@ class update_db {
 			$i = 0;
 			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
 			//$Connection->db->beginTransaction();
-			$dbdata = array();
 			while (($data = fgetcsv($handle, 1000,"\t")) !== FALSE)
 			{
 				if ($i > 0 && $data[0] != '') {
@@ -1575,7 +1574,6 @@ class update_db {
 			$i = 0;
 			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
 			//$Connection->db->beginTransaction();
-			$dbdata = array();
 			while (($data = fgets($handle, 1000)) !== FALSE)
 			{
 				$result = array();
@@ -2389,7 +2387,7 @@ class update_db {
 		if (file_exists($tmp_dir.'satellite.tsv.gz.md5')) {
 			$satellite_md5_file = explode(' ',file_get_contents($tmp_dir.'satellite.tsv.gz.md5'));
 			$satellite_md5 = $satellite_md5_file[0];
-			if (!update_db::check_satellite_version($marine_identity_md5)) {
+			if (!update_db::check_satellite_version($satellite_md5)) {
 				if ($globalDebug) echo "Satellite from FlightAirMap website : Download...";
 				update_db::download('http://data.flightairmap.fr/data/satellite.tsv.gz',$tmp_dir.'satellite.tsv.gz');
 				if (file_exists($tmp_dir.'satellite.tsv.gz')) {
@@ -3298,7 +3296,7 @@ class update_db {
 				echo update_db::update_ModeS_faa();
 				echo update_db::fix_icaotype();
 				echo update_db::update_banned_fam();
-				echo update_db::update_celestrak();
+				//echo update_db::update_celestrak();
 				//echo update_db::delete_duplicatemodes();
 			} else {
 				//echo update_db::update_routes();
