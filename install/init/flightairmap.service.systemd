@@ -1,8 +1,12 @@
 [Unit]
 Description=FlightAirMap
+Requires=mysql.service
+After=mysql.service
 
 [Service]
 ExecStart=/var/www/flightairmap/Web_App/scripts/daemon-spotter.php
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
