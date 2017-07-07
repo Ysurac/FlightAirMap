@@ -1972,7 +1972,7 @@ INSERT INTO `airlines` VALUES(186, 186, 'Airport Helicopter Basel', 'N', '', 'AH
 INSERT INTO `airlines` VALUES(187, 187, 'Aeroservices Corporate', 'N', '', 'CJE', 'BIRD JET', 'France', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `airlines` VALUES(188, 188, 'Aspen Helicopters', 'N', '', 'AHF', 'ASPEN', 'United States', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `airlines` VALUES(112, 112, 'Astraeus', 'N', '5W', 'AEU', 'FLYSTAR', 'United Kingdom', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `airlines` VALUES(5685, 13130, 'Xpressair', '', 'XN', 'N', '', 'Indonesia', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `airlines` VALUES(5685, 13130, 'Xpressair', '', 'XN', 'XAR', '', 'Indonesia', 'Y', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `airlines` VALUES(189, 189, 'Aerochago Airlines', 'N', '', 'AHG', 'AEROCHAGO', 'Dominican Republic', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `airlines` VALUES(190, 190, 'Airplanes Holdings', 'N', '', 'AHH', 'AIRHOLD', 'Ireland', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `airlines` VALUES(192, 192, 'Aerochiapas', 'N', '', 'AHP', 'AEROCHIAPAS', 'Mexico', 'N', 'passenger', NULL, NULL, NULL, NULL, 0);
