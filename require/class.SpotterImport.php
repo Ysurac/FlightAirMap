@@ -986,7 +986,7 @@ class SpotterImport {
 					$source = $this->all_flights[$id]['source_name'];
 					if ($source == '') $source = $this->all_flights[$id]['format_source'];
 					if (!isset($this->source_location[$source])) {
-						$Location = new Source();
+						$Location = new Source($this->db);
 						$coord = $Location->getLocationInfobySourceName($source);
 						if (count($coord) > 0) {
 							$latitude = $coord[0]['latitude'];
