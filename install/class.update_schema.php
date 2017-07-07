@@ -799,7 +799,6 @@ class update_schema {
 		global $globalDBdriver;
 		$Connection = new Connection();
 		$error = '';
-		$query = "";
 		// Add table tle for satellites
 		if ($globalDBdriver == 'mysql') {
 			if (!$Connection->tableExists('tle')) {

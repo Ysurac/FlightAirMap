@@ -1442,6 +1442,7 @@ class update_db {
 			'BELA' => array('country' => 'Belarus', 'owner' => ''),
 			'BERM' => array('country' => 'Bermuda', 'owner' => ''),
 			'BOL' => array('country' => 'Bolivia', 'owner' => ''),
+			'BUL' => array('country' => 'Bulgaria', 'owner' => ''),
 			'BRAZ' => array('country' => 'Brazil', 'owner' => ''),
 			'CA' => array('country' => 'Canada', 'owner' => ''),
 			'CHBZ' => array('country' => 'China/Brazil', 'owner' => ''),
@@ -1593,56 +1594,58 @@ class update_db {
 				*/
 				
 				$owner_code = trim(substr($data,49,5));
-				$result['country_owner'] = $satcat_sources[$owner_code]['country'];
-				$result['owner'] = $satcat_sources[$owner_code]['owner'];
-				$result['launch_date'] = trim(substr($data,56,10));
-				$launch_site_code = trim(substr($data,68,5));
-				$result['launch_site'] = $satcat_launch_site[$launch_site_code];
-				$result['lifetime'] = trim(substr($data,75,10));
-				$result['period'] = trim(substr($data,87,7));
-				$result['inclination'] = trim(substr($data,96,5));
-				$result['apogee'] = trim(substr($data,103,6));
-				$result['perigee'] = trim(substr($data,111,6));
-				//$result['radarcross'] = trim(substr($data,119,8));
-				$result['status'] = trim(substr($data,129,3));
-				//print_r($result);
-				$result = array_map(function($value) {
-					return trim($value) === '' ? null : $value;
-				}, $result);
-				//print_r($data);
-				if ($result['operational'] != 'D') {
-					$query = "SELECT * FROM satellite WHERE cospar = :cospar LIMIT 1";
-					try {
-						$Connection = new Connection();
-						$sth = $Connection->db->prepare($query);
-						$sth->execute(array(':cospar' => $result['cospar']));
-						$exist = $sth->fetchAll(PDO::FETCH_ASSOC);
-					} catch(PDOException $e) {
-						return "error : ".$e->getMessage();
-					}
-					if (empty($exist)) {
-						$query = 'INSERT INTO satellite (name, name_alternate, country_un, country_owner, owner, users, purpose, purpose_detailed, orbit, type, longitude_geo, perigee, apogee, eccentricity, inclination, period, launch_mass, dry_mass, power, launch_date, lifetime, contractor, country_contractor, launch_site, launch_vehicule, cospar, norad, comments, source_orbital, sources) 
-						    VALUES (:name, :name_alternate, :country_un, :country_owner, :owner, :users, :purpose, :purpose_detailed, :orbit, :type, :longitude_geo, :perigee, :apogee, :eccentricity, :inclination, :period, :launch_mass, :dry_mass, :power, :launch_date, :lifetime, :contractor, :country_contractor, :launch_site, :launch_vehicule, :cospar, :norad, :comments, :source_orbital, :sources)';
-						try {
-							$sth = $Connection->db->prepare($query);
-							$sth->execute(array(
-							    ':name' => $result['name'], ':name_alternate' => '', ':country_un' => '', ':country_owner' => $result['country_owner'], ':owner' => $result['owner'], ':users' => '', ':purpose' => '', ':purpose_detailed' => '', ':orbit' => $result['status'],
-							    ':type' => '', ':longitude_geo' => NULL, ':perigee' => !empty($result['perigee']) ? $result['perigee'] : NULL, ':apogee' => !empty($result['apogee']) ? $result['apogee'] : NULL, ':eccentricity' => NULL, ':inclination' => $result['inclination'],
-							    ':period' => !empty($result['period']) ? $result['period'] : NULL, ':launch_mass' => NULL, ':dry_mass' => NULL, ':power' => NULL, ':launch_date' => $result['launch_date'], ':lifetime' => $result['lifetime'], 
-							    ':contractor' => '',':country_contractor' => '', ':launch_site' => $result['launch_site'], ':launch_vehicule' => '', ':cospar' => $result['cospar'], ':norad' => $result['norad'], ':comments' => '', ':source_orbital' => '', ':sources' => ''
-							    )
-							);
-						} catch(PDOException $e) {
-							return "error : ".$e->getMessage();
-						}
-					} elseif ($exist[0]['name'] != $result['name'] && $exist[0]['name_alternate'] != $result['name']) {
-						$query = "UPDATE satellite SET name_alternate = :name_alternate WHERE cospar = :cospar";
+				if ($owner != 'TBD') {
+					$result['country_owner'] = $satcat_sources[$owner_code]['country'];
+					$result['owner'] = $satcat_sources[$owner_code]['owner'];
+					$result['launch_date'] = trim(substr($data,56,10));
+					$launch_site_code = trim(substr($data,68,5));
+					$result['launch_site'] = $satcat_launch_site[$launch_site_code];
+					$result['lifetime'] = trim(substr($data,75,10));
+					$result['period'] = trim(substr($data,87,7));
+					$result['inclination'] = trim(substr($data,96,5));
+					$result['apogee'] = trim(substr($data,103,6));
+					$result['perigee'] = trim(substr($data,111,6));
+					//$result['radarcross'] = trim(substr($data,119,8));
+					$result['status'] = trim(substr($data,129,3));
+					//print_r($result);
+					$result = array_map(function($value) {
+						return trim($value) === '' ? null : $value;
+					}, $result);
+					//print_r($data);
+					if ($result['operational'] != 'D') {
+						$query = "SELECT * FROM satellite WHERE cospar = :cospar LIMIT 1";
 						try {
 							$Connection = new Connection();
 							$sth = $Connection->db->prepare($query);
-							$sth->execute(array(':name_alternate' => $result['name'],':cospar' => $result['cospar']));
+							$sth->execute(array(':cospar' => $result['cospar']));
+							$exist = $sth->fetchAll(PDO::FETCH_ASSOC);
 						} catch(PDOException $e) {
 							return "error : ".$e->getMessage();
+						}
+						if (empty($exist)) {
+							$query = 'INSERT INTO satellite (name, name_alternate, country_un, country_owner, owner, users, purpose, purpose_detailed, orbit, type, longitude_geo, perigee, apogee, eccentricity, inclination, period, launch_mass, dry_mass, power, launch_date, lifetime, contractor, country_contractor, launch_site, launch_vehicule, cospar, norad, comments, source_orbital, sources) 
+							    VALUES (:name, :name_alternate, :country_un, :country_owner, :owner, :users, :purpose, :purpose_detailed, :orbit, :type, :longitude_geo, :perigee, :apogee, :eccentricity, :inclination, :period, :launch_mass, :dry_mass, :power, :launch_date, :lifetime, :contractor, :country_contractor, :launch_site, :launch_vehicule, :cospar, :norad, :comments, :source_orbital, :sources)';
+							try {
+								$sth = $Connection->db->prepare($query);
+								$sth->execute(array(
+								    ':name' => $result['name'], ':name_alternate' => '', ':country_un' => '', ':country_owner' => $result['country_owner'], ':owner' => $result['owner'], ':users' => '', ':purpose' => '', ':purpose_detailed' => '', ':orbit' => $result['status'],
+								    ':type' => '', ':longitude_geo' => NULL, ':perigee' => !empty($result['perigee']) ? $result['perigee'] : NULL, ':apogee' => !empty($result['apogee']) ? $result['apogee'] : NULL, ':eccentricity' => NULL, ':inclination' => $result['inclination'],
+								    ':period' => !empty($result['period']) ? $result['period'] : NULL, ':launch_mass' => NULL, ':dry_mass' => NULL, ':power' => NULL, ':launch_date' => $result['launch_date'], ':lifetime' => $result['lifetime'], 
+								    ':contractor' => '',':country_contractor' => '', ':launch_site' => $result['launch_site'], ':launch_vehicule' => '', ':cospar' => $result['cospar'], ':norad' => $result['norad'], ':comments' => '', ':source_orbital' => '', ':sources' => ''
+								    )
+								);
+							} catch(PDOException $e) {
+								return "error : ".$e->getMessage();
+							}
+						} elseif ($exist[0]['name'] != $result['name'] && $exist[0]['name_alternate'] != $result['name']) {
+							$query = "UPDATE satellite SET name_alternate = :name_alternate WHERE cospar = :cospar";
+							try {
+								$Connection = new Connection();
+								$sth = $Connection->db->prepare($query);
+								$sth->execute(array(':name_alternate' => $result['name'],':cospar' => $result['cospar']));
+							} catch(PDOException $e) {
+								return "error : ".$e->getMessage();
+							}
 						}
 					}
 				}
