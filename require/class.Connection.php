@@ -94,6 +94,7 @@ class Connection{
 			if (isset($globalDB[$DBname]['port'])) $globalDBSport = $globalDB[$DBname]['port'];
 			else $globalDBSport = 3306;
 		}
+		if ($globalDBSname == '' || $globalDBSuser == '') return false;
 		// Set number of try to connect to DB
 		if (!isset($globalDBretry) || $globalDBretry == '' || $globalDBretry === NULL) $globalDBretry = 5;
 		$i = 0;
