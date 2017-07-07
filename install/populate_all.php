@@ -19,7 +19,7 @@
     echo "Done !\n";
     if (isset($globalOwner) && $globalOwner) {
 	echo "Install private owners...";
-	update_db::update_owner();
+	update_db::update_owner_fam();
         echo "Done !\n";
     }
     /*
