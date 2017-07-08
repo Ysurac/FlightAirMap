@@ -204,7 +204,7 @@ if (isset($_GET['reset'])) {
 	} else {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
-		$error .= update_db::update_routes();
+		$error .= update_db::update_routes_fam();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate routes table with externals data'));
 		$_SESSION['install'] = 'translation';
 		$_SESSION['next'] = 'Populate translation table with externals data';

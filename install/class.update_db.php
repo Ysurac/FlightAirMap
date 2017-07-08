@@ -1864,7 +1864,7 @@ class update_db {
 		include_once('class.create_db.php');
 		require_once(dirname(__FILE__).'/../require/class.NOTAM.php');
 		if ($globalDebug) echo "NOTAM from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/notam.txt.gz',$tmp_dir.'notam.txt.gz');
+		update_db::download('http://data.flightairmap.com/data/notam.txt.gz',$tmp_dir.'notam.txt.gz');
 		$error = '';
 		if (file_exists($tmp_dir.'notam.txt.gz')) {
 			if ($globalDebug) echo "Gunzip...";
@@ -1965,7 +1965,7 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		$error = '';
 		if ($globalDebug) echo "Schedules Oneworld : Download...";
-		update_db::download('http://data.flightairmap.fr/data/schedules/oneworld.csv.gz',$tmp_dir.'oneworld.csv.gz');
+		update_db::download('http://data.flightairmap.com/data/schedules/oneworld.csv.gz',$tmp_dir.'oneworld.csv.gz');
 		if (file_exists($tmp_dir.'oneworld.csv.gz')) {
 			if ($globalDebug) echo "Gunzip...";
 			update_db::gunzip($tmp_dir.'oneworld.csv.gz');
@@ -1981,7 +1981,7 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		$error = '';
 		if ($globalDebug) echo "Schedules Skyteam : Download...";
-		update_db::download('http://data.flightairmap.fr/data/schedules/skyteam.csv.gz',$tmp_dir.'skyteam.csv.gz');
+		update_db::download('http://data.flightairmap.com/data/schedules/skyteam.csv.gz',$tmp_dir.'skyteam.csv.gz');
 		if (file_exists($tmp_dir.'skyteam.csv.gz')) {
 			if ($globalDebug) echo "Gunzip...";
 			update_db::gunzip($tmp_dir.'skyteam.csv.gz');
@@ -2009,7 +2009,7 @@ class update_db {
 */
 		if ($globalDebug) echo "Modes : Download...";
 //		update_db::download('http://planebase.biz/sqb.php?f=basestationall.zip',$tmp_dir.'basestation_latest.zip','http://planebase.biz/bstnsqb');
-		update_db::download('http://data.flightairmap.fr/data/BaseStation.sqb.gz',$tmp_dir.'BaseStation.sqb.gz');
+		update_db::download('http://data.flightairmap.com/data/BaseStation.sqb.gz',$tmp_dir.'BaseStation.sqb.gz');
 
 //		if (file_exists($tmp_dir.'basestation_latest.zip')) {
 		if (file_exists($tmp_dir.'BaseStation.sqb.gz')) {
@@ -2297,7 +2297,7 @@ class update_db {
 	public static function update_translation_fam() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Translation from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/translation.tsv.gz',$tmp_dir.'translation.tsv.gz');
+		update_db::download('http://data.flightairmap.com/data/translation.tsv.gz',$tmp_dir.'translation.tsv.gz');
 		if (file_exists($tmp_dir.'translation.tsv.gz')) {
 			if ($globalDebug) echo "Gunzip...";
 			update_db::gunzip($tmp_dir.'translation.tsv.gz');
@@ -2312,7 +2312,7 @@ class update_db {
 	public static function update_ModeS_fam() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "ModeS from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/modes.tsv.gz',$tmp_dir.'modes.tsv.gz');
+		update_db::download('http://data.flightairmap.com/data/modes.tsv.gz',$tmp_dir.'modes.tsv.gz');
 		if (file_exists($tmp_dir.'modes.tsv.gz')) {
 			if ($globalDebug) echo "Gunzip...";
 			update_db::gunzip($tmp_dir.'modes.tsv.gz');
@@ -2328,9 +2328,9 @@ class update_db {
 		global $tmp_dir, $globalDebug, $globalOwner;
 		if ($globalDebug) echo "owner from FlightAirMap website : Download...";
 		if ($globalOwner === TRUE) {
-			update_db::download('http://data.flightairmap.fr/data/owners_all.tsv.gz',$tmp_dir.'owners.tsv.gz');
+			update_db::download('http://data.flightairmap.com/data/owners_all.tsv.gz',$tmp_dir.'owners.tsv.gz');
 		} else {
-			update_db::download('http://data.flightairmap.fr/data/owners.tsv.gz',$tmp_dir.'owners.tsv.gz');
+			update_db::download('http://data.flightairmap.com/data/owners.tsv.gz',$tmp_dir.'owners.tsv.gz');
 		}
 		if (file_exists($tmp_dir.'owners.tsv.gz')) {
 			if ($globalDebug) echo "Gunzip...";
@@ -2346,7 +2346,7 @@ class update_db {
 	public static function update_routes_fam() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Routes from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/routes.tsv.gz',$tmp_dir.'routes.tsv.gz');
+		update_db::download('http://data.flightairmap.com/data/routes.tsv.gz',$tmp_dir.'routes.tsv.gz');
 		if (file_exists($tmp_dir.'routes.tsv.gz')) {
 			if ($globalDebug) echo "Gunzip...";
 			update_db::gunzip($tmp_dir.'routes.tsv.gz');
@@ -2360,13 +2360,13 @@ class update_db {
 	}
 	public static function update_marine_identity_fam() {
 		global $tmp_dir, $globalDebug;
-		update_db::download('http://data.flightairmap.fr/data/marine_identity.tsv.gz.md5',$tmp_dir.'marine_identity.tsv.gz.md5');
+		update_db::download('http://data.flightairmap.com/data/marine_identity.tsv.gz.md5',$tmp_dir.'marine_identity.tsv.gz.md5');
 		if (file_exists($tmp_dir.'marine_identity.tsv.gz.md5')) {
 			$marine_identity_md5_file = explode(' ',file_get_contents($tmp_dir.'marine_identity.tsv.gz.md5'));
 			$marine_identity_md5 = $marine_identity_md5_file[0];
 			if (!update_db::check_marine_identity_version($marine_identity_md5)) {
 				if ($globalDebug) echo "Marine identity from FlightAirMap website : Download...";
-				update_db::download('http://data.flightairmap.fr/data/marine_identity.tsv.gz',$tmp_dir.'marine_identity.tsv.gz');
+				update_db::download('http://data.flightairmap.com/data/marine_identity.tsv.gz',$tmp_dir.'marine_identity.tsv.gz');
 				if (file_exists($tmp_dir.'marine_identity.tsv.gz')) {
 					if ($globalDebug) echo "Gunzip...";
 					update_db::gunzip($tmp_dir.'marine_identity.tsv.gz');
@@ -2386,13 +2386,13 @@ class update_db {
 
 	public static function update_satellite_fam() {
 		global $tmp_dir, $globalDebug;
-		update_db::download('http://data.flightairmap.fr/data/satellite.tsv.gz.md5',$tmp_dir.'satellite.tsv.gz.md5');
+		update_db::download('http://data.flightairmap.com/data/satellite.tsv.gz.md5',$tmp_dir.'satellite.tsv.gz.md5');
 		if (file_exists($tmp_dir.'satellite.tsv.gz.md5')) {
 			$satellite_md5_file = explode(' ',file_get_contents($tmp_dir.'satellite.tsv.gz.md5'));
 			$satellite_md5 = $satellite_md5_file[0];
 			if (!update_db::check_satellite_version($satellite_md5)) {
 				if ($globalDebug) echo "Satellite from FlightAirMap website : Download...";
-				update_db::download('http://data.flightairmap.fr/data/satellite.tsv.gz',$tmp_dir.'satellite.tsv.gz');
+				update_db::download('http://data.flightairmap.com/data/satellite.tsv.gz',$tmp_dir.'satellite.tsv.gz');
 				if (file_exists($tmp_dir.'satellite.tsv.gz')) {
 					if ($globalDebug) echo "Gunzip...";
 					update_db::gunzip($tmp_dir.'satellite.tsv.gz');
@@ -2412,7 +2412,7 @@ class update_db {
 	public static function update_banned_fam() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Banned airlines in Europe from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/ban-eu.csv',$tmp_dir.'ban_eu.csv');
+		update_db::download('http://data.flightairmap.com/data/ban-eu.csv',$tmp_dir.'ban_eu.csv');
 		if (file_exists($tmp_dir.'ban_eu.csv')) {
 			//if ($globalDebug) echo "Gunzip...";
 			//update_db::gunzip($tmp_dir.'ban_ue.csv');
@@ -2431,18 +2431,18 @@ class update_db {
 		$error = '';
 		if ($globalDebug) echo "Airspace from FlightAirMap website : Download...";
 		if ($globalDBdriver == 'mysql') {
-			update_db::download('http://data.flightairmap.fr/data/airspace_mysql.sql.gz.md5',$tmp_dir.'airspace.sql.gz.md5');
+			update_db::download('http://data.flightairmap.com/data/airspace_mysql.sql.gz.md5',$tmp_dir.'airspace.sql.gz.md5');
 		} else {
-			update_db::download('http://data.flightairmap.fr/data/airspace_pgsql.sql.gz.md5',$tmp_dir.'airspace.sql.gz.md5');
+			update_db::download('http://data.flightairmap.com/data/airspace_pgsql.sql.gz.md5',$tmp_dir.'airspace.sql.gz.md5');
 		}
 		if (file_exists($tmp_dir.'airspace.sql.gz.md5')) {
 			$airspace_md5_file = explode(' ',file_get_contents($tmp_dir.'airspace.sql.gz.md5'));
 			$airspace_md5 = $airspace_md5_file[0];
 			if (!update_db::check_airspace_version($airspace_md5)) {
 				if ($globalDBdriver == 'mysql') {
-					update_db::download('http://data.flightairmap.fr/data/airspace_mysql.sql.gz',$tmp_dir.'airspace.sql.gz');
+					update_db::download('http://data.flightairmap.com/data/airspace_mysql.sql.gz',$tmp_dir.'airspace.sql.gz');
 				} else {
-					update_db::download('http://data.flightairmap.fr/data/airspace_pgsql.sql.gz',$tmp_dir.'airspace.sql.gz');
+					update_db::download('http://data.flightairmap.com/data/airspace_pgsql.sql.gz',$tmp_dir.'airspace.sql.gz');
 				}
 				if (file_exists($tmp_dir.'airspace.sql.gz')) {
 					if ($globalDebug) echo "Gunzip...";
@@ -2473,12 +2473,12 @@ class update_db {
 		global $tmp_dir, $globalDebug, $globalGeoidSource;
 		$error = '';
 		if ($globalDebug) echo "Geoid from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/geoid/'.$globalGeoidSource.'.pgm.gz.md5',$tmp_dir.$globalGeoidSource.'.pgm.gz.md5');
+		update_db::download('http://data.flightairmap.com/data/geoid/'.$globalGeoidSource.'.pgm.gz.md5',$tmp_dir.$globalGeoidSource.'.pgm.gz.md5');
 		if (file_exists($tmp_dir.$globalGeoidSource.'.pgm.gz.md5')) {
 			$geoid_md5_file = explode(' ',file_get_contents($tmp_dir.$globalGeoidSource.'.pgm.gz.md5'));
 			$geoid_md5 = $geoid_md5_file[0];
 			if (!update_db::check_geoid_version($geoid_md5)) {
-				update_db::download('http://data.flightairmap.fr/data/geoid/'.$globalGeoidSource.'.pgm.gz',$tmp_dir.$globalGeoidSource.'.pgm.gz');
+				update_db::download('http://data.flightairmap.com/data/geoid/'.$globalGeoidSource.'.pgm.gz',$tmp_dir.$globalGeoidSource.'.pgm.gz');
 				if (file_exists($tmp_dir.$globalGeoidSource.'.pgm.gz')) {
 					if ($globalDebug) echo "Gunzip...";
 					update_db::gunzip($tmp_dir.$globalGeoidSource.'.pgm.gz',dirname(__FILE__).'/../data/'.$globalGeoidSource.'.pgm');
@@ -2546,7 +2546,7 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		$error = '';
 		if ($globalDebug) echo "Models from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/models/models.md5sum',$tmp_dir.'models.md5sum');
+		update_db::download('http://data.flightairmap.com/data/models/models.md5sum',$tmp_dir.'models.md5sum');
 		if (file_exists($tmp_dir.'models.md5sum')) {
 			if ($globalDebug) echo "Check files...\n";
 			$newmodelsdb = array();
@@ -2568,10 +2568,10 @@ class update_db {
 			$diff = array_diff($newmodelsdb,$modelsdb);
 			foreach ($diff as $key => $value) {
 				if ($globalDebug) echo 'Downloading model '.$key.' ...'."\n";
-				update_db::download('http://data.flightairmap.fr/data/models/'.$key,dirname(__FILE__).'/../models/'.$key);
+				update_db::download('http://data.flightairmap.com/data/models/'.$key,dirname(__FILE__).'/../models/'.$key);
 				
 			}
-			update_db::download('http://data.flightairmap.fr/data/models/models.md5sum',dirname(__FILE__).'/../models/models.md5sum');
+			update_db::download('http://data.flightairmap.com/data/models/models.md5sum',dirname(__FILE__).'/../models/models.md5sum');
 		} else $error = "File ".$tmp_dir.'models.md5sum'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
@@ -2583,7 +2583,7 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		$error = '';
 		if ($globalDebug) echo "Space models from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/models/space/space_models.md5sum',$tmp_dir.'space_models.md5sum');
+		update_db::download('http://data.flightairmap.com/data/models/space/space_models.md5sum',$tmp_dir.'space_models.md5sum');
 		if (file_exists($tmp_dir.'space_models.md5sum')) {
 			if ($globalDebug) echo "Check files...\n";
 			$newmodelsdb = array();
@@ -2605,10 +2605,10 @@ class update_db {
 			$diff = array_diff($newmodelsdb,$modelsdb);
 			foreach ($diff as $key => $value) {
 				if ($globalDebug) echo 'Downloading space model '.$key.' ...'."\n";
-				update_db::download('http://data.flightairmap.fr/data/models/space/'.$key,dirname(__FILE__).'/../models/space/'.$key);
+				update_db::download('http://data.flightairmap.com/data/models/space/'.$key,dirname(__FILE__).'/../models/space/'.$key);
 				
 			}
-			update_db::download('http://data.flightairmap.fr/data/models/space/space_models.md5sum',dirname(__FILE__).'/../models/space/space_models.md5sum');
+			update_db::download('http://data.flightairmap.com/data/models/space/space_models.md5sum',dirname(__FILE__).'/../models/space/space_models.md5sum');
 		} else $error = "File ".$tmp_dir.'models.md5sum'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
@@ -2620,7 +2620,7 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		$error = '';
 		if ($globalDebug) echo "Vehicules models from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.fr/data/models/vehicules/vehicules_models.md5sum',$tmp_dir.'vehicules_models.md5sum');
+		update_db::download('http://data.flightairmap.com/data/models/vehicules/vehicules_models.md5sum',$tmp_dir.'vehicules_models.md5sum');
 		if (file_exists($tmp_dir.'vehicules_models.md5sum')) {
 			if ($globalDebug) echo "Check files...\n";
 			$newmodelsdb = array();
@@ -2642,10 +2642,10 @@ class update_db {
 			$diff = array_diff($newmodelsdb,$modelsdb);
 			foreach ($diff as $key => $value) {
 				if ($globalDebug) echo 'Downloading vehicules model '.$key.' ...'."\n";
-				update_db::download('http://data.flightairmap.fr/data/models/vehicules/'.$key,dirname(__FILE__).'/../models/vehicules/'.$key);
+				update_db::download('http://data.flightairmap.com/data/models/vehicules/'.$key,dirname(__FILE__).'/../models/vehicules/'.$key);
 				
 			}
-			update_db::download('http://data.flightairmap.fr/data/models/vehicules/vehicules_models.md5sum',dirname(__FILE__).'/../models/vehicules/vehicules_models.md5sum');
+			update_db::download('http://data.flightairmap.com/data/models/vehicules/vehicules_models.md5sum',dirname(__FILE__).'/../models/vehicules/vehicules_models.md5sum');
 		} else $error = "File ".$tmp_dir.'models.md5sum'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;

@@ -49,7 +49,7 @@ class create_db {
 		return $error;
 	}
 
-	public static function create_database($root,$root_pass,$user,$pass,$db,$db_type,$host) {
+	public static function create_database($root,$root_pass,$user,$pass,$db,$db_type,$host,$port = '') {
 		$root = filter_var($root,FILTER_SANITIZE_STRING);
 		$root_pass = filter_var($root_pass,FILTER_SANITIZE_STRING);
 		$user = filter_var($user,FILTER_SANITIZE_STRING);
@@ -57,12 +57,15 @@ class create_db {
 		$db = filter_var($db,FILTER_SANITIZE_STRING);
 		$db_type = filter_var($db_type,FILTER_SANITIZE_STRING);
 		$host = filter_var($host,FILTER_SANITIZE_STRING);
+		if ($db_type == 'mysql' && $port == '') $port = 3306;
+		elseif ($port == '') $port = 5432;
 		// Dirty hack
 		if ($host != 'localhost' && $host != '127.0.0.1') {
 			$grantright = $_SERVER['SERVER_ADDR'];
 		} else $grantright = 'localhost';
 		try {
-			$dbh = new PDO($db_type.':host='.$host,$root,$root_pass);
+			if ($host == 'localhost') $dbh = new PDO($db_type.':host=127.0.0.1',$root,$root_pass);
+			else $dbh = new PDO($db_type.':host='.$host.';port='.$port,$root,$root_pass);
 			$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			if ($db_type == 'mysql') {
 				$dbh->exec('CREATE DATABASE IF NOT EXISTS `'.$db.'`;GRANT ALL ON `'.$db."`.* TO '".$user."'@'".$grantright."' IDENTIFIED BY '".$password."';FLUSH PRIVILEGES;");
