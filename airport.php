@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.Common.php');
 require_once('require/class.Language.php');
 require_once('require/class.Stats.php');
 
@@ -110,6 +111,7 @@ if (isset($_POST['airport']))
 } else {
 	$Spotter= new Spotter();
 	$Stats = new Stats();
+	$Common = new Common();
 	$title = _("Airports");
 	require_once('header.php');
 	print '<div class="column">';
@@ -122,7 +124,7 @@ if (isset($_POST['airport']))
 	$previous = null;
 	print '<div class="alphabet-legend">';
 	foreach($airport_names as $value) {
-		$firstLetter = mb_strtoupper(mb_substr($value['airport_city'], 0, 1));
+		$firstLetter = strtoupper($Common->replace_mb_substr($value['airport_city'], 0, 1));
 		if($previous !== $firstLetter)
 		{
 			if ($previous !== null){
@@ -135,7 +137,7 @@ if (isset($_POST['airport']))
 	print '</div>';
 	$previous = null;
 	foreach($airport_names as $value) {
-		$firstLetter = mb_strtoupper(mb_substr($value['airport_city'], 0, 1));
+		$firstLetter = strtoupper($Common->replace_mb_substr($value['airport_city'], 0, 1));
 		if ($firstLetter != "")
 		{
 			if($previous !== $firstLetter)

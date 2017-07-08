@@ -647,5 +647,15 @@ class Common {
 		$forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
 		return filter_var($client, FILTER_VALIDATE_IP) ? $client : filter_var($forward, FILTER_VALIDATE_IP) ? $forward : $_SERVER['REMOTE_ADDR']; 
 	}
+	public function replace_mb_substr($string, $offset, $length)
+	{
+		if (!function_exists('mb_substr')) {
+			$arr = preg_split("//u", $string);
+			$slice = array_slice($arr, $offset + 1, $length);
+			return implode("", $slice);
+		} else {
+			return mb_substr($string,$offset,$length,'UTF-8');
+		}
+	}
 }
 ?>

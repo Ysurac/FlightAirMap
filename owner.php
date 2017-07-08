@@ -25,7 +25,7 @@ if (isset($_POST['owner']))
 	$previous = null;
 	print '<div class="alphabet-legend">';
 	foreach($owner_names as $value) {
-		$firstLetter = $Common->remove_accents(mb_strtoupper(mb_substr($value['owner_name'], 0, 1)));
+		$firstLetter = $Common->remove_accents(strtoupper($Common->replace_mb_substr($value['owner_name'], 0, 1)));
 		if($previous !== $firstLetter && $firstLetter != "'" && $firstLetter != '"')
 		{
 			if ($previous !== null){
@@ -38,7 +38,7 @@ if (isset($_POST['owner']))
 	print '</div>';
 	$previous = null;
 	foreach($owner_names as $value) {
-		$firstLetter = $Common->remove_accents(mb_strtoupper(mb_substr($value['owner_name'], 0, 1)));
+		$firstLetter = $Common->remove_accents(strtoupper($Common->replace_mb_substr($value['owner_name'], 0, 1)));
 		if ($firstLetter != "")
 		{
 			if($previous !== $firstLetter && $firstLetter != "'" && $firstLetter != '"')

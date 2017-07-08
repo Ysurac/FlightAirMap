@@ -3,6 +3,7 @@ require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 require_once('require/class.Stats.php');
+require_once('require/class.Common.php');
 
 if (isset($_POST['pilot']))
 {
@@ -11,6 +12,7 @@ if (isset($_POST['pilot']))
 } else {
 	$Spotter= new Spotter();
 	$Stats = new Stats();
+	$Common = new Common();
 	$title = _("Pilots");
 	require_once('header.php');
 	print '<div class="column">';
@@ -23,7 +25,7 @@ if (isset($_POST['pilot']))
 	$previous = null;
 	print '<div class="alphabet-legend">';
 	foreach($pilot_names as $value) {
-		$firstLetter = mb_strtoupper(mb_substr($value['pilot_name'], 0, 1));
+		$firstLetter = strtoupper($Common->replace_mb_substr($value['pilot_name'], 0, 1));
 		if($previous !== $firstLetter && $firstLetter != "'")
 		{
 			if ($previous !== null){
@@ -36,7 +38,7 @@ if (isset($_POST['pilot']))
 	print '</div>';
 	$previous = null;
 	foreach($pilot_names as $value) {
-		$firstLetter = mb_strtoupper(mb_substr($value['pilot_name'], 0, 1));
+		$firstLetter = strtoupper($Common->replace_mb_substr($value['pilot_name'], 0, 1));
 		if ($firstLetter != "")
 		{
 			if($previous !== $firstLetter && $firstLetter != "'")

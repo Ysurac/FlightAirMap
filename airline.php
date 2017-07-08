@@ -1,5 +1,6 @@
 <?php
 require_once('require/class.Connection.php');
+require_once('require/class.Common.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
@@ -12,6 +13,7 @@ if (isset($_POST['airline']))
 	$title = "Airlines";
 	require_once('header.php');
 	$Spotter = new Spotter();
+	$Common = new Common();
 	print '<div class="column">';
 	print '<h1>'._("Airlines").'</h1>';
 	if (isset($_POST['airline_type'])) {
@@ -70,7 +72,7 @@ if (isset($_POST['airline']))
 	{
 		//echo $value['airline_name']."\n";
 		//echo mb_substr($value['airline_name'],0,1).' - '.$value['airline_name']."\n";
-		$firstLetter = mb_strtoupper(mb_substr($value['airline_name'], 0, 1),'UTF-8');
+		$firstLetter = strtoupper($Common->replace_mb_substr($value['airline_name'], 0, 1));
 		if($previous !== $firstLetter)
 		{
 			if ($previous !== null) print ' | ';
@@ -81,7 +83,7 @@ if (isset($_POST['airline']))
 	print '</div>';
 	$previous = null;
 	foreach($airline_names as $value) {
-		$firstLetter = strtoupper(substr($value['airline_name'], 0, 1));
+		$firstLetter = strtoupper($Common->replace_mb_substr($value['airline_name'], 0, 1));
 		if ($firstLetter != "")
 		{
 			if($previous !== $firstLetter)
