@@ -57,19 +57,12 @@ The follwing is a list of PHP extensions that must be installed on your server i
 Check https://github.com/Ysurac/FlightAirMap/wiki/Installation for detailed installation instruction.
 
 ### Web install/Update ###
-(This is the recommanded way to install)
 
 git pull https://github.com/Ysurac/FlightAirMap or get latest release https://github.com/Ysurac/FlightAirMap/releases
 
 Use install/index.php
 
 (You can always keep scripts/settings.php when you update)
-
-### Console install ###
-* Create a mysql database.
-* Populate the database with db/*.sql
-* supply require/settings.php with your database credentials.
-* run install/populate_all.php or install/populate_ivao.php if you use IVAO as datasource
 
 ## Data Sources
 

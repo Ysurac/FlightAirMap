@@ -2,7 +2,8 @@
 <?php
     require_once('../require/settings.php');
     if ($globalInstalled) {
-        echo '$globalInstalled must be set to FALSE in require/settings.php';
+        //echo '$globalInstalled must be set to FALSE in require/settings.php';
+        echo "Use install/index.php instead. You really don't want to use this.";
         exit;
     }
     require('class.update_db.php');

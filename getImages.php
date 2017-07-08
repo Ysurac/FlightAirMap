@@ -88,8 +88,8 @@ if (extension_loaded('gd') && function_exists('gd_info')) {
         imagesavealpha($image, true);
 	imagepng($image);
 	imagepng($image);
-	if (is_writable('cache')) {
-    	    imagepng($image,dirname(__FILE__).DIRECTORY_SEPARATOR.'cache/'.$color.'-'.$filename);
+	if (is_writable(dirname(__FILE__).'/cache')) {
+    	    imagepng($image,dirname(__FILE__).'/cache/'.$color.'-'.$filename);
 	}
         imagedestroy($image);
     }

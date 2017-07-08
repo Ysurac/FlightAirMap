@@ -2815,17 +2815,17 @@ class Spotter{
 			elseif (isset($globalVATSIM) && $globalVATSIM) $forsource = 'vatsim';
 			elseif (isset($globalIVAO) && $globalIVAO) $forsource = 'ivao';
 			if ($forsource === NULL) {
-				$query = "SELECT DISTINCT icao AS airline_icao, name AS airline_name, type AS airline_type FROM airlines WHERE forsource IS NULL ORDER BY name ASC";
+				$query = "SELECT DISTINCT icao AS airline_icao, name AS airline_name, type AS airline_type FROM airlines WHERE forsource IS NULL ORDER BY airline_name ASC";
 				$query_data = array();
 			} else {
-				$query = "SELECT DISTINCT icao AS airline_icao, name AS airline_name, type AS airline_type FROM airlines WHERE forsource = :forsource ORDER BY name ASC";
+				$query = "SELECT DISTINCT icao AS airline_icao, name AS airline_name, type AS airline_type FROM airlines WHERE forsource = :forsource ORDER BY airline_name ASC";
 				$query_data = array(':forsource' => $forsource);
 			}
 		} else {
 			$query  = "SELECT DISTINCT spotter_output.airline_icao AS airline_icao, spotter_output.airline_name AS airline_name, spotter_output.airline_type AS airline_type
 					FROM spotter_output".$filter_query." spotter_output.airline_icao <> '' 
 					AND spotter_output.airline_type = :airline_type 
-					ORDER BY spotter_output.airline_icao ASC";
+					ORDER BY spotter_output.airline_name ASC";
 			$query_data = array(':airline_type' => $airline_type);
 		}
 		

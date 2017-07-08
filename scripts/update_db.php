@@ -150,7 +150,7 @@ if (isset($globalMap3D) && $globalMap3D) {
 		if ((isset($globalTracker) && $globalTracker) || (isset($globalMarine) && $globalMarine)) {
 			$update_db->update_vehicules_models();
 		}
-	} elseif (isset($globalSatellite) && $globalSatellite && isset($globalMasterServer) && $globalMasterServer) {
+	} elseif (isset($globalMasterServer) && $globalMasterServer) {
 		if ($update_db->check_last_satellite_update()) {
 			echo "Updating satellite data...";
 			echo $update_db->update_celestrak();

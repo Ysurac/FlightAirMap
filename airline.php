@@ -28,7 +28,7 @@ if (isset($_POST['airline']))
 		foreach ($alliances as $alliance) {
 			print '<div class="alphabet-airline alphabet-item">';
 			print '<a href="'.$globalURL.'/airline/alliance_'.str_replace(' ','_',$alliance['alliance']).'">';
-			if (@getimagesize('images/airlines/'.str_replace(' ','_',$alliance['alliance']).'.png') || @getimagesize($globalURL.'/images/airlines/'.str_replace(' ','_',$alliance['alliance']).'.png'))
+			if (file_exists('images/airlines/'.str_replace(' ','_',$alliance['alliance']).'.png'))
 			{
 				print '<img src="'.$globalURL.'/images/airlines/'.str_replace(' ','_',$alliance['alliance']).'.png" alt="'._("Click to see alliance activity").'" title="'._("Click to see alliance activity").'" /> ';
 			} else print $alliance['alliance'];
@@ -92,10 +92,12 @@ if (isset($_POST['airline']))
 			$previous = $firstLetter;
 			print '<div class="alphabet-airline alphabet-item">';
 			print '<a href="'.$globalURL.'/airline/'.$value['airline_icao'].'">';
-			if (isset($globalIVAO) && $globalIVAO && (@getimagesize('images/airlines/'.$value['airline_icao'].'.gif') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.gif')))
+			//if (isset($globalIVAO) && $globalIVAO && (@getimagesize('images/airlines/'.$value['airline_icao'].'.gif') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.gif')))
+			if (isset($globalIVAO) && $globalIVAO && (file_exists('images/airlines/'.$value['airline_icao'].'.gif')))
 			{
 				print '<img src="'.$globalURL.'/images/airlines/'.$value['airline_icao'].'.gif" alt="'._("Click to see airline activity").'" title="'._("Click to see airline activity").'" /> ';
-			} elseif (@getimagesize('images/airlines/'.$value['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.png'))
+			//} elseif (@getimagesize('images/airlines/'.$value['airline_icao'].'.png') || @getimagesize($globalURL.'/images/airlines/'.$value['airline_icao'].'.png'))
+			} elseif (file_exists('images/airlines/'.$value['airline_icao'].'.png'))
 			{
 				print '<img src="'.$globalURL.'/images/airlines/'.$value['airline_icao'].'.png" alt="'._("Click to see airline activity").'" title="'._("Click to see airline activity").'" /> ';
 				if (isset($value['ban_eu']) && $value['ban_eu'] == 1) print '<img src="'.$globalURL.'/images/baneu.png" alt="'._("Banned in Europe").'" title="'._("Banned in Europe").'" /> ';

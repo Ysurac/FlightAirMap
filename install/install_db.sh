@@ -1,7 +1,7 @@
 #!/bin/sh
 # You should always use PHP scripts.
 # This script will certainly not work.
-
+# ! DON'T USE ME PLEASE !
 # Config #
 DB_USER=""
 DB_PASS=""
