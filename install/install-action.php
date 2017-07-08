@@ -111,6 +111,7 @@ if (isset($_GET['reset'])) {
 	}
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'waypoints') {
 	include_once('class.update_db.php');
+	$globalDebug = FALSE;
 	$error .= update_db::update_waypoints();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate waypoints database'));
 
@@ -120,6 +121,7 @@ if (isset($_GET['reset'])) {
 	print json_encode($result);
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'airspace') {
 	include_once('class.update_db.php');
+	$globalDebug = FALSE;
 	$error .= update_db::update_airspace_fam();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate airspace database'));
 	$_SESSION['install'] = 'countries';
@@ -128,6 +130,7 @@ if (isset($_GET['reset'])) {
 	print json_encode($result);
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'countries') {
 	include_once('class.update_db.php');
+	$globalDebug = FALSE;
 	$error .= update_db::update_countries();
 	$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate countries database'));
 	if (isset($globalNOTAM) && $globalNOTAM && isset($globalNOTAMSource) && $globalNOTAMSource != '') {

@@ -121,8 +121,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</select>
 			</p>
 			<p>
-				<label for="createdb">Create database (will not work for MySQL >= 5.7, you need to create DB and user manually)</label>
+				<label for="createdb">Create database</label>
 				<input type="checkbox" name="createdb" id="createdb" value="createdb" onClick="create_database_js()" />
+				<p class="help-block">will not work for MySQL >= 5.7 and MariaDB >= 10.1, you need to create DB and user manually</p>
 			</p>
 			<div id="createdb_data">
 				<p>
