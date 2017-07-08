@@ -2149,214 +2149,213 @@ class update_schema {
 		return $error;
 	}
 
-
-
-    	public static function check_version($update = false) {
-    	    global $globalDBname;
-    	    $version = 0;
-    	    $Connection = new Connection();
-    	    if ($Connection->tableExists('aircraft')) {
-    		if (!$Connection->tableExists('config')) {
-    		    $version = '1';
-    		    if ($update) return self::update_from_1();
-    		    else return $version;
+	public static function check_version($update = false) {
+		global $globalDBname;
+		$version = 0;
+		$Connection = new Connection();
+		if (!$Connection->connectionExists()) {
+			return "error (check_version): Can't connect to ".$globalDBname."\n";
 		} else {
-    		    $Connection = new Connection();
-		    $query = "SELECT value FROM config WHERE name = 'schema_version' LIMIT 1";
-		    try {
-            		$sth = $Connection->db->prepare($query);
-		        $sth->execute();
-		    } catch(PDOException $e) {
-			return "error : ".$e->getMessage()."\n";
-    		    }
-    		    $result = $sth->fetch(PDO::FETCH_ASSOC);
-    		    if ($update) {
-    			if ($result['value'] == '2') {
-    			    $error = self::update_from_2();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '3') {
-    			    $error = self::update_from_3();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '4') {
-    			    $error = self::update_from_4();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '5') {
-    			    $error = self::update_from_5();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '6') {
-    			    $error = self::update_from_6();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '7') {
-    			    $error = self::update_from_7();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '8') {
-    			    $error = self::update_from_8();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '9') {
-    			    $error = self::update_from_9();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '10') {
-    			    $error = self::update_from_10();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '11') {
-    			    $error = self::update_from_11();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '12') {
-    			    $error = self::update_from_12();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '13') {
-    			    $error = self::update_from_13();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '14') {
-    			    $error = self::update_from_14();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '15') {
-    			    $error = self::update_from_15();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '16') {
-    			    $error = self::update_from_16();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '17') {
-    			    $error = self::update_from_17();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '18') {
-    			    $error = self::update_from_18();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '19') {
-    			    $error = self::update_from_19();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '20') {
-    			    $error = self::update_from_20();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '21') {
-    			    $error = self::update_from_21();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '22') {
-    			    $error = self::update_from_22();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '23') {
-    			    $error = self::update_from_23();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '24') {
-    			    $error = self::update_from_24();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '25') {
-    			    $error = self::update_from_25();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '26') {
-    			    $error = self::update_from_26();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '27') {
-    			    $error = self::update_from_27();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '28') {
-    			    $error = self::update_from_28();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '29') {
-    			    $error = self::update_from_29();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '30') {
-    			    $error = self::update_from_30();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '31') {
-    			    $error = self::update_from_31();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '32') {
-    			    $error = self::update_from_32();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '33') {
-    			    $error = self::update_from_33();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '34') {
-    			    $error = self::update_from_34();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '35') {
-    			    $error = self::update_from_35();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '36') {
-    			    $error = self::update_from_36();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '37') {
-    			    $error = self::update_from_37();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '38') {
-    			    $error = self::update_from_38();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '39') {
-    			    $error = self::update_from_39();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '40') {
-    			    $error = self::update_from_40();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '41') {
-    			    $error = self::update_from_41();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '42') {
-    			    $error = self::update_from_42();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '43') {
-    			    $error = self::update_from_43();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '44') {
-    			    $error = self::update_from_44();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} elseif ($result['value'] == '45') {
-    			    $error = self::update_from_45();
-    			    if ($error != '') return $error;
-    			    else return self::check_version(true);
-    			} else return '';
-    		    } else {
-    			if (isset($result['value']) && $result['value'] != '') return $result['value'];
-    			else return 0;
-    		    }
+			if ($Connection->tableExists('aircraft')) {
+				if (!$Connection->tableExists('config')) {
+					$version = '1';
+					if ($update) return self::update_from_1();
+					else return $version;
+				} else {
+					$query = "SELECT value FROM config WHERE name = 'schema_version' LIMIT 1";
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute();
+					} catch(PDOException $e) {
+						return "error (check_version): ".$e->getMessage()."\n";
+					}
+					$result = $sth->fetch(PDO::FETCH_ASSOC);
+					if ($update) {
+						if ($result['value'] == '2') {
+							$error = self::update_from_2();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '3') {
+							$error = self::update_from_3();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '4') {
+							$error = self::update_from_4();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '5') {
+							$error = self::update_from_5();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '6') {
+							$error = self::update_from_6();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '7') {
+							$error = self::update_from_7();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '8') {
+							$error = self::update_from_8();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '9') {
+							$error = self::update_from_9();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '10') {
+							$error = self::update_from_10();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '11') {
+							$error = self::update_from_11();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '12') {
+							$error = self::update_from_12();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '13') {
+							$error = self::update_from_13();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '14') {
+							$error = self::update_from_14();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '15') {
+							$error = self::update_from_15();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '16') {
+							$error = self::update_from_16();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '17') {
+							$error = self::update_from_17();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '18') {
+							$error = self::update_from_18();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '19') {
+							$error = self::update_from_19();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '20') {
+							$error = self::update_from_20();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '21') {
+							$error = self::update_from_21();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '22') {
+							$error = self::update_from_22();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '23') {
+							$error = self::update_from_23();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '24') {
+							$error = self::update_from_24();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '25') {
+							$error = self::update_from_25();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '26') {
+							$error = self::update_from_26();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '27') {
+							$error = self::update_from_27();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '28') {
+							$error = self::update_from_28();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '29') {
+							$error = self::update_from_29();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '30') {
+							$error = self::update_from_30();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '31') {
+							$error = self::update_from_31();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '32') {
+							$error = self::update_from_32();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '33') {
+							$error = self::update_from_33();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '34') {
+							$error = self::update_from_34();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '35') {
+							$error = self::update_from_35();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '36') {
+							$error = self::update_from_36();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '37') {
+							$error = self::update_from_37();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '38') {
+							$error = self::update_from_38();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '39') {
+							$error = self::update_from_39();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '40') {
+							$error = self::update_from_40();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '41') {
+							$error = self::update_from_41();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '42') {
+							$error = self::update_from_42();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '43') {
+							$error = self::update_from_43();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '44') {
+							$error = self::update_from_44();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '45') {
+							$error = self::update_from_45();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} else return '';
+					} else {
+						if (isset($result['value']) && $result['value'] != '') return $result['value'];
+						else return 0;
+					}
+				}
+			} else return $version;
 		}
-		
-	    } else return $version;
-    	}
-    	
+	}
 }
 //echo update_schema::check_version();
 ?>
