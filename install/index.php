@@ -33,9 +33,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 		require('../footer.php');
 		exit;
 	}
+	/*
 	if (!is_writable('../data')) {
 		print '<div class="info column"><p><strong>The directory <i>data</i> must be writable to <i>scripts/update_db.php</i> user.</strong></p></div>';
 	}
+	*/
 	if (!is_writable('../images/airlines')) {
 		print '<div class="info column"><p><strong>The directory <i>images/airlines</i> must be writable for IVAO.</strong></p></div>';
 	}
@@ -123,7 +125,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="createdb">Create database</label>
 				<input type="checkbox" name="createdb" id="createdb" value="createdb" onClick="create_database_js()" />
-				<p class="help-block">will not work for MySQL >= 5.7 and MariaDB >= 10.1, you need to create DB and user manually</p>
+				<p class="help-block">Create database will not work for MySQL >= 5.7 and MariaDB >= 10.1, you need to create DB and user manually</p>
 			</p>
 			<div id="createdb_data">
 				<p>

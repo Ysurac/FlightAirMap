@@ -5,7 +5,8 @@ require_once(dirname(__FILE__).'/class.create_db.php');
 require_once(dirname(__FILE__).'/class.update_schema.php');
 require_once(dirname(__FILE__).'/class.settings.php');
 require(dirname(__FILE__).'/../require/settings.php');
-
+set_time_limit(0);
+ini_set('max_execution_time', 3000);
 /*
 if ($globalInstalled && !isset($_SESSION['install'])) {
 	print '<div class="info column"><p>You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</p></div>';
