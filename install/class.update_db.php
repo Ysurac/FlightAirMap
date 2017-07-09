@@ -1938,16 +1938,18 @@ class update_db {
 		//Direct download forbidden
 		//if ($globalDebug) echo "IVAO : Download...";
 		//update_db::download('http://fr.mirror.ivao.aero/software/ivae_feb2013.zip',$tmp_dir.'ivae_feb2013.zip');
-		if (file_exists($tmp_dir.'ivae_feb2013.zip')) {
-			if ($globalDebug) echo "Unzip...";
-			update_db::unzip($tmp_dir.'ivae_feb2013.zip');
-			if ($globalDebug) echo "Add to DB...";
-			update_db::ivao_airlines($tmp_dir.'data/airlines.dat');
-			if ($globalDebug) echo "Copy airlines logos to airlines images directory...";
-			if (is_writable(dirname(__FILE__).'/../images/airlines')) {
-				if (!$Common->xcopy($tmp_dir.'logos/',dirname(__FILE__).'/../images/airlines/')) $error = "Failed to copy airlines logo.";
-			} else $error = "The directory ".dirname(__FILE__).'/../images/airlines'." must be writable";
-		} else $error = "File ".$tmp_dir.'ivao.zip'." doesn't exist. Download failed.";
+		if (extension_loaded('zip')) {
+			if (file_exists($tmp_dir.'ivae_feb2013.zip')) {
+				if ($globalDebug) echo "Unzip...";
+				update_db::unzip($tmp_dir.'ivae_feb2013.zip');
+				if ($globalDebug) echo "Add to DB...";
+				update_db::ivao_airlines($tmp_dir.'data/airlines.dat');
+				if ($globalDebug) echo "Copy airlines logos to airlines images directory...";
+				if (is_writable(dirname(__FILE__).'/../images/airlines')) {
+					if (!$Common->xcopy($tmp_dir.'logos/',dirname(__FILE__).'/../images/airlines/')) $error = "Failed to copy airlines logo.";
+				} else $error = "The directory ".dirname(__FILE__).'/../images/airlines'." must be writable";
+			} else $error = "File ".$tmp_dir.'ivao.zip'." doesn't exist. Download failed.";
+		} else $error = "ZIP module not loaded but required for IVAO.";
 		if ($error != '') {
 			return $error;
 		} elseif ($globalDebug) echo "Done\n";

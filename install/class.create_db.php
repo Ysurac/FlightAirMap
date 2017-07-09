@@ -10,6 +10,7 @@ class create_db {
 	public static function import_file($filename) {
 		$filename = filter_var($filename,FILTER_SANITIZE_STRING);
 		$Connection = new Connection();
+		if (!$Connection->connectionExists()) return 'error: DB connection failed';
 		//Connection::$db->beginTransaction();
 		$templine = '';
 		$handle = @fopen($filename,"r");

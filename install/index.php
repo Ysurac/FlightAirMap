@@ -65,7 +65,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 	}
 	*/
 	if (!extension_loaded('zip')) {
-		$error[] = "ZIP is not loaded. Needed to populate database for SBS.";
+		//$error[] = "ZIP is not loaded. Needed to populate database for SBS.";
+		print '<div class="info column"><p><strong>ZIP is not loaded. Needed to populate database for IVAO.</strong></p></div>';
 	}
 	if (!extension_loaded('json')) {
 		$error[] = "Json is not loaded. Needed for aircraft schedule and bitly.";
