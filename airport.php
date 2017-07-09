@@ -7,7 +7,7 @@ require_once('require/class.Stats.php');
 
 if (isset($_POST['airport']))
 {
-	header('Location: '.$globalURL.'/airport/'.$_POST['airport']);
+	header('Location: '.$globalURL.'/airport/'.filter_input(INPUT_POST,'airport',FILTER_SANITIZE_STRING));
 } else if (isset($_GET['airport'])){
 	$Spotter = new Spotter();
 	//calculuation for the pagination

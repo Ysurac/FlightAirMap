@@ -8,7 +8,7 @@ require_once('require/class.Stats.php');
 
 if (isset($_POST['airline']))
 {
-	header('Location: '.$globalURL.'/airline/'.$_POST['airline']);
+	header('Location: '.$globalURL.'/airline/'.filter_input(INPUT_POST,'airline',FILTER_SANITIZE_STRING));
 } else {
 	$title = "Airlines";
 	require_once('header.php');
