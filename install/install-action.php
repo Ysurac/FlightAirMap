@@ -107,6 +107,8 @@ if (isset($_GET['reset'])) {
 		$error .= $check_version;
 		$_SESSION['error'] = $error;
 		$_SESSION['errorlst'] = array_merge($_SESSION['errorlst'],array('Create and import tables'));
+		$result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+		print json_encode($result);
 	} else {
 		$error .= update_schema::check_version(true);
 		if ($error != '') {
