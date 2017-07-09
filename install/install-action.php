@@ -80,7 +80,9 @@ if (isset($_GET['reset'])) {
 	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	print json_encode($result);
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
-	if (update_schema::check_version(false) == '0') {
+	$check_version = update_schema::check_version(false)
+	if ($check_version == '0') {
+		
 		if ($globalDBdriver == 'mysql') {
 		    $error .= create_db::import_all_db('../db/');
 		} elseif ($globalDBdriver == 'pgsql') {
@@ -99,6 +101,10 @@ if (isset($_GET['reset'])) {
 		}
 		$result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 		print json_encode($result);
+	} elseif (!is_numeric($check_version)) {
+		$error .= $check_version;
+		$_SESSION['error'] = $error;
+		$_SESSION['errorlst'] = array_merge($_SESSION['errorlst'],array('Create and import tables'));
 	} else {
 		$error .= update_schema::check_version(true);
 		if ($error != '') {
