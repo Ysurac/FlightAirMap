@@ -208,6 +208,11 @@ if (strtolower($current_page) == "index")
 <script src="<?php print $globalURL; ?>/js/map-marine.2d.js.php?<?php print time(); ?>"></script>
 <?php
 		}
+		if (isset($globalSatellite) && $globalSatellite) {
+?>
+<script src="<?php print $globalURL; ?>/js/map-satellite.2d.js.php?<?php print time(); ?>"></script>
+<?php
+		}
 	    }
 ?>
 <?php
@@ -244,6 +249,10 @@ if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($gl
 		} elseif (isset($type) && $type == 'tracker') {
 ?>
 <script src="<?php print $globalURL; ?>/js/map-tracker.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
+<?php
+		} elseif (isset($type) && $type == 'satellite') {
+?>
+<script src="<?php print $globalURL; ?>/js/map-satellite.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
 <?php
 		}
 ?>

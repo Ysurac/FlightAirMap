@@ -150,6 +150,7 @@ if (isset($_GET['ident'])) {
 	}
 }
 
+/*
 if (!empty($spotter_array) || $usecoord) {
 	if ($usecoord) {
 		if (isset($_GET['archive'])) {
@@ -160,7 +161,8 @@ if (!empty($spotter_array) || $usecoord) {
 	} else $flightcnt = count($spotter_array);
 	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;
-
+*/
+$flightcnt = 0;
 $sqltime = round(microtime(true)-$begintime,2);
 
 if ((!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation == FALSE) || (isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'false')) $usenextlatlon = false;

@@ -67,7 +67,7 @@ $("#aircraft_ident").attr('class','');
 var MapTrackMarine = getCookie('MapTrackMarine');
 if (MapTrackMarine != '') {
 	$("#aircraft_ident").attr('class',MapTrackMarine);
-	$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+MapTrack);
+	$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+MapTrackMarine);
 	delCookie('MapTrackMarine');
 }
 
@@ -124,6 +124,7 @@ function getLiveMarineData(click)
 <?php
 	}
 ?>
+		nbmarine = 0;
 		layer_marine_data = L.layerGroup();
 		var live_marine_data = L.geoJson(data, {
 		    pointToLayer: function (feature, latLng) {
@@ -151,6 +152,7 @@ function getLiveMarineData(click)
 <?php
 	}
 ?>
+		    if (type != "history"){ nbmarine = nbmarine+1; }
 		    if (callsign != ""){ markerMarineLabel += callsign; }
 		    if (type != ""){ markerMarineLabel += ' - '+type; }
 <?php
@@ -159,7 +161,7 @@ function getLiveMarineData(click)
 	else $MarineIconColor = '1a3151';
 	if (!isset($ident) && !isset($fammarine_id)) {
 ?>
-		    info_marine_update(feature.properties.fc);
+		    //info_marine_update(feature.properties.fc);
 <?php
 		if (isset($archive) && $archive) {
 ?>
@@ -577,6 +579,7 @@ function getLiveMarineData(click)
 			layer_marine_data.addTo(map);
 			//re-create the bootstrap tooltips on the marker 
 			//showBootstrapTooltip();
+			info_marine_update(nbmarine);
 		}
 	});
 	//  getLiveMarineData(0);

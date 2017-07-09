@@ -98,12 +98,12 @@ require_once('header.php');
 ?>
 	<li><a href="#" onclick="show3D(); return false;" role="tab" title="3D"><b>3D</b></a></li>
 <?php
-        } else {
-    	    if (isset($globalSatellite) && $globalSatellite) {
+	    if (isset($globalSatellite) && $globalSatellite) {
 ?>
 	<li><a href="#satellites" role="tab" title="<?php echo _("Satellites"); ?>"><i class="satellite"></i></a></li>
 <?php
 	    }
+	} else {
 ?>
 	<li><a href="#" onclick="show2D(); return false;" role="tab" title="2D"><b>2D</b></a></li>
 <?php
@@ -339,13 +339,21 @@ require_once('header.php');
 <?php
     if (!isset($_COOKIE['MapFormat']) || $_COOKIE['MapFormat'] != '3d') {
 ?>
-		    
+<?php
+	if (!isset($globalAircraft) || $globalAircraft === TRUE) {
+?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightpopup" value="1" onclick="clickFlightPopup(this)" <?php if (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true') print 'checked'; ?> ><?php echo _("Display flight info as popup"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightpath" value="1" onclick="clickFlightPath(this)" <?php if ((isset($_COOKIE['flightpath']) && $_COOKIE['flightpath'] == 'true')) print 'checked'; ?> ><?php echo _("Display flight path"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightroute" value="1" onclick="clickFlightRoute(this)" <?php if ((isset($_COOKIE['MapRoute']) && $_COOKIE['MapRoute'] == 'true') || (isset($globalMapRoute) && $globalMapRoute)) print 'checked'; ?> ><?php echo _("Display flight route on click"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightremainingroute" value="1" onclick="clickFlightRemainingRoute(this)" <?php if ((isset($_COOKIE['MapRemainingRoute']) && $_COOKIE['MapRemainingRoute'] == 'true') || !isset($_COOKIE['MapRemainingRoute']) || (isset($globalMapRemainingRoute) && $globalMapRemainingRoute)) print 'checked'; ?> ><?php echo _("Display flight remaining route on click"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="flightestimation" value="1" onclick="clickFlightEstimation(this)" <?php if ((isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'true') || (!isset($_COOKIE['flightestimation']) && !isset($globalMapEstimation)) || (!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation)) print 'checked'; ?> ><?php echo _("Planes animate between updates"); ?></label></div></li>
 <?php
+	}
+	if (isset($globalSatellite) && $globalSatellite === TRUE) {
+?>
+		    <li><div class="checkbox"><label><input type="checkbox" name="satelliteestimation" value="1" onclick="clickSatelliteEstimation(this)" <?php if ((isset($_COOKIE['satelliteestimation']) && $_COOKIE['satelliteestimation'] == 'true') || (!isset($_COOKIE['satelliteestimation']) && !isset($globalMapEstimation)) || (!isset($_COOKIE['satelliteestimation']) && isset($globalMapEstimation) && $globalMapEstimation)) print 'checked'; ?> ><?php echo _("Satellites animate between updates"); ?></label></div></li>
+<?php
+	}
     }
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayairports" value="1" onclick="clickDisplayAirports(this)" <?php if (isset($_COOKIE['displayairports']) && $_COOKIE['displayairports'] == 'true' || !isset($_COOKIE['displayairports'])) print 'checked'; ?> ><?php echo _("Display airports on map"); ?></label></div></li>
@@ -626,7 +634,7 @@ require_once('header.php');
 	    </form>
     	</div>
 <?php
-    if (isset($globalSatellite) && $globalSatellite && isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+    if (isset($globalSatellite) && $globalSatellite) {
 ?>
         <div class="sidebar-pane" id="satellites">
 	    <h1 class="sidebar-header"><?php echo _("Satellites"); ?><span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>

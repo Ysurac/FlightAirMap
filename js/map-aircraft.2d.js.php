@@ -285,6 +285,7 @@ function getLiveData(click)
 	}
 ?>
 			layer_data = L.layerGroup();
+			var nbaircraft = 0;
 			var live_data = L.geoJson(data, {
 				pointToLayer: function (feature, latLng) {
 					var markerLabel = "";
@@ -315,6 +316,7 @@ function getLiveData(click)
 <?php
 	}
 ?>
+					if (type != "history") nbaircraft = nbaircraft+1;
 					if (callsign != ""){ markerLabel += callsign; }
 					if (departure_airport_code != "" && arrival_airport_code != "" && departure_airport_code != "NA" && arrival_airport_code != "NA"){ markerLabel += ' ( '+departure_airport_code+' - '+arrival_airport_code+' )'; }
 <?php
@@ -323,7 +325,7 @@ function getLiveData(click)
 	else $IconColor = '1a3151';
 	if (!isset($ident) && !isset($flightaware_id)) {
 ?>
-					info_update(feature.properties.fc);
+					//info_update(feature.properties.fc);
 <?php
 		if (isset($archive) && $archive) {
 ?>
@@ -805,6 +807,7 @@ function getLiveData(click)
 				layer_data.addTo(map);
 				//re-create the bootstrap tooltips on the marker 
 				//showBootstrapTooltip();
+				info_update(nbaircraft);
 			}
 		});
 		//  getLiveData(0);
@@ -1049,7 +1052,6 @@ function clickFlightEstimation(cb) {
     document.cookie =  'flightestimation='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
 }
-
 function clickSanta(cb) {
     if (cb.checked) {
 	update_santaLayer(true);

@@ -38,6 +38,9 @@ if (isset($_GET['tracker'])) {
 } elseif (isset($_GET['marine'])) {
 	//$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.$filename;
 	$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.'color'.DIRECTORY_SEPARATOR.$filename;
+} elseif (isset($_GET['satellite'])) {
+	//$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.$filename;
+	$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'satellites'.DIRECTORY_SEPARATOR.$filename;
 } else {
 	$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'aircrafts'.DIRECTORY_SEPARATOR.'new'.DIRECTORY_SEPARATOR.$filename;
 }
@@ -99,6 +102,8 @@ if (extension_loaded('gd') && function_exists('gd_info')) {
         readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/vehicules/'.$filename);
     } elseif (isset($_GET['marine'])) {
         readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/vehicules/'.$filename);
+    } elseif (isset($_GET['satellite'])) {
+        readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/satellites/'.$filename);
     } else {
         if ($color == 'FF0000') readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/aircrafts/selected/'.$filename);
 	else readfile(dirname(__FILE__).DIRECTORY_SEPARATOR.'images/aircrafts/'.$filename);

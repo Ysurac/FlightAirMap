@@ -7,25 +7,26 @@ setcookie("MapFormat",'2d');
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
 else $compress = $globalJsonCompress;
+$compress = false;
 ?>
 
 
 //var map;
-var geojsonTrackerLayer;
+var geojsonSatelliteLayer;
 var noTimeout = true;
-layer_tracker_data = L.layerGroup();
+layer_satellite_data = L.layerGroup();
 
 <?php
-	if (isset($_GET['famtrackid'])) {
-		$famtrackid = filter_input(INPUT_GET,'famtrackid',FILTER_SANITIZE_STRING);
+	if (isset($_GET['famsatid'])) {
+		$famsatid = filter_input(INPUT_GET,'famsatid',FILTER_SANITIZE_STRING);
 	}
 	if (isset($_GET['ident'])) {
 		$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
 	}
-	if (!isset($ident) && !isset($famtrackid)) {
+	if (!isset($ident) && !isset($famsatid)) {
 ?>
-	function info_tracker_update (props) {
-		$("#ibxtracker").html('<h4><?php echo _("Trackers detected"); ?></h4>' +  '<b>' + props + '</b>');
+	function info_satellite_update (props) {
+		$("#ibxsatellite").html('<h4><?php echo _("Satellites displayed"); ?></h4>' +  '<b>' + props + '</b>');
 	}
 <?php
 	}
@@ -59,20 +60,20 @@ layer_tracker_data = L.layerGroup();
 $(".showdetails").on("click",".close",function(){
 	$(".showdetails").empty();
 	$("#aircraft_ident").attr('class','');
-	getTrackerLiveData(1);
+	getSatelliteLiveData(1);
 	return false;
 })
 
 
 $("#aircraft_ident").attr('class','');
-var MapTrackTracker = getCookie('MapTrackTracker');
-if (MapTrackTracker != '') {
-	$("#aircraft_ident").attr('class',MapTrackTracker);
-	$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+MapTrackTracker);
-	delCookie('MapTrackTracker');
+var MapTrackSatellite = getCookie('MapTrackSatellite');
+if (MapTrackSatellite != '') {
+	$("#aircraft_ident").attr('class',MapTrackSatellite);
+	$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+MapTrackSatellite);
+	delCookie('MapTrackSatellite');
 }
 
-function getLiveTrackerData(click)
+function getLiveSatelliteData(click)
 {
 	var bbox = map.getBounds().toBBoxString();
 <?php
@@ -98,45 +99,45 @@ function getLiveTrackerData(click)
 <?php
 	if (isset($ident)) {
 ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&ident="+encodeURI(<?php print $ident; ?>)+"&history",
+	    url: "<?php print $globalURL; ?>/live-sat-geojson.php?"+Math.random()+"&ident="+encodeURI(<?php print $ident; ?>)+"&history",
 <?php
-	} elseif (isset($famtrackid)) {
+	} elseif (isset($famsatid)) {
 ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&famtrackid="+encodeURI(<?php print $famtrackid; ?>)+"&history",
+	    url: "<?php print $globalURL; ?>/live-sat-geojson.php?"+Math.random()+"&famsatid="+encodeURI(<?php print $famsatid; ?>)+"&history",
 <?php
 	} elseif (isset($archive) && $archive) {
 ?>
-            url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&coord="+bbox+"&history="+encodeURI(document.getElementById('aircraft_ident').className)+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
+            url: "<?php print $globalURL; ?>/live-sat-geojson.php?"+Math.random()+"&history="+encodeURI(document.getElementById('aircraft_ident').className)+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
 <?php
 	} else {
 ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&coord="+bbox+"&history="+encodeURI(document.getElementById('aircraft_ident').className),
+	    url: "<?php print $globalURL; ?>/live-sat-geojson.php?"+Math.random()+"&history="+encodeURI(document.getElementById('aircraft_ident').className),
 <?php 
 	}
 ?>
 	    success: function(data) {
-		map.removeLayer(layer_tracker_data);
+		map.removeLayer(layer_satellite_data);
 <?php
 	if (!isset($archive) || !$archive) {
 ?>
 		if (document.getElementById('aircraft_ident').className != "") {
-			$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+encodeURI(document.getElementById('aircraft_ident').className));
+			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+encodeURI(document.getElementById('aircraft_ident').className));
 		}
 <?php
 	}
 ?>
-		var nbtracker = 0;
-		layer_tracker_data = L.layerGroup();
-		var live_tracker_data = L.geoJson(data, {
+		layer_satellite_data = L.layerGroup();
+		var nbsat = 0;
+		var live_satellite_data = L.geoJson(data, {
 		    pointToLayer: function (feature, latLng) {
-		    var markerTrackerLabel = "";
-		    //if (feature.properties.callsign != ""){ markerTrackerLabel += feature.properties.callsign+'<br />'; }
-		    //if (feature.properties.departure_airport_code != "" || feature.properties.arrival_airport_code != ""){ markerTrackerLabel += '<span class="nomobile">'+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+'</span>'; }
+		    var markerSatelliteLabel = "";
+		    //if (feature.properties.callsign != ""){ markerSatelliteLabel += feature.properties.callsign+'<br />'; }
+		    //if (feature.properties.departure_airport_code != "" || feature.properties.arrival_airport_code != ""){ markerSatelliteLabel += '<span class="nomobile">'+feature.properties.departure_airport_code+' - '+feature.properties.arrival_airport_code+'</span>'; }
 <?php
 	if ($compress) {
 ?>
 		    var callsign = feature.properties.c;
-		    var famtrackid = encodeURI(feature.properties.fti);
+		    var famsatid = encodeURI(feature.properties.fti);
 		    var aircraft_shadow = feature.properties.as;
 		    var altitude = feature.properties.a;
 		    var heading = feature.properties.h;
@@ -145,7 +146,7 @@ function getLiveTrackerData(click)
 	} else {
 ?>
 		    var callsign = feature.properties.callsign;
-		    var famtrackid = encodeURI(feature.properties.famtrackid);
+		    var famsatid = encodeURI(feature.properties.famsatid);
 		    var aircraft_shadow = feature.properties.aircraft_shadow;
 		    var altitude = feature.properties.altitude;
 		    var heading = feature.properties.heading;
@@ -153,16 +154,16 @@ function getLiveTrackerData(click)
 <?php
 	}
 ?>
-		    if (type != "history") { nbtracker = nbtracker+1; }
-		    if (callsign != ""){ markerTrackerLabel += callsign; }
-		    if (type != ""){ markerTrackerLabel += ' - '+type; }
+		    if (type == "satellite"){ nbsat = nbsat +1; }
+		    if (callsign != ""){ markerSatelliteLabel += callsign; }
+		    if (type != ""){ markerSatelliteLabel += ' - '+type; }
 <?php
-	if (isset($_COOKIE['TrackerIconColor'])) $IconColor = $_COOKIE['TrackerIconColor'];
-	elseif (isset($globalTrackerIconColor)) $IconColor = $globalTrackerIconColor;
+	if (isset($_COOKIE['SatelliteIconColor'])) $IconColor = $_COOKIE['SatelliteIconColor'];
+	elseif (isset($globalSatelliteIconColor)) $IconColor = $globalSatelliteIconColor;
 	else $IconColor = '1a3151';
-	if (!isset($ident) && !isset($famtrackid)) {
+	if (!isset($ident) && !isset($famsatid)) {
 ?>
-		    //info_tracker_update(feature.properties.fc);
+		    info_satellite_update(feature.properties.fc);
 <?php
 		if (isset($archive) && $archive) {
 ?>
@@ -170,24 +171,24 @@ function getLiveTrackerData(click)
 <?php
 		}
 ?>
-		    if (document.getElementById('aircraft_ident').className == callsign || document.getElementById('aircraft_ident').className == famtrackid) {
-			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?tracker&color=FF0000&filename='+aircraft_shadow;
-			    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?tracker&color=8D93B9&filename='+aircraft_shadow;
+		    if (document.getElementById('aircraft_ident').className == callsign || document.getElementById('aircraft_ident').className == famsatid) {
+			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?satellite&color=FF0000&filename='+aircraft_shadow;
+			    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?satellite&color=8D93B9&filename='+aircraft_shadow;
 		    } else {
-			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?tracker&color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
-			    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?tracker&color=8D93B9&filename='+aircraft_shadow;
+			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?satellite&color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
+			    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?satellite&color=8D93B9&filename='+aircraft_shadow;
 		    }
 <?php
 	} else {
 ?>
-		    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?tracker&color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
-		    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?tracker&color=8D93B9&filename='+aircraft_shadow;
+		    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?satellite&color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
+		    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?satellite&color=8D93B9&filename='+aircraft_shadow;
 <?php
 	}
 	if (isset($globalAircraftSize) && $globalAircraftSize != '') {
 ?>
 <?php
-		if ((!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation == FALSE) || (isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'false')) {
+		if ((!isset($_COOKIE['satelliteestimation']) && isset($globalMapEstimation) && $globalMapEstimation == FALSE) || (isset($_COOKIE['satelliteestimation']) && $_COOKIE['satelliteestimation'] == 'false')) {
 ?>
 		    return new L.Marker(latLng, {
 <?php
@@ -198,9 +199,9 @@ function getLiveTrackerData(click)
 <?php
 		}
 ?>
-			rotationAngle: heading,
-			iconAngle: heading,
-			title: markerTrackerLabel,
+			//rotationAngle: heading,
+			//iconAngle: heading,
+			title: markerSatelliteLabel,
 			alt: callsign,
 			icon: L.icon({
 			    iconUrl: iconURLpath,
@@ -225,15 +226,15 @@ function getLiveTrackerData(click)
 ?>
 		    .on('click', function() {
 				//if (callsign == "NA") {
-				    $("#aircraft_ident").attr('class',famtrackid);
-				    $(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+famtrackid);
+				    $("#aircraft_ident").attr('class',famsatid);
+				    $(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+famsatid);
 				/*
 				} else {
 				    $("#aircraft_ident").attr('class',callsign);
-				    $(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&ident="+callsign);
+				    $(".showdetails").load("<?php print $globalURL; ?>/satellite-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
-				getLiveTrackerData(1);
+				getLiveSatelliteData(1);
 			});
 <?php
 		}
@@ -243,7 +244,7 @@ function getLiveTrackerData(click)
 ?>
 		    if (map.getZoom() > 7) {
 <?php
-		if ((!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation == FALSE) || (isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'false')) {
+		if ((!isset($_COOKIE['satelliteestimation']) && isset($globalMapEstimation) && $globalMapEstimation == FALSE) || (isset($_COOKIE['satelliteestimation']) && $_COOKIE['satelliteestimation'] == 'false')) {
 ?>
 			    return new L.Marker(latLng, {
 <?php
@@ -254,10 +255,10 @@ function getLiveTrackerData(click)
 <?php
 		}
 ?>
-				rotationAngle: heading,
+				//rotationAngle: heading,
 				autostart: true,
-			        iconAngle: heading,
-				title: markerTrackerLabel,
+			        //iconAngle: heading,
+				title: markerSatelliteLabel,
 				alt: callsign,
 				icon: L.icon({
 				    iconUrl: iconURLpath,
@@ -283,22 +284,22 @@ function getLiveTrackerData(click)
 			    .on('click', function() {
 				//$("#aircraft_ident").attr('class',callsign);
 				//if (callsign == "NA") {
-					$("#aircraft_ident").attr('class',famtrackid);
-					$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+famtrackid);
+					$("#aircraft_ident").attr('class',famsatid);
+					$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+famsatid);
 				/*
 				} else {
 					$("#aircraft_ident").attr('class',callsign);
-					$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&ident="+callsign);
+					$(".showdetails").load("<?php print $globalURL; ?>/satellite-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
-				getLiveTrackerData(1);
+				getLiveSatelliteData(1);
 			});
 <?php
 		}
 ?>
 		    } else {
 <?php
-		if ((!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation == FALSE) || (isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'false')) {
+		if ((!isset($_COOKIE['satelliteestimation']) && isset($globalMapEstimation) && $globalMapEstimation == FALSE) || (isset($_COOKIE['satelliteestimation']) && $_COOKIE['satelliteestimation'] == 'false')) {
 ?>
 			    return new L.Marker(latLng, {
 <?php
@@ -309,10 +310,10 @@ function getLiveTrackerData(click)
 <?php
 		}
 ?>
-				rotationAngle: heading,
+				//rotationAngle: heading,
 				autostart: true,
-				iconAngle: heading,
-				title: markerTrackerLabel,
+				//iconAngle: heading,
+				title: markerSatelliteLabel,
 				alt: callsign,
 				icon: L.icon({
 				    iconUrl: iconURLpath,
@@ -337,15 +338,15 @@ function getLiveTrackerData(click)
 ?>
 			    .on('click', function() {
 				//if (callsign == "NA") {
-				    $("#aircraft_ident").attr('class',famtrackid);
-				    $(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+famtrackid);
+				    $("#aircraft_ident").attr('class',famsatid);
+				    $(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+famsatid);
 				/*
 				} else {
 				    $("#aircraft_ident").attr('class',callsign);
-				    $(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&ident="+callsign);
+				    $(".showdetails").load("<?php print $globalURL; ?>/satellite-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
-				getLiveTrackerData(1);
+				getLiveSatelliteData(1);
 			    });
 <?php
 		}
@@ -384,14 +385,14 @@ function getLiveTrackerData(click)
 			}
 		    } else {
 			if (typeof feature.properties.image_copyright != 'undefined') {
-			    output += '<div class="left"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.famtrackid+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a>Image &copy; '+ feature.properties.image_copyright+'</div>';
+			    output += '<div class="left"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.famsatid+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a>Image &copy; '+ feature.properties.image_copyright+'</div>';
 			} else {
-			    output += '<div class="left"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.famtrackid+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a></div>';
+			    output += '<div class="left"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.famsatid+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a></div>';
 			}
 		    }
 		    output += '<div class="right">';
                     output += '<div class="callsign-details">';
-                    output += '<div class="callsign"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.famtrackid+'" target="_blank">'+feature.properties.callsign+'</a></div>';
+                    output += '<div class="callsign"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.famsatid+'" target="_blank">'+feature.properties.callsign+'</a></div>';
                     output += '<div class="airline">'+feature.properties.airline_name+'</div>';
                     output += '</div>';
                     output += '<div class="nomobile airports">';
@@ -492,12 +493,12 @@ function getLiveTrackerData(click)
             	    }
             	    output += '</div>';
                 
-            	    <?php if (!isset($ident) && !isset($famtrackid)) { ?>
+            	    <?php if (!isset($ident) && !isset($famsatid)) { ?>
             	    layer.bindPopup(output);
 		    <?php } ?>
-            	    layer_tracker_data.addLayer(layer);
+            	    layer_satellite_data.addLayer(layer);
                 } else {
-            	    layer_tracker_data.addLayer(layer);
+            	    layer_satellite_data.addLayer(layer);
                 }
 
                 if (type == "route"){
@@ -507,13 +508,13 @@ function getLiveTrackerData(click)
 		    	"opacity": 0.5
 		    };
 		    layer.setStyle(style);
-		    layer_tracker_data.addLayer(layer);
+		    layer_satellite_data.addLayer(layer);
 		}
 
 
                 //aircraft history position as a line
                 if (type == "history"){
-		    <?php if (!isset($ident) && !isset($famtrackid)) { ?>
+		    <?php if (!isset($ident) && !isset($famsatid)) { ?>
 		    if (document.getElementById('aircraft_ident').className == callsign) {
 			if (map.getZoom() > 7) {
                 	    var style = {
@@ -530,7 +531,7 @@ function getLiveTrackerData(click)
 				"opacity": 1
 			    };
 			    layer.setStyle(style);
-			    layer_tracker_data.addLayer(layer);
+			    layer_satellite_data.addLayer(layer);
 			}
             	    } else {
 			if (map.getZoom() > 7) {
@@ -540,7 +541,7 @@ function getLiveTrackerData(click)
 				"opacity": 0.6
 			    };
 			    layer.setStyle(style);
-			    layer_tracker_data.addLayer(layer);
+			    layer_satellite_data.addLayer(layer);
 			} else {
                 	    var style = {
                     		"color": "#1a3151",
@@ -548,7 +549,7 @@ function getLiveTrackerData(click)
 				"opacity": 0.6
 			    };
 			    layer.setStyle(style);
-			    layer_tracker_data.addLayer(layer);
+			    layer_satellite_data.addLayer(layer);
 			}
                     }
 		    <?php
@@ -561,7 +562,7 @@ function getLiveTrackerData(click)
                     	    "opacity": 0.6
                 	};
                 	layer.setStyle(style);
-                	layer_tracker_data.addLayer(layer);
+                	layer_satellite_data.addLayer(layer);
 		    } else {
                 	var style = {
 			    "color": "#1a3151",
@@ -569,7 +570,7 @@ function getLiveTrackerData(click)
                     	    "opacity": 0.6
                 	};
                 	layer.setStyle(style);
-                	layer_tracker_data.addLayer(layer);
+                	layer_satellite_data.addLayer(layer);
 		    }
 <?php
             		}
@@ -577,37 +578,45 @@ function getLiveTrackerData(click)
 				}
 			    }
 			});
-			layer_tracker_data.addTo(map);
+			layer_satellite_data.addTo(map);
 			//re-create the bootstrap tooltips on the marker 
 			//showBootstrapTooltip();
-			info_tracker_update(nbtracker);
+			//console.log(nbsat);
+			info_satellite_update(nbsat);
 		}
+//		console.log(nb);
+//		info_satellite_update(nb);
 	});
-	//  getLiveTrackerData(0);
+//		console.log(nb);
+	//  getLiveSatelliteData(0);
 }
 
 $( document ).ready(function() {
  //load the function on startup
-getLiveTrackerData(0);
+getLiveSatelliteData(0);
 
 
 <?php
 	if (isset($archive) && $archive) {
 ?>
 //then load it again every 30 seconds
-//  var reload = setInterval(function(){if (noTimeout) getLiveTrackerData(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
-reloadTrackerPage = setInterval(function(){if (noTimeout) getLiveTrackerData(0)},<?php print $archiveupdatetime*1000; ?>);
+//  var reload = setInterval(function(){if (noTimeout) getLiveSatelliteData(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
+reloadSatellitePage = setInterval(function(){if (noTimeout) getLiveSatelliteData(0)},<?php print $archiveupdatetime*1000; ?>);
 <?php
 	} else {
 ?>
 //then load it again every 30 seconds
-reloadTrackerPage = setInterval(
-    function(){if (noTimeout) getLiveTrackerData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+reloadSatellitePage = setInterval(
+    function(){if (noTimeout) getLiveSatelliteData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 <?php
 	}
 ?>
-function TrackericonColor(color) {
-    document.cookie =  'TrackerIconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+function SatelliteiconColor(color) {
+    document.cookie =  'SatelliteIconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
 }
 });
+function clickSatelliteEstimation(cb) {
+    document.cookie =  'satelliteestimation='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    window.location.reload();
+}
