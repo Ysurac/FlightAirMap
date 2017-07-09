@@ -11,12 +11,21 @@ class update_db {
 	public static $db_sqlite;
 
 	public static function download($url, $file, $referer = '') {
-		//$file = str_replace('/',DIRECTORY_SEPARATOR,$file);
-		$fp = fopen($file, 'w+');
+		global $globalProxy, $globalForceIPv4;
+		$fp = fopen($file, 'w');
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
+		if (isset($globalForceIPv4) && $globalForceIPv4) {
+			if (defined('CURLOPT_IPRESOLVE') && defined('CURL_IPRESOLVE_V4')){
+				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+			}
+		}
+		if (isset($globalProxy) && $globalProxy != '') {
+			curl_setopt($ch, CURLOPT_PROXY, $globalProxy);
+		}
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 20);
 		if ($referer != '') curl_setopt($ch, CURLOPT_REFERER, $referer);
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
 		curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -2460,9 +2469,9 @@ class update_db {
 		    			}
 					$error = create_db::import_file($tmp_dir.'airspace.sql');
 					update_db::insert_airspace_version($airspace_md5);
-				} else $error = "File ".$tmp_dir.'airpsace.sql.gz'." doesn't exist. Download failed.";
+				} else $error = "File ".$tmp_dir.'airspace.sql.gz'." doesn't exist. Download failed.";
 			}
-		} else $error = "File ".$tmp_dir.'airpsace.sql.gz.md5'." doesn't exist. Download failed.";
+		} else $error = "File ".$tmp_dir.'airspace.sql.gz.md5'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
 		} elseif ($globalDebug) echo "Done\n";
