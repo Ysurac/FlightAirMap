@@ -80,7 +80,7 @@ if (isset($_GET['reset'])) {
 	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	print json_encode($result);
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
-	$check_version = update_schema::check_version(false)
+	$check_version = update_schema::check_version(false);
 	if ($check_version == '0') {
 		
 		if ($globalDBdriver == 'mysql') {
