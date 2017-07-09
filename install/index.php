@@ -5,6 +5,7 @@ if (isset($_SESSION['error'])) {
 	header('Content-Encoding: none;');
 	echo 'Error : '.$_SESSION['error'].' - Resetting install... You need to fix the problem and run install again.';
 	unset($_SESSION['error']);
+	unset($_SESSION['errorlst']);
 	unset($_SESSION['install']);
 }
 require_once(dirname(__FILE__).'/class.create_db.php');
@@ -1506,6 +1507,9 @@ if (isset($_POST['dbtype'])) {
 			    $('#step').html('');
 			    result['done'].forEach(function(done) {
 				$('#step').append('<li>'+ done +'....<strong>SUCCESS</strong></li>');
+			    });
+			    result['errorlst'].forEach(function(done) {
+				$('#step').append('<li>'+ done +'....<strong>FAILED</strong></li>');
 			    });
 			    if (result['error'] != '') {
 				setTimeout(function(){
