@@ -2511,12 +2511,12 @@ class Spotter{
 	* @return Array spotter_id and flightaware_id
 	*
 	*/
-	public function getAllIDByRegistration($registration)
+	public function getAllIDByRegistration($registration, $limit = false)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
-		$query  = "SELECT spotter_id,flightaware_id, date FROM spotter_output WHERE spotter_output.registration = :registration";
-		
+		$query  = "SELECT spotter_id,flightaware_id, date FROM spotter_output WHERE spotter_output.registration = :registration ORDER BY spotter_id DESC";
+		if ($limit) $query .= " LIMIT 1";
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
 

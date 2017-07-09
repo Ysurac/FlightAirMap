@@ -105,8 +105,6 @@ class Accident {
 		}
 		$i = 0;
 		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-			//print_r($row);
-			//echo $row['flightaware_id'];
 			if (preg_match('/^[\w\-]+$/',$row['registration'])) {
 				$data = array();
 				if ($row['registration'] != '') {
@@ -157,7 +155,7 @@ class Accident {
 				if ($data['title'] == null) {
 					$data['message'] = $row['type'].' of '.$row['registration'].' at '.$row['place'].','.$row['country'];
 				} else $data['message'] = strtolower($data['title']);
-				$ids = $Spotter->getAllIDByRegistration($data['registration']);
+				$ids = $Spotter->getAllIDByRegistration($data['registration'],true);
 				$date = $data['date'];
 				if (isset($ids[$date])) {
 					$data['spotted'] = TRUE;

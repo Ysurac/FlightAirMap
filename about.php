@@ -30,7 +30,7 @@ require_once('header.php');
 <?php
 	} else {
 ?>
-     <p>This project use <a href="http://www.flightairmap.fr/">FlightAirMap</a> (<a href="https://github.com/Ysurac/FlightAirMap/">source</a>) by Ycarus from <a href="http://www.zugaina.com/">Zugaina</a>.</p>
+     <p>This project use <a href="http://www.flightairmap.com/">FlightAirMap</a> (<a href="https://github.com/Ysurac/FlightAirMap/">source</a>) by Ycarus from <a href="http://www.zugaina.com/">Zugaina</a>.</p>
 <?php
 	}
 ?>
