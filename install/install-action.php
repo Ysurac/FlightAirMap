@@ -67,6 +67,7 @@ if (isset($_GET['reset'])) {
 	unset($_SESSION['install']);
 	echo 'Reset session !!';
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_create') {
+	$globalDebug = FALSE;
 	$dbroot = $_SESSION['database_root'];
 	$dbrootpass = $_SESSION['database_rootpass'];
 	$error .= create_db::create_database($dbroot,$dbrootpass,$globalDBuser,$globalDBpass,$globalDBname,$globalDBdriver,$globalDBhost);
@@ -80,6 +81,7 @@ if (isset($_GET['reset'])) {
 	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	print json_encode($result);
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
+	$globalDebug = FALSE;
 	$check_version = update_schema::check_version(false);
 	if ($check_version == '0') {
 		
