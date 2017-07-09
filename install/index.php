@@ -1456,6 +1456,7 @@ if (isset($_POST['dbtype'])) {
 		} else $_SESSION['done'] = array('Write configuration');
 		*/
 		$_SESSION['done'] = array('Write configuration');
+		$_SESSION['errorlst'] = array();
 		print '<li>Write configuration....<img src="../images/loading.gif" /></li></ul></div>';
 		print "<script>console.log('Configuration writed...');setTimeout(window.location = 'index.php?".rand()."&next=".$_SESSION['install']."',10000);</script>";
 	}
