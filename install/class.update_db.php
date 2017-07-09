@@ -3313,7 +3313,7 @@ class update_db {
 			} else {
 				//echo update_db::update_routes();
 				echo update_db::update_routes_fam();
-				echo update_db::update_translation();
+				//echo update_db::update_translation();
 				echo update_db::update_translation_fam();
 				//echo update_db::update_notam_fam();
 				//echo update_db::update_ModeS();

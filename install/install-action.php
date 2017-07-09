@@ -223,7 +223,7 @@ if (isset($_GET['reset'])) {
 	} else {
 		include_once('class.update_db.php');
 		$globalDebug = FALSE;
-		$error .= update_db::update_translation();
+		$error .= update_db::update_translation_fam();
 		$_SESSION['done'] = array_merge($_SESSION['done'],array('Populate translation table with externals data'));
 
 		if ($_SESSION['waypoints'] == 1) {
