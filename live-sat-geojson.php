@@ -28,7 +28,7 @@ if (isset($_COOKIE['sattypes']) && $_COOKIE['sattypes'] != '') {
 	}
 }
 
-if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') {
+if ((isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') || !isset($_COOKIE['displayiss'])) {
 	$spotter_array[] = $Satellite->position('ISS (ZARYA)');
 	$spotter_array[] = $Satellite->position('TIANGONG 1');
 	$spotter_array[] = $Satellite->position('TIANGONG-2');

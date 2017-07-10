@@ -640,7 +640,7 @@ require_once('header.php');
 	    <h1 class="sidebar-header"><?php echo _("Satellites"); ?><span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
 	    <form>
 		<ul>
-		    <li><div class="checkbox"><label><input type="checkbox" name="displayiss" value="1" onclick="clickDisplayISS(this)" <?php if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') print 'checked'; ?> ><?php echo _("Show ISS, Tiangong-1 and Tiangong-2 on map"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="displayiss" value="1" onclick="clickDisplayISS(this)" <?php if ((isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') || !isset($_COOKIE['displayiss'])) print 'checked'; ?> ><?php echo _("Show ISS, Tiangong-1 and Tiangong-2 on map"); ?></label></div></li>
 		    <li><?php echo _("Type:"); ?>
 			<select class="selectpicker" multiple onchange="sattypes(this);">
 			    <?php
