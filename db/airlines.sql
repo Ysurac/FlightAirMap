@@ -14,7 +14,8 @@ CREATE TABLE `airlines` (
   `wikipedia_link` varchar(255) DEFAULT NULL,
   `forsource` varchar(255) DEFAULT NULL,
   `alliance` varchar(255) DEFAULT NULL,
-  `ban_eu` tinyint(1) NOT NULL DEFAULT '0'
+  `ban_eu` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY(`airlines_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8492 DEFAULT CHARSET=utf8;
 
 INSERT INTO `airlines` VALUES (7502,0,'AB Airlines','','7L','AZX','','','Y','passenger','http://web.archive.org/*/http:/www.abairlines.com','http://en.wikipedia.org/wiki/AB_Airlines',NULL,NULL,0);
@@ -7503,5 +7504,5 @@ INSERT INTO `airlines` VALUES (8488,0,'Westward Airways (Nebraska)','','CN','WWD
 INSERT INTO `airlines` VALUES (8490,0,'AirGO Private Airline','','','XGO','','','Y','passenger',NULL,NULL,NULL,NULL,0);
 INSERT INTO `airlines` VALUES (8491,0,'Bul Air','','','BVL','','','Y','passenger',NULL,NULL,NULL,NULL,0);
 
-ALTER TABLE `airlines` ADD PRIMARY KEY (`airlines_id`), ADD KEY `airlines_id` (`airlines_id`), ADD KEY `icao` (`icao`);
+ALTER TABLE `airlines` ADD KEY `airlines_id` (`airlines_id`), ADD KEY `icao` (`icao`);
 ALTER TABLE `airlines` MODIFY `airlines_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8364;
