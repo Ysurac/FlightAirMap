@@ -399,6 +399,15 @@ camera.setView({
 
 	}
 ?>
+<?php
+	if (isset($globalMap3DTiles) && $globalMap3DTiles != '') {
+?>
+var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+	url: '<?php print $globalMap3DTiles; ?>'
+}));
+<?php
+	}
+?>
 
 var layers = viewer.scene.imageryLayers;
 //var clouds = layers.addImageryProvider(
@@ -409,8 +418,18 @@ var layers = viewer.scene.imageryLayers;
 //	}
 //));
 
-
-
+/*
+var provider = new Cesium.WebMapTileServiceImageryProvider({
+    //url : 'https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/AMSR2_Snow_Water_Equivalent/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png',
+    //url : 'https://firms.modaps.eosdis.nasa.gov/wms/c6/?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=fires24&width=1024&height=512&BBOX=-180,-90,180,90&&SRS=EPSG:4326',
+    url : 'https://firms.modaps.eosdis.nasa.gov/wms/c6/',
+    layer : 'fires24',
+    format : 'image/png',
+    credit : new Cesium.Credit('NASA Global Imagery Browse Services for EOSDIS')
+});
+var imageryLayers = viewer.imageryLayers;
+imageryLayers.addImageryProvider(provider);
+*/
 
 <?php
 //	if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'stk') {

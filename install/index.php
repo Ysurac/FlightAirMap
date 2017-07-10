@@ -623,6 +623,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<label for="map3ddefault">Default to map in 3D</label>
 				<input type="checkbox" name="map3ddefault" id="map3ddefault" value="map3ddefault"<?php if (isset($globalMap3Ddefault) && $globalMap3Ddefault) { ?> checked="checked"<?php } ?> />
 			</p>
+			<p>
+				<label for="map3dtileset">3D Tiles</label>
+				<input type="text" name="map3dtileset" id="map3dtileset" value="<?php if (isset($globalMap3DTiles) && $globalMap3DTile) { print $globalMap3DTiles; } ?>" />
+				<p class="help-block">Set the url of your 3D Tiles</p>
+			</p>
 <!--
 			<p>
 				<label for="mapsatellites">Enable satellites in 3D map</label>
@@ -1116,6 +1121,9 @@ if (isset($_POST['dbtype'])) {
 
 	$customcss = filter_input(INPUT_POST,'customcss',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalCustomCSS' => $customcss));
+
+	$map3dtile = filter_input(INPUT_POST,'map3dtileset',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalMap3DTiles' => $map3dtile));
 
 	$notamsource = filter_input(INPUT_POST,'notamsource',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalNOTAMSource' => $notamsource));
