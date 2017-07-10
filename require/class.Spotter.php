@@ -394,10 +394,14 @@ class Spotter{
 			elseif (isset($globalIVAO) && $globalIVAO) $fromsource = 'ivao';
 			if (!isset($row['airline_name']) || $row['airline_name'] == '') {
 				if ((!isset($globalNoAirlines) || $globalNoAirlines === FALSE) && !is_numeric(substr($row['ident'], 0, 3))) {
-					if (is_numeric(substr($row['ident'], 2, 1))) {
-						$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 2),$fromsource);
-					} elseif (is_numeric(substr($row['ident'], 3, 1))) {
-						$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3),$fromsource);
+					if ((isset($temp_array['registration']) && $row['ident'] != str_replace('-','',$temp_array['registration'])) || !isset($temp_array['registration'])) {
+						if (is_numeric(substr($row['ident'], 2, 1))) {
+							$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 2),$fromsource);
+						} elseif (is_numeric(substr($row['ident'], 3, 1))) {
+							$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3),$fromsource);
+						} else {
+							$airline_array = $this->getAllAirlineInfo('NA');
+						}
 					} else {
 						$airline_array = $this->getAllAirlineInfo('NA');
 					}
