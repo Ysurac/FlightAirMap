@@ -27,13 +27,13 @@ if (isset($_COOKIE['sattypes']) && $_COOKIE['sattypes'] != '') {
 		$spotter_array = array_merge($Satellite->position_all_type($sattype),$spotter_array);
 	}
 }
-/*
-if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss']) {
-	$spotter_array = array_merge($Satellite->position('ISS (ZARYA)',time()-$globalLiveInterval,time()),$spotter_array);
-	$spotter_array = array_merge($Satellite->position('TIANGONG 1',time()-$globalLiveInterval,time()),$spotter_array);
-	$spotter_array = array_merge($Satellite->position('TIANGONG-2',time()-$globalLiveInterval,time()),$spotter_array);
+
+if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') {
+	$spotter_array[] = $Satellite->position('ISS (ZARYA)');
+	$spotter_array[] = $Satellite->position('TIANGONG 1');
+	$spotter_array[] = $Satellite->position('TIANGONG-2');
 }
-*/
+
 //$spotter_array = array_unique($spotter_array,SORT_REGULAR);
 //print_r($spotter_array);
 $sqltime = round(microtime(true)-$begintime,2);
@@ -52,7 +52,13 @@ if (!empty($spotter_array) && is_array($spotter_array))
 		$output_data .= '"name":"'.urlencode($spotter_item['name']).'",';
 		$output_data .= '"callsign":"'.$spotter_item['name'].'",';
 		$output_data .= '"type":"satellite",';
-		$output_data .= '"logo":"default.png",';
+		if ($spotter_item['name'] == 'ISS (ZARYA)') {
+			$output_data .= '"aircraft_shadow":"iss.png",';
+		} elseif ($spotter_item['name'] == 'TIANGONG 1' || $spotter_item['name'] == 'TIANGONG-2') {
+			$output_data .= '"aircraft_shadow":"tiangong1.png",';
+		} else {
+			$output_data .= '"aircraft_shadow":"defaultsat.png",';
+		}
 		$output_data .= '"altitude":0,';
 		$output_data .= '"sqt":'.$sqltime.',';
 		$nextlatlon = $Satellite->position($spotter_item['name'],time()+$globalMapRefresh+20);
@@ -66,9 +72,8 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			if ($spotter_item['longitude'] < 0) $nextlon = -180;
 			else $nextlon = 180;
 		}
-		$output_data .= '"nextlatlon":['.$nextlat.','.$nextlon.'],';
+		$output_data .= '"nextlatlon":['.$nextlat.','.$nextlon.']},';
 		//$output_data .= '"heading":"'.$Common->getHeading($spotter_item['latitude'],$spotter_item['longitude'],$nextlatlon['latitude'],$nextlatlon['longitude']).'",';
-		$output_data .= '"aircraft_shadow":"defaultsat.png"},';
 		$output_data .= '"geometry":{"type":"Point","coordinates":[';
 		$output_data .= $spotter_item['longitude'].','.$spotter_item['latitude'];
 		$output_data .= ']}},';

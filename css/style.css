@@ -238,10 +238,7 @@ ul{
 	border-radius: 50px;
 }
 .container{
-  padding-top:10px;
-  padding-bottom: 15px;
-  padding-left:50px;
-  padding-right:50px;
+	padding: 10px 50px 15px;
 }
 .navbar{
 	margin-bottom:0px;

@@ -131,7 +131,7 @@ function clickDisplayAirports(cb) {
 }
 function clickDisplayISS(cb) {
     document.cookie =  'displayiss='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+    updateSat();
 }
 function clickDisplayMinimap(cb) {
     document.cookie =  'displayminimap='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'

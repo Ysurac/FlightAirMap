@@ -79,7 +79,8 @@ class Satellite {
 		$result = array();
 		foreach ($all_sat as $sat) {
 			$position = $this->position($sat['tle_name'],$timestamp_begin,$timestamp_end,$second);
-			$result = array_merge($position,$result);
+			if (isset($position[0])) $result = array_merge($position,$result);
+			else $result[] = $position;
 		}
 		return $result;
 	}

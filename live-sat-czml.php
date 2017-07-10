@@ -25,7 +25,7 @@ if (isset($_COOKIE['sattypes']) && $_COOKIE['sattypes'] != '') {
 		$spotter_array = array_merge($Satellite->position_all_type($sattype,$timeb-$globalLiveInterval,$timeb),$spotter_array);
 	}
 }
-if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss']) {
+if (isset($_COOKIE['displayiss']) && $_COOKIE['displayiss'] == 'true') {
 	$spotter_array = array_merge($Satellite->position('ISS (ZARYA)',time()-$globalLiveInterval,time()),$spotter_array);
 	$spotter_array = array_merge($Satellite->position('TIANGONG 1',time()-$globalLiveInterval,time()),$spotter_array);
 	$spotter_array = array_merge($Satellite->position('TIANGONG-2',time()-$globalLiveInterval,time()),$spotter_array);

@@ -73,7 +73,7 @@ if (MapTrackSatellite != '') {
 	delCookie('MapTrackSatellite');
 }
 
-function getLiveSatelliteData(click)
+function updateSat(click)
 {
 	var bbox = map.getBounds().toBBoxString();
 <?php
@@ -154,6 +154,7 @@ function getLiveSatelliteData(click)
 <?php
 	}
 ?>
+		    console.log(callsign);
 		    if (type == "satellite"){ nbsat = nbsat +1; }
 		    if (callsign != ""){ markerSatelliteLabel += callsign; }
 		    if (type != ""){ markerSatelliteLabel += ' - '+type; }
@@ -234,7 +235,7 @@ function getLiveSatelliteData(click)
 				    $(".showdetails").load("<?php print $globalURL; ?>/satellite-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
-				getLiveSatelliteData(1);
+				updateSat(1);
 			});
 <?php
 		}
@@ -292,7 +293,7 @@ function getLiveSatelliteData(click)
 					$(".showdetails").load("<?php print $globalURL; ?>/satellite-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
-				getLiveSatelliteData(1);
+				updateSat(1);
 			});
 <?php
 		}
@@ -346,7 +347,7 @@ function getLiveSatelliteData(click)
 				    $(".showdetails").load("<?php print $globalURL; ?>/satellite-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
-				getLiveSatelliteData(1);
+				updateSat(1);
 			    });
 <?php
 		}
@@ -588,26 +589,26 @@ function getLiveSatelliteData(click)
 //		info_satellite_update(nb);
 	});
 //		console.log(nb);
-	//  getLiveSatelliteData(0);
+	//  updateSat(0);
 }
 
 $( document ).ready(function() {
  //load the function on startup
-getLiveSatelliteData(0);
+updateSat(0);
 
 
 <?php
 	if (isset($archive) && $archive) {
 ?>
 //then load it again every 30 seconds
-//  var reload = setInterval(function(){if (noTimeout) getLiveSatelliteData(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
-reloadSatellitePage = setInterval(function(){if (noTimeout) getLiveSatelliteData(0)},<?php print $archiveupdatetime*1000; ?>);
+//  var reload = setInterval(function(){if (noTimeout) updateSat(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
+reloadSatellitePage = setInterval(function(){if (noTimeout) updateSat(0)},<?php print $archiveupdatetime*1000; ?>);
 <?php
 	} else {
 ?>
 //then load it again every 30 seconds
 reloadSatellitePage = setInterval(
-    function(){if (noTimeout) getLiveSatelliteData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+    function(){if (noTimeout) updateSat(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 <?php
 	}
 ?>
