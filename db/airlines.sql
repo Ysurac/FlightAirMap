@@ -14,10 +14,7 @@ CREATE TABLE `airlines` (
   `wikipedia_link` varchar(255) DEFAULT NULL,
   `forsource` varchar(255) DEFAULT NULL,
   `alliance` varchar(255) DEFAULT NULL,
-  `ban_eu` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`airlines_id`),
-  KEY `airlines_id` (`airlines_id`),
-  KEY `icao` (`icao`)
+  `ban_eu` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM AUTO_INCREMENT=8492 DEFAULT CHARSET=utf8;
 
 INSERT INTO `airlines` VALUES (7502,0,'AB Airlines','','7L','AZX','','','Y','passenger','http://web.archive.org/*/http:/www.abairlines.com','http://en.wikipedia.org/wiki/AB_Airlines',NULL,NULL,0);
