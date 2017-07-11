@@ -1,7 +1,7 @@
 <?php
 @session_start();
 //print_r($_SESSION);
-if (isset($_SESSION['error'])) {
+if (isset($_SESSION['error']) || isset($_SESSION['errorlst'])) {
 	header('Content-Encoding: none;');
 	echo 'Error : '.$_SESSION['error'].' - Resetting install... You need to fix the problem and run install again.';
 	unset($_SESSION['error']);
@@ -13,6 +13,7 @@ require_once(dirname(__FILE__).'/class.update_schema.php');
 require_once(dirname(__FILE__).'/class.settings.php');
 $title="Install";
 require(dirname(__FILE__).'/../require/settings.php');
+require(dirname(__FILE__).'/../require/class.Common.php');
 require(dirname(__FILE__).'/header.php');
 
 if ($globalInstalled && !isset($_SESSION['install'])) {
@@ -29,8 +30,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 		require('../footer.php');
 		exit;
 	}
-	if (!is_writable('tmp')) {
-		print '<div class="info column"><p><strong>The directory <i>install/tmp</i> must be writable.</strong></p></div>';
+	if (!$Common->is__writable('tmp')) {
+		print '<div class="info column"><p><strong>The directory <i>install/tmp</i> must be writable to the current user.</strong></p></div>';
 		require('../footer.php');
 		exit;
 	}
@@ -50,12 +51,14 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 		print '<div class="info column"><p><strong>pcntl_fork is not available. Schedules will not be fetched.</strong></p></div>';
 	}
 	*/
+	/*
 	if (!extension_loaded('SimpleXML')) {
 		$error[] = "SimpleXML is not loaded.";
 	}
 	if (!extension_loaded('dom')) {
 		$error[] = "Dom is not loaded. Needed for aircraft schedule";
 	}
+	*/
 	if (!extension_loaded('PDO')) {
 		$error[] = "PDO is not loaded.";
 	}
@@ -625,7 +628,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<p>
 				<label for="map3dtileset">3D Tiles</label>
-				<input type="text" name="map3dtileset" id="map3dtileset" value="<?php if (isset($globalMap3DTiles) && $globalMap3DTile) { print $globalMap3DTiles; } ?>" />
+				<input type="text" name="map3dtileset" id="map3dtileset" value="<?php if (isset($globalMap3DTiles) && $globalMap3DTiles) { print $globalMap3DTiles; } ?>" />
 				<p class="help-block">Set the url of your 3D Tiles</p>
 			</p>
 <!--

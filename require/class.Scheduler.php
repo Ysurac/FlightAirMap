@@ -736,6 +736,7 @@ class Schedule {
 	*/
 	private function getAirCanada($callsign,$date = 'NOW') {
 		$Common = new Common();
+		if (class_exists("DomDocument") === FALSE) return array();
 		date_default_timezone_set('UTC');
 		$check_date = new Datetime($date);
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
