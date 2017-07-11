@@ -13,7 +13,7 @@ require_once(dirname(__FILE__).'/class.update_schema.php');
 require_once(dirname(__FILE__).'/class.settings.php');
 $title="Install";
 require(dirname(__FILE__).'/../require/settings.php');
-require(dirname(__FILE__).'/../require/class.Common.php');
+require_once(dirname(__FILE__).'/../require/class.Common.php');
 require(dirname(__FILE__).'/header.php');
 
 if ($globalInstalled && !isset($_SESSION['install'])) {
