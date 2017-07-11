@@ -30,6 +30,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 		require('../footer.php');
 		exit;
 	}
+	$Common = new Common();
 	if (!$Common->is__writable('tmp/')) {
 		print '<div class="info column"><p><strong>The directory <i>install/tmp</i> must be writable to the current user.</strong></p></div>';
 		require('../footer.php');
