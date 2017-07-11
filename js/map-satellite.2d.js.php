@@ -154,7 +154,6 @@ function updateSat(click)
 <?php
 	}
 ?>
-		    console.log(callsign);
 		    if (type == "satellite"){ nbsat = nbsat +1; }
 		    if (callsign != ""){ markerSatelliteLabel += callsign; }
 		    if (type != ""){ markerSatelliteLabel += ' - '+type; }
@@ -374,136 +373,9 @@ function updateSat(click)
 	}
 ?>
                 var output = '';
-		
-              //individual aircraft
-		if (feature.minimal == "false" && type == "aircraft"){
-		    output += '<div class="top">';
-                    if (typeof feature.properties.image_source_website != 'undefined') {
-                	if (typeof feature.properties.image_copyright != 'undefined') {
-                	    output += '<div class="left"><a href="'+feature.properties.image_source_website+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a>Image &copy; '+ feature.properties.image_copyright+'</div>';
-            		} else {
-                	    output += '<div class="left"><a href="'+feature.properties.image_source_website+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a></div>';
-			}
-		    } else {
-			if (typeof feature.properties.image_copyright != 'undefined') {
-			    output += '<div class="left"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.famsatid+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a>Image &copy; '+ feature.properties.image_copyright+'</div>';
-			} else {
-			    output += '<div class="left"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.famsatid+'" target="_blank"><img src="'+feature.properties.image+'" alt="'+feature.properties.registration+' '+feature.properties.aircraft_name+'" title="'+feature.properties.registration+' '+feature.properties.aircraft_name+' Image &copy; '+feature.properties.image_copyright+'" /></a></div>';
-			}
-		    }
-		    output += '<div class="right">';
-                    output += '<div class="callsign-details">';
-                    output += '<div class="callsign"><a href="<?php print $globalURL; ?>/redirect/'+feature.properties.famsatid+'" target="_blank">'+feature.properties.callsign+'</a></div>';
-                    output += '<div class="airline">'+feature.properties.airline_name+'</div>';
-                    output += '</div>';
-                    output += '<div class="nomobile airports">';
-                    output += '<div class="airport">';
-                    output += '<span class="code"><a href="<?php print $globalURL; ?>/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
-		    if (typeof feature.properties.departure_airport_time != 'undefined') {
-			output += '<br /><span class="time">'+feature.properties.departure_airport_time+'</span>';
-		    }
-		    output += '</div>';
-		    output += '<i class="fa fa-long-arrow-right"></i>';
-		    output += '<div class="airport">';
-                    output += '<span class="code"><a href="<?php print $globalURL; ?>/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
-		    if (typeof feature.properties.arrival_airport_time != 'undefined') {
-			output += '<br /><span class="time">'+feature.properties.arrival_airport_time+'</span>';
-		    }
-		    output += '</div>';
-                    output += '</div>';
-                    if (typeof feature.properties.route_stop != 'undefined') {
-                	output += '<?php echo _("Route stop:"); ?> '+feature.properties.route_stop;
-                    }
-                    output += '</div>';
-                    output += '</div>';
-                    output += '<div class="details">';
-                    output += '<div class="mobile airports">';
-                    output += '<div class="airport">';
-                    output += '<span class="code"><a href="<?php print $globalURL; ?>/airport/'+feature.properties.departure_airport_code+'" target="_blank">'+feature.properties.departure_airport_code+'</a></span>'+feature.properties.departure_airport;
-                    output += '</div>';
-                    output += '<i class="fa fa-long-arrow-right"></i>';
-                    output += '<div class="airport">';
-                    output += '<span class="code"><a href="<?php print $globalURL; ?>/airport/'+feature.properties.arrival_airport_code+'" target="_blank">'+feature.properties.arrival_airport_code+'</a></span>'+feature.properties.arrival_airport;
-                    output += '</div>';
-                    output += '</div>';
-                    output += '<div>';
-                    output += '<span><?php echo _("Aircraft"); ?></span>';
-                    if (feature.properties.aircraft_wiki != 'undefined') {
-                        output += '<a href="'+feature.properties.aircraft_wiki+'">';
-                        output += feature.properties.aircraft_name;
-                        output += '</a>';
-                    } else {
-                        output += feature.properties.aircraft_name;
-                    }
-                    output += '</div>';
-                    if (feature.properties.altitude != "" || feature.properties.altitude != 0)
-                    {
-                        output += '<div>';
-                	output += '<span><?php echo _("Altitude"); ?></span>';
-                        output += feature.properties.altitude+'00 feet - '+Math.round(feature.properties.altitude*30.48)+' m (FL'+feature.properties.altitude+')';
-                        output += '</div>';
-                    }
-                    if (feature.properties.registration != "")
-                    {
-                	output += '<div>';
-                        output += '<span><?php echo _("Registration"); ?></span>';
-                        output += '<a href="<?php print $globalURL; ?>/registration/'+feature.properties.registration+'" target="_blank">'+feature.properties.registration+'</a>';
-                        output += '</div>';
-                    }
-                    output += '<div>';
-                    output += '<span><?php echo _("Speed"); ?></span>';
-                    output += feature.properties.ground_speed+' knots - '+Math.round(feature.properties.ground_speed*1.852)+' km/h';
-                    output += '</div>';
-                    output += '<div>';
-                    output += '<span><?php echo _("Coordinates"); ?></span>';
-                    output += feature.properties.latitude+", "+feature.properties.longitude;
-                    output += '</div>';
-                    output += '<div>';
-                    output += '<span><?php echo _("Heading"); ?></span>';
-                    output += feature.properties.heading;
-                    output += '</div>';
-            	    if (typeof feature.properties.pilot_name != 'undefined') {
-                	output += '<div>';
-                        output += '<span><?php echo _("Pilot"); ?></span>';
-            		if (typeof feature.properties.pilot_id != 'undefined') {
-                    	    output += feature.properties.pilot_name+" ("+feature.properties.pilot_id+")";
-                        } else {
-                    	    output += feature.properties.pilot_name;
-                        }
-                	output += '</div>';
-                    }
-            	    output += '</div>';
-            	    if (typeof feature.properties.waypoints != 'undefined') {
-            		output += '<div class="waypoints"><span><?php echo _("Route"); ?></span>';
-            		output += feature.properties.waypoints;
-            		output += '</div>';
-            	    }
-                    if (typeof feature.properties.acars != 'undefined') {
-            		output += '<div class="acars"><span><?php echo _("Latest ACARS message"); ?></span>';
-            		output += feature.properties.acars;
-            		output += '</div>';
-            	    }
-            	    if (typeof feature.properties.squawk != 'undefined') {
-                	output += '<div class="bottom">';
-                	output += '<?php echo _("Squawk:"); ?> ';
-			output += feature.properties.squawk;
-            		if (typeof feature.properties.squawk_usage != 'undefined') {
-            			output += ' - '+feature.properties.squawk_usage;
-            		}
-			output += '</div>';
-            	    }
-            	    output += '</div>';
-                
-            	    <?php if (!isset($ident) && !isset($famsatid)) { ?>
-            	    layer.bindPopup(output);
-		    <?php } ?>
-            	    layer_satellite_data.addLayer(layer);
-                } else {
-            	    layer_satellite_data.addLayer(layer);
-                }
-
-                if (type == "route"){
-            	    var style = {
+		layer_satellite_data.addLayer(layer);
+		if (type == "route"){
+		    var style = {
 		    	"color": "#c74343",
 		    	"weight": 2,
 		    	"opacity": 0.5
