@@ -1,12 +1,21 @@
 <?php
 @session_start();
 //print_r($_SESSION);
-if (isset($_SESSION['error']) || isset($_SESSION['errorlst'])) {
+if (isset($_SESSION['error'])) {
 	header('Content-Encoding: none;');
 	echo 'Error : '.$_SESSION['error'].' - Resetting install... You need to fix the problem and run install again.';
-	unset($_SESSION['error']);
-	unset($_SESSION['errorlst']);
-	unset($_SESSION['install']);
+	if (isset($_SESSION['error'])) unset($_SESSION['error']);
+	if (isset($_SESSION['errorlst'])) unset($_SESSION['errorlst']);
+	if (isset($_SESSION['next'])) unset($_SESSION['next']);
+	if (isset($_SESSION['install'])) unset($_SESSION['install']);
+}
+if (isset($_SESSION['errorlst'])) {
+	header('Content-Encoding: none;');
+	echo 'Error : Resetting install... You need to fix the problem and run install again.';
+	if (isset($_SESSION['error'])) unset($_SESSION['error']);
+	if (isset($_SESSION['errorlst'])) unset($_SESSION['errorlst']);
+	if (isset($_SESSION['next'])) unset($_SESSION['next']);
+	if (isset($_SESSION['install'])) unset($_SESSION['install']);
 }
 require_once(dirname(__FILE__).'/class.create_db.php');
 require_once(dirname(__FILE__).'/class.update_schema.php');
