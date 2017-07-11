@@ -268,6 +268,7 @@ class Image {
 			$url= 'http://www.planespotters.net/Aviation_Photos/search.php?reg='.$aircraft_registration.'&output=rss';
 		}
 		$data = $Common->getData($url);
+		if (substr($data, 0, 5) != "<?xml") return false;
 		if ($xml = simplexml_load_string($data)) {
 			if (isset($xml->channel->item)) {
 				$image_url = array();
@@ -306,6 +307,7 @@ class Image {
 			$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q="'.urlencode($name).'"';
 		}
 		$data = $Common->getData($url);
+		if (substr($data, 0, 5) != "<?xml") return false;
 		if ($xml = simplexml_load_string($data)) {
 			if (isset($xml->channel->item->link)) {
 				$image_url = array();
@@ -416,6 +418,7 @@ class Image {
 			else $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$registration.',ship';
 		}
 		$data = $Common->getData($url);
+		if (substr($data, 0, 5) != "<?xml") return false;
 		if ($xml = simplexml_load_string($data)) {
 			if (isset($xml->channel->item)) {
 				$original_url = trim((string)$xml->channel->item->enclosure->attributes()->url);
