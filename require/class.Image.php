@@ -194,13 +194,13 @@ class Image {
 		foreach ($globalAircraftImageSources as $source) {
 			$source = strtolower($source);
 			if ($source == 'ivaomtl' && $globalIVAO && $aircraft_icao != '' && $airline_icao != '') $images_array = $this->fromIvaoMtl('aircraft',$aircraft_icao,$airline_icao);
-			if ($source == 'planespotters' && !$globalIVAO) $images_array = $this->fromPlanespotters('aircraft',$aircraft_registration,$aircraft_name);
-			if ($source == 'flickr') $images_array = $this->fromFlickr('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'planespotters' && !$globalIVAO && extension_loaded('simplexml')) $images_array = $this->fromPlanespotters('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'flickr' && extension_loaded('simplexml')) $images_array = $this->fromFlickr('aircraft',$aircraft_registration,$aircraft_name);
 			if ($source == 'bing') $images_array = $this->fromBing('aircraft',$aircraft_registration,$aircraft_name);
-			if ($source == 'deviantart') $images_array = $this->fromDeviantart('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'deviantart' && extension_loaded('simplexml')) $images_array = $this->fromDeviantart('aircraft',$aircraft_registration,$aircraft_name);
 			if ($source == 'wikimedia') $images_array = $this->fromWikimedia('aircraft',$aircraft_registration,$aircraft_name);
-			if ($source == 'jetphotos' && !$globalIVAO) $images_array = $this->fromJetPhotos('aircraft',$aircraft_registration,$aircraft_name);
-			if ($source == 'planepictures' && !$globalIVAO) $images_array = $this->fromPlanePictures('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'jetphotos' && !$globalIVAO && class_exists("DomDocument")) $images_array = $this->fromJetPhotos('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'planepictures' && !$globalIVAO && class_exists("DomDocument")) $images_array = $this->fromPlanePictures('aircraft',$aircraft_registration,$aircraft_name);
 			if ($source == 'airportdata' && !$globalIVAO) $images_array = $this->fromAirportData('aircraft',$aircraft_registration,$aircraft_name);
 			if ($source == 'customsources') $images_array = $this->fromCustomSource('aircraft',$aircraft_registration,$aircraft_name);
 			if (isset($images_array) && $images_array['original'] != '') return $images_array;
