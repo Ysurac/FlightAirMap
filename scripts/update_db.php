@@ -146,7 +146,9 @@ if (isset($globalMap3D) && $globalMap3D) {
 			$update_db->insert_last_satellite_update();
 		}
 		$update_db->update_models();
-		$update_db->update_space_models();
+		if (isset($globalSatellite) && $globalSatellite) {
+			$update_db->update_space_models();
+		}
 		if ((isset($globalTracker) && $globalTracker) || (isset($globalMarine) && $globalMarine)) {
 			$update_db->update_vehicules_models();
 		}
