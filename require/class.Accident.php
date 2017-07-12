@@ -352,8 +352,7 @@ class Accident {
 		global $globalDBdriver;
 			$query = "SELECT COUNT(*) as nb FROM accidents";
 		try {
-			$Connection = new Connection($this->db);
-			$sth = $Connection->db->prepare($query);
+			$sth = $this->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
@@ -370,8 +369,7 @@ class Accident {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_accident_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '1 DAYS'";
 		}
 		try {
-			$Connection = new Connection($this->db);
-			$sth = $Connection->db->prepare($query);
+			$sth = $this->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
@@ -385,8 +383,7 @@ class Accident {
 		$query = "DELETE FROM config WHERE name = 'last_update_accident_db';
 		    INSERT INTO config (name,value) VALUES ('last_update_accident_db',NOW());";
 		try {
-			$Connection = new Connection($this->db);
-			$sth = $Connection->db->prepare($query);
+			$sth = $this->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
