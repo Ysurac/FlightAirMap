@@ -381,7 +381,7 @@ class TrackerImport {
 					$source = $this->all_tracked[$id]['source_name'];
 					if ($source == '') $source = $this->all_tracked[$id]['format_source'];
 					if (!isset($this->source_location[$source])) {
-						$Location = new Source();
+						$Location = new Source($this->db);
 						$coord = $Location->getLocationInfobySourceName($source);
 						if (count($coord) > 0) {
 							$latitude = $coord[0]['latitude'];

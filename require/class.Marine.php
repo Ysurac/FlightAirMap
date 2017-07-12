@@ -817,7 +817,7 @@ class Marine{
 		if (!$Connection->tableExists('countries')) return array();
 		require_once('class.SpotterLive.php');
 		if (!isset($globalArchive) || $globalArchive !== TRUE) {
-			$MarineLive = new MarineLive();
+			$MarineLive = new MarineLive($this->db);
 			$filter_query = $MarineLive->getFilter($filters,true,true);
 			$filter_query .= " over_country IS NOT NULL AND over_country <> ''";
 			if ($olderthanmonths > 0) {
@@ -837,7 +837,7 @@ class Marine{
 			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT fammarine_id,over_country FROM marine_live".$filter_query.") l ON c.iso2 = l.over_country ";
 		} else {
 			require_once(dirname(__FILE__)."/class.MarineArchive.php");
-			$MarineArchive = new MarineArchive();
+			$MarineArchive = new MarineArchive($this->db);
 			$filter_query = $MarineArchive->getFilter($filters,true,true);
 			$filter_query .= " over_country <> ''";
 			if ($olderthanmonths > 0) {

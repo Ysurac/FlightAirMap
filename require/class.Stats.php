@@ -516,7 +516,7 @@ class Stats {
 		return $all;
 	}
 	public function countAllFlightOverCountries($limit = true, $stats_airline = '',$filter_name = '',$year = '',$month = '') {
-		$Connection = new Connection();
+		$Connection = new Connection($this->db);
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($Connection->tableExists('countries')) {
 			if (strpos($stats_airline,'alliance_') !== FALSE) {
@@ -1980,7 +1980,7 @@ class Stats {
 	public function addOldStats() {
 		global $globalDebug, $globalArchiveMonths, $globalArchive, $globalArchiveYear, $globalDBdriver, $globalStatsFilters,$globalDeleteLastYearStats,$globalStatsReset,$globalStatsResetYear, $globalAccidents;
 		$Common = new Common();
-		$Connection = new Connection();
+		$Connection = new Connection($this->db);
 		date_default_timezone_set('UTC');
 		$last_update = $this->getLastStatsUpdate('last_update_stats');
 			if ($globalDebug) echo 'Update stats !'."\n";
@@ -2088,7 +2088,7 @@ class Stats {
 			
 			if (isset($globalAccidents) && $globalAccidents) {
 				if ($globalDebug) echo 'Count fatalities stats...'."\n";
-				$Accident = new Accident();
+				$Accident = new Accident($this->db);
 				$this->deleteStatsByType('fatalities_byyear');
 				$alldata = $Accident->countFatalitiesByYear();
 				foreach ($alldata as $number) {
@@ -2263,7 +2263,7 @@ class Stats {
 			echo '--- Stats by airlines ---'."\n";
 			if ($Connection->tableExists('countries')) {
 				if ($globalDebug) echo 'Count all flights by countries by airlines...'."\n";
-				$SpotterArchive = new SpotterArchive();
+				$SpotterArchive = new SpotterArchive($this->db);
 				//$Spotter = new Spotter($this->db);
 				$alldata = $SpotterArchive->countAllFlightOverCountriesByAirlines(false,0,$last_update_day);
 				//$alldata = $Spotter->countAllFlightOverCountriesByAirlines(false,0,$last_update_day);

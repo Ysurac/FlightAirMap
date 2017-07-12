@@ -548,7 +548,7 @@ class TrackerArchive {
     {
 	global $globalTimezone, $globalDBdriver;
 	require_once(dirname(__FILE__).'/class.Translation.php');
-	$Translation = new Translation();
+	$Translation = new Translation($this->db);
 	$Tracker = new Tracker($this->db);
 
 	date_default_timezone_set('UTC');
@@ -1195,7 +1195,7 @@ class TrackerArchive {
     public function getTrackerDataByAirport($airport = '', $limit = '', $sort = '',$filters = array())
     {
 	global $global_query;
-	$Tracker = new Tracker();
+	$Tracker = new Tracker($this->db);
 	date_default_timezone_set('UTC');
 	$query_values = array();
 	$limit_query = '';

@@ -51,7 +51,7 @@ class METAR {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_metar' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '20 MINUTES'";
 		}
 		try {
-			$Connection = new Connection();
+			$Connection = new Connection($this->db);
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
@@ -67,7 +67,7 @@ class METAR {
 		$query = "DELETE FROM config WHERE name = 'last_update_metar';
 		        INSERT INTO config (name,value) VALUES ('last_update_metar',NOW());";
 		try {
-			$Connection = new Connection();
+			$Connection = new Connection($this->db);
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {

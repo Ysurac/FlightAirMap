@@ -552,7 +552,7 @@ class MarineArchive {
     {
 	global $globalTimezone, $globalDBdriver;
 	require_once(dirname(__FILE__).'/class.Translation.php');
-	$Translation = new Translation();
+	$Translation = new Translation($this->db);
 	$Marine = new Marine($this->db);
 
 	date_default_timezone_set('UTC');
@@ -1199,7 +1199,7 @@ class MarineArchive {
     public function getMarineDataByAirport($airport = '', $limit = '', $sort = '',$filters = array())
     {
 	global $global_query;
-	$Marine = new Marine();
+	$Marine = new Marine($this->db);
 	date_default_timezone_set('UTC');
 	$query_values = array();
 	$limit_query = '';

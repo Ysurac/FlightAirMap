@@ -599,7 +599,7 @@ class Spotter{
 	{
 		global $globalTimezone, $globalDBdriver;
 		require_once(dirname(__FILE__).'/class.Translation.php');
-		$Translation = new Translation();
+		$Translation = new Translation($this->db);
 
 		date_default_timezone_set('UTC');
 
@@ -5113,7 +5113,7 @@ class Spotter{
 */
 		if (!isset($globalArchive) || $globalArchive === FALSE) {
 			require_once('class.SpotterLive.php');
-			$SpotterLive = new SpotterLive();
+			$SpotterLive = new SpotterLive($this->db);
 			$filter_query = $SpotterLive->getFilter($filters,true,true);
 			$filter_query .= " over_country IS NOT NULL AND over_country <> ''";
 			if ($olderthanmonths > 0) {
@@ -5133,7 +5133,7 @@ class Spotter{
 			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT flightaware_id,over_country FROM spotter_live".$filter_query.") l ON c.iso2 = l.over_country ";
 		} else {
 			require_once('class.SpotterArchive.php');
-			$SpotterArchive = new SpotterArchive();
+			$SpotterArchive = new SpotterArchive($this->db);
 			$filter_query = $SpotterArchive->getFilter($filters,true,true);
 			$filter_query .= " over_country IS NOT NULL AND over_country <> ''";
 			if ($olderthanmonths > 0) {

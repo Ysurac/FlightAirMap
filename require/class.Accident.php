@@ -287,9 +287,9 @@ class Accident {
 		require_once('class.Connection.php');
 		require_once('class.Image.php');
 		require_once('class.Spotter.php');
-		$Connection = new Connection();
-		$Image = new Image();
-		$Spotter = new Spotter();
+		$Connection = new Connection($this->db);
+		$Image = new Image($this->db);
+		$Spotter = new Spotter($this->db);
 
 		if (empty($crash)) return false;
 		if (!$new) {
@@ -352,7 +352,7 @@ class Accident {
 		global $globalDBdriver;
 			$query = "SELECT COUNT(*) as nb FROM accidents";
 		try {
-			$Connection = new Connection();
+			$Connection = new Connection($this->db);
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
@@ -370,7 +370,7 @@ class Accident {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_accident_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '1 DAYS'";
 		}
 		try {
-			$Connection = new Connection();
+			$Connection = new Connection($this->db);
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
@@ -385,7 +385,7 @@ class Accident {
 		$query = "DELETE FROM config WHERE name = 'last_update_accident_db';
 		    INSERT INTO config (name,value) VALUES ('last_update_accident_db',NOW());";
 		try {
-			$Connection = new Connection();
+			$Connection = new Connection($this->db);
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {

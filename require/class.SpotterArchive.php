@@ -598,7 +598,7 @@ class SpotterArchive {
     {
 	global $globalTimezone, $globalDBdriver;
 	require_once(dirname(__FILE__).'/class.Translation.php');
-	$Translation = new Translation();
+	$Translation = new Translation($this->db);
 	$Spotter = new Spotter($this->db);
 
 	date_default_timezone_set('UTC');
@@ -1245,7 +1245,7 @@ class SpotterArchive {
     public function getSpotterDataByAirport($airport = '', $limit = '', $sort = '',$filters = array())
     {
 	global $global_query;
-	$Spotter = new Spotter();
+	$Spotter = new Spotter($this->db);
 	date_default_timezone_set('UTC');
 	$query_values = array();
 	$limit_query = '';

@@ -761,7 +761,7 @@ class Tracker{
 		if (!$Connection->tableExists('countries')) return array();
 		if (!isset($globalArchive) || $globalArchive !== TRUE) {
 			require_once('class.TrackerLive.php');
-			$TrackerLive = new TrackerLive();
+			$TrackerLive = new TrackerLive($this->db);
 			$filter_query = $TrackerLive->getFilter($filters,true,true);
 			$filter_query .= " over_country IS NOT NULL AND over_country <> ''";
 			if ($olderthanmonths > 0) {
@@ -781,7 +781,7 @@ class Tracker{
 			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT famtrackid,over_country FROM tracker_live".$filter_query.") l ON c.iso2 = l.over_country ";
 		} else {
 			require_once('class.TrackerArchive.php');
-			$TrackerArchive = new TrackerArchive();
+			$TrackerArchive = new TrackerArchive($this->db);
 			$filter_query = $TrackerArchive->getFilter($filters,true,true);
 			$filter_query .= " over_country IS NOT NULL AND over_country <> ''";
 			if ($olderthanmonths > 0) {
