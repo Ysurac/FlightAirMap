@@ -49,7 +49,8 @@ var weatherradarrefresh;
 var weathersatellite;
 var weathersatelliterefresh; 
 var noTimeout = true;
-
+var locationsLayer;
+var genLayer;
 <?php
 	if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0) {
 ?>
@@ -340,11 +341,9 @@ $( document ).ready(function() {
 	};
 
 	function update_locationsLayer() {
-		//var bbox = map.getBounds().toBBoxString();
-		//locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox,{
-		var locationsLayerQuery = $.getJSON("<?php print $globalURL; ?>/location-geojson.php",function (data) {
-		//locationsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/location-geojson.php",{
-		    //onEachFeature: locationPopup,
+		var bbox = map.getBounds().toBBoxString();
+		//var locationsLayerQuery = $.getJSON("<?php print $globalURL; ?>/location-geojson.php",function (data) {
+		var locationsLayerQuery = $.getJSON("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox,function (data) {
 		    locationsLayer = L.geoJson(data,{
 			pointToLayer: function (feature, latlng) {
 			    if (feature.properties.type == 'wx' && typeof feature.properties.temp != 'undefined') {
