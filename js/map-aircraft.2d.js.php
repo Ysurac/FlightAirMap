@@ -286,6 +286,7 @@ function getLiveData(click)
 ?>
 			layer_data = L.layerGroup();
 			var nbaircraft = 0;
+			var flightcount = 0;
 			var live_data = L.geoJson(data, {
 				pointToLayer: function (feature, latLng) {
 					var markerLabel = "";
@@ -316,6 +317,7 @@ function getLiveData(click)
 <?php
 	}
 ?>
+					flightcount = feature.properties.fc;
 					if (type != "history") nbaircraft = nbaircraft+1;
 					if (callsign != ""){ markerLabel += callsign; }
 					if (departure_airport_code != "" && arrival_airport_code != "" && departure_airport_code != "NA" && arrival_airport_code != "NA"){ markerLabel += ' ( '+departure_airport_code+' - '+arrival_airport_code+' )'; }
@@ -807,7 +809,15 @@ function getLiveData(click)
 				layer_data.addTo(map);
 				//re-create the bootstrap tooltips on the marker 
 				//showBootstrapTooltip();
-				info_update(nbaircraft);
+				if (typeof flightcount != "undefined" && flightcount != 0) {
+					if (flightcount != nbaircraft) {
+						info_update(nbaircraft+'/'+flightcount);
+					} else {
+						info_update(nbaircraft);
+					}
+				} else {
+					info_update(nbaircraft);
+				}
 			}
 		});
 		//  getLiveData(0);

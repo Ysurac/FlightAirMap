@@ -100,7 +100,7 @@ if (isset($_GET['ident'])) {
 	$fammarine_id = urldecode(filter_input(INPUT_GET,'fammarine_id',FILTER_SANITIZE_STRING));
 	$spotter_array = $MarineLive->getLastLiveMarineDataById($fammarine_id);
 	$allhistory = true;
-} elseif (isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true'))) {
+} elseif (isset($globalMapUseBbox) && $globalMapUseBbox && isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true'))) {
 //} elseif (isset($_GET['coord'])) {
 	$usecoord = true;
 	$coord = explode(',',$_GET['coord']);
@@ -150,19 +150,16 @@ if (isset($_GET['ident'])) {
 	}
 }
 
-/*
-if (!empty($spotter_array) || $usecoord) {
-	if ($usecoord) {
-		if (isset($_GET['archive'])) {
-			$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
-		} else {
-			$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
-		}
-	} else $flightcnt = count($spotter_array);
+
+if ($usecoord) {
+	if (isset($_GET['archive'])) {
+		$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
+	} else {
+		$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
+	}
 	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;
-*/
-$flightcnt = 0;
+
 $sqltime = round(microtime(true)-$begintime,2);
 
 if ((!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation == FALSE) || (isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'false')) $usenextlatlon = false;
