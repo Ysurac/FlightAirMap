@@ -173,25 +173,63 @@ class MarineLive {
 	* @return Array the spotter information
 	*
 	*/
-	public function getMinLastLiveMarineData($filter = array())
+	public function getMinLastLiveMarineData($coord = array(),$filter = array(), $limit = false)
 	{
-		global $globalDBdriver, $globalLiveInterval;
+		global $globalDBdriver, $globalLiveInterval, $globalMap3DMarinesLimit;
 		date_default_timezone_set('UTC');
-
+		if (is_array($coord) && !empty($coord)) {
+			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		}
 		$filter_query = $this->getFilter($filter,true,true);
 
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
+		if (!isset($globalMap3DMarinesLimit) || $globalMap3DMarinesLimit == '') $globalMap3DMarinesLimit = '300';
 		if ($globalDBdriver == 'mysql') {
-			$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
-			FROM marine_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= marine_live.date AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' 
-			ORDER BY marine_live.fammarine_id, marine_live.date";
-                } else {
-			$query  = "SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
-			FROM marine_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' 
-			ORDER BY marine_live.fammarine_id, marine_live.date";
+			if (isset($globalArchive) && $globalArchive === TRUE) {
+				$query  = 'SELECT * FROM (SELECT marine_archive.ident, marine_archive.fammarine_id,marine_archive.type, marine_archive.latitude, marine_archive.longitude, marine_archive.heading, marine_archive.ground_speed, marine_archive.date, marine_archive.format_source 
+				    FROM marine_archive INNER JOIN (SELECT fammarine_id FROM marine_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= marine_live.date) l ON l.flightaware_id = marine_archive.flightaware_id ";
+				if (isset($maxlat)) $query .= "AND marine_archive.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_archive.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
+				$query .= "UNION
+				    SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				    FROM marine_live".$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= marine_live.date";
+				if (isset($maxlat)) $query .= " AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
+				$query .= ") AS marine 
+				    WHERE latitude <> '0' AND longitude <> '0' 
+				    ORDER BY fammarine_id, date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
+			} else {
+				$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				    FROM marine_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= marine_live.date ";
+				if (isset($maxlat)) $query .= "AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
+				$query .= "AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' 
+				ORDER BY marine_live.fammarine_id, marine_live.date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
+			}
+		} else {
+			if (isset($globalArchive) && $globalArchive === TRUE) {
+				$query  = "SELECT * FROM (SELECT marine_archive.ident, marine_archive.fammarine_id, marine_archive.type,marine_archive.latitude, marine_archive.longitude, marine_archive.heading, marine_archive.ground_speed, marine_archive.date, marine_archive.format_source 
+				    FROM marine_archive INNER JOIN (SELECT flightaware_id FROM marine_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date) l ON l.flightaware_id = marine_archive.flightaware_id ";
+				if (isset($maxlat)) $query .= "AND marine_archive.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_archive.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
+				$query .= "UNION
+				    SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				    FROM marine_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date";
+				if (isset($maxlat)) $query .= " AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
+				$query .= ") AS marine WHERE latitude <> '0' AND longitude <> '0' ";
+				$query .= "ORDER BY fammarine_id, date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
+			} else {
+				$query  = "SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				    FROM marine_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date ";
+				if (isset($maxlat)) $query .= "AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
+				$query .= "AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' 
+				ORDER BY marine_live.fammarine_id, marine_live.date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
+			}
 		}
-
-    		try {
+		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {

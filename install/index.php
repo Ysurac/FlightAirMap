@@ -892,7 +892,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">0 to disable</p>
 			</p>
 			<p>
-				<label for="bbox">Only display flights that we can see on screen (boarding box)</label>
+				<label for="bbox">Only display flights that we can see on screen (bounding box)</label>
 				<input type="checkbox" name="bbox" id="bbox" value="bbox"<?php if (isset($globalMapUseBbox) && $globalMapUseBbox) { ?> checked="checked"<?php } ?> />
 			</p>
 			<br />

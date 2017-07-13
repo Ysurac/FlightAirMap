@@ -13,6 +13,7 @@ $(".showdetails").on("click",".close",function(){
 
 function displayMarineData(data) {
 	var dsn;
+	var flightcnt = 0;
 	for (var i =0; i < viewer.dataSources.length; i++) {
 		if (viewer.dataSources.get(i).name == 'marine') {
 			dsn = i;
@@ -24,28 +25,9 @@ function displayMarineData(data) {
 		var entity = entities[i];
 		if (typeof dsn != 'undefined') var existing = viewer.dataSources.get(dsn);
 		else var existing;
-
+		flightcnt = entity.properties.valueOf('flightcnt')._flightcnt._value;
 		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
 		entity.orientation = orientation;
-
-		if (typeof existing != 'undefined') {
-			var last = viewer.dataSources.get(dsn).entities.getById(entity.id);
-			if (typeof last == 'undefined') {
-				entity.addProperty('lastupdate');
-				entity.lastupdate = Date.now();
-				entity.addProperty('type');
-				entity.type = 'marine';
-				viewer.dataSources.get(dsn).entities.add(entity);
-			} else {
-				last.lastupdate = Date.now();
-				last.type = 'marine';
-			}
-		} else {
-			entity.addProperty('lastupdate');
-			entity.lastupdate = Date.now();
-			entity.addProperty('marine');
-			entity.type = 'marine';
-		}
 	}
 	if (typeof dsn == 'undefined') {
 		viewer.dataSources.add(data);
@@ -53,11 +35,24 @@ function displayMarineData(data) {
 	} else {
 		for (var i = 0; i < viewer.dataSources.get(dsn).entities.values.length; i++) {
 			var entity = viewer.dataSources.get(dsn).entities.values[i];
-			if (parseInt(entity.lastupdate) < Math.floor(Date.now()-<?php if (isset($globalMapRefresh)) print $globalMapRefresh*2000; else print '60000'; ?>)) {
+			var entityid = entity.id;
+			var lastupdateentity = entity.properties.valueOf('lastupdate')._lastupdate._value;
+			<?php 
+			    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+			?>
+			if (lastupdateentity != lastupdatemarine) {
 				viewer.dataSources.get(dsn).entities.remove(entity);
-			} else {
-				//console.log(parseInt(entity.lastupdate)+' > '+Math.floor(Date.now()-100));
+				czmldsmarine.entities.removeById(entityid);
 			}
+			<?php
+			    } else {
+			?>
+			if (parseInt(lastupdateentity) < Math.floor(Date.now()-<?php if (isset($globalMapRefresh)) print $globalMapRefresh*2000; else print '60000'; ?>)) {
+				viewer.dataSources.get(dsn).entities.remove(entity);
+			}
+			<?php
+			    }
+			?>
 		}
 	}
 	var MapTrack = getCookie('MapTrack');
@@ -65,23 +60,29 @@ function displayMarineData(data) {
 		viewer.trackedEntity = viewer.dataSources.get(dsn).entities.getById(MapTrack);
 		$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
 		$("#aircraft_ident").attr('class',flightaware_id);
-		//lastid = MapTrack;
 	}
-
-
-//    viewer.dataSources.add(data);
-
-//    }
-    //console.log(viewer.dataSources.get(dsn).name);
-	$("#ibxmarine").html('<h4><?php echo _("Marines detected"); ?></h4><br /><b>'+viewer.dataSources.get(dsn).entities.values.length+'</b>');
-    //console.log(viewer.dataSources.get(dsn).entities.values.length);
-    //console.log(viewer.dataSources.length);
-    //console.log(dsn);
+	var flightvisible = viewer.dataSources.get(dsn).entities.values.length;
+	if (flightcnt != 0 && flightcnt != flightvisible && flightcnt > flightvisible) {
+		$("#ibxmarine").html('<h4><?php echo _("Marines detected"); ?></h4><br /><b>'+flightvisible+'/'+flightcnt+'</b>');
+	} else {
+		$("#ibxmarine").html('<h4><?php echo _("Marines detected"); ?></h4><br /><b>'+flightvisible+'</b>');
+	}
 };
 
+var lastupdatemarine;
 function updateMarineData() {
-	var livemarinedata = czmldsmarine.process('<?php print $globalURL; ?>/live-czml.php?marine&' + Date.now());
-    
+	lastupdatemarine = Date.now();
+<?php
+    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+?>
+	var livemarinedata = czmldsmarine.process('<?php print $globalURL; ?>/live-czml.php?marine&coord='+bbox()+'&update=' + lastupdatemarine);
+<?php
+    } else {
+?>
+	var livemarinedata = czmldsmarine.process('<?php print $globalURL; ?>/live-czml.php?marine&update=' + lastupdatemarine);
+<?php
+    }
+?>
 	livemarinedata.then(function (data) { 
 		displayMarineData(data);
 	});
@@ -93,13 +94,14 @@ var handler_marine = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
 handler_marine.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
 	if (Cesium.defined(pickedObject)) {
-		//console.log(pickedObject.id);
+		var type = pickedObject.id.properties.valueOf('type')._type._value;
+		if (typeof type == 'undefined') {
+			var type = pickedObject.id.type;
+		}
 		var currenttime = viewer.clock.currentTime;
-		//console.log(pickedObject.id.position.getValue(viewer.clock.currentTime));
 		console.log(pickedObject.id);
-//		if (typeof pickedObject.id.lastupdate != 'undefined') {
 		delCookie('MapTrack');
-		if (pickedObject.id.type == 'marine') {
+		if (type == 'marine') {
 			flightaware_id = pickedObject.id.id;
 			$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
 			var dsn;

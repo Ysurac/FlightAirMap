@@ -1874,14 +1874,19 @@ class update_db {
 		require_once(dirname(__FILE__).'/../require/class.NOTAM.php');
 		if ($globalDebug) echo "NOTAM from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.com/data/notam.txt.gz',$tmp_dir.'notam.txt.gz');
+		update_db::download('http://data.flightairmap.com/data/notam.txt.gz.md5',$tmp_dir.'notam.txt.gz.md5');
 		$error = '';
-		if (file_exists($tmp_dir.'notam.txt.gz')) {
-			if ($globalDebug) echo "Gunzip...";
-			update_db::gunzip($tmp_dir.'notam.txt.gz');
-			if ($globalDebug) echo "Add to DB...";
-			//$error = create_db::import_file($tmp_dir.'notam.sql');
-			$NOTAM = new NOTAM();
-			$NOTAM->updateNOTAMfromTextFile($tmp_dir.'notam.txt');
+		if (file_exists($tmp_dir.'notam.txt.gz') && file_exists($tmp_dir.'notam.txt.gz.md5')) {
+			$notam_md5_file = explode(' ',file_get_contents($tmp_dir.'notam.txt.gz.md5'));
+			$notam_md5 = $notam_md5_file[0];
+			if (md5_file($tmp_dir.'notam.txt.gz') == $notam_md5) {
+				if ($globalDebug) echo "Gunzip...";
+				update_db::gunzip($tmp_dir.'notam.txt.gz');
+				if ($globalDebug) echo "Add to DB...";
+				//$error = create_db::import_file($tmp_dir.'notam.sql');
+				$NOTAM = new NOTAM();
+				$NOTAM->updateNOTAMfromTextFile($tmp_dir.'notam.txt');
+			} else $error = "File ".$tmp_dir.'notam.txt.gz'." md5 failed. Download failed.";
 		} else $error = "File ".$tmp_dir.'notam.txt.gz'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
@@ -2309,11 +2314,16 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Translation from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.com/data/translation.tsv.gz',$tmp_dir.'translation.tsv.gz');
-		if (file_exists($tmp_dir.'translation.tsv.gz')) {
-			if ($globalDebug) echo "Gunzip...";
-			update_db::gunzip($tmp_dir.'translation.tsv.gz');
-			if ($globalDebug) echo "Add to DB...";
-			$error = update_db::translation_fam();
+		update_db::download('http://data.flightairmap.com/data/translation.tsv.gz.md5',$tmp_dir.'translation.tsv.gz.md5');
+		if (file_exists($tmp_dir.'translation.tsv.gz') && file_exists($tmp_dir.'translation.tsv.gz')) {
+			$translation_md5_file = explode(' ',file_get_contents($tmp_dir.'translation.tsv.gz.md5'));
+			$translation_md5 = $translation_md5_file[0];
+			if (md5_file($tmp_dir.'translation.tsv.gz') == $translation_md5) {
+				if ($globalDebug) echo "Gunzip...";
+				update_db::gunzip($tmp_dir.'translation.tsv.gz');
+				if ($globalDebug) echo "Add to DB...";
+				$error = update_db::translation_fam();
+			} else $error = "File ".$tmp_dir.'translation.tsv.gz'." md5 failed. Download failed.";
 		} else $error = "File ".$tmp_dir.'translation.tsv.gz'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
@@ -2324,11 +2334,16 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "ModeS from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.com/data/modes.tsv.gz',$tmp_dir.'modes.tsv.gz');
-		if (file_exists($tmp_dir.'modes.tsv.gz')) {
-			if ($globalDebug) echo "Gunzip...";
-			update_db::gunzip($tmp_dir.'modes.tsv.gz');
-			if ($globalDebug) echo "Add to DB...";
-			$error = update_db::modes_fam();
+		update_db::download('http://data.flightairmap.com/data/modes.tsv.gz.md5',$tmp_dir.'modes.tsv.gz.md5');
+		if (file_exists($tmp_dir.'modes.tsv.gz') && file_exists($tmp_dir.'modes.tsv.gz.md5')) {
+			$modes_md5_file = explode(' ',file_get_contents($tmp_dir.'modes.tsv.gz.md5'));
+			$modes_md5 = $modes_md5_file[0];
+			if (md5_file($tmp_dir.'modes.tsv.gz') == $modes_md5) {
+				if ($globalDebug) echo "Gunzip...";
+				update_db::gunzip($tmp_dir.'modes.tsv.gz');
+				if ($globalDebug) echo "Add to DB...";
+				$error = update_db::modes_fam();
+			} else $error = "File ".$tmp_dir.'modes.tsv.gz'." md5 failed. Download failed.";
 		} else $error = "File ".$tmp_dir.'modes.tsv.gz'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
@@ -2340,14 +2355,20 @@ class update_db {
 		if ($globalDebug) echo "owner from FlightAirMap website : Download...";
 		if ($globalOwner === TRUE) {
 			update_db::download('http://data.flightairmap.com/data/owners_all.tsv.gz',$tmp_dir.'owners.tsv.gz');
+			update_db::download('http://data.flightairmap.com/data/owners_all.tsv.gz.md5',$tmp_dir.'owners.tsv.gz.md5');
 		} else {
 			update_db::download('http://data.flightairmap.com/data/owners.tsv.gz',$tmp_dir.'owners.tsv.gz');
+			update_db::download('http://data.flightairmap.com/data/owners.tsv.gz.md5',$tmp_dir.'owners.tsv.gz.md5');
 		}
-		if (file_exists($tmp_dir.'owners.tsv.gz')) {
-			if ($globalDebug) echo "Gunzip...";
-			update_db::gunzip($tmp_dir.'owners.tsv.gz');
-			if ($globalDebug) echo "Add to DB...";
-			$error = update_db::owner_fam();
+		if (file_exists($tmp_dir.'owners.tsv.gz') && file_exists($tmp_dir.'owners.tsv.gz.md5')) {
+			$owners_md5_file = explode(' ',file_get_contents($tmp_dir.'owners.tsv.gz.md5'));
+			$owners_md5 = $owners_md5_file[0];
+			if (md5_file($tmp_dir.'owners.tsv.gz') == $owners_md5) {
+				if ($globalDebug) echo "Gunzip...";
+				update_db::gunzip($tmp_dir.'owners.tsv.gz');
+				if ($globalDebug) echo "Add to DB...";
+				$error = update_db::owner_fam();
+			} else $error = "File ".$tmp_dir.'owners.tsv.gz'." md5 failed. Download failed.";
 		} else $error = "File ".$tmp_dir.'owners.tsv.gz'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
@@ -2358,11 +2379,16 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Routes from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.com/data/routes.tsv.gz',$tmp_dir.'routes.tsv.gz');
-		if (file_exists($tmp_dir.'routes.tsv.gz')) {
-			if ($globalDebug) echo "Gunzip...";
-			update_db::gunzip($tmp_dir.'routes.tsv.gz');
-			if ($globalDebug) echo "Add to DB...";
-			$error = update_db::routes_fam();
+		update_db::download('http://data.flightairmap.com/data/routes.tsv.gz.md5',$tmp_dir.'routes.tsv.gz.md5');
+		if (file_exists($tmp_dir.'routes.tsv.gz') && file_exists($tmp_dir.'routes.tsv.gz.md5')) {
+			$routes_md5_file = explode(' ',file_get_contents($tmp_dir.'routes.tsv.gz.md5'));
+			$routes_md5 = $routes_md5_file[0];
+			if (md5_file($tmp_dir.'routes.tsv.gz') == $routes_md5) {
+				if ($globalDebug) echo "Gunzip...";
+				update_db::gunzip($tmp_dir.'routes.tsv.gz');
+				if ($globalDebug) echo "Add to DB...";
+				$error = update_db::routes_fam();
+			} else $error = "File ".$tmp_dir.'routes.tsv.gz'." md5 failed. Download failed.";
 		} else $error = "File ".$tmp_dir.'routes.tsv.gz'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
@@ -2379,10 +2405,12 @@ class update_db {
 				if ($globalDebug) echo "Marine identity from FlightAirMap website : Download...";
 				update_db::download('http://data.flightairmap.com/data/marine_identity.tsv.gz',$tmp_dir.'marine_identity.tsv.gz');
 				if (file_exists($tmp_dir.'marine_identity.tsv.gz')) {
-					if ($globalDebug) echo "Gunzip...";
-					update_db::gunzip($tmp_dir.'marine_identity.tsv.gz');
-					if ($globalDebug) echo "Add to DB...";
-					$error = update_db::marine_identity_fam();
+					if (md5_file($tmp_dir.'marine_identity.tsv.gz') == $marine_identity_md5) {
+						if ($globalDebug) echo "Gunzip...";
+						update_db::gunzip($tmp_dir.'marine_identity.tsv.gz');
+						if ($globalDebug) echo "Add to DB...";
+						$error = update_db::marine_identity_fam();
+					} else $error = "File ".$tmp_dir.'marine_identity.tsv.gz'." md5 failed. Download failed.";
 				} else $error = "File ".$tmp_dir.'marine_identity.tsv.gz'." doesn't exist. Download failed.";
 				if ($error != '') {
 					return $error;
@@ -2405,10 +2433,12 @@ class update_db {
 				if ($globalDebug) echo "Satellite from FlightAirMap website : Download...";
 				update_db::download('http://data.flightairmap.com/data/satellite.tsv.gz',$tmp_dir.'satellite.tsv.gz');
 				if (file_exists($tmp_dir.'satellite.tsv.gz')) {
-					if ($globalDebug) echo "Gunzip...";
-					update_db::gunzip($tmp_dir.'satellite.tsv.gz');
-					if ($globalDebug) echo "Add to DB...";
-					$error = update_db::satellite_fam();
+					if (md5_file($tmp_dir.'satellite.tsv.gz') == $satellite_md5) {
+						if ($globalDebug) echo "Gunzip...";
+						update_db::gunzip($tmp_dir.'satellite.tsv.gz');
+						if ($globalDebug) echo "Add to DB...";
+						$error = update_db::satellite_fam();
+					} else $error = "File ".$tmp_dir.'satellite.tsv.gz'." md5 failed. Download failed.";
 				} else $error = "File ".$tmp_dir.'satellite.tsv.gz'." doesn't exist. Download failed.";
 				if ($error != '') {
 					return $error;
@@ -2456,21 +2486,23 @@ class update_db {
 					update_db::download('http://data.flightairmap.com/data/airspace_pgsql.sql.gz',$tmp_dir.'airspace.sql.gz');
 				}
 				if (file_exists($tmp_dir.'airspace.sql.gz')) {
-					if ($globalDebug) echo "Gunzip...";
-					update_db::gunzip($tmp_dir.'airspace.sql.gz');
-					if ($globalDebug) echo "Add to DB...";
-					$Connection = new Connection();
-					if ($Connection->tableExists('airspace')) {
-						$query = 'DROP TABLE airspace';
-						try {
-							$sth = $Connection->db->prepare($query);
-    	    	    					$sth->execute();
-			            		} catch(PDOException $e) {
-							return "error : ".$e->getMessage();
-		            			}
-		    			}
-					$error = create_db::import_file($tmp_dir.'airspace.sql');
-					update_db::insert_airspace_version($airspace_md5);
+					if (md5_file($tmp_dir.'airspace.sql.gz') == $airspace_md5) {
+						if ($globalDebug) echo "Gunzip...";
+						update_db::gunzip($tmp_dir.'airspace.sql.gz');
+						if ($globalDebug) echo "Add to DB...";
+						$Connection = new Connection();
+						if ($Connection->tableExists('airspace')) {
+							$query = 'DROP TABLE airspace';
+							try {
+								$sth = $Connection->db->prepare($query);
+								$sth->execute();
+							} catch(PDOException $e) {
+								return "error : ".$e->getMessage();
+							}
+						}
+						$error = create_db::import_file($tmp_dir.'airspace.sql');
+						update_db::insert_airspace_version($airspace_md5);
+					} else $error = "File ".$tmp_dir.'airspace.sql.gz'." md5 failed. Download failed.";
 				} else $error = "File ".$tmp_dir.'airspace.sql.gz'." doesn't exist. Download failed.";
 			}
 		} else $error = "File ".$tmp_dir.'airspace.sql.gz.md5'." doesn't exist. Download failed.";
@@ -2491,11 +2523,13 @@ class update_db {
 			if (!update_db::check_geoid_version($geoid_md5)) {
 				update_db::download('http://data.flightairmap.com/data/geoid/'.$globalGeoidSource.'.pgm.gz',$tmp_dir.$globalGeoidSource.'.pgm.gz');
 				if (file_exists($tmp_dir.$globalGeoidSource.'.pgm.gz')) {
-					if ($globalDebug) echo "Gunzip...";
-					update_db::gunzip($tmp_dir.$globalGeoidSource.'.pgm.gz',dirname(__FILE__).'/../data/'.$globalGeoidSource.'.pgm');
-					if (file_exists(dirname(__FILE__).'/../data/'.$globalGeoidSource.'.pgm')) {
-						update_db::insert_geoid_version($geoid_md5);
-					}
+					if (md5_file($tmp_dir.$globalGeoidSource.'.pgm.gz') == $geoid_md5) {
+						if ($globalDebug) echo "Gunzip...";
+						update_db::gunzip($tmp_dir.$globalGeoidSource.'.pgm.gz',dirname(__FILE__).'/../data/'.$globalGeoidSource.'.pgm');
+						if (file_exists(dirname(__FILE__).'/../data/'.$globalGeoidSource.'.pgm')) {
+							update_db::insert_geoid_version($geoid_md5);
+						}
+					} else $error = "File ".$tmp_dir.$globalGeoidSource.'.pgm.gz'." md5 failed. Download failed.";
 				} else $error = "File ".$tmp_dir.$globalGeoidSource.'.pgm.gz'." doesn't exist. Download failed.";
 			}
 		} else $error = "File ".$tmp_dir.$globalGeoidSource.'.pgm.gz.md5'." doesn't exist. Download failed.";

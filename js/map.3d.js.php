@@ -154,18 +154,30 @@ function zoomOutMap() {
 	camera.moveBackward();
 }
 
+var entitybbox;
 function bbox() {
-	var position = viewer.camera.positionCartographic;
-	var pitch = viewer.camera.pitch;
+	var position = viewer.scene.camera.positionCartographic;
+	var pitch = viewer.scene.camera.pitch;
 //	console.log('height: '+position.height);
 //	console.log('pitch: '+Math.degrees(pitch));
-	if (position.height < 1000000 && pitch < Math.radians(-25)) { 
-		
-		var rectangle = camera.computeViewRectangle(viewer.scene.globe.ellipsoid);
+	if (position.height < 5000000 && pitch < Math.radians(-25)) { 
+		//viewer.entities.remove(entitybbox);
+		var rectangle = viewer.scene.camera.computeViewRectangle(viewer.scene.globe.ellipsoid);
 		var west = Math.degrees(rectangle.west);
 		var south = Math.degrees(rectangle.south);
 		var east = Math.degrees(rectangle.east);
 		var north = Math.degrees(rectangle.north);
+		//console.log(west+','+south+','+east+','+north);
+		/*
+		entitybbox = viewer.entities.add({
+			rectangle : {
+				coordinates : rectangle,
+				material : Cesium.Color.RED.withAlpha(0.2),
+				outline : true,
+				outlineColor : Cesium.Color.RED
+			}
+		});
+		*/
 		return west+','+south+','+east+','+north;
 	} else {
 		return '';
@@ -499,5 +511,14 @@ handlera.setInputAction(
         }
     },
     Cesium.ScreenSpaceEventType.MOUSE_MOVE
+);
+*/
+/*
+var handlera = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+handlera.setInputAction(
+    function() {
+	bbox();
+    },
+    Cesium.ScreenSpaceEventType.LEFT_CLICK
 );
 */

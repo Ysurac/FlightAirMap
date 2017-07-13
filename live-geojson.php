@@ -150,12 +150,17 @@ if (isset($_GET['ident'])) {
 	}
 }
 
-
 if ($usecoord) {
 	if (isset($_GET['archive'])) {
 		$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
 	} else {
-		$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
+		if ($tracker) {
+			$flightcnt = $TrackerLive->getLiveSpotterCount($filter);
+		} elseif ($marine) {
+			$flightcnt = $MarineLive->getLiveSpotterCount($filter);
+		} else {
+			$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
+		}
 	}
 	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;

@@ -10,9 +10,10 @@ $(".showdetails").on("click",".close",function(){
 	return false;
 })
 
-
+var lastupdatetracker;
 function displayTrackerData(data) {
 	var dsn;
+	var flightcnt = 0;
 	for (var i =0; i < viewer.dataSources.length; i++) {
 		if (viewer.dataSources.get(i).name == 'tracker') {
 			dsn = i;
@@ -23,7 +24,7 @@ function displayTrackerData(data) {
 	for (var i = 0; i < entities.length; i++) {
 		var fromground = 0;
 		var entity = entities[i];
-		//console.log(entity);
+		flightcnt = entity.properties.valueOf('flightcnt')._flightcnt._value;
 		var onground = entity.properties.valueOf('onground')._onground._value;
 		//console.log(onground);
 		if (typeof dsn != 'undefined') var existing = viewer.dataSources.get(dsn);
@@ -70,25 +71,6 @@ function displayTrackerData(data) {
 
 		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
 		entity.orientation = orientation;
-
-		if (typeof existing != 'undefined') {
-			var last = viewer.dataSources.get(dsn).entities.getById(entity.id);
-			if (typeof last == 'undefined') {
-				entity.addProperty('lastupdate');
-				entity.lastupdate = Date.now();
-				entity.addProperty('type');
-				entity.type = 'tracker';
-				viewer.dataSources.get(dsn).entities.add(entity);
-			} else {
-				last.lastupdate = Date.now();
-				last.type = 'tracker';
-			}
-		} else {
-			entity.addProperty('lastupdate');
-			entity.lastupdate = Date.now();
-			entity.addProperty('tracker');
-			entity.type = 'tracker';
-		}
 	}
 	if (typeof dsn == 'undefined') {
 		viewer.dataSources.add(data);
@@ -96,11 +78,25 @@ function displayTrackerData(data) {
 	} else {
 		for (var i = 0; i < viewer.dataSources.get(dsn).entities.values.length; i++) {
 			var entity = viewer.dataSources.get(dsn).entities.values[i];
-			if (parseInt(entity.lastupdate) < Math.floor(Date.now()-<?php if (isset($globalMapRefresh)) print $globalMapRefresh*2000; else print '60000'; ?>)) {
+			var entityid = entity.id;
+			var lastupdateentity = entity.properties.valueOf('lastupdate')._lastupdate._value;
+			<?php 
+			    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+			?>
+			if (lastupdateentity != lastupdatetracker) {
 				viewer.dataSources.get(dsn).entities.remove(entity);
-			} else {
-				//console.log(parseInt(entity.lastupdate)+' > '+Math.floor(Date.now()-100));
+				czmldstracker.entities.removeById(entityid);
 			}
+			<?php
+			    } else {
+			?>
+			if (parseInt(lastupdateentity) < Math.floor(Date.now()-<?php if (isset($globalMapRefresh)) print $globalMapRefresh*2000; else print '60000'; ?>)) {
+				viewer.dataSources.get(dsn).entities.remove(entity);
+				czmldstracker.entities.removeById(entityid);
+			}
+			<?php
+			    }
+			?>
 		}
 	}
 	var MapTrack = getCookie('MapTrack');
@@ -108,24 +104,28 @@ function displayTrackerData(data) {
 		viewer.trackedEntity = viewer.dataSources.get(dsn).entities.getById(MapTrack);
 		$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+encodeURI(flightaware_id)+"&currenttime="+Date.parse(currenttime.toString()));
 		$("#aircraft_ident").attr('class',flightaware_id);
-		//lastid = MapTrack;
 	}
-
-
-//    viewer.dataSources.add(data);
-
-//    }
-    //console.log(viewer.dataSources.get(dsn).name);
-	//console.log('done');
-	$("#ibxtracker").html('<h4><?php echo _("Trackers detected"); ?></h4><br /><b>'+viewer.dataSources.get(dsn).entities.values.length+'</b>');
-    //console.log(viewer.dataSources.get(dsn).entities.values.length);
-    //console.log(viewer.dataSources.length);
-    //console.log(dsn);
+	var flightvisible = viewer.dataSources.get(dsn).entities.values.length;
+	if (flightcnt != 0 && flightcnt != flightvisible && flightcnt > flightvisible) {
+		$("#ibxtracker").html('<h4><?php echo _("Trackers detected"); ?></h4><br /><b>'+flightvisible+'/'+flightcnt+'</b>');
+	} else {
+		$("#ibxtracker").html('<h4><?php echo _("Trackers detected"); ?></h4><br /><b>'+flightvisible+'</b>');
+	}
 };
 
 function updateTrackerData() {
-	var livetrackerdata = czmldstracker.process('<?php print $globalURL; ?>/live-czml.php?tracker&' + Date.now());
-    
+	lastupdatetracker = Date.now();
+<?php
+    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+?>
+	var livetrackerdata = czmldstracker.process('<?php print $globalURL; ?>/live-czml.php?tracker&coord='+bbox()+'&update=' + lastupdatetracker);
+<?php
+    } else {
+?>
+	var livetrackerdata = czmldstracker.process('<?php print $globalURL; ?>/live-czml.php?tracker&update=' + lastupdatetracker);
+<?php
+    }
+?>  
 	livetrackerdata.then(function (data) { 
 		displayTrackerData(data);
 	});
@@ -137,13 +137,13 @@ var handler_tracker = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
 handler_tracker.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
 	if (Cesium.defined(pickedObject)) {
-		//console.log(pickedObject.id);
+		var type = pickedObject.id.properties.valueOf('type')._type._value;
+		if (typeof type == 'undefined') {
+			var type = pickedObject.id.type;
+		}
 		var currenttime = viewer.clock.currentTime;
-		//console.log(pickedObject.id.position.getValue(viewer.clock.currentTime));
-		console.log(pickedObject.id);
-//		if (typeof pickedObject.id.lastupdate != 'undefined') {
 		delCookie('MapTrack');
-		if (pickedObject.id.type == 'tracker') {
+		if (type == 'tracker') {
 			flightaware_id = pickedObject.id.id;
 			$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+encodeURI(flightaware_id)+"&currenttime="+Date.parse(currenttime.toString()));
 			var dsn;
@@ -162,7 +162,7 @@ handler_tracker.setInputAction(function(click) {
 			pnew.path.show = true;
 			$("#aircraft_ident").attr('class',flightaware_id);
 			//lastid = flightaware_id;
-		} else if (pickedObject.id.type == 'loc') {
+		} else if (type == 'loc') {
 			$(".showdetails").load("<?php print $globalURL; ?>/location-data.php?"+Math.random()+"&sourceid="+encodeURI(pickedObject.id.id));
 		}
 	}

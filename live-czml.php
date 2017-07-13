@@ -150,14 +150,26 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 //	echo 'Begin : '.$begindate.' - End : '.$enddate."\n";
 	$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
 } elseif ($tracker) {
-	$spotter_array = $TrackerLive->getMinLastLiveTrackerData($filter);
+	$coord = array();
+	if (isset($_GET['coord']) && $_GET['coord'] != '') {
+		$coord = explode(',',$_GET['coord']);
+	}
+	$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,true);
 } elseif ($marine) {
-	$spotter_array = $MarineLive->getMinLastLiveMarineData($filter);
+	$coord = array();
+	if (isset($_GET['coord']) && $_GET['coord'] != '') {
+		$coord = explode(',',$_GET['coord']);
+	}
+	$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true);
 } else {
-	$spotter_array = $SpotterLive->getMinLastLiveSpotterData($filter);
+	$coord = array();
+	if (isset($_GET['coord']) && $_GET['coord'] != '') {
+		$coord = explode(',',$_GET['coord']);
+	}
+	$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true);
 }
 //print_r($spotter_array);
-if (!empty($spotter_array)) {
+if (!empty($spotter_array) && isset($coord)) {
 	if (isset($_GET['archive'])) {
 		$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
 	} elseif ($tracker) {
@@ -173,7 +185,7 @@ if (!empty($spotter_array)) {
 $sqltime = round(microtime(true)-$begintime,2);
 $minitime = time();
 $maxitime = 0;
-
+$lastupdate = filter_input(INPUT_GET,'update',FILTER_SANITIZE_NUMBER_INT);
 $modelsdb = array();
 if (file_exists(dirname(__FILE__).'/models/modelsdb')) {
 	if (($handle = fopen(dirname(__FILE__).'/models/modelsdb','r')) !== FALSE) {
@@ -241,8 +253,17 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$output .= '{';
 			$output .= '"id": "'.$id.'",';
 			$output .= '"properties": {';
+			$output .= '"flightcnt": "'.$flightcnt.'",';
 			$output .= '"onground": %onground%,';
-			$output .= '"format": "'.$spotter_item['format_source'].'"';
+			$output .= '"lastupdate": "'.$lastupdate.'",';
+			$output .= '"format": "'.$spotter_item['format_source'].'",';
+			if ($tracker) {
+				$output.= '"type": "tracker"';
+			} elseif ($marine) {
+				$output.= '"type": "marine"';
+			} else {
+				$output.= '"type": "flight"';
+			}
 			$output .= '},';
 
 			$output .= '"path" : { ';
@@ -585,7 +606,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 					$output .= '},';
 				}
 			}
-			if ($onground) $output = str_replace('%onground%','true',$output);
+			if (isset($onground) && $onground) $output = str_replace('%onground%','true',$output);
 			else $output = str_replace('%onground%','false',$output);
 
 	//		$output .= '"heightReference": "CLAMP_TO_GROUND",';
