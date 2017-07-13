@@ -155,9 +155,9 @@ if ($usecoord) {
 		$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
 	} else {
 		if ($tracker) {
-			$flightcnt = $TrackerLive->getLiveSpotterCount($filter);
+			$flightcnt = $TrackerLive->getLiveTrackerCount($filter);
 		} elseif ($marine) {
-			$flightcnt = $MarineLive->getLiveSpotterCount($filter);
+			$flightcnt = $MarineLive->getLiveMarineCount($filter);
 		} else {
 			$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
 		}

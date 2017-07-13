@@ -175,7 +175,7 @@ class MarineLive {
 	*/
 	public function getMinLastLiveMarineData($coord = array(),$filter = array(), $limit = false)
 	{
-		global $globalDBdriver, $globalLiveInterval, $globalMap3DMarinesLimit;
+		global $globalDBdriver, $globalLiveInterval, $globalMap3DMarinesLimit, $globalArchive;
 		date_default_timezone_set('UTC');
 		if (is_array($coord) && !empty($coord)) {
 			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);

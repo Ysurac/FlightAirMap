@@ -235,7 +235,7 @@ class SpotterLive {
 		$filter_query = $this->getFilter($filter,true,true);
 
 		if (!isset($globalLiveInterval) || $globalLiveInterval == '') $globalLiveInterval = '200';
-		if (!isset($globalMap3DAircraftsLimit) || $globalMap3DAicraftsLimit == '') $globalMap3DAircraftsLimit = '300';
+		if (!isset($globalMap3DAircraftsLimit) || $globalMap3DAircraftsLimit == '') $globalMap3DAircraftsLimit = '300';
 		if ($globalDBdriver == 'mysql') {
 			if (isset($globalArchive) && $globalArchive === TRUE) {
 				/*
