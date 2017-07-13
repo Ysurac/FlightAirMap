@@ -352,7 +352,8 @@ class Accident {
 		global $globalDBdriver;
 			$query = "SELECT COUNT(*) as nb FROM accidents";
 		try {
-			$sth = $this->db->prepare($query);
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
