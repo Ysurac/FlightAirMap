@@ -1113,29 +1113,24 @@ class update_db {
 			fclose($handle);
 			if ($globalTransaction) $Connection->db->commit();
 		}
-		//print_r($mfr);
 		return '';
-        }
+	}
+
 	public static function modes_fam() {
 		global $tmp_dir, $globalTransaction;
 		$query = "DELETE FROM aircraft_modes WHERE Source = '' OR Source = :source";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute(array(':source' => 'website_fam'));
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-
-		
-		//update_db::unzip($out_file);
+			$sth->execute(array(':source' => 'website_fam'));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
 		$delimiter = "\t";
 		$Connection = new Connection();
 		if (($handle = fopen($tmp_dir.'modes.tsv', 'r')) !== FALSE)
 		{
 			$i = 0;
-			//$Connection->db->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
-			//$Connection->db->beginTransaction();
 			if ($globalTransaction) $Connection->db->beginTransaction();
 			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
@@ -1153,6 +1148,55 @@ class update_db {
 			}
 			fclose($handle);
 			if ($globalTransaction) $Connection->db->commit();
+		}
+		return '';
+	}
+
+	public static function airlines_fam() {
+		global $tmp_dir, $globalTransaction;
+		$Connection = new Connection();
+		$query = "DELETE FROM airlines WHERE forsource IS NULL";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$query = "LOCK TABLE airlines WRITE";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$delimiter = "\t";
+		if (($handle = fopen($tmp_dir.'airlines.tsv', 'r')) !== FALSE)
+		{
+			$i = 0;
+			if ($globalTransaction) $Connection->db->beginTransaction();
+			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				if ($i > 0) {
+					if ($data[1] == 'NULL') $data[1] = $data[0];
+					$query = 'INSERT INTO airlines (name,alias,iata,icao,callsign,country,active,type,home,wikipedia_link,alliance,ban_eu) VALUES (:name,:alias,:iata,:icao,:callsign,:country,:active,:type,:home,:wikipedia_link,:alliance,:ban_eu)';
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute(array(':name' => $data[0],':alias' => $data[1],':iata' => $data[2],':icao' => $data[3], ':callsign' => $data[4],':country' => $data[5],':active' => $data[6],':type' => $data[7],':home' => $data[8],':wikipedia_link' => $data[9],':alliance' => $data[10],':ban_eu' => $data[11]));
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+				}
+				$i++;
+			}
+			fclose($handle);
+			if ($globalTransaction) $Connection->db->commit();
+		}
+		$query = "UNLOCK TABLES";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
 		}
 		return '';
         }
@@ -1873,21 +1917,26 @@ class update_db {
 		include_once('class.create_db.php');
 		require_once(dirname(__FILE__).'/../require/class.NOTAM.php');
 		if ($globalDebug) echo "NOTAM from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.com/data/notam.txt.gz',$tmp_dir.'notam.txt.gz');
 		update_db::download('http://data.flightairmap.com/data/notam.txt.gz.md5',$tmp_dir.'notam.txt.gz.md5');
 		$error = '';
-		if (file_exists($tmp_dir.'notam.txt.gz') && file_exists($tmp_dir.'notam.txt.gz.md5')) {
+		if (file_exists($tmp_dir.'notam.txt.gz.md5')) {
 			$notam_md5_file = explode(' ',file_get_contents($tmp_dir.'notam.txt.gz.md5'));
 			$notam_md5 = $notam_md5_file[0];
-			if (md5_file($tmp_dir.'notam.txt.gz') == $notam_md5) {
-				if ($globalDebug) echo "Gunzip...";
-				update_db::gunzip($tmp_dir.'notam.txt.gz');
-				if ($globalDebug) echo "Add to DB...";
-				//$error = create_db::import_file($tmp_dir.'notam.sql');
-				$NOTAM = new NOTAM();
-				$NOTAM->updateNOTAMfromTextFile($tmp_dir.'notam.txt');
-			} else $error = "File ".$tmp_dir.'notam.txt.gz'." md5 failed. Download failed.";
-		} else $error = "File ".$tmp_dir.'notam.txt.gz'." doesn't exist. Download failed.";
+			if (!update_db::check_notam_version($notam_md5)) {
+				update_db::download('http://data.flightairmap.com/data/notam.txt.gz',$tmp_dir.'notam.txt.gz');
+				if (file_exists($tmp_dir.'notam.txt.gz')) {
+					if (md5_file($tmp_dir.'notam.txt.gz') == $notam_md5) {
+						if ($globalDebug) echo "Gunzip...";
+						update_db::gunzip($tmp_dir.'notam.txt.gz');
+						if ($globalDebug) echo "Add to DB...";
+						//$error = create_db::import_file($tmp_dir.'notam.sql');
+						$NOTAM = new NOTAM();
+						$NOTAM->updateNOTAMfromTextFile($tmp_dir.'notam.txt');
+						update_db::insert_notam_version($notam_md5);
+					} else $error = "File ".$tmp_dir.'notam.txt.gz'." md5 failed. Download failed.";
+				} else $error = "File ".$tmp_dir.'notam.txt.gz'." doesn't exist. Download failed.";
+			} elseif ($globalDebug) echo "No new version.";
+		} else $error = "File ".$tmp_dir.'notam.txt.gz.md5'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
 		} elseif ($globalDebug) echo "Done\n";
@@ -2350,6 +2399,35 @@ class update_db {
 		} elseif ($globalDebug) echo "Done\n";
 		return '';
 	}
+
+	public static function update_airlines_fam() {
+		global $tmp_dir, $globalDebug;
+		if ($globalDebug) echo "Airlines from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.com/data/airlines.tsv.gz',$tmp_dir.'airlines.tsv.gz');
+		if (file_exists($tmp_dir.'airlines.tsv.gz.md5')) {
+			$airlines_md5_file = explode(' ',file_get_contents($tmp_dir.'airlines.tsv.gz.md5'));
+			$airlines_md5 = $airlines_md5_file[0];
+			if (!update_db::check_airlines_version($airlines_md5)) {
+				update_db::download('http://data.flightairmap.com/data/airliness.tsv.gz.md5',$tmp_dir.'airlines.tsv.gz.md5');
+				if (file_exists($tmp_dir.'airlines.tsv.gz')) {
+					if (md5_file($tmp_dir.'airlines.tsv.gz') == $airlines_md5) {
+						if ($globalDebug) echo "Gunzip...";
+						update_db::gunzip($tmp_dir.'airlines.tsv.gz');
+						if ($globalDebug) echo "Add to DB...";
+						$error = update_db::airlines_fam();
+						update_db::insert_airlines_version($airlines_md5);
+					} else $error = "File ".$tmp_dir.'airlines.tsv.gz'." md5 failed. Download failed.";
+			    } else $error = "File ".$tmp_dir.'airlines.tsv.gz'." doesn't exist. Download failed.";
+			} elseif ($globalDebug) echo "No update";
+		} else $error = "File ".$tmp_dir.'airlines.tsv.gz.md5'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} else {
+			if ($globalDebug) echo "Done\n";
+		}
+		return '';
+	}
+
 	public static function update_owner_fam() {
 		global $tmp_dir, $globalDebug, $globalOwner;
 		if ($globalDebug) echo "owner from FlightAirMap website : Download...";
@@ -2414,9 +2492,9 @@ class update_db {
 				} else $error = "File ".$tmp_dir.'marine_identity.tsv.gz'." doesn't exist. Download failed.";
 				if ($error != '') {
 					return $error;
-				} elseif ($globalDebug) {
+				} else {
 					update_db::insert_marine_identity_version($marine_identity_md5);
-					echo "Done\n";
+					if ($globalDebug) echo "Done\n";
 				}
 			}
 		}
@@ -2442,9 +2520,9 @@ class update_db {
 				} else $error = "File ".$tmp_dir.'satellite.tsv.gz'." doesn't exist. Download failed.";
 				if ($error != '') {
 					return $error;
-				} elseif ($globalDebug) {
+				} else {
 					update_db::insert_satellite_version($satellite_md5);
-					echo "Done\n";
+					if ($globalDebug) echo "Done\n";
 				}
 			}
 		}
@@ -2942,6 +3020,57 @@ class update_db {
 		else return false;
 	}
 
+	public static function check_airlines_version($version) {
+		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'airlines_version' AND value = :version";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return true;
+		else return false;
+	}
+
+	public static function check_notam_version($version) {
+		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'notam_version' AND value = :version";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return true;
+		else return false;
+	}
+
+	public static function insert_airlines_version($version) {
+		$query = "DELETE FROM config WHERE name = 'airlines_version';
+			INSERT INTO config (name,value) VALUES ('airlines_version',:version);";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
+	public static function insert_notam_version($version) {
+		$query = "DELETE FROM config WHERE name = 'notam_version';
+			INSERT INTO config (name,value) VALUES ('notam_version',:version);";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
 
 	public static function insert_airspace_version($version) {
 		$query = "DELETE FROM config WHERE name = 'airspace_version';

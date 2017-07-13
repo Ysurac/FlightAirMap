@@ -59,6 +59,7 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 			$update_db->update_owner();
 		} else {
 			$update_db->update_owner_fam();
+			$update_db->update_airlines_fam();
 			//echo "Delete duplicate owner...";
 			//$update_db->delete_duplicateowner();
 			//echo "Done";
