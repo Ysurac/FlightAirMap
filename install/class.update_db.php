@@ -1153,16 +1153,22 @@ class update_db {
 	}
 
 	public static function airlines_fam() {
-		global $tmp_dir, $globalTransaction;
+		global $tmp_dir, $globalTransaction, $globalDBdriver;
 		$Connection = new Connection();
-		$query = "DELETE FROM airlines WHERE forsource IS NULL";
+		/*
+		if ($globalDBdriver == 'mysql') {
+			$query = "LOCK TABLE airlines WRITE";
+		} else {
+			$query = "LOCK TABLE airlines IN ACCESS EXCLUSIVE WORK";
+		}
 		try {
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
-		$query = "LOCK TABLE airlines WRITE";
+		*/
+		$query = "DELETE FROM airlines WHERE forsource IS NULL";
 		try {
 			$sth = $Connection->db->prepare($query);
 			$sth->execute();
@@ -1178,7 +1184,7 @@ class update_db {
 			{
 				if ($i > 0) {
 					if ($data[1] == 'NULL') $data[1] = $data[0];
-					$query = 'INSERT INTO airlines (name,alias,iata,icao,callsign,country,active,type,home,wikipedia_link,alliance,ban_eu) VALUES (:name,:alias,:iata,:icao,:callsign,:country,:active,:type,:home,:wikipedia_link,:alliance,:ban_eu)';
+					$query = 'INSERT INTO airlines (airline_id,name,alias,iata,icao,callsign,country,active,type,home_link,wikipedia_link,alliance,ban_eu) VALUES (0,:name,:alias,:iata,:icao,:callsign,:country,:active,:type,:home,:wikipedia_link,:alliance,:ban_eu)';
 					try {
 						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':name' => $data[0],':alias' => $data[1],':iata' => $data[2],':icao' => $data[3], ':callsign' => $data[4],':country' => $data[5],':active' => $data[6],':type' => $data[7],':home' => $data[8],':wikipedia_link' => $data[9],':alliance' => $data[10],':ban_eu' => $data[11]));
@@ -1191,6 +1197,7 @@ class update_db {
 			fclose($handle);
 			if ($globalTransaction) $Connection->db->commit();
 		}
+		/*
 		$query = "UNLOCK TABLES";
 		try {
 			$sth = $Connection->db->prepare($query);
@@ -1198,6 +1205,7 @@ class update_db {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		*/
 		return '';
         }
         
@@ -2403,12 +2411,12 @@ class update_db {
 	public static function update_airlines_fam() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Airlines from FlightAirMap website : Download...";
-		update_db::download('http://data.flightairmap.com/data/airlines.tsv.gz',$tmp_dir.'airlines.tsv.gz');
+		update_db::download('http://data.flightairmap.com/data/airlines.tsv.gz.md5',$tmp_dir.'airlines.tsv.gz.md5');
 		if (file_exists($tmp_dir.'airlines.tsv.gz.md5')) {
 			$airlines_md5_file = explode(' ',file_get_contents($tmp_dir.'airlines.tsv.gz.md5'));
 			$airlines_md5 = $airlines_md5_file[0];
 			if (!update_db::check_airlines_version($airlines_md5)) {
-				update_db::download('http://data.flightairmap.com/data/airliness.tsv.gz.md5',$tmp_dir.'airlines.tsv.gz.md5');
+				update_db::download('http://data.flightairmap.com/data/airlines.tsv.gz',$tmp_dir.'airlines.tsv.gz');
 				if (file_exists($tmp_dir.'airlines.tsv.gz')) {
 					if (md5_file($tmp_dir.'airlines.tsv.gz') == $airlines_md5) {
 						if ($globalDebug) echo "Gunzip...";
@@ -2431,6 +2439,7 @@ class update_db {
 	public static function update_owner_fam() {
 		global $tmp_dir, $globalDebug, $globalOwner;
 		if ($globalDebug) echo "owner from FlightAirMap website : Download...";
+		$error = '';
 		if ($globalOwner === TRUE) {
 			update_db::download('http://data.flightairmap.com/data/owners_all.tsv.gz',$tmp_dir.'owners.tsv.gz');
 			update_db::download('http://data.flightairmap.com/data/owners_all.tsv.gz.md5',$tmp_dir.'owners.tsv.gz.md5');
@@ -3223,13 +3232,13 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-                $row = $sth->fetch(PDO::FETCH_ASSOC);
-                if ($row['nb'] > 0) return false;
-                else return true;
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return false;
+		else return true;
 	}
 
 	public static function insert_last_owner_update() {
@@ -3243,6 +3252,38 @@ class update_db {
                         return "error : ".$e->getMessage();
                 }
 	}
+
+	public static function check_last_airlines_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_airlines_db' AND value > DATE_SUB(NOW(), INTERVAL 15 DAY)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_airlines_db' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '15 DAYS'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return false;
+		else return true;
+	}
+
+	public static function insert_last_airlines_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_airlines_db';
+			INSERT INTO config (name,value) VALUES ('last_update_airlines_db',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
 	public static function check_last_schedules_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {

@@ -59,13 +59,20 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 			$update_db->update_owner();
 		} else {
 			$update_db->update_owner_fam();
-			$update_db->update_airlines_fam();
 			//echo "Delete duplicate owner...";
 			//$update_db->delete_duplicateowner();
 			//echo "Done";
 		}
 		$update_db->insert_last_owner_update();
 	} elseif (isset($globalDebug) && $globalDebug && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Owner are only updated every 15 days.\n";
+
+	if ($update_db->check_last_airlines_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+		echo "Updating airlines...\n";
+		if (!isset($globalMasterSource) || !$globalMasterSource) {
+			echo $update_db->update_airlines_fam();
+		}
+		$update_db->insert_last_airlines_update();
+	} elseif (isset($globalDebug) && $globalDebug && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Airlines are only updated every 15 days.\n";
 
 	if (isset($globalAccidents) && $globalAccidents && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
 		require_once(dirname(__FILE__).'/../require/class.Accident.php');
