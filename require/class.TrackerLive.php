@@ -180,11 +180,13 @@ class TrackerLive {
 	{
 		global $globalDBdriver, $globalLiveInterval, $globalArchive, $globalMap3DTrackersLimit;
 		date_default_timezone_set('UTC');
+		$usecoord = false;
 		if (is_array($coord) && !empty($coord)) {
 			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+			$usecoord = true;
 		}
 		$filter_query = $this->getFilter($filter,true,true);
 
@@ -195,11 +197,11 @@ class TrackerLive {
 				$query  = "SELECT * FROM (
 					SELECT tracker_archive.ident, tracker_archive.famtrackid,tracker_archive.type,tracker_archive.latitude, tracker_archive.longitude, tracker_archive.altitude, tracker_archive.heading, tracker_archive.ground_speed, tracker_archive.date, tracker_archive.format_source 
 					FROM tracker_archive INNER JOIN (SELECT famtrackid FROM tracker_live".$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= tracker_live.date) l ON l.famtrackid = tracker_archive.famtrackid ";
-				if (isset($maxlat)) $query .= "AND tracker_archive.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_archive.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
+				if ($usecoord) $query .= "AND tracker_archive.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_archive.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
 				$query .= "UNION
 					SELECT tracker_live.ident, tracker_live.famtrackid, tracker_live.type,tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
 					FROM tracker_live".$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= tracker_live.date ";
-				if (isset($maxlat)) $query .= "AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
+				if ($usecoord) $query .= "AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
 				$query .= ") AS tracker
 				    WHERE latitude <> '0' AND longitude <> '0' 
 				    ORDER BY famtrackid, date";
@@ -207,7 +209,7 @@ class TrackerLive {
 			} else {
 				$query  = 'SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
 				    FROM tracker_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= tracker_live.date ";
-				if (isset($maxlat)) $query .= "AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
+				if ($usecoord) $query .= "AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
 				$query .= "AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0' 
 				    ORDER BY tracker_live.famtrackid, tracker_live.date";
 				if ($limit) $query .= " LIMIT ".$globalMap3DTrackersLimit;
@@ -217,11 +219,11 @@ class TrackerLive {
 				$query  = "SELECT * FROM (
 					SELECT tracker_archive.ident, tracker_archive.famtrackid,tracker_archive.type,tracker_archive.latitude, tracker_archive.longitude, tracker_archive.altitude, tracker_archive.heading, tracker_archive.ground_speed, tracker_archive.date, tracker_archive.format_source 
 					FROM tracker_archive INNER JOIN (SELECT famtrackid FROM tracker_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= tracker_live.date) l ON l.famtrackid = tracker_archive.famtrackid ";
-				if (isset($maxlat)) $query .= "AND tracker_archive.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_archive.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
+				if ($usecoord) $query .= "AND tracker_archive.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_archive.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
 				$query .= "UNION
 					SELECT tracker_live.ident, tracker_live.famtrackid, tracker_live.type,tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
 					FROM tracker_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= tracker_live.date";
-				if (isset($maxlat)) $query .= " AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
+				if ($usecoord) $query .= " AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
 				$query .= ") AS tracker
 				    WHERE latitude <> '0' AND longitude <> '0' 
 				    ORDER BY famtrackid, date";
@@ -229,7 +231,7 @@ class TrackerLive {
 			} else {
 				$query  = "SELECT tracker_live.ident, tracker_live.famtrackid, tracker_live.type,tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
 				    FROM tracker_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= tracker_live.date AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0' ";
-				if (isset($maxlat)) $query .= "AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
+				if ($usecoord) $query .= "AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
 				$query .= "ORDER BY tracker_live.famtrackid, tracker_live.date";
 				if ($limit) $query .= " LIMIT ".$globalMap3DTrackersLimit;
 			}
