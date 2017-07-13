@@ -2410,6 +2410,7 @@ class update_db {
 
 	public static function update_airlines_fam() {
 		global $tmp_dir, $globalDebug;
+		$error = '';
 		if ($globalDebug) echo "Airlines from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.com/data/airlines.tsv.gz.md5',$tmp_dir.'airlines.tsv.gz.md5');
 		if (file_exists($tmp_dir.'airlines.tsv.gz.md5')) {
@@ -2426,7 +2427,7 @@ class update_db {
 						update_db::insert_airlines_version($airlines_md5);
 					} else $error = "File ".$tmp_dir.'airlines.tsv.gz'." md5 failed. Download failed.";
 			    } else $error = "File ".$tmp_dir.'airlines.tsv.gz'." doesn't exist. Download failed.";
-			} elseif ($globalDebug) echo "No update";
+			} elseif ($globalDebug) echo "No update.";
 		} else $error = "File ".$tmp_dir.'airlines.tsv.gz.md5'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
