@@ -557,6 +557,18 @@ foreach($number_results_array as $number)
 		</fieldset>
 <?php
 if (isset($globalArchiveKeepMonths) && $globalArchiveKeepMonths > 0) {
+	if (isset($globalDemo) && $globalDemo) {
+?>
+		<fieldset>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<label class="checkbox-inline"><input type="checkbox" name="archive" value="1" disabled /><?php echo sprintf(_("Search in archive (older than %s months)"),$globalArchiveKeepMonths); ?></label>
+					<p class="help-block">Disabled in demo</p>
+				</div>
+			</div>
+		</fieldset>
+<?php
+	} else {
 ?>
 		<fieldset>
 			<div class="form-group">
@@ -566,6 +578,7 @@ if (isset($globalArchiveKeepMonths) && $globalArchiveKeepMonths > 0) {
 			</div>
 		</fieldset>
 <?php
+	}
 }
 ?>
 		<fieldset>
