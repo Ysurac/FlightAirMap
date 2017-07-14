@@ -8774,14 +8774,11 @@ class Spotter{
                     GROUP BY route,spotter_output.departure_airport_icao, spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
                     ORDER BY route_count DESC
 		    LIMIT 10 OFFSET 0";
-      
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute();
-      
 		$routes_array = array();
 		$temp_array = array();
-        
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['route_count'] = $row['route_count'];
@@ -8793,10 +8790,8 @@ class Spotter{
 			$temp_array['airport_arrival_name'] = $row['airport_arrival_name'];
 			$temp_array['airport_arrival_city'] = $row['airport_arrival_city'];
 			$temp_array['airport_arrival_country'] = $row['airport_arrival_country'];
-          
 			$routes_array[] = $temp_array;
 		}
-
 		return $routes_array;
 	}
 	

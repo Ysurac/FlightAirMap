@@ -2718,9 +2718,9 @@ class Stats {
 				echo 'Deleting old data...'."\n";
 				//$query = 'DELETE FROM spotter_output WHERE spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)';
 				if ($globalDBdriver == 'mysql') {
-					$query = "DELETE FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
+					$query = "DELETE FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01') LIMIT 10000";
 				} else {
-					$query = "DELETE FROM spotter_output WHERE spotter_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP)";
+					$query = "DELETE FROM spotter_output WHERE spotter_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP) LIMIT 10000";
 				}
 				try {
 					$sth = $this->db->prepare($query);
