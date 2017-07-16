@@ -226,7 +226,6 @@ require_once('header.php');
 			        });
 			    });
 			</script>
-
 		    <li><?php echo _("Playback speed:"); ?>
 			<div class="range">
 			    <input type="range" min="0" max="50" step="1" name="archivespeed" onChange="archivespeedrange.value=value;" value="<?php  if (isset($_POST['archivespeed'])) print $_POST['archivespeed']; elseif (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?>">
@@ -372,7 +371,6 @@ require_once('header.php');
 <?php
     }
 ?>
-
 		    <?php
 			if (function_exists('array_column')) {
 			    if (array_search(TRUE, array_column($globalSources, 'sourcestats')) !== FALSE) {
@@ -588,14 +586,27 @@ require_once('header.php');
 		    <li><?php echo _("Display APRS sources name:"); ?>
 			<select class="selectpicker" multiple onchange="sources(this);">
 			    <?php
+				/*
 				$Spotter = new Spotter();
-				foreach($Spotter->getAllSourceName('aprs') as $source) {
+				$datasource = $Spotter->getAllSourceName('aprs');
+				foreach($datasource as $source) {
 					if (isset($_COOKIE['filter_Sources']) && in_array($source['source_name'],explode(',',$_COOKIE['filter_Sources']))) {
 						echo '<option value="'.$source['source_name'].'" selected>'.$source['source_name'].'</option>';
 					} else {
 						echo '<option value="'.$source['source_name'].'">'.$source['source_name'].'</option>';
 					}
 				}
+				*/
+				$Source = new Source();
+				$datasource = $Source->getLocationInfoByType('gs');
+				foreach($datasource as $src) {
+					if (isset($_COOKIE['filter_Sources']) && in_array($src['name'],explode(',',$_COOKIE['filter_Sources']))) {
+						echo '<option value="'.$src['name'].'" selected>'.$src['name'].'</option>';
+					} else {
+						echo '<option value="'.$src['name'].'">'.$src['name'].'</option>';
+					}                                
+				}
+				
 			    ?>
 			</select>
 		    </li>
