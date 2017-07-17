@@ -2450,27 +2450,28 @@ class Stats {
 			// Stats by filters
 			if (!isset($globalStatsFilters) || $globalStatsFilters == '') $globalStatsFilters = array();
 			foreach ($globalStatsFilters as $name => $filter) {
-				//$filter_name = $filter['name'];
-				$filter_name = $name;
-				$reset = false;
-				$last_update = $this->getLastStatsUpdate('last_update_stats_'.$filter_name);
-				if (isset($filter['resetall']) && isset($last_update[0]['value']) && strtotime($filter['resetall']) > strtotime($last_update[0]['value'])) {
-					if ($globalDebug) echo '!!! Delete stats for filter '.$filter_name.' !!!'."\n";
-					$this->deleteOldStats($filter_name);
-					unset($last_update);
-				}
-				if (isset($last_update[0]['value'])) {
-					$last_update_day = $last_update[0]['value'];
-				} else {
-				$last_update_day = '2012-12-12 12:12:12';
-					if (isset($filter['DeleteLastYearStats'])) {
-						$last_update_day = date('Y').'-01-01 00:00:00';
+				if (!empty($filter)) {
+					//$filter_name = $filter['name'];
+					$filter_name = $name;
+					$reset = false;
+					$last_update = $this->getLastStatsUpdate('last_update_stats_'.$filter_name);
+					if (isset($filter['resetall']) && isset($last_update[0]['value']) && strtotime($filter['resetall']) > strtotime($last_update[0]['value'])) {
+						if ($globalDebug) echo '!!! Delete stats for filter '.$filter_name.' !!!'."\n";
+						$this->deleteOldStats($filter_name);
+						unset($last_update);
 					}
-				}
-				if (isset($filter['DeleteLastYearStats']) && date('Y',strtotime($last_update_day)) != date('Y')) {
-					$last_update_day = date('Y').'-01-01 00:00:00';
-					$reset = true;
-				}
+					if (isset($last_update[0]['value'])) {
+						$last_update_day = $last_update[0]['value'];
+					} else {
+						$last_update_day = '2012-12-12 12:12:12';
+						if (isset($filter['DeleteLastYearStats'])) {
+							$last_update_day = date('Y').'-01-01 00:00:00';
+						}
+					}
+					if (isset($filter['DeleteLastYearStats']) && date('Y',strtotime($last_update_day)) != date('Y')) {
+						$last_update_day = date('Y').'-01-01 00:00:00';
+						$reset = true;
+					}
 				
 
 				// Count by filter
@@ -2542,108 +2543,109 @@ class Stats {
 				foreach ($alldata as $number) {
 					echo $this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_name'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count'],'',$filter_name,$reset);
 				}
-				$Spotter = new Spotter($this->db);
-				$alldata = $Spotter->countAllMonths($filter);
-				$lastyear = false;
-				foreach ($alldata as $number) {
-					if ($number['year_name'] != date('Y')) $lastyear = true;
-					$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
-				}
-				$alldata = $Spotter->countAllMonthsOwners($filter);
-				foreach ($alldata as $number) {
-					$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
-				}
-				$alldata = $Spotter->countAllMonthsPilots($filter);
-				foreach ($alldata as $number) {
-					$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
-				}
-				$alldata = $Spotter->countAllMilitaryMonths($filter);
-				foreach ($alldata as $number) {
-					$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
-				}
-				$alldata = $Spotter->countAllMonthsAircrafts($filter);
-				foreach ($alldata as $number) {
-					$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
-				}
-				$alldata = $Spotter->countAllMonthsRealArrivals($filter);
-				foreach ($alldata as $number) {
-					$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
-				}
-				echo '...Departure'."\n";
-				$pall = $Spotter->getLast7DaysAirportsDeparture('',$filter);
-				$dall = $Spotter->getLast7DaysDetectedAirportsDeparture('',$filter);
-				foreach ($dall as $value) {
-					$icao = $value['departure_airport_icao'];
-					$ddate = $value['date'];
-					$find = false;
-					foreach ($pall as $pvalue) {
-						if ($pvalue['departure_airport_icao'] == $icao && $pvalue['date'] == $ddate) {
-							$pvalue['departure_airport_count'] = $pvalue['departure_airport_count'] + $value['departure_airport_count'];
-							$find = true;
-							break;
+					$Spotter = new Spotter($this->db);
+					$alldata = $Spotter->countAllMonths($filter);
+					$lastyear = false;
+					foreach ($alldata as $number) {
+						if ($number['year_name'] != date('Y')) $lastyear = true;
+						$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
+					}
+					$alldata = $Spotter->countAllMonthsOwners($filter);
+					foreach ($alldata as $number) {
+						$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
+					}
+					$alldata = $Spotter->countAllMonthsPilots($filter);
+					foreach ($alldata as $number) {
+						$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
+					}
+					$alldata = $Spotter->countAllMilitaryMonths($filter);
+					foreach ($alldata as $number) {
+						$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
+					}
+					$alldata = $Spotter->countAllMonthsAircrafts($filter);
+				    	foreach ($alldata as $number) {
+			    			$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
+					}
+					$alldata = $Spotter->countAllMonthsRealArrivals($filter);
+					foreach ($alldata as $number) {
+						$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
+					}
+					echo '...Departure'."\n";
+					$pall = $Spotter->getLast7DaysAirportsDeparture('',$filter);
+					$dall = $Spotter->getLast7DaysDetectedAirportsDeparture('',$filter);
+					foreach ($dall as $value) {
+						$icao = $value['departure_airport_icao'];
+						$ddate = $value['date'];
+						$find = false;
+						foreach ($pall as $pvalue) {
+							if ($pvalue['departure_airport_icao'] == $icao && $pvalue['date'] == $ddate) {
+								$pvalue['departure_airport_count'] = $pvalue['departure_airport_count'] + $value['departure_airport_count'];
+								$find = true;
+								break;
+							}
+						}
+						if ($find === false) {
+							$pall[] = $value;
 						}
 					}
-					if ($find === false) {
-						$pall[] = $value;
+					$alldata = $pall;
+					foreach ($alldata as $number) {
+						$this->addStatDepartureAirportsDaily($number['date'],$number['departure_airport_icao'],$number['departure_airport_name'],$number['departure_airport_city'],$number['departure_airport_country'],$number['departure_airport_count'],'',$filter_name);
 					}
-				}
-				$alldata = $pall;
-				foreach ($alldata as $number) {
-					$this->addStatDepartureAirportsDaily($number['date'],$number['departure_airport_icao'],$number['departure_airport_name'],$number['departure_airport_city'],$number['departure_airport_country'],$number['departure_airport_count'],'',$filter_name);
-				}
-				echo '...Arrival'."\n";
-				$pall = $Spotter->getLast7DaysAirportsArrival('',$filter);
-				$dall = $Spotter->getLast7DaysDetectedAirportsArrival('',$filter);
-				foreach ($dall as $value) {
-					$icao = $value['arrival_airport_icao'];
-					$ddate = $value['date'];
-					$find = false;
-					foreach ($pall as $pvalue) {
-						if ($pvalue['arrival_airport_icao'] == $icao && $pvalue['date'] == $ddate) {
-							$pvalue['arrival_airport_count'] = $pvalue['arrival_airport_count'] + $value['arrival_airport_count'];
-							$find = true;
-							break;
+					echo '...Arrival'."\n";
+					$pall = $Spotter->getLast7DaysAirportsArrival('',$filter);
+					$dall = $Spotter->getLast7DaysDetectedAirportsArrival('',$filter);
+					foreach ($dall as $value) {
+						$icao = $value['arrival_airport_icao'];
+						$ddate = $value['date'];
+						$find = false;
+						foreach ($pall as $pvalue) {
+							if ($pvalue['arrival_airport_icao'] == $icao && $pvalue['date'] == $ddate) {
+								$pvalue['arrival_airport_count'] = $pvalue['arrival_airport_count'] + $value['arrival_airport_count'];
+								$find = true;
+								break;
+							}
+						}
+						if ($find === false) {
+							$pall[] = $value;
 						}
 					}
-					if ($find === false) {
-						$pall[] = $value;
+					$alldata = $pall;
+					foreach ($alldata as $number) {
+						$this->addStatArrivalAirportsDaily($number['date'],$number['arrival_airport_icao'],$number['arrival_airport_name'],$number['arrival_airport_city'],$number['arrival_airport_country'],$number['arrival_airport_count'],'',$filter_name);
 					}
-				}
-				$alldata = $pall;
-				foreach ($alldata as $number) {
-					$this->addStatArrivalAirportsDaily($number['date'],$number['arrival_airport_icao'],$number['arrival_airport_name'],$number['arrival_airport_city'],$number['arrival_airport_country'],$number['arrival_airport_count'],'',$filter_name);
-				}
-				echo 'Flights data...'."\n";
-				echo '-> countAllDatesLastMonth...'."\n";
-				$alldata = $Spotter->countAllDatesLastMonth($filter);
-				foreach ($alldata as $number) {
-					$this->addStatFlight('month',$number['date_name'],$number['date_count'], '',$filter_name);
-				}
-				echo '-> countAllDates...'."\n";
-				$previousdata = $this->countAllDates('',$filter_name);
-				$alldata = $Common->array_merge_noappend($previousdata,$Spotter->countAllDates($filter));
-				$values = array();
-				foreach ($alldata as $cnt) {
-					$values[] = $cnt['date_count'];
-				}
-				array_multisort($values,SORT_DESC,$alldata);
-				array_splice($alldata,11);
-				foreach ($alldata as $number) {
-					$this->addStatFlight('date',$number['date_name'],$number['date_count'],'',$filter_name);
-				}
+					echo 'Flights data...'."\n";
+					echo '-> countAllDatesLastMonth...'."\n";
+					$alldata = $Spotter->countAllDatesLastMonth($filter);
+					foreach ($alldata as $number) {
+						$this->addStatFlight('month',$number['date_name'],$number['date_count'], '',$filter_name);
+					}
+					echo '-> countAllDates...'."\n";
+					$previousdata = $this->countAllDates('',$filter_name);
+					$alldata = $Common->array_merge_noappend($previousdata,$Spotter->countAllDates($filter));
+					$values = array();
+					foreach ($alldata as $cnt) {
+						$values[] = $cnt['date_count'];
+					}
+					array_multisort($values,SORT_DESC,$alldata);
+					array_splice($alldata,11);
+					foreach ($alldata as $number) {
+						$this->addStatFlight('date',$number['date_name'],$number['date_count'],'',$filter_name);
+					}
 				
-				echo '-> countAllHours...'."\n";
-				$alldata = $Spotter->countAllHours('hour',$filter);
-				foreach ($alldata as $number) {
-					$this->addStatFlight('hour',$number['hour_name'],$number['hour_count'],'',$filter_name);
-				}
-				echo 'Insert last stats update date...'."\n";
-				date_default_timezone_set('UTC');
-				$this->addLastStatsUpdate('last_update_stats_'.$filter_name,date('Y-m-d G:i:s'));
-				if (isset($filter['DeleteLastYearStats']) && $filter['DeleteLastYearStats'] == true) {
-					if (date('Y',strtotime($last_update_day)) != date('Y')) {
-						$this->deleteOldStats($filter_name);
-						$this->addLastStatsUpdate('last_update_stats_'.$filter_name,date('Y').'-01-01 00:00:00');
+					echo '-> countAllHours...'."\n";
+					$alldata = $Spotter->countAllHours('hour',$filter);
+					foreach ($alldata as $number) {
+						$this->addStatFlight('hour',$number['hour_name'],$number['hour_count'],'',$filter_name);
+					}
+					echo 'Insert last stats update date...'."\n";
+					date_default_timezone_set('UTC');
+					$this->addLastStatsUpdate('last_update_stats_'.$filter_name,date('Y-m-d G:i:s'));
+					if (isset($filter['DeleteLastYearStats']) && $filter['DeleteLastYearStats'] == true) {
+						if (date('Y',strtotime($last_update_day)) != date('Y')) {
+							$this->deleteOldStats($filter_name);
+							$this->addLastStatsUpdate('last_update_stats_'.$filter_name,date('Y').'-01-01 00:00:00');
+						}
 					}
 				}
 			}
