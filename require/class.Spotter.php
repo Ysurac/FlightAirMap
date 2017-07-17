@@ -2746,21 +2746,16 @@ class Spotter{
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.registration 
 				FROM spotter_output".$filter_query." spotter_output.registration <> '' 
-				ORDER BY spotter_output.registration ASC";
-
+				ORDER BY spotter_output.date DESC LIMIT 45000";
 		$sth = $this->db->prepare($query);
 		$sth->execute();
-
 		$aircraft_array = array();
 		$temp_array = array();
-		
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['registration'] = $row['registration'];
-
 			$aircraft_array[] = $temp_array;
 		}
-
 		return $aircraft_array;
 	}
 
