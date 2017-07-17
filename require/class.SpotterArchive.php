@@ -387,9 +387,9 @@ class SpotterArchive {
         {
 		global $globalArchiveKeepTrackMonths, $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
-			$query = 'DELETE FROM spotter_archive WHERE spotter_archive.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepTrackMonths.' MONTH)';
+			$query = 'DELETE FROM spotter_archive WHERE spotter_archive.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepTrackMonths.' MONTH) LIMIT 10000';
 		} else {
-			$query = "DELETE FROM spotter_archive WHERE spotter_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveKeepTrackMonths." MONTH'";
+			$query = "DELETE FROM spotter_archive WHERE spotter_archive_id IN (SELECT spotter_archive_id FROM spotter_archive WHERE spotter_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveKeepTrackMonths." MONTH' LIMIT 10000)";
 		}
                 try {
                         $sth = $this->db->prepare($query);
@@ -848,96 +848,84 @@ class SpotterArchive {
 	
 	if ($date_posted != "")
 	{
-	    $date_array = explode(",", $date_posted);
-	    
-	    $date_array[0] = filter_var($date_array[0],FILTER_SANITIZE_STRING);
-	    $date_array[1] = filter_var($date_array[1],FILTER_SANITIZE_STRING);
-	    
-	    if ($globalTimezone != '') {
-		date_default_timezone_set($globalTimezone);
-		$datetime = new DateTime();
-		$offset = $datetime->format('P');
-	    } else $offset = '+00:00';
-
-
-	    if ($date_array[1] != "")
-	    {                
-		$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
-		$date_array[1] = date("Y-m-d H:i:s", strtotime($date_array[1]));
-		if ($globalDBdriver == 'mysql') {
-			$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) <= '".$date_array[1]."' ";
+		$date_array = explode(",", $date_posted);
+		$date_array[0] = filter_var($date_array[0],FILTER_SANITIZE_STRING);
+		$date_array[1] = filter_var($date_array[1],FILTER_SANITIZE_STRING);
+		if ($globalTimezone != '') {
+			date_default_timezone_set($globalTimezone);
+			$datetime = new DateTime();
+			$offset = $datetime->format('P');
+		} else $offset = '+00:00';
+		if ($date_array[1] != "")
+		{                
+			$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
+			$date_array[1] = date("Y-m-d H:i:s", strtotime($date_array[1]));
+			if ($globalDBdriver == 'mysql') {
+				$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) <= '".$date_array[1]."' ";
+			} else {
+				$additional_query .= " AND spotter_archive_output.date::timestamp AT TIME ZONE INTERVAL ".$offset." >= CAST('".$date_array[0]."' AS TIMESTAMP) AND spotter_archive_output.date::timestamp AT TIME ZONE INTERVAL ".$offset." <= CAST('".$date_array[1]."' AS TIMESTAMP) ";
+			}
 		} else {
-			$additional_query .= " AND spotter_archive_output.date::timestamp AT TIME ZONE INTERVAL ".$offset." >= CAST('".$date_array[0]."' AS TIMESTAMP) AND spotter_archive_output.date::timestamp AT TIME ZONE INTERVAL ".$offset." <= CAST('".$date_array[1]."' AS TIMESTAMP) ";
+			$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
+			if ($globalDBdriver == 'mysql') {
+				$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' ";
+			} else {
+				$additional_query .= " AND spotter_archive_output.date::timestamp AT TIME ZONE INTERVAL ".$offset." >= CAST('".$date_array[0]."' AS TIMESTAMP) ";
+				}
+			}
 		}
-	    } else {
-		$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
-                if ($globalDBdriver == 'mysql') {
-			$additional_query .= " AND TIMESTAMP(CONVERT_TZ(spotter_archive_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' ";
-		} else {
-			$additional_query .= " AND spotter_archive_output.date::timestamp AT TIME ZONE INTERVAL ".$offset." >= CAST('".$date_array[0]."' AS TIMESTAMP) ";
-		}
-	    }
-	}
-	
-	if ($limit != "")
-	{
-	    $limit_array = explode(",", $limit);
-	    
-	    $limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
-	    $limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
-	    
-	    if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
-	    {
-		//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
-		$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
-	    }
-	}
-	
-
-	if ($origLat != "" && $origLon != "" && $dist != "") {
-		$dist = number_format($dist*0.621371,2,'.','');
-		$query="SELECT spotter_archive_output.*, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2))) as distance 
-                          FROM spotter_archive_output, spotter_archive WHERE spotter_output_archive.flightaware_id = spotter_archive.flightaware_id AND spotter_output.ident <> '' ".$additional_query."AND CAST(spotter_archive.longitude as double precision) between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and CAST(spotter_archive.latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
-                          AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2)))) < $dist".$filter_query." ORDER BY distance";
-	} else {
-		if ($sort != "")
+		if ($limit != "")
 		{
-			$search_orderby_array = $Spotter->getOrderBy();
-			$orderby_query = $search_orderby_array[$sort]['sql'];
+			$limit_array = explode(",", $limit);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+			}
+		}
+		if ($origLat != "" && $origLon != "" && $dist != "") {
+			$dist = number_format($dist*0.621371,2,'.','');
+			$query="SELECT spotter_archive_output.*, 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2))) as distance 
+			      FROM spotter_archive_output, spotter_archive WHERE spotter_output_archive.flightaware_id = spotter_archive.flightaware_id AND spotter_output.ident <> '' ".$additional_query."AND CAST(spotter_archive.longitude as double precision) between ($origLon-$dist/ABS(cos(radians($origLat))*69)) and ($origLon+$dist/ABS(cos(radians($origLat))*69)) and CAST(spotter_archive.latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+			      AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - ABS(CAST(spotter_archive.latitude as double precision)))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(ABS(CAST(spotter_archive.latitude as double precision))*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2)))) < $dist".$filter_query." ORDER BY distance";
 		} else {
-			$orderby_query = " ORDER BY spotter_archive_output.date DESC";
-		}
-	
-		if ($includegeodata == "true")
-		{
-			$additional_query .= " AND (spotter_archive_output.waypoints <> '')";
-		}
+			if ($sort != "")
+			{
+				$search_orderby_array = $Spotter->getOrderBy();
+				$orderby_query = $search_orderby_array[$sort]['sql'];
+			} else {
+				$orderby_query = " ORDER BY spotter_archive_output.date DESC";
+			}
+			if ($includegeodata == "true")
+			{
+				$additional_query .= " AND (spotter_archive_output.waypoints <> '')";
+			}
 
-		$query  = "SELECT spotter_archive_output.* FROM spotter_archive_output 
-		    WHERE spotter_archive_output.ident <> '' 
-		    ".$additional_query."
-		    ".$filter_query.$orderby_query;
+			$query  = "SELECT spotter_archive_output.* FROM spotter_archive_output 
+			    WHERE spotter_archive_output.ident <> '' 
+			    ".$additional_query."
+			    ".$filter_query.$orderby_query;
+		}
+		$spotter_array = $Spotter->getDataFromDB($query, $query_values,$limit_query);
+		return $spotter_array;
 	}
-	$spotter_array = $Spotter->getDataFromDB($query, $query_values,$limit_query);
 
-	return $spotter_array;
-    }
-
-    public function deleteSpotterArchiveData()
-    {
+	public function deleteSpotterArchiveData() {
 		global $globalArchiveKeepMonths, $globalDBdriver;
-                date_default_timezone_set('UTC');
-                if ($globalDBdriver == 'mysql') {
-			$query = 'DELETE FROM spotter_archive_output WHERE spotter_archive_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepMonths.' MONTH)';
+		date_default_timezone_set('UTC');
+		if ($globalDBdriver == 'mysql') {
+			$query = 'DELETE FROM spotter_archive_output WHERE spotter_archive_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepMonths.' MONTH) LIMIT 10000';
 		} else {
-			$query = "DELETE FROM spotter_archive_output WHERE spotter_archive_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveKeepMonths." MONTH'";
+			$query = "DELETE FROM spotter_archive_output WHERE spotter_archive_id IN (SELECT spotter_archive_id FROM spotter_archive_output WHERE spotter_archive_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveKeepMonths." MONTH' LIMIT 10000)";
 		}
-                try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error";
-                }
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error";
+		}
 	}
 
     /**

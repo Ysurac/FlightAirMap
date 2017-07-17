@@ -2679,7 +2679,11 @@ class Stats {
 						}
 					}
 					echo 'Delete old data'."\n";
-					$query = "DELETE FROM spotter_output WHERE spotter_output.date < '".date('Y')."-01-01 00:00:00'";
+					if ($globalDBdriver == 'mysql') {
+						$query = "DELETE FROM spotter_output WHERE spotter_output.date < '".date('Y')."-01-01 00:00:00' LIMIT 10000";
+					} else {
+						$query = "DELETE FROM spotter_output WHERE spotter_id IN (SELECT spotter_id FROM spotter_output WHERE spotter_output.date < '".date('Y')."-01-01 00:00:00' LIMIT 10000)";
+					}
 					try {
 						$sth = $this->db->prepare($query);
 						$sth->execute();
