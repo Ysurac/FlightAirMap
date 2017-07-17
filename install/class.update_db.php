@@ -1638,6 +1638,7 @@ class update_db {
 			//$Connection->db->beginTransaction();
 			while (($data = fgets($handle, 1000)) !== FALSE)
 			{
+				if ($data != '') {
 				$result = array();
 				$result['cospar'] = trim(substr($data,0,11));
 				$result['norad'] = trim(substr($data,13,6));
@@ -1655,7 +1656,14 @@ class update_db {
 				*/
 				
 				$owner_code = trim(substr($data,49,5));
-				if ($owner_code != 'TBD') {
+				
+				if (!isset($satcat_sources[$owner_code])) {
+					echo $data;
+					echo 'owner_code: '.$owner_code."\n";
+					echo 'launch_site_code: '.trim(substr($data,68,5))."\n";
+				}
+				
+				if ($owner_code != 'TBD' && isset($satcat_sources[$owner_code])) {
 					$result['country_owner'] = $satcat_sources[$owner_code]['country'];
 					$result['owner'] = $satcat_sources[$owner_code]['owner'];
 					$result['launch_date'] = trim(substr($data,56,10));
@@ -1710,7 +1718,7 @@ class update_db {
 						}
 					}
 				}
-				
+				}
 				$i++;
 			}
 			fclose($handle);
@@ -2369,6 +2377,7 @@ class update_db {
 
 	public static function update_translation_fam() {
 		global $tmp_dir, $globalDebug;
+		$error = '';
 		if ($globalDebug) echo "Translation from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.com/data/translation.tsv.gz',$tmp_dir.'translation.tsv.gz');
 		update_db::download('http://data.flightairmap.com/data/translation.tsv.gz.md5',$tmp_dir.'translation.tsv.gz.md5');
@@ -2389,6 +2398,7 @@ class update_db {
 	}
 	public static function update_ModeS_fam() {
 		global $tmp_dir, $globalDebug;
+		$error = '';
 		if ($globalDebug) echo "ModeS from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.com/data/modes.tsv.gz',$tmp_dir.'modes.tsv.gz');
 		update_db::download('http://data.flightairmap.com/data/modes.tsv.gz.md5',$tmp_dir.'modes.tsv.gz.md5');
@@ -3562,5 +3572,5 @@ class update_db {
 //echo update_db::delete_duplicateowner();
 //echo update_db::fix_icaotype();
 //echo update_db::satellite_ucsdb('tmp/UCS_Satellite_Database_officialname_1-1-17.txt');
-//echo update_db::satellite_celestrak('tmp/satcat.txt');
+echo update_db::update_celestrak();
 ?>
