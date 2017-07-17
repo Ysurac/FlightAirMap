@@ -16,16 +16,22 @@ if (!isset($globalDemo)) {
 		if ((isset($_COOKIE['show_GroundStation']) && $_COOKIE['show_GroundStation'] == 'true') 
 		    || (!isset($_COOKIE['show_GroundStation']) && (!isset($globalMapGroundStation) || $globalMapGroundStation === TRUE))) {
 			//$spotter_array = $Source->getAllLocationInfo();
-			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('gs'));
+			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('gs',$coords));
 		}
 		if ((isset($_COOKIE['show_WeatherStation']) && $_COOKIE['show_WeatherStation'] == 'true') 
 		    || (!isset($_COOKIE['show_WeatherStation']) && (!isset($globalMapWeatherStation) || $globalMapWeatherStation === TRUE))) {
-			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('wx'));
+			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('wx',$coords));
 		}
 		if ((isset($_COOKIE['show_Lightning']) && $_COOKIE['show_Lightning'] == 'true') 
 		    || (!isset($_COOKIE['show_Lightning']) && (!isset($globalMapLightning) || $globalMapLightning === TRUE))) {
-			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('lightning'));
+			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('lightning',$coords));
 		}
+		
+		if ((isset($_COOKIE['show_Fire']) && $_COOKIE['show_Fire'] == 'true') 
+		    || (!isset($_COOKIE['show_Fire']) && (!isset($globalMapFire) || $globalMapFire === TRUE))) {
+			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('fires',$coords));
+		}
+		
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType(''));
 	} else {
 		if ((isset($_COOKIE['show_GroundStation']) && $_COOKIE['show_GroundStation'] == 'true') 
@@ -41,6 +47,12 @@ if (!isset($globalDemo)) {
 		    || (!isset($_COOKIE['show_Lightning']) && (!isset($globalMapLightning) || $globalMapLightning === TRUE))) {
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('lightning'));
 		}
+		/*
+		if ((isset($_COOKIE['show_Fire']) && $_COOKIE['show_Fire'] == 'true') 
+		    || (!isset($_COOKIE['show_Fire']) && (!isset($globalMapFire) || $globalMapFire === TRUE))) {
+			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('fires'));
+		}
+		*/
 		$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType(''));
 	}
 }

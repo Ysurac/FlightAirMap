@@ -1220,16 +1220,16 @@ foreach($spotter_array as $spotter_item)
 		{
 			print '<li><a href="'.$globalURL.'/route/'.$spotter_item['departure_airport'].'/'.$spotter_item['arrival_airport'].'">'._("Route Profile").'</a></li>';
 		}
-		if (isset($spotter_item['airline_country']) && $spotter_item['airline_country'] != "")
+		if (isset($spotter_item['airline_country']) && $spotter_item['airline_country'] != "" && $spotter_item['airline_country'] != "NA")
 		{
 			print '<li><a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $spotter_item['airline_country'])).'">'._("Airline Country Profile").'</a></li>';
 			print '<li><hr /></li>';
 		}
-		if (isset($spotter_item['departure_airport_country']) && $spotter_item['departure_airport_country'] != "" && $spotter_item['departure_airport_country'] != "N/A")
+		if (isset($spotter_item['departure_airport_country']) && $spotter_item['departure_airport_country'] != "" && $spotter_item['departure_airport_country'] != "N/A" && $spotter_item['departure_airport_country'] != "NA")
 		{
 			print '<li><a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $spotter_item['departure_airport_country'])).'">'._("Departure Airport Country Profile").'</a></li>';
 		}
-		if (isset($spotter_item['arrival_airport_country']) && $spotter_item['arrival_airport_country'] != "" && $spotter_item['arrival_airport_country'] != "N/A")
+		if (isset($spotter_item['arrival_airport_country']) && $spotter_item['arrival_airport_country'] != "" && $spotter_item['arrival_airport_country'] != "N/A" && $spotter_item['arrival_airport_country'] != "NA")
 		{
 			print '<li><a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $spotter_item['arrival_airport_country'])).'">'._("Arrival Airport Country Profile").'</a></li>';
 		}

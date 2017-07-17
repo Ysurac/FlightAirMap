@@ -619,26 +619,26 @@ class Spotter{
 					if (is_int($q_item)) $additional_query .= "(spotter_output.spotter_id like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.aircraft_icao like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.aircraft_name like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.aircraft_manufacturer like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.airline_icao like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.airline_name like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.airline_country like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.departure_airport_icao like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.departure_airport_name like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.departure_airport_city like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.departure_airport_country like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.arrival_airport_icao like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.arrival_airport_name like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.arrival_airport_city like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.arrival_airport_country like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.aircraft_manufacturer like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.airline_icao like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.airline_name like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.airline_country like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.departure_airport_icao like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.departure_airport_name like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.departure_airport_city like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.departure_airport_country like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.arrival_airport_icao like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.arrival_airport_name like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.arrival_airport_city like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.arrival_airport_country like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.registration like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.owner_name like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.owner_name like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.pilot_id like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.pilot_name like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.ident like '%".$q_item."%') OR ";
 					$translate = $Translation->ident2icao($q_item);
 					if ($translate != $q_item) $additional_query .= "(spotter_output.ident like '%".$translate."%') OR ";
-					$additional_query .= "(spotter_output.highlight like '%".$q_item."%')";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.highlight like '%".$q_item."%')";
 					$additional_query .= ")";
 				}
 			}
@@ -1852,7 +1852,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.aircraft_manufacturer = :aircraft_manufacturer)";
+				$additional_query .= " AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer";
 				$query_values = array(':aircraft_manufacturer' => $aircraft_manufacturer);
 			}
 		}
@@ -1880,9 +1880,7 @@ class Spotter{
 		}
 
 		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
-
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
-
 		return $spotter_array;
 	}
 

@@ -38,7 +38,7 @@ print '</div>';
 
 if ($spotter_item['city'] != '') print '<div><span>'._("City").'</span>'.$spotter_item['city'].'</div>';
 if ($spotter_item['country'] !='') print '<div><span>'._("Country").'</span>'.$spotter_item['country'].'</div>';
-print '<div><span>'._("Coordinates").'</span>'.round($spotter_item['latitude'],3).', '.round($spotter_item['longitude'],3).'</div>';
+print '<div><span>'._("Coordinates").'</span>'.round($spotter_item['latitude'],4).', '.round($spotter_item['longitude'],4).'</div>';
 /*
 if ($spotter_item['atc_range'] > 0) {
     print '<div><span>'._("Range").'</span>';

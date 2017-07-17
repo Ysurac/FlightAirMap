@@ -31,10 +31,14 @@ if (!isset($_GET['country'])){
 	
 	$page_url = $globalURL.'/country/'.$_GET['country'];
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-	if ($sort != '') {
-		$spotter_array = $Spotter->getSpotterDataByCountry($country, $limit_start.",".$absolute_difference, $sort);
+	if ($country == 'Na') {
+		$spotter_array = array();
 	} else {
-		$spotter_array = $Spotter->getSpotterDataByCountry($country, $limit_start.",".$absolute_difference, '');
+		if ($sort != '') {
+			$spotter_array = $Spotter->getSpotterDataByCountry($country, $limit_start.",".$absolute_difference, $sort);
+		} else {
+			$spotter_array = $Spotter->getSpotterDataByCountry($country, $limit_start.",".$absolute_difference, '');
+		}
 	}
 
 	if (!empty($spotter_array))
