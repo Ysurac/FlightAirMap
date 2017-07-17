@@ -29,13 +29,12 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 
 	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
 	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
-
 		$aircraft_types = $Stats->getAllAircraftTypes();
 		if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();
 		foreach($aircraft_types as $aircraft_item)
 		{
 			$output .= '<url>';
-			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/aircraft/'.$aircraft_item['aircraft_icao'].'</loc>';
+			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/aircraft/'.urlencode($aircraft_item['aircraft_icao']).'</loc>';
 			    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
 			    $output .= '<changefreq>daily</changefreq>';
 			$output .= '</url>';
@@ -52,7 +51,7 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		foreach($aircraft_registrations as $aircraft_item)
 		{
 			$output .= '<url>';
-			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/registration/'.$aircraft_item['registration'].'</loc>';
+			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/registration/'.urlencode($aircraft_item['registration']).'</loc>';
 			    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
 			    $output .= '<changefreq>daily</changefreq>';
 			$output .= '</url>';
@@ -68,7 +67,7 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		foreach($airline_names as $airline_item)
 		{
 			$output .= '<url>';
-			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/airline/'.$airline_item['airline_icao'].'</loc>';
+			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/airline/'.urlencode($airline_item['airline_icao']).'</loc>';
 			    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
 			    $output .= '<changefreq>daily</changefreq>';
 			$output .= '</url>';
@@ -102,7 +101,7 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		foreach($manufacturer_names as $manufacturer_item)
 		{
 			$output .= '<url>';
-			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $manufacturer_item['aircraft_manufacturer'])).'</loc>';
+			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/manufacturer/'.urlencode(strtolower(str_replace(" ", "-", $manufacturer_item['aircraft_manufacturer']))).'</loc>';
 			    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
 			    $output .= '<changefreq>daily</changefreq>';
 			$output .= '</url>';
@@ -118,7 +117,7 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		foreach($country_names as $country_item)
 		{
 			$output .= '<url>';
-			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/country/'.strtolower(str_replace(" ", "-", $country_item['country'])).'</loc>';
+			    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/country/'.urlencode(strtolower(str_replace(" ", "-", $country_item['country']))).'</loc>';
 			    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
 			    $output .= '<changefreq>daily</changefreq>';
 			$output .= '</url>';
@@ -135,7 +134,7 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		{
 			if (ctype_alnum($ident_item['ident'])) {
 				$output .= '<url>';
-				    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/ident/'.$ident_item['ident'].'</loc>';
+				    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/ident/'.urlencode($ident_item['ident']).'</loc>';
 				    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
 				    $output .= '<changefreq>daily</changefreq>';
 				$output .= '</url>';
