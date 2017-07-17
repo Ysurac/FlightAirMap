@@ -26,6 +26,7 @@ require_once('header.php');
 ?>
 <noscript><div class="alert alert-danger" role="alert"><?php echo _("JavaScript <b>MUST</b> be enabled"); ?></div></noscript>
 <div id="live-map"></div>
+<br/>
 <div id="dialog" title="<?php echo _("Session has timed-out"); ?>">
   <p><?php echo _("In order to save data consumption web page times out after 30 minutes. Close this dialog to continue."); ?></p>
 </div>
