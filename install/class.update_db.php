@@ -3572,5 +3572,5 @@ class update_db {
 //echo update_db::delete_duplicateowner();
 //echo update_db::fix_icaotype();
 //echo update_db::satellite_ucsdb('tmp/UCS_Satellite_Database_officialname_1-1-17.txt');
-echo update_db::update_celestrak();
+//echo update_db::update_celestrak();
 ?>
