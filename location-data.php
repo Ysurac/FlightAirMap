@@ -21,16 +21,20 @@ if ($spotter_item['name'] != '') print '<div class="right"><div class="callsign-
 elseif ($spotter_item['location_id'] != 0) print '<div class="right"><div class="callsign-details"><div class="callsign">'.$spotter_item['location_id'].'</div>';
 elseif ($spotter_item['type'] == 'lightning') print '<div class="right"><div class="callsign-details"><div class="callsign">'._("Lightning").'</div>';
 elseif ($spotter_item['type'] == 'wx') print '<div class="right"><div class="callsign-details"><div class="callsign">'._("Weather Station").'</div>';
+elseif ($spotter_item['type'] == 'fires') print '<div class="right"><div class="callsign-details"><div class="callsign">'._("Fire").'</div>';
 else print '<div class="right"><div class="callsign-details"><div class="callsign"></div>';
 print '</div>';
 
 print '</div></div>';
 print '<div class="details"><div class="mobile airports"><div class="airport">';
-print '</div></div><div>';
+print '</div></div>';
 
-print '<span>'._("Altitude").'</span>';
-print $spotter_item['altitude'];
-print '</div>';
+if ($spotter_item['type'] != 'fires') {
+	print '<div>';
+	print '<span>'._("Altitude").'</span>';
+	print $spotter_item['altitude'];
+	print '</div>';
+}
 
 print '<div><span>'._("Last Seen").'</span>';
 print $spotter_item['last_seen'].' UTC';

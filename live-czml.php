@@ -226,6 +226,7 @@ if ($from_archive === true) {
 $output .= '},';
 if (!empty($spotter_array) && is_array($spotter_array))
 {
+	$nblatlong = 0;
 	foreach($spotter_array as $spotter_item)
 	{
 		$j++;
@@ -243,6 +244,13 @@ if (!empty($spotter_array) && is_array($spotter_array))
                 elseif (isset($spotter_item['fammarine_id'])) $id = $spotter_item['fammarine_id'];
                 if ($prev_flightaware_id != $id) {
 			if ($prev_flightaware_id != '') {
+				if ($nblatlong == 1) {
+					$output .= ',"'.date("c").'", ';
+					$output .= $prevlong.', ';
+					$output .= $prevlat;
+					if (!$marine) $output .= ', '.$prevalt;
+					else $output .= ', 0';
+				}
 				$output .= ']';
 				$output .= '}';
 				//$output .= ', '.$orientation.']}';
@@ -250,6 +258,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			}
 			$orientation = '';
 			$prev_flightaware_id = $id;
+			$nblatlong = 0;
 			$output .= '{';
 			$output .= '"id": "'.$id.'",';
 			$output .= '"properties": {';
@@ -650,6 +659,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			//$quat = quaternionrotate(deg2rad($spotter_item['heading']),deg2rad(0),deg2rad(0));
 			//$orientation .= '"'.date("c",strtotime($spotter_item['date'])).'",'.$quat['x'].','.$quat['y'].','.$quat['z'].','.$quat['w'];
 		} else {
+			$nblatlong = $nblatlong+1;
 			$output .= ',"'.date("c",strtotime($spotter_item['date'])).'", ';
 			if ($maxitime < strtotime($spotter_item['date'])) $maxitime = strtotime($spotter_item['date']);
 			if ($spotter_item['ground_speed'] == 0) {

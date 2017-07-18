@@ -328,7 +328,17 @@ function update_locationsLayer() {
 	}
     }
 
+<?php
+    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+?>
+    var loc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox());
+<?php
+    } else {
+?>
     var loc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/location-geojson.php");
+<?php
+    }
+?>
     loc_geojson.then(function(geojsondata) {
 	loc = new Cesium.CustomDataSource('location');
 	for (var i =0;i < geojsondata.features.length; i++) {
@@ -522,3 +532,12 @@ handlera.setInputAction(
     Cesium.ScreenSpaceEventType.LEFT_CLICK
 );
 */
+viewer.camera.moveEnd.addEventListener(function() { 
+<?php
+	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+?>      
+	update_locationsLayer();
+<?php
+	}
+?>
+});
