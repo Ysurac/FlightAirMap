@@ -62,7 +62,7 @@ class Source {
 		return $all;
 	}
 
-	public function getLocationInfoByType($type, $coord = array()) {
+	public function getLocationInfoByType($type, $coord = array(), $limit = false) {
 		$query = "SELECT * FROM source_location WHERE type = :type";
 		if (is_array($coord) && !empty($coord)) {
 			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
@@ -72,7 +72,7 @@ class Source {
 			$query .= " AND source_location.latitude BETWEEN ".$minlat." AND ".$maxlat." AND source_location.longitude BETWEEN ".$minlong." AND ".$maxlong." AND source_location.latitude <> 0 AND source_location.longitude <> 0";
 		}
 		$query .= " ORDER BY last_seen DESC";
-		$query .= " LIMIT 200";
+		if ($limit) $query .= " LIMIT 200";
 		$query_values = array(':type' => $type);
 		try {
 			$sth = $this->db->prepare($query);

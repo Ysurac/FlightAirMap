@@ -137,7 +137,9 @@ var handler_tracker = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
 handler_tracker.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
 	if (Cesium.defined(pickedObject)) {
-		var type = pickedObject.id.properties.valueOf('type')._type._value;
+		if (typeof pickedObject.id.properties != 'undefined') {
+			var type = pickedObject.id.properties.valueOf('type')._type._value;
+		}
 		if (typeof type == 'undefined') {
 			var type = pickedObject.id.type;
 		}

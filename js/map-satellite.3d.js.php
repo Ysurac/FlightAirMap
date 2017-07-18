@@ -117,7 +117,11 @@ handler_satellite.setInputAction(function(click) {
 		var currenttime = viewer.clock.currentTime;
 		console.log(pickedObject.id);
 		delCookie('MapTrack');
-		if (pickedObject.id.type == 'sat') {
+		var type = '';
+		if (typeof pickedObject.id.type != 'undefined') {
+			type = pickedObject.id.type;
+		}
+		if (type == 'sat') {
 			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(pickedObject.id.id));
 		}
 	}

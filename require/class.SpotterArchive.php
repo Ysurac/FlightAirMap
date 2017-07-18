@@ -9,119 +9,117 @@ class SpotterArchive {
 		if ($this->db === null) die('Error: No DB connection.');
 	}
 
-    /**
-    * Get SQL query part for filter used
-    * @param Array $filter the filter
-    * @return Array the SQL part
-    */
-    public function getFilter($filter = array(),$where = false,$and = false) {
-	global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
-	$filters = array();
-	if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
-		if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
-			$filters = $globalStatsFilters[$globalFilterName];
-		} else {
-			$filter = array_merge($filter,$globalStatsFilters[$globalFilterName]);
+	/**
+	* Get SQL query part for filter used
+	* @param Array $filter the filter
+	* @return Array the SQL part
+	*/
+	public function getFilter($filter = array(),$where = false,$and = false) {
+		global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
+		$filters = array();
+		if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
+			if (isset($globalStatsFilters[$globalFilterName][0]['source'])) {
+				$filters = $globalStatsFilters[$globalFilterName];
+			} else {
+				$filter = array_merge($filter,$globalStatsFilters[$globalFilterName]);
+			}
 		}
-	}
-	if (isset($filter[0]['source'])) {
-		$filters = array_merge($filters,$filter);
-	}
-	if (is_array($globalFilter)) $filter = array_merge($filter,$globalFilter);
-	$filter_query_join = '';
-	$filter_query_where = '';
-	foreach($filters as $flt) {
-	    if (isset($flt['airlines']) && !empty($flt['airlines'])) {
-		if ($flt['airlines'][0] != '') {
-		    if (isset($flt['source'])) {
-			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$flt['airlines'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) saff ON saff.flightaware_id = spotter_archive_output.flightaware_id";
-		    } else {
-			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$flt['airlines'])."')) saff ON saff.flightaware_id = spotter_archive_output.flightaware_id";
-		    }
+		if (isset($filter[0]['source'])) {
+			$filters = array_merge($filters,$filter);
 		}
-	    }
-	    if (isset($flt['pilots_id']) && !empty($flt['pilots_id'])) {
-		if (isset($flt['source'])) {
-		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.pilot_id IN ('".implode("','",$flt['pilots_id'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) sp ON sp.flightaware_id = spotter_archive_output.flightaware_id";
-		} else {
-		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.pilot_id IN ('".implode("','",$flt['pilots_id'])."')) sp ON sp.flightaware_id = spotter_archive_output.flightaware_id";
+		if (is_array($globalFilter)) $filter = array_merge($filter,$globalFilter);
+		$filter_query_join = '';
+		$filter_query_where = '';
+		foreach($filters as $flt) {
+			if (isset($flt['airlines']) && !empty($flt['airlines'])) {
+				if ($flt['airlines'][0] != '') {
+					if (isset($flt['source'])) {
+						$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$flt['airlines'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) saff ON saff.flightaware_id = spotter_archive_output.flightaware_id";
+					} else {
+						$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$flt['airlines'])."')) saff ON saff.flightaware_id = spotter_archive_output.flightaware_id";
+					}
+				}
+			}
+			if (isset($flt['pilots_id']) && !empty($flt['pilots_id'])) {
+				if (isset($flt['source'])) {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.pilot_id IN ('".implode("','",$flt['pilots_id'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) sp ON sp.flightaware_id = spotter_archive_output.flightaware_id";
+				} else {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.pilot_id IN ('".implode("','",$flt['pilots_id'])."')) sp ON sp.flightaware_id = spotter_archive_output.flightaware_id";
+				}
+			}
+			if (isset($flt['idents']) && !empty($flt['idents'])) {
+				if (isset($flt['source'])) {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.ident IN ('".implode("','",$flt['idents'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) spi ON spi.flightaware_id = spotter_archive_output.flightaware_id";
+				} else {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.ident IN ('".implode("','",$flt['idents'])."')) spi ON spi.flightaware_id = spotter_archive_output.flightaware_id";
+				}
+			}
+			if (isset($flt['registrations']) && !empty($flt['registrations'])) {
+				if (isset($flt['source'])) {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.registration IN ('".implode("','",$flt['registrations'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) sre ON sre.flightaware_id = spotter_archive_output.flightaware_id";
+				} else {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.registration IN ('".implode("','",$flt['registrations'])."')) sre ON sre.flightaware_id = spotter_archive_output.flightaware_id";
+				}
+			}
+			if ((isset($flt['airlines']) && empty($flt['airlines']) && isset($flt['pilots_id']) && empty($flt['pilots_id']) && isset($flt['idents']) && empty($flt['idents']) && isset($flt['registrations']) && empty($flt['registrations'])) || (!isset($flt['airlines']) && !isset($flt['pilots_id']) && !isset($flt['idents']) && !isset($flt['registrations']))) {
+				if (isset($flt['source'])) {
+					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.format_source IN ('".implode("','",$flt['source'])."')) saa ON saa.flightaware_id = spotter_archive_output.flightaware_id";
+				}
+			}
 		}
-	    }
-	    if (isset($flt['idents']) && !empty($flt['idents'])) {
-		if (isset($flt['source'])) {
-		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.ident IN ('".implode("','",$flt['idents'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) spi ON spi.flightaware_id = spotter_archive_output.flightaware_id";
-		} else {
-		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.ident IN ('".implode("','",$flt['idents'])."')) spi ON spi.flightaware_id = spotter_archive_output.flightaware_id";
+		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
+			if ($filter['airlines'][0] != '') {
+				$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) saf ON saf.flightaware_id = spotter_archive_output.flightaware_id";
+			}
 		}
-	    }
-	    if (isset($flt['registrations']) && !empty($flt['registrations'])) {
-		if (isset($flt['source'])) {
-		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.registration IN ('".implode("','",$flt['registrations'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) sre ON sre.flightaware_id = spotter_archive_output.flightaware_id";
-		} else {
-		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.registration IN ('".implode("','",$flt['registrations'])."')) sre ON sre.flightaware_id = spotter_archive_output.flightaware_id";
+		if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
+			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_archive_output.flightaware_id ";
 		}
-	    }
-	    if ((isset($flt['airlines']) && empty($flt['airlines']) && isset($flt['pilots_id']) && empty($flt['pilots_id']) && isset($flt['idents']) && empty($flt['idents']) && isset($flt['registrations']) && empty($flt['registrations'])) || (!isset($flt['airlines']) && !isset($flt['pilots_id']) && !isset($flt['idents']) && !isset($flt['registrations']))) {
-		if (isset($flt['source'])) {
-		    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_output.format_source IN ('".implode("','",$flt['source'])."')) saa ON saa.flightaware_id = spotter_archive_output.flightaware_id";
+		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
+			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) spi ON spi.flightaware_id = spotter_archive_output.flightaware_id";
 		}
-	    }
-	}
-	if (isset($filter['airlines']) && !empty($filter['airlines'])) {
-	    if ($filter['airlines'][0] != '') {
-		$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) saf ON saf.flightaware_id = spotter_archive_output.flightaware_id";
-	    }
-	}
-	
-	if (isset($filter['airlinestype']) && !empty($filter['airlinestype'])) {
-	    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_type = '".$filter['airlinestype']."') sa ON sa.flightaware_id = spotter_archive_output.flightaware_id ";
-	}
-	if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
-	    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) spi ON spi.flightaware_id = spotter_archive_output.flightaware_id";
-	}
-	if (isset($filter['source']) && !empty($filter['source'])) {
-	    $filter_query_where .= " AND format_source IN ('".implode("','",$filter['source'])."')";
-	}
-	if (isset($filter['ident']) && !empty($filter['ident'])) {
-	    $filter_query_where .= " AND ident = '".$filter['ident']."'";
-	}
-	if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
-		$filter_query_where .= " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
-	}
-	if ((isset($filter['year']) && $filter['year'] != '') || (isset($filter['month']) && $filter['month'] != '') || (isset($filter['day']) && $filter['day'] != '')) {
-	    $filter_query_date = '';
-	    
-	    if (isset($filter['year']) && $filter['year'] != '') {
-		if ($globalDBdriver == 'mysql') {
-		    $filter_query_date .= " AND YEAR(spotter_archive_output.date) = '".$filter['year']."'";
-		} else {
-		    $filter_query_date .= " AND EXTRACT(YEAR FROM spotter_archive_output.date) = '".$filter['year']."'";
+		if (isset($filter['source']) && !empty($filter['source'])) {
+			$filter_query_where .= " AND format_source IN ('".implode("','",$filter['source'])."')";
 		}
-	    }
-	    if (isset($filter['month']) && $filter['month'] != '') {
-		if ($globalDBdriver == 'mysql') {
-		    $filter_query_date .= " AND MONTH(spotter_archive_output.date) = '".$filter['month']."'";
-		} else {
-		    $filter_query_date .= " AND EXTRACT(MONTH FROM spotter_archive_output.date) = '".$filter['month']."'";
+		if (isset($filter['ident']) && !empty($filter['ident'])) {
+			$filter_query_where .= " AND ident = '".$filter['ident']."'";
 		}
-	    }
-	    if (isset($filter['day']) && $filter['day'] != '') {
-		if ($globalDBdriver == 'mysql') {
-		    $filter_query_date .= " AND DAY(spotter_archive_output.date) = '".$filter['day']."'";
-		} else {
-		    $filter_query_date .= " AND EXTRACT(DAY FROM spotter_archive_output.date) = '".$filter['day']."'";
+		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
+			$filter_query_where .= " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
 		}
-	    }
-	    $filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output".preg_replace('/^ AND/',' WHERE',$filter_query_date).") sd ON sd.flightaware_id = spotter_archive_output.flightaware_id";
+		if ((isset($filter['year']) && $filter['year'] != '') || (isset($filter['month']) && $filter['month'] != '') || (isset($filter['day']) && $filter['day'] != '')) {
+			$filter_query_date = '';
+			if (isset($filter['year']) && $filter['year'] != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query_date .= " AND YEAR(spotter_archive_output.date) = '".$filter['year']."'";
+				} else {
+					$filter_query_date .= " AND EXTRACT(YEAR FROM spotter_archive_output.date) = '".$filter['year']."'";
+				}
+			}
+			if (isset($filter['month']) && $filter['month'] != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query_date .= " AND MONTH(spotter_archive_output.date) = '".$filter['month']."'";
+				} else {
+					$filter_query_date .= " AND EXTRACT(MONTH FROM spotter_archive_output.date) = '".$filter['month']."'";
+				}
+			}
+			if (isset($filter['day']) && $filter['day'] != '') {
+				if ($globalDBdriver == 'mysql') {
+					$filter_query_date .= " AND DAY(spotter_archive_output.date) = '".$filter['day']."'";
+				} else {
+					$filter_query_date .= " AND EXTRACT(DAY FROM spotter_archive_output.date) = '".$filter['day']."'";
+				}
+			}
+			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output".preg_replace('/^ AND/',' WHERE',$filter_query_date).") sd ON sd.flightaware_id = spotter_archive_output.flightaware_id";
+		}
+		if ($filter_query_where == '' && $where) $filter_query_where = ' WHERE';
+		elseif ($filter_query_where != '' && $and) $filter_query_where .= ' AND';
+		if ($filter_query_where != '') {
+			$filter_query_where = preg_replace('/^ AND/',' WHERE',$filter_query_where);
+		}
+		$filter_query = $filter_query_join.$filter_query_where;
+		return $filter_query;
 	}
-	if ($filter_query_where == '' && $where) $filter_query_where = ' WHERE';
-	elseif ($filter_query_where != '' && $and) $filter_query_where .= ' AND';
-	if ($filter_query_where != '') {
-		$filter_query_where = preg_replace('/^ AND/',' WHERE',$filter_query_where);
-	}
-	$filter_query = $filter_query_join.$filter_query_where;
-	return $filter_query;
-    }
 
 	// Spotter_archive
 	public function addSpotterArchiveData($flightaware_id = '', $ident = '', $registration = '', $airline_name = '', $airline_icao = '', $airline_country = '', $airline_type = '', $aircraft_icao = '', $aircraft_shadow = '', $aircraft_name = '', $aircraft_manufacturer = '', $departure_airport_icao = '', $departure_airport_name = '', $departure_airport_city = '', $departure_airport_country = '', $departure_airport_time = '',$arrival_airport_icao = '', $arrival_airport_name = '', $arrival_airport_city ='', $arrival_airport_country = '', $arrival_airport_time = '', $route_stop = '', $date = '',$latitude = '', $longitude = '', $waypoints = '', $altitude = '', $real_altitude = '',$heading = '', $ground_speed = '', $squawk = '', $ModeS = '', $pilot_id = '', $pilot_name = '',$verticalrate = '',$format_source = '', $source_name = '', $over_country = '') {
@@ -316,26 +314,21 @@ class SpotterArchive {
         * @return Array the spotter information
         *
         */
-        public function getAltitudeSpeedArchiveSpotterDataById($id)
-        {
-
-                date_default_timezone_set('UTC');
-
-                $id = filter_var($id, FILTER_SANITIZE_STRING);
-                $query  = "SELECT spotter_archive.altitude, spotter_archive.real_altitude,spotter_archive.ground_speed, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id ORDER BY date";
-
-                try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':id' => $id));
-                } catch(PDOException $e) {
-                        echo $e->getMessage();
-                        die;
-                }
-                $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
-
-                return $spotter_array;
-        }
-
+	public function getAltitudeSpeedArchiveSpotterDataById($id)
+	{
+		date_default_timezone_set('UTC');
+		$id = filter_var($id, FILTER_SANITIZE_STRING);
+		$query  = "SELECT spotter_archive.altitude, spotter_archive.real_altitude,spotter_archive.ground_speed, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id ORDER BY date";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':id' => $id));
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+			die;
+		}
+		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $spotter_array;
+	}
 
         /**
         * Gets altitude information based on a particular callsign
@@ -343,26 +336,22 @@ class SpotterArchive {
         * @return Array the spotter information
         *
         */
-        public function getLastAltitudeArchiveSpotterDataByIdent($ident)
-        {
-
-                date_default_timezone_set('UTC');
-
-                $ident = filter_var($ident, FILTER_SANITIZE_STRING);
-                $query  = "SELECT spotter_archive.altitude, spotter_archive.date FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE l.ident = :ident GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate LIMIT 1";
+	public function getLastAltitudeArchiveSpotterDataByIdent($ident)
+	{
+		date_default_timezone_set('UTC');
+		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
+		$query  = "SELECT spotter_archive.altitude, spotter_archive.date FROM spotter_archive INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_archive l WHERE l.ident = :ident GROUP BY l.flightaware_id) s on spotter_archive.flightaware_id = s.flightaware_id AND spotter_archive.date = s.maxdate LIMIT 1";
 //                $query  = "SELECT spotter_archive.altitude, spotter_archive.date FROM spotter_archive WHERE spotter_archive.ident = :ident";
-
-                try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute(array(':ident' => $ident));
-                } catch(PDOException $e) {
-                        echo $e->getMessage();
-                        die;
-                }
-                $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
-
-                return $spotter_array;
-        }
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':ident' => $ident));
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+			die;
+		}
+		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $spotter_array;
+	}
 
 
 
@@ -372,32 +361,30 @@ class SpotterArchive {
         * @return Array the spotter information
         *
         */
-        public function getSpotterArchiveData($ident,$flightaware_id,$date)
-        {
-    		$Spotter = new Spotter($this->db);
-                $ident = filter_var($ident, FILTER_SANITIZE_STRING);
-                $query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE l.ident = :ident AND l.flightaware_id = :flightaware_id AND l.date LIKE :date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate";
+	public function getSpotterArchiveData($ident,$flightaware_id,$date)
+	{
+		$Spotter = new Spotter($this->db);
+		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
+		$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE l.ident = :ident AND l.flightaware_id = :flightaware_id AND l.date LIKE :date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate";
+		$spotter_array = $Spotter->getDataFromDB($query,array(':ident' => $ident,':flightaware_id' => $flightaware_id,':date' => $date.'%'));
+		return $spotter_array;
+	}
 
-                $spotter_array = $Spotter->getDataFromDB($query,array(':ident' => $ident,':flightaware_id' => $flightaware_id,':date' => $date.'%'));
-
-                return $spotter_array;
-        }
-        
-        public function deleteSpotterArchiveTrackData()
-        {
+	public function deleteSpotterArchiveTrackData()
+	{
 		global $globalArchiveKeepTrackMonths, $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			$query = 'DELETE FROM spotter_archive WHERE spotter_archive.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepTrackMonths.' MONTH) LIMIT 10000';
 		} else {
 			$query = "DELETE FROM spotter_archive WHERE spotter_archive_id IN (SELECT spotter_archive_id FROM spotter_archive WHERE spotter_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveKeepTrackMonths." MONTH' LIMIT 10000)";
 		}
-                try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        echo $e->getMessage();
-                        die;
-                }
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+			die;
+		}
 	}
 
 	/**

@@ -2472,77 +2472,84 @@ class Stats {
 						$last_update_day = date('Y').'-01-01 00:00:00';
 						$reset = true;
 					}
-				
-
-				// Count by filter
-				if ($globalDebug) echo '--- Stats for filter '.$filter_name.' ---'."\n";
-				$Spotter = new Spotter($this->db);
-				$alldata = $Spotter->countAllAircraftTypes(false,0,$last_update_day,$filter);
-				foreach ($alldata as $number) {
-					$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name'],$number['aircraft_manufacturer'],'',$filter_name,$reset);
-				}
-				$alldata = $Spotter->countAllAirlines(false,0,$last_update_day,$filter);
-				foreach ($alldata as $number) {
-					$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name'],$filter_name,$reset);
-				}
-				$alldata = $Spotter->countAllAircraftRegistrations(false,0,$last_update_day,$filter);
-				foreach ($alldata as $number) {
-					$this->addStatAircraftRegistration($number['registration'],$number['aircraft_registration_count'],$number['aircraft_icao'],'',$filter_name,$reset);
-				}
-				$alldata = $Spotter->countAllCallsigns(false,0,$last_update_day,$filter);
-				foreach ($alldata as $number) {
-					$this->addStatCallsign($number['callsign_icao'],$number['callsign_icao_count'],'',$filter_name,$reset);
-				}
-				$alldata = $Spotter->countAllOwners(false,0,$last_update_day,$filter);
-				foreach ($alldata as $number) {
-					$this->addStatOwner($number['owner_name'],$number['owner_count'],'',$filter_name,$reset);
-				}
-				$alldata = $Spotter->countAllPilots(false,0,$last_update_day,$filter);
-				foreach ($alldata as $number) {
-					$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name'],'',$filter_name,$number['format_source'],$reset);
-				}
-				$pall = $Spotter->countAllDepartureAirports(false,0,$last_update_day,$filter);
-				$dall = $Spotter->countAllDetectedDepartureAirports(false,0,$last_update_day,$filter);
-				$alldata = array();
-				foreach ($pall as $value) {
-					$icao = $value['airport_departure_icao'];
-					$alldata[$icao] = $value;
-				}
-				foreach ($dall as $value) {
-					$icao = $value['airport_departure_icao'];
-					if (isset($alldata[$icao])) {
-						$alldata[$icao]['airport_departure_icao_count'] = $alldata[$icao]['airport_departure_icao_count'] + $value['airport_departure_icao_count'];
-					} else $alldata[$icao] = $value;
-				}
-				$count = array();
-				foreach ($alldata as $key => $row) {
-					$count[$key] = $row['airport_departure_icao_count'];
-				}
-				array_multisort($count,SORT_DESC,$alldata);
-				foreach ($alldata as $number) {
-					echo $this->addStatDepartureAirports($number['airport_departure_icao'],$number['airport_departure_name'],$number['airport_departure_city'],$number['airport_departure_country'],$number['airport_departure_icao_count'],'',$filter_name,$reset);
-				}
-				$pall = $Spotter->countAllArrivalAirports(false,0,$last_update_day,false,$filter);
-				$dall = $Spotter->countAllDetectedArrivalAirports(false,0,$last_update_day,false,$filter);
-				$alldata = array();
-				foreach ($pall as $value) {
-					$icao = $value['airport_arrival_icao'];
-					$alldata[$icao] = $value;
-				}
-				foreach ($dall as $value) {
-					$icao = $value['airport_arrival_icao'];
-					if (isset($alldata[$icao])) {
-						$alldata[$icao]['airport_arrival_icao_count'] = $alldata[$icao]['airport_arrival_icao_count'] + $value['airport_arrival_icao_count'];
-					} else $alldata[$icao] = $value;
-				}
-				$count = array();
-				foreach ($alldata as $key => $row) {
-					$count[$key] = $row['airport_arrival_icao_count'];
-				}
-				array_multisort($count,SORT_DESC,$alldata);
-				foreach ($alldata as $number) {
-					echo $this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_name'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count'],'',$filter_name,$reset);
-				}
+					// Count by filter
+					if ($globalDebug) echo '--- Stats for filter '.$filter_name.' ---'."\n";
+					$Spotter = new Spotter($this->db);
+					if ($globalDebug) echo 'Count all aircraft types...'."\n";
+					$alldata = $Spotter->countAllAircraftTypes(false,0,$last_update_day,$filter);
+					foreach ($alldata as $number) {
+						$this->addStatAircraft($number['aircraft_icao'],$number['aircraft_icao_count'],$number['aircraft_name'],$number['aircraft_manufacturer'],'',$filter_name,$reset);
+					}
+					if ($globalDebug) echo 'Count all airlines...'."\n";
+					$alldata = $Spotter->countAllAirlines(false,0,$last_update_day,$filter);
+					foreach ($alldata as $number) {
+						$this->addStatAirline($number['airline_icao'],$number['airline_count'],$number['airline_name'],$filter_name,$reset);
+					}
+					if ($globalDebug) echo 'Count all aircraft registrations...'."\n";
+					$alldata = $Spotter->countAllAircraftRegistrations(false,0,$last_update_day,$filter);
+					foreach ($alldata as $number) {
+						$this->addStatAircraftRegistration($number['registration'],$number['aircraft_registration_count'],$number['aircraft_icao'],'',$filter_name,$reset);
+					}
+					if ($globalDebug) echo 'Count all callsigns...'."\n";
+					$alldata = $Spotter->countAllCallsigns(false,0,$last_update_day,$filter);
+					foreach ($alldata as $number) {
+						$this->addStatCallsign($number['callsign_icao'],$number['callsign_icao_count'],'',$filter_name,$reset);
+					}
+					if ($globalDebug) echo 'Count all owners...'."\n";
+					$alldata = $Spotter->countAllOwners(false,0,$last_update_day,$filter);
+					foreach ($alldata as $number) {
+						$this->addStatOwner($number['owner_name'],$number['owner_count'],'',$filter_name,$reset);
+					}
+					if ($globalDebug) echo 'Count all pilots...'."\n";
+					$alldata = $Spotter->countAllPilots(false,0,$last_update_day,$filter);
+					foreach ($alldata as $number) {
+						$this->addStatPilot($number['pilot_id'],$number['pilot_count'],$number['pilot_name'],'',$filter_name,$number['format_source'],$reset);
+					}
+					if ($globalDebug) echo 'Count departure airports...'."\n";
+					$pall = $Spotter->countAllDepartureAirports(false,0,$last_update_day,$filter);
+					$dall = $Spotter->countAllDetectedDepartureAirports(false,0,$last_update_day,$filter);
+					$alldata = array();
+					foreach ($pall as $value) {
+						$icao = $value['airport_departure_icao'];
+						$alldata[$icao] = $value;
+					}
+					foreach ($dall as $value) {
+						$icao = $value['airport_departure_icao'];
+						if (isset($alldata[$icao])) {
+							$alldata[$icao]['airport_departure_icao_count'] = $alldata[$icao]['airport_departure_icao_count'] + $value['airport_departure_icao_count'];
+						} else $alldata[$icao] = $value;
+					}
+					$count = array();
+					foreach ($alldata as $key => $row) {
+						$count[$key] = $row['airport_departure_icao_count'];
+					}
+					array_multisort($count,SORT_DESC,$alldata);
+					foreach ($alldata as $number) {
+						echo $this->addStatDepartureAirports($number['airport_departure_icao'],$number['airport_departure_name'],$number['airport_departure_city'],$number['airport_departure_country'],$number['airport_departure_icao_count'],'',$filter_name,$reset);
+					}
+					if ($globalDebug) echo 'Count all arrival airports...'."\n";
+					$pall = $Spotter->countAllArrivalAirports(false,0,$last_update_day,false,$filter);
+					$dall = $Spotter->countAllDetectedArrivalAirports(false,0,$last_update_day,false,$filter);
+					$alldata = array();
+					foreach ($pall as $value) {
+						$icao = $value['airport_arrival_icao'];
+						$alldata[$icao] = $value;
+					}
+					foreach ($dall as $value) {
+						$icao = $value['airport_arrival_icao'];
+						if (isset($alldata[$icao])) {
+							$alldata[$icao]['airport_arrival_icao_count'] = $alldata[$icao]['airport_arrival_icao_count'] + $value['airport_arrival_icao_count'];
+						} else $alldata[$icao] = $value;
+					}
+					$count = array();
+					foreach ($alldata as $key => $row) {
+						$count[$key] = $row['airport_arrival_icao_count'];
+					}
+					array_multisort($count,SORT_DESC,$alldata);
+					foreach ($alldata as $number) {
+						echo $this->addStatArrivalAirports($number['airport_arrival_icao'],$number['airport_arrival_name'],$number['airport_arrival_city'],$number['airport_arrival_country'],$number['airport_arrival_icao_count'],'',$filter_name,$reset);
+					}
+					if ($globalDebug) echo 'Count all months...'."\n";
 					$Spotter = new Spotter($this->db);
 					$alldata = $Spotter->countAllMonths($filter);
 					$lastyear = false;
@@ -2550,22 +2557,27 @@ class Stats {
 						if ($number['year_name'] != date('Y')) $lastyear = true;
 						$this->addStat('flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
 					}
+					if ($globalDebug) echo 'Count all owners by months...'."\n";
 					$alldata = $Spotter->countAllMonthsOwners($filter);
 					foreach ($alldata as $number) {
 						$this->addStat('owners_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
 					}
+					if ($globalDebug) echo 'Count all pilots by months...'."\n";
 					$alldata = $Spotter->countAllMonthsPilots($filter);
 					foreach ($alldata as $number) {
 						$this->addStat('pilots_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
 					}
+					if ($globalDebug) echo 'Count all military by months...'."\n";
 					$alldata = $Spotter->countAllMilitaryMonths($filter);
 					foreach ($alldata as $number) {
 						$this->addStat('military_flights_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
 					}
+					if ($globalDebug) echo 'Count all aircrafts by months...'."\n";
 					$alldata = $Spotter->countAllMonthsAircrafts($filter);
 				    	foreach ($alldata as $number) {
 			    			$this->addStat('aircrafts_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);
 					}
+					if ($globalDebug) echo 'Count all real arrivals by months...'."\n";
 					$alldata = $Spotter->countAllMonthsRealArrivals($filter);
 					foreach ($alldata as $number) {
 						$this->addStat('realarrivals_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])),'',$filter_name);

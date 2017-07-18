@@ -511,9 +511,10 @@ var handler_aircraft = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 handler_aircraft.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
 	if (Cesium.defined(pickedObject)) {
-		//console.log(pickedObject.id);
 		var currenttime = viewer.clock.currentTime;
-		var type = pickedObject.id.properties.valueOf('type')._type._value;
+		if (typeof pickedObject.id.properties != 'undefined') {
+			var type = pickedObject.id.properties.valueOf('type')._type._value
+		}
 		if (typeof type == 'undefined') {
 			var type = pickedObject.id.type;
 		}
