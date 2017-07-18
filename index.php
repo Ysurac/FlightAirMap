@@ -605,9 +605,8 @@ require_once('header.php');
 						echo '<option value="'.$src['name'].'" selected>'.$src['name'].'</option>';
 					} else {
 						echo '<option value="'.$src['name'].'">'.$src['name'].'</option>';
-					}                                
+					}
 				}
-				
 			    ?>
 			</select>
 		    </li>
