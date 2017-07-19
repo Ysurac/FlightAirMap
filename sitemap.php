@@ -327,9 +327,11 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		$output .= '<sitemap>';
 	    	$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/sitemap/ident</loc>';
 		$output .= '</sitemap>';
+		/*
 		$output .= '<sitemap>';
 	    	$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/sitemap/date</loc>';
 		$output .= '</sitemap>';
+		*/
 		$output .= '<sitemap>';
 	    	$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/sitemap/route</loc>';
 		$output .= '</sitemap>';
