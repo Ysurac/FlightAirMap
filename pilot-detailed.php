@@ -45,12 +45,12 @@ if (!isset($_GET['pilot'])){
 	if ($sort != '') 
 	{
 		$spotter_array = $Spotter->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference, $sort,$filter);
-		if (empty($spotter_array)) {
+		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$spotter_array = $SpotterArchive->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference, $sort,$filter);
 		}
 	} else {
 		$spotter_array = $Spotter->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference,'',$filter);
-		if (empty($spotter_array)) {
+		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$spotter_array = $SpotterArchive->getSpotterDataByPilot($pilot,$limit_start.",".$absolute_difference,'',$filter);
 		}
 	}

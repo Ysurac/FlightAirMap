@@ -45,18 +45,14 @@ if (!isset($_GET['owner'])){
 	if ($sort != '') 
 	{
 		$spotter_array = $Spotter->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference, $sort,$filter);
-		/*
-		if (empty($spotter_array)) {
+		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$spotter_array = $SpotterArchive->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference, $sort,$filter);
 		}
-		*/
 	} else {
 		$spotter_array = $Spotter->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference,'',$filter);
-		/*
-		if (empty($spotter_array)) {
+		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$spotter_array = $SpotterArchive->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference,'',$filter);
 		}
-		*/
 	}
 
 	if (!empty($spotter_array))

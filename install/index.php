@@ -801,6 +801,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">You will need to put <i>update_db.php</i> in cron. But all should be faster when archive is enabled.</p>
 			</p>
 			<p>
+				<label for="archiveresults">Use archive to display results</label>
+				<input type="checkbox" name="archiveresults" id="archiveresults" value="archiveresults"<?php if ((isset($globalArchiveResults) && $globalArchiveResults) || !isset($globalArchiveResults)) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
 				<label for="archivemonths">Generate statistics, delete or put in archive flights older than xx months</label>
 				<input type="number" name="archivemonths" id="archivemonths" value="<?php if (isset($globalArchiveMonths)) print $globalArchiveMonths; else echo '1'; ?>" />
 				<p class="help-block">0 to disable, delete old flight if <i>Archive all flights data</i> is disabled</p>
@@ -1203,6 +1207,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalArchive' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalArchive' => 'FALSE'));
+	}
+	$archiveresults = filter_input(INPUT_POST,'archiveresults',FILTER_SANITIZE_STRING);
+	if ($archiveresults == 'archiveresults') {
+		$settings = array_merge($settings,array('globalArchiveResults' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalArchiveResults' => 'FALSE'));
 	}
 	$daemon = filter_input(INPUT_POST,'daemon',FILTER_SANITIZE_STRING);
 	if ($daemon == 'daemon') {
