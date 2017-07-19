@@ -59,12 +59,12 @@ if (!isset($_GET['ident'])){
 		if ($sort != '') 
 		{
 			$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
-			if (empty($spotter_array)) {
+			if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 				$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
 			}
 		} else {
 			$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
-			if (empty($spotter_array)) {
+			if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 				$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
 			}
 		}
@@ -75,12 +75,12 @@ if (!isset($_GET['ident'])){
 				if ($sort != '') 
 				{
 					$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
-					if (empty($spotter_array)) {
+					if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 						$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
 					}
 				} else {
 					$spotter_array = $Spotter->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
-					if (empty($spotter_array)) {
+					if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 						$spotter_array = $SpotterArchive->getSpotterDataByIdent($ident,$limit_start.",".$absolute_difference);
 					}
 				}
@@ -90,12 +90,12 @@ if (!isset($_GET['ident'])){
 		if ($sort != '') 
 		{
 			$spotter_array = $Marine->getMarineDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
-			if (empty($spotter_array)) {
+			if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 				$spotter_array = $MarineArchive->getMarineDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
 			}
 		} else {
 			$spotter_array = $Marine->getMarineDataByIdent($ident,$limit_start.",".$absolute_difference);
-			if (empty($spotter_array)) {
+			if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 				$spotter_array = $MarineArchive->getMarineDataByIdent($ident,$limit_start.",".$absolute_difference);
 			}
 		}
@@ -103,12 +103,12 @@ if (!isset($_GET['ident'])){
 		if ($sort != '') 
 		{
 			$spotter_array = $Tracker->getTrackerDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
-			if (empty($spotter_array)) {
+			if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 				$spotter_array = $TrackerArchive->getTrackerDataByIdent($ident,$limit_start.",".$absolute_difference, $sort);
 			}
 		} else {
 			$spotter_array = $Tracker->getTrackerDataByIdent($ident,$limit_start.",".$absolute_difference);
-			if (empty($spotter_array)) {
+			if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 				$spotter_array = $TrackerArchive->getTrackerDataByIdent($ident,$limit_start.",".$absolute_difference);
 			}
 		}
