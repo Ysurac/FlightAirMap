@@ -1660,10 +1660,12 @@ class update_db {
 				if (!isset($satcat_sources[$owner_code])) {
 					echo $data;
 					echo 'owner_code: '.$owner_code."\n";
+				}
+				if (!isset($satcat_launch_site[trim(substr($data,68,5))])) {
 					echo 'launch_site_code: '.trim(substr($data,68,5))."\n";
 				}
 				
-				if ($owner_code != 'TBD' && isset($satcat_sources[$owner_code])) {
+				if ($owner_code != 'TBD' && isset($satcat_sources[$owner_code]) && isset($satcat_launch_site[trim(substr($data,68,5))])) {
 					$result['country_owner'] = $satcat_sources[$owner_code]['country'];
 					$result['owner'] = $satcat_sources[$owner_code]['owner'];
 					$result['launch_date'] = trim(substr($data,56,10));
