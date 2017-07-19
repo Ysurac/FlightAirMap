@@ -79,7 +79,11 @@ class SpotterArchive {
 			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) spi ON spi.flightaware_id = spotter_archive_output.flightaware_id";
 		}
 		if (isset($filter['source']) && !empty($filter['source'])) {
-			$filter_query_where .= " AND format_source IN ('".implode("','",$filter['source'])."')";
+			if (count($filter['source']) == 1) {
+				$filter_query_where .= " AND format_source = '".$filter['source'][0]."'";
+			} else {
+				$filter_query_where .= " AND format_source IN ('".implode("','",$filter['source'])."')";
+			}
 		}
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
 			$filter_query_where .= " AND ident = '".$filter['ident']."'";

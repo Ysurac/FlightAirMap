@@ -148,7 +148,11 @@ class Spotter{
 				$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) spid ON spid.flightaware_id = spotter_output.flightaware_id";
 			}
 		if (isset($filter['source']) && !empty($filter['source'])) {
-			$filter_query_where .= " AND format_source IN ('".implode("','",$filter['source'])."')";
+			if (count($filter['source']) == 1) {
+				$filter_query_where .= " AND format_source = '".$filter['source'][0]."'";
+			} else {
+				$filter_query_where .= " AND format_source IN ('".implode("','",$filter['source'])."')";
+			}
 		}
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
 			$filter_query_where .= " AND ident = '".$filter['ident']."'";
@@ -1731,8 +1735,13 @@ class Spotter{
 				$offset = '+00:00';
 			}
 			if ($globalDBdriver == 'mysql') {
-				$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date ";
-				$query_values = array(':date' => $datetime->format('Y-m-d'), ':offset' => $offset);
+				if ($offset == '+00:00') {
+					$additional_query = " AND DATE(spotter_output.date) = :date ";
+					$query_values = array(':date' => $datetime->format('Y-m-d'));
+				} else {
+					$additional_query = " AND DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) = :date ";
+					$query_values = array(':date' => $datetime->format('Y-m-d'), ':offset' => $offset);
+				}
 			} elseif ($globalDBdriver == 'pgsql') {
 				//$globalTimezone = 'UTC';
 				$additional_query = " AND to_char(spotter_output.date AT TIME ZONE :timezone,'YYYY-mm-dd') = :date ";
