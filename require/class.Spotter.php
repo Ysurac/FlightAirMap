@@ -620,18 +620,18 @@ class Spotter{
 				foreach ($q_array as $q_item){
 					$q_item = filter_var($q_item,FILTER_SANITIZE_STRING);
 					$additional_query .= " AND (";
-					if (is_int($q_item)) $additional_query .= "(spotter_output.spotter_id like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.aircraft_icao like '%".$q_item."%') OR ";
+					if (is_int($q_item)) $additional_query .= "(spotter_output.spotter_id =  '".$q_item."') OR ";
+					$additional_query .= "(spotter_output.aircraft_icao =  '".$q_item."') OR ";
 					$additional_query .= "(spotter_output.aircraft_name like '%".$q_item."%') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.aircraft_manufacturer like '%".$q_item."%') OR ";
-					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.airline_icao like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.airline_icao =  '".$q_item."') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.airline_name like '%".$q_item."%') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.airline_country like '%".$q_item."%') OR ";
-					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.departure_airport_icao like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.departure_airport_icao =  '".$q_item."') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.departure_airport_name like '%".$q_item."%') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.departure_airport_city like '%".$q_item."%') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.departure_airport_country like '%".$q_item."%') OR ";
-					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.arrival_airport_icao like '%".$q_item."%') OR ";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.arrival_airport_icao = '".$q_item."') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.arrival_airport_name like '%".$q_item."%') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.arrival_airport_city like '%".$q_item."%') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.arrival_airport_country like '%".$q_item."%') OR ";

@@ -281,6 +281,7 @@ if (!empty($_GET)){
 
 <div class="column">
 	<form action="<?php print $globalURL; ?>/search" method="get" role="form" class="form-horizontal">
+<!--
 		<fieldset>
 			<div class="form-group">
 				<label class="control-label col-sm-2"><?php echo _("Keywords"); ?></label>
@@ -289,6 +290,7 @@ if (!empty($_GET)){
 				</div>
 			</div>
 		</fieldset>
+-->
 		<div class="advanced-form">
 			<fieldset>
 				<legend><?php echo _("Aircraft"); ?></legend>
