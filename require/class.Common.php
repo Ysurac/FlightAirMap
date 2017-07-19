@@ -345,7 +345,7 @@ class Common {
 		return (rad2deg(atan2($dLon, $dPhi)) + 360) % 360;
 	}
 	
-	public function checkLine($lat1,$lon1,$lat2,$lon2,$lat3,$lon3,$approx = 0.2) {
+	public function checkLine($lat1,$lon1,$lat2,$lon2,$lat3,$lon3,$approx = 0.15) {
 		//$a = ($lon2-$lon1)*$lat3+($lat2-$lat1)*$lon3+($lat1*$lon2+$lat2*$lon1);
 		$a = -($lon2-$lon1);
 		$b = $lat2 - $lat1;
