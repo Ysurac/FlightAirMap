@@ -938,7 +938,7 @@ class SpotterArchive {
 	    {
 		return false;
 	    } else {
-		$additional_query = " AND (spotter_archive_output.ident = :ident)";
+		$additional_query = " AND spotter_archive_output.ident = :ident";
 		$query_values = array(':ident' => $ident);
 	    }
 	}

@@ -2,7 +2,7 @@
 require_once(dirname(__FILE__).'/class.Scheduler.php');
 require_once(dirname(__FILE__).'/class.ACARS.php');
 require_once(dirname(__FILE__).'/class.Image.php');
-$global_query = "SELECT spotter_output.* FROM spotter_output";
+$global_query = "SELECT spotter_output.spotter_id,spotter_output.flightaware_id,spotter_output.ident,spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.real_altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.owner_name,spotter_output.verticalrate,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time,spotter_output.real_departure_airport_icao,spotter_output.real_departure_airport_time FROM spotter_output";
 
 class Spotter{
 	public $aircraft_correct_icaotype = array('CL64' => 'CL60',
@@ -421,10 +421,10 @@ class Spotter{
 				if (isset($row['airline_iata'])) $temp_array['airline_iata'] = $row['airline_iata'];
 				else $temp_array['airline_iata'] = 'N/A';
 				$temp_array['airline_name'] = $row['airline_name'];
-				$temp_array['airline_country'] = $row['airline_country'];
+				if (isset($row['airline_country'])) $temp_array['airline_country'] = $row['airline_country'];
 				if (isset($row['airline_callsign'])) $temp_array['airline_callsign'] = $row['airline_callsign'];
 				else $temp_array['airline_callsign'] = 'N/A';
-				$temp_array['airline_type'] = $row['airline_type'];
+				if (isset($row['airline_type'])) $temp_array['airline_type'] = $row['airline_type'];
 				if ($temp_array['airline_icao'] != '' && $temp_array['airline_iata'] == 'N/A') {
 					$airline_array = $this->getAllAirlineInfo($temp_array['airline_icao']);
 					if (count($airline_array) > 0) {
@@ -1793,8 +1793,8 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query .= " AND ((spotter_output.departure_airport_country = :country) OR (spotter_output.arrival_airport_country = :country))";
-				$additional_query .= " OR spotter_output.airline_country = :country";
+				$additional_query .= " AND (spotter_output.departure_airport_country = :country OR spotter_output.arrival_airport_country = :country";
+				$additional_query .= " OR spotter_output.airline_country = :country)";
 				$query_values = array(':country' => $country);
 			}
 		}
@@ -1910,7 +1910,7 @@ class Spotter{
 				return false;
 			} else {
 				$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
-				$additional_query .= " AND (spotter_output.departure_airport_icao = :departure_airport_icao)";
+				$additional_query .= " AND spotter_output.departure_airport_icao = :departure_airport_icao";
 				//$additional_query .= " AND (spotter_output.departure_airport_icao = :departure_airport_icao AND spotter_output.real_departure_airport_icao IS NULL) OR spotter_output.real_departure_airport_icao = :departure_airport_icao";
 				$query_values = array(':departure_airport_icao' => $departure_airport_icao);
 			}
@@ -1923,7 +1923,7 @@ class Spotter{
 				return false;
 			} else {
 				$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
-				$additional_query .= " AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)";
+				$additional_query .= " AND spotter_output.arrival_airport_icao = :arrival_airport_icao";
 				//$additional_query .= " AND ((spotter_output.arrival_airport_icao = :arrival_airport_icao AND spotter_output.real_arrival_airport_icao IS NULL) OR spotter_output.real_arrival_airport_icao = :arrival_airport_icao)";
 				$query_values = array_merge($query_values,array(':arrival_airport_icao' => $arrival_airport_icao));
 			}
@@ -1951,7 +1951,9 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = "SELECT spotter_output.spotter_id,spotter_output.flightaware_id,spotter_output.ident,spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time,spotter_output.real_departure_airport_icao,spotter_output.real_departure_airport_time FROM spotter_output";
+		//$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query .= $filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
           
 		//$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
 
