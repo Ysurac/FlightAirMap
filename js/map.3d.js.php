@@ -21,9 +21,9 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 		else $MapBoxId = $_COOKIE['MapTypeId'];
 ?>
 	var imProv = Cesium.MapboxImageryProvider({
-		credit: 'Map data © OpenStreetMap contributors, ' +
+		credit: 'Map data Â© OpenStreetMap contributors, ' +
 	      'CC-BY-SA, ' +
-	      'Imagery © Mapbox',
+	      'Imagery Â© Mapbox',
 		mapId: '<?php print $MapBoxId; ?>',
 		accessToken: '<?php print $globalMapboxToken; ?>'
 	});
@@ -32,7 +32,7 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 ?>
 	var imProv = Cesium.createOpenStreetMapImageryProvider({
 		url : 'https://a.tile.openstreetmap.org/',
-		credit: 'Map data © OpenStreetMap contributors, ' +
+		credit: 'Map data Â© OpenStreetMap contributors, ' +
 	      'Open Database Licence'
 	});
 <?php
