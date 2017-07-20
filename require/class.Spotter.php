@@ -1316,8 +1316,6 @@ class Spotter{
 	{
 		global $global_query;
 		
-		date_default_timezone_set('UTC');
-		
 		$query_values = array();
 		$limit_query = '';
 		$additional_query = '';
@@ -1333,21 +1331,18 @@ class Spotter{
 			}
 		} else {
 			$additional_query = " spotter_output.ident <> ''";
-		
+		}
 		if ($limit != "")
 		{
 			$limit_array = explode(",", $limit);
-			
 			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
 			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
-			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
 				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
 				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
-
 		if ($sort != "")
 		{
 			$search_orderby_array = $this->getOrderBy();
@@ -1355,11 +1350,8 @@ class Spotter{
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
-
 		$query = $global_query.$filter_query.$additional_query." ".$orderby_query;
-
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
-
 		return $spotter_array;
 	}
 	
@@ -1385,7 +1377,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query = " AND (spotter_output.owner_name = :owner)";
+				$additional_query = " AND spotter_output.owner_name = :owner";
 				$query_values = array(':owner' => $owner);
 			}
 		}
