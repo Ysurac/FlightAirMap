@@ -1328,10 +1328,11 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query = " AND (spotter_output.ident = :ident)";
+				$additional_query = " spotter_output.ident = :ident";
 				$query_values = array(':ident' => $ident);
 			}
-		}
+		} else {
+			$additional_query = " spotter_output.ident <> ''";
 		
 		if ($limit != "")
 		{
@@ -1355,7 +1356,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_query.$filter_query.$additional_query." ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
