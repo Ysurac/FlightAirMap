@@ -62,7 +62,7 @@ if ($spotter_item['type'] == 'wx') {
 	if (isset($weather['precipitation24h'])) print '<div><span>'._("Precipitation Today").'</span>'.$weather['precipitation24h'].' mm</div>';
 	$spotter_item['description'] = $weather['comment'];
 } elseif ($spotter_item['type'] == 'fires') {
-	print_r(json_decode($spotter_item['description'],true));
+	//print_r(json_decode($spotter_item['description'],true));
 }
 print '</div>';
 if ($spotter_item['type'] != 'wx' && $spotter_item['type'] != 'fires') {

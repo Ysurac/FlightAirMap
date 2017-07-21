@@ -68,9 +68,7 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
 
 	if ($update_db->check_last_airlines_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
 		echo "Updating airlines...\n";
-		if (!isset($globalMasterSource) || !$globalMasterSource) {
-			echo $update_db->update_airlines_fam();
-		}
+		echo $update_db->update_airlines_fam();
 		$update_db->insert_last_airlines_update();
 	} elseif (isset($globalDebug) && $globalDebug && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Airlines are only updated every 15 days.\n";
 
@@ -140,6 +138,14 @@ if (isset($globalGroundAltitude) && $globalGroundAltitude) {
 	$Elevation->downloadNeeded();
 	//echo "Done\n";
 }
+
+if (isset($globalMapFires) && $globalMapFires && $update_db->check_last_fires_update()) {
+	echo "Update fires data...";
+	echo $update_db->update_fires();
+	$update_db->insert_last_fires_update();
+	echo "Done\n";
+}
+
 
 if (isset($globalMap3D) && $globalMap3D) {
 	if (isset($globalSatellite) && $globalSatellite && $update_db->check_last_tle_update()) {

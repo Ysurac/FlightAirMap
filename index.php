@@ -361,6 +361,11 @@ require_once('header.php');
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayweatherstation" value="1" onclick="clickDisplayWeatherStation(this)" <?php if ((isset($_COOKIE['show_WeatherStation']) && $_COOKIE['show_WeatherStation'] == 'true') || (!isset($_COOKIE['show_WeatherStation']) && (!isset($globalMapWeatherStation) || $globalMapWeatherStation === TRUE))) print 'checked'; ?> ><?php echo _("Display weather station on map"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displaylightning" value="1" onclick="clickDisplayLightning(this)" <?php if ((isset($_COOKIE['show_Lightning']) && $_COOKIE['show_Lightning'] == 'true') || (!isset($_COOKIE['show_Lightning']) && (!isset($globalMapLightning) || $globalMapLightning === TRUE))) print 'checked'; ?> ><?php echo _("Display lightning on map"); ?></label></div></li>
 <?php
+	if (isset($globalMapFires) && $globalMapFires) {
+?>
+		    <li><div class="checkbox"><label><input type="checkbox" name="displayfires" value="1" onclick="clickDisplayFires(this)" <?php if ((isset($_COOKIE['show_Fires']) && $_COOKIE['show_Fires'] == 'true') || (!isset($_COOKIE['show_Fires']))) print 'checked'; ?> ><?php echo _("Display fires on map"); ?></label></div></li>
+<?php
+	}
     if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayminimap" value="1" onclick="clickDisplayMinimap(this)" <?php if (!isset($_COOKIE['displayminimap']) || (isset($_COOKIE['displayminimap']) && $_COOKIE['displayminimap'] == 'true')) print 'checked'; ?> ><?php echo _("Show mini-map"); ?></label></div></li>

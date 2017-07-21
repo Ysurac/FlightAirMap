@@ -1488,7 +1488,7 @@ while ($i > 0) {
 				    if (isset($line['altitude'])) $data['altitude'] = $line['altitude'];
 				    if (isset($line['comment'])) $data['comment'] = $line['comment'];
 				    if (isset($line['symbol'])) $data['type'] = $line['symbol'];
-				    if (isset($line['heading'])) $data['heading'] = $line['heading'];
+				    if (isset($line['heading']) && !isset($line['format_source'])) $data['heading'] = $line['heading'];
 				    //else $data['heading'] = 0;
 				    if (isset($line['stealth'])) $data['aircraft_type'] = $line['stealth'];
 				    //if (!isset($line['source_type']) && (!isset($globalAPRSarchive) || (isset($globalAPRSarchive) && $globalAPRSarchive === FALSE))) $data['noarchive'] = true;

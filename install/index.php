@@ -630,6 +630,12 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<br />
 			<p>
+				<label for="fires">Add fires support</label>
+				<input type="checkbox" name="fires" id="fires" value="fires"<?php if (isset($globalMapFires) && $globalMapFires) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Display all fires on map by default. Fires are updated via <i>update_db.php</i> script.</p>
+			</p>
+			<br />
+			<p>
 				<label for="map3d">Enable map in 3D</label>
 				<input type="checkbox" name="map3d" id="map3d" value="map3d"<?php if ((isset($globalMap3D) && $globalMap3D) || !isset($globalMap3D)) { ?> checked="checked"<?php } ?> />
 				<p class="help-block">Bing map key is needed.</p>
@@ -1294,6 +1300,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalAccidents' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalAccidents' => 'FALSE'));
+	}
+	$fires = filter_input(INPUT_POST,'fires',FILTER_SANITIZE_STRING);
+	if ($fires == 'fires') {
+		$settings = array_merge($settings,array('globalMapFires' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMapFires' => 'FALSE'));
 	}
 	$mapsatellites = filter_input(INPUT_POST,'mapsatellites',FILTER_SANITIZE_STRING);
 	if ($mapsatellites == 'mapsatellites') {

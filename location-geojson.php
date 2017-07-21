@@ -28,7 +28,7 @@ if (!isset($globalDemo)) {
 		}
 		
 		if ((isset($_COOKIE['show_Fire']) && $_COOKIE['show_Fire'] == 'true') 
-		    || (!isset($_COOKIE['show_Fire']) && (!isset($globalMapFire) || $globalMapFire === TRUE))) {
+		    || (!isset($_COOKIE['show_Fire']) && (!isset($globalMapFires) || $globalMapFires === TRUE))) {
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('fires',$coords,true));
 		}
 		$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType(''));
@@ -46,12 +46,10 @@ if (!isset($globalDemo)) {
 		    || (!isset($_COOKIE['show_Lightning']) && (!isset($globalMapLightning) || $globalMapLightning === TRUE))) {
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('lightning'));
 		}
-		/*
 		if ((isset($_COOKIE['show_Fire']) && $_COOKIE['show_Fire'] == 'true') 
-		    || (!isset($_COOKIE['show_Fire']) && (!isset($globalMapFire) || $globalMapFire === TRUE))) {
+		    || (!isset($_COOKIE['show_Fire']) && (!isset($globalMapFires) || $globalMapFires === TRUE))) {
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('fires',array(),true));
 		}
-		*/
 		$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType(''));
 	}
 }

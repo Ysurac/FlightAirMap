@@ -1860,7 +1860,28 @@ class update_db {
 			if ($globalTransaction) $Connection->db->commit();
 		}
 		return '';
-        }
+	}
+
+	public static function update_fires() {
+		global $tmp_dir, $globalTransaction, $globalDebug;
+		require_once(dirname(__FILE__).'/../require/class.Source.php');
+		$delimiter = ',';
+		$Common = new Common();
+		$Common->download('http://firms.modaps.eosdis.nasa.gov/active_fire/viirs/text/VNP14IMGTDL_NRT_Global_24h.csv',$tmp_dir.'fires.csv');
+		$Connection = new Connection();
+		$Source = new Source();
+		$Source->deleteLocationByType('fires');
+		$i = 0;
+		if (($handle = fopen($tmp_dir.'fires.csv','r')) !== false) {
+			while (($row = fgetcsv($handle,1000)) !== false) {
+				if ($i > 0 && $row[0] != '' && $row[8] != 'low') {
+					$description = array('bright_t14' => $row[2],'scan' => $row[3],'track' => $row[4],'sat' => $row[7],'confidence' => $row[8],'version' => $row[9],'bright_t15' => $row[10],'frp' => $row[11],'daynight' => $row[12]);
+					$Source->addLocation('',$row[0],$row[1],null,'','','fires','fire.png','fires',0,0,$row[5].' '.substr($row[6],0,2).':'.substr($row[6],2,2),json_encode($description));
+				}
+				$i++;
+			}
+		}
+	}
 
 	public static function ivao_airlines($filename) {
 		//require_once(dirname(__FILE__).'/../require/class.Spotter.php');
@@ -1870,11 +1891,10 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
-
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
 		$header = NULL;
 		$delimiter = ':';
 		$Connection = new Connection();
@@ -3260,10 +3280,41 @@ class update_db {
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        return "error : ".$e->getMessage();
-                }
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+
+	public static function check_last_fires_update() {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_fires' AND value > DATE_SUB(NOW(), INTERVAL 1 HOUR)";
+		} else {
+			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_fires' AND value::timestamp > CURRENT_TIMESTAMP - INTERVAL '1 HOUR'";
+		}
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return false;
+		else return true;
+	}
+
+	public static function insert_last_fires_update() {
+		$query = "DELETE FROM config WHERE name = 'last_update_fires';
+			INSERT INTO config (name,value) VALUES ('last_update_fires',NOW());";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
 	}
 
 	public static function check_last_airlines_update() {
