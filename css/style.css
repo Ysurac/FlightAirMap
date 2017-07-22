@@ -1091,9 +1091,12 @@ body.page-upcoming table tr td.logo img{
     body.page-highlights-display .dispay-view div img{
         width:220px;
     }
+    
     .container {
-	width: auto;
+	/*width: auto;*/
+	width: 99%;
     }
+    
 }
 
 /* Tablet (Landscape) */
@@ -1148,40 +1151,38 @@ body.page-upcoming table tr td.logo img{
 	.navbar form input[type="text"]{
 		width:75%;
 	}
-    .navbar .search {
-	display:none;
-    }
-
-    span.notablet,
-    a.notablet{
+	.navbar .search {
+		display:none;
+	}
+	span.notablet,
+	a.notablet{
 		display:none !important;
 	}
 	span.tablet,
-    a.tablet{
+	a.tablet{
 		display:inline-block !important;
 	}
 
 	/* FLIGHT ID */
 	body.page-flightid-overview .image{
-        width:425px;
-    }
-    
-    /* HIGHLIGHTS */
-    body.page-highlights-display .dispay-view div:nth-child(4n){
-        margin-right:1.0em;
-    }
-    body.page-highlights-display .dispay-view div:nth-child(3n){
-        margin-right:0px;   
-    }
-    body.page-highlights-display .dispay-view div img{
-        width:240px;
-    }
-    
-    /* STATISTIC */
-    body.page-statistics .global-stats div{
-        font-size:2.0em;
-    }
+		width:425px;
+	}
 
+	/* HIGHLIGHTS */
+	body.page-highlights-display .dispay-view div:nth-child(4n){
+		margin-right:1.0em;
+	}
+	body.page-highlights-display .dispay-view div:nth-child(3n){
+		margin-right:0px;   
+	}
+	body.page-highlights-display .dispay-view div img{
+		width:240px;
+	}
+
+	/* STATISTIC */
+	body.page-statistics .global-stats div{
+		font-size:2.0em;
+	}
 }
 
 
