@@ -74,6 +74,12 @@ if (isset($options['aprsserverport'])) $globalServerAPRSport = $options['aprsser
 if (isset($options['aprsserverssid'])) $globalServerAPRSssid = $options['aprsserverssid'];
 if (isset($options['aprsserverpass'])) $globalServerAPRSpass = $options['aprsserverpass'];
 if (isset($options['noaprsserver'])) $globalServerAPRS = FALSE; 
+if (isset($options['enable_aircraft'])) $globalAircraft = TRUE; 
+if (isset($options['disable_aircraft'])) $globalAircraft = FALSE; 
+if (isset($options['enable_tracker'])) $globalTracker = TRUE; 
+if (isset($options['disable_tracker'])) $globalTracker = FALSE; 
+if (isset($options['enable_marine'])) $globalMarine = TRUE; 
+if (isset($options['disable_marine'])) $globalMarine = FALSE; 
 if (isset($options['nodaemon'])) $globalDaemon = FALSE;
 if (isset($options['server'])) $globalServer = TRUE;
 if (isset($options['idsource'])) $id_source = $options['idsource'];
@@ -87,6 +93,13 @@ if (isset($globalServer) && $globalServer) {
     $SI->connect();
 */
 } else $SI=new SpotterImport($Connection->db);
+
+if (isset($globalTracker) && $globalTracker) require_once(dirname(__FILE__).'/../require/class.TrackerImport.php');
+if (isset($globalMarine) && $globalMarine) {
+    require_once(dirname(__FILE__).'/../require/class.AIS.php');
+    require_once(dirname(__FILE__).'/../require/class.MarineImport.php');
+}
+
 if (isset($globalTracker) && $globalTracker) $TI = new TrackerImport($Connection->db);
 if (isset($globalMarine) && $globalMarine) {
     $AIS = new AIS();
