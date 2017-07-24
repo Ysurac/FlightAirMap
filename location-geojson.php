@@ -14,40 +14,40 @@ if (!isset($globalDemo)) {
 	{
 		$coords = explode(',',$_GET['coord']);
 		if ((isset($_COOKIE['show_GroundStation']) && $_COOKIE['show_GroundStation'] == 'true') 
-		    || (!isset($_COOKIE['show_GroundStation']) && (!isset($globalMapGroundStation) || $globalMapGroundStation === TRUE))) {
+		    || (!isset($_COOKIE['show_GroundStation']) && (isset($globalMapGroundStation) && $globalMapGroundStation === TRUE))) {
 			//$spotter_array = $Source->getAllLocationInfo();
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('gs',$coords));
 		}
 		if ((isset($_COOKIE['show_WeatherStation']) && $_COOKIE['show_WeatherStation'] == 'true') 
-		    || (!isset($_COOKIE['show_WeatherStation']) && (!isset($globalMapWeatherStation) || $globalMapWeatherStation === TRUE))) {
+		    || (!isset($_COOKIE['show_WeatherStation']) && (isset($globalMapWeatherStation) && $globalMapWeatherStation === TRUE))) {
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('wx',$coords));
 		}
 		if ((isset($_COOKIE['show_Lightning']) && $_COOKIE['show_Lightning'] == 'true') 
-		    || (!isset($_COOKIE['show_Lightning']) && (!isset($globalMapLightning) || $globalMapLightning === TRUE))) {
+		    || (!isset($_COOKIE['show_Lightning']) && (isset($globalMapLightning) && $globalMapLightning === TRUE))) {
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('lightning',$coords));
 		}
 		
 		if ((isset($_COOKIE['show_Fire']) && $_COOKIE['show_Fire'] == 'true') 
-		    || (!isset($_COOKIE['show_Fire']) && (!isset($globalMapFires) || $globalMapFires === TRUE))) {
+		    || (!isset($_COOKIE['show_Fire']) && (isset($globalMapFires) && $globalMapFires === TRUE))) {
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('fires',$coords,true));
 		}
 		$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType(''));
 	} else {
 		if ((isset($_COOKIE['show_GroundStation']) && $_COOKIE['show_GroundStation'] == 'true') 
-		    || (!isset($_COOKIE['show_GroundStation']) && (!isset($globalMapGroundStation) || $globalMapGroundStation === TRUE))) {
+		    || (!isset($_COOKIE['show_GroundStation']) && (isset($globalMapGroundStation) && $globalMapGroundStation === TRUE))) {
 			//$spotter_array = $Source->getAllLocationInfo();
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('gs'));
 		}
 		if ((isset($_COOKIE['show_WeatherStation']) && $_COOKIE['show_WeatherStation'] == 'true') 
-		    || (!isset($_COOKIE['show_WeatherStation']) && (!isset($globalMapWeatherStation) || $globalMapWeatherStation === TRUE))) {
+		    || (!isset($_COOKIE['show_WeatherStation']) && (isset($globalMapWeatherStation) && $globalMapWeatherStation === TRUE))) {
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('wx'));
 		}
 		if ((isset($_COOKIE['show_Lightning']) && $_COOKIE['show_Lightning'] == 'true') 
-		    || (!isset($_COOKIE['show_Lightning']) && (!isset($globalMapLightning) || $globalMapLightning === TRUE))) {
+		    || (!isset($_COOKIE['show_Lightning']) && (isset($globalMapLightning) && $globalMapLightning === TRUE))) {
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('lightning'));
 		}
 		if ((isset($_COOKIE['show_Fire']) && $_COOKIE['show_Fire'] == 'true') 
-		    || (!isset($_COOKIE['show_Fire']) && (!isset($globalMapFires) || $globalMapFires === TRUE))) {
+		    || (!isset($_COOKIE['show_Fire']) && (isset($globalMapFires) && $globalMapFires === TRUE))) {
 			$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('fires',array(),true));
 		}
 		$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType(''));
