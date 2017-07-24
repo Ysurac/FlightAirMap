@@ -210,11 +210,13 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
 		    $output .= '<changefreq>daily</changefreq>';
 		$output .= '</url>';
+		/*
 		$output .= '<url>';
 		    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/search</loc>';
 		    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
 		    $output .= '<changefreq>daily</changefreq>';
 		$output .= '</url>';
+		*/
 		$output .= '<url>';
 		    $output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/about</loc>';
 		    $output .= '<lastmod>'.date("c", time()).'</lastmod>';
