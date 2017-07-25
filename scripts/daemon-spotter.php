@@ -74,12 +74,12 @@ if (isset($options['aprsserverport'])) $globalServerAPRSport = $options['aprsser
 if (isset($options['aprsserverssid'])) $globalServerAPRSssid = $options['aprsserverssid'];
 if (isset($options['aprsserverpass'])) $globalServerAPRSpass = $options['aprsserverpass'];
 if (isset($options['noaprsserver'])) $globalServerAPRS = FALSE; 
-if (isset($options['enable_aircraft'])) $globalAircraft = TRUE; 
-if (isset($options['disable_aircraft'])) $globalAircraft = FALSE; 
-if (isset($options['enable_tracker'])) $globalTracker = TRUE; 
-if (isset($options['disable_tracker'])) $globalTracker = FALSE; 
-if (isset($options['enable_marine'])) $globalMarine = TRUE; 
-if (isset($options['disable_marine'])) $globalMarine = FALSE; 
+if (isset($options['enable-aircraft'])) $globalAircraft = TRUE; 
+if (isset($options['disable-aircraft'])) $globalAircraft = FALSE; 
+if (isset($options['enable-tracker'])) $globalTracker = TRUE; 
+if (isset($options['disable-tracker'])) $globalTracker = FALSE; 
+if (isset($options['enable-marine'])) $globalMarine = TRUE; 
+if (isset($options['disable-marine'])) $globalMarine = FALSE; 
 if (isset($options['nodaemon'])) $globalDaemon = FALSE;
 if (isset($options['server'])) $globalServer = TRUE;
 if (isset($options['idsource'])) $id_source = $options['idsource'];
@@ -1586,7 +1586,7 @@ while ($i > 0) {
 					} else {
 						$Source->addLocation($data['ident'],$data['latitude'],$data['longitude'],0,'','',$data['source_name'],'wx.png','wx',$id,0,$data['datetime'],$weather_data);
 					}
-				    } elseif (isset($line['symbol']) && $line['symbol'] == 'Lightning') {
+				    } elseif (isset($line['symbol']) && ($line['symbol'] == 'Lightning' || $line['symbol'] == 'Thunderstorm')) {
 					//if ($globalDebug) echo '!! Weather Station not yet supported'."\n";
 					if ($globalDebug) echo '☈ Lightning added'."\n";
 					$Source->deleteOldLocationByType('lightning');
