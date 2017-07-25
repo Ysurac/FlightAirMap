@@ -126,6 +126,7 @@ function getLiveTrackerData(click)
 	}
 ?>
 		var nbtracker = 0;
+		var trackcnt = 0;
 		layer_tracker_data = L.layerGroup();
 		var live_tracker_data = L.geoJson(data, {
 		    pointToLayer: function (feature, latLng) {
@@ -153,6 +154,7 @@ function getLiveTrackerData(click)
 <?php
 	}
 ?>
+		    trackcnt = feature.properties.fc;
 		    if (type != "history") { nbtracker = nbtracker+1; }
 		    if (callsign != ""){ markerTrackerLabel += callsign; }
 		    if (type != ""){ markerTrackerLabel += ' - '+type; }
@@ -580,7 +582,15 @@ function getLiveTrackerData(click)
 			layer_tracker_data.addTo(map);
 			//re-create the bootstrap tooltips on the marker 
 			//showBootstrapTooltip();
-			info_tracker_update(nbtracker);
+			if (typeof trackcnt != "undefined" && trackcnt != 0) {
+				if (trackcnt != nbtracker) {
+					info_tracker_update(nbtracker+'/'+trackcnt);
+				} else {
+					info_tracker_update(nbtracker);
+				}
+			} else {
+				info_tracker_update(nbtracker);
+			}
 		}
 	});
 	//  getLiveTrackerData(0);

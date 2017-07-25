@@ -169,6 +169,10 @@ function clickDisplayLightning(cb) {
     createCookie('show_Lightning',cb.checked,2);
     window.location.reload();
 }
+function clickDisplayFires(cb) {
+    createCookie('show_Fires',cb.checked,2);
+    window.location.reload();
+}
 function unitdistance(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;
