@@ -29,7 +29,7 @@ print '</div></div>';
 print '<div class="details"><div class="mobile airports"><div class="airport">';
 print '</div></div>';
 
-if ($spotter_item['type'] != 'fires') {
+if ($spotter_item['type'] != 'fires' && $spotter_item['type'] != 'lightning') {
 	print '<div>';
 	print '<span>'._("Altitude").'</span>';
 	print $spotter_item['altitude'];
