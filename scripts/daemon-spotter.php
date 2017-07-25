@@ -54,7 +54,7 @@ if (!isset($globalSources)) {
     }
 }
 
-$options = getopt('s::',array('source::','server','nodaemon','idsource::','aprsserverssid::','aprsserverpass::','aprsserverhost::','aprsserverport::','format::','noaprsserver'));
+$options = getopt('s::',array('source::','server','nodaemon','idsource::','aprsserverssid::','aprsserverpass::','aprsserverhost::','aprsserverport::','format::','noaprsserver','enable-aircraft','disable-aircraft','enable-tracker','disable-tracker','enable-marine','disable-marine'));
 //if (isset($options['s'])) $hosts = array($options['s']);
 //elseif (isset($options['source'])) $hosts = array($options['source']);
 if (isset($options['s'])) {
@@ -76,7 +76,10 @@ if (isset($options['aprsserverpass'])) $globalServerAPRSpass = $options['aprsser
 if (isset($options['noaprsserver'])) $globalServerAPRS = FALSE; 
 if (isset($options['enable-aircraft'])) $globalAircraft = TRUE; 
 if (isset($options['disable-aircraft'])) $globalAircraft = FALSE; 
-if (isset($options['enable-tracker'])) $globalTracker = TRUE; 
+if (isset($options['enable-tracker'])) {
+	if ($globalDebug) echo 'Enable Tracker mode'."\n";
+	$globalTracker = TRUE; 
+}
 if (isset($options['disable-tracker'])) $globalTracker = FALSE; 
 if (isset($options['enable-marine'])) $globalMarine = TRUE; 
 if (isset($options['disable-marine'])) $globalMarine = FALSE; 
