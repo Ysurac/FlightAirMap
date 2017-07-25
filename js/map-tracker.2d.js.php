@@ -605,7 +605,7 @@ $( document ).ready(function() {
 <?php
     }
 ?>
-	}
+	});
  //load the function on startup
 getLiveTrackerData(0);
 
