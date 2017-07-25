@@ -286,7 +286,7 @@ class TrackerLive {
 	public function getLiveTrackerDatabyCoord($coord, $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
-		$Spotter = new Spotter($this->db);
+		$Tracker = new Tracker($this->db);
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		$filter_query = $this->getFilter($filter);
 
@@ -301,7 +301,7 @@ class TrackerLive {
 		} else {
 			$query  = "SELECT tracker_live.* FROM tracker_live INNER JOIN (SELECT l.famtrackid, max(l.date) as maxdate FROM tracker_live l WHERE NOW() at time zone 'UTC'  - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.famtrackid) s on tracker_live.famtrackid = s.famtrackid AND tracker_live.date = s.maxdate AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong." GROUP BY tracker_live.famtrackid".$filter_query;
 		}
-		$spotter_array = $Spotter->getDataFromDB($query);
+		$spotter_array = $Tracker->getDataFromDB($query);
 		return $spotter_array;
 	}
 
@@ -314,7 +314,7 @@ class TrackerLive {
 	public function getMinLiveTrackerDatabyCoord($coord, $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
-		$Spotter = new Spotter($this->db);
+		$Tracker = new Tracker($this->db);
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		$filter_query = $this->getFilter($filter,true,true);
 
@@ -373,7 +373,7 @@ class TrackerLive {
 				    AND tracker_live.date = s.maxdate".$filter_query." tracker_live.latitude <> '0' AND tracker_live.longitude <> '0'";
 			}
 		}
-		$spotter_array = $Spotter->getDataFromDB($query);
+		$spotter_array = $Tracker->getDataFromDB($query);
 		return $spotter_array;
 	}
 
