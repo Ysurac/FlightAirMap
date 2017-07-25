@@ -316,7 +316,7 @@ class TrackerLive {
 		global $globalDBdriver, $globalLiveInterval;
 		$Spotter = new Spotter($this->db);
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
-		$filter_query = $this->getFilter($filter);
+		$filter_query = $this->getFilter($filter,true,true);
 
 		if (is_array($coord)) {
 			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
@@ -324,6 +324,7 @@ class TrackerLive {
 			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		} else return array();
+		/*
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
 			FROM tracker_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= tracker_live.date AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0' AND tracker_live.latitude BETWEEN ".$minlat.' AND '.$maxlat.' AND tracker_live.longitude BETWEEN '.$minlong.' AND '.$maxlong."
@@ -331,6 +332,46 @@ class TrackerLive {
 		} else {
 			$query  = "SELECT tracker_live.ident, tracker_live.type,tracker_live.famtrackid, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
 			FROM tracker_live INNER JOIN (SELECT l.famtrackid, max(l.date) as maxdate FROM tracker_live l WHERE CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date l.latitude BETWEEN ".$minlat." AND ".$maxlat." AND l.longitude BETWEEN ".$minlong." AND ".$maxlong." GROUP BY l.famtrackid) s on tracker_live.famtrackid = s.famtrackid AND tracker_live.date = s.maxdate".$filter_query." tracker_live.latitude <> '0' AND tracker_live.longitude <> '0'";
+		}
+		*/
+		if ($globalDBdriver == 'mysql') {
+			if (isset($globalArchive) && $globalArchive === TRUE) {
+				$query  = 'SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
+				    FROM tracker_live 
+				    '.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= tracker_live.date 
+				    AND tracker_live.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND tracker_live.longitude BETWEEN '.$minlong.' AND '.$maxlong.'
+				    AND tracker_live.latitude <> 0 AND tracker_live.longitude <> 0';
+			} else {
+				$query  = 'SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
+				    FROM tracker_live 
+				    INNER JOIN (SELECT l.famtrackid, max(l.date) as maxdate 
+					FROM tracker_live l 
+					WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date 
+					AND l.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND l.longitude BETWEEN '.$minlong.' AND '.$maxlong.'
+					GROUP BY l.famtrackid
+				    ) s on tracker_live.famtrackid = s.famtrackid 
+				    AND tracker_live.date = s.maxdate'.$filter_query.' tracker_live.latitude <> 0 AND tracker_live.longitude <> 0';
+			}
+		} else {
+			if (isset($globalArchive) && $globalArchive === TRUE) {
+				$query  = "SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
+				    FROM tracker_live 
+				    ".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= tracker_live.date 
+				    AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." 
+				    AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong." 
+				    AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0'";
+			} else {
+				$query  = "SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
+				    FROM tracker_live 
+				    INNER JOIN (SELECT l.famtrackid, max(l.date) as maxdate 
+					FROM tracker_live l 
+					WHERE CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date 
+					AND l.latitude BETWEEN ".$minlat." AND ".$maxlat." 
+					AND l.longitude BETWEEN ".$minlong." AND ".$maxlong." 
+					GROUP BY l.famtrackid
+				    ) s on tracker_live.famtrackid = s.famtrackid 
+				    AND tracker_live.date = s.maxdate".$filter_query." tracker_live.latitude <> '0' AND tracker_live.longitude <> '0'";
+			}
 		}
 		$spotter_array = $Spotter->getDataFromDB($query);
 		return $spotter_array;
