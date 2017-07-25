@@ -966,12 +966,12 @@ class TrackerLive {
 
 		$query_values = array(':famtrackid' => $famtrackid,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':altitude' => $altitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':comment' => $comment,':type' => $type);
 		try {
-			
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
-                } catch(PDOException $e) {
-                	return "error : ".$e->getMessage();
-                }
+			$sth->closeCursor();
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
                 /*
                 echo 'putinarchive : '.$putinarchive."\n";
                 echo 'noarchive : '.$noarchive."\n";
