@@ -2689,12 +2689,48 @@ class Stats {
 						} catch(PDOException $e) {
 							return "error : ".$e->getMessage().' - query : '.$query."\n";
 						}
+						$query = "INSERT INTO tracker_archive_output SELECT * FROM tracker_output WHERE tracker_output.date < '".date('Y')."-01-01 00:00:00'";
+						try {
+							$sth = $this->db->prepare($query);
+							$sth->execute();
+						} catch(PDOException $e) {
+							return "error : ".$e->getMessage().' - query : '.$query."\n";
+						}
+						$query = "INSERT INTO marine_archive_output SELECT * FROM marine_output WHERE marine_output.date < '".date('Y')."-01-01 00:00:00'";
+						try {
+							$sth = $this->db->prepare($query);
+							$sth->execute();
+						} catch(PDOException $e) {
+							return "error : ".$e->getMessage().' - query : '.$query."\n";
+						}
 					}
 					echo 'Delete old data'."\n";
 					if ($globalDBdriver == 'mysql') {
 						$query = "DELETE FROM spotter_output WHERE spotter_output.date < '".date('Y')."-01-01 00:00:00' LIMIT 10000";
 					} else {
 						$query = "DELETE FROM spotter_output WHERE spotter_id IN (SELECT spotter_id FROM spotter_output WHERE spotter_output.date < '".date('Y')."-01-01 00:00:00' LIMIT 10000)";
+					}
+					try {
+						$sth = $this->db->prepare($query);
+						$sth->execute();
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage().' - query : '.$query."\n";
+					}
+					if ($globalDBdriver == 'mysql') {
+						$query = "DELETE FROM tracker_output WHERE tracker_output.date < '".date('Y')."-01-01 00:00:00' LIMIT 10000";
+					} else {
+						$query = "DELETE FROM tracker_output WHERE tracker_id IN (SELECT tracker_id FROM tracker_output WHERE tracker_output.date < '".date('Y')."-01-01 00:00:00' LIMIT 10000)";
+					}
+					try {
+						$sth = $this->db->prepare($query);
+						$sth->execute();
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage().' - query : '.$query."\n";
+					}
+					if ($globalDBdriver == 'mysql') {
+						$query = "DELETE FROM marine_output WHERE marine_output.date < '".date('Y')."-01-01 00:00:00' LIMIT 10000";
+					} else {
+						$query = "DELETE FROM marine_output WHERE marine_id IN (SELECT marine_id FROM marine_output WHERE marine_output.date < '".date('Y')."-01-01 00:00:00' LIMIT 10000)";
 					}
 					try {
 						$sth = $this->db->prepare($query);
@@ -2732,14 +2768,68 @@ class Stats {
 					} catch(PDOException $e) {
 						return "error : ".$e->getMessage();
 					}
+					echo 'Archive old tracker data...'."\n";
+					if ($globalDBdriver == 'mysql') {
+						$query = "INSERT INTO tracker_archive_output (tracker_archive_output_id,famtrackid, ident, latitude, longitude, altitude, heading, ground_speed, date, format_source, source_name, comment, type) 
+							    SELECT tracker_id,famtrackid, ident, latitude, longitude, altitude, heading, ground_speed, date, format_source, source_name, comment, type
+							     FROM tracker_output WHERE tracker_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
+					} else {
+						$query = "INSERT INTO tracker_archive_output (tracker_archive_output_id,famtrackid, ident, latitude, longitude, altitude, heading, ground_speed, date, format_source, source_name, comment, type) 
+							     SELECT tracker_id,famtrackid, ident, latitude, longitude, altitude, heading, ground_speed, date, format_source, source_name, comment, type
+							    FROM tracker_output WHERE tracker_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP)";
+					}
+					try {
+						$sth = $this->db->prepare($query);
+						$sth->execute();
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
+					echo 'Archive old marine data...'."\n";
+					if ($globalDBdriver == 'mysql') {
+						$query = "INSERT INTO marine_archive_output (marine_archive_output_id,fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, status,imo,arrival_port_name,arrival_port_date) 
+							    SELECT marine_id,fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, status,imo,arrival_port_name,arrival_port_date 
+							     FROM marine_output WHERE marine_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
+					} else {
+						$query = "INSERT INTO marine_archive_output (marine_archive_output_id,fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, status,imo,arrival_port_name,arrival_port_date) 
+							     SELECT marine_id,fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, status,imo,arrival_port_name,arrival_port_date 
+							    FROM marine_output WHERE marine_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP)";
+					}
+					try {
+						$sth = $this->db->prepare($query);
+						$sth->execute();
+					} catch(PDOException $e) {
+						return "error : ".$e->getMessage();
+					}
 				}
 				echo 'Deleting old data...'."\n";
-				//$query = 'DELETE FROM spotter_output WHERE spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveMonths.' MONTH)';
 				if ($globalDBdriver == 'mysql') {
-					$query = "DELETE FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01') LIMIT 10000";
+					$query = "DELETE FROM spotter_output WHERE spotter_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
 				} else {
-					//$query = "DELETE FROM spotter_output WHERE spotter_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP) LIMIT 10000";
-					$query = "DELETE FROM spotter_output WHERE spotter_id IN ( SELECT spotter_id FROM spotter_output WHERE spotter_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP) LIMIT 10000)";
+					$query = "DELETE FROM spotter_output WHERE spotter_id IN ( SELECT spotter_id FROM spotter_output WHERE spotter_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP))";
+				}
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error : ".$e->getMessage();
+				}
+				echo 'Deleting old tracker data...'."\n";
+				if ($globalDBdriver == 'mysql') {
+					$query = "DELETE FROM tracker_output WHERE tracker_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
+				} else {
+					$query = "DELETE FROM tracker_output WHERE tracker_id IN ( SELECT tracker_id FROM tracker_output WHERE tracker_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP))";
+				}
+				try {
+					$sth = $this->db->prepare($query);
+					$sth->execute();
+				} catch(PDOException $e) {
+					return "error : ".$e->getMessage();
+				}
+				echo 'Deleting old marine data...'."\n";
+				if ($globalDBdriver == 'mysql') {
+					$query = "DELETE FROM marine_output WHERE marine_output.date < DATE_FORMAT(UTC_TIMESTAMP() - INTERVAL ".$globalArchiveMonths." MONTH, '%Y/%m/01')";
+				} else {
+					$query = "DELETE FROM marine_output WHERE marine_id IN ( SELECT marine_id FROM marine_output WHERE marine_output.date < CAST(to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveMonths." MONTHS', 'YYYY/mm/01') AS TIMESTAMP))";
 				}
 				try {
 					$sth = $this->db->prepare($query);

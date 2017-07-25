@@ -115,12 +115,28 @@ if (isset($globalArchive) && $globalArchive) {
 		require_once(dirname(__FILE__).'/../require/class.SpotterArchive.php');
 		$SpotterArchive = new SpotterArchive();
 		$SpotterArchive->deleteSpotterArchiveData();
+		require_once(dirname(__FILE__).'/../require/class.TrackerArchive.php');
+		$TrackerArchive = new TrackerArchive();
+		$TrackerArchive->deleteTrackerArchiveData();
+		require_once(dirname(__FILE__).'/../require/class.MarineArchive.php');
+		$MarineArchive = new MarineArchive();
+		$MarineArchive->deleteMarineArchiveData();
 	}
 	if (isset($globalArchiveKeepTrackMonths) && $globalArchiveKeepTrackMonths > 0) {
 		echo "Deleting archive track old data...";
 		require_once(dirname(__FILE__).'/../require/class.SpotterArchive.php');
 		$SpotterArchive = new SpotterArchive();
 		$SpotterArchive->deleteSpotterArchiveTrackData();
+		echo "Done\n";
+		echo "Deleting tracker archive track old data...";
+		require_once(dirname(__FILE__).'/../require/class.TrackerArchive.php');
+		$TrackerArchive = new TrackerArchive();
+		$TrackerArchive->deleteTrackerArchiveTrackData();
+		echo "Done\n";
+		echo "Deleting marine archive track old data...";
+		require_once(dirname(__FILE__).'/../require/class.MarineArchive.php');
+		$MarineArchive = new MarineArchive();
+		$MarineArchive->deleteMarineArchiveTrackData();
 		echo "Done\n";
 	}
 }

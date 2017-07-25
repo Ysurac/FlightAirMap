@@ -329,29 +329,34 @@ class MarineArchive {
         * @return Array the spotter information
         *
         */
-        public function getMarineArchiveData($ident,$fammarine_id,$date)
-        {
-    		$Marine = new Marine($this->db);
-                $ident = filter_var($ident, FILTER_SANITIZE_STRING);
-                $query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM spotter_live l WHERE l.ident = :ident AND l.fammarine_id = :fammarine_id AND l.date LIKE :date GROUP BY l.fammarine_id) s on spotter_live.fammarine_id = s.fammarine_id AND spotter_live.date = s.maxdate";
+	public function getMarineArchiveData($ident,$fammarine_id,$date)
+	{
+		$Marine = new Marine($this->db);
+		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
+		$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM spotter_live l WHERE l.ident = :ident AND l.fammarine_id = :fammarine_id AND l.date LIKE :date GROUP BY l.fammarine_id) s on spotter_live.fammarine_id = s.fammarine_id AND spotter_live.date = s.maxdate";
+		$spotter_array = $Marine->getDataFromDB($query,array(':ident' => $ident,':fammarine_id' => $fammarine_id,':date' => $date.'%'));
+		return $spotter_array;
+	}
 
-                $spotter_array = $Marine->getDataFromDB($query,array(':ident' => $ident,':fammarine_id' => $fammarine_id,':date' => $date.'%'));
-
-                return $spotter_array;
-        }
-        
-        public function deleteMarineArchiveTrackData()
-        {
-		global $globalArchiveKeepTrackMonths;
-                date_default_timezone_set('UTC');
-		$query = 'DELETE FROM marine_archive WHERE marine_archive.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepTrackMonths.' MONTH)';
-                try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        echo $e->getMessage();
-                        die;
-                }
+       /**
+        * Delete all tracking data
+        *
+        */
+	public function deleteMarineArchiveTrackData()
+	{
+		global $globalArchiveKeepTrackMonths, $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = 'DELETE FROM marine_archive WHERE marine_archive.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepTrackMonths.' MONTH)';
+		} else {
+			$query = "DELETE FROM marine_archive WHERE marine_archive_id IN (SELECT marine_archive_id FROM marine_archive WHERE marine_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveKeepTrackMonths." MONTH' LIMIT 10000)";
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+			die;
+		}
 	}
 
 	/**

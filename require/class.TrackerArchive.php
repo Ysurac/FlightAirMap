@@ -335,19 +335,22 @@ class TrackerArchive {
 
                 return $spotter_array;
         }
-        
-        public function deleteTrackerArchiveTrackData()
-        {
-		global $globalArchiveKeepTrackMonths;
-                date_default_timezone_set('UTC');
-		$query = 'DELETE FROM tracker_archive WHERE tracker_archive.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepTrackMonths.' MONTH)';
-                try {
-                        $sth = $this->db->prepare($query);
-                        $sth->execute();
-                } catch(PDOException $e) {
-                        echo $e->getMessage();
-                        die;
-                }
+
+	public function deleteTrackerArchiveTrackData()
+	{
+		global $globalArchiveKeepTrackMonths, $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query = 'DELETE FROM tracker_archive WHERE tracker_archive.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$globalArchiveKeepTrackMonths.' MONTH)';
+		} else {
+			$query = "DELETE FROM tracker_archive WHERE tracker_archive_id IN (SELECT tracker_archive_id FROM tracker_archive WHERE tracker_archive.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalArchiveKeepTrackMonths." MONTH' LIMIT 10000)";
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+			die;
+		}
 	}
 
 	/**
