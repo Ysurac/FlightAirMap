@@ -310,7 +310,7 @@ class MarineLive {
 		global $globalDBdriver, $globalLiveInterval;
 		$Marine = new Marine($this->db);
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
-		$filter_query = $this->getFilter($filter);
+		$filter_query = $this->getFilter($filter,true,true);
 
 		if (is_array($coord)) {
 			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
