@@ -125,8 +125,10 @@ if (isset($globalMarine) && $globalMarine) {
 }
 //$APRS=new APRS($Connection->db);
 $SBS=new SBS();
-$ACARS=new ACARS($Connection->db,true);
-$Source=new Source($Connection->db);
+if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+	$ACARS=new ACARS($Connection->db,true);
+	$Source=new Source($Connection->db);
+}
 $Common=new Common();
 date_default_timezone_set('UTC');
 //$servertz = system('date +%Z');
