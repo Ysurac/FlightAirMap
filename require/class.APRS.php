@@ -649,6 +649,7 @@ class aprs {
 class APRSSpotter extends APRS {
 	public function addLiveSpotterData($id,$ident,$aircraft_icao,$departure_airport,$arrival_airport,$latitude,$longitude,$waypoints,$altitude,$altitude_real,$heading,$speed,$datetime,$departure_airport_time,$arrival_airport_time,$squawk,$route_stop,$hex,$putinarchive,$registration,$pilot_id,$pilot_name, $verticalrate, $noarchive, $ground,$format_source,$source_name,$over_country) {
 		$Common = new Common();
+		date_default_timezone_set('UTC');
 		if ($latitude != '' && $longitude != '') {
 			$lat = $latitude;
 			$long = $longitude;
@@ -690,6 +691,7 @@ class APRSSpotter extends APRS {
 class APRSMarine extends APRS {
 	public function addLiveMarineData($id, $ident, $latitude, $longitude, $heading, $speed,$datetime, $putinarchive,$mmsi,$type,$typeid,$imo,$callsign,$arrival_code,$arrival_date,$status,$statusid,$noarchive,$format_source,$source_name,$over_country) {
 		$Common = new Common();
+		date_default_timezone_set('UTC');
 		if ($latitude != '' && $longitude != '') {
 			$latitude = $Common->convertDM($latitude,'latitude');
 			$longitude = $Common->convertDM($longitude,'longitude');

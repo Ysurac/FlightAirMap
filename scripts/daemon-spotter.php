@@ -1497,6 +1497,7 @@ while ($i > 0) {
 			    $buffer = str_replace('APRS <- ','',$buffer);
 			    $buffer = str_replace('APRS -> ','',$buffer);
 			    //echo $buffer."\n";
+			    date_default_timezone_set('UTC');
 			    if (substr($buffer,0,1) != '#' && substr($buffer,0,1) != '@' && substr($buffer,0,5) != 'APRS ') {
 				$line = $APRS->parse($buffer);
 				//if (is_array($line) && isset($line['address']) && $line['address'] != '' && isset($line['ident'])) {
