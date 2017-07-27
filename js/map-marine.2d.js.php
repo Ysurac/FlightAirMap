@@ -124,7 +124,8 @@ function getLiveMarineData(click)
 <?php
 	}
 ?>
-		nbmarine = 0;
+		var nbmarine = 0;
+		var marinecount = 0;
 		layer_marine_data = L.layerGroup();
 		var live_marine_data = L.geoJson(data, {
 		    pointToLayer: function (feature, latLng) {
@@ -152,6 +153,7 @@ function getLiveMarineData(click)
 <?php
 	}
 ?>
+		    marinecount = feature.properties.fc;
 		    if (type != "history"){ nbmarine = nbmarine+1; }
 		    if (callsign != ""){ markerMarineLabel += callsign; }
 		    if (type != ""){ markerMarineLabel += ' - '+type; }
@@ -579,7 +581,15 @@ function getLiveMarineData(click)
 			layer_marine_data.addTo(map);
 			//re-create the bootstrap tooltips on the marker 
 			//showBootstrapTooltip();
-			info_marine_update(nbmarine);
+			if (typeof marinecount != "undefined" && marinecount != 0) {
+				if (marinecount != nbmarine) {
+					info_marine_update(nbmarine+'/'+marinecount);
+				} else {
+					info_marine_update(nbmarine);
+				}
+			} else {
+				info_marine_update(nbmarine);
+			}
 		}
 	});
 	//  getLiveMarineData(0);
