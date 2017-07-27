@@ -307,7 +307,7 @@ class MarineLive {
 	*/
 	public function getMinLiveMarineDatabyCoord($coord, $filter = array())
 	{
-		global $globalDBdriver, $globalLiveInterval;
+		global $globalDBdriver, $globalLiveInterval, $globalArchive;
 		$Marine = new Marine($this->db);
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		$filter_query = $this->getFilter($filter,true,true);

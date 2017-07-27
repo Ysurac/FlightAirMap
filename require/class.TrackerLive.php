@@ -313,7 +313,7 @@ class TrackerLive {
 	*/
 	public function getMinLiveTrackerDatabyCoord($coord, $filter = array())
 	{
-		global $globalDBdriver, $globalLiveInterval;
+		global $globalDBdriver, $globalLiveInterval, $globalArchive;
 		$Tracker = new Tracker($this->db);
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		$filter_query = $this->getFilter($filter,true,true);
