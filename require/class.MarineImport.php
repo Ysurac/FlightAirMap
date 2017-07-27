@@ -52,14 +52,16 @@ class MarineImport {
     }
 
     public function checkAll() {
-	global $globalDebug;
-	if ($globalDebug) echo "Update last seen tracked data...\n";
-	foreach ($this->all_tracked as $key => $flight) {
-	    if (isset($this->all_tracked[$key]['id'])) {
-		//echo $this->all_tracked[$key]['id'].' - '.$this->all_tracked[$key]['latitude'].'  '.$this->all_tracked[$key]['longitude']."\n";
-    		$Marine = new Marine($this->db);
-        	$Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime']);
-            }
+	global $globalDebug, $globalNoDB;
+	if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+	    if ($globalDebug) echo "Update last seen tracked data...\n";
+	    foreach ($this->all_tracked as $key => $flight) {
+		if (isset($this->all_tracked[$key]['id'])) {
+		    //echo $this->all_tracked[$key]['id'].' - '.$this->all_tracked[$key]['latitude'].'  '.$this->all_tracked[$key]['longitude']."\n";
+    		    $Marine = new Marine($this->db);
+    		    $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime']);
+		}
+	    }
 	}
     }
 
