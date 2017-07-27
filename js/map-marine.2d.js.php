@@ -596,6 +596,15 @@ function getLiveMarineData(click)
 }
 
 $( document ).ready(function() {
+    map.on('moveend', function() {
+<?php
+    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+?>
+	getLiveMarineData(1);
+<?php
+    }
+?>
+    });
  //load the function on startup
 getLiveMarineData(0);
 
