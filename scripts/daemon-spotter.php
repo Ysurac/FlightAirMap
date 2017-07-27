@@ -74,15 +74,30 @@ if (isset($options['aprsserverport'])) $globalServerAPRSport = $options['aprsser
 if (isset($options['aprsserverssid'])) $globalServerAPRSssid = $options['aprsserverssid'];
 if (isset($options['aprsserverpass'])) $globalServerAPRSpass = $options['aprsserverpass'];
 if (isset($options['noaprsserver'])) $globalServerAPRS = FALSE; 
-if (isset($options['enable-aircraft'])) $globalAircraft = TRUE; 
-if (isset($options['disable-aircraft'])) $globalAircraft = FALSE; 
+if (isset($options['enable-aircraft'])) {
+	if ($globalDebug) echo 'Enable Aircraft mode'."\n";
+	$globalAircraft = TRUE; 
+}
+if (isset($options['disable-aircraft'])) {
+	if ($globalDebug) echo 'Disable Aircraft mode'."\n";
+	$globalAircraft = FALSE;
+}
 if (isset($options['enable-tracker'])) {
 	if ($globalDebug) echo 'Enable Tracker mode'."\n";
 	$globalTracker = TRUE; 
 }
-if (isset($options['disable-tracker'])) $globalTracker = FALSE; 
-if (isset($options['enable-marine'])) $globalMarine = TRUE; 
-if (isset($options['disable-marine'])) $globalMarine = FALSE; 
+if (isset($options['disable-tracker'])) {
+	if ($globalDebug) echo 'Disable Tracker mode'."\n";
+	$globalTracker = FALSE;
+}
+if (isset($options['enable-marine'])) {
+	if ($globalDebug) echo 'Enable Marine mode'."\n";
+	$globalMarine = TRUE;
+}
+if (isset($options['disable-marine'])) {
+	if ($globalDebug) echo 'Disable Marine mode'."\n";
+	$globalMarine = FALSE;
+}
 if (isset($options['nodaemon'])) $globalDaemon = FALSE;
 if (isset($options['server'])) $globalServer = TRUE;
 if (isset($options['idsource'])) $id_source = $options['idsource'];
@@ -555,6 +570,9 @@ while ($i > 0) {
 			    $data = array();
 			    $data['ident'] = $line['NAME'];
 			    $data['mmsi'] = $line['MMSI'];
+			    if (strlen($data['mmsi']) > 9) {
+				$data['mmsi'] = substr($data['mmsi'],-9);
+			    }
 			    $data['speed'] = $line['SOG'];
 			    $data['heading'] = $line['COG'];
 			    $data['latitude'] = $line['LAT'];
