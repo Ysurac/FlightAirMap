@@ -169,6 +169,16 @@ handler_tracker.setInputAction(function(click) {
 		}
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+camera.moveEnd.addEventListener(function() {
+<?php
+    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+?>
+	updateTrackerData();
+<?php
+    }
+?>
+});
+
 
 if (archive == false) {
 	var reloadpage = setInterval(

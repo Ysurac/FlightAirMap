@@ -155,7 +155,7 @@ if (isset($globalGroundAltitude) && $globalGroundAltitude) {
 	//echo "Done\n";
 }
 
-if (isset($globalMapFires) && $globalMapFires && $update_db->check_last_fires_update()) {
+if (isset($globalFires) && $globalFires && $update_db->check_last_fires_update()) {
 	echo "Update fires data...";
 	echo $update_db->update_fires();
 	$update_db->insert_last_fires_update();

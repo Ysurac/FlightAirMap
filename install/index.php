@@ -630,9 +630,14 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<br />
 			<p>
+				<label for="firessupport">Add fires support</label>
+				<input type="checkbox" name="firessupport" id="firessupport" value="firessupport"<?php if (isset($globalFires) && $globalFires) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Fires are updated via <i>update_db.php</i> script.</p>
+			</p>
+			<p>
 				<label for="fires">Add fires support</label>
 				<input type="checkbox" name="fires" id="fires" value="fires"<?php if (isset($globalMapFires) && $globalMapFires) { ?> checked="checked"<?php } ?> />
-				<p class="help-block">Display all fires on map by default. Fires are updated via <i>update_db.php</i> script.</p>
+				<p class="help-block">Display all fires on map by default.</p>
 			</p>
 			<br />
 			<p>
@@ -1306,6 +1311,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapFires' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapFires' => 'FALSE'));
+	}
+	$firessupport = filter_input(INPUT_POST,'firessupport',FILTER_SANITIZE_STRING);
+	if ($firessupport == 'firessupport') {
+		$settings = array_merge($settings,array('globalFires' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalFires' => 'FALSE'));
 	}
 	$mapsatellites = filter_input(INPUT_POST,'mapsatellites',FILTER_SANITIZE_STRING);
 	if ($mapsatellites == 'mapsatellites') {

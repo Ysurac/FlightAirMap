@@ -88,6 +88,7 @@ function updateMarineData() {
 	});
 }
 
+
 var czmldsmarine = new Cesium.CzmlDataSource();
 updateMarineData();
 var handler_marine = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
@@ -125,6 +126,15 @@ handler_marine.setInputAction(function(click) {
 		}
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+camera.moveEnd.addEventListener(function() {
+<?php
+    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+?>
+	updateMarineData();
+<?php
+    }
+?>
+});
 
 if (archive == false) {
 	var reloadpage = setInterval(

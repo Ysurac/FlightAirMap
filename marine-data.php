@@ -3,9 +3,9 @@ require_once('require/class.Connection.php');
 require_once('require/class.Marine.php');
 require_once('require/class.Language.php');
 require_once('require/class.MarineLive.php');
-//require_once('require/class.MarineArchive.php');
+require_once('require/class.MarineArchive.php');
 $MarineLive = new MarineLive();
-//$SpotterArchive = new SpotterArchive();
+$MarineArchive = new MarineArchive();
 
 $from_archive = false;
 if (isset($_GET['ident'])) {
@@ -14,20 +14,20 @@ if (isset($_GET['ident'])) {
 		$currenttime = filter_input(INPUT_GET,'currenttime',FILTER_SANITIZE_NUMBER_INT);
 		$currenttime = round($currenttime/1000);
 		$spotter_array = $MarineLive->getDateLiveMarineDataByIdent($ident,$currenttime);
-		/*
+		
 		if (empty($spotter_array)) {
 			$from_archive = true;
-			$spotter_array = $SpotterArchive->getDateArchiveSpotterDataByIdent($ident,$currenttime);
+			$spotter_array = $MarineArchive->getDateArchiveMarineDataByIdent($ident,$currenttime);
 		}
-		*/
+		
 	} else {
 		$spotter_array = $MarineLive->getLastLiveMarineDataByIdent($ident);
-		/*
+		
 		if (empty($spotter_array)) {
 			$from_archive = true;
-			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataByIdent($ident);
+			$spotter_array = $MarineArchive->getLastArchiveMarineDataByIdent($ident);
 		}
-		*/
+		
 	}
 }
 if (isset($_GET['fammarine_id'])) {
@@ -36,21 +36,21 @@ if (isset($_GET['fammarine_id'])) {
 		$currenttime = filter_input(INPUT_GET,'currenttime',FILTER_SANITIZE_NUMBER_INT);
 		$currenttime = round($currenttime/1000);
 		$spotter_array = $MarineLive->getDateLiveMarineDataById($fammarine_id,$currenttime);
-		/*
+		
 		if (empty($spotter_array)) {
 			$from_archive = true;
 //			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
-			$spotter_array = $SpotterArchive->getDateArchiveSpotterDataById($flightaware_id,$currenttime);
+			$spotter_array = $MarineArchive->getDateArchiveMarineDataById($flightaware_id,$currenttime);
 		}
-		*/
+		
 	} else {
 		$spotter_array = $MarineLive->getLastLiveMarineDataById($fammarine_id);
-		/*
+		
 		if (empty($spotter_array)) {
 			$from_archive = true;
-			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
+			$spotter_array = $MarineArchive->getLastArchiveMarineDataById($flightaware_id);
 		}
-		*/
+		
 	}
 }
  ?>
