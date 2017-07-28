@@ -213,7 +213,7 @@ class MarineImport {
 			date_default_timezone_set('UTC');
 			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('datetime' => date('Y-m-d H:i:s')));
 		} else {
-			if ($globalDebug) echo "!!! Unknow date error ".$this->all_tracked[$id]['mmsi']." - format : ".$line['format_source']."!!!";
+			if ($globalDebug) echo "!!! Unknow date error ".$this->all_tracked[$id]['mmsi']." date: ".$line['datetime']." - format : ".$line['format_source']."!!!";
 			return '';
 		}
 
