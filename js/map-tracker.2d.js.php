@@ -155,6 +155,9 @@ function getLiveTrackerData(click)
 	}
 ?>
 		    trackcnt = feature.properties.fc;
+		    if (typeof feature.properties.empty != 'undefined') {
+			return;
+		    }
 		    if (type != "history") { nbtracker = nbtracker+1; }
 		    if (callsign != ""){ markerTrackerLabel += callsign; }
 		    if (type != ""){ markerTrackerLabel += ' - '+type; }

@@ -318,6 +318,9 @@ function getLiveData(click)
 	}
 ?>
 					flightcount = feature.properties.fc;
+					if (typeof feature.properties.empty != 'undefined') {
+						return;
+					}
 					if (type != "history") nbaircraft = nbaircraft+1;
 					if (callsign != ""){ markerLabel += callsign; }
 					if (departure_airport_code != "" && arrival_airport_code != "" && departure_airport_code != "NA" && arrival_airport_code != "NA"){ markerLabel += ' ( '+departure_airport_code+' - '+arrival_airport_code+' )'; }

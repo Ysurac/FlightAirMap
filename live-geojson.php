@@ -670,10 +670,13 @@ $output = '{';
 			$output .= '"fc": "'.$j.'"';
 		} else {
 			$output .= '"features": ';
-			$output .= '{';
+			$output .= '[{';
 			$output .= '"type": "Feature",';
 			$output .= '"properties": {';
-			$output .= '"fc": "'.$flightcnt.'"}}';
+			$output .= '"fc": "'.$flightcnt.'",';
+			$output .= '"empty": "true"}';
+			$output .= ',"geometry": {"type": "Point","coordinates": [0, 0]}';
+			$output .= '}]';
 		}
 		
 $output .= '}';

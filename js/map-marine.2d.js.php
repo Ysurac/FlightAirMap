@@ -154,6 +154,9 @@ function getLiveMarineData(click)
 	}
 ?>
 		    marinecount = feature.properties.fc;
+		    if (typeof feature.properties.empty != 'undefined') {
+			return;
+		    }
 		    if (type != "history"){ nbmarine = nbmarine+1; }
 		    if (callsign != ""){ markerMarineLabel += callsign; }
 		    if (type != ""){ markerMarineLabel += ' - '+type; }
