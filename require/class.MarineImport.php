@@ -195,7 +195,7 @@ class MarineImport {
 		    if (!isset($this->all_tracked[$id]['id'])) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('id' => $this->all_tracked[$id]['ident']));
 		}
 
-		if (isset($line['datetime']) && strtotime($line['datetime']) > time()-20*60 && strtotime($line['datetime']) < time()+20*60) {
+		if (isset($line['datetime']) && strtotime($line['datetime']) > time()-30*60 && strtotime($line['datetime']) < time()+20*60) {
 		    if (!isset($this->all_tracked[$id]['datetime']) || strtotime($line['datetime']) > strtotime($this->all_tracked[$id]['datetime'])) {
 			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('datetime' => $line['datetime']));
 		    } else {
@@ -203,10 +203,10 @@ class MarineImport {
 				elseif (strtotime($line['datetime']) > strtotime($this->all_tracked[$id]['datetime']) && $globalDebug) echo "!!! Date previous latest data (".$line['datetime']." > ".$this->all_tracked[$id]['datetime'].") !!! for ".$this->all_tracked[$id]['hex']." - format : ".$line['format_source']."\n";
 				return '';
 		    }
-		} elseif (isset($line['datetime']) && strtotime($line['datetime']) < time()-20*60) {
+		} elseif (isset($line['datetime']) && strtotime($line['datetime']) <= time()-30*60) {
 			if ($globalDebug) echo "!!! Date is too old ".$this->all_tracked[$id]['mmsi']." - format : ".$line['format_source']."!!!";
 			return '';
-		} elseif (isset($line['datetime']) && strtotime($line['datetime']) > time()+20*60) {
+		} elseif (isset($line['datetime']) && strtotime($line['datetime']) >= time()+20*60) {
 			if ($globalDebug) echo "!!! Date is in the future ".$this->all_tracked[$id]['mmsi']." - format : ".$line['format_source']."!!!";
 			return '';
 		} elseif (!isset($line['datetime'])) {
