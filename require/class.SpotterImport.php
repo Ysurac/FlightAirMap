@@ -725,7 +725,7 @@ class SpotterImport {
   		    $heading = $Common->getHeading($this->all_flights[$id]['archive_latitude'],$this->all_flights[$id]['archive_longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude']);
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => round($heading)));
 		    if (abs($this->all_flights[$id]['heading']-round($heading)) > 10) $this->all_flights[$id]['putinarchive'] = true;
-  		    if ($globalDebug) echo "ø Calculated Heading for ".$this->all_flights[$id]['id']." : ".$heading."\n";
+  		    if ($globalDebug) echo "ø Calculated Heading for ".$this->all_flights[$id]['hex']." : ".$heading."\n";
   		} elseif (isset($this->all_flights[$id]['format_source']) && $this->all_flights[$id]['format_source'] == 'ACARS') {
   		    // If not enough messages and ACARS set heading to 0
   		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('heading' => 0));
