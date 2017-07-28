@@ -360,10 +360,10 @@ class SpotterImport {
 				return '';
 		    }
 		} elseif (isset($line['datetime']) && strtotime($line['datetime']) < time()-20*60) {
-			if ($globalDebug) echo "!!! Date is too old ".$line['datetime']." for ".$this->all_flights[$id]['id']." - format : ".$line['format_source']."!!!\n";
+			if ($globalDebug) echo "!!! Date is too old ".$line['datetime']." for ".$this->all_flights[$id]['hex']." - format : ".$line['format_source']."!!!\n";
 			return '';
 		} elseif (isset($line['datetime']) && strtotime($line['datetime']) > time()+20*60) {
-			if ($globalDebug) echo "!!! Date is in the future ".$line['datetime']." for ".$this->all_flights[$id]['id']." - format : ".$line['format_source']."!!!\n";
+			if ($globalDebug) echo "!!! Date is in the future ".$line['datetime']." for ".$this->all_flights[$id]['hex']." - format : ".$line['format_source']."!!!\n";
 			return '';
 		} elseif (!isset($line['datetime'])) {
 			date_default_timezone_set('UTC');
