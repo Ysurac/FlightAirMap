@@ -509,6 +509,10 @@ while ($i > 0) {
 		if ($nn > 0) {
 		    foreach ($httpfeeds as $feed) {
 			$buffer = stream_get_line($feed,2000,"\n");
+			if ($buffer === FALSE) {
+				$sourceeen[] = $value;
+				connect_all($sourceeen);
+			}
 			$buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 			$buffer = explode('\n',$buffer);
 			foreach ($buffer as $line) {
