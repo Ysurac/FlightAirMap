@@ -155,8 +155,9 @@ class MarineImport {
 		}
 		if (isset($line['type_id'])) {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('type' => $AIS->getShipType($line['type_id'])));
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('typeid' => $line['type_id']));
 		}
-		if (isset($line['type']) && $line['type'] != '') {
+		if (isset($line['type']) && $line['type'] != '' && $this->all_tracked[$id]['type'] == '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('type' => $line['type']));
 		}
 		if (isset($line['mmsi_type']) && $line['mmsi_type'] != '') {
@@ -174,7 +175,6 @@ class MarineImport {
 		if (isset($line['arrival_date']) && $line['arrival_date'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('arrival_date' => $line['arrival_date']));
 		}
-
 
 		//if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_tracked[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9-]+$/', $line['ident'])) {
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_tracked[$id]['ident'] != trim($line['ident']))) {

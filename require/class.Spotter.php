@@ -3518,12 +3518,12 @@ class Spotter{
 			$query  = "SELECT DISTINCT DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) as date
 								FROM spotter_output
 								WHERE spotter_output.date <> '' 
-								ORDER BY spotter_output.date ASC LIMIT 0,200";
+								ORDER BY spotter_output.date ASC LIMIT 0,100";
 		} else {
 			$query  = "SELECT DISTINCT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date
 								FROM spotter_output
 								WHERE spotter_output.date <> '' 
-								ORDER BY spotter_output.date ASC LIMIT 0,200";
+								ORDER BY spotter_output.date ASC LIMIT 0,100";
 		}
 		
 		$sth = $this->db->prepare($query);
