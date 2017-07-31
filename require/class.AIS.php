@@ -656,8 +656,10 @@ class AIS {
 	}
 	
 	public function famaprs_to_ais($data) {
-		
-		$result['id'] = str_pad(decbin($id),6,'0',STR_PAD_LEFT);
+		/*
+		// In dev. Not yet finished.
+		$result = array();
+		$result['id'] = str_pad(decbin($data['id']),6,'0',STR_PAD_LEFT);
 		$result['noidea'] = str_pad(decbin(0), 2, '0', STR_PAD_LEFT);
 		$result['mmsi'] = str_pad(decbin($data['mmsi']),30,'0',STR_PAD_LEFT);
 		//$result['noidea2'] = str_pad(decbin(0), 2, '0', STR_PAD_LEFT);
@@ -672,8 +674,10 @@ class AIS {
 			$result['latitude'] = str_pad(decbin($this->mk_ais_lat($data['latitude'])),27,'0',STR_PAD_LEFT);
 			$result['cog'] = str_pad(decbin($data['heading']*10),12,'0',STR_PAD_LEFT);
 		} else if ($id == 4) {
-			$ro->lon = $this->make_lonf(bindec(substr($_aisdata,79,28)));
-			$ro->lat = $this->make_latf(bindec(substr($_aisdata,107,27)));
+			//$ro->lon = $this->make_lonf(bindec(substr($_aisdata,79,28)));
+			//$ro->lat = $this->make_latf(bindec(substr($_aisdata,107,27)));
+			$result['longitude'] = str_pad(decbin($this->mk_ais_lon($data['longitude'])),28,'0',STR_PAD_LEFT);
+			$result['latitude'] = str_pad(decbin($this->mk_ais_lat($data['latitude'])),27,'0',STR_PAD_LEFT);
 		} else if ($id == 5) {
 			$result['imo'] = str_pad(decbin($data['imo']),30,'0',STR_PAD_LEFT);
 			$result['callsign'] = $this->char2bin($data['callsign'],42);
@@ -748,5 +752,6 @@ class AIS {
 		$ro->status = $this->getStatus($ro->statusid);
 
 		return $this->mk_ais(implode('',$result));
+		*/
 	}
 }

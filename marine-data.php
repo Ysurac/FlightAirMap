@@ -100,6 +100,7 @@ print '</div>';
 print '<div><span>'._("Coordinates").'</span>'.$spotter_item['latitude'].', '.$spotter_item['longitude'].'</div>';
 print '<div><span>'._("Type").'</span>'.$spotter_item['type'].'</div>';
 print '<div><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
+print '<div><span>'._("MMSI").'</span>'.$spotter_item['mmsi'].'</div>';
 if (isset($spotter_item['over_country']) && $spotter_item['over_country'] != '') {
 	print '<div><span>'._("Over country").'</span>';
 	print $spotter_item['over_country'];
