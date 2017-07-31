@@ -394,6 +394,10 @@ class AIS {
 		if ( $chksum == $dcs ) { // NMEA checksum pass
 			$pcs = explode(',', $rawdata);
 			// !AI??? identifier
+			if (!isset($pcs[1])) {
+				echo "ERROR,INVALID_DATA ".time()." $rawdata\n";
+				return -1;
+			}
 			$num_seq = (int)$pcs[1]; // number of sequences
 			$seq = (int)$pcs[2]; // get sequence
 			// get msg sequence id
@@ -649,5 +653,100 @@ class AIS {
 		    $ro->id = bindec(substr($_aisdata,0,6));
 		*/
 		return $result;
+	}
+	
+	public function famaprs_to_ais($data) {
+		
+		$result['id'] = str_pad(decbin($id),6,'0',STR_PAD_LEFT);
+		$result['noidea'] = str_pad(decbin(0), 2, '0', STR_PAD_LEFT);
+		$result['mmsi'] = str_pad(decbin($data['mmsi']),30,'0',STR_PAD_LEFT);
+		//$result['noidea2'] = str_pad(decbin(0), 2, '0', STR_PAD_LEFT);
+		$result['statusid'] = str_pad(decbin($data['status_id']),4,'0',STR_PAD_LEFT);
+		//$result['statusid'] = str_pad(decbin($data['status_id']),2,'0',STR_PAD_LEFT);
+		
+		//$result['callsign'] = $this->char2bin($data['callsign'],20);
+		if ($id >= 1 && $id <= 3) {
+			$result['noidea2'] = str_pad(decbin(0), 8, '0', STR_PAD_LEFT);
+			$result['sog'] = str_pad(decbin($data['speed']*10),10,'0',STR_PAD_LEFT);
+			$result['longitude'] = str_pad(decbin($this->mk_ais_lon($data['longitude'])),28,'0',STR_PAD_LEFT);
+			$result['latitude'] = str_pad(decbin($this->mk_ais_lat($data['latitude'])),27,'0',STR_PAD_LEFT);
+			$result['cog'] = str_pad(decbin($data['heading']*10),12,'0',STR_PAD_LEFT);
+		} else if ($id == 4) {
+			$ro->lon = $this->make_lonf(bindec(substr($_aisdata,79,28)));
+			$ro->lat = $this->make_latf(bindec(substr($_aisdata,107,27)));
+		} else if ($id == 5) {
+			$result['imo'] = str_pad(decbin($data['imo']),30,'0',STR_PAD_LEFT);
+			$result['callsign'] = $this->char2bin($data['callsign'],42);
+			$result['name'] = $this->char2bin($data['ident'],120);
+			$ro->typeid = bindec(substr($_aisdata,232,8));
+			$ro->type = $this->getShipType($ro->typeid);
+			//$ro->to_bow = bindec(substr($_aisdata,240,9));
+			//$ro->to_stern = bindec(substr($_aisdata,249,9));
+			//$ro->to_port = bindec(substr($_aisdata,258,6));
+			//$ro->to_starboard = bindec(substr($_aisdata,264,6));
+			$ro->eta_month = bindec(substr($_aisdata,274,4));
+			$ro->eta_day = bindec(substr($_aisdata,278,5));
+			$ro->eta_hour = bindec(substr($_aisdata,283,5));
+			$ro->eta_minute = bindec(substr($_aisdata,288,6));
+			//$ro->draught = bindec(substr($_aisdata,294,8));
+			$ro->destination = $this->binchar($_aisdata,302,120);
+		} else if ($id == 9) {
+			// Search and Rescue aircraft position report
+		} else if ($id == 18) {
+			$ro->sog = bindec(substr($_aisdata,46,10))/10;
+			$ro->lon = $this->make_lonf(bindec(substr($_aisdata,57,28)));
+			$ro->lat = $this->make_latf(bindec(substr($_aisdata,85,27)));
+			$ro->cog = bindec(substr($_aisdata,112,12))/10;
+			$ro->heading = bindec(substr($_aisdata,124,9));
+			if ($ro->heading == 511) $ro->heading = '';
+		} else if ($id == 19) {
+			$ro->cog = bindec(substr($_aisdata,112,12))/10;
+			$ro->sog = bindec(substr($_aisdata,46,10))/10;
+			$ro->lon = str_pad($this->mk_ais_lon($data['longitude']),28,'0',STR_PAD_LEFT);
+			$ro->lat = $this->mk_ais_lat(bindec(substr($_aisdata,89,27)));
+			$ro->name = $this->binchar($_aisdata,143,120);
+			$ro->cls = 2; // class B
+			$ro->heading = bindec(substr($_aisdata,124,9));
+			if ($ro->heading == 511) $ro->heading = '';
+			$ro->typeid = bindec(substr($_aisdata,263,8));
+			$ro->type = $this->getShipType($ro->typeid);
+			//$ro->to_bow = bindec(substr($_aisdata,271,9));
+			//$ro->to_stern = bindec(substr($_aisdata,280,9));
+			//$ro->to_port = bindec(substr($_aisdata,289,6));
+			//$ro->to_starboard = bindec(substr($_aisdata,295,6));
+		} else if ($id == 21) {
+			$ro->lon = $this->make_lonf(bindec(substr($_aisdata,164,28)));
+			$ro->lat = $this->make_latf(bindec(substr($_aisdata,192,27)));
+			$ro->name = $this->binchar($_aisdata,43,120);
+			//$ro->to_bow = bindec(substr($_aisdata,219,9));
+			//$ro->to_stern = bindec(substr($_aisdata,228,9));
+			//$ro->to_port = bindec(substr($_aisdata,237,6));
+			//$ro->to_starboard = bindec(substr($_aisdata,243,6));
+		} else if ($id == 24) {
+			$pn = bindec(substr($_aisdata,38,2));
+			if ($pn == 0) {
+				$ro->name = $this->binchar($_aisdata,40,120);
+			}
+			$ro->typeid = bindec(substr($_aisdata,40,8));
+			$ro->type = $this->getShipType($ro->typeid);
+			$ro->callsign = $this->binchar($_aisdata,90,42);
+			//$ro->to_bow = bindec(substr($_aisdata,132,9));
+			//$ro->to_stern = bindec(substr($_aisdata,141,9));
+			//$ro->to_port = bindec(substr($_aisdata,150,6));
+			//$ro->to_starboard = bindec(substr($_aisdata,156,6));
+		} else if ($id == 27) {
+			$ro->cog = bindec(substr($_aisdata,85,9));
+			if ($ro->cog == 511) $ro->cog = 0.0;
+			$ro->sog = bindec(substr($_aisdata,79,6));
+			if ($ro->sog == 63) $ro->sog = 0.0;
+			$ro->lon = $this->make_lonf(bindec(substr($_aisdata,44,18))*10);
+			$ro->lat = $this->make_latf(bindec(substr($_aisdata,62,17))*10);
+			$ro->cls = 1; // class A
+		
+		}
+		$ro->statusid = bindec(substr($_aisdata,38,4));
+		$ro->status = $this->getStatus($ro->statusid);
+
+		return $this->mk_ais(implode('',$result));
 	}
 }
