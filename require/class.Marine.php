@@ -480,12 +480,12 @@ class Marine{
 			$query  = "SELECT DISTINCT DATE(CONVERT_TZ(marine_output.date,'+00:00', :offset)) as date
 								FROM marine_output
 								WHERE marine_output.date <> '' 
-								ORDER BY marine_output.date ASC LIMIT 0,200";
+								ORDER BY marine_output.date ASC LIMIT 0,100";
 		} else {
 			$query  = "SELECT DISTINCT to_char(marine_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date
 								FROM marine_output
 								WHERE marine_output.date <> '' 
-								ORDER BY marine_output.date ASC LIMIT 0,200";
+								ORDER BY marine_output.date ASC LIMIT 0,100";
 		}
 		
 		$sth = $this->db->prepare($query);

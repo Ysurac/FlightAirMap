@@ -145,7 +145,7 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 	{
 		if (ctype_alnum($ident_item['ident'])) {
 			$output .= '<url>';
-			$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/ident/'.urlencode($ident_item['ident']).'</loc>';
+			$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/marine/ident/'.urlencode($ident_item['ident']).'</loc>';
 			$output .= '<lastmod>'.date("c", time()).'</lastmod>';
 			$output .= '<changefreq>daily</changefreq>';
 			$output .= '</url>';
@@ -172,7 +172,20 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 	foreach($date_names as $date_item)
 	{
 		$output .= '<url>';
-		$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/date/'.date("Y-m-d", strtotime($date_item['date'])).'</loc>';
+		$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/marine/date/'.date("Y-m-d", strtotime($date_item['date'])).'</loc>';
+		$output .= '<lastmod>'.date("c", time()).'</lastmod>';
+		$output .= '<changefreq>daily</changefreq>';
+		$output .= '</url>';
+	}
+	$output .= '</urlset>';
+} else if (isset($_GET['type']) && $_GET['type'] == "tracker-date"){
+	$output .= '<?xml version="1.0" encoding="UTF-8"?>';
+	$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
+	$date_names = $Tracker->getAllDates();
+	foreach($date_names as $date_item)
+	{
+		$output .= '<url>';
+		$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/tracker/date/'.date("Y-m-d", strtotime($date_item['date'])).'</loc>';
 		$output .= '<lastmod>'.date("c", time()).'</lastmod>';
 		$output .= '<changefreq>daily</changefreq>';
 		$output .= '</url>';
@@ -392,11 +405,9 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		$output .= '<sitemap>';
 		$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/sitemap/ident</loc>';
 		$output .= '</sitemap>';
-		/*
 		$output .= '<sitemap>';
 		$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/sitemap/date</loc>';
 		$output .= '</sitemap>';
-		*/
 		$output .= '<sitemap>';
 		$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/sitemap/route</loc>';
 		$output .= '</sitemap>';
@@ -405,6 +416,9 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		$output .= '<sitemap>';
 		$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/sitemap/tracker-static</loc>';
 		$output .= '</sitemap>';
+		$output .= '<sitemap>';
+		$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/sitemap/tracker-date</loc>';
+		$output .= '</sitemap>';
 	}
 	if (isset($globalMarine) && $globalMarine) {
 		$output .= '<sitemap>';
@@ -412,6 +426,9 @@ if (isset($_GET['type']) && $_GET['type'] == "flight")
 		$output .= '</sitemap>';
 		$output .= '<sitemap>';
 		$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/sitemap/marine-ident</loc>';
+		$output .= '</sitemap>';
+		$output .= '<sitemap>';
+		$output .= '<loc>'.'http://'.$_SERVER['HTTP_HOST'].$globalURL.'/sitemap/marine-date</loc>';
 		$output .= '</sitemap>';
 	}
 	$output .= '</sitemapindex>';

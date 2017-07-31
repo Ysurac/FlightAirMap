@@ -459,12 +459,12 @@ class Tracker{
 			$query  = "SELECT DISTINCT DATE(CONVERT_TZ(tracker_output.date,'+00:00', :offset)) as date
 								FROM tracker_output
 								WHERE tracker_output.date <> '' 
-								ORDER BY tracker_output.date ASC LIMIT 0,200";
+								ORDER BY tracker_output.date ASC LIMIT 0,100";
 		} else {
 			$query  = "SELECT DISTINCT to_char(tracker_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date
 								FROM tracker_output
 								WHERE tracker_output.date <> '' 
-								ORDER BY tracker_output.date ASC LIMIT 0,200";
+								ORDER BY tracker_output.date ASC LIMIT 0,100";
 		}
 		
 		$sth = $this->db->prepare($query);
