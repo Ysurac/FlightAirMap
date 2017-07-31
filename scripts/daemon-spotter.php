@@ -1517,7 +1517,7 @@ while ($i > 0) {
 				    if (isset($line['squawk'])) $data['squawk'] = $line['squawk'];
 				    if (isset($line['arrival_code'])) $data['arrical_code'] = $line['arrival_code'];
 				    if (isset($line['arrival_date'])) $data['arrical_date'] = $line['arrival_date'];
-				    if (isset($line['type_id'])) $data['type_id'] = $line['typeid'];
+				    //if (isset($line['type_id'])) $data['type_id'] = $line['typeid'];
 				    if (isset($line['status_id'])) $data['status_id'] = $line['statusid'];
 				    if (isset($line['timestamp'])) $data['datetime'] = date('Y-m-d H:i:s',$line['timestamp']);
 				    else $data['datetime'] = date('Y-m-d H:i:s');
