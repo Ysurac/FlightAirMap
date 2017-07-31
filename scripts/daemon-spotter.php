@@ -510,8 +510,7 @@ while ($i > 0) {
 		    foreach ($httpfeeds as $feed) {
 			$buffer = stream_get_line($feed,2000,"\n");
 			if ($buffer === FALSE) {
-				$sourceeen[] = $value;
-				connect_all($sourceeen);
+			    connect_all($globalSources);
 			}
 			$buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 			$buffer = explode('\n',$buffer);
@@ -553,9 +552,10 @@ while ($i > 0) {
 		    if ($tt[$format] > 30) {
 			if ($globalDebug) echo 'Reconnect...'."\n";
 			sleep(2);
-			$sourceeen[] = $value;
-			connect_all($sourceeen);
-			$sourceeen = array();
+			//$sourceeen[] = $value;
+			//connect_all($sourceeen);
+			//$sourceeen = array();
+			connect_all($globalSources);
 		    }
 		}
 	    }
@@ -1319,9 +1319,9 @@ while ($i > 0) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
 		    if ($format == 'sbs' || $format == 'aprs' || $format == 'famaprs' || $format == 'raw' || $format == 'tsv' || $format == 'acarssbs3') {
-			$buffer = @socket_read($r, 6000,PHP_NORMAL_READ);
+			$buffer = socket_read($r, 6000,PHP_NORMAL_READ);
 		    } elseif ($format == 'vrstcp') {
-			$buffer = @socket_read($r, 6000);
+			$buffer = socket_read($r, 6000);
 		    } else {
 			$az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
 		    }
@@ -1331,11 +1331,13 @@ while ($i > 0) {
 		    //if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
 		    $error = false;
 		    //$SI::del();
-		    if ($format == 'vrstcp') {
-			$buffer = explode('},{',$buffer);
-		    } else $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
+		    if ($buffer !== FALSE) {
+			if ($format == 'vrstcp') {
+			    $buffer = explode('},{',$buffer);
+			} else $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
+		    }
 		    // SBS format is CSV format
-		    if ($buffer !== FALSE && $buffer != '') {
+		    if ($buffer !== FALSE && $buffer !== '') {
 			$tt[$format] = 0;
 			if ($format == 'acarssbs3') {
 			    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
