@@ -64,7 +64,9 @@ print 'var series = [';
 $flightover_data = '';
 foreach($flightover_array as $flightover_item)
 {
-	$flightover_data .= '[ "'.$flightover_item['flight_country_iso3'].'",'.$flightover_item['flight_count'].'],';
+	if ($type == 'aircraft') $flightover_data .= '[ "'.$flightover_item['flight_country_iso3'].'",'.$flightover_item['flight_count'].'],';
+	elseif ($type == 'marine') $flightover_data .= '[ "'.$flightover_item['marine_country_iso3'].'",'.$flightover_item['marine_count'].'],';
+	elseif ($type == 'tracker') $flightover_data .= '[ "'.$flightover_item['tracker_country_iso3'].'",'.$flightover_item['tracker_count'].'],';
 }
 $flightover_data = substr($flightover_data, 0, -1);
 print $flightover_data;
@@ -116,15 +118,16 @@ if (!empty($flightover_array))
 	{
 		print '<tr>';
 		print '<td><strong>'.$i.'</strong></td>';
-		print '<td>';
-/*		print '<a href="'.$globalURL.'/ident/'.$callsign_item['callsign_icao'].'">'.$callsign_item['callsign_icao'].'</a>';
-		print '</td>';
-		print '<td>';
-		print '<a href="'.$globalURL.'/airline/'.$callsign_item['airline_icao'].'">'.$callsign_item['airline_name'].'</a>';
-*/
-		print $flightover_item['flight_country'];
-		print '</td>';
-		print '<td>'.$flightover_item['flight_count'].'</td>';
+		if ($type == 'aircraft') {
+			print '<td>'.$flightover_item['flight_country'].'</td>';
+			print '<td>'.$flightover_item['flight_count'].'</td>';
+		} elseif ($type == 'marine') {
+			print '<td>'.$flightover_item['marine_country'].'</td>';
+			print '<td>'.$flightover_item['marine_count'].'</td>';
+		} elseif ($type == 'tracker') {
+			print '<td>'.$flightover_item['tracker_country'].'</td>';
+			print '<td>'.$flightover_item['tracker_count'].'</td>';
+		}
 		print '</tr>';
 		$i++;
 	}

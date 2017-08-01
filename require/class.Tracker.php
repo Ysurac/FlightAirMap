@@ -812,10 +812,10 @@ class Tracker{
         
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			$temp_array['flight_count'] = $row['nb'];
-			$temp_array['flight_country'] = $row['name'];
-			$temp_array['flight_country_iso3'] = $row['iso3'];
-			$temp_array['flight_country_iso2'] = $row['iso2'];
+			$temp_array['tracker_count'] = $row['nb'];
+			$temp_array['tracker_country'] = $row['name'];
+			$temp_array['tracker_country_iso3'] = $row['iso3'];
+			$temp_array['tracker_country_iso2'] = $row['iso2'];
 			$flight_array[] = $temp_array;
 		}
 		return $flight_array;

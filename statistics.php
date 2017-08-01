@@ -614,7 +614,7 @@ if ($type == 'tracker') {
 		print 'var series = [';
 		$flightover_data = '';
 		foreach($flightover_array as $flightover_item) {
-			$flightover_data .= '[ "'.$flightover_item['flight_country_iso3'].'",'.$flightover_item['flight_count'].'],';
+			$flightover_data .= '[ "'.$flightover_item['tracker_country_iso3'].'",'.$flightover_item['tracker_count'].'],';
 		}
 		$flightover_data = substr($flightover_data, 0, -1);
 		print $flightover_data;
