@@ -422,9 +422,13 @@ class Common {
 		return $result;
 	}
 
-	public function nextcoord($latitude, $longitude, $speed, $heading, $archivespeed = 1){
+	public function nextcoord($latitude, $longitude, $speed, $heading, $archivespeed = 1, $seconds = ''){
 		global $globalMapRefresh;
-		$distance = ($speed*0.514444*$globalMapRefresh*$archivespeed)/1000;
+		if ($seconds == '') {
+			$distance = ($speed*0.514444*$globalMapRefresh*$archivespeed)/1000;
+		} else {
+			$distance = ($speed*0.514444*$seconds*$archivespeed)/1000;
+		}
 		$r = 6378;
 		$latitude = deg2rad($latitude);
 		$longitude = deg2rad($longitude);
