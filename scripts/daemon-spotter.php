@@ -254,8 +254,7 @@ function connect_all($hosts) {
     		    if ($idf !== false) {
     			$httpfeeds[$id] = $idf;
         		if ($globalDebug) echo "Connected to ".$globalSources[$id]['format']." source (".$host.")...\n";
-    		    }
-    		    elseif ($globalDebug) echo "Can't connect to ".$globalSources[$id]['host']."\n";
+    		    } elseif ($globalDebug) echo "Can't connect to ".$globalSources[$id]['host']."\n";
     		} elseif ($globalDebug) echo "Connect to ".$globalSources[$id]['format']." source (".$host.")...\n";
         } elseif (!filter_var($host,FILTER_VALIDATE_URL)) {
 	    $hostport = explode(':',$host);
@@ -376,7 +375,7 @@ if ($use_aprs) {
 }
 
 // connected - lets do some work
-if ($globalDebug) echo "Connected!\n";
+//if ($globalDebug) echo "Connected!\n";
 sleep(1);
 if ($globalDebug) echo "SCAN MODE \n\n";
 if (!isset($globalCronEnd)) $globalCronEnd = 60;
@@ -1319,9 +1318,9 @@ while ($i > 0) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
 		    if ($format == 'sbs' || $format == 'aprs' || $format == 'famaprs' || $format == 'raw' || $format == 'tsv' || $format == 'acarssbs3') {
-			$buffer = socket_read($r, 6000,PHP_NORMAL_READ);
+			$buffer = @socket_read($r, 6000,PHP_NORMAL_READ);
 		    } elseif ($format == 'vrstcp') {
-			$buffer = socket_read($r, 6000);
+			$buffer = @socket_read($r, 6000);
 		    } else {
 			$az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
 		    }
@@ -1718,7 +1717,7 @@ while ($i > 0) {
 			} elseif ($format != 'acars' && $format != 'flightgearsp') {
 			    if (isset($tt[$format])) $tt[$format]++;
 			    else $tt[$format] = 0;
-			    if ($tt[$format] > 30) {
+			    if ($tt[$format] > 30 || $buffer === FALSE) {
 				if ($globalDebug) echo "ERROR : Reconnect ".$format."...";
 				//@socket_close($r);
 				sleep(2);
@@ -1729,7 +1728,8 @@ while ($i > 0) {
 				//connect_all($globalSources);
 				$tt[$format]=0;
 				break;
-			    }
+			    } else if ($globalDebug) echo "Trying again (".$tt[$format]."x) ".$format."...";
+
 			}
 		    }
 		}
