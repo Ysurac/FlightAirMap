@@ -1728,8 +1728,8 @@ while ($i > 0) {
 				//connect_all($globalSources);
 				$tt[$format]=0;
 				break;
-			    } else if ($globalDebug) echo "Trying again (".$tt[$format]."x) ".$format."...";
-
+			    } 
+			    //else if ($globalDebug) echo "Trying again (".$tt[$format]."x) ".$format."...";
 			}
 		    }
 		}
