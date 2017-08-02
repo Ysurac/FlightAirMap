@@ -251,28 +251,36 @@ function getLiveData(click)
 	}
 ?>
 	layer_data_p = L.layerGroup();
-	$.ajax({
-		dataType: "json",
-		//      url: "live/geojson?"+Math.random(),
 <?php
 	if (isset($ident)) {
 ?>
-		url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&ident=<?php print $ident; ?>&history",
+	var defurl = "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&ident=<?php print $ident; ?>&history";
 <?php
 	} elseif (isset($flightaware_id)) {
 ?>
-		url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&flightaware_id=<?php print $flightaware_id; ?>&history",
+	var defurl = "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&flightaware_id=<?php print $flightaware_id; ?>&history";
 <?php
 	} elseif (isset($archive) && $archive) {
 ?>
-		url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
+	var defurl = "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>";
 <?php
 	} else {
 ?>
-		url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className,
+	if (click == 1) {
+		var now = new Date();
+		var defurl = "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&currenttime="+now.getTime();
+	} else {
+		var defurl = "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className;
+	}
 <?php 
 	}
 ?>
+
+
+	$.ajax({
+		dataType: "json",
+		//      url: "live/geojson?"+Math.random(),
+		url: defurl,
 		success: function(data) {
 			map.removeLayer(layer_data);
 <?php
