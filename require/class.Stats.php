@@ -4,6 +4,8 @@
 */
 
 require_once(dirname(__FILE__).'/class.Spotter.php');
+require_once(dirname(__FILE__).'/class.Marine.php');
+require_once(dirname(__FILE__).'/class.Tracker.php');
 require_once(dirname(__FILE__).'/class.Accident.php');
 require_once(dirname(__FILE__).'/class.SpotterArchive.php');
 require_once(dirname(__FILE__).'/class.Common.php');
@@ -940,6 +942,50 @@ class Stats {
 		}
 		return $all;
 	}
+	public function countAllDatesMarine($filter_name = '') {
+		global $globalStatsFilters;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		$query = "SELECT marine_date as date_name, cnt as date_count FROM stats_marine WHERE stats_type = 'date' AND filter_name = :filter_name ORDER BY date_count DESC";
+		$query_data = array(':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			$filters = array();
+			if ($filter_name != '') {
+				$filters = $globalStatsFilters[$filter_name];
+			}
+			$Marine = new Marine($this->db);
+			$all = $Marine->countAllDates($filters);
+		}
+		return $all;
+	}
+	public function countAllDatesTracker($filter_name = '') {
+		global $globalStatsFilters;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		$query = "SELECT tracker_date as date_name, cnt as date_count FROM stats_tracker WHERE stats_type = 'date' AND filter_name = :filter_name ORDER BY date_count DESC";
+		$query_data = array(':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			$filters = array();
+			if ($filter_name != '') {
+				$filters = $globalStatsFilters[$filter_name];
+			}
+			$Tracker = new Tracker($this->db);
+			$all = $Tracker->countAllDates($filters);
+		}
+		return $all;
+	}
 	public function countAllDatesByAirlines($filter_name = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
@@ -1700,6 +1746,26 @@ class Stats {
 			return "error : ".$e->getMessage();
 		}
 	}
+	public function addStatMarine($type,$date_name,$cnt,$filter_name = '') {
+		$query = "INSERT INTO stats_marine (stats_type,marine_date,cnt,filter_name) VALUES (:type,:flight_date,:cnt,:filter_name)";
+		$query_values = array(':type' => $type,':flight_date' => $date_name,':cnt' => $cnt,':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+	public function addStatTracker($type,$date_name,$cnt,$filter_name = '') {
+		$query = "INSERT INTO stats_tracker (stats_type,tracker_date,cnt,filter_name) VALUES (:type,:flight_date,:cnt,:filter_name)";
+		$query_values = array(':type' => $type,':flight_date' => $date_name,':cnt' => $cnt,':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
 	public function addStatAircraftRegistration($registration,$cnt,$aircraft_icao = '',$airline_icao = '',$filter_name = '',$reset = false) {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
@@ -1762,6 +1828,52 @@ class Stats {
 			}
 		}
 		$query_values = array(':iso2' => $iso2,':iso3' => $iso3,':name' => $name,':cnt' => $cnt,':filter_name' => $filter_name,':airline' => $airline_icao);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+	public function addStatCountryMarine($iso2,$iso3,$name,$cnt,$filter_name = '',$reset = false) {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			if ($reset) {
+				$query = "INSERT INTO stats_marine_country (iso2,iso3,name,cnt,filter_name) VALUES (:iso2,:iso3,:name,:cnt,:filter_name) ON DUPLICATE KEY UPDATE cnt = :cnt";
+			} else {
+				$query = "INSERT INTO stats_marine_country (iso2,iso3,name,cnt,filter_name) VALUES (:iso2,:iso3,:name,:cnt,:filter_name) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+			}
+		} else {
+			if ($reset) {
+				$query = "UPDATE stats_marine_country SET cnt = :cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
+			} else {
+				$query = "UPDATE stats_marine_country SET cnt = cnt+:cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
+			}
+		}
+		$query_values = array(':iso2' => $iso2,':iso3' => $iso3,':name' => $name,':cnt' => $cnt,':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+	public function addStatCountryTracker($iso2,$iso3,$name,$cnt,$filter_name = '',$reset = false) {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			if ($reset) {
+				$query = "INSERT INTO stats_tracker_country (iso2,iso3,name,cnt,filter_name) VALUES (:iso2,:iso3,:name,:cnt,:filter_name) ON DUPLICATE KEY UPDATE cnt = :cnt";
+			} else {
+				$query = "INSERT INTO stats_tracker_country (iso2,iso3,name,cnt,filter_name) VALUES (:iso2,:iso3,:name,:cnt,:filter_name) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+			}
+		} else {
+			if ($reset) {
+				$query = "UPDATE stats_tracker_country SET cnt = :cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
+			} else {
+				$query = "UPDATE stats_tracker_country SET cnt = cnt+:cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
+			}
+		}
+		$query_values = array(':iso2' => $iso2,':iso3' => $iso3,':name' => $name,':cnt' => $cnt,':filter_name' => $filter_name);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -1966,6 +2078,26 @@ class Stats {
 			return "error : ".$e->getMessage();
 		}
 	}
+	public function deleteStatMarine($type) {
+		$query = "DELETE FROM stats_marine WHERE stats_type = :type";
+		$query_values = array(':type' => $type);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+	public function deleteStatTracker($type) {
+		$query = "DELETE FROM stats_tracker WHERE stats_type = :type";
+		$query_values = array(':type' => $type);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
 	public function deleteStatAirport($type) {
 		$query = "DELETE FROM stats_airport WHERE stats_type = :type";
 		$query_values = array(':type' => $type);
@@ -1978,12 +2110,125 @@ class Stats {
 	}
 
 	public function addOldStats() {
-		global $globalDebug, $globalArchiveMonths, $globalArchive, $globalArchiveYear, $globalDBdriver, $globalStatsFilters,$globalDeleteLastYearStats,$globalStatsReset,$globalStatsResetYear, $globalAccidents;
+		global $globalAircraft, $globalMarine, $globalTracker, $globalDebug, $globalArchiveMonths, $globalArchive, $globalArchiveYear, $globalDBdriver, $globalStatsFilters,$globalDeleteLastYearStats,$globalStatsReset,$globalStatsResetYear, $globalAccidents;
 		$Common = new Common();
 		$Connection = new Connection($this->db);
 		date_default_timezone_set('UTC');
-		$last_update = $this->getLastStatsUpdate('last_update_stats');
-			if ($globalDebug) echo 'Update stats !'."\n";
+		if (isset($globalMarine) && $globalMarine) {
+			$last_update = $this->getLastStatsUpdate('last_update_stats_marine');
+			if ($globalDebug) echo '!!! Update Marine stats !!!'."\n";
+			if (isset($last_update[0]['value'])) {
+				$last_update_day = $last_update[0]['value'];
+			} else $last_update_day = '2012-12-12 12:12:12';
+			$reset = false;
+			$Marine = new Marine($this->db);
+			$filtername = 'marine';
+			if ($Connection->tableExists('countries')) {
+				if ($globalDebug) echo 'Count all vessels by countries...'."\n";
+				$alldata = $Marine->countAllMarineOverCountries(false,0,$last_update_day);
+				foreach ($alldata as $number) {
+					$this->addStatCountryMarine($number['marine_country_iso2'],$number['marine_country_iso3'],$number['marine_country'],$number['marine_count'],'','',$reset);
+				}
+			}
+			if ($globalDebug) echo 'Count all vessels by months...'."\n";
+			$last_month = date('Y-m-01 00:00:00', strtotime('-1 month', strtotime($last_update_day)));
+			$filter_last_month = array('since_date' => $last_month);
+			$alldata = $Marine->countAllMonths($filter_last_month);
+			$lastyear = false;
+			foreach ($alldata as $number) {
+				if ($number['year_name'] != date('Y')) $lastyear = true;
+				$this->addStat('marine_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+			}
+			echo 'Marine data...'."\n";
+			$this->deleteStatMarine('month');
+			echo '-> countAllDatesLastMonth...'."\n";
+			$alldata = $Marine->countAllDatesLastMonth($filter_last_month);
+			foreach ($alldata as $number) {
+				$this->addStatMarine('month',$number['date_name'],$number['date_count']);
+			}
+			echo '-> countAllDates...'."\n";
+			$previousdata = $this->countAllDatesMarine();
+			$this->deleteStatMarine('date');
+			$alldata = $Common->array_merge_noappend($previousdata,$Marine->countAllDates($filter_last_month));
+			$values = array();
+			foreach ($alldata as $cnt) {
+				$values[] = $cnt['date_count'];
+			}
+			array_multisort($values,SORT_DESC,$alldata);
+			array_splice($alldata,11);
+			foreach ($alldata as $number) {
+				$this->addStatMarine('date',$number['date_name'],$number['date_count']);
+			}
+			
+			$this->deleteStatMarine('hour');
+			echo '-> countAllHours...'."\n";
+			$alldata = $Marine->countAllHours('hour',$filter_last_month);
+			foreach ($alldata as $number) {
+				$this->addStatMarine('hour',$number['hour_name'],$number['hour_count']);
+			}
+			echo 'Insert last stats update date...'."\n";
+			date_default_timezone_set('UTC');
+			$this->addLastStatsUpdate('last_update_stats_marine',date('Y-m-d G:i:s'));
+		}
+		if (isset($globalTracker) && $globalTracker) {
+			$last_update = $this->getLastStatsUpdate('last_update_stats_tracker');
+			if ($globalDebug) echo '!!! Update tracker stats !!!'."\n";
+			if (isset($last_update[0]['value'])) {
+				$last_update_day = $last_update[0]['value'];
+			} else $last_update_day = '2012-12-12 12:12:12';
+			$reset = false;
+			$Tracker = new Tracker($this->db);
+			if ($Connection->tableExists('countries')) {
+				if ($globalDebug) echo 'Count all trackers by countries...'."\n";
+				$alldata = $Tracker->countAllTrackerOverCountries(false,0,$last_update_day);
+				foreach ($alldata as $number) {
+					$this->addStatCountryTracker($number['tracker_country_iso2'],$number['tracker_country_iso3'],$number['tracker_country'],$number['tracker_count'],'','',$reset);
+				}
+			}
+			if ($globalDebug) echo 'Count all vessels by months...'."\n";
+			$last_month = date('Y-m-01 00:00:00', strtotime('-1 month', strtotime($last_update_day)));
+			$filter_last_month = array('since_date' => $last_month);
+			$alldata = $Tracker->countAllMonths($filter_last_month);
+			$lastyear = false;
+			foreach ($alldata as $number) {
+				if ($number['year_name'] != date('Y')) $lastyear = true;
+				$this->addStat('tracker_bymonth',$number['date_count'],date('Y-m-d H:i:s',mktime(0,0,0,$number['month_name'],1,$number['year_name'])));
+			}
+			echo 'Tracker data...'."\n";
+			$this->deleteStatTracker('month');
+			echo '-> countAllDatesLastMonth...'."\n";
+			$alldata = $Tracker->countAllDatesLastMonth($filter_last_month);
+			foreach ($alldata as $number) {
+				$this->addStatTracker('month',$number['date_name'],$number['date_count']);
+			}
+			echo '-> countAllDates...'."\n";
+			$previousdata = $this->countAllDatesTracker();
+			$this->deleteStatTracker('date');
+			$alldata = $Common->array_merge_noappend($previousdata,$Tracker->countAllDates($filter_last_month));
+			$values = array();
+			foreach ($alldata as $cnt) {
+				$values[] = $cnt['date_count'];
+			}
+			array_multisort($values,SORT_DESC,$alldata);
+			array_splice($alldata,11);
+			foreach ($alldata as $number) {
+				$this->addStatTracker('date',$number['date_name'],$number['date_count']);
+			}
+			
+			$this->deleteStatTracker('hour');
+			echo '-> countAllHours...'."\n";
+			$alldata = $Tracker->countAllHours('hour',$filter_last_month);
+			foreach ($alldata as $number) {
+				$this->addStatTracker('hour',$number['hour_name'],$number['hour_count']);
+			}
+			echo 'Insert last stats update date...'."\n";
+			date_default_timezone_set('UTC');
+			$this->addLastStatsUpdate('last_update_stats_tracker',date('Y-m-d G:i:s'));
+		}
+
+		if (isset($globalAircraft) && $globalAircraft) {
+			$last_update = $this->getLastStatsUpdate('last_update_stats');
+			if ($globalDebug) echo '!!! Update aicraft stats !!!'."\n";
 			if (isset($last_update[0]['value'])) {
 				$last_update_day = $last_update[0]['value'];
 			} else $last_update_day = '2012-12-12 12:12:12';
@@ -2661,9 +2906,10 @@ class Stats {
 					}
 				}
 			}
+		}
 
 			// Last year stats
-			if ($lastyear) {
+			if (isset($lastyear) && $lastyear) {
 				echo 'Data from last year...'."\n";
 				// SUM all previous month to put as year
 				$previous_year = date('Y');
@@ -2847,7 +3093,7 @@ class Stats {
 				require_once(dirname(__FILE__).'/../install/class.settings.php');
 				settings::modify_settings(array('globalStatsResetYear' => 'FALSE'));
 			}
-		//}
+		
 	}
 }
 

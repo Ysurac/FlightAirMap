@@ -543,6 +543,7 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 		    <li><a href="<?php print $globalURL; ?>/marine/latest"><?php echo _("Latest Activity"); ?></a></li>
 		    <li><a href="<?php print $globalURL; ?>/marine/date/<?php print date("Y-m-d"); ?>"><?php echo _("Today's Activity"); ?></a></li>
 		</ul>
+		<li><a href="<?php print $globalURL; ?>/marine/search"><?php echo _("Search"); ?></a></li>
 		<li><a href="<?php print $globalURL; ?>/marine/statistics"><?php echo _("Statistics"); ?></a></li>
 	    </li>
 <?php
@@ -576,6 +577,7 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 		    <li><a href="<?php print $globalURL; ?>/tracker/date/<?php print date("Y-m-d"); ?>"><?php echo _("Today's Activity"); ?></a></li>
 		</ul>
 	    </li>
+	    <li><a href="<?php print $globalURL; ?>/tracker/search"><?php echo _("Search"); ?></a></li>
 	    <li><a href="<?php print $globalURL; ?>/tracker/statistics"><?php echo _("Statistics"); ?></a></li>
 <?php
 	if ($sub) {

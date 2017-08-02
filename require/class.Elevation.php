@@ -189,7 +189,7 @@ class Elevation {
 	public function downloadNeeded() {
 		$Connection = new Connection();
 		$db = $Connection->db;
-		$query = 'SELECT latitude, longitude FROM spotter_output WHERE latitude <> 0 AND longitude <> 0 ORDER BY date DESC LIMIT 50';
+		$query = 'SELECT latitude, longitude FROM spotter_output WHERE latitude <> 0 AND longitude <> 0 ORDER BY date DESC LIMIT 10';
 		$query_values = array();
 		try {
 			$sth = $db->prepare($query);
@@ -200,7 +200,7 @@ class Elevation {
 		while ($data = $sth->fetch(PDO::FETCH_ASSOC)) {
 			$this->download($data['latitude'],$data['longitude'],true);
 		}
-		$query = 'SELECT latitude, longitude FROM tracker_output WHERE latitude <> 0 AND longitude <> 0 ORDER BY date DESC LIMIT 50';
+		$query = 'SELECT latitude, longitude FROM tracker_output WHERE latitude <> 0 AND longitude <> 0 ORDER BY date DESC LIMIT 10';
 		$query_values = array();
 		try {
 			$sth = $db->prepare($query);

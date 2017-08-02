@@ -1,11 +1,21 @@
 <?php
 require_once('require/class.Connection.php');
-require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
-require_once('require/class.SpotterArchive.php');
-$Spotter = new Spotter();
-$orderby = $Spotter->getOrderBy();
-
+if (isset($_GET['marine'])) {
+	$type = 'marine';
+	require_once('require/class.Marine.php');
+	$Marine = new Marine();
+} elseif (isset($_GET['tracker'])) {
+	$type = 'tracker';
+	require_once('require/class.Tracker.php');
+	$Tracker = new Tracker();
+} else {
+	require_once('require/class.Spotter.php');
+	require_once('require/class.SpotterArchive.php');
+	$Spotter = new Spotter();
+	$orderby = $Spotter->getOrderBy();
+	$type = 'aircraft';
+}
 $title = _("Search");
 
 //$page_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
@@ -80,7 +90,29 @@ $limit_next = $limit_end + $absolute_difference;
 $limit_previous_1 = $limit_start - $absolute_difference;
 $limit_previous_2 = $limit_end - $absolute_difference;
 
-if (!empty($_GET)){  
+if (
+    (isset($_GET['q']) && $_GET['q'] != '') || 
+    (isset($_GET['registration']) && $_GET['registration'] != '') || 
+    (isset($_GET['aircraft']) && $_GET['aircraft'] != '') ||
+    (isset($_GET['manufacturer']) && $_GET['manufacturer'] != '') ||
+    (isset($_GET['highlights']) && $_GET['highlights'] != '') ||
+    (isset($_GET['airline']) && $_GET['airline'] != '') ||
+    (isset($_GET['airline_country']) && $_GET['airline_country'] != '') ||
+    (isset($_GET['airline_type']) && $_GET['airline_type'] != '') ||
+    (isset($_GET['airport']) && $_GET['airport'] != '') ||
+    (isset($_GET['airport_country']) && $_GET['airport_country'] != '') ||
+    (isset($_GET['callsign']) && $_GET['callsign'] != '') ||
+    (isset($_GET['owner']) && $_GET['owner'] != '') ||
+    (isset($_GET['pilot_name']) && $_GET['pilot_name'] != '') ||
+    (isset($_GET['pilot_id']) && $_GET['pilot_id'] != '') ||
+    (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != '') ||
+    (isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != '') ||
+    (isset($_GET['mmsi']) && $_GET['mmsi'] != '') ||
+    (isset($_GET['imo']) && $_GET['imo'] != '') ||
+    ((isset($_GET['origlat']) && $_GET['origlat'] != '') &&
+    (isset($_GET['origlon']) && $_GET['origlon'] != '') &&
+    (isset($_GET['dist']) && $_GET['dist'] != ''))
+    ){  
 	$q = filter_input(INPUT_GET, 'q',FILTER_SANITIZE_STRING);
 	$registration = filter_input(INPUT_GET, 'registration',FILTER_SANITIZE_STRING);
 	$aircraft = filter_input(INPUT_GET, 'aircraft',FILTER_SANITIZE_STRING);
@@ -95,6 +127,8 @@ if (!empty($_GET)){
 	$owner = filter_input(INPUT_GET, 'owner',FILTER_SANITIZE_STRING);
 	$pilot_name = filter_input(INPUT_GET, 'pilot_name',FILTER_SANITIZE_STRING);
 	$pilot_id = filter_input(INPUT_GET, 'pilot_id',FILTER_SANITIZE_STRING);
+	$mmsi = filter_input(INPUT_GET, 'mmsi',FILTER_SANITIZE_NUMBER_INT);
+	$imo = filter_input(INPUT_GET, 'imo',FILTER_SANITIZE_NUMBER_INT);
 	$departure_airport_route = filter_input(INPUT_GET, 'departure_airport_route',FILTER_SANITIZE_STRING);
 	$arrival_airport_route = filter_input(INPUT_GET, 'arrival_airport_route',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
@@ -102,16 +136,25 @@ if (!empty($_GET)){
 	$origlat = filter_input(INPUT_GET,'origlat',FILTER_SANITIZE_NUMBER_FLOAT);
 	$origlon = filter_input(INPUT_GET,'origlon',FILTER_SANITIZE_NUMBER_FLOAT);
 	$dist = filter_input(INPUT_GET,'dist',FILTER_SANITIZE_NUMBER_INT);
+	$number_results = filter_input(INPUT_GET,'number_results',FILTER_SANITIZE_NUMBER_INT);
 	if ($dist != '') {
 		if (isset($globalDistanceUnit) && $globalDistanceUnit == 'mi') $dist = $dist*1.60934;
 		elseif (isset($globalDistanceUnit) && $globalDistanceUnit == 'nm') $dist = $dist*1.852;
 	}
 	if (!isset($sql_date)) $sql_date = '';
 	if ($archive == 1) {
-		$SpotterArchive = new SpotterArchive();
-		$spotter_array = $SpotterArchive->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'',$origlat,$origlon,$dist);
+		if ($type == 'aircraft') {
+			$SpotterArchive = new SpotterArchive();
+			$spotter_array = $SpotterArchive->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'',$origlat,$origlon,$dist);
+		}
 	} else {
-		$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'',$origlat,$origlon,$dist);
+		if ($type == 'aircraft') {
+			$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'',$origlat,$origlon,$dist);
+		} elseif ($type == 'tracker') {
+			$spotter_array = $Tracker->searchTrackerData($q,$callsign,$sql_date,$limit_start.",".$absolute_difference,$sort,'',$origlat,$origlon,$dist);
+		} elseif ($type == 'marine') {
+			$spotter_array = $Marine->searchMarineData($q,$callsign,$mmsi,$imo,$sql_date,$limit_start.",".$absolute_difference,$sort,'',$origlat,$origlon,$dist);
+		}
 	}
 	 
 	print '<span class="sub-menu-statistic column mobile">';
@@ -119,28 +162,30 @@ if (!empty($_GET)){
 	print '</span>';
 	print '<div class="sub-menu sub-menu-container">';
 	print '<ul class="nav">';
-	print '<li class="dropdown">';
-	print '<a class="dropdown-toggle" data-toggle="dropdown" href="#" ><i class="fa fa-download"></i> '._("Download Search Results").' <span class="caret"></span></a>';
-	print '<ul class="dropdown-menu">';
-	print '<li><a href="'.$globalURL.'/search/csv?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">CSV</a></li>';
-	print '<li><a href="'.$globalURL.'/search/rss?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">RSS</a></li>';
-	print '<li><hr /></li>';
-	print '<li><span>For Advanced Users</strong></li>';
-	print '<li><a href="'.$globalURL.'/search/json?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">JSON</a></li>';
-	print '<li><a href="'.$globalURL.'/search/xml?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">XML</a></li>';
-	print '<li><a href="'.$globalURL.'/search/yaml?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">YAML</a></li>';
-	print '<li><a href="'.$globalURL.'/search/php?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">PHP (serialized array)</a></li>';
-	print '<li><hr /></li>';
-	print '<li><span>For Geo/Map Users</span></li>';
-	print '<li><a href="'.$globalURL.'/search/kml?'.htmlentities($_SERVER['QUERY_STRING']).'">KML</a></li>';
-	print '<li><a href="'.$globalURL.'/search/geojson?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">GeoJSON</a></li>';
-	print '<li><a href="'.$globalURL.'/search/georss?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">GeoRSS</a></li>';
-	print '<li><a href="'.$globalURL.'/search/gpx?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">GPX</a></li>';
-	print '<li><a href="'.$globalURL.'/search/wkt?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">WKT</a></li>';
-	print '<li><hr /></li>';
-	print '<li><a href="'.$globalURL.'/about/export" target="_blank" class="export-info">'._("Download Info/Licence").'&raquo;</a></li>';
-	print '</ul>';
-	print '</li>';
+	if ($type == 'aircraft') {
+		print '<li class="dropdown">';
+		print '<a class="dropdown-toggle" data-toggle="dropdown" href="#" ><i class="fa fa-download"></i> '._("Download Search Results").' <span class="caret"></span></a>';
+		print '<ul class="dropdown-menu">';
+		print '<li><a href="'.$globalURL.'/search/csv?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">CSV</a></li>';
+		print '<li><a href="'.$globalURL.'/search/rss?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">RSS</a></li>';
+		print '<li><hr /></li>';
+		print '<li><span>For Advanced Users</strong></li>';
+		print '<li><a href="'.$globalURL.'/search/json?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">JSON</a></li>';
+		print '<li><a href="'.$globalURL.'/search/xml?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">XML</a></li>';
+		print '<li><a href="'.$globalURL.'/search/yaml?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">YAML</a></li>';
+		print '<li><a href="'.$globalURL.'/search/php?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">PHP (serialized array)</a></li>';
+		print '<li><hr /></li>';
+		print '<li><span>For Geo/Map Users</span></li>';
+		print '<li><a href="'.$globalURL.'/search/kml?'.htmlentities($_SERVER['QUERY_STRING']).'">KML</a></li>';
+		print '<li><a href="'.$globalURL.'/search/geojson?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">GeoJSON</a></li>';
+		print '<li><a href="'.$globalURL.'/search/georss?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">GeoRSS</a></li>';
+		print '<li><a href="'.$globalURL.'/search/gpx?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">GPX</a></li>';
+		print '<li><a href="'.$globalURL.'/search/wkt?'.htmlentities($_SERVER['QUERY_STRING']).'&download=true" target="_blank">WKT</a></li>';
+		print '<li><hr /></li>';
+		print '<li><a href="'.$globalURL.'/about/export" target="_blank" class="export-info">'._("Download Info/Licence").'&raquo;</a></li>';
+		print '</ul>';
+		print '</li>';
+	}
 	//remove 3D=true parameter
 	$no3D = str_replace("&3D=true", "", $_SERVER['QUERY_STRING']);
 	$kmlURL = str_replace("http://", "kml://", $globalURL);
@@ -187,6 +232,8 @@ if (!empty($_GET)){
 		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && (!isset($_GET['arrival_airport_route']) || $_GET['arrival_airport_route'] == "")){ print _("Route out of:").' <span>'.$departure_airport_route.'</span> '; }
 		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] == "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print _("Route into:").' <span>'.$arrival_airport_route.'</span> '; }
 		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print _("Route between:").' <span>'.$departure_airport_route.'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
+		if (isset($_GET['mmsi']) && $_GET['mmsi'] != ""){ print _("MMSI:").' <span>'.$mmsi.'</span> '; }
+		if (isset($_GET['imo']) && $_GET['imo'] != ""){ print _("IMO:").' <span>'.$imo.'</span> '; }
 		if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] == ""){ print _("Date starting at:").' <span>'.$start_date.'</span> '; }
 		if (isset($_GET['start_date']) && $_GET['start_date'] == "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print _("Date ending at:").' <span>'.$end_date.'</span> '; }
 		if (isset($_GET['start_date']) && $_GET['start_date'] != "" && isset($_GET['end_date']) && $_GET['end_date'] != ""){ print _("Date between:").' <span>'.$start_date.'</span> and <span>'.$end_date.'</span> '; }
@@ -255,11 +302,19 @@ if (!empty($_GET)){
 			print '<div class="pagination">';
 			if ($limit_previous_1 >= 0)
 			{
-				print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';
+				if ($type == 'aircraft') {
+					print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';
+				} elseif ($type == 'tracker') {
+					print '<a href="'.$globalURL.'/tracker/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';
+				}
 			}
 			if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
 			{
-				print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_end.','.$limit_next.'">'._("Next Page").'&raquo;</a>';
+				if ($type == 'aircraft') {
+					print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_end.','.$limit_next.'">'._("Next Page").'&raquo;</a>';
+				} elseif ($type == 'tracker') {
+					print '<a href="'.$globalURL.'/tracker/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_end.','.$limit_next.'">'._("Next Page").'&raquo;</a>';
+				}
 			}
 			print '</div>';
 		}
@@ -280,7 +335,21 @@ if (!empty($_GET)){
 ?>
 
 <div class="column">
+<?php
+if ($type == 'aircraft') {
+?>
 	<form action="<?php print $globalURL; ?>/search" method="get" role="form" class="form-horizontal">
+<?php
+} elseif ($type == 'marine') {
+?>
+	<form action="<?php print $globalURL; ?>/marine/search" method="get" role="form" class="form-horizontal">
+<?php
+} elseif ($type == 'tracker') {
+?>
+	<form action="<?php print $globalURL; ?>/tracker/search" method="get" role="form" class="form-horizontal">
+<?php
+}
+?>
 <!--
 		<fieldset>
 			<div class="form-group">
@@ -292,6 +361,9 @@ if (!empty($_GET)){
 		</fieldset>
 -->
 		<div class="advanced-form">
+<?php
+if ($type == 'aircraft') {
+?>
 			<fieldset>
 				<legend><?php echo _("Aircraft"); ?></legend>
 				<div class="form-group">
@@ -319,7 +391,7 @@ if (!empty($_GET)){
 					</div>
 				</div>
 <?php
-if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
+	if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) {
 ?>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Pilot id"); ?></label> 
@@ -334,7 +406,7 @@ if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (i
 					</div>
 				</div>
 <?php
-}else {
+	}else {
 ?>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Owner name"); ?></label> 
@@ -343,7 +415,7 @@ if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (i
 					</div>
 				</div>
 <?php
-}
+	}
 ?>
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-10">
@@ -430,12 +502,117 @@ if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (i
 				<script type="text/javascript">getSelect('arrivalairportnames','<?php if(isset($_GET['arrival_airport_route'])) print $arrival_airport_route; ?>');</script>
 			</fieldset>
 			<fieldset>
+				<legend>Altitude</legend>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Lowest Altitude"); ?></label> 
+					<div class="col-sm-10">
+						<select name="lowest_altitude" class="form-control selectpicker" data-live-search="true">
+							<option></option>
+<?php
+$altitude_array = Array(1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000);
+foreach($altitude_array as $altitude)
+{
+	if(isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] == $altitude)
+	{
+		print '<option value="'.$altitude.'" selected="selected">'.number_format($altitude).' feet</option>';
+	} else {
+		print '<option value="'.$altitude.'">'.number_format($altitude).' feet</option>';
+	}
+}
+?>
+					</select>
+				</div>
+			</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Highest Altitude"); ?></label> 
+					<div class="col-sm-10">
+						<select name="highest_altitude" class="form-control selectpicker" data-live-search="true">
+							<option></option>
+<?php
+	$altitude_array = Array(1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000);
+	foreach($altitude_array as $altitude)
+	{
+		if(isset($_GET['highest_altitude']) && $_GET['highest_altitude'] == $altitude)
+		{
+			print '<option value="'.$altitude.'" selected="selected">'.number_format($altitude).' feet</option>';
+		} else {
+			print '<option value="'.$altitude.'">'.number_format($altitude).' feet</option>';
+		}
+	}
+?>
+						</select>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<legend><?php echo _("Flights near"); ?></legend>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Latitude"); ?></label>
+					<div class="col-sm-10">
+						<input type="text" name="origlat" class="form-control" placeholder="<?php echo _("Center point latitude"); ?>" value="<?php if (isset($_GET['origlat'])) print $origlat; ?>" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Longitude"); ?></label>
+					<div class="col-sm-10">
+						<input type="text" name="origlon" class="form-control" placeholder="<?php echo _("Center point longitude"); ?>" value="<?php if (isset($_GET['origlon'])) print $origlon; ?>" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Distance").' ('; if (isset($globalDistanceUnit)) print $globalDistanceUnit; else print 'km'; print ')'; ?></label>
+					<div class="col-sm-10">
+						<input type="text" name="dist" class="form-control" placeholder="<?php echo _("Distance from center point"); ?>" value="<?php if (isset($_GET['distance'])) print $distance; ?>" />
+					</div>
+				</div>
+			</fieldset>
+<?php
+} elseif ($type == 'tracker') {
+?>
+			<fieldset>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Callsign"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" name="callsign" class="form-control" value="<?php if (isset($_GET['callsign'])) print $callsign; ?>" size="8" placeholder="<?php echo _("Callsign"); ?>" />
+					</div>
+				</div>
+			</fieldset>
+<?php
+} elseif ($type == 'marine') {
+?>
+			<fieldset>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Callsign"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" name="callsign" class="form-control" value="<?php if (isset($_GET['callsign'])) print $callsign; ?>" size="8" placeholder="<?php echo _("Callsign"); ?>" />
+					</div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("MMSI"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" name="mmsi" class="form-control" value="<?php if (isset($_GET['mmsi'])) print $mmsi; ?>" size="8" placeholder="<?php echo _("MMSI"); ?>" />
+					</div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("IMO"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" name="imo" class="form-control" value="<?php if (isset($_GET['imo'])) print $imo; ?>" size="8" placeholder="<?php echo _("IMO"); ?>" />
+					</div>
+				</div>
+			</fieldset>
+<?php
+}
+?>
+			<fieldset>
 				<legend><?php echo _("Date"); ?></legend>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Start Date"); ?></label>
 					<div class="col-sm-10">
 						<div class='input-group date' id='datetimepicker1'>
-							<input type='text' name="start_date" class="form-control" value="<?php if (isset($_GET['start_date'])) print $start_date; ?>" placeholder="<?php echo _("Start Date/Time"); ?>" />
+							<input type='text' name="start_date" class="form-control" value="<?php if (isset($_GET['start_date']) && $_GET['start_date'] != '') print $start_date; ?>" placeholder="<?php echo _("Start Date/Time"); ?>" />
 							<span class="input-group-addon">
 								<span class="glyphicon glyphicon-calendar"></span>
 							</span>
@@ -446,7 +623,7 @@ if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (i
 					<label class="control-label col-sm-2"><?php echo _("End Date"); ?></label>
 					<div class="col-sm-10">
 						<div class='input-group date' id='datetimepicker2'>
-						<input type='text' name="end_date" class="form-control" value="<?php if (isset($_GET['end_date'])) print $end_date; ?>" placeholder="<?php echo _("End Date/Time"); ?>" />
+						<input type='text' name="end_date" class="form-control" value="<?php if (isset($_GET['end_date']) && $_GET['end_date'] != '') print $end_date; ?>" placeholder="<?php echo _("End Date/Time"); ?>" />
 						<span class="input-group-addon">
 							<span class="glyphicon glyphicon-calendar"></span>
 						</span>
@@ -471,70 +648,6 @@ if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (i
 				</script>
 			</fieldset>
 		</div>
-		
-		<fieldset>
-			<legend>Altitude</legend>
-			<div class="form-group">
-				<label class="control-label col-sm-2"><?php echo _("Lowest Altitude"); ?></label> 
-				<div class="col-sm-10">
-					<select name="lowest_altitude" class="form-control selectpicker" data-live-search="true">
-						<option></option>
-<?php
-$altitude_array = Array(1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000);
-foreach($altitude_array as $altitude)
-{
-	if(isset($_GET['lowest_altitude']) && $_GET['lowest_altitude'] == $altitude)
-	{
-		print '<option value="'.$altitude.'" selected="selected">'.number_format($altitude).' feet</option>';
-	} else {
-		print '<option value="'.$altitude.'">'.number_format($altitude).' feet</option>';
-	}
-}
-?>
-					</select>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2"><?php echo _("Highest Altitude"); ?></label> 
-					<div class="col-sm-10">
-				<select name="highest_altitude" class="form-control selectpicker" data-live-search="true">
-					<option></option>
-<?php
-$altitude_array = Array(1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000);
-foreach($altitude_array as $altitude)
-{
-	if(isset($_GET['highest_altitude']) && $_GET['highest_altitude'] == $altitude)
-	{
-		print '<option value="'.$altitude.'" selected="selected">'.number_format($altitude).' feet</option>';
-	} else {
-		print '<option value="'.$altitude.'">'.number_format($altitude).' feet</option>';
-	}
-}
-?>
-				</select>
-			</div>
-		</fieldset>
-		<fieldset>
-			<legend><?php echo _("Flights near"); ?></legend>
-			<div class="form-group">
-				<label class="control-label col-sm-2"><?php echo _("Latitude"); ?></label>
-				<div class="col-sm-10">
-					<input type="text" name="origlat" class="form-control" placeholder="<?php echo _("Center point latitude"); ?>" value="<?php if (isset($_GET['origlat'])) print $origlat; ?>" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2"><?php echo _("Longitude"); ?></label>
-				<div class="col-sm-10">
-					<input type="text" name="origlon" class="form-control" placeholder="<?php echo _("Center point longitude"); ?>" value="<?php if (isset($_GET['origlon'])) print $origlon; ?>" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2"><?php echo _("Distance").' ('; if (isset($globalDistanceUnit)) print $globalDistanceUnit; else print 'km'; print ')'; ?></label>
-				<div class="col-sm-10">
-					<input type="text" name="dist" class="form-control" placeholder="<?php echo _("Distance from center point"); ?>" value="<?php if (isset($_GET['distance'])) print $distance; ?>" />
-				</div>
-			</div>
-		</fieldset>
 		<fieldset>
 			<legend><?php echo _("Limit per Page"); ?></legend>
 			<div class="form-group">

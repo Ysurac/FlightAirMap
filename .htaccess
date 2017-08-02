@@ -71,6 +71,12 @@ RewriteRule ^search/gpx(/?)$ search-gpx.php [L,NC]
 RewriteRule ^search/georss(/?)$ search-georss.php [L,NC]
 RewriteRule ^search(/?)$ search.php [L,NC]
 
+#---------- TRACKER ---------
+RewriteRule ^tracker/search(/?)$ search.php?tracker [L,NC]
+
+#---------- MARINE ---------
+RewriteRule ^marine/search(/?)$ search.php?marine [L,NC]
+
 ########### AIRPORT ###########
 
 RewriteRule ^airport/statistics/aircraft/([^/]+)(/?)$ airport-statistics-aircraft.php?airport=$1 [L,NC]

@@ -26,15 +26,17 @@ if (strtolower($current_page) == "search")
 {
 	print '<thead>';
 	print '<th class="aircraft_thumbnail"></th>';
-	if (!isset($globalNoAirlines) || $globalNoAirlines === FALSE) {
-		if ($_GET['sort'] == "airline_name_asc")
-		{
-			print '<th class="logo"><a href="'.$page_url.'&sort=airline_name_desc" class="active">'._("Airline").'</a> <i class="fa fa-caret-up"></i></th>';
-		} else if ($_GET['sort'] == "airline_name_desc")
-		{
-			 print '<th class="logo"><a href="'.$page_url.'&sort=airline_name_asc" class="active">'._("Airline").'</a> <i class="fa fa-caret-down"></i></th>';
-		} else {
-			print '<th class="logo"><a href="'.$page_url.'&sort=airline_name_asc">'._("Airline").'</a> <i class="fa fa-sort small"></i></th>';
+	if ($type == 'aircraft') {
+		if (!isset($globalNoAirlines) || $globalNoAirlines === FALSE) {
+			if ($_GET['sort'] == "airline_name_asc")
+			{
+				print '<th class="logo"><a href="'.$page_url.'&sort=airline_name_desc" class="active">'._("Airline").'</a> <i class="fa fa-caret-up"></i></th>';
+			} else if ($_GET['sort'] == "airline_name_desc")
+			{
+				 print '<th class="logo"><a href="'.$page_url.'&sort=airline_name_asc" class="active">'._("Airline").'</a> <i class="fa fa-caret-down"></i></th>';
+			} else {
+				print '<th class="logo"><a href="'.$page_url.'&sort=airline_name_asc">'._("Airline").'</a> <i class="fa fa-sort small"></i></th>';
+			}
 		}
 	}
 	if (!isset($globalNoIdents) || $globalNoIdents === FALSE) {
@@ -48,52 +50,83 @@ if (strtolower($current_page) == "search")
 			print '<th class="ident"><a href="'.$page_url.'&sort=ident_asc">'._("Ident").'</a> <i class="fa fa-sort small"></i></th>';
 		}
 	}
-	if ($_GET['sort'] == "aircraft_asc")
-	{
-		print '<th class="type"><a href="'.$page_url.'&sort=aircraft_desc" class="active">'._("Aircraft").'</a> <i class="fa fa-caret-up"></i></th>';
-	} else if ($_GET['sort'] == "aircraft_desc")
-	{
-		print '<th class="type"><a href="'.$page_url.'&sort=aircraft_asc" class="active">'._("Aircraft").'</a> <i class="fa fa-caret-down"></i></th>';
-	} else {
-		print '<th class="type"><a href="'.$page_url.'&sort=aircraft_asc">'._("Aircraft").'</a> <i class="fa fa-sort small"></i></th>';
-	}
-	if ($_GET['sort'] == "airport_departure_asc")
-	{
-		print '<th class="departure"><a href="'.$page_url.'&sort=airport_departure_desc" class="active"><span class="nomobile">'._("Coming from").'</span><span class="mobile">'._("From").'</span></a> <i class="fa fa-caret-up"></i></th>';
-	} else if ($_GET['sort'] == "airport_departure_desc")
-	{
-		print '<th class="departure"><a href="'.$page_url.'&sort=airport_departure_asc" class="active"><span class="nomobile">'._("Coming from").'</span><span class="mobile">'._("From").'</span></a> <i class="fa fa-caret-down"></i></th>';
-	} else {
-		print '<th class="departure"><a href="'.$page_url.'&sort=airport_departure_asc"><span class="nomobile">'._("Coming from").'</span><span class="mobile">'._("From").'</span></a> <i class="fa fa-sort small"></i></th>';
-	}
-	if ($_GET['sort'] == "airport_arrival_asc")
-	{
-		print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_desc" class="active"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-up"></i></th>';
-	} else if ($_GET['sort'] == "airport_arrival_desc")
-	{
-		print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc" class="active"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-down"></i></th>';
-	} else {
-		print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc"><span class="nomobile">'._("Flying to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
-	}
-	if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
-		print '<th class="routestop"><span class="nomobile">'._("Route stop").'</span><span class="mobile">'._("Stop").'</span></a></th>';
-	}
-	if (isset($_GET['dist']) && $_GET['dist'] != '') {
-		if ($_GET['sort'] == "distance_asc")
+	if ($type == 'aircraft') {
+		if ($_GET['sort'] == "aircraft_asc")
 		{
-			print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-caret-up"></i></th>';
-		} elseif ($_GET['sort'] == "distance_desc")
+			print '<th class="type"><a href="'.$page_url.'&sort=aircraft_desc" class="active">'._("Aircraft").'</a> <i class="fa fa-caret-up"></i></th>';
+		} else if ($_GET['sort'] == "aircraft_desc")
 		{
-			print '<th class="distance"><a href="'.$page_url.'&sort=distance_asc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-caret-down"></i></th>';
+			print '<th class="type"><a href="'.$page_url.'&sort=aircraft_asc" class="active">'._("Aircraft").'</a> <i class="fa fa-caret-down"></i></th>';
 		} else {
-			print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-sort small"></i></th>';
+			print '<th class="type"><a href="'.$page_url.'&sort=aircraft_asc">'._("Aircraft").'</a> <i class="fa fa-sort small"></i></th>';
+		}
+	} elseif ($type == 'marine') {
+		if ($_GET['sort'] == "type_asc")
+		{
+			print '<th class="type">'._("Type").'</th>';
+		} else if ($_GET['sort'] == "type_desc")
+		{
+			print '<th class="type">'._("Type").'</th>';
+		} else {
+			print '<th class="type">'._("Type").'</th>';
+		}
+	} elseif ($type == 'tracker') {
+		if ($_GET['sort'] == "type_asc")
+		{
+			print '<th class="type">'._("Type").'</th>';
+		} else if ($_GET['sort'] == "type_desc")
+		{
+			print '<th class="type">'._("Type").'</th>';
+		} else {
+			print '<th class="type">'._("Type").'</th>';
 		}
 	}
-	if ((isset($globalUsePilot) && $globalUsePilot) || !isset($globalUsePilot) && ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || (isset($globalVAM) && $globalVAM))) {
-		print '<th class="pilot"><span class="nomobile">'._("Pilot name").'</span><span class="mobile">'._("Pilot").'</span></a></th>';
+	if ($type == 'aircraft') {
+		if ($_GET['sort'] == "airport_departure_asc")
+		{
+			print '<th class="departure"><a href="'.$page_url.'&sort=airport_departure_desc" class="active"><span class="nomobile">'._("Coming from").'</span><span class="mobile">'._("From").'</span></a> <i class="fa fa-caret-up"></i></th>';
+		} else if ($_GET['sort'] == "airport_departure_desc")
+		{
+			print '<th class="departure"><a href="'.$page_url.'&sort=airport_departure_asc" class="active"><span class="nomobile">'._("Coming from").'</span><span class="mobile">'._("From").'</span></a> <i class="fa fa-caret-down"></i></th>';
+		} else {
+			print '<th class="departure"><a href="'.$page_url.'&sort=airport_departure_asc"><span class="nomobile">'._("Coming from").'</span><span class="mobile">'._("From").'</span></a> <i class="fa fa-sort small"></i></th>';
+		}
 	}
-	if ((isset($globalUseOwner) && $globalUseOwner) || (!isset($globalUseOwner) && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM))) {
-		print '<th class="owner"><span class="nomobile">'._("Owner name").'</span><span class="mobile">'._("Owner").'</span></a></th>';
+	if ($type == 'aircraft' || $type == 'marine') {
+		if ($_GET['sort'] == "airport_arrival_asc")
+		{
+			print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_desc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-up"></i></th>';
+		} else if ($_GET['sort'] == "airport_arrival_desc")
+		{
+			print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-down"></i></th>';
+		} else {
+			print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
+		}
+	}
+	if ($type == 'aircraft') {
+		if ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalVAM) && $globalVAM) || (isset($globalphpVMS) && $globalphpVMS)) {
+			print '<th class="routestop"><span class="nomobile">'._("Route stop").'</span><span class="mobile">'._("Stop").'</span></a></th>';
+		}
+		if (isset($_GET['dist']) && $_GET['dist'] != '') {
+			if ($_GET['sort'] == "distance_asc")
+			{
+				print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-caret-up"></i></th>';
+			} elseif ($_GET['sort'] == "distance_desc")
+			{
+				print '<th class="distance"><a href="'.$page_url.'&sort=distance_asc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-caret-down"></i></th>';
+			} else {
+				print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-sort small"></i></th>';
+			}
+		}
+		if ((isset($globalUsePilot) && $globalUsePilot) || !isset($globalUsePilot) && ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS) || (isset($globalVAM) && $globalVAM))) {
+			print '<th class="pilot"><span class="nomobile">'._("Pilot name").'</span><span class="mobile">'._("Pilot").'</span></a></th>';
+		}
+		if ((isset($globalUseOwner) && $globalUseOwner) || (!isset($globalUseOwner) && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS) && (!isset($globalVAM) || !$globalVAM))) {
+			print '<th class="owner"><span class="nomobile">'._("Owner name").'</span><span class="mobile">'._("Owner").'</span></a></th>';
+		}
+	}
+	if ($type == 'tracker') {
+		print '<th class="comment"><span class="nomobile">'._("Comment").'</span><span class="mobile">'._("Comment").'</span></th>';
 	}
 	if ($_GET['sort'] == "date_asc")
 	{

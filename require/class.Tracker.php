@@ -38,7 +38,7 @@ class Tracker{
 		foreach($filters as $flt) {
 			if (isset($flt['idents']) && !empty($flt['idents'])) {
 				if (isset($flt['source'])) {
-					$filter_query_join .= " INNER JOIN (SELECT famtrackid FROM tracker_output WHERE tracker_output.ident IN ('".implode("','",$flt['idents'])."') AND spotter_output.format_source IN ('".implode("','",$flt['source'])."')) spfi ON spfi.famtrackid = tracker_output.famtrackid";
+					$filter_query_join .= " INNER JOIN (SELECT famtrackid FROM tracker_output WHERE tracker_output.ident IN ('".implode("','",$flt['idents'])."') AND tracker_output.format_source IN ('".implode("','",$flt['source'])."')) spfi ON spfi.famtrackid = tracker_output.famtrackid";
 				} else {
 					$filter_query_join .= " INNER JOIN (SELECT famtrackid FROM tracker_output WHERE tracker_output.ident IN ('".implode("','",$flt['idents'])."')) spfi ON spfi.famtrackid = tracker_output.famtrackid";
 				}
@@ -81,12 +81,12 @@ class Tracker{
 	}
 
 	/**
-	* Executes the SQL statements to get the spotter information
+	* Executes the SQL statements to get the tracker information
 	*
 	* @param String $query the SQL query
 	* @param Array $params parameter of the query
 	* @param String $limitQuery the limit query
-	* @return Array the spotter information
+	* @return Array the tracker information
 	*
 	*/
 	public function getDataFromDB($query, $params = array(), $limitQuery = '',$schedules = false)
@@ -114,7 +114,7 @@ class Tracker{
 		}
 		
 		$num_rows = 0;
-		$spotter_array = array();
+		$tracker_array = array();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$num_rows++;
@@ -122,10 +122,10 @@ class Tracker{
 			if (isset($row['tracker_live_id'])) {
 				$temp_array['tracker_id'] = $this->getTrackerIDBasedOnFamTrackID($row['famtrackid']);
 			/*
-			} elseif (isset($row['spotter_archive_id'])) {
-				$temp_array['spotter_id'] = $row['spotter_archive_id'];
-			} elseif (isset($row['spotter_archive_output_id'])) {
-				$temp_array['spotter_id'] = $row['spotter_archive_output_id'];
+			} elseif (isset($row['tracker_archive_id'])) {
+				$temp_array['tracker_id'] = $row['tracker_archive_id'];
+			} elseif (isset($row['tracker_archive_output_id'])) {
+				$temp_array['tracker_id'] = $row['tracker_archive_output_id'];
 			*/} 
 			elseif (isset($row['trackerid'])) {
 				$temp_array['trackerid'] = $row['trackerid'];
@@ -192,18 +192,18 @@ class Tracker{
 			if (isset($row['over_country']) && $row['over_country'] != '') $temp_array['over_country'] = $row['over_country'];
 			if (isset($row['distance']) && $row['distance'] != '') $temp_array['distance'] = $row['distance'];
 			$temp_array['query_number_rows'] = $num_rows;
-			$spotter_array[] = $temp_array;
+			$tracker_array[] = $temp_array;
 		}
 		if ($num_rows == 0) return array();
-		$spotter_array[0]['query_number_rows'] = $num_rows;
-		return $spotter_array;
+		$tracker_array[0]['query_number_rows'] = $num_rows;
+		return $tracker_array;
 	}	
 	
 	
 	/**
-	* Gets all the spotter information based on the latest data entry
+	* Gets all the tracker information based on the latest data entry
 	*
-	* @return Array the spotter information
+	* @return Array the tracker information
 	*
 	*/
 	public function getLatestTrackerData($limit = '', $sort = '', $filter = array())
@@ -238,15 +238,15 @@ class Tracker{
 
 		$query  = $global_query.$filter_query." ".$orderby_query;
 
-		$spotter_array = $this->getDataFromDB($query, array(),$limit_query,true);
+		$tracker_array = $this->getDataFromDB($query, array(),$limit_query,true);
 
-		return $spotter_array;
+		return $tracker_array;
 	}
     
 	/*
-	* Gets all the spotter information based on the spotter id
+	* Gets all the tracker information based on the tracker id
 	*
-	* @return Array the spotter information
+	* @return Array the tracker information
 	*
 	*/
 	public function getTrackerDataByID($id = '')
@@ -258,14 +258,14 @@ class Tracker{
 		$additional_query = "tracker_output.famtrackid = :id";
 		$query_values = array(':id' => $id);
 		$query  = $global_query." WHERE ".$additional_query." ";
-		$spotter_array = $this->getDataFromDB($query,$query_values);
-		return $spotter_array;
+		$tracker_array = $this->getDataFromDB($query,$query_values);
+		return $tracker_array;
 	}
 
 	/**
-	* Gets all the spotter information based on the callsign
+	* Gets all the tracker information based on the callsign
 	*
-	* @return Array the spotter information
+	* @return Array the tracker information
 	*
 	*/
 	public function getTrackerDataByIdent($ident = '', $limit = '', $sort = '', $filter = array())
@@ -313,9 +313,9 @@ class Tracker{
 
 		$query = $global_query.$filter_query." tracker_output.ident <> '' ".$additional_query." ".$orderby_query;
 
-		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
+		$tracker_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
-		return $spotter_array;
+		return $tracker_array;
 	}
 	
 	public function getTrackerDataByDate($date = '', $limit = '', $sort = '',$filter = array())
@@ -371,8 +371,8 @@ class Tracker{
 		}
 
 		$query = $global_query.$filter_query." tracker_output.ident <> '' ".$additional_query.$orderby_query;
-		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
-		return $spotter_array;
+		$tracker_array = $this->getDataFromDB($query, $query_values, $limit_query);
+		return $tracker_array;
 	}
 
 
@@ -485,7 +485,7 @@ class Tracker{
 	
 	
 	/**
-	* Update ident spotter data
+	* Update ident tracker data
 	*
 	* @param String $flightaware_id the ID from flightaware
 	* @param String $ident the flight ident
@@ -509,7 +509,7 @@ class Tracker{
 
 	}
 	/**
-	* Update latest spotter data
+	* Update latest tracker data
 	*
 	* @param String $flightaware_id the ID from flightaware
 	* @param String $ident the flight ident
@@ -534,7 +534,7 @@ class Tracker{
 	}
 
 	/**
-	* Adds a new spotter data
+	* Adds a new tracker data
 	*
 	* @param String $flightaware_id the ID from flightaware
 	* @param String $ident the flight ident
@@ -707,7 +707,7 @@ class Tracker{
 	/**
 	* Gets the aircraft data from the last 20 seconds
 	*
-	* @return Array the spotter data
+	* @return Array the tracker data
 	*
 	*/
 	public function getRealTimeData($q = '')
@@ -738,13 +738,9 @@ class Tracker{
 				WHERE tracker_output.date::timestamp >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '20 SECONDS' ".$additional_query." 
 				AND tracker_output.date::timestamp < CURRENT_TIMESTAMP AT TIME ZONE 'UTC'";
 		}
-		$spotter_array = $this->getDataFromDB($query, array());
-
-		return $spotter_array;
+		$tracker_array = $this->getDataFromDB($query, array());
+		return $tracker_array;
 	}
-	
-	
-	
 
 	/**
 	* Gets all number of flight over countries
@@ -752,7 +748,6 @@ class Tracker{
 	* @return Array the airline country list
 	*
 	*/
-
 	public function countAllTrackerOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
 		global $globalDBdriver, $globalArchive;
@@ -1712,8 +1707,115 @@ q	*
 		return $tracker_array;
 	}
 
+	/**
+	* Gets all the tracker information
+	*
+	* @return Array the tracker information
+	*
+	*/
+	public function searchTrackerData($q = '', $callsign = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '',$filters = array())
+	{
+		global $globalTimezone, $globalDBdriver;
+		date_default_timezone_set('UTC');
+		$query_values = array();
+		$additional_query = '';
+		$filter_query = $this->getFilter($filters,true,true);
+		if ($q != "")
+		{
+			if (!is_string($q))
+			{
+				return false;
+			} else {
+				$q_array = explode(" ", $q);
+				foreach ($q_array as $q_item){
+					$q_item = filter_var($q_item,FILTER_SANITIZE_STRING);
+					$additional_query .= " AND (";
+					if (is_int($q_item)) $additional_query .= "(tracker_output.tracker_id = '".$q_item."') OR ";
+					$additional_query .= "(tracker_output.ident like '%".$q_item."%') OR ";
+					$additional_query .= ")";
+				}
+			}
+		}
+		if ($callsign != "")
+		{
+			$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
+			if (!is_string($callsign))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND tracker_output.ident = :callsign";
+				$query_values = array_merge($query_values,array(':callsign' => $callsign));
+			}
+		}
+		if ($date_posted != "")
+		{
+			$date_array = explode(",", $date_posted);
+			$date_array[0] = filter_var($date_array[0],FILTER_SANITIZE_STRING);
+			$date_array[1] = filter_var($date_array[1],FILTER_SANITIZE_STRING);
+			if ($globalTimezone != '') {
+				date_default_timezone_set($globalTimezone);
+				$datetime = new DateTime();
+				$offset = $datetime->format('P');
+			} else $offset = '+00:00';
+			if ($date_array[1] != "")
+			{
+				$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
+				$date_array[1] = date("Y-m-d H:i:s", strtotime($date_array[1]));
+				if ($globalDBdriver == 'mysql') {
+					$additional_query .= " AND TIMESTAMP(CONVERT_TZ(tracker_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' AND TIMESTAMP(CONVERT_TZ(tracker_output.date,'+00:00', '".$offset."')) <= '".$date_array[1]."' ";
+				} else {
+					$additional_query .= " AND CAST(tracker_output.date AT TIME ZONE INTERVAL ".$offset." AS TIMESTAMP) >= '".$date_array[0]."' AND CAST(tracker_output.date AT TIME ZONE INTERVAL ".$offset." AS TIMESTAMP) <= '".$date_array[1]."' ";
+				}
+			} else {
+				$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
+				if ($globalDBdriver == 'mysql') {
+					$additional_query .= " AND TIMESTAMP(CONVERT_TZ(tracker_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' ";
+				} else {
+					$additional_query .= " AND CAST(tracker_output.date AT TIME ZONE INTERVAL ".$offset." AS TIMESTAMP) >= '".$date_array[0]."' ";
+				}
+			}
+		}
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+			} else $limit_query = "";
+		} else $limit_query = "";
+		if ($sort != "")
+		{
+			$search_orderby_array = $this->getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			if ($origLat != "" && $origLon != "" && $dist != "") {
+				$orderby_query = " ORDER BY distance ASC";
+			} else {
+				$orderby_query = " ORDER BY tracker_output.date DESC";
+			}
+		}
+		if ($origLat != "" && $origLon != "" && $dist != "") {
+			$dist = number_format($dist*0.621371,2,'.',''); // convert km to mile
+			if ($globalDBdriver == 'mysql') {
+				$query="SELECT tracker_output.*, 1.60935*3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - tracker_archive.latitude)*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(tracker_archive.latitude*pi()/180)*POWER(SIN(($origLon-tracker_archive.longitude)*pi()/180/2),2))) as distance 
+				    FROM tracker_archive,tracker_output".$filter_query." tracker_output.famtrackid = tracker_archive.famtrackid AND tracker_output.ident <> '' ".$additional_query."AND tracker_archive.longitude between ($origLon-$dist/cos(radians($origLat))*69) and ($origLon+$dist/cos(radians($origLat)*69)) and tracker_archive.latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+				    AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - tracker_archive.latitude)*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(tracker_archive.latitude*pi()/180)*POWER(SIN(($origLon-tracker_archive.longitude)*pi()/180/2),2)))) < $dist".$orderby_query;
+			} else {
+				$query="SELECT tracker_output.*, 1.60935 * 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(tracker_archive.latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(tracker_archive.latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(tracker_archive.longitude as double precision))*pi()/180/2),2))) as distance 
+				    FROM tracker_archive,tracker_output".$filter_query." tracker_output.famtrackid = tracker_archive.famtrackid AND tracker_output.ident <> '' ".$additional_query."AND CAST(tracker_archive.longitude as double precision) between ($origLon-$dist/cos(radians($origLat))*69) and ($origLon+$dist/cos(radians($origLat))*69) and CAST(tracker_archive.latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+				    AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(tracker_archive.latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(tracker_archive.latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(tracker_archive.longitude as double precision))*pi()/180/2),2)))) < $dist".$filter_query.$orderby_query;
+			}
+		} else {
+			$query  = "SELECT tracker_output.* FROM tracker_output".$filter_query." tracker_output.ident <> '' 
+			    ".$additional_query."
+			    ".$orderby_query;
+		}
+		$tracker_array = $this->getDataFromDB($query, $query_values,$limit_query);
+		return $tracker_array;
+	}
 
-	
 	/**
 	* Gets the short url from bit.ly
 	*
@@ -1726,25 +1828,20 @@ q	*
 		global $globalBitlyAccessToken;
 		
 		if ($globalBitlyAccessToken == '') return $url;
-        
 		$google_url = 'https://api-ssl.bitly.com/v3/shorten?access_token='.$globalBitlyAccessToken.'&longUrl='.$url;
-		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_URL, $google_url);
 		$bitly_data = curl_exec($ch);
 		curl_close($ch);
-		
 		$bitly_data = json_decode($bitly_data);
 		$bitly_url = '';
 		if ($bitly_data->status_txt = "OK"){
 			$bitly_url = $bitly_data->data->url;
 		}
-
 		return $bitly_url;
 	}
-
 
 	public function getOrderBy()
 	{
@@ -1753,6 +1850,5 @@ q	*
 		return $orderby;
 		
 	}
-    
 }
 ?>

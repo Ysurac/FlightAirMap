@@ -103,7 +103,7 @@ if (isset($globalSchedules) && $globalSchedules && $update_db->check_last_schedu
 } elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Schedules are only updated every 15 days.\n";
 
 if (isset($globalArchiveMonths) && $globalArchiveMonths > 0) {
-	echo "Updating statistics and archive old data...";
+	echo "Updating statistics and archive old data...\n";
 	require_once(dirname(__FILE__).'/../require/class.Stats.php');
 	$Stats = new Stats();
 	echo $Stats->addOldStats();

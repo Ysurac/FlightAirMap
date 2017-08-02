@@ -65,14 +65,18 @@ require_once('header.php');
 <?php 
 if ($type == 'aircraft') {
 	$last_update = $Stats->getLastStatsUpdate();
-	//if (isset($last_update[0]['value'])) print '<!-- Last update : '.$last_update[0]['value'].' -->';
-	if (isset($last_update[0]['value'])) {
-		date_default_timezone_set('UTC');
-		$lastupdate = strtotime($last_update[0]['value']);
-		if (isset($globalTimezone) && $globalTimezone != '') date_default_timezone_set($globalTimezone);
-		print '<i>Last update: '.date('Y-m-d G:i:s',$lastupdate).'</i>';
-	}
+} elseif ($type == 'marine') {
+	$last_update = $Stats->getLastStatsUpdate('last_update_stats_marine');
+} elseif ($type == 'tracker') {
+	$last_update = $Stats->getLastStatsUpdate('last_update_stats_tracker');
 }
+if (isset($last_update[0]['value'])) {
+	date_default_timezone_set('UTC');
+	$lastupdate = strtotime($last_update[0]['value']);
+	if (isset($globalTimezone) && $globalTimezone != '') date_default_timezone_set($globalTimezone);
+	print '<i>Last update: '.date('Y-m-d G:i:s',$lastupdate).'</i>';
+}
+
 ?>
     </div>
 <?php 

@@ -4,38 +4,38 @@ require_once(dirname(__FILE__).'/settings.php');
 class Connection{
 	public $db = null;
 	public $dbs = array();
-	public $latest_schema = 46;
-	
+	public $latest_schema = 47;
+
 	public function __construct($dbc = null,$dbname = null,$user = null,$pass = null) {
-	    global $globalNoDB;
-	    if (isset($globalNoDB) && $globalNoDB === TRUE) {
-		$this->db = null;
-	    } else {
-		if ($dbc === null) {
-		    if ($this->db === null && $dbname === null) {
-			if ($user === null && $pass === null) {
-			    $this->createDBConnection();
-			} else {
-			    $this->createDBConnection(null,$user,$pass);
-			}
-		    } else {
-			$this->createDBConnection($dbname);
-		    }
-		} elseif ($dbname === null || $dbname === 'default') {
-	    	    $this->db = $dbc;
-	    	    if ($this->connectionExists() === false) {
-			/*
-			echo 'Restart Connection !!!'."\n";
-			$e = new \Exception;
-			var_dump($e->getTraceAsString());
-			*/
-			$this->createDBConnection();
-		    }
+		global $globalNoDB;
+		if (isset($globalNoDB) && $globalNoDB === TRUE) {
+			$this->db = null;
 		} else {
-		    //$this->connectionExists();
-		    $this->dbs[$dbname] = $dbc;
+			if ($dbc === null) {
+				if ($this->db === null && $dbname === null) {
+					if ($user === null && $pass === null) {
+						$this->createDBConnection();
+					} else {
+						$this->createDBConnection(null,$user,$pass);
+					}
+				} else {
+					$this->createDBConnection($dbname);
+				}
+			} elseif ($dbname === null || $dbname === 'default') {
+				$this->db = $dbc;
+				if ($this->connectionExists() === false) {
+					/*
+					echo 'Restart Connection !!!'."\n";
+					$e = new \Exception;
+					var_dump($e->getTraceAsString());
+					*/
+					$this->createDBConnection();
+				}
+			} else {
+				//$this->connectionExists();
+				$this->dbs[$dbname] = $dbc;
+			}
 		}
-	    }
 	}
 
 	public function db() {
@@ -61,7 +61,6 @@ class Connection{
 	* @return Boolean of the database connection
 	*
 	*/
-
 	public function createDBConnection($DBname = null, $user = null, $pass = null)
 	{
 		global $globalDBdriver, $globalDBhost, $globalDBuser, $globalDBpass, $globalDBname, $globalDebug, $globalDB, $globalDBport, $globalDBTimeOut, $globalDBretry, $globalDBPersistent;

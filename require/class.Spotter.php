@@ -637,7 +637,7 @@ class Spotter{
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.arrival_airport_country like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.registration like '%".$q_item."%') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.owner_name like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.pilot_id like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_output.pilot_id =  '".$q_item."') OR ";
 					$additional_query .= "(spotter_output.pilot_name like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.ident like '%".$q_item."%') OR ";
 					$translate = $Translation->ident2icao($q_item);

@@ -1803,6 +1803,139 @@ q	*
 		return $marine_array;
 	}
 
+	/**
+	* Gets all the tracker information
+	*
+	* @return Array the tracker information
+	*
+	*/
+	public function searchMarineData($q = '', $callsign = '',$mmsi = '', $imo = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '',$filters = array())
+	{
+		global $globalTimezone, $globalDBdriver;
+		date_default_timezone_set('UTC');
+		$query_values = array();
+		$additional_query = '';
+		$filter_query = $this->getFilter($filters,true,true);
+		if ($q != "")
+		{
+			if (!is_string($q))
+			{
+				return false;
+			} else {
+				$q_array = explode(" ", $q);
+				foreach ($q_array as $q_item){
+					$q_item = filter_var($q_item,FILTER_SANITIZE_STRING);
+					$additional_query .= " AND (";
+					if (is_int($q_item)) $additional_query .= "(marine_output.marine_id = '".$q_item."') OR ";
+					if (is_int($q_item)) $additional_query .= "(marine_output.mmsi = '".$q_item."') OR ";
+					if (is_int($q_item)) $additional_query .= "(marine_output.imo = '".$q_item."') OR ";
+					$additional_query .= "(marine_output.ident like '%".$q_item."%') OR ";
+					$additional_query .= ")";
+				}
+			}
+		}
+		if ($callsign != "")
+		{
+			$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
+			if (!is_string($callsign))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND marine_output.ident = :callsign";
+				$query_values = array_merge($query_values,array(':callsign' => $callsign));
+			}
+		}
+		if ($mmsi != "")
+		{
+			$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
+			if (!is_numeric($mmsi))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND marine_output.mmsi = :mmsi";
+				$query_values = array_merge($query_values,array(':mmsi' => $mmsi));
+			}
+		}
+		if ($imo != "")
+		{
+			$imo = filter_var($imo,FILTER_SANITIZE_STRING);
+			if (!is_numeric($imo))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND marine_output.imo = :imo";
+				$query_values = array_merge($query_values,array(':imo' => $imo));
+			}
+		}
+		if ($date_posted != "")
+		{
+			$date_array = explode(",", $date_posted);
+			$date_array[0] = filter_var($date_array[0],FILTER_SANITIZE_STRING);
+			$date_array[1] = filter_var($date_array[1],FILTER_SANITIZE_STRING);
+			if ($globalTimezone != '') {
+				date_default_timezone_set($globalTimezone);
+				$datetime = new DateTime();
+				$offset = $datetime->format('P');
+			} else $offset = '+00:00';
+			if ($date_array[1] != "")
+			{
+				$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
+				$date_array[1] = date("Y-m-d H:i:s", strtotime($date_array[1]));
+				if ($globalDBdriver == 'mysql') {
+					$additional_query .= " AND TIMESTAMP(CONVERT_TZ(marine_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' AND TIMESTAMP(CONVERT_TZ(marine_output.date,'+00:00', '".$offset."')) <= '".$date_array[1]."' ";
+				} else {
+					$additional_query .= " AND CAST(marine_output.date AT TIME ZONE INTERVAL ".$offset." AS TIMESTAMP) >= '".$date_array[0]."' AND CAST(marine_output.date AT TIME ZONE INTERVAL ".$offset." AS TIMESTAMP) <= '".$date_array[1]."' ";
+				}
+			} else {
+				$date_array[0] = date("Y-m-d H:i:s", strtotime($date_array[0]));
+				if ($globalDBdriver == 'mysql') {
+					$additional_query .= " AND TIMESTAMP(CONVERT_TZ(marine_output.date,'+00:00', '".$offset."')) >= '".$date_array[0]."' ";
+				} else {
+					$additional_query .= " AND CAST(marine_output.date AT TIME ZONE INTERVAL ".$offset." AS TIMESTAMP) >= '".$date_array[0]."' ";
+				}
+			}
+		}
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+			} else $limit_query = "";
+		} else $limit_query = "";
+		if ($sort != "")
+		{
+			$search_orderby_array = $this->getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			if ($origLat != "" && $origLon != "" && $dist != "") {
+				$orderby_query = " ORDER BY distance ASC";
+			} else {
+				$orderby_query = " ORDER BY marine_output.date DESC";
+			}
+		}
+		if ($origLat != "" && $origLon != "" && $dist != "") {
+			$dist = number_format($dist*0.621371,2,'.',''); // convert km to mile
+			if ($globalDBdriver == 'mysql') {
+				$query="SELECT marine_output.*, 1.60935*3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - marine_archive.latitude)*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(marine_archive.latitude*pi()/180)*POWER(SIN(($origLon-marine_archive.longitude)*pi()/180/2),2))) as distance 
+				    FROM marine_archive,marine_output".$filter_query." marine_output.fammarine_id = marine_archive.fammarine_id AND marine_output.ident <> '' ".$additional_query."AND marine_archive.longitude between ($origLon-$dist/cos(radians($origLat))*69) and ($origLon+$dist/cos(radians($origLat)*69)) and marine_archive.latitude between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+				    AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - marine_archive.latitude)*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(marine_archive.latitude*pi()/180)*POWER(SIN(($origLon-marine_archive.longitude)*pi()/180/2),2)))) < $dist".$orderby_query;
+			} else {
+				$query="SELECT marine_output.*, 1.60935 * 3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(marine_archive.latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(marine_archive.latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(marine_archive.longitude as double precision))*pi()/180/2),2))) as distance 
+				    FROM marine_archive,marine_output".$filter_query." marine_output.fammarine_id = marine_archive.fammarine_id AND marine_output.ident <> '' ".$additional_query."AND CAST(marine_archive.longitude as double precision) between ($origLon-$dist/cos(radians($origLat))*69) and ($origLon+$dist/cos(radians($origLat))*69) and CAST(marine_archive.latitude as double precision) between ($origLat-($dist/69)) and ($origLat+($dist/69)) 
+				    AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(marine_archive.latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(marine_archive.latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(marine_archive.longitude as double precision))*pi()/180/2),2)))) < $dist".$filter_query.$orderby_query;
+			}
+		} else {
+			$query  = "SELECT marine_output.* FROM marine_output".$filter_query." marine_output.ident <> '' 
+			    ".$additional_query."
+			    ".$orderby_query;
+		}
+		$marine_array = $this->getDataFromDB($query, $query_values,$limit_query);
+		return $marine_array;
+	}
+
 	public function getOrderBy()
 	{
 		$orderby = array("aircraft_asc" => array("key" => "aircraft_asc", "value" => "Aircraft Type - ASC", "sql" => "ORDER BY marine_output.aircraft_icao ASC"), "aircraft_desc" => array("key" => "aircraft_desc", "value" => "Aircraft Type - DESC", "sql" => "ORDER BY marine_output.aircraft_icao DESC"),"manufacturer_asc" => array("key" => "manufacturer_asc", "value" => "Aircraft Manufacturer - ASC", "sql" => "ORDER BY marine_output.aircraft_manufacturer ASC"), "manufacturer_desc" => array("key" => "manufacturer_desc", "value" => "Aircraft Manufacturer - DESC", "sql" => "ORDER BY marine_output.aircraft_manufacturer DESC"),"airline_name_asc" => array("key" => "airline_name_asc", "value" => "Airline Name - ASC", "sql" => "ORDER BY marine_output.airline_name ASC"), "airline_name_desc" => array("key" => "airline_name_desc", "value" => "Airline Name - DESC", "sql" => "ORDER BY marine_output.airline_name DESC"), "ident_asc" => array("key" => "ident_asc", "value" => "Ident - ASC", "sql" => "ORDER BY marine_output.ident ASC"), "ident_desc" => array("key" => "ident_desc", "value" => "Ident - DESC", "sql" => "ORDER BY marine_output.ident DESC"), "airport_departure_asc" => array("key" => "airport_departure_asc", "value" => "Departure Airport - ASC", "sql" => "ORDER BY marine_output.departure_airport_city ASC"), "airport_departure_desc" => array("key" => "airport_departure_desc", "value" => "Departure Airport - DESC", "sql" => "ORDER BY marine_output.departure_airport_city DESC"), "airport_arrival_asc" => array("key" => "airport_arrival_asc", "value" => "Arrival Airport - ASC", "sql" => "ORDER BY marine_output.arrival_airport_city ASC"), "airport_arrival_desc" => array("key" => "airport_arrival_desc", "value" => "Arrival Airport - DESC", "sql" => "ORDER BY marine_output.arrival_airport_city DESC"), "date_asc" => array("key" => "date_asc", "value" => "Date - ASC", "sql" => "ORDER BY marine_output.date ASC"), "date_desc" => array("key" => "date_desc", "value" => "Date - DESC", "sql" => "ORDER BY marine_output.date DESC"),"distance_asc" => array("key" => "distance_asc","value" => "Distance - ASC","sql" => "ORDER BY distance ASC"),"distance_desc" => array("key" => "distance_desc","value" => "Distance - DESC","sql" => "ORDER BY distance DESC"));

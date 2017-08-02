@@ -112,6 +112,12 @@ location /search {
     rewrite ^/search/georss(/?)$ /search-georss.php last;
     rewrite ^/search(/?)$ /search.php last;
 }
+location /tracker/search {
+    rewrite ^/tracker/search(/?)$ /search.php?tracker last;
+}
+location /marine/search {
+    rewrite ^/marine/search(/?)$ /search.php?marine last;
+}
 location /airport {
     rewrite ^/airport/statistics/aircraft/([^/]+)(/?)$ /airport-statistics-aircraft.php?airport=$1 last;
     rewrite ^/airport/statistics/registration/([^/]+)(/?)$ /airport-statistics-registration.php?airport=$1 last;
