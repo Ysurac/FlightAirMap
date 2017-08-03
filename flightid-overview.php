@@ -431,7 +431,7 @@ if (!empty($spotter_array))
 			print '</div>';
 		}
 
-		if ($spotter_item['waypoints'] != "" || $spotter_item['route_stop'] != "")
+		if ($spotter_item['waypoints'] != "" || (isset($spotter_item['route_stop']) && $spotter_item['route_stop'] != ""))
 		{
 			print '<div class="detail coordinates">';
 			print '<div class="title">'._("Route").'</div>';

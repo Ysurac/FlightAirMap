@@ -25,7 +25,7 @@ if (!empty($spotter_array))
 	if (empty($all_manufacturers)) $all_manufacturers = $Spotter->getAllManufacturers();
 	foreach($all_manufacturers as $all_manufacturer)
 	{
-		if($GET['aircraft_manufacturer'] == strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])))
+		if($manufacturer == ucwords($all_manufacturer['aircraft_manufacturer']))
 		{
 			print '<option value="'.strtolower(str_replace(" ", "-", $all_manufacturer['aircraft_manufacturer'])).'" selected="selected">'.$all_manufacturer['aircraft_manufacturer'].'</option>';
 		} else {
