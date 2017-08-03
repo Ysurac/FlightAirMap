@@ -2110,11 +2110,11 @@ class Stats {
 	}
 
 	public function addOldStats() {
-		global $globalAircraft, $globalMarine, $globalTracker, $globalDebug, $globalArchiveMonths, $globalArchive, $globalArchiveYear, $globalDBdriver, $globalStatsFilters,$globalDeleteLastYearStats,$globalStatsReset,$globalStatsResetYear, $globalAccidents;
+		global $globalMasterServer, $globalAircraft, $globalMarine, $globalTracker, $globalDebug, $globalArchiveMonths, $globalArchive, $globalArchiveYear, $globalDBdriver, $globalStatsFilters,$globalDeleteLastYearStats,$globalStatsReset,$globalStatsResetYear, $globalAccidents;
 		$Common = new Common();
 		$Connection = new Connection($this->db);
 		date_default_timezone_set('UTC');
-		if (isset($globalMarine) && $globalMarine) {
+		if ((isset($globalMarine) && $globalMarine) || (isset($globalMasterServer) && $globalMasterServer)) {
 			$last_update = $this->getLastStatsUpdate('last_update_stats_marine');
 			if ($globalDebug) echo '!!! Update Marine stats !!!'."\n";
 			if (isset($last_update[0]['value'])) {
@@ -2170,7 +2170,7 @@ class Stats {
 			date_default_timezone_set('UTC');
 			$this->addLastStatsUpdate('last_update_stats_marine',date('Y-m-d G:i:s'));
 		}
-		if (isset($globalTracker) && $globalTracker) {
+		if ((isset($globalTracker) && $globalTracker) || (isset($globalMasterServer) && $globalMasterServer)) {
 			$last_update = $this->getLastStatsUpdate('last_update_stats_tracker');
 			if ($globalDebug) echo '!!! Update tracker stats !!!'."\n";
 			if (isset($last_update[0]['value'])) {
@@ -2226,7 +2226,7 @@ class Stats {
 			$this->addLastStatsUpdate('last_update_stats_tracker',date('Y-m-d G:i:s'));
 		}
 
-		if (isset($globalAircraft) && $globalAircraft) {
+		if (!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft) || (isset($globalMasterServer) && $globalMasterServer)) {
 			$last_update = $this->getLastStatsUpdate('last_update_stats');
 			if ($globalDebug) echo '!!! Update aicraft stats !!!'."\n";
 			if (isset($last_update[0]['value'])) {
