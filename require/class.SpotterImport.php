@@ -375,7 +375,7 @@ class SpotterImport {
 			return '';
 		}
 
-		if (isset($line['registration']) && $line['registration'] != '' && $line['registration'] != 'z.NO-REG') {
+		if (isset($line['registration']) && $line['registration'] != '' && $line['registration'] != 'z.NO-REG' && $line['registration'] != 'NA') {
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('registration' => $line['registration']));
 		}
 		if (isset($line['waypoints']) && $line['waypoints'] != '') {
