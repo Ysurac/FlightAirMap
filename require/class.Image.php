@@ -173,7 +173,7 @@ class Image {
 		$Spotter = new Spotter($this->db);
 		if (!isset($globalIVAO)) $globalIVAO = FALSE;
 		$aircraft_registration = filter_var($aircraft_registration,FILTER_SANITIZE_STRING);
-		if ($aircraft_registration != '' && (!isset($globalVA) || $globalVA !== TRUE)) {
+		if ($aircraft_registration != '' && $aircraft_registration != 'NA' && (!isset($globalVA) || $globalVA !== TRUE)) {
 			if (strpos($aircraft_registration,'/') !== false) return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 			$aircraft_registration = urlencode(trim($aircraft_registration));
 			$aircraft_info = $Spotter->getAircraftInfoByRegistration($aircraft_registration);
