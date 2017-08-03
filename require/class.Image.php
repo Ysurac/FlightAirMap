@@ -24,7 +24,7 @@ class Image {
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 		$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 		$reg = $registration;
-		if ($reg == '' && $aircraft_icao != '') $reg = $aircraft_icao.$airline_icao;
+		if (($reg == '' || $reg == 'NA') && $aircraft_icao != '') $reg = $aircraft_icao.$airline_icao;
 		$reg = trim($reg);
 		$query  = "SELECT spotter_image.image, spotter_image.image_thumbnail, spotter_image.image_source, spotter_image.image_source_website,spotter_image.image_copyright, spotter_image.registration 
 			FROM spotter_image 
