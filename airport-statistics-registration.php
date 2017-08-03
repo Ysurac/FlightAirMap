@@ -102,7 +102,7 @@ if (!empty($airport_array))
 			print '<td>';
 			print $aircraft_item['registration_count'];
 			print '</td>';
-			print '<td><a href="'.$globalURL.'/search?registration='.$aircraft_item['registration'].'&airport='.$_GET['airport'].'">'._("Search flights").'</a></td>';
+			print '<td><a href="'.$globalURL.'/search?registration='.$aircraft_item['registration'].'&airport='.$airport.'">'._("Search flights").'</a></td>';
 			print '</tr>';
 			$i++;
 		}

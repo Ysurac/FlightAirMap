@@ -21,13 +21,13 @@ if ($spotter_array[0]['registration'] != "")
 		      <?php _("Airport"); ?> <span class="caret"></span>
 		    </a>
 		    <ul class="dropdown-menu" role="menu">
-		      <li><a href="<?php print $globalURL; ?>/registration/statistics/departure-airport/<?php print $_GET['registration']; ?>"><?php echo _("Departure Airport"); ?></a></li>
-		      <li><a href="<?php print $globalURL; ?>/registration/statistics/departure-airport-country/<?php print $_GET['registration']; ?>"><?php echo _("Departure Airport by Country"); ?></a></li>
-			  <li><a href="<?php print $globalURL; ?>/registration/statistics/arrival-airport/<?php print $_GET['registration']; ?>"><?php echo _("Arrival Airport"); ?></a></li>
-			  <li><a href="<?php print $globalURL; ?>/registration/statistics/arrival-airport-country/<?php print $_GET['registration']; ?>"><?php echo _("Arrival Airport by Country"); ?></a></li>
+		      <li><a href="<?php print $globalURL; ?>/registration/statistics/departure-airport/<?php print $registration; ?>"><?php echo _("Departure Airport"); ?></a></li>
+		      <li><a href="<?php print $globalURL; ?>/registration/statistics/departure-airport-country/<?php print $registration; ?>"><?php echo _("Departure Airport by Country"); ?></a></li>
+			  <li><a href="<?php print $globalURL; ?>/registration/statistics/arrival-airport/<?php print $registration; ?>"><?php echo _("Arrival Airport"); ?></a></li>
+			  <li><a href="<?php print $globalURL; ?>/registration/statistics/arrival-airport-country/<?php print $registration; ?>"><?php echo _("Arrival Airport by Country"); ?></a></li>
 		    </ul>
 		</li>
-		<li><a href="<?php print $globalURL; ?>/registration/statistics/route/<?php print $_GET['registration']; ?>" <?php if (strtolower($current_page) == "registration-statistics-route"){ print 'class="active"'; } ?>><?php echo _("Route"); ?></a></li>
-		<li><a href="<?php print $globalURL; ?>/registration/statistics/time/<?php print $_GET['registration']; ?>" <?php if (strtolower($current_page) == "registration-statistics-time"){ print 'class="active"'; } ?>><?php echo _("Time"); ?></a></li>
+		<li><a href="<?php print $globalURL; ?>/registration/statistics/route/<?php print $registration; ?>" <?php if (strtolower($current_page) == "registration-statistics-route"){ print 'class="active"'; } ?>><?php echo _("Route"); ?></a></li>
+		<li><a href="<?php print $globalURL; ?>/registration/statistics/time/<?php print $registration; ?>" <?php if (strtolower($current_page) == "registration-statistics-time"){ print 'class="active"'; } ?>><?php echo _("Time"); ?></a></li>
 	</ul>
 </div>

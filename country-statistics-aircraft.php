@@ -8,7 +8,7 @@ if (!isset($_GET['country'])) {
 }
 $Spotter = new Spotter();
 
-$country = ucwords(str_replace("-", " ", $_GET['country']));
+$country = ucwords(str_replace("-", " ", urldecode(filter_input(INPUT_GET,'country',FILTER_SANITIZE_STRING))));
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $spotter_array = $Spotter->getSpotterDataByCountry($country, "0,1", $sort);
 

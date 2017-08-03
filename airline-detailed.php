@@ -28,7 +28,7 @@ if (!isset($_GET['airline'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$airline = filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
+	$airline = urldecode(filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING));
 	$page_url = $globalURL.'/airline/'.$airline;
 	$alliance = false;
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);

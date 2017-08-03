@@ -7,7 +7,7 @@ if (!isset($_GET['owner'])) {
         die();
 }
 $Spotter = new Spotter();
-$owner = filter_input(INPUT_GET,'owner',FILTER_SANITIZE_STRING);
+$owner = urldecode(filter_input(INPUT_GET,'owner',FILTER_SANITIZE_STRING));
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
 $month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
@@ -78,7 +78,7 @@ if (!empty($spotter_array))
 			print '<td>';
 			print $aircraft_item['registration_count'];
 			print '</td>';
-			print '<td><a href="'.$globalURL.'/search?registration='.$aircraft_item['registration'].'&owner='.$_GET['owner'].'">'._("Search flights").'</a></td>';
+			print '<td><a href="'.$globalURL.'/search?registration='.$aircraft_item['registration'].'&owner='.$owner.'">'._("Search flights").'</a></td>';
 			print '</tr>';
 			$i++;
 		}

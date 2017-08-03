@@ -8,7 +8,7 @@ if (!isset($_GET['aircraft_manufacturer'])) {
         die();
 }
 $Spotter = new Spotter();
-$manufacturer = ucwords(str_replace("-", " ", filter_input(INPUT_GET,'aircraft_manufacturer',FILTER_SANITIZE_STRING)));
+$manufacturer = ucwords(str_replace("-", " ", urldecode(filter_input(INPUT_GET,'aircraft_manufacturer',FILTER_SANITIZE_STRING))));
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 
 $spotter_array = $Spotter->getSpotterDataByManufacturer($manufacturer,"0,1", $sort);
@@ -76,7 +76,7 @@ if (!empty($spotter_array))
 			print $route_item['route_count'];
 			print '</td>';
 			print '<td>';
-			print '<a href="'.$globalURL.'/search?manufacturer='.$_GET['aircraft_manufacturer'].'&departure_airport_route='.$route_item['airport_departure_icao'].'&arrival_airport_route='.$route_item['airport_arrival_icao'].'">'._("Search Flights").'</a>';
+			print '<a href="'.$globalURL.'/search?manufacturer='.$manufacturer.'&departure_airport_route='.$route_item['airport_departure_icao'].'&arrival_airport_route='.$route_item['airport_arrival_icao'].'">'._("Search Flights").'</a>';
 			print '</td>';
 			print '<td>';
 			print '<a href="'.$globalURL.'/route/'.$route_item['airport_departure_icao'].'/'.$route_item['airport_arrival_icao'].'">'._("Route History").'</a>';

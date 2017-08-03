@@ -60,7 +60,7 @@ if (!empty($airport_array))
 	print '<h2>'._("Most Common Aircraft Manufacturer").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common Aircraft Manufacturer of flights to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
 
-	$manufacturers_array = $Spotter->countAllAircraftManufacturerByAirport($_GET['airport']);
+	$manufacturers_array = $Spotter->countAllAircraftManufacturerByAirport($airport);
 	if (!empty($manufacturers_array))
 	{
 		print '<div class="table-responsive">';
@@ -83,7 +83,7 @@ if (!empty($airport_array))
 			print '<td>';
 			print $manufacturer_item['aircraft_manufacturer_count'];
 			print '</td>';
-			print '<td><a href="'.$globalURL.'/search?manufacturer='.strtolower(str_replace(" ", "-", $manufacturer_item['aircraft_manufacturer'])).'&airport='.$_GET['airport'].'">'._("Search flights").'</a></td>';
+			print '<td><a href="'.$globalURL.'/search?manufacturer='.strtolower(str_replace(" ", "-", $manufacturer_item['aircraft_manufacturer'])).'&airport='.$airport.'">'._("Search flights").'</a></td>';
 			print '</tr>';
 			$i++;
 		}

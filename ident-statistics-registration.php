@@ -73,7 +73,7 @@ if (!empty($spotter_array))
 			print '<td>';
 			print $aircraft_item['registration_count'];
 			print '</td>';
-			print '<td><a href="'.$globalURL.'/search?registration='.$aircraft_item['registration'].'&callsign='.$_GET['ident'].'">'._("Search flights").'</a></td>';
+			print '<td><a href="'.$globalURL.'/search?registration='.$aircraft_item['registration'].'&callsign='.$ident.'">'._("Search flights").'</a></td>';
 			print '</tr>';
 			$i++;
 		}

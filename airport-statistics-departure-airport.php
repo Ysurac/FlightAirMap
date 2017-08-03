@@ -133,7 +133,7 @@ if (!empty($airport_array))
 		print '<td>';
 		print $airport_item['airport_departure_icao_count'];
 		print '</td>';
-		print '<td><a href="'.$globalURL.'/search?departure_airport_route='.$airport_item['airport_departure_icao'].'&arrival_airport_route='.$_GET['airport'].'">'._("Search flights").'</a></td>';
+		print '<td><a href="'.$globalURL.'/search?departure_airport_route='.$airport_item['airport_departure_icao'].'&arrival_airport_route='.$airport.'">'._("Search flights").'</a></td>';
 		print '</tr>';
 		$i++;
 	}

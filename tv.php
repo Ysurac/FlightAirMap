@@ -147,16 +147,20 @@ function getNewDataTV()
    
 <?php
 	if (isset($_GET['image']) && isset($_GET['q'])) {
+	$image = filter_input(INPUT_GET,'image',FILTER_SANITIZE_STRING);
+	$q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
 ?>
-   $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&image=<?php print $_GET['image']; ?>&q=<?php print $_GET['q']; ?>", function( data ) {
+   $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&image=<?php print $image; ?>&q=<?php print $q; ?>", function( data ) {
 <?php
 	} elseif (isset($_GET['image'])) {
+	$image = filter_input(INPUT_GET,'image',FILTER_SANITIZE_STRING);
 ?>
-   $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&image=<?php print $_GET['image']; ?>", function( data ) {
+   $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&image=<?php print $image; ?>", function( data ) {
 <?php
 	} elseif (isset($_GET['q'])) {
+	$q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
 ?>
-   $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&q=<?php print $_GET['q']; ?>", function( data ) {
+   $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&q=<?php print $q; ?>", function( data ) {
 <?php
 	} else {
 ?>

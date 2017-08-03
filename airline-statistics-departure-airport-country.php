@@ -7,7 +7,7 @@ if (!isset($_GET['airline'])) {
         header('Location: '.$globalURL.'/airline');
         die();
 }
-$airline = filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING);
+$airline = urldecode(filter_input(INPUT_GET,'airline',FILTER_SANITIZE_STRING));
 $Spotter = new Spotter();
 $alliance = false;
 if (strpos($airline,'alliance_') !== FALSE) {
