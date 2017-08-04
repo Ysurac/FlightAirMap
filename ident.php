@@ -8,6 +8,10 @@ if ($ident != '')
 	if (isset($_GET['marine'])) header('Location: '.$globalURL.'/marine/ident/'.$ident);
 	else header('Location: '.$globalURL.'/ident/'.$ident);
 } else {
-	header('Location: '.$globalURL);
+	if ($globalURL == '') {
+		header('Location: /');
+	} else {
+		header('Location: '.$globalURL);
+	}
 }
 ?>

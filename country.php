@@ -1,12 +1,16 @@
 <?php
 require_once('require/class.Connection.php');
-require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
 
 if (isset($_POST['country']) && $_POST['country'] != "")
 {
-	header('Location: '.$globalURL.'/country/'.$_POST['country']);
+	$country = filter_input(INPUT_POST,'country',FILTER_SANITIZE_STRING);
+	header('Location: '.$globalURL.'/country/'.$country);
 } else {
-	header('Location: '.$globalURL);
+	if ($globalURL == '') {
+		header('Location: /');
+	} else {
+		header('Location: '.$globalURL);
+	}
 }
 ?>

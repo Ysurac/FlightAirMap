@@ -8,6 +8,10 @@ if ($_POST['registration'] != "")
 	$registration = filter_input(INPUT_POST,'registration',FILTER_SANITIZE_STRING);
 	header('Location: '.$globalURL.'/registration/'.$registration);
 } else {
-	header('Location: '.$globalURL);
+	if ($globalURL == '') {
+		header('Location: /');
+	} else {
+		header('Location: '.$globalURL);
+	}
 }
 ?>

@@ -12,6 +12,10 @@ if ($_POST['aircraft_manufacturer'] != "")
 	$aircraft_manufacturer = filter_input(INPUT_GET,'aircraft_manufacturer',FILTER_SANITIZE_STRING);
 	header('Location: '.$globalURL.'/manufacturer/'.$aircraft_manufacturer);
 } else {
-	header('Location: '.$globalURL);
+	if ($globalURL == '') {
+		header('Location: /');
+	} else {
+		header('Location: '.$globalURL);
+	}
 }
 ?>

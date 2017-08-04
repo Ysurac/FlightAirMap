@@ -9,6 +9,10 @@ if ($_POST['departure_airport'] != "" || $_POST['arrival_airport'])
 	$arrival_airport = filter_input(INPUT_POST,'arrival_airport',FILTER_SANITIZE_STRING);
 	header('Location: '.$globalURL.'/route/'.$departure_airport.'/'.$arrival_airport);
 } else {
-	header('Location: '.$globalURL);
+	if ($globalURL == '') {
+		header('Location: /');
+	} else {
+		header('Location: '.$globalURL);
+	}
 }
 ?>
