@@ -4939,7 +4939,7 @@ class Spotter{
 		$filter_query = $this->getFilter($filters,true,true);
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
-		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count, countries.iso AS airline_country_iso3
+		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count, countries.iso3 AS airline_country_iso3
 		 		FROM spotter_output,countries".$filter_query." spotter_output.airline_country <> '' AND (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao) AND countries.name = spotter_output.airline_country 
 				GROUP BY spotter_output.airline_country, countries.iso3
 				ORDER BY airline_country_count DESC
