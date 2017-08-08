@@ -286,22 +286,24 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			} elseif ($marine) {
 				$output.= '"type": "marine"';
 			} else {
-				$aircraft_icao = $spotter_item['aircraft_icao'];
-				$ident = $spotter_item['ident'];
-				if ($ident != '') {
-					if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
-						$airline_icao = substr($ident, 0, 2);
-					} elseif (is_numeric(substr(substr($ident, 0, 4), -1, 1))) {
-						$airline_icao = substr($ident, 0, 3);
-					}
-					if (isset($airline_icao)) {
-						$imagefile = $aircraft_icao.'-'.$airline_icao.'.png';
-						if (file_exists(dirname(__FILE__).'/models/gltf2/liveries/'.$imagefile)) {
-							$output.= '"liveries": "'.$globalURL.'/models/gltf2/liveries/'.$imagefile.'",';
+				if (isset($globalMap3DLiveries) && $globalMap3DLiveries) {
+					$aircraft_icao = $spotter_item['aircraft_icao'];
+					$ident = $spotter_item['ident'];
+					if ($ident != '') {
+						if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
+							$airline_icao = substr($ident, 0, 2);
+						} elseif (is_numeric(substr(substr($ident, 0, 4), -1, 1))) {
+							$airline_icao = substr($ident, 0, 3);
+						}
+						if (isset($airline_icao)) {
+							$imagefile = $aircraft_icao.'-'.$airline_icao.'.png';
+							if (file_exists(dirname(__FILE__).'/models/gltf2/liveries/'.$imagefile)) {
+								$output.= '"liveries": "'.$globalURL.'/models/gltf2/liveries/'.$imagefile.'",';
+							}
 						}
 					}
+					if ($ident != '') $output.= '"ident": "'.$ident.'",';
 				}
-				if ($ident != '') $output.= '"ident": "'.$ident.'",';
 				$output.= '"gltf2": %gltf2%,';
 				$output.= '"type": "flight"';
 			}
@@ -356,7 +358,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			} else {
 				if (isset($spotter_item['aircraft_icao'])) {
 					$aircraft_icao = $spotter_item['aircraft_icao'];
-					if (isset($modelsdb2[$aircraft_icao])) {
+					if (isset($modelsdb2[$aircraft_icao]) && $aircraft_icao != '') {
 						$gltf2 = true;
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/gltf2/'.$modelsdb2[$aircraft_icao].'","scale" : 1.0,"minimumPixelSize": 20';
 						$output .= ',"heightReference": "'.$heightrelative.'"';
@@ -365,7 +367,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 							$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
 						}
     						$output .= '},';
-					} elseif (isset($modelsdb[$aircraft_icao])) {
+					} elseif (isset($modelsdb[$aircraft_icao]) && $aircraft_icao != '') {
 						$output .= '"model": {"gltf" : "'.$globalURL.'/models/'.$modelsdb[$aircraft_icao].'","scale" : 1.0,"minimumPixelSize": 20';
 						$output .= ',"heightReference": "'.$heightrelative.'"';
 						if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] == 'true' && isset($_COOKIE['IconColor'])) {

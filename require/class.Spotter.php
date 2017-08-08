@@ -5687,7 +5687,7 @@ class Spotter{
 			if($row['registration'] != "")
 			{
 				$image_array = $Image->getSpotterImage($row['registration']);
-				$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+				if (isset($image_array[0]['image_thumbnail'])) $temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
 			}
 			$temp_array['registration_count'] = $row['registration_count'];
 			$aircraft_array[] = $temp_array;

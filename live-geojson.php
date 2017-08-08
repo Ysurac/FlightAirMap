@@ -395,10 +395,10 @@ $output = '{';
 						if ($currenttime != '') {
 							if (strtotime($spotter_item['date']) < $currenttime) {
 								if (isset($archivespeed)) {
-									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],$archivespeed,$currenttime-strtotime($spotter_item['date'])+$globalMapRefresh);
+									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],$archivespeed,($currenttime-strtotime($spotter_item['date'])+$globalMapRefresh));
 									$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
 								} elseif ($usenextlatlon) {
-									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],1,$currenttime-strtotime($spotter_item['date'])+$globalMapRefresh);
+									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],1,($currenttime-strtotime($spotter_item['date'])+$globalMapRefresh));
 									$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
 								}
 							}
