@@ -18,6 +18,9 @@ function displayDataSat(data) {
 			break;
 		}
 	}
+	if (typeof dsn != 'undefined') {
+		data.clock.currentTime = viewer.clock.currentTime;
+	}
 	var entities = data.entities.values;
 	for (var i = 0; i < entities.length; i++) {
 		var entity = entities[i];

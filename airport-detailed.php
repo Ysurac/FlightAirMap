@@ -32,8 +32,8 @@ if (!isset($_GET['airport'])){
 	$airport = $airport_icao;
 	$page_url = $globalURL.'/airport/'.$airport_icao;
 	
-	if (isset($_GET['sort'])) {
-		$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
+	if ($sort != '') {
 		$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, $sort);
 	} else {
 		$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, '');

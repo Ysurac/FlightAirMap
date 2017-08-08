@@ -420,7 +420,7 @@ class aprs {
 			    
 		            $body_parse = substr($body_parse,6);
 		    }
-		    
+		    echo 'bodyparse : '.$body_parse."\n";
 		    if (preg_match('/CS=([0-9A-Z_]*)/',$body_parse,$matches)) {
 			$result['ident'] = str_replace('_',' ',$matches[1]);
 		    }
@@ -731,4 +731,8 @@ class APRSMarine extends APRS {
 		}
 	}
 }
+//$aprs = new aprs();
+//print_r($aprs->parse('MARINE>APRS,TCPIP*,qAS,FAMAIS-1:;366577000*145838h4739.48N/12222.14Ws222/000/A=000000 !W23! SI=5'));
+//print_r($aprs->parse('MARINE>APRS,TCPIP*,qAS,FAMAIS-1:;413905111*121816h7959.29S/02626.78Es105/001/A=000000 !W15! CS=GUIPINGNANHUO5599/TI=70'));
+
 ?>

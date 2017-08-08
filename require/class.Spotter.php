@@ -5182,7 +5182,7 @@ class Spotter{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT spotter_output.aircraft_icao, COUNT(spotter_output.aircraft_icao) AS aircraft_icao_count, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer 
-		    FROM spotter_output ".$filter_query." spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> ''";
+		    FROM spotter_output ".$filter_query." spotter_output.aircraft_name  <> '' AND spotter_output.aircraft_icao  <> '' AND spotter_output.aircraft_icao  <> 'NA'";
 		if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
 				$query .= ' AND spotter_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH)';

@@ -180,8 +180,8 @@ class Stats {
 				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
 			}
 			if ($year == '' && $month == '') {
-				if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC LIMIT 10 OFFSET 0";
-				else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC";
+				if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND aircraft_icao <> 'NA' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> ''  AND aircraft_icao <> 'NA' AND stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC";
 				try {
 					$sth = $this->db->prepare($query);
 					$sth->execute(array(':filter_name' => $filter_name));
@@ -192,8 +192,8 @@ class Stats {
 			} else $all = array();
 		} else {
 			if ($year == '' && $month == '') {
-				if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC LIMIT 10 OFFSET 0";
-				else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC";
+				if ($limit) $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND aircraft_icao <> 'NA' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT aircraft_icao, cnt AS aircraft_icao_count, aircraft_name, aircraft_manufacturer FROM stats_aircraft WHERE aircraft_name <> '' AND aircraft_icao <> '' AND aircraft_icao <> 'NA' AND stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_icao_count DESC";
 				try {
 					$sth = $this->db->prepare($query);
 					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));

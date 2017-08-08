@@ -13,19 +13,22 @@ $(".showdetails").on("click",".close",function(){
 
 function displayMarineData(data) {
 	var dsn;
-	var flightcnt = 0;
+	var marinecnt = 0;
 	for (var i =0; i < viewer.dataSources.length; i++) {
 		if (viewer.dataSources.get(i).name == 'marine') {
 			dsn = i;
 			break;
 		}
 	}
+	if (typeof dsn != 'undefined') {
+		data.clock.currentTime = viewer.clock.currentTime;
+	}
 	var entities = data.entities.values;
 	for (var i = 0; i < entities.length; i++) {
 		var entity = entities[i];
 		if (typeof dsn != 'undefined') var existing = viewer.dataSources.get(dsn);
 		else var existing;
-		flightcnt = entity.properties.valueOf('flightcnt')._flightcnt._value;
+		marinecnt = entity.properties.flightcnt;
 		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
 		entity.orientation = orientation;
 	}
@@ -36,7 +39,7 @@ function displayMarineData(data) {
 		for (var i = 0; i < viewer.dataSources.get(dsn).entities.values.length; i++) {
 			var entity = viewer.dataSources.get(dsn).entities.values[i];
 			var entityid = entity.id;
-			var lastupdateentity = entity.properties.valueOf('lastupdate')._lastupdate._value;
+			var lastupdateentity = entity.properties.lastupdate;
 			<?php 
 			    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
 			?>
@@ -61,11 +64,11 @@ function displayMarineData(data) {
 		$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
 		$("#aircraft_ident").attr('class',flightaware_id);
 	}
-	var flightvisible = viewer.dataSources.get(dsn).entities.values.length;
-	if (flightcnt != 0 && flightcnt != flightvisible && flightcnt > flightvisible) {
-		$("#ibxmarine").html('<h4><?php echo _("Marines detected"); ?></h4><br /><b>'+flightvisible+'/'+flightcnt+'</b>');
+	var marinevisible = viewer.dataSources.get(dsn).entities.values.length;
+	if (marinecnt != 0 && marinecnt != marinevisible && marinecnt > marinevisible) {
+		$("#ibxmarine").html('<h4><?php echo _("Marines detected"); ?></h4><br /><b>'+marinevisible+'/'+marinecnt+'</b>');
 	} else {
-		$("#ibxmarine").html('<h4><?php echo _("Marines detected"); ?></h4><br /><b>'+flightvisible+'</b>');
+		$("#ibxmarine").html('<h4><?php echo _("Marines detected"); ?></h4><br /><b>'+marinevisible+'</b>');
 	}
 };
 

@@ -176,6 +176,9 @@ if (isset($globalMap3D) && $globalMap3D) {
 			$update_db->insert_last_satellite_update();
 		}
 		$update_db->update_models();
+		if (isset($globalMap3DLiveries) && $globalMap3DLiveries) {
+			$update_db->update_liveries();
+		}
 		if (isset($globalSatellite) && $globalSatellite) {
 			$update_db->update_space_models();
 		}

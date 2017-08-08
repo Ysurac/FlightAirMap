@@ -650,6 +650,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="checkbox" name="map3ddefault" id="map3ddefault" value="map3ddefault"<?php if (isset($globalMap3Ddefault) && $globalMap3Ddefault) { ?> checked="checked"<?php } ?> />
 			</p>
 			<p>
+				<label for="map3dliveries">Display real liveries</label>
+				<input type="checkbox" name="map3dliveries" id="map3dliveries" value="map3dliveries"<?php if (isset($globalMap3DLiveries) && $globalMap3DLiveries) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
 				<label for="map3dtileset">3D Tiles</label>
 				<input type="text" name="map3dtileset" id="map3dtileset" value="<?php if (isset($globalMap3DTiles) && $globalMap3DTiles) { print $globalMap3DTiles; } ?>" />
 				<p class="help-block">Set the url of your 3D Tiles</p>
@@ -1329,6 +1333,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMap3Ddefault' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMap3Ddefault' => 'FALSE'));
+	}
+	$map3dliveries = filter_input(INPUT_POST,'map3dliveries',FILTER_SANITIZE_STRING);
+	if ($map3dliveries == 'map3dliveries') {
+		$settings = array_merge($settings,array('globalMap3DLiveries' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMap3DLiveries' => 'FALSE'));
 	}
 	$translate = filter_input(INPUT_POST,'translate',FILTER_SANITIZE_STRING);
 	if ($translate == 'translate') {

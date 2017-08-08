@@ -122,6 +122,55 @@ $(".showdetails").on("click",".close",function(){
 	return false;
 })
 
+var previoustexture;
+function changeLiveries(primitive) {
+	if (primitive instanceof Cesium.Model) {
+		//console.log(primitive);
+		//if (typeof primitive.gltf.images != 'undefined') {
+		//}
+		//console.log(primitive._rendererResources.textures);
+		//var imagePath = '/models/gltf2/livreries/A320-AFR.png';
+		if (primitive.id.properties.gltf2 && typeof primitive.id.properties.liveries != 'undefined') {
+			//console.log(primitive);
+			//primitive.cacheKey = primitive.id.id;
+			//console.log(primitive);
+			console.log('load liveries: '+primitive.id.properties.liveries+' for ident: '+primitive.id.properties.ident.toString());
+			var imagePath = primitive.id.properties.liveries.toString();
+			previoustexture = texture;
+			try {
+				var texture = primitive._rendererResources.textures[0];
+				Cesium.loadImage(imagePath).then(function(imageData) {
+					texture.copyFrom(imageData);
+					texture.generateMipmap(); // Also replaces textures in mipmap
+				}).otherwise(function(e) {
+					console.log(e);
+				});
+			} catch(e) { console.log(e); }
+		} else {
+			console.log('No liveries available');
+		}
+	}
+}
+function resetLiveries(primitive) {
+	if (typeof previoustexture != 'undefined') {
+		if (primitive instanceof Cesium.Model) {
+			var texture = primitive._rendererResources.textures[0];
+			texture.copyFrom(previoustexture);
+			texture.generateMipmap(); // Also replaces textures in mipmap
+		} else {
+			for (var k = 0; k < viewer.scene.primitives.length; k++) {
+				if (viewer.scene.primitives[k].cacheKey = primitive.cacheKey) {
+				var texture = viewer.scene.primitives[k]._rendererResources.textures[0];
+				texture.copyFrom(previoustexture);
+				texture.generateMipmap(); // Also replaces textures in mipmap
+				break;
+				}
+			}
+		}
+	}
+}
+
+
 var lastupdate;
 function displayData(data) {
 	var flightcnt = 0;
@@ -132,13 +181,20 @@ function displayData(data) {
 			break;
 		}
 	}
+	if (typeof dsn != 'undefined') {
+		//if (Cesium.JulianDate.greaterThan(viewer.clock.currentTime,data.clock.currentTime)) {
+			data.clock.currenTime = viewer.clock.currentTime;
+		//}
+	}
 	var entities = data.entities.values;
 	for (var i = 0; i < entities.length; i++) {
 		var fromground = 0;
 		var entity = entities[i];
-		flightcnt = entity.properties.valueOf('flightcnt')._flightcnt._value;
+		
+		flightcnt = entity.properties.flightcnt;
 		if (typeof dsn != 'undefined') var existing = viewer.dataSources.get(dsn);
 		else var existing;
+		
 		//	var billboard = new Cesium.BillboardGraphics();
 		//	var iconURLpath = '/getImages.php?color=FF0000&resize=15&filename='+aircraft_shadow+'&heading='+heading;
 		//	entity.point = undefined;
@@ -207,9 +263,10 @@ function displayData(data) {
 		for (var i = 0; i < viewer.dataSources.get(dsn).entities.values.length; i++) {
 			var entity = viewer.dataSources.get(dsn).entities.values[i];
 			var entityid = entity.id;
-			var lastupdateentity = entity.properties.valueOf('lastupdate')._lastupdate._value;
+			var lastupdateentity = entity.properties.lastupdate;
 			<?php 
 			    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+			    // Remove flights not in latest CZML
 			?>
 			if (lastupdateentity != lastupdate) {
 				viewer.dataSources.get(dsn).entities.remove(entity);
@@ -227,6 +284,17 @@ function displayData(data) {
 			?>
 		}
 	}
+	
+	/*
+	// Add liveries to model if available
+	var primitives = viewer.scene.primitives;
+	for (var i = 0; i < primitives.length; i++) {
+		var primitive = primitives.get(i);
+		changeLireries(primitive);
+	}
+	*/
+	
+	
 	var MapTrack = getCookie('MapTrack');
 	if (MapTrack != '') {
 		viewer.trackedEntity = viewer.dataSources.get(dsn).entities.getById(MapTrack);
@@ -507,6 +575,7 @@ setInterval(function(){update_polarLayer()},<?php if (isset($globalMapRefresh)) 
 		}
 ?>
 		
+var lastpick;
 var handler_aircraft = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 handler_aircraft.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
@@ -543,6 +612,15 @@ handler_aircraft.setInputAction(function(click) {
 			pnew.path.show = true;
 			$("#aircraft_ident").attr('class',flightaware_id);
 			//lastid = flightaware_id;
+			<?php
+				if (isset($globalMap3DLiveries) && $globalMap3DLiveries) {
+			?>
+			if (typeof lastpick != 'undefined') resetLiveries(lastpick.primitive);
+			changeLiveries(pickedObject.primitive);
+			lastpick = pickedObject;
+			<?php
+				}
+			?>
 		} else if (type == 'atc') {
 			$(".showdetails").load("<?php print $globalURL; ?>/atc-data.php?"+Math.random()+"&atcid="+encodeURI(pickedObject.id.ref)+"&atcident="+encodeURI(pickedObject.id.ident));
 		} else if (type == 'notam') {

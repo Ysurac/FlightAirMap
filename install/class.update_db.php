@@ -2741,6 +2741,74 @@ class update_db {
 		if ($error != '') {
 			return $error;
 		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "glTF 2.0 Models from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.com/data/models/gltf2/models.md5sum',$tmp_dir.'modelsgltf2.md5sum');
+		if (file_exists($tmp_dir.'modelsgltf2.md5sum')) {
+			if ($globalDebug) echo "Check files...\n";
+			$newmodelsdb = array();
+			if (($handle = fopen($tmp_dir.'modelsgltf2.md5sum','r')) !== FALSE) {
+				while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+					$model = trim($row[2]);
+					$newmodelsdb[$model] = trim($row[0]);
+				}
+			}
+			$modelsdb = array();
+			if (file_exists(dirname(__FILE__).'/../models/gltf2/models.md5sum')) {
+				if (($handle = fopen(dirname(__FILE__).'/../models/gltf2/models.md5sum','r')) !== FALSE) {
+					while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+						$model = trim($row[2]);
+						$modelsdb[$model] = trim($row[0]);
+					}
+				}
+			}
+			$diff = array_diff($newmodelsdb,$modelsdb);
+			foreach ($diff as $key => $value) {
+				if ($globalDebug) echo 'Downloading model '.$key.' ...'."\n";
+				update_db::download('http://data.flightairmap.com/data/models/gltf2/'.$key,dirname(__FILE__).'/../models/gltf2/'.$key);
+				
+			}
+			update_db::download('http://data.flightairmap.com/data/models/gltf2/models.md5sum',dirname(__FILE__).'/../models/gltf2/models.md5sum');
+		} else $error = "File ".$tmp_dir.'modelsgltf2.md5sum'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+
+	public static function update_liveries() {
+		global $tmp_dir, $globalDebug;
+		$error = '';
+		if ($globalDebug) echo "Liveries from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.com/data/models/gltf2/liveries/liveries.md5sum',$tmp_dir.'liveries.md5sum');
+		if (file_exists($tmp_dir.'liveries.md5sum')) {
+			if ($globalDebug) echo "Check files...\n";
+			$newmodelsdb = array();
+			if (($handle = fopen($tmp_dir.'liveries.md5sum','r')) !== FALSE) {
+				while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+					$model = trim($row[2]);
+					$newmodelsdb[$model] = trim($row[0]);
+				}
+			}
+			$modelsdb = array();
+			if (file_exists(dirname(__FILE__).'/../models/gltf2/liveries/liveries.md5sum')) {
+				if (($handle = fopen(dirname(__FILE__).'/../models/gltf2/liveries/liveries.md5sum','r')) !== FALSE) {
+					while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+						$model = trim($row[2]);
+						$modelsdb[$model] = trim($row[0]);
+					}
+				}
+			}
+			$diff = array_diff($newmodelsdb,$modelsdb);
+			foreach ($diff as $key => $value) {
+				if ($globalDebug) echo 'Downloading liveries '.$key.' ...'."\n";
+				update_db::download('http://data.flightairmap.com/data/models/gltf2/liveries/'.$key,dirname(__FILE__).'/../models/gltf2/liveries/'.$key);
+				
+			}
+			update_db::download('http://data.flightairmap.com/data/models/gltf2/liveries/liveries.md5sum',dirname(__FILE__).'/../models/gltf2/liveries/liveries.md5sum');
+		} else $error = "File ".$tmp_dir.'models.md5sum'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
 		return '';
 	}
 
