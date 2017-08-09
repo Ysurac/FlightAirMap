@@ -25,7 +25,7 @@ if (!empty($spotter_array))
 	//print '<div><span class="label">'._("Ident").'</span>'.$spotter_array[0]['ident'].'</div>';
 	//print '<div><span class="label">'._("Airline").'</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
 	print '</div>';
-	include('owner-sub-menu.php');
+	include('pilot-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Departure Airports by Country").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows all departure airports by Country of origin of flights piloted by <strong>%s</strong>."),$spotter_array[0]['pilot_name']).'</p>';

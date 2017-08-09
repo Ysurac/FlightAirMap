@@ -3,8 +3,6 @@ require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
 require_once('require/class.Stats.php');
 require_once('require/class.Language.php');
-require_once('require/class.Translation.php');
-//require_once('require/class.SpotterLive.php');
 require_once('require/class.SpotterArchive.php');
 
 if (!isset($_GET['pilot'])){
@@ -12,7 +10,6 @@ if (!isset($_GET['pilot'])){
 } else {
 	$Spotter = new Spotter();
 	$SpotterArchive = new SpotterArchive();
-	$Translation = new Translation();
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
@@ -132,7 +129,7 @@ if (!isset($_GET['pilot'])){
 		if ($duration != '0') print '<div><span class="label">'._("Total flights spotted duration").'</span>'.$duration.'</div>';
 		print '</div>';
 	
-		include('owner-sub-menu.php');
+		include('pilot-sub-menu.php');
 		print '<div class="table column">';
 		print '<p>'.sprintf(_("The table below shows the detailed information of all flights with the pilot <strong>%s</strong>."),$spotter_array[0]['pilot_name']).'</p>';
 

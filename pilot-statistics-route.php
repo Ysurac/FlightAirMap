@@ -26,7 +26,7 @@ if (!empty($spotter_array))
 //	print '<div><span class="label">'._("Airline").'</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
 	print '</div>';
 
-	include('owner-sub-menu.php');
+	include('pilot-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Routes").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common routes from flights piloted by <strong>%s</strong>."),$spotter_array[0]['pilot_name']).'</p>';
