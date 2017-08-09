@@ -27,12 +27,12 @@ For trackers, APRS is a supported source, so cars, trucks, mobile phones,... can
 [https://www.flightairmap.com/](https://www.flightairmap.com/)
 
 ## Demo
-* From ADS-B : [https://real.flightairmap.com/](https://real.flightairmap.com/)
-* From Open Glider Network : [https://ogn.flightairmap.com/](https://ogn.flightairmap.com/)
-* From IVAO : [https://ivao.flightairmap.com/](https://ivao.flightairmap.com/)
-* From VATSIM : [https://vatsim.flightairmap.com/](https://vatsim.flightairmap.com/)
-* From APRS Trackers : [https://tracker.flightairmap.com/](https://tracker.flightairmap.com/)
-* From Vessels : [https://marine.flightairmap.com/](https://marine.flightairmap.com/)
+* From ADS-B, real flights: [https://real.flightairmap.com/](https://real.flightairmap.com/)
+* From Open Glider Network: [https://ogn.flightairmap.com/](https://ogn.flightairmap.com/)
+* From IVAO, virtual flights: [https://ivao.flightairmap.com/](https://ivao.flightairmap.com/)
+* From VATSIM, virtual flights: [https://vatsim.flightairmap.com/](https://vatsim.flightairmap.com/)
+* From APRS Trackers: [https://tracker.flightairmap.com/](https://tracker.flightairmap.com/)
+* From AIS, real vessels: [https://marine.flightairmap.com/](https://marine.flightairmap.com/)
 
 ## Documentation
 
