@@ -456,6 +456,7 @@ require_once('header.php');
 <?php
 	if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 ?>
+		    <li><input type="checkbox" name="useliveries" value="1" onclick="useLiveries(this)" <?php if (isset($_COOKIE['UseLiveries']) && $_COOKIE['UseLiveries'] == 'true') print 'checked'; ?> ><?php echo _("Use airlines liveries"); ?></li>
 		    <li><input type="checkbox" name="aircraftcolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Aircraft color"); ?></li>
 		    <li><?php echo _("Aircraft icon color:"); ?>
 			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print 'ff0000'; ?>">

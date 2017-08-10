@@ -615,9 +615,11 @@ handler_aircraft.setInputAction(function(click) {
 			<?php
 				if (isset($globalMap3DLiveries) && $globalMap3DLiveries) {
 			?>
-			if (typeof lastpick != 'undefined') resetLiveries(lastpick.primitive);
-			changeLiveries(pickedObject.primitive);
-			lastpick = pickedObject;
+			if (getCookie('UseLiveries') == 'true') {
+				if (typeof lastpick != 'undefined') resetLiveries(lastpick.primitive);
+				changeLiveries(pickedObject.primitive);
+				lastpick = pickedObject;
+			}
 			<?php
 				}
 			?>
@@ -723,5 +725,8 @@ function iconColor(color) {
 function iconColorForce(val) {
     document.cookie =  'IconColorForce='+val.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     if (getCookie('IconColor') != '') document.cookie =  'IconColor=ff0000; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}
+function useLiveries(val) {
+    document.cookie =  'UseLiveries='+val.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 }
 
