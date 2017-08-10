@@ -863,7 +863,7 @@ foreach($spotter_array as $spotter_item)
 				print '<br /><span class="airport_time">'.$departure_airport_time.'</span>'."\n";
 			}
 			if ($spotter_item['departure_airport'] != 'NA') {
-				if (isset($spotter_item['latitude']) && isset($spotter_item['longitude'])) {
+				if (isset($spotter_item['latitude']) && $spotter_item['latitude'] != 0 && isset($spotter_item['longitude']) && $spotter_item['longitude'] != 0) {
 					require_once(dirname(__FILE__).'/require/class.Spotter.php');
 					$Spotter = new Spotter();
 					if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '' && isset($spotter_item['last_longitude']) && $spotter_item['last_longitude'] != '') {
@@ -934,7 +934,7 @@ foreach($spotter_array as $spotter_item)
 				print '<br /><span class="airport_time">'.$arrival_airport_time.'</span>'."\n";
 			}
 			if (!isset($spotter_item['real_arrival_airport']) && $spotter_item['arrival_airport'] != 'NA') {
-				if (isset($spotter_item['latitude']) && isset($spotter_item['longitude'])) {
+				if (isset($spotter_item['latitude']) && $spotter_item['latitude'] != 0 && isset($spotter_item['longitude']) && $spotter_item['longitude'] != 0) {
 					if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '' && isset($spotter_item['last_longitude']) && $spotter_item['last_longitude'] != '') {
 						$latitude = $spotter_item['last_latitude'];
 						$longitude = $spotter_item['last_longitude'];
