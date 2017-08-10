@@ -37,7 +37,9 @@ if (!empty($spotter_array))
 	$airport_data = '';
 	foreach($airport_airport_array as $airport_item)
 	{
-		$airport_data .= '[ "'.$airport_item['airport_arrival_icao_count'].'", "'.$airport_item['airport_arrival_icao'].'",'.$airport_item['airport_arrival_latitude'].','.$airport_item['airport_arrival_longitude'].'],';
+		if (isset($airport_item['airport_arrival_latitude']) && isset($airport_item['airport_arrival_longitude'])) {
+			$airport_data .= '[ "'.$airport_item['airport_arrival_icao_count'].'", "'.$airport_item['airport_arrival_icao'].'",'.$airport_item['airport_arrival_latitude'].','.$airport_item['airport_arrival_longitude'].'],';
+		}
 	}
 	$airport_data = substr($airport_data, 0, -1);
 	print $airport_data;

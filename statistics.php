@@ -51,7 +51,7 @@ require_once('header.php');
 <link href="<?php echo $globalURL; ?>/css/c3.min.css" rel="stylesheet" type="text/css">
 <!--<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>-->
 <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>-->
-<script type="text/javascript" src="<?php echo $globalURL; ?>/js/d3.min.js"></script>
+<script type="text/javascript" src="<?php echo $globalURL; ?>/js/d3.min.js"></script>-
 <script type="text/javascript" src="<?php echo $globalURL; ?>/js/c3.min.js"></script>
 <script type="text/javascript" src="<?php echo $globalURL; ?>/js/d3pie.min.js"></script>
 <script type="text/javascript" src="<?php echo $globalURL; ?>/js/radarChart.js"></script>
@@ -737,7 +737,9 @@ if ($type == 'aircraft') {
 		$airport_data = '';
 		foreach($airport_airport_array2 as $airport_item)
 		{
-			$airport_data .= '[ "'.$airport_item['airport_arrival_icao_count'].'", "'.$airport_item['airport_arrival_icao'].'",'.$airport_item['airport_arrival_latitude'].','.$airport_item['airport_arrival_longitude'].'],';
+			if (isset($airport_item['airport_arrival_longitude']) && isset($airport_item['airport_arrival_latitude'])) {
+				$airport_data .= '[ "'.$airport_item['airport_arrival_icao_count'].'", "'.$airport_item['airport_arrival_icao'].'",'.$airport_item['airport_arrival_latitude'].','.$airport_item['airport_arrival_longitude'].'],';
+			}
 		}
 		$airport_data = substr($airport_data, 0, -1);
 		print $airport_data;
