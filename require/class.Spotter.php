@@ -8681,6 +8681,7 @@ class Spotter{
 		{
 			$temp_array['airport_departure_country_count'] = $row['airport_departure_country_count'];
 			$temp_array['airport_departure_country'] = $row['departure_airport_country'];
+			$temp_array['airport_departure_country_iso3'] = $row['airport_departure_country_iso3'];
           
 			$airport_array[] = $temp_array;
 		}
