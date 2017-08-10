@@ -544,21 +544,23 @@ if (!empty($spotter_array))
 			print '<div>';
 			$Common = new Common();
 			$departure_airport_info = $Spotter->getAllAirportInfo($spotter_item['departure_airport']);
-			if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
-				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
-					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'nm').' nm';
-				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
-					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'mi').' mi';
+			if (count($departure_airport_info) > 0) {
+				if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
+					if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+						print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'nm').' nm';
+					} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+						print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'mi').' mi';
+					} else {
+						print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'km').' km';
+					}
 				} else {
-					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'km').' km';
-				}
-			} else {
-				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
-					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'nm').' nm';
-				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
-					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'mi').' mi';
-				} else {
-					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'km').' km';
+					if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+						print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'nm').' nm';
+					} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+						print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'mi').' mi';
+					} else {
+						print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$departure_airport_info[0]['latitude'],$departure_airport_info[0]['longitude'],'km').' km';
+					}
 				}
 			}
 			print '</div>';

@@ -114,7 +114,7 @@ if (!empty($spotter_array) || $alliance === true)
 	$country_data = '';
 	foreach($airport_country_array as $airport_item)
 	{
-		$country_data .= '[ "'.$airport_item['departure_airport_country_iso3'].'",'.$airport_item['airport_departure_country_count'].'],';
+		$country_data .= '[ "'.$airport_item['airport_departure_country_iso3'].'",'.$airport_item['airport_departure_country_count'].'],';
 	}
 	$country_data = substr($country_data, 0, -1);
 	print $country_data;
@@ -164,7 +164,7 @@ if (!empty($spotter_array) || $alliance === true)
 			print '<tr>';
 			print '<td><strong>'.$i.'</strong></td>';
 			print '<td>';
-			print '<a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $airport_item['departure_airport_country'])).'">'.$airport_item['departure_airport_country'].'</a>';
+			print '<a href="'.$globalURL.'/country/'.strtolower(str_replace(" ", "-", $airport_item['airport_departure_country'])).'">'.$airport_item['airport_departure_country'].'</a>';
 			print '</td>';
 			print '<td>';
 			print $airport_item['airport_departure_country_count'];

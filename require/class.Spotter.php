@@ -2105,11 +2105,10 @@ class Spotter{
 		$query_values = array(':airport' => $airport_icao);
 		$sth = $this->db->prepare($query);
 		$sth->execute($query_values);
-		$row = $sth->fetch(PDO::FETCH_ASSOC);
-		$sth->closeCursor();
+		$row = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (count($row) > 0) {
-			$airport_latitude = $row['latitude'];
-			$airport_longitude = $row['longitude'];
+			$airport_latitude = $row[0]['latitude'];
+			$airport_longitude = $row[0]['longitude'];
 			$Common = new Common();
 			return $Common->distance($latitude,$longitude,$airport_latitude,$airport_longitude);
 		} else return '';
@@ -4812,7 +4811,7 @@ class Spotter{
 		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT COUNT(*) AS nb 
-				FROM spotter_output".$filter_query." (spotter_output.pilot_name = :pilot OR spotter_output.pilod_id = :pilot)";
+				FROM spotter_output".$filter_query." (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot)";
 		$query_values = array();
 		$query_values = array_merge($query_values,array(':pilot' => $pilot));
 		$sth = $this->db->prepare($query);
