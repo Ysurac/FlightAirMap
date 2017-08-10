@@ -756,7 +756,7 @@ foreach($spotter_array as $spotter_item)
 		// Aircraft ident
 		print '<td class="ident">'."\n";
 		if ($type == 'aircraft') {
-			if ($spotter_item['ident'] != "")
+			if (isset($spotter_item['ident']) && $spotter_item['ident'] != "")
 			{
 				if ($spotter_item['ident'] == "NA") {
 					print '<a href="'.$globalURL.'/ident/'.$spotter_item['ident'].'">'._("Not available").'</a>'."\n";
@@ -767,7 +767,7 @@ foreach($spotter_array as $spotter_item)
 				print '<a href="'.$globalURL.'/ident/NA">'._("Not available").'</a>'."\n";
 			}
 		} elseif ($type == 'marine') {
-			if ($spotter_item['ident'] != "")
+			if (isset($spotter_item['ident']) && $spotter_item['ident'] != "")
 			{
 				if ($spotter_item['ident'] == "NA") {
 					print '<a href="'.$globalURL.'/marine/ident/'.$spotter_item['ident'].'">'._("Not available").'</a>'."\n";
@@ -778,7 +778,7 @@ foreach($spotter_array as $spotter_item)
 				print '<a href="'.$globalURL.'/marine/ident/NA">'._("Not available").'</a>'."\n";
 			}
 		} elseif ($type == 'tracker') {
-			if ($spotter_item['ident'] != "")
+			if (isset($spotter_item['ident']) && $spotter_item['ident'] != "")
 			{
 				if ($spotter_item['ident'] == "NA") {
 					print '<a href="'.$globalURL.'/tracker/ident/'.$spotter_item['ident'].'">'._("Not available").'</a>'."\n";
