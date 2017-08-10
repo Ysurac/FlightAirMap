@@ -13,7 +13,7 @@
 	<?php
 	    }
 	?>
-	<span>Developed in Barrie by <a href="http://mtru.nz/" target="_blank">Mario Trunz</a> & at <a href="http://www.zugaina.com" target="_blank">Zugaina</a> by Ycarus</span> - <span><a href="<?php if (isset($globalURL)) print $globalURL; ?>/about#source">Source &amp; Credits</a></span> - <span><a href="https://www.flightairmap.fr/" target="_blank">Get source code</a></span>
+	<span>Developed in Barrie by <a href="http://mtru.nz/" target="_blank">Mario Trunz</a> & at <a href="http://www.zugaina.com" target="_blank">Zugaina</a> by Ycarus</span> - <span><a href="<?php if (isset($globalURL)) print $globalURL; ?>/about#source">Source &amp; Credits</a></span> - <span><a href="https://www.flightairmap.com/" target="_blank">Get source code</a></span>
 </footer>
 
 <div class="notifications bottom-left"></div>
