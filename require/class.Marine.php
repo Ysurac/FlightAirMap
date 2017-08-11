@@ -464,6 +464,24 @@ class Marine{
 		else return array();
 	}
 
+	/**
+	* Add identity
+	*
+	*/
+	public function addIdentity($mmsi,$imo,$ident,$callsign,$type)
+	{
+		$mmsi = filter_var($mmsi,FILTER_SANITIZE_NUMBER_INT);
+		$imo = filter_var($imo,FILTER_SANITIZE_NUMBER_INT);
+		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
+		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
+		$type = filter_var($type,FILTER_SANITIZE_STRING);
+		if (empty($this->getIdentity)) {
+			$query  = "INSERT INTO marine_identity (mmsi,imo,call_sign,ship_name,type) VALUES (:mmsi,:imo,:call_sign,:ship_name,:type)";
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':mmsi' => $mmsi,':imo' => $imo,':call_sign' => $callsign,':ship_name' => $ident,':type' => $type));
+		}
+	}
+
 	/*
 	* Gets a list of all dates
 	*
@@ -506,8 +524,7 @@ class Marine{
 
 		return $date_array;
 	}
-	
-	
+
 	/**
 	* Update ident tracker data
 	*
@@ -515,22 +532,18 @@ class Marine{
 	* @param String $ident the marine ident
 	* @return String success or false
 	*
-	*/	
+	*/
 	public function updateIdentMarineData($fammarine_id = '', $ident = '',$fromsource = NULL)
 	{
-
 		$query = 'UPDATE marine_output SET ident = :ident WHERE fammarine_id = :fammarine_id';
-                $query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident);
-
+		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch (PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
-		
 		return "success";
-
 	}
 
 	/**
@@ -541,7 +554,7 @@ class Marine{
 	* @param String $status the marine status
 	* @return String success or false
 	*
-	*/	
+	*/
 	public function updateStatusMarineData($fammarine_id = '', $status_id = '',$status = '')
 	{
 

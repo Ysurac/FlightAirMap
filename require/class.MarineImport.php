@@ -187,6 +187,7 @@ class MarineImport {
 				$fromsource = NULL;
 				$result = $Marine->updateIdentMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$fromsource);
 				if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
+				$Marine->addIdentity($this->all_tracked[$id]['mmsi'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['ident'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['type']);
 				$Marine->db = null;
 				if ($globalDebugTimeElapsed) echo 'Time elapsed for update identspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 			    }
