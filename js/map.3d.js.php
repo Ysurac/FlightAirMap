@@ -411,11 +411,21 @@ var viewer = new Cesium.Viewer('live-map', {
 // Set initial camera position
 var camera = viewer.camera;
 <?php
-	if (isset($globalCenterLatitude) && isset($globalCenterLongitude) && $globalCenterLatitude != '' && $globalCenterLongitude != '') {
-		$zoom = $globalLiveZoom*1000000.0;
+	if (isset($_COOKIE['lastcentercoord']) || (isset($globalCenterLatitude) && isset($globalCenterLongitude) && $globalCenterLatitude != '' && $globalCenterLongitude != '')) {
+		if (isset($_COOKIE['lastcentercoord'])) {
+			$lastcentercoord = explode(',',$_COOKIE['lastcentercoord']);
+			if (!isset($lastcentercoord[3])) $zoom = $lastcentercoord[2]*1000000.0;
+			else $zoom = $lastcentercoord[3];
+			$viewcenterlatitude = $lastcentercoord[0];
+			$viewcenterlongitude = $lastcentercoord[1];
+		} else {
+			$zoom = $globalLiveZoom*1000000.0;
+			$viewcenterlatitude = $globalCenterLatitude;
+			$viewcenterlongitude = $globalCenterLongitude;
+		}
 ?>
 camera.setView({
-	destination : Cesium.Cartesian3.fromDegrees(<?php echo $globalCenterLongitude; ?>,<?php echo $globalCenterLatitude; ?>, <?php echo $zoom; ?>),
+	destination : Cesium.Cartesian3.fromDegrees(<?php echo $viewcenterlongitude; ?>,<?php echo $viewcenterlatitude; ?>, <?php echo $zoom; ?>),
 });
 <?php
 
@@ -540,4 +550,6 @@ viewer.camera.moveEnd.addEventListener(function() {
 <?php
 	}
 ?>
+	var position = viewer.camera.positionCartographic;
+	createCookie('lastcentercoord',Cesium.Math.toDegrees(position.latitude)+','+Cesium.Math.toDegrees(position.longitude)+',8,'+position.height,2);
 });
