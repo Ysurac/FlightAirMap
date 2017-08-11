@@ -110,6 +110,19 @@ $( document ).ready(function() {
 	map = L.map('archive-map', { zoomControl:false }).setView([<?php if (isset($latitude)) print $latitude; else print $globalCenterLatitude; ?>,<?php if (isset($longitude)) print $longitude; else print $globalCenterLongitude; ?>], zoom);
 <?php
 	} else {
+		if ((isset($globalCenterLatitude) && $globalCenterLatitude != '' && isset($globalCenterLongitude) && $globalCenterLongitude != '') || isset($_COOKIE['lastcentercoord'])) {
+			if (isset($_COOKIE['lastcentercoord'])) {
+				$lastcentercoord = explode(',',$_COOKIE['lastcentercoord']);
+				$viewcenterlatitude = $lastcentercoord[0];
+				$viewcenterlongitude = $lastcentercoord[1];
+				$viewzoom = $lastcentercoord[2];
+			} else {
+				$viewcenterlatitude = $globalCenterLatitude;
+				$viewcenterlongitude = $globalCenterLongitude;
+				$viewzoom = $globalLiveZoom;
+			}
+		}
+
 ?>
 $( document ).ready(function() {
 	//setting the zoom functionality for either mobile or desktop
@@ -120,16 +133,16 @@ $( document ).ready(function() {
 	     || navigator.userAgent.match(/BlackBerry/i)
 	     || navigator.userAgent.match(/Windows Phone/i))
 	{
-		var zoom = <?php if (isset($globalLiveZoom)) print $globalLiveZoom-1; else print '8'; ?>;
+		var zoom = <?php if (isset($viewzoom) && $viewzoom == $globalLiveZoom) print $viewzoom-1; elseif (isset($viewzoom)) print $viewzoom; else print '8'; ?>;
 	} else {
-		var zoom = <?php if (isset($globalLiveZoom)) print $globalLiveZoom; else print '9'; ?>;
+		var zoom = <?php if (isset($viewzoom)) print $viewzoom; else print '9'; ?>;
 	}
 
 	//create the map
 <?php
-		if (isset($globalCenterLatitude) && $globalCenterLatitude != '' && isset($globalCenterLongitude) && $globalCenterLongitude != '') {
+		if (isset($viewcenterlatitude) && isset($viewcenterlongitude)) {
 ?>
-	map = L.map('live-map', { zoomControl:false }).setView([<?php print $globalCenterLatitude; ?>,<?php print $globalCenterLongitude; ?>], zoom);
+	map = L.map('live-map', { zoomControl:false }).setView([<?php print $viewcenterlatitude; ?>,<?php print $viewcenterlongitude; ?>], zoom);
 	//map = WE.map('live-map');
 <?php
 		} else {
@@ -382,6 +395,7 @@ $( document ).ready(function() {
 			map.removeLayer(locationsLayer);
 			update_locationsLayer();
 		//}
+		createCookie('lastcentercoord',map.getCenter().lat+','+map.getCenter().lng+','+map.getZoom(),2);
 	});
 update_locationsLayer();
 setInterval(function(){update_locationsLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);

@@ -74,7 +74,7 @@ require_once('header.php');
     
     <h3>Models credits</h3>
     <p>Credits for aircrafts models are <a href="models/sources.txt">here</a>, spaces models <a href="models/space/sources.txt">here</a> and vehicules models <a href="models/vehicules/sources.txt">here</a></p>
-
+    <p>Sources of models are available <a href="https://github.com/Ysurac/FlightAirMap-3dmodels">here</a>.</p>
 </div>
 
 <?php

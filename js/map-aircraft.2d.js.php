@@ -251,6 +251,7 @@ function getLiveData(click)
 	}
 ?>
 	layer_data_p = L.layerGroup();
+	var now = new Date();
 <?php
 	if (isset($ident)) {
 ?>
@@ -267,7 +268,6 @@ function getLiveData(click)
 	} else {
 ?>
 	if (click == 1) {
-		var now = new Date();
 		var defurl = "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&currenttime="+now.getTime();
 	} else {
 		var defurl = "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className;
