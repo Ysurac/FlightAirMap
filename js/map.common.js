@@ -87,6 +87,11 @@ function identfilter() {
     //document.cookie =  'filter_ident='+ident+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
     createCookie('filter_ident',ident,2);
 }
+function mmsifilter() {
+    var ident = $("#mmsifilter").value;
+    //document.cookie =  'filter_ident='+ident+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
+    createCookie('filter_mmsi',ident,2);
+}
 function removefilters() {
     // Get an array of all cookie names (the regex matches what we don't want)
     var cookieNames = document.cookie.split(/=[^;]*(?:;\s*|$)/);
