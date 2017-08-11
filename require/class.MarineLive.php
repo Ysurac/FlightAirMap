@@ -48,6 +48,9 @@ class MarineLive {
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
 			$filter_query_where .= " AND ident = '".$filter['ident']."'";
 		}
+		if (isset($filter['mmsi']) && !empty($filter['mmsi'])) {
+			$filter_query_where .= " AND mmsi = '".$filter['mmsi']."'";
+		}
 		if ((isset($filter['year']) && $filter['year'] != '') || (isset($filter['month']) && $filter['month'] != '') || (isset($filter['day']) && $filter['day'] != '')) {
 			$filter_query_date = '';
 			
@@ -463,13 +466,27 @@ class MarineLive {
 	{
 		$Marine = new Marine($this->db);
 		date_default_timezone_set('UTC');
-
 		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
-                $query  = 'SELECT marine_live.* FROM marine_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM marine_live l WHERE l.ident = :ident AND l.date <= :date GROUP BY l.fammarine_id) s on marine_live.fammarine_id = s.fammarine_id AND marine_live.date = s.maxdate ORDER BY marine_live.date DESC';
-
-                $date = date('c',$date);
+		$query  = 'SELECT marine_live.* FROM marine_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM marine_live l WHERE l.ident = :ident AND l.date <= :date GROUP BY l.fammarine_id) s on marine_live.fammarine_id = s.fammarine_id AND marine_live.date = s.maxdate ORDER BY marine_live.date DESC';
+		$date = date('c',$date);
 		$spotter_array = $Marine->getDataFromDB($query,array(':ident' => $ident,':date' => $date));
+		return $spotter_array;
+	}
 
+	/**
+	* Gets all the spotter information based on a particular MMSI
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public function getDateLiveMarineDataByMMSI($mmsi,$date)
+	{
+		$Marine = new Marine($this->db);
+		date_default_timezone_set('UTC');
+		$mmsi = filter_var($mmsi, FILTER_SANITIZE_NUMBER_INT);
+		$query  = 'SELECT marine_live.* FROM marine_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM marine_live l WHERE l.mmsi = :mmsi AND l.date <= :date GROUP BY l.fammarine_id) s on marine_live.fammarine_id = s.fammarine_id AND marine_live.date = s.maxdate ORDER BY marine_live.date DESC';
+		$date = date('c',$date);
+		$spotter_array = $Marine->getDataFromDB($query,array(':mmsi' => $mmsi,':date' => $date));
 		return $spotter_array;
 	}
 

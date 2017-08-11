@@ -620,7 +620,7 @@ require_once('header.php');
 			}
 		    ?>
 		    <?php
-			if (!isset($globalAircraft) && $globalAircraft) {
+			if (!isset($globalAircraft) || $globalAircraft) {
 		    ?>
 		    <?php
 			if (!(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalphpVMS) && $globalphpVMS)) {
@@ -643,6 +643,21 @@ require_once('header.php');
 		    <?php
 			}
 		    ?>
+		    <?php
+			if (isset($globalMarine) && $globalMarine) {
+		    ?>
+		    <li>
+			<?php echo _("Display vessels with ident:"); ?>
+			<input type="text" name="identfilter" onchange="identfilter();" id="identfilter" value="<?php if (isset($_COOKIE['filter_ident'])) print $_COOKIE['filter_ident']; ?>" />
+		    </li>
+		    <li>
+			<?php echo _("Display vessels with MMSI:"); ?>
+			<input type="text" name="mmsifilter" onchange="mmsifilter();" id="mmsifilter" value="<?php if (isset($_COOKIE['filter_mmsi'])) print $_COOKIE['filter_mmsi']; ?>" />
+		    </li>
+		    <?php
+			}
+		    ?>
+
 		</ul>
 	    </form>
 	    <form method="post">

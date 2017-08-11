@@ -48,6 +48,9 @@ class Marine{
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
 			$filter_query_where .= " AND ident = '".$filter['ident']."'";
 		}
+		if (isset($filter['mmsi']) && !empty($filter['mmsi'])) {
+			$filter_query_where .= " AND mmsi = '".$filter['mmsi']."'";
+		}
 		if (isset($filter['year']) && $filter['year'] != '') {
 			if ($globalDBdriver == 'mysql') {
 				$filter_query_where .= " AND YEAR(marine_output.date) = '".$filter['year']."'";

@@ -13,7 +13,7 @@ if (isset($_GET['marine'])) $marine = true;
 if ($tracker) {
 	require_once('require/class.Tracker.php');
 	require_once('require/class.TrackerLive.php');
-	//require_once('require/class.SpotterArchive.php');
+	//require_once('require/class.TrackerArchive.php');
 	$TrackerLive = new TrackerLive();
 	$Tracker = new Tracker();
 //	$TrackerArchive = new TrackerArchive();
@@ -79,6 +79,7 @@ if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalphpVMS) &
 if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalSBS1) && $globalSBS1 && isset($_COOKIE['filter_ShowSBS1']) && $_COOKIE['filter_ShowSBS1'] == 'true') $filter['source'] = array_merge($filter['source'],array('sbs','famaprs'));
 if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalAPRS) && $globalAPRS && isset($_COOKIE['filter_ShowAPRS']) && $_COOKIE['filter_ShowAPRS'] == 'true') $filter['source'] = array_merge($filter['source'],array('aprs'));
 if (isset($_COOKIE['filter_ident']) && $_COOKIE['filter_ident'] != '') $filter['ident'] = filter_var($_COOKIE['filter_ident'],FILTER_SANITIZE_STRING);
+if (isset($_COOKIE['filter_mmsi']) && $_COOKIE['filter_mmsi'] != '') $filter['mmsi'] = filter_var($_COOKIE['filter_mmsi'],FILTER_SANITIZE_STRING);
 if (isset($_COOKIE['filter_Airlines']) && $_COOKIE['filter_Airlines'] != '') $filter['airlines'] = filter_var_array(explode(',',$_COOKIE['filter_Airlines']),FILTER_SANITIZE_STRING);
 if (isset($_COOKIE['filter_Sources']) && $_COOKIE['filter_Sources'] != '') $filter['source_aprs'] = filter_var_array(explode(',',$_COOKIE['filter_Sources']),FILTER_SANITIZE_STRING);
 if (isset($_COOKIE['filter_airlinestype']) && $_COOKIE['filter_airlinestype'] != 'all') $filter['airlinestype'] = filter_var($_COOKIE['filter_airlinestype'],FILTER_SANITIZE_STRING);
