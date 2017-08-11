@@ -471,14 +471,16 @@ class Marine{
 	public function addIdentity($mmsi,$imo,$ident,$callsign,$type)
 	{
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_NUMBER_INT);
-		$imo = filter_var($imo,FILTER_SANITIZE_NUMBER_INT);
-		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
-		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
-		$type = filter_var($type,FILTER_SANITIZE_STRING);
-		if (empty($this->getIdentity)) {
-			$query  = "INSERT INTO marine_identity (mmsi,imo,call_sign,ship_name,type) VALUES (:mmsi,:imo,:call_sign,:ship_name,:type)";
-			$sth = $this->db->prepare($query);
-			$sth->execute(array(':mmsi' => $mmsi,':imo' => $imo,':call_sign' => $callsign,':ship_name' => $ident,':type' => $type));
+		if ($mmsi != '') {
+			$imo = filter_var($imo,FILTER_SANITIZE_NUMBER_INT);
+			$ident = filter_var($ident,FILTER_SANITIZE_STRING);
+			$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
+			$type = filter_var($type,FILTER_SANITIZE_STRING);
+			if (empty($this->getIdentity($mmsi))) {
+				$query  = "INSERT INTO marine_identity (mmsi,imo,call_sign,ship_name,type) VALUES (:mmsi,:imo,:call_sign,:ship_name,:type)";
+				$sth = $this->db->prepare($query);
+				$sth->execute(array(':mmsi' => $mmsi,':imo' => $imo,':call_sign' => $callsign,':ship_name' => $ident,':type' => $type));
+			}
 		}
 	}
 
