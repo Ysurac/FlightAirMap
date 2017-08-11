@@ -145,7 +145,7 @@ class Marine{
 			}
 			if (isset($row['ground_speed'])) $temp_array['ground_speed'] = $row['ground_speed'];
 
-			if($temp_array['mmsi'] != "")
+			if(isset($temp_array['mmsi']) && $temp_array['mmsi'] != "")
 			{
 				$Image = new Image($this->db);
 				if (isset($temp_array['ident']) && $temp_array['ident'] != '') $image_array = $Image->getMarineImage($temp_array['mmsi'],'',$temp_array['ident']);
