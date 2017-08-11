@@ -335,7 +335,7 @@ class MarineImport {
 		        if (!isset($globalDistanceIgnore['latitude']) || $this->all_tracked[$id]['longitude'] == ''  || $this->all_tracked[$id]['latitude'] == '' || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 			    if (!isset($this->all_tracked[$id]['forcenew']) || $this->all_tracked[$id]['forcenew'] == 0) {
 				if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
-				    if ($globalDebug) echo "Check if aircraft is already in DB...";
+				    if ($globalDebug) echo "Check if vessel is already in DB...";
 				    $timeelapsed = microtime(true);
 				    $MarineLive = new MarineLive($this->db);
 				    if (isset($line['id'])) {
@@ -356,7 +356,7 @@ class MarineImport {
 				$recent_ident = '';
 				$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('forcenew' => 0));
 			    }
-			    //if there was no aircraft with the same callsign within the last hour and go post it into the archive
+			    //if there was no vessel with the same callsign within the last hour and go post it into the archive
 			    if($recent_ident == "" && $this->all_tracked[$id]['latitude'] != '' && $this->all_tracked[$id]['longitude'] != '')
 			    {
 				if ($globalDebug) echo "\o/ Add ".$this->all_tracked[$id]['mmsi']." in archive DB : ";

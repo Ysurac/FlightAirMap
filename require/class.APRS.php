@@ -420,7 +420,7 @@ class aprs {
 			    
 		            $body_parse = substr($body_parse,6);
 		    }
-		    echo 'bodyparse : '.$body_parse."\n";
+		    //echo 'bodyparse : '.$body_parse."\n";
 		    if (preg_match('/CS=([0-9A-Z_]*)/',$body_parse,$matches)) {
 			$result['ident'] = str_replace('_',' ',$matches[1]);
 		    }
