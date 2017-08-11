@@ -123,7 +123,7 @@ if (!empty($spotter_array)) {
 			$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
 			$waypoint_pieces = array_chunk($waypoint_pieces, 2);
 			foreach ($waypoint_pieces as $waypoint_coordinate) {
-				$output .=  $waypoint_coordinate[1].','.$waypoint_coordinate[0].','.$altitude.' ';
+				if (isset($waypoint_coordinate[1])) $output .=  $waypoint_coordinate[1].','.$waypoint_coordinate[0].','.$altitude.' ';
 			}
 			$output .= '</coordinates>';
 			$output .= '<altitudeMode>absolute</altitudeMode>';

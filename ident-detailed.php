@@ -42,9 +42,14 @@ if (!isset($_GET['ident'])){
 		$absolute_difference = 25;
 	} else {
 		$limit_explode = explode(",", $_GET['limit']);
-		$limit_start = $limit_explode[0];
-		$limit_end = $limit_explode[1];
-		if (!ctype_digit(strval($limit_start)) || !ctype_digit(strval($limit_end))) {
+		if (isset($limit_explode[1])) {
+			$limit_start = $limit_explode[0];
+			$limit_end = $limit_explode[1];
+			if (!ctype_digit(strval($limit_start)) || !ctype_digit(strval($limit_end))) {
+				$limit_start = 0;
+				$limit_end = 25;
+			}
+		} else {
 			$limit_start = 0;
 			$limit_end = 25;
 		}

@@ -572,28 +572,28 @@ if (!empty($spotter_array))
 			print '<div>';
 			$Common = new Common();
 			$arrival_airport_info = $Spotter->getAllAirportInfo($spotter_item['arrival_airport']);
-			if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
-				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
-					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'nm').' nm';
-				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
-					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'mi').' mi';
+			if (count($arrival_airport_info) > 0) {
+				if (isset($spotter_item['last_latitude']) && $spotter_item['last_latitude'] != '') {
+					if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+						print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'nm').' nm';
+					} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+						print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'mi').' mi';
+					} else {
+						print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'km').' km';
+					}
 				} else {
-					print $Common->distance($spotter_item['last_latitude'],$spotter_item['last_longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'km').' km';
-				}
-			} else {
-				if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
-					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'nm').' nm';
-				} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
-					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'mi').' mi';
-				} else {
-					print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'km').' km';
+					if ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+						print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'nm').' nm';
+					} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+						print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'mi').' mi';
+					} else {
+						print $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$arrival_airport_info[0]['latitude'],$arrival_airport_info[0]['longitude'],'km').' km';
+					}
 				}
 			}
 			print '</div>';
 			print '</div>';
 		}
-
-
 		print '</div>';
 	}
 	print '</div>';
@@ -602,13 +602,14 @@ if (!empty($spotter_array))
 
 	if ($spotter_array[0]['registration'] != "" && $spotter_array[0]['registration'] != "NA" && $spotter_array[0]['registration'] != "N/A")
 	{
+		$registration = $spotter_array[0]['registration'];
 		print '<div class="last-flights">';
-		print '<h3>'._("Last 5 Flights of this Aircraft").' ('.$spotter_array[0]['registration'].')</h3>';
+		print '<h3>'._("Last 5 Flights of this Aircraft").' ('.$registration.')</h3>';
 		$hide_th_links = true;
-		$spotter_array = $Spotter->getSpotterDataByRegistration($spotter_array[0]['registration'],"0,5", "");
+		$spotter_array = $Spotter->getSpotterDataByRegistration($registration,"0,5", "");
 		include('table-output.php'); 
 		print '<div class="more">';
-		print '<a href="'.$globalURL.'/registration/'.$spotter_array[0]['registration'].'" class="btn btn-default btn" role="button">See all Flights&raquo;</a>';
+		print '<a href="'.$globalURL.'/registration/'.$registration.'" class="btn btn-default btn" role="button">See all Flights&raquo;</a>';
 		print '</div>';
 		print '</div>';
 	}
@@ -635,6 +636,5 @@ if (!empty($spotter_array))
 	print '<h1>'._("Error").'</h1>';
 	print '<p>'._("Sorry, this flight is not in the database. :(").'</p>'; 
 }
-
-	require_once('footer.php');
+require_once('footer.php');
 ?>

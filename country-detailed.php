@@ -10,13 +10,18 @@ if (!isset($_GET['country'])){
 	//calculuation for the pagination
 	if(!isset($_GET['limit']))
 	{
-	  $limit_start = 0;
-	  $limit_end = 25;
-	  $absolute_difference = 25;
+		$limit_start = 0;
+		$limit_end = 25;
+		$absolute_difference = 25;
 	}  else {
 		$limit_explode = explode(",", $_GET['limit']);
-		$limit_start = $limit_explode[0];
-		$limit_end = $limit_explode[1];
+		if (isset($limit_explode[1])) {
+			$limit_start = $limit_explode[0];
+			$limit_end = $limit_explode[1];
+		} else {
+			$limit_start = 0;
+			$limit_end = 25;
+		}
 		if (!ctype_digit(strval($limit_start)) || !ctype_digit(strval($limit_end))) {
 			$limit_start = 0;
 			$limit_end = 25;

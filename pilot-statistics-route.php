@@ -31,7 +31,7 @@ if (!empty($spotter_array))
 	print '<h2>'._("Most Common Routes").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common routes from flights piloted by <strong>%s</strong>."),$spotter_array[0]['pilot_name']).'</p>';
 
-	$route_array = $Spotter->countAllRoutesByOwner($owner,$filter);
+	$route_array = $Spotter->countAllRoutesByPilot($pilot,$filter);
 	if (!empty($route_array))
 	{
 		print '<div class="table-responsive">';
