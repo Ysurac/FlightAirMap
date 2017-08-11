@@ -623,7 +623,7 @@ require_once('header.php');
 			if (!isset($globalAircraft) || $globalAircraft) {
 		    ?>
 		    <?php
-			if (!(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalphpVMS) && $globalphpVMS)) {
+			    if (!(isset($globalVATSIM) && $globalVATSIM) && !(isset($globalIVAO) && $globalIVAO) && !(isset($globalphpVMS) && $globalphpVMS)) {
 		    ?>
 		    <li><?php echo _("Display airlines of type:"); ?><br/>
 			<select class="selectpicker" onchange="airlinestype(this);">
@@ -634,12 +634,8 @@ require_once('header.php');
 			</select>
 		    </li>
 		    <?php
-			}
+			    }
 		    ?>
-		    <li>
-			<?php echo _("Display flight with ident:"); ?>
-			<input type="text" name="identfilter" onchange="identfilter();" id="identfilter" value="<?php if (isset($_COOKIE['filter_ident'])) print $_COOKIE['filter_ident']; ?>" />
-		    </li>
 		    <?php
 			}
 		    ?>
@@ -647,17 +643,16 @@ require_once('header.php');
 			if (isset($globalMarine) && $globalMarine) {
 		    ?>
 		    <li>
-			<?php echo _("Display vessels with ident:"); ?>
-			<input type="text" name="identfilter" onchange="identfilter();" id="identfilter" value="<?php if (isset($_COOKIE['filter_ident'])) print $_COOKIE['filter_ident']; ?>" />
-		    </li>
-		    <li>
 			<?php echo _("Display vessels with MMSI:"); ?>
 			<input type="text" name="mmsifilter" onchange="mmsifilter();" id="mmsifilter" value="<?php if (isset($_COOKIE['filter_mmsi'])) print $_COOKIE['filter_mmsi']; ?>" />
 		    </li>
 		    <?php
 			}
 		    ?>
-
+		    <li>
+			<?php echo _("Display with ident:"); ?>
+			<input type="text" name="identfilter" onchange="identfilter();" id="identfilter" value="<?php if (isset($_COOKIE['filter_ident'])) print $_COOKIE['filter_ident']; ?>" />
+		    </li>
 		</ul>
 	    </form>
 	    <form method="post">
