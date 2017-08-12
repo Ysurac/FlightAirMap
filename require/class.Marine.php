@@ -481,7 +481,7 @@ class Marine{
 				$query  = "INSERT INTO marine_identity (mmsi,imo,call_sign,ship_name,type) VALUES (:mmsi,:imo,:call_sign,:ship_name,:type)";
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':mmsi' => $mmsi,':imo' => $imo,':call_sign' => $callsign,':ship_name' => $ident,':type' => $type));
-			} elseif ($identinfo != $ident) {
+			} elseif ($ident != '' && $identinfo != $ident) {
 				$query  = "UPDATE marine_identity SET ship_name = :ship_name,type = :type WHERE mmsi = :mmsi";
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':mmsi' => $mmsi,':ship_name' => $ident,':type' => $type));
