@@ -461,7 +461,7 @@ class Marine{
 		$sth->execute(array(':mmsi' => $mmsi));
 		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (isset($result[0])) return $result[0];
-		else return array();
+		else return '';
 	}
 
 	/**
