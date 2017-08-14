@@ -563,9 +563,13 @@ function deleteWaypoints() {
 }
 
 var czmlds = new Cesium.CzmlDataSource();
+<?php
+		if (!isset($globalMapUseBbox) || !$globalMapUseBbox) {
+?>
 Cesium.when(viewer.terrainProvider.ready,function() {updateData(); });
-//updateData();
-
+<?php
+		}
+?>
 <?php
 		if (!((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) && (isset($_COOKIE['polar']) && $_COOKIE['polar'] == 'true')) {
 ?>
@@ -671,6 +675,7 @@ camera.moveEnd.addEventListener(function() {
 <?php
 	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
 ?>
+	console.log("Camera move...");
 	updateData();
 <?php
 	}
@@ -686,6 +691,7 @@ if (archive == false) {
 	}
 	var reloadpage = setInterval(
 		function(){
+			console.log('Reload...');
 			updateData();
 			if (typeof czmldssanta == 'undefined') {
 				if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-25T02:00Z'))) {
