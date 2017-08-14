@@ -154,18 +154,30 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$coord = array();
 	if (isset($_GET['coord']) && $_GET['coord'] != '') {
 		$coord = explode(',',$_GET['coord']);
+		if (!(filter_var($coord[0],FILTER_VALIDATE_FLOAT) && filter_var($coord[1],FILTER_VALIDATE_FLOAT) && filter_var($coord[2],FILTER_VALIDATE_FLOAT) && filter_var($coord[3],FILTER_VALIDATE_FLOAT) 
+		    && $coord[0] > -180.0 && $coord[0] < 180.0 && $coord[1] > -90.0 && $coord[1] < 90.0 && $coord[2] > -180.0 && $coord[2] < 180.0 && $coord[3] > -90.0 && $coord[3] < 90.0)) {
+			$coord = array();
+		}
 	}
 	$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,true);
 } elseif ($marine) {
 	$coord = array();
 	if (isset($_GET['coord']) && $_GET['coord'] != '') {
 		$coord = explode(',',$_GET['coord']);
+		if (!(filter_var($coord[0],FILTER_VALIDATE_FLOAT) && filter_var($coord[1],FILTER_VALIDATE_FLOAT) && filter_var($coord[2],FILTER_VALIDATE_FLOAT) && filter_var($coord[3],FILTER_VALIDATE_FLOAT) 
+		    && $coord[0] > -180.0 && $coord[0] < 180.0 && $coord[1] > -90.0 && $coord[1] < 90.0 && $coord[2] > -180.0 && $coord[2] < 180.0 && $coord[3] > -90.0 && $coord[3] < 90.0)) {
+			$coord = array();
+		}
 	}
 	$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true);
 } else {
 	$coord = array();
 	if (isset($_GET['coord']) && $_GET['coord'] != '') {
 		$coord = explode(',',$_GET['coord']);
+		if (!(filter_var($coord[0],FILTER_VALIDATE_FLOAT) && filter_var($coord[1],FILTER_VALIDATE_FLOAT) && filter_var($coord[2],FILTER_VALIDATE_FLOAT) && filter_var($coord[3],FILTER_VALIDATE_FLOAT) 
+		    && $coord[0] > -180.0 && $coord[0] < 180.0 && $coord[1] > -90.0 && $coord[1] < 90.0 && $coord[2] > -180.0 && $coord[2] < 180.0 && $coord[3] > -90.0 && $coord[3] < 90.0)) {
+			$coord = array();
+		}
 	}
 	$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true);
 }

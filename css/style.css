@@ -1154,6 +1154,9 @@ body.page-upcoming table tr td.logo img{
 	.navbar .search {
 		display:none;
 	}
+	.navbar .language {
+		display:none;
+	}
 	span.notablet,
 	a.notablet{
 		display:none !important;
@@ -1264,6 +1267,9 @@ body.page-upcoming table tr td.logo img{
 			padding:10px;
 		}
     .navbar .search {
+	display:none;
+    }
+    .navbar .language {
 	display:none;
     }
     .info div{
@@ -1474,8 +1480,9 @@ body.page-upcoming table tr td.logo img{
     .navbar .search {
 	display:none;
     }
-
-
+    .navbar .language {
+	display:none;
+    }
 }
 
 .range {
