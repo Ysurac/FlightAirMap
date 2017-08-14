@@ -450,7 +450,7 @@ class Marine{
 	/**
 	* Gets all info from a mmsi
 	*
-	* @return Array list of mmsi info
+	* @return Array ident
 	*
 	*/
 	public function getIdentity($mmsi)
@@ -461,7 +461,7 @@ class Marine{
 		$sth->execute(array(':mmsi' => $mmsi));
 		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (isset($result[0])) return $result[0];
-		else return '';
+		else return array();
 	}
 
 	/**
@@ -477,11 +477,11 @@ class Marine{
 			$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 			$type = filter_var($type,FILTER_SANITIZE_STRING);
 			$identinfo = $this->getIdentity($mmsi);
-			if ($identinfo == '') {
+			if (empty($identinfo)) {
 				$query  = "INSERT INTO marine_identity (mmsi,imo,call_sign,ship_name,type) VALUES (:mmsi,:imo,:call_sign,:ship_name,:type)";
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':mmsi' => $mmsi,':imo' => $imo,':call_sign' => $callsign,':ship_name' => $ident,':type' => $type));
-			} elseif ($ident != '' && $identinfo != $ident) {
+			} elseif ($ident != '' && $identinfo['ship_name'] != $ident) {
 				$query  = "UPDATE marine_identity SET ship_name = :ship_name,type = :type WHERE mmsi = :mmsi";
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':mmsi' => $mmsi,':ship_name' => $ident,':type' => $type));
