@@ -144,7 +144,7 @@ class MarineImport {
 		    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
 			$Marine = new Marine($this->db);
 			$identity = $Marine->getIdentity($line['mmsi']);
-			if ($identity != '') {
+			if (!empty($identity)) {
 			    $this->all_tracked[$id]['ident'] = $identity['ship_name'];
 			    $this->all_tracked[$id]['type'] = $identity['type'];
 			}
