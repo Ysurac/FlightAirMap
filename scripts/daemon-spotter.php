@@ -1188,7 +1188,10 @@ while ($i > 0) {
 	    	    $data['departure_airport_time'] = $line['deptime'];
 	    	    $data['arrival_airport_icao'] = $line['arricao'];
     		    $data['arrival_airport_time'] = $line['arrtime'];
-    		    $data['registration'] = $line['aircraft'];
+    		    if (isset($line['registration'])) {
+    			$data['registration'] = $line['registration'];
+    			if (isset($line['aircraft'])) $data['id'] = $line['aircraft'];
+    		    } else $data['registration'] = $line['aircraft'];
 		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($line['route'])) $data['waypoints'] = $line['route']; // route
 		    if (isset($line['aircraftname'])) {
