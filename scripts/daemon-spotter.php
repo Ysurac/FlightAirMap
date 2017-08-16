@@ -1237,7 +1237,7 @@ while ($i > 0) {
 	    if ($buffer != '' && is_array($all_data) && isset($all_data['ACARSData'])) {
 		$reset = 0;
 		foreach ($all_data['ACARSData'] as $line) {
-		    print_r($line);
+		    //print_r($line);
 	    	    $data = array();
 	    	    //$data['id'] = $line['id']; // id not usable
 	    	    $data['id'] = $line['id'];
