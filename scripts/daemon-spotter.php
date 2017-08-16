@@ -204,6 +204,11 @@ function connect_all($hosts) {
         	$globalSources[$id]['format'] = 'phpvmacars';
         	//$last_exec['phpvmacars'] = 0;
         	if ($globalDebug) echo "Connect to phpvmacars source (".$host.")...\n";
+            } else if (preg_match('/\/api\/v1\/acars\/data$/i',$host)) {
+        	//$formats[$id] = 'phpvmacars';
+        	$globalSources[$id]['format'] = 'vaos';
+        	//$last_exec['phpvmacars'] = 0;
+        	if ($globalDebug) echo "Connect to vaos source (".$host.")...\n";
             } else if (preg_match('/VAM-json.php$/i',$host)) {
         	//$formats[$id] = 'phpvmacars';
         	$globalSources[$id]['format'] = 'vam';
@@ -1190,7 +1195,7 @@ while ($i > 0) {
     		    $data['arrival_airport_time'] = $line['arrtime'];
     		    if (isset($line['registration'])) {
     			$data['registration'] = $line['registration'];
-    			if (isset($line['aircraft'])) $data['id'] = $line['aircraft'];
+    			//if (isset($line['aircraft'])) $data['id'] = $line['aircraft'];
     		    } else $data['registration'] = $line['aircraft'];
 		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($line['route'])) $data['waypoints'] = $line['route']; // route
@@ -1209,6 +1214,64 @@ while ($i > 0) {
     		    if (isset($line['route'])) $data['waypoints'] = $line['route'];
     		    $data['id_source'] = $id_source;
 	    	    $data['format_source'] = 'phpvmacars';
+		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+		    $SI->add($data);
+		    unset($data);
+		}
+		if ($globalDebug) echo 'No more data...'."\n";
+		unset($buffer);
+		unset($all_data);
+	    }
+	    //$last_exec['phpvmacars'] = time();
+	    $last_exec[$id]['last'] = time();
+	} elseif ($value['format'] == 'vaos' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
+	    //$buffer = $Common->getData($hosts[$id]);
+	    if ($globalDebug) echo 'Get Data...'."\n";
+	    $buffer = $Common->getData($value['host']);
+	    $all_data = json_decode($buffer,true);
+	    if ($buffer != '' && is_array($all_data) && isset($all_data['ACARSData'])) {
+		$reset = 0;
+		foreach ($all_data['ACARSData'] as $line) {
+		    print_r($line);
+	    	    $data = array();
+	    	    //$data['id'] = $line['id']; // id not usable
+	    	    $data['id'] = $line['id'];
+	    	    //$data['hex'] = substr(str_pad(bin2hex($line['flightnum']),6,'000000',STR_PAD_LEFT),-6); // hex
+	    	    if (isset($line['user']['username'])) $data['pilot_name'] = $line['user']['username'];
+	    	    if (isset($line['user_id'])) $data['pilot_id'] = $line['user_id'];
+	    	    $data['ident'] = str_replace(' ','',$line['bid']['flightnum']); // ident
+	    	    if (is_numeric($data['ident'])) $data['ident'] = $line['bid']['airline']['icao'].$data['ident'];
+	    	    $data['altitude'] = $line['altitude']; // altitude
+	    	    $data['speed'] = $line['groundspeed']; // speed
+	    	    $data['heading'] = $line['heading']; // heading
+	    	    $data['latitude'] = $line['lat']; // lat
+	    	    $data['longitude'] = $line['lon']; // long
+	    	    //$data['verticalrate'] = ''; // verticale rate
+	    	    //$data['squawk'] = ''; // squawk
+	    	    //$data['emergency'] = ''; // emergency
+	    	    if (isset($value['timezone'])) {
+	    		$datetime = new DateTime($line['updated_at'],new DateTimeZone($value['timezone']));
+	    		$datetime->setTimeZone(new DateTimeZone('UTC'));
+	    		$data['datetime'] = $datetime->format('Y-m-d H:i:s');
+	    	    } else $data['datetime'] = date('Y-m-d H:i:s');
+	    	    
+	    	    $data['departure_airport_icao'] = $line['bid']['depapt']['icao'];
+	    	    $data['departure_airport_time'] = $line['bid']['deptime'];
+	    	    $data['arrival_airport_icao'] = $line['bid']['arrapt']['icao'];
+		    $data['arrival_airport_time'] = $line['bid']['arrtime'];
+		    $data['registration'] = $line['bid']['aircraft']['registration'];
+
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+		    if (isset($line['bid']['route']) && $line['bid']['route'] != '') $data['waypoints'] = $line['bid']['route']; // route
+	    	    $data['aircraft_icao'] = $line['bid']['aircraft']['icao'];
+
+    		    $data['id_source'] = $id_source;
+	    	    $data['format_source'] = 'vaos';
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
 		    $SI->add($data);
 		    unset($data);

@@ -513,6 +513,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="aircraftlistjson" <?php if (isset($source['format']) && $source['format'] == 'aircraftlistjson') print 'selected'; ?>>Virtual Radar Server AircraftList.json</option>
 										<option value="vrstcp" <?php if (isset($source['format']) && $source['format'] == 'vrstcp') print 'selected'; ?>>Virtual Radar Server TCP</option>
 										<option value="phpvmacars" <?php if (isset($source['format']) && $source['format'] == 'phpvmacars') print 'selected'; ?>>phpVMS</option>
+										<option value="vaos" <?php if (isset($source['format']) && $source['format'] == 'phpvmacars') print 'selected'; ?>>Virtual Airline Operations System (VAOS)</option>
 										<option value="vam" <?php if (isset($source['format']) && $source['format'] == 'vam') print 'selected'; ?>>Virtual Airlines Manager</option>
 										<option value="whazzup" <?php if (isset($source['format']) && $source['format'] == 'whazzup') print 'selected'; ?>>IVAO</option>
 										<option value="flightgearmp" <?php if (isset($source['format']) && $source['format'] == 'flightgearmp') print 'selected'; ?>>FlightGear Multiplayer</option>
@@ -565,6 +566,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="aircraftlistjson">Virtual Radar Server AircraftList.json</option>
 										<option value="vrstcp">Virtual Radar Server TCP</option>
 										<option value="phpvmacars">phpVMS</option>
+										<option value="vaos">Virtual Airline Operations System (VAOS)</option>
 										<option value="vam">Virtual Airlines Manager</option>
 										<option value="whazzup">IVAO</option>
 										<option value="flightgearmp">FlightGear Multiplayer</option>
@@ -652,6 +654,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="map3dliveries">Display real liveries</label>
 				<input type="checkbox" name="map3dliveries" id="map3dliveries" value="map3dliveries"<?php if (isset($globalMap3DLiveries) && $globalMap3DLiveries) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Liveries will be loaded when you click on a flight</p>
 			</p>
 			<p>
 				<label for="map3dtileset">3D Tiles</label>
