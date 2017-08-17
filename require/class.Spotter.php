@@ -2585,12 +2585,12 @@ class Spotter{
 	* @return Array aircraft information
 	*
 	*/
-	public function getAircraftInfoByRegistration($registration)
+	public function getAircraftInfoByRegistration($registration, $limit = true)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.aircraft_manufacturer, spotter_output.airline_icao FROM spotter_output WHERE spotter_output.registration = :registration";
-		
+		if ($limit) $query .= " LIMIT 200";
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':registration' => $registration));
 
