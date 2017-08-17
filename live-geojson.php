@@ -129,6 +129,14 @@ if (isset($_GET['ident'])) {
 		} else {
 			$spotter_array = $SpotterLive->getMinLiveSpotterDatabyCoord($coord,$filter);
 		}
+	} else {
+		if ($tracker) {
+			$spotter_array = $TrackerLive->getMinLiveTrackerData($filter);
+		} elseif ($marine) {
+			$spotter_array = $MarineLive->getMinLiveMarineData($filter);
+		} else {
+			$spotter_array = $SpotterLive->getMinLiveSpotterData($filter);
+		}
 	}
 } elseif (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate']) && isset($_GET['speed']) && !isset($_GET['tracker']) && !isset($_GET['marine'])) {
 	$from_archive = true;

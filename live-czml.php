@@ -373,7 +373,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 					$aircraft_icao = $spotter_item['aircraft_icao'];
 					if (isset($modelsdb2[$aircraft_icao]) && $aircraft_icao != '') {
 						$gltf2 = true;
-						$output .= '"model": {"gltf" : "'.$globalURL.'/models/gltf2/'.$modelsdb2[$aircraft_icao].'","scale" : 1.0,"minimumPixelSize": 20';
+						$output .= '"model": {"gltf" : "'.$globalURL.'/models/gltf2/'.$modelsdb2[$aircraft_icao].'","scale" : 1.0,"minimumPixelSize": 15';
 						$output .= ',"heightReference": "'.$heightrelative.'"';
 						if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] == 'true' && isset($_COOKIE['IconColor'])) {
 							$rgb = $Common->hex2rgb($_COOKIE['IconColor']);
