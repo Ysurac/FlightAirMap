@@ -33,7 +33,7 @@ class Image {
 		$sth->execute(array(':registration' => $reg));
 		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (!empty($result)) return $result;
-		elseif ($registration != '') return $this->getSpotterImage('',$aircraft_icao,$airline_icao);
+		elseif ($registration != '' && ($aircraft_icao != '' || $airline_icao != '')) return $this->getSpotterImage('',$aircraft_icao,$airline_icao);
 		else return array();
 	}
 

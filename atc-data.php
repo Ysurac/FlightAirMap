@@ -25,10 +25,12 @@ print '</div></div>';
 print '<div class="details"><div class="mobile airports"><div class="airport">';
 print '</div></div><div>';
 
-print '<span>'._("Frequency").'</span>';
-print $spotter_item['frequency'];
-print '</div>';
-if ($spotter_item['ivao_name'] != '') {
+if (isset($spotter_item['frequency']) && $spotter_item['frequency'] != '') {
+	print '<span>'._("Frequency").'</span>';
+	print $spotter_item['frequency'];
+	print '</div>';
+}
+if (isset($spotter_item['ivao_name']) && $spotter_item['ivao_name'] != '') {
 	print '<div><span>'._("Name").'</span>';
 	print $spotter_item['ivao_name'];
 	print '</div>';

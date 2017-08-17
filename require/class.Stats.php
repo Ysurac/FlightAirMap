@@ -430,8 +430,8 @@ class Stats {
 				$alliance_airlines = array_merge($alliance_airlines,array($airline['airline_icao']));
 			}
 			if ($year == '' && $month == '') {
-				if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
-				else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY aircraft_registration_count DESC";
+				if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY registration_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT s.aircraft_icao, s.cnt AS registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline IN ('".implode("','",$alliance_airlines)."') AND filter_name = :filter_name ORDER BY registration_count DESC";
 				try {
 					$sth = $this->db->prepare($query);
 					$sth->execute(array(':filter_name' => $filter_name));
@@ -442,8 +442,8 @@ class Stats {
 			} else $all = array();
 		} else {
 			if ($year == '' && $month == '') {
-				if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_registration_count DESC LIMIT 10 OFFSET 0";
-				else $query = "SELECT s.aircraft_icao, s.cnt AS aircraft_registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY aircraft_registration_count DESC";
+				if ($limit) $query = "SELECT s.aircraft_icao, s.cnt AS registration_count, a.type AS aircraft_name, s.registration FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY registration_count DESC LIMIT 10 OFFSET 0";
+				else $query = "SELECT s.aircraft_icao, s.cnt AS registration_count, a.type AS aircraft_name FROM stats_registration s, aircraft a WHERE s.registration <> '' AND a.icao = s.aircraft_icao AND s.stats_airline = :stats_airline AND filter_name = :filter_name ORDER BY registration_count DESC";
 				try {
 					$sth = $this->db->prepare($query);
 					$sth->execute(array(':stats_airline' => $stats_airline,':filter_name' => $filter_name));
