@@ -106,6 +106,11 @@ if (isset($spotter_item['over_country']) && $spotter_item['over_country'] != '')
 	print $spotter_item['over_country'];
 	print '</div>';
 }
+if (isset($spotter_item['arrival_port_name']) && $spotter_item['arrival_port_name'] != '') {
+	print '<div><span>'._("Destination").'</span>';
+	print $spotter_item['arrival_port_name'];
+	print '</div>';
+}
 if (isset($spotter_item['source_name']) && $spotter_item['source_name'] != '') {
 	print '<div><span>'._("Source").'</span>';
 	print $spotter_item['source_name'];

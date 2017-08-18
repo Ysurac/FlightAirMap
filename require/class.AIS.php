@@ -226,7 +226,6 @@ class AIS {
 		}
 		$ro->statusid = bindec(substr($_aisdata,38,4));
 		$ro->status = $this->getStatus($ro->statusid);
-		//var_dump($ro); // dump results here for demo purpose
 		return $ro;
 	}
 
@@ -353,7 +352,6 @@ class AIS {
 
 	public function process_ais_itu($_itu, $_len, $_filler, $aux /*, $ais_ch*/) {
 		global $port; // tcpip port...
-		
 		static $debug_counter = 0;
 		$aisdata168='';//six bit array of ascii characters
 		$ais_nmea_array = str_split($_itu); // convert to an array
@@ -378,7 +376,7 @@ class AIS {
 		static $msg_sid = -1; // 0 to 9, indicate -1 at start state of device, do not process messages
 		static $cmsg_sid; // current msg_sid
 		static $itu; // buffer for ITU message
-
+		echo $rawdata."\n";
 		$filler = 0; // fill bits (int)
 		$chksum = 0;
 		// raw data without the \n
@@ -440,7 +438,7 @@ class AIS {
 				    || $num_seq == $pseq // valid multi-part message
 				) {
 					if ($num_seq != 1) { // test
-						//echo $rawdata;
+						echo $rawdata;
 					}
 					return $this->process_ais_itu($itu, strlen($itu), $filler, $aux /*, $ais_ch*/);
 				}

@@ -713,7 +713,6 @@ class Marine{
 		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 		$arrival_code = filter_var($arrival_code,FILTER_SANITIZE_STRING);
 		$arrival_date = filter_var($arrival_date,FILTER_SANITIZE_STRING);
-	
 		if (isset($globalMarineImageFetch) && $globalMarineImageFetch === TRUE) {
 			$Image = new Image($this->db);
 			$image_array = $Image->getMarineImage($mmsi,$imo,$ident);
@@ -722,20 +721,18 @@ class Marine{
 			}
 			unset($Image);
 		}
-		
-                if ($latitude == '' && $longitude == '') {
-            		$latitude = 0;
-            		$longitude = 0;
-            	}
-                if ($heading == '' || $Common->isInteger($heading) === false) $heading = 0;
-                if ($groundspeed == '' || $Common->isInteger($groundspeed) === false) $groundspeed = 0;
-                if ($arrival_date == '') $arrival_date = NULL;
+		if ($latitude == '' && $longitude == '') {
+			$latitude = 0;
+			$longitude = 0;
+		}
+		if ($heading == '' || $Common->isInteger($heading) === false) $heading = 0;
+		if ($groundspeed == '' || $Common->isInteger($groundspeed) === false) $groundspeed = 0;
+		if ($arrival_date == '') $arrival_date = NULL;
 		$query  = "INSERT INTO marine_output (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, status,imo,arrival_port_name,arrival_port_date) 
 		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:speed,:date,:format_source, :source_name,:mmsi,:type,:status,:imo,:arrival_port_name,:arrival_port_date)";
 
 		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':speed' => $groundspeed,':date' => $date,':format_source' => $format_source, ':source_name' => $source_name,':mmsi' => $mmsi,':type' => $type,':status' => $status,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
 		try {
-		        
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 			$this->db = null;

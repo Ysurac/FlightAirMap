@@ -173,7 +173,7 @@ class MarineImport {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('arrival_code' => $line['arrival_code']));
 		}
 		if (isset($line['arrival_date']) && $line['arrival_date'] != '') {
-		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('arrival_date' => $line['arrival_date']));
+		    if (strtotime($line['arrival_date']) > time()) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('arrival_date' => $line['arrival_date']));
 		}
 
 		//if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_tracked[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9-]+$/', $line['ident'])) {

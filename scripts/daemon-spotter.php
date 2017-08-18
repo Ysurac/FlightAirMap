@@ -476,7 +476,7 @@ while ($i > 0) {
 		    $ais_data = $AIS->parse_line(trim($line));
 		    $data = array();
 		    if (isset($ais_data['ident'])) $data['ident'] = $ais_data['ident'];
-		    if (isset($ais_data['mmsi'])) $data['mmsi'] = $ais_data['mmsi'];
+		    if (isset($ais_data['mmsi'])) $data['mmsi'] = substr($ais_data['mmsi'],-9);
 		    if (isset($ais_data['speed'])) $data['speed'] = $ais_data['speed'];
 		    if (isset($ais_data['heading'])) $data['heading'] = $ais_data['heading'];
 		    if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
@@ -523,7 +523,7 @@ while ($i > 0) {
 				$ais_data = $AIS->parse_line(trim($line));
 				$data = array();
 				if (isset($ais_data['ident'])) $data['ident'] = $ais_data['ident'];
-				if (isset($ais_data['mmsi'])) $data['mmsi'] = $ais_data['mmsi'];
+				if (isset($ais_data['mmsi'])) $data['mmsi'] = substr($ais_data['mmsi'],-9);
 				if (isset($ais_data['speed'])) $data['speed'] = $ais_data['speed'];
 				if (isset($ais_data['heading'])) $data['heading'] = $ais_data['heading'];
 				if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
@@ -588,8 +588,10 @@ while ($i > 0) {
 			    $data['latitude'] = $line['LAT'];
 			    $data['longitude'] = $line['LNG'];
 			    //    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
+			    $data['type_id'] = $line['TYPE'];
 			    $data['imo'] = $line['IMO'];
-			    //$data['arrival_code'] = $ais_data['destination'];
+			    if ($line['DEST'] != '') $data['arrival_code'] = $line['DEST'];
+			    if ($line['ARV'] != '') $data['arrival_time'] = date('Y-m-d H:i:s',strtotime($line['ARV']));
 			    $data['datetime'] = date('Y-m-d H:i:s',$line['T']);
 			    $data['format_source'] = 'myshiptracking';
 			    $data['id_source'] = $id_source;
@@ -616,7 +618,7 @@ while ($i > 0) {
 			    $data = array();
 			    $data['ident'] = $line['shipname'];
 			    $data['callsign'] = $line['callsign'];
-			    $data['mmsi'] = $line['mmsi'];
+			    $data['mmsi'] = substr($line['mmsi'],-9);
 			    $data['speed'] = $line['sog'];
 			    if ($line['heading'] != '511') $data['heading'] = $line['heading'];
 			    $data['latitude'] = $line['latitude'];
@@ -646,13 +648,14 @@ while ($i > 0) {
 		$all_data = json_decode($buffer,true);
 		if (isset($all_data['features'][0]['id'])) {
 		    foreach ($all_data['features'] as $line) {
+			print_r($line);
 			$data = array();
 			if (isset($line['properties']['name'])) $data['ident'] = $line['properties']['name'];
 			if (isset($line['properties']['callsign'])) $data['callsign'] = $line['properties']['callsign'];
-			if (isset($line['properties']['mmsi'])) $data['mmsi'] = $line['properties']['mmsi'];
-			if (isset($line['properties']['imo'])) $data['mmsi'] = $line['properties']['imo'];
+			if (isset($line['properties']['mmsi'])) $data['mmsi'] = substr($line['properties']['mmsi'],-9);
+			if (isset($line['properties']['imo'])) $data['imo'] = $line['properties']['imo'];
 			if (isset($line['properties']['speed'])) $data['speed'] = $line['properties']['speed'];
-			if (isset($line['properties']['heading'])) $data['heading'] = $line['properties']['heading'];
+			if (isset($line['properties']['heading']) && $line['properties']['heading'] != 0) $data['heading'] = $line['properties']['heading'];
 			$data['latitude'] = $line['geometry']['coordinates'][1];
 			$data['longitude'] = $line['geometry']['coordinates'][0];
 			if (isset($line['properties']['vesselType'])) $data['type'] = $line['properties']['vesselType'];
@@ -678,16 +681,18 @@ while ($i > 0) {
 	    echo 'download...';
 	    $buffer = $Common->getData($value['host'],'post',$value['post'],'','','','','ShipPlotter');
 	    echo 'done !'."\n";
+	    // FIXME: Need more work
 	    if ($buffer != '') $reset = 0;
     	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
 	    $buffer = explode('\n',$buffer);
 	    foreach ($buffer as $line) {
 		if ($line != '') {
 		    $data = array();
+		    echo $line."\n";
 		    $data['mmsi'] = (int)substr($line,0,9);
 		    $data['datetime'] = date('Y-m-d H:i:s',substr($line,10,10));
-		    //$data['status'] = substr($line,21,2);
-		    //$data['type'] = substr($line,24,3);
+		    $data['status_id'] = substr($line,21,2);
+		    $data['type_id'] = substr($line,24,3);
 		    $data['latitude'] = substr($line,29,9);
 		    $data['longitude'] = substr($line,41,9);
 		    $data['speed'] = round(substr($line,51,5));
@@ -696,9 +701,9 @@ while ($i > 0) {
 		    //$data['draft'] = substr($line,67,4);
 		    //$data['length'] = substr($line,72,3);
 		    //$data['beam'] = substr($line,76,2);
-		    $data['ident'] = trim(utf8_encode(substr($line,79,20)));
+		    $data['ident'] = trim(utf8_encode(substr($line,78,20)));
 		    //$data['callsign'] = trim(substr($line,100,7);
-		    //$data['dest'] = substr($line,108,20);
+		    $data['arrival_code'] = substr($line,108,20);
 		    //$data['etaDate'] = substr($line,129,5);
 		    //$data['etaTime'] = substr($line,135,5);
 		    $data['format_source'] = 'shipplotter';
@@ -1423,7 +1428,7 @@ while ($i > 0) {
 			    $ais_data = $AIS->parse_line(trim($buffer));
 			    $data = array();
 			    if (isset($ais_data['ident'])) $data['ident'] = $ais_data['ident'];
-			    if (isset($ais_data['mmsi'])) $data['mmsi'] = $ais_data['mmsi'];
+			    if (isset($ais_data['mmsi'])) $data['mmsi'] = substr($ais_data['mmsi'],-9);
 			    if (isset($ais_data['speed'])) $data['speed'] = $ais_data['speed'];
 			    if (isset($ais_data['heading'])) $data['heading'] = $ais_data['heading'];
 			    if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
