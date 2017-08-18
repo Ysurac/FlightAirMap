@@ -678,7 +678,8 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 ?>
       <div class="search">
       <form action="<?php print $globalURL; ?>/search" method="get">
-		<input type="text" name="q" value="<?php if (isset($GET['q'])) { if ($_GET['q'] != ""){ print $_GET['q']; } else { print _("Search"); } } else { print _("Search"); } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>
+		<!--<input type="text" name="q" value="<?php if (isset($GET['q'])) { if ($_GET['q'] != ""){ print $_GET['q']; } else { print _("Search"); } } else { print _("Search"); } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>-->
+		<input type="text" name="callsign" value="<?php if (isset($GET['callsign'])) { if ($_GET['callsign'] != ""){ print $_GET['callsign']; } else { print _("Search"); } } else { print _("Search"); } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>
 	</form>
 	</div>
   	<div class="social">
