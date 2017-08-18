@@ -53,7 +53,7 @@ class ATC {
 	}
 
 	public function getById($id) {
-		$filter_query = $this->getFilter(array(),true);
+		$filter_query = $this->getFilter(array(),true,true);
 		$query = "SELECT * FROM atc".$filter_query." atc_id = :id";
 		$query_values = array(':id' => $id);
 		try {
@@ -67,7 +67,7 @@ class ATC {
 	}
 
 	public function getByIdent($ident,$format_source = '') {
-		$filter_query = $this->getFilter(array(),true);
+		$filter_query = $this->getFilter(array(),true,true);
 		if ($format_source == '') {
 			$query = "SELECT * FROM atc".$filter_query." ident = :ident";
 			$query_values = array(':ident' => $ident);
