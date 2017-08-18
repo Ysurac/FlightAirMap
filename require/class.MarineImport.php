@@ -170,7 +170,26 @@ class MarineImport {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('callsign' => $line['callsign']));
 		}
 		if (isset($line['arrival_code']) && $line['arrival_code'] != '') {
-		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('arrival_code' => $line['arrival_code']));
+		    if (!isset($this->all_tracked[$id]['arrival_code'])) {
+			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('arrival_code' => $line['arrival_code']));
+			if ($this->all_tracked[$id]['addedMarine'] != 0) {
+			    if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
+				if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+				    $Marine = new Marine($this->db);
+				    $fromsource = NULL;
+				    $Marine->updateArrivalPortNameMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['arrival_code'],$fromsource);
+				    $Marine->db = null;
+				}
+			    }
+			}
+		    } elseif ($this->all_tracked[$id]['arrival_code'] != $line['arrival_code']) {
+			$this->all_tracked[$id]['arrival_code'] = $line['arrival_code'];
+			if (!isset($line['id'])) {
+				$this->all_tracked[$id]['id'] = $id.'-'.date('YmdHi');
+				$this->all_tracked[$id]['forcenew'] = 1;
+				$this->all_tracked[$id]['addedMarine'] = 0;
+			}
+		    }
 		}
 		if (isset($line['arrival_date']) && $line['arrival_date'] != '') {
 		    if (strtotime($line['arrival_date']) > time()) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('arrival_date' => $line['arrival_date']));

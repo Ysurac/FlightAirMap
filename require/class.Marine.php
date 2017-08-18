@@ -554,6 +554,27 @@ class Marine{
 	}
 
 	/**
+	* Update arrival marine data
+	*
+	* @param String $fammarine_id the ID
+	* @param String $ident the marine ident
+	* @return String success or false
+	*
+	*/
+	public function updateArrivalPortNameMarineData($fammarine_id = '', $arrival_code = '',$fromsource = NULL)
+	{
+		$query = 'UPDATE marine_output SET arrival_port_name = :arrival_code WHERE fammarine_id = :fammarine_id';
+		$query_values = array(':fammarine_id' => $fammarine_id,':arrival_code' => $arrival_code);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch (PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		return "success";
+	}
+
+	/**
 	* Update Status data
 	*
 	* @param String $fammarine_id the ID
