@@ -8531,7 +8531,7 @@ class Spotter{
 		$filter_query = $this->getFilter($filters,true,true);
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count, countries.iso3 AS airport_arrival_country_iso3 
-			FROM spotter_output,countries".$filter_query." spotter_output.arrival_airport_country <> '' AND spotter_output.owner_name = :owner AND countries.name = spotter_output.arrival_airport_country 
+			FROM countries, spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND spotter_output.owner_name = :owner AND countries.name = spotter_output.arrival_airport_country 
 			GROUP BY spotter_output.arrival_airport_country, countries.iso3
 			ORDER BY airport_arrival_country_count DESC";
 		$sth = $this->db->prepare($query);
@@ -8550,7 +8550,7 @@ class Spotter{
 		$filter_query = $this->getFilter($filters,true,true);
 		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_output.arrival_airport_country, COUNT(spotter_output.arrival_airport_country) AS airport_arrival_country_count, countries.iso3 AS arrival_airport_country_iso3 
-			FROM spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) AND countries.name = spotter_output.arrival_airport_country 
+			FROM countries, spotter_output".$filter_query." spotter_output.arrival_airport_country <> '' AND (spotter_output.pilot_name = :pilot OR spotter_output.pilot_id = :pilot) AND countries.name = spotter_output.arrival_airport_country 
 			GROUP BY spotter_output.arrival_airport_country, countries.iso3
 			ORDER BY airport_arrival_country_count DESC";
 		$sth = $this->db->prepare($query);
