@@ -639,10 +639,10 @@ class Spotter{
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.owner_name like '%".$q_item."%') OR ";
 					$additional_query .= "(spotter_output.pilot_id =  '".$q_item."') OR ";
 					$additional_query .= "(spotter_output.pilot_name like '%".$q_item."%') OR ";
-					$additional_query .= "(spotter_output.ident like '%".$q_item."%') OR ";
 					$translate = $Translation->ident2icao($q_item);
 					if ($translate != $q_item) $additional_query .= "(spotter_output.ident like '%".$translate."%') OR ";
-					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.highlight like '%".$q_item."%')";
+					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.highlight like '%".$q_item."%') OR";
+					$additional_query .= "(spotter_output.ident like '%".$q_item."%')";
 					$additional_query .= ")";
 				}
 			}
