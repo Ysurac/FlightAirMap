@@ -1,6 +1,13 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Common.php');
+if (isset($globalProtect) && $globalProtect) {
+	@session_start();
+	if (!isset($_SESSION['protect']) || !isset($_SERVER['HTTP_REFERER'])) {
+		echo 'You must access this page using the right way.';
+		die();
+	}
+}
 $tracker = false;
 $marine = false;
 $usecoord = false;

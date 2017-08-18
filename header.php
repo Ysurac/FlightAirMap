@@ -1,5 +1,8 @@
 <?php
-
+if (isset($globalProtect) && $globalProtect) {
+	@session_start();
+	$_SESSION['protect'] = 'protect';
+}
 //gets the page file and stores it in a variable
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
 $current_page = $file_path['filename'];
@@ -7,6 +10,8 @@ if ($globalTimezone == '') $globalTimezone = 'UTC';
 date_default_timezone_set($globalTimezone);
 if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] != '') $MapType = $_COOKIE['MapType'];
 else $MapType = $globalMapProvider;
+
+
 if (isset($_GET['3d'])) {
 	setcookie('MapFormat','3d');
 } else if (isset($_GET['2d'])) {
