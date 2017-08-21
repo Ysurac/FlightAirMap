@@ -137,7 +137,10 @@ class Marine{
 			if (isset($row['mmsi'])) $temp_array['mmsi'] = $row['mmsi'];
 			if (isset($row['type'])) $temp_array['type'] = $row['type'];
 			if (isset($row['type_id'])) $temp_array['type_id'] = $row['type_id'];
+			if (isset($row['status'])) $temp_array['status'] = $row['status'];
+			if (isset($row['status_id'])) $temp_array['status_id'] = $row['status_id'];
 			if (isset($row['ident'])) $temp_array['ident'] = $row['ident'];
+			if (isset($row['arrival_port_name'])) $temp_array['arrival_port_name'] = $row['arrival_port_name'];
 			if (isset($row['latitude'])) $temp_array['latitude'] = $row['latitude'];
 			if (isset($row['longitude'])) $temp_array['longitude'] = $row['longitude'];
 			if (isset($row['format_source'])) $temp_array['format_source'] = $row['format_source'];
@@ -557,7 +560,7 @@ class Marine{
 	* Update arrival marine data
 	*
 	* @param String $fammarine_id the ID
-	* @param String $ident the marine ident
+	* @param String $arrival_code the marine ident
 	* @return String success or false
 	*
 	*/
@@ -730,6 +733,8 @@ class Marine{
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
 		$type = filter_var($type,FILTER_SANITIZE_STRING);
 		$status = filter_var($status,FILTER_SANITIZE_STRING);
+		$type_id = filter_var($typeid,FILTER_SANITIZE_NUMBER_INT);
+		$status_id = filter_var($statusid,FILTER_SANITIZE_NUMBER_INT);
 		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
 		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 		$arrival_code = filter_var($arrival_code,FILTER_SANITIZE_STRING);
@@ -746,13 +751,15 @@ class Marine{
 			$latitude = 0;
 			$longitude = 0;
 		}
+		if ($type_id == '') $type_id = NULL;
+		if ($status_id == '') $status_id = NULL;
 		if ($heading == '' || $Common->isInteger($heading) === false) $heading = 0;
 		if ($groundspeed == '' || $Common->isInteger($groundspeed) === false) $groundspeed = 0;
 		if ($arrival_date == '') $arrival_date = NULL;
-		$query  = "INSERT INTO marine_output (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, status,imo,arrival_port_name,arrival_port_date) 
-		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:speed,:date,:format_source, :source_name,:mmsi,:type,:status,:imo,:arrival_port_name,:arrival_port_date)";
+		$query  = "INSERT INTO marine_output (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, type_id, status,status_id,imo,arrival_port_name,arrival_port_date) 
+		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:speed,:date,:format_source, :source_name,:mmsi,:type,:type_id,:status,:status_id,:imo,:arrival_port_name,:arrival_port_date)";
 
-		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':speed' => $groundspeed,':date' => $date,':format_source' => $format_source, ':source_name' => $source_name,':mmsi' => $mmsi,':type' => $type,':status' => $status,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
+		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':speed' => $groundspeed,':date' => $date,':format_source' => $format_source, ':source_name' => $source_name,':mmsi' => $mmsi,':type' => $type,':type_id' => $type_id,':status' => $status,':status_id' => $status_id,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);

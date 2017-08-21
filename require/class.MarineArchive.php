@@ -94,10 +94,10 @@ class MarineArchive {
 		
 		//$country = $over_country;
 		// Route is not added in marine_archive
-		$query  = 'INSERT INTO marine_archive (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,status,imo,arrival_port_name,arrival_port_date) 
-		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:status,:imo,:arrival_port_name,:arrival_port_date)';
+		$query  = 'INSERT INTO marine_archive (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,type_id,status,status_id,imo,arrival_port_name,arrival_port_date) 
+		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:type_id,:status,:status_id,:imo,:arrival_port_name,:arrival_port_date)';
 
-		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $country,':mmsi' => $mmsi,':type' => $type,':status' => $status,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
+		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $country,':mmsi' => $mmsi,':type' => $type,':type_id' => $typeid,':status' => $status,':status_id' => $statusid,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
 
 		try {
 			$sth = $this->db->prepare($query);

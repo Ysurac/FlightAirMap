@@ -160,6 +160,23 @@ class MarineImport {
 		if (isset($line['type']) && $line['type'] != '' && $this->all_tracked[$id]['type'] == '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('type' => $line['type']));
 		}
+		if (isset($line['status']) && $line['status'] != '') {
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('status' => $line['status']));
+		}
+		if (isset($line['status_id']) && (!isset($this->all_tracked[$id]['status_id']) || $this->all_tracked[$id]['status_id'] != $line['status_id'])) {
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('status_id' => $line['status_id']));
+		    if ($this->all_tracked[$id]['addedMarine'] == 1) {
+			if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
+			    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+				$Marine = new Marine($this->db);
+				$Marine->updateStatusMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['status_id'],$this->all_tracked[$id]['status']);
+				unset($Marine);
+			    }
+			}
+		    }
+		}
+
+
 		if (isset($line['mmsi_type']) && $line['mmsi_type'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('mmsi_type' => $line['mmsi_type']));
 		}
@@ -172,6 +189,7 @@ class MarineImport {
 		if (isset($line['arrival_code']) && $line['arrival_code'] != '') {
 		    if (!isset($this->all_tracked[$id]['arrival_code'])) {
 			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('arrival_code' => $line['arrival_code']));
+			if ($globalDebug) echo $this->all_tracked[$id]['id'].' => New arrival: '.$line['arrival_code']."\n";
 			if ($this->all_tracked[$id]['addedMarine'] != 0) {
 			    if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
 				if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
@@ -184,6 +202,7 @@ class MarineImport {
 			}
 		    } elseif ($this->all_tracked[$id]['arrival_code'] != $line['arrival_code']) {
 			$this->all_tracked[$id]['arrival_code'] = $line['arrival_code'];
+			if ($globalDebug) echo $this->all_tracked[$id]['id'].' => New arrival: '.$line['arrival_code']."\n";
 			if (!isset($line['id'])) {
 				$this->all_tracked[$id]['id'] = $id.'-'.date('YmdHi');
 				$this->all_tracked[$id]['forcenew'] = 1;
@@ -224,16 +243,16 @@ class MarineImport {
 				return '';
 		    }
 		} elseif (isset($line['datetime']) && strtotime($line['datetime']) <= time()-30*60) {
-			if ($globalDebug) echo "!!! Date is too old ".$this->all_tracked[$id]['mmsi']." - format : ".$line['format_source']."!!!";
+			if ($globalDebug) echo "!!! Date is too old ".$this->all_tracked[$id]['mmsi']." - format : ".$line['format_source']."!!!\n";
 			return '';
 		} elseif (isset($line['datetime']) && strtotime($line['datetime']) >= time()+20*60) {
-			if ($globalDebug) echo "!!! Date is in the future ".$this->all_tracked[$id]['mmsi']." - format : ".$line['format_source']."!!!";
+			if ($globalDebug) echo "!!! Date is in the future ".$this->all_tracked[$id]['mmsi']." - format : ".$line['format_source']."!!!\n";
 			return '';
 		} elseif (!isset($line['datetime'])) {
 			date_default_timezone_set('UTC');
 			$this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('datetime' => date('Y-m-d H:i:s')));
 		} else {
-			if ($globalDebug) echo "!!! Unknow date error ".$this->all_tracked[$id]['mmsi']." date: ".$line['datetime']." - format : ".$line['format_source']."!!!";
+			if ($globalDebug) echo "!!! Unknow date error ".$this->all_tracked[$id]['mmsi']." date: ".$line['datetime']." - format : ".$line['format_source']."!!!\n";
 			return '';
 		}
 
@@ -313,22 +332,6 @@ class MarineImport {
 		if (isset($line['source_name']) && $line['source_name'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('source_name' => $line['source_name']));
 		}
-		if (isset($line['status']) && $line['status'] != '') {
-		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('status' => $line['status']));
-		}
-		if (isset($line['status_id']) && (!isset($this->all_tracked[$id]['status_id']) || $this->all_tracked[$id]['status_id'] != $line['status_id'])) {
-		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('status_id' => $line['status_id']));
-		    if ($this->all_tracked[$id]['addedMarine'] == 1) {
-			if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
-			    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
-				$Marine = new Marine($this->db);
-				$Marine->updateStatusMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['status_id'],$this->all_tracked[$id]['status']);
-				unset($Marine);
-			    }
-			}
-		    }
-		}
-
 		if (isset($line['noarchive']) && $line['noarchive'] === true) {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('noarchive' => true));
 		}

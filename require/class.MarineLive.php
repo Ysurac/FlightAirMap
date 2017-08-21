@@ -962,13 +962,16 @@ class MarineLive {
 		$source_name = filter_var($source_name,FILTER_SANITIZE_STRING);
 		$over_country = filter_var($over_country,FILTER_SANITIZE_STRING);
 		$type = filter_var($type,FILTER_SANITIZE_STRING);
+		$typeid = filter_var($typeid,FILTER_SANITIZE_NUMBER_INT);
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_NUMBER_INT);
 		$status = filter_var($status,FILTER_SANITIZE_STRING);
+		$statusid = filter_var($statusid,FILTER_SANITIZE_NUMBER_INT);
 		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
 		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 		$arrival_code = filter_var($arrival_code,FILTER_SANITIZE_STRING);
 		$arrival_date = filter_var($arrival_date,FILTER_SANITIZE_STRING);
-		
+		if ($typeid == '') $typeid = NULL;
+		if ($statusid == '') $statusid = NULL;
 
             	if ($groundspeed == '' || $Common->isInteger($groundspeed) === false ) $groundspeed = 0;
             	if ($heading == '' || $Common->isInteger($heading) === false ) $heading = 0;
@@ -978,9 +981,9 @@ class MarineLive {
 			if ($globalDebug) echo '-- Delete previous data -- ';
 			$query .= 'DELETE FROM marine_live WHERE fammarine_id = :fammarine_id;';
 		}
-		$query .= 'INSERT INTO marine_live (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,status,imo,arrival_port_name,arrival_port_date) 
-		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:status,:imo,:arrival_port_name,:arrival_port_date)';
-		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':mmsi' => $mmsi,':type' => $type,':status' => $status,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
+		$query .= 'INSERT INTO marine_live (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,type_id,status,status_id,imo,arrival_port_name,arrival_port_date) 
+		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:typeid,:status,:statusid,:imo,:arrival_port_name,:arrival_port_date)';
+		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':mmsi' => $mmsi,':type' => $type,':typeid' => $typeid,':status' => $status,':statusid' => $statusid,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -992,7 +995,7 @@ class MarineLive {
 		if (isset($globalArchive) && $globalArchive && $putinarchive && $noarchive !== true) {
 			if ($globalDebug) echo '(Add to Marine archive : ';
 			$MarineArchive = new MarineArchive($this->db);
-			$result =  $MarineArchive->addMarineArchiveData($fammarine_id, $ident, $latitude, $longitude, $heading, $groundspeed, $date, $putinarchive, $mmsi,$type,$typeid,$imo, $callsign,$arrival_code,$arrival_date,$status,$noarchive,$format_source, $source_name, $over_country);
+			$result =  $MarineArchive->addMarineArchiveData($fammarine_id, $ident, $latitude, $longitude, $heading, $groundspeed, $date, $putinarchive, $mmsi,$type,$typeid,$imo, $callsign,$arrival_code,$arrival_date,$status,$statusid,$noarchive,$format_source, $source_name, $over_country);
 			if ($globalDebug) echo $result.')';
 		}
 		return "success";
