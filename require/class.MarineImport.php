@@ -218,6 +218,14 @@ class MarineImport {
 
 		//if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_tracked[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9-]+$/', $line['ident'])) {
 		if (isset($line['ident']) && $line['ident'] != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_tracked[$id]['ident'] != trim($line['ident']))) {
+		    if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
+			if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
+			    $timeelapsed = microtime(true);
+			    $Marine = new Marine($this->db);
+			    $Marine->addIdentity($this->all_tracked[$id]['mmsi'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['ident'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['type']);
+			    $Marine->db = null;
+			}
+		    }
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => trim($line['ident'])));
 		    if ($this->all_tracked[$id]['addedMarine'] == 1) {
 			if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
@@ -227,7 +235,6 @@ class MarineImport {
 				$fromsource = NULL;
 				$result = $Marine->updateIdentMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$fromsource);
 				if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
-				$Marine->addIdentity($this->all_tracked[$id]['mmsi'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['ident'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['type']);
 				$Marine->db = null;
 				if ($globalDebugTimeElapsed) echo 'Time elapsed for update identspotterdata : '.round(microtime(true)-$timeelapsed,2).'s'."\n";
 			    }
