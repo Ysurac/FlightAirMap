@@ -611,6 +611,7 @@ class Stats {
 		} else return array();
 	}
 	public function countAllTrackerOverCountries($limit = true, $filter_name = '',$year = '',$month = '') {
+		global $globalStatsFilters;
 		$Connection = new Connection($this->db);
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($Connection->tableExists('countries')) {

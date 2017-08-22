@@ -232,7 +232,7 @@ if ($type == 'marine') {
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Vessel Type"); ?></h2>
 <?php
-	$marine_array = $Stats->countAllMarineTypes(true,0,'',$filter_name,$year,$month);
+	$marine_array = $Stats->countAllMarineTypes(true,$filter_name,$year,$month);
 	if (count($marine_array) == 0) print _("No data available");
 	else {
 		print '<div id="chart1" class="chart" width="100%"></div><script>';
