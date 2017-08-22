@@ -19,7 +19,7 @@ Modified in 2017 by Ycarus <ycarus@zugaina.org>
 Original version come from https://github.com/ais-one/phpais
 */
 class AIS {
-	$shiptype = array(0 => 'Not available (default)',
+	protected $shiptype = array(0 => 'Not available (default)',
 			20 => 'Wing in ground (WIG), all ships of this type',
 			21 => 'Wing in ground (WIG), Hazardous category A',
 			22 => 'Wing in ground (WIG), Hazardous category B',
