@@ -593,6 +593,7 @@ class AIS {
 	public function parse($buffer) {
 		$data = $this->process_ais_buf($buffer);
 		if (!is_object($data)) return array();
+		$result = array();
 		if ($data->lon != 0) $result['longitude'] = $data->lon;
 		if ($data->lat != 0) $result['latitude'] = $data->lat;
 		$result['ident'] = trim($data->name);
@@ -626,7 +627,6 @@ class AIS {
 	public function parse_line($buffer) {
 		global $globalDebug;
 		$result = array();
-		$data = new stdClass();
 		$start = strpos($buffer,"VDM");
 		$tst = substr($buffer, $start - 3);
 		$data = $this->process_ais_raw( $tst, "" );

@@ -129,7 +129,7 @@ if ($type == 'aircraft') {
 ?>
 	<span><span class="badge"><?php print number_format($Stats->countOverallMarine($filter_name,$year,$month)); ?></span> <?php echo _("Vessels"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-	<span><span class="badge"><?php print number_format($Marine->countOverallMarineTypes(array(),$year,$month)); ?></span> <?php echo _("Types"); ?></span>
+	<span><span class="badge"><?php print number_format($Stats->countOverallMarineTypes($filter_name,$year,$month)); ?></span> <?php echo _("Types"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
 } elseif ($type == 'tracker') {
@@ -232,7 +232,7 @@ if ($type == 'marine') {
             <div class="col-md-6">
                 <h2><?php echo _("Top 10 Most Common Vessel Type"); ?></h2>
 <?php
-	$marine_array = $Marine->countAllMarineTypes(true,0,'',array(),$year,$month);
+	$marine_array = $Stats->countAllMarineTypes(true,0,'',$filter_name,$year,$month);
 	if (count($marine_array) == 0) print _("No data available");
 	else {
 		print '<div id="chart1" class="chart" width="100%"></div><script>';

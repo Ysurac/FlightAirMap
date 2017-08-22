@@ -955,7 +955,7 @@ class Marine{
 					$filter_query .= " AND marine_archive.date > CAST('".$sincedate."' AS TIMESTAMP)";
 				}
 			}
-			$filter_query .= " LIMIT 100 OFFSET 0";
+			$filter_query .= " LIMIT 200 OFFSET 0";
 			$query = "SELECT c.name, c.iso3, c.iso2, count(c.name) as nb FROM countries c INNER JOIN (SELECT DISTINCT fammarine_id,over_country FROM marine_archive".$filter_query.") l ON c.iso2 = l.over_country ";
 		}
 		$query .= "GROUP BY c.name,c.iso3,c.iso2 ORDER BY nb DESC";

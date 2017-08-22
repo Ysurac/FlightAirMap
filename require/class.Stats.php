@@ -218,6 +218,31 @@ class Stats {
 		}
 		return $all;
 	}
+	public function countAllMarineTypes($limit = true, $filter_name = '',$year = '', $month = '') {
+		global $globalStatsFilters;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		if ($year == '' && $month == '') {
+			if ($limit) $query = "SELECT type AS marine_type, cnt AS marine_type_count, type_id AS marine_type_id FROM stats_marine_type WHERE filter_name = :filter_name ORDER BY marine_type_count DESC LIMIT 10 OFFSET 0";
+			else $query = "SELECT type AS marine_type, cnt AS marine_type_count, type_id AS marine_type_id FROM stats_marine_type WHERE filter_name = :filter_name ORDER BY aircraft_icao_count DESC";
+			try {
+				$sth = $this->db->prepare($query);
+				$sth->execute(array(':filter_name' => $filter_name));
+			} catch(PDOException $e) {
+				echo "error : ".$e->getMessage();
+			}
+			$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		} else $all = array();
+		if (empty($all)) {
+			$filters = array('year' => $year,'month' => $month);
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Marine = new Marine($this->db);
+			//$all = $Spotter->countAllAircraftTypes($limit,0,'',$filters,$year,$month);
+			$all = $Marine->countAllMarineTypes($limit,0,'',$filters);
+		}
+		return $all;
+	}
 	public function countAllAirlineCountries($limit = true,$filter_name = '',$year = '',$month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
@@ -562,6 +587,7 @@ class Stats {
 		$Connection = new Connection($this->db);
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($Connection->tableExists('countries')) {
+			$all = array();
 			if ($year == '' && $month == '') {
 				if ($limit) $query = "SELECT countries.iso3 as marine_country_iso3, countries.iso2 as marine_country_iso2, countries.name as marine_country, cnt as marine_count, lat as marine_country_latitude, lon as marine_country_longitude FROM stats_marine_country, countries WHERE stats_marine_country.iso2 = countries.iso2 AND filter_name = :filter_name ORDER BY marine_count DESC LIMIT 20 OFFSET 0";
 				else $query = "SELECT countries.iso3 as marine_country_iso3, countries.iso2 as marine_country_iso2, countries.name as marine_country, cnt as marine_count, lat as marine_country_latitude, lon as marine_country_longitude FROM stats_marine_country, countries WHERE stats_marine_country.iso2 = countries.iso2 AND filter_name = :filter_name ORDER BY marine_count DESC";
@@ -572,20 +598,23 @@ class Stats {
 					echo "error : ".$e->getMessage();
 				}
 				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
-				return $all;
 			}
-			$filters = array();
-			if ($filter_name != '') {
-				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			if (empty($all)) {
+				$filters = array();
+				if ($filter_name != '') {
+					$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+				}
+				$Marine = new Marine($this->db);
+				$all = $Marine->countAllMarineOverCountries($limit,0,'',$filters);
 			}
-			$Marine = new Marine($this->db);
-			return $Marine->countAllMarineOverCountries($limit,$filters,$year,$month);
+			return $all;
 		} else return array();
 	}
 	public function countAllTrackerOverCountries($limit = true, $filter_name = '',$year = '',$month = '') {
 		$Connection = new Connection($this->db);
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		if ($Connection->tableExists('countries')) {
+			$all = array();
 			if ($year == '' && $month == '') {
 				if ($limit) $query = "SELECT countries.iso3 as tracker_country_iso3, countries.iso2 as tracker_country_iso2, countries.name as tracker_country, cnt as tracker_count, lat as tracker_country_latitude, lon as tracker_country_longitude FROM stats_tracker_country, countries WHERE stats_tracker_country.iso2 = countries.iso2 AND filter_name = :filter_name ORDER BY tracker_count DESC LIMIT 20 OFFSET 0";
 				else $query = "SELECT countries.iso3 as tracker_country_iso3, countries.iso2 as tracker_country_iso2, countries.name as tracker_country, cnt as tracker_count, lat as tracker_country_latitude, lon as tracker_country_longitude FROM stats_tracker_country, countries WHERE stats_tracker_country.iso2 = countries.iso2 AND filter_name = :filter_name ORDER BY tracker_count DESC";
@@ -598,8 +627,15 @@ class Stats {
 				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 				return $all;
 			}
-			$Tracker = new Tracker($this->db);
-			return $Tracker->countAllTrackerOverCountries($limit,$filters,$year,$month);
+			if (empty($all)) {
+				$filters = array();
+				if ($filter_name != '') {
+					$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+				}
+				$Tracker = new Tracker($this->db);
+				$all = $Tracker->countAllTrackerOverCountries($limit,0,'',$filters);
+			}
+			return $all;
 		} else return array();
 	}
 	public function countAllPilots($limit = true,$stats_airline = '',$filter_name = '', $year = '',$month = '') {
@@ -1363,6 +1399,33 @@ class Stats {
 		}
 		return $all;
 	}
+	public function countOverallMarineTypes($filter_name = '',$year = '',$month = '') {
+		global $globalStatsFilters;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		$all = array();
+		if ($year == '' && $month == '') {
+			$query = "SELECT SUM(cnt) AS nb_type FROM stats_marine_type WHERE filter_name = :filter_name";
+			try {
+				$sth = $this->db->prepare($query);
+				$sth->execute(array(':filter_name' => $filter_name));
+			} catch(PDOException $e) {
+				echo "error : ".$e->getMessage();
+			}
+			$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+			$all = $result[0]['nb_type'];
+		}
+		if (empty($all)) {
+			$filters = array();
+			$filters = array('year' => $year,'month' => $month);
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Marine = new Marine($this->db);
+			//$all = $Spotter->countOverallAirlines($filters,$year,$month);
+			$all = $Marine->countOverallMarineTypes($filters);
+		}
+		return $all;
+	}
 	public function countOverallOwners($stats_airline = '',$filter_name = '',$year = '', $month = '') {
 		global $globalStatsFilters;
 		if ($filter_name == '') $filter_name = $this->filter_name;
@@ -1915,9 +1978,9 @@ class Stats {
 			}
 		} else {
 			if ($reset) {
-				$query = "UPDATE stats_marine_country SET cnt = :cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
+				$query = "UPDATE stats_marine_country SET cnt = :cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_marine_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_marine_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
 			} else {
-				$query = "UPDATE stats_marine_country SET cnt = cnt+:cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
+				$query = "UPDATE stats_marine_country SET cnt = cnt+:cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_marine_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_marine_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
 			}
 		}
 		$query_values = array(':iso2' => $iso2,':iso3' => $iso3,':name' => $name,':cnt' => $cnt,':filter_name' => $filter_name);
@@ -1938,9 +2001,9 @@ class Stats {
 			}
 		} else {
 			if ($reset) {
-				$query = "UPDATE stats_tracker_country SET cnt = :cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
+				$query = "UPDATE stats_tracker_country SET cnt = :cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_tracker_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_tracker_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
 			} else {
-				$query = "UPDATE stats_tracker_country SET cnt = cnt+:cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
+				$query = "UPDATE stats_tracker_country SET cnt = cnt+:cnt WHERE iso2 = :iso2 AND filter_name = :filter_name; INSERT INTO stats_tracker_country (iso2,iso3,name,cnt,filter_name) SELECT :iso2,:iso3,:name,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_tracker_country WHERE iso2 = :iso2 AND filter_name = :filter_name);"; 
 			}
 		}
 		$query_values = array(':iso2' => $iso2,':iso3' => $iso3,':name' => $name,':cnt' => $cnt,':filter_name' => $filter_name);
@@ -1967,6 +2030,29 @@ class Stats {
 			}
 		}
 		$query_values = array(':aircraft_icao' => $aircraft_icao,':aircraft_name' => $aircraft_name,':cnt' => $cnt, ':aircraft_manufacturer' => $aircraft_manufacturer,':stats_airline' => $airline_icao, ':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+	public function addStatMarineType($type,$type_id,$cnt, $filter_name = '', $reset = false) {
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			if ($reset) {
+				$query = "INSERT INTO stats_marine_type (type,type_id,cnt, filter_name) VALUES (:type,:type_id,:cnt,:filter_name) ON DUPLICATE KEY UPDATE cnt = :cnt";
+			} else {
+				$query = "INSERT INTO stats_marine_type (type,type_id,cnt, filter_name) VALUES (:type,:type_id,:cnt,:filter_name) ON DUPLICATE KEY UPDATE cnt = cnt+:cnt";
+			}
+		} else {
+			if ($reset) {
+				$query = "UPDATE stats_marine_type SET cnt = :cnt, type = :type, filter_name = :filter_name WHERE type_id = :type_id AND filter_name = :filter_name; INSERT INTO stats_marine_type (type, type_id,cnt,filter_name) SELECT :type,:type_id,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_marine_type WHERE type_id = :type_id AND filter_name = :filter_name);"; 
+			} else {
+				$query = "UPDATE stats_marine_type SET cnt = cnt+:cnt, type = :type, filter_name = :filter_name WHERE type_id = :type_id AND filter_name = :filter_name; INSERT INTO stats_marine_type (type,type_id,cnt,filter_name) SELECT :type,:type_id,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_marine_type WHERE type_id = :type_id AND filter_name = :filter_name);"; 
+			}
+		}
+		$query_values = array(':type' => $type,':type_id' => $type_id,':cnt' => $cnt, ':filter_name' => $filter_name);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -2197,7 +2283,7 @@ class Stats {
 				if ($globalDebug) echo 'Count all vessels by countries...'."\n";
 				$alldata = $Marine->countAllMarineOverCountries(false,0,$last_update_day);
 				foreach ($alldata as $number) {
-					$this->addStatCountryMarine($number['marine_country_iso2'],$number['marine_country_iso3'],$number['marine_country'],$number['marine_count'],'','',$reset);
+					echo $this->addStatCountryMarine($number['marine_country_iso2'],$number['marine_country_iso3'],$number['marine_country'],$number['marine_count'],'','',$reset);
 				}
 			}
 			if ($globalDebug) echo 'Count all vessels by months...'."\n";
@@ -2236,6 +2322,12 @@ class Stats {
 			foreach ($alldata as $number) {
 				$this->addStatMarine('hour',$number['hour_name'],$number['hour_count']);
 			}
+			if ($globalDebug) echo 'Count all types...'."\n";
+			$alldata = $Marine->countAllMarineTypes(false,0,$last_update_day);
+			foreach ($alldata as $number) {
+				$this->addStatMarineType($number['marine_type'],$number['marine_type_id'],$number['marine_type_count'],'',$reset);
+			}
+
 			echo 'Insert last stats update date...'."\n";
 			date_default_timezone_set('UTC');
 			$this->addLastStatsUpdate('last_update_stats_marine',date('Y-m-d G:i:s'));
