@@ -253,7 +253,7 @@ if ($type == 'marine') {
 ?>
                 <div class="more">
             	    <?php
-            	    /*
+            	    
             		if ($year != '' && $month != '') {
             	    ?>
             	    <a href="<?php print $globalURL; ?>/marine/statistics/type/<?php echo $year; ?>/<?php echo $month ?>/" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
@@ -263,7 +263,6 @@ if ($type == 'marine') {
             	    <a href="<?php print $globalURL; ?>/marine/statistics/type" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
             	    <?php
             		}
-            		*/
             	    ?>
                 </div>
             </div>

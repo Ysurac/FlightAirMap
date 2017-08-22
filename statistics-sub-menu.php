@@ -138,13 +138,15 @@
 ?>
 		<li class="dropdown">
 		    <a class="dropdown-toggle <?php if(strtolower($current_page) == "statistics-date" || strtolower($current_page) == "statistics-time"){ print 'active'; } ?>" data-toggle="dropdown" href="#">
-		      <?php echo _("Date &amp; Time"); ?> <span class="caret"></span>
+			<?php echo _("Date &amp; Time"); ?> <span class="caret"></span>
 		    </a>
 		    <ul class="dropdown-menu" role="menu">
-		      <li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/date"><?php echo _("Date"); ?></a></li>
-			  <li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/time"><?php echo _("Time"); ?></a></li>
+			<li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/date"><?php echo _("Date"); ?></a></li>
+			<li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/time"><?php echo _("Time"); ?></a></li>
 		    </ul>
 		</li>
+		<li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/type"><?php echo _("Type"); ?></a></li>
+
 <?php
 	}
 ?>

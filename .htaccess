@@ -281,6 +281,11 @@ RewriteRule ^aircraft/([^/]+)/([^/]+)(/?)$ aircraft-detailed.php?aircraft_type=$
 RewriteRule ^aircraft/([^/]+)(/?)$ aircraft-detailed.php?aircraft_type=$1 [L,NC]
 RewriteRule ^aircraft(/?)$ aircraft.php [L,NC]
 
+########### TYPE ###########
+RewriteRule ^marine/type/([^/]+)/([^/]+)/([^/]+)(/?)$ marine-type-detailed.php?type=$1&limit=$2&sort=$3 [L,NC]
+RewriteRule ^marine/type/([^/]+)/([^/]+)(/?)$ marine-type-detailed.php?type=$1&limit=$2 [L,NC]
+RewriteRule ^marine/type/([^/]+)(/?)$ marine-type-detailed.php?type=$1 [L,NC]
+
 
 ########### DATE ###########
 
@@ -400,6 +405,7 @@ RewriteRule ^marine/statistics/time(/?)$ statistics-time.php?marine [L,NC]
 RewriteRule ^marine/statistics/month(/?)$ statistics-month.php?marine [L,NC]
 RewriteRule ^marine/statistics/year(/?)$ statistics-year.php?marine [L,NC]
 RewriteRule ^marine/statistics/country(/?)$ statistics-country.php?marine [L,NC]
+RewriteRule ^marine/statistics/type(/?)$ statistics-type.php?marine [L,NC]
 RewriteRule ^marine/statistics(/?)$ statistics.php?marine [L,NC]
 
 #---------- TRACKER ---------

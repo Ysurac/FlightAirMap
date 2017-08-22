@@ -19,7 +19,7 @@ if (!empty($spotter_array))
 	$title = sprintf(_("Most Common Time of Day from %s (%s)"),$spotter_array[0]['aircraft_name'],$spotter_array[0]['aircraft_type']);
 	require_once('header.php');
 	print '<div class="select-item">';
-	print '<form action="'.$globalURL.'/aircraft" method="post">';
+	print '<form action="'.$globalURL.'/aircraft" method="get">';
 	print '<select name="aircraft_type" class="selectpicker" data-live-search="true">';
 	print '<option></option>';
 	$Stats = new Stats();

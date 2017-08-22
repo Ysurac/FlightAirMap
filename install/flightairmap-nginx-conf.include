@@ -300,6 +300,12 @@ location /aircraft {
     rewrite ^/aircraft(/?)$ /aircraft.php last;
 }
 
+location /marine/type {
+    rewrite ^/marine/type/([^/]+)/([^/]+)/([^/]+)(/?)$ /marine-type-detailed.php?type=$1&limit=$2&sort=$3 last;
+    rewrite ^/marine/type/([^/]+)/([^/]+)(/?)$ /marine-type-detailed.php?type=$1&limit=$2 last;
+    rewrite ^/marine/type/([^/]+)(/?)$ /marine-type-detailed.php?type=$1 last;
+}
+
 location /date {
     rewrite ^/date/statistics/aircraft/([^/]+)(/?)$ /date-statistics-aircraft.php?date=$1 last;
     rewrite ^/date/statistics/registration/([^/]+)(/?)$ /date-statistics-registration.php?date=$1 last;
@@ -411,6 +417,7 @@ location /marine/statistics {
     rewrite "^/marine/statistics/month(/?)$" /statistics-month.php?marine last;
     rewrite "^/marine/statistics/year(/?)$" /statistics-year.php?marine last;
     rewrite "^/marine/statistics/country(/?)$" /statistics-country.php?marine last;
+    rewrite "^/marine/statistics/type(/?)$" /statistics-type.php?marine last;
     rewrite "^/marine/statistics(/?)$" /statistics.php?marine last;
 }
 location /tracker/statistics {

@@ -807,11 +807,11 @@ foreach($spotter_array as $spotter_item)
 		} elseif ($type == 'marine') {
 			if (isset($spotter_item['type_id'])) {
 				if ($spotter_item['type'] == '') {
-					print '<span class="nomobile"><a href="'.$globalURL.'/marine/vessel/'.$spotter_item['type_id'].'">'._("Not available").'</a></span>'."\n";
+					print '<span class="nomobile"><a href="'.$globalURL.'/marine/type/'.$spotter_item['type_id'].'">'._("Not available").'</a></span>'."\n";
 				} else {
-					print '<span class="nomobile"><a href="'.$globalURL.'/marine/vessel/'.$spotter_item['type_id'].'">'.$spotter_item['type'].'</a></span>'."\n";
+					print '<span class="nomobile"><a href="'.$globalURL.'/marine/type/'.$spotter_item['type_id'].'">'.$spotter_item['type'].'</a></span>'."\n";
 				}
-				print '<span class="mobile"><a href="'.$globalURL.'/marine/vessel/'.$spotter_item['type_id'].'">'.$spotter_item['type'].'</a></span>'."\n";
+				print '<span class="mobile"><a href="'.$globalURL.'/marine/type/'.$spotter_item['type_id'].'">'.$spotter_item['type'].'</a></span>'."\n";
 			} else {
 				if ($spotter_item['type'] == '') {
 					print '<span class="nomobile">'._("Not available").'</span>'."\n";

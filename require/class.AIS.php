@@ -19,6 +19,94 @@ Modified in 2017 by Ycarus <ycarus@zugaina.org>
 Original version come from https://github.com/ais-one/phpais
 */
 class AIS {
+	$shiptype = array(0 => 'Not available (default)',
+			20 => 'Wing in ground (WIG), all ships of this type',
+			21 => 'Wing in ground (WIG), Hazardous category A',
+			22 => 'Wing in ground (WIG), Hazardous category B',
+			23 => 'Wing in ground (WIG), Hazardous category C',
+			24 => 'Wing in ground (WIG), Hazardous category D',
+			25 => 'Wing in ground (WIG), Reserved for future use',
+			26 => 'Wing in ground (WIG), Reserved for future use',
+			27 => 'Wing in ground (WIG), Reserved for future use',
+			28 => 'Wing in ground (WIG), Reserved for future use',
+			29 => 'Wing in ground (WIG), Reserved for future use',
+			30 => 'Fishing',
+			31 => 'Towing',
+			32 => 'Towing: length exceeds 200m or breadth exceeds 25m',
+			33 => 'Dredging or underwater ops',
+			34 => 'Diving ops',
+			35 => 'Military ops',
+			36 => 'Sailing',
+			37 => 'Pleasure Craft',
+			38 => 'Reserved',
+			39 => 'Reserved',
+			40 => 'High speed craft (HSC), all ships of this type',
+			41 => 'High speed craft (HSC), Hazardous category A',
+			42 => 'High speed craft (HSC), Hazardous category B',
+			43 => 'High speed craft (HSC), Hazardous category C',
+			44 => 'High speed craft (HSC), Hazardous category D',
+			45 => 'High speed craft (HSC), Reserved for future use',
+			46 => 'High speed craft (HSC), Reserved for future use',
+			47 => 'High speed craft (HSC), Reserved for future use',
+			48 => 'High speed craft (HSC), Reserved for future use',
+			49 => 'High speed craft (HSC), No additional information',
+			50 => 'Pilot Vessel',
+			51 => 'Search and Rescue vessel',
+			52 => 'Tug',
+			53 => 'Port Tender',
+			54 => 'Anti-pollution equipment',
+			55 => 'Law Enforcement',
+			56 => 'Spare - Local Vessel',
+			57 => 'Spare - Local Vessel',
+			58 => 'Medical Transport',
+			59 => 'Noncombatant ship according to RR Resolution No. 18',
+			60 => 'Passenger, all ships of this type',
+			61 => 'Passenger, Hazardous category A',
+			62 => 'Passenger, Hazardous category B',
+			63 => 'Passenger, Hazardous category C',
+			64 => 'Passenger, Hazardous category D',
+			65 => 'Passenger, Reserved for future use',
+			66 => 'Passenger, Reserved for future use',
+			67 => 'Passenger, Reserved for future use',
+			68 => 'Passenger, Reserved for future use',
+			69 => 'Passenger, No additional information',
+			70 => 'Cargo, all ships of this type',
+			71 => 'Cargo, Hazardous category A',
+			72 => 'Cargo, Hazardous category B',
+			73 => 'Cargo, Hazardous category C',
+			74 => 'Cargo, Hazardous category D',
+			75 => 'Cargo, Reserved for future use',
+			76 => 'Cargo, Reserved for future use',
+			77 => 'Cargo, Reserved for future use',
+			78 => 'Cargo, Reserved for future use',
+			79 => 'Cargo, No additional information',
+			80 => 'Tanker, all ships of this type',
+			81 => 'Tanker, Hazardous category A',
+			82 => 'Tanker, Hazardous category B',
+			83 => 'Tanker, Hazardous category C',
+			84 => 'Tanker, Hazardous category D',
+			85 => 'Tanker, Reserved for future use',
+			86 => 'Tanker, Reserved for future use',
+			87 => 'Tanker, Reserved for future use',
+			88 => 'Tanker, Reserved for future use',
+			89 => 'Tanker, No additional information',
+			90 => 'Other Type, all ships of this type',
+			91 => 'Other Type, Hazardous category A',
+			92 => 'Other Type, Hazardous category B',
+			93 => 'Other Type, Hazardous category C',
+			94 => 'Other Type, Hazardous category D',
+			95 => 'Other Type, Reserved for future use',
+			96 => 'Other Type, Reserved for future use',
+			97 => 'Other Type, Reserved for future use',
+			98 => 'Other Type, Reserved for future use',
+			99 => 'Other Type, no additional information');
+
+
+
+
+
+
+
 /* AIS Decoding
 - Receive and get ITU payload
 - Organises the binary bits of the Payload into 6-bit strings,
@@ -266,88 +354,14 @@ class AIS {
 	}
 	
 	public function getShipType($code) {
-		if ($code == 0) return 'Not available (default)';
-		elseif ($code >= 1 && $code <= 19) return 'Reserved for future use';
-		elseif ($code == 20) return 'Wing in ground (WIG), all ships of this type';
-		elseif ($code == 21) return 'Wing in ground (WIG), Hazardous category A';
-		elseif ($code == 22) return 'Wing in ground (WIG), Hazardous category B';
-		elseif ($code == 23) return 'Wing in ground (WIG), Hazardous category C';
-		elseif ($code == 24) return 'Wing in ground (WIG), Hazardous category D';
-		elseif ($code == 25) return 'Wing in ground (WIG), Reserved for future use';
-		elseif ($code == 26) return 'Wing in ground (WIG), Reserved for future use';
-		elseif ($code == 27) return 'Wing in ground (WIG), Reserved for future use';
-		elseif ($code == 28) return 'Wing in ground (WIG), Reserved for future use';
-		elseif ($code == 29) return 'Wing in ground (WIG), Reserved for future use';
-		elseif ($code == 30) return 'Fishing';
-		elseif ($code == 31) return 'Towing';
-		elseif ($code == 32) return 'Towing: length exceeds 200m or breadth exceeds 25m';
-		elseif ($code == 33) return 'Dredging or underwater ops';
-		elseif ($code == 34) return 'Diving ops';
-		elseif ($code == 35) return 'Military ops';
-		elseif ($code == 36) return 'Sailing';
-		elseif ($code == 37) return 'Pleasure Craft';
-		elseif ($code == 38) return 'Reserved';
-		elseif ($code == 39) return 'Reserved';
-		elseif ($code == 40) return 'High speed craft (HSC), all ships of this type';
-		elseif ($code == 41) return 'High speed craft (HSC), Hazardous category A';
-		elseif ($code == 42) return 'High speed craft (HSC), Hazardous category B';
-		elseif ($code == 43) return 'High speed craft (HSC), Hazardous category C';
-		elseif ($code == 44) return 'High speed craft (HSC), Hazardous category D';
-		elseif ($code == 45) return 'High speed craft (HSC), Reserved for future use';
-		elseif ($code == 46) return 'High speed craft (HSC), Reserved for future use';
-		elseif ($code == 47) return 'High speed craft (HSC), Reserved for future use';
-		elseif ($code == 48) return 'High speed craft (HSC), Reserved for future use';
-		elseif ($code == 49) return 'High speed craft (HSC), No additional information';
-		elseif ($code == 50) return 'Pilot Vessel';
-		elseif ($code == 51) return 'Search and Rescue vessel';
-		elseif ($code == 52) return 'Tug';
-		elseif ($code == 53) return 'Port Tender';
-		elseif ($code == 54) return 'Anti-pollution equipment';
-		elseif ($code == 55) return 'Law Enforcement';
-		elseif ($code == 56) return 'Spare - Local Vessel';
-		elseif ($code == 57) return 'Spare - Local Vessel';
-		elseif ($code == 58) return 'Medical Transport';
-		elseif ($code == 59) return 'Noncombatant ship according to RR Resolution No. 18';
-		elseif ($code == 60) return 'Passenger, all ships of this type';
-		elseif ($code == 61) return 'Passenger, Hazardous category A';
-		elseif ($code == 62) return 'Passenger, Hazardous category B';
-		elseif ($code == 63) return 'Passenger, Hazardous category C';
-		elseif ($code == 64) return 'Passenger, Hazardous category D';
-		elseif ($code == 65) return 'Passenger, Reserved for future use';
-		elseif ($code == 66) return 'Passenger, Reserved for future use';
-		elseif ($code == 67) return 'Passenger, Reserved for future use';
-		elseif ($code == 68) return 'Passenger, Reserved for future use';
-		elseif ($code == 69) return 'Passenger, No additional information';
-		elseif ($code == 70) return 'Cargo, all ships of this type';
-		elseif ($code == 71) return 'Cargo, Hazardous category A';
-		elseif ($code == 72) return 'Cargo, Hazardous category B';
-		elseif ($code == 73) return 'Cargo, Hazardous category C';
-		elseif ($code == 74) return 'Cargo, Hazardous category D';
-		elseif ($code == 75) return 'Cargo, Reserved for future use';
-		elseif ($code == 76) return 'Cargo, Reserved for future use';
-		elseif ($code == 77) return 'Cargo, Reserved for future use';
-		elseif ($code == 78) return 'Cargo, Reserved for future use';
-		elseif ($code == 79) return 'Cargo, No additional information';
-		elseif ($code == 80) return 'Tanker, all ships of this type';
-		elseif ($code == 81) return 'Tanker, Hazardous category A';
-		elseif ($code == 82) return 'Tanker, Hazardous category B';
-		elseif ($code == 83) return 'Tanker, Hazardous category C';
-		elseif ($code == 84) return 'Tanker, Hazardous category D';
-		elseif ($code == 85) return 'Tanker, Reserved for future use';
-		elseif ($code == 86) return 'Tanker, Reserved for future use';
-		elseif ($code == 87) return 'Tanker, Reserved for future use';
-		elseif ($code == 88) return 'Tanker, Reserved for future use';
-		elseif ($code == 89) return 'Tanker, No additional information';
-		elseif ($code == 90) return 'Other Type, all ships of this type';
-		elseif ($code == 91) return 'Other Type, Hazardous category A';
-		elseif ($code == 92) return 'Other Type, Hazardous category B';
-		elseif ($code == 93) return 'Other Type, Hazardous category C';
-		elseif ($code == 94) return 'Other Type, Hazardous category D';
-		elseif ($code == 95) return 'Other Type, Reserved for future use';
-		elseif ($code == 96) return 'Other Type, Reserved for future use';
-		elseif ($code == 97) return 'Other Type, Reserved for future use';
-		elseif ($code == 98) return 'Other Type, Reserved for future use';
-		elseif ($code == 99) return 'Other Type, no additional information';
+		if (isset($this->shiptype[$code])) return $this->shiptype[$code];
+		else return '';
+	}
+
+	public function getShipTypeID($type) {
+		$typeid = array_search($type,$this->shiptype);
+		if ($typeid !== FALSE) return $typeid;
+		else return '';
 	}
 
 	public function process_ais_itu($_itu, $_len, $_filler, $aux /*, $ais_ch*/) {

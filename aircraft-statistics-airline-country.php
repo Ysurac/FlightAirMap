@@ -19,7 +19,7 @@ if (!empty($spotter_array))
 	require_once('header.php');
     
 	print '<div class="select-item">';
-	print '<form action="'.$globalURL.'/aircraft" method="post">';
+	print '<form action="'.$globalURL.'/aircraft" method="get">';
 	print '<select name="aircraft_type" class="selectpicker" data-live-search="true">';
     	print '<option></option>';
     	$Stats = new Stats();

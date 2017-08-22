@@ -327,6 +327,59 @@ class Marine{
 
 		return $spotter_array;
 	}
+
+	/**
+	* Gets all the marine information based on the type
+	*
+	* @return Array the marine information
+	*
+	*/
+	public function getMarineDataByType($type = '', $limit = '', $sort = '', $filter = array())
+	{
+		global $global_query;
+		
+		date_default_timezone_set('UTC');
+		
+		$query_values = array();
+		$limit_query = '';
+		$additional_query = '';
+		$filter_query = $this->getFilter($filter,true,true);
+		if (!is_string($type))
+		{
+			return false;
+		} else {
+			$additional_query = " AND marine_output.type_id = :type";
+			$query_values = array(':type' => $type);
+		}
+		
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+			
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+			}
+		}
+
+		if ($sort != "")
+		{
+			$search_orderby_array = $this->getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY marine_output.date DESC";
+		}
+
+		$query = $global_query.$filter_query." marine_output.type <> '' ".$additional_query." ".$orderby_query;
+		//echo $query."\n";
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
+
+		return $spotter_array;
+	}
 	
 	public function getMarineDataByDate($date = '', $limit = '', $sort = '',$filter = array())
 	{
@@ -1792,8 +1845,8 @@ q	*
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
-		$query  = "SELECT marine_output.type AS marine_type, COUNT(marine_output.type) AS marine_type_count 
-		    FROM marine_output ".$filter_query." marine_output.type  <> ''";
+		$query  = "SELECT marine_output.type AS marine_type, COUNT(marine_output.type) AS marine_type_count, marine_output.type_id AS marine_type_id 
+		    FROM marine_output ".$filter_query." marine_output.type <> '' AND marine_output.type_id IS NOT NULL";
 		if ($olderthanmonths > 0) {
 			if ($globalDBdriver == 'mysql') {
 				$query .= ' AND marine_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH)';
@@ -1836,7 +1889,7 @@ q	*
 				$query_values = array_merge($query_values,array(':day' => $day));
 			}
 		}
-		$query .= " GROUP BY marine_output.type ORDER BY marine_type_count DESC";
+		$query .= " GROUP BY marine_output.type, marine_output.type_id ORDER BY marine_type_count DESC";
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
 		$sth = $this->db->prepare($query);
 		$sth->execute($query_values);
@@ -1845,6 +1898,7 @@ q	*
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
 			$temp_array['marine_type'] = $row['marine_type'];
+			$temp_array['marine_type_id'] = $row['marine_type_id'];
 			$temp_array['marine_type_count'] = $row['marine_type_count'];
 			$marine_array[] = $temp_array;
 		}
