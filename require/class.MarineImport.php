@@ -147,6 +147,7 @@ class MarineImport {
 			if (!empty($identity)) {
 			    $this->all_tracked[$id]['ident'] = $identity['ship_name'];
 			    $this->all_tracked[$id]['type'] = $identity['type'];
+			    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('typeid' => $AIS->getShipTypeID($identity['type'])));
 			}
 			//print_r($identity);
 			unset($Marine);
@@ -159,7 +160,7 @@ class MarineImport {
 		}
 		if (isset($line['type']) && $line['type'] != '' && $this->all_tracked[$id]['type'] == '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('type' => $line['type']));
-		    if (!isset($line['type_id'])) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('typeid' => $AIS->getShipTypeID($line['type'])));
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('typeid' => $AIS->getShipTypeID($line['type'])));
 		}
 		if (isset($line['status']) && $line['status'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('status' => $line['status']));
