@@ -127,14 +127,14 @@ if ($type == 'aircraft') {
 <?php
 } elseif ($type == 'marine') {
 ?>
-	<span><span class="badge"><?php print number_format($Marine->countOverallMarine(array(),$year,$month)); ?></span> <?php echo _("Vessels"); ?></span>
+	<span><span class="badge"><?php print number_format($Stats->countOverallMarine($filter_name,$year,$month)); ?></span> <?php echo _("Vessels"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<span><span class="badge"><?php print number_format($Marine->countOverallMarineTypes(array(),$year,$month)); ?></span> <?php echo _("Types"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
 } elseif ($type == 'tracker') {
 ?>
-	<span><span class="badge"><?php print number_format($Tracker->countOverallTracker(array(),$year,$month)); ?></span> <?php echo _("Trackers"); ?></span>
+	<span><span class="badge"><?php print number_format($Stats->countOverallTracker($filter_name,$year,$month)); ?></span> <?php echo _("Trackers"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<span><span class="badge"><?php print number_format($Tracker->countOverallTrackerTypes(array(),$year,$month)); ?></span> <?php echo _("Types"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
@@ -548,7 +548,7 @@ if ($type == 'aircraft') {
 <?php
 }
 if ($type == 'marine') {
-	$flightover_array = $Marine->countAllMarineOverCountries(true);
+	$flightover_array = $Stats->countAllMarineOverCountries(true);
 ?>
 <!--    <div class="row column">-->
 	<div class="col-md-6">
@@ -605,7 +605,7 @@ if ($type == 'marine') {
 <?php
 }
 if ($type == 'tracker') {
-	$flightover_array = $Tracker->countAllTrackerOverCountries(true);
+	$flightover_array = $Stats->countAllTrackerOverCountries(true);
 ?>
 <!--    <div class="row column">-->
 	<div class="col-md-6">

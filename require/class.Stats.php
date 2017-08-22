@@ -554,15 +554,53 @@ class Stats {
 					return $all;
 				} else return array();
 			}
-		} else {
-			/*
-			if (empty($all)) {
-				$Spotter = new Spotter($this->db);
-				$all = $Spotter->countAllFlightOverCountries($limit);
+			$Spotter = new Spotter($this->db);
+			return $Spotter->countAllFlightOverCountries($limit);
+		} else return array();
+	}
+	public function countAllMarineOverCountries($limit = true, $filter_name = '',$year = '',$month = '') {
+		$Connection = new Connection($this->db);
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		if ($Connection->tableExists('countries')) {
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT countries.iso3 as marine_country_iso3, countries.iso2 as marine_country_iso2, countries.name as marine_country, cnt as marine_count, lat as marine_country_latitude, lon as marine_country_longitude FROM stats_marine_country, countries WHERE stats_marine_country.iso2 = countries.iso2 AND filter_name = :filter_name ORDER BY marine_count DESC LIMIT 20 OFFSET 0";
+				else $query = "SELECT countries.iso3 as marine_country_iso3, countries.iso2 as marine_country_iso2, countries.name as marine_country, cnt as marine_count, lat as marine_country_latitude, lon as marine_country_longitude FROM stats_marine_country, countries WHERE stats_marine_country.iso2 = countries.iso2 AND filter_name = :filter_name ORDER BY marine_count DESC";
+				 try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+				return $all;
 			}
-			*/
-			return array();
-		}
+			$filters = array();
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Marine = new Marine($this->db);
+			return $Marine->countAllMarineOverCountries($limit,$filters,$year,$month);
+		} else return array();
+	}
+	public function countAllTrackerOverCountries($limit = true, $filter_name = '',$year = '',$month = '') {
+		$Connection = new Connection($this->db);
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		if ($Connection->tableExists('countries')) {
+			if ($year == '' && $month == '') {
+				if ($limit) $query = "SELECT countries.iso3 as tracker_country_iso3, countries.iso2 as tracker_country_iso2, countries.name as tracker_country, cnt as tracker_count, lat as tracker_country_latitude, lon as tracker_country_longitude FROM stats_tracker_country, countries WHERE stats_tracker_country.iso2 = countries.iso2 AND filter_name = :filter_name ORDER BY tracker_count DESC LIMIT 20 OFFSET 0";
+				else $query = "SELECT countries.iso3 as tracker_country_iso3, countries.iso2 as tracker_country_iso2, countries.name as tracker_country, cnt as tracker_count, lat as tracker_country_latitude, lon as tracker_country_longitude FROM stats_tracker_country, countries WHERE stats_tracker_country.iso2 = countries.iso2 AND filter_name = :filter_name ORDER BY tracker_count DESC";
+				 try {
+					$sth = $this->db->prepare($query);
+					$sth->execute(array(':filter_name' => $filter_name));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+				}
+				$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+				return $all;
+			}
+			$Tracker = new Tracker($this->db);
+			return $Tracker->countAllTrackerOverCountries($limit,$filters,$year,$month);
+		} else return array();
 	}
 	public function countAllPilots($limit = true,$stats_airline = '',$filter_name = '', $year = '',$month = '') {
 		global $globalStatsFilters;
@@ -1178,6 +1216,38 @@ class Stats {
 			$Spotter = new Spotter($this->db);
 			//$all = $Spotter->countOverallFlights($filters,$year,$month);
 			$all = $Spotter->countOverallFlights($filters);
+		}
+		return $all;
+	}
+	public function countOverallMarine($filter_name = '',$year = '',$month = '') {
+		global $globalStatsFilters;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		if ($year == '') $year = date('Y');
+		$all = $this->getSumStats('marine_bymonth',$year,'',$filter_name,$month);
+		if (empty($all)) {
+			$filters = array('year' => $year,'month' => $month);
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Marine = new Marine($this->db);
+			//$all = $Spotter->countOverallFlights($filters,$year,$month);
+			$all = $Marine->countOverallMarine($filters);
+		}
+		return $all;
+	}
+	public function countOverallTracker($filter_name = '',$year = '',$month = '') {
+		global $globalStatsFilters;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		if ($year == '') $year = date('Y');
+		$all = $this->getSumStats('tracker_bymonth',$year,'',$filter_name,$month);
+		if (empty($all)) {
+			$filters = array('year' => $year,'month' => $month);
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Tracker = new Tracker($this->db);
+			//$all = $Spotter->countOverallFlights($filters,$year,$month);
+			$all = $Tracker->countOverallTracker($filters);
 		}
 		return $all;
 	}
