@@ -482,7 +482,9 @@ while ($i > 0) {
 		    if (isset($ais_data['latitude'])) $data['latitude'] = $ais_data['latitude'];
 		    if (isset($ais_data['longitude'])) $data['longitude'] = $ais_data['longitude'];
 		    if (isset($ais_data['status'])) $data['status'] = $ais_data['status'];
+		    if (isset($ais_data['statusid'])) $data['status_id'] = $ais_data['statusid'];
 		    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
+		    if (isset($ais_data['typeid'])) $data['type_id'] = $ais_data['typeid'];
 		    if (isset($ais_data['imo'])) $data['imo'] = $ais_data['imo'];
 		    if (isset($ais_data['callsign'])) $data['callsign'] = $ais_data['callsign'];
 		    if (isset($ais_data['timestamp'])) {
@@ -588,7 +590,7 @@ while ($i > 0) {
 			    $data['latitude'] = $line['LAT'];
 			    $data['longitude'] = $line['LNG'];
 			    //    if (isset($ais_data['type'])) $data['type'] = $ais_data['type'];
-			    $data['type_id'] = $line['TYPE'];
+			    //$data['type_id'] = $line['TYPE'];
 			    $data['imo'] = $line['IMO'];
 			    if ($line['DEST'] != '') $data['arrival_code'] = $line['DEST'];
 			    if ($line['ARV'] != '') $data['arrival_time'] = date('Y-m-d H:i:s',strtotime($line['ARV']));
@@ -1587,8 +1589,8 @@ while ($i > 0) {
 				    if (isset($line['squawk'])) $data['squawk'] = $line['squawk'];
 				    if (isset($line['arrival_code'])) $data['arrival_code'] = $line['arrival_code'];
 				    if (isset($line['arrival_date'])) $data['arrival_date'] = $line['arrival_date'];
-				    if (isset($line['type_id'])) $data['type_id'] = $line['typeid'];
-				    if (isset($line['status_id'])) $data['status_id'] = $line['statusid'];
+				    if (isset($line['typeid'])) $data['type_id'] = $line['typeid'];
+				    if (isset($line['statusid'])) $data['status_id'] = $line['statusid'];
 				    if (isset($line['timestamp'])) $data['datetime'] = date('Y-m-d H:i:s',$line['timestamp']);
 				    else $data['datetime'] = date('Y-m-d H:i:s');
 				    //$data['datetime'] = date('Y-m-d H:i:s');
