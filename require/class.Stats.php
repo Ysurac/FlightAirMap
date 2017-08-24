@@ -897,6 +897,35 @@ class Stats {
 		}
 		return $all;
 	}
+
+	public function countAllMarineMonthsLastYear($limit = true,$filter_name = '') {
+		global $globalDBdriver, $globalStatsFilters;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		if ($globalDBdriver == 'mysql') {
+			if ($limit) $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'marine_bymonth' AND stats_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 MONTH) AND filter_name = :filter_name";
+			else $query = "SELECT MONTH(stats_date) as month_name, YEAR(stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'marine_bymonth' AND filter_name = :filter_name";
+		} else {
+			if ($limit) $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'marine_bymonth' AND stats_date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '12 MONTHS' AND filter_name = :filter_name";
+			else $query = "SELECT EXTRACT(MONTH FROM stats_date) as month_name, EXTRACT(YEAR FROM stats_date) as year_name, cnt as date_count FROM stats WHERE stats_type = 'marine_bymonth' AND filter_name = :filter_name";
+		}
+		$query_data = array(':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			$filters = array();
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Marine = new Marine($this->db);
+			$all = $Marine->countAllMonthsLastYear($filters);
+		}
+		return $all;
+	}
 	
 	public function countAllDatesLastMonth($stats_airline = '',$filter_name = '') {
 		global $globalStatsFilters;
@@ -932,6 +961,28 @@ class Stats {
 			}
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countAllDatesLastMonth($filters);
+		}
+		return $all;
+	}
+	public function countAllMarineDatesLastMonth($filter_name = '') {
+		global $globalStatsFilters;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		$query = "SELECT marine_date as date_name, cnt as date_count FROM stats_marine WHERE stats_type = 'month' AND filter_name = :filter_name";
+		$query_data = array(':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			$filters = array();
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Marine = new Marine($this->db);
+			$all = $Marine->countAllDatesLastMonth($filters);
 		}
 		return $all;
 	}
@@ -977,6 +1028,32 @@ class Stats {
 			}
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countAllDatesLast7Days($filters);
+		}
+		return $all;
+	}
+	public function countAllMarineDatesLast7Days($filter_name = '') {
+		global $globalDBdriver, $globalStatsFilters;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		if ($globalDBdriver == 'mysql') {
+			$query = "SELECT marine_date as date_name, cnt as date_count FROM stats_marine WHERE stats_type = 'month' AND marine_date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 7 DAY) AND filter_name = :filter_name";
+		} else {
+			$query = "SELECT marine_date as date_name, cnt as date_count FROM stats_marine WHERE stats_type = 'month' AND marine_date::timestamp >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 DAYS' AND filter_name = :filter_name";
+		}
+		$query_data = array(':filter_name' => $filter_name);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			$filters = array();
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Marine = new Marine($this->db);
+			$all = $Marine->countAllDatesLast7Days($filters);
 		}
 		return $all;
 	}
@@ -1233,6 +1310,37 @@ class Stats {
 			}
 			$Spotter = new Spotter($this->db);
 			$all = $Spotter->countAllHours($orderby,$filters);
+		}
+		return $all;
+	}
+	public function countAllMarineHours($orderby = 'hour',$limit = true,$filter_name = '') {
+		global $globalTimezone, $globalDBdriver, $globalStatsFilters;
+		if ($filter_name == '') $filter_name = $this->filter_name;
+		if ($limit) $query = "SELECT marine_date as hour_name, cnt as hour_count FROM stats_marine WHERE stats_type = 'hour' AND filter_name = :filter_name";
+		else $query = "SELECT marine_date as hour_name, cnt as hour_count FROM stats_marine WHERE stats_type = 'hour' AND filter_name = :filter_name";
+		$query_data = array(':filter_name' => $filter_name);
+		if ($orderby == 'hour') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " ORDER BY CAST(marine_date AS UNSIGNED) ASC";
+			} else {
+				$query .= " ORDER BY CAST(marine_date AS integer) ASC";
+			}
+		}
+		if ($orderby == 'count') $query .= " ORDER BY hour_count DESC";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_data);
+		} catch(PDOException $e) {
+			echo "error : ".$e->getMessage();
+		}
+		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (empty($all)) {
+			$filters = array();
+			if ($filter_name != '') {
+				$filters = array_merge($filters,$globalStatsFilters[$filter_name]);
+			}
+			$Marine = new Marine($this->db);
+			$all = $Marine->countAllHours($orderby,$filters);
 		}
 		return $all;
 	}

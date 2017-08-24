@@ -548,7 +548,7 @@ if ($type == 'aircraft') {
 <?php
 }
 if ($type == 'marine') {
-	$flightover_array = $Stats->countAllMarineOverCountries(true);
+	$flightover_array = $Stats->countAllMarineOverCountries(true,$filter_name,$year,$month);
 ?>
 <!--    <div class="row column">-->
 	<div class="col-md-6">
@@ -599,6 +599,7 @@ if ($type == 'marine') {
                 <div class="more">
                     <a href="<?php print $globalURL; ?>/marine/statistics/country" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
                 </div>
+	    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
             </div>
         </div>
 
@@ -925,7 +926,7 @@ if ($type == 'marine') {
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Months of the last 12 Months"); ?></h2>
 <?php
-		$year_array = $Marine->countAllMonthsLastYear(true,$airline_icao,$filter_name);
+		$year_array = $Stats->countAllMarineMonthsLastYear(true,$filter_name);
 		if (count($year_array) == 0) print _("No data available");
 		else {
 			print '<div id="chart8" class="chart" width="100%"></div><script>';
@@ -954,7 +955,7 @@ if ($type == 'marine') {
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Day in the last Month"); ?></h2>
 <?php
-		$month_array = $Marine->countAllDatesLastMonth($airline_icao,$filter_name);
+		$month_array = $Stats->countAllMarineDatesLastMonth($filter_name);
 		if (count($month_array) == 0) print _("No data available");
 		else {
 			print '<div id="chart9" class="chart" width="100%"></div><script>';
@@ -983,7 +984,7 @@ if ($type == 'marine') {
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Day in the last 7 Days"); ?></h2>
 <?php
-		$date_array = $Marine->countAllDatesLast7Days($airline_icao,$filter_name);
+		$date_array = $Stats->countAllMarineDatesLast7Days($filter_name);
 		if (empty($date_array)) print _("No data available");
 		else {
 			print '<div id="chart5" class="chart" width="100%"></div><script>';
@@ -1011,7 +1012,7 @@ if ($type == 'marine') {
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Time of the Day"); ?></h2>
 <?php
-		$hour_array = $Marine->countAllHours('hour',true,$airline_icao,$filter_name);
+		$hour_array = $Stats->countAllMarineHours('hour',true,$filter_name);
 		if (empty($hour_array)) print _("No data available");
 		else {
 			print '<div id="chart6" class="chart" width="100%"></div><script>';
