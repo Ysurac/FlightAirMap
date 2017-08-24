@@ -1052,7 +1052,7 @@ if ($type == 'tracker') {
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Months of the last 12 Months"); ?></h2>
 <?php
-		$year_array = $Tracker->countAllMonthsLastYear(true);
+		$year_array = $Stats->countAllTrackerMonthsLastYear(true);
 		if (count($year_array) == 0) print _("No data available");
 		else {
 			print '<div id="chart8" class="chart" width="100%"></div><script>';
@@ -1081,7 +1081,7 @@ if ($type == 'tracker') {
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Day in the last Month"); ?></h2>
 <?php
-		$month_array = $Tracker->countAllDatesLastMonth();
+		$month_array = $Stats->countAllTrackerDatesLastMonth();
 		if (count($month_array) == 0) print _("No data available");
 		else {
 			print '<div id="chart9" class="chart" width="100%"></div><script>';
@@ -1110,7 +1110,7 @@ if ($type == 'tracker') {
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Day in the last 7 Days"); ?></h2>
 <?php
-		$date_array = $Tracker->countAllDatesLast7Days();
+		$date_array = $Stats->countAllTrackerDatesLast7Days();
 		if (empty($date_array)) print _("No data available");
 		else {
 			print '<div id="chart5" class="chart" width="100%"></div><script>';
@@ -1138,7 +1138,7 @@ if ($type == 'tracker') {
             <div class="col-md-6">
                 <h2><?php echo _("Busiest Time of the Day"); ?></h2>
 <?php
-		$hour_array = $Tracker->countAllHours('hour',true);
+		$hour_array = $Stats->countAllTrackerHours('hour',true);
 		if (empty($hour_array)) print _("No data available");
 		else {
 			print '<div id="chart6" class="chart" width="100%"></div><script>';

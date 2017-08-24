@@ -2222,6 +2222,29 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_48() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->tableExists('stats_tracker_type')) {
+			if ($globalDBdriver == 'mysql') {
+				$error .= create_db::import_file('../db/stats_tracker_type.sql');
+				if ($error != '') return $error;
+			} else {
+				$error .= create_db::import_file('../db/pgsql/stats_tracker_type.sql');
+				if ($error != '') return $error;
+			}
+		}
+		$query = "UPDATE config SET value = '49' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
 	public static function check_version($update = false) {
 		global $globalDBname;
 		$version = 0;
@@ -2426,6 +2449,10 @@ class update_schema {
 							else return self::check_version(true);
 						} elseif ($result['value'] == '47') {
 							$error = self::update_from_47();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '48') {
+							$error = self::update_from_48();
 							if ($error != '') return $error;
 							else return self::check_version(true);
 						} else return '';
