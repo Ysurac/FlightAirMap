@@ -86,6 +86,7 @@ class METAR {
 		elseif ($pieces[0] == 'SPECI') $pos++;
 		if (strlen($pieces[$pos]) != 4) $pos++;
 		$result = array();
+		if (!isset($pieces[$pos])) return $result;
 		$result['location'] = $pieces[$pos];
 		$pos++;
 		$result['dayofmonth'] = substr($pieces[$pos],0,2);
