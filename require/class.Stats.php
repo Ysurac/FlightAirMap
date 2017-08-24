@@ -1513,7 +1513,7 @@ class Stats {
 		if ($filter_name == '') $filter_name = $this->filter_name;
 		$all = array();
 		if ($year == '' && $month == '') {
-			$query = "SELECT SUM(cnt) AS nb_type FROM stats_marine_type WHERE filter_name = :filter_name";
+			$query = "SELECT COUNT(*) AS nb_type FROM stats_marine_type WHERE filter_name = :filter_name";
 			try {
 				$sth = $this->db->prepare($query);
 				$sth->execute(array(':filter_name' => $filter_name));
