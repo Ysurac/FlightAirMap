@@ -1,11 +1,13 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.SpotterLive.php');
 require_once('require/class.Language.php');
 
 header('Content-Type: text/javascript');
-$Spotter = new Spotter();
-$spotter_array = $Spotter->getRealTimeData($_GET['q']);
+$q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
+$SpotterLive = new SpotterLive();
+$spotter_array = $SpotterLive->getRealTimeData($q);
 
 $output = '{';
 $output .= '"flights": [';
@@ -16,7 +18,7 @@ if (!empty($spotter_array)) {
 		$output .= '"flight_id": "'.$spotter_item['spotter_id'].'",';
 		$output .= '"html": "';
 		$output .= '<tr id=\"table-tr-'.$spotter_item['spotter_id'].'\" style=\"display:none;\">';
-		if ($_GET['image'] == "true")
+		if (isset($_GET['image']) && $_GET['image'] == "true")
 		{
 			if ($spotter_item['image'] != "")
 			{
@@ -34,7 +36,7 @@ if (!empty($spotter_array)) {
 			$output .= '<td class=\"logo\">';
 			$output .= '<img src=\"'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.gif\" />';
 			$output .= '</td>';
-		} elseif (@getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png'))
+		} elseif (@getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png') || @getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.png'))
 		{
 			$output .= '<td class=\"logo\">';
 			$output .= '<img src=\"'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png\" />';

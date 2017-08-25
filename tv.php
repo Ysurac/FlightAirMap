@@ -29,7 +29,8 @@ $Spotter = new Spotter();
 <?php
 if (isset($_GET['q']))
 {
-	$spotter_array = $Spotter->searchSpotterData($_GET['q'], "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "0,10", "", "");
+	$q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
+	$spotter_array = $Spotter->searchSpotterData($q, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "0,10", "", "");
 } else {
 	$spotter_array = $Spotter->getLatestSpotterData("0,10", "");
 }
@@ -147,18 +148,18 @@ function getNewDataTV()
    
 <?php
 	if (isset($_GET['image']) && isset($_GET['q'])) {
-	$image = filter_input(INPUT_GET,'image',FILTER_SANITIZE_STRING);
-	$q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
+		$image = filter_input(INPUT_GET,'image',FILTER_SANITIZE_STRING);
+		$q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
 ?>
    $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&image=<?php print $image; ?>&q=<?php print $q; ?>", function( data ) {
 <?php
 	} elseif (isset($_GET['image'])) {
-	$image = filter_input(INPUT_GET,'image',FILTER_SANITIZE_STRING);
+		$image = filter_input(INPUT_GET,'image',FILTER_SANITIZE_STRING);
 ?>
    $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&image=<?php print $image; ?>", function( data ) {
 <?php
 	} elseif (isset($_GET['q'])) {
-	$q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
+		$q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
 ?>
    $.getJSON( "<?php print $globalURL; ?>/getLatestData-tv.php?other_i="+other_i+"&q=<?php print $q; ?>", function( data ) {
 <?php

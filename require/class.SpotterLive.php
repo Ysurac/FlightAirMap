@@ -957,7 +957,53 @@ class SpotterLive {
 			$ident_result = $row['flightaware_id'];
 		}
 		return $ident_result;
-        }
+	}
+
+	/**
+	* Gets the aircraft data from the last 20 seconds
+	*
+	* @return Array the spotter data
+	*
+	*/
+	public function getRealTimeData($q = '')
+	{
+		global $globalDBdriver;
+		$additional_query = '';
+		if ($q != "")
+		{
+			if (!is_string($q))
+			{
+				return false;
+			} else {
+				$q_array = explode(" ", $q);
+				foreach ($q_array as $q_item){
+					$q_item = filter_var($q_item,FILTER_SANITIZE_STRING);
+					$additional_query .= " AND (";
+					$additional_query .= "(spotter_live.aircraft_icao like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_live.aircraft_name like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_live.aircraft_manufacturer like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_live.airline_icao like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_live.departure_airport_icao like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_live.arrival_airport_icao like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_live.registration like '%".$q_item."%') OR ";
+					$additional_query .= "(spotter_live.ident like '%".$q_item."%')";
+					$additional_query .= ")";
+				}
+			}
+		}
+		if ($globalDBdriver == 'mysql') {
+			$query  = "SELECT spotter_live.* FROM spotter_live 
+			    WHERE spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 20 SECOND) ".$additional_query." 
+			    AND spotter_live.date < UTC_TIMESTAMP()";
+		} else {
+			$query  = "SELECT spotter_live.* FROM spotter_live 
+			    WHERE spotter_live.date::timestamp >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '20 SECONDS' ".$additional_query." 
+			    AND spotter_live.date::timestamp < CURRENT_TIMESTAMP AT TIME ZONE 'UTC'";
+		}
+		$Spotter = new Spotter();
+		$spotter_array = $Spotter->getDataFromDB($query, array());
+		return $spotter_array;
+	}
 
 	/**
 	* Adds a new spotter data
