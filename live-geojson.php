@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Common.php');
+
 if (isset($globalProtect) && $globalProtect) {
 	@session_start();
 	if (!isset($_SESSION['protect']) || !isset($_SERVER['HTTP_REFERER'])) {
@@ -8,6 +9,7 @@ if (isset($globalProtect) && $globalProtect) {
 		die();
 	}
 }
+
 $tracker = false;
 $marine = false;
 $usecoord = false;
@@ -213,6 +215,7 @@ $output = '{';
 			foreach($spotter_array as $spotter_item)
 			{
 				$j++;
+				unset($idistance);
 				date_default_timezone_set('UTC');
 
 				if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
@@ -413,34 +416,89 @@ $output = '{';
 							if ($compress) $output .= '"a": "'.$spotter_item['altitude'].'",';
 							else $output .= '"altitude": "'.$spotter_item['altitude'].'",';
 						}
-						if ($compress)$output .= '"h": "'.$spotter_item['heading'].'",';
-						else $output .= '"heading": "'.$spotter_item['heading'].'",';
 						
+						$heading = $spotter_item['heading'];
+						
+						if (isset($archivespeed) || $usenextlatlon) {
+							if (isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != 'NA') {
+								if (isset($spotter_item['arrival_airport_latitude'])) {
+									$cheading = $Common->getHeading($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['arrival_airport_latitude'],$spotter_item['arrival_airport_longitude']);
+									$idistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['arrival_airport_latitude'],$spotter_item['arrival_airport_longitude']);
+									$farr_lat = $spotter_item['arrival_airport_latitude'];
+									$farr_lon = $spotter_item['arrival_airport_longitude'];
+								} else {
+									$aairport = $Spotter->getAllAirportInfo($spotter_item['arrival_airport']);
+									if (isset($aairport[0]['latitude'])) {
+										$cheading = $Common->getHeading($spotter_item['latitude'],$spotter_item['longitude'],$aairport[0]['latitude'],$aairport[0]['longitude']);
+										$idistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$aairport[0]['latitude'],$aairport[0]['longitude']);
+										$farr_lat = $aairport[0]['latitude'];
+										$farr_lon = $aairport[0]['longitude'];
+									}
+								}
+							}
+						}
+						
+						if ($compress)$output .= '"h": "'.$heading.'",';
+						else $output .= '"heading": "'.$heading.'",';
 						if ($currenttime != '') {
 							if (strtotime($spotter_item['date']) < $currenttime) {
 								if (isset($archivespeed)) {
-									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],$archivespeed,($currenttime-strtotime($spotter_item['date'])+$globalMapRefresh));
-									$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$heading,$archivespeed,($currenttime-strtotime($spotter_item['date'])+$globalMapRefresh));
+									$fdistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$nextcoord['latitude'],$nextcoord['longitude']);
+									if (!isset($idistance) || $fdistance < $idistance) $output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+									else {
+										$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$cheading,$archivespeed,($currenttime-strtotime($spotter_item['date'])+$globalMapRefresh));
+										$fdistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$nextcoord['latitude'],$nextcoord['longitude']);
+										if (!isset($idistance) || $fdistance < $idistance) $output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+										else {
+											$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$heading,$archivespeed);
+											$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+										}
+									}
 								} elseif ($usenextlatlon) {
-									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],1,($currenttime-strtotime($spotter_item['date'])+$globalMapRefresh));
-									$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$heading,1,($currenttime-strtotime($spotter_item['date'])+$globalMapRefresh));
+									$fdistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$nextcoord['latitude'],$nextcoord['longitude']);
+									if (!isset($idistance) || $fdistance < $idistance) $output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+									else {
+										$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$cheading,1,($currenttime-strtotime($spotter_item['date'])+$globalMapRefresh));
+										$fdistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$nextcoord['latitude'],$nextcoord['longitude']);
+										if (!isset($idistance) || $fdistance < $idistance) $output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+										else {
+											$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$heading);
+											$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+										}
+									}
 								}
 							} else {
 								if (isset($archivespeed)) {
-									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],$archivespeed);
+									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$heading,$archivespeed);
 									$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
 								} elseif ($usenextlatlon) {
-									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading']);
+									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$heading);
 									$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
 								}
 							}
 						} else {
 							if (isset($archivespeed)) {
-								$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],$archivespeed);
-								$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+								$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$heading,$archivespeed);
+								$fdistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$nextcoord['latitude'],$nextcoord['longitude']);
+								if (!isset($idistance) || $fdistance < $idistance) {
+									$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+								} else {
+									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$cheading,$archivespeed);
+									//$fdistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$nextcoord['latitude'],$nextcoord['longitude']);
+									$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+								}
 							} elseif ($usenextlatlon) {
-								$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading']);
-								$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+								$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$heading);
+								$fdistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$nextcoord['latitude'],$nextcoord['longitude']);
+								if (!isset($idistance) || $fdistance < $idistance) {
+										$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+								} else {
+									$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$cheading);
+									//$fdistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$nextcoord['latitude'],$nextcoord['longitude']);
+									$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+								}
 							}
 						}
 
@@ -488,8 +546,23 @@ $output = '{';
 								if ($currenttime != '') {
 									if (strtotime($spotter_item['date']) < $currenttime) {
 										if (!isset($archivespeed)) $archivespeed = 1;
+										$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$heading,$archivespeed,($currenttime-strtotime($spotter_item['date'])));
+										$fdistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$nextcoord['latitude'],$nextcoord['longitude']);
+										if (!isset($idistance) || $fdistance < $idistance) $output .= $nextcoord['longitude'].','.$nextcoord['latitude'];
+										else {
+											$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$cheading,$archivespeed,($currenttime-strtotime($spotter_item['date'])));
+											$fdistance = $Common->distance($spotter_item['latitude'],$spotter_item['longitude'],$nextcoord['latitude'],$nextcoord['longitude']);
+											if (!isset($idistance) || $fdistance < $idistance) $output .= $nextcoord['longitude'].','.$nextcoord['latitude'];
+											else {
+												$output .= $spotter_item['longitude'].', ';
+												$output .= $spotter_item['latitude'];
+											}
+										}
+										/*
+										if (!isset($archivespeed)) $archivespeed = 1;
 										$nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],$archivespeed,$currenttime-strtotime($spotter_item['date']));
 										$output .= $nextcoord['longitude'].','.$nextcoord['latitude'];
+										*/
 									} else {
 										$output .= $spotter_item['longitude'].', ';
 										$output .= $spotter_item['latitude'];
