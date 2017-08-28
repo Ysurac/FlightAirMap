@@ -300,11 +300,11 @@ if ($type == 'tracker') {
             	    /*
             		if ($year != '' && $month != '') {
             	    ?>
-            	    <a href="<?php print $globalURL; ?>/marine/statistics/type/<?php echo $year; ?>/<?php echo $month ?>/" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+            	    <a href="<?php print $globalURL; ?>/tracker/statistics/type/<?php echo $year; ?>/<?php echo $month ?>/" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
             	    <?php
             		} else {
             	    ?>
-            	    <a href="<?php print $globalURL; ?>/marine/statistics/type" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+            	    <a href="<?php print $globalURL; ?>/tracker/statistics/type" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
             	    <?php
             		}
             		*/

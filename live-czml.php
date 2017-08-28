@@ -301,7 +301,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$output .= '"flightcnt": "'.$flightcnt.'",';
 			$output .= '"onground": %onground%,';
 			$output .= '"lastupdate": "'.$lastupdate.'",';
-			$output .= '"format": "'.$spotter_item['format_source'].'",';
+			if (isset($spotter_item['format_source'])) $output .= '"format": "'.$spotter_item['format_source'].'",';
 			if ($tracker) {
 				$output.= '"type": "tracker"';
 			} elseif ($marine) {

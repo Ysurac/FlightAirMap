@@ -145,7 +145,13 @@
 			<li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/time"><?php echo _("Time"); ?></a></li>
 		    </ul>
 		</li>
+<?php
+		if ($type == 'marine') {
+?>
 		<li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/type"><?php echo _("Type"); ?></a></li>
+<?php
+		}
+?>
 
 <?php
 	}

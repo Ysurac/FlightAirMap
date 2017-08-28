@@ -6,6 +6,9 @@
 		<input type="month" name="date" onchange="statsdatechange(this);" value="<?php if (isset($year) && $year != '') echo $year.'-'; ?><?php if (isset($month) && $month != '') echo $month; ?>" />
 	</form>
 </div>
+<?php
+    if (isset($owner)) {
+?>
 <div class="sub-menu sub-menu-container">
 	<ul class="nav nav-pills">
 		<li><a href="<?php print $globalURL; ?>/owner/<?php print $owner; ?><?php if (isset($year) && $year != '') echo '/'.$year; ?><?php if (isset($month) && $month != '') echo '/'.$month; ?>" <?php if (strtolower($current_page) == "owner-detailed"){ print 'class="active"'; } ?>><?php echo _("Detailed"); ?></a></li>
@@ -34,3 +37,6 @@
 		<li><a href="<?php print $globalURL; ?>/owner/statistics/time/<?php print $owner; ?><?php if (isset($year) && $year != '') echo '/'.$year; ?><?php if (isset($month) && $month != '') echo '/'.$month; ?>" <?php if (strtolower($current_page) == "owner-statistics-time"){ print 'class="active"'; } ?>><?php echo _("Time"); ?></a></li>
 	</ul>
 </div>
+<?php
+    }
+?>
