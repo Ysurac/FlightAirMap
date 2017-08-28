@@ -400,6 +400,13 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
     <div class="collapse navbar-collapse">
 
       <ul class="nav navbar-nav">
+<?php
+    if (isset($globalNewsFeeds['global']) && !empty($globalNewsFeeds['global'])) {
+?>
+    <li><a href="<?php print $globalURL; ?>/news"><?php echo _("News"); ?></a></li>
+<?php
+    }
+?>
 
 <?php 
     $sub = false;
@@ -425,15 +432,24 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 ?>
     <li class="dropdown">
 <?php
-    if ($sub) {
+	if ($sub) {
 ?>
       	<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Aircrafts"); ?> <b class="caret"></b></a>
 	<ul class="dropdown-menu multi-level">
       	<li class="dropdown-submenu">
 <?php
-    }
+        }
 ?>
+<?php
+	if (isset($globalNewsFeeds['aircraft']) && !empty($globalNewsFeeds['aircraft'])) {
+?>
+    <a href="<?php print $globalURL; ?>/news-aircraft"><?php echo _("Aircrafts News"); ?></a></li>
+    <li>
+<?php
+	}
+?>
+
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="<?php if ($sub) echo 'right-'; ?>caret"></b></a>
           <ul class="dropdown-menu">
           	<li><a href="<?php print $globalURL; ?>/aircraft"><?php echo _("Aircrafts Types"); ?></a></li>
@@ -536,9 +552,17 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 <?php
         if ($sub) {
 ?>
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Vessels"); ?> <b class="caret"></b></a>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Marines"); ?> <b class="caret"></b></a>
 	<ul class="dropdown-menu multi-level">
 	    <li class="dropdown-submenu">
+<?php
+	}
+?>
+<?php
+	if (isset($globalNewsFeeds['marine']) && !empty($globalNewsFeeds['marine'])) {
+?>
+    <a href="<?php print $globalURL; ?>/marine/news"><?php echo _("Marines News"); ?></a></li>
+    <li>
 <?php
 	}
 ?>
@@ -575,6 +599,14 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 <?php
 	}
 ?>
+<?php
+	if (isset($globalNewsFeeds['tracker']) && !empty($globalNewsFeeds['tracker'])) {
+?>
+    <a href="<?php print $globalURL; ?>/tracker/news"><?php echo _("Trackers News"); ?></a></li>
+    <li>
+<?php
+	}
+?>
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="<?php if ($sub) echo 'right-'; ?>caret"></b></a>
 		<ul class="dropdown-menu">
 		    <li><a href="<?php print $globalURL; ?>/tracker/currently"><?php echo _("Current Activity"); ?></a></li>
@@ -602,12 +634,21 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 <?php
         if ($sub) {
 ?>
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Satellite"); ?> <b class="caret"></b></a>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Satellites"); ?> <b class="caret"></b></a>
 	<ul class="dropdown-menu multi-level">
 	    <li class="dropdown-submenu">
 <?php
 	}
 ?>
+<?php
+	if (isset($globalNewsFeeds['satellite']) && !empty($globalNewsFeeds['satellite'])) {
+?>
+    <a href="<?php print $globalURL; ?>/marine/news"><?php echo _("Satellites News"); ?></a></li>
+    <li>
+<?php
+	}
+?>
+
 <!--
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="<?php if ($sub) echo 'right-'; ?>caret"></b></a>
 		<ul class="dropdown-menu">

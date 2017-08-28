@@ -107,7 +107,6 @@ if ($facebook_meta_image != "")
 	var new_row = updateRow(clone.cloneNode(true), ++tbody.rows.length, true);
         tbody.appendChild(new_row);
     }
-
     function updateRow(row, i, reset) {
         var inp1 = row.cells[0].getElementsByTagName('input')[0];
         var inp2 = row.cells[1].getElementsByTagName('input')[0];
@@ -115,7 +114,32 @@ if ($facebook_meta_image != "")
         var inp4 = row.cells[3].getElementsByTagName('input')[0];
         if (reset) {
             inp1.value = inp2.value = inp4.value = '';
-            inp3.value = 'Auto';
+            inp3.value = 'auto';
+        }
+        return row;
+    }
+    function deleteRowNews(el) {
+	var table = document.getElementById('NewsTable');
+	var i = el.parentNode.parentNode.rowIndex;
+	table.deleteRow(i);
+    }
+
+    function insRowNews() {
+        var table = document.getElementById('NewsTable'),
+	tbody = table.getElementsByTagName('tbody')[0],
+        clone = tbody.rows[0].cloneNode(true);
+	var new_row = updateRowNews(clone.cloneNode(true), ++tbody.rows.length, true);
+        tbody.appendChild(new_row);
+    }
+
+    function updateRowNews(row, i, reset) {
+        var inp1 = row.cells[0].getElementsByTagName('input')[0];
+        var inp2 = row.cells[1].getElementsByTagName('select')[0];
+        var inp3 = row.cells[2].getElementsByTagName('select')[0];
+        if (reset) {
+            inp1.value = '';
+            inp2.value = 'en';
+            inp3.value = 'global';
         }
         return row;
     }

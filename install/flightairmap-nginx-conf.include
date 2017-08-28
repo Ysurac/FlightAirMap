@@ -450,6 +450,20 @@ location /tools {
     rewrite ^/tools/geoid(/?)$ /tools-geoid.php last;
 }
 
+location /news {
+    rewrite ^/news(/?)$ /news.php last;
+    rewrite ^/news-aircraft(/?)$ /news.php?aircraft last;
+}
+location /marine/news {
+    rewrite ^/marine/news(/?)$ /news.php?marine last;
+}
+location /tracker/news {
+    rewrite ^/tracker/news(/?)$ /news.php?tracker last;
+}
+location /satellite/news {
+    rewrite ^/satellite/news(/?)$ /news.php?satellite last;
+}
+
 location /scripts {
     deny all;
 }

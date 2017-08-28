@@ -1078,6 +1078,20 @@ body.page-upcoming table tr td.logo img{
     width:60%;
 }
 
+/* NEWS */
+.news {
+    margin: 20px 0 0 0;
+    padding: 0 0 10px 0;
+}
+.news img {
+    vertical-align: bottom;
+/*    float: right;*/
+}
+.news span {
+    font-size: 12px;
+}
+
+
 /* Widescreen */
 @media only screen and (min-width: 1199px){
 
@@ -1621,4 +1635,11 @@ body.page-upcoming table tr td.logo img{
     -webkit-border-radius: 6px 0 6px 6px;
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
+}
+
+.news select {
+    width: 60% !important;
+}
+.news input[type="url"] {
+    width: 100% !important;
 }

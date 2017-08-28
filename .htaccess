@@ -437,6 +437,13 @@ RewriteRule ^tools/metar(/?)$ tools-metar.php [L,NC]
 RewriteRule ^tools/notam(/?)$ tools-notam.php [L,NC]
 RewriteRule ^tools/geoid(/?)$ tools-geoid.php [L,NC]
 
+########### NEWS ###########
+RewriteRule ^news(/?)$ news.php [L,NC]
+RewriteRule ^news-aircraft(/?)$ news.php?aircraft [L,NC]
+RewriteRule ^marine/news(/?)$ news.php?marine [L,NC]
+RewriteRule ^tracker/news(/?)$ news.php?tracker [L,NC]
+RewriteRule ^satellite/news(/?)$ news.php?satellite [L,NC]
+
 ########### ACCIDENTS/INCIDENTS ###########
 RewriteRule ^accident-latest/([^/]+)(/?)$ accident-latest.php?limit=$1 [L,NC]
 RewriteRule ^incident-latest/([^/]+)(/?)$ incident-latest.php?limit=$1 [L,NC]

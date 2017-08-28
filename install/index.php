@@ -83,6 +83,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 		//$error[] = "ZIP is not loaded. Needed to populate database for SBS.";
 		print '<div class="info column"><p><strong>ZIP is not loaded. Needed to populate database for IVAO.</strong></p></div>';
 	}
+	if (!extension_loaded('xml') && !extension_loaded('xmlreader')) {
+		print '<div class="info column"><p><strong>XML is not loaded. Needed to parse RSS for News pages.</strong></p></div>';
+	}
 	if (!extension_loaded('json')) {
 		$error[] = "Json is not loaded. Needed for aircraft schedule and bitly.";
 	}
@@ -605,6 +608,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<p class="help-block">FlightGear Singleplayer open an UDP server, the host should be <i>0.0.0.0</i>.</p>
 					<p class="help-block">Virtual Airlines Manager need to use the file <i>install/vAM/VAM-json.php</i> and the url <i>http://yourvaminstall/VAM-json.php</i>.</p>
 					<p class="help-block">HTTP and TCP sources can't be used at the same time.</p>
+					<!-- ' -->
 					<p class="help-block">Callback script is in <i>import/callback.php</i>. In host you can restrict access to some IP, Callback pass to restrict by a pass using <i>import/callback.php?pass=yourpass</i>.</p>
 				</fieldset>
 			</fieldset>
@@ -622,6 +626,71 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					</p>
 				</fieldset>
 			</div>
+		</fieldset>
+		<fieldset id="news">
+			<legend>News</legend>
+			<table class="news table" id="NewsTable">
+			    <thead>
+				<tr>
+				    <td>RSS/Atom URL</td>
+				    <td>Language</td>
+				    <td>Type</td>
+				    <td>Action</td>
+			    </thead>
+			    <tbody>
+				<?php
+				    if (isset($globalNewsFeeds) && !empty($globalNewsFeeds)) {
+					foreach ($globalNewsFeeds as $type => $feedslng) {
+					    foreach ($feedslng as $lng => $feeds) {
+						foreach ($feeds as $feed) {
+				?>
+				<tr>
+				    <td><input type="url" name="newsurl[]" value="<?php print $feed; ?>"/></td>
+				    <td>
+					<select name="newslang[]">
+					    <option value="en"<?php if ($lng == 'en') print ' selected'; ?>>English</option>
+					    <option value="fr"<?php if ($lng == 'fr') print ' selected'; ?>>French</option>
+					</select>
+				    </td>
+				    <td>
+					<select name="newstype[]">
+					    <option value="global"<?php if ($type == 'global') print ' selected'; ?>>Global</option>
+					    <option value="aircraft"<?php if ($type == 'aircraft') print ' selected'; ?>>Aircraft</option>
+					    <option value="marine"<?php if ($type == 'marine') print ' selected'; ?>>Marine</option>
+					    <option value="tracker"<?php if ($type == 'tracker') print ' selected'; ?>>Tracker</option>
+					    <option value="satellite"<?php if ($type == 'Satellite') print ' selected'; ?>>Satellite</option>
+					</select>
+				    </td>
+				    <td><input type="button" value="Delete" onclick="deleteRowNews(this)" /> <input type="button" value="Add" onclick="insRowNews()" /></td>
+				</tr>
+				
+				<?php
+						}
+					    }
+					}
+				    }
+				?>
+				<tr>
+				    <td><input type="url" name="newsurl[]" /></td>
+				    <td>
+					<select name="newslang[]">
+					    <option value="en">English</option>
+					    <option value="fr">French</option>
+					</select>
+				    </td>
+				    <td>
+					<select name="newstype[]">
+					    <option value="global">Global</option>
+					    <option value="aircraft">Aircraft</option>
+					    <option value="marine">Marine</option>
+					    <option value="tracker">Tracker</option>
+					    <option value="satellite">Satellite</option>
+					</select>
+				    </td>
+				    <td><input type="button" value="Delete" onclick="deleteRowNews(this)" /> <input type="button" value="Add" onclick="insRowNews()" /></td>
+				</tr>
+			    </tbody>
+			</table>
 		</fieldset>
 		
 		<fieldset id="optional">
@@ -1073,6 +1142,22 @@ if (isset($_POST['dbtype'])) {
 	    else $sources[] = array('name' => $name,'latitude' => $source_latitude[$keys],'longitude' => $source_longitude[$keys],'altitude' => $source_altitude[$keys],'city' => $source_city[$keys],'country' => $source_country[$keys],'source' => $source_ref[$keys]);
 	}
 	if (count($sources) > 0) $_SESSION['sources'] = $sources;
+
+	$newsurl = $_POST['newsurl'];
+	$newslng = $_POST['newslang'];
+	$newstype = $_POST['newstype'];
+	
+	$newsfeeds = array();
+	foreach($newsurl as $newskey => $url) {
+	    if ($url != '') {
+		$type = $newstype[$newskey];
+		$lng = $newslng[$newskey];
+		if (isset($newsfeeds[$type][$lng])) {
+		    $newsfeeds[$type][$lng] = array_merge($newsfeeds[$type][$lng],array($url));
+		} else $newsfeeds[$type][$lng] = array($url);
+	    }
+	}
+	$settings = array_merge($settings,array('globalNewsFeeds' => $newsfeeds));
 
 	//$sbshost = filter_input(INPUT_POST,'sbshost',FILTER_SANITIZE_STRING);
 	//$sbsport = filter_input(INPUT_POST,'sbsport',FILTER_SANITIZE_NUMBER_INT);

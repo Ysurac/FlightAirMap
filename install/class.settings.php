@@ -22,16 +22,52 @@ class settings {
 				if ($Common->isAssoc($value)) {
 					foreach ($value as $key => $data) {
 						if (!isset($array_value)) {
-							if ($data == 'TRUE' || $data == 'FALSE') {
-								$array_value = "'".$key."' => ".$data."";
+							if (is_array($data)) {
+								foreach ($data as $keya => $dataa) {
+									if (is_array($dataa)) {
+										foreach ($dataa as $dataaa) {
+											if (!isset($dataarraya)) $dataarraya = $dataaa;
+											else $dataarraya .= "','".$dataaa;
+										}
+										$dataarray = "array('".$keya."' => array('".$dataarraya."'))";
+										unset($dataarraya);
+									} else {
+										if (!isset($dataarray)) $dataarray = "'".$dataa."'";
+										else $dataarray .= ",'".$dataa."'";
+									}
+								}
+								$array_value = "'".$key."' => ".$dataarray;
+								unset($dataarray);
 							} else {
-								$array_value = "'".$key."' => '".$data."'";
+								if ($data == 'TRUE' || $data == 'FALSE') {
+									$array_value = "'".$key."' => ".$data."";
+								} else {
+									$array_value = "'".$key."' => '".$data."'";
+								}
 							}
 						} else {
-							if ($data == 'TRUE' || $data == 'FALSE') {
-								$array_value .= ",'".$key."' => ".$data."";
+							if (is_array($data)) {
+								foreach ($data as $dataa) {
+									if (is_array($dataa)) {
+										foreach ($dataa as $dataaa) {
+											if (!isset($dataarraya)) $dataarraya = $dataaa;
+											else $dataarraya .= "','".$dataaa;
+										}
+										$dataarray = "array('".$keya."' => array('".$dataarraya."'))";
+										unset($dataarraya);
+									} else {
+										if (!isset($dataarray)) $dataarray = "'".$dataa."'";
+										else $dataarray .= "','".$dataa."'";
+									}
+								}
+								$array_value .= ",'".$key."' => ".$dataarray;
+								unset($dataarray);
 							} else {
-								$array_value .= ",'".$key."' => '".$data."'";
+								if ($data == 'TRUE' || $data == 'FALSE') {
+									$array_value .= ",'".$key."' => ".$data."";
+								} else {
+									$array_value .= ",'".$key."' => '".$data."'";
+								}
 							}
 						}
 					}
