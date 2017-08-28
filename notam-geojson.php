@@ -12,7 +12,7 @@ if (isset($_GET['coord']))
 {
 	$coords = explode(',',$_GET['coord']);
 	if (isset($_COOKIE['notamscope']) && $_COOKIE['notamscope'] != '' && $_COOKIE['notamscope'] != 'All') {
-		$scope = filter_var($_COOOKIE['notamscope'],FILTER_SANITIZE_STRING);
+		$scope = filter_var($_COOKIE['notamscope'],FILTER_SANITIZE_STRING);
 		$spotter_array = $NOTAM->getAllNOTAMbyCoordScope($coords,$scope);
 	} elseif (isset($_GET['scope']) && $_GET['scope'] != '' && $_GET['scope'] != 'All') {
 		$scope = filter_input(INPUT_GET,'scope',FILTER_SANITIZE_STRING);

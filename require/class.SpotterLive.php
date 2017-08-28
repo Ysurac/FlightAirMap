@@ -973,7 +973,7 @@ class SpotterLive {
 		{
 			if (!is_string($q))
 			{
-				return false;
+				return array();
 			} else {
 				$q_array = explode(" ", $q);
 				foreach ($q_array as $q_item){

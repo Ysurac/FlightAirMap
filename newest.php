@@ -6,7 +6,8 @@ $Spotter = new Spotter();
 
 if (isset($_POST['category']))
 {
-	header('Location: '.$globalURL.'/newest/'.$_POST['category']);
+	$category = filter_input(INPUT_POST,'category',FILTER_SANITIZE_STRING);
+	header('Location: '.$globalURL.'/newest/'.$category);
 }
 
 $title = _("Newest");

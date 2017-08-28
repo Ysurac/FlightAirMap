@@ -37,43 +37,12 @@ if (!isset($_GET['type'])){
 	{
 		$title = sprintf(_("Detailed View for %s"),$spotter_array[0]['type']);
 		require_once('header.php');
-	
-	/*    
-		print '<div class="select-item">';
-		print '<form action="'.$globalURL.'/marine/type/" method="post">';
-		print '<select name="aircraft_type" class="selectpicker" data-live-search="true">';
-    		print '<option></option>';
-    		$Stats = new Stats();
-		$aircraft_types = $Stats->getAllAircraftTypes();
-		if (empty($aircraft_types)) $aircraft_types = $Spotter->getAllAircraftTypes();
-		foreach($aircraft_types as $aircrafttype)
-		{
-			if($aircraft_type == $aircrafttype['aircraft_icao'])
-			{
-				print '<option value="'.$aircrafttype['aircraft_icao'].'" selected="selected">'.$aircrafttype['aircraft_manufacturer'].' '.$aircrafttype['aircraft_name'].' ('.$aircrafttype['aircraft_icao'].')</option>';
-			} else {
-				print '<option value="'.$aircrafttype['aircraft_icao'].'">'.$aircrafttype['aircraft_manufacturer'].' '.$aircrafttype['aircraft_name'].' ('.$aircrafttype['aircraft_icao'].')</option>';
-			}
-    		}
-    		print '</select>';
-	    	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
-	  	print '</form>';
-	  	print '</div>';
-	*/
-		//if ($aircraft_type != "NA")
-		//{
-	    		print '<div class="info column">';
-	      		print '<h1>'.$spotter_array[0]['type'].'</h1>';
-	      		//print '<div><span class="label">'._("Name").'</span>'.$spotter_array[0]['aircraft_name'].'</div>';
-	      		//print '<div><span class="label">'._("ICAO").'</span>'.$spotter_array[0]['aircraft_type'].'</div>'; 
-	      		//if (isset($spotter_array[0]['aircraft_manufacturer'])) print '<div><span class="label">'._("Manufacturer").'</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $spotter_array[0]['aircraft_manufacturer'])).'">'.$spotter_array[0]['aircraft_manufacturer'].'</a></div>';
-	    		print '</div>';
-		//} else {
-		//	print '<div class="alert alert-warning">'._("This special aircraft profile shows all flights in where the aircraft type is unknown.").'</div>';
-		//}
-	      
+
+		print '<div class="info column">';
+		print '<h1>'.$spotter_array[0]['type'].'</h1>';
+		print '</div>';
+
 		//include('aircraft-sub-menu.php');
-	        
 		print '<div class="table column">';
 		print '<p>'.sprintf(_("The table below shows the detailed information of all marine of type <strong>%s</strong>."),$spotter_array[0]['type']).'</p>';
 		  
