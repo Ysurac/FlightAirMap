@@ -24,7 +24,7 @@ class settings {
 						if (!isset($array_value)) {
 							if (is_array($data)) {
 								foreach ($data as $keya => $dataa) {
-									if (is_array($dataa)) {
+									if (is_array($dataa) && !empty($dataa)) {
 										foreach ($dataa as $dataaa) {
 											if (!isset($dataarraya)) $dataarraya = $dataaa;
 											else $dataarraya .= "','".$dataaa;
@@ -47,8 +47,8 @@ class settings {
 							}
 						} else {
 							if (is_array($data)) {
-								foreach ($data as $dataa) {
-									if (is_array($dataa)) {
+								foreach ($data as $keya => $dataa) {
+									if (is_array($dataa) && !empty($dataa)) {
 										foreach ($dataa as $dataaa) {
 											if (!isset($dataarraya)) $dataarraya = $dataaa;
 											else $dataarraya .= "','".$dataaa;
