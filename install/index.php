@@ -627,9 +627,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</fieldset>
 			</div>
 		</fieldset>
-		<fieldset id="news">
+		<fieldset id="newsi">
 			<legend>News</legend>
-			<table class="news table" id="NewsTable">
+			<table class="newsi table" id="NewsTable">
 			    <thead>
 				<tr>
 				    <td>RSS/Atom URL</td>

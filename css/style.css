@@ -1638,9 +1638,9 @@ body.page-upcoming table tr td.logo img{
     border-radius: 6px 0 6px 6px;
 }
 
-.news select {
+.newsi select {
     width: 60% !important;
 }
-.news input[type="url"] {
+.newsi input[type="url"] {
     width: 100% !important;
 }
