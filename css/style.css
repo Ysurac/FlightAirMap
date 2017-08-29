@@ -1081,7 +1081,8 @@ body.page-upcoming table tr td.logo img{
 /* NEWS */
 .news {
     margin: 20px 0 0 0;
-    padding: 0 0 10px 0;
+    padding: 10px;
+    box-shadow: 2px 2px 5px 0px #1a3151;
 }
 .news img {
     vertical-align: bottom;
