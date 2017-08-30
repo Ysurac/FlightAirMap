@@ -158,7 +158,7 @@ if (!empty($spotter_array) || $alliance === true)
 			print '<a href="'.$globalURL.'/aircraft/'.$aircraft_item['aircraft_icao'].'">'.$aircraft_item['aircraft_name'].' ('.$aircraft_item['aircraft_icao'].')</a>';
 			print '</td>';
 			print '<td>';
-			print $aircraft_item['registration_count'];
+			print $aircraft_item['aircraft_registration_count'];
 			print '</td>';
 			print '<td><a href="'.$globalURL.'/search?registration='.$aircraft_item['registration'].'&airline='.$airline.'">'._("Search flights").'</a></td>';
 			print '</tr>';
