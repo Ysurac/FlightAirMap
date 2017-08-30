@@ -228,6 +228,32 @@ class Common {
 	}
 
 	/**
+	* Give plunge between 2 altitudes and distance
+	* @param Float $initial_altitude altitude of first point in m
+	* @param Float $final_altitude altitude of second point in m
+	* @param String $distance distance between two points in m
+	* @return Float plunge
+	*/
+	public function plunge($initial_altitude,$final_altitude,$distance) {
+		$plunge = rad2deg(asin(($final_altitude-$initial_altitude)/$distance));
+		return $plunge;
+	}
+
+	/**
+	* Give azimuth between 2 coordonnates
+	* @param Float $lat latitude of first point
+	* @param Float $lon longitude of first point
+	* @param Float $latc latitude of second point
+	* @param Float $lonc longitude of second point
+	* @return Float Azimuth
+	*/
+	public function azimuth($lat, $lon, $latc, $lonc) {
+		$azimuth = rad2deg(atan(($latc - $lat)/($lonc - $lon)));
+		return 360+$azimuth;
+	}
+	
+	
+	/**
 	* Check is distance realistic
 	* @param int $timeDifference the time between the reception of both messages
 	* @param float $distance distance covered
