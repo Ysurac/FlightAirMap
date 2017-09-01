@@ -1626,7 +1626,7 @@ while ($i > 0) {
 				    if ($data['source_type'] != 'modes' && $data['source_type'] != 'ais') $data['altitude_relative'] = 'AMSL';
 				    // Accept data if time <= system time + 20s
 				    //if (($data['source_type'] == 'modes') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
-				    if (($data['source_type'] == 'modes') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
+				    if (($data['source_type'] == 'modes') || isset($line['stealth']) && (!isset($data['hex']) || $data['hex'] != 'FFFFFF') && ($line['stealth'] == 0 || $line['stealth'] == '') && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
 					$send = $SI->add($data);
 				    } elseif ($data['source_type'] == 'ais') {
 					$data['type'] = '';
