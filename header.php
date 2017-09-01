@@ -18,6 +18,10 @@ if (isset($_GET['3d'])) {
 	setcookie('MapFormat','2d');
 }
 
+if (isset($_GET['tsk'])) {
+	$tsk = filter_input(INPUT_GET,'tsk',FILTER_SANITIZE_URL);
+}
+
 if (isset($_POST['archive'])) {
 	setcookie('archive','true');
 	setcookie('archive_begin',strtotime($_POST['start_date']));
@@ -98,6 +102,7 @@ if (strtolower($current_page) == "index")
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
 <script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet.textpath.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
@@ -196,7 +201,7 @@ if (strtolower($current_page) == "index")
 <?php
 //		}
 ?>
-<script src="<?php print $globalURL; ?>/js/map.2d.js.php?<?php print time(); ?>"></script>
+<script src="<?php print $globalURL; ?>/js/map.2d.js.php?<?php print time(); ?><?php if (isset($tsk)) print '&tsk='.$tsk; ?>"></script>
 <?php
 		if (!isset($globalAircraft) || $globalAircraft) {
 ?>

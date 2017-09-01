@@ -308,51 +308,6 @@ $( document ).ready(function() {
 <?php
 	}
 ?>
-	function locationPopup (feature, layer) {
-		var output = '';
-		output += '<div class="top">';
-		    output += '<div class="left">';
-			if (typeof feature.properties.image_thumb != 'undefined' && feature.properties.image_thumb != '') {
-			    output += '<img src="'+feature.properties.image_thumb+'" /></a>';
-			}
-		    output += '</div>';
-		    output += '<div class="right">';
-			output += '<div class="callsign-details">';
-			if (feature.properties.name == "") {
-			    output += '<div class="callsign">'+feature.properties.location_id+'</div>';
-			} else {
-			    output += '<div class="callsign">'+feature.properties.name+'</div>';
-			}
-			output += '</div>';
-		     output += '</div>';
-		output += '</div>';
-		output += '<div class="details">';
-		    if (feature.properties.city != "")
-		    {
-			output += '<div>';
-			    output += '<span><?php echo _("City"); ?></span>';
-			    output += feature.properties.city;
-			output += '</div>';
-		    }
-		    if (feature.properties.altitude != "" || feature.properties.altitude != 0)
-		    {
-			output += '<div>';
-			    output += '<span><?php echo _("Altitude"); ?></span>';
-			    output += Math.round(feature.properties.altitude*3,2809)+' feet - '+feature.properties.altitude+' m';
-			output += '</div>';
-		    }
-		    if (feature.properties.country != "")
-		    {
-			output += '<div>';
-			    output += '<span><?php echo _("Country"); ?></span>';
-			    output += feature.properties.country;
-			output += '</div>';
-		    }
-		output += '</div>';
-		output += '</div>';
-		layer.bindPopup(output);
-	};
-
 	function update_locationsLayer() {
 		var bbox = map.getBounds().toBBoxString();
 		//var locationsLayerQuery = $.getJSON("<?php print $globalURL; ?>/location-geojson.php",function (data) {
@@ -387,6 +342,44 @@ $( document ).ready(function() {
 		});
 	};
 
+<?php
+    if (isset($_GET['tsk'])) {
+?>
+	function tskPopup (feature, layer) {
+		var output = '';
+		output += '<div class="top">';
+		if (typeof feature.properties.type != 'undefined') output += '&nbsp;<b>Type:</b>&nbsp;'+feature.properties.type+'<br /> ';
+		if (typeof feature.properties.name != 'undefined') output += '&nbsp;<b>Name:</b>&nbsp;'+feature.properties.name+'<br /> ';
+		if (typeof feature.properties.altitude != 'undefined') output += '&nbsp;<b>Altitude:</b>&nbsp;'+feature.properties.altitude+'<br /> ';
+		output += '</div>';
+		layer.bindPopup(output);
+	};
+
+	function update_tsk() {
+		var bbox = map.getBounds().toBBoxString();
+		var tskLayerQuery = $.getJSON("<?php print $globalURL; ?>/tsk-geojson.php?tsk=<?php echo filter_input(INPUT_GET,'tsk',FILTER_SANITIZE_URL); ?>",function (data) {
+		    tskLayer = L.geoJson(data,{
+			onEachFeature: function (feature, layer) {
+			    tskPopup(feature, layer);
+			    if (feature.geometry.type == 'LineString') layer.setText('     ►     ', {repeat: true,offset: 4,attributes: {fill: 'blue'}});
+			},
+			pointToLayer: function (feature, latlng) {
+				return L.marker(latlng, {
+				    icon: L.icon({
+					iconUrl: feature.properties.icon,
+					iconSize: [16, 18]
+				    })
+				}).on('click', function() {
+				    //$(".showdetails").load("location-data.php?"+Math.random()+"&sourceid="+encodeURI(feature.properties.id));
+				});
+			}
+		    }).addTo(map);
+		});
+	};
+	update_tsk();
+<?php
+    }
+?>
 	map.on('moveend', function() {
 		//if (map.getZoom() > 7) {
 		//	map.removeLayer(locationsLayer);
