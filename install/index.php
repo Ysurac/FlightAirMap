@@ -84,7 +84,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 		print '<div class="info column"><p><strong>ZIP is not loaded. Needed to populate database for IVAO.</strong></p></div>';
 	}
 	if (!extension_loaded('xml') && !extension_loaded('xmlreader')) {
-		print '<div class="info column"><p><strong>XML is not loaded. Needed to parse RSS for News pages.</strong></p></div>';
+		print '<div class="info column"><p><strong>XML is not loaded. Needed to parse RSS for News pages and if you want tsk files support.</strong></p></div>';
 	}
 	if (!extension_loaded('json')) {
 		$error[] = "Json is not loaded. Needed for aircraft schedule and bitly.";
@@ -691,6 +691,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</tr>
 			    </tbody>
 			</table>
+			<p class="help-block"><i>News</i> page syndicate RSS/Atom feeds. If you only use one mode, use type global.</p>
 		</fieldset>
 		
 		<fieldset id="optional">
@@ -1005,6 +1006,12 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="noairlines">No airlines check and display (can be used for OGN or Virtual Flights without airlines)</label>
 				<input type="checkbox" name="noairlines" id="noairlines" value="noairlines"<?php if (isset($globalNoAirlines) && $globalNoAirlines) { ?> checked="checked"<?php } ?> />
+			</p>
+			<br />
+			<p>
+				<label for="tsk">Enable support of XCSoar task (.tsk) files</label>
+				<input type="checkbox" name="tsk" id="tsk" value="tsk"<?php if (isset($globalTSK) && $globalTSK) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">tsk file can be loaded using http://yourflightairmap/tsk=http://yourtskfile</p>
 			</p>
 			<br />
 			<p>
@@ -1561,6 +1568,13 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalNoAirlines' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalNoAirlines' => 'FALSE'));
+	}
+
+	$tsk = filter_input(INPUT_POST,'tsk',FILTER_SANITIZE_STRING);
+	if ($tsk == 'tsk') {
+		$settings = array_merge($settings,array('globalTSK' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalTSK' => 'FALSE'));
 	}
 
 	if (!isset($globalTransaction)) $settings = array_merge($settings,array('globalTransaction' => 'TRUE'));

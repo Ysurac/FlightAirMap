@@ -18,7 +18,7 @@ if (isset($_GET['3d'])) {
 	setcookie('MapFormat','2d');
 }
 
-if (isset($_GET['tsk'])) {
+if (isset($globalTSK) && $globalTSK && isset($_GET['tsk'])) {
 	$tsk = filter_input(INPUT_GET,'tsk',FILTER_SANITIZE_URL);
 }
 

@@ -343,7 +343,7 @@ $( document ).ready(function() {
 	};
 
 <?php
-    if (isset($_GET['tsk'])) {
+    if (isset($globalTSK) && $globalTSK && isset($_GET['tsk'])) {
 ?>
 	function tskPopup (feature, layer) {
 		var output = '';

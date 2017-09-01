@@ -14,7 +14,7 @@ class Common {
 	* @param Array $headers header to submit with the form
 	* @return String the result
 	*/
-	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '',$useragent = '') {
+	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '',$useragent = '', $sizelimit = false) {
 		global $globalProxy, $globalForceIPv4;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -65,6 +65,13 @@ class Common {
 		if ($referer != '') {
 			curl_setopt($ch, CURLOPT_REFERER, $referer);
 		}
+		if ($sizelimit === true) {
+			curl_setopt($ch, CURLOPT_BUFFERSIZE, 128);
+			curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+			curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function($curlr,$downloadsize, $downloaded, $uploadsize, $uploaded){
+				return ($downloaded > (3*1024)) ? 1 : 0;
+			});
+		}
 		$result = curl_exec($ch);
 		$info = curl_getinfo($ch);
 		//var_dump($info);
@@ -91,13 +98,21 @@ class Common {
 	}
 
 	public static function download($url, $file, $referer = '') {
-		global $globalDebug;
+		global $globalDebug, $globalProxy, $globalForceIPv4;
 		$fp = fopen($file, 'w');
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		if ($referer != '') curl_setopt($ch, CURLOPT_REFERER, $referer);
+		if (isset($globalForceIPv4) && $globalForceIPv4) {
+			if (defined('CURLOPT_IPRESOLVE') && defined('CURL_IPRESOLVE_V4')){
+				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+			}
+		}
+		if (isset($globalProxy) && $globalProxy != '') {
+			curl_setopt($ch, CURLOPT_PROXY, $globalProxy);
+		}
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
 		curl_setopt($ch, CURLOPT_FILE, $fp);
 		curl_exec($ch);
@@ -370,7 +385,7 @@ class Common {
 		//return the angle, normalized
 		return (rad2deg(atan2($dLon, $dPhi)) + 360) % 360;
 	}
-	
+
 	public function checkLine($lat1,$lon1,$lat2,$lon2,$lat3,$lon3,$approx = 0.15) {
 		//$a = ($lon2-$lon1)*$lat3+($lat2-$lat1)*$lon3+($lat1*$lon2+$lat2*$lon1);
 		$a = -($lon2-$lon1);
