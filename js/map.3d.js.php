@@ -360,6 +360,49 @@ function update_locationsLayer() {
     });
 }
 
+function update_tsk() {
+    var tsknb;
+    for (var i =0; i < viewer.dataSources.length; i++) {
+	if (viewer.dataSources.get(i).name == 'tsk') {
+	    tsknb = i;
+	    break;
+	}
+    }
+
+    var tsk_geojson = Cesium.loadJson("<?php print $globalURL; ?>/tsk-geojson.php?tsk=<?php print filter_input(INPUT_GET,'tsk',FILTER_SANITIZE_URL); ?>");
+    tsk_geojson.then(function(geojsondata) {
+	tsk = new Cesium.CustomDataSource('tsk');
+	for (var i =0;i < geojsondata.features.length; i++) {
+	    if (geojsondata.features[i].geometry.type == 'LineString') {
+	    	data = geojsondata.features[i].properties;
+	    	var positionsarray = [];
+	    	for (var j = 0; j < geojsondata.features[i].geometry.coordinates.length; j++) {
+	    		positionsarray.push(Cesium.Cartesian3.fromDegreesArray(geojsondata.features[i].geometry.coordinates[j])[0]);
+	    	}
+		var entity = tsk.entities.add({
+		    polyline: {
+		    positions: positionsarray,
+		    width : 5,
+		    material :  new Cesium.PolylineArrowMaterialProperty(Cesium.Color.BLUE)
+		    }
+		});
+	    } else {
+		data = geojsondata.features[i].properties;
+		console.log(data);
+		var entity = tsk.entities.add({
+		    position: Cesium.Cartesian3.fromDegreesArray(geojsondata.features[i].geometry.coordinates)[0],
+		    billboard: {
+			image: data.icon,
+			verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+		    },
+		    type: 'tsk'
+		});
+	    }
+	}
+	if (typeof tsknb != 'undefined') var remove = viewer.dataSources.remove(viewer.dataSources.get(tsknb));
+	viewer.dataSources.add(tsk);
+    });
+}
 
 $(".showdetails").on("click",".close",function(){
 	$(".showdetails").empty();
@@ -515,6 +558,14 @@ viewer.scene.globe.enableLighting = true;
 if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
 	CesiumMiniMap(viewer);
 }
+
+<?php
+    if (isset($globalTSK) && $globalTSK && isset($_GET['tsk'])) {
+?>
+update_tsk();
+<?php
+    }
+?>
 
 update_locationsLayer();
 setInterval(function(){update_locationsLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);

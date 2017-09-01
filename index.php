@@ -49,7 +49,7 @@ require_once('header.php');
 <?php
     if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 ?>
-<script src="<?php echo $globalURL; ?>/js/map.3d.js.php"></script>
+<script src="<?php echo $globalURL; ?>/js/map.3d.js.php<?php if (isset($tsk)) print '?tsk='.$tsk; ?>"></script>
 <?php
 	if (!isset($globalAircraft) || $globalAircraft) {
 ?>
