@@ -192,7 +192,7 @@ class SpotterImport {
 	if ($globalDebug) echo 'Delete old values and update latest data...'."\n";
 	foreach ($this->all_flights as $key => $flight) {
 	    if (isset($flight['lastupdate'])) {
-		if ($flight['lastupdate'] < (time()-5900)) {
+		if ($flight['lastupdate'] < (time()-1800)) {
 		    $this->delKey($key);
 		}
 	    }
@@ -217,7 +217,7 @@ class SpotterImport {
     }
 
     public function add($line) {
-	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource, $globalVAM, $globalAllFlights, $globalServerAPRS, $APRSSpotter, $globalNoImport, $globalNoDB, $globalVA, $globalAircraftMaxUpdate, $globalAircraftMinUpdate, $globalLiveInterval, $GeoidClass;
+	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource, $globalVAM, $globalAllFlights, $globalServerAPRS, $APRSSpotter, $globalNoImport, $globalNoDB, $globalVA, $globalAircraftMaxUpdate, $globalAircraftMinUpdate, $globalLiveInterval, $GeoidClass, $globalArchive;
 	//if (!isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.01';
 	if (!isset($globalAircraftMaxUpdate) || $globalAircraftMaxUpdate == '') $globalAircraftMaxUpdate = 3000;
@@ -523,6 +523,7 @@ class SpotterImport {
 	    	    	|| (isset($globalVAM) && $globalVAM)
 	    	    	|| !isset($timediff)
 	    	    	|| $timediff > $globalLiveInterval
+	    	    	|| $globalArchive
 	    	    	|| ($timediff > 30 
 	    	    	    && isset($this->all_flights[$id]['latitude']) 
 	    	    	    && isset($this->all_flights[$id]['longitude']) 

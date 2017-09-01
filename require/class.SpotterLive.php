@@ -871,13 +871,13 @@ class SpotterLive {
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT spotter_live.ident, spotter_live.flightaware_id FROM spotter_live 
 				WHERE spotter_live.ident = :ident 
-				AND spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE)'; 
+				AND spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 20 MINUTE)'; 
 //				AND spotter_live.date < UTC_TIMESTAMP()";
 			$query_data = array(':ident' => $ident);
 		} else {
 			$query  = "SELECT spotter_live.ident, spotter_live.flightaware_id FROM spotter_live 
 				WHERE spotter_live.ident = :ident 
-				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - INTERVAL '30 MINUTES'";
+				AND spotter_live.date >= now() AT TIME ZONE 'UTC' - INTERVAL '20 MINUTES'";
 //				AND spotter_live.date < now() AT TIME ZONE 'UTC'";
 			$query_data = array(':ident' => $ident);
 		}
@@ -937,13 +937,13 @@ class SpotterLive {
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT spotter_live.ModeS, spotter_live.flightaware_id FROM spotter_live 
 				WHERE spotter_live.ModeS = :modes 
-				AND spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE)'; 
+				AND spotter_live.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 20 MINUTE)'; 
 //				AND spotter_live.date < UTC_TIMESTAMP()";
 			$query_data = array(':modes' => $modes);
 		} else {
 			$query  = "SELECT spotter_live.ModeS, spotter_live.flightaware_id FROM spotter_live 
 				WHERE spotter_live.ModeS = :modes 
-				AND spotter_live.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '30 MINUTE'";
+				AND spotter_live.date >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '20 MINUTE'";
 //			//	AND spotter_live.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC'";
 			$query_data = array(':modes' => $modes);
 		}
