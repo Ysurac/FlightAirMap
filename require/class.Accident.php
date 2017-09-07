@@ -320,7 +320,8 @@ class Accident {
 						$query_values = array(':registration' => trim($cr['registration']),':date' => date('Y-m-d',$cr['date']),':url' => $cr['url'],':country' => $cr['country'],':place' => $cr['place'],':title' => $cr['title'],':fatalities' => $cr['fatalities'],':latitude' => $cr['latitude'],':longitude' => $cr['longitude'],':type' => $cr['type'],':source' => $cr['source'],':ident' => $cr['ident'],':aircraft_manufacturer' => $cr['aircraft_manufacturer'],':aircraft_name' => $cr['aircraft_name'],':airline_name' => $cr['operator']);
 						$sth->execute($query_values);
 						if ($cr['date'] > time()-(30*86400)) {
-							if (empty($Image->getSpotterImage($cr['registration']))) {
+							$imgchk = $Image->getSpotterImage($cr['registration']);
+							if (empty($imgchk)) {
 								if ($globalDebug) echo "\t".'Get image for '.$cr['registration'].'...';
 								$Image->addSpotterImage($cr['registration']);
 								if ($globalDebug) echo "\t".'Done'."\n";
