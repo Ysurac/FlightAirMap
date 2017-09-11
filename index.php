@@ -304,6 +304,7 @@ require_once('header.php');
 					if (!isset($_COOKIE['MapTypeId'])) $MapBoxId = 'default';
 					else $MapBoxId = $_COOKIE['MapTypeId'];
 			    ?>
+			<!--    <option value="MapboxGL"<?php if ($MapType == 'MapboxGL') print ' selected'; ?>>Mapbox GL</option> -->
 			    <option value="Mapbox-default"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'default') print ' selected'; ?>>Mapbox default</option>
 			    <option value="Mapbox-mapbox.streets"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'mapbox.streets') print ' selected'; ?>>Mapbox streets</option>
 			    <option value="Mapbox-mapbox.light"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'mapbox.light') print ' selected'; ?>>Mapbox light</option>
@@ -339,6 +340,8 @@ require_once('header.php');
 <?php
     if (!isset($_COOKIE['MapFormat']) || $_COOKIE['MapFormat'] != '3d') {
 ?>
+		    <li><div class="checkbox"><label><input type="checkbox" name="display2dbuildings" value="1" onclick="clickDisplay2DBuildings(this)" <?php if ((isset($_COOKIE['Map2DBuildings']) && $_COOKIE['Map2DBuildings'] == 'true') || (!isset($_COOKIE['Map2DBuildings']))) print 'checked'; ?> ><?php echo _("Display 2.5D buidings on map"); ?></label></div></li>
+
 <?php
 	if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 ?>

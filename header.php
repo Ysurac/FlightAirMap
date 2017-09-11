@@ -108,19 +108,36 @@ if (strtolower($current_page) == "index")
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.common.js"></script>
+<?php
+	if (isset($_COOKIE['Map2DBuildings']) && $_COOKIE['Map2DBuildings'] == 'true') {
+?>
+<script src="<?php print $globalURL; ?>/js/OSMBuildings-Leaflet.js"></script>
+<?php
+	}
+?>
+<?php
+	if ($globalMapProvider == 'MapboxGL' || (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'MapboxGL')) {
+?>
+<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.css" rel='stylesheet' />
+<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-mapbox-gl.js"></script>
+<?php
+	}
+?>
 <?php 
 	if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 ?>
 <?php 
-	if (isset($globalOffline) && $globalOffline) {
+	if (file_exists(dirname(__FILE__).'/js/Cesium/Cesium.js')) {
+	// || isset($globalOffline) && $globalOffline) {
 ?>
 <link rel="stylesheet" href="<?php print $globalURL; ?>/js/Cesium/Widgets/widgets.css" />
 <script src="<?php print $globalURL; ?>/js/Cesium/Cesium.js"></script>
 <?php
 	} else {
 ?>
-<link rel="stylesheet" href="https://cesiumjs.org/releases/1.36/Build/Cesium/Widgets/widgets.css" />
-<script src="https://cesiumjs.org/releases/1.36/Build/Cesium/Cesium.js"></script>
+<link rel="stylesheet" href="https://cesiumjs.org/releases/1.37/Build/Cesium/Widgets/widgets.css" />
+<script src="https://cesiumjs.org/releases/1.37/Build/Cesium/Cesium.js"></script>
 <?php
 	}
 ?>
@@ -809,6 +826,13 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
       'Imagery © <a href="http://mapbox.com">Mapbox</a>',
     id: '<?php print $globalMapboxId; ?>',
     token : '<?php print $globalMapboxToken; ?>'
+  }).addTo(map);
+<?php
+    } elseif ($globalMapProvider == 'Mapbox-GL') {
+?>
+    L.mapboxGL({
+	accessToken: '<?php print $globalMapboxToken; ?>',
+	style: 'mapbox://styles/mapbox/bright-v8'
   }).addTo(map);
 <?php
     } elseif ($globalMapProvider == 'MapQuest-OSM') {

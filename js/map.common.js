@@ -178,6 +178,10 @@ function clickDisplayFires(cb) {
     createCookie('show_Fires',cb.checked,2);
     window.location.reload();
 }
+function clickDisplay2DBuildings(cb) {
+    createCookie('Map2DBuildings',cb.checked,2);
+    window.location.reload();
+}
 function unitdistance(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;

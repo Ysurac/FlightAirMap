@@ -14,7 +14,7 @@ class Common {
 	* @param Array $headers header to submit with the form
 	* @return String the result
 	*/
-	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '',$useragent = '', $sizelimit = false) {
+	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '',$useragent = '', $sizelimit = false, $async = false) {
 		global $globalProxy, $globalForceIPv4;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -72,9 +72,12 @@ class Common {
 				return ($downloaded > (3*1024)) ? 1 : 0;
 			});
 		}
+		if ($async) {
+			curl_setopt($ch, CURLOPT_NOSIGNAL, 1); //to timeout immediately if the value is < 1000 ms
+			curl_setopt($ch, CURLOPT_TIMEOUT_MS, 50);
+		}
 		$result = curl_exec($ch);
 		$info = curl_getinfo($ch);
-		//var_dump($info);
 		curl_close($ch);
 		if ($info['http_code'] == '503' && strstr($result,'DDoS protection by CloudFlare')) {
 			echo "Cloudflare Detected\n";
@@ -263,8 +266,11 @@ class Common {
 	* @return Float Azimuth
 	*/
 	public function azimuth($lat, $lon, $latc, $lonc) {
-		$azimuth = rad2deg(atan(($latc - $lat)/($lonc - $lon)));
-		return 360+$azimuth;
+		$dX = $latc - $lat;
+		$dY = $lonc - $lon;
+		$azimuth = rad2deg(atan2($dY,$dX));
+		if ($azimuth < 0) return $azimuth+360;
+		return $azimuth;
 	}
 	
 	

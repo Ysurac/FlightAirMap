@@ -177,6 +177,13 @@ $( document ).ready(function() {
 	    token: '<?php print $globalMapboxToken; ?>'
 	}).addTo(map);
 <?php
+	} elseif ($MapType == 'MapboxGL') {
+?>
+	L.mapboxGL({
+	    style: 'https://raw.githubusercontent.com/osm2vectortiles/mapbox-gl-styles/master/styles/bright-v9-cdn.json',
+	    accessToken: '<?php print $globalMapboxToken; ?>'
+	}).addTo(map);
+<?php
 	} elseif ($MapType == 'OpenStreetMap') {
 ?>
 	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -272,7 +279,13 @@ $( document ).ready(function() {
 <?php
 	}
 ?>
-
+<?php
+	if (isset($_COOKIE['Map2DBuildings']) && $_COOKIE['Map2DBuildings'] == 'true') {
+?>
+new OSMBuildings(map).load();
+<?php
+	}
+?>
 <?php
 	if (!isset($globalBounding) || $globalBounding == 'polygon') {
 		if ($globalLatitudeMin != '' && $globalLatitudeMax != '' && $globalLongitudeMin != '' && $globalLongitudeMax != '') 
