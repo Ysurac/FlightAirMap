@@ -64,7 +64,7 @@ Check https://github.com/Ysurac/FlightAirMap/wiki/Installation for detailed inst
 
 ### Web install/Update ###
 
-git pull https://github.com/Ysurac/FlightAirMap or get latest release https://github.com/Ysurac/FlightAirMap/releases
+git clone --recursive https://github.com/Ysurac/FlightAirMap or get latest release https://github.com/Ysurac/FlightAirMap/releases
 
 Use install/index.php
 

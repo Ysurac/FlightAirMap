@@ -272,6 +272,25 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</div>
 			<br />
 		</fieldset>
+		<fieldset id="offline">
+			<legend>Offline mode</legend>
+		<?php
+			if (file_exists(dirname(__FILE__).'/../js/Cesium/Cesium.js')) {
+		?>
+			<p>
+				<input type="checkbox" name="mapoffline" id="mapoffline" value="mapoffline" <?php if (!isset($globalMapOffline) || $globalMapOffline) { ?>checked="checked" <?php } ?>/>
+				<label for="mapoffline">Map offline mode</label>
+				<p class="help-block">Map offline mode will not use network to display 3D map but Natural Earth (2D map not available)</p>
+			</p>
+		<?php
+			}
+		?>
+			<p>
+				<input type="checkbox" name="globaloffline" id="globaloffline" value="globaloffline" <?php if (!isset($globalOffline) || $globalOffline) { ?>checked="checked" <?php } ?>/>
+				<label for="globaloffline">Offline mode</label>
+				<p class="help-block">Backend will not use network</p>
+			</p>
+		</fieldset>
 		<fieldset id="coverage">
 			<legend>Coverage area</legend>
 			<p>
@@ -1380,6 +1399,18 @@ if (isset($_POST['dbtype'])) {
 	}
 	
 	
+	$mapoffline = filter_input(INPUT_POST,'mapoffline',FILTER_SANITIZE_STRING);
+	if ($mapoffline == 'mapoffline') {
+		$settings = array_merge($settings,array('globalMapOffline' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMapOffline' => 'FALSE'));
+	}
+	$globaloffline = filter_input(INPUT_POST,'globaloffline',FILTER_SANITIZE_STRING);
+	if ($globaloffline == 'globaloffline') {
+		$settings = array_merge($settings,array('globalOffline' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalOffline' => 'FALSE'));
+	}
 
 	$notam = filter_input(INPUT_POST,'notam',FILTER_SANITIZE_STRING);
 	if ($notam == 'notam') {

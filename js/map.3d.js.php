@@ -9,7 +9,7 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	else $MapType = $globalMapProvider;
 
 //	unset($_COOKIE['MapType']);
-	if ($MapType != 'Mapbox' && $MapType != 'OpenStreetMap' && $MapType != 'Bing-Aerial' && $MapType != 'Bing-Hybrid' && $MapType != 'Bing-Road') {
+	if ($MapType != 'Mapbox' && $MapType != 'OpenStreetMap' && $MapType != 'Bing-Aerial' && $MapType != 'Bing-Hybrid' && $MapType != 'Bing-Road' && $MapType != 'offline') {
 		if (isset($globalBingMapKey) && $globalBingMapKey != '') $MapType = 'Bing-Aerial';
 		else $MapType = 'OpenStreetMap';
 	}
@@ -102,7 +102,9 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	} elseif ($MapType == 'offline') {
 ?>
 	var imProv = new Cesium.createTileMapServiceImageryProvider({
-		url : Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
+		url : Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII'),
+		maximumLevel : 2,
+		credit : 'Imagery courtesy Natural Earth'
 	});
 <?php
 /*
@@ -509,7 +511,19 @@ imageryLayers.addImageryProvider(provider);
 <?php
 //	if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'stk') {
 ?>
+<?php
+    if (isset($globalMapOffline) && $globalMapOffline === TRUE) {
+?>
+var MapTerrain = 'ellipsoid';
+<?php
+    } else {
+?>
 var MapTerrain = getCookie('MapTerrain');
+<?php
+    }
+?>
+
+
 if (MapTerrain == 'stk' || MapTerrain == '') {
 	var cesiumTerrainProviderMeshes = new Cesium.CesiumTerrainProvider({
 	    url : 'https://assets.agi.com/stk-terrain/world',

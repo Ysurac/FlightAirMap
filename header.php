@@ -11,6 +11,7 @@ date_default_timezone_set($globalTimezone);
 if (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] != '') $MapType = $_COOKIE['MapType'];
 else $MapType = $globalMapProvider;
 
+if (isset($globalMapOffline) && $globalMapOffline) $MapType = 'offline';
 
 if (isset($_GET['3d'])) {
 	setcookie('MapFormat','3d');

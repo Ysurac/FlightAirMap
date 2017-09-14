@@ -143,6 +143,7 @@ $( document ).ready(function() {
 		if (isset($viewcenterlatitude) && isset($viewcenterlongitude)) {
 ?>
 	map = L.map('live-map', { zoomControl:false }).setView([<?php print $viewcenterlatitude; ?>,<?php print $viewcenterlongitude; ?>], zoom);
+	//map = L.map('live-map', { crs : L.CRS.EPSG4326, zoomControl:false }).setView([<?php print $viewcenterlatitude; ?>,<?php print $viewcenterlongitude; ?>], zoom);
 	//map = WE.map('live-map');
 <?php
 		} else {
@@ -265,6 +266,20 @@ $( document ).ready(function() {
 ?>
 	var hereLayer = new L.tileLayer.here({appId: '<?php print $globalHereappId; ?>',appcode: '<?php print $globalHereappCode; ?>',scheme: 'hybrid.day'});
 	map.addLayer(hereLayer);
+<?php
+	} elseif ($MapType == 'offline') {
+?>	var center = map.getCenter();
+	map.options.crs = L.CRS.EPSG4326;
+	map.setView(center);
+	map._resetView(map.getCenter(), map.getZoom(), true);
+	L.tileLayer('<?php print $globalURL; ?>/js/Cesium/Assets/Textures/NaturalEarthII/{z}/{x}/{y}.jpg', {
+	    minZoom: 0,
+	    maxZoom: 5,
+	    tms : true,
+	    zindex : 3,
+	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
+	    attribution: 'Natural Earth'
+	}).addTo(map);
 <?php
 	} elseif (isset($globalMapCustomLayer[$MapType])) {
 		$customid = $MapType;

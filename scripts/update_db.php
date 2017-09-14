@@ -20,7 +20,7 @@ require_once(dirname(__FILE__).'/../require/settings.php');
 require(dirname(__FILE__).'/../install/class.update_db.php');
 $update_db = new update_db();
 
-if (!isset($globalMasterServer) || !$globalMasterServer) {
+if ((!isset($globalMasterServer) || !$globalMasterServer) && (!isset($globalOffline) || $globalOffline === FALSE)) {
 	if (isset($globalNOTAM) && $globalNOTAM && $update_db->check_last_notam_update()) {
 		echo "updating NOTAM...";
 		if (!isset($globalNOTAMSource) || $globalNOTAMSource == '') {
@@ -84,23 +84,24 @@ if (!isset($globalMasterServer) || !$globalMasterServer) {
   
 }
 
+if (!isset($globalOffline) || $globalOffline === FALSE) {
+	if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalMETARcycle) {
+		echo "updating METAR...";
+		require_once(dirname(__FILE__).'/../require/class.METAR.php');
+		$METAR = new METAR();
+		if ($METAR->check_last_update()) {
+			$METAR->addMETARCycle();
+			$METAR->insert_last_update();
+		} else echo "METAR are only updated every 30 minutes.\n";
+	}
 
-if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalMETARcycle) {
-	echo "updating METAR...";
-	require_once(dirname(__FILE__).'/../require/class.METAR.php');
-	$METAR = new METAR();
-	if ($METAR->check_last_update()) {
-		$METAR->addMETARCycle();
-		$METAR->insert_last_update();
-	} else echo "METAR are only updated every 30 minutes.\n";
+	if (isset($globalSchedules) && $globalSchedules && $update_db->check_last_schedules_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+		echo "Updating schedules...";
+		//$update_db->update_oneworld();
+		$update_db->update_skyteam();
+		$update_db->insert_last_schedules_update();
+	} elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Schedules are only updated every 15 days.\n";
 }
-
-if (isset($globalSchedules) && $globalSchedules && $update_db->check_last_schedules_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
-	echo "Updating schedules...";
-	//$update_db->update_oneworld();
-	$update_db->update_skyteam();
-	$update_db->insert_last_schedules_update();
-} elseif (isset($globalDebug) && $globalDebug && isset($globalOwner) && $globalOwner && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Schedules are only updated every 15 days.\n";
 
 if (isset($globalArchiveMonths) && $globalArchiveMonths > 0) {
 	echo "Updating statistics and archive old data...\n";
@@ -147,7 +148,7 @@ if (isset($globalACARSArchiveKeepMonths) && $globalACARSArchiveKeepMonths > 0) {
 	$ACARS->deleteArchiveAcarsData();
 	echo "Done\n";
 }
-if (isset($globalGroundAltitude) && $globalGroundAltitude) {
+if (isset($globalGroundAltitude) && $globalGroundAltitude && (!isset($globalOffline) || $globalOffline === FALSE)) {
 	echo "Adding ground altitude files...\n";
 	require_once(dirname(__FILE__).'/../require/class.Elevation.php');
 	$Elevation = new Elevation();
@@ -155,7 +156,7 @@ if (isset($globalGroundAltitude) && $globalGroundAltitude) {
 	//echo "Done\n";
 }
 
-if (isset($globalFires) && $globalFires && $update_db->check_last_fires_update()) {
+if (isset($globalFires) && $globalFires && $update_db->check_last_fires_update() && (!isset($globalOffline) || $globalOffline === FALSE)) {
 	echo "Update fires data...";
 	echo $update_db->update_fires();
 	$update_db->insert_last_fires_update();
@@ -163,7 +164,7 @@ if (isset($globalFires) && $globalFires && $update_db->check_last_fires_update()
 }
 
 
-if (isset($globalMap3D) && $globalMap3D) {
+if (isset($globalMap3D) && $globalMap3D && (!isset($globalOffline) || $globalOffline === FALSE)) {
 	if (isset($globalSatellite) && $globalSatellite && $update_db->check_last_tle_update()) {
 		echo "Updating tle for satellites position...";
 		$update_db->update_tle();
