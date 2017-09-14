@@ -181,7 +181,7 @@ $( document ).ready(function() {
 	} elseif ($MapType == 'MapboxGL') {
 ?>
 	L.mapboxGL({
-	    style: 'https://raw.githubusercontent.com/osm2vectortiles/mapbox-gl-styles/master/styles/bright-v9-cdn.json',
+	    style: 'https://data.osmbuildings.org/0.2/rkc8ywdl/style.json',
 	    accessToken: '<?php print $globalMapboxToken; ?>'
 	}).addTo(map);
 <?php

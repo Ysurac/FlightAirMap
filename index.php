@@ -315,7 +315,7 @@ require_once('header.php');
 					if (!isset($_COOKIE['MapTypeId'])) $MapBoxId = 'default';
 					else $MapBoxId = $_COOKIE['MapTypeId'];
 			    ?>
-			<!--    <option value="MapboxGL"<?php if ($MapType == 'MapboxGL') print ' selected'; ?>>Mapbox GL</option> -->
+			    <option value="MapboxGL"<?php if ($MapType == 'MapboxGL') print ' selected'; ?>>Mapbox GL</option>
 			    <option value="Mapbox-default"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'default') print ' selected'; ?>>Mapbox default</option>
 			    <option value="Mapbox-mapbox.streets"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'mapbox.streets') print ' selected'; ?>>Mapbox streets</option>
 			    <option value="Mapbox-mapbox.light"<?php if ($MapType == 'Mapbox' && $MapBoxId == 'mapbox.light') print ' selected'; ?>>Mapbox light</option>

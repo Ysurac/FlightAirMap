@@ -119,8 +119,8 @@ if (strtolower($current_page) == "index")
 <?php
 	if ($globalMapProvider == 'MapboxGL' || (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'MapboxGL')) {
 ?>
-<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.css" rel='stylesheet' />
-<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
+<link href="https://cdn.osmbuildings.org/mapbox-gl/0.40.0/mapbox-gl.css" rel='stylesheet' />
+<script src="https://cdn.osmbuildings.org/mapbox-gl/0.40.0/mapbox-gl.js"></script>
 <script src="<?php print $globalURL; ?>/js/leaflet-mapbox-gl.js"></script>
 <?php
 	}
