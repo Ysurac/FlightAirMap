@@ -182,7 +182,11 @@ $( document ).ready(function() {
 ?>
 	L.mapboxGL({
 	    style: 'https://data.osmbuildings.org/0.2/rkc8ywdl/style.json',
-	    accessToken: '<?php print $globalMapboxToken; ?>'
+	    accessToken: '<?php print $globalMapboxToken; ?>',
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+	      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+	      'Imagery © <a href="http://mapbox.com">Mapbox</a>' +
+	      '<a href="https://osmbuildings.org/copyright">&copy; OSM Buildings</a>',
 	}).addTo(map);
 <?php
 	} elseif ($MapType == 'OpenStreetMap') {
