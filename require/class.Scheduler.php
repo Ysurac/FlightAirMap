@@ -848,9 +848,9 @@ class Schedule {
 
 	
 	public function fetchSchedule($ident,$date = 'NOW') {
-		global $globalSchedulesSources, $globalSchedulesFetch;
+		global $globalSchedulesSources, $globalSchedulesFetch, $globalOffline;
 		//$Common = new Common();
-		if (!$globalSchedulesFetch) return array();
+		if ($globalSchedulesFetch === FALSE || (isset($globalOffline) && $globalOffline === TRUE)) return array();
 		$airline_icao = '';
 		if (!is_numeric(substr($ident, 0, 3)))
 		{

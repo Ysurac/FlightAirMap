@@ -95,8 +95,8 @@ class Image {
 	*/
 	public function addSpotterImage($registration,$aircraft_icao = '', $airline_icao = '')
 	{
-		global $globalDebug,$globalAircraftImageFetch;
-		if (isset($globalAircraftImageFetch) && !$globalAircraftImageFetch) return '';
+		global $globalDebug,$globalAircraftImageFetch, $globalOffline;
+		if ((isset($globalAircraftImageFetch) && $globalAircraftImageFetch === FALSE) || (isset($globalOffline) && $globalOffline === TRUE)) return '';
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 		$registration = trim($registration);
 		//getting the aircraft image
@@ -127,8 +127,8 @@ class Image {
 	*/
 	public function addMarineImage($mmsi,$imo = '',$name = '')
 	{
-		global $globalDebug,$globalMarineImageFetch;
-		if (isset($globalMarineImageFetch) && !$globalMarineImageFetch) return '';
+		global $globalDebug,$globalMarineImageFetch, $globalOffline;
+		if ((isset($globalMarineImageFetch) && !$globalMarineImageFetch) || (isset($globalOffline) && $globalOffline === TRUE)) return '';
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
 		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
 		$name = filter_var($name,FILTER_SANITIZE_STRING);
