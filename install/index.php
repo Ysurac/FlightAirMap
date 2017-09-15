@@ -833,6 +833,20 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					</div>
 					<p class="help-block">Register an account on <a href="https://developer.lufthansa.com/page">https://developer.lufthansa.com/page</a></p>
 				</p>
+				<p>
+					<div class="form-group">
+						<b>FlightAware API Key</b>
+						<p>
+							<label for="flightawareusername">Username</label>
+							<input type="text" name="flightawareusername" id="flightawareusername" value="<?php if (isset($globalFlightAwareUsername)) print $globalFlightAwareUsername; ?>" />
+						</p>
+						<p>
+							<label for="flightawarepassword">API key</label>
+							<input type="text" name="flightawarepassword" id="flightawarepassword" value="<?php if (isset($globalFlightAwarePassword)) print $globalFlightAwarePassword; ?>" />
+						</p>
+					</div>
+					<p class="help-block">Register an account on <a href="https://www.flightaware.com/">https://www.flightaware.com/</a></p>
+				</p>
 			</div>
 			<br />
 			<p>

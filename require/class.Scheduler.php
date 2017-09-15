@@ -673,6 +673,8 @@ class Schedule {
 	* @return Flight departure and arrival airports and time
 	*/
 	public function getFlightAware($callsign) {
+		global $globalFlightAwareUsername, $globalFlightAwarePassword;
+		date_default_timezone_set('UTC');
 		$Common = new Common();
 		/*
 		if (!is_numeric(substr($callsign, 0, 3)))
@@ -684,20 +686,38 @@ class Schedule {
 			} 
 		}
 		*/
-		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
-		$url= "http://fr.flightaware.com/live/flight/".$callsign;
-		//$check_date = new Datetime($date);
+		//$numvol = preg_replace('/^[A-Z]*/','',$callsign);
+		if ($globalFlightAwareUsername != '' && $globalFlightAwarePassword != '') {
+			$url = 'http://'.$globalFlightAwareUsername.':'.$globalFlightAwarePassword.'@flightxml.flightaware.com/json/FlightXML3/FlightInfoStatus?ident='.$callsign;
+			$data = $Common->getData($url);
+			if ($data != '') {
+				$result = json_decode($data,true);
+				$flight = $result['FlightInfoStatusResult']['flights'][0];
+				if (isset($flight['origin'])) {
+					return array(
+					    'DepartureAirportIATA' => $flight['origin']['alternate_ident'],
+					    'DepartureTime' => $flight['filed_departure_time']['time'],
+					    'ArrivalAirportIATA' => $flight['destination']['alternate_ident'],
+					    'ArrivalTime' => $flight['filed_arrival_time']['time'],
+					    'Source' => 'website_flightaware');
+				}
+			}
+		}
+		
+		$url= "http://flightaware.com/live/flight/".$callsign;
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$data = $Common->getData($url);
 		if ($data != '') {
-			$table = $Common->table2array($data);
-			if (isset($table[11][0])) {
-				$departureTime = str_replace('h',':',substr($table[5][0],0,5));
-				$arrivalTime = str_replace('h',':',substr($table[5][1],0,5));
-				echo $table[3][0];
-				sscanf($table[3][0],'%*[^(] (%3[A-Z] / %*4[A-Z])',$DepartureAirportIata);
-				sscanf($table[3][1],'%*[^(] (%3[A-Z] / %*4[A-Z])',$ArrivalAirportIata);
-				return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_flightaware');
+			preg_match(':<script>var trackpollBootstrap = (.*?);</script>:',$data,$result);
+			$flights = json_decode($result[1],true);
+			$flight = reset($flights['flights']);
+			if (isset($flight['activityLog']['flights'][0]['origin'])) {
+				return array(
+				    'DepartureAirportIATA' => $flight['activityLog']['flights'][0]['origin']['iata'],
+				    'DepartureTime' => date('H:i',$flight['activityLog']['flights'][0]['takeoffTimes']['scheduled']),
+				    'ArrivalAirportIATA' => $flight['activityLog']['flights'][0]['destination']['iata'],
+				    'ArrivalTime' => date('H:i',$flight['activityLog']['flights'][0]['landingTimes']['scheduled']),
+				    'Source' => 'website_flightaware');
 			}
 		}
 		return array();
@@ -716,10 +736,11 @@ class Schedule {
 		$data = $Common->getData($url);
 		if ($data != '') {
 			$table = $Common->table2array($data);
-			//print_r($table);
 			if (isset($table[11][1])) {
-				$departureTime = substr($table[11][1],0,5);
-				$arrivalTime = substr($table[17][1],0,5);
+				if (is_numeric(substr($table[11][1],0,1))) $departureTime = substr($table[11][1],0,5);
+				$departureTime = '';
+				if (is_numeric(substr($table[17][1],0,1))) $arrivalTime = substr($table[17][1],0,5);
+				else $arrivalTime = '';
 				$DepartureAirportIata = substr($table[13][1],0,3);
 				$ArrivalAirportIata = substr($table[15][1],0,3);
 				return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_costtotravel');
@@ -1098,7 +1119,7 @@ class Schedule {
 //$Schedule = new Schedule();
 
 //print_r($Schedule->fetchSchedule('HV5661'));
-//print_r($Schedule->getFlightAware('AF1179'));
+//print_r($Schedule->getCostToTravel('AB8788'));
 //print_r($Schedule->getBritishAirways('BAW551'));
 //print_r($Schedule->getLufthansa('LH551'));
 //print_r($Schedule->getTunisair('TU203'));
