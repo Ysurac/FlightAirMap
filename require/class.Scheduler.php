@@ -687,6 +687,7 @@ class Schedule {
 		}
 		*/
 		//$numvol = preg_replace('/^[A-Z]*/','',$callsign);
+		//if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		if ($globalFlightAwareUsername != '' && $globalFlightAwarePassword != '') {
 			$url = 'http://'.$globalFlightAwareUsername.':'.$globalFlightAwarePassword.'@flightxml.flightaware.com/json/FlightXML3/FlightInfoStatus?ident='.$callsign;
 			$data = $Common->getData($url);
@@ -705,7 +706,6 @@ class Schedule {
 		}
 		
 		$url= "http://flightaware.com/live/flight/".$callsign;
-		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$data = $Common->getData($url);
 		if ($data != '') {
 			preg_match(':<script>var trackpollBootstrap = (.*?);</script>:',$data,$result);
@@ -738,7 +738,7 @@ class Schedule {
 			$table = $Common->table2array($data);
 			if (isset($table[11][1])) {
 				if (is_numeric(substr($table[11][1],0,1))) $departureTime = substr($table[11][1],0,5);
-				$departureTime = '';
+				else $departureTime = '';
 				if (is_numeric(substr($table[17][1],0,1))) $arrivalTime = substr($table[17][1],0,5);
 				else $arrivalTime = '';
 				$DepartureAirportIata = substr($table[13][1],0,3);
