@@ -53,6 +53,9 @@ if ($facebook_meta_image != "")
     function schedule_js() {
         document.getElementById("schedules_options").style.display = document.getElementById("schedules").checked ? "inline" : "none" ;
     }
+    function mapmatching_js() {
+        document.getElementById("mapmatching_options").style.display = document.getElementById("mapmatching").checked ? "inline" : "none" ;
+    }
     function daemon_js() {
         document.getElementById("cronends").style.display = document.getElementById("daemon").checked ? "none" : "inline" ;
     }

@@ -6,7 +6,7 @@ require_once(dirname(__FILE__).'/class.update_schema.php');
 require_once(dirname(__FILE__).'/class.settings.php');
 require(dirname(__FILE__).'/../require/settings.php');
 set_time_limit(0);
-ini_set('max_execution_time', 3000);
+ini_set('max_execution_time', 6000);
 /*
 if ($globalInstalled && !isset($_SESSION['install'])) {
 	print '<div class="info column"><p>You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</p></div>';
@@ -107,6 +107,7 @@ if (isset($_GET['reset'])) {
 		$error .= $check_version;
 		$_SESSION['error'] = $error;
 		$_SESSION['errorlst'] = array_merge($_SESSION['errorlst'],array('Create and import tables'));
+		if (!isset($_SESSION['next'])) $_SESSION['next'] = '';
 		$result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 		print json_encode($result);
 	} else {
@@ -128,6 +129,7 @@ if (isset($_GET['reset'])) {
 		$_SESSION['error'] = $error;
 		$_SESSION['errorlst'] = array_merge($_SESSION['errorlst'],array('Populate waypoints database'));
 	} else $_SESSION['done'] = array_merge($_SESSION['done'],array('Populate waypoints database'));
+/*
 	$_SESSION['install'] = 'airspace';
 	$_SESSION['next'] = 'Populate airspace table';
 	$result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
@@ -140,6 +142,7 @@ if (isset($_GET['reset'])) {
 		$_SESSION['error'] = $error;
 		$_SESSION['errorlst'] = array_merge($_SESSION['errorlst'],array('Populate airspace database'));
 	} else $_SESSION['done'] = array_merge($_SESSION['done'],array('Populate airspace database'));
+*/
 	$_SESSION['install'] = 'countries';
 	$_SESSION['next'] = 'Populate countries table';
 	$result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);

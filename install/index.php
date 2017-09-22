@@ -729,7 +729,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p class="help-block">Fires are updated via <i>update_db.php</i> script.</p>
 			</p>
 			<p>
-				<label for="fires">Add fires support</label>
+				<label for="fires">Display fires on map</label>
 				<input type="checkbox" name="fires" id="fires" value="fires"<?php if (isset($globalMapFires) && $globalMapFires) { ?> checked="checked"<?php } ?> />
 				<p class="help-block">Display all fires on map by default.</p>
 			</p>
