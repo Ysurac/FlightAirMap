@@ -884,6 +884,21 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
         attribution: '<?php print $globalMapCustomLayer[$customid]['attribution']; ?>'
     }).addTo(map);
 <?php
+    } elseif ($globalMapProvider == 'offline' || (isset($globalMapOffline) && $globalMapOffline === TRUE)) {
+?>
+    var center = map.getCenter();
+    map.options.crs = L.CRS.EPSG4326;
+    map.setView(center);
+    map._resetView(map.getCenter(), map.getZoom(), true);
+    L.tileLayer('<?php print $globalURL; ?>/js/Cesium/Assets/Textures/NaturalEarthII/{z}/{x}/{y}.jpg', {
+        minZoom: 0,
+        maxZoom: 5,
+        tms : true,
+        zindex : 3,
+        noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
+        attribution: 'Natural Earth'
+    }).addTo(map);
+<?php
     //} elseif ($globalMapProvider == 'OpenStreetMap') {
     } else {
 ?>

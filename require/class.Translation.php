@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used to do flight ident translation
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once(dirname(__FILE__).'/settings.php');
 require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.Spotter.php');
@@ -8,11 +15,14 @@ require_once(dirname(__FILE__).'/libs/uagent/uagent.php');
 
 class Translation {
 	public $db;
+	
+	/*
+	* Initialize DB connection
+	*/
 	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
 	}
-
 
 	/**
 	* Change IATA to ICAO value for ident
@@ -91,35 +101,36 @@ class Translation {
 			//echo "Found in DB !\n";
 			return $correct;
 		}
-		 /*
-    	    elseif ($web && $globalTranslationFetch) {
-    		if (! is_numeric(substr($ident,-4))) {
-    		    if (count($globalTranslationSources) > 0) {
-    			$correct = $this->fromPlanefinder($ident);
-    			if ($correct != '') {
-    			    $correct = $this->ident2icao($correct);
-    			    if ($correct != $ident) {
-    				$this->addOperator($ident,$correct,'planefinder');
-    				//echo "Add to DB ! (".$correct.") \n";
-    				return $correct;
-    			    }
-    			}
-    		    }
-    		}
-    	    }
-    	    */
+		/*
+		elseif ($web && $globalTranslationFetch) {
+			if (! is_numeric(substr($ident,-4))) {
+				if (count($globalTranslationSources) > 0) {
+					$correct = $this->fromPlanefinder($ident);
+					if ($correct != '') {
+						$correct = $this->ident2icao($correct);
+						if ($correct != $ident) {
+							$this->addOperator($ident,$correct,'planefinder');
+							//echo "Add to DB ! (".$correct.") \n";
+							return $correct;
+						}
+					}
+				}
+			}
+		}
+		*/
 		return $this->ident2icao($ident);
 	}
 
 /*  
-    function fromPlanefinder($icao) {
-	$url = 'http://planefinder.net/data/endpoints/search_ajax.php?searchText='.$icao;
-	$Common = new Common();
-	$json = $Common->getData($url);
-	$parsed_json = json_decode($json);
-	if (isset($parsed_json->flights[0]->title) && isset($parsed_json->flights[0]->subtitle) && $parsed_json->flights[0]->subtitle == $icao) return $parsed_json->flights[0]->title;
-	else return '';
-    }
+	// Disabled as Planefinder request
+	function fromPlanefinder($icao) {
+		$url = 'http://planefinder.net/data/endpoints/search_ajax.php?searchText='.$icao;
+		$Common = new Common();
+		$json = $Common->getData($url);
+		$parsed_json = json_decode($json);
+		if (isset($parsed_json->flights[0]->title) && isset($parsed_json->flights[0]->subtitle) && $parsed_json->flights[0]->subtitle == $icao) return $parsed_json->flights[0]->title;
+		else return '';
+	}
 */
 }
 //echo Translation->checkTranslation('EZY268X');

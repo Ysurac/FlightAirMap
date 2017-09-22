@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used to parse NOTAM
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) at Zugaina <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once(dirname(__FILE__).'/settings.php');
 require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.Common.php');
@@ -972,7 +979,6 @@ class NOTAM {
 	}
 	public function getAllNOTAM() {
 		global $globalDBdriver;
-		//$query = "SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()";
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()';
 		} else {
@@ -990,7 +996,6 @@ class NOTAM {
 	}
 	public function getAllNOTAMbyFir($fir) {
 		global $globalDBdriver;
-		//$query = "SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()";
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT * FROM notam WHERE date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP() AND fir = :fir ORDER BY date_begin DESC';
 		} else {
@@ -1026,19 +1031,16 @@ class NOTAM {
 			$notamtext .= $notam['full_notam'];
 			$notamtext .= "\n".'%%'."\n";
 		}
-		//$allnotam = implode('\n%%%%\n',$allnotam_result);
 		file_put_contents($filename,$notamtext);
 	}
 	public function parseNOTAMtextFile($filename) {
 		$data = file_get_contents($filename);
 		preg_match_all("/%%(.+?)%%/is", $data, $matches);
-		//print_r($matches);
 		if (isset($matches[1])) return $matches[1];
 		else return array();
 	}
 	public function getAllNOTAMbyScope($scope) {
 		global $globalDBdriver;
-		//$query = "SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP()";
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT * FROM notam WHERE radius > 0 AND date_end > UTC_TIMESTAMP() AND date_begin < UTC_TIMESTAMP() AND scope = :scope';
 		} else {
@@ -1077,7 +1079,6 @@ class NOTAM {
 		} else {
 			$query  = 'SELECT * FROM notam WHERE center_latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND center_longitude BETWEEN '.$minlong.' AND '.$maxlong." AND radius > 0 AND date_end > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AND date_begin < CURRENT_TIMESTAMP AT TIME ZONE 'UTC'";
 		}
-		//$query = "SELECT * FROM notam WHERE radius > 0";
 		$query_values = array();
 		try {
 			$sth = $this->db->prepare($query);
@@ -1101,7 +1102,6 @@ class NOTAM {
 		} else {
 			$query  = 'SELECT * FROM notam WHERE center_latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND center_longitude BETWEEN '.$minlong.' AND '.$maxlong." AND radius > 0 AND date_end > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AND date_begin < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AND scope = :scope";
 		}
-		//$query = "SELECT * FROM notam WHERE radius > 0";
 		$query_values = array(':scope' => $scope);
 		try {
 			$sth = $this->db->prepare($query);
@@ -1273,9 +1273,7 @@ class NOTAM {
 		$result['date_begin'] = NULL;
 		$result['date_end'] = NULL;
 		$data = str_ireplace(array("\r","\n",'\r','\n'),' ',$data);
-		//echo $data."\n";
 		$data = preg_split('#\s(?=([A-Z]\)\s))#',$data);
-		//print_r($data);
 		$q = false;
 		$a = false;
 		$b = false;
@@ -1287,7 +1285,6 @@ class NOTAM {
 				$line = str_replace(' ','',$line);
 				if (preg_match('#Q\)([A-Z]{3,4})\/([A-Z]{5})\/(IV|I|V)\/([A-Z]{1,3})\/([A-Z]{1,2})\/([0-9]{3})\/([0-9]{3})\/([0-9]{4})(N|S)([0-9]{5})(E|W)([0-9]{3}|)#',$line,$matches)) {
 				//if (preg_match('#Q\)([A-Z]{4})\/([A-Z]{5})\/(IV|I|V)\/([A-Z]{1,3})\/([A-Z]{1,2})\/([0-9]{3})\/([0-9]{3})\/([0-9]{4})(N|S)([0-9]{5})(E|W)([0-9]{3})#',$line,$matches)) {
-					//print_r($matches);
 					$result['fir'] = $matches[1];
 					$result['code'] = $matches[2];
 					$result['title'] = $this->parse_code($result['code']);

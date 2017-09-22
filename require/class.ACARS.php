@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used to parse ACARS messages.
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) at Zugaina <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.Spotter.php');
 require_once(dirname(__FILE__).'/class.SpotterImport.php');
@@ -10,6 +17,10 @@ class ACARS {
 	public $db;
 	public $SI;
 	private $fromACARSscript = false;
+
+	/*
+	 * Initialize DB connection
+	*/
 	public function __construct($dbc = null,$fromACARSscript = false) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
@@ -19,6 +30,7 @@ class ACARS {
 			$this->SI = new SpotterImport($this->db);
 		}
 	}
+
 	/**
 	* Change IATA to ICAO value for ident
 	*

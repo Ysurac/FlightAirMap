@@ -1,9 +1,20 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used to support ATC (used by virtual airlines).
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) at Zugaina <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once(dirname(__FILE__).'/settings.php');
 require_once(dirname(__FILE__).'/class.Connection.php');
 
 class ATC {
 	public $db;
+
+	/*
+	 * Initialize DB connection
+	*/
 	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db;
@@ -38,6 +49,10 @@ class ATC {
 		return $filter_query;
 	}
 
+	/*
+	 * Get all ATC from atc table
+	 * @return Array Return all ATC
+	*/
 	public function getAll() {
 		$filter_query = $this->getFilter(array());
 		$query = "SELECT * FROM atc".$filter_query;
@@ -52,6 +67,11 @@ class ATC {
 		return $all;
 	}
 
+	/*
+	 * Get ATC from atc table by id
+	 * @param Integer ATC id
+	 * @return Array Return ATC
+	*/
 	public function getById($id) {
 		$filter_query = $this->getFilter(array(),true,true);
 		$query = "SELECT * FROM atc".$filter_query." atc_id = :id";
@@ -66,6 +86,12 @@ class ATC {
 		return $all;
 	}
 
+	/*
+	 * Get ATC from atc table by ident
+	 * @param String $ident Flight ident
+	 * @param String $format_source Format source
+	 * @return Array Return ATC
+	*/
 	public function getByIdent($ident,$format_source = '') {
 		$filter_query = $this->getFilter(array(),true,true);
 		if ($format_source == '') {
@@ -85,6 +111,21 @@ class ATC {
 		return $all;
 	}
 
+	/*
+	 * Add ATC in atc table
+	 * @param String $ident Flight ident
+	 * @param String $frequency Frequency
+	 * @param Float $latitude Latitude
+	 * @param Float $longitude Longitude
+	 * @param Float $range Range
+	 * @param String $info ATC info
+	 * @param String $date ATC date
+	 * @param String $type ATC type
+	 * @param Integer $ivao_id ATC IVAO id
+	 * @param String $ivao_name ATC IVAO name
+	 * @param String $format_source Format source
+	 * @param String $source_name Source name
+	*/
 	public function add($ident,$frequency,$latitude,$longitude,$range,$info,$date,$type = '',$ivao_id = '',$ivao_name = '',$format_source = '',$source_name = '') {
 		$info = preg_replace('/[^(\x20-\x7F)]*/','',$info);
 		$info = str_replace('^','<br />',$info);
@@ -101,6 +142,21 @@ class ATC {
 		}
 	}
 
+	/*
+	 * Update in atc table
+	 * @param String $ident Flight ident
+	 * @param String $frequency Frequency
+	 * @param Float $latitude Latitude
+	 * @param Float $longitude Longitude
+	 * @param Float $range Range
+	 * @param String $info ATC info
+	 * @param String $date ATC date
+	 * @param String $type ATC type
+	 * @param Integer $ivao_id ATC IVAO id
+	 * @param String $ivao_name ATC IVAO name
+	 * @param String $format_source Format source
+	 * @param String $source_name Source name
+	*/
 	public function update($ident,$frequency,$latitude,$longitude,$range,$info,$date,$type = '',$ivao_id = '',$ivao_name = '',$format_source = '',$source_name = '') {
 		$info = preg_replace('/[^(\x20-\x7F)]*/','',$info);
 		$info = str_replace('^','<br />',$info);
@@ -117,6 +173,10 @@ class ATC {
 		}
 	}
 
+	/*
+	 * Delete ATC from atc table by id
+	 * @param Integer ATC id
+	*/
 	public function deleteById($id) {
 		$query = "DELETE FROM atc WHERE atc_id = :id";
 		$query_values = array(':id' => $id);
@@ -128,6 +188,11 @@ class ATC {
 		}
 	}
 
+	/*
+	 * Delete ATC from atc table by ident
+	 * @param String $ident Flight ident
+	 * @param String $format_source Format source
+	*/
 	public function deleteByIdent($ident,$format_source) {
 		$query = "DELETE FROM atc WHERE ident = :ident AND format_source = :format_source";
 		$query_values = array(':ident' => $ident,':format_source' => $format_source);
@@ -139,6 +204,9 @@ class ATC {
 		}
 	}
 
+	/*
+	 * Delete all ATC from atc table
+	*/
 	public function deleteAll() {
 		$query = "DELETE FROM atc";
 		$query_values = array();
@@ -150,6 +218,9 @@ class ATC {
 		}
 	}
 
+	/*
+	 * Delete ATC from atc table older than 1 hour
+	*/
 	public function deleteOldATC() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {

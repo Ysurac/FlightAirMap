@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used to download and parse METAR
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) at Zugaina <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once(dirname(__FILE__).'/settings.php');
 require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.Common.php');
@@ -38,11 +45,18 @@ class METAR {
 	    'DS' => 'Duststorm'
 	);
 
+	/*
+	 * Initialize db connection
+	*/
 	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db;
 	}
 
+	/*
+	 * Check in config table in DB if METAR was updated more than 20 minutes ago
+	 * @return Boolean Return true if METAR was updated more than 20 minutes ago
+	*/
 	public static function check_last_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
@@ -63,6 +77,9 @@ class METAR {
 		else return true;
 	}
 
+	/*
+	 * Insert METAR update date in config table in DB
+	*/
 	public static function insert_last_update() {
 		$query = "DELETE FROM config WHERE name = 'last_update_metar';
 		        INSERT INTO config (name,value) VALUES ('last_update_metar',NOW());";
@@ -75,6 +92,11 @@ class METAR {
 		}
 	}
 
+	/*
+	 * Parse METAR
+	 * @param String $data METAR text
+	 * @return Array All data in METAR available in an array
+	*/
 	public function parse($data) {
 		//$data = str_replace(array('\n','\r','\r','\n'),'',$data);
 		$codes = implode('|', array_keys($this->texts));
@@ -89,6 +111,7 @@ class METAR {
 		if (!isset($pieces[$pos])) return $result;
 		$result['location'] = $pieces[$pos];
 		$pos++;
+		if (!isset($pieces[$pos])) return $result;
 		$result['dayofmonth'] = substr($pieces[$pos],0,2);
 		$result['time'] = substr($pieces[$pos],2,4);
 		$c = count($pieces);
@@ -258,8 +281,13 @@ class METAR {
 			}
 		}
 		return $result;
-        }
+	}
 
+	/*
+	 * Get METAR from an airport ICAO
+	 * @param String $icao Airport ICAO
+	 * @return Array Return array with metar date, location and text
+	*/
 	public function getMETAR($icao) {
 		global $globalMETARcycle, $globalDBdriver;
 		if (isset($globalMETARcycle) && $globalMETARcycle) {
@@ -282,6 +310,12 @@ class METAR {
 		return $all;
 	}
 
+	/*
+	 * Add METAR in DB
+	 * @param String $location Airport ICAO
+	 * @param String $metar METAR text
+	 * @param String $date date of the METAR
+	*/
 	public function addMETAR($location,$metar,$date) {
 		global $globalDBdriver;
 		$date = date('Y-m-d H:i:s',strtotime($date));
@@ -299,6 +333,10 @@ class METAR {
 		}
 	}
 
+	/*
+	 * Delete a METAR based on id
+	 * @param Integer $id METAR table id
+	*/
 	public function deleteMETAR($id) {
 		$query = "DELETE FROM metar WHERE id = :id";
 		$query_values = array(':id' => $id);
@@ -310,6 +348,9 @@ class METAR {
 		}
 	}
 
+	/*
+	 * Delete all METAR in DB
+	*/
 	public function deleteAllMETARLocation() {
 		$query = "DELETE FROM metar";
 		try {
@@ -320,6 +361,9 @@ class METAR {
 		}
 	}
 
+	/*
+	 * Download all METAR from IVAO or NOAA for current hour
+	*/
 	public function addMETARCycle() {
 		global $globalDebug, $globalIVAO, $globalTransaction;
 		if (isset($globalDebug) && $globalDebug) echo "Downloading METAR cycle...";
@@ -355,6 +399,11 @@ class METAR {
 		if (isset($globalDebug) && $globalDebug) echo "Done\n";
 	}
 
+	/*
+	 * Download METAR from $globalMETARurl for an airport ICAO
+	 * @param String $icao airport ICAO
+	 * @return Array Return array with metar date, location and text
+	*/
 	public function downloadMETAR($icao) {
 		global $globalMETARurl;
 		if ($globalMETARurl == '') return array();

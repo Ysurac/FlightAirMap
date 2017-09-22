@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /*
-Modified in 2017 by Ycarus <ycarus@zugaina.org>
+Modified in 2017 by Yannick Chabanois (Ycarus) <ycarus@zugaina.org>
 Original version come from https://github.com/ais-one/phpais
 */
 class AIS {

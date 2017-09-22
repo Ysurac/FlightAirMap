@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used for Accidents/Incidents data.
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) at Zugaina <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.Spotter.php');
 require_once(dirname(__FILE__).'/class.Image.php');
@@ -7,12 +14,19 @@ require_once(dirname(__FILE__).'/class.Translation.php');
 class Accident {
 	public $db;
 
+	/*
+	 * Initialize DB connection
+	 */
 	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
 		if ($this->db === null) die('Error: No DB connection. (Accident)');
 	}
 
+	/*
+	 * Get all aircrafts registration by accidents
+	 * @return Array Return all registrations in accidents table
+	*/
 	public function get() {
 		$query = 'SELECT DISTINCT registration FROM accidents ORDER BY date DESC';
 		$sth = $this->db->prepare($query);

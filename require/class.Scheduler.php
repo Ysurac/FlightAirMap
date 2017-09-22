@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used to retrieve schedules
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) at Zugaina <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once(dirname(__FILE__).'/libs/simple_html_dom.php');
 require_once(dirname(__FILE__).'/settings.php');
 require_once(dirname(__FILE__).'/class.Connection.php');
@@ -8,13 +15,17 @@ require_once(dirname(__FILE__).'/libs/uagent/uagent.php');
 
 class Schedule {
 	protected $cookies = array();
-        public $db;
+	public $db;
+
+	/*
+	 * Initialize connection to DB
+	*/
 	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
 		if ($this->db === null) die('Error: No DB connection.');
 	}
-	
+
 	/**
 	* Add schedule data to database
 	* @param String $ident aircraft ident
@@ -24,14 +35,13 @@ class Schedule {
 	* @param String $arrival_airport_time arrival airport time
 	/ @param String $source source of data
 	*/
-	
 	public function addSchedule($ident,$departure_airport_icao,$departure_airport_time,$arrival_airport_icao,$arrival_airport_time,$source = 'website') {
 		date_default_timezone_set('UTC');
 		$date = date("Y-m-d H:i:s",time());
-	        //if ($departure_airport_time == '' && $arrival_airport_time == '') exit;
-	        //$query = "SELECT COUNT(*) FROM schedule WHERE ident = :ident";
-	        $query = "SELECT COUNT(*) FROM routes WHERE CallSign = :ident";
-	        $query_values = array(':ident' => $ident);
+		//if ($departure_airport_time == '' && $arrival_airport_time == '') exit;
+		//$query = "SELECT COUNT(*) FROM schedule WHERE ident = :ident";
+		$query = "SELECT COUNT(*) FROM routes WHERE CallSign = :ident";
+		$query_values = array(':ident' => $ident);
 		 try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -62,19 +72,19 @@ class Schedule {
 			if ($sth->fetchColumn() == 0) {
 				//$query = 'UPDATE schedule SET departure_airport_icao = :departure_airport_icao, departure_airport_time = :departure_airport_time, arrival_airport_icao = :arrival_airport_icao, arrival_airport_time = :arrival_airport_time, date_modified = :date, source = :source WHERE ident = :ident';
 				if ($departure_airport_time == '' && $arrival_airport_time == '') {
-                            	    $query = 'UPDATE routes SET FromAirport_ICAO = :departure_airport_icao, ToAirport_ICAO = :arrival_airport_icao, date_modified = :date, Source = :source WHERE CallSign = :ident';
-				    $query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao, ':date' => $date, ':source' => $source);
+					$query = 'UPDATE routes SET FromAirport_ICAO = :departure_airport_icao, ToAirport_ICAO = :arrival_airport_icao, date_modified = :date, Source = :source WHERE CallSign = :ident';
+					$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao, ':date' => $date, ':source' => $source);
 				} elseif ($arrival_airport_time == '') {
-                            	    $query = 'UPDATE routes SET FromAirport_ICAO = :departure_airport_icao, FromAiport_Time = :departure_airport_time, ToAirport_ICAO = :arrival_airport_icao, date_modified = :date, Source = :source WHERE CallSign = :ident';
-				    $query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao, ':date' => $date, ':source' => $source);
+					$query = 'UPDATE routes SET FromAirport_ICAO = :departure_airport_icao, FromAiport_Time = :departure_airport_time, ToAirport_ICAO = :arrival_airport_icao, date_modified = :date, Source = :source WHERE CallSign = :ident';
+					$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao, ':date' => $date, ':source' => $source);
 				} elseif ($departure_airport_time == '') {
-                            	    $query = 'UPDATE routes SET FromAirport_ICAO = :departure_airport_icao, ToAirport_ICAO = :arrival_airport_icao, ToAirport_Time = :arrival_airport_time, date_modified = :date, Source = :source WHERE CallSign = :ident';
-				    $query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time, ':date' => $date, ':source' => $source);
+					$query = 'UPDATE routes SET FromAirport_ICAO = :departure_airport_icao, ToAirport_ICAO = :arrival_airport_icao, ToAirport_Time = :arrival_airport_time, date_modified = :date, Source = :source WHERE CallSign = :ident';
+					$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time, ':date' => $date, ':source' => $source);
 				} else {
-                            	    $query = 'UPDATE routes SET FromAirport_ICAO = :departure_airport_icao, FromAiport_Time = :departure_airport_time, ToAirport_ICAO = :arrival_airport_icao, ToAirport_Time = :arrival_airport_time, date_modified = :date, Source = :source WHERE CallSign = :ident';
-				    $query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time, ':date' => $date, ':source' => $source);
+					$query = 'UPDATE routes SET FromAirport_ICAO = :departure_airport_icao, FromAiport_Time = :departure_airport_time, ToAirport_ICAO = :arrival_airport_icao, ToAirport_Time = :arrival_airport_time, date_modified = :date, Source = :source WHERE CallSign = :ident';
+					$query_values = array(':ident' => $ident,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time, ':date' => $date, ':source' => $source);
 				}
-				 try {
+				try {
 					$sth = $this->db->prepare($query);
 					$sth->execute($query_values);
 				} catch(PDOException $e) {
@@ -84,7 +94,7 @@ class Schedule {
 				//$query = 'UPDATE schedule SET date_lastseen = :date WHERE ident = :ident';
 				$query = 'UPDATE routes SET date_lastseen = :date WHERE CallSign = :ident';
 				$query_values = array(':ident' => $ident,':date' => $date);
-				 try {
+				try {
 					$sth = $this->db->prepare($query);
 					$sth->execute($query_values);
 				} catch(PDOException $e) {
@@ -101,19 +111,23 @@ class Schedule {
 				return "error : ".$e->getMessage();
 			}
 		}
-        
 	}
 
+	/*
+	 * Get schedule data by ident
+	 * @param String $ident Flight ident
+	 * @return Array Schedules info
+	*/
 	public function getSchedule($ident) {
-	        $Translation = new Translation($this->db);
-	        $operator = $Translation->checkTranslation($ident,false);
-	        if ($ident != $operator) {
-	    		$query = "SELECT FromAirport_ICAO as departure_airport_icao, ToAirport_ICAO as arrival_airport_icao, FromAirport_Time as departure_airport_time, ToAirport_Time as arrival_airport_time FROM routes WHERE FromAirport_ICAO <> '' AND ToAirport_ICAO <> '' AND CallSign = :operator OR CallSign = :ident LIMIT 1";
-	    		$query_values = array(':ident' => $ident,'operator' => $operator);
-	    	} else {
-		        $query = "SELECT FromAirport_ICAO as departure_airport_icao, ToAirport_ICAO as arrival_airport_icao, FromAirport_Time as departure_airport_time, ToAirport_Time as arrival_airport_time FROM routes WHERE FromAirport_ICAO <> '' AND ToAirport_ICAO <> '' AND CallSign = :ident LIMIT 1";
-	    		$query_values = array(':ident' => $ident);
-	    	}
+		$Translation = new Translation($this->db);
+		$operator = $Translation->checkTranslation($ident,false);
+		if ($ident != $operator) {
+			$query = "SELECT FromAirport_ICAO as departure_airport_icao, ToAirport_ICAO as arrival_airport_icao, FromAirport_Time as departure_airport_time, ToAirport_Time as arrival_airport_time FROM routes WHERE FromAirport_ICAO <> '' AND ToAirport_ICAO <> '' AND CallSign = :operator OR CallSign = :ident LIMIT 1";
+			$query_values = array(':ident' => $ident,'operator' => $operator);
+		} else {
+			$query = "SELECT FromAirport_ICAO as departure_airport_icao, ToAirport_ICAO as arrival_airport_icao, FromAirport_Time as departure_airport_time, ToAirport_Time as arrival_airport_time FROM routes WHERE FromAirport_ICAO <> '' AND ToAirport_ICAO <> '' AND CallSign = :ident LIMIT 1";
+			$query_values = array(':ident' => $ident);
+		}
 		 try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -127,6 +141,11 @@ class Schedule {
 		} else return array();
 	}
 
+	/*
+	 * Check if there is schedule info for an ident
+	 * @param String $ident Flight ident
+	 * @return Integer 1 if result, 0 if no results
+	*/
 	public function checkSchedule($ident) {
 		global $globalDBdriver;
 	        //$query = "SELECT COUNT(*) as nb FROM schedule WHERE ident = :ident AND date_added > DATE_SUB(CURDATE(), INTERVAL 8 DAY) - 8 LIMIT 1";
@@ -866,8 +885,12 @@ class Schedule {
 		} else return array();
 	}
 
-
-	
+	/*
+	 * Fetch schedules from ident
+	 * @param String $ident Flight ident
+	 * @param String $date Date
+	 * @return Array Schedules info
+	*/
 	public function fetchSchedule($ident,$date = 'NOW') {
 		global $globalSchedulesSources, $globalSchedulesFetch, $globalOffline;
 		//$Common = new Common();
@@ -1111,7 +1134,7 @@ class Schedule {
 					}
 			}
 		}
-	        return array();
+		return array();
 	}
 }
 

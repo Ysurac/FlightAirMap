@@ -651,6 +651,25 @@ $output = '{';
 						} else {
 							$spotter_history_array = $TrackerLive->getAllLiveTrackerDataById($spotter_item['famtrackid']);
 						}
+						if ($globalMapMatching === TRUE && 
+						    isset($spotter_item['type']) && (
+							$spotter_item['type'] == 'Firetruck' ||
+							$spotter_item['type'] == 'Ambulance' ||
+							$spotter_item['type'] == 'Truck (18 Wheeler)' ||
+							$spotter_item['type'] == 'Truck' ||
+							$spotter_item['type'] == 'Mobile Satellite Station' ||
+							$spotter_item['type'] == 'Van' ||
+							$spotter_item['type'] == 'Police' ||
+							$spotter_item['type'] == 'Bus' ||
+							$spotter_item['type'] == 'Jeep' ||
+							$spotter_item['type'] == 'Motorcycle' ||
+							$spotter_item['type'] == 'Car'
+						    )
+						) {
+							require(dirname(__FILE__).'/require/class.MapMatching.php');
+							$MapMatching = new MapMatching();
+							$spotter_history_array = $MapMatching->match($spotter_history_array);
+						}
 					} elseif ($marine) {
 						if ($from_archive || $globalArchive) {
 							$spotter_history_array = $MarineArchive->getAllArchiveMarineDataById($spotter_item['fammarine_id']);
@@ -697,7 +716,8 @@ $output = '{';
 							if ($d == false) {
 								if ($compress) $output_history = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "history"},"geometry": {"type": "LineString","coordinates": [';
 								else $output_history = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "history"},"geometry": {"type": "LineString","coordinates": [';
-							} else $d = true;
+								$d = true;
+							}
 							$output_history .= '[';
 							$output_history .=  $spotter_history['longitude'].', ';
 							$output_history .=  $spotter_history['latitude'];
@@ -713,7 +733,7 @@ $output = '{';
 						}
 					}
 					if (isset($output_history)) {
-					
+						//echo $output_history;
 						if ($from_archive === false) {
 							$output_historyd = '[';
 							$output_historyd .=  $spotter_item['longitude'].', ';

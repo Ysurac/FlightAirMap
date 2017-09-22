@@ -1,6 +1,10 @@
 <?php
-/*
-* This class save stats older than a year and $globalArchiveMonths
+/**
+ * This class is part of FlightAirMap. It's used to save stats
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) at Zugaina <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
 */
 
 require_once(dirname(__FILE__).'/class.Spotter.php');
@@ -12,7 +16,10 @@ require_once(dirname(__FILE__).'/class.Common.php');
 class Stats {
 	public $db;
 	public $filter_name = '';
-	
+
+	/*
+	 * Initialize DB connection
+	*/
 	public function __construct($dbc = null) {
 		global $globalFilterName;
 		if (isset($globalFilterName)) $this->filter_name = $globalFilterName;
@@ -3500,7 +3507,6 @@ class Stats {
 				require_once(dirname(__FILE__).'/../install/class.settings.php');
 				settings::modify_settings(array('globalStatsResetYear' => 'FALSE'));
 			}
-		
 	}
 }
 

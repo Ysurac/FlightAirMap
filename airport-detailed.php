@@ -95,6 +95,7 @@ if (!isset($_GET['airport'])){
 			print '</div>';
 			print '<div><span class="label">'._("Coordinates").'</span><a href="http://maps.google.ca/maps?z=10&t=k&q='.$airport_array[0]['latitude'].','.$airport_array[0]['longitude'].'" target="_blank">Google Map<i class="fa fa-angle-double-right"></i></a></div>';
 			print '<div><span class="label">'._("Live Air Traffic").'</span><a href="http://www.liveatc.net/search/?icao='.$airport_array[0]['icao'].'" target="_blank">LiveATC.net<i class="fa fa-angle-double-right"></i></a></div>';
+			if (isset($airport_array[0]['diagram_pdf']) && $airport_array[0]['diagram_pdf'] != '') print '<div><span class="label">'._("Diagram").'</span><a href="'.$airport_array[0]['diagram_pdf'].'" target="_blank">'.$airport_array[0]['icao'].'<i class="fa fa-angle-double-right"></i></a></div>';
 			print '</div>';
 			
 			$Stats = new Stats();

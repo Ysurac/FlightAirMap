@@ -423,7 +423,7 @@ new OSMBuildings(map).load();
 		createCookie('lastcentercoord',map.getCenter().lat+','+map.getCenter().lng+','+map.getZoom(),2);
 	});
 update_locationsLayer();
-setInterval(function(){update_locationsLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
+setInterval(function(){if (noTimeout) update_locationsLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
 
 <?php
     // Add support for custom json via $globalMapJson
@@ -435,7 +435,7 @@ update_genLayer('<?php print $json['url']; ?>');
 <?php
 		if (isset($json['refresh']) && $json['refresh'] > 0) {
 ?>
-setInterval(function(){update_genLayer('<?php print $json['url']; ?>')}, <?php print $json['refresh']; ?>);
+setInterval(function(){if (noTimeout) update_genLayer('<?php print $json['url']; ?>')}, <?php print $json['refresh']; ?>);
 <?php
 		}
 	    }

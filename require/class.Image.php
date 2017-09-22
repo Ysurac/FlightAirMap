@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used to get Image
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) at Zugaina <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once(dirname(__FILE__).'/class.Spotter.php');
 require_once(dirname(__FILE__).'/class.Common.php');
 require_once(dirname(__FILE__).'/settings.php');
@@ -6,6 +13,9 @@ require_once(dirname(__FILE__).'/settings.php');
 class Image {
 	public $db;
 
+	/*
+	 * Initialize connection to DB
+	*/
 	public function __construct($dbc = null) {
 		$Connection = new Connection($dbc);
 		$this->db = $Connection->db();
