@@ -98,19 +98,19 @@ function getLiveTrackerData(click)
 <?php
 	if (isset($ident)) {
 ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&ident="+encodeURI(<?php print $ident; ?>)+"&history",
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&ident="+encodeURI(<?php print $ident; ?>)+"&history&zoom="+map.getZoom(),
 <?php
 	} elseif (isset($famtrackid)) {
 ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&famtrackid="+encodeURI(<?php print $famtrackid; ?>)+"&history",
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&famtrackid="+encodeURI(<?php print $famtrackid; ?>)+"&history&zoom="+map.getZoom(),
 <?php
 	} elseif (isset($archive) && $archive) {
 ?>
-            url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&coord="+bbox+"&history="+encodeURI(document.getElementById('aircraft_ident').className)+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
+            url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&coord="+bbox+"&history="+encodeURI(document.getElementById('aircraft_ident').className)+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>&zoom="+map.getZoom(),
 <?php
 	} else {
 ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&coord="+bbox+"&history="+encodeURI(document.getElementById('aircraft_ident').className),
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&tracker&coord="+bbox+"&history="+encodeURI(document.getElementById('aircraft_ident').className)+"&zoom="+map.getZoom(),
 <?php 
 	}
 ?>

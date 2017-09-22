@@ -651,7 +651,7 @@ $output = '{';
 						} else {
 							$spotter_history_array = $TrackerLive->getAllLiveTrackerDataById($spotter_item['famtrackid']);
 						}
-						if ($globalMapMatching === TRUE && 
+						if ($globalMapMatching === TRUE && isset($_GET['zoom']) && $_GET['zoom'] > 12 && 
 						    isset($spotter_item['type']) && (
 							$spotter_item['type'] == 'Firetruck' ||
 							$spotter_item['type'] == 'Ambulance' ||
