@@ -278,7 +278,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			if (file_exists(dirname(__FILE__).'/../js/Cesium/Cesium.js')) {
 		?>
 			<p>
-				<input type="checkbox" name="mapoffline" id="mapoffline" value="mapoffline" <?php if (!isset($globalMapOffline) || $globalMapOffline) { ?>checked="checked" <?php } ?>/>
+				<input type="checkbox" name="mapoffline" id="mapoffline" value="mapoffline" <?php if (isset($globalMapOffline) && $globalMapOffline) { ?>checked="checked" <?php } ?>/>
 				<label for="mapoffline">Map offline mode</label>
 				<p class="help-block">Map offline mode will not use network to display 3D map but Natural Earth (2D map not available)</p>
 			</p>
@@ -286,7 +286,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			}
 		?>
 			<p>
-				<input type="checkbox" name="globaloffline" id="globaloffline" value="globaloffline" <?php if (!isset($globalOffline) || $globalOffline) { ?>checked="checked" <?php } ?>/>
+				<input type="checkbox" name="globaloffline" id="globaloffline" value="globaloffline" <?php if (isset($globalOffline) && $globalOffline) { ?>checked="checked" <?php } ?>/>
 				<label for="globaloffline">Offline mode</label>
 				<p class="help-block">Backend will not use network</p>
 			</p>
@@ -362,13 +362,16 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<th>Country</th>
 					<th>Source name</th>
 				</tr>
-				<!--
+				
 		<?php
 		    if (isset($globalDBuser) && isset($globalDBpass) && $globalDBuser != '' && $globalDBpass != '') {
+		?>
+		<!--
+		<?php
 			    require_once(dirname(__FILE__).'/../require/class.Connection.php');
 			    $Connection = new Connection();
 		?>
-			-->
+		-->
 		<?php
 			if ($Connection->db != NULL) {
 			    if ($Connection->tableExists('source_location')) {
@@ -846,6 +849,30 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 						</p>
 					</div>
 					<p class="help-block">Register an account on <a href="https://www.flightaware.com/">https://www.flightaware.com/</a></p>
+				</p>
+			</div>
+			<br />
+			<p>
+				<label for="mapmatching">Map Matching</label>
+				<input type="checkbox" name="mapmatching" id="mapmatching" value="mapmatching"<?php if (isset($globalMapMatching) && $globalMapMatching) { ?> checked="checked"<?php } ?> onClick="mapmatching_js()" />
+				<p class="help-block">Only for Tracker mode</p>
+			</p>
+			<br />
+			<div id="mapmatching_options">
+				<p>
+					<label for="mapmatchingsource">Map Matching source</label>
+					<select name="mapmatchingsource" id="mapmatchingsource">
+						<option value="graphhopper" <?php if (isset($globalMapMatchingSource) && $globalMapMatchingSource == 'graphhopper') print 'selected="selected" '; ?>>GraphHopper</option>
+						<option value="osmr" <?php if ((isset($globalMapMatchingSource) && $globalMapMatchingSource == 'osmr') || !isset($globalMatchingSource)) print 'selected="selected" '; ?>>OSMR</option>
+						<option value="mapbox" <?php if (isset($globalMapMatchingSource) && $globalMapMatchingSource == 'mapbox') print 'selected="selected" '; ?>>Mapbox</option>
+					</select>
+					<p class="help-block">Mapbox need the API Key defined in map section</p>
+				</p>
+				<br />
+				<p>
+					<label for="graphhopper">GraphHopper API Key</label>
+					<input type="text" name="graphhopper" id="graphhopper" value="<?php if (isset($globalGraphHopperKey)) print $globalGraphHopperKey; ?>" />
+					<p class="help-block">Register an account on <a href="https://www.graphhopper.com/">https://www.graphhopper.com/</a></p>
 				</p>
 			</div>
 			<br />
@@ -1621,6 +1648,16 @@ if (isset($_POST['dbtype'])) {
 	} else {
 		$settings = array_merge($settings,array('globalTSK' => 'FALSE'));
 	}
+	$mapmatching = filter_input(INPUT_POST,'mapmatching',FILTER_SANITIZE_STRING);
+	if ($mapmatching == 'mapmatching') {
+		$settings = array_merge($settings,array('globalMapMatching' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMapMatching' => 'FALSE'));
+	}
+	$mapmatchingsource = filter_input(INPUT_POST,'mapmatchingsource',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalMapMatchingSource' => $mapmatchingsource));
+	$graphhopper = filter_input(INPUT_POST,'graphhopper',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalGraphHopperKey' => $graphhopper));
 
 	if (!isset($globalTransaction)) $settings = array_merge($settings,array('globalTransaction' => 'TRUE'));
 
