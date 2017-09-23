@@ -160,12 +160,14 @@ if (isset($_GET['reset'])) {
 	    $_SESSION['next'] = 'Populate NOTAM table with externals data';
 	    $result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	    print json_encode($result);
+	/*
 	} elseif (isset($_SESSION['owner']) && $_SESSION['owner'] == 1) {
 	    $_SESSION['install'] = 'owner';
 	    $_SESSION['next'] = 'Populate owner table with externals data';
 	    unset($_SESSION['owner']);
 	    $result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	    print json_encode($result);
+	*/
 	} else {
 	    $_SESSION['install'] = 'sources';
 	    $_SESSION['next'] = 'Insert data in source table';
@@ -271,10 +273,12 @@ if (isset($_GET['reset'])) {
 		} elseif (isset($globalNOTAM) && $globalNOTAM && isset($globalNOTAMSource) && $globalNOTAMSource != '') {
 			$_SESSION['install'] = 'notam';
 			$_SESSION['next'] = 'Populate NOTAM table with externals data';
+		/*
 		} elseif ($_SESSION['owner'] == 1) {
 			$_SESSION['install'] = 'owner';
 			$_SESSION['next'] = 'Populate owner table with externals data';
 			unset($_SESSION['owner']);
+		*/
 		} else {
 			$_SESSION['install'] = 'sources';
 			$_SESSION['next'] = 'Insert data in source table';
@@ -324,6 +328,7 @@ if (isset($_GET['reset'])) {
 				$_SESSION['errorlst'] = array_merge($_SESSION['errorlst'],array('Populate notam table with externals data (no source defined)'));
 			} else $_SESSION['done'] = array_merge($_SESSION['done'],array('Populate notam table with externals data (no source defined)'));
 		}
+		/*
 		if (isset($_SESSION['owner']) && $_SESSION['owner'] == 1) {
 			$_SESSION['install'] = 'owner';
 			$_SESSION['next'] = 'Populate owner table';
@@ -331,11 +336,12 @@ if (isset($_GET['reset'])) {
 			$result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 			print json_encode($result);
 		} else {
+		*/
 			$_SESSION['install'] = 'sources';
 			$_SESSION['next'] = 'Insert data in source table';
 			$result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 			print json_encode($result);
-		}
+		//}
 	}
 /*
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'ivao') {
