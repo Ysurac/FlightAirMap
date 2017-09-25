@@ -21,6 +21,9 @@ $current_page = $file_path['filename'];
 <link type="text/css" rel="stylesheet" href="../css/print.css?<?php print time(); ?>" />
 <script type="text/javascript" src="../js/jquery-2.1.3.min.js"></script>
 <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="pragma" content="no-cache">
 <?php
 /*
 if ($facebook_meta_image != "")
