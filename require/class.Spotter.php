@@ -11836,7 +11836,7 @@ q	*
 	*/
 	public function setHighlightFlightByRegistration($registration,$highlight, $date = '') {
 		if ($date == '') {
-			$query  = "UPDATE spotter_output SET highlight = :highlight WHERE spotter_id IN (SELECT MAX(spotter_id) FROM spotter_output WHERE registration = :registration)";
+			$query  = "UPDATE spotter_output SET highlight = :highlight WHERE spotter_id IN (SELECT MAX(spotter_id) FROM spotter_output WHERE registration = :registration) LIMIT 1";
 			$query_values = array(':registration' => $registration, ':highlight' => $highlight);
 		} else {
 			$query  = "UPDATE spotter_output SET highlight = :highlight WHERE registration = :registration AND date(date) = :date";

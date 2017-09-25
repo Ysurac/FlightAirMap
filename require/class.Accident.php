@@ -90,7 +90,8 @@ class Accident {
 					}
 				}
 			} else {
-				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+				//$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+				$query = "SELECT * FROM accidents WHERE type = :type ORDER BY accidents.date DESC".$limit_query;
 				//$query = "SELECT accidents.registration, accidents.ident, accidents.date, accidents.url, accidents.country, accidents.place, accidents.title, accidents.fatalities, accidents.type, accidents.ident, accidents.aircraft_manufacturer, accidents.aircraft_name, accidents.airline_name, accidents.airline_icao, spotter_output.flightaware_id FROM accidents LEFT OUTER JOIN spotter_output ON accidents.registration = spotter_output.registration WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents WHERE type = :type GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
 				$query_values = array(':type' => $type);
 			}
@@ -106,7 +107,8 @@ class Accident {
 				}
 				$query_values = array(':date' => $date);
 			} else {
-				$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+				//$query = "SELECT * FROM accidents WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
+				$query = "SELECT * FROM accidents ORDER BY accidents.date DESC".$limit_query;
 				//$query = "SELECT accidents.registration, accidents.ident, accidents.date, accidents.url, accidents.country, accidents.place, accidents.title, accidents.fatalities, accidents.type, accidents.ident, accidents.aircraft_manufacturer, accidents.aircraft_name, accidents.airline_name, accidents.airline_icao, spotter_output.flightaware_id FROM accidents LEFT OUTER JOIN spotter_output ON accidents.registration = spotter_output.registration WHERE accidents_id IN (SELECT max(accidents_id) FROM accidents GROUP BY registration) ORDER BY accidents.date DESC".$limit_query;
 				$query_values = array();
 			}
