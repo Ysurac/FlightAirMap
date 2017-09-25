@@ -173,6 +173,11 @@ function connect_all($hosts) {
         	$globalSources[$id]['format'] = 'aircraftlistjson';
         	//$last_exec['aircraftlistjson'] = 0;
         	if ($globalDebug) echo "Connect to aircraftlist.json source (".$host.")...\n";
+    	    } else if (preg_match('/aircraft.json$/i',$host)) {
+        	//$formats[$id] = 'aircraftjson';
+        	$globalSources[$id]['format'] = 'aircraftjson';
+        	//$last_exec['aircraftlistjson'] = 0;
+        	if ($globalDebug) echo "Connect to aircraftlist.json source (".$host.")...\n";
     	    } else if (preg_match('/opensky/i',$host)) {
         	//$formats[$id] = 'aircraftlistjson';
         	$globalSources[$id]['format'] = 'opensky';
@@ -397,6 +402,8 @@ if (!$globalDaemon && ((isset($globalVA) && $globalVA) || (isset($globalIVAO) &&
 
 // Infinite loop if daemon, else work for time defined in $globalCronEnd or only one time.
 while ($i > 0) {
+    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
+
     if (!$globalDaemon) $i = $endtime-time();
     // Delete old ATC
     if ($globalDaemon && ((isset($globalVA) && $globalVA) || (isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM))) {
@@ -409,7 +416,7 @@ while ($i > 0) {
 	foreach ($last_exec as $last) {
 	    if ((time() - $last['last']) < $max) $max = time() - $last['last'];
 	}
-	if ($max != $globalMinFetch) {
+	if ($max < $globalMinFetch) {
 	    if ($globalDebug) echo 'Sleeping...'."\n";
 	    sleep($globalMinFetch-$max+2);
 	}
@@ -421,7 +428,7 @@ while ($i > 0) {
 	date_default_timezone_set('UTC');
 	//if ($globalDebug) echo 'Source host : '.$value['host'].' - Source format: '.$value['format']."\n";
 	if (!isset($last_exec[$id]['last'])) $last_exec[$id]['last'] = 0;
-	if ($value['format'] == 'deltadbtxt' && 
+	if ($value['format'] === 'deltadbtxt' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -457,7 +464,7 @@ while ($i > 0) {
     		}
     	    }
     	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'aisnmeatxt' && 
+	} elseif ($value['format'] === 'aisnmeatxt' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
@@ -501,12 +508,12 @@ while ($i > 0) {
     		    $data['id_source'] = $id_source;
 		    //print_r($data);
 		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
-		    if ($add && isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
+		    if ($add && isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] === 'Ship') $MI->add($data);
 		    unset($data);
 		}
     	    }
     	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'aisnmeahttp') {
+	} elseif ($value['format'] === 'aisnmeahttp') {
 	    $arr = $httpfeeds;
 	    $w = $e = null;
 	    
@@ -546,7 +553,7 @@ while ($i > 0) {
 				$data['format_source'] = 'aisnmeahttp';
 				$data['id_source'] = $id_source;
 				if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
-				if (isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
+				if (isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] === 'Ship') $MI->add($data);
 				unset($data);
 			    }
 			}
@@ -565,7 +572,7 @@ while ($i > 0) {
 		    }
 		}
 	    }
-	} elseif ($value['format'] == 'myshiptracking' && 
+	} elseif ($value['format'] === 'myshiptracking' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
@@ -605,7 +612,7 @@ while ($i > 0) {
 		}
 	    }
 	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'boatbeaconapp' && 
+	} elseif ($value['format'] === 'boatbeaconapp' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
@@ -639,7 +646,7 @@ while ($i > 0) {
 		
 	    }
     	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'boatnerd' && 
+	} elseif ($value['format'] === 'boatnerd' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
@@ -674,7 +681,7 @@ while ($i > 0) {
 		
 	    }
     	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'shipplotter' && 
+	} elseif ($value['format'] === 'shipplotter' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
@@ -718,16 +725,16 @@ while ($i > 0) {
 		}
     	    }
     	    $last_exec[$id]['last'] = time();
-	//} elseif (($value == 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value == 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {
+	//} elseif (($value === 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value === 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {
 	} elseif (
 	    (
-		$value['format'] == 'whazzup' && 
+		$value['format'] === 'whazzup' && 
 		(
 		    (isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
 		    (!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
 		)
 	    ) || (
-		$value['format'] == 'vatsimtxt' && 
+		$value['format'] === 'vatsimtxt' && 
 		(
 		    (isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
 		    (!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -779,27 +786,27 @@ while ($i > 0) {
 	    		    }
         		}
 	    		/*
-	    		if ($value == 'whazzup') $data['format_source'] = 'whazzup';
-	    		elseif ($value == 'vatsimtxt') $data['format_source'] = 'vatsimtxt';
+	    		if ($value === 'whazzup') $data['format_source'] = 'whazzup';
+	    		elseif ($value === 'vatsimtxt') $data['format_source'] = 'vatsimtxt';
 	    		*/
 	    		$data['format_source'] = $value['format'];
 			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 			if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
-    			if ($line[3] == 'PILOT') $SI->add($data);
-			elseif ($line[3] == 'ATC') {
+    			if ($line[3] === 'PILOT') $SI->add($data);
+			elseif ($line[3] === 'ATC') {
 				//print_r($data);
 				$data['info'] = str_replace('^&sect;','<br />',$data['info']);
 				$data['info'] = str_replace('&amp;sect;','',$data['info']);
 				$typec = substr($data['ident'],-3);
-				if ($typec == 'APP') $data['type'] = 'Approach';
-				elseif ($typec == 'TWR') $data['type'] = 'Tower';
-				elseif ($typec == 'OBS') $data['type'] = 'Observer';
-				elseif ($typec == 'GND') $data['type'] = 'Ground';
-				elseif ($typec == 'DEL') $data['type'] = 'Delivery';
-				elseif ($typec == 'DEP') $data['type'] = 'Departure';
-				elseif ($typec == 'FSS') $data['type'] = 'Flight Service Station';
-				elseif ($typec == 'CTR') $data['type'] = 'Control Radar or Centre';
-				elseif ($data['type'] == '') $data['type'] = 'Observer';
+				if ($typec === 'APP') $data['type'] = 'Approach';
+				elseif ($typec === 'TWR') $data['type'] = 'Tower';
+				elseif ($typec === 'OBS') $data['type'] = 'Observer';
+				elseif ($typec === 'GND') $data['type'] = 'Ground';
+				elseif ($typec === 'DEL') $data['type'] = 'Delivery';
+				elseif ($typec === 'DEP') $data['type'] = 'Departure';
+				elseif ($typec === 'FSS') $data['type'] = 'Flight Service Station';
+				elseif ($typec === 'CTR') $data['type'] = 'Control Radar or Centre';
+				elseif ($data['type'] === '') $data['type'] = 'Observer';
 				if (!isset($data['source_name'])) $data['source_name'] = '';
 				if (isset($ATC)) {
 					if (count($ATC->getByIdent($data['ident'],$data['format_source'])) > 0) echo $ATC->update($data['ident'],$data['frequency'],$data['latitude'],$data['longitude'],$data['range'],$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source'],$data['source_name']);
@@ -810,10 +817,10 @@ while ($i > 0) {
     		    }
     		}
     	    }
-    	    //if ($value == 'whazzup') $last_exec['whazzup'] = time();
-    	    //elseif ($value == 'vatsimtxt') $last_exec['vatsimtxt'] = time();
+    	    //if ($value === 'whazzup') $last_exec['whazzup'] = time();
+    	    //elseif ($value === 'vatsimtxt') $last_exec['vatsimtxt'] = time();
     	    $last_exec[$id]['last'] = time();
-    	} elseif ($value['format'] == 'airwhere' && 
+    	} elseif ($value['format'] === 'airwhere' && 
     	    (
     		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
     		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -866,12 +873,12 @@ while ($i > 0) {
 	    }
 	    $last_exec[$id]['last'] = time();
 	/*
-	} if ($value['format'] == 'aircraftlistjson') {
+	} if ($value['format'] === 'aircraftlistjson') {
 	    print_r($globalSources);
 	    print_r($last_exec);
 	    echo $globalMinFetch;
 	*/
-	} elseif ($value['format'] == 'aircraftlistjson' && 
+	} elseif ($value['format'] === 'aircraftlistjson' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -933,8 +940,8 @@ while ($i > 0) {
 	    } elseif ($globalDebug) echo 'No data'."\n";
     	    //$last_exec['aircraftlistjson'] = time();
     	    $last_exec[$id]['last'] = time();
-    	//} elseif ($value == 'planeupdatefaa' && (time() - $last_exec['planeupdatefaa'] > $globalMinFetch)) {
-    	} elseif ($value['format'] == 'planeupdatefaa' && 
+    	//} elseif ($value === 'planeupdatefaa' && (time() - $last_exec['planeupdatefaa'] > $globalMinFetch)) {
+    	} elseif ($value['format'] === 'planeupdatefaa' && 
     	    (
     		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
     		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -959,7 +966,7 @@ while ($i > 0) {
 		    $data['registration'] = $line[2];
 		    $data['aircraft_icao'] = $line[0];
 		    $deparr = explode('-',$line[1]);
-		    if (count($deparr) == 2) {
+		    if (count($deparr) === 2) {
 			$data['departure_airport_icao'] = $deparr[0];
 			$data['arrival_airport_icao'] = $deparr[1];
 		    }
@@ -974,7 +981,7 @@ while ($i > 0) {
 	    }
 	    //$last_exec['planeupdatefaa'] = time();
 	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'opensky' && 
+	} elseif ($value['format'] === 'opensky' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -1008,8 +1015,42 @@ while ($i > 0) {
 	    }
 	    //$last_exec['planeupdatefaa'] = time();
 	    $last_exec[$id]['last'] = time();
-	//} elseif ($value == 'fr24json' && (time() - $last_exec['fr24json'] > $globalMinFetch)) {
-	} elseif ($value['format'] == 'fr24json' && 
+	} elseif ($value['format'] === 'aircraftjson' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
+	    $buffer = $Common->getData($value['host']);
+	    $all_data = json_decode($buffer,true);
+	    if (isset($all_data['aircraft'])) {
+		$reset = 0;
+		foreach ($all_data['aircraft'] as $key => $line) {
+		    $data = array();
+		    if (isset($line['hex'])) $data['hex'] = $line['hex']; // hex
+		    if (isset($line['ident'])) $data['ident'] = trim($line['ident']); // ident
+		    if (isset($line['altitude'])) $data['altitude'] = $line['altitude']; // altitude
+		    if (isset($line['speed'])) $data['speed'] = $line['speed']; // speed
+		    if (isset($line['track'])) $data['heading'] = $line['track']; // heading
+		    if (isset($line['lat'])) $data['latitude'] = $line['lat']; // lat
+		    if (isset($line['lon'])) $data['longitude'] = $line['lon']; // long
+		    if (isset($line['vert_rate'])) $data['verticalrate'] = $line['vert_rate']; // verticale rate
+		    if (isset($line['squawk'])) $data['squawk'] = $line['squawk']; // squawk
+		    //$data['emergency'] = ''; // emergency
+		    //$data['registration'] = $line[2];
+		    //$data['aircraft_icao'] = $line[0];
+		    $data['datetime'] = date('Y-m-d H:i:s');
+		    $data['format_source'] = 'aircraftjson';
+		    $data['id_source'] = $id_source;
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+		    $SI->add($data);
+		    unset($data);
+		}
+	    }
+	    //$last_exec['planeupdatefaa'] = time();
+	    $last_exec[$id]['last'] = time();
+	//} elseif ($value === 'fr24json' && (time() - $last_exec['fr24json'] > $globalMinFetch)) {
+	} elseif ($value['format'] === 'fr24json' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -1047,8 +1088,8 @@ while ($i > 0) {
 	    }
 	    //$last_exec['fr24json'] = time();
 	    $last_exec[$id]['last'] = time();
-	//} elseif ($value == 'radarvirtueljson' && (time() - $last_exec['radarvirtueljson'] > $globalMinFetch)) {
-	} elseif ($value['format'] == 'radarvirtueljson' && 
+	//} elseif ($value === 'radarvirtueljson' && (time() - $last_exec['radarvirtueljson'] > $globalMinFetch)) {
+	} elseif ($value['format'] === 'radarvirtueljson' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -1094,8 +1135,8 @@ while ($i > 0) {
 	    }
 	    //$last_exec['radarvirtueljson'] = time();
 	    $last_exec[$id]['last'] = time();
-	//} elseif ($value == 'pirepsjson' && (time() - $last_exec['pirepsjson'] > $globalMinFetch)) {
-	} elseif ($value['format'] == 'pirepsjson' && 
+	//} elseif ($value === 'pirepsjson' && (time() - $last_exec['pirepsjson'] > $globalMinFetch)) {
+	} elseif ($value['format'] === 'pirepsjson' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -1136,22 +1177,22 @@ while ($i > 0) {
 		    $data['datetime'] = date('Y-m-d H:i:s');
 		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
-		    if ($line['icon'] == 'plane') {
+		    if ($line['icon'] === 'plane') {
 			$SI->add($data);
 		    //    print_r($data);
-    		    } elseif ($line['icon'] == 'ct') {
+    		    } elseif ($line['icon'] === 'ct') {
 			$data['info'] = str_replace('^&sect;','<br />',$data['info']);
 			$data['info'] = str_replace('&amp;sect;','',$data['info']);
 			$typec = substr($data['ident'],-3);
 			$data['type'] = '';
-			if ($typec == 'APP') $data['type'] = 'Approach';
-			elseif ($typec == 'TWR') $data['type'] = 'Tower';
-			elseif ($typec == 'OBS') $data['type'] = 'Observer';
-			elseif ($typec == 'GND') $data['type'] = 'Ground';
-			elseif ($typec == 'DEL') $data['type'] = 'Delivery';
-			elseif ($typec == 'DEP') $data['type'] = 'Departure';
-			elseif ($typec == 'FSS') $data['type'] = 'Flight Service Station';
-			elseif ($typec == 'CTR') $data['type'] = 'Control Radar or Centre';
+			if ($typec === 'APP') $data['type'] = 'Approach';
+			elseif ($typec === 'TWR') $data['type'] = 'Tower';
+			elseif ($typec === 'OBS') $data['type'] = 'Observer';
+			elseif ($typec === 'GND') $data['type'] = 'Ground';
+			elseif ($typec === 'DEL') $data['type'] = 'Delivery';
+			elseif ($typec === 'DEP') $data['type'] = 'Departure';
+			elseif ($typec === 'FSS') $data['type'] = 'Flight Service Station';
+			elseif ($typec === 'CTR') $data['type'] = 'Control Radar or Centre';
 			else $data['type'] = 'Observer';
 			if (isset($ATC)) echo $ATC->add($data['ident'],'',$data['latitude'],$data['longitude'],'0',$data['info'],$data['datetime'],$data['type'],$data['pilot_id'],$data['pilot_name'],$data['format_source']);
 		    }
@@ -1160,8 +1201,8 @@ while ($i > 0) {
 	    }
 	    //$last_exec['pirepsjson'] = time();
 	    $last_exec[$id]['last'] = time();
-	//} elseif ($value == 'phpvmacars' && (time() - $last_exec['phpvmacars'] > $globalMinFetch)) {
-	} elseif ($value['format'] == 'phpvmacars' && 
+	//} elseif ($value === 'phpvmacars' && (time() - $last_exec['phpvmacars'] > $globalMinFetch)) {
+	} elseif ($value['format'] === 'phpvmacars' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -1231,7 +1272,7 @@ while ($i > 0) {
 	    }
 	    //$last_exec['phpvmacars'] = time();
 	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'vaos' && 
+	} elseif ($value['format'] === 'vaos' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -1289,7 +1330,7 @@ while ($i > 0) {
 	    }
 	    //$last_exec['phpvmacars'] = time();
 	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'vam' && 
+	} elseif ($value['format'] === 'vam' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -1340,7 +1381,7 @@ while ($i > 0) {
 	    }
 	    //$last_exec['phpvmacars'] = time();
 	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] == 'blitzortung' && 
+	} elseif ($value['format'] === 'blitzortung' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
@@ -1374,11 +1415,9 @@ while ($i > 0) {
 		unset($buffer);
 	    }
 	    $last_exec[$id]['last'] = time();
-	//} elseif ($value == 'sbs' || $value == 'tsv' || $value == 'raw' || $value == 'aprs' || $value == 'beast') {
-	} elseif ($value['format'] == 'sbs' || $value['format'] == 'tsv' || $value['format'] == 'raw' || $value['format'] == 'aprs' || $value['format'] == 'famaprs' || $value['format'] == 'beast' || $value['format'] == 'flightgearmp' || $value['format'] == 'flightgearsp' || $value['format'] == 'acars' || $value['format'] == 'acarssbs3' || $value['format'] == 'ais' || $value['format'] == 'vrstcp') {
-	    if (function_exists('pcntl_fork')) pcntl_signal_dispatch();
-    	    //$last_exec[$id]['last'] = time();
-
+	//} elseif ($value === 'sbs' || $value === 'tsv' || $value === 'raw' || $value === 'aprs' || $value === 'beast') {
+	} elseif ($value['format'] === 'sbs' || $value['format'] === 'tsv' || $value['format'] === 'raw' || $value['format'] === 'aprs' || $value['format'] === 'famaprs' || $value['format'] === 'beast' || $value['format'] === 'flightgearmp' || $value['format'] === 'flightgearsp' || $value['format'] === 'acars' || $value['format'] === 'acarssbs3' || $value['format'] === 'ais' || $value['format'] === 'vrstcp') {
+	    //$last_exec[$id]['last'] = time();
 	    //$read = array( $sockets[$id] );
 	    $read = $sockets;
 	    $write = NULL;
@@ -1390,9 +1429,9 @@ while ($i > 0) {
 		foreach ($read as $nb => $r) {
 		    //$value = $formats[$nb];
 		    $format = $globalSources[$nb]['format'];
-		    if ($format == 'sbs' || $format == 'aprs' || $format == 'famaprs' || $format == 'raw' || $format == 'tsv' || $format == 'acarssbs3') {
+		    if ($format === 'sbs' || $format === 'aprs' || $format === 'famaprs' || $format === 'raw' || $format === 'tsv' || $format === 'acarssbs3') {
 			$buffer = @socket_read($r, 6000,PHP_NORMAL_READ);
-		    } elseif ($format == 'vrstcp') {
+		    } elseif ($format === 'vrstcp') {
 			$buffer = @socket_read($r, 6000);
 		    } else {
 			$az = socket_recvfrom($r,$buffer,6000,0,$remote_ip,$remote_port);
@@ -1404,18 +1443,18 @@ while ($i > 0) {
 		    $error = false;
 		    //$SI::del();
 		    if ($buffer !== FALSE) {
-			if ($format == 'vrstcp') {
+			if ($format === 'vrstcp') {
 			    $buffer = explode('},{',$buffer);
 			} else $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$buffer));
 		    }
 		    // SBS format is CSV format
 		    if ($buffer !== FALSE && $buffer !== '') {
 			$tt[$format] = 0;
-			if ($format == 'acarssbs3') {
+			if ($format === 'acarssbs3') {
 			    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
 			    $ACARS->add(trim($buffer));
 			    $ACARS->deleteLiveAcarsData();
-			} elseif ($format == 'raw') {
+			} elseif ($format === 'raw') {
 			    // AVR format
 			    $data = $SBS->parse($buffer);
 			    if (is_array($data)) {
@@ -1424,9 +1463,9 @@ while ($i > 0) {
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
 				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
 				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
-				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
+				if (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
 			    }
-			} elseif ($format == 'ais') {
+			} elseif ($format === 'ais') {
 			    $ais_data = $AIS->parse_line(trim($buffer));
 			    $data = array();
 			    if (isset($ais_data['ident'])) $data['ident'] = $ais_data['ident'];
@@ -1453,9 +1492,9 @@ while ($i > 0) {
 			    }
 			    $data['format_source'] = 'aisnmea';
     			    $data['id_source'] = $id_source;
-			    if (isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] == 'Ship') $MI->add($data);
+			    if (isset($ais_data['mmsi_type']) && $ais_data['mmsi_type'] === 'Ship') $MI->add($data);
 			    unset($data);
-                        } elseif ($format == 'flightgearsp') {
+                        } elseif ($format === 'flightgearsp') {
                     	    //echo $buffer."\n";
                     	    if (strlen($buffer) > 5) {
 				$line = explode(',',$buffer);
@@ -1472,20 +1511,20 @@ while ($i > 0) {
 				$data['datetime'] = date('Y-m-d H:i:s');
 				$data['format_source'] = 'flightgearsp';
 				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
-				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
+				if (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
 				//$send = @ socket_send( $r  , $data_aprs , strlen($data_aprs) , 0 );
 			    }
-                        } elseif ($format == 'acars') {
+                        } elseif ($format === 'acars') {
                     	    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
 			    $ACARS->add(trim($buffer));
 			    socket_sendto($r, "OK " . $buffer , 100 , 0 , $remote_ip , $remote_port);
 			    $ACARS->deleteLiveAcarsData();
-			} elseif ($format == 'flightgearmp') {
+			} elseif ($format === 'flightgearmp') {
 			    if (substr($buffer,0,1) != '#') {
 				$data = array();
 				//echo $buffer."\n";
 				$line = explode(' ',$buffer);
-				if (count($line) == 11) {
+				if (count($line) === 11) {
 				    $userserver = explode('@',$line[0]);
 				    $data['hex'] = substr(str_pad(bin2hex($line[0]),6,'000000',STR_PAD_LEFT),0,6); // hex
 				    $data['ident'] = $userserver[0];
@@ -1498,13 +1537,13 @@ while ($i > 0) {
 				    $aircraft_type = preg_split(':/:',$aircraft_type);
 				    $data['aircraft_name'] = substr(end($aircraft_type),0,-4);
 				    if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
-				    if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
+				    if (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
 				}
 			    }
-			} elseif ($format == 'beast') {
+			} elseif ($format === 'beast') {
 			    echo 'Beast Binary format not yet supported. Beast AVR format is supported in alpha state'."\n";
 			    die;
-			} elseif ($format == 'vrstcp') {
+			} elseif ($format === 'vrstcp') {
 			    foreach($buffer as $all_data) {
 				$line = json_decode('{'.$all_data.'}',true);
 				$data = array();
@@ -1532,7 +1571,7 @@ while ($i > 0) {
 				if (isset($data['latitude']) && isset($data['hex'])) $SI->add($data);
 				unset($data);
 			    }
-			} elseif ($format == 'tsv' || substr($buffer,0,4) == 'clock') {
+			} elseif ($format === 'tsv' || substr($buffer,0,4) === 'clock') {
 			    $line = explode("\t", $buffer);
 			    for($k = 0; $k < count($line); $k=$k+2) {
 				$key = $line[$k];
@@ -1554,12 +1593,12 @@ while ($i > 0) {
     				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
 				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
-    				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
+    				if (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
     				unset($lined);
     				unset($data);
     			    } else $error = true;
-			} elseif ($format == 'aprs' && $use_aprs) {
-			    if ($aprs_connect == 0) {
+			} elseif ($format === 'aprs' && $use_aprs) {
+			    if ($aprs_connect === 0) {
 				$send = @ socket_send( $r  , $aprs_login , strlen($aprs_login) , 0 );
 				$aprs_connect = 1;
 			    }
@@ -1625,48 +1664,48 @@ while ($i > 0) {
 				    $aprsdate = strtotime($data['datetime']);
 				    if ($data['source_type'] != 'modes' && $data['source_type'] != 'ais') $data['altitude_relative'] = 'AMSL';
 				    // Accept data if time <= system time + 20s
-				    //if (($data['source_type'] == 'modes') || isset($line['stealth']) && ($line['stealth'] == 0 || $line['stealth'] == '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
-				    if (($data['source_type'] == 'modes') || isset($line['stealth']) && (!isset($data['hex']) || $data['hex'] != 'FFFFFF') && ($line['stealth'] == 0 || $line['stealth'] == '') && (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
+				    //if (($data['source_type'] === 'modes') || isset($line['stealth']) && ($line['stealth'] === 0 || $line['stealth'] === '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
+				    if (($data['source_type'] === 'modes') || isset($line['stealth']) && (!isset($data['hex']) || $data['hex'] != 'FFFFFF') && ($line['stealth'] === 0 || $line['stealth'] === '') && (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
 					$send = $SI->add($data);
-				    } elseif ($data['source_type'] == 'ais') {
+				    } elseif ($data['source_type'] === 'ais') {
 					$data['type'] = '';
 					if (isset($globalMarine) && $globalMarine) $send = $MI->add($data);
 				    } elseif (isset($line['stealth'])) {
 					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";
 					else echo '--------- '.$data['ident'].' : Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
 				    } elseif (isset($globalAircraft) && $globalAircraft && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && (
-					    //$line['symbol'] == 'Balloon' ||
-					    $line['symbol'] == 'Glider' || 
-					    $line['symbol'] == 'Aircraft (small)' || $line['symbol'] == 'Helicopter')) {
-					    if ($line['symbol'] == 'Ballon') $data['aircraft_icao'] = 'BALL';
-					    if ($line['symbol'] == 'Glider') $data['aircraft_icao'] = 'PARAGLIDER';
+					    //$line['symbol'] === 'Balloon' ||
+					    $line['symbol'] === 'Glider' || 
+					    $line['symbol'] === 'Aircraft (small)' || $line['symbol'] === 'Helicopter')) {
+					    if ($line['symbol'] === 'Ballon') $data['aircraft_icao'] = 'BALL';
+					    if ($line['symbol'] === 'Glider') $data['aircraft_icao'] = 'PARAGLIDER';
 					    $send = $SI->add($data);
 				    } elseif (isset($globalMarine) && $globalMarine && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && (
-					    $line['symbol'] == 'Yacht (Sail)' || 
-					    $line['symbol'] == 'Ship (Power Boat)')) {
+					    $line['symbol'] === 'Yacht (Sail)' || 
+					    $line['symbol'] === 'Ship (Power Boat)')) {
 					    $send = $MI->add($data);
 				    } elseif (isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && (
-					    $line['symbol'] == 'Car' || 
-					    $line['symbol'] == 'Ambulance' || 
-					    $line['symbol'] == 'Van' || 
-					    $line['symbol'] == 'Truck' || $line['symbol'] == 'Truck (18 Wheeler)' || 
-					    $line['symbol'] == 'Motorcycle' || 
-					    $line['symbol'] == 'Tractor' || 
-					    $line['symbol'] == 'Police' || 
-					    $line['symbol'] == 'Bike' || 
-					    $line['symbol'] == 'Jogger' || 
-					    $line['symbol'] == 'Horse' || 
-					    $line['symbol'] == 'Bus' || 
-					    $line['symbol'] == 'Jeep' || 
-					    $line['symbol'] == 'Recreational Vehicle' || 
-					    $line['symbol'] == 'Yacht (Sail)' || 
-					    $line['symbol'] == 'Ship (Power Boat)' || 
-					    $line['symbol'] == 'Firetruck' || 
-					    $line['symbol'] == 'Balloon' || $line['symbol'] == 'Glider' || 
-					    $line['symbol'] == 'Aircraft (small)' || $line['symbol'] == 'Helicopter' || 
-					    $line['symbol'] == 'SUV' ||
-					    $line['symbol'] == 'Snowmobile' ||
-					    $line['symbol'] == 'Mobile Satellite Station')) {
+					    $line['symbol'] === 'Car' || 
+					    $line['symbol'] === 'Ambulance' || 
+					    $line['symbol'] === 'Van' || 
+					    $line['symbol'] === 'Truck' || $line['symbol'] === 'Truck (18 Wheeler)' || 
+					    $line['symbol'] === 'Motorcycle' || 
+					    $line['symbol'] === 'Tractor' || 
+					    $line['symbol'] === 'Police' || 
+					    $line['symbol'] === 'Bike' || 
+					    $line['symbol'] === 'Jogger' || 
+					    $line['symbol'] === 'Horse' || 
+					    $line['symbol'] === 'Bus' || 
+					    $line['symbol'] === 'Jeep' || 
+					    $line['symbol'] === 'Recreational Vehicle' || 
+					    $line['symbol'] === 'Yacht (Sail)' || 
+					    $line['symbol'] === 'Ship (Power Boat)' || 
+					    $line['symbol'] === 'Firetruck' || 
+					    $line['symbol'] === 'Balloon' || $line['symbol'] === 'Glider' || 
+					    $line['symbol'] === 'Aircraft (small)' || $line['symbol'] === 'Helicopter' || 
+					    $line['symbol'] === 'SUV' ||
+					    $line['symbol'] === 'Snowmobile' ||
+					    $line['symbol'] === 'Mobile Satellite Station')) {
 				    //} elseif (isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && isset($line['speed']) && $line['symbol'] != 'Weather Station' && $line['symbol'] != 'House QTH (VHF)' && $line['symbol'] != 'Dot' && $line['symbol'] != 'TCP-IP' && $line['symbol'] != 'xAPRS (UNIX)' && $line['symbol'] != 'Antenna' && $line['symbol'] != 'Cloudy' && $line['symbol'] != 'HF Gateway' && $line['symbol'] != 'Yagi At QTH' && $line['symbol'] != 'Digi' && $line['symbol'] != '8' && $line['symbol'] != 'MacAPRS') {
 				//    } elseif (isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && $line['symbol'] != 'Weather Station' && $line['symbol'] != 'House QTH (VHF)' && $line['symbol'] != 'Dot' && $line['symbol'] != 'TCP-IP' && $line['symbol'] != 'xAPRS (UNIX)' && $line['symbol'] != 'Antenna' && $line['symbol'] != 'Cloudy' && $line['symbol'] != 'HF Gateway' && $line['symbol'] != 'Yagi At QTH' && $line['symbol'] != 'Digi' && $line['symbol'] != '8' && $line['symbol'] != 'MacAPRS') {
 					//echo '!!!!!!!!!!!!!!!! SEND !!!!!!!!!!!!!!!!!!!!'."\n";
@@ -1679,7 +1718,7 @@ while ($i > 0) {
 					} else {
 						$Source->addLocation($data['ident'],$data['latitude'],$data['longitude'],$data['altitude'],'','',$data['source_name'],'antenna.png','gs',$id,0,$data['datetime']);
 					}
-				    } elseif (isset($line['symbol']) && $line['symbol'] == 'Weather Station') {
+				    } elseif (isset($line['symbol']) && $line['symbol'] === 'Weather Station') {
 					//if ($globalDebug) echo '!! Weather Station not yet supported'."\n";
 					if ($globalDebug) echo '# Weather Station added'."\n";
 					$Source->deleteOldLocationByType('wx');
@@ -1689,7 +1728,7 @@ while ($i > 0) {
 					} else {
 						$Source->addLocation($data['ident'],$data['latitude'],$data['longitude'],0,'','',$data['source_name'],'wx.png','wx',$id,0,$data['datetime'],$weather_data);
 					}
-				    } elseif (isset($line['symbol']) && ($line['symbol'] == 'Lightning' || $line['symbol'] == 'Thunderstorm')) {
+				    } elseif (isset($line['symbol']) && ($line['symbol'] === 'Lightning' || $line['symbol'] === 'Thunderstorm')) {
 					//if ($globalDebug) echo '!! Weather Station not yet supported'."\n";
 					if ($globalDebug) echo '☈ Lightning added'."\n";
 					$Source->deleteOldLocationByType('lightning');
@@ -1708,12 +1747,12 @@ while ($i > 0) {
 					$Source->updateLocationDescByName($line['ident'],$line['source'],$id,$line['comment']);
 				}
 				/*
-				elseif (is_array($line) && $globalDebug && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && ($line['symbol'] == 'Car' || $line['symbol'] == 'Ambulance' || $line['symbol'] == 'Van' || $line['symbol'] == 'Truck' || $line['symbol'] == 'Truck (18 Wheeler)' || $line['symbol'] == 'Motorcycle')) {
+				elseif (is_array($line) && $globalDebug && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && ($line['symbol'] === 'Car' || $line['symbol'] === 'Ambulance' || $line['symbol'] === 'Van' || $line['symbol'] === 'Truck' || $line['symbol'] === 'Truck (18 Wheeler)' || $line['symbol'] === 'Motorcycle')) {
 					echo '!! Car & Trucks not yet supported'."\n";
 				}
 				*/
-				//elseif ($line == false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
-				elseif ($line == true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
+				//elseif ($line === false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
+				elseif ($line === true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
 				if (isset($globalSources[$nb]['last_weather_clean']) && time()-$globalSources[$nb]['last_weather_clean'] > 60*5) {
 					$Source->deleteOldLocationByType('lightning');
 					$Source->deleteOldLocationByType('wx');
@@ -1753,12 +1792,12 @@ while ($i > 0) {
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
 				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
     				$data['id_source'] = $id_source;
-    				if (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $send = $SI->add($data);
+    				if (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $send = $SI->add($data);
     				else $error = true;
     				unset($data);
     			    } else $error = true;
 			    if ($error) {
-				if (count($line) > 1 && ($line[0] == 'STA' || $line[0] == 'AIR' || $line[0] == 'SEL' || $line[0] == 'ID' || $line[0] == 'CLK')) { 
+				if (count($line) > 1 && ($line[0] === 'STA' || $line[0] === 'AIR' || $line[0] === 'SEL' || $line[0] === 'ID' || $line[0] === 'CLK')) { 
 					if ($globalDebug) echo "Not a message. Ignoring... \n";
 				} else {
 					if ($globalDebug) echo "Wrong line format. Ignoring... \n";
@@ -1768,7 +1807,7 @@ while ($i > 0) {
 					}
 					//socket_close($r);
 					if ($globalDebug) echo "Reconnect after an error...\n";
-					if ($format == 'aprs') $aprs_connect = 0;
+					if ($format === 'aprs') $aprs_connect = 0;
 					$sourceer[$nb] = $globalSources[$nb];
 					connect_all($sourceer);
 					$sourceer = array();
@@ -1778,7 +1817,7 @@ while ($i > 0) {
 			// Sleep for xxx microseconds
 			if (isset($globalSBSSleep)) usleep($globalSBSSleep);
 		    } else {
-			if ($format == 'flightgearmp') {
+			if ($format === 'flightgearmp') {
 			    	if ($globalDebug) echo "Reconnect FlightGear MP...";
 				//@socket_close($r);
 				sleep($globalMinFetch);
@@ -1826,9 +1865,9 @@ while ($i > 0) {
 			$time = time();
 			//connect_all($hosts);
 			$aprs_connect = 0;
-			if ($reset%5 == 0) sleep(20);
-			if ($reset%10 == 0) sleep(100);
-			if ($reset%20 == 0) sleep(200);
+			if ($reset%5 === 0) sleep(20);
+			if ($reset%10 === 0) sleep(100);
+			if ($reset%20 === 0) sleep(200);
 			if ($reset > 100) exit('Too many attempts...');
 			if ($globalDebug) echo "Restart all connections...";
 			connect_all($globalSources);

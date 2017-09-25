@@ -327,8 +327,7 @@ class SpotterImport {
 				$Spotter->db = null;
 			}
 			$this->all_flights[$id] = array_merge($this->all_flights[$id],array('aircraft_icao' => $icao));
-		}
-		if (!isset($this->all_flights[$id]['aircraft_icao']) && isset($line['aircraft_name'])) {
+		} elseif (!isset($this->all_flights[$id]['aircraft_icao']) && isset($line['aircraft_name'])) {
 			if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
 				// Get aircraft ICAO from aircraft name
 				$Spotter = new Spotter($this->db);

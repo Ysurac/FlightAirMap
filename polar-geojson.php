@@ -17,14 +17,14 @@ if (isset($_GET['download'])) {
 header('Content-Type: text/javascript');
 
 
-$polar = $Stats->getStatsSource(date('Y-m-d'),'polar');
+$polar = $Stats->getStatsSource('polar',date('Y'),date('m'),date('d'));
 $output = '{"type": "FeatureCollection","features": [';
 if (!empty($polar)) {
 	foreach($polar as $eachpolar) {
 		$data = json_decode($eachpolar['source_data']);
 		$name = $eachpolar['source_name'];
 		$coord = $Location->getLocationInfobySourceName($name);
-		$output .= '{"type": "Feature","properties": {"name": "'.$name.'","style": {"color": "#B5DAB1", "opacity": 0.6}},"geometry": {"type": "Polygon","coordinates": [[';
+		$output .= '{"type": "Feature","properties": {"name": "'.$name.'","style": {"color": "#B5DAB1", "opacity": 1.0}},"geometry": {"type": "Polygon","coordinates": [[';
 		if (isset($coord[0]['latitude'])) {
 			$initial_latitude = $coord[0]['latitude'];
 			$initial_longitude = $coord[0]['longitude'];

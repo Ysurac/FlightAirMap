@@ -210,7 +210,6 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<option value="Mapbox" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Mapbox') { ?>selected="selected" <?php } ?>>Mapbox</option>
 					<option value="MapQuest-OSM" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-OSM') { ?>selected="selected" <?php } ?>>MapQuest-OSM</option>
 					<option value="MapQuest-Aerial" <?php if (isset($globalMapProvider) && $globalMapProvider == 'MapQuest-Aerial') { ?>selected="selected" <?php } ?>>MapQuest-Aerial</option>
-					<option value="Google-Hybrid" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Google-Hybrid') { ?>selected="selected" <?php } ?>>Google Hybrid</option>
 					<option value="Bing-Hybrid" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Bing-Hybrid') { ?>selected="selected" <?php } ?>>Bing Hybrid</option>
 					<option value="Yandex" <?php if (isset($globalMapProvider) && $globalMapProvider == 'Yandex') { ?>selected="selected" <?php } ?>>Yandex</option>
 				</select>
@@ -532,6 +531,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="sbs" <?php if (isset($source['format']) && $source['format'] == 'sbs') print 'selected'; ?>>SBS</option>
 										<option value="tsv" <?php if (isset($source['format']) && $source['format'] == 'tsv') print 'selected'; ?>>TSV</option>
 										<option value="raw" <?php if (isset($source['format']) && $source['format'] == 'raw') print 'selected'; ?>>Raw</option>
+										<option value="aircraftjson" <?php if (isset($source['format']) && $source['format'] == 'aircraftjson') print 'selected'; ?>>Dump1090 aircraft.json</option>
 										<option value="aprs" <?php if (isset($source['format']) && $source['format'] == 'aprs') print 'selected'; ?>>APRS</option>
 										<option value="deltadbtxt" <?php if (isset($source['format']) && $source['format'] == 'deltadbtxt') print 'selected'; ?>>Radarcape deltadb.txt</option>
 										<option value="vatsimtxt" <?php if (isset($source['format']) && $source['format'] == 'vatsimtxt') print 'selected'; ?>>Vatsim</option>
@@ -585,6 +585,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="sbs">SBS</option>
 										<option value="tsv">TSV</option>
 										<option value="raw">Raw</option>
+										<option value="aircraftjson">Dump1090 aircraft.json</option>
 										<option value="aprs">APRS</option>
 										<option value="deltadbtxt">Radarcape deltadb.txt</option>
 										<option value="vatsimtxt">Vatsim</option>
@@ -629,7 +630,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<p class="help-block">For working source statistics, the name of the source <b>MUST</b> be the same as the source name of a source location, else center coverage latitude and longitude is used as source position. This is not available/usable with virtual airlines.</p>
 					<p class="help-block">FlightGear Singleplayer open an UDP server, the host should be <i>0.0.0.0</i>.</p>
 					<p class="help-block">Virtual Airlines Manager need to use the file <i>install/vAM/VAM-json.php</i> and the url <i>http://yourvaminstall/VAM-json.php</i>.</p>
-					<p class="help-block">HTTP and TCP sources can't be used at the same time.</p>
+					<p class="help-block">For a local file, you should use file:// before the path.</p>
+					<p class="help-block">URL and TCP sources can't be used at the same time.</p>
 					<!-- ' -->
 					<p class="help-block">Callback script is in <i>import/callback.php</i>. In host you can restrict access to some IP, Callback pass to restrict by a pass using <i>import/callback.php?pass=yourpass</i>.</p>
 				</fieldset>
