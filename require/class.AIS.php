@@ -361,20 +361,21 @@ class AIS {
 	public function getShipTypeID($type) {
 		$typeid = array_search($type,$this->shiptype);
 		if ($typeid !== FALSE) return $typeid;
-		elseif ($type == 'Cargo' || $type == 'General Cargo' || $type == 'Bulk Carrier' || $type == 'Container Ship' || $type == 'Cargo A' || $type == 'Reefer' || $type == 'Vehicles Carrier') return 70;
+		elseif ($type == 'Cargo' || $type == 'General Cargo' || $type == 'Bulk Carrier' || $type == 'Container Ship' || $type == 'Cargo A' || $type == 'Reefer' || $type == 'Vehicles Carrier' || $type == 'Ro-Ro Cargo') return 70;
 		elseif ($type == 'Passengers Ship' || $type == 'Passenger' || $type == 'Ro-Ro/Passenger Ship' || $type == 'Motor Passenger') return 60;
 		elseif ($type == 'Tanker' || $type == 'Crude Oil Tanker' || $type == 'Oil Products Tanker' || $type == 'Oil/Chemical Tanker' || $type == 'Bunkering Tanker') return 80;
-		elseif ($type == 'Lpg Tanker') return 84;
+		elseif ($type == 'Lpg Tanker' || $type == 'Lng Tanker') return 84;
 		elseif ($type == 'Sailing Vessel') return 36;
 		elseif ($type == 'Yacht') return 37;
 		elseif ($type == 'Trailing Suction Hopper Dredger' || $type == 'Drilling Jack Up' || $type == 'Suction Dredger' || $type == 'Hopper Dredger') return 33;
 		elseif ($type == 'High speed craft') return 40;
+		elseif ($type == 'Crew Boat') return 53;
 		elseif ($type == 'Icebreaker') return 52;
 		elseif ($type == 'Pollution Control Vessel') return 54;
 		elseif ($type == 'Other Type') return 90;
-		elseif ($type == 'Anchor Handling Vessel' || $type == 'Offshore Supply Ship' || $type == 'Research/Survey Vessel' || $type == 'Utility Vessel' || $type == 'Pipe Burying Vessel' || $type == 'Heavy Lift Vessel' || $type == 'Crane Ship') return 59;
-		elseif ($type == 'Fish Carrier' || $type == 'Trawler' || $type == 'Trawlers' || $type == 'Fishing Vessel' || $type == 'Trawlers|unknown Not Fishing' || $type == 'Purse Seines|trawlers' || $type == 'Purse Seines' || $type == 'Trollers') return 30;
-		else return '';
+		elseif ($type == 'Anchor Handling Vessel' || $type == 'Offshore Supply Ship' || $type == 'Research/Survey Vessel' || $type == 'Utility Vessel' || $type == 'Pipe Burying Vessel' || $type == 'Heavy Lift Vessel' || $type == 'Crane Ship' || $type == 'Buoy-laying Vessel') return 59;
+		elseif ($type == 'Fish Carrier' || $type == 'Trawler' || $type == 'Trawlers' || $type == 'Fishing Vessel' || $type == 'Trawlers|unknown Not Fishing' || $type == 'Purse Seines|trawlers' || $type == 'Purse Seines' || $type == 'Trollers' || $type == 'Set Longlines' || $type == 'Set Gillnets|trawlers') return 30;
+		else return 0;
 	}
 
 	public function process_ais_itu($_itu, $_len, $_filler, $aux /*, $ais_ch*/) {
