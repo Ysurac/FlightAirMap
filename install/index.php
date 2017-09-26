@@ -978,7 +978,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="daemon">Use daemon-spotter.php as daemon</label>
 				<input type="checkbox" name="daemon" id="daemon" value="daemon"<?php if ((isset($globalDaemon) && $globalDaemon) || !isset($globalDaemon)) { ?> checked="checked"<?php } ?> onClick="daemon_js()" />
-				<p class="help-block">Uncheck if the script is running as cron job</p>
+				<p class="help-block">Uncheck if the script is running as cron job. You should always run it as daemon when it's possible.</p>
 				<div id="cronends"> 
 					<label for="cronend">Run script for xx seconds</label>
 					<input type="number" name="cronend" id="cronend" value="<?php if (isset($globalCronEnd)) print $globalCronEnd; else print '0'; ?>" />
@@ -1044,6 +1044,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<label for="mapidle">Map idle timeout (in minutes)</label>
 				<input type="number" name="mapidle" id="mapidle" value="<?php if (isset($globalMapIdleTimeout)) echo $globalMapIdleTimeout; else echo '30'; ?>" />
 				<p class="help-block">0 to disable</p>
+			</p>
+			<p>
+				<label for="minfetch">HTTP/file source fetch every xxx seconds</label>
+				<input type="number" name="minfetch" id="minfetch" value="<?php if (isset($globalMinFetch)) echo $globalMinFetch; else echo '20'; ?>" />
 			</p>
 			<p>
 				<label for="bbox">Only display flights that we can see on screen (bounding box)</label>
@@ -1334,6 +1338,8 @@ if (isset($_POST['dbtype'])) {
 	$settings = array_merge($settings,array('globalMapRefresh' => $maprefresh));
 	$mapidle = filter_input(INPUT_POST,'mapidle',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalMapIdleTimeout' => $mapidle));
+	$minfetch = filter_input(INPUT_POST,'minfetch',FILTER_SANITIZE_NUMBER_INT);
+	$settings = array_merge($settings,array('globalMinFetch' => $minfetch));
 	$closestmindist = filter_input(INPUT_POST,'closestmindist',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalClosestMinDist' => $closestmindist));
 
