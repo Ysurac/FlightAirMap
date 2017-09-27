@@ -9,7 +9,6 @@ if (isset($globalProtect) && $globalProtect) {
 		die();
 	}
 }
-
 $tracker = false;
 $marine = false;
 $usecoord = false;
@@ -112,8 +111,8 @@ if (isset($_GET['ident'])) {
 	$fammarine_id = urldecode(filter_input(INPUT_GET,'fammarine_id',FILTER_SANITIZE_STRING));
 	$spotter_array = $MarineLive->getLastLiveMarineDataById($fammarine_id);
 	$allhistory = true;
+/*
 } elseif (isset($globalMapUseBbox) && $globalMapUseBbox && isset($_GET['coord']) && (!isset($globalMapPopup) || $globalMapPopup || (isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true'))) {
-//} elseif (isset($_GET['coord'])) {
 	$usecoord = true;
 	$coord = explode(',',$_GET['coord']);
 	if (filter_var($coord[0],FILTER_VALIDATE_FLOAT) && filter_var($coord[1],FILTER_VALIDATE_FLOAT) && filter_var($coord[2],FILTER_VALIDATE_FLOAT) && filter_var($coord[3],FILTER_VALIDATE_FLOAT) 
@@ -126,6 +125,7 @@ if (isset($_GET['ident'])) {
 			$spotter_array = $SpotterLive->getLiveSpotterDatabyCoord($coord,$filter);
 		}
 	}
+*/
 } elseif (isset($globalMapUseBbox) && $globalMapUseBbox && isset($_GET['coord']) && $min) {
 	$usecoord = true;
 	$coord = explode(',',$_GET['coord']);
@@ -791,7 +791,7 @@ $output = '{';
 				     && (isset($spotter_item['arrival_airport']) 
 				        && $spotter_item['arrival_airport'] != 'NA' 
 				        && ((isset($_COOKIE['MapRemainingRoute']) && $_COOKIE['MapRemainingRoute'] == "true") 
-				    	    || (!isset($_COOKIE['MapRemainaingRoute']) && (!isset($globalMapRemainingRoute) 
+				    	    || (!isset($_COOKIE['MapRemainingRoute']) && (!isset($globalMapRemainingRoute) 
 				    	    || (isset($globalMapRemainingRoute) && $globalMapRemainingRoute)))))) {
 				    $havedata = false;
 				    if ($compress) $output_dest = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "routedest"},"geometry": {"type": "LineString","coordinates": [';

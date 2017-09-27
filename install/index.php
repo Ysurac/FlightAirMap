@@ -192,7 +192,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				    if ((!isset($globalURL) || $globalURL == '') && (!isset($globalDBuser) || $globalDBuser == '')) {
 					if (isset($_SERVER['REQUEST_URI'])) {
 						$URL = $_SERVER['REQUEST_URI'];
-						$globalURL = str_replace('/install/index.php','',$URL);
+						$globalURL = str_replace('/install','',str_replace('/install/','',str_replace('/install/index.php','',$URL)));
 					}
 				    }
 				?>
@@ -366,7 +366,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<th>Name</th>
 					<th>Latitude</th>
 					<th>Longitude</th>
-					<th>Altitude</th>
+					<th>Altitude (in m)</th>
 					<th>City</th>
 					<th>Country</th>
 					<th>Source name</th>
