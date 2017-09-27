@@ -1028,7 +1028,7 @@ while ($i > 0) {
 		foreach ($all_data['aircraft'] as $key => $line) {
 		    $data = array();
 		    if (isset($line['hex'])) $data['hex'] = $line['hex']; // hex
-		    if (isset($line['ident'])) $data['ident'] = trim($line['ident']); // ident
+		    if (isset($line['flight'])) $data['ident'] = trim($line['flight']); // ident
 		    if (isset($line['altitude'])) $data['altitude'] = $line['altitude']; // altitude
 		    if (isset($line['speed'])) $data['speed'] = $line['speed']; // speed
 		    if (isset($line['track'])) $data['heading'] = $line['track']; // heading
