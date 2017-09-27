@@ -139,8 +139,7 @@ ul{
 	padding-bottom:0px;
 }
 .navbar .navbar-brand{
-	padding:0px;
-	padding-top:10px;
+	padding:10px 25px 0 0;
 }
 .navbar .nav a{
 	color:#fff;
@@ -217,6 +216,7 @@ ul{
 .navbar .search form input[type="text"]{
 	width:80%;
 	padding-left:10px;
+	padding-top: 5px;
 	border:0px;
 	outline:none;
 	color:#aaa;
@@ -1108,8 +1108,7 @@ body.page-upcoming table tr td.logo img{
     }
     
     .container {
-	/*width: auto;*/
-	width: 99%;
+	width: 100%;
     }
     
 }
