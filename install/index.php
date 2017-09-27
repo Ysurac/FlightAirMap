@@ -187,8 +187,18 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<p>
 				<label for="siteurl">Site directory</label>
+				<?php
+				    // Try to detect site directory
+				    if ((!isset($globalURL) || $globalURL == '') && (!isset($globalDBuser) || $globalDBuser == '')) {
+					if (isset($_SERVER['REQUEST_URI'])) {
+						$URL = $_SERVER['REQUEST_URI'];
+						$globalURL = str_replace('/install/index.php','',$URL);
+					}
+				    }
+				?>
 				<input type="text" name="siteurl" id="siteurl" value="<?php if (isset($globalURL)) print $globalURL; ?>" />
-				<p class="help-block">Can be null. ex : <i>flightairmap</i> if complete URL is <i>http://toto.com/flightairmap</i></p>
+				<p class="help-block">ex : <i>/flightairmap</i> if complete URL is <i>http://toto.com/flightairmap</i></p>
+				<p class="help-block">Can be empty</p>
 			</p>
 			<p>
 				<label for="timezone">Timezone</label>
