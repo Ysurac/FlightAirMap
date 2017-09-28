@@ -403,8 +403,8 @@ $output = '{';
 						
 						if (isset($spotter_item['date_iso_8601'])) {
 							$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
-						}
-						if (isset($spotter_item['date'])) {
+							$output .= '"lu": "'.strtotime($spotter_item['date_iso_8601']).'",';
+						} elseif (isset($spotter_item['date'])) {
 							$output .= '"lu": "'.strtotime($spotter_item['date']).'",';
 						}
 						if (!$min) {
@@ -648,7 +648,7 @@ $output = '{';
 				    ) {
 					if ($tracker) {
 						if ($from_archive || $globalArchive) {
-							$spotter_history_array = $TrackerArchive->getAllArchiveTrackerDataById($spotter_item['famtrackid'],strtotime($spotter_item['date_iso_8601']));
+							$spotter_history_array = $TrackerArchive->getAllArchiveTrackerDataById($spotter_item['famtrackid']);
 						} else {
 							$spotter_history_array = $TrackerLive->getAllLiveTrackerDataById($spotter_item['famtrackid']);
 						}
@@ -671,7 +671,11 @@ $output = '{';
 						) {
 							require(dirname(__FILE__).'/require/class.MapMatching.php');
 							$MapMatching = new MapMatching();
-							$spotter_history_array_mm = array_merge($spotter_history_array,array(array('latitude' => $spotter_item['latitude'],'longitude' => $spotter_item['longitude'],'date' => date('c',strtotime($spotter_item['date_iso_8601'])))));
+							if (isset($spotter_item['date_iso_8601'])) {
+								$spotter_history_array_mm = array_merge($spotter_history_array,array(array('latitude' => $spotter_item['latitude'],'longitude' => $spotter_item['longitude'],'date' => date('c',strtotime($spotter_item['date_iso_8601'])))));
+							} else {
+								$spotter_history_array_mm = array_merge($spotter_history_array,array(array('latitude' => $spotter_item['latitude'],'longitude' => $spotter_item['longitude'],'date' => date('c',strtotime($spotter_item['date'])))));
+							}
 							$spotter_history_array = $MapMatching->match($spotter_history_array_mm);
 						}
 					} elseif ($marine) {
