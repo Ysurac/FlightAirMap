@@ -171,9 +171,7 @@ $( document ).ready(function() {
 	L.tileLayer('https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={token}', {
 	    maxZoom: 18,
 	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
-	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-	      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-	      'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	    attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
 	    id: '<?php print $MapBoxId; ?>',
 	    token: '<?php print $globalMapboxToken; ?>'
 	}).addTo(map);
@@ -183,9 +181,7 @@ $( document ).ready(function() {
 	L.mapboxGL({
 	    style: 'https://data.osmbuildings.org/0.2/rkc8ywdl/style.json',
 	    accessToken: '<?php print $globalMapboxToken; ?>',
-	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-	      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-	      'Imagery © <a href="http://mapbox.com">Mapbox</a>' +
+	    attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>' +
 	      '<a href="https://osmbuildings.org/copyright">&copy; OSM Buildings</a>',
 	}).addTo(map);
 <?php

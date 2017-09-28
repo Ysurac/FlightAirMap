@@ -417,7 +417,7 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a href="<?php print $globalURL; ?>/search" class="navbar-toggle navbar-toggle-search"><i class="fa fa-search"></i></a>
+      <a href="<?php print $globalURL; ?>/search" class="navbar-toggle search"><i class="fa fa-search"></i></a>
       <a class="navbar-brand" href="<?php if ($globalURL == '') print '/'; else print $globalURL; ?>"><img src="<?php print $globalURL.$logoURL; ?>" height="30px" /></a>
     </div>
     <div class="collapse navbar-collapse">
@@ -741,7 +741,7 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 	}
 ?>
       <div class="search">
-      <form action="<?php print $globalURL; ?>/search" method="get">
+	<form action="<?php print $globalURL; ?>/search" method="get">
 		<!--<input type="text" name="q" value="<?php if (isset($GET['q'])) { if ($_GET['q'] != ""){ print $_GET['q']; } else { print _("Search"); } } else { print _("Search"); } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>-->
 		<input type="text" name="callsign" value="<?php if (isset($GET['callsign'])) { if ($_GET['callsign'] != ""){ print $_GET['callsign']; } else { print _("Search"); } } else { print _("Search"); } ?>" onfocus="if (this.value=='search'){this.value='';}" /><button type="submit"><i class="fa fa-search"></i></button>
 	</form>

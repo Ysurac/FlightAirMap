@@ -557,11 +557,13 @@ class TrackerLive {
 		//$query  = self::$global_query.' WHERE tracker_live.famtrackid = :id ORDER BY date';
 		if ($globalDBdriver == 'mysql') {
 			$query = 'SELECT tracker_live.* FROM tracker_live WHERE tracker_live.famtrackid = :id';
-			if ($liveinterval) $query .= ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= date';
+			if ($liveinterval === true) $query .= ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= date';
+			elseif ($liveinterval !== false) $query .= " AND date <= '".date('c',$liveinterval)."'";
 			$query .= ' ORDER BY date';
 		} else {
 			$query = 'SELECT tracker_live.* FROM tracker_live WHERE tracker_live.famtrackid = :id';
-			if ($liveinterval) $query .= " AND CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= date";
+			if ($liveinterval === true) $query .= " AND CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= date";
+			elseif ($liveinterval !== false) $query .= " AND date <= '".date('c',$liveinterval)."'";
 			$query .= ' ORDER BY date';
 		}
 

@@ -376,6 +376,10 @@ function getLiveTrackerData(click)
 <?php
 	}
 ?>
+		var atr = feature.properties.atr;
+		if (typeof atr != 'undefined') {
+			layer_tracker_data.getAttribution = function() { return atr; };
+		}
                 var output = '';
 		
               //individual aircraft
@@ -628,8 +632,11 @@ reloadTrackerPage = setInterval(
 <?php
 	}
 ?>
+});
 function TrackericonColor(color) {
     document.cookie =  'TrackerIconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
 }
-});
+function clickMapMatching(cb) {
+    document.cookie =  'mapmatching='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+}

@@ -22,6 +22,8 @@ class MapMatching {
 			return $this->GraphHopper($spotter_history_array);
 		} elseif ($globalMapMatchingSource == 'osmr') {
 			return $this->osmr($spotter_history_array);
+		} elseif ($globalMapMatchingSource == 'fam') {
+			return $this->FAMMapMatching($spotter_history_array);
 		/*
 		} elseif ($globalMapMatchingSource == 'trackmatching') {
 			return $this->TrackMatching($spotter_history_array);
@@ -37,6 +39,7 @@ class MapMatching {
 	* @return String The GPX file
 	*/
 	public function create_gpx($spotter_history_array) {
+		date_default_timezone_set('UTC');
 		$gpx = '<?xml version="1.0" encoding="UTF-8"?>';
 		$gpx .= '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpsies="http://www.gpsies.com/GPX/1/0" creator="GPSies http://www.gpsies.com - Sendl.-O&amp;apos;sch-heim" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.gpsies.com/GPX/1/0 http://www.gpsies.com/gpsies.xsd">';
 		$gpx .= '<trk>';
@@ -97,6 +100,7 @@ class MapMatching {
 				}
 			}
 		}
+		$spotter_history_array[0]['mapmatching_engine'] = 'trackmatching';
 		return $spotter_history_array;
 	}
 
@@ -115,7 +119,7 @@ class MapMatching {
 			$spotter_history_initial_array = array_slice($spotter_history_array,0,count($spotter_history_array)-$globalMapMatchingMaxPts);
 		}
 		$data = $this->create_gpx($spotter_history_array);
-		$url = 'https://graphhopper.com/api/1/match?vehicle=car&points_encoded=0&key='.$globalGraphHopperKey;
+		$url = 'https://graphhopper.com/api/1/match?vehicle=car&points_encoded=0&instructions=false&key='.$globalGraphHopperKey;
 		$Common = new Common();
 		$matching = $Common->getData($url,'post',$data,array('Content-Type: application/gpx+xml'));
 		$matching = json_decode($matching,true);
@@ -127,6 +131,39 @@ class MapMatching {
 			}
 		}
 		$spotter_history_array = array_merge($spotter_history_initial_array,$spotter_history_array);
+		$spotter_history_array[0]['mapmatching_engine'] = 'graphhopper';
+		return $spotter_history_array;
+	}
+
+	/*
+	* Use https://mapmatching.flightairmap.com/ as map matching engine
+	* @param Array $spotter_history_array Array with latitude, longitude, altitude and date
+	* @return Array Modified data with new map matching coordinates
+	*/
+	public function FAMMapMatching($spotter_history_array) {
+		global $globalMapMatchingMaxPts, $globalGraphHopperKey;
+		if (!isset($globalMapMatchingMaxPts)) $globalMapMatchingMaxPts = 100;
+		if (count($spotter_history_array) < 2) return $spotter_history_array;
+		$spotter_history_initial_array = array();
+		if (count($spotter_history_array) > $globalMapMatchingMaxPts) {
+			$spotter_history_array = array_slice($spotter_history_array,-$globalMapMatchingMaxPts);
+			$spotter_history_initial_array = array_slice($spotter_history_array,0,count($spotter_history_array)-$globalMapMatchingMaxPts);
+		}
+		$data = $this->create_gpx($spotter_history_array);
+		$url = 'https://mapmatching.flightairmap.com/api/1/match?vehicle=car&points_encoded=0&instructions=false';
+		//$url = 'https://mapmatching.flightairmap.com/api/1/match?vehicle=car&points_encoded=0';
+		$Common = new Common();
+		$matching = $Common->getData($url,'post',$data,array('Content-Type: application/gpx+xml'));
+		$matching = json_decode($matching,true);
+		if (isset($matching['paths'][0]['points']['coordinates'])) {
+			$spotter_history_array = array();
+			foreach ($matching['paths'][0]['points']['coordinates'] as $match) {
+				$coord = $match;
+				$spotter_history_array[] = array('longitude' => $coord[0],'latitude' => $coord[1]);
+			}
+		}
+		$spotter_history_array = array_merge($spotter_history_initial_array,$spotter_history_array);
+		$spotter_history_array[0]['mapmatching_engine'] = 'fam';
 		return $spotter_history_array;
 	}
 
@@ -167,6 +204,7 @@ class MapMatching {
 			}
 		}
 		$spotter_history_array = array_merge($spotter_history_initial_array,$spotter_history_array);
+		$spotter_history_array[0]['mapmatching_engine'] = 'osmr';
 		return $spotter_history_array;
 	}
 
@@ -208,6 +246,7 @@ class MapMatching {
 			}
 		}
 		$spotter_history_array = array_merge($spotter_history_initial_array,$spotter_history_array);
+		$spotter_history_array[0]['mapmatching_engine'] = 'mapbox';
 		return $spotter_history_array;
 	}
 

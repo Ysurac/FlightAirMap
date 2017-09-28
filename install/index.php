@@ -874,11 +874,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p>
 					<label for="mapmatchingsource">Map Matching source</label>
 					<select name="mapmatchingsource" id="mapmatchingsource">
+						<option value="fam" <?php if ((isset($globalMapMatchingSource) && $globalMapMatchingSource == 'fam') || !isset($globalMatchingSource)) print 'selected="selected" '; ?>>FlightAirMap Map Matching</option>
 						<option value="graphhopper" <?php if (isset($globalMapMatchingSource) && $globalMapMatchingSource == 'graphhopper') print 'selected="selected" '; ?>>GraphHopper</option>
-						<option value="osmr" <?php if ((isset($globalMapMatchingSource) && $globalMapMatchingSource == 'osmr') || !isset($globalMatchingSource)) print 'selected="selected" '; ?>>OSMR</option>
+						<option value="osmr" <?php if (isset($globalMapMatchingSource) && $globalMapMatchingSource == 'osmr')) print 'selected="selected" '; ?>>OSMR</option>
 						<option value="mapbox" <?php if (isset($globalMapMatchingSource) && $globalMapMatchingSource == 'mapbox') print 'selected="selected" '; ?>>Mapbox</option>
 					</select>
-					<p class="help-block">Mapbox need the API Key defined in map section</p>
+					<p class="help-block">Mapbox need the API Key defined in map section.</p>
+					<p class="help-block">FlightAirMap Map Matching is free, without API key but limited to about 100 input points to keep fast results.</p>
 				</p>
 				<br />
 				<p>

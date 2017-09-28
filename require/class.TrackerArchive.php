@@ -164,11 +164,12 @@ class TrackerArchive {
         * @return Array the spotter information
         *
         */
-        public function getAllArchiveTrackerDataById($id)
+        public function getAllArchiveTrackerDataById($id,$date = '')
 	{
                 date_default_timezone_set('UTC');
                 $id = filter_var($id, FILTER_SANITIZE_STRING);
-                $query  = $this->global_query." WHERE tracker_archive.famtrackid = :id ORDER BY date";
+                if ($date == '') $query  = $this->global_query." WHERE tracker_archive.famtrackid = :id ORDER BY date";
+                else $query  = $this->global_query." WHERE tracker_archive.famtrackid = :id AND date < '".date('c',$date)."' ORDER BY date";
 
 //              $spotter_array = Tracker->getDataFromDB($query,array(':id' => $id));
 

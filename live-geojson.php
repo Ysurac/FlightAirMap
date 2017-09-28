@@ -404,7 +404,7 @@ $output = '{';
 							$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
 						}
 						if (isset($spotter_item['date'])) {
-							$output .= '"lu": "'.strtotime($spotter_item['date']).'",';
+							$output .= '"lu": "'.strtotime($spotter_item['date_iso_8601']).'",';
 						}
 						if (!$min) {
 							$output .= '"latitude": "'.$spotter_item['latitude'].'",';
@@ -568,8 +568,8 @@ $output = '{';
 										$output .= $spotter_item['latitude'];
 									}
 								} else {
-										$output .= $spotter_item['longitude'].', ';
-										$output .= $spotter_item['latitude'];
+									$output .= $spotter_item['longitude'].', ';
+									$output .= $spotter_item['latitude'];
 								}
 										/*
 										.', ';
@@ -647,11 +647,13 @@ $output = '{';
 				    ) {
 					if ($tracker) {
 						if ($from_archive || $globalArchive) {
-							$spotter_history_array = $TrackerArchive->getAllArchiveTrackerDataById($spotter_item['famtrackid']);
+							$spotter_history_array = $TrackerArchive->getAllArchiveTrackerDataById($spotter_item['famtrackid'],strtotime($spotter_item['date_iso_8601']));
 						} else {
 							$spotter_history_array = $TrackerLive->getAllLiveTrackerDataById($spotter_item['famtrackid']);
 						}
-						if ($globalMapMatching === TRUE && isset($_GET['zoom']) && $_GET['zoom'] > 12 && 
+						if (((isset($_COOKIE['mapmatching']) && $_COOKIE['mapmatching'] == 'true') ||
+						    (!isset($_COOKIE['mapmatching']) && $globalMapMatching === TRUE)) && 
+						    isset($_GET['zoom']) && $_GET['zoom'] > 12 && 
 						    isset($spotter_item['type']) && (
 							$spotter_item['type'] == 'Firetruck' ||
 							$spotter_item['type'] == 'Ambulance' ||
@@ -668,7 +670,8 @@ $output = '{';
 						) {
 							require(dirname(__FILE__).'/require/class.MapMatching.php');
 							$MapMatching = new MapMatching();
-							$spotter_history_array = $MapMatching->match($spotter_history_array);
+							$spotter_history_array_mm = array_merge($spotter_history_array,array(array('latitude' => $spotter_item['latitude'],'longitude' => $spotter_item['longitude'],'date' => date('c',strtotime($spotter_item['date_iso_8601'])))));
+							$spotter_history_array = $MapMatching->match($spotter_history_array_mm);
 						}
 					} elseif ($marine) {
 						if ($from_archive || $globalArchive) {
@@ -714,8 +717,12 @@ $output = '{';
 							$prev_alt = $alt;
 						} else {
 							if ($d == false) {
-								if ($compress) $output_history = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "history"},"geometry": {"type": "LineString","coordinates": [';
-								else $output_history = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "history"},"geometry": {"type": "LineString","coordinates": [';
+								if ($compress) {
+									$output_history = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'",';
+									if (isset($spotter_history_array[0]['mapmatching_engine']) && $spotter_history_array[0]['mapmatching_engine'] == 'graphhopper') $output_history .= '"atr": "Powered by <a href=\"https://www.graphhopper.com/\">GraphHopper API</a>", Map matching engine use data from © <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>",';
+									elseif (isset($spotter_history_array[0]['mapmatching_engine'])) $output_history .= '"atr": "Map matching engine use data from © <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>",';
+									$output_history .= '"t": "history"},"geometry": {"type": "LineString","coordinates": [';
+								} else $output_history = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "history"},"geometry": {"type": "LineString","coordinates": [';
 								$d = true;
 							}
 							$output_history .= '[';
@@ -734,7 +741,7 @@ $output = '{';
 					}
 					if (isset($output_history)) {
 						//echo $output_history;
-						if ($from_archive === false) {
+						if ($from_archive === false && !isset($spotter_history_array[0]['mapmatching_engine'])) {
 							$output_historyd = '[';
 							$output_historyd .=  $spotter_item['longitude'].', ';
 							$output_historyd .=  $spotter_item['latitude'];
@@ -742,6 +749,11 @@ $output = '{';
 							$output_historyd .= '],';
 							//$output_history = $output_historyd.$output_history;
 							$output_history = $output_history.$output_historyd;
+						} elseif (isset($spotter_history_array[0]['mapmatching_engine'])) {
+							$last = array_pop($spotter_history_array);
+							$latitude = $last['latitude'];
+							$longitude = $last['longitude'];
+							$output = str_replace('"coordinates": ['.$spotter_item['longitude'].', '.$spotter_item['latitude'].']}','"coordinates": ['.$longitude.', '.$latitude.']}',$output);
 						}
 						
 						$output_history  = substr($output_history, 0, -1);
