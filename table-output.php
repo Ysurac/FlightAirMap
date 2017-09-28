@@ -801,7 +801,9 @@ foreach($spotter_array as $spotter_item)
 				//print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'._("Not available").'</a></span>'."\n";
 				print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a></span>'."\n";
 			} else {
-				print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].'</a></span>'."\n";
+				$aircraft_names = explode('/',$spotter_item['aircraft_name']);
+				if (count($aircraft_names) == 1) print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].'</a></span>'."\n";
+				else print '<span class="nomobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'" title="'.$spotter_item['aircraft_name'].'">'.$spotter_item['aircraft_manufacturer'].' '.$aircraft_names[0].'</a></span>'."\n";
 			}
 			print '<span class="mobile"><a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a></span>'."\n";
 		} elseif ($type == 'marine') {
