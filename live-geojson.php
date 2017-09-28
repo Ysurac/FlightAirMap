@@ -12,6 +12,7 @@ if (isset($globalProtect) && $globalProtect) {
 $tracker = false;
 $marine = false;
 $usecoord = false;
+if (isset($_GET['test'])) exit();
 if (isset($_GET['tracker'])) {
     $tracker = true;
 }
@@ -404,7 +405,7 @@ $output = '{';
 							$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
 						}
 						if (isset($spotter_item['date'])) {
-							$output .= '"lu": "'.strtotime($spotter_item['date_iso_8601']).'",';
+							$output .= '"lu": "'.strtotime($spotter_item['date']).'",';
 						}
 						if (!$min) {
 							$output .= '"latitude": "'.$spotter_item['latitude'].'",';
