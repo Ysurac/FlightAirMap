@@ -876,7 +876,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<select name="mapmatchingsource" id="mapmatchingsource">
 						<option value="fam" <?php if ((isset($globalMapMatchingSource) && $globalMapMatchingSource == 'fam') || !isset($globalMatchingSource)) print 'selected="selected" '; ?>>FlightAirMap Map Matching</option>
 						<option value="graphhopper" <?php if (isset($globalMapMatchingSource) && $globalMapMatchingSource == 'graphhopper') print 'selected="selected" '; ?>>GraphHopper</option>
-						<option value="osmr" <?php if (isset($globalMapMatchingSource) && $globalMapMatchingSource == 'osmr')) print 'selected="selected" '; ?>>OSMR</option>
+						<option value="osmr" <?php if (isset($globalMapMatchingSource) && $globalMapMatchingSource == 'osmr') print 'selected="selected" '; ?>>OSMR</option>
 						<option value="mapbox" <?php if (isset($globalMapMatchingSource) && $globalMapMatchingSource == 'mapbox') print 'selected="selected" '; ?>>Mapbox</option>
 					</select>
 					<p class="help-block">Mapbox need the API Key defined in map section.</p>
