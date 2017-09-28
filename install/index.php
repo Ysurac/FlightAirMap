@@ -109,13 +109,18 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 	if (!function_exists("gettext")) {
 		print '<div class="alert alert-warning"><strong>Alert</strong> gettext doesn\'t exist. Site translation not available.</div>';
 	}
-	print '<div class="alert alert-info">If you use MySQL or MariaDB, check that <i>max_allowed_packet</i> >= 8M, else import of some table can fail.</div>';
+	print '<div class="alert alert-info">If you use MySQL or MariaDB, check that <i>max_allowed_packet</i> >= 8M, else import of some tables can fail.</div>';
 	if (isset($_SERVER['REQUEST_SCHEME']) && isset($_SERVER['SERVER_NAME']) && isset($_SERVER['SERVER_PORT']) && isset($_SERVER['REQUEST_URI'])) {
 		if (function_exists('get_headers')) {
 			//$check_header = @get_headers($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].str_replace(array('install/','install'),'search',str_replace('index.php','',$_SERVER["REQUEST_URI"])));
 			$check_header = @get_headers($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].str_replace(array('install/','install'),'live/geojson?test',str_replace('index.php','',$_SERVER["REQUEST_URI"])));
 			if (isset($check_header[0]) && !stripos($check_header[0],"200 OK")) {
 				print '<div class="alert alert-danger"><strong>Error</strong> Check your configuration, rewrite don\'t seems to work well. If using Apache, you need to desactivate MultiViews <a href="https://github.com/Ysurac/FlightAirMap/wiki/Apache-configuration">https://github.com/Ysurac/FlightAirMap/wiki/Apache-configuration</a></div>';
+			} else {
+				$check_header = @get_headers($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].str_replace(array('install/','install'),'search',str_replace('index.php','',$_SERVER["REQUEST_URI"])));
+				if (isset($check_header[0]) && !stripos($check_header[0],"200 OK")) {
+					print '<div class="alert alert-danger"><strong>Error</strong> Check your configuration, rewrite don\'t seems to work well. If using Apache, you need to desactivate MultiViews <a href="https://github.com/Ysurac/FlightAirMap/wiki/Apache-configuration">https://github.com/Ysurac/FlightAirMap/wiki/Apache-configuration</a></div>';
+				}
 			}
 		}
 	}
