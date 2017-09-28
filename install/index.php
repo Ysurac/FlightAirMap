@@ -28,7 +28,7 @@ require_once(dirname(__FILE__).'/../require/class.Common.php');
 require(dirname(__FILE__).'/header.php');
 
 if ($globalInstalled && !isset($_SESSION['install'])) {
-	print '<div class="info column"><p>You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</p></div>';
+	print '<div class="alert alert-danger">You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</div>';
 	require('../footer.php');
 	exit;
 }
@@ -37,13 +37,13 @@ $writable = false;
 $error = array();
 if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 	if (!is_writable('../require/settings.php')) {
-		print '<div class="info column"><p><strong>The file <i>require/settings.php</i> must be writable.</strong></p></div>';
+		print '<div class="alert alert-danger"><strong>Error</strong> The file <i>require/settings.php</i> must be writable.</div>';
 		require('../footer.php');
 		exit;
 	}
 	$Common = new Common();
 	if (!$Common->is__writable('tmp/')) {
-		print '<div class="info column"><p><strong>The directory <i>install/tmp</i> must be writable to the current user.</strong></p></div>';
+		print '<div class="alert alert-danger"><strong>Error</strong> The directory <i>install/tmp</i> must be writable to the current user.</div>';
 		require('../footer.php');
 		exit;
 	}
@@ -53,10 +53,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 	}
 	*/
 	if (!is_writable('../images/airlines')) {
-		print '<div class="info column"><p><strong>The directory <i>images/airlines</i> must be writable for IVAO.</strong></p></div>';
+		print '<div class="alert alert-info">The directory <i>images/airlines</i> must be writable for IVAO.</div>';
 	}
 	if (!set_time_limit(0)) {
-		print '<div class="info column"><p><strong>You may need to update the maximum execution time.</strong></p></div>';
+		print '<div class="alert alert-info">You may need to update the maximum execution time.</div>';
 	}
 	/*
 	if (!function_exists('pcntl_fork')) {
@@ -81,10 +81,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 	*/
 	if (!extension_loaded('zip')) {
 		//$error[] = "ZIP is not loaded. Needed to populate database for SBS.";
-		print '<div class="info column"><p><strong>ZIP is not loaded. Needed to populate database for IVAO.</strong></p></div>';
+		print '<div class="alert alert-info">ZIP is not loaded. Needed to populate database for IVAO.</div>';
 	}
 	if (!extension_loaded('xml') && !extension_loaded('xmlreader')) {
-		print '<div class="info column"><p><strong>XML is not loaded. Needed to parse RSS for News pages and if you want tsk files support.</strong></p></div>';
+		print '<div class="alert alert-warning"><strong>Alert</strong> XML is not loaded. Needed to parse RSS for News pages and if you want tsk files support.</div>';
 	}
 	if (!extension_loaded('json')) {
 		$error[] = "Json is not loaded. Needed for aircraft schedule and bitly.";
@@ -107,20 +107,21 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 	}
 
 	if (!function_exists("gettext")) {
-		print '<div class="info column"><p><strong>gettext doesn\'t exist. Site translation not available.</strong></p></div>';
+		print '<div class="alert alert-warning"><strong>Alert</strong> gettext doesn\'t exist. Site translation not available.</div>';
 	}
-	print '<div class="info column"><p><strong>If you use MySQL or MariaDB, check that <i>max_allowed_packet</i> >= 8M, else import of some table can fail.</strong></p></div>';
+	print '<div class="alert alert-info">If you use MySQL or MariaDB, check that <i>max_allowed_packet</i> >= 8M, else import of some table can fail.</div>';
 	if (isset($_SERVER['REQUEST_SCHEME']) && isset($_SERVER['SERVER_NAME']) && isset($_SERVER['SERVER_PORT']) && isset($_SERVER['REQUEST_URI'])) {
 		if (function_exists('get_headers')) {
 			//$check_header = @get_headers($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].str_replace(array('install/','install'),'search',str_replace('index.php','',$_SERVER["REQUEST_URI"])));
 			$check_header = @get_headers($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].str_replace(array('install/','install'),'live/geojson?test',str_replace('index.php','',$_SERVER["REQUEST_URI"])));
+			print_r($check_header);
 			if (isset($check_header[0]) && !stripos($check_header[0],"200 OK")) {
-				print '<div class="info column"><p><strong>Check your configuration, rewrite don\'t seems to work well. If using Apache, you need to desactivate MultiViews <a href="https://github.com/Ysurac/FlightAirMap/wiki/Apache-configuration">https://github.com/Ysurac/FlightAirMap/wiki/Apache-configuration</a></strong></p></div>';
+				print '<div class="alert alert-danger"><strong>Error</strong> Check your configuration, rewrite don\'t seems to work well. If using Apache, you need to desactivate MultiViews <a href="https://github.com/Ysurac/FlightAirMap/wiki/Apache-configuration">https://github.com/Ysurac/FlightAirMap/wiki/Apache-configuration</a></div>';
 			}
 		}
 	}
 	if (count($error) > 0) {
-		print '<div class="info column"><ul>';
+		print '<div class="alert alert-danger"><ul>';
 		foreach ($error as $err) {
 			print '<li>'.$err.'</li>';
 		}
