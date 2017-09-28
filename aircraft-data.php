@@ -65,6 +65,9 @@ if (!empty($spotter_array)) {
 	} */
 
 	print '<div class="top">';
+	if (isset($globalCam) && $globalCam === TRUE) {
+		print '<div class="left"><img src="http://192.168.1.47:81/videostream.cgi?user=admin&pwd=888888&resolution=8&rate=0" alt="cam"/></div>';
+	}
 	if (isset($image)) {
 		print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].'" title="'.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' Image &copy; '.$spotter_item['image_copyright'].'"/><br />Image &copy; '.$spotter_item['image_copyright'].'</div>';
 	}
@@ -104,9 +107,13 @@ if (!empty($spotter_array)) {
 	print '<div id="aircraft">';
 	print '<span>'._("Aircraft").'</span>';
 	if (isset($spotter_item['aircraft_wiki'])) print '<a href="'.$spotter_item['aircraft_wiki'].'">'.$spotter_item['aircraft_name'].'</a>';
-	if (isset($spotter_item['aircraft_type']) && isset($spotter_item['aircraft_manufacturer']) && $spotter_item['aircraft_manufacturer'] != 'N/A' && isset($spotter_item['aircraft_name']) && $spotter_item['aircraft_name'] != 'N/A') print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
-	elseif (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a>';
+	if (isset($spotter_item['aircraft_type']) && isset($spotter_item['aircraft_manufacturer']) && $spotter_item['aircraft_manufacturer'] != 'N/A' && isset($spotter_item['aircraft_name']) && $spotter_item['aircraft_name'] != 'N/A') {
+		$aircraft_names = explode('/',$spotter_item['aircraft_name']);
+		if (count($aircraft_names) == 1) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')</a>';
+		else print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'" title="'.$spotter_item['aircraft_name'].'">'.$spotter_item['aircraft_manufacturer'].' '.$aircraft_names[0].' ('.$spotter_item['aircraft_type'].')</a>';
+	} elseif (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a>';
 	else print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
+	
 	print '</div>';
 	print '<div id ="altitude"><span>'._("Altitude").'</span>';
 	if (isset($globalGroundAltitude) && $globalGroundAltitude) {
@@ -147,6 +154,25 @@ if (!empty($spotter_array)) {
 	}
 	print '</div>';
 	print '<div id="coordinates"><span>'._("Coordinates").'</span>'.$spotter_item['latitude'].', '.$spotter_item['longitude'].'</div>';
+
+	if (isset($globalCam) && $globalCam) {
+		require_once(dirname(__FILE__).'/require/class.Common.php');
+		$Common = new Common();
+		$azimuth = round($Common->azimuth($globalCenterLatitude,$globalCenterLongitude,$spotter_item['latitude'],$spotter_item['longitude']));
+		$distance = $Common->distance($globalCenterLatitude,$globalCenterLongitude,$spotter_item['latitude'],$spotter_item['longitude'],'m');
+		$plunge = round($Common->plunge($globalCenterAltitude,$spotter_item['real_altitude'],$distance));
+		print '<div id="camcoordinates"><span>'._("Cam Coordinates").'</span>';
+		print 'azimuth: '.$azimuth;
+		print ' / ';
+		print 'plunge: '.$plunge;
+		print ' / ';
+		print 'distance: '.$distance;
+		print '</div>';
+		//echo $Common->getData('http://127.0.0.1/camera.php?azimuth='.$azimuth.'&plunge='.$plunge,'get','','','','','','',false,true);
+		//echo $Common->getData('file://'.dirname(__FILE__).'/camera.php?azimuth='.$azimuth.'&plunge='.$plunge,'get','','','','','','',false,true);
+		echo $Common->getData('http://'.$_SERVER['SERVER_NAME'].'/camera.php?azimuth='.$azimuth.'&plunge='.$plunge,'get','','','','','','',false,true);
+	}
+  
 	print '<div id="heading"><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
 	if (isset($spotter_item['pilot_name']) && $spotter_item['pilot_name'] != '') {
 		print '<div id="pilot"><span>'._("Pilot").'</span>';
