@@ -9,7 +9,7 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	else $MapType = $globalMapProvider;
 
 //	unset($_COOKIE['MapType']);
-	if ($MapType != 'Mapbox' && $MapType != 'OpenStreetMap' && $MapType != 'Bing-Aerial' && $MapType != 'Bing-Hybrid' && $MapType != 'Bing-Road' && $MapType != 'offline') {
+	if ($MapType != 'Mapbox' && $MapType != 'OpenStreetMap' && $MapType != 'Bing-Aerial' && $MapType != 'Bing-Hybrid' && $MapType != 'Bing-Road' && $MapType != 'offline' && $MapType != 'ArcGIS-Streetmap' && $MapType != 'ArcGIS-Satellite' && $MapType != 'NatGeo-Street') {
 		if (isset($globalBingMapKey) && $globalBingMapKey != '') $MapType = 'Bing-Aerial';
 		else $MapType = 'OpenStreetMap';
 	}
@@ -98,6 +98,27 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 		url : 'https://dev.virtualearth.net',
 		key: '<?php print $globalBingMapKey; ?>',
 		mapStyle: Cesium.BingMapsStyle.ROAD});
+<?php
+	} elseif ($MapType == 'ArcGIS-Satellite') {
+?>
+	var imProv = new Cesium.ArcGisMapServerImageryProvider({
+		url : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
+		credit : 'ESRI'
+	});
+<?php
+	} elseif ($MapType == 'ArcGIS-Streetmap') {
+?>
+	var imProv = new Cesium.ArcGisMapServerImageryProvider({
+		url : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer',
+		credit : 'ESRI'
+	});
+<?php
+	} elseif ($MapType == 'NatGeo-Street') {
+?>
+	var imProv = new Cesium.ArcGisMapServerImageryProvider({
+		url : 'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer',
+		credit : 'ESRI'
+	});
 <?php
 	} elseif ($MapType == 'offline') {
 ?>
@@ -473,7 +494,6 @@ camera.setView({
 	destination : Cesium.Cartesian3.fromDegrees(<?php echo $viewcenterlongitude; ?>,<?php echo $viewcenterlatitude; ?>, <?php echo $zoom; ?>),
 });
 <?php
-
 	}
 ?>
 <?php

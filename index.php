@@ -266,6 +266,10 @@ require_once('header.php');
 			    <option value="offline"<?php if ($MapType == 'offline') print ' selected'; ?>>Natural Earth (local)</option>
 			    <?php
 				    }
+			    ?>
+			    <option value="ArcGIS-Streetmap"<?php if ($MapType == 'ArcGIS-Streetmap') print ' selected'; ?>>ArcGIS Streetmap</option>
+			    <option value="ArcGIS-Satellite"<?php if ($MapType == 'ArcGIS-Satellite') print ' selected'; ?>>ArcGIS Satellite</option>
+			    <?php
 				    if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 			    ?>
 			    <option value="Bing-Aerial"<?php if ($MapType == 'Bing-Aerial') print ' selected'; ?>>Bing-Aerial</option>
@@ -305,6 +309,7 @@ require_once('header.php');
 			    <?php
 					}
 			    ?>
+			    <option value="NatGeo-Street"<?php if ($MapType == 'NatGeo-Street') print ' selected'; ?>>National Geographic Street</option>
 			    <option value="Yandex"<?php if ($MapType == 'Yandex') print ' selected'; ?>>Yandex</option>
 			    <option value="offline"<?php if ($MapType == 'offline') print ' selected'; ?>>Natural Earth</option>
 			    <?php
