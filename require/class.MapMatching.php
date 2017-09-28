@@ -46,7 +46,7 @@ class MapMatching {
 		$gpx .= '<trkseg>';
 		foreach($spotter_history_array as $spotter_data) {
 			$gpx .= '<trkpt lat="'.sprintf("%.8f",$spotter_data['latitude']).'" lon="'.sprintf("%.8f",$spotter_data['longitude']).'">';
-			$gpx .= '<ele>'.sprintf("%.6f",$spotter_data['altitude']).'</ele>';
+			if (isset($spotter_data['altitude'])) $gpx .= '<ele>'.sprintf("%.6f",$spotter_data['altitude']).'</ele>';
 			$gpx .= '<time>'.date("Y-m-d\TH:i:s\Z",strtotime($spotter_data['date'])).'</time>';
 			$gpx .= '</trkpt>';
 		}
