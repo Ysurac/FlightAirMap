@@ -4,7 +4,7 @@ extra_started_commands="reload"
 
 start() {
         ebegin "Starting Cron-ACARS"
-        start-stop-daemon --background --start --make-pidfile --pidfile /var/run/flightairmap-acars.pid --exec /var/www/airradar/Web_App/scripts/daemon-acars.php
+        start-stop-daemon --background --start --make-pidfile --pidfile /var/run/flightairmap-acars.pid --exec /var/www/airradar/scripts/daemon-acars.php
         eend $?
 }
 

@@ -4,7 +4,7 @@ Requires=mysql.service
 After=mysql.service
 
 [Service]
-ExecStart=/var/www/flightairmap/Web_App/scripts/daemon-spotter.php
+ExecStart=/var/www/flightairmap/scripts/daemon-spotter.php
 Restart=always
 RestartSec=10
 
