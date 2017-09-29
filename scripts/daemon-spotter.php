@@ -1042,6 +1042,10 @@ while ($i > 0) {
 		    $data['datetime'] = date('Y-m-d H:i:s');
 		    $data['format_source'] = 'aircraftjson';
 		    $data['id_source'] = $id_source;
+		    if (isset($value['name']) && $value['name'] != '') {
+			    if (isset($line['mlat']) && !empty($line['mlat'])) $data['source_name'] = $value['name'].'_MLAT';
+			    else $data['source_name'] = $value['name'];
+		    } elseif (isset($line['mlat']) && !empty($line['mlat'])) $data['source_name'] = 'MLAT';
 		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 		    $SI->add($data);
 		    unset($data);
