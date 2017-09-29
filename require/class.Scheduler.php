@@ -1076,9 +1076,11 @@ class Schedule {
 				case "VY":
 					return $this->getVueling($ident);
 				// Alitalia
+				/*
 				case "AZ":
 				case "AZA":
 					return $this->getAlitalia($ident);
+				*/
 				// Air Canada
 				case "ACA":
 				case "AC":
