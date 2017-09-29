@@ -1265,13 +1265,20 @@ class update_db {
 			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
 			{
 				if ($i > 0) {
+					$data = array_map(function($v) { return $v === 'NULL' ? NULL : $v; },$data);
 					$query = 'INSERT INTO routes (CallSign,Operator_ICAO,FromAirport_ICAO,FromAirport_Time,ToAirport_ICAO,ToAirport_Time,RouteStop,Source) VALUES (:CallSign,:Operator_ICAO,:FromAirport_ICAO,:FromAirport_Time,:ToAirport_ICAO,:ToAirport_Time,:RouteStop,:source)';
 					try {
 						$sth = $Connection->db->prepare($query);
 						$sth->execute(array(':CallSign' => $data[0],':Operator_ICAO' => $data[1],':FromAirport_ICAO' => $data[2],':FromAirport_Time' => $data[3], ':ToAirport_ICAO' => $data[4],':ToAirport_Time' => $data[5],':RouteStop' => $data[6],':source' => 'website_fam'));
 					} catch(PDOException $e) {
 						if ($globalDebug) echo "error: ".$e->getMessage()." - data: ".implode(',',$data);
+						die();
 					}
+				}
+				if ($globalTransaction && $i % 2000 == 0) {
+					$Connection->db->commit();
+					if ($globalDebug) echo '.';
+					$Connection->db->beginTransaction();
 				}
 				$i++;
 			}
@@ -2889,25 +2896,55 @@ class update_db {
 	public static function update_aircraft() {
 		global $tmp_dir, $globalDebug;
 		date_default_timezone_set('UTC');
-		//$error = '';
-		/*
-		if ($globalDebug) echo "Aircrafts : Download...";
-		$data_req_array = array('Mnfctrer' => '','Model' => '','Dscrptn'=> '','EngCount' =>'' ,'EngType'=> '','TDesig' => '*','WTC' => '','Button' => 'Search');
-		$data_req = 'Mnfctrer=Airbus&Model=&Dscrptn=&EngCount=&EngType=&TDesig=&WTC=&Button=Search';
-		//$data = Common::getData('http://cfapp.icao.int/Doc8643/8643_List1.cfm','post',$data_req_array,array('Content-Type: application/x-www-form-urlencoded','Host: cfapp.icao.int','Origin: http://cfapp.icao.int','Pragma: no-cache','Upgrade-Insecure-Requests: 1','Content-Length: '.strlen($data_req)),'','http://cfapp.icao.int/Doc8643/search.cfm',20);
-		$data = Common::getData('http://cfapp.icao.int/Doc8643/8643_List1.cfm','post',$data_req_array,'','','http://cfapp.icao.int/Doc8643/search.cfm',30);
-//		echo strlen($data_req);
-		echo $data;
-		*/
-		if (file_exists($tmp_dir.'aircrafts.html')) {
-		    //var_dump(file_get_html($tmp_dir.'aircrafts.html'));
-		    $fh = fopen($tmp_dir.'aircrafts.html',"r");
-		    $result = fread($fh,100000000);
-		    //echo $result;
-		    //var_dump(str_get_html($result));
-		    //print_r(self::table2array($result));
+		$Common = new Common();
+		$data = $Common->getData('https://www4.icao.int/doc8643/External/AircraftTypes','post',array('X-Requested-With: XMLHttpRequest','Accept: application/json, text/javascript, */*; q=0.01','Host: www4.icao.int','Origin: https://www.icao.int','Content-Length: 0'),'','','https://www.icao.int/publications/DOC8643/Pages/Search.aspx',60);
+		$all = json_decode($data,true);
+		$Connection = new Connection();
+		$querychk = "SELECT COUNT(1) as nb FROM aircraft WHERE icao = :icao";
+		$sth = $Connection->db->prepare($querychk);
+		$queryins = "INSERT INTO aircraft (icao,type,manufacturer,aircraft_shadow,aircraft_description,engine_type,engine_count,wake_category,official_page) VALUES (:icao,:type,:manufacturer,:aircraft_shadow,:aircraft_description,:engine_type,:engine_count,:wake_category,'')";
+		$queryup = "UPDATE aircraft SET type = :type WHERE icao = :icao";
+		$sthins = $Connection->db->prepare($queryins);
+		$sthup = $Connection->db->prepare($queryup);
+		$allicao = array();
+		foreach ($all as $model) {
+			$icao = $model['Designator'];
+			if (!isset($allicao[$icao])) {
+				$aircraft_shadow = 'generic_'.substr($model['EngineType'],0,1).$model['EngineCount'].$model['WTC'].'.png';
+				$allicao[$icao] = array(':icao' => $icao,':type' => $model['ModelFullName'],':manufacturer' => $model['ManufacturerCode'],':aircraft_shadow' => $aircraft_shadow,':aircraft_description' => $model['AircraftDescription'],':engine_type' => $model['EngineType'],':engine_count' => $model['EngineCount'],':wake_category' => $model['WTC']);
+			} else {
+				$allicao[$icao][':type'] = $allicao[$icao][':type'].'/'.$model['ModelFullName'];
+			}
 		}
-
+		foreach ($allicao as $icao => $airdata) {
+			try {
+				$sth->execute(array(':icao' => $icao));
+				$exist = $sth->fetchAll(PDO::FETCH_ASSOC);
+				if ($exist[0]['nb'] == 0) {
+					$sthins->execute($airdata);
+				} else {
+					$sthup->execute(array(':type' => $airdata[':type'],':icao' => $icao));
+				}
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+		}
+		
+		/*
+		foreach ($all as $model) {
+			try {
+				$sth->execute(array(':icao' => $model['Designator']));
+				$exist = $sth->fetchAll(PDO::FETCH_ASSOC);
+				if ($exist[0]['nb'] == 0) {
+					echo 'ICAO: '.$model['Designator'].' is not available'."\n";
+					$aircraft_shadow = 'generic_'.substr($model['EngineType'],0,1).$model['EngineCount'].$model['WTC'].'.png';
+					$sthins->execute(array(':icao' => $model['Designator'],':type' => $model['ModelFullName'],':manufacturer' => $model['ManufacturerCode'],':aircraft_shadow' => $aircraft_shadow,':aircraft_description' => $model['AircraftDescription'],':engine_type' => $model['EngineType'],':engine_count' => $model['EngineCount'],':wake_category' => $model['WTC']));
+				}
+			} catch(PDOException $e) {
+				return "error : ".$e->getMessage();
+			}
+		}
+		*/
 	}
 	
 	public static function update_notam() {
@@ -3694,4 +3731,6 @@ class update_db {
 //echo update_db::fix_icaotype();
 //echo update_db::satellite_ucsdb('tmp/UCS_Satellite_Database_officialname_1-1-17.txt');
 //echo update_db::update_celestrak();
+//echo update_db::update_aircraft();
+
 ?>

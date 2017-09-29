@@ -299,7 +299,7 @@ class Accident {
 	* @param Array $crash An array with accidents/incidents data
 	*/
 	public function add($crash,$new = false) {
-		global $globalTransaction, $globalDebug;
+		global $globalTransaction, $globalDebug, $globalAircraftImageFetch;
 		require_once('class.Connection.php');
 		require_once('class.Image.php');
 		require_once('class.Spotter.php');
@@ -331,11 +331,11 @@ class Accident {
 					if (strpos($cr['registration'],'-') === FALSE) $cr['registration'] = $Spotter->convertAircraftRegistration($cr['registration']);
 					$query_check_values = array(':registration' => $cr['registration'],':date' => date('Y-m-d',$cr['date']),':type' => $cr['type'],':source' => $cr['source']);
 					$sth_check->execute($query_check_values);
-					$result_check = $sth_check->fetch(PDO::FETCH_ASSOC);
-					if ($result_check['nb'] == 0) {
+					$result_check = $sth_check->fetchAll(PDO::FETCH_ASSOC);
+					if ($result_check[0]['nb'] == 0) {
 						$query_values = array(':registration' => trim($cr['registration']),':date' => date('Y-m-d',$cr['date']),':url' => $cr['url'],':country' => $cr['country'],':place' => $cr['place'],':title' => $cr['title'],':fatalities' => $cr['fatalities'],':latitude' => $cr['latitude'],':longitude' => $cr['longitude'],':type' => $cr['type'],':source' => $cr['source'],':ident' => $cr['ident'],':aircraft_manufacturer' => $cr['aircraft_manufacturer'],':aircraft_name' => $cr['aircraft_name'],':airline_name' => $cr['operator']);
 						$sth->execute($query_values);
-						if ($cr['date'] > time()-(30*86400)) {
+						if ($globalAircraftImageFetch && $cr['date'] > time()-(30*86400)) {
 							$imgchk = $Image->getSpotterImage($cr['registration']);
 							if (empty($imgchk)) {
 								if ($globalDebug) echo "\t".'Get image for '.$cr['registration'].'...';

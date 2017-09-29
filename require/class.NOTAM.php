@@ -1208,14 +1208,24 @@ class NOTAM {
 		}
 	}
 	public function updateNOTAMfromTextFile($filename) {
+		global $globalTransaction, $globalDebug;
 		$alldata = $this->parseNOTAMtextFile($filename);
 		if (count($alldata) > 0) {
 			$this->deleteOldNOTAM();
+			if ($globalTransaction) $this->db->beginTransaction();
+			$j = 0;
 			foreach ($alldata as $initial_data) {
+				$j++;
 				$data = $this->parse($initial_data);
 				$notamref = $this->getNOTAMbyRef($data['ref']);
 				if (!isset($notamref['notam_id'])) $this->addNOTAM($data['ref'],$data['title'],'',$data['fir'],$data['code'],'',$data['scope'],$data['lower_limit'],$data['upper_limit'],$data['latitude'],$data['longitude'],$data['radius'],$data['date_begin'],$data['date_end'],$data['permanent'],$data['text'],$data['full_notam']);
+				if ($globalTransaction && $j % 1000 == 0) {
+					$this->db->commit();
+					if ($globalDebug) echo '.';
+					$this->db->beginTransaction();
+				}
 			}
+			if ($globalTransaction) $this->db->commit();
 		}
 	}
 
