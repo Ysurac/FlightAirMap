@@ -311,6 +311,8 @@ function connect_all($hosts) {
 		if ($globalDebug) echo 'Connection in progress to '.$hostn.':'.$port.' ('.$globalSources[$id]['format'].')....'."\n";
             } else {
 		if ($globalDebug) echo 'Connection failed to '.$hostn.':'.$port.' : '.$errno.' '.$errstr."\n";
+		sleep(10);
+		$this->connect_all($hosts);
     	    }
         }
     }
