@@ -1044,9 +1044,11 @@ class Schedule {
 					break;
 */
 				// Air France
+				/*
 				case "AF":
 				case "AFR":
 					return $this->getAirFrance($ident,$date,'AF');
+				*/
 				// HOP
 				case "A5":
 				case "HOP":
