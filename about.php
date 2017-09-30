@@ -40,7 +40,7 @@ require_once('header.php');
 <?php
 	if ($globalFlightAware) { 
 ?>
-    <p>The data from FlightAware is coming from multiple sources. Not every aircraft is tracked on FlightAware, especially not older aircrafts as well as government aircrafts, however most modern airliners will work. You can learn more about how it works on <a href="http://flightaware.com/adsb/" target="_blank">FlightAware's ADS-B</a> page. Also, not every aircraft is shown to have flown exactly at that minute as seen on this site (aka real-time). There is a 5 minute delay on some of the sources.</p>
+    <p>The data from FlightAware is coming from multiple sources. Not every aircraft is tracked on FlightAware, especially not older aircraft as well as government aircraft, however most modern airliners will work. You can learn more about how it works on <a href="http://flightaware.com/adsb/" target="_blank">FlightAware's ADS-B</a> page. Also, not every aircraft is shown to have flown exactly at that minute as seen on this site (aka real-time). There is a 5 minute delay on some of the sources.</p>
 <?php
 	}
 ?>
@@ -73,7 +73,7 @@ require_once('header.php');
     </ul>
     
     <h3>Models credits</h3>
-    <p>Credits for aircrafts models are <a href="models/sources.txt">here</a>, spaces models <a href="models/space/sources.txt">here</a> and vehicules models <a href="models/vehicules/sources.txt">here</a></p>
+    <p>Credits for aircraft models are <a href="models/sources.txt">here</a>, spaces models <a href="models/space/sources.txt">here</a> and vehicules models <a href="models/vehicules/sources.txt">here</a></p>
     <p>Sources of models are available <a href="https://github.com/Ysurac/FlightAirMap-3dmodels">here</a>.</p>
 </div>
 

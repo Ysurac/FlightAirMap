@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-13 15:41+0200\n"
+"POT-Creation-Date: 2017-09-30 14:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,8 +19,8 @@ msgstr ""
 
 #: statistics-manufacturer.php:6 registration-sub-menu.php:14
 #: owner-sub-menu.php:2 country-sub-menu.php:2 statistics-time.php:6
-#: statistics-aircraft.php:6 header.php:545 header.php:598 header.php:640
-#: header.php:683 route-sub-menu.php:2 statistics-airport-arrival.php:6
+#: statistics-aircraft.php:6 header.php:546 header.php:599 header.php:641
+#: header.php:684 route-sub-menu.php:2 statistics-airport-arrival.php:6
 #: statistics-sub-menu.php:2 statistics-callsign.php:6 airport-sub-menu.php:2
 #: statistics-type.php:6 statistics-airport-departure-country.php:6
 #: statistics-route-waypoint.php:6 statistics-registration.php:6
@@ -136,7 +136,7 @@ msgstr ""
 msgid "# of times"
 msgstr ""
 
-#: airline.php:18 airline.php:41 pilot-detailed.php:127 header.php:481
+#: airline.php:18 airline.php:41 pilot-detailed.php:127 header.php:482
 #: owner-detailed.php:134 statistics.php:112
 msgid "Airlines"
 msgstr ""
@@ -149,19 +149,19 @@ msgstr ""
 msgid "Click to see alliance activity"
 msgstr ""
 
-#: airline.php:46 index.php:574 index.php:633
+#: airline.php:46 index.php:597 index.php:656
 msgid "All"
 msgstr ""
 
-#: airline.php:48 index.php:634
+#: airline.php:48 index.php:657
 msgid "Passenger"
 msgstr ""
 
-#: airline.php:50 index.php:635
+#: airline.php:50 index.php:658
 msgid "Cargo"
 msgstr ""
 
-#: airline.php:52 index.php:636 statistics.php:121
+#: airline.php:52 index.php:659 statistics.php:121
 msgid "Military"
 msgstr ""
 
@@ -173,13 +173,13 @@ msgstr ""
 msgid "Banned in Europe"
 msgstr ""
 
-#: js/map.2d.js.php:505 js/map.2d.js.php:506 js/map.3d.js.php:214
+#: js/map.2d.js.php:544 js/map.2d.js.php:545 js/map.3d.js.php:237
 #: js/map.new.js.php:1704 js/map.new.js.php:1705 js/map.js.php:1527
 #: js/map.js.php:1528
 msgid "Your location"
 msgstr ""
 
-#: js/map.2d.js.php:550 js/map.3d.js.php:249 js/map.new.js.php:1749
+#: js/map.2d.js.php:589 js/map.3d.js.php:272 js/map.new.js.php:1749
 #: js/map.js.php:1572
 msgid "Compass is not supported by this browser."
 msgstr ""
@@ -194,34 +194,34 @@ msgstr ""
 msgid "Archive"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:418 js/map-marine.2d.js.php:417
+#: js/map-tracker.2d.js.php:422 js/map-marine.2d.js.php:417
 #: js/map-aircraft.2d.js.php:580 js/map.new.js.php:914 js/map.js.php:921
 msgid "Route stop:"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:433 js/map-marine.2d.js.php:432
+#: js/map-tracker.2d.js.php:437 js/map-marine.2d.js.php:432
 #: js/map-aircraft.2d.js.php:595 js/map.new.js.php:929 js/map.js.php:936
-#: owner-sub-menu.php:17 country-sub-menu.php:9 aircraft-detailed.php:95
-#: route-sub-menu.php:9 table-output.php:56 table-output.php:59
-#: table-output.php:61 table-output.php:210 table-output.php:223
-#: table-output.php:263 table-output.php:266 table-output.php:268
-#: table-output.php:395 table-output.php:398 table-output.php:400
-#: statistics-sub-menu.php:67 statistics-sub-menu.php:70
-#: statistics-sub-menu.php:171 statistics-sub-menu.php:174
-#: airport-sub-menu.php:9 search.php:368 aircraft-data.php:108
-#: statistics-registration.php:52 airline-sub-menu.php:9 date-sub-menu.php:9
-#: pilot-sub-menu.php:9 ident-sub-menu.php:9 manufacturer-sub-menu.php:9
-#: flightid-overview.php:358
+#: pilot-detailed.php:123 owner-sub-menu.php:17 country-sub-menu.php:9
+#: aircraft-detailed.php:95 header.php:461 route-sub-menu.php:9
+#: table-output.php:56 table-output.php:59 table-output.php:61
+#: table-output.php:210 table-output.php:223 table-output.php:263
+#: table-output.php:266 table-output.php:268 table-output.php:395
+#: table-output.php:398 table-output.php:400 statistics-sub-menu.php:67
+#: statistics-sub-menu.php:70 statistics-sub-menu.php:171
+#: statistics-sub-menu.php:174 airport-sub-menu.php:9 search.php:368
+#: aircraft-data.php:108 statistics-registration.php:52 airline-sub-menu.php:9
+#: date-sub-menu.php:9 pilot-sub-menu.php:9 ident-sub-menu.php:9
+#: owner-detailed.php:130 manufacturer-sub-menu.php:9 flightid-overview.php:358
 msgid "Aircraft"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:445 js/map-marine.2d.js.php:444
+#: js/map-tracker.2d.js.php:449 js/map-marine.2d.js.php:444
 #: js/map-aircraft.2d.js.php:54 js/map-aircraft.2d.js.php:607
 #: js/map.new.js.php:317 js/map.new.js.php:413 js/map.new.js.php:941
 #: js/map.js.php:316 js/map.js.php:412 js/map.js.php:948 airport.php:79
 #: airport-statistics-airline.php:50 airport-statistics-manufacturer.php:51
 #: tracker-data.php:79 airport-statistics-departure-airport.php:49
-#: airport-statistics-arrival-airport.php:50 aircraft-data.php:114
+#: airport-statistics-arrival-airport.php:50 aircraft-data.php:118
 #: airport-data.php:45 airport-statistics-registration.php:51
 #: space-data.php:107 airport-statistics-time.php:51
 #: airport-statistics-route.php:51 location-data.php:34
@@ -232,7 +232,7 @@ msgstr ""
 msgid "Altitude"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:452 js/map-marine.2d.js.php:451
+#: js/map-tracker.2d.js.php:456 js/map-marine.2d.js.php:451
 #: js/map-aircraft.2d.js.php:614 js/map.new.js.php:948 js/map.js.php:955
 #: date-statistics-registration.php:46 owner-sub-menu.php:21
 #: owner-statistics-registration.php:43
@@ -242,7 +242,7 @@ msgstr ""
 #: pilot-statistics-registration.php:43 route-sub-menu.php:13
 #: statistics-sub-menu.php:71 statistics-sub-menu.php:175
 #: airport-sub-menu.php:13 registration-detailed.php:69 search.php:388
-#: search.php:390 aircraft-data.php:142 statistics-registration.php:51
+#: search.php:390 aircraft-data.php:146 statistics-registration.php:51
 #: registration-statistics-arrival-airport.php:112
 #: registration-statistics-departure-airport-country.php:102
 #: airline-sub-menu.php:13 airport-statistics-registration.php:71
@@ -256,19 +256,19 @@ msgstr ""
 msgid "Registration"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:457 js/map-marine.2d.js.php:456
+#: js/map-tracker.2d.js.php:461 js/map-marine.2d.js.php:456
 #: js/map-aircraft.2d.js.php:619 js/map.new.js.php:953 js/map.js.php:960
-#: tracker-data.php:102 aircraft-data.php:143 space-data.php:116
+#: tracker-data.php:102 aircraft-data.php:147 space-data.php:116
 #: marine-data.php:91
 msgid "Speed"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:461 js/map-marine.2d.js.php:460
+#: js/map-tracker.2d.js.php:465 js/map-marine.2d.js.php:460
 #: js/map-aircraft.2d.js.php:623 js/map.new.js.php:957 js/map.js.php:964
 #: airport.php:80 airport-statistics-airline.php:51
 #: airport-statistics-manufacturer.php:52 atc-data.php:43 tracker-data.php:111
 #: airport-statistics-departure-airport.php:50
-#: airport-statistics-arrival-airport.php:51 aircraft-data.php:152
+#: airport-statistics-arrival-airport.php:51 aircraft-data.php:156
 #: airport-data.php:53 airport-statistics-registration.php:52
 #: airport-statistics-time.php:52 airport-statistics-route.php:52
 #: location-data.php:45 airport-statistics-airline-country.php:51
@@ -279,49 +279,49 @@ msgstr ""
 msgid "Coordinates"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:465 js/map-marine.2d.js.php:464
+#: js/map-tracker.2d.js.php:469 js/map-marine.2d.js.php:464
 #: js/map-aircraft.2d.js.php:627 js/map.new.js.php:961 js/map.js.php:968
-#: tracker-data.php:113 aircraft-data.php:172 marine-data.php:102
+#: tracker-data.php:113 aircraft-data.php:176 marine-data.php:102
 msgid "Heading"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:470 js/map-marine.2d.js.php:469
+#: js/map-tracker.2d.js.php:474 js/map-marine.2d.js.php:469
 #: js/map-aircraft.2d.js.php:632 js/map.new.js.php:966 js/map.js.php:973
 #: pilot-statistics-aircraft.php:69
 #: pilot-statistics-departure-airport-country.php:106
 #: pilot-statistics-time.php:93 pilot-statistics-manufacturer.php:67
 #: pilot-statistics-registration.php:91 table-output.php:122
 #: table-output.php:315 table-output.php:437 pilot-statistics-airline.php:85
-#: aircraft-data.php:174 pilot-statistics-route.php:77
+#: aircraft-data.php:178 pilot-statistics-route.php:77
 #: pilot-statistics-arrival-airport.php:118
 #: pilot-statistics-arrival-airport-country.php:106
 #: pilot-statistics-departure-airport.php:118
 msgid "Pilot"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:480 js/map-marine.2d.js.php:479
+#: js/map-tracker.2d.js.php:484 js/map-marine.2d.js.php:479
 #: js/map-aircraft.2d.js.php:642 js/map.new.js.php:976 js/map.js.php:983
 #: registration-sub-menu.php:30 owner-sub-menu.php:36 country-sub-menu.php:37
 #: table-output.php:321 table-output.php:443 statistics-sub-menu.php:105
 #: statistics-sub-menu.php:210 airport-sub-menu.php:37 search.php:484
-#: aircraft-data.php:203 airline-sub-menu.php:28 aircraft-sub-menu.php:28
+#: aircraft-data.php:207 airline-sub-menu.php:28 aircraft-sub-menu.php:28
 #: date-sub-menu.php:37 pilot-sub-menu.php:28 ident-sub-menu.php:28
 #: manufacturer-sub-menu.php:36 flightid-overview.php:437
 msgid "Route"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:485 js/map-marine.2d.js.php:484
+#: js/map-tracker.2d.js.php:489 js/map-marine.2d.js.php:484
 #: js/map-aircraft.2d.js.php:647 js/map.new.js.php:981 js/map.js.php:988
-#: aircraft-data.php:204
+#: aircraft-data.php:208
 msgid "Latest ACARS message"
 msgstr ""
 
-#: js/map-tracker.2d.js.php:491 js/map-marine.2d.js.php:490
+#: js/map-tracker.2d.js.php:495 js/map-marine.2d.js.php:490
 #: js/map-aircraft.2d.js.php:653 js/map.new.js.php:987 js/map.js.php:994
 #: table-output.php:629 table-output.php:631 table-output.php:633
 #: table-output.php:635 table-output.php:642 table-output.php:644
 #: table-output.php:648 table-output.php:657 table-output.php:659
-#: table-output.php:661 table-output.php:663 aircraft-data.php:205
+#: table-output.php:661 table-output.php:663 aircraft-data.php:209
 msgid "Squawk:"
 msgstr ""
 
@@ -446,10 +446,9 @@ msgstr ""
 msgid "Homepage"
 msgstr ""
 
-#: js/map-aircraft.2d.js.php:181 js/map.new.js.php:506 js/map.new.js.php:508
-#: js/map-aircraft.3d.js.php:307 js/map-aircraft.3d.js.php:309
-#: js/map.js.php:504
-msgid "Aircrafts detected"
+#: js/map-aircraft.2d.js.php:181 js/map-aircraft.3d.js.php:307
+#: js/map-aircraft.3d.js.php:309
+msgid "Aircraft detected"
 msgstr ""
 
 #: js/map-aircraft.2d.js.php:198 js/map-aircraft.2d.js.php:199
@@ -489,7 +488,7 @@ msgid "Title:"
 msgstr ""
 
 #: js/map-aircraft.2d.js.php:1222 js/map.new.js.php:2110 js/map.js.php:1944
-#: index.php:674 table-output.php:570 table-output.php:575 table-output.php:577
+#: index.php:697 table-output.php:570 table-output.php:575 table-output.php:577
 #: table-output.php:579 table-output.php:581 table-output.php:583
 #: table-output.php:585 table-output.php:587 table-output.php:589
 #: table-output.php:591 table-output.php:593 table-output.php:595
@@ -510,6 +509,10 @@ msgstr ""
 
 #: js/map-aircraft.2d.js.php:1228 js/map.new.js.php:2116 js/map.js.php:1950
 msgid "Base:"
+msgstr ""
+
+#: js/map.new.js.php:506 js/map.new.js.php:508 js/map.js.php:504
+msgid "Aircrafts detected"
 msgstr ""
 
 #: footer.php:11
@@ -537,7 +540,7 @@ msgstr ""
 #: country-detailed.php:90 ident-detailed.php:224 incident-latest.php:42
 #: manufacturer-detailed.php:82 latest.php:71 accident-latest.php:40
 #: acars-archive.php:39 highlights-display.php:73 owner-detailed.php:147
-#: acars-latest.php:42 airport-detailed.php:201 incident-detailed.php:61
+#: acars-latest.php:42 airport-detailed.php:202 incident-detailed.php:61
 msgid "Previous Page"
 msgstr ""
 
@@ -549,7 +552,7 @@ msgstr ""
 #: country-detailed.php:94 ident-detailed.php:228 incident-latest.php:43
 #: manufacturer-detailed.php:86 latest.php:75 accident-latest.php:41
 #: acars-archive.php:40 highlights-display.php:77 owner-detailed.php:151
-#: acars-latest.php:45 airport-detailed.php:205 incident-detailed.php:62
+#: acars-latest.php:45 airport-detailed.php:206 incident-detailed.php:62
 msgid "Next Page"
 msgstr ""
 
@@ -881,7 +884,7 @@ msgstr ""
 #: manufacturer-statistics-airline.php:103
 #: aircraft-statistics-registration.php:114
 #: date-statistics-airline-country.php:115 owner-statistics-time.php:95
-#: country-statistics-registration.php:110 airport-detailed.php:212
+#: country-statistics-registration.php:110 airport-detailed.php:213
 #: flightid-overview.php:636 ident-statistics-registration.php:88
 #: airport-statistics-arrival-airport-country.php:137
 #: pilot-statistics-departure-airport.php:120
@@ -1106,11 +1109,7 @@ msgid "Flights"
 msgstr ""
 
 #: pilot-detailed.php:121 owner-detailed.php:128
-msgid "Aircrafts type"
-msgstr ""
-
-#: pilot-detailed.php:123 header.php:460 owner-detailed.php:130
-msgid "Aircrafts"
+msgid "Aircraft type"
 msgstr ""
 
 #: pilot-detailed.php:125 owner-detailed.php:132
@@ -1133,7 +1132,7 @@ msgstr ""
 #: owner-statistics-arrival-airport.php:119 table-output.php:125
 #: table-output.php:211 table-output.php:224 table-output.php:318
 #: table-output.php:440 owner-statistics-arrival-airport-country.php:106
-#: aircraft-data.php:180 owner-statistics-departure-airport-country.php:106
+#: aircraft-data.php:184 owner-statistics-departure-airport-country.php:106
 #: space-data.php:136 owner-statistics-departure-airport.php:118
 #: owner-statistics-aircraft.php:69 owner-statistics-route.php:77
 #: owner-detailed.php:156 owner-statistics-time.php:93
@@ -1201,7 +1200,7 @@ msgid ""
 msgstr ""
 
 #: country-statistics-route.php:83 registration-statistics-route.php:57
-#: table-output.php:1254 statistics-route-airport.php:61
+#: table-output.php:1256 statistics-route-airport.php:61
 #: airport-statistics-route.php:91 pilot-statistics-route.php:66
 #: airline-statistics-route.php:137 owner-statistics-route.php:66
 #: ident-statistics-route.php:61
@@ -1518,7 +1517,7 @@ msgstr ""
 msgid "Sorry, the aircraft manufacturer does not exist in this database. :("
 msgstr ""
 
-#: currently.php:49 header.php:500 header.php:593 header.php:634 header.php:677
+#: currently.php:49 header.php:501 header.php:594 header.php:635 header.php:678
 msgid "Current Activity"
 msgstr ""
 
@@ -1618,7 +1617,7 @@ msgstr ""
 #: pilot-statistics-aircraft.php:36
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights piloted by "
+"The statistic below shows the most common aircraft of flights piloted by "
 "<strong>%s</strong>."
 msgstr ""
 
@@ -1678,7 +1677,7 @@ msgstr ""
 #: airport-statistics-registration.php:55 airport-statistics-time.php:55
 #: airport-statistics-route.php:55
 #: airport-statistics-departure-airport-country.php:54
-#: airport-statistics-aircraft.php:55 airport-detailed.php:189
+#: airport-statistics-aircraft.php:55 airport-detailed.php:190
 #: airport-statistics-arrival-airport-country.php:54
 msgid ""
 "This special airport profile shows all flights that do <u>not</u> have a "
@@ -1688,7 +1687,7 @@ msgstr ""
 #: airport.php:90
 #, php-format
 msgid ""
-"The table below shows the route(s) aircrafts have used to/from <strong>%s</"
+"The table below shows the route(s) aircraft have used to/from <strong>%s</"
 "strong>, sorted by the most recent one."
 msgstr ""
 
@@ -1699,12 +1698,12 @@ msgstr ""
 #: airport-statistics-registration.php:122 airport-statistics-time.php:123
 #: airport-statistics-route.php:105 airport-statistics-airline-country.php:139
 #: airport-statistics-departure-airport-country.php:139
-#: airport-statistics-aircraft.php:99 airport-detailed.php:213
+#: airport-statistics-aircraft.php:99 airport-detailed.php:214
 #: airport-statistics-arrival-airport-country.php:138
 msgid "Sorry, the airport does not exist in this database. :("
 msgstr ""
 
-#: airport.php:115 airport.php:118 header.php:485
+#: airport.php:115 airport.php:118 header.php:486
 msgid "Airports"
 msgstr ""
 
@@ -1874,15 +1873,15 @@ msgstr ""
 msgid "Location:"
 msgstr ""
 
-#: tools-metar.php:42 airport-data.php:82 airport-detailed.php:155
+#: tools-metar.php:42 airport-data.php:82 airport-detailed.php:156
 msgid "Wind:"
 msgstr ""
 
-#: tools-metar.php:54 airport-data.php:94 airport-detailed.php:167
+#: tools-metar.php:54 airport-data.php:94 airport-detailed.php:168
 msgid "Visibility:"
 msgstr ""
 
-#: tools-metar.php:57 airport-data.php:97 airport-detailed.php:170
+#: tools-metar.php:57 airport-data.php:97 airport-detailed.php:171
 msgid "Weather:"
 msgstr ""
 
@@ -1890,19 +1889,19 @@ msgstr ""
 msgid "Cloud:"
 msgstr ""
 
-#: tools-metar.php:68 airport-data.php:100 airport-detailed.php:173
+#: tools-metar.php:68 airport-data.php:100 airport-detailed.php:174
 msgid "Temperature:"
 msgstr ""
 
-#: tools-metar.php:71 airport-data.php:103 airport-detailed.php:176
+#: tools-metar.php:71 airport-data.php:103 airport-detailed.php:177
 msgid "Dew point:"
 msgstr ""
 
-#: tools-metar.php:75 airport-data.php:107 airport-detailed.php:180
+#: tools-metar.php:75 airport-data.php:107 airport-detailed.php:181
 msgid "Humidity:"
 msgstr ""
 
-#: tools-metar.php:78 airport-data.php:110 airport-detailed.php:183
+#: tools-metar.php:78 airport-data.php:110 airport-detailed.php:184
 msgid "Pressure:"
 msgstr ""
 
@@ -1944,7 +1943,7 @@ msgstr ""
 #: country-statistics-aircraft.php:51 manufacturer-statistics-aircraft.php:47
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights from <strong>"
+"The statistic below shows the most common aircraft of flights from <strong>"
 "%s</strong>."
 msgstr ""
 
@@ -1999,7 +1998,7 @@ msgid ""
 msgstr ""
 
 #: index.php:44
-msgid "Aircrafts Detected"
+msgid "Aircraft Detected"
 msgstr ""
 
 #: index.php:45
@@ -2034,7 +2033,7 @@ msgstr ""
 msgid "Layers"
 msgstr ""
 
-#: index.php:94 index.php:517
+#: index.php:94 index.php:540
 msgid "Filters"
 msgstr ""
 
@@ -2042,7 +2041,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: index.php:104 index.php:670 header.php:659
+#: index.php:105 index.php:693 header.php:660
 msgid "Satellites"
 msgstr ""
 
@@ -2082,171 +2081,175 @@ msgstr ""
 msgid "Type of Map:"
 msgstr ""
 
-#: index.php:329
+#: index.php:348
 msgid "Type of Terrain:"
 msgstr ""
 
-#: index.php:343
+#: index.php:362
 msgid "Display 2.5D buidings on map"
 msgstr ""
 
-#: index.php:348
+#: index.php:367
 msgid "Display flight info as popup"
 msgstr ""
 
-#: index.php:349
+#: index.php:368
 msgid "Display flight path"
 msgstr ""
 
-#: index.php:350
+#: index.php:369
 msgid "Display flight route on click"
 msgstr ""
 
-#: index.php:351
+#: index.php:370
 msgid "Display flight remaining route on click"
 msgstr ""
 
-#: index.php:352
+#: index.php:371
 msgid "Planes animate between updates"
 msgstr ""
 
-#: index.php:357
+#: index.php:375
+msgid "Enable map matching"
+msgstr ""
+
+#: index.php:380
 msgid "Satellites animate between updates"
 msgstr ""
 
-#: index.php:362
+#: index.php:385
 msgid "Display airports on map"
 msgstr ""
 
-#: index.php:363
+#: index.php:386
 msgid "Display ground station on map"
 msgstr ""
 
-#: index.php:364
+#: index.php:387
 msgid "Display weather station on map"
 msgstr ""
 
-#: index.php:365
+#: index.php:388
 msgid "Display lightning on map"
 msgstr ""
 
-#: index.php:369
+#: index.php:392
 msgid "Display fires on map"
 msgstr ""
 
-#: index.php:374
+#: index.php:397
 msgid "Show mini-map"
 msgstr ""
 
-#: index.php:379
+#: index.php:402
 msgid "Show Santa Claus now"
 msgstr ""
 
-#: index.php:387 index.php:397
+#: index.php:410 index.php:420
 msgid "Display polar on map"
 msgstr ""
 
-#: index.php:410
+#: index.php:433
 msgid "Aircraft icon color based on altitude"
 msgstr ""
 
-#: index.php:414 index.php:464
+#: index.php:437 index.php:487
 msgid "Aircraft icon color:"
 msgstr ""
 
-#: index.php:426 index.php:474
+#: index.php:449 index.php:497
 msgid "Marine icon color:"
 msgstr ""
 
-#: index.php:437 index.php:484
+#: index.php:460 index.php:507
 msgid "Tracker icon color:"
 msgstr ""
 
-#: index.php:447
+#: index.php:470
 msgid "Show airport icon at zoom level:"
 msgstr ""
 
-#: index.php:462
+#: index.php:485
 msgid "Use airlines liveries"
 msgstr ""
 
-#: index.php:463
+#: index.php:486
 msgid "Force Aircraft color"
 msgstr ""
 
-#: index.php:473
+#: index.php:496
 msgid "Force Marine color"
 msgstr ""
 
-#: index.php:483
+#: index.php:506
 msgid "Force Tracker color"
 msgstr ""
 
-#: index.php:491
+#: index.php:514
 msgid "Distance unit:"
 msgstr ""
 
-#: index.php:498
+#: index.php:521
 msgid "Altitude unit:"
 msgstr ""
 
-#: index.php:504
+#: index.php:527
 msgid "Speed unit:"
 msgstr ""
 
-#: index.php:514
+#: index.php:537
 msgid "Any change in settings reload page"
 msgstr ""
 
-#: index.php:526
+#: index.php:549
 msgid "Display VATSIM data"
 msgstr ""
 
-#: index.php:527
+#: index.php:550
 msgid "Display IVAO data"
 msgstr ""
 
-#: index.php:528
+#: index.php:551
 msgid "Display phpVMS data"
 msgstr ""
 
-#: index.php:536
+#: index.php:559
 msgid "Display ADS-B data"
 msgstr ""
 
-#: index.php:539
+#: index.php:562
 msgid "Display APRS data"
 msgstr ""
 
-#: index.php:544
+#: index.php:567
 msgid "Display airlines:"
 msgstr ""
 
-#: index.php:571
+#: index.php:594
 msgid "Display alliance:"
 msgstr ""
 
-#: index.php:596
+#: index.php:619
 msgid "Display APRS sources name:"
 msgstr ""
 
-#: index.php:631
+#: index.php:654
 msgid "Display airlines of type:"
 msgstr ""
 
-#: index.php:649
+#: index.php:672
 msgid "Display vessels with MMSI:"
 msgstr ""
 
-#: index.php:656
+#: index.php:679
 msgid "Display with ident:"
 msgstr ""
 
-#: index.php:662 index.php:663
+#: index.php:685 index.php:686
 msgid "Remove all filters"
 msgstr ""
 
-#: index.php:673
+#: index.php:696
 msgid "Show ISS, Tiangong-1 and Tiangong-2 on map"
 msgstr ""
 
@@ -2422,149 +2425,149 @@ msgstr ""
 #: date-statistics-aircraft.php:37
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights on <strong>"
-"%s</strong>."
+"The statistic below shows the most common aircraft of flights on <strong>%s</"
+"strong>."
 msgstr ""
 
-#: header.php:428 news.php:7 news.php:38
+#: header.php:429 news.php:7 news.php:38
 msgid "News"
 msgstr ""
 
-#: header.php:469
-msgid "Aircrafts News"
+#: header.php:470
+msgid "Aircraft News"
 msgstr ""
 
-#: header.php:475 header.php:591 header.php:632 header.php:675
+#: header.php:476 header.php:592 header.php:633 header.php:676
 msgid "Explore"
 msgstr ""
 
-#: header.php:477 aircraft.php:13 aircraft.php:16
-msgid "Aircrafts Types"
+#: header.php:478 aircraft.php:13 aircraft.php:16
+msgid "Aircraft Types"
 msgstr ""
 
-#: header.php:489 statistics.php:102 owner.php:16 owner.php:19
+#: header.php:490 statistics.php:102 owner.php:16 owner.php:19
 msgid "Owners"
 msgstr ""
 
-#: header.php:495 pilot.php:16 pilot.php:19 statistics.php:96
+#: header.php:496 pilot.php:16 pilot.php:19 statistics.php:96
 msgid "Pilots"
 msgstr ""
 
-#: header.php:501 header.php:594 header.php:635 header.php:678 latest.php:22
+#: header.php:502 header.php:595 header.php:636 header.php:679 latest.php:22
 #: latest.php:47
 msgid "Latest Activity"
 msgstr ""
 
-#: header.php:502 header.php:595 header.php:636 header.php:679
+#: header.php:503 header.php:596 header.php:637 header.php:680
 msgid "Today's Activity"
 msgstr ""
 
-#: header.php:503
+#: header.php:504
 msgid "Newest by Category"
 msgstr ""
 
-#: header.php:509
+#: header.php:510
 msgid "ACARS data not available publicly"
 msgstr ""
 
-#: header.php:510 header.php:516 acars-latest.php:6 acars-latest.php:32
+#: header.php:511 header.php:517 acars-latest.php:6 acars-latest.php:32
 msgid "Latest ACARS messages"
 msgstr ""
 
-#: header.php:511 header.php:517
+#: header.php:512 header.php:518
 msgid "Archive ACARS messages"
 msgstr ""
 
-#: header.php:526
+#: header.php:527
 msgid "Latest accident"
 msgstr ""
 
-#: header.php:527
+#: header.php:528
 msgid "Today's Accident"
 msgstr ""
 
-#: header.php:528
+#: header.php:529
 msgid "Latest incident"
 msgstr ""
 
-#: header.php:529
+#: header.php:530
 msgid "Today's Incident"
 msgstr ""
 
-#: header.php:534 highlights-display.php:6 highlights-display.php:36
+#: header.php:535 highlights-display.php:6 highlights-display.php:36
 msgid "Special Highlights"
 msgstr ""
 
-#: header.php:538
+#: header.php:539
 msgid "Upcoming Flights"
 msgstr ""
 
-#: header.php:544 header.php:597 header.php:639 header.php:744 header.php:745
+#: header.php:545 header.php:598 header.php:640 header.php:745 header.php:746
 #: search.php:19 search.php:325 search.php:332 search.php:701
 msgid "Search"
 msgstr ""
 
-#: header.php:547
+#: header.php:548
 msgid "Tools"
 msgstr ""
 
-#: header.php:549
+#: header.php:550
 msgid "ACARS translator"
 msgstr ""
 
-#: header.php:550
+#: header.php:551
 msgid "METAR translator"
 msgstr ""
 
-#: header.php:551
+#: header.php:552
 msgid "NOTAM translator"
 msgstr ""
 
-#: header.php:555 tools-geoid.php:10 tools-geoid.php:20
+#: header.php:556 tools-geoid.php:10 tools-geoid.php:20
 msgid "Geoid Height Calculator"
 msgstr ""
 
-#: header.php:577
+#: header.php:578
 msgid "Marines"
 msgstr ""
 
-#: header.php:586
+#: header.php:587
 msgid "Marines News"
 msgstr ""
 
-#: header.php:618 statistics.php:137
+#: header.php:619 statistics.php:137
 msgid "Trackers"
 msgstr ""
 
-#: header.php:627
+#: header.php:628
 msgid "Trackers News"
 msgstr ""
 
-#: header.php:668
+#: header.php:669
 msgid "Satellites News"
 msgstr ""
 
-#: header.php:697
+#: header.php:698
 msgid "About"
 msgstr ""
 
-#: header.php:699
+#: header.php:700
 msgid "About The Project"
 msgstr ""
 
-#: header.php:700
+#: header.php:701
 msgid "Exporting Data"
 msgstr ""
 
-#: header.php:705
+#: header.php:706
 msgid "Spotter TV"
 msgstr ""
 
-#: header.php:711
+#: header.php:712
 msgid "Contribute"
 msgstr ""
 
-#: header.php:716
+#: header.php:717
 msgid "Report any Issues"
 msgstr ""
 
@@ -2778,10 +2781,10 @@ msgstr ""
 #: table-output.php:657 table-output.php:659 table-output.php:661
 #: table-output.php:762 table-output.php:767 table-output.php:773
 #: table-output.php:778 table-output.php:784 table-output.php:789
-#: table-output.php:810 table-output.php:817 table-output.php:825
-#: table-output.php:838 table-output.php:839 table-output.php:898
-#: table-output.php:899 table-output.php:963 table-output.php:964
-#: table-output.php:1108
+#: table-output.php:812 table-output.php:819 table-output.php:827
+#: table-output.php:840 table-output.php:841 table-output.php:900
+#: table-output.php:901 table-output.php:965 table-output.php:966
+#: table-output.php:1110
 msgid "Not available"
 msgstr ""
 
@@ -2794,52 +2797,52 @@ msgstr ""
 msgid "Click to see airline information"
 msgstr ""
 
-#: table-output.php:749 table-output.php:913 table-output.php:914
-#: table-output.php:1098 table-output.php:1122
+#: table-output.php:749 table-output.php:915 table-output.php:916
+#: table-output.php:1100 table-output.php:1124
 msgid "Not Available"
 msgstr ""
 
-#: table-output.php:906 table-output.php:908
+#: table-output.php:908 table-output.php:910
 msgid "Real:"
 msgstr ""
 
-#: table-output.php:907
+#: table-output.php:909
 msgid "Scheduled:"
 msgstr ""
 
-#: table-output.php:1231
+#: table-output.php:1233
 msgid "Detailed Flight Information"
 msgstr ""
 
-#: table-output.php:1232 flightid-sub-menu.php:13
+#: table-output.php:1234 flightid-sub-menu.php:13
 msgid "Download Flight Data"
 msgstr ""
 
-#: table-output.php:1237 table-output.php:1241
+#: table-output.php:1239 table-output.php:1243
 msgid "Aircraft History"
 msgstr ""
 
-#: table-output.php:1245
+#: table-output.php:1247
 msgid "Manufacturer Profile"
 msgstr ""
 
-#: table-output.php:1249
+#: table-output.php:1251
 msgid "Flights of Aircraft Type &amp; Airline"
 msgstr ""
 
-#: table-output.php:1258
+#: table-output.php:1260
 msgid "Airline Country Profile"
 msgstr ""
 
-#: table-output.php:1263
+#: table-output.php:1265
 msgid "Departure Airport Country Profile"
 msgstr ""
 
-#: table-output.php:1267
+#: table-output.php:1269
 msgid "Arrival Airport Country Profile"
 msgstr ""
 
-#: table-output.php:1272
+#: table-output.php:1274
 msgid "Detailed information"
 msgstr ""
 
@@ -2919,15 +2922,15 @@ msgid ""
 "(%s)</strong>."
 msgstr ""
 
-#: tracker-data.php:93 aircraft-data.php:133
+#: tracker-data.php:93 aircraft-data.php:137
 msgid "Ground Altitude"
 msgstr ""
 
-#: tracker-data.php:115 aircraft-data.php:185 marine-data.php:105
+#: tracker-data.php:115 aircraft-data.php:189 marine-data.php:105
 msgid "Over country"
 msgstr ""
 
-#: tracker-data.php:120 aircraft-data.php:190 aircraft-data.php:202
+#: tracker-data.php:120 aircraft-data.php:194 aircraft-data.php:206
 #: marine-data.php:115
 msgid "Source"
 msgstr ""
@@ -3006,7 +3009,7 @@ msgstr ""
 #: route-statistics-aircraft.php:29
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights between "
+"The statistic below shows the most common aircraft of flights between "
 "<strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
 msgstr ""
 
@@ -3162,8 +3165,8 @@ msgstr ""
 
 #: search.php:422 search.php:423
 msgid ""
-"Include only aircrafts with special highlights (unique liveries, "
-"destinations etc.)"
+"Include only aircraft with special highlights (unique liveries, destinations "
+"etc.)"
 msgstr ""
 
 #: search.php:455
@@ -3251,7 +3254,7 @@ msgstr ""
 msgid "Search in archive (older than %s months)"
 msgstr ""
 
-#: aircraft-data.php:160
+#: aircraft-data.php:164
 msgid "Cam Coordinates"
 msgstr ""
 
@@ -3694,7 +3697,7 @@ msgstr ""
 #: owner-statistics-aircraft.php:36
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights owned by "
+"The statistic below shows the most common aircraft of flights owned by "
 "<strong>%s</strong>."
 msgstr ""
 
@@ -3919,7 +3922,7 @@ msgstr ""
 
 #: highlights-display.php:40
 msgid ""
-"The view below shows all aircrafts that have been selected to have some sort "
+"The view below shows all aircraft that have been selected to have some sort "
 "of special characteristic about them, such as unique liveries, destinations "
 "etc."
 msgstr ""
@@ -3947,7 +3950,7 @@ msgstr ""
 #: ident-statistics-aircraft.php:31
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights using the "
+"The statistic below shows the most common aircraft of flights using the "
 "ident/callsign <strong>%s</strong>."
 msgstr ""
 
@@ -4108,7 +4111,7 @@ msgid "Arrivals seen"
 msgstr ""
 
 #: statistics.php:107
-msgid "Aircrafts types"
+msgid "Aircraft types"
 msgstr ""
 
 #: statistics.php:130
@@ -4241,7 +4244,7 @@ msgstr ""
 #: airport-statistics-aircraft.php:61
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights to/from "
+"The statistic below shows the most common aircraft of flights to/from "
 "<strong>%s, %s (%s)</strong>."
 msgstr ""
 
@@ -4387,7 +4390,11 @@ msgstr ""
 msgid "Detailed View for %s, %s (%s)"
 msgstr ""
 
-#: airport-detailed.php:195
+#: airport-detailed.php:98
+msgid "Diagram"
+msgstr ""
+
+#: airport-detailed.php:196
 #, php-format
 msgid ""
 "The table below shows the detailed information of all flights to/from "

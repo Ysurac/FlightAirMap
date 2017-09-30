@@ -58,7 +58,7 @@ if (!empty($airport_array))
 	include('airport-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Aircraft").'</h2>';
- 	print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
+ 	print '<p>'.sprintf(_("The statistic below shows the most common aircraft of flights to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
 	
 	$aircraft_array = $Spotter->countAllAircraftTypesByAirport($airport);
 	if (!empty($aircraft_array))

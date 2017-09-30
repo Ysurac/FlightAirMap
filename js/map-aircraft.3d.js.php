@@ -304,9 +304,9 @@ function displayData(data) {
 	var flightvisible = viewer.dataSources.get(dsn).entities.values.length;
 	//console.log('flightcnt: '+flightcnt+' - flightvisible: '+flightvisible);
 	if (flightcnt != 0 && flightcnt != flightvisible && flightcnt > flightvisible) {
-		$("#ibxaircraft").html('<h4><?php echo _("Aircrafts detected"); ?></h4><br /><b>'+flightvisible+'/'+flightcnt+'</b>');
+		$("#ibxaircraft").html('<h4><?php echo _("Aircraft detected"); ?></h4><br /><b>'+flightvisible+'/'+flightcnt+'</b>');
 	} else {
-		$("#ibxaircraft").html('<h4><?php echo _("Aircrafts detected"); ?></h4><br /><b>'+flightvisible+'</b>');
+		$("#ibxaircraft").html('<h4><?php echo _("Aircraft detected"); ?></h4><br /><b>'+flightvisible+'</b>');
 	}
 };
 

@@ -48,7 +48,7 @@ if (!empty($spotter_array))
 	include('country-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Aircraft").'</h2>';
-	print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights from <strong>%s</strong>."),$country).'</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common aircraft of flights from <strong>%s</strong>."),$country).'</p>';
 
 	$aircraft_array = $Spotter->countAllAircraftTypesByCountry($country);
 	if (!empty($aircraft_array))

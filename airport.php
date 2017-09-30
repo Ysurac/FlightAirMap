@@ -87,7 +87,7 @@ if (isset($_POST['airport']))
 		print '<div class="table column">';
 		if ($airport_array[0]['iata'] != "NA")
 		{
-			print '<p>'.sprintf(_("The table below shows the route(s) aircrafts have used to/from <strong>%s</strong>, sorted by the most recent one."),$airport_array[0]['name']).'</p>';
+			print '<p>'.sprintf(_("The table below shows the route(s) aircraft have used to/from <strong>%s</strong>, sorted by the most recent one."),$airport_array[0]['name']).'</p>';
 		}
 
 		include('table-output.php');  

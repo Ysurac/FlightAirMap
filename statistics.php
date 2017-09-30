@@ -104,7 +104,7 @@ if ($type == 'aircraft') {
 <?php
 	}
 ?>
-        <span><span class="badge"><?php print number_format($Stats->countOverallAircrafts($airline_icao,$filter_name,$year,$month)); ?></span> <?php echo _("Aircrafts types"); ?></span>
+        <span><span class="badge"><?php print number_format($Stats->countOverallAircrafts($airline_icao,$filter_name,$year,$month)); ?></span> <?php echo _("Aircraft types"); ?></span>
         <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
 	if ($airline_icao == '') {

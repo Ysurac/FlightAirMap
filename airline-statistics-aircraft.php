@@ -95,9 +95,9 @@ if (!empty($spotter_array) || $alliance === true)
 	print '<div class="column">';
 	print '<h2>'._("Most Common Aircraft").'</h2>';
 	if ($alliance === false) {
-		print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights from <strong>%s</strong>."),$spotter_array[0]['airline_name']).'</p>';
+		print '<p>'.sprintf(_("The statistic below shows the most common aircraft of flights from <strong>%s</strong>."),$spotter_array[0]['airline_name']).'</p>';
 	} else {
-		print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights from <strong>%s</strong>."),str_replace('_',' ',str_replace('alliance_','',$airline))).'</p>';
+		print '<p>'.sprintf(_("The statistic below shows the most common aircraft of flights from <strong>%s</strong>."),str_replace('_',' ',str_replace('alliance_','',$airline))).'</p>';
 	}
 
 	/*

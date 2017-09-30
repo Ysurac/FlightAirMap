@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-01 17:42+0200\n"
-"PO-Revision-Date: 2017-06-01 17:42+0200\n"
+"PO-Revision-Date: 2017-06-01 17:51+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -467,7 +467,7 @@ msgstr "Site"
 
 #: js/map-aircraft.2d.js.php:179 js/map.new.js.php:506 js/map.new.js.php:508
 #: js/map.js.php:504
-msgid "Aircrafts detected"
+msgid "Aircraft detected"
 msgstr "Avions détectés"
 
 #: js/map-aircraft.2d.js.php:196 js/map-aircraft.2d.js.php:197
@@ -1093,12 +1093,8 @@ msgid "Flights"
 msgstr "Vols"
 
 #: pilot-detailed.php:124 owner-detailed.php:123
-msgid "Aircrafts type"
+msgid "Aircraft type"
 msgstr "Modèles d'avions"
-
-#: pilot-detailed.php:126 header.php:414 owner-detailed.php:125
-msgid "Aircrafts"
-msgstr "Avions"
 
 #: pilot-detailed.php:128 owner-detailed.php:127
 msgid "Manufacturers"
@@ -1652,7 +1648,7 @@ msgstr "Avions les plus courants"
 #: pilot-statistics-aircraft.php:36
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights piloted by "
+"The statistic below shows the most common aircraft of flights piloted by "
 "<strong>%s</strong>."
 msgstr ""
 
@@ -1726,7 +1722,7 @@ msgstr ""
 #: airport.php:89
 #, php-format
 msgid ""
-"The table below shows the route(s) aircrafts have used to/from <strong>%s</"
+"The table below shows the route(s) aircraft have used to/from <strong>%s</"
 "strong>, sorted by the most recent one."
 msgstr ""
 "Le tableau ci-dessous affiche les itinéraires des avions depuis/vers <strong>"
@@ -2007,7 +2003,7 @@ msgstr "Avions les plus courants depuis %s (%s)"
 #: manufacturer-statistics-aircraft.php:47
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights from <strong>"
+"The statistic below shows the most common aircraft of flights from <strong>"
 "%s</strong>."
 msgstr ""
 "Les statistiques ci-dessous concernent les avions les plus courants des vols "
@@ -2056,7 +2052,7 @@ msgid "JavaScript <b>MUST</b> be enabled"
 msgstr "JavaScript <b>DOIT</b> être activé"
 
 #: index.php:40
-msgid "Aircrafts Detected"
+msgid "Aircraft Detected"
 msgstr "Avions détectés"
 
 #: index.php:41
@@ -2479,7 +2475,7 @@ msgstr "Avions les plus courants le %s"
 #: date-statistics-aircraft.php:37
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights on <strong>"
+"The statistic below shows the most common aircraft of flights on <strong>"
 "%s</strong>."
 msgstr ""
 "Les statistiques ci-dessous concernent les avions les plus courants des vols "
@@ -2490,7 +2486,7 @@ msgid "Explore"
 msgstr "Explorer"
 
 #: header.php:422 aircraft.php:13 aircraft.php:16
-msgid "Aircrafts Types"
+msgid "Aircraft Types"
 msgstr "Modèles d'avions"
 
 #: header.php:434 statistics.php:90 owner.php:16 owner.php:19
@@ -3068,7 +3064,7 @@ msgstr "Avions les plus courants entre %s (%s), %s - %s (%s), %s"
 #: route-statistics-aircraft.php:29
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights between "
+"The statistic below shows the most common aircraft of flights between "
 "<strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
 msgstr ""
 "Les statistiques ci-dessous concernent les avions les plus courants des vols "
@@ -3226,7 +3222,7 @@ msgstr "Numéro du pilote"
 
 #: search.php:342 search.php:343
 msgid ""
-"Include only aircrafts with special highlights (unique liveries, "
+"Include only aircraft with special highlights (unique liveries, "
 "destinations etc.)"
 msgstr ""
 "Inclus seulement les avions particuliers (destinations particulière, "
@@ -3770,7 +3766,7 @@ msgstr ""
 #: owner-statistics-aircraft.php:36
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights owned by "
+"The statistic below shows the most common aircraft of flights owned by "
 "<strong>%s</strong>."
 msgstr ""
 "Les statistiques ci-dessous concernent les avions les plus courants des vols "
@@ -3977,7 +3973,7 @@ msgstr "Nom du propriétaire"
 
 #: highlights-display.php:40
 msgid ""
-"The view below shows all aircrafts that have been selected to have some sort "
+"The view below shows all aircraft that have been selected to have some sort "
 "of special characteristic about them, such as unique liveries, destinations "
 "etc."
 msgstr ""
@@ -4009,7 +4005,7 @@ msgstr ""
 #: ident-statistics-aircraft.php:31
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights using the "
+"The statistic below shows the most common aircraft of flights using the "
 "ident/callsign <strong>%s</strong>."
 msgstr ""
 "Les statistiques ci-dessous concernent les avions les plus courants des vols "
@@ -4179,7 +4175,7 @@ msgid "Arrivals seen"
 msgstr "Arrivées repérées"
 
 #: statistics.php:95
-msgid "Aircrafts types"
+msgid "Aircraft types"
 msgstr "Modèles d'avions"
 
 #: statistics.php:120 statistics.php:127
@@ -4290,7 +4286,7 @@ msgstr "Avions les plus courants depuis/vers %s, %s (%s)"
 #: airport-statistics-aircraft.php:61
 #, php-format
 msgid ""
-"The statistic below shows the most common aircrafts of flights to/from "
+"The statistic below shows the most common aircraft of flights to/from "
 "<strong>%s, %s (%s)</strong>."
 msgstr ""
 "Les statistiques ci-dessous concernent les avions les plus courants des vols "
@@ -4592,80 +4588,3 @@ msgid ""
 msgstr ""
 "Les statistiques ci-dessous concernent les itinéraires les plus courants des "
 "vols utilisant l'identifiant <strong>%s</strong>."
-
-#~ msgid ""
-#~ "The table below shows the detailed information of all flights from "
-#~ "<strong>%s</strong."
-#~ msgstr ""
-#~ "Le tableau ci-dessous affiche les informations détaillées sur tous les "
-#~ "vols depuis <strong>%s</strong>."
-
-#~ msgid "Weather Rain"
-#~ msgstr "Pluie"
-
-#~ msgid "Latest Incidents"
-#~ msgstr "Dernier Incidents\t"
-
-#~ msgid "Waypoints"
-#~ msgstr "Point de cheminement"
-
-#~ msgid "Airspace"
-#~ msgstr "Espace aérien"
-
-#~ msgid "Expected Time"
-#~ msgstr "Heure prévue"
-
-#~ msgid "Date first seen"
-#~ msgstr "Vue pour la première fois"
-
-#~ msgid "Day"
-#~ msgstr "Jour"
-
-#~ msgid "Flights Distance for %s"
-#~ msgstr "Distance des vols pour %s"
-
-#~ msgid "Search in archive"
-#~ msgstr "Recherche dans l'historique"
-
-#~ msgid "Aircraft Types"
-#~ msgstr "Modèles d'avion"
-
-#~ msgid "# of Times"
-#~ msgstr "# de fois"
-
-#~ msgid "'Most Common Aircraft Manufacturer on %s"
-#~ msgstr "Constructeurs aéronautique les plus courants sur %s"
-
-#~ msgid ""
-#~ "The statistic below shows the most common aircraft by registration of "
-#~ "flights to/from <strong>%s, %s (%s)</strong."
-#~ msgstr ""
-#~ "Les statistiques ci-dessous concernent les avions les plus courants par "
-#~ "enregistrement des vols depuis/vers <strong>%s, %s (%s)</strong>."
-
-#~ msgid "Statistic - Most common Departure Airport by Country"
-#~ msgstr "Statistique - Aéroport de départ les plus courants par pays"
-
-#~ msgid "Statistic - Most common Departure Airport"
-#~ msgstr "Statistique - Aéroport de départ les plus courants"
-
-#~ msgid "Statistic - Most common Callsign"
-#~ msgstr "Statistique - Indicatifs les plus courants"
-
-#~ msgid "Statistic - Most common Country a flight was over"
-#~ msgstr "Statistique - Les pays les plus souvent survolés"
-
-#~ msgid "Statistic - Most common Aircraft Manufacturer"
-#~ msgstr "Statistique - Constructeurs aéronautique les plus courants"
-
-#~ msgid "Statistic"
-#~ msgstr "Statistique"
-
-#~ msgid "Statistic - Most common Aircraft Registrations"
-#~ msgstr "Statistiques - Les enregistrements les plus communs"
-
-#~ msgid "Statistic - Most common Route by Airport"
-#~ msgstr "Statistique - Itinéraires les plus courants par aéroports"
-
-#~ msgid "Not data available"
-#~ msgstr "Aucune donnée"

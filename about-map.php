@@ -14,7 +14,7 @@ require_once('header.php');
     	<img src="/images/about-live-map.png" alt="Live Map" title="Live Map" />
     </div>
     
-    <p>The <a href="<?php print $globalURL; ?>">Live Map</a> is a full screen page showing the latest positions of the aircrafts in near real-time in the coverage area.</p>
+    <p>The <a href="<?php print $globalURL; ?>">Live Map</a> is a full screen page showing the latest positions of the aircraft in near real-time in the coverage area.</p>
     
     <p>Clicking on the aircraft icon allows you to see information about the flight, including details such as aircraft type, registration, current altitude (in both feet and Flight level), speed (in knots), heading (in degrees) and the coordinates. Additionally, the aircraft image also shows up, which is based on the registration of the aircraft, just like on the rest of the site.</p>
     
@@ -40,8 +40,8 @@ require_once('header.php');
     
     <h3>Frequently Asked Questions (FAQ)</h3>
     
-    <strong>Why is the map blank? There are no aircrafts visible.</strong>
-    <p>A: If the map is blank that means that there are no aircrafts currently flying within the coverage area.</p>
+    <strong>Why is the map blank? There are no aircraft visible.</strong>
+    <p>A: If the map is blank that means that there are no aircraft currently flying within the coverage area.</p>
     
     <strong>Why are there no images available in the aircraft popup?</strong>
     <p>A: We get the images based on the aircraft registration. Some of our data sources don't include the aircraft registrations, so we can't get an image for that particular flight.</p>

@@ -33,7 +33,7 @@ if (!empty($spotter_array))
 	include('owner-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Aircraft").'</h2>';
-	print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights owned by <strong>%s</strong>."),$spotter_array[0]['aircraft_owner']).'</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common aircraft of flights owned by <strong>%s</strong>."),$spotter_array[0]['aircraft_owner']).'</p>';
 
 	$aircraft_array = $Spotter->countAllAircraftTypesByOwner($owner,$filter);
 	if (!empty($aircraft_array))

@@ -125,9 +125,9 @@ if (!isset($_GET['owner'])){
 		if ($flights == 0) $flights = $Spotter->countFlightsByOwner($owner,$filter);
 		print '<div><span class="label">'._("Flights").'</span>'.$flights.'</div>';
 		$aircraft_type = count($Spotter->countAllAircraftTypesByOwner($owner,$filter));
-		print '<div><span class="label">'._("Aircrafts type").'</span>'.$aircraft_type.'</div>';
+		print '<div><span class="label">'._("Aircraft type").'</span>'.$aircraft_type.'</div>';
 		$aircraft_registration = count($Spotter->countAllAircraftRegistrationByOwner($owner,$filter));
-		print '<div><span class="label">'._("Aircrafts").'</span>'.$aircraft_registration.'</div>';
+		print '<div><span class="label">'._("Aircraft").'</span>'.$aircraft_registration.'</div>';
 		$aircraft_manufacturer = count($Spotter->countAllAircraftManufacturerByOwner($owner,$filter));
 		print '<div><span class="label">'._("Manufacturers").'</span>'.$aircraft_manufacturer.'</div>';
 		$airlines = count($Spotter->countAllAirlinesByOwner($owner,$filter));

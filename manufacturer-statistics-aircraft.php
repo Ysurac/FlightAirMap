@@ -44,7 +44,7 @@ if (!empty($spotter_array))
 	include('manufacturer-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Aircraft").'</h2>';
-	print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights from <strong>%s</strong>."),$manufacturer).'</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common aircraft of flights from <strong>%s</strong>."),$manufacturer).'</p>';
 
 	$aircraft_array = $Spotter->countAllAircraftTypesByManufacturer($manufacturer);
 	if (!empty($aircraft_array))

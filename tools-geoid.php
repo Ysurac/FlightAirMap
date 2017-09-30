@@ -3,9 +3,9 @@ require_once('require/class.Connection.php');
 require_once('require/class.GeoidHeight.php');
 require_once('require/class.Language.php');
 try {
-$GeoidHeight = new GeoidHeight();
+	$GeoidHeight = new GeoidHeight();
 } catch (Exception $e) {
-    echo $e;
+	echo $e;
 }
 $title = _("Geoid Height Calculator");
 require_once('header.php');

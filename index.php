@@ -41,7 +41,7 @@ require_once('header.php');
 <div class="geocode"></div><div class="compass"></div>
 <div class="weatherrain"></div><div class="weatherprecipitation"></div><div class="weatherclouds"></div><div class="weatherradar"></div>
 <div id="infobox" class="infobox"><table><tr>
-    <?php if ((isset($globalAircraft) && $globalAircraft) || !isset($globalAircraft)) { ?><td><div id="ibxaircraft"><h4><?php echo _("Aircrafts Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td>
+    <?php if ((isset($globalAircraft) && $globalAircraft) || !isset($globalAircraft)) { ?><td><div id="ibxaircraft"><h4><?php echo _("Aircraft Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td>
     <?php }; if (isset($globalMarine) && $globalMarine) { ?><td><div id="ibxmarine"><h4><?php echo _("Vessels Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td>
     <?php }; if (isset($globalTracker) && $globalTracker) { ?><td><div id="ibxtracker"><h4><?php echo _("Trackers Detected"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td>
     <?php }; if (isset($globalSatellite) && $globalSatellite) { ?><td><div id="ibxsatellite"><h4><?php echo _("Satellites Displayed"); ?></h4><br /><i class="fa fa-spinner fa-pulse fa-fw"></i></div></td><?php } ?>

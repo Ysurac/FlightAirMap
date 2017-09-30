@@ -34,7 +34,7 @@ if (!empty($spotter_array))
 	include('date-sub-menu.php');
 	print '<div class="column">';
 	print '<h2>'._("Most Common Aircraft").'</h2>';
-	print '<p>'.sprintf(_("The statistic below shows the most common aircrafts of flights on <strong>%s</strong>."),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
+	print '<p>'.sprintf(_("The statistic below shows the most common aircraft of flights on <strong>%s</strong>."),date("l F j, Y", strtotime($spotter_array[0]['date_iso_8601']))).'</p>';
 	
 	$aircraft_array = $Spotter->countAllAircraftTypesByDate($date);
 	if (!empty($aircraft_array))

@@ -419,8 +419,8 @@ if ($type == 'aircraft') {
 ?>
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-10">
-					<!--<div><input type="checkbox" class="form-control" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <label for="highlights"><?php echo _("Include only aircrafts with special highlights (unique liveries, destinations etc.)"); ?></label></div>-->
-					<label class="checkbox-inline"><input type="checkbox" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <?php echo _("Include only aircrafts with special highlights (unique liveries, destinations etc.)"); ?></label>
+					<!--<div><input type="checkbox" class="form-control" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <label for="highlights"><?php echo _("Include only aircraft with special highlights (unique liveries, destinations etc.)"); ?></label></div>-->
+					<label class="checkbox-inline"><input type="checkbox" name="highlights" value="true" id="highlights" <?php if (isset($_GET['highlights'])) if ($_GET['highlights'] == "true"){ print 'checked="checked"'; } ?>> <?php echo _("Include only aircraft with special highlights (unique liveries, destinations etc.)"); ?></label>
 					</div>
 				</div>
 			</fieldset>
