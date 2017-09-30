@@ -1050,9 +1050,11 @@ class Schedule {
 					return $this->getAirFrance($ident,$date,'AF');
 				*/
 				// HOP
+				/*
 				case "A5":
 				case "HOP":
 					return $this->getAirFrance($ident,$date,'A5');
+				*/
 				// EasyJet
 				case "U2":
 				case "DS":
