@@ -244,7 +244,7 @@ class SpotterImport {
 	if(is_array($line) && (isset($line['hex']) || isset($line['id']))) {
 	    //print_r($line);
 	    if (isset($line['hex'])) $line['hex'] = strtoupper($line['hex']);
-  	    if (isset($line['id']) || (isset($line['hex']) && $line['hex'] != '' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) === 6)) {
+  	    if (isset($line['id']) || (isset($line['hex']) && $line['hex'] != '' && substr($line['hex'],0,1) != '~' && $line['hex'] != '00000' && $line['hex'] != '000000' && $line['hex'] != '111111' && ctype_xdigit($line['hex']) && strlen($line['hex']) === 6)) {
 
 		// Increment message number
 		if (isset($line['sourcestats']) && $line['sourcestats'] === TRUE) {

@@ -1027,6 +1027,7 @@ while ($i > 0) {
 		$reset = 0;
 		foreach ($all_data['aircraft'] as $key => $line) {
 		    $data = array();
+		    // add support for ground vehicule with ~ in front of hex
 		    if (isset($line['hex'])) $data['hex'] = $line['hex']; // hex
 		    if (isset($line['flight'])) $data['ident'] = trim($line['flight']); // ident
 		    if (isset($line['altitude'])) $data['altitude'] = $line['altitude']; // altitude
