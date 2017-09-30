@@ -1023,7 +1023,7 @@ while ($i > 0) {
 	) {
 	    $buffer = $Common->getData($value['host']);
 	    $all_data = json_decode($buffer,true);
-	    if (isset($all_data['aircraft'])) {
+	    if (isset($all_data['aircraft']) && isset($all_data['now']) && $all_data['now'] > time()-1800) {
 		$reset = 0;
 		foreach ($all_data['aircraft'] as $key => $line) {
 		    $data = array();
