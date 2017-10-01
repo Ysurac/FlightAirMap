@@ -10,6 +10,7 @@ require_once(dirname(__FILE__).'/libs/simple_html_dom.php');
 require_once(dirname(__FILE__).'/settings.php');
 require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.Translation.php');
+require_once(dirname(__FILE__).'/class.Spotter.php');
 require_once(dirname(__FILE__).'/class.Common.php');
 require_once(dirname(__FILE__).'/libs/uagent/uagent.php');
 
@@ -175,14 +176,14 @@ class Schedule {
 	* @param String $carrier IATA code
 	* @return Flight departure and arrival airports and time
 	*/
-	private function getAirFrance($callsign, $date = 'NOW',$carrier = 'AF') {
+	public function getAirFrance($callsign, $date = 'NOW',$carrier = 'AF') {
 		$Common = new Common();
 		$check_date = new Datetime($date);
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
 		if (!filter_var($numvol,FILTER_VALIDATE_INT)) return array();
 		$url = "http://www.airfrance.fr/cgi-bin/AF/FR/fr/local/resainfovol/infovols/detailsVolJson.do?codeCompagnie[0]=".$carrier."&numeroVol[0]=".$numvol."&dayFlightDate=".$check_date->format('d')."&yearMonthFlightDate=".$check_date->format('Ym');
 		$json = $Common->getData($url);
-	
+		var_dump($json);
 		$parsed_json = json_decode($json);
 		if (property_exists($parsed_json,'errors') === false) {
 			//$originLong = $parsed_json->{'flightsList'}[0]->{'segmentsList'}[0]->{'originLong'};
@@ -1126,9 +1127,14 @@ class Schedule {
 				case "BHP":
 					return $this->getAirBerlin($ident,$date,'4T');
 				default:
+					if (strlen($airline_icao == 3) {
+						$Spotter = new Spotter($this->db);
+						$airline_info = $Spotter->getAllAirlineInfo($airline_icao);
+						if (isset($airline_info[0]['iata'])) $airline_icao = $airline_info[0]['iata'];
+					}
 					// Randomly use a generic function to get hours
 					if (strlen($airline_icao) == 2) {
-						if (!isset($globalSchedulesSources)) $globalSchedulesSources = array('flightmapper','costtotravel','flightradar24','flightaware');
+						if (!isset($globalSchedulesSources)) $globalSchedulesSources = array('flightmapper','costtotravel','flightaware');
 						if (count($globalSchedulesSources) > 0) {
 							$rand = mt_rand(0,count($globalSchedulesSources)-1);
 							$source = $globalSchedulesSources[$rand];
@@ -1153,5 +1159,6 @@ class Schedule {
 //print_r($Schedule->getLufthansa('LH551'));
 //print_r($Schedule->getTunisair('TU203'));
 //print_r($Schedule->getTransavia('TRA598'));
+//print_r($Schedule->getSkyTeam('AF7669'));
 
 ?>
