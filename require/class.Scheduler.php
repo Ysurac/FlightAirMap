@@ -893,7 +893,7 @@ class Schedule {
 	 * @return Array Schedules info
 	*/
 	public function fetchSchedule($ident,$date = 'NOW') {
-		global $globalSchedulesSources, $globalSchedulesFetch, $globalOffline;
+		global $globalSchedulesSources, $globalSchedulesFetch, $globalOffline, $globalFlightAwareUsername;
 		//$Common = new Common();
 		if ($globalSchedulesFetch === FALSE || (isset($globalOffline) && $globalOffline === TRUE)) return array();
 		$airline_icao = '';
@@ -1141,7 +1141,7 @@ class Schedule {
 							if ($source == 'flightmapper') return $this->getFlightMapper($ident);
 							elseif ($source == 'costtotravel') return $this->getCostToTravel($ident);
 							//elseif ($source == 'flightradar24') return $this->getFlightRadar24($ident,$date);
-							elseif ($source == 'flightaware') return $this->getFlightAware($ident);
+							elseif ($source == 'flightaware' && $globalFlightAwareUsername != '') return $this->getFlightAware($ident);
 						}
 					}
 			}

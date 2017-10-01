@@ -113,6 +113,7 @@ class SpotterImport {
 		if ($globalDebug) echo "-> get arrival/departure airport info for ".$ident."\n";
     		$sch = $Schedule->getSchedule($operator);
 		$this->all_flights[$id] = array_merge($this->all_flights[$id],array('arrival_airport' => $sch['arrival_airport_icao'],'departure_airport' => $sch['departure_airport_icao'],'departure_airport_time' => $sch['departure_airport_time'],'arrival_airport_time' => $sch['arrival_airport_time']));
+		if ($this->all_flights[$id]['addedSpotter'] == 1) $Spotter->updateLatestScheduleSpotterData($this->all_flights[$id]['id'],$sch['departure_airport_icao'],$sch['departure_airport_time'],$sch['arrival_airport_icao'],$sch['arrival_airport_time']);
        }
 	$Spotter->db = null;
 	$Schedule->db = null;

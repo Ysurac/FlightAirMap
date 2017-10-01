@@ -3620,6 +3620,7 @@ class Spotter{
 		return "success";
 
 	}
+
 	/**
 	* Update latest spotter data
 	*
@@ -3643,7 +3644,31 @@ class Spotter{
 		}
 		
 		return "success";
+	}
 
+	/**
+	* Update latest schedule spotter data
+	*
+	* @param String $flightaware_id the ID from flightaware
+	* @param String $departure_airport_icao the departure airport ICAO
+	* @param String $departure_airport_time the deaprture airport time
+	* @param String $arrival_airport_icao the arrival airport ICAO
+	* @param String $arrival_airport_time the arrival airport time
+	* @return String success or false
+	*
+	*/	
+	public function updateLatestScheduleSpotterData($flightaware_id = '', $departure_airport_icao = '', $departure_airport_time = '', $arrival_airport_icao = '',$arrival_airport_time = '')
+	{
+		$query = 'UPDATE spotter_output SET departure_airport_icao = :departure_airport_icao, departure_airport_time = :departure_airport_time, arrival_airport_icao = :arrival_airport_icao, arrival_airport_time = :arrival_airport_time WHERE flightaware_id = :flightaware_id';
+		$query_values = array(':flightaware_id' => $flightaware_id,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch (PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		
+		return "success";
 	}
 
 	/**
