@@ -177,7 +177,12 @@ function connect_all($hosts) {
         	//$formats[$id] = 'aircraftjson';
         	$globalSources[$id]['format'] = 'aircraftjson';
         	//$last_exec['aircraftlistjson'] = 0;
-        	if ($globalDebug) echo "Connect to aircraftlist.json source (".$host.")...\n";
+        	if ($globalDebug) echo "Connect to aircraft.json source (".$host.")...\n";
+    	    } else if (preg_match('/aircraft$/i',$host)) {
+        	//$formats[$id] = 'planefinderclient';
+        	$globalSources[$id]['format'] = 'planefinderclient';
+        	//$last_exec['aircraftlistjson'] = 0;
+        	if ($globalDebug) echo "Connect to planefinderclient source (".$host.")...\n";
     	    } else if (preg_match('/opensky/i',$host)) {
         	//$formats[$id] = 'aircraftlistjson';
         	$globalSources[$id]['format'] = 'opensky';
@@ -312,7 +317,7 @@ function connect_all($hosts) {
             } else {
 		if ($globalDebug) echo 'Connection failed to '.$hostn.':'.$port.' : '.$errno.' '.$errstr."\n";
 		sleep(10);
-		$this->connect_all($hosts);
+		connect_all($hosts);
     	    }
         }
     }
@@ -1055,6 +1060,40 @@ while ($i > 0) {
 		}
 	    }
 	    //$last_exec['planeupdatefaa'] = time();
+	    $last_exec[$id]['last'] = time();
+	} elseif ($value['format'] === 'planefinderclient' && 
+	    (
+		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+	    )
+	) {
+	    $buffer = $Common->getData($value['host']);
+	    $all_data = json_decode($buffer,true);
+	    if (isset($all_data['aircraft'])) {
+		$reset = 0;
+		foreach ($all_data['aircraft'] as $key => $line) {
+		    $data = array();
+		    $data['hex'] = $key; // hex
+		    if (isset($line['callsign'])) $data['ident'] = trim($line['callsign']); // ident
+		    if (isset($line['altitude'])) $data['altitude'] = $line['altitude']; // altitude
+		    if (isset($line['speed'])) $data['speed'] = $line['speed']; // speed
+		    if (isset($line['heading'])) $data['heading'] = $line['heading']; // heading
+		    if (isset($line['lat'])) $data['latitude'] = $line['lat']; // lat
+		    if (isset($line['lon'])) $data['longitude'] = $line['lon']; // long
+		    if (isset($line['vert_rate'])) $data['verticalrate'] = $line['vert_rate']; // verticale rate
+		    if (isset($line['squawk'])) $data['squawk'] = $line['squawk']; // squawk
+		    //$data['emergency'] = ''; // emergency
+		    if (isset($line['reg'])) $data['registration'] = $line['reg'];
+		    if (isset($line['type'])) $data['aircraft_icao'] = $line['type'];
+		    $data['datetime'] = date('Y-m-d H:i:s',$line['pos_update_time']);
+		    $data['format_source'] = 'planefinderclient';
+		    $data['id_source'] = $id_source;
+		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+		    $SI->add($data);
+		    unset($data);
+		}
+	    }
 	    $last_exec[$id]['last'] = time();
 	//} elseif ($value === 'fr24json' && (time() - $last_exec['fr24json'] > $globalMinFetch)) {
 	} elseif ($value['format'] === 'fr24json' && 
