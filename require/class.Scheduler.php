@@ -1127,7 +1127,7 @@ class Schedule {
 				case "BHP":
 					return $this->getAirBerlin($ident,$date,'4T');
 				default:
-					if (strlen($airline_icao == 3) {
+					if (strlen($airline_icao) == 3) {
 						$Spotter = new Spotter($this->db);
 						$airline_info = $Spotter->getAllAirlineInfo($airline_icao);
 						if (isset($airline_info[0]['iata'])) $airline_icao = $airline_info[0]['iata'];
