@@ -2658,7 +2658,7 @@ class update_db {
 						} else $error = "File data/".$globalGeoidSource.'.pgm'." doesn't exist. Gunzip failed.";
 					} else $error = "File ".$tmp_dir.$globalGeoidSource.'.pgm.gz'." md5 failed. Download failed.";
 				} else $error = "File ".$tmp_dir.$globalGeoidSource.'.pgm.gz'." doesn't exist. Download failed.";
-			}
+			} elseif ($globalDebug) echo 'No new version'."\n";
 		} else $error = "File ".$tmp_dir.$globalGeoidSource.'.pgm.gz.md5'." doesn't exist. Download failed.";
 		if ($error != '') {
 			return $error;
