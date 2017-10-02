@@ -42,6 +42,9 @@ class GeoidHeight  {
 			else $name = dirname(__FILE__).'/../data/egm96-15.pgm';
 		}
 
+		if (file_exists($name) === FALSE) {
+			throw new Exception($name." doesn't exist");
+		}
 		$f = @fopen($name,"r");
 		if ($f === FALSE) {
 			throw new Exception("Can't open ".$name);

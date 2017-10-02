@@ -5,7 +5,14 @@ require_once('require/class.Language.php');
 try {
 	$GeoidHeight = new GeoidHeight();
 } catch (Exception $e) {
-	echo $e;
+	$title = _("Geoid Height Calculator");
+	require_once('header.php');
+	print '<div class="info column">';
+	print '<h1>'._("Geoid Height Calculator").'</h1>';
+	print '</div>';
+	print '<p>Not available</p>';
+	if (isset($globalDebug) && $globalDebug) echo '<p>'.$e.'</p>';
+	require_once('footer.php');
 }
 $title = _("Geoid Height Calculator");
 require_once('header.php');
@@ -20,7 +27,7 @@ print '<div class="info column">';
 print '<h1>'._("Geoid Height Calculator").'</h1>';
 print '</div>';
 
-print '<div class="table column">';	
+print '<div class="table column">';
 print '<p>'._("Calculate geoid at a point. GPS use a theoretical sea level estimated by a World Geodetic System (WGS84), Earth Gravity Model is better.").'</p>';
 print '<div class="pagination">';
 print '<form method="post" class="form-horizontal">';
