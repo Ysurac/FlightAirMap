@@ -47,6 +47,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 		require('../footer.php');
 		exit;
 	}
+	if (!$Common->is__writable('../data/')) {
+		print '<div class="alert alert-danger"><strong>Error</strong> The directory <i>data</i> must be writable to <i>scripts/update_db.php</i> user.</div>';
+	}
 	/*
 	if (!is_writable('../data')) {
 		print '<div class="info column"><p><strong>The directory <i>data</i> must be writable to <i>scripts/update_db.php</i> user.</strong></p></div>';
@@ -548,6 +551,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="tsv" <?php if (isset($source['format']) && $source['format'] == 'tsv') print 'selected'; ?>>TSV</option>
 										<option value="raw" <?php if (isset($source['format']) && $source['format'] == 'raw') print 'selected'; ?>>Raw</option>
 										<option value="aircraftjson" <?php if (isset($source['format']) && $source['format'] == 'aircraftjson') print 'selected'; ?>>Dump1090 aircraft.json</option>
+										<option value="planefinderclient" <?php if (isset($source['format']) && $source['format'] == 'planefinderclient') print 'selected'; ?>>Planefinder client</option>
 										<option value="aprs" <?php if (isset($source['format']) && $source['format'] == 'aprs') print 'selected'; ?>>APRS</option>
 										<option value="deltadbtxt" <?php if (isset($source['format']) && $source['format'] == 'deltadbtxt') print 'selected'; ?>>Radarcape deltadb.txt</option>
 										<option value="vatsimtxt" <?php if (isset($source['format']) && $source['format'] == 'vatsimtxt') print 'selected'; ?>>Vatsim</option>
@@ -602,6 +606,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="tsv">TSV</option>
 										<option value="raw">Raw</option>
 										<option value="aircraftjson">Dump1090 aircraft.json</option>
+										<option value="planefinderclient">Planefinder client</option>
 										<option value="aprs">APRS</option>
 										<option value="deltadbtxt">Radarcape deltadb.txt</option>
 										<option value="vatsimtxt">Vatsim</option>
