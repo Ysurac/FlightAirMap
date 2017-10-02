@@ -51,7 +51,7 @@ class Common {
 			} else {
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 			}
-		}
+		} elseif ($type != 'get' && $type != '') curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
 		if ($headers != '') {
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		}
@@ -728,6 +728,139 @@ class Common {
 		if (!$rm)
 			unlink($path);
 		return true;
+	}
+	
+	/*
+	 * Great circle route
+	 * Translated to PHP from javascript version of https://github.com/springmeyer/arc.js
+	 * @param Float $begin_lat Latitude of origin point
+	 * @param Float $begin_lon Longitude of origin point
+	 * @param Float $end_lat Latitude of final point
+	 * @param Float $end_lon Longitude of final point
+	 * @param Integer $nbpts Number of intermediate vertices desired
+	 * @param Integer $offset Controls the likelyhood that lines will be split which cross the dateline
+	 * @return Array Coordinate of the route
+	*/
+	public function greatcircle($begin_lat,$begin_lon,$end_lat,$end_lon,$nbpts = 20, $offset = 10) {
+		if ($nbpts <= 2) return array(array($begin_lon,$begin_lat),array($end_lon,$end_lat));
+		$sx = deg2rad($begin_lon);
+		$sy = deg2rad($begin_lat);
+		$ex = deg2rad($end_lon);
+		$ey = deg2rad($end_lat);
+		$w = $sx - $ex;
+		$h = $sy - $ey;
+		$z = pow(sin($h/2.0),2) + cos($sy)*cos($ey)*pow(sin($w/2.0),2);
+		$g = 2.0*asin(sqrt($z));
+		if ($g == pi() || is_nan($g)) return array(array($begin_lon,$begin_lat),array($end_lon,$end_lat));
+		$first_pass = array();
+		$delta = 1.0/($nbpts-1);
+		for ($i =0; $i < $nbpts; ++$i) {
+			$step = $delta*$i;
+			$A = sin((1 - $step) * $g) / sin($g);
+			$B = sin($step * $g) / sin($g);
+			$x = $A * cos($sy) * cos($sx) + $B * cos($ey) * cos($ex);
+			$y = $A * cos($sy) * sin($sx) + $B * cos($ey) * sin($ex);
+			$z = $A * sin($sy) + $B * sin($ey);
+			$lat = rad2deg(atan2($z, sqrt(pow($x, 2) + pow($y, 2))));
+			$lon = rad2deg(atan2($y, $x));
+			$first_pass[] = array($lon,$lat);
+		}
+		$bHasBigDiff = false;
+		$dfMaxSmallDiffLong = 0;
+		// from http://www.gdal.org/ogr2ogr.html
+		// -datelineoffset:
+		// (starting with GDAL 1.10) offset from dateline in degrees (default long. = +/- 10deg, geometries within 170deg to -170deg will be splited)
+		$dfDateLineOffset = $offset;
+		$dfLeftBorderX = 180 - $dfDateLineOffset;
+		$dfRightBorderX = -180 + $dfDateLineOffset;
+		$dfDiffSpace = 360 - $dfDateLineOffset;
+		
+		// https://github.com/OSGeo/gdal/blob/7bfb9c452a59aac958bff0c8386b891edf8154ca/gdal/ogr/ogrgeometryfactory.cpp#L2342
+		for ($j = 1; $j < count($first_pass); ++$j) {
+			$dfPrevX = $first_pass[$j-1][0];
+			$dfX = $first_pass[$j][0];
+			$dfDiffLong = abs($dfX - $dfPrevX);
+			if ($dfDiffLong > $dfDiffSpace &&
+			    (($dfX > $dfLeftBorderX && $dfPrevX < $dfRightBorderX) || ($dfPrevX > $dfLeftBorderX && $dfX < $dfRightBorderX))) 
+			{
+				$bHasBigDiff = true;
+			} else if ($dfDiffLong > $dfMaxSmallDiffLong) {
+				$dfMaxSmallDiffLong = $dfDiffLong;
+			}
+		}
+		$poMulti = array();
+		if ($bHasBigDiff && $dfMaxSmallDiffLong < $dfDateLineOffset) {
+			$poNewLS = array();
+			//$poMulti[] = $poNewLS;
+			for ($k = 0; $k < count($first_pass); ++$k) {
+				$dfX0 = floatval($first_pass[$k][0]);
+				if ($k > 0 &&  abs($dfX0 - $first_pass[$k-1][0]) > $dfDiffSpace) {
+					$dfX1 = floatval($first_pass[$k-1][0]);
+					$dfY1 = floatval($first_pass[$k-1][1]);
+					$dfX2 = floatval($first_pass[$k][0]);
+					$dfY2 = floatval($first_pass[$k][1]);
+					if ($dfX1 > -180 && $dfX1 < $dfRightBorderX && $dfX2 == 180 &&
+					    $k+1 < count($first_pass) &&
+					    $first_pass[$k-1][0] > -180 && $first_pass[$k-1][0] < $dfRightBorderX)
+					{
+						$poNewLS[] = array(-180, $first_pass[$k][1]);
+						$k++;
+						//echo 'here';
+						$poNewLS[] = array($first_pass[$k][0], $first_pass[$k][1]);
+						continue;
+					} else if ($dfX1 > $dfLeftBorderX && $dfX1 < 180 && $dfX2 == -180 &&
+					    $k+1 < count($first_pass) &&
+					    $first_pass[$k-1][0] > $dfLeftBorderX && $first_pass[$k-1][0] < 180)
+					{
+						$poNewLS[] = array(180, $first_pass[$k][1]);
+						$k++;
+						$poNewLS[] = array($first_pass[$k][0], $first_pass[$k][1]);
+						continue;
+					}
+					if ($dfX1 < $dfRightBorderX && $dfX2 > $dfLeftBorderX)
+					{
+						// swap dfX1, dfX2
+						$tmpX = $dfX1;
+						$dfX1 = $dfX2;
+						$dfX2 = $tmpX;
+						// swap dfY1, dfY2
+						$tmpY = $dfY1;
+						$dfY1 = $dfY2;
+						$dfY2 = $tmpY;
+					}
+					if ($dfX1 > $dfLeftBorderX && $dfX2 < $dfRightBorderX) {
+						$dfX2 += 360;
+					}
+					if ($dfX1 <= 180 && $dfX2 >= 180 && $dfX1 < $dfX2)
+					{
+						$dfRatio = (180 - $dfX1) / ($dfX2 - $dfX1);
+						$dfY = $dfRatio * $dfY2 + (1 - $dfRatio) * $dfY1;
+						$poNewLS[] = array($first_pass[$k-1][0] > $dfLeftBorderX ? 180 : -180, $dfY);
+						$poMulti[] = $poNewLS;
+						$poNewLS = array();
+						$poNewLS[] = array($first_pass[$k-1][0] > $dfLeftBorderX ? -180 : 180, $dfY);
+						//$poMulti[] = $poNewLS;
+					} else {
+						//$poNewLS[] = array();
+						$poMulti[] = $poNewLS;
+						$poNewLS = array();
+					}
+					$poNewLS[] = array($dfX0, $first_pass[$k][1]);
+				} else {
+					$poNewLS[] = array($first_pass[$k][0], $first_pass[$k][1]);
+				}
+			}
+			$poMulti[] = $poNewLS;
+		} else {
+			// add normally
+			$poNewLS0 = array();
+			//$poMulti[] = $poNewLS0;
+			for ($l = 0; $l < count($first_pass); ++$l) {
+				$poNewLS0[] = array($first_pass[$l][0],$first_pass[$l][1]);
+			}
+			$poMulti[] = $poNewLS0;
+		}
+		return $poMulti;
 	}
 }
 ?>

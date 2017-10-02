@@ -813,19 +813,29 @@ $output = '{';
 				    $havedata = false;
 				    if ($compress) $output_dest = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'","t": "routedest"},"geometry": {"type": "LineString","coordinates": [';
 				    else $output_dest = '{"type": "Feature","properties": {"callsign": "'.$spotter_item['ident'].'","type": "routedest"},"geometry": {"type": "LineString","coordinates": [';
-				    $output_dest .= '['.$spotter_item['longitude'].','.$spotter_item['latitude'].'],';
-
+				    
+				    //$output_dest .= '['.$spotter_item['longitude'].','.$spotter_item['latitude'].'],';
 				    if (isset($spotter_item['arrival_airport_latitude'])) {
-					$output_dest .= '['.$spotter_item['arrival_airport_longitude'].','.$spotter_item['arrival_airport_latitude'].']';
+					//$output_dest .= '['.$spotter_item['arrival_airport_longitude'].','.$spotter_item['arrival_airport_latitude'].']';
+					$end_lon = $spotter_item['arrival_airport_longitude'];
+					$end_lat = $spotter_item['arrival_airport_latitude'];
 					$havedata = true;
 				    } elseif (isset($spotter_item['arrival_airport']) && $spotter_item['arrival_airport'] != 'NA') {
 					$aairport = $Spotter->getAllAirportInfo($spotter_item['arrival_airport']);
 					if (isset($aairport[0]['latitude'])) {
-					    $output_dest .= '['.$aairport[0]['longitude'].','.$aairport[0]['latitude'].']';
+					    //$output_dest .= '['.$aairport[0]['longitude'].','.$aairport[0]['latitude'].']';
+					    $end_lon = $aairport[0]['longitude'];
+					    $end_lat = $aairport[0]['latitude'];
 					    $havedata = true;
 					}
 				    }
-				    //$output_dest  = substr($output_dest, 0, -1);
+				    if ($havedata) {
+					$line = $Common->greatCircle($spotter_item['latitude'],$spotter_item['longitude'],$end_lat,$end_lon);
+					foreach ($line[0] as $coord) {
+						$output_dest .= '['.$coord[0].','.$coord[1].'],';
+					}
+					$output_dest  = substr($output_dest, 0, -1);
+				    }
 				    $output_dest .= ']}},';
 				    if ($havedata) $output .= $output_dest;
 				    unset($output_dest);
