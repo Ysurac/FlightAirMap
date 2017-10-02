@@ -13,6 +13,7 @@ try {
 	print '<p>Not available</p>';
 	if (isset($globalDebug) && $globalDebug) echo '<p>'.$e.'</p>';
 	require_once('footer.php');
+	exit();
 }
 $title = _("Geoid Height Calculator");
 require_once('header.php');
