@@ -48,15 +48,15 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 		exit;
 	}
 	if (!$Common->is__writable('../data/')) {
-		print '<div class="alert alert-danger"><strong>Error</strong> The directory <i>data</i> must be writable to <i>scripts/update_db.php</i> user.</div>';
+		print '<div class="alert alert-danger"><strong>Error</strong> The directory <i>data</i> must be writable from this page or at least to <i>scripts/update_db.php</i> user.</div>';
 	}
 	/*
 	if (!is_writable('../data')) {
 		print '<div class="info column"><p><strong>The directory <i>data</i> must be writable to <i>scripts/update_db.php</i> user.</strong></p></div>';
 	}
 	*/
-	if (!is_writable('../images/airlines')) {
-		print '<div class="alert alert-info">The directory <i>images/airlines</i> must be writable for IVAO.</div>';
+	if (!$Common->is__writable('../images/airlines')) {
+		print '<div class="alert alert-warning">The directory <i>images/airlines</i> must be writable for IVAO (else you can ignore this warning).</div>';
 	}
 	if (!set_time_limit(0)) {
 		print '<div class="alert alert-info">You may need to update the maximum execution time.</div>';
