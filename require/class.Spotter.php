@@ -279,6 +279,7 @@ class Spotter{
 			if (isset($row['real_arrival_airport_icao']) && $row['real_arrival_airport_icao'] != NULL) $temp_array['real_arrival_airport'] = $row['real_arrival_airport_icao'];
 			if (isset($row['latitude'])) $temp_array['latitude'] = $row['latitude'];
 			if (isset($row['longitude'])) $temp_array['longitude'] = $row['longitude'];
+			if (isset($row['verticalrate'])) $temp_array['verticalrate'] = $row['verticalrate'];
 			if (isset($row['last_latitude'])) $temp_array['last_latitude'] = $row['last_latitude'];
 			if (isset($row['last_longitude'])) $temp_array['last_longitude'] = $row['last_longitude'];
 			/*

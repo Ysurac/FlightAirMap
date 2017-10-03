@@ -254,6 +254,13 @@ class Common {
 	*/
 	public function plunge($initial_altitude,$final_altitude,$distance) {
 		$plunge = rad2deg(asin(($final_altitude-$initial_altitude)/$distance));
+		/*
+		$siter = 6378137.0 + $initial_altitude;
+		$planer = 6378137.0 + $final_altitude;
+		$airdist = sqrt($siter-$siter + $planer*$planer - 2*$siter*$planer*cos($distance/6378137.0));
+		echo 'airdist:'.$airdist;
+		$plunge = rad2deg(asin(($planer*$planer - $siter*$siter - $airdist*$airdist)/(2*$siter+$distance)));
+		*/
 		return $plunge;
 	}
 
@@ -297,7 +304,8 @@ class Common {
 	}
 
 	public function isInteger($input){
-	    return(ctype_digit(strval($input)));
+		//return(ctype_digit(strval($input)));
+		return preg_match('/^-?[0-9]+$/', (string)$input) ? true : false;
 	}
 
 
@@ -379,13 +387,13 @@ class Common {
 		//difference in longitudinal coordinates
 		$dLon = deg2rad($lon2) - deg2rad($lon1);
 		//difference in the phi of latitudinal coordinates
-		$dPhi = log(tan(deg2rad($lat2) / 2 + pi() / 4) / tan(deg2rad($lat1) / 2 + pi() / 4));
+		$dPhi = log(tan(deg2rad($lat2) / 2 + M_PI / 4) / tan(deg2rad($lat1) / 2 + M_PI / 4));
 		//we need to recalculate $dLon if it is greater than pi
-		if(abs($dLon) > pi()) {
+		if(abs($dLon) > M_PI) {
 			if($dLon > 0) {
-				$dLon = (2 * pi() - $dLon) * -1;
+				$dLon = (2 * M_PI - $dLon) * -1;
 			} else {
-				$dLon = 2 * pi() + $dLon;
+				$dLon = 2 * M_PI + $dLon;
 			}
 		}
 		//return the angle, normalized
@@ -751,7 +759,7 @@ class Common {
 		$h = $sy - $ey;
 		$z = pow(sin($h/2.0),2) + cos($sy)*cos($ey)*pow(sin($w/2.0),2);
 		$g = 2.0*asin(sqrt($z));
-		if ($g == pi() || is_nan($g)) return array(array($begin_lon,$begin_lat),array($end_lon,$end_lat));
+		if ($g == M_PI || is_nan($g)) return array(array($begin_lon,$begin_lat),array($end_lon,$end_lat));
 		$first_pass = array();
 		$delta = 1.0/($nbpts-1);
 		for ($i =0; $i < $nbpts; ++$i) {

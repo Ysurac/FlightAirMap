@@ -174,6 +174,15 @@ if (!empty($spotter_array)) {
 	}
   
 	print '<div id="heading"><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
+	if (isset($spotter_item['verticalrate']) && $spotter_item['verticalrate'] != '') {
+		print '<div id="verticalrate"><span>'._("Vertical rate").'</span>';
+		if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
+			print $spotter_item['verticalrate']. ' ft/min';
+		} else {
+			print round($spotter_item['verticalrate']*0.3048). ' m/min';
+		}
+		print '</div>';
+	}
 	if (isset($spotter_item['pilot_name']) && $spotter_item['pilot_name'] != '') {
 		print '<div id="pilot"><span>'._("Pilot").'</span>';
 		if (isset($spotter_item['pilot_id'])) print $spotter_item['pilot_name'].' ('.$spotter_item['pilot_id'].')';
