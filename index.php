@@ -395,7 +395,7 @@ require_once('header.php');
     if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayminimap" value="1" onclick="clickDisplayMinimap(this)" <?php if (!isset($_COOKIE['displayminimap']) || (isset($_COOKIE['displayminimap']) && $_COOKIE['displayminimap'] == 'true')) print 'checked'; ?> ><?php echo _("Show mini-map"); ?></label></div></li>
-		    <li><div class="checkbox"><label><input type="checkbox" name="one3dmodel" value="1" onclick="useOne3Dmodel(this)" <?php if (isset($_COOKIE['one3dmodel']) && $_COOKIE['one3dmodel'] == 'true') print 'checked'; ?> ><?php echo _("Use same 3D model for all aircraft (use fewer resources)"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="one3dmodel" value="1" onclick="useOne3Dmodel(this)" <?php if ((isset($_COOKIE['one3dmodel']) && $_COOKIE['one3dmodel'] == 'true') || (!isset($_COOKIE['one3dmodel']) && isset($globalMap3DOneModel) && $globalMap3DOneModel)) print 'checked'; ?> ><?php echo _("Use same 3D model for all aircraft (use fewer resources)"); ?></label></div></li>
 <?php
     }
     if (time() > mktime(0,0,0,12,1,date("Y")) && time() < mktime(0,0,0,12,31,date("Y"))) {

@@ -11,7 +11,7 @@ if (isset($globalProtect) && $globalProtect) {
 
 $no3dmodels = false; // Only for testing
 $one3dmodel = false; // Only for testing
-if (isset($globalMap3DForceModel) && $globalMap3DForceModel != '') {
+if ((isset($globalMap3DForceModel) && $globalMap3DForceModel != '') || (isset($globalMap3DOneModel) && $globalMap3DOneModel)) {
 	$one3dmodel = true;
 }
 if (isset($_COOKIE['one3dmodel']) && $_COOKIE['one3dmodel'] == 'true') {
