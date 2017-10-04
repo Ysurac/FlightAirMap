@@ -130,7 +130,7 @@ if (!empty($spotter_array))
 	} elseif (@getimagesize($globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png')) {
 		print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'"><img src="'.$globalURL.'/images/airlines/'.$spotter_array[0]['airline_icao'].'.png" class="airline-logo" /></a> ';
 	} else {
-		if ($spotter_array[0]['airline_name'] != "") {
+		if (isset($spotter_array[0]['airline_name']) && $spotter_array[0]['airline_name'] != "") {
 			print '<a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a> ';
 		}
 	}
