@@ -32,7 +32,7 @@ class SpotterArchive {
 		$filter_query_where = '';
 		foreach($filters as $flt) {
 			if (isset($flt['airlines']) && !empty($flt['airlines'])) {
-				if ($flt['airlines'][0] != '') {
+				if ($flt['airlines'][0] != '' && $flt['airlines'][0] != 'all') {
 					if (isset($flt['source'])) {
 						$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$flt['airlines'])."') AND spotter_archive_output.format_source IN ('".implode("','",$flt['source'])."')) saff ON saff.flightaware_id = spotter_archive_output.flightaware_id";
 					} else {
@@ -68,7 +68,7 @@ class SpotterArchive {
 			}
 		}
 		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
-			if ($filter['airlines'][0] != '') {
+			if ($filter['airlines'][0] != '' && $filter['airlines'][0] != 'all') {
 				$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) saf ON saf.flightaware_id = spotter_archive_output.flightaware_id";
 			}
 		}

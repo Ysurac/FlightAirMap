@@ -41,10 +41,12 @@
 					if (!isset($filter_name)) $filter_name = '';
 					$airlines = $Stats->getAllAirlineNames($filter_name);
 					foreach($airlines as $airline) {
-						if (isset($airline_icao) && $airline_icao == $airline['airline_icao']) {
-							print '<option value="'.$airline['airline_icao'].'" selected>'.$airline['airline_name'].'</option>';
-						} else {
-							print '<option value="'.$airline['airline_icao'].'">'.$airline['airline_name'].'</option>';
+						if ($airline['airline_icao'] != '') {
+							if (isset($airline_icao) && $airline_icao != 'all' && $airline_icao == $airline['airline_icao']) {
+								print '<option value="'.$airline['airline_icao'].'" selected>'.$airline['airline_name'].'</option>';
+							} else {
+								print '<option value="'.$airline['airline_icao'].'">'.$airline['airline_name'].'</option>';
+							}
 						}
 					}
 				?>

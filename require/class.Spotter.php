@@ -98,7 +98,7 @@ class Spotter{
 		$filter_query_where = '';
 		foreach($filters as $flt) {
 			if (isset($flt['airlines']) && !empty($flt['airlines'])) {
-				if ($flt['airlines'][0] != '') {
+				if ($flt['airlines'][0] != '' && $flt['airlines'][0] != 'all') {
 					if (isset($flt['source'])) {
 						$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$flt['airlines'])."') AND spotter_output.format_source IN ('".implode("','",$flt['source'])."')) saf ON saf.flightaware_id = spotter_output.flightaware_id";
 					} else {
@@ -134,7 +134,7 @@ class Spotter{
 			}
 		}
 		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
-			if ($filter['airlines'][0] != '') {
+			if ($filter['airlines'][0] != '' && $filter['airlines'][0] != 'all') {
 					$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) sof ON sof.flightaware_id = spotter_output.flightaware_id";
 			}
 		}
@@ -2869,10 +2869,10 @@ class Spotter{
 		elseif (isset($globalVATSIM) && $globalVATSIM) $forsource = 'vatsim';
 		elseif (isset($globalIVAO) && $globalIVAO) $forsource = 'ivao';
 		if ($forsource === NULL) {
-			$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND forsource IS NULL ORDER BY alliance ASC";
+			$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND alliance <> 'NULL' AND forsource IS NULL ORDER BY alliance ASC";
 			$query_data = array();
 		} else {
-			$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND forsource = :forsource ORDER BY alliance ASC";
+			$query = "SELECT DISTINCT alliance FROM airlines WHERE alliance IS NOT NULL AND alliance <> 'NULL' AND forsource = :forsource ORDER BY alliance ASC";
 			$query_data = array(':forsource' => $forsource);
 		}
 		
