@@ -2302,10 +2302,9 @@ class Spotter{
 	public function getAllAirlineInfo($airline_icao, $fromsource = NULL)
 	{
 		global $globalUseRealAirlines, $globalNoAirlines;
-		if (isset($globalNoAirlines) && $globalNoAirlines) return array();
 		if (isset($globalUseRealAirlines) && $globalUseRealAirlines) $fromsource = NULL;
 		$airline_icao = strtoupper(filter_var($airline_icao,FILTER_SANITIZE_STRING));
-		if ($airline_icao == 'NA') {
+		if ($airline_icao == 'NA' || (isset($globalNoAirlines) && $globalNoAirlines)) {
 			$airline_array = array();
 			$airline_array[] = array('name' => 'Not Available','iata' => 'NA', 'icao' => 'NA', 'callsign' => '', 'country' => 'NA', 'type' =>'');
 			return $airline_array;
