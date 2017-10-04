@@ -310,7 +310,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			} elseif ($marine) {
 				$output.= '"type": "marine"';
 			} else {
-				if (isset($globalMap3DLiveries) && $globalMap3DLiveries) {
+				if ($one3dmodel === false && isset($globalMap3DLiveries) && $globalMap3DLiveries) {
 					$aircraft_icao = $spotter_item['aircraft_icao'];
 					$ident = $spotter_item['ident'];
 					if ($ident != '') {
