@@ -71,7 +71,7 @@ foreach ($spotter_array as $spotter_item)
 		print '</td>';
 	} else {
 		print '<td class="logo-no-image">';
-		if ($spotter_item['airline_name'] != "")
+		if (isset($spotter_item['airline_name']) && $spotter_item['airline_name'] != "")
 		{
 			print $spotter_item['airline_name'];
 		} else {
@@ -116,7 +116,7 @@ foreach ($spotter_array as $spotter_item)
 	{
 		print '<span><i class="fa fa-th-list"></i> '.$spotter_item['ident'].'</span>';
 	}
-	if ($spotter_item['airline_name'] != "")
+	if (isset($spotter_item['airline_name']) && $spotter_item['airline_name'] != "")
 	{
 		print '<span><i class="fa fa-align-justify"></i> '.$spotter_item['airline_name'].'</span>';
 	}
