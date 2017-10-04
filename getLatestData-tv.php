@@ -31,17 +31,17 @@ if (!empty($spotter_array)) {
 				$output .= '</td>';
 			}
 		}
-		if ($globalIVAO && @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.gif'))
+		if (isset($spotter_item['airline_icao']) && $globalIVAO && @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.gif'))
 		{
 			$output .= '<td class=\"logo\">';
 			$output .= '<img src=\"'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.gif\" />';
 			$output .= '</td>';
-		} elseif (@getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png') || @getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.png'))
+		} elseif (isset($spotter_item['airline_icao']) && @getimagesize($globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png') || @getimagesize('images/airlines/'.$spotter_item['airline_icao'].'.png'))
 		{
 			$output .= '<td class=\"logo\">';
 			$output .= '<img src=\"'.$globalURL.'/images/airlines/'.$spotter_item['airline_icao'].'.png\" />';
 			$output .= '</td>';
-		} else {
+		} elseif (isset($spotter_item['airline_name'])) {
 			$output .= '<td class=\"logo-no-image\">';
 			if ($spotter_item['airline_name'] != "")
 			{
@@ -93,11 +93,11 @@ if (!empty($spotter_array)) {
 		{
 			$output .= '<span><i class=\"fa fa-th-list\"></i> '.$spotter_item['ident'].'</span>';
 		}
-		if ($spotter_item['airline_name'] != "")
+		if (isset($spotter_item['airline_name']) && $spotter_item['airline_name'] != "")
 		{
 			$output .= '<span><i class=\"fa fa-align-justify\"></i> '.$spotter_item['airline_name'].'</span>';
 		}
-		if ($spotter_item['airline_country'] != "")
+		if (isset($spotter_item['airline_country']) && $spotter_item['airline_country'] != "")
 		{
 			$output .= '<span><i class=\"fa fa-globe\"></i> '.$spotter_item['airline_country'].'</span>';
 		}
