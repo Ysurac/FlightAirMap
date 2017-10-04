@@ -18,6 +18,7 @@ var atcLayer;
 var polarLayer;
 var santaLayer;
 var notamLayer;
+var airspaceLayer;
 waypoints = '';
 
 //initialize the layer group for the aircrft markers
