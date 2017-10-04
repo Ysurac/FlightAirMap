@@ -410,7 +410,7 @@ class aprs {
 					if (preg_match('/AI=([0-9A-Z]{4})/',$body_parse,$matches)) {
 						$result['aircraft_icao'] = $matches[1];
 					}
-					if (preg_match('/VR=([0-9]*)/',$body_parse,$matches)) {
+					if (preg_match('/VR=([-0-9]*)/',$body_parse,$matches)) {
 						$result['verticalrate'] = $matches[1];
 					}
 					if (preg_match('/TI=([0-9]*)/',$body_parse,$matches)) {
