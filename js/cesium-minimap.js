@@ -11,6 +11,7 @@ function CesiumMiniMap(parentViewer, options) {
 
     options = options || {};
     var expanded = options.expanded || true;
+    var _osm = options.osm || true;
     var _viewer, _container, _toggleButton;
 
     var CESIUM_OPTS = {
@@ -55,10 +56,16 @@ function CesiumMiniMap(parentViewer, options) {
         miniscene.screenSpaceCameraController.enableTilt = false;
         miniscene.screenSpaceCameraController.enableLook = false;
 
-        parentViewer.scene.imageryLayers.layerAdded.addEventListener(_addLayer);
+        if (!_osm) parentViewer.scene.imageryLayers.layerAdded.addEventListener(_addLayer);
+        else {
+	    var imProvOSM = Cesium.createOpenStreetMapImageryProvider({
+		url : 'https://a.tile.openstreetmap.org/'
+	    });
+	    miniviewer.scene.imageryLayers.addImageryProvider(imProvOSM);
+        }
 
         var pos = parentViewer.scene.camera.positionCartographic;
-	pos.height = 22000000.0;
+	pos.height = 220000.0;
         miniviewer.scene.camera.setView({
             destination: Cesium.Ellipsoid.WGS84.cartographicToCartesian(pos),
         });
@@ -71,7 +78,7 @@ function CesiumMiniMap(parentViewer, options) {
         var parentCamera = parentViewer.scene.camera;
         parentCamera.moveEnd.addEventListener(function () {
             var pos = parentCamera.positionCartographic;
-	    pos.height = Math.max(Math.min(pos.height,11000000) * 2, 100000);
+	    pos.height = Math.max(Math.min(pos.height,11000000) * 2, 10000);
             minicamera.setView({
                 destination: Cesium.Ellipsoid.WGS84.cartographicToCartesian(pos),
                 orientation: {
@@ -122,7 +129,7 @@ function CesiumMiniMap(parentViewer, options) {
         _container.appendChild(_toggleButton);
         _setupMap(div);
         _setupListener();
-        if (parentViewer.imageryLayers.length) {
+        if (!_osm && parentViewer.imageryLayers.length) {
             _addLayer(parentViewer.imageryLayers.get(0));
         }
     }

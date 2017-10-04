@@ -465,6 +465,7 @@ var viewer = new Cesium.Viewer('live-map', {
     geocoder : false,
 //    scene3DOnly: true,
     fullscreenButton : false,
+    contextOptions  : {webgl:{failIfMajorPerformanceCaveat:false} }
 //    terrainProvider : new Cesium.CesiumTerrainProvider({
 //        url : 'https://assets.agi.com/stk-terrain/world',
 //	requestWaterMask : true,
@@ -590,7 +591,8 @@ viewer.scene.globe.enableLighting = true;
 //});
 		
 if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
-	CesiumMiniMap(viewer);
+	CesiumMiniMap(viewer, {osm: true});
+	viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('(Minimap: Map data © OpenStreetMap contributors, Open Database Licence)'));
 }
 
 <?php
