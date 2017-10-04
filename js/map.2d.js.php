@@ -443,7 +443,7 @@ new OSMBuildings(map).load();
 		createCookie('lastcentercoord',map.getCenter().lat+','+map.getCenter().lng+','+map.getZoom(),2);
 	});
 update_locationsLayer();
-setInterval(function(){if (noTimeout) update_locationsLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
+setInterval(function(){if (noTimeout) { map.removeLayer(locationsLayer); update_locationsLayer();} },<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
 
 <?php
     // Add support for custom json via $globalMapJson
