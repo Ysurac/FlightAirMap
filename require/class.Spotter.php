@@ -420,6 +420,14 @@ class Spotter{
 					$temp_array['airline_country'] = $airline_array[0]['country'];
 					$temp_array['airline_callsign'] = $airline_array[0]['callsign'];
 					$temp_array['airline_type'] = $airline_array[0]['type'];
+				} else {
+					$airline_array = $this->getAllAirlineInfo('NA');
+					$temp_array['airline_icao'] = $airline_array[0]['icao'];
+					$temp_array['airline_iata'] = $airline_array[0]['iata'];
+					$temp_array['airline_name'] = $airline_array[0]['name'];
+					$temp_array['airline_country'] = $airline_array[0]['country'];
+					$temp_array['airline_callsign'] = $airline_array[0]['callsign'];
+					$temp_array['airline_type'] = $airline_array[0]['type'];
 				}
 			} else {
 				$temp_array['airline_icao'] = $row['airline_icao'];
