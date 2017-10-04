@@ -50,11 +50,6 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 	if (!$Common->is__writable('../data/')) {
 		print '<div class="alert alert-danger"><strong>Error</strong> The directory <i>data</i> must be writable from this page or at least to <i>scripts/update_db.php</i> user.</div>';
 	}
-	/*
-	if (!is_writable('../data')) {
-		print '<div class="info column"><p><strong>The directory <i>data</i> must be writable to <i>scripts/update_db.php</i> user.</strong></p></div>';
-	}
-	*/
 	if (!$Common->is__writable('../images/airlines')) {
 		print '<div class="alert alert-warning">The directory <i>images/airlines</i> must be writable for IVAO (else you can ignore this warning).</div>';
 	}
@@ -765,6 +760,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="map3ddefault">Default to map in 3D</label>
 				<input type="checkbox" name="map3ddefault" id="map3ddefault" value="map3ddefault"<?php if (isset($globalMap3Ddefault) && $globalMap3Ddefault) { ?> checked="checked"<?php } ?> />
+			</p>
+			<p>
+				<label for="one3dmodel">Use same 3D model for all aircraft</label>
+				<input type="checkbox" name="one3dmodel" id="one3dmodel" value="one3dmodel"<?php if (isset($globalMap3DOneModel) && $globalMap3DOneModel) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Use less resources</p>
 			</p>
 			<p>
 				<label for="map3dliveries">Display real liveries</label>
@@ -1531,6 +1531,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMap3Ddefault' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMap3Ddefault' => 'FALSE'));
+	}
+	$one3dmodel = filter_input(INPUT_POST,'one3dmodel',FILTER_SANITIZE_STRING);
+	if ($one3dmodel == 'one3dmodel') {
+		$settings = array_merge($settings,array('globalMap3DOneModel' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMap3DOneModel' => 'FALSE'));
 	}
 	$map3dliveries = filter_input(INPUT_POST,'map3dliveries',FILTER_SANITIZE_STRING);
 	if ($map3dliveries == 'map3dliveries') {
