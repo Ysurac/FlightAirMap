@@ -309,12 +309,12 @@ require_once('header.php');
 			    <?php
 					}
 			    ?>
-			    <option value="NatGeo-Street"<?php if ($MapType == 'NatGeo-Street') print ' selected'; ?>>National Geographic Street</option>
 			    <option value="Yandex"<?php if ($MapType == 'Yandex') print ' selected'; ?>>Yandex</option>
 			    <option value="offline"<?php if ($MapType == 'offline') print ' selected'; ?>>Natural Earth</option>
 			    <?php
 				    }
 			    ?>
+			    <option value="NatGeo-Street"<?php if ($MapType == 'NatGeo-Street') print ' selected'; ?>>National Geographic Street</option>
 			    <?php
 				    if (isset($globalMapboxToken) && $globalMapboxToken != '') {
 					if (!isset($_COOKIE['MapTypeId'])) $MapBoxId = 'default';
@@ -395,6 +395,7 @@ require_once('header.php');
     if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayminimap" value="1" onclick="clickDisplayMinimap(this)" <?php if (!isset($_COOKIE['displayminimap']) || (isset($_COOKIE['displayminimap']) && $_COOKIE['displayminimap'] == 'true')) print 'checked'; ?> ><?php echo _("Show mini-map"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="one3dmodel" value="1" onclick="useOne3Dmodel(this)" <?php if (isset($_COOKIE['one3dmodel']) && $_COOKIE['one3dmodel'] == 'true') print 'checked'; ?> ><?php echo _("Use same 3D model for all aircraft (use fewer resources)"); ?></label></div></li>
 <?php
     }
     if (time() > mktime(0,0,0,12,1,date("Y")) && time() < mktime(0,0,0,12,31,date("Y"))) {

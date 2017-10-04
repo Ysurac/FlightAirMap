@@ -14,6 +14,9 @@ $one3dmodel = false; // Only for testing
 if (isset($globalMap3DForceModel) && $globalMap3DForceModel != '') {
 	$one3dmodel = true;
 }
+if (isset($_COOKIE['one3dmodel']) && $_COOKIE['one3dmodel'] == 'true') {
+	$one3dmodel = true;
+}
 $tracker = false;
 $marine = false;
 if (isset($_GET['tracker'])) $tracker = true;
