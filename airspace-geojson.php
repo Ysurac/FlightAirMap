@@ -59,7 +59,6 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC))
 {
 		date_default_timezone_set('UTC');
 		$properties = $row;
-		print_r($properties);
 		unset($properties['wkb_geometry']);
 		unset($properties['wkb']);
 		unset($properties['shape']);
