@@ -66,7 +66,7 @@ function CesiumMiniMap(parentViewer, options) {
         }
 
         var pos = parentViewer.scene.camera.positionCartographic;
-	//pos.height = 220000.0;
+	pos.height = 220000.0;
         miniviewer.scene.camera.setView({
             destination: Cesium.Ellipsoid.WGS84.cartographicToCartesian(pos),
         });
@@ -77,8 +77,8 @@ function CesiumMiniMap(parentViewer, options) {
     function _setupListener() {
         var minicamera = _viewer.scene.camera;
         var parentCamera = parentViewer.scene.camera;
-        //parentCamera.moveEnd.addEventListener(function () {
-        var intervalPosition = setInterval(function() {
+        parentCamera.percentageChanged = 0.001;
+        parentCamera.changed.addEventListener(function () {
             var pos = parentCamera.positionCartographic;
 	    pos.height = Math.max(Math.min(pos.height,1100000) * 2, 10000);
             minicamera.setView({
@@ -88,7 +88,7 @@ function CesiumMiniMap(parentViewer, options) {
             	    pitch : parentCamera.pitch
             	}
             });
-        },1000);
+        });
     }
 
     function _toggle() {
