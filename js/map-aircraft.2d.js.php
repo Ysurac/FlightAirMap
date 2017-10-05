@@ -1170,7 +1170,7 @@ function showWaypoints(cb) {
 	if (cb.checked == true) {
 		update_waypointsLayer();
 	} else {
-		map.removeLayer(waypointsLayer);
+		if (typeof waypointsLayer != 'undefined') map.removeLayer(waypointsLayer);
 	}
 }
 
@@ -1205,7 +1205,7 @@ function showAirspace(cb) {
 	if (cb.checked == true) {
 		update_airspaceLayer();
 	} else {
-		map.removeLayer(airspaceLayer);
+		if (typeof airspaceLayer != 'undefined') map.removeLayer(airspaceLayer);
 	}
 }
 
