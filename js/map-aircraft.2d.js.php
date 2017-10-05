@@ -1034,18 +1034,18 @@ function showNotam(cb) {
 	if (cb.checked == true) {
 		update_notamLayer();
 	} else {
-		map.removeLayer(notamLayer);
+		if (typeof notamLayer != 'undefined') map.removeLayer(notamLayer);
 	}
 }
 function notamscope(selectObj) {
-    var idx = selectObj.selectedIndex;
-    var scope = selectObj.options[idx].value;
-    document.cookie = 'notamscope='+scope+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    if ($("#notam").hasClass("active"))
-    {
-	map.removeLayer(notamLayer);
-	update_notamLayer();
-     }
+	var idx = selectObj.selectedIndex;
+	var scope = selectObj.options[idx].value;
+	document.cookie = 'notamscope='+scope+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	if (getCookie("notam") == 'true')
+	{
+		if (typeof notamLayer != 'undefined') map.removeLayer(notamLayer);
+		update_notamLayer();
+	}
 }
 
 function iconColor(color) {

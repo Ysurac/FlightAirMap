@@ -375,14 +375,14 @@ function showWaypoints(cb) {
 	}
 }
 function notamscope(selectObj) {
-    var idx = selectObj.selectedIndex;
-    var scope = selectObj.options[idx].value;
-    document.cookie = 'notamscope='+scope+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    if ($("#notam").hasClass("active")) {
-	deleteNOTAM();
-	addNOTAM();
-    }
-
+	var idx = selectObj.selectedIndex;
+	var scope = selectObj.options[idx].value;
+	document.cookie = 'notamscope='+scope+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	if (getCookie("notam") == 'true')
+	{
+		deleteNOTAM();
+		addNOTAM();
+	}
 }
 
 var notams;
