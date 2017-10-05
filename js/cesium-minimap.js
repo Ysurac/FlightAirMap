@@ -66,7 +66,8 @@ function CesiumMiniMap(parentViewer, options) {
         }
 
         var pos = parentViewer.scene.camera.positionCartographic;
-	pos.height = 220000.0;
+	//pos.height = 2200000.0;
+	pos.height = Math.max(Math.min(pos.height,2200000) * 2, 2000);
         miniviewer.scene.camera.setView({
             destination: Cesium.Ellipsoid.WGS84.cartographicToCartesian(pos),
         });
@@ -80,7 +81,7 @@ function CesiumMiniMap(parentViewer, options) {
         parentCamera.percentageChanged = 0.001;
         parentCamera.changed.addEventListener(function () {
             var pos = parentCamera.positionCartographic;
-	    pos.height = Math.max(Math.min(pos.height,1100000) * 2, 10000);
+	    pos.height = Math.max(Math.min(pos.height,2200000) * 2, 2000);
             minicamera.setView({
                 destination: Cesium.Ellipsoid.WGS84.cartographicToCartesian(pos),
                 orientation: {
