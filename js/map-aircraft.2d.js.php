@@ -123,33 +123,47 @@ function update_airportsLayer() {
 
 $( document ).ready(function() {
 	var zoom = map.getZoom();
+	if (map.getZoom() > 7) {
+		if (getCookie("airspace") == 'true')
+		{
+			update_airspaceLayer();
+		}
+		if (getCookie("waypoints") == 'true')
+		{
+			update_waypointsLayer();
+		}
+		if (getCookie("notam") == 'true')
+		{
+			update_notamLayer();
+		}
+	}
 	map.on('moveend', function() {
 		if (map.getZoom() > 7) {
 			if (getCookie("displayairports") == 'true') update_airportsLayer();
-			if ($("#airspace").hasClass("active"))
+			if (getCookie("airspace") == 'true')
 			{
-				map.removeLayer(airspaceLayer);
+				if (typeof airspaceLayer != 'undefined') map.removeLayer(airspaceLayer);
 				update_airspaceLayer();
 			}
-			if ($("#waypoints").hasClass("active"))
+			if (getCookie("waypoints") == 'true')
 			{
-				map.removeLayer(waypointsLayer);
+				if (typeof waypointsLayer != 'undefined') map.removeLayer(waypointsLayer);
 				update_waypointsLayer();
 			}
 		} else {
 			if (getCookie("displayairports") == 'true') update_airportsLayer();
-			if ($("#airspace").hasClass("active"))
+			if (getCookie("airspace") == 'true')
 			{
-				map.removeLayer(airspaceLayer);
+				if (typeof airspaceLayer != 'undefined') map.removeLayer(airspaceLayer);
 			}
-			if ($("#waypoints").hasClass("active"))
+			if (getCookie("waypoints") == 'true')
 			{
-				map.removeLayer(waypointsLayer);
+				if (typeof waypointsLayer != 'undefined') map.removeLayer(waypointsLayer);
 			}
 		}
-		if ($("#notam").hasClass("active"))
+		if (getCookie("notam") == 'true')
 		{
-			map.removeLayer(notamLayer);
+			if (typeof notamLayer != 'undefined') map.removeLayer(notamLayer);
 			update_notamLayer();
 		}
 <?php
@@ -1015,19 +1029,13 @@ function update_santaLayer(nows) {
 };
 
 
-function showNotam() {
-    if (!$("#notam").hasClass("active"))
-    {
-	//loads the function to load the waypoints
-	update_notamLayer();
-	//add the active class
-	$("#notam").addClass("active");
-    } else {
-	//remove the waypoints layer
-	map.removeLayer(notamLayer);
-	//remove the active class
-	$("#notam").removeClass("active");
-     }
+function showNotam(cb) {
+	document.cookie =  'notam='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	if (cb.checked == true) {
+		update_notamLayer();
+	} else {
+		map.removeLayer(notamLayer);
+	}
 }
 function notamscope(selectObj) {
     var idx = selectObj.selectedIndex;
@@ -1157,19 +1165,13 @@ function update_waypointsLayer() {
 	});
 };
 
-function showWaypoints() {
-    if (!$("#waypoints").hasClass("active"))
-    {
-	//loads the function to load the waypoints
-	update_waypointsLayer();
-	//add the active class
-	$("#waypoints").addClass("active");
-    } else {
-	//remove the waypoints layer
-	map.removeLayer(waypointsLayer);
-	//remove the active class
-	$("#waypoints").removeClass("active");
-     }
+function showWaypoints(cb) {
+	document.cookie =  'waypoints='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	if (cb.checked == true) {
+		update_waypointsLayer();
+	} else {
+		map.removeLayer(waypointsLayer);
+	}
 }
 
 function waypointsPopup (feature, layer) {
@@ -1198,19 +1200,13 @@ function waypointsPopup (feature, layer) {
 	layer.bindPopup(output);
 };
 
-function showAirspace() {
-    if (!$("#airspace").hasClass("active"))
-    {
-	//loads the function to load the waypoints
-	update_airspaceLayer();
-	//add the active class
-	$("#airspace").addClass("active");
-    } else {
-	//remove the waypoints layer
-	map.removeLayer(airspaceLayer);
-	//remove the active class
-	$("#airspace").removeClass("active");
-     }
+function showAirspace(cb) {
+	document.cookie =  'airspace='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	if (cb.checked == true) {
+		update_airspaceLayer();
+	} else {
+		map.removeLayer(airspaceLayer);
+	}
 }
 
 function airspacePopup (feature, layer) {

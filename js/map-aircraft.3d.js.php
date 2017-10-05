@@ -350,41 +350,29 @@ function updateSanta() {
 	});
 }
 
-function showNotam() {
-    if (!$("#notam").hasClass("active"))
-    {
-	$("#notam").addClass("active");
-	console.log('add NOTAM');
-	addNOTAM();
-    } else {
-	console.log('remove NOTAM');
-	$("#notam").removeClass("active");
-	deleteNOTAM();
-    }
+function showNotam(cb) {
+	document.cookie =  'notam='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	if (cb.checked == true) {
+		addNOTAM();
+	} else {
+		deleteNOTAM();
+	}
 }
-function showAirspace() {
-    if (!$("#airspace").hasClass("active"))
-    {
-	$("#airspace").addClass("active");
-	console.log('add Airspace');
-	addAirspace();
-    } else {
-	console.log('remove Airspace');
-	$("#airspace").removeClass("active");
-	deleteAirspace();
-    }
+function showAirspace(cb) {
+	document.cookie =  'airspace='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	if (cb.checked == true) {
+		addAirspace();
+	} else {
+		deleteAirspace();
+	}
 }
-function showWaypoints() {
-    if (!$("#waypoints").hasClass("active"))
-    {
-	$("#waypoints").addClass("active");
-	console.log('add Waypoints');
-	addWaypoints();
-    } else {
-	console.log('remove Waypoints');
-	$("#waypoints").removeClass("active");
-	deleteWaypoints();
-    }
+function showWaypoints(cb) {
+	document.cookie =  'waypoints='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	if (cb.checked == true) {
+		addWaypoints();
+	} else {
+		deleteWaypoints();
+	}
 }
 function notamscope(selectObj) {
     var idx = selectObj.selectedIndex;
@@ -660,15 +648,15 @@ handler_aircraft.setInputAction(function(click) {
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 camera.moveEnd.addEventListener(function() {
-	if ($("#notam").hasClass("active"))
+	if (getCookie("notam") == 'true')
 	{
 		addNOTAM();
 	}
-	if ($("#airspace").hasClass("active"))
+	if (getCookie("airspace") == 'true')
 	{
 		addAirspace();
 	}
-	if ($("#waypoints").hasClass("active"))
+	if (getCookie("waypoints") == 'true')
 	{
 		addWaypoints();
 	}
@@ -712,9 +700,23 @@ if (archive == false) {
 
 }
 
-if (getCookie('displayairports') == 'true') {
+if (getCookie('displayairports') == 'true') 
+{
 	update_airportsLayer();
 }
+if (getCookie("notam") == 'true')
+{
+	addNOTAM();
+}
+if (getCookie("airspace") == 'true')
+{
+	addAirspace();
+}
+if (getCookie("waypoints") == 'true')
+{
+	addWaypoints();
+}
+
 <?php
     if ((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM)) {
 ?>

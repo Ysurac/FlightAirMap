@@ -139,8 +139,8 @@ require_once('header.php');
 ?>
 		<form>
 			<ul>
-				<li><div class="checkbox"><label><input type="checkbox" name="waypoints" value="1" onclick="showWaypoints();" /><?php echo _("Display waypoints"); ?></label></div></li>
-				<li><div class="checkbox"><label><input type="checkbox" name="airspace" value="1" onclick="showAirspace();" /><?php echo _("Display airspace"); ?></label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="waypoints" value="1" onclick="showWaypoints(this);" <?php if (isset($_COOKIE['waypoints']) && $_COOKIE['waypoints'] == 'true') print 'checked'; ?> /><?php echo _("Display waypoints"); ?></label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="airspace" value="1" onclick="showAirspace(this);" <?php if (isset($_COOKIE['airspace']) && $_COOKIE['airspace'] == 'true') print 'checked'; ?> /><?php echo _("Display airspace"); ?></label></div></li>
 			</ul>
 		</form>
 <?php
@@ -148,8 +148,8 @@ require_once('header.php');
 ?>
 		<form>
 			<ul>
-				<li><div class="checkbox"><label><input type="checkbox" name="waypoints" value="1" onclick="showWaypoints();" /><?php echo _("Display waypoints"); ?> Beta</label></div></li>
-				<li><div class="checkbox"><label><input type="checkbox" name="airspace" value="1" onclick="showAirspace();" /><?php echo _("Display airspace"); ?> Beta</label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="waypoints" value="1" onclick="showWaypoints(this);" <?php if (isset($_COOKIE['waypoints']) && $_COOKIE['waypoints'] == 'true') print 'checked'; ?> /><?php echo _("Display waypoints"); ?> Beta</label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="airspace" value="1" onclick="showAirspace(this);" <?php if (isset($_COOKIE['airspace']) && $_COOKIE['airspace'] == 'true') print 'checked'; ?> /><?php echo _("Display airspace"); ?> Beta</label></div></li>
 			</ul>
 			<p>This layers are in Beta, this can and will crash.</p>
 		</form>
@@ -160,7 +160,7 @@ require_once('header.php');
 		<h1>NOTAM</h1>
 		<form>
 			<ul>
-				<li><div class="checkbox"><label><input type="checkbox" name="notamcb" value="1" onclick="showNotam();" /><?php echo _("Display NOTAM"); ?></label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="notamcb" value="1" onclick="showNotam(this);" <?php if (isset($_COOKIE['notam']) && $_COOKIE['notam'] == 'true') print 'checked'; ?> /><?php echo _("Display NOTAM"); ?></label></div></li>
 				<li><?php echo _("NOTAM scope:"); ?>
 					<select class="selectpicker" onchange="notamscope(this);">
 						<option<?php if (!isset($_COOKIE['notamscope']) || $_COOKIE['notamscope'] == 'All') print ' selected'; ?>>All</option>
