@@ -183,14 +183,23 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true);
 } else {
 	$coord = array();
-	if (isset($_GET['coord']) && $_GET['coord'] != '') {
+	if (!((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '')) && isset($_GET['coord']) && $_GET['coord'] != '') {
 		$coord = explode(',',$_GET['coord']);
 		if (!(filter_var($coord[0],FILTER_VALIDATE_FLOAT) && filter_var($coord[1],FILTER_VALIDATE_FLOAT) && filter_var($coord[2],FILTER_VALIDATE_FLOAT) && filter_var($coord[3],FILTER_VALIDATE_FLOAT) 
 		    && $coord[0] > -180.0 && $coord[0] < 180.0 && $coord[1] > -90.0 && $coord[1] < 90.0 && $coord[2] > -180.0 && $coord[2] < 180.0 && $coord[3] > -90.0 && $coord[3] < 90.0)) {
 			$coord = array();
 		}
 	}
-	$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true);
+	$previous_filter = $filter;
+	if ((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '')) {
+		$filter = array_merge($filter,array('id' => $_COOKIE['MapTrack']));
+		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true);
+	} elseif (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '' && !empty($coord)) {
+		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true,$_COOKIE['MapTrack']);
+	} else {
+		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true);
+	}
+	$filter = $previous_filter;
 }
 //print_r($spotter_array);
 if (!empty($spotter_array) && isset($coord)) {
@@ -208,6 +217,8 @@ if (!empty($spotter_array) && isset($coord)) {
 
 $sqltime = round(microtime(true)-$begintime,2);
 $minitime = time();
+$minitracktime_begin = time();
+$minitracktime = $minitracktime_begin;
 $maxitime = 0;
 $lastupdate = filter_input(INPUT_GET,'update',FILTER_SANITIZE_NUMBER_INT);
 $modelsdb = array();
@@ -697,6 +708,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 	//		$output .= '"epoch" : "'.date("c",strtotime($spotter_item['date'])).'", ';
 			$output .= '"cartographicDegrees": [';
 			if ($minitime > strtotime($spotter_item['date'])) $minitime = strtotime($spotter_item['date']);
+			if (isset($_COOKIE['MapTrack']) && $id == $_COOKIE['MapTrack'] && $minitracktime > strtotime($spotter_item['date'])) $minitracktime = strtotime($spotter_item['date']);
 			if ($maxitime < strtotime($spotter_item['date'])) $maxitime = strtotime($spotter_item['date']);
 			$output .= '"'.date("c",strtotime($spotter_item['date'])).'", ';
 			$output .= $spotter_item['longitude'].', ';
@@ -775,7 +787,11 @@ if (isset($globalArchive) && $globalArchive === TRUE) {
 		}
 	}
 	else $output = str_replace('%minitime%',date("c",$minitime),$output);
-} else $output = str_replace('%minitime%',date("c",$minitime),$output);
+} elseif (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '' && $minitracktime != $minitracktime_begin) {
+	$output = str_replace('%minitime%',date("c",$minitracktime),$output);
+} else {
+	$output = str_replace('%minitime%',date("c",$minitime),$output);
+}
 $output = str_replace('%maxitime%',date("c",$maxitime),$output);
 if ($gltf2) $output = str_replace('%gltf2%','true',$output);
 else $output = str_replace('%gltf2%','false',$output);

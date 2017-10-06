@@ -183,7 +183,7 @@ function bbox() {
 	var pitch = viewer.scene.camera.pitch;
 //	console.log('height: '+position.height);
 //	console.log('pitch: '+Math.degrees(pitch));
-	if (position.height < 5000000 && pitch < Math.radians(-25)) { 
+	if (position.height < 5000000 && pitch < Math.radians(-20)) { 
 		//viewer.entities.remove(entitybbox);
 		var rectangle = viewer.scene.camera.computeViewRectangle(viewer.scene.globe.ellipsoid);
 		var west = Math.degrees(rectangle.west);
@@ -461,7 +461,7 @@ var viewer = new Cesium.Viewer('live-map', {
     shadows : true,
 //    selectionIndicator : false,
     infoBox : false,
-   navigationHelpButton : false,
+    navigationHelpButton : false,
     geocoder : false,
 //    scene3DOnly: true,
     fullscreenButton : false,

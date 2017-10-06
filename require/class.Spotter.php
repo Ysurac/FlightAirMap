@@ -157,6 +157,9 @@ class Spotter{
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
 			$filter_query_where .= " AND ident = '".$filter['ident']."'";
 		}
+		if (isset($filter['id']) && !empty($filter['id'])) {
+			$filter_query_where .= " AND flightaware_id = '".$filter['id']."'";
+		}
 		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
 			$filter_query_where .= " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
 		}

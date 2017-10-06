@@ -119,11 +119,12 @@ function sources(selectObj) {
 function show2D() {
     //document.cookie =  'MapFormat=2d; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
     createCookie('MapFormat','2d',10);
+    document.cookie =  'MapTrack='+document.getElementById("aircraft_ident").className+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
 }
 function show3D() {
-    //document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     createCookie('MapFormat','3d',10);
+    document.cookie =  'MapTrack='+document.getElementById("aircraft_ident").className+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
 }
 function clickPolar(cb) {
@@ -141,6 +142,9 @@ function clickDisplayISS(cb) {
 function clickDisplayMinimap(cb) {
     document.cookie =  'displayminimap='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     window.location.reload();
+}
+function clickSingleModel(cb) {
+    document.cookie =  'singlemodel='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 }
 function clickVATSIM(cb) {
     //document.cookie =  'filter_ShowVATSIM='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';

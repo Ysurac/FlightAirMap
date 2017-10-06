@@ -295,14 +295,16 @@ function displayData(data) {
 	*/
 	
 	
+	var singleflight = getCookie('singlemodel');
 	var MapTrack = getCookie('MapTrack');
 	if (MapTrack != '') {
 		viewer.trackedEntity = viewer.dataSources.get(dsn).entities.getById(MapTrack);
-		$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
-		$("#aircraft_ident").attr('class',flightaware_id);
+		//viewer.selectedEntity = viewer.dataSources.get(dsn).entities.getById(MapTrack);
+		var currenttime = viewer.clock.currentTime;
+		$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+MapTrack+"&currenttime="+Date.parse(currenttime.toString()));
+		$("#aircraft_ident").attr('class',MapTrack);
 	}
 	var flightvisible = viewer.dataSources.get(dsn).entities.values.length;
-	//console.log('flightcnt: '+flightcnt+' - flightvisible: '+flightvisible);
 	if (flightcnt != 0 && flightcnt != flightvisible && flightcnt > flightvisible) {
 		$("#ibxaircraft").html('<h4><?php echo _("Aircraft detected"); ?></h4><br /><b>'+flightvisible+'/'+flightcnt+'</b>');
 	} else {
@@ -328,12 +330,10 @@ function updateData() {
 	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
 ?>
 	var livedata = czmlds.process('<?php print $globalURL; ?>/live-czml.php?update=' + lastupdate+'&coord='+bbox());
-	//var livedata = czmlds.load('<?php print $globalURL; ?>/live-czml.php?' + Date.now()+'&coord='+bbox());
 <?php
 	} else {
 ?>
 	var livedata = czmlds.process('<?php print $globalURL; ?>/live-czml.php?' + Date.now());
-	//var livedata = czmlds.load('<?php print $globalURL; ?>/live-czml.php?update=' + lastupdate);
 <?php
 	}
 ?>
@@ -585,6 +585,7 @@ handler_aircraft.setInputAction(function(click) {
 		delCookie('MapTrack');
 		if (type == 'flight') {
 			flightaware_id = pickedObject.id.id;
+			createCookie('MapTrack',flightaware_id,1);
 			$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
 			var dsn;
 			for (var i =0; i < viewer.dataSources.length; i++) {
@@ -645,6 +646,8 @@ handler_aircraft.setInputAction(function(click) {
 			var pnew = viewer.dataSources.get(dsn).entities.getById(pickedObject.id.id);
 			pnew.path.show = true;
 		}
+	} else {
+		delCookie('MapTrack');
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 camera.moveEnd.addEventListener(function() {

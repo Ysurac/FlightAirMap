@@ -16,9 +16,11 @@ if ($trackident != '') {
 	} else {
 		setcookie('MapTrack',$resulttrackident[0]['flightaware_id']);
 	}
+/*
 } else {
 	unset($_COOKIE['MapTrack']);
 	setcookie('MapTrack', '', time() - 3600);
+*/
 }
 
 $title = _("Home");
@@ -77,10 +79,10 @@ require_once('header.php');
 <div id="sidebar" class="sidebar collapsed">
     <!-- Nav tabs -->
     <ul class="sidebar-tabs" role="tablist">
-	<li><a href="#" onclick="zoomInMap(); return false;" title="<?php echo _("Zoom in"); ?>"><i class="fa fa-plus"></i></a></li>
-	<li><a href="#" onclick="zoomOutMap(); return false;" title="<?php echo _("Zoom out"); ?>"><i class="fa fa-minus"></i></a></li>
-	<li><a href="#" onclick="getUserLocation(); return false;" title="<?php echo _("Plot your Location"); ?>"><i class="fa fa-map-marker"></i></a></li>
-	<li><a href="#" onclick="getCompassDirection(); return false;" title="<?php echo _("Compass Mode"); ?>"><i class="fa fa-compass"></i></a></li>
+	<li><a href="" onclick="zoomInMap(); return false;" title="<?php echo _("Zoom in"); ?>"><i class="fa fa-plus"></i></a></li>
+	<li><a href="" onclick="zoomOutMap(); return false;" title="<?php echo _("Zoom out"); ?>"><i class="fa fa-minus"></i></a></li>
+	<li><a href="" onclick="getUserLocation(); return false;" title="<?php echo _("Plot your Location"); ?>"><i class="fa fa-map-marker"></i></a></li>
+	<li><a href="" onclick="getCompassDirection(); return false;" title="<?php echo _("Compass Mode"); ?>"><i class="fa fa-compass"></i></a></li>
 <?php
     if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 	if (isset($globalArchive) && $globalArchive == TRUE) {
@@ -97,7 +99,7 @@ require_once('header.php');
     if (isset($globalMap3D) && $globalMap3D) {
 	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
 ?>
-	<li><a href="#" onclick="show3D(); return false;" role="tab" title="3D"><b>3D</b></a></li>
+	<li><a href="" onclick="show3D(); return false;" role="tab" title="3D"><b>3D</b></a></li>
 <?php
 	} else {
 	    if (isset($globalSatellite) && $globalSatellite) {
@@ -106,7 +108,7 @@ require_once('header.php');
 <?php
 	    }
 ?>
-	<li><a href="#" onclick="show2D(); return false;" role="tab" title="2D"><b>2D</b></a></li>
+	<li><a href="" onclick="show2D(); return false;" role="tab" title="2D"><b>2D</b></a></li>
 <?php
 	}
     }
@@ -392,6 +394,13 @@ require_once('header.php');
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayfires" value="1" onclick="clickDisplayFires(this)" <?php if ((isset($_COOKIE['show_Fires']) && $_COOKIE['show_Fires'] == 'true') || (!isset($_COOKIE['show_Fires']) && (isset($globalMapFires) && $globalMapFires === TRUE))) print 'checked'; ?> ><?php echo _("Display fires on map"); ?></label></div></li>
 <?php
 	}
+	if (isset($globalMap3D) && $globalMap3D) {
+?>
+		    <li><div class="checkbox"><label><input type="checkbox" name="singlemodel" value="1" onclick="clickSingleModel(this)" <?php if (isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') print 'checked'; ?> ><?php echo _("Only display selected flight on 3D mode"); ?></label></div></li>
+<?php
+	}
+?>
+<?php
     if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayminimap" value="1" onclick="clickDisplayMinimap(this)" <?php if (!isset($_COOKIE['displayminimap']) || (isset($_COOKIE['displayminimap']) && $_COOKIE['displayminimap'] == 'true')) print 'checked'; ?> ><?php echo _("Show mini-map"); ?></label></div></li>
