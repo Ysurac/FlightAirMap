@@ -404,6 +404,7 @@ function getLiveData(click)
 		}
 ?>
 						rotationAngle: heading,
+						autostart: true,
 						iconAngle: heading,
 						title: markerLabel,
 						alt: callsign,
