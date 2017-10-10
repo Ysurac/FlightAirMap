@@ -778,7 +778,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<p>
 				<label for="map3dshadows">Use sun shadows on 3D models</label>
-				<input type="text" name="map3dshadows" id="map3dshadows" value="map3dshadows"<?php if (!isset($globalMap3DShadows) || (isset($globalMap3DShadows) && $globalMap3DShadows)) { ?> checked="checked" <?php } ?> />
+				<input type="checkbox" name="map3dshadows" id="map3dshadows" value="map3dshadows"<?php if (!isset($globalMap3DShadows) || (isset($globalMap3DShadows) && $globalMap3DShadows)) { ?> checked="checked" <?php } ?> />
 			</p>
 <!--
 			<p>
