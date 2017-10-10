@@ -458,7 +458,7 @@ var viewer = new Cesium.Viewer('live-map', {
 //    }),
     timeline : archive,
     animation : false,
-    shadows : true,
+    shadows : <?php if ((isset($globalMap3DShadows) && $globalMap3DShadows === FALSE) || (isset($_COOKIE['map3dnoshadows']) && $_COOKIE['map3dnoshadows'] == 'true')) print 'false'; else print 'true'; ?>,
 //    selectionIndicator : false,
     infoBox : false,
     navigationHelpButton : false,
