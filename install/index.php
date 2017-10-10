@@ -776,6 +776,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="text" name="map3dtileset" id="map3dtileset" value="<?php if (isset($globalMap3DTiles) && $globalMap3DTiles) { print $globalMap3DTiles; } ?>" />
 				<p class="help-block">Set the url of your 3D Tiles</p>
 			</p>
+			<p>
+				<label for="map3dshadows">Use sun shadows on 3D models</label>
+				<input type="text" name="map3dshadows" id="map3dshadows" value="map3dshadows"<?php if (!isset($globalMap3DShadows) || (isset($globalMap3DShadows) && $globalMap3DShadows)) { ?> checked="checked" <?php } ?> />
+			</p>
 <!--
 			<p>
 				<label for="mapsatellites">Enable satellites in 3D map</label>
@@ -793,7 +797,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="realairlines">Always use real airlines</label>
 				<input type="checkbox" name="realairlines" id="realairlines" value="realairlines"<?php if (isset($globalUseRealAirlines) && $globalUseRealAirlines) { ?> checked="checked"<?php } ?> />
-				<p class="help-block">Use real airlines even for IVAO or VATSIM.</p>
+				<p class="help-block">Use real airlines for IVAO or VATSIM.</p>
 			</p>
 			<br />
 			<p>
@@ -1543,6 +1547,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMap3DLiveries' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMap3DLiveries' => 'FALSE'));
+	}
+	$map3dshadows = filter_input(INPUT_POST,'map3dshadows',FILTER_SANITIZE_STRING);
+	if ($map3dshadows == 'map3dshadows') {
+		$settings = array_merge($settings,array('globalMap3DShadows' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMap3DShadows' => 'FALSE'));
 	}
 	$translate = filter_input(INPUT_POST,'translate',FILTER_SANITIZE_STRING);
 	if ($translate == 'translate') {
