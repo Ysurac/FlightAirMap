@@ -2,7 +2,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 100%;
+  width: 95%;
   overflow: hidden;
   z-index: 2000; }
   .sidebar.collapsed {
@@ -10,7 +10,7 @@
   @media (min-width: 768px) {
     .sidebar {
       top: 40px;
-      bottom: 30px;
+      bottom: 60px;
       transition: width 500ms; } }
   @media (min-width: 768px) and (max-width: 991px) {
     .sidebar {

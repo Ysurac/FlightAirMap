@@ -54,11 +54,13 @@ if (isset($_GET['ident'])) {
 	$archivespeed = filter_input(INPUT_GET,'speed',FILTER_SANITIZE_NUMBER_INT);
 	$begindate = date('Y-m-d H:i:s',$begindate);
 	$enddate = date('Y-m-d H:i:s',$enddate);
-	$spotter_array = $SpotterArchive->getMinLiveSpotterDataPlayback($begindate,$enddate,$filter);
+	//$spotter_array = $SpotterArchive->getMinLiveSpotterDataPlayback($begindate,$enddate,$filter);
+	$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
 }
 
 if (!empty($spotter_array)) {
-	$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
+	//$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
+	$flightcnt = 0;
 	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;
 
@@ -88,49 +90,6 @@ $output = '{';
 				} else {
 					$image = "images/placeholder_thumb.png";
 				}
-
-				//waypoint plotting
-                /*
-				$output .= '{';
-					$output .= '"type": "Feature",';
-						$output .= '"properties": {';
-                            $output .= '"flightaware_id": "'.$spotter_item['flightaware_id'].'",';
-							$output .= '"callsign": "'.$spotter_item['ident'].'",';
-							$output .= '"registration": "'.$spotter_item['registration'].'",';
-							$output .= '"aircraft_name": "'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')",';
-							$output .= '"airline_name": "'.$spotter_item['airline_name'].'",';
-							$output .= '"departure_airport_code": "'.$spotter_item['departure_airport'].'",';
-							$output .= '"departure_airport": "'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_country'].'",';
-							$output .= '"arrival_airport_code": "'.$spotter_item['arrival_airport'].'",';
-							$output .= '"arrival_airport": "'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].'",';
-							$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
-							$output .= '"latitude": "'.$spotter_item['latitude'].'",';
-							$output .= '"longitude": "'.$spotter_item['longitude'].'",';
-							$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
-							$output .= '"altitude": "'.$spotter_item['altitude'].'",';
-							$output .= '"heading": "'.$spotter_item['heading'].'",';
-							$output .= '"image": "'.$image.'",';
-							$output .= '"type": "route"';
-						$output .= '},';
-						$output .= '"geometry": {';
-							$output .= '"type": "LineString",';
-								$output .= '"coordinates": [';
-									$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
-									$waypoint_pieces = array_chunk($waypoint_pieces, 2);
-
-									foreach ($waypoint_pieces as $waypoint_coordinate)
-									{
-										$output .= '[';
-													$output .=  $waypoint_coordinate[1].', ';
-													$output .=  $waypoint_coordinate[0];
-										$output .= '],';
-
-									}
-									$output = substr($output, 0, -1);
-								$output .= ']';
-							$output .= '}';
-				$output .= '},';
-                */
 
 				//location of aircraft
 //				print_r($spotter_item);
@@ -263,52 +222,54 @@ $output = '{';
 						//$spotter_history_array = array();
 				$output_history = '';
 				$output_time = '';
+				$output_timediff = '';
+				$previousts = 0;
 				foreach ($spotter_history_array as $key => $spotter_history)
 				{
 					$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].'],';
 					$output_time .= (strtotime($spotter_history['date'])*1000).',';
+					if ($previousts != 0) $output_timediff .= (strtotime($spotter_history['date'])-$previousts).',';
+					$previousts = strtotime($spotter_history['date']);
 				}
 				if (isset($output_time)) {
 				    $output_time  = substr($output_time, 0, -1);
 				    $output .= '"time": ['.$output_time.'],';
 				}
-
-
-
+				if (isset($output_timediff)) {
+				    $output_timediff  = substr($output_timediff, 0, -1);
+				    $output .= '"timediff": ['.$output_timediff.'],';
+				}
 							// FIXME : type when not aircraft ?
 						if ($compress) $output .= '"t": "aircraft"';
 						else $output .= '"type": "aircraft"';
 						$output .= '},';
 						$output .= '"geometry": {';
 						$output .= '"type": "MultiPoint",';
+						//$output .= '"type": "LineString",';
 						$output .= '"coordinates": [';
 						
 				if (isset($output_history)) {
 				    $output_history  = substr($output_history, 0, -1);
 				    $output .= $output_history;
 				}
-				
-						$output .= ']';
-						$output .= '}';
-				$output .= '},';
-
-			}
-			$output  = substr($output, 0, -1);
-			$output .= ']';
-			$output .= ',"initial_sqltime": "'.$sqltime.'",';
-			$output .= '"totaltime": "'.round(microtime(true)-$begintime,2).'",';
-			if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
-			$output .= '"fc": "'.$flightcnt.'"';
-		} else {
-			$output .= '"features": ';
-			$output .= '{';
-			$output .= '"type": "Feature",';
-			$output .= '"properties": {';
-			$output .= '"fc": "'.$flightcnt.'"}}';
+				$output .= ']';
+				$output .= '}';
+			$output .= '},';
 		}
-		
+		$output  = substr($output, 0, -1);
+		$output .= ']';
+		$output .= ',"initial_sqltime": "'.$sqltime.'",';
+		$output .= '"totaltime": "'.round(microtime(true)-$begintime,2).'",';
+		if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
+		$output .= '"fc": "'.$flightcnt.'"';
+	} else {
+		$output .= '"features": ';
+		$output .= '{';
+		$output .= '"type": "Feature",';
+		$output .= '"properties": {';
+		$output .= '"fc": "'.$flightcnt.'"}}';
+	}
 $output .= '}';
-
 print $output;
 
 ?>

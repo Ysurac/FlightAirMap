@@ -1286,6 +1286,45 @@ class update_db {
 			if ($globalTransaction) $Connection->db->commit();
 		}
 		return '';
+	}
+
+	public static function block_fam() {
+		global $tmp_dir, $globalTransaction, $globalDebug;
+		$query = "DELETE FROM aircraft_block WHERE Source = '' OR Source = :source";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':source' => 'website_fam'));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$delimiter = "\t";
+		$Connection = new Connection();
+		if (($handle = fopen($tmp_dir.'block.tsv', 'r')) !== FALSE)
+		{
+			$i = 0;
+			if ($globalTransaction) $Connection->db->beginTransaction();
+			while (($data = fgets($handle, 1000)) !== FALSE)
+			{
+				$query = 'INSERT INTO aircraft_block (callSign,Source) VALUES (:callSign,:source)';
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute(array(':callSign' => trim($data),':source' => 'website_fam'));
+				} catch(PDOException $e) {
+					if ($globalDebug) echo "error: ".$e->getMessage()." - data: ".$data;
+					die();
+				}
+				if ($globalTransaction && $i % 2000 == 0) {
+					$Connection->db->commit();
+					if ($globalDebug) echo '.';
+					$Connection->db->beginTransaction();
+				}
+				$i++;
+			}
+			fclose($handle);
+			if ($globalTransaction) $Connection->db->commit();
+		}
+		return '';
         }
 
 	public static function marine_identity_fam() {
@@ -2522,6 +2561,26 @@ class update_db {
 		} elseif ($globalDebug) echo "Done\n";
 		return '';
 	}
+	public static function update_block_fam() {
+		global $tmp_dir, $globalDebug;
+		if ($globalDebug) echo "Blocked aircraft from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.com/data/block.tsv.gz',$tmp_dir.'block.tsv.gz');
+		update_db::download('http://data.flightairmap.com/data/block.tsv.gz.md5',$tmp_dir.'block.tsv.gz.md5');
+		if (file_exists($tmp_dir.'block.tsv.gz') && file_exists($tmp_dir.'block.tsv.gz.md5')) {
+			$block_md5_file = explode(' ',file_get_contents($tmp_dir.'block.tsv.gz.md5'));
+			$block_md5 = $block_md5_file[0];
+			if (md5_file($tmp_dir.'block.tsv.gz') == $block_md5) {
+				if ($globalDebug) echo "Gunzip...";
+				update_db::gunzip($tmp_dir.'block.tsv.gz');
+				if ($globalDebug) echo "Add to DB...";
+				$error = update_db::block_fam();
+			} else $error = "File ".$tmp_dir.'block.tsv.gz'." md5 failed. Download failed.";
+		} else $error = "File ".$tmp_dir.'block.tsv.gz'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
 	public static function update_marine_identity_fam() {
 		global $tmp_dir, $globalDebug;
 		update_db::download('http://data.flightairmap.com/data/marine_identity.tsv.gz.md5',$tmp_dir.'marine_identity.tsv.gz.md5');
@@ -3683,6 +3742,7 @@ class update_db {
 				echo update_db::update_ModeS_faa();
 				echo update_db::fix_icaotype();
 				echo update_db::update_banned_fam();
+				echo update_db::update_block_fam();
 				//echo update_db::update_celestrak();
 				//echo update_db::delete_duplicatemodes();
 			} else {
@@ -3697,6 +3757,7 @@ class update_db {
 				echo update_db::update_ModeS_ogn();
 				//echo update_db::delete_duplicatemodes();
 				echo update_db::update_banned_fam();
+				echo update_db::update_block_fam();
 			}
 		}
 	}
@@ -3732,5 +3793,6 @@ class update_db {
 //echo update_db::satellite_ucsdb('tmp/UCS_Satellite_Database_officialname_1-1-17.txt');
 //echo update_db::update_celestrak();
 //echo update_db::update_aircraft();
+//echo update_db::update_block_fam();
 
 ?>

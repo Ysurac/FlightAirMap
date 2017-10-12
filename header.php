@@ -109,44 +109,45 @@ if (strtolower($current_page) == "index")
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.common.js"></script>
-<?php
-	if (isset($_COOKIE['Map2DBuildings']) && $_COOKIE['Map2DBuildings'] == 'true') {
-?>
-<script src="<?php print $globalURL; ?>/js/OSMBuildings-Leaflet.js"></script>
-<?php
-	}
-?>
-<?php
-	if ($globalMapProvider == 'MapboxGL' || (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'MapboxGL')) {
-?>
-<link href="https://cdn.osmbuildings.org/mapbox-gl/0.40.0/mapbox-gl.css" rel='stylesheet' />
-<script src="https://cdn.osmbuildings.org/mapbox-gl/0.40.0/mapbox-gl.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-mapbox-gl.js"></script>
-<?php
-	}
-?>
 <?php 
 	if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 ?>
 <?php 
-	if (file_exists(dirname(__FILE__).'/js/Cesium/Cesium.js')) {
-	// || isset($globalOffline) && $globalOffline) {
+		if (file_exists(dirname(__FILE__).'/js/Cesium/Cesium.js')) {
+		// || isset($globalOffline) && $globalOffline) {
 ?>
 <link rel="stylesheet" href="<?php print $globalURL; ?>/js/Cesium/Widgets/widgets.css" />
 <script src="<?php print $globalURL; ?>/js/Cesium/Cesium.js"></script>
 <?php
-	} else {
+		} else {
 ?>
 <link rel="stylesheet" href="https://cesiumjs.org/releases/1.38/Build/Cesium/Widgets/widgets.css" />
 <script src="https://cesiumjs.org/releases/1.38/Build/Cesium/Cesium.js"></script>
 <?php
-	}
+		}
 ?>
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/cesium-minimap.css" />
 <script src="<?php print $globalURL; ?>/js/cesium-minimap.js"></script>
 <?php
 	} else {
 ?>
+<?php
+		if (isset($_COOKIE['Map2DBuildings']) && $_COOKIE['Map2DBuildings'] == 'true') {
+?>
+<script src="<?php print $globalURL; ?>/js/OSMBuildings-Leaflet.js"></script>
+<?php
+		}
+?>
+<?php
+		if ($globalMapProvider == 'MapboxGL' || (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'MapboxGL')) {
+?>
+<link href="https://cdn.osmbuildings.org/mapbox-gl/0.40.0/mapbox-gl.css" rel='stylesheet' />
+<script src="https://cdn.osmbuildings.org/mapbox-gl/0.40.0/mapbox-gl.js"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-mapbox-gl.js"></script>
+<?php
+		}
+?>
+
 <?php
 		if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
 ?>
@@ -188,39 +189,24 @@ if (strtolower($current_page) == "index")
 	}
 ?>
 <?php 
-    if (isset($_POST['archive'])) {
-?>
-<script src="<?php print $globalURL; ?>/js/map.common.js"></script>
-<?php 
-	    if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
-?>
-
-<script src="<?php print $globalURL; ?>/js/map.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
-<?php    
-	    }
-    } else {
-?>
-<?php
-/*	if (isset($globalBeta) && $globalBeta) {
-?>
-<script src="<?php print $globalURL; ?>/js/leaflet-realtime.js"></script>
-<script src="<?php print $globalURL; ?>/js/map.new.js.php?<?php print time(); ?>"></script>
-<?php
-	} else {
-*/
-?>
-<?php 
-	    if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
-?>
-<?php
-//		if (isset($globalBeta) && $globalBeta) {
+	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
 ?>
 <script src="<?php print $globalURL; ?>/js/leaflet-playback.js"></script>
+<?php 
+		if (isset($_POST['archive'])) {
+?>
+<!--
+<link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.timedimension.control.min.css" />
+<script src="<?php print $globalURL; ?>/js/iso8601.min.js"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet.timedimension.src.js"></script>
+-->
+<script src="<?php print $globalURL; ?>/js/map.2d.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
 <?php
-//		}
+		} else {
 ?>
 <script src="<?php print $globalURL; ?>/js/map.2d.js.php?<?php print time(); ?><?php if (isset($tsk)) print '&tsk='.$tsk; ?>"></script>
 <?php
+		}
 		if (!isset($globalAircraft) || $globalAircraft) {
 ?>
 <script src="<?php print $globalURL; ?>/js/map-aircraft.2d.js.php?<?php print time(); ?>"></script>
@@ -241,13 +227,7 @@ if (strtolower($current_page) == "index")
 <script src="<?php print $globalURL; ?>/js/map-satellite.2d.js.php?<?php print time(); ?>"></script>
 <?php
 		}
-	    }
-?>
-<?php
-//	}
-?>
-<?php
-    }
+	}
 }
 ?>
 <?php
@@ -721,23 +701,26 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
       </ul>
 <?php
 	if (isset($globalTranslate) && $globalTranslate) {
+		$Language = new Language();
+  		$alllang = $Language->getLanguages();
+		if (count($alllang) > 1) {
 ?>
   	<div class="language">
   	    <form>
   		<select class="selectpicker" data-width="120px" onchange="language(this);">
   		    <?php
-  		        $Language = new Language();
-  		        $alllang = $Language->getLanguages();
   		        foreach ($alllang as $key => $lang) {
   		            print '<option value="'.$key.'"';
   		            if (isset($_COOKIE['language']) && $_COOKIE['language'] == $key) print ' selected ';
-  		            print '>'.$lang[0].'</option>';
+  		            if ($lang[0] == 'Deutsch') print '>'.$lang[0].' (&beta;eta)</option>';
+  		            else print '>'.$lang[0].'</option>';
   		        }
   		    ?>
   		</select>
   	    </form>
   	</div>
 <?php
+		}
 	}
 ?>
       <div class="search">

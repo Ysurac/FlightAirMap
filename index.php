@@ -84,7 +84,7 @@ require_once('header.php');
 	<li><a href="" onclick="getUserLocation(); return false;" title="<?php echo _("Plot your Location"); ?>"><i class="fa fa-map-marker"></i></a></li>
 	<li><a href="" onclick="getCompassDirection(); return false;" title="<?php echo _("Compass Mode"); ?>"><i class="fa fa-compass"></i></a></li>
 <?php
-    if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+    if ((isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') || (isset($globalBeta) && $globalBeta === TRUE)) {
 	if (isset($globalArchive) && $globalArchive == TRUE) {
 ?>
 	<li><a href="#archive" role="tab" title="<?php echo _("Archive"); ?>"><i class="fa fa-archive"></i></a></li>
@@ -195,7 +195,7 @@ require_once('header.php');
 		<ul>
 		    <li>
 		        <div class="form-group">
-			    <label>From (UTC):</label>
+			    <label><?php echo _("From (UTC):"); ?></label>
 		            <div class='input-group date' id='datetimepicker1'>
             			<input type='text' name="start_date" class="form-control" value="<?php if (isset($_POST['start_date'])) print $_POST['start_date']; elseif (isset($_COOKIE['archive_begin'])) print date("m/d/Y h:i a",$_COOKIE['archive_begin']); ?>" required />
 		                <span class="input-group-addon">
@@ -204,7 +204,7 @@ require_once('header.php');
 		            </div>
 		        </div>
 		        <div class="form-group">
-			    <label>To (UTC):</label>
+			    <label><?php echo _("To (UTC):"); ?></label>
 		            <div class='input-group date' id='datetimepicker2'>
 		                <input type='text' name="end_date" class="form-control" value="<?php if (isset($_POST['end_date'])) print $_POST['end_date']; elseif (isset($_COOKIE['archive_end'])) print date("m/d/Y h:i a",$_COOKIE['archive_end']); ?>" />
             			<span class="input-group-addon">
@@ -444,9 +444,7 @@ require_once('header.php');
 		    <?php 
 				if (!isset($_COOKIE['IconColorAltitude']) || $_COOKIE['IconColorAltitude'] == 'false') {
 		    ?>
-		    <li><?php echo _("Aircraft icon color:"); ?>
-			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print '1a3151'; ?>">
-		    </li>
+			<li><?php echo _("Aircraft icon color:"); ?><input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print '1a3151'; ?>"></li>
 		    <?php
 				}
 			    }
@@ -493,8 +491,8 @@ require_once('header.php');
 	if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 ?>
 		    <li><input type="checkbox" name="useliveries" value="1" onclick="useLiveries(this)" <?php if (isset($_COOKIE['UseLiveries']) && $_COOKIE['UseLiveries'] == 'true') print 'checked'; ?> ><?php echo _("Use airlines liveries"); ?></li>
-		    <li><input type="checkbox" name="aircraftcolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Aircraft color"); ?></li>
-		    <li><?php echo _("Aircraft icon color:"); ?>
+		    <li><input type="checkbox" name="aircraftcolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Aircraft color"); ?>&nbsp;
+		    <!--<li><?php echo _("Aircraft icon color:"); ?>-->
 			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print 'ff0000'; ?>">
 		    </li>
 <?php
@@ -503,8 +501,8 @@ require_once('header.php');
 <?php
 	if (isset($globalMarine) && $globalMarine === TRUE) {
 ?>
-		    <li><input type="checkbox" name="marinecolorforce" value="1" onclick="MarineiconColorForce(this)" <?php if (isset($_COOKIE['MarineIconColorForce']) && $_COOKIE['MarineIconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Marine color"); ?></li>
-		    <li><?php echo _("Marine icon color:"); ?>
+		    <li><input type="checkbox" name="marinecolorforce" value="1" onclick="MarineiconColorForce(this)" <?php if (isset($_COOKIE['MarineIconColorForce']) && $_COOKIE['MarineIconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Marine color"); ?>&nbsp;
+		    <!--<li><?php echo _("Marine icon color:"); ?>-->
 			<input type="color" name="marinecolor" id="html5colorpicker" onchange="MarineiconColor(marinecolor.value);" value="#<?php if (isset($_COOKIE['MarineIconColor'])) print $_COOKIE['MarineIconColor']; elseif (isset($globalMarineIconColor)) print $globalMarineIconColor; else print 'ff0000'; ?>">
 		    </li>
 <?php
@@ -513,8 +511,8 @@ require_once('header.php');
 <?php
 	if (isset($globalTracker) && $globalTracker === TRUE) {
 ?>
-		    <li><input type="checkbox" name="trackercolorforce" value="1" onclick="TrackericonColorForce(this)" <?php if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Tracker color"); ?></li>
-		    <li><?php echo _("Tracker icon color:"); ?>
+		    <li><input type="checkbox" name="trackercolorforce" value="1" onclick="TrackericonColorForce(this)" <?php if (isset($_COOKIE['TrackerIconColorForce']) && $_COOKIE['TrackerIconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Tracker color"); ?>&nbsp;
+		    <!--<li><?php echo _("Tracker icon color:"); ?>-->
 			<input type="color" name="trackercolor" id="html5colorpicker" onchange="TrackericonColor(trackercolor.value);" value="#<?php if (isset($_COOKIE['TrackerIconColor'])) print $_COOKIE['TrackerIconColor']; elseif (isset($globalTrackerIconColor)) print $globalTrackerIconColor; else print 'ff0000'; ?>">
 		    </li>
 <?php

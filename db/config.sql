@@ -7,4 +7,4 @@ CREATE TABLE IF NOT EXISTS `config` (
 
 TRUNCATE TABLE `config`;
 
-INSERT INTO `config` (`id`, `name`, `value`) VALUES (1, 'schema_version', '50');
+INSERT INTO `config` (`id`, `name`, `value`) VALUES (1, 'schema_version', '51');

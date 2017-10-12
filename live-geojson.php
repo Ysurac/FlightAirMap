@@ -127,7 +127,7 @@ if (isset($_GET['ident'])) {
 		}
 	}
 */
-} elseif (isset($globalMapUseBbox) && $globalMapUseBbox && isset($_GET['coord']) && $min) {
+} elseif (isset($globalMapUseBbox) && $globalMapUseBbox && isset($_GET['coord']) && $min && !isset($_GET['archive'])) {
 	$usecoord = true;
 	$coord = explode(',',$_GET['coord']);
 	if (filter_var($coord[0],FILTER_VALIDATE_FLOAT) && filter_var($coord[1],FILTER_VALIDATE_FLOAT) && filter_var($coord[2],FILTER_VALIDATE_FLOAT) && filter_var($coord[3],FILTER_VALIDATE_FLOAT) 
@@ -260,9 +260,9 @@ $output = '{';
 							if ($compress) $output .= '"fmi": "'.$spotter_item['fammarine_id'].'",';
 							else $output .= '"fammarineid": "'.$spotter_item['fammarine_id'].'",';
 						}
-							$output .= '"fc": "'.$flightcnt.'",';
-							$output .= '"sqt": "'.$sqltime.'",';
-							if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
+						$output .= '"fc": "'.$flightcnt.'",';
+						$output .= '"sqt": "'.$sqltime.'",';
+						if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
 
 /*
 							if ($min) $output .= '"minimal": "true",';

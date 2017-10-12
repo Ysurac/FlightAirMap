@@ -246,10 +246,7 @@ class SpotterArchive {
         {
                 date_default_timezone_set('UTC');
                 $id = filter_var($id, FILTER_SANITIZE_STRING);
-                $query  = "SELECT spotter_archive.latitude, spotter_archive.longitude, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id";
-
-//              $spotter_array = Spotter->getDataFromDB($query,array(':id' => $id));
-
+                $query  = "SELECT spotter_archive.latitude, spotter_archive.longitude, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id ORDER by spotter_archive.date ASC";
                 try {
                         $sth = $this->db->prepare($query);
                         $sth->execute(array(':id' => $id));
@@ -258,7 +255,6 @@ class SpotterArchive {
                         die;
                 }
                 $spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
-
                 return $spotter_array;
         }
 

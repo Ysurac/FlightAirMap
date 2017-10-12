@@ -307,6 +307,13 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
   width: 90%;
   max-height: 280px;
 }
+.showdetails .blocked {
+  display:inline-block;
+  margin: 5px;
+  max-width: 25px;
+  width: 90%;
+  max-height: 25px;
+}
 .showdetails .callsign-details{
   background-color:#1a3151;
   color:#fff;

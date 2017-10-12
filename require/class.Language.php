@@ -82,13 +82,13 @@ class Language {
 	public function listLocaleDir()
 	{
 		$result = array('en_GB');
-		if (!is_dir('./locale')) {
+		if (!is_dir(dirname(__FILE__).'/../locale')) {
 			return $result;
 		}
-		$handle = @opendir('./locale');
+		$handle = @opendir(dirname(__FILE__).'/../locale');
 		if ($handle === false) return $result;
 		while (false !== ($file = readdir($handle))) {
-			$path = './locale'.'/'.$file.'/LC_MESSAGES/fam.mo';
+			$path = dirname(__FILE__).'/../locale'.'/'.$file.'/LC_MESSAGES/fam.mo';
 			if ($file != "." && $file != ".." && @file_exists($path)) {
 				$result[] = $file;
 			}
@@ -111,9 +111,11 @@ class Language {
 	{
 		$available = $this->listLocaleDir();
 		$allAvailableLanguages = array();
+		$currentLocal = setlocale(LC_ALL, 0);
 		foreach ($available as $lang) {
-			if (isset($this->all_languages[$lang])) $allAvailableLanguages[$lang] = $this->all_languages[$lang];
+			if (isset($this->all_languages[$lang]) && (setlocale(LC_ALL,$this->getLocale($lang)) || $lang = 'en_GB')) $allAvailableLanguages[$lang] = $this->all_languages[$lang];
 		}
+		setlocale(LC_ALL,$currentLocal);
 		return $allAvailableLanguages;
 	}
 }

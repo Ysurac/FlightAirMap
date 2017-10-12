@@ -73,7 +73,11 @@ if (!empty($spotter_array)) {
 	}
 	print '<div class="right">';
 	print '<div class="callsign-details">';
-	if ($spotter_item['ident'] != 'Not Available') print '<div class="callsign"><a href="'.$globalURL.'/redirect/'.$spotter_item['flightaware_id'].'" target="_blank">'.$spotter_item['ident'].'</a></div>';
+	if ($spotter_item['ident'] != 'Not Available') {
+		print '<div class="callsign"><a href="'.$globalURL.'/redirect/'.$spotter_item['flightaware_id'].'" target="_blank">'.$spotter_item['ident'].'</a>';
+		if (isset($spotter_item['blocked']) && $spotter_item['blocked'] === true) print '<img src="'.$globalURL.'/images/forbidden.png" title="'._("Callsign is in blocked FAA list").'" class="blocked" />';
+		print '</div>';
+	}
 	if (isset($spotter_item['airline_name']) && $spotter_item['airline_name'] != 'Not Available') print '<div class="airline">'.$spotter_item['airline_name'].'</div>';
 	print '</div>';
 	if ($spotter_item['departure_airport'] != 'NA' && $spotter_item['arrival_airport'] != 'NA') {

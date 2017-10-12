@@ -106,6 +106,18 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 
 	if (!function_exists("gettext")) {
 		print '<div class="alert alert-warning"><strong>Alert</strong> gettext doesn\'t exist. Site translation not available.</div>';
+	} else {
+		require_once(dirname(__FILE__).'/../require/class.Language.php');
+		$Language = new Language();
+		$availablelng = $Language->getLanguages();
+		$alllng = $Language->listLocaleDir();
+		if (count($alllng) != count($availablelng)) {
+			$notavailable = array();
+			foreach($alllng as $lng) {
+				if (!isset($availablelng[$lng])) $notavailable[] = $lng;
+			}
+			print '<div class="alert alert-warning">The following translation can\'t be used on your system: '.implode(', ',$notavailable).'. You need to add the system locales: <a href="https://github.com/Ysurac/FlightAirMap/wiki/Translation">documentation</a>.</div>';
+		}
 	}
 	print '<div class="alert alert-info">If you use MySQL or MariaDB, check that <i>max_allowed_packet</i> >= 8M, else import of some tables can fail.</div>';
 	if (isset($_SERVER['REQUEST_SCHEME']) && isset($_SERVER['SERVER_NAME']) && isset($_SERVER['SERVER_PORT']) && isset($_SERVER['REQUEST_URI'])) {

@@ -62,6 +62,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC))
 		unset($properties['wkb_geometry']);
 		unset($properties['wkb']);
 		unset($properties['shape']);
+		//print_r($properties);
 		if ($globalDBdriver == 'mysql') {
 			$geom = geoPHP::load($row['wkb']);
 		} else {
@@ -73,21 +74,25 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC))
 		elseif (isset($properties['ogc_fid'])) $properties['id'] = $properties['ogc_fid'];
 		if (isset($properties['ceiling'])) $properties['tops'] = $properties['ceiling'];
 		if (isset($properties['floor'])) $properties['base'] = $properties['floor'];
-		if (preg_match('/^FL(\s)*(?<alt>\d+)/',strtoupper($properties['tops']),$matches)) {
-			$properties['upper_limit'] = round($matches['alt']*100*0.38048);
-		} elseif (preg_match('/^(?<alt>\d+)(\s)*(FT|AGL|ALT|MSL)/',strtoupper($properties['tops']),$matches)) {
-			$properties['upper_limit'] = round($matches['alt']*0.38048);
-		} elseif (preg_match('/^(?<alt>\d+)(\s)*M/',strtoupper($properties['tops']),$matches)) {
-			$properties['upper_limit'] = $matches['alt'];
+		if (isset($properties['tops'])) {
+			if (preg_match('/^FL(\s)*(?<alt>\d+)/',strtoupper($properties['tops']),$matches)) {
+				$properties['upper_limit'] = round($matches['alt']*100*0.38048);
+			} elseif (preg_match('/^(?<alt>\d+)(\s)*(FT|AGL|ALT|MSL)/',strtoupper($properties['tops']),$matches)) {
+				$properties['upper_limit'] = round($matches['alt']*0.38048);
+			} elseif (preg_match('/^(?<alt>\d+)(\s)*M/',strtoupper($properties['tops']),$matches)) {
+				$properties['upper_limit'] = $matches['alt'];
+			}
 		}
-		if ($properties['base'] == 'SFC' || $properties['base'] == 'MSL' || $properties['base'] == 'GROUND' || $properties['base'] == 'GND') {
-			$properties['lower_limit'] = 0;
-		} elseif (preg_match('/^FL(\s)*(?<alt>\d+)/',strtoupper($properties['base']),$matches)) {
-			$properties['lower_limit'] = round($matches['alt']*100*0.38048);
-		} elseif (preg_match('/^(?<alt>\d+)(\s)*(FT|AGL|ALT|MSL)/',strtoupper($properties['base']),$matches)) {
-			$properties['lower_limit'] = round($matches['alt']*0.38048);
-		} elseif (preg_match('/^(?<alt>\d+)(\s)*M/',strtoupper($properties['base']),$matches)) {
-			$properties['lower_limit'] = $matches['alt'];
+		if (isset($properties['base'])) {
+			if ($properties['base'] == 'SFC' || $properties['base'] == 'MSL' || $properties['base'] == 'GROUND' || $properties['base'] == 'GND') {
+				$properties['lower_limit'] = 0;
+			} elseif (preg_match('/^FL(\s)*(?<alt>\d+)/',strtoupper($properties['base']),$matches)) {
+				$properties['lower_limit'] = round($matches['alt']*100*0.38048);
+			} elseif (preg_match('/^(?<alt>\d+)(\s)*(FT|AGL|ALT|MSL)/',strtoupper($properties['base']),$matches)) {
+				$properties['lower_limit'] = round($matches['alt']*0.38048);
+			} elseif (preg_match('/^(?<alt>\d+)(\s)*M/',strtoupper($properties['base']),$matches)) {
+				$properties['lower_limit'] = $matches['alt'];
+			}
 		}
 		if ($properties['type'] == 'RESTRICTED' || $properties['type'] == 'R') {
 			$properties['color'] = '#cf2626';
@@ -108,12 +113,14 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC))
 		} else {
 			$properties['color'] = '#d9ffcb';
 		}
-		$feature = array(
-		    'type' => 'Feature',
-		    'geometry' => json_decode($geom->out('json')),
-		    'properties' => $properties
-		);
-		array_push($geojson['features'], $feature);
+		if (isset($properties['type']) && $properties['type'] != '') {
+			$feature = array(
+			    'type' => 'Feature',
+			    'geometry' => json_decode($geom->out('json')),
+			    'properties' => $properties
+			);
+			array_push($geojson['features'], $feature);
+		}
 }
 print json_encode($geojson, JSON_NUMERIC_CHECK);
 

@@ -262,6 +262,9 @@ class Spotter{
 			if (isset($row['flightaware_id'])) $temp_array['flightaware_id'] = $row['flightaware_id'];
 			if (isset($row['modes'])) $temp_array['modes'] = $row['modes'];
 			$temp_array['ident'] = $row['ident'];
+			if ($temp_array['ident'] != '') {
+				$temp_array['blocked'] = $this->checkIdentBlocked($temp_array['ident']);
+			}
 			if (isset($row['registration']) && $row['registration'] != '') {
 				$temp_array['registration'] = $row['registration'];
 			} elseif (isset($temp_array['modes'])) {
@@ -1315,8 +1318,28 @@ class Spotter{
 		return $spotter_array;
 	}
 
-	
-	
+	/**
+	* Check if a ident is in block list
+	*
+	* @param String $ident the aircraft callsign
+	* @return Boolean return true is in block list
+	*
+	*/
+	public function checkIdentBlocked($ident = '')
+	{
+		global $global_query;
+		
+		date_default_timezone_set('UTC');
+		$query = "SELECT count(*) as nb FROM aircraft_block WHERE callsign  = :callsign";
+		$query_values = array(':callsign' => $ident);
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		$row = $sth->fetchAll(PDO::FETCH_ASSOC);
+		$sth->closeCursor();
+		if ($row[0]['nb'] > 0) {
+			return true;
+		} else return false;
+	}
 	
 	/**
 	* Gets all the spotter information based on the callsign

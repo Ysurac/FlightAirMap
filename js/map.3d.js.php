@@ -7,8 +7,8 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 <?php
 	if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
 	else $MapType = $globalMapProvider;
-
 //	unset($_COOKIE['MapType']);
+
 	if ($MapType != 'Mapbox' && $MapType != 'OpenStreetMap' && $MapType != 'Bing-Aerial' && $MapType != 'Bing-Hybrid' && $MapType != 'Bing-Road' && $MapType != 'offline' && $MapType != 'ArcGIS-Streetmap' && $MapType != 'ArcGIS-Satellite' && $MapType != 'NatGeo-Street') {
 		if (isset($globalBingMapKey) && $globalBingMapKey != '') $MapType = 'Bing-Aerial';
 		else $MapType = 'OpenStreetMap';
@@ -36,48 +36,6 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	      'Open Database Licence'
 	});
 <?php
-/*
-	} elseif ($MapType == 'MapQuest-OSM') {
-?>
-	var mapquestLayer = new MQ.mapLayer();
-	map.addLayer(mapquestLayer);
-<?php
-	} elseif ($MapType == 'MapQuest-Aerial') {
-?>
-	var mapquestLayer = new MQ.satelliteLayer();
-	map.addLayer(mapquestLayer);
-<?php
-	} elseif ($MapType == 'MapQuest-Hybrid') {
-?>
-	var mapquestLayer = new MQ.hybridLayer();
-	map.addLayer(mapquestLayer);
-<?php
-	} elseif ($MapType == 'Google-Roadmap') {
-?>
-	var googleLayer = new L.Google('ROADMAP');
-	map.addLayer(googleLayer);
-<?php
-	} elseif ($MapType == 'Google-Satellite') {
-?>
-	var googleLayer = new L.Google('SATELLITE');
-	map.addLayer(googleLayer);
-<?php
-	} elseif ($MapType == 'Google-Hybrid') {
-?>
-	var googleLayer = new L.Google('HYBRID');
-	map.addLayer(googleLayer);
-<?php
-	} elseif ($MapType == 'Google-Terrain') {
-?>
-	var googleLayer = new L.Google('TERRAIN');
-	map.addLayer(googleLayer);
-<?php
-	} elseif ($MapType == 'Yandex') {
-?>
-	var yandexLayer = new L.Yandex();
-	map.addLayer(yandexLayer);
-<?php
-*/
 	} elseif ($MapType == 'Bing-Aerial') {
 ?>
 	var imProv = new Cesium.BingMapsImageryProvider({
@@ -128,25 +86,6 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 		credit : 'Imagery courtesy Natural Earth'
 	});
 <?php
-/*
-	} elseif ($MapType == 'Here-Roadmap') {
-?>
-	var hereLayer = new L.tileLayer.here({appId: '<?php print $globalHereappId; ?>',appcode: '<?php print $globalHereappCode; ?>',scheme: 'normal.day'});
-	map.addLayer(hereLayer);
-<?php
-	} elseif ($MapType == 'Here-Aerial') {
-?>
-	var hereLayer = new L.tileLayer.here({appId: '<?php print $globalHereappId; ?>',appcode: '<?php print $globalHereappCode; ?>',scheme: 'satellite.day'});
-	map.addLayer(hereLayer);
-<?php
-	} elseif ($MapType == 'Here-Hybrid') {
-?>
-	var hereLayer = new L.tileLayer.here({appId: '<?php print $globalHereappId; ?>',appcode: '<?php print $globalHereappCode; ?>',scheme: 'hybrid.day'});
-	map.addLayer(hereLayer);
-<?php
-*/
-?>
-<?php
 	}  elseif (isset($globalMapCustomLayer[$MapType])) {
 		$customid = $MapType;
 ?>
@@ -160,7 +99,6 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	}
 ?>
 
-
 // Converts from radians to degrees.
 Math.degrees = function(radians) {
 	return radians * 180 / Math.PI;
@@ -168,7 +106,6 @@ Math.degrees = function(radians) {
 Math.radians = function(degrees) {
 	return degrees * Math.PI / 180;
 };
-
 
 function zoomInMap() {
 	camera.moveForward();
@@ -308,7 +245,6 @@ function capture_orientation (event) {
 			css = 'rotate(' + alpha + 'deg)';
 		}
 	}    
-  
 	//we use the "alpha" variable for the rotation effect
 	$("#live-map").css({ WebkitTransform: css});
 	$("#live-map").css({'-moz-transform': css});
@@ -316,115 +252,100 @@ function capture_orientation (event) {
 }
 
 function update_airportsLayer() {
-    var getZoom = getCookie('AirportZoom');
-    if (getZoom == '') getZoom = 7;
-//		if (map.getZoom() > getZoom) {
-	    //if (typeof airportsLayer == 'undefined' || map.hasLayer(airportsLayer) == false) {
-//			var bbox = map.getBounds().toBBoxString();
-//			airportsLayer = new L.GeoJSON.AJAX("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox,{
-//		$(".showdetails").load("airport-data.php?"+Math.random()+"&airport_icao="+feature.properties.icao);
-
-	
-    
-    //var airport_geojson = new Cesium.GeoJsonDataSource.load("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox());
-    var airport_geojson = new Cesium.GeoJsonDataSource.load("<?php print $globalURL; ?>/airport-geojson.php");
-    airport_geojson.then(function(data) {
-	for (var i =0;i < data.entities.values.length; i++) {
-	    var billboard = new Cesium.BillboardGraphics();
-	    billboard.image = data.entities.values[i].properties.icon;
-	    billboard.scaleByDistance = new Cesium.NearFarScalar(1.0e2, 1, 2.0e6, 0.0);
-//			billboard.distanceDisplayCondition = new DistanceDisplayCondition(0.0,7000.0);
-	    data.entities.values[i].billboard = billboard;
-	    data.entities.values[i].addProperty('type');
-	    data.entities.values[i].type = 'airport';
-	}
-	viewer.dataSources.add(data);
-    });
+	var getZoom = getCookie('AirportZoom');
+	if (getZoom == '') getZoom = 7;
+	var airport_geojson = new Cesium.GeoJsonDataSource.load("<?php print $globalURL; ?>/airport-geojson.php");
+	airport_geojson.then(function(data) {
+		for (var i =0;i < data.entities.values.length; i++) {
+			var billboard = new Cesium.BillboardGraphics();
+			billboard.image = data.entities.values[i].properties.icon;
+			billboard.scaleByDistance = new Cesium.NearFarScalar(1.0e2, 1, 2.0e6, 0.0);
+			data.entities.values[i].billboard = billboard;
+			data.entities.values[i].addProperty('type');
+			data.entities.values[i].type = 'airport';
+		}
+		viewer.dataSources.add(data);
+	});
 }
 
 function update_locationsLayer() {
-    var locnb;
-    for (var i =0; i < viewer.dataSources.length; i++) {
-	if (viewer.dataSources.get(i).name == 'location') {
-	    locnb = i;
-	    break;
+	var locnb;
+	for (var i =0; i < viewer.dataSources.length; i++) {
+		if (viewer.dataSources.get(i).name == 'location') {
+			locnb = i;
+			break;
+		}
 	}
-    }
-
 <?php
-    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
 ?>
-    var loc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox());
+	var loc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox());
 <?php
-    } else {
+	} else {
 ?>
-    var loc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/location-geojson.php");
+	var loc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/location-geojson.php");
 <?php
-    }
-?>
-    loc_geojson.then(function(geojsondata) {
-	loc = new Cesium.CustomDataSource('location');
-	for (var i =0;i < geojsondata.features.length; i++) {
-	    data = geojsondata.features[i].properties;
-	    //console.log('id : '+data.id);
-	    var entity = loc.entities.add({
-		id: data.id,
-		//ident: data.ident,
-		position: Cesium.Cartesian3.fromDegrees(geojsondata.features[i].geometry.coordinates[0],geojsondata.features[i].geometry.coordinates[1]),
-		billboard: {
-		    image: data.icon,
-		    verticalOrigin: Cesium.VerticalOrigin.BOTTOM
-		},
-		type: 'loc'
-	    });
 	}
-	if (typeof locnb != 'undefined') var remove = viewer.dataSources.remove(viewer.dataSources.get(locnb));
-	viewer.dataSources.add(loc);
-    });
+?>
+	loc_geojson.then(function(geojsondata) {
+		loc = new Cesium.CustomDataSource('location');
+		for (var i =0;i < geojsondata.features.length; i++) {
+			data = geojsondata.features[i].properties;
+			var entity = loc.entities.add({
+				id: data.id,
+				position: Cesium.Cartesian3.fromDegrees(geojsondata.features[i].geometry.coordinates[0],geojsondata.features[i].geometry.coordinates[1]),
+				billboard: {
+					image: data.icon,
+					verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+				},
+				type: 'loc'
+			});
+		}
+		if (typeof locnb != 'undefined') var remove = viewer.dataSources.remove(viewer.dataSources.get(locnb));
+		viewer.dataSources.add(loc);
+	});
 }
 
 function update_tsk() {
-    var tsknb;
-    for (var i =0; i < viewer.dataSources.length; i++) {
-	if (viewer.dataSources.get(i).name == 'tsk') {
-	    tsknb = i;
-	    break;
+	var tsknb;
+	for (var i =0; i < viewer.dataSources.length; i++) {
+		if (viewer.dataSources.get(i).name == 'tsk') {
+			tsknb = i;
+			break;
+		}
 	}
-    }
-
-    var tsk_geojson = Cesium.loadJson("<?php print $globalURL; ?>/tsk-geojson.php?tsk=<?php print filter_input(INPUT_GET,'tsk',FILTER_SANITIZE_URL); ?>");
-    tsk_geojson.then(function(geojsondata) {
-	tsk = new Cesium.CustomDataSource('tsk');
-	for (var i =0;i < geojsondata.features.length; i++) {
-	    if (geojsondata.features[i].geometry.type == 'LineString') {
-	    	data = geojsondata.features[i].properties;
-	    	var positionsarray = [];
-	    	for (var j = 0; j < geojsondata.features[i].geometry.coordinates.length; j++) {
-	    		positionsarray.push(Cesium.Cartesian3.fromDegreesArray(geojsondata.features[i].geometry.coordinates[j])[0]);
-	    	}
-		var entity = tsk.entities.add({
-		    polyline: {
-		    positions: positionsarray,
-		    width : 5,
-		    material :  new Cesium.PolylineArrowMaterialProperty(Cesium.Color.BLUE)
-		    }
-		});
-	    } else {
-		data = geojsondata.features[i].properties;
-		console.log(data);
-		var entity = tsk.entities.add({
-		    position: Cesium.Cartesian3.fromDegreesArray(geojsondata.features[i].geometry.coordinates)[0],
-		    billboard: {
-			image: data.icon,
-			verticalOrigin: Cesium.VerticalOrigin.BOTTOM
-		    },
-		    type: 'tsk'
-		});
-	    }
-	}
-	if (typeof tsknb != 'undefined') var remove = viewer.dataSources.remove(viewer.dataSources.get(tsknb));
-	viewer.dataSources.add(tsk);
-    });
+	var tsk_geojson = Cesium.loadJson("<?php print $globalURL; ?>/tsk-geojson.php?tsk=<?php print filter_input(INPUT_GET,'tsk',FILTER_SANITIZE_URL); ?>");
+	tsk_geojson.then(function(geojsondata) {
+		tsk = new Cesium.CustomDataSource('tsk');
+		for (var i =0;i < geojsondata.features.length; i++) {
+			if (geojsondata.features[i].geometry.type == 'LineString') {
+				data = geojsondata.features[i].properties;
+				var positionsarray = [];
+				for (var j = 0; j < geojsondata.features[i].geometry.coordinates.length; j++) {
+					positionsarray.push(Cesium.Cartesian3.fromDegreesArray(geojsondata.features[i].geometry.coordinates[j])[0]);
+				}
+				var entity = tsk.entities.add({
+					polyline: {
+						positions: positionsarray,
+						width : 5,
+						material :  new Cesium.PolylineArrowMaterialProperty(Cesium.Color.BLUE)
+					}
+				});
+			} else {
+				data = geojsondata.features[i].properties;
+				var entity = tsk.entities.add({
+					position: Cesium.Cartesian3.fromDegreesArray(geojsondata.features[i].geometry.coordinates)[0],
+					billboard: {
+						image: data.icon,
+						verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+					},
+					type: 'tsk'
+				});
+			}
+		}
+		if (typeof tsknb != 'undefined') var remove = viewer.dataSources.remove(viewer.dataSources.get(tsknb));
+		viewer.dataSources.add(tsk);
+	});
 }
 
 $(".showdetails").on("click",".close",function(){
@@ -450,29 +371,17 @@ if (getCookie('archive') == '' || getCookie('archive') == 'false') {
 }
 
 var viewer = new Cesium.Viewer('live-map', {
-    sceneMode : Cesium.SceneMode.SCENE3D,
-    baseLayerPicker: false,
-    imageryProvider : imProv,
-//    imageryProvider : Cesium.createTileMapServiceImageryProvider({
-//        url : Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
-//    }),
-    timeline : archive,
-    animation : false,
-    shadows : <?php if ((isset($globalMap3DShadows) && $globalMap3DShadows === FALSE) || (isset($_COOKIE['map3dnoshadows']) && $_COOKIE['map3dnoshadows'] == 'true')) print 'false'; else print 'true'; ?>,
-//    selectionIndicator : false,
-    infoBox : false,
-    navigationHelpButton : false,
-    geocoder : false,
-//    scene3DOnly: true,
-    fullscreenButton : false,
-    contextOptions  : {webgl:{failIfMajorPerformanceCaveat:false} }
-//    terrainProvider : new Cesium.CesiumTerrainProvider({
-//        url : 'https://assets.agi.com/stk-terrain/world',
-//	requestWaterMask : true,
-//        requestVertexNormals : true
-//    }),
-//    terrainShadows: Cesium.ShadowMode.DISABLED
-//    automaticallyTrackDataSourceClocks: false
+	sceneMode : Cesium.SceneMode.SCENE3D,
+	baseLayerPicker: false,
+	imageryProvider : imProv,
+	timeline : archive,
+	animation : false,
+	shadows : <?php if ((isset($globalMap3DShadows) && $globalMap3DShadows === FALSE) || (isset($_COOKIE['map3dnoshadows']) && $_COOKIE['map3dnoshadows'] == 'true')) print 'false'; else print 'true'; ?>,
+	infoBox : false,
+	navigationHelpButton : false,
+	geocoder : false,
+	fullscreenButton : false,
+	contextOptions  : {webgl:{failIfMajorPerformanceCaveat:false} }
 });
 
 // Set initial camera position
@@ -508,131 +417,67 @@ var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
 ?>
 
 var layers = viewer.scene.imageryLayers;
-//var clouds = layers.addImageryProvider(
-//new Cesium.createOpenStreetMapImageryProvider({
-//		url : 'http://b.tile.openweathermap.org/map/clouds',
-//		fileExtension : 'png',
-//		tileMatrixSetID : 'a'
-//	}
-//));
-
-/*
-var provider = new Cesium.WebMapTileServiceImageryProvider({
-    //url : 'https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/AMSR2_Snow_Water_Equivalent/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png',
-    //url : 'https://firms.modaps.eosdis.nasa.gov/wms/c6/?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=fires24&width=1024&height=512&BBOX=-180,-90,180,90&&SRS=EPSG:4326',
-    url : 'https://firms.modaps.eosdis.nasa.gov/wms/c6/',
-    layer : 'fires24',
-    format : 'image/png',
-    credit : new Cesium.Credit('NASA Global Imagery Browse Services for EOSDIS')
-});
-var imageryLayers = viewer.imageryLayers;
-imageryLayers.addImageryProvider(provider);
-*/
-
 <?php
-//	if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'stk') {
-?>
-<?php
-    if (isset($globalMapOffline) && $globalMapOffline === TRUE) {
+	if (isset($globalMapOffline) && $globalMapOffline === TRUE) {
 ?>
 var MapTerrain = 'ellipsoid';
 <?php
-    } else {
+	} else {
 ?>
 var MapTerrain = getCookie('MapTerrain');
 <?php
-    }
+	}
 ?>
-
 
 if (MapTerrain == 'stk' || MapTerrain == '') {
 	var cesiumTerrainProviderMeshes = new Cesium.CesiumTerrainProvider({
-	    url : 'https://assets.agi.com/stk-terrain/world',
-	    requestWaterMask : true,
-	    requestVertexNormals : true
+		url : 'https://assets.agi.com/stk-terrain/world',
+		requestWaterMask : true,
+		requestVertexNormals : true
 	});
 	viewer.terrainProvider = cesiumTerrainProviderMeshes;
 } else if (MapTerrain == 'articdem') {
 	var cesiumTerrainProviderMeshesArtic = new Cesium.CesiumTerrainProvider({
-	    url : 'https://assets.agi.com/stk-terrain/v1/tilesets/ArticDEM/tiles',
-	    requestWaterMask : true,
-	    requestVertexNormals : true
+		url : 'https://assets.agi.com/stk-terrain/v1/tilesets/ArticDEM/tiles',
+		requestWaterMask : true,
+		requestVertexNormals : true
 	});
 	viewer.terrainProvider = cesiumTerrainProviderMeshesArtic;
 } else if (MapTerrain == 'ellipsoid') {
-<?php
-//	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'ellipsoid') {
-?>
 	var ellipsoidProvider = new Cesium.EllipsoidTerrainProvider({
-	    requestWaterMask : true,
-	    requestVertexNormals : true
+		requestWaterMask : true,
+		requestVertexNormals : true
 	});
 	viewer.terrainProvider = ellipsoidProvider;
-<?php 
-//	} elseif (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'vrterrain') {
-?>
 } else if (MapTerrain == 'vrterrain') {
 	var vrTheWorldProvider = new Cesium.VRTheWorldTerrainProvider({
-	    url : 'http://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
-	    requestWaterMask : true,
-	    requestVertexNormals : true,
-	    credit : 'Terrain data courtesy VT MÄK'
+		url : 'http://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
+		requestWaterMask : true,
+		requestVertexNormals : true,
+		credit : 'Terrain data courtesy VT MÄK'
 	});
 	viewer.terrainProvider = vrTheWorldProvider;
 }
-<?php
-//	}
-?>
 viewer.scene.globe.enableLighting = true;
-//viewer.scene.globe.depthTestAgainstTerrain = true;
-//var dataSource = new Cesium.CzmlDataSource.load('/live-czml.php');
-//dataSource.then(function (data) { 
-//    displayData(data);
-//});
-		
 if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
 	CesiumMiniMap(viewer, {osm: true});
 	viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('(Minimap: Map data © OpenStreetMap contributors, Open Database Licence)'));
 }
 
 <?php
-    if (isset($globalTSK) && $globalTSK && isset($_GET['tsk'])) {
+	if (isset($globalTSK) && $globalTSK && isset($_GET['tsk'])) {
 ?>
 update_tsk();
 <?php
-    }
+	}
 ?>
 
 update_locationsLayer();
 setInterval(function(){update_locationsLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
-/*
-var handlera = new Cesium.ScreenSpaceEventHandler(viewer.canvas, false);
-handlera.setInputAction(
-    function(movement) {
-	console.log('move');
-        var ray = viewer.camera.getPickRay(movement.endPosition);
-        var position = viewer.scene.globe.pick(ray, viewer.scene);
-        if (Cesium.defined(position)) {
-            var positionCartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(position);
-            console.log(positionCartographic.height.toFixed(2));
-        }
-    },
-    Cesium.ScreenSpaceEventType.MOUSE_MOVE
-);
-*/
-/*
-var handlera = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-handlera.setInputAction(
-    function() {
-	bbox();
-    },
-    Cesium.ScreenSpaceEventType.LEFT_CLICK
-);
-*/
 viewer.camera.moveEnd.addEventListener(function() { 
 <?php
 	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
-?>      
+?>
 	update_locationsLayer();
 <?php
 	}

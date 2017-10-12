@@ -208,10 +208,16 @@ class SpotterImport {
 		if ((!isset($globalNoImport) || $globalNoImport === FALSE) && (!isset($globalNoDB) || $globalNoDB !== TRUE)) {
 			$real_arrival = $this->arrival($key);
 			$Spotter = new Spotter($this->db);
+			$SpotterLive = new SpotterLive($this->db);
 			if ($this->all_flights[$key]['latitude'] != '' && $this->all_flights[$key]['longitude'] != '') {
 				$result = $Spotter->updateLatestSpotterData($this->all_flights[$key]['id'],$this->all_flights[$key]['ident'],$this->all_flights[$key]['latitude'],$this->all_flights[$key]['longitude'],$this->all_flights[$key]['altitude'],$this->all_flights[$key]['ground'],$this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'],$real_arrival['airport_icao'],$real_arrival['airport_time']);
 				if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
+				$this->all_flights[$key]['putinarchive'] = true;
+				$result = $SpotterLive->addLiveSpotterData($this->all_flights[$key]['id'], $this->all_flights[$key]['ident'], $this->all_flights[$key]['aircraft_icao'], $this->all_flights[$key]['departure_airport'], $this->all_flights[$key]['arrival_airport'], $this->all_flights[$key]['latitude'], $this->all_flights[$key]['longitude'], $this->all_flights[$key]['waypoints'], $this->all_flights[$key]['altitude'],$this->all_flights[$key]['altitude_real'], $this->all_flights[$key]['heading'], $this->all_flights[$key]['speed'],$this->all_flights[$key]['datetime'], $this->all_flights[$key]['departure_airport_time'], $this->all_flights[$key]['arrival_airport_time'], $this->all_flights[$key]['squawk'],$this->all_flights[$key]['route_stop'],$this->all_flights[$key]['hex'],$this->all_flights[$key]['putinarchive'],$this->all_flights[$key]['registration'],$this->all_flights[$key]['pilot_id'],$this->all_flights[$key]['pilot_name'], $this->all_flights[$key]['verticalrate'], $this->all_flights[$key]['noarchive'], $this->all_flights[$key]['ground'],$this->all_flights[$key]['format_source'],$this->all_flights[$key]['source_name'],$this->all_flights[$key]['over_country']);
+				if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
 			}
+			$Spotter->db = null;
+			$SpotterLive->db = null;
 		}
 	}
 	unset($this->all_flights[$key]);
