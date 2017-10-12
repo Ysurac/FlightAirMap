@@ -1298,7 +1298,6 @@ class update_db {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
-		$delimiter = "\t";
 		$Connection = new Connection();
 		if (($handle = fopen($tmp_dir.'block.tsv', 'r')) !== FALSE)
 		{
