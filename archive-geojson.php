@@ -66,24 +66,29 @@ if (!empty($spotter_array)) {
 
 $sqltime = round(microtime(true)-$begintime,2);
 
+$pfi = '';
 //var_dump($spotter_array);
 $j = 0;
 
 $output = '{';
 	$output .= '"type": "FeatureCollection",';
-		if ($min) $output .= '"minimal": "true",';
-		else $output .= '"minimal": "false",';
-		$output .= '"fc": "'.$flightcnt.'",';
-		$output .= '"sqt": "'.$sqltime.'",';
+	if ($min) $output .= '"minimal": "true",';
+	else $output .= '"minimal": "false",';
+	$output .= '"fc": "'.$flightcnt.'",';
+	$output .= '"sqt": "'.$sqltime.'",';
 
-		if (!empty($spotter_array) && is_array($spotter_array))
+	if (!empty($spotter_array) && is_array($spotter_array))
+	{
+		$output .= '"features": [';
+		foreach($spotter_array as $spotter_item)
 		{
-			$output .= '"features": [';
-			foreach($spotter_array as $spotter_item)
-			{
-				$j++;
-				date_default_timezone_set('UTC');
-
+			$j++;
+			date_default_timezone_set('UTC');
+			if ($pfi != $spotter_item['flightaware_id']) {
+				$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataById($spotter_item['flightaware_id']);
+				$pfi = $spotter_item['flightaware_id'];
+			} else $spotter_history_array = 0;
+			if (count($spotter_history_array) > 1) {
 				if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
 				{
 					$image = $spotter_item['image_thumbnail'];
@@ -186,11 +191,13 @@ $output = '{';
 						if ($compress)$output .= '"h": "'.$spotter_item['heading'].'",';
 						else $output .= '"heading": "'.$spotter_item['heading'].'",';
 						
+						/*
 						if (isset($archivespeed)) $nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],$archivespeed);
 						else $nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading']);
 						//$output .= '"nextlatitude": "'.$nextcoord['latitude'].'",';
 						//$output .= '"nextlongitude": "'.$nextcoord['longitude'].'",';
 						$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
+						*/
 
 						if (!$min) $output .= '"image": "'.$image.'",';
 						if (isset($spotter_item['image_copyright']) && $spotter_item['image_copyright'] != '') {
@@ -218,18 +225,24 @@ $output = '{';
 						if (isset($spotter_item['acars'])) {
 							$output .= '"acars": "'.trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"), '<br />',$spotter_item['acars']['message'])).'",';
 						}
-						$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataById($spotter_item['flightaware_id']);
+				//$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataById($spotter_item['flightaware_id']);
 						//$spotter_history_array = array();
 				$output_history = '';
 				$output_time = '';
 				$output_timediff = '';
 				$previousts = 0;
+				$end = false;
+				$k = 0;
 				foreach ($spotter_history_array as $key => $spotter_history)
 				{
-					$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].'],';
-					$output_time .= (strtotime($spotter_history['date'])*1000).',';
-					if ($previousts != 0) $output_timediff .= (strtotime($spotter_history['date'])-$previousts).',';
-					$previousts = strtotime($spotter_history['date']);
+					if ($end == false) {
+						$k++;
+						$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].'],';
+						$output_time .= (strtotime($spotter_history['date'])*1000).',';
+						if ($previousts != 0) $output_timediff .= (strtotime($spotter_history['date'])-$previousts).',';
+						$previousts = strtotime($spotter_history['date']);
+						if ($k > 1 && (strtotime($spotter_history['date'])*1000 > $enddate)) $end = true;
+					}
 				}
 				if (isset($output_time)) {
 				    $output_time  = substr($output_time, 0, -1);
@@ -254,7 +267,8 @@ $output = '{';
 				}
 				$output .= ']';
 				$output .= '}';
-			$output .= '},';
+				$output .= '},';
+			}
 		}
 		$output  = substr($output, 0, -1);
 		$output .= ']';
