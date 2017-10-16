@@ -353,7 +353,8 @@ L.Playback.Track = L.Class.extend({
         },
         trackStaleAtTick : function(timestamp)
         {
-	    //console.log('endtime: '+this._endTime+' - timestamp: '+timestamp);
+	    if ((this._endTime + this._staleTime) <= timestamp) console.log('endtime: '+this._endTime+' - timestamp: '+timestamp+' => true !');
+	    else console.log('endtime: '+this._endTime+' - timestamp: '+timestamp);
 	    return ((this._endTime + this._staleTime) <= timestamp);
         },
         tick : function (timestamp) {
@@ -383,7 +384,7 @@ L.Playback.Track = L.Class.extend({
             }
             if (lngLat) {
                 var latLng = new L.LatLng(lngLat[1], lngLat[0]);
-                this._marker = new L.Playback.MoveableMarker(latLng, options, this._geoJSON);     
+                this._marker = new L.Playback.MoveableMarker(latLng, options, this._geoJSON);
 		if(options.mouseOverCallback) {
                     this._marker.on('mouseover',options.mouseOverCallback);
                 }
@@ -394,7 +395,6 @@ L.Playback.Track = L.Class.extend({
 		if(this._fadeMarkersWhenStale && !this.trackPresentAtTick(timestamp))
 		{
 			this._marker.setOpacity(0);
-			//console.log('setOpacity(0)');
 		}
             }
 	    return this._marker;
@@ -405,16 +405,11 @@ L.Playback.Track = L.Class.extend({
                     //show the marker if its now present
                     if(this.trackPresentAtTick(timestamp)) {
                         this._marker.setOpacity(1);
-                        //console.log('setOpacity 1');
                     } else {
                         this._marker.setOpacity(0);
-                        //console.log('setOpacity 0');
                     }
                     if(this.trackStaleAtTick(timestamp)) {
-                	//console.log('stale : '+this._marker);
-                        //this._marker.setOpacity(0.25);
                         this._marker.setOpacity(0);
-                        //console.log('setOpacity 0.25');
                     }
                 }
                 if(this._orientIcon){
@@ -539,12 +534,12 @@ L.Playback.Clock = L.Class.extend({
     },
 
     _tick: function (self) {
+	self._trackController.tock(self._cursor, self._transitionTime);
+	self._callbacks(self._cursor);
 	if (self._cursor > self._trackController.getEndTime()) {
 	    clearInterval(self._intervalID);
 	    return;
 	}
-	self._trackController.tock(self._cursor, self._transitionTime);
-	self._callbacks(self._cursor);
 	self._cursor += self._tickLen;
     },
 
