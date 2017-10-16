@@ -1835,6 +1835,7 @@ while ($i > 0) {
     				$data['emergency'] = $line[19];
     				$data['format_source'] = 'sbs';
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
+				elseif ($line[0] == 'MLAT') $data['source_name'] = 'MLAT';
     				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
 				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
     				$data['id_source'] = $id_source;
