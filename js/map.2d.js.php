@@ -31,6 +31,7 @@ document.cookie =  'archive_update=<?php print $lastupd; ?>; expires=Thu, 2 Aug 
 document.cookie =  'archive_speed=<?php print $archivespeed; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
 <?php
 	}
+	if (isset($_COOKIE['archive_begin']) && $_COOKIE['archive_begin'] != '') $archive = true;
 ?>
 
 
@@ -433,18 +434,20 @@ new OSMBuildings(map).load();
     }
 ?>
 	map.on('moveend', function() {
-		//if (map.getZoom() > 7) {
-		//	map.removeLayer(locationsLayer);
-		//	update_locationsLayer();
-		//} else {
+		if (map.hasLayer(locationsLayer) == true) {
 			map.removeLayer(locationsLayer);
 			update_locationsLayer();
-		//}
+		}
 		createCookie('lastcentercoord',map.getCenter().lat+','+map.getCenter().lng+','+map.getZoom(),2);
 	});
+<?php
+	if (!isset($archive) || $archive === false) {
+?>
 update_locationsLayer();
 setInterval(function(){if (noTimeout) { map.removeLayer(locationsLayer); update_locationsLayer();} },<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
-
+<?php
+	}
+?>
 <?php
     // Add support for custom json via $globalMapJson
     if (isset($globalMapJson) && is_array($globalMapJson)) {

@@ -8,6 +8,8 @@ else $compress = $globalJsonCompress;
 
 if (isset($_GET['ident'])) $ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
 if (isset($_GET['flightaware_id'])) $flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
+$archive = false;
+if (isset($_COOKIE['archive_begin']) && $_COOKIE['archive_begin'] != '') $archive = true;
 ?>
 
 
@@ -167,7 +169,7 @@ $( document ).ready(function() {
 			update_notamLayer();
 		}
 <?php
-	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+	if (isset($globalMapUseBbox) && $globalMapUseBbox && $archive === false) {
 ?>
 		getLiveData(1);
 <?php
@@ -176,7 +178,7 @@ $( document ).ready(function() {
 	});
 	map.on('zoomend', function() {
 <?php
-	if (!isset($globalMapUseBbox) || $globalMapUseBbox === FALSE) {
+	if ((!isset($globalMapUseBbox) || $globalMapUseBbox === FALSE) && $archive === false) {
 ?>
 		if ((map.getZoom() > 7 && zoom < 7) || (map.getZoom() < 7 && zoom > 7)) {
 			zoom = map.getZoom();
@@ -202,6 +204,7 @@ $( document ).ready(function() {
 <?php
 	if (isset($archive) && $archive) {
 ?>
+	console.log('Create archivebox...');
 	var archive = L.control();
 	archive.onAdd = function (map) {
 		this._div = L.DomUtil.create('div', 'archivebox'); // create a div with a class "info"
@@ -225,10 +228,15 @@ $( document ).ready(function() {
 	$(".showdetails").on("click",".close",function(){
 		$(".showdetails").empty();
 		$("#aircraft_ident").attr('class','');
+<?php
+	if ($archive === false) {
+?>
 		getLiveData(1);
+<?php
+	}
+?>
 		return false;
-	})
-
+	});
 <?php
 	if (!isset($ident) && !isset($flightaware_id)) {
 ?>
@@ -236,7 +244,6 @@ $( document ).ready(function() {
 <?php
 	}
 ?>
-
 
 $("#aircraft_ident").attr('class','');
 var MapTrack = getCookie('MapTrack');
@@ -249,22 +256,6 @@ if (MapTrack != '') {
 function getLiveData(click)
 {
 	var bbox = map.getBounds().toBBoxString();
-<?php
-	if (isset($archive) && $archive) {
-?>
-	var begindate = parseInt(getCookie("archive_begin"));
-	var enddate = begindate+parseInt(getCookie("archive_update"));
-	if (enddate > getCookie("archive_end")) {
-		enddate = parseInt(getCookie("archive_end"));
-		clearInterval(reloadPage);
-	} else {
-		if (click != 1) {
-			document.cookie =  'archive_begin='+enddate+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
-		}
-	}
-<?php
-	}
-?>
 	layer_data_p = L.layerGroup();
 	var now = new Date();
 <?php
@@ -275,10 +266,6 @@ function getLiveData(click)
 	} elseif (isset($flightaware_id)) {
 ?>
 	var defurl = "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&flightaware_id=<?php print $flightaware_id; ?>&history";
-<?php
-	} elseif (isset($archive) && $archive) {
-?>
-	var defurl = "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>";
 <?php
 	} else {
 ?>
@@ -298,15 +285,9 @@ function getLiveData(click)
 		url: defurl,
 		success: function(data) {
 			map.removeLayer(layer_data);
-<?php
-	if (!isset($archive) || !$archive) {
-?>
 			if (document.getElementById('aircraft_ident') && document.getElementById('aircraft_ident').className != "") {
 				$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+document.getElementById('aircraft_ident').className);
 			}
-<?php
-	}
-?>
 			layer_data = L.layerGroup();
 			var nbaircraft = 0;
 			var flightcount = 0;
@@ -354,13 +335,6 @@ function getLiveData(click)
 	if (!isset($ident) && !isset($flightaware_id)) {
 ?>
 					//info_update(feature.properties.fc);
-<?php
-		if (isset($archive) && $archive) {
-?>
-					archive.update(feature.properties);
-<?php
-		}
-?>
 					if (document.getElementById('aircraft_ident').className == callsign || document.getElementById('aircraft_ident').className == flightaware_id) {
 						var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=FF0000&filename='+aircraft_shadow;
 						var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?color=8D93B9&filename='+aircraft_shadow;
@@ -849,16 +823,91 @@ function getLiveData(click)
 		});
 		//  getLiveData(0);
 	}
- //load the function on startup
-	getLiveData(0);
+
+function update_archiveLayer(click) {
+	$("#infobox").html('<?php echo _("Loading archive"); ?> <i class="fa fa-spinner fa-pulse fa-rw"></i>');
+	var bbox = map.getBounds().toBBoxString();
+	var begindate = parseInt(getCookie("archive_begin"));
+	//var enddate = parseInt(getCookie("archive_end"));
+	//var enddate = begindate+parseInt(getCookie("archive_update"));
+	var enddate = begindate+3600;
+	if (enddate > getCookie("archive_end")) {
+		enddate = parseInt(getCookie("archive_end"));
+		//clearInterval(reloadPage);
+	} else {
+		if (click != 1) {
+			document.cookie =  'archive_begin='+enddate+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+		}
+	}
+	var archivespeed = parseInt(getCookie("archive_speed"));
+	var url = "<?php print $globalURL; ?>/archive-geojson.php?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed="+archivespeed;
+	var archivegeoJSONQuery = $.getJSON(url, function(data) {
+		$("#infobox").remove();
+		var archiveLayerGroup = L.layerGroup();
+		var archivegeoJSON = L.geoJson(data, {
+			onEachFeature: function(feature,layer) {
+				//console.log(feature);
+				var aircraft_shadow = feature.properties.as;
+				var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
+				var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?color=8D93B9&filename='+aircraft_shadow;
+				var iconURLpathselected = '<?php print $globalURL; ?>/getImages.php?color=FF0000&filename='+aircraft_shadow;
+			
+				var playbackOptions = {
+					orientIcons: true,
+					clickCallback: function(event) { 
+						//console.log(event);
+						var flightaware_id = event.target.feature.properties.fi;
+						var currentdate = (begindate + event.originalEvent.timeStamp)*1000;
+						$("#aircraft_ident").attr('class',flightaware_id);
+						$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+currentdate);
+						//this.setIcon(iconURLpathselected);
+					},
+					marker: function(){
+						return {
+							icon: L.icon({
+								//iconUrl: '<?php print $globalURL; ?>/images/aircrafts/new/A320.png',
+								iconUrl: iconURLpath,
+								iconSize: [30, 30],
+								iconAnchor: [15, 30]
+							})
+						}
+					},
+					fadeMarkersWhenStale: true,
+					staleTime: 60,
+					speed: 10,
+					orientIcons: true,
+					maxInterpolationTime: 30*60*1000,
+					tracksLayer: false,
+					playControl: false,
+					sliderControl: false
+				};
+				var archiveplayback = new L.Playback(map,feature,null,playbackOptions);
+				//archiveplayback.start();
+				//var now = new Date(); 
+				//if (nows == false) archiveplayback.setCursor(now.getTime());
+				archiveplayback.setCursor(begindate*1000);
+				archiveplayback.start();
+			}
+		});
+	});
+};
 
 
 <?php
+	if ($archive === false) {
+?>
+	//load the function on startup
+	getLiveData(0);
+<?php
+	}
+?>
+<?php
 	if (isset($archive) && $archive) {
 ?>
-	//then load it again every 30 seconds
-	//  var reload = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
-	reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php print $archiveupdatetime*1000; ?>);
+	console.log('Load Archive geoJson');
+	var archiveupdatetime = parseInt(getCookie('archive_update'));
+	//reloadPage = setInterval(function(){if (noTimeout) update_archiveLayer(0)},archiveupdatetime*1000);
+	update_archiveLayer(0);
 <?php
 	} else {
 ?>
@@ -995,9 +1044,6 @@ function update_polarLayer() {
 	});
 };
 
-
-
-
 function update_santaLayer(nows) {
 	if (nows) var url = "<?php print $globalURL; ?>/live-santa-geojson.php?now";
 	else var url = "<?php print $globalURL; ?>/live-santa-geojson.php";
@@ -1028,7 +1074,6 @@ function update_santaLayer(nows) {
 		});
 	});
 };
-
 
 function showNotam(cb) {
 	document.cookie =  'notam='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
