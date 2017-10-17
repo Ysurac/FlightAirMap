@@ -21,6 +21,7 @@ var polarLayer;
 var santaLayer;
 var notamLayer;
 var airspaceLayer;
+var archiveplayback;
 waypoints = '';
 
 //initialize the layer group for the aircrft markers
@@ -204,23 +205,16 @@ $( document ).ready(function() {
 <?php
 	if (isset($archive) && $archive) {
 ?>
-	console.log('Create archivebox...');
-	var archive = L.control();
-	archive.onAdd = function (map) {
-		this._div = L.DomUtil.create('div', 'archivebox'); // create a div with a class "info"
-		this.update();
-		return this._div;
-	};
-	archive.update = function (props) {
+	function archive_update (props) {
+		document.getElementById('archivebox').style.display = "block";
 		if (typeof props != 'undefined') {
-			//this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><i class="fa fa-fast-backward" aria-hidden="true"></i> <i class="fa fa-backward" aria-hidden="true"></i>  <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>  <i class="fa fa-forward" aria-hidden="true"></i> <i class="fa fa-fast-forward" aria-hidden="true"></i>';
-			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>';
+			var thedate = new Date(props);
+			$("#archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + thedate.toUTCString() + '</b>' + '<br/><a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>');
+			//$("#archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + thedate.toUTCString() + '</b>' + '<br/>');
 		} else {
-			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i></b>';
+			$("#archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i></b>');
 		}
-
-	};
-	archive.addTo(map);
+	}
 <?php
 	}
 ?>
@@ -828,9 +822,13 @@ function update_archiveLayer(click) {
 	$("#infobox").html('<?php echo _("Loading archive"); ?> <i class="fa fa-spinner fa-pulse fa-rw"></i>');
 	var bbox = map.getBounds().toBBoxString();
 	var begindate = parseInt(getCookie("archive_begin"));
-	//var enddate = parseInt(getCookie("archive_end"));
+	var enddate = parseInt(getCookie("archive_end"));
+	//var finaldate = parseInt(getCookie("archive_end"))*1000;
 	//var enddate = begindate+parseInt(getCookie("archive_update"));
-	var enddate = begindate+3600;
+	//var enddate = begindate+3600;
+	var finaldate = enddate*1000;
+	//console.log(finaldate);
+	/*
 	if (enddate > getCookie("archive_end")) {
 		enddate = parseInt(getCookie("archive_end"));
 		//clearInterval(reloadPage);
@@ -839,56 +837,54 @@ function update_archiveLayer(click) {
 			document.cookie =  'archive_begin='+enddate+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
 		}
 	}
+	*/
 	var archivespeed = parseInt(getCookie("archive_speed"));
+	var playbackOptions = {
+		orientIcons: true,
+		clickCallback: function(event) { 
+			//console.log(event);
+			var flightaware_id = event.target.feature.properties.fi;
+			var currentdate = (begindate + event.originalEvent.timeStamp)*1000;
+			$("#aircraft_ident").attr('class',flightaware_id);
+			$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+currentdate);
+			//this.setIcon(iconURLpathselected);
+		},
+		marker: function(feat){
+			var aircraft_shadow = feat.properties.as;
+			var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
+			return {
+				icon: L.icon({
+					//iconUrl: '<?php print $globalURL; ?>/images/aircrafts/new/A320.png',
+					iconUrl: iconURLpath,
+					iconSize: [30, 30],
+					iconAnchor: [15, 30]
+				})
+			}
+		},
+		fadeMarkersWhenStale: true,
+		finalTime: finaldate,
+		staleTime: 60,
+		speed: archivespeed,
+		orientIcons: true,
+		maxInterpolationTime: 30*60*1000,
+		tracksLayer: false,
+		playControl: false,
+		sliderControl: false
+	};
+
 	var url = "<?php print $globalURL; ?>/archive-geojson.php?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed="+archivespeed;
+	var alldata = [];
 	var archivegeoJSONQuery = $.getJSON(url, function(data) {
 		$("#infobox").remove();
 		var archiveLayerGroup = L.layerGroup();
 		var archivegeoJSON = L.geoJson(data, {
 			onEachFeature: function(feature,layer) {
-				//console.log(feature);
-				var aircraft_shadow = feature.properties.as;
-				var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
-				var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?color=8D93B9&filename='+aircraft_shadow;
-				var iconURLpathselected = '<?php print $globalURL; ?>/getImages.php?color=FF0000&filename='+aircraft_shadow;
-			
-				var playbackOptions = {
-					orientIcons: true,
-					clickCallback: function(event) { 
-						//console.log(event);
-						var flightaware_id = event.target.feature.properties.fi;
-						var currentdate = (begindate + event.originalEvent.timeStamp)*1000;
-						$("#aircraft_ident").attr('class',flightaware_id);
-						$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+currentdate);
-						//this.setIcon(iconURLpathselected);
-					},
-					marker: function(){
-						return {
-							icon: L.icon({
-								//iconUrl: '<?php print $globalURL; ?>/images/aircrafts/new/A320.png',
-								iconUrl: iconURLpath,
-								iconSize: [30, 30],
-								iconAnchor: [15, 30]
-							})
-						}
-					},
-					fadeMarkersWhenStale: true,
-					staleTime: 60,
-					speed: 10,
-					orientIcons: true,
-					maxInterpolationTime: 30*60*1000,
-					tracksLayer: false,
-					playControl: false,
-					sliderControl: false
-				};
-				var archiveplayback = new L.Playback(map,feature,null,playbackOptions);
-				//archiveplayback.start();
-				//var now = new Date(); 
-				//if (nows == false) archiveplayback.setCursor(now.getTime());
-				archiveplayback.setCursor(begindate*1000);
-				archiveplayback.start();
+				alldata.push(feature);
 			}
 		});
+		archiveplayback = new L.Playback(map,alldata,archive_update,playbackOptions);
+		archiveplayback.setCursor(begindate*1000);
+		archiveplayback.start();
 	});
 };
 
@@ -1138,11 +1134,13 @@ function clickSanta(cb) {
 }
 
 function archivePause() {
-    clearInterval(reloadPage);
+//    clearInterval(reloadPage);
+    archiveplayback.stop();
     console.log('Pause');
 }
 function archivePlay() {
-    reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
+  //  reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
+    archiveplayback.start();
     console.log('Play');
 }
 

@@ -148,6 +148,8 @@ L.Playback.Track = L.Class.extend({
             var tickLen = options.tickLen || 250;
             this._staleTime = options.staleTime || 60*60*1000;
             this._fadeMarkersWhenStale = options.fadeMarkersWhenStale || true;
+            this._beginTime = options.beginTime;
+            this._finalTime = options.finalTime;
 
             this._geoJSON = geoJSON;
             this._tickLen = tickLen;
@@ -353,13 +355,15 @@ L.Playback.Track = L.Class.extend({
         },
         trackStaleAtTick : function(timestamp)
         {
-	    if ((this._endTime + this._staleTime) <= timestamp) console.log('endtime: '+this._endTime+' - timestamp: '+timestamp+' => true !');
-	    else console.log('endtime: '+this._endTime+' - timestamp: '+timestamp);
+	    //if ((this._endTime + this._staleTime) <= timestamp) console.log('endtime: '+this._endTime+' - timestamp: '+timestamp+' => true !');
+	    //else console.log('endtime: '+this._endTime+' - timestamp: '+timestamp);
 	    return ((this._endTime + this._staleTime) <= timestamp);
         },
         tick : function (timestamp) {
             if (timestamp > this._endTime)
                 timestamp = this._endTime;
+            if (typeof this._finalTime != 'undefined' && timestamp > this._finalTime)
+                timestamp = this._finalTime;
             if (timestamp < this._startTime)
                 timestamp = this._startTime;
             return this._ticks[timestamp];
@@ -369,6 +373,8 @@ L.Playback.Track = L.Class.extend({
             //return 90;
             if (timestamp > this._endTime)
                timestamp = this._endTime;
+            if (typeof this._finalTime != 'undefined' && timestamp > this._finalTime)
+                timestamp = this._finalTime;
             if (timestamp < this._startTime)
                 timestamp = this._startTime;
             return this._orientations[timestamp];
