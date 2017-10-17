@@ -209,10 +209,8 @@ $( document ).ready(function() {
 		document.getElementById('archivebox').style.display = "block";
 		if (typeof props != 'undefined') {
 			var thedate = new Date(props);
-			$("#archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + thedate.toUTCString() + '</b>' + '<br/><a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>');
-			//$("#archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + thedate.toUTCString() + '</b>' + '<br/>');
-		} else {
-			$("#archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i></b>');
+			$("#thedate").html(thedate.toUTCString());
+		//	$("#archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i></b>');
 		}
 	}
 <?php
@@ -876,6 +874,9 @@ function update_archiveLayer(click) {
 	var alldata = [];
 	var archivegeoJSONQuery = $.getJSON(url, function(data) {
 		$("#infobox").remove();
+		document.getElementById('archivebox').style.display = "block";
+		$("#archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><span id="thedate"></span></b>' + '<br/><a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a><br/><input type="range" min="1" id="archiveboxspeed" max="50" size="10" step="1" onInput="archiveboxspeedrange.value=value;" onChange="archiveboxspeedrange.value=value;archiveplayback.setSpeed(value);" value="'+getCookie('archive_speed')+'"/><output id="archiveboxspeedrange">'+getCookie('archive_speed')+'</output>');
+
 		var archiveLayerGroup = L.layerGroup();
 		var archivegeoJSON = L.geoJson(data, {
 			onEachFeature: function(feature,layer) {
