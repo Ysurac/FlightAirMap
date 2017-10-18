@@ -11,6 +11,11 @@ if (isset($_GET['flightaware_id'])) $flightaware_id = filter_input(INPUT_GET,'fl
 $archive = false;
 if (isset($_COOKIE['archive_begin']) && $_COOKIE['archive_begin'] != '') $archive = true;
 ?>
+<?php
+if (isset($_COOKIE['IconColor'])) $IconColor = $_COOKIE['IconColor'];
+elseif (isset($globalAircraftIconColor)) $IconColor = $globalAircraftIconColor;
+else $IconColor = '1a3151';
+?>
 
 
 var user = new L.FeatureGroup();
@@ -321,9 +326,6 @@ function getLiveData(click)
 					if (callsign != ""){ markerLabel += callsign; }
 					if (departure_airport_code != "" && arrival_airport_code != "" && departure_airport_code != "NA" && arrival_airport_code != "NA"){ markerLabel += ' ( '+departure_airport_code+' - '+arrival_airport_code+' )'; }
 <?php
-	if (isset($_COOKIE['IconColor'])) $IconColor = $_COOKIE['IconColor'];
-	elseif (isset($globalAircraftIconColor)) $IconColor = $globalAircraftIconColor;
-	else $IconColor = '1a3151';
 	if (!isset($ident) && !isset($flightaware_id)) {
 ?>
 					//info_update(feature.properties.fc);
@@ -816,6 +818,7 @@ function getLiveData(click)
 		//  getLiveData(0);
 	}
 
+
 function update_archiveLayer(click) {
 	$("#infobox").html('<?php echo _("Loading archive"); ?> <i class="fa fa-spinner fa-pulse fa-rw"></i>');
 	var bbox = map.getBounds().toBBoxString();
@@ -837,22 +840,26 @@ function update_archiveLayer(click) {
 	}
 	*/
 	var archivespeed = parseInt(getCookie("archive_speed"));
+	var lasticon;
 	var playbackOptions = {
 		orientIcons: true,
 		clickCallback: function(event) { 
-			//console.log(event);
 			var flightaware_id = event.target.feature.properties.fi;
 			var currentdate = (begindate + event.originalEvent.timeStamp)*1000;
 			$("#aircraft_ident").attr('class',flightaware_id);
 			$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+currentdate);
-			//this.setIcon(iconURLpathselected);
+			var aircraft_shadow = event.target.feature.properties.as;
+			if (typeof lasticon != 'undefined') {
+				lasticon.target._icon.src = '<?php print $globalURL; ?>/getImages.php?color=<?php print $IconColor; ?>&filename='+lasticon.target.feature.properties.as;
+			}
+			lasticon = event;
+			event.target._icon.src = '<?php print $globalURL; ?>/getImages.php?color=FF0000&filename='+aircraft_shadow;
 		},
 		marker: function(feat){
 			var aircraft_shadow = feat.properties.as;
 			var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
 			return {
 				icon: L.icon({
-					//iconUrl: '<?php print $globalURL; ?>/images/aircrafts/new/A320.png',
 					iconUrl: iconURLpath,
 					iconSize: [30, 30],
 					iconAnchor: [15, 30]
