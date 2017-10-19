@@ -289,7 +289,7 @@ $output = '{';
 						if (!$min && isset($spotter_item['aircraft_icao'])) {
 							$output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
 						}
-						if (!isset($spotter_item['aircraft_shadow']) && !$tracker) {
+						if (!isset($spotter_item['aircraft_shadow']) && !$tracker && !$marine) {
 							if (!isset($spotter_item['aircraft_icao']) || $spotter_item['aircraft_icao'] == '') $spotter_item['aircraft_shadow'] = '';
 							else {
 								$aircraft_icao = $spotter_item['aircraft_icao'];

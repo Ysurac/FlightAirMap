@@ -1,11 +1,49 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Common.php');
-require_once('require/class.Spotter.php');
-require_once('require/class.SpotterArchive.php');
+
+if (isset($globalProtect) && $globalProtect) {
+	@session_start();
+	if (!isset($_SESSION['protect']) || !isset($_SERVER['HTTP_REFERER'])) {
+		echo 'You must access this page using the right way.';
+		die();
+	}
+}
+
+$tracker = false;
+$marine = false;
+
+if (isset($_GET['tracker'])) {
+	$tracker = true;
+}
+if (isset($_GET['marine'])) {
+	$marine = true;
+}
+if ($tracker) {
+	require_once('require/class.Tracker.php');
+	require_once('require/class.TrackerArchive.php');
+}
+elseif ($marine) {
+	require_once('require/class.Marine.php');
+	require_once('require/class.MarineArchive.php');
+}
+else {
+	require_once('require/class.Spotter.php');
+	require_once('require/class.SpotterArchive.php');
+}
 $begintime = microtime(true);
-$Spotter = new Spotter();
-$SpotterArchive = new SpotterArchive();
+if ($tracker) {
+	$Tracker = new Tracker();
+	$TrackerArchive = new TrackerArchive();
+}
+elseif ($marine) {
+	$Marine = new Marine();
+	$MarineArchive = new MarineArchive();
+}
+else {
+	$Spotter = new Spotter();
+	$SpotterArchive = new SpotterArchive();
+}
 $Common = new Common();
 
 if (isset($_GET['download'])) {
@@ -22,42 +60,71 @@ $from_archive = false;
 $min = false;
 $allhistory = false;
 $filter['source'] = array();
-if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['ShowVATSIM']) && $_COOKIE['ShowVATSIM'] == 'true') $filter['source'] = array_merge($filter['source'],array('vatsimtxt'));
-if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalIVAO) && $globalIVAO && isset($_COOKIE['ShowIVAO']) && $_COOKIE['ShowIVAO'] == 'true') $filter['source'] = array_merge($filter['source'],array('whazzup'));
-if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalphpVMS) && $globalphpVMS && isset($_COOKIE['ShowVMS']) && $_COOKIE['ShowVMS'] == 'true') $filter['source'] = array_merge($filter['source'],array('phpvmacars'));
-if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalSBS1) && $globalSBS1 && isset($_COOKIE['ShowSBS1']) && $_COOKIE['ShowSBS1'] == 'true') $filter['source'] = array_merge($filter['source'],array('sbs'));
-if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalAPRS) && $globalAPRS && isset($_COOKIE['ShowAPRS']) && $_COOKIE['ShowAPRS'] == 'true') $filter['source'] = array_merge($filter['source'],array('aprs'));
-if (isset($_COOKIE['Airlines']) && $_COOKIE['Airlines'] != '') $filter['airlines'] = explode(',',$_COOKIE['Airlines']);
-if (isset($_COOKIE['Sources']) && $_COOKIE['Sources'] != '') $filter['source_aprs'] = explode(',',$_COOKIE['Sources']);
-if (isset($_COOKIE['airlinestype']) && $_COOKIE['airlinestype'] != 'all') $filter['airlinestype'] = $_COOKIE['airlinestype'];
+if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['filter_ShowVATSIM']) && $_COOKIE['filter_ShowVATSIM'] == 'true') $filter['source'] = array_merge($filter['source'],array('vatsimtxt'));
+if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalIVAO) && $globalIVAO && isset($_COOKIE['filter_ShowIVAO']) && $_COOKIE['filter_ShowIVAO'] == 'true') $filter['source'] = array_merge($filter['source'],array('whazzup'));
+if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalphpVMS) && $globalphpVMS && isset($_COOKIE['filter_ShowVMS']) && $_COOKIE['filter_ShowVMS'] == 'true') $filter['source'] = array_merge($filter['source'],array('phpvmacars'));
+if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalSBS1) && $globalSBS1 && isset($_COOKIE['filter_ShowSBS1']) && $_COOKIE['filter_ShowSBS1'] == 'true') $filter['source'] = array_merge($filter['source'],array('sbs','famaprs'));
+if ((!isset($globalMapchoose) || $globalMapchoose) && isset($globalAPRS) && $globalAPRS && isset($_COOKIE['filter_ShowAPRS']) && $_COOKIE['filter_ShowAPRS'] == 'true') $filter['source'] = array_merge($filter['source'],array('aprs'));
+if (isset($_COOKIE['filter_ident']) && $_COOKIE['filter_ident'] != '') $filter['ident'] = filter_var($_COOKIE['filter_ident'],FILTER_SANITIZE_STRING);
+if (isset($_COOKIE['filter_mmsi']) && $_COOKIE['filter_mmsi'] != '') $filter['mmsi'] = filter_var($_COOKIE['filter_mmsi'],FILTER_SANITIZE_STRING);
+if (isset($_COOKIE['filter_Airlines']) && $_COOKIE['filter_Airlines'] != '') $filter['airlines'] = filter_var_array(explode(',',$_COOKIE['filter_Airlines']),FILTER_SANITIZE_STRING);
+if (isset($_COOKIE['filter_Sources']) && $_COOKIE['filter_Sources'] != '') $filter['source_aprs'] = filter_var_array(explode(',',$_COOKIE['filter_Sources']),FILTER_SANITIZE_STRING);
+if (isset($_COOKIE['filter_airlinestype']) && $_COOKIE['filter_airlinestype'] != 'all') $filter['airlinestype'] = filter_var($_COOKIE['filter_airlinestype'],FILTER_SANITIZE_STRING);
+if (isset($_COOKIE['filter_alliance']) && $_COOKIE['filter_alliance'] != 'all') $filter['alliance'] = filter_var($_COOKIE['filter_alliance'],FILTER_SANITIZE_STRING);
 
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) {
 	$min = true;
-}
+} else $min = false;
 
 if (isset($_GET['ident'])) {
 	$ident = filter_input(INPUT_GET,'ident',FILTER_SANITIZE_STRING);
 	$from_archive = true;
-	$spotter_array = $SpotterArchive->getLastArchiveSpotterDataByIdent($ident);
+	if ($tracker) {
+		$spotter_array = $TrackerArchive->getLastArchiveTrackerDataByIdent($ident);
+	}
+	elseif ($marine) {
+		$spotter_array = $MarineArchive->getLastArchiveMarineDataByIdent($ident);
+	}
+	else {
+		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataByIdent($ident);
+	}
 	$allhistory = true;
-} elseif (isset($_GET['flightaware_id'])) {
+}
+elseif (isset($_GET['flightaware_id'])) {
 	$flightaware_id = filter_input(INPUT_GET,'flightaware_id',FILTER_SANITIZE_STRING);
 	$from_archive = true;
-	$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
+	if ($tracker) {
+		$spotter_array = $TrackerArchive->getLastArchiveTrackerDataById($flightaware_id);
+	}
+	elseif ($marine) {
+		$spotter_array = $MarineArchive->getLastArchiveMarineDataById($flightaware_id);
+	}
+	else {
+		$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
+	}
 	$allhistory = true;
-} elseif (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate']) && isset($_GET['speed'])) {
+}
+elseif (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate']) && isset($_GET['speed'])) {
 	$from_archive = true;
-//	$begindate = filter_input(INPUT_GET,'begindate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
-//	$enddate = filter_input(INPUT_GET,'enddate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
 	$begindate = filter_input(INPUT_GET,'begindate',FILTER_SANITIZE_NUMBER_INT);
 	if (isset($globalAircraftMaxUpdate)) $begindate = $begindate - $globalAircraftMaxUpdate;
 	else $begindate = $begindate - 3000;
 	$enddate = filter_input(INPUT_GET,'enddate',FILTER_SANITIZE_NUMBER_INT);
 	$archivespeed = filter_input(INPUT_GET,'speed',FILTER_SANITIZE_NUMBER_INT);
-	$begindate = date('Y-m-d H:i:s',$begindate);
-	$enddate = date('Y-m-d H:i:s',$enddate);
-	//$spotter_array = $SpotterArchive->getMinLiveSpotterDataPlayback($begindate,$enddate,$filter);
-	$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
+	if ($begindate != '' && $enddate != '') {
+		$begindate = date('Y-m-d H:i:s',$begindate);
+		$enddate = date('Y-m-d H:i:s',$enddate);
+		//$spotter_array = $SpotterArchive->getMinLiveSpotterDataPlayback($begindate,$enddate,$filter);
+		if ($tracker) {
+			$spotter_array = $TrackerArchive->getMinLiveTrackerData($begindate,$enddate,$filter);
+		}
+		elseif ($marine) {
+			$spotter_array = $MarineArchive->getMinLiveMarineData($begindate,$enddate,$filter);
+		}
+		else {
+			$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
+		}
+	}
 }
 
 if (!empty($spotter_array)) {
@@ -73,218 +140,220 @@ $pfi = '';
 $j = 0;
 
 $output = '{';
-	$output .= '"type": "FeatureCollection",';
-	if ($min) $output .= '"minimal": "true",';
-	else $output .= '"minimal": "false",';
-	$output .= '"fc": "'.$flightcnt.'",';
-	$output .= '"sqt": "'.$sqltime.'",';
+$output .= '"type": "FeatureCollection",';
+if ($min) $output .= '"minimal": "true",';
+else $output .= '"minimal": "false",';
+$output .= '"fc": "'.$flightcnt.'",';
+$output .= '"sqt": "'.$sqltime.'",';
 
-	if (!empty($spotter_array) && is_array($spotter_array))
-	{
-		$output .= '"features": [';
-		foreach($spotter_array as $spotter_item)
-		{
-			$j++;
-			date_default_timezone_set('UTC');
+if (!empty($spotter_array) && is_array($spotter_array)) {
+	$output .= '"features": [';
+	foreach($spotter_array as $spotter_item) {
+		$j++;
+		date_default_timezone_set('UTC');
+		if ($tracker) {
+			if ($pfi != $spotter_item['famtrackid']) {
+				$spotter_history_array = $TrackerArchive->getCoordArchiveTrackerDataById($spotter_item['famtrackid']);
+				$pfi = $spotter_item['famtrackid'];
+			} else $spotter_history_array = 0;
+		}
+		elseif ($marine) {
+			if ($pfi != $spotter_item['fammarine_d']) {
+				$spotter_history_array = $MarineArchive->getCoordArchiveMarineDataById($spotter_item['fammarine_id']);
+				$pfi = $spotter_item['fammarine_id'];
+			} else $spotter_history_array = 0;
+		}
+		else {
 			if ($pfi != $spotter_item['flightaware_id']) {
 				$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataById($spotter_item['flightaware_id']);
 				$pfi = $spotter_item['flightaware_id'];
 			} else $spotter_history_array = 0;
-			if (count($spotter_history_array) > 1) {
-				if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
-				{
-					$image = $spotter_item['image_thumbnail'];
-				} else {
-					$image = "images/placeholder_thumb.png";
+		}
+		if (count($spotter_history_array) > 1) {
+			//location of aircraft
+			$output .= '{';
+			$output .= '"type": "Feature",';
+			$output .= '"properties": {';
+			$output .= '"fi": "'.$pfi.'",';
+			if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
+			if (isset($spotter_item['ident']) && $spotter_item['ident'] != '') {
+				$output .= '"c": "'.$spotter_item['ident'].'",';
+			} else {
+				$output .= '"c": "NA",';
+			}
+			if (!isset($spotter_item['aircraft_shadow']) && !$tracker && !$marine) {
+				if (!isset($spotter_item['aircraft_icao']) || $spotter_item['aircraft_icao'] == '') $spotter_item['aircraft_shadow'] = '';
+				else {
+					$aircraft_info = $Spotter->getAllAircraftInfo($spotter_item['aircraft_icao']);
+					if (count($aircraft_info) > 0) $spotter_item['aircraft_shadow'] = $aircraft_info[0]['aircraft_shadow'];
+					elseif (isset($spotter_item['format_source']) && $spotter_item['format_source'] == 'aprs') $spotter_item['aircraft_shadow'] = 'PA18.png';
+					elseif ($aircraft_icao == 'PARAGLIDER') $spotter_item['aircraft_shadow'] = 'PARAGLIDER.png';
+					else $spotter_item['aircraft_shadow'] = '';
+					$aircrafts_shadow[$aircraft_icao] = $spotter_item['aircraft_shadow'];
 				}
+			}
 
-				//location of aircraft
-//				print_r($spotter_item);
-				$output .= '{';
-					$output .= '"type": "Feature",';
-						//$output .= '"fc": "'.$flightcnt.'",';
-						//$output .= '"sqt": "'.$sqltime.'",';
-						$output .= '"properties": {';
-							if ($compress) $output .= '"fi": "'.$spotter_item['flightaware_id'].'",';
-							else $output .= '"flightaware_id": "'.$spotter_item['flightaware_id'].'",';
-							$output .= '"fc": "'.$flightcnt.'",';
-							$output .= '"sqt": "'.$sqltime.'",';
-							if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
-
-/*
-							if ($min) $output .= '"minimal": "true",';
-							else $output .= '"minimal": "false",';
-*/
-							//$output .= '"fc": "'.$spotter_item['nb'].'",';
-						if (isset($spotter_item['ident']) && $spotter_item['ident'] != '') {
-							if ($compress) $output .= '"c": "'.$spotter_item['ident'].'",';
-							else $output .= '"callsign": "'.$spotter_item['ident'].'",';
-						} else {
-							if ($compress) $output .= '"c": "NA",';
-							else $output .= '"callsign": "NA",';
-						}
-						if (isset($spotter_item['registration'])) $output .= '"registration": "'.$spotter_item['registration'].'",';
-						if (isset($spotter_item['aircraft_name']) && isset($spotter_item['aircraft_type'])) {
-							$output .= '"aircraft_name": "'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')",';
-							$output .= '"aircraft_wiki": "http://'.strtolower($globalLanguage).'.wikipedia.org/wiki/'.urlencode(str_replace(' ','_',$spotter_item['aircraft_name'])).'",';
-						} elseif (isset($spotter_item['aircraft_type'])) {
-							$output .= '"aircraft_name": "NA ('.$spotter_item['aircraft_type'].')",';
-						} elseif (!$min) {
-							$output .= '"aircraft_name": "NA",';
-						}
-						if (!$min && isset($spotter_item['aircraft_icao'])) {
-							$output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
-						}
-						if (!isset($spotter_item['aircraft_shadow'])) {
-							if (!isset($spotter_item['aircraft_icao']) || $spotter_item['aircraft_icao'] == '') $spotter_item['aircraft_shadow'] = '';
-							else {
-								$aircraft_info = $Spotter->getAllAircraftInfo($spotter_item['aircraft_icao']);
-								if (count($aircraft_info) > 0) $spotter_item['aircraft_shadow'] = $aircraft_info[0]['aircraft_shadow'];
-								else $spotter_item['aircraft_shadow'] = '';
-							}
-						}
-						if ($spotter_item['aircraft_shadow'] == '') {
-							if ($compress) $output .= '"as": "default.png",';
-							else $output .= '"aircraft_shadow": "default.png",';
-						} else {
-							if ($compress) $output .= '"as": "'.$spotter_item['aircraft_shadow'].'",';
-							else $output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
-						}
-						if (isset($spotter_item['airline_name'])) {
-							$output .= '"airline_name": "'.$spotter_item['airline_name'].'",';
-						} elseif (!$min) {
-							$output .= '"airline_name": "NA",';
-						}
-						if (isset($spotter_item['departure_airport'])) {
-							if ($compress) $output .= '"dac": "'.$spotter_item['departure_airport'].'",';
-							else $output .= '"departure_airport_code": "'.$spotter_item['departure_airport'].'",';
-						}
-						if (isset($spotter_item['departure_airport_city'])) {
-							$output .= '"departure_airport": "'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_country'].'",';
-						}
-						if (isset($spotter_item['departure_airport_time'])) {
-							$output .= '"departure_airport_time": "'.$spotter_item['departure_airport_time'].'",';
-						}
-						if (isset($spotter_item['arrival_airport_time'])) {
-							$output .= '"arrival_airport_time": "'.$spotter_item['arrival_airport_time'].'",';
-						}
-						if (isset($spotter_item['arrival_airport'])) {
-							if ($compress) $output .= '"aac": "'.$spotter_item['arrival_airport'].'",';
-							else $output .= '"arrival_airport_code": "'.$spotter_item['arrival_airport'].'",';
-						}
-						if (isset($spotter_item['arrival_airport_city'])) {
-							$output .= '"arrival_airport": "'.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_country'].'",';
-						}
-						
-						if (isset($spotter_item['date_iso_8601'])) {
-							$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
-						}
-						if (isset($spotter_item['date'])) {
-							$output .= '"lu": "'.strtotime($spotter_item['date']).'",';
-						}
-						if (!$min) {
-							$output .= '"latitude": "'.$spotter_item['latitude'].'",';
-							$output .= '"longitude": "'.$spotter_item['longitude'].'",';
-							$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
-						}
-						
-						if ($compress) $output .= '"a": "'.$spotter_item['altitude'].'",';
-						else $output .= '"altitude": "'.$spotter_item['altitude'].'",';
-						if ($compress)$output .= '"h": "'.$spotter_item['heading'].'",';
-						else $output .= '"heading": "'.$spotter_item['heading'].'",';
-						
-						/*
-						if (isset($archivespeed)) $nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading'],$archivespeed);
-						else $nextcoord = $Common->nextcoord($spotter_item['latitude'],$spotter_item['longitude'],$spotter_item['ground_speed'],$spotter_item['heading']);
-						//$output .= '"nextlatitude": "'.$nextcoord['latitude'].'",';
-						//$output .= '"nextlongitude": "'.$nextcoord['longitude'].'",';
-						$output .= '"nextlatlon": ['.$nextcoord['latitude'].','.$nextcoord['longitude'].'],';
-						*/
-
-						if (!$min) $output .= '"image": "'.$image.'",';
-						if (isset($spotter_item['image_copyright']) && $spotter_item['image_copyright'] != '') {
-							$output .= '"image_copyright": "'.str_replace('"',"'",trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'',$spotter_item['image_copyright']))).'",';
-						}
-						if (isset($spotter_item['image_source_website'])) {
-							$output .= '"image_source_website": "'.urlencode($spotter_item['image_source_website']).'",';
-						}
-						if (isset($spotter_item['squawk'])) {
-							if ($compress) $output .= '"sq": "'.$spotter_item['squawk'].'",';
-							else $output .= '"squawk": "'.$spotter_item['squawk'].'",';
-						}
-						if (isset($spotter_item['squawk_usage'])) {
-							$output .= '"squawk_usage": "'.$spotter_item['squawk_usage'].'",';
-						}
-						if (isset($spotter_item['pilot_id'])) {
-							$output .= '"pilot_id": "'.$spotter_item['pilot_id'].'",';
-						}
-						if (isset($spotter_item['pilot_name'])) {
-							$output .= '"pilot_name": "'.$spotter_item['pilot_name'].'",';
-						}
-						if (isset($spotter_item['waypoints']) && $spotter_item['waypoints'] != '') {
-							$output .= '"waypoints": "'.$spotter_item['waypoints'].'",';
-						}
-						if (isset($spotter_item['acars'])) {
-							$output .= '"acars": "'.trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"), '<br />',$spotter_item['acars']['message'])).'",';
-						}
-				//$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataById($spotter_item['flightaware_id']);
-						//$spotter_history_array = array();
-				$output_history = '';
-				$output_time = '';
-				$output_timediff = '';
-				$previousts = 0;
-				$end = false;
-				$k = 0;
-				foreach ($spotter_history_array as $key => $spotter_history)
-				{
-					if ($end == false) {
-						$k++;
-						$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].'],';
-						$output_time .= (strtotime($spotter_history['date'])*1000).',';
-						if ($previousts != 0) $output_timediff .= (strtotime($spotter_history['date'])-$previousts).',';
-						$previousts = strtotime($spotter_history['date']);
-						if ($k > 1 && (strtotime($spotter_history['date'])*1000 > $enddate)) $end = true;
+			if (!isset($spotter_item['aircraft_shadow']) || $spotter_item['aircraft_shadow'] == '') {
+				if ($tracker) {
+					if (isset($spotter_item['type']) && $spotter_item['type'] == 'Ambulance') {
+						if ($compress) $output .= '"as": "ambulance.png",';
+						else $output .= '"aircraft_shadow": "ambulance.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Police') {
+						if ($compress) $output .= '"as": "police.png",';
+						else $output .= '"aircraft_shadow": "police.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Yacht (Sail)') {
+						if ($compress) $output .= '"as": "ship.png",';
+						else $output .= '"aircraft_shadow": "ship.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Ship (Power Boat)') {
+						if ($compress) $output .= '"as": "ship.png",';
+						else $output .= '"aircraft_shadow": "ship.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Shuttle') {
+						if ($compress) $output .= '"as": "ship.png",';
+						else $output .= '"aircraft_shadow": "ship.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Truck') {
+						if ($compress) $output .= '"as": "truck.png",';
+						else $output .= '"aircraft_shadow": "truck.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Truck (18 Wheeler)') {
+						if ($compress) $output .= '"as": "truck.png",';
+						else $output .= '"aircraft_shadow": "truck.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Aircraft (small)') {
+						if ($compress) $output .= '"as": "aircraft.png",';
+						else $output .= '"aircraft_shadow": "aircraft.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Large Aircraft') {
+						if ($compress) $output .= '"as": "aircraft.png",';
+						else $output .= '"aircraft_shadow": "aircraft.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Helicopter') {
+						if ($compress) $output .= '"as": "helico.png",';
+						else $output .= '"aircraft_shadow": "helico.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Railroad Engine') {
+						if ($compress) $output .= '"as": "rail.png",';
+						else $output .= '"aircraft_shadow": "rail.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Firetruck') {
+						if ($compress) $output .= '"as": "firetruck.png",';
+						else $output .= '"aircraft_shadow": "firetruck.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Bus') {
+						if ($compress) $output .= '"as": "bus.png",';
+						else $output .= '"aircraft_shadow": "bus.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Phone') {
+						if ($compress) $output .= '"as": "phone.png",';
+						else $output .= '"aircraft_shadow": "phone.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Jogger') {
+						if ($compress) $output .= '"as": "jogger.png",';
+						else $output .= '"aircraft_shadow": "jogger.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Bike') {
+						if ($compress) $output .= '"as": "bike.png",';
+						else $output .= '"aircraft_shadow": "bike.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Motorcycle') {
+						if ($compress) $output .= '"as": "motorcycle.png",';
+						else $output .= '"aircraft_shadow": "motorcycle.png",';
+					}
+					elseif (isset($spotter_item['type']) && $spotter_item['type'] == 'Balloon') {
+						if ($compress) $output .= '"as": "balloon.png",';
+						else $output .= '"aircraft_shadow": "balloon.png",';
+					}
+					else {
+						if ($compress) $output .= '"as": "car.png",';
+						else $output .= '"aircraft_shadow": "car.png",';
 					}
 				}
-				if (isset($output_time)) {
-				    $output_time  = substr($output_time, 0, -1);
-				    $output .= '"time": ['.$output_time.'],';
+				elseif ($marine) {
+					if ($compress) $output .= '"as": "ship.png",';
+					else $output .= '"aircraft_shadow": "ship.png",';
 				}
-				if (isset($output_timediff)) {
-				    $output_timediff  = substr($output_timediff, 0, -1);
-				    $output .= '"timediff": ['.$output_timediff.'],';
+				else {
+					if ($compress) $output .= '"as": "default.png",';
+					else $output .= '"aircraft_shadow": "default.png",';
 				}
-							// FIXME : type when not aircraft ?
-						if ($compress) $output .= '"t": "aircraft"';
-						else $output .= '"type": "aircraft"';
-						$output .= '},';
-						$output .= '"geometry": {';
-						//$output .= '"type": "MultiPoint",';
-						$output .= '"type": "LineString",';
-						$output .= '"coordinates": [';
-						
-				if (isset($output_history)) {
-				    $output_history  = substr($output_history, 0, -1);
-				    $output .= $output_history;
-				}
-				$output .= ']';
-				$output .= '}';
-				$output .= '},';
+			} else {
+				if ($compress) $output .= '"as": "'.$spotter_item['aircraft_shadow'].'",';
+				else $output .= '"aircraft_shadow": "'.$spotter_item['aircraft_shadow'].'",';
 			}
+
+			if (isset($spotter_item['date_iso_8601'])) {
+				$output .= '"date_update": "'.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'",';
+			}
+			if (isset($spotter_item['date'])) {
+				$output .= '"lu": "'.strtotime($spotter_item['date']).'",';
+			}
+			if (isset($spotter_item['squawk'])) {
+				$output .= '"sq": "'.$spotter_item['squawk'].'",';
+			}
+			if (isset($spotter_item['squawk_usage'])) {
+				$output .= '"squawk_usage": "'.$spotter_item['squawk_usage'].'",';
+			}
+			//$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataById($spotter_item['flightaware_id']);
+			//$spotter_history_array = array();
+			$output_history = '';
+			$output_time = '';
+			$output_timediff = '';
+			$previousts = 0;
+			$end = false;
+			$k = 0;
+			foreach ($spotter_history_array as $key => $spotter_history) {
+				if ($end == false) {
+					$k++;
+					$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].'],';
+					$output_time .= (strtotime($spotter_history['date'])*1000).',';
+					if ($previousts != 0) $output_timediff .= (strtotime($spotter_history['date'])-$previousts).',';
+					$previousts = strtotime($spotter_history['date']);
+					if ($k > 1 && (strtotime($spotter_history['date'])*1000 > $enddate)) $end = true;
+				}
+			}
+			if (isset($output_time)) {
+				$output_time  = substr($output_time, 0, -1);
+				$output .= '"time": ['.$output_time.'],';
+			}
+			if (isset($output_timediff)) {
+				$output_timediff  = substr($output_timediff, 0, -1);
+				$output .= '"timediff": ['.$output_timediff.'],';
+			}
+			// FIXME : type when not aircraft ?
+			if ($compress) $output .= '"t": "aircraft"';
+			else $output .= '"type": "aircraft"';
+			$output .= '},';
+			$output .= '"geometry": {';
+			//$output .= '"type": "MultiPoint",';
+			$output .= '"type": "LineString",';
+			$output .= '"coordinates": [';
+
+			if (isset($output_history)) {
+				$output_history  = substr($output_history, 0, -1);
+				$output .= $output_history;
+			}
+			$output .= ']';
+			$output .= '}';
+			$output .= '},';
 		}
-		$output  = substr($output, 0, -1);
-		$output .= ']';
-		$output .= ',"initial_sqltime": "'.$sqltime.'",';
-		$output .= '"totaltime": "'.round(microtime(true)-$begintime,2).'",';
-		if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
-		$output .= '"fc": "'.$flightcnt.'"';
-	} else {
-		$output .= '"features": ';
-		$output .= '{';
-		$output .= '"type": "Feature",';
-		$output .= '"properties": {';
-		$output .= '"fc": "'.$flightcnt.'"}}';
 	}
+	$output  = substr($output, 0, -1);
+	$output .= ']';
+	$output .= ',"initial_sqltime": "'.$sqltime.'",';
+	$output .= '"totaltime": "'.round(microtime(true)-$begintime,2).'",';
+	if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
+	$output .= '"fc": "'.$flightcnt.'"';
+} else {
+	$output .= '"features": ';
+	$output .= '{';
+	$output .= '"type": "Feature",';
+	$output .= '"properties": {';
+	$output .= '"fc": "'.$flightcnt.'"}}';
+}
 $output .= '}';
 print $output;
 
