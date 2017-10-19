@@ -159,7 +159,7 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$archivespeed = filter_var($_COOKIE['archive_speed'],FILTER_SANITIZE_NUMBER_INT);
 	$begindate = date('Y-m-d H:i:s',$begindate);
 	$enddate = date('Y-m-d H:i:s',$enddate);
-//	echo 'Begin : '.$begindate.' - End : '.$enddate."\n";
+	//echo 'Begin : '.$begindate.' - End : '.$enddate."\n";
 	$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
 } elseif ($tracker) {
 	$coord = array();

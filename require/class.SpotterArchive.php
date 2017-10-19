@@ -608,7 +608,7 @@ class SpotterArchive {
 		if ($registration != "") {
 			$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 			if (!is_string($registration)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.registration = '".$registration."')";
 			}
@@ -617,7 +617,7 @@ class SpotterArchive {
 		if ($aircraft_icao != "") {
 			$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 			if (!is_string($aircraft_icao)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.aircraft_icao = '".$aircraft_icao."')";
 			}
@@ -626,7 +626,7 @@ class SpotterArchive {
 		if ($aircraft_manufacturer != "") {
 			$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 			if (!is_string($aircraft_manufacturer)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.aircraft_manufacturer = '".$aircraft_manufacturer."')";
 			}
@@ -634,7 +634,7 @@ class SpotterArchive {
 
 		if ($highlights == "true") {
 			if (!is_string($highlights)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.highlight <> '')";
 			}
@@ -643,7 +643,7 @@ class SpotterArchive {
 		if ($airline_icao != "") {
 			$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 			if (!is_string($airline_icao)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.airline_icao = '".$airline_icao."')";
 			}
@@ -652,7 +652,7 @@ class SpotterArchive {
 		if ($airline_country != "") {
 			$airline_country = filter_var($airline_country,FILTER_SANITIZE_STRING);
 			if (!is_string($airline_country)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.airline_country = '".$airline_country."')";
 			}
@@ -661,7 +661,7 @@ class SpotterArchive {
 		if ($airline_type != "") {
 			$airline_type = filter_var($airline_type,FILTER_SANITIZE_STRING);
 			if (!is_string($airline_type)) {
-				return false;
+				return array();
 			} else {
 				if ($airline_type == "passenger") {
 					$additional_query .= " AND (spotter_archive_output.airline_type = 'passenger')";
@@ -678,7 +678,7 @@ class SpotterArchive {
 		if ($airport != "") {
 			$airport = filter_var($airport,FILTER_SANITIZE_STRING);
 			if (!is_string($airport)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND ((spotter_archive_output.departure_airport_icao = '".$airport."') OR (spotter_archive_output.arrival_airport_icao = '".$airport."'))";
 			}
@@ -687,7 +687,7 @@ class SpotterArchive {
 		if ($airport_country != "") {
 			$airport_country = filter_var($airport_country,FILTER_SANITIZE_STRING);
 			if (!is_string($airport_country)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND ((spotter_archive_output.departure_airport_country = '".$airport_country."') OR (spotter_archive_output.arrival_airport_country = '".$airport_country."'))";
 			}
@@ -696,7 +696,7 @@ class SpotterArchive {
 		if ($callsign != "") {
 			$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 			if (!is_string($callsign)) {
-				return false;
+				return array();
 			} else {
 				$translate = $Translation->ident2icao($callsign);
 				if ($translate != $callsign) {
@@ -711,7 +711,7 @@ class SpotterArchive {
 		if ($owner != "") {
 			$owner = filter_var($owner,FILTER_SANITIZE_STRING);
 			if (!is_string($owner)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.owner_name = '".$owner."')";
 			}
@@ -720,7 +720,7 @@ class SpotterArchive {
 		if ($pilot_name != "") {
 			$pilot_name = filter_var($pilot_name,FILTER_SANITIZE_STRING);
 			if (!is_string($pilot_name)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.pilot_name = '".$pilot_name."')";
 			}
@@ -729,7 +729,7 @@ class SpotterArchive {
 		if ($pilot_id != "") {
 			$pilot_id = filter_var($pilot_id,FILTER_SANITIZE_NUMBER_INT);
 			if (!is_string($pilot_id)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.pilot_id = '".$pilot_id."')";
 			}
@@ -738,7 +738,7 @@ class SpotterArchive {
 		if ($departure_airport_route != "") {
 			$departure_airport_route = filter_var($departure_airport_route,FILTER_SANITIZE_STRING);
 			if (!is_string($departure_airport_route)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.departure_airport_icao = '".$departure_airport_route."')";
 			}
@@ -747,7 +747,7 @@ class SpotterArchive {
 		if ($arrival_airport_route != "") {
 			$arrival_airport_route = filter_var($arrival_airport_route,FILTER_SANITIZE_STRING);
 			if (!is_string($arrival_airport_route)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_archive_output.arrival_airport_icao = '".$arrival_airport_route."')";
 			}
