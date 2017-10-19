@@ -854,9 +854,11 @@ function update_archiveLayer(click) {
 			}
 			lasticon = event;
 			event.target._icon.src = '<?php print $globalURL; ?>/getImages.php?color=FF0000&filename='+aircraft_shadow;
+			/*
 			archiveplayback._tracksLayer.addLayer(event.target.feature);
 			console.log(event);
 			console.log(archiveplayback);
+			*/
 		},
 		marker: function(feature){
 			var aircraft_shadow = feature.properties.as;
