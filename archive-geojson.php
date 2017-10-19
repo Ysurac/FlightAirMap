@@ -138,7 +138,7 @@ $sqltime = round(microtime(true)-$begintime,2);
 $pfi = '';
 //var_dump($spotter_array);
 $j = 0;
-
+$aircrafts_shadow = array();
 $output = '{';
 $output .= '"type": "FeatureCollection",';
 if ($min) $output .= '"minimal": "true",';
@@ -184,6 +184,7 @@ if (!empty($spotter_array) && is_array($spotter_array)) {
 			if (!isset($spotter_item['aircraft_shadow']) && !$tracker && !$marine) {
 				if (!isset($spotter_item['aircraft_icao']) || $spotter_item['aircraft_icao'] == '') $spotter_item['aircraft_shadow'] = '';
 				else {
+					$aircraft_icao = $spotter_item['aircraft_icao'];
 					$aircraft_info = $Spotter->getAllAircraftInfo($spotter_item['aircraft_icao']);
 					if (count($aircraft_info) > 0) $spotter_item['aircraft_shadow'] = $aircraft_info[0]['aircraft_shadow'];
 					elseif (isset($spotter_item['format_source']) && $spotter_item['format_source'] == 'aprs') $spotter_item['aircraft_shadow'] = 'PA18.png';
