@@ -53,7 +53,7 @@ var noTimeout = true;
 var locationsLayer;
 var genLayer;
 <?php
-	if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0) {
+	if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0 && (!isset($archive) || $archive === false)) {
 ?>
 $(document).idle({
 	onIdle: function(){
