@@ -73,6 +73,7 @@ if (isset($_POST['removefilters'])) {
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-ui.min.js"></script>
 
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/moment.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/moment-timezone-with-data.min.js"></script>
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="<?php print $globalURL; ?>/js/bootstrap-select.min.js"></script>

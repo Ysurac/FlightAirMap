@@ -854,9 +854,12 @@ function update_archiveLayer(click) {
 			}
 			lasticon = event;
 			event.target._icon.src = '<?php print $globalURL; ?>/getImages.php?color=FF0000&filename='+aircraft_shadow;
+			archiveplayback._tracksLayer.addLayer(event.target.feature);
+			console.log(event);
+			console.log(archiveplayback);
 		},
-		marker: function(feat){
-			var aircraft_shadow = feat.properties.as;
+		marker: function(feature){
+			var aircraft_shadow = feature.properties.as;
 			var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=<?php print $IconColor; ?>&filename='+aircraft_shadow;
 			return {
 				icon: L.icon({
@@ -864,6 +867,16 @@ function update_archiveLayer(click) {
 					iconSize: [30, 30],
 					iconAnchor: [15, 30]
 				})
+			}
+		},
+		layer: {
+			onEachFeature : function (feature, layer) {
+				var style = {
+				    "color": "#1a3151",
+				    "weight": 2,
+				    "opacity": 1
+				};
+				layer.setStyle(style);
 			}
 		},
 		fadeMarkersWhenStale: true,
@@ -874,6 +887,7 @@ function update_archiveLayer(click) {
 		maxInterpolationTime: 30*60*1000,
 		tracksLayer: false,
 		playControl: false,
+		layerControl: false,
 		sliderControl: false
 	};
 
@@ -882,7 +896,7 @@ function update_archiveLayer(click) {
 	var archivegeoJSONQuery = $.getJSON(url, function(data) {
 		$("#infobox").remove();
 		document.getElementById('archivebox').style.display = "block";
-		$("#archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><span id="thedate"></span></b>' + '<br/><a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a><br/><div class="range archive"><input type="range" min="1" id="archiveboxspeed" max="50" size="10" step="1" onInput="archiveboxspeedrange.value=value;" onChange="archiveboxspeedrange.value=value;archiveplayback.setSpeed(value);" value="'+getCookie('archive_speed')+'"/><output id="archiveboxspeedrange">'+getCookie('archive_speed')+'</output></div>');
+		$("#archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><span id="thedate"></span></b>' + '<br/><a href="#" onClick="noarchive();"><i class="fa fa-eject" aria-hidden="true"></i></a> <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a><br/><div class="range archive"><input type="range" min="1" id="archiveboxspeed" max="50" size="10" step="1" onInput="archiveboxspeedrange.value=value;" onChange="archiveboxspeedrange.value=value;archiveplayback.setSpeed(value);" value="'+getCookie('archive_speed')+'"/><output id="archiveboxspeedrange">'+getCookie('archive_speed')+'</output></div>');
 
 		var archiveLayerGroup = L.layerGroup();
 		var archivegeoJSON = L.geoJson(data, {

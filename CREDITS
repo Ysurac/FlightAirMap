@@ -37,6 +37,11 @@ License : BSD-2-Clause
 Attribution : Original author: Validimir Agafonkin
 Source : https://github.com/Leaflet/Leaflet
 
+File : js/LeafletPlayback.js
+License : BSD-2-Clause
+Attribution : Original author: Nicholas Hallahan
+Source : https://github.com/hallahan/LeafletPlayback
+
 File : js/boostrap-*-dist
 License : MIT License
 Attribution : Original authors: Mark Otto, Jacob Thornton

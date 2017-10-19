@@ -47,6 +47,7 @@ To install the web app, you need to have meet the following requirements:
 * An HTTP Server such as:
 	* Apache 2.0+
 	* Nginx (include install/flightairmap-nginx-conf.include in server part of the config)
+	* Lighttpd
 
 ## Required Extensions
 

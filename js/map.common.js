@@ -201,3 +201,21 @@ function unitaltitude(selectObj) {
     var unit = selectObj.options[idx].value;
     document.cookie =  'unitaltitude='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
 }
+function addarchive(begindate,enddate) {
+    console.log('add archive');
+    createCookie('archive',true,2);
+//    createCookie('archive_begin',document.getElementById("start_date").value,2);
+//    createCookie('archive_end',document.getElementById("end_date").value,2);
+    createCookie('archive_begin',begindate,2);
+    createCookie('archive_end',enddate,2);
+    createCookie('archive_speed',document.getElementById("archivespeed").value,2);
+    window.location.reload();
+}
+function noarchive() {
+    console.log('No archive!');
+    delCookie('archive');
+    delCookie('archive_begin');
+    delCookie('archive_end');
+    delCookie('archive_speed');
+    window.location.reload();
+}

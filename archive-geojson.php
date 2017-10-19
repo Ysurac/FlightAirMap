@@ -50,6 +50,8 @@ if (isset($_GET['ident'])) {
 //	$begindate = filter_input(INPUT_GET,'begindate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
 //	$enddate = filter_input(INPUT_GET,'enddate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
 	$begindate = filter_input(INPUT_GET,'begindate',FILTER_SANITIZE_NUMBER_INT);
+	if (isset($globalAircraftMaxUpdate)) $begindate = $begindate - $globalAircraftMaxUpdate;
+	else $begindate = $begindate - 3000;
 	$enddate = filter_input(INPUT_GET,'enddate',FILTER_SANITIZE_NUMBER_INT);
 	$archivespeed = filter_input(INPUT_GET,'speed',FILTER_SANITIZE_NUMBER_INT);
 	$begindate = date('Y-m-d H:i:s',$begindate);
@@ -257,8 +259,8 @@ $output = '{';
 						else $output .= '"type": "aircraft"';
 						$output .= '},';
 						$output .= '"geometry": {';
-						$output .= '"type": "MultiPoint",';
-						//$output .= '"type": "LineString",';
+						//$output .= '"type": "MultiPoint",';
+						$output .= '"type": "LineString",';
 						$output .= '"coordinates": [';
 						
 				if (isset($output_history)) {

@@ -84,13 +84,13 @@ require_once('header.php');
 	<li><a href="" onclick="getUserLocation(); return false;" title="<?php echo _("Plot your Location"); ?>"><i class="fa fa-map-marker"></i></a></li>
 	<li><a href="" onclick="getCompassDirection(); return false;" title="<?php echo _("Compass Mode"); ?>"><i class="fa fa-compass"></i></a></li>
 <?php
-    if ((isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') || (isset($globalBeta) && $globalBeta === TRUE)) {
+    //if ((isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') || (isset($globalBeta) && $globalBeta === TRUE)) {
 	if (isset($globalArchive) && $globalArchive == TRUE) {
 ?>
 	<li><a href="#archive" role="tab" title="<?php echo _("Archive"); ?>"><i class="fa fa-archive"></i></a></li>
 <?php
 	}
-    }
+    //}
 ?>
 	<li><a href="#home" role="tab" title="<?php echo _("Layers"); ?>"><i class="fa fa-map"></i></a></li>
 	<li><a href="#filters" role="tab" title="<?php echo _("Filters"); ?>"><i class="fa fa-filter"></i></a></li>
@@ -186,66 +186,70 @@ require_once('header.php');
 ?>
         </div>
 <?php
-    if (isset($globalArchive) && $globalArchive == TRUE) {
+	if (isset($globalArchive) && $globalArchive == TRUE) {
+		date_default_timezone_set('UTC');
 ?>
-        <div class="sidebar-pane" id="archive">
+	<div class="sidebar-pane" id="archive">
 	    <h1 class="sidebar-header"><?php echo _("Playback"); ?> <i>Bêta</i><span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
 	    <p>This feature is not finished yet.</p>
-	    <form method="post">
-		<ul>
-		    <li>
-		        <div class="form-group">
-			    <label><?php echo _("From (UTC):"); ?></label>
-		            <div class='input-group date' id='datetimepicker1'>
-            			<input type='text' name="start_date" class="form-control" value="<?php if (isset($_POST['start_date'])) print $_POST['start_date']; elseif (isset($_COOKIE['archive_begin'])) print date("m/d/Y h:i a",$_COOKIE['archive_begin']); ?>" required />
-		                <span class="input-group-addon">
-            			    <span class="glyphicon glyphicon-calendar"></span>
-		                </span>
-		            </div>
-		        </div>
-		        <div class="form-group">
-			    <label><?php echo _("To (UTC):"); ?></label>
-		            <div class='input-group date' id='datetimepicker2'>
-		                <input type='text' name="end_date" class="form-control" value="<?php if (isset($_POST['end_date'])) print $_POST['end_date']; elseif (isset($_COOKIE['archive_end'])) print date("m/d/Y h:i a",$_COOKIE['archive_end']); ?>" />
-            			<span class="input-group-addon">
-		                    <span class="glyphicon glyphicon-calendar"></span>
-            			</span>
-		            </div>
-		        </div>
-			<script type="text/javascript">
-			    $(function () {
-			        $('#datetimepicker1').datetimepicker(
-			    	    //format: 'LT'
-			    	);
-			        $('#datetimepicker2').datetimepicker({
-			    	    //format: 'LT',
-			            useCurrent: false
-			        });
-			        $("#datetimepicker1").on("dp.change", function (e) {
-			            $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
-			        });
-			        $("#datetimepicker2").on("dp.change", function (e) {
-			            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
-			        });
-			    });
-			</script>
-		    <li><?php echo _("Playback speed:"); ?>
-			<div class="range">
-			    <input type="range" min="0" max="50" step="1" name="archivespeed" onChange="archivespeedrange.value=value;" value="<?php  if (isset($_POST['archivespeed'])) print $_POST['archivespeed']; elseif (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?>">
-			    <output id="archivespeedrange"><?php  if (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?></output>
+	    <ul>
+		<li>
+		    <div class="form-group">
+			<label><?php echo _("From:"); ?></label>
+			<div class='input-group date' id='datetimepicker1'>
+			    <input type='text' id="start_date" name="start_date" class="form-control" value="<?php if (isset($_COOKIE['archive_begin'])) print date("Y-m-d H:i",$_COOKIE['archive_begin']); ?> UTC" required />
+			    <span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			    </span>
 			</div>
-		    </li>
-		    <li><input type="submit" name="archive" value="Show archive" class="btn btn-primary" /></li>
-		</ul>
-	    </form>
-	    <form method="post">
-		<ul>
-		    <li><input type="submit" name="noarchive" class="btn btn-primary" value="Back from archive view" /></li>
-		</ul>
-	    </form>
+		    </div>
+		    <div class="form-group">
+			<label><?php echo _("To:"); ?></label>
+			<div class='input-group date' id='datetimepicker2'>
+			    <input type='text' id="end_date" name="end_date" class="form-control" value="<?php if (isset($_COOKIE['archive_end'])) print date("Y-m-d H:i",$_COOKIE['archive_end']); ?> UTC" />
+			    <span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			    </span>
+			</div>
+		    </div>
+		    <script type="text/javascript">
+			var begindate;
+			var enddate;
+			$(function () {
+			    moment.tz.setDefault("UTC");
+			    $('#datetimepicker1').datetimepicker({
+			        format: 'YYYY-MM-DD HH:mm z',
+			        timeZone: 'UTC'
+			    });
+			    $('#datetimepicker2').datetimepicker({
+			        format: 'YYYY-MM-DD HH:mm z',
+			        timeZone: 'UTC',
+			        useCurrent: false
+			    });
+			    $("#datetimepicker1").on("dp.change", function (e) {
+			        $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
+			        begindate = e.date.unix();
+			    });
+			    $("#datetimepicker2").on("dp.change", function (e) {
+			        $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+			        enddate = e.date.unix();
+			    });
+			});
+		    </script>
+		<li><?php echo _("Playback speed:"); ?>
+		    <div class="range">
+			<input type="range" min="0" max="50" step="1" id="archivespeed" name="archivespeed" onChange="archivespeedrange.value=value;" value="<?php  if (isset($_POST['archivespeed'])) print $_POST['archivespeed']; elseif (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?>">
+			<output id="archivespeedrange"><?php  if (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?></output>
+		    </div>
+		</li>
+		<li><button type="button" onclick="addarchive(begindate,enddate);" class="btn btn-primary"><?php echo _("Show archive"); ?></button></li>
+	    </ul>
+	    <ul>
+		<li><button type="button" onclick="noarchive();" class="btn btn-primary"><?php echo _("Back from archive view"); ?></button></li>
+	    </ul>
 	</div>
 <?php
-    }
+	}
 ?>
         <div class="sidebar-pane" id="settings">
 	    <h1 class="sidebar-header"><?php echo _("Settings"); ?><span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
