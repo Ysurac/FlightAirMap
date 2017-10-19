@@ -213,8 +213,8 @@ require_once('header.php');
 			</div>
 		    </div>
 		    <script type="text/javascript">
-			var begindate;
-			var enddate;
+			var begindate = getCookie('archive_begin');
+			var enddate = getCookie('archive_end');
 			$(function () {
 			    moment.tz.setDefault("UTC");
 			    $('#datetimepicker1').datetimepicker({
