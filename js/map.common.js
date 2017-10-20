@@ -204,3 +204,16 @@ function noarchive() {
     delCookie('archive_speed');
     window.location.reload();
 }
+function msgbox(text,buttontext) {
+	buttontext = buttontext || "OK";
+	$("<div>" + text + "</div>").dialog({
+	    dialogClass: "no-close",
+	    buttons: [{
+		text: buttontext,
+		click: function() {
+		    $( this ).dialog( "close" );
+		    $(this).remove();
+		}
+	    }]
+	});
+}

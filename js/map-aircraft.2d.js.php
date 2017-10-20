@@ -909,6 +909,10 @@ function update_archiveLayer(click) {
 		archiveplayback = new L.Playback(map,alldata,archive_update,playbackOptions);
 		archiveplayback.setCursor(begindate*1000);
 		archiveplayback.start();
+	}).fail(function(jqxhr, textStatus, error) {
+		var err = textStatus + ", " + error;
+		console.log("Can't load archive json: "+err);
+		msgbox("Can't load archive json: "+err);
 	});
 };
 
