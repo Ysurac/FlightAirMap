@@ -48,7 +48,7 @@ $Common = new Common();
 
 if (isset($_GET['download'])) {
 	if ($_GET['download'] == "true") {
-		header('Content-disposition: attachment; filename="flightairmap.json"');
+		header('Content-disposition: attachment; filename="flightairmap-archive.json"');
 	}
 }
 header('Content-Type: text/javascript');
@@ -145,7 +145,7 @@ if ($min) $output .= '"minimal": "true",';
 else $output .= '"minimal": "false",';
 $output .= '"fc": "'.$flightcnt.'",';
 $output .= '"sqt": "'.$sqltime.'",';
-
+$begin = true;
 if (!empty($spotter_array) && is_array($spotter_array)) {
 	$output .= '"features": [';
 	foreach($spotter_array as $spotter_item) {
@@ -153,24 +153,58 @@ if (!empty($spotter_array) && is_array($spotter_array)) {
 		date_default_timezone_set('UTC');
 		if ($tracker) {
 			if ($pfi != $spotter_item['famtrackid']) {
-				$spotter_history_array = $TrackerArchive->getCoordArchiveTrackerDataById($spotter_item['famtrackid']);
 				$pfi = $spotter_item['famtrackid'];
+				$begin = true;
 			} else $spotter_history_array = 0;
 		}
 		elseif ($marine) {
 			if ($pfi != $spotter_item['fammarine_d']) {
-				$spotter_history_array = $MarineArchive->getCoordArchiveMarineDataById($spotter_item['fammarine_id']);
 				$pfi = $spotter_item['fammarine_id'];
+				$begin = true;
 			} else $spotter_history_array = 0;
 		}
 		else {
 			if ($pfi != $spotter_item['flightaware_id']) {
-				//$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataById($spotter_item['flightaware_id']);
-				$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataByIdDate($spotter_item['flightaware_id'],$begindate,$enddate);
 				$pfi = $spotter_item['flightaware_id'];
-			} else $spotter_history_array = 0;
+				$begin = true;
+			}
 		}
-		if (count($spotter_history_array) > 1) {
+		if ($begin) {
+			if ($j > 1) {
+				if (isset($output_time)) {
+					$output_time  = substr($output_time, 0, -1);
+					$output .= '"time": ['.$output_time.']';
+				}
+				$output .= '},';
+				$output .= '"geometry": {';
+				//$output .= '"type": "MultiPoint",';
+				$output .= '"type": "LineString",';
+				$output .= '"coordinates": [';
+				if (isset($output_history)) {
+					$output_history  = substr($output_history, 0, -1);
+					$output .= $output_history;
+				}
+				$output .= ']}},';
+			}
+			$pfi = $spotter_item['flightaware_id'];
+			$output_history = '';
+			$output_time = '';
+			$output_timediff = '';
+			$previousts = 0;
+			$end = false;
+			$k = 0;
+		}
+
+		if ($end == false) {
+			$k++;
+			$output_history .= '['.$spotter_item['longitude'].', '.$spotter_item['latitude'].'],';
+			$output_time .= (strtotime($spotter_item['date'])*1000).',';
+			$previousts = strtotime($spotter_item['date']);
+			if ($k > 1 && (strtotime($spotter_item['date'])*1000 > $enddate)) $end = true;
+		}
+
+		if ($begin) {
+			$begin = false;
 			//location of aircraft
 			$output .= '{';
 			$output .= '"type": "Feature",';
@@ -299,52 +333,35 @@ if (!empty($spotter_array) && is_array($spotter_array)) {
 			if (isset($spotter_item['squawk_usage'])) {
 				$output .= '"squawk_usage": "'.$spotter_item['squawk_usage'].'",';
 			}
-			//$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataById($spotter_item['flightaware_id']);
-			//$spotter_history_array = array();
-			$output_history = '';
-			$output_time = '';
-			$output_timediff = '';
-			$previousts = 0;
-			$end = false;
-			$k = 0;
-			foreach ($spotter_history_array as $key => $spotter_history) {
-				if ($end == false) {
-					$k++;
-					$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].'],';
-					$output_time .= (strtotime($spotter_history['date'])*1000).',';
-					//if ($previousts != 0) $output_timediff .= (strtotime($spotter_history['date'])-$previousts).',';
-					$previousts = strtotime($spotter_history['date']);
-					if ($k > 1 && (strtotime($spotter_history['date'])*1000 > $enddate)) $end = true;
-				}
+			if (isset($spotter_item['type'])) {
+				$output .= '"t": "'.$spotter_item['type'].'",';
+			} elseif ($marine) {
+				$output .= '"t": "ship",';
+			} else {
+				$output .= '"t": "aircraft",';
 			}
-			if (isset($output_time)) {
-				$output_time  = substr($output_time, 0, -1);
-				$output .= '"time": ['.$output_time.'],';
-			}
-			/*
-			if (isset($output_timediff)) {
-				$output_timediff  = substr($output_timediff, 0, -1);
-				$output .= '"timediff": ['.$output_timediff.'],';
-			}
-			*/
-			// FIXME : type when not aircraft ?
-			if ($compress) $output .= '"t": "aircraft"';
-			else $output .= '"type": "aircraft"';
-			$output .= '},';
-			$output .= '"geometry": {';
-			//$output .= '"type": "MultiPoint",';
-			$output .= '"type": "LineString",';
-			$output .= '"coordinates": [';
-
-			if (isset($output_history)) {
-				$output_history  = substr($output_history, 0, -1);
-				$output .= $output_history;
-			}
-			$output .= ']';
-			$output .= '}';
-			$output .= '},';
 		}
 	}
+
+	if ($j > 1) {
+		if (isset($output_time)) {
+			$output_time  = substr($output_time, 0, -1);
+			$output .= '"time": ['.$output_time.']';
+		}
+		$output .= '},';
+		$output .= '"geometry": {';
+		//$output .= '"type": "MultiPoint",';
+		$output .= '"type": "LineString",';
+		$output .= '"coordinates": [';
+		if (isset($output_history)) {
+			$output_history  = substr($output_history, 0, -1);
+			$output .= $output_history;
+		}
+		$output .= ']';
+		$output .= '}';
+		$output .= '},';
+	}
+
 	$output  = substr($output, 0, -1);
 	$output .= ']';
 	$output .= ',"initial_sqltime": "'.$sqltime.'",';
