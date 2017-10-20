@@ -1,4 +1,7 @@
 <?php
+// This script can be slow...
+set_time_limit(0);
+ini_set('max_execution_time',6000);
 require_once('require/class.Connection.php');
 require_once('require/class.Common.php');
 
