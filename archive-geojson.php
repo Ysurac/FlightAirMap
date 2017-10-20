@@ -165,7 +165,8 @@ if (!empty($spotter_array) && is_array($spotter_array)) {
 		}
 		else {
 			if ($pfi != $spotter_item['flightaware_id']) {
-				$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataById($spotter_item['flightaware_id']);
+				//$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataById($spotter_item['flightaware_id']);
+				$spotter_history_array = $SpotterArchive->getCoordArchiveSpotterDataByIdDate($spotter_item['flightaware_id'],$begindate,$enddate);
 				$pfi = $spotter_item['flightaware_id'];
 			} else $spotter_history_array = 0;
 		}
@@ -311,7 +312,7 @@ if (!empty($spotter_array) && is_array($spotter_array)) {
 					$k++;
 					$output_history .= '['.$spotter_history['longitude'].', '.$spotter_history['latitude'].'],';
 					$output_time .= (strtotime($spotter_history['date'])*1000).',';
-					if ($previousts != 0) $output_timediff .= (strtotime($spotter_history['date'])-$previousts).',';
+					//if ($previousts != 0) $output_timediff .= (strtotime($spotter_history['date'])-$previousts).',';
 					$previousts = strtotime($spotter_history['date']);
 					if ($k > 1 && (strtotime($spotter_history['date'])*1000 > $enddate)) $end = true;
 				}
@@ -320,10 +321,12 @@ if (!empty($spotter_array) && is_array($spotter_array)) {
 				$output_time  = substr($output_time, 0, -1);
 				$output .= '"time": ['.$output_time.'],';
 			}
+			/*
 			if (isset($output_timediff)) {
 				$output_timediff  = substr($output_timediff, 0, -1);
 				$output .= '"timediff": ['.$output_timediff.'],';
 			}
+			*/
 			// FIXME : type when not aircraft ?
 			if ($compress) $output .= '"t": "aircraft"';
 			else $output .= '"type": "aircraft"';

@@ -263,10 +263,10 @@ class SpotterArchive {
 	public function getCoordArchiveSpotterDataByIdDate($id,$begindate,$enddate) {
 		date_default_timezone_set('UTC');
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
-		$query  = "SELECT spotter_archive.latitude, spotter_archive.longitude, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id AND spotter_archive.date BETWEEN '".$begindate."' AND '".$enddate."' ORDER by spotter_archive.date ASC";
+		$query  = "SELECT spotter_archive.latitude, spotter_archive.longitude, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id AND spotter_archive.date BETWEEN :begindate AND :enddate ORDER by spotter_archive.date ASC";
 		try {
 			$sth = $this->db->prepare($query);
-			$sth->execute(array(':id' => $id));
+			$sth->execute(array(':id' => $id,':begindate' => $begindate,':enddate' => $enddate));
 		} catch(PDOException $e) {
 			echo $e->getMessage();
 			die;
