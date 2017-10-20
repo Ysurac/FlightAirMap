@@ -911,8 +911,8 @@ function update_archiveLayer(click) {
 		archiveplayback.start();
 	}).fail(function(jqxhr, textStatus, error) {
 		var err = textStatus + ", " + error;
-		console.log("Can't load archive json: "+err);
-		msgbox("Can't load archive json: "+err);
+		console.log("Can't load archive json: "+err+"\nURL: "+url);
+		msgbox("Can't load archive json: <i>"+err+"</i><br><b>URL:</b> "+url);
 	});
 };
 
