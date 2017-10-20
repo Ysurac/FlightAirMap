@@ -353,7 +353,7 @@ function updateSanta() {
 }
 
 function showNotam(cb) {
-	document.cookie =  'notam='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	createCookie('notam',cb.checked,9999);
 	if (cb.checked == true) {
 		addNOTAM();
 	} else {
@@ -361,7 +361,7 @@ function showNotam(cb) {
 	}
 }
 function showAirspace(cb) {
-	document.cookie =  'airspace='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	createCookie('airspace',cb.checked,9999);
 	if (cb.checked == true) {
 		addAirspace();
 	} else {
@@ -369,7 +369,7 @@ function showAirspace(cb) {
 	}
 }
 function showWaypoints(cb) {
-	document.cookie =  'waypoints='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	createCookie('waypoints',cb.checked,9999);
 	if (cb.checked == true) {
 		addWaypoints();
 	} else {
@@ -379,7 +379,7 @@ function showWaypoints(cb) {
 function notamscope(selectObj) {
 	var idx = selectObj.selectedIndex;
 	var scope = selectObj.options[idx].value;
-	document.cookie = 'notamscope='+scope+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	createCookie('notamscope',scope,9999);
 	if (getCookie("notam") == 'true')
 	{
 		deleteNOTAM();
@@ -730,18 +730,18 @@ setInterval(function(){update_atcLayer()},<?php if (isset($globalMapRefresh)) pr
 ?>
 
 function iconColor(color) {
-    document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
-    if (getCookie('IconColorForce') == 'true') window.location.reload();
+	createCookie('IconColor',color.substring(1),9999);
+	if (getCookie('IconColorForce') == 'true') window.location.reload();
 }
 function iconColorForce(val) {
-    document.cookie =  'IconColorForce='+val.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
-    if (getCookie('IconColor') != '') document.cookie =  'IconColor=ff0000; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+	createCookie('IconColorForce',val.checked,9999);
+	if (getCookie('IconColor') != '') document.cookie =  'IconColor=ff0000; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
 }
 function useLiveries(val) {
-    document.cookie =  'UseLiveries='+val.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+	createCookie('UseLiveries',val.checked,9999);
 }
 function useOne3Dmodel(val) {
-    document.cookie =  'one3dmodel='+val.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
-    window.location.reload();
+	createCookie('one3dmodel',val.checked,9999);
+	window.location.reload();
 }
 

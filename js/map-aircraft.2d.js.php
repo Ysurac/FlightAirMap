@@ -26,7 +26,7 @@ var polarLayer;
 var santaLayer;
 var notamLayer;
 var airspaceLayer;
-var archiveplayback;
+//var archiveplayback;
 waypoints = '';
 
 //initialize the layer group for the aircrft markers
@@ -1096,7 +1096,7 @@ function update_santaLayer(nows) {
 };
 
 function showNotam(cb) {
-	document.cookie =  'notam='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	createCookie('notam',cb.checked,9999);
 	if (cb.checked == true) {
 		update_notamLayer();
 	} else {
@@ -1106,7 +1106,7 @@ function showNotam(cb) {
 function notamscope(selectObj) {
 	var idx = selectObj.selectedIndex;
 	var scope = selectObj.options[idx].value;
-	document.cookie = 'notamscope='+scope+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	createCookie('notamscope',scope,9999);
 	if (getCookie("notam") == 'true')
 	{
 		if (typeof notamLayer != 'undefined') map.removeLayer(notamLayer);
@@ -1115,38 +1115,38 @@ function notamscope(selectObj) {
 }
 
 function iconColor(color) {
-    document.cookie =  'IconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+	createCookie('IconColor',color.substring(1),9999);
+	window.location.reload();
 }
 function iconColorAltitude(val) {
-    document.cookie =  'IconColorAltitude='+val.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+	createCookie('IconColorAltitude',val.checked,9999);
+	window.location.reload();
 }
 
 function airportDisplayZoom(zoom) {
-    document.cookie =  'AirportZoom='+zoom+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+	createCookie('AirportZoom',zoom,9999);
+	window.location.reload();
 }
 
 function clickFlightPopup(cb) {
-    document.cookie =  'flightpopup='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+	createCookie('flightpopup',cb.checked,9999);
+	window.location.reload();
 }
 function clickFlightPath(cb) {
-    document.cookie =  'flightpath='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+	createCookie('flightpath',cb.checked,9999);
+	window.location.reload();
 }
 function clickFlightRoute(cb) {
-    document.cookie =  'MapRoute='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+	createCookie('MapRoute',cb.checked,9999);
+	window.location.reload();
 }
 function clickFlightRemainingRoute(cb) {
-    document.cookie =  'MapRemainingRoute='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+	createCookie('MapRemainingRoute',cb.checked,9999);
+	window.location.reload();
 }
 function clickFlightEstimation(cb) {
-    document.cookie =  'flightestimation='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+	createCookie('flightestimation',cb.checked,9999);
+	window.location.reload();
 }
 function clickSanta(cb) {
     if (cb.checked) {
@@ -1155,17 +1155,6 @@ function clickSanta(cb) {
 	// FIXME : Need to use leafletplayback stop() for example
 	window.location.reload();
     }
-}
-
-function archivePause() {
-//    clearInterval(reloadPage);
-    archiveplayback.stop();
-    console.log('Pause');
-}
-function archivePlay() {
-  //  reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
-    archiveplayback.start();
-    console.log('Play');
 }
 
 function notamPopup (feature, layer) {
@@ -1177,7 +1166,6 @@ function notamPopup (feature, layer) {
 	output += '</div>';
 	layer.bindPopup(output);
 };
-
 
 function update_notamLayer() {
 	var bbox = map.getBounds().toBBoxString();
@@ -1234,7 +1222,7 @@ function update_waypointsLayer() {
 };
 
 function showWaypoints(cb) {
-	document.cookie =  'waypoints='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	createCookie('waypoints',cb.checked,9999);
 	if (cb.checked == true) {
 		update_waypointsLayer();
 	} else {
@@ -1269,7 +1257,7 @@ function waypointsPopup (feature, layer) {
 };
 
 function showAirspace(cb) {
-	document.cookie =  'airspace='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	createCoookie('airspace',cb.checked,9999);
 	if (cb.checked == true) {
 		update_airspaceLayer();
 	} else {

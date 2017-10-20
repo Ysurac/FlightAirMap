@@ -186,7 +186,7 @@ require_once('header.php');
 ?>
         </div>
 <?php
-	if (isset($globalArchive) && $globalArchive == TRUE) {
+	if (isset($globalArchive) && $globalArchive == TRUE && (!isset($globalAircraft) || $globalAircraft === TRUE)) {
 		date_default_timezone_set('UTC');
 ?>
 	<div class="sidebar-pane" id="archive">

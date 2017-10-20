@@ -8,33 +8,11 @@ if (!isset($globalOpenWeatherMapKey)) $globalOpenWeatherMapKey = '';
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
 else $compress = $globalJsonCompress;
-if (isset($_GET['archive'])) {
+
+if (isset($_COOKIE['archive_begin']) && $_COOKIE['archive_begin'] != '') {
+	echo "console.log('Archive mode');";
 	$archive = true;
-	//$archiveupdatetime = 50;
-	$archiveupdatetime = $globalMapRefresh;
-	date_default_timezone_set('UTC');
-	$archivespeed = $_GET['archivespeed'];
-	$begindate = $_GET['begindate'];
-	//$lastupd = round(($_GET['enddate']-$_GET['begindate'])/(($_GET['during']*60)/10));
-	//$lastupd = 20;
-	$lastupd = $_GET['archivespeed']*$archiveupdatetime;
-	if (isset($_GET['enddate']) && $_GET['enddate'] != '') $enddate = $_GET['enddate'];
-	else $enddate = time();
-	setcookie("archive_begin",$begindate);
-	setcookie("archive_end",$enddate);
-	setcookie("archive_update",$lastupd);
-	setcookie("archive_speed",$archivespeed);
-?>
-document.cookie =  'archive_begin=<?php print $begindate; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
-document.cookie =  'archive_end=<?php print $enddate; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
-document.cookie =  'archive_update=<?php print $lastupd; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
-document.cookie =  'archive_speed=<?php print $archivespeed; ?>; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
-<?php
-	}
-	if (isset($_COOKIE['archive_begin']) && $_COOKIE['archive_begin'] != '') {
-		echo "console.log('Archive mode');";
-		$archive = true;
-	}
+}
 ?>
 var map;
 var user = new L.FeatureGroup();
@@ -53,6 +31,7 @@ var weathersatelliterefresh;
 var noTimeout = true;
 var locationsLayer;
 var genLayer;
+var archiveplayback;
 <?php
 	if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0 && (!isset($archive) || $archive === false)) {
 ?>
@@ -482,30 +461,6 @@ function genLayerPopup (feature, layer) {
 };
 });
 
-function mapType(selectObj) {
-    var idx = selectObj.selectedIndex;
-    var atype = selectObj.options[idx].value;
-    var type = atype.split('-');
-	document.cookie =  'MapType='+type+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    if (type[0] == 'Mapbox') {
-        document.cookie =  'MapType='+type[0]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	document.cookie =  'MapTypeId='+type[1]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    } else {
-	document.cookie =  'MapType='+atype+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    }
-    window.location.reload();
-}
-
-
-function archivePause() {
-    clearInterval(reloadPage);
-    console.log('Pause');
-}
-function archivePlay() {
-    reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},10000);
-    console.log('Play');
-}
-
 //zooms in the map
 function zoomInMap(){
   var zoom = map.getZoom();
@@ -841,4 +796,13 @@ function loadWeatherSatellite()
         transparent: true,
         opacity: '0.65'
     }).addTo(map);
+}
+
+function archivePause() {
+	archiveplayback.stop();
+	console.log('Pause');
+}
+function archivePlay() {
+	archiveplayback.start();
+	console.log('Play');
 }
