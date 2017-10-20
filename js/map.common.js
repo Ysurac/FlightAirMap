@@ -22,7 +22,8 @@ function createCookie(name, value, days) {
     } else {
         expires = "";
     }
-    document.cookie = name+"="+value+expires+"; path=/";
+    //document.cookie = name+"="+value+expires+"; path=/";
+    document.cookie = name+"="+value+expires;
 }
 
 function mapType(selectObj) {
