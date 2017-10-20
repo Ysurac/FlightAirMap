@@ -215,7 +215,8 @@ if (!empty($spotter_array) && is_array($spotter_array)) {
 			$output .= '"fi": "'.$pfi.'",';
 			if (isset($begindate)) $output .= '"archive_date": "'.$begindate.'",';
 			if (isset($spotter_item['ident']) && $spotter_item['ident'] != '') {
-				$output .= '"c": "'.$spotter_item['ident'].'",';
+				$output .= '"c": "'.str_replace('\\','',$spotter_item['ident']).'",';
+				//"
 			} else {
 				$output .= '"c": "NA",';
 			}
