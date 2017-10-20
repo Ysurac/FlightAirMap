@@ -10,7 +10,7 @@ function getCookie(cname) {
 }
 
 function delCookie(cname) {
-    document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
 }
 
 function createCookie(name, value, days) {
@@ -22,8 +22,8 @@ function createCookie(name, value, days) {
     } else {
         expires = "";
     }
-    //document.cookie = name+"="+value+expires+"; path=/";
-    document.cookie = name+"="+value+expires;
+    document.cookie = name+"="+value+expires+"; path=/";
+    //document.cookie = name+"="+value+expires;
 }
 
 function mapType(selectObj) {
@@ -203,7 +203,8 @@ function unitaltitude(selectObj) {
     document.cookie =  'unitaltitude='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
 }
 function addarchive(begindate,enddate) {
-    //console.log('add archive');
+    console.log('Add archive');
+    //console.log('begin: '+begindate+' - end: '+enddate);
     createCookie('archive',true,2);
     createCookie('archive_begin',begindate,2);
     createCookie('archive_end',enddate,2);
@@ -211,7 +212,7 @@ function addarchive(begindate,enddate) {
     window.location.reload();
 }
 function noarchive() {
-    //console.log('No archive!');
+    console.log('Exit archive!');
     delCookie('archive');
     delCookie('archive_begin');
     delCookie('archive_end');

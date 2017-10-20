@@ -197,7 +197,7 @@ require_once('header.php');
 		    <div class="form-group">
 			<label><?php echo _("From:"); ?></label>
 			<div class='input-group date' id='datetimepicker1'>
-			    <input type='text' id="start_date" name="start_date" class="form-control" value="<?php if (isset($_COOKIE['archive_begin'])) print date("Y-m-d H:i",$_COOKIE['archive_begin']); ?> UTC" required />
+			    <input type='text' id="start_date" name="start_date" class="form-control" autocomplete="off" value="<?php if (isset($_COOKIE['archive_begin']) && $_COOKIE['archive_begin'] != '') print date("Y-m-d H:i",$_COOKIE['archive_begin']).' UTC'; ?>" required />
 			    <span class="input-group-addon">
 				<span class="glyphicon glyphicon-calendar"></span>
 			    </span>
@@ -206,7 +206,7 @@ require_once('header.php');
 		    <div class="form-group">
 			<label><?php echo _("To:"); ?></label>
 			<div class='input-group date' id='datetimepicker2'>
-			    <input type='text' id="end_date" name="end_date" class="form-control" value="<?php if (isset($_COOKIE['archive_end'])) print date("Y-m-d H:i",$_COOKIE['archive_end']); ?> UTC" />
+			    <input type='text' id="end_date" name="end_date" class="form-control" autocomplete="off" value="<?php if (isset($_COOKIE['archive_end']) && $_COOKIE['archive_end'] != '') print date("Y-m-d H:i",$_COOKIE['archive_end']).' UTC'; ?>" />
 			    <span class="input-group-addon">
 				<span class="glyphicon glyphicon-calendar"></span>
 			    </span>

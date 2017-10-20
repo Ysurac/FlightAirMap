@@ -154,8 +154,14 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 //	$begindate = filter_var($_COOKIE['archive_begin'],FILTER_SANITIZE_NUMBER_INT);
 //	$enddate = filter_var($_COOKIE['archive_end'],FILTER_SANITIZE_NUMBER_INT);
 	$begindate = $_COOKIE['archive_begin'];
+	$begindateinitial = $_COOKIE['archive_begin'];
+	if (isset($globalAircraftMaxUpdate)) {
+		$begindate = $begindate - $globalAircraftMaxUpdate;
+	} else {
+		$begindate = $begindate - 3000;
+	}
 	$enddate = $_COOKIE['archive_end'];
-
+	$enddateinitial = $_COOKIE['archive_end'];
 	$archivespeed = filter_var($_COOKIE['archive_speed'],FILTER_SANITIZE_NUMBER_INT);
 	$begindate = date('Y-m-d H:i:s',$begindate);
 	$enddate = date('Y-m-d H:i:s',$enddate);
@@ -803,7 +809,9 @@ if (!empty($spotter_array) && is_array($spotter_array))
 }
 $output .= ']';
 if (isset($globalArchive) && $globalArchive === TRUE) {
-	if ((time()-$globalLiveInterval) > $minitime) {
+	if (isset($begindateinitial)) {
+		$output = str_replace('%minitime%',date("c",$begindateinitial),$output);
+	} elseif ((time()-$globalLiveInterval) > $minitime) {
 		if (time()-$globalLiveInterval > $maxitime) {
 			$output = str_replace('%minitime%',date("c",$maxitime),$output);
 		} else {
@@ -816,7 +824,11 @@ if (isset($globalArchive) && $globalArchive === TRUE) {
 } else {
 	$output = str_replace('%minitime%',date("c",$minitime),$output);
 }
-$output = str_replace('%maxitime%',date("c",$maxitime),$output);
+if (isset($enddateinitial)) {
+	$output = str_replace('%maxitime%',date("c",$enddateinitial),$output);
+} else {
+	$output = str_replace('%maxitime%',date("c",$maxitime),$output);
+}
 if ($gltf2) $output = str_replace('%gltf2%','true',$output);
 else $output = str_replace('%gltf2%','false',$output);
 print $output;
