@@ -16,26 +16,24 @@ function delCookie(cname) {
 function createCookie(name, value, days) {
     var date, expires;
     if (days) {
-        date = new Date();
-        date.setTime(date.getTime()+(days*24*60*60*1000));
-        expires = "; expires="+date.toGMTString();
+	date = new Date();
+	date.setTime(date.getTime()+(days*24*60*60*1000));
+	expires = "; expires="+date.toGMTString();
     } else {
-        expires = "";
+	expires = "";
     }
     document.cookie = name+"="+value+expires+"; path=/";
-    //document.cookie = name+"="+value+expires;
 }
 
 function mapType(selectObj) {
     var idx = selectObj.selectedIndex;
     var atype = selectObj.options[idx].value;
     var type = atype.split('-');
-    document.cookie =  'MapType='+type+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     if (type[0] == 'Mapbox') {
-	document.cookie =  'MapType='+type[0]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-	document.cookie =  'MapTypeId='+type[1]+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	createCookie('MapType',type[0],9999);
+	createCookie('MapTypeId',type[1],9999);
     } else {
-	document.cookie =  'MapType='+atype+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+	createCookie('MapType',atype,9999);
     }
     window.location.reload();
 }
@@ -45,6 +43,7 @@ function terrainType(selectObj) {
     var atype = selectObj.options[idx].value;
     var type = atype.split('-');
     document.cookie =  'MapTerrain='+type+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    createCookie('MapTerrain',type,9999);
     window.location.reload();
 }
 
@@ -56,7 +55,6 @@ function sattypes(selectObj) {
 	    sattypes.push(sattype.value);
 	}
     }
-    //document.cookie =  'sattypes='+sattypes.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
     createCookie('sattypes',sattypes.join(),2);
     updateSat();
 }
@@ -68,29 +66,24 @@ function airlines(selectObj) {
 	    airs.push(air.value);
 	}
     }
-    //document.cookie =  'filter_Airlines='+airs.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
     createCookie('filter_Airlines',airs.join(),2);
 }
 function airlinestype(selectObj) {
     var idx = selectObj.selectedIndex;
     var airtype = selectObj.options[idx].value;
-    //document.cookie =  'filter_airlinestype='+airtype+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
     createCookie('filter_airlinestype',airtype,2);
 }
 function alliance(selectObj) {
     var idx = selectObj.selectedIndex;
     var alliance = selectObj.options[idx].value;
-    //document.cookie =  'filter_alliance='+alliance+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
     createCookie('filter_alliance',alliance,2);
 }
 function identfilter() {
     var ident = $("#identfilter").value;
-    //document.cookie =  'filter_ident='+ident+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
     createCookie('filter_ident',ident,2);
 }
 function mmsifilter() {
     var ident = $("#mmsifilter").value;
-    //document.cookie =  'filter_ident='+ident+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/'
     createCookie('filter_mmsi',ident,2);
 }
 function removefilters() {
@@ -98,9 +91,9 @@ function removefilters() {
     var cookieNames = document.cookie.split(/=[^;]*(?:;\s*|$)/);
     // Remove any that match the pattern
     for (var i = 0; i < cookieNames.length; i++) {
-    if (/^filter_/.test(cookieNames[i])) {
-        document.cookie = cookieNames[i] + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-        }
+	if (/^filter_/.test(cookieNames[i])) {
+	    delCookie(cookieNames[i]);
+	}
     }
     window.location.reload();
 }
@@ -112,59 +105,52 @@ function sources(selectObj) {
 	    sources.push(source.value);
 	}
     }
-    //document.cookie =  'filter_Sources='+sources.join()+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
     createCookie('filter_Sources',sources.join(),2);
 }
 
 
 function show2D() {
-    //document.cookie =  'MapFormat=2d; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
     createCookie('MapFormat','2d',10);
-    document.cookie =  'MapTrack='+document.getElementById("aircraft_ident").className+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    createCookie('MapTrack',document.getElementById("aircraft_ident").className,9999);
     window.location.reload();
 }
 function show3D() {
     createCookie('MapFormat','3d',10);
-    document.cookie =  'MapTrack='+document.getElementById("aircraft_ident").className+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    createCookie('MapTrack',document.getElementById("aircraft_ident").className,9999);
     window.location.reload();
 }
 function clickPolar(cb) {
-    document.cookie =  'polar='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    createCookie('polar',cb.checked,9999);
     window.location.reload();
 }
 function clickDisplayAirports(cb) {
-    document.cookie =  'displayairports='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    createCookie('displayairports',cb.checked,9999);
     window.location.reload();
 }
 function clickDisplayISS(cb) {
-    document.cookie =  'displayiss='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    createCookie('displayiss',cb.checked,9999);
     updateSat();
 }
 function clickDisplayMinimap(cb) {
-    document.cookie =  'displayminimap='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    createCookie('displayminimap',cb.checked,9999);
     window.location.reload();
 }
 function clickSingleModel(cb) {
-    document.cookie =  'singlemodel='+cb.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
+    createCookie('singlemodel',cb.checked,9999);
 }
 function clickVATSIM(cb) {
-    //document.cookie =  'filter_ShowVATSIM='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
     createCookie('filter_ShowVATSIM',cb.checked,2);
 }
 function clickIVAO(cb) {
-     //document.cookie =  'filter_ShowIVAO='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
      createCookie('filter_ShowIVAO',cb.checked,2);
 }
 function clickphpVMS(cb) {
-    //document.cookie =  'filter_ShowVMS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
     createCookie('filter_ShowVMS',cb.checked,2);
 }
 function clickSBS1(cb) {
-    //document.cookie =  'filter_ShowSBS1='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
     createCookie('filter_ShowSBS1',cb.checked,2);
 }
 function clickAPRS(cb) {
-    //document.cookie =  'filter_ShowAPRS='+cb.checked+'; expires=<?php print date("D, j M Y G:i:s T",mktime(0, 0, 0, date("m")  , date("d")+2, date("Y"))); ?>; path=/';
     createCookie('filter_ShowAPRS',cb.checked,2);
 }
 function clickDisplayGroundStation(cb) {
@@ -190,21 +176,20 @@ function clickDisplay2DBuildings(cb) {
 function unitdistance(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;
-    document.cookie =  'unitdistance='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+    createCookie('unitdistance',unit,9999);
 }
 function unitspeed(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;
-    document.cookie =  'unitspeed='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+    createCookie('unitspeed',unit,9999);
 }
 function unitaltitude(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;
-    document.cookie =  'unitaltitude='+unit+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+    createCookie('unitaltitude',unit,9999);
 }
 function addarchive(begindate,enddate) {
     console.log('Add archive');
-    //console.log('begin: '+begindate+' - end: '+enddate);
     createCookie('archive',true,2);
     createCookie('archive_begin',begindate,2);
     createCookie('archive_end',enddate,2);
