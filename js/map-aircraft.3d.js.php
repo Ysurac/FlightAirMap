@@ -324,7 +324,9 @@ function displayDataSanta(data) {
 };
 
 function updateData() {
-	lastupdate = Date.now();
+	var currenttime = viewer.clock.currentTime;
+	lastupdate = Date.parse(currenttime.toString());
+	//lastupdate = Date.now();
 	// Process is used instead of load because flight didn't move smoothy with load
 <?php
 	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
@@ -333,7 +335,7 @@ function updateData() {
 <?php
 	} else {
 ?>
-	var livedata = czmlds.process('<?php print $globalURL; ?>/live-czml.php?' + Date.now());
+	var livedata = czmlds.process('<?php print $globalURL; ?>/live-czml.php?update=' + lastupdate);
 <?php
 	}
 ?>
@@ -666,8 +668,10 @@ camera.moveEnd.addEventListener(function() {
 <?php
 	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
 ?>
-	console.log("Camera move...");
-	updateData();
+	if (archive == false) {
+		console.log("Camera move...");
+		updateData();
+	}
 <?php
 	}
 ?>
@@ -693,14 +697,10 @@ if (archive == false) {
 		}
 	,<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 } else {
-	//var widget = new Cesium.CesiumWidget('archivebox');
-//	var timeline = new Cesium.Timeline(viewer);
 	var clockViewModel = new Cesium.ClockViewModel(viewer.clock);
 	var animationViewModel = new Cesium.AnimationViewModel(clockViewModel);
-	//this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><i class="fa fa-fast-backward" aria-hidden="true"></i> <i class="fa fa-backward" aria-hidden="true"></i>  <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>  <i class="fa fa-forward" aria-hidden="true"></i> <i class="fa fa-fast-forward" aria-hidden="true"></i>';
-	$(".archivebox").html('<h4><?php echo str_replace("'","\'",_("Archive")); ?></h4>' + '<br/><form id="noarchive" method="post"><input type="hidden" name="noarchive" /></form><a href="#" onClick="animationViewModel.playReverseViewModel.command();"><i class="fa fa-play fa-flip-horizontal" aria-hidden="true"></i></a> <a href="#" onClick="'+"document.getElementById('noarchive').submit();"+'"><i class="fa fa-eject" aria-hidden="true"></i></a> <a href="#" onClick="animationViewModel.pauseViewModel.command();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="animationViewModel.playForwardViewModel.command();"><i class="fa fa-play" aria-hidden="true"></i></a>');
-	//		this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i></b>';
-
+	updateData();
+	$("#archivebox").html('<h4><?php echo _("Archive"); ?></h4>' +  '<b><span id="thedate"></span></b>' + '<br/><a href="#" onClick="noarchive();"><i class="fa fa-eject" aria-hidden="true"></i></a> <a href="#" onClick="animationViewModel.pauseViewModel.command();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="animationViewModel.playForwardViewModel.command();"><i class="fa fa-play" aria-hidden="true"></i></a><br/><div class="range archive"><input type="range" min="1" id="archiveboxspeed" max="50" size="10" step="1" onInput="archiveboxspeedrange.value=value;" onChange="archiveboxspeedrange.value=value;animationViewModel.clockViewModel.multiplier=value;" value="'+getCookie('archive_speed')+'"/><output id="archiveboxspeedrange">'+getCookie('archive_speed')+'</output></div>');
 }
 
 if (getCookie('displayairports') == 'true') 
