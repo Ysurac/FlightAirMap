@@ -254,6 +254,27 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
+	/**
+	* Gets coordinate & time spotter information based on a particular id
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public function getCoordArchiveSpotterDataByIdDate($id,$begindate,$enddate) {
+		date_default_timezone_set('UTC');
+		$id = filter_var($id, FILTER_SANITIZE_STRING);
+		$query  = "SELECT spotter_archive.latitude, spotter_archive.longitude, spotter_archive.date FROM spotter_archive WHERE spotter_archive.flightaware_id = :id AND spotter_archive.date BETWEEN '".$begindate."' AND '".$enddate."' ORDER by spotter_archive.date ASC";
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':id' => $id));
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+			die;
+		}
+		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $spotter_array;
+	}
+
 
 	/**
 	* Gets altitude information based on a particular callsign
@@ -389,6 +410,7 @@ class SpotterArchive {
 	public function getMinLiveSpotterData($begindate,$enddate,$filter = array()) {
 		global $globalDBdriver, $globalLiveInterval;
 		date_default_timezone_set('UTC');
+		//$filter_query = $this->getFilter($filter,true,true);
 
 		$filter_query = '';
 		if (isset($filter['source']) && !empty($filter['source'])) {
@@ -405,12 +427,11 @@ class SpotterArchive {
 			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
 		}
 
-		//if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT spotter_archive.date,spotter_archive.flightaware_id, spotter_archive.ident, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, a.aircraft_shadow,a.engine_type, a.engine_count, a.wake_category
 			          FROM spotter_archive
 			          INNER JOIN (SELECT * FROM aircraft) a on spotter_archive.aircraft_icao = a.icao
-			          WHERE spotter_archive.date BETWEEN '."'".$begindate."'".' AND '."'".$begindate."'".'
+			          WHERE spotter_archive.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".'
 			          '.$filter_query.' ORDER BY flightaware_id';
 		} else {
 			$query  = 'SELECT spotter_archive.flightaware_id, spotter_archive.date, spotter_archive.ident, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, a.aircraft_shadow,a.engine_type, a.engine_count, a.wake_category
@@ -428,7 +449,6 @@ class SpotterArchive {
 			die;
 		}
 		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
-
 		return $spotter_array;
 	}
 
@@ -442,11 +462,13 @@ class SpotterArchive {
 		global $globalDBdriver, $globalLiveInterval;
 		date_default_timezone_set('UTC');
 
+		//$filter_query = $this->getFilter($filter,true,true);
+
 		$filter_query = '';
 		if (isset($filter['source']) && !empty($filter['source'])) {
 			$filter_query .= " AND format_source IN ('".implode("','",$filter['source'])."') ";
 		}
-		// Should use spotter_output also ?
+		// Use spotter_output also ?
 		if (isset($filter['airlines']) && !empty($filter['airlines'])) {
 			$filter_query .= " INNER JOIN (SELECT flightaware_id FROM spotter_archive_output WHERE spotter_archive_output.airline_icao IN ('".implode("','",$filter['airlines'])."')) so ON so.flightaware_id = spotter_archive.flightaware_id ";
 		}
@@ -456,6 +478,7 @@ class SpotterArchive {
 		if (isset($filter['source_aprs']) && !empty($filter['source_aprs'])) {
 			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
 		}
+
 
 		//if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		if ($globalDBdriver == 'mysql') {
