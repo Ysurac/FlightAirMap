@@ -912,7 +912,7 @@ function update_archiveLayer(click) {
 	}).fail(function(jqxhr, textStatus, error) {
 		var err = textStatus + ", " + error;
 		console.log("Can't load archive json: "+err+"\nURL: "+url);
-		msgbox("Can't load archive json: <i>"+err+"</i><br><b>URL:</b> "+url);
+		msgbox("Can't load archive json: <i>"+err+'</i><br><b>URL:</b> <a href="'+location.href.substring(0, location.href.lastIndexOf('/'))+url+'">'+location.href.substring(0, location.href.lastIndexOf('/'))+url+'</a>');
 	});
 };
 
