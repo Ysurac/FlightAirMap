@@ -268,6 +268,11 @@ function update_airportsLayer() {
 	});
 }
 
+function resolutionScale(scale) {
+	createCookie('resolutionScale',scale,9999);
+	viewer.resolutionScale = scale;
+}
+
 function update_locationsLayer() {
 	var locnb;
 	for (var i =0; i < viewer.dataSources.length; i++) {
@@ -458,7 +463,33 @@ if (MapTerrain == 'stk' || MapTerrain == '') {
 	});
 	viewer.terrainProvider = vrTheWorldProvider;
 }
+
+
+// Water effect
+//viewer.scene.globe.oceanNormalMapUrl = 'js/Cesium/Assets/Textures/waterNormals.jpg';
+viewer.scene.globe.oceanNormalMapUrl = 'images/shaders/water/water_new_height.png';
+viewer.scene.globe.showWaterEffect = true;
+
+// Lightning
 viewer.scene.globe.enableLighting = true;
+
+//viewer.scene.globe.tileCacheSize = 1500;
+// Render size before rescale
+if (getCookie('resolutionScale') != '') {
+	viewer.resolutionScale = getCookie('resolutionScale');
+}
+viewer.scene.globe.maximumScreenSpaceError = 1;
+
+// ShadowMap
+viewer.shadowMap.pointLightRadius = 100;
+viewer.shadowMap.cascadesEnabled = true;
+viewer.shadowMap.maximumDistance = 1E3;
+viewer.shadowMap.size = 2048;
+viewer.shadowMap.softShadows = true;
+viewer.shadowMap.darkness = .3;
+
+
+
 if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
 	CesiumMiniMap(viewer, {osm: true});
 	viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('(Minimap: Map data © OpenStreetMap contributors, Open Database Licence)'));

@@ -491,6 +491,12 @@ require_once('header.php');
 <?php
     } elseif (isset($_COOKIE['MapFormat']) || $_COOKIE['MapFOrmat'] == '3d') {
 ?>
+		    <li><?php echo _("Set scaling factor for rendering resolution:"); ?>
+			<div class="range">
+			    <input type="range" min="0.5" max="2" step="0.5" name="resolutionscale" onchange="scale.value=value;resolutionScale(resolutionscale.value);" value="<?php if (isset($_COOKIE['resolutionScale'])) print $_COOKIE['resolutionScale']; else print '1'; ?>">
+			    <output id="scale"><?php if (isset($_COOKIE['resolutionScale'])) print $_COOKIE['resolutionScale']; else print '1'; ?></output>
+			</div>
+		    </li>
 <?php
 	if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 ?>

@@ -668,7 +668,7 @@ camera.moveEnd.addEventListener(function() {
 <?php
 	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
 ?>
-	if (archive == false) {
+	if (typeof archive == 'undefined' || archive == false) {
 		console.log("Camera move...");
 		updateData();
 	}
