@@ -97,7 +97,7 @@ function statsairlinechange(e) {
 	var add = false;
 	for (i = 0; i < pagename.length; i++) {
 		if (pagename[i] != '') {
-			if (pagename[i].length != 3) page = page+'/'+pagename[i];
+			if (pagename[i].length != 3 && pagename[i].substr(0,9) != 'alliance_') page = page+'/'+pagename[i];
 			else {
 				add = true;
 				if (airline != 'all') page = page+'/'+airline;
