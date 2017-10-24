@@ -111,12 +111,12 @@ function sources(selectObj) {
 
 function show2D() {
     createCookie('MapFormat','2d',10);
-    createCookie('MapTrack',document.getElementById("aircraft_ident").className,9999);
+    createCookie('MapTrack',document.getElementById("aircraft_ident").className,1);
     window.location.reload();
 }
 function show3D() {
     createCookie('MapFormat','3d',10);
-    createCookie('MapTrack',document.getElementById("aircraft_ident").className,9999);
+    createCookie('MapTrack',document.getElementById("aircraft_ident").className,1);
     window.location.reload();
 }
 function clickPolar(cb) {
