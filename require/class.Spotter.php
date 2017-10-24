@@ -4044,11 +4044,10 @@ class Spotter{
 			$sth->closeCursor();
 			$this->db = null;
 		} catch (PDOException $e) {
-		    return "error : ".$e->getMessage();
+		    return array('error' => $e->getMessage());
 		}
-		
-		return "success";
-
+		return $query_values;
+		//return "success";
 	}
 	
   

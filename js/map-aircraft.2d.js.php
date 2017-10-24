@@ -532,6 +532,8 @@ function getLiveData(click)
 						var squawk = feature.properties.sq;
 						var coord = feature.geometry.coordinates;
 						var lastupdate = feature.properties.lu;
+						var aircraft_icao = feature.properties.ai;
+						var registration = feature.properties.reg;
 <?php
 	} else {
 ?>
@@ -543,7 +545,7 @@ function getLiveData(click)
 ?>
 						if (type == 'aircraft') {
 							var lastupdatedate = new moment.tz(lastupdate*1000,moment.tz.guess()).format("HH:mm:ss");
-							datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+Math.round(altitude*100)+' feet</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
+							datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+Math.round(altitude*100)+' feet</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
 						}
 						var output = '';
 						//individual aircraft
@@ -826,7 +828,7 @@ function getLiveData(click)
 				
 				if (datatable != '') {
 					$('#datatable').css('height','20em');
-					$('#datatable').html('<div id="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th>Callsign</th><th>Altitude</th><th>Departure airport</th><th>Arrival airport</th><th>Squawk</th><th>Latitude</th><th>Longitude</th><th>Last update</th></tr></thead><tbody>'+datatable+'</tbody></table></div>');
+					$('#datatable').html('<div id="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th>Callsign</th><th>Registration</th><th>Aircraft ICAO</th><th>Altitude</th><th>Departure airport</th><th>Arrival airport</th><th>Squawk</th><th>Latitude</th><th>Longitude</th><th>Last update</th></tr></thead><tbody>'+datatable+'</tbody></table></div>');
 					$(".table-row").click(function () {
 						$("#aircraft_ident").attr('class',$(this).data('id'));
 						$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+$(this).data('id'));

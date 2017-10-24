@@ -277,7 +277,10 @@ $output = '{';
 							if ($compress) $output .= '"c": "NA",';
 							else $output .= '"callsign": "NA",';
 						}
-						if (isset($spotter_item['registration'])) $output .= '"registration": "'.$spotter_item['registration'].'",';
+						if (isset($spotter_item['registration'])) {
+							if ($compress) $output .= '"reg": "'.$spotter_item['registration'].'",';
+							else $output .= '"registration": "'.$spotter_item['registration'].'",';
+						}
 						if (isset($spotter_item['aircraft_name']) && isset($spotter_item['aircraft_type'])) {
 							$output .= '"aircraft_name": "'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')",';
 							$output .= '"aircraft_wiki": "http://'.strtolower($globalLanguage).'.wikipedia.org/wiki/'.urlencode(str_replace(' ','_',$spotter_item['aircraft_name'])).'",';
@@ -286,8 +289,9 @@ $output = '{';
 						} elseif (!$min) {
 							$output .= '"aircraft_name": "NA",';
 						}
-						if (!$min && isset($spotter_item['aircraft_icao'])) {
-							$output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
+						if (isset($spotter_item['aircraft_icao'])) {
+							if ($compress) $output .= '"ai": "'.$spotter_item['aircraft_icao'].'",';
+							else $output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
 						}
 						if (!isset($spotter_item['aircraft_shadow']) && !$tracker && !$marine) {
 							if (!isset($spotter_item['aircraft_icao']) || $spotter_item['aircraft_icao'] == '') $spotter_item['aircraft_shadow'] = '';
