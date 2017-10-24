@@ -474,7 +474,7 @@ viewer.scene.globe.showWaterEffect = true;
 viewer.scene.globe.enableLighting = true;
 
 // Cache
-//viewer.scene.globe.tileCacheSize = 1000;
+viewer.scene.globe.tileCacheSize = 1000;
 
 // Render size before rescale
 if (getCookie('resolutionScale') != '') {
@@ -485,7 +485,7 @@ if (getCookie('resolutionScale') != '') {
 // ShadowMap
 viewer.shadowMap.pointLightRadius = 100;
 viewer.shadowMap.cascadesEnabled = true;
-//viewer.shadowMap.maximumDistance = 2E3;
+viewer.shadowMap.maximumDistance = 3E3;
 viewer.shadowMap.size = 2048;
 viewer.shadowMap.softShadows = true;
 viewer.shadowMap.darkness = .3;
