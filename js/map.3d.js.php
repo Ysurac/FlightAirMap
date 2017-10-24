@@ -473,21 +473,28 @@ viewer.scene.globe.showWaterEffect = true;
 // Lightning
 viewer.scene.globe.enableLighting = true;
 
-//viewer.scene.globe.tileCacheSize = 1500;
+// Cache
+//viewer.scene.globe.tileCacheSize = 1000;
+
 // Render size before rescale
 if (getCookie('resolutionScale') != '') {
 	viewer.resolutionScale = getCookie('resolutionScale');
 }
-viewer.scene.globe.maximumScreenSpaceError = 1;
+//viewer.scene.globe.maximumScreenSpaceError = 1;
 
 // ShadowMap
 viewer.shadowMap.pointLightRadius = 100;
 viewer.shadowMap.cascadesEnabled = true;
-viewer.shadowMap.maximumDistance = 1E3;
+//viewer.shadowMap.maximumDistance = 2E3;
 viewer.shadowMap.size = 2048;
 viewer.shadowMap.softShadows = true;
 viewer.shadowMap.darkness = .3;
 
+// Color
+//viewer.scene.globe.imageryLayers._layers[0].contrast = 1.1;
+//viewer.scene.globe.imageryLayers._layers[0].saturation = 1.1;
+//viewer.scene.skyAtmosphere.brightnessShift = 0.9;
+//viewer.scene.skyAtmosphere.saturationShift = 0.7;
 
 
 if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
