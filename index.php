@@ -777,6 +777,9 @@ require_once('header.php');
 	}
     });
 </script>
+</section>
+<section>
+<div id="datatable"></div>
 <?php
 require_once('footer.php');
 ?>

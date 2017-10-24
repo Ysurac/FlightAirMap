@@ -413,7 +413,10 @@ $output = '{';
 							$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
 						}
 						
-						if (isset($spotter_item['altitude'])) {
+						if (isset($spotter_item['real_altitude'])) {
+							if ($compress) $output .= '"a": "'.($spotter_item['real_altitude']/100).'",';
+							else $output .= '"altitude": "'.($spotter_item['real_altitude']/100).'",';
+						} elseif (isset($spotter_item['altitude'])) {
 							if ($compress) $output .= '"a": "'.$spotter_item['altitude'].'",';
 							else $output .= '"altitude": "'.$spotter_item['altitude'].'",';
 						}

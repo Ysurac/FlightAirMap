@@ -285,16 +285,11 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
 }
 
 .showdetails {
-/*  display:inline-block;*/
   position: absolute;
   right: 5px;
   top: 160px;
   margin: 0px;
-/*
-    top: 55px;
-*/
     width: 300px;
-    /*padding: 3px 3px;*/
     font: 12px/14px Arial, Helvetica, sans-serif;
     text-align: center;
     background: white;
@@ -482,3 +477,19 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
     
 }
 .ui-dialog { z-index: 3000 !important ;}
+#datatabledata {
+	z-index: 2000;
+	position: absolute;
+	margin: 0px;
+	display: block;
+	overflow: auto;
+	height: 20em;
+	width: 100%;
+	background-color: white;
+}
+/*
+#datatable {
+	height: 20em;
+}
+*/
+

@@ -16,6 +16,17 @@ if (isset($_COOKIE['IconColor'])) $IconColor = $_COOKIE['IconColor'];
 elseif (isset($globalAircraftIconColor)) $IconColor = $globalAircraftIconColor;
 else $IconColor = '1a3151';
 ?>
+<?php
+if (isset($globalDebug) && $globalDebug === TRUE) {
+?>
+var globaldebug = true;
+<?php
+} else {
+?>
+var globaldebug = false;
+<?php
+}
+?>
 
 
 var user = new L.FeatureGroup();
@@ -288,6 +299,7 @@ function getLiveData(click)
 			layer_data = L.layerGroup();
 			var nbaircraft = 0;
 			var flightcount = 0;
+			var datatable = '';
 			var live_data = L.geoJson(data, {
 				pointToLayer: function (feature, latLng) {
 					var markerLabel = "";
@@ -511,9 +523,15 @@ function getLiveData(click)
 <?php
 	if ($compress) {
 ?>
+						var id = feature.properties.fi;
 						var altitude = feature.properties.a;
 						var type = feature.properties.t;
 						var callsign = feature.properties.c;
+						var dairport = feature.properties.dac;
+						var aairport = feature.properties.aac;
+						var squawk = feature.properties.sq;
+						var coord = feature.geometry.coordinates;
+						var lastupdate = feature.properties.lu;
 <?php
 	} else {
 ?>
@@ -523,6 +541,10 @@ function getLiveData(click)
 <?php
 	}
 ?>
+						if (type == 'aircraft') {
+							var lastupdatedate = new moment.tz(lastupdate*1000,moment.tz.guess()).format("HH:mm:ss");
+							datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+Math.round(altitude*100)+' feet</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
+						}
 						var output = '';
 						//individual aircraft
 						if (feature.minimal == "false" && type == "aircraft"){
@@ -801,6 +823,19 @@ function getLiveData(click)
 						}
 					}
 				});
+				
+				if (datatable != '') {
+					$('#datatable').css('height','20em');
+					$('#datatable').html('<div id="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th>Callsign</th><th>Altitude</th><th>Departure airport</th><th>Arrival airport</th><th>Squawk</th><th>Latitude</th><th>Longitude</th><th>Last update</th></tr></thead><tbody>'+datatable+'</tbody></table></div>');
+					$(".table-row").click(function () {
+						$("#aircraft_ident").attr('class',$(this).data('id'));
+						$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+$(this).data('id'));
+						getLiveData(1);
+						map.panTo([$(this).data('latitude'),$(this).data('longitude')]);
+					});
+
+				}
+				
 				layer_data.addTo(map);
 				//re-create the bootstrap tooltips on the marker 
 				//showBootstrapTooltip();
@@ -892,28 +927,38 @@ function update_archiveLayer(click) {
 		layerControl: false,
 		sliderControl: false
 	};
-
-	var url = "<?php print $globalURL; ?>/archive-geojson.php?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed="+archivespeed;
 	var alldata = [];
+	var part = 0;
+	//do {
+	//part += 1;
+	//console.log('part: '+part);
+	var url = "<?php print $globalURL; ?>/archive-geojson.php?"+Math.random()+"&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed="+archivespeed+"&part="+part;
 	var archivegeoJSONQuery = $.getJSON(url, function(data) {
-		$("#infobox").remove();
-		document.getElementById('archivebox').style.display = "block";
-		$("#archivebox").html('<h4><?php echo _("Archive"); ?></h4>' +  '<b><span id="thedate"></span></b>' + '<br/><a href="#" onClick="noarchive();"><i class="fa fa-eject" aria-hidden="true"></i></a> <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a><br/><div class="range archive"><input type="range" min="1" id="archiveboxspeed" max="50" size="10" step="1" onInput="archiveboxspeedrange.value=value;" onChange="archiveboxspeedrange.value=value;archiveplayback.setSpeed(value);" value="'+getCookie('archive_speed')+'"/><output id="archiveboxspeedrange">'+getCookie('archive_speed')+'</output></div>');
-
+		alldata = [];
 		var archiveLayerGroup = L.layerGroup();
 		var archivegeoJSON = L.geoJson(data, {
 			onEachFeature: function(feature,layer) {
 				alldata.push(feature);
 			}
 		});
-		archiveplayback = new L.Playback(map,alldata,archive_update,playbackOptions);
-		archiveplayback.setCursor(begindate*1000);
-		archiveplayback.start();
+		if (typeof archiveplayback == 'undefined') {
+			$("#infobox").remove();
+			document.getElementById('archivebox').style.display = "block";
+			$("#archivebox").html('<h4><?php echo _("Archive"); ?></h4>' +  '<b><span id="thedate"></span></b>' + '<br/><a href="#" onClick="noarchive();"><i class="fa fa-eject" aria-hidden="true"></i></a> <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a><br/><div class="range archive"><input type="range" min="1" id="archiveboxspeed" max="50" size="10" step="1" onInput="archiveboxspeedrange.value=value;" onChange="archiveboxspeedrange.value=value;archiveplayback.setSpeed(value);" value="'+getCookie('archive_speed')+'"/><output id="archiveboxspeedrange">'+getCookie('archive_speed')+'</output></div>');
+			archiveplayback = new L.Playback(map,alldata,archive_update,playbackOptions);
+			archiveplayback.setCursor(begindate*1000);
+			archiveplayback.start();
+		} else {
+			archiveplayback.addData(alldata);
+		}
 	}).fail(function(jqxhr, textStatus, error) {
-		var err = textStatus + ", " + error;
-		console.log("Can't load archive json: "+err+"\nURL: "+url);
-		msgbox("Can't load archive json: <i>"+err+'</i><br><b>URL:</b> <a href="'+location.href.substring(0, location.href.lastIndexOf('/'))+url+'">'+location.href.substring(0, location.href.lastIndexOf('/'))+url+'</a>');
+		if (globaldebug) {
+			var err = textStatus + ", " + error;
+			console.log("Can't load archive json: "+err+"\nURL: "+url);
+			msgbox("Can't load archive json: <i>"+err+'</i><br><b>URL:</b> <a href="'+location.href.substring(0, location.href.lastIndexOf('/'))+url+'">'+location.href.substring(0, location.href.lastIndexOf('/'))+url+'</a>');
+		}
 	});
+	//} while (alldata.length > 0);
 };
 
 
@@ -967,6 +1012,8 @@ function update_archiveLayer(click) {
 <?php
 	}
 ?>
+
+
 });
 
 function atcPopup (feature, layer) {
