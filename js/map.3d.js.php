@@ -385,8 +385,7 @@ var viewer = new Cesium.Viewer('live-map', {
 	infoBox : false,
 	navigationHelpButton : false,
 	geocoder : false,
-	fullscreenButton : false,
-	contextOptions  : {webgl:{failIfMajorPerformanceCaveat:false} }
+	fullscreenButton : false
 });
 
 // Set initial camera position
