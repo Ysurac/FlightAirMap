@@ -465,20 +465,22 @@ if (MapTerrain == 'stk' || MapTerrain == '') {
 
 
 // Water effect
+/*
 //viewer.scene.globe.oceanNormalMapUrl = 'js/Cesium/Assets/Textures/waterNormals.jpg';
 viewer.scene.globe.oceanNormalMapUrl = 'images/shaders/water/water_new_height.png';
 viewer.scene.globe.showWaterEffect = true;
-
+*/
 // Lightning
 viewer.scene.globe.enableLighting = true;
-
+/*
 // Cache
 viewer.scene.globe.tileCacheSize = 1000;
-
+*/
 // Render size before rescale
 if (getCookie('resolutionScale') != '') {
 	viewer.resolutionScale = getCookie('resolutionScale');
 }
+/*
 //viewer.scene.globe.maximumScreenSpaceError = 1;
 
 // ShadowMap
@@ -488,13 +490,13 @@ viewer.shadowMap.maximumDistance = 3E3;
 viewer.shadowMap.size = 2048;
 viewer.shadowMap.softShadows = true;
 viewer.shadowMap.darkness = .3;
-
+*/
 // Color
 //viewer.scene.globe.imageryLayers._layers[0].contrast = 1.1;
 //viewer.scene.globe.imageryLayers._layers[0].saturation = 1.1;
 //viewer.scene.skyAtmosphere.brightnessShift = 0.9;
 //viewer.scene.skyAtmosphere.saturationShift = 0.7;
-
+  
 
 if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
 	CesiumMiniMap(viewer, {osm: true});
