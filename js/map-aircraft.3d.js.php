@@ -584,8 +584,8 @@ handler_aircraft.setInputAction(function(click) {
 		//console.log(pickedObject.id.position.getValue(viewer.clock.currentTime));
 //		console.log(pickedObject.id);
 //		if (typeof pickedObject.id.lastupdate != 'undefined') {
-		delCookie('MapTrack');
 		if (type == 'flight') {
+			delCookie('MapTrack');
 			flightaware_id = pickedObject.id.id;
 			createCookie('MapTrack',flightaware_id,1);
 			$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
