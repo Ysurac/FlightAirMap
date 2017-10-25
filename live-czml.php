@@ -202,8 +202,10 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true);
 	} elseif (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '' && !empty($coord)) {
 		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true,$_COOKIE['MapTrack']);
-	} else {
+	} elseif (!isset($_COOKIE['singlemodel']) || $_COOKIE['singlemodel'] == 'false') {
 		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true);
+	} else {
+		$spotter_array = array();
 	}
 	$filter = $previous_filter;
 }
