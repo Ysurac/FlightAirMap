@@ -355,7 +355,7 @@ function update_tsk() {
 
 $(".showdetails").on("click",".close",function(){
 	$(".showdetails").empty();
-	$("#aircraft_ident").attr('class','');
+	$("#pointident").attr('class','');
 	//getLiveData(1);
 	return false;
 })
@@ -465,11 +465,11 @@ if (MapTerrain == 'stk' || MapTerrain == '') {
 
 
 // Water effect
-/*
+
 //viewer.scene.globe.oceanNormalMapUrl = 'js/Cesium/Assets/Textures/waterNormals.jpg';
 viewer.scene.globe.oceanNormalMapUrl = 'images/shaders/water/water_new_height.png';
 viewer.scene.globe.showWaterEffect = true;
-*/
+
 // Lightning
 viewer.scene.globe.enableLighting = true;
 /*

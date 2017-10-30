@@ -7,6 +7,10 @@ setcookie("MapFormat",'2d');
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
 else $compress = $globalJsonCompress;
+if (isset($_COOKIE['MarineIconColor'])) $MarineIconColor = $_COOKIE['MarineIconColor'];
+elseif (isset($globalMarineIconColor)) $MarineIconColor = $globalMarineIconColor;
+else $MarineIconColor = '1a3151';
+
 ?>
 
 
@@ -30,43 +34,19 @@ layer_marine_data = L.layerGroup();
 	}
 ?>
 
-	<?php
-	/*
-	    if (isset($_GET['archive'])) {
-	?>
-	var archive = L.control();
-	archive.onAdd = function (map) {
-		this._div = L.DomUtil.create('div', 'archivebox'); // create a div with a class "info"
-		this.update();
-		return this._div;
-	};
-	archive.update = function (props) {
-		if (typeof props != 'undefined') {
-			//this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><i class="fa fa-fast-backward" aria-hidden="true"></i> <i class="fa fa-backward" aria-hidden="true"></i>  <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>  <i class="fa fa-forward" aria-hidden="true"></i> <i class="fa fa-fast-forward" aria-hidden="true"></i>';
-			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b>' + props.archive_date + ' UTC </b>' + '<br/><a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a>';
-		} else {
-			this._div.innerHTML = '<h4><?php echo str_replace("'","\'",_("Archive Date & Time")); ?></h4>' +  '<b><i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i></b>';
-		}
-
-	};
-	archive.addTo(map);
-	<?php
-	    }
-	    */
-	?>
-
 $(".showdetails").on("click",".close",function(){
 	$(".showdetails").empty();
-	$("#aircraft_ident").attr('class','');
+	$("#pointident").attr('class','');
 	getMarineLiveData(1);
 	return false;
 })
 
 
-$("#aircraft_ident").attr('class','');
+$("#pointident").attr('class','');
 var MapTrackMarine = getCookie('MapTrackMarine');
 if (MapTrackMarine != '') {
-	$("#aircraft_ident").attr('class',MapTrackMarine);
+	$("#pointident").attr('class',MapTrackMarine);
+	$("#pointtype").attr('class','marine');
 	$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+MapTrackMarine);
 	delCookie('MapTrackMarine');
 }
@@ -74,22 +54,21 @@ if (MapTrackMarine != '') {
 function getLiveMarineData(click)
 {
 	var bbox = map.getBounds().toBBoxString();
-<?php
-	if (isset($archive) && $archive) {
-?>
-	var begindate = parseInt(getCookie("archive_begin"));
-	var enddate = begindate+parseInt(getCookie("archive_update"));
-	if (enddate > getCookie("archive_end")) {
-		enddate = parseInt(getCookie("archive_end"));
-		clearInterval(reloadPage);
-	} else {
-		if (click != 1) {
-			document.cookie =  'archive_begin='+enddate+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
+	/*
+	if (archive === true) {
+		var begindate = parseInt(getCookie("archive_begin"));
+		var enddate = begindate+parseInt(getCookie("archive_update"));
+		if (enddate > getCookie("archive_end")) {
+			enddate = parseInt(getCookie("archive_end"));
+			clearInterval(reloadPage);
+		} else {
+			if (click != 1) {
+				createCookie('archive_begin',enddate,9999);
+			}
 		}
 	}
-<?php
-	}
-?>
+	*/
+
 	//layer_data_p = L.layerGroup();
 	$.ajax({
 	    dataType: "json",
@@ -105,11 +84,11 @@ function getLiveMarineData(click)
 <?php
 	} elseif (isset($archive) && $archive) {
 ?>
-            url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&marine&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
+            url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&marine&coord="+bbox+"&history="+document.getElementById('pointident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
 <?php
 	} else {
 ?>
-	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&marine&coord="+bbox+"&history="+document.getElementById('aircraft_ident').className,
+	    url: "<?php print $globalURL; ?>/live/geojson?"+Math.random()+"&marine&coord="+bbox+"&history="+document.getElementById('pointident').className,
 <?php 
 	}
 ?>
@@ -118,14 +97,15 @@ function getLiveMarineData(click)
 <?php
 	if (!isset($archive) || !$archive) {
 ?>
-		if (document.getElementById('aircraft_ident').className != "") {
-			$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+document.getElementById('aircraft_ident').className);
+		if (document.getElementById('pointident').className != "") {
+			$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+document.getElementById('pointident').className);
 		}
 <?php
 	}
 ?>
 		var nbmarine = 0;
 		var marinecount = 0;
+		var datatablemarine = '';
 		layer_marine_data = L.layerGroup();
 		var live_marine_data = L.geoJson(data, {
 		    pointToLayer: function (feature, latLng) {
@@ -161,9 +141,6 @@ function getLiveMarineData(click)
 		    if (callsign != ""){ markerMarineLabel += callsign; }
 		    if (type != ""){ markerMarineLabel += ' - '+type; }
 <?php
-	if (isset($_COOKIE['MarineIconColor'])) $MarineIconColor = $_COOKIE['MarineIconColor'];
-	elseif (isset($globalMarineIconColor)) $MarineIconColor = $globalMarineIconColor;
-	else $MarineIconColor = '1a3151';
 	if (!isset($ident) && !isset($fammarine_id)) {
 ?>
 		    //info_marine_update(feature.properties.fc);
@@ -174,8 +151,8 @@ function getLiveMarineData(click)
 <?php
 		}
 ?>
-		    if (document.getElementById('aircraft_ident').className == callsign || document.getElementById('aircraft_ident').className == fammarine_id) {
-		    //if (document.getElementById('aircraft_ident').className == fammarine_id) {
+		    if (document.getElementById('pointident').className == callsign || document.getElementById('pointident').className == fammarine_id) {
+		    //if (document.getElementById('pointident').className == fammarine_id) {
 			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?marine&color=FF0000&filename='+aircraft_shadow;
 			    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?marine&color=8D93B9&filename='+aircraft_shadow;
 		    } else {
@@ -230,11 +207,12 @@ function getLiveMarineData(click)
 ?>
 		    .on('click', function() {
 				//if (callsign == "NA") {
-				    $("#aircraft_ident").attr('class',fammarine_id);
+				    $("#pointident").attr('class',fammarine_id);
+				    $("#pointtype").attr('class','marine');
 				    $(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+fammarine_id);
 				/*
 				} else {
-				    $("#aircraft_ident").attr('class',callsign);
+				    $("#pointident").attr('class',callsign);
 				    $(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
@@ -286,13 +264,14 @@ function getLiveMarineData(click)
 		if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 ?>
 			    .on('click', function() {
-				//$("#aircraft_ident").attr('class',callsign);
+				//$("#pointident").attr('class',callsign);
 				//if (callsign == "NA") {
-					$("#aircraft_ident").attr('class',fammarine_id);
+					$("#pointident").attr('class',fammarine_id);
+					$("#pointtype").attr('class','marine');
 					$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+fammarine_id);
 				/*
 				} else {
-					$("#aircraft_ident").attr('class',callsign);
+					$("#pointident").attr('class',callsign);
 					$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
@@ -341,11 +320,12 @@ function getLiveMarineData(click)
 ?>
 			    .on('click', function() {
 				//if (callsign == "NA") {
-				    $("#aircraft_ident").attr('class',fammarine_id);
+				    $("#pointident").attr('class',fammarine_id);
+				    $("#pointtype").attr('class','marine');
 				    $(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+fammarine_id);
 				/*
 				} else {
-				    $("#aircraft_ident").attr('class',callsign);
+				    $("#pointident").attr('class',callsign);
 				    $(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
@@ -364,8 +344,11 @@ function getLiveMarineData(click)
 	if ($compress) {
 ?>
 		//var altitude = feature.properties.a;
+		var id = feature.properties.fmi;
 		var type = feature.properties.t;
 		var callsign = feature.properties.c;
+		var lastupdate = feature.properties.lu;
+		var coord = feature.geometry.coordinates;
 <?php
 	} else {
 ?>
@@ -375,6 +358,10 @@ function getLiveMarineData(click)
 <?php
 	}
 ?>
+		if (type != 'history') {
+			var lastupdatedate = new moment.tz(lastupdate*1000,moment.tz.guess()).format("HH:mm:ss");
+			datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+type+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
+		}
                 var output = '';
 		
               //individual aircraft
@@ -518,7 +505,7 @@ function getLiveMarineData(click)
                 //aircraft history position as a line
                 if (type == "history"){
 		    <?php if (!isset($ident) && !isset($fammarine_id)) { ?>
-		    if (document.getElementById('aircraft_ident').className == callsign) {
+		    if (document.getElementById('pointident').className == callsign) {
 			if (map.getZoom() > 7) {
                 	    var style = {
 				"color": "#1a3151",
@@ -581,6 +568,17 @@ function getLiveMarineData(click)
 				}
 			    }
 			});
+			if (datatablemarine != '') {
+				$('#datatablemarine').css('height','20em');
+				$('#datatablemarine').html('<div class="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th>Callsign</th><th>Type<th>Latitude</th><th>Longitude</th><th>Last update</th></tr></thead><tbody>'+datatablemarine+'</tbody></table></div>');
+				$(".table-row").click(function () {
+					$("#pointident").attr('class',$(this).data('id'));
+					$("#pointtype").attr('class','marine');
+					$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+$(this).data('id'));
+					getLiveMarineData(1);
+					map.panTo([$(this).data('latitude'),$(this).data('longitude')]);
+				});
+			}
 			layer_marine_data.addTo(map);
 			//re-create the bootstrap tooltips on the marker 
 			//showBootstrapTooltip();
@@ -599,36 +597,110 @@ function getLiveMarineData(click)
 }
 
 $( document ).ready(function() {
-    map.on('moveend', function() {
+	map.on('moveend', function() {
 <?php
-    if (isset($globalMapUseBbox) && $globalMapUseBbox) {
+	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
 ?>
-	getLiveMarineData(1);
-<?php
-    }
-?>
-    });
- //load the function on startup
-getLiveMarineData(0);
-
-
-<?php
-	if (isset($archive) && $archive) {
-?>
-//then load it again every 30 seconds
-//  var reload = setInterval(function(){if (noTimeout) getLiveMarineData(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
-reloadMarinePage = setInterval(function(){if (noTimeout) getLiveMarineData(0)},<?php print $archiveupdatetime*1000; ?>);
-<?php
-	} else {
-?>
-//then load it again every 30 seconds
-reloadMarinePage = setInterval(
-    function(){if (noTimeout) getLiveMarineData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+	if (archive === false) {
+		getLiveMarineData(1);
+	}
 <?php
 	}
 ?>
+});
+if (archive === false) {
+	//load the function on startup
+	getLiveMarineData(0);
+}
+if (archive === true) {
+	function update_archiveMarineLayer(click) {
+		$("#infobox").html('<?php echo _("Loading archive"); ?> <i class="fa fa-spinner fa-pulse fa-rw"></i>');
+		var bbox = map.getBounds().toBBoxString();
+		var begindate = parseInt(getCookie("archive_begin"));
+		var enddate = parseInt(getCookie("archive_end"));
+		var finaldate = enddate*1000;
+		var archivespeed = parseInt(getCookie("archive_speed"));
+		var lasticon;
+		var playbackOptions = {
+		    orientIcons: true,
+		    clickCallback: function(event) { 
+			var flightaware_id = event.target.feature.properties.fi;
+			var currentdate = (begindate + event.originalEvent.timeStamp)*1000;
+			$("#pointident").attr('class',flightaware_id);
+			$("#pointtype").attr('class','marine');
+			$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+currentdate);
+			var aircraft_shadow = event.target.feature.properties.as;
+			if (typeof lasticon != 'undefined') {
+			    lasticon.target._icon.src = '<?php print $globalURL; ?>/getImages.php?color=<?php print $MarineIconColor; ?>&filename='+lasticon.target.feature.properties.as;
+			}
+			lasticon = event;
+			event.target._icon.src = '<?php print $globalURL; ?>/getImages.php?color=FF0000&filename='+aircraft_shadow;
+		    /*
+			archiveplayback._tracksLayer.addLayer(event.target.feature);
+			console.log(event);
+			console.log(archiveplayback);
+		    */
+		    },
+		    marker: function(feature){
+			var aircraft_shadow = feature.properties.as;
+			var iconURLpath = '<?php print $globalURL; ?>/getImages.php?color=<?php print $MarineIconColor; ?>&filename='+aircraft_shadow;
+			return {
+			    icon: L.icon({
+				iconUrl: iconURLpath,
+				iconSize: [30, 30],
+				iconAnchor: [15, 30]
+			    })
+			}
+		    },
+		    layer: {
+			onEachFeature : function (feature, layer) {
+			    var style = {
+				"color": "#1a3151",
+				"weight": 2,
+				"opacity": 1
+			    };
+			    layer.setStyle(style);
+			}
+		    },
+		    fadeMarkersWhenStale: true,
+		    finalTime: finaldate,
+		    staleTime: 60,
+		    speed: archivespeed,
+		    orientIcons: true,
+		    maxInterpolationTime: 30*60*1000,
+		    tracksLayer: false,
+		    playControl: false,
+		    layerControl: false,
+		    sliderControl: false
+		};
+		var url = "<?php print $globalURL; ?>/archive-geojson.php?"+Math.random()+"&marine&coord="+bbox+"&history="+document.getElementById('pointident').className+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed="+archivespeed;
+		var alldata = [];
+		var archivegeoJSONQuery = $.getJSON(url, function(data) {
+			$("#infobox").remove();
+			document.getElementById('archivebox').style.display = "block";
+			$("#archivebox").html('<h4><?php echo _("Archive"); ?></h4>' +  '<b><span id="thedate"></span></b>' + '<br/><a href="#" onClick="noarchive();"><i class="fa fa-eject" aria-hidden="true"></i></a> <a href="#" onClick="archivePause();"><i class="fa fa-pause" aria-hidden="true"></i></a> <a href="#" onClick="archivePlay();"><i class="fa fa-play" aria-hidden="true"></i></a><br/><div class="range archive"><input type="range" min="1" id="archiveboxspeed" max="50" size="10" step="1" onInput="archiveboxspeedrange.value=value;" onChange="archiveboxspeedrange.value=value;archiveplayback.setSpeed(value);" value="'+getCookie('archive_speed')+'"/><output id="archiveboxspeedrange">'+getCookie('archive_speed')+'</output></div>');
+			var archiveLayerGroup = L.layerGroup();
+			var archivegeoJSON = L.geoJson(data, {
+				onEachFeature: function(feature,layer) {
+					alldata.push(feature);
+				}
+			});
+			archiveplayback = new L.Playback(map,alldata,archive_update,playbackOptions);
+			archiveplayback.setCursor(begindate*1000);
+			archiveplayback.start();
+		});
+	};
+
+	console.log('Load Marine Archive geoJson');
+	update_archiveMarineLayer(0);
+} else {
+	//then load it again every 30 seconds
+	reloadMarinePage = setInterval(
+	function(){if (noTimeout) getLiveMarineData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
+}
+
 function MarineiconColor(color) {
-    document.cookie =  'MarineIconColor='+color.substring(1)+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
-    window.location.reload();
+	createCookie('MarineIconColor',color.substring(1),9999);
+	window.location.reload();
 }
 });

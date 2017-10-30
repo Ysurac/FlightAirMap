@@ -5,7 +5,7 @@
 
 $(".showdetails").on("click",".close",function(){
 	$(".showdetails").empty();
-	$("#aircraft_ident").attr('class','');
+	$("#pointident").attr('class','');
 	return false;
 })
 

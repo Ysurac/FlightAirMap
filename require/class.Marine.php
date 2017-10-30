@@ -48,6 +48,9 @@ class Marine{
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
 			$filter_query_where .= " AND ident = '".$filter['ident']."'";
 		}
+		if (isset($filter['id']) && !empty($filter['id'])) {
+			$filter_query_where .= " AND fammarine_id = '".$filter['id']."'";
+		}
 		if (isset($filter['mmsi']) && !empty($filter['mmsi'])) {
 			$filter_query_where .= " AND mmsi = '".$filter['mmsi']."'";
 		}

@@ -111,12 +111,24 @@ function sources(selectObj) {
 
 function show2D() {
     createCookie('MapFormat','2d',10);
-    createCookie('MapTrack',document.getElementById("aircraft_ident").className,1);
+    if (document.getElementById("pointtype").className == 'tracker') {
+	createCookie('MapTrackTracker',document.getElementById("pointident").className,1);
+    } else if (document.getElementById("pointtype").className == 'marine') {
+	createCookie('MapTrackMarine',document.getElementById("pointident").className,1);
+    } else {
+	createCookie('MapTrack',document.getElementById("pointident").className,1);
+    }
     window.location.reload();
 }
 function show3D() {
     createCookie('MapFormat','3d',10);
-    createCookie('MapTrack',document.getElementById("aircraft_ident").className,1);
+    if (document.getElementById("pointtype").className == 'tracker') {
+	createCookie('MapTrackTracker',document.getElementById("pointident").className,1);
+    } else if (document.getElementById("pointtype").className == 'marine') {
+	createCookie('MapTrackMarine',document.getElementById("pointident").className,1);
+    } else {
+	createCookie('MapTrack',document.getElementById("pointident").className,1);
+    }
     window.location.reload();
 }
 function clickPolar(cb) {

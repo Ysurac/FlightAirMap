@@ -157,7 +157,7 @@ if (!empty($spotter_array)) {
 		print round($spotter_item['ground_speed']*1.852).' km/h';
 	}
 	print '</div>';
-	print '<div id="coordinates"><span>'._("Coordinates").'</span>'.$spotter_item['latitude'].', '.$spotter_item['longitude'].'</div>';
+	print '<div id="coordinates"><span>'._("Coordinates").'</span><span class="latitude">'.$spotter_item['latitude'].'</span>, <span class="longitude">'.$spotter_item['longitude'].'</span></div>';
 
 	if (isset($globalCam) && $globalCam) {
 		require_once(dirname(__FILE__).'/require/class.Common.php');

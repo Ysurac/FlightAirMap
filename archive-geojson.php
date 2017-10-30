@@ -114,6 +114,9 @@ elseif (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['end
 	else $begindate = $begindate - 3000;
 	$enddate = filter_input(INPUT_GET,'enddate',FILTER_SANITIZE_NUMBER_INT);
 	$archivespeed = filter_input(INPUT_GET,'speed',FILTER_SANITIZE_NUMBER_INT);
+	$part = filter_input(INPUT_GET,'part',FILTER_SANITIZE_NUMBER_INT);
+	if ($part == '') $part = 0;
+	
 	if ($begindate != '' && $enddate != '') {
 		$begindate = date('Y-m-d H:i:s',$begindate);
 		$enddate = date('Y-m-d H:i:s',$enddate);
@@ -125,7 +128,7 @@ elseif (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['end
 			$spotter_array = $MarineArchive->getMinLiveMarineData($begindate,$enddate,$filter);
 		}
 		else {
-			$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
+			$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter,$part);
 		}
 	}
 }

@@ -48,6 +48,9 @@ class MarineLive {
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
 			$filter_query_where .= " AND ident = '".$filter['ident']."'";
 		}
+		if (isset($filter['id']) && !empty($filter['id'])) {
+			$filter_query_where .= " AND fammarine_id = '".$filter['id']."'";
+		}
 		if (isset($filter['mmsi']) && !empty($filter['mmsi'])) {
 			$filter_query_where .= " AND mmsi = '".$filter['mmsi']."'";
 		}
@@ -294,9 +297,9 @@ class MarineLive {
 			$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		} else return array();
 		if ($globalDBdriver == 'mysql') {
-			$query  = 'SELECT marine_live.* FROM marine_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM marine_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.fammarine_id) s on marine_live.fammarine_id = s.fammarine_id AND marine_live.date = s.maxdate AND marine_live.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND marine_live.longitude BETWEEN '.$minlong.' AND '.$maxlong.' GROUP BY marine_live.fammarine_id'.$filter_query;
+			$query  = 'SELECT marine_live.* FROM marine_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM marine_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.fammarine_id) s on marine_live.fammarine_id = s.fammarine_id AND marine_live.date = s.maxdate AND marine_live.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND marine_live.longitude BETWEEN '.$minlong.' AND '.$maxlong.' GROUP BY marine_live.fammarine_id ORDER BY date DESC'.$filter_query;
 		} else {
-			$query  = "SELECT marine_live.* FROM marine_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM marine_live l WHERE NOW() at time zone 'UTC'  - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.fammarine_id) s on marine_live.fammarine_id = s.fammarine_id AND marine_live.date = s.maxdate AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong." GROUP BY marine_live.fammarine_id".$filter_query;
+			$query  = "SELECT marine_live.* FROM marine_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM marine_live l WHERE NOW() at time zone 'UTC'  - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.fammarine_id) s on marine_live.fammarine_id = s.fammarine_id AND marine_live.date = s.maxdate AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong." GROUP BY marine_live.fammarine_id ORDEr BY date DESC".$filter_query;
 		}
 		$spotter_array = $Marine->getDataFromDB($query);
 		return $spotter_array;
@@ -338,7 +341,7 @@ class MarineLive {
 				    FROM marine_live 
 				    '.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= marine_live.date 
 				    AND marine_live.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND marine_live.longitude BETWEEN '.$minlong.' AND '.$maxlong.'
-				    AND marine_live.latitude <> 0 AND marine_live.longitude <> 0';
+				    AND marine_live.latitude <> 0 AND marine_live.longitude <> 0 ORDER BY date DESC';
 			} else {
 				$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
 				    FROM marine_live 
@@ -348,7 +351,7 @@ class MarineLive {
 				    AND l.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND l.longitude BETWEEN '.$minlong.' AND '.$maxlong.'
 				    GROUP BY l.fammarine_id
 				    ) s on marine_live.fammarine_id = s.fammarine_id 
-				    AND marine_live.date = s.maxdate'.$filter_query.' marine_live.latitude <> 0 AND marine_live.longitude <> 0';
+				    AND marine_live.date = s.maxdate'.$filter_query.' marine_live.latitude <> 0 AND marine_live.longitude <> 0 ORDER BY date DESC';
 			}
 		} else {
 			if (isset($globalArchive) && $globalArchive === TRUE) {
@@ -357,7 +360,7 @@ class MarineLive {
 				    ".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date 
 				    AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." 
 				    AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong." 
-				    AND marine_live.latitude <> '0' AND marine_live.longitude <> '0'";
+				    AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' ORDER BY date DESC";
 			} else {
 				$query  = "SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
 				    FROM marine_live 
@@ -368,7 +371,7 @@ class MarineLive {
 				    AND l.longitude BETWEEN ".$minlong." AND ".$maxlong." 
 				    GROUP BY l.fammarine_id
 				    ) s on marine_live.fammarine_id = s.fammarine_id 
-				    AND marine_live.date = s.maxdate".$filter_query." marine_live.latitude <> '0' AND marine_live.longitude <> '0'";
+				    AND marine_live.date = s.maxdate".$filter_query." marine_live.latitude <> '0' AND marine_live.longitude <> '0' ORDER BY date DESC";
 			}
 		}
 		$spotter_array = $Marine->getDataFromDB($query);

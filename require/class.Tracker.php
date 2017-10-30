@@ -50,6 +50,9 @@ class Tracker{
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
 			$filter_query_where .= " AND ident = '".$filter['ident']."'";
 		}
+		if (isset($filter['id']) && !empty($filter['id'])) {
+			$filter_query_where .= " AND famtrackid = '".$filter['id']."'";
+		}
 		if (isset($filter['year']) && $filter['year'] != '') {
 			if ($globalDBdriver == 'mysql') {
 				$filter_query_where .= " AND YEAR(tracker_output.date) = '".$filter['year']."'";

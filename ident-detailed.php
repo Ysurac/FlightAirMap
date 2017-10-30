@@ -205,6 +205,7 @@ if (!isset($_GET['ident'])){
 		print '<br/><br/><br/>';
 		print '<h1>'.$spotter_array[0]['ident'].'</h1>';
 		print '<div><span class="label">'._("Ident").'</span>'.$spotter_array[0]['ident'].'</div>';
+		if (isset($spotter_array[0]['blocked']) && $spotter_array[0]['blocked'] === true) print '<div>'._("Callsign is in blocked FAA list").'</div>';
 		if (isset($spotter_array[0]['airline_icao'])) {
 			print '<div><span class="label">'._("Airline").'</span><a href="'.$globalURL.'/airline/'.$spotter_array[0]['airline_icao'].'">'.$spotter_array[0]['airline_name'].'</a></div>'; 
 		}

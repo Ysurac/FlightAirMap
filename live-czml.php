@@ -146,7 +146,13 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$archivespeed = filter_input(INPUT_GET,'speed',FILTER_SANITIZE_NUMBER_INT);
 	$begindate = date('Y-m-d H:i:s',$begindate);
 	$enddate = date('Y-m-d H:i:s',$enddate);
-	$spotter_array = $SpotterArchive->getMinLiveSpotterDataPlayback($begindate,$enddate,$filter);
+	if ($tracker) {
+		$spotter_array = $TrackerArchive->getMinLiveTrackerDataPlayback($begindate,$enddate,$filter);
+	} elseif ($marine) {
+		$spotter_array = $MarineArchive->getMinLiveMarineDataPlayback($begindate,$enddate,$filter);
+	} else {
+		$spotter_array = $SpotterArchive->getMinLiveSpotterDataPlayback($begindate,$enddate,$filter);
+	}
 } elseif (isset($_COOKIE['archive']) && isset($_COOKIE['archive_begin']) && isset($_COOKIE['archive_end']) && isset($_COOKIE['archive_speed'])) {
 	$from_archive = true;
 //	$begindate = filter_input(INPUT_GET,'begindate',FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>'~^\d{4}/\d{2}/\d{2}$~')));
@@ -166,7 +172,13 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$begindate = date('Y-m-d H:i:s',$begindate);
 	$enddate = date('Y-m-d H:i:s',$enddate);
 	//echo 'Begin : '.$begindate.' - End : '.$enddate."\n";
-	$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
+	if ($tracker) {
+		$spotter_array = $TrackerArchive->getMinLiveTrackerData($begindate,$enddate,$filter);
+	} elseif ($marine) {
+		$spotter_array = $MarineArchive->getMinLiveMarineData($begindate,$enddate,$filter);
+	} else {
+		$spotter_array = $SpotterArchive->getMinLiveSpotterData($begindate,$enddate,$filter);
+	}
 } elseif ($tracker) {
 	$coord = array();
 	if (isset($_GET['coord']) && $_GET['coord'] != '') {
@@ -176,7 +188,20 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 			$coord = array();
 		}
 	}
-	$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,true);
+	$previous_filter = $filter;
+	if ((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrackTracker']) && $_COOKIE['MapTrackTracker'] != '')) {
+		$filter = array_merge($filter,array('id' => $_COOKIE['MapTrackTracker']));
+		$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,true);
+	/*
+	} elseif (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '' && !empty($coord)) {
+		$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,true,$_COOKIE['MapTrack']);
+	*/
+	} elseif (!isset($_COOKIE['singlemodel']) || $_COOKIE['singlemodel'] == 'false') {
+		$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,true);
+	} else {
+		$spotter_array = array();
+	}
+	$filter = $previous_filter;
 } elseif ($marine) {
 	$coord = array();
 	if (isset($_GET['coord']) && $_GET['coord'] != '') {
@@ -186,7 +211,20 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 			$coord = array();
 		}
 	}
-	$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true);
+	$previous_filter = $filter;
+	if ((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrackMarine']) && $_COOKIE['MapTrackMarine'] != '')) {
+		$filter = array_merge($filter,array('id' => $_COOKIE['MapTrackMarine']));
+		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true);
+	/*
+	} elseif (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '' && !empty($coord)) {
+		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true,$_COOKIE['MapTrack']);
+	*/
+	} elseif (!isset($_COOKIE['singlemodel']) || $_COOKIE['singlemodel'] == 'false') {
+		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true);
+	} else {
+		$spotter_array = array();
+	}
+	$filter = $previous_filter;
 } else {
 	$coord = array();
 	if (!((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '')) && isset($_GET['coord']) && $_GET['coord'] != '') {
@@ -211,14 +249,24 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 }
 //print_r($spotter_array);
 if (!empty($spotter_array) && isset($coord)) {
-	if (isset($_GET['archive'])) {
-		$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
-	} elseif ($tracker) {
-		$flightcnt = $TrackerLive->getLiveTrackerCount($filter);
+	if ($tracker) {
+		if (isset($_GET['archive'])) {
+			$flightcnt = $TrackerLive->getLiveTrackerCount($begindate,$enddate,$filter);
+		} else {
+			$flightcnt = $TrackerLive->getLiveTrackerCount($filter);
+		}
 	} elseif ($marine) {
-		$flightcnt = $MarineLive->getLiveMarineCount($filter);
+		if (isset($_GET['archive'])) {
+			$flightcnt = $MarineLive->getLiveMarineCount($begindate,$enddate,$filter);
+		} else {
+			$flightcnt = $MarineLive->getLiveMarineCount($filter);
+		}
 	} else {
-		$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
+		if (isset($_GET['archive'])) {
+			$flightcnt = $SpotterArchive->getLiveSpotterCount($begindate,$enddate,$filter);
+		} else {
+			$flightcnt = $SpotterLive->getLiveSpotterCount($filter);
+		}
 	}
 	if ($flightcnt == '') $flightcnt = 0;
 } else $flightcnt = 0;
@@ -331,10 +379,26 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			$output .= '"flightcnt": "'.$flightcnt.'",';
 			$output .= '"onground": %onground%,';
 			$output .= '"lastupdate": "'.$lastupdate.'",';
+			if (isset($spotter_item['aircraft_icao'])) {
+				$output .= '"aircraft_icao": "'.$spotter_item['aircraft_icao'].'",';
+			}
+			if (isset($spotter_item['departure_airport'])) {
+				$output .= '"departure_airport_code": "'.$spotter_item['departure_airport'].'",';
+			}
+			if (isset($spotter_item['arrival_airport'])) {
+				$output .= '"arrival_airport_code": "'.$spotter_item['arrival_airport'].'",';
+			}
+			if (isset($spotter_item['squawk'])) {
+				$output .= '"squawk": "'.$spotter_item['squawk'].'",';
+			}
+			if (isset($spotter_item['registration'])) $output .= '"registration": "'.$spotter_item['registration'].'",';
 			if (isset($spotter_item['format_source'])) $output .= '"format": "'.$spotter_item['format_source'].'",';
+			if (isset($spotter_item['ident'])) $output.= '"ident": "'.$spotter_item['ident'].'",';
 			if ($tracker) {
+				if (isset($spotter_item['type'])) $output .= '"tracker_type": "'.$spotter_item['type'].'",';
 				$output.= '"type": "tracker"';
 			} elseif ($marine) {
+				if (isset($spotter_item['type'])) $output .= '"marine_type": "'.$spotter_item['type'].'",';
 				$output.= '"type": "marine"';
 			} else {
 				if ($one3dmodel === false && isset($globalMap3DLiveries) && $globalMap3DLiveries) {
@@ -353,7 +417,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 							}
 						}
 					}
-					if ($ident != '') $output.= '"ident": "'.$ident.'",';
+					//if ($ident != '') $output.= '"ident": "'.$ident.'",';
 				}
 				$output.= '"gltf2": %gltf2%,';
 				$output.= '"type": "flight"';

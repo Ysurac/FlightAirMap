@@ -407,7 +407,7 @@ class SpotterArchive {
 	    * @return Array the spotter information
 	    *
 	    */
-	public function getMinLiveSpotterData($begindate,$enddate,$filter = array()) {
+	public function getMinLiveSpotterData($begindate,$enddate,$filter = array(),$part = 0) {
 		global $globalDBdriver, $globalLiveInterval;
 		date_default_timezone_set('UTC');
 		//$filter_query = $this->getFilter($filter,true,true);
@@ -427,18 +427,31 @@ class SpotterArchive {
 			$filter_query = " AND format_source = 'aprs' AND source_name IN ('".implode("','",$filter['source_aprs'])."')";
 		}
 
+		$limit = '';
+		if ($part != 0) {
+			$limit = ' LIMIT 100 OFFSET '.($part-1)*100;
+		}
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT spotter_archive.date,spotter_archive.flightaware_id, spotter_archive.ident, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, a.aircraft_shadow,a.engine_type, a.engine_count, a.wake_category
 			          FROM spotter_archive
-			          INNER JOIN (SELECT * FROM aircraft) a on spotter_archive.aircraft_icao = a.icao
+			          INNER JOIN aircraft a on spotter_archive.aircraft_icao = a.icao
 			          WHERE spotter_archive.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".'
-			          '.$filter_query.' ORDER BY flightaware_id';
+			          '.$filter_query.' ORDER BY flightaware_id'.$limit;
 		} else {
+			
 			$query  = 'SELECT spotter_archive.flightaware_id, spotter_archive.date, spotter_archive.ident, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, a.aircraft_shadow,a.engine_type, a.engine_count, a.wake_category
 			          FROM spotter_archive
-			          INNER JOIN (SELECT * FROM aircraft) a on spotter_archive.aircraft_icao = a.icao
+			          INNER JOIN aircraft a on spotter_archive.aircraft_icao = a.icao
 			          WHERE spotter_archive.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".'
-			          '.$filter_query.' ORDER BY flightaware_id';
+			          '.$filter_query.' ORDER BY flightaware_id'.$limit;
+			          
+			/*          
+			$query  = 'SELECT spotter_archive.flightaware_id, spotter_archive.date, spotter_archive.ident, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk
+			          FROM spotter_archive
+			          WHERE spotter_archive.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".'
+			          '.$filter_query.' ORDER BY flightaware_id'.$limit;
+			*/          
+
 		}
 		//echo $query;
 		try {

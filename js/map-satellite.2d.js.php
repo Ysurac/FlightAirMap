@@ -59,16 +59,17 @@ layer_satellite_data = L.layerGroup();
 
 $(".showdetails").on("click",".close",function(){
 	$(".showdetails").empty();
-	$("#aircraft_ident").attr('class','');
+	$("#pointident").attr('class','');
 	getSatelliteLiveData(1);
 	return false;
 })
 
 
-$("#aircraft_ident").attr('class','');
+$("#pointident").attr('class','');
 var MapTrackSatellite = getCookie('MapTrackSatellite');
 if (MapTrackSatellite != '') {
-	$("#aircraft_ident").attr('class',MapTrackSatellite);
+	$("#pointident").attr('class',MapTrackSatellite);
+	$("#pointtype").attr('class','satellite');
 	$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+MapTrackSatellite);
 	delCookie('MapTrackSatellite');
 }
@@ -76,22 +77,6 @@ if (MapTrackSatellite != '') {
 function updateSat(click)
 {
 	var bbox = map.getBounds().toBBoxString();
-<?php
-	if (isset($archive) && $archive) {
-?>
-	var begindate = parseInt(getCookie("archive_begin"));
-	var enddate = begindate+parseInt(getCookie("archive_update"));
-	if (enddate > getCookie("archive_end")) {
-		enddate = parseInt(getCookie("archive_end"));
-		clearInterval(reloadPage);
-	} else {
-		if (click != 1) {
-			document.cookie =  'archive_begin='+enddate+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
-		}
-	}
-<?php
-	}
-?>
 	//layer_data_p = L.layerGroup();
 	$.ajax({
 	    dataType: "json",
@@ -107,25 +92,19 @@ function updateSat(click)
 <?php
 	} elseif (isset($archive) && $archive) {
 ?>
-            url: "<?php print $globalURL; ?>/live-sat-geojson.php?"+Math.random()+"&history="+encodeURI(document.getElementById('aircraft_ident').className)+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
+            url: "<?php print $globalURL; ?>/live-sat-geojson.php?"+Math.random()+"&history="+encodeURI(document.getElementById('pointident').className)+"&archive&begindate="+begindate+"&enddate="+enddate+"&speed=<?php print $archivespeed; ?>",
 <?php
 	} else {
 ?>
-	    url: "<?php print $globalURL; ?>/live-sat-geojson.php?"+Math.random()+"&history="+encodeURI(document.getElementById('aircraft_ident').className),
+	    url: "<?php print $globalURL; ?>/live-sat-geojson.php?"+Math.random()+"&history="+encodeURI(document.getElementById('pointident').className),
 <?php 
 	}
 ?>
 	    success: function(data) {
 		map.removeLayer(layer_satellite_data);
-<?php
-	if (!isset($archive) || !$archive) {
-?>
-		if (document.getElementById('aircraft_ident').className != "") {
-			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+encodeURI(document.getElementById('aircraft_ident').className));
+		if (document.getElementById('pointident').className != "") {
+			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+encodeURI(document.getElementById('pointident').className));
 		}
-<?php
-	}
-?>
 		layer_satellite_data = L.layerGroup();
 		var nbsat = 0;
 		var live_satellite_data = L.geoJson(data, {
@@ -164,14 +143,7 @@ function updateSat(click)
 	if (!isset($ident) && !isset($famsatid)) {
 ?>
 		    info_satellite_update(feature.properties.fc);
-<?php
-		if (isset($archive) && $archive) {
-?>
-		    archive.update(feature.properties);
-<?php
-		}
-?>
-		    if (document.getElementById('aircraft_ident').className == callsign || document.getElementById('aircraft_ident').className == famsatid) {
+		    if (document.getElementById('pointident').className == callsign || document.getElementById('pointident').className == famsatid) {
 			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?satellite&color=FF0000&filename='+aircraft_shadow;
 			    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?satellite&color=8D93B9&filename='+aircraft_shadow;
 		    } else {
@@ -226,11 +198,12 @@ function updateSat(click)
 ?>
 		    .on('click', function() {
 				//if (callsign == "NA") {
-				    $("#aircraft_ident").attr('class',famsatid);
+				    $("#pointident").attr('class',famsatid);
+				    $("#pointtype").attr('class','satellite');
 				    $(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+famsatid);
 				/*
 				} else {
-				    $("#aircraft_ident").attr('class',callsign);
+				    $("#pointident").attr('class',callsign);
 				    $(".showdetails").load("<?php print $globalURL; ?>/satellite-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
@@ -282,13 +255,14 @@ function updateSat(click)
 		if ((isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'false') || (!isset($_COOKIE['flightpopup']) && isset($globalMapPopup) && !$globalMapPopup)) {
 ?>
 			    .on('click', function() {
-				//$("#aircraft_ident").attr('class',callsign);
+				//$("#pointident").attr('class',callsign);
 				//if (callsign == "NA") {
-					$("#aircraft_ident").attr('class',famsatid);
+					$("#pointident").attr('class',famsatid);
+					$("#pointtype").attr('class','satellite');
 					$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+famsatid);
 				/*
 				} else {
-					$("#aircraft_ident").attr('class',callsign);
+					$("#pointident").attr('class',callsign);
 					$(".showdetails").load("<?php print $globalURL; ?>/satellite-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
@@ -338,11 +312,12 @@ function updateSat(click)
 ?>
 			    .on('click', function() {
 				//if (callsign == "NA") {
-				    $("#aircraft_ident").attr('class',famsatid);
+				    $("#pointident").attr('class',famsatid);
+				    $("#pointtype").attr('class','satellite');
 				    $(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat="+famsatid);
 				/*
 				} else {
-				    $("#aircraft_ident").attr('class',callsign);
+				    $("#pointident").attr('class',callsign);
 				    $(".showdetails").load("<?php print $globalURL; ?>/satellite-data.php?"+Math.random()+"&ident="+callsign);
 				}
 				*/
@@ -388,7 +363,7 @@ function updateSat(click)
                 //aircraft history position as a line
                 if (type == "history"){
 		    <?php if (!isset($ident) && !isset($famsatid)) { ?>
-		    if (document.getElementById('aircraft_ident').className == callsign) {
+		    if (document.getElementById('pointident').className == callsign) {
 			if (map.getZoom() > 7) {
                 	    var style = {
 				"color": "#1a3151",

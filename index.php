@@ -34,7 +34,8 @@ require_once('header.php');
 </div>
 <!--<div id="loadingOverlay"><h1>Loading...</h1></div>-->
 <div id="toolbar"></div>
-<div id="aircraft_ident"></div>
+<div id="pointident"></div>
+<div id="pointtype"></div>
 <div id="airspace"></div>
 <div id="notam"></div>
 <div id="waypoints"></div>
@@ -85,7 +86,7 @@ require_once('header.php');
 	<li><a href="" onclick="getCompassDirection(); return false;" title="<?php echo _("Compass Mode"); ?>"><i class="fa fa-compass"></i></a></li>
 <?php
     //if ((isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') || (isset($globalBeta) && $globalBeta === TRUE)) {
-	if (isset($globalArchive) && $globalArchive == TRUE) {
+	if (isset($globalArchive) && $globalArchive == TRUE && (!isset($globalAircraft) || $globalAircraft === TRUE)) {
 ?>
 	<li><a href="#archive" role="tab" title="<?php echo _("Archive"); ?>"><i class="fa fa-archive"></i></a></li>
 <?php
@@ -500,8 +501,8 @@ require_once('header.php');
 <?php
 	if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 ?>
-		    <li><input type="checkbox" name="useliveries" value="1" onclick="useLiveries(this)" <?php if (isset($_COOKIE['UseLiveries']) && $_COOKIE['UseLiveries'] == 'true') print 'checked'; ?> ><?php echo _("Use airlines liveries"); ?></li>
-		    <li><input type="checkbox" name="aircraftcolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] == 'true') print 'checked'; ?> ><?php echo _("Force Aircraft color"); ?>&nbsp;
+		    <li><input type="checkbox" name="useliveries" value="1" onclick="useLiveries(this)" <?php if (isset($_COOKIE['UseLiveries']) && $_COOKIE['UseLiveries'] == 'true') print 'checked'; ?> > <?php echo _("Use airlines liveries"); ?></li>
+		    <li><input type="checkbox" name="aircraftcolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] == 'true') print 'checked'; ?> > <?php echo _("Force Aircraft color"); ?>&nbsp;
 		    <!--<li><?php echo _("Aircraft icon color:"); ?>-->
 			<input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print 'ff0000'; ?>">
 		    </li>
@@ -780,6 +781,8 @@ require_once('header.php');
 </section>
 <section>
 <div id="datatable"></div>
+<div id="datatablemarine"></div>
+<div id="datatabletracker"></div>
 <?php
 require_once('footer.php');
 ?>

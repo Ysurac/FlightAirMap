@@ -117,7 +117,7 @@ function update_atcLayer() {
 
 $(".showdetails").on("click",".close",function(){
 	$(".showdetails").empty();
-	$("#aircraft_ident").attr('class','');
+	$("#pointident").attr('class','');
 	//getLiveData(1);
 	return false;
 })
@@ -174,6 +174,7 @@ function resetLiveries(primitive) {
 var lastupdate;
 function displayData(data) {
 	var flightcnt = 0;
+	var datatable = '';
 	var dsn;
 	for (var i =0; i < viewer.dataSources.length; i++) {
 		if (viewer.dataSources.get(i).name == 'fam') {
@@ -183,7 +184,7 @@ function displayData(data) {
 	}
 	if (typeof dsn != 'undefined') {
 		//if (Cesium.JulianDate.greaterThan(viewer.clock.currentTime,data.clock.currentTime)) {
-			data.clock.currenTime = viewer.clock.currentTime;
+			data.clock.currentTime = viewer.clock.currentTime;
 		//}
 	}
 	var entities = data.entities.values;
@@ -192,6 +193,29 @@ function displayData(data) {
 		var entity = entities[i];
 		
 		flightcnt = entity.properties.flightcnt;
+		
+		var id = entity.id;
+		if (Cesium.defined(entity.properties.ident)) var callsign = entity.properties.ident;
+		else var callsign = '';
+		if (Cesium.defined(entity.properties.departure_airport_code)) var dairport = entity.properties.departure_airport_code;
+		else var dairport = '';
+		if (Cesium.defined(entity.properties.arrival_airport_code)) var aairport = entity.properties.arrival_airport_code;
+		else var aairport = '';
+		if (Cesium.defined(entity.properties.squawk)) var squawk = entity.properties.squawk;
+		else var squawk = '';
+		var position = entity.position.getValue(data.clock.currentTime);
+		if (Cesium.defined(position)) {
+			var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(position);
+			var lastupdatet = entity.position._property._times[entity.position._property._times.length-1].toString();
+			if (Cesium.defined(entity.properties.aircraft_icao)) var aircraft_icao = entity.properties.aircraft_icao;
+			else var aircraft_icao = '';
+			if (Cesium.defined(entity.properties.registration)) var registration = entity.properties.registration;
+			else var registration = '';
+			var lastupdatedate = new moment.tz(lastupdatet,moment.tz.guess()).format("HH:mm:ss");
+			datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+Math.round(coord.height)+' m</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
+			//datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+lastupdatedate+'</td></tr>';
+		}
+		
 		if (typeof dsn != 'undefined') var existing = viewer.dataSources.get(dsn);
 		else var existing;
 		
@@ -269,6 +293,7 @@ function displayData(data) {
 			    // Remove flights not in latest CZML
 			?>
 			if (lastupdateentity != lastupdate) {
+				console.log('Remove...');
 				viewer.dataSources.get(dsn).entities.remove(entity);
 				czmlds.entities.removeById(entityid);
 			}
@@ -302,7 +327,8 @@ function displayData(data) {
 		//viewer.selectedEntity = viewer.dataSources.get(dsn).entities.getById(MapTrack);
 		var currenttime = viewer.clock.currentTime;
 		$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+MapTrack+"&currenttime="+Date.parse(currenttime.toString()));
-		$("#aircraft_ident").attr('class',MapTrack);
+		$("#pointident").attr('class',MapTrack);
+		$("#pointtype").attr('class','aircraft');
 	}
 	var flightvisible = viewer.dataSources.get(dsn).entities.values.length;
 	if (flightcnt != 0 && flightcnt != flightvisible && flightcnt > flightvisible) {
@@ -310,6 +336,19 @@ function displayData(data) {
 	} else {
 		$("#ibxaircraft").html('<h4><?php echo _("Aircraft detected"); ?></h4><br /><b>'+flightvisible+'</b>');
 	}
+	
+	if (datatable != '') {
+		$('#datatable').css('height','20em');
+		$('#datatable').html('<div class="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th>Callsign</th><th>Registration</th><th>Aircraft ICAO</th><th>Altitude</th><th>Departure airport</th><th>Arrival airport</th><th>Squawk</th><th>Latitude</th><th>Longitude</th><th>Last update</th></tr></thead><tbody>'+datatable+'</tbody></table></div>');
+		$(".table-row").click(function () {
+			$("#pointident").attr('class',$(this).data('id'));
+			$("#pointtype").attr('class','aircraft');
+			var currenttime = viewer.clock.currentTime;
+			$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+$(this).data('id')+"&currenttime="+Date.parse(currenttime.toString()));
+			viewer.trackedEntity = viewer.dataSources.get(dsn).entities.getById($(this).data('id'));
+		});
+	}
+
 };
 
 function displayDataSanta(data) {
@@ -596,7 +635,7 @@ handler_aircraft.setInputAction(function(click) {
 					break;
 				}
 			}
-			var lastid = document.getElementById('aircraft_ident').className;
+			var lastid = document.getElementById('pointident').className;
 			if (typeof lastid != 'undefined' && lastid != '') {
 				var plast = viewer.dataSources.get(dsn).entities.getById(lastid);
 				if (typeof plast != 'undefined') {
@@ -605,7 +644,8 @@ handler_aircraft.setInputAction(function(click) {
 			}
 			var pnew = viewer.dataSources.get(dsn).entities.getById(flightaware_id);
 			pnew.path.show = true;
-			$("#aircraft_ident").attr('class',flightaware_id);
+			$("#pointident").attr('class',flightaware_id);
+			$("#pointtype").attr('class','aircraft');
 			//lastid = flightaware_id;
 			<?php
 				if (isset($globalMap3DLiveries) && $globalMap3DLiveries) {
@@ -668,7 +708,7 @@ camera.moveEnd.addEventListener(function() {
 <?php
 	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
 ?>
-	if (typeof archive == 'undefined' || archive == false) {
+	if ((typeof archive == 'undefined' || archive == false) && getCookie('MapTrack') == '') {
 		console.log("Camera move...");
 		updateData();
 	}
@@ -684,6 +724,7 @@ if (archive == false) {
 		czmldssanta = new Cesium.CzmlDataSource();
 		updateSanta();
 	}
+	updateData();
 	var reloadpage = setInterval(
 		function(){
 			console.log('Reload...');

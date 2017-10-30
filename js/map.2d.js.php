@@ -9,11 +9,18 @@ if (!isset($globalOpenWeatherMapKey)) $globalOpenWeatherMapKey = '';
 if (!isset($globalJsonCompress)) $compress = true;
 else $compress = $globalJsonCompress;
 
+/*
 if (isset($_COOKIE['archive_begin']) && $_COOKIE['archive_begin'] != '') {
 	echo "console.log('Archive mode');";
 	$archive = true;
 }
+*/
 ?>
+if (getCookie('archive_begin') != '') {
+	var archive = true;
+} else {
+	var archive = false;
+}
 var map;
 var user = new L.FeatureGroup();
 var weatherprecipitation;
@@ -33,26 +40,28 @@ var locationsLayer;
 var genLayer;
 var archiveplayback;
 <?php
-	if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0 && (!isset($archive) || $archive === false)) {
+	if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0) {
 ?>
-$(document).idle({
-	onIdle: function(){
-		noTimeout = false;
-		$( "#dialog" ).dialog({
-			modal: true,
-			buttons: {
-				Close: function() {
-					//noTimeout = true;
-					$( this ).dialog( "close" );
+if (archive === false) {
+	$(document).idle({
+		onIdle: function(){
+			noTimeout = false;
+			$( "#dialog" ).dialog({
+				modal: true,
+				buttons: {
+					Close: function() {
+						//noTimeout = true;
+						$( this ).dialog( "close" );
+					}
+				},
+				 close: function() {
+					noTimeout = true;
 				}
-			},
-			 close: function() {
-				noTimeout = true;
-		        }
-		});
-	},
-	idle: <?php print $globalMapIdleTimeout*60000; ?>
-})
+			});
+		},
+		idle: <?php print $globalMapIdleTimeout*60000; ?>
+	})
+}
 <?php
 	}
 	if (isset($_GET['ident'])) {
@@ -420,14 +429,10 @@ new OSMBuildings(map).load();
 		}
 		createCookie('lastcentercoord',map.getCenter().lat+','+map.getCenter().lng+','+map.getZoom(),2);
 	});
-<?php
-	if (!isset($archive) || $archive === false) {
-?>
-update_locationsLayer();
-setInterval(function(){if (noTimeout) { map.removeLayer(locationsLayer); update_locationsLayer();} },<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
-<?php
+	if (archive === false) {
+		update_locationsLayer();
+		setInterval(function(){if (noTimeout) { map.removeLayer(locationsLayer); update_locationsLayer();} },<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
 	}
-?>
 <?php
     // Add support for custom json via $globalMapJson
     if (isset($globalMapJson) && is_array($globalMapJson)) {

@@ -48,6 +48,9 @@ class TrackerLive {
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
 			$filter_query_where .= " AND ident = '".$filter['ident']."'";
 		}
+		if (isset($filter['id']) && !empty($filter['id'])) {
+			$filter_query_where .= " AND famtrackid = '".$filter['id']."'";
+		}
 		if ((isset($filter['year']) && $filter['year'] != '') || (isset($filter['month']) && $filter['month'] != '') || (isset($filter['day']) && $filter['day'] != '')) {
 			$filter_query_date = '';
 			
@@ -340,7 +343,7 @@ class TrackerLive {
 				    FROM tracker_live 
 				    '.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= tracker_live.date 
 				    AND tracker_live.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND tracker_live.longitude BETWEEN '.$minlong.' AND '.$maxlong.'
-				    AND tracker_live.latitude <> 0 AND tracker_live.longitude <> 0';
+				    AND tracker_live.latitude <> 0 AND tracker_live.longitude <> 0 ORDER BY date DESC';
 			} else {
 				$query  = 'SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
 				    FROM tracker_live 
@@ -350,7 +353,7 @@ class TrackerLive {
 					AND l.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND l.longitude BETWEEN '.$minlong.' AND '.$maxlong.'
 					GROUP BY l.famtrackid
 				    ) s on tracker_live.famtrackid = s.famtrackid 
-				    AND tracker_live.date = s.maxdate'.$filter_query.' tracker_live.latitude <> 0 AND tracker_live.longitude <> 0';
+				    AND tracker_live.date = s.maxdate'.$filter_query.' tracker_live.latitude <> 0 AND tracker_live.longitude <> 0 ORDER BY date DESC';
 			}
 		} else {
 			if (isset($globalArchive) && $globalArchive === TRUE) {
@@ -359,7 +362,7 @@ class TrackerLive {
 				    ".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= tracker_live.date 
 				    AND tracker_live.latitude BETWEEN ".$minlat." AND ".$maxlat." 
 				    AND tracker_live.longitude BETWEEN ".$minlong." AND ".$maxlong." 
-				    AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0'";
+				    AND tracker_live.latitude <> '0' AND tracker_live.longitude <> '0' ORDER BY date DESC";
 			} else {
 				$query  = "SELECT tracker_live.ident, tracker_live.famtrackid,tracker_live.type, tracker_live.latitude, tracker_live.longitude, tracker_live.altitude, tracker_live.heading, tracker_live.ground_speed, tracker_live.date, tracker_live.format_source 
 				    FROM tracker_live 
@@ -370,7 +373,7 @@ class TrackerLive {
 					AND l.longitude BETWEEN ".$minlong." AND ".$maxlong." 
 					GROUP BY l.famtrackid
 				    ) s on tracker_live.famtrackid = s.famtrackid 
-				    AND tracker_live.date = s.maxdate".$filter_query." tracker_live.latitude <> '0' AND tracker_live.longitude <> '0'";
+				    AND tracker_live.date = s.maxdate".$filter_query." tracker_live.latitude <> '0' AND tracker_live.longitude <> '0' ORDER BY date DESC";
 			}
 		}
 		$spotter_array = $Tracker->getDataFromDB($query);
