@@ -24,17 +24,17 @@ if (isset($_GET['marine'])) $marine = true;
 if ($tracker) {
 	require_once('require/class.Tracker.php');
 	require_once('require/class.TrackerLive.php');
-	//require_once('require/class.TrackerArchive.php');
+	require_once('require/class.TrackerArchive.php');
 	$TrackerLive = new TrackerLive();
 	$Tracker = new Tracker();
-//	$TrackerArchive = new TrackerArchive();
+	$TrackerArchive = new TrackerArchive();
 } elseif ($marine) {
 	require_once('require/class.Marine.php');
 	require_once('require/class.MarineLive.php');
-	//require_once('require/class.MarineArchive.php');
+	require_once('require/class.MarineArchive.php');
 	$MarineLive = new MarineLive();
 	$Marine = new Marine();
-//	$MarineArchive = new MarineArchive();
+	$MarineArchive = new MarineArchive();
 } else {
 	require_once('require/class.Spotter.php');
 	require_once('require/class.SpotterLive.php');
@@ -251,13 +251,13 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 if (!empty($spotter_array) && isset($coord)) {
 	if ($tracker) {
 		if (isset($_GET['archive'])) {
-			$flightcnt = $TrackerLive->getLiveTrackerCount($begindate,$enddate,$filter);
+			$flightcnt = $TrackerArchive->getLiveTrackerCount($begindate,$enddate,$filter);
 		} else {
 			$flightcnt = $TrackerLive->getLiveTrackerCount($filter);
 		}
 	} elseif ($marine) {
 		if (isset($_GET['archive'])) {
-			$flightcnt = $MarineLive->getLiveMarineCount($begindate,$enddate,$filter);
+			$flightcnt = $MarineArchive->getLiveMarineCount($begindate,$enddate,$filter);
 		} else {
 			$flightcnt = $MarineLive->getLiveMarineCount($filter);
 		}

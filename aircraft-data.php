@@ -16,13 +16,13 @@ if (isset($_GET['ident'])) {
 		$currenttime = filter_input(INPUT_GET,'currenttime',FILTER_SANITIZE_NUMBER_INT);
 		$currenttime = round($currenttime/1000);
 		$spotter_array = $SpotterLive->getDateLiveSpotterDataByIdent($ident,$currenttime);
-		if (empty($spotter_array)) {
+		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$from_archive = true;
 			$spotter_array = $SpotterArchive->getDateArchiveSpotterDataByIdent($ident,$currenttime);
 		}
 	} else {
 		$spotter_array = $SpotterLive->getLastLiveSpotterDataByIdent($ident);
-		if (empty($spotter_array)) {
+		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$from_archive = true;
 			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataByIdent($ident);
 		}
@@ -34,14 +34,14 @@ if (isset($_GET['flightaware_id'])) {
 		$currenttime = filter_input(INPUT_GET,'currenttime',FILTER_SANITIZE_NUMBER_INT);
 		$currenttime = round($currenttime/1000);
 		$spotter_array = $SpotterLive->getDateLiveSpotterDataById($flightaware_id,$currenttime);
-		if (empty($spotter_array)) {
+		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$from_archive = true;
 //			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
 			$spotter_array = $SpotterArchive->getDateArchiveSpotterDataById($flightaware_id,$currenttime);
 		}
 	} else {
 		$spotter_array = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
-		if (empty($spotter_array)) {
+		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$from_archive = true;
 			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
 		}
@@ -177,7 +177,7 @@ if (!empty($spotter_array)) {
 		echo $Common->getData('http://'.$_SERVER['SERVER_NAME'].'/camera.php?azimuth='.$azimuth.'&plunge='.$plunge,'get','','','','','','',false,true);
 	}
   
-	print '<div id="heading"><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
+	print '<div id="heading"><span>'._("Heading").'</span><span class="heading">'.$spotter_item['heading'].'</span>°</div>';
 	if (isset($spotter_item['verticalrate']) && $spotter_item['verticalrate'] != '') {
 		print '<div id="verticalrate"><span>'._("Vertical rate").'</span>';
 		if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
