@@ -1,6 +1,28 @@
 <?php
 	require_once('../require/settings.php');
 	require_once('../require/class.Language.php'); 
+	if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
+?>
+    var unitspeed = 'mph';
+<?php
+	} elseif ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) {
+?>
+    var unitspeed = 'knots';
+<?php
+	} else {
+?>
+    var unitspeed = 'kmh';
+<?php
+	}
+	if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
+?>
+    var unitaltitude = 'feet';
+<?php
+	} else {
+?>
+    var unitaltitude = 'm';
+<?php
+	}
 ?>
 
 document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'

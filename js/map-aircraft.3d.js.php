@@ -212,7 +212,12 @@ function displayData(data) {
 			if (Cesium.defined(entity.properties.registration)) var registration = entity.properties.registration;
 			else var registration = '';
 			var lastupdatedate = new moment.tz(lastupdatet,moment.tz.guess()).format("HH:mm:ss");
-			datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+Math.round(coord.height)+' m</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
+			if (unitaltitude == 'm') {
+				var txtaltitude = Math.round(coord.height)+' m (FL'+Math.round(coord.height*3.28084/100)+')';
+			} else {
+				var txtaltitude = Math.round(coord.height*3.28084)+' feet (FL'+Math.round(coord.height*3.28084/100)+')';
+			}
+			datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+txtaltitude+'</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
 			//datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+lastupdatedate+'</td></tr>';
 		}
 		
@@ -715,6 +720,18 @@ camera.moveEnd.addEventListener(function() {
 <?php
 	}
 ?>
+});
+viewer.clock.onTick.addEventListener(function(clock) {
+	if (Cesium.defined(viewer.trackedEntity)) {
+		var position = viewer.trackedEntity.position.getValue(clock.currentTime);
+		if (Cesium.defined(position)) {
+			var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(position);
+			$(".latitude").html(Cesium.Math.toDegrees(coord.latitude).toFixed(5));
+			$(".longitude").html(Cesium.Math.toDegrees(coord.longitude).toFixed(5));
+			var heading = Cesium.Math.toDegrees(Cesium.Quaternion.computeAngle(viewer.trackedEntity.orientation.getValue(clock.currentTime))).toFixed(0);
+			$(".heading").html(heading);
+		}
+	}
 });
 
 //var reloadpage = setInterval(function() { updateData(); },30000);

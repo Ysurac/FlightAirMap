@@ -542,8 +542,13 @@ function getLiveData(click)
 	}
 ?>
 						if (type == 'aircraft') {
+							if (unitaltitude == 'm') {
+								var txtaltitude = Math.round(altitude*30.48)+' m (FL'+Math.round(altitude)+')';
+							} else {
+								var txtaltitude = altitude+' feet (FL'+Math.round(altitude)+')';
+							}
 							var lastupdatedate = new moment.tz(lastupdate*1000,moment.tz.guess()).format("HH:mm:ss");
-							datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+Math.round(altitude*100)+' feet</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
+							datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+txtaltitude+'</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
 						}
 						var output = '';
 						//individual aircraft
