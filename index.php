@@ -243,7 +243,17 @@ require_once('header.php');
 			<output id="archivespeedrange"><?php  if (isset($_COOKIE['archive_speed'])) print $_COOKIE['archive_speed']; else print '1'; ?></output>
 		    </div>
 		</li>
+		<?php
+		    if (isset($globalDemo) && $globalDemo) {
+		?>
+		<li><button type="button" class="btn btn-primary disabled"><?php echo _("Show archive"); ?></button> Disabled in Demo mode</li>
+		<?php
+		    } else {
+		?>
 		<li><button type="button" onclick="addarchive(begindate,enddate);" class="btn btn-primary"><?php echo _("Show archive"); ?></button></li>
+		<?php
+		    }
+		?>
 	    </ul>
 	    <ul>
 		<li><button type="button" onclick="noarchive();" class="btn btn-primary"><?php echo _("Back from archive view"); ?></button></li>
