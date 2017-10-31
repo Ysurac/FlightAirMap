@@ -4,9 +4,11 @@ Requires=mysql.service
 After=mysql.service
 
 [Service]
-ExecStart=/bin/bash -c '/var/www/flightairmap/scripts/daemon-spotter.php 2>&1'
+ExecStart=/var/www/flightairmap/scripts/daemon-spotter.php
 Restart=always
 RestartSec=10
+StandardOutput=null
+StandardError=null
 
 [Install]
 WantedBy=multi-user.target
