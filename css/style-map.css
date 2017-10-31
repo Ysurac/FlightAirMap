@@ -423,6 +423,11 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
     display: inline-block !important;
     color:#000000 !important;
 }
+.heading {
+    text-transform: none;
+    display: inline-block !important;
+    color:#000000 !important;
+}
 .atcname{
   background-color:#3d76bf;
   color:#fff;
