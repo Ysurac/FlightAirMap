@@ -270,16 +270,16 @@ $output = '{';
 */
 							//$output .= '"fc": "'.$spotter_item['nb'].'",';
 						if (isset($spotter_item['ident']) && $spotter_item['ident'] != '') {
-							if ($compress) $output .= '"c": "'.str_replace('\\','',$spotter_item['ident']).'",';
-							else $output .= '"callsign": "'.str_replace('\\','',$spotter_item['ident']).'",';
-							//"
+							if ($compress) $output .= '"c": '.json_encode(str_replace('\\','',$spotter_item['ident'])).',';
+							else $output .= '"callsign": '.json_encode(str_replace('\\','',$spotter_item['ident'])).',';
+							//'
 						} else {
 							if ($compress) $output .= '"c": "NA",';
 							else $output .= '"callsign": "NA",';
 						}
 						if (isset($spotter_item['registration'])) {
-							if ($compress) $output .= '"reg": "'.$spotter_item['registration'].'",';
-							else $output .= '"registration": "'.$spotter_item['registration'].'",';
+							if ($compress) $output .= '"reg": '.json_encode($spotter_item['registration']).',';
+							else $output .= '"registration": '.json_encode($spotter_item['registration']).',';
 						}
 						if (isset($spotter_item['aircraft_name']) && isset($spotter_item['aircraft_type'])) {
 							$output .= '"aircraft_name": "'.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].')",';
