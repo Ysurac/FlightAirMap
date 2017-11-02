@@ -97,9 +97,9 @@ if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpee
 	print $spotter_item['ground_speed'].' km/h';
 }
 print '</div>';
-print '<div><span>'._("Coordinates").'</span>'.$spotter_item['latitude'].', '.$spotter_item['longitude'].'</div>';
+print '<div><span>'._("Coordinates").'</span><span class="latitude">'.$spotter_item['latitude'].'</span>, <span class="longitude">'.$spotter_item['longitude'].'</span></div>';
 print '<div><span>'._("Type").'</span>'.$spotter_item['type'].'</div>';
-print '<div><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
+print '<div><span>'._("Heading").'</span><span class="heading">'.$spotter_item['heading'].'</span>°</div>';
 print '<div><span>'._("MMSI").'</span>'.$spotter_item['mmsi'].'</div>';
 if (isset($spotter_item['over_country']) && $spotter_item['over_country'] != '') {
 	print '<div><span>'._("Over country").'</span>';

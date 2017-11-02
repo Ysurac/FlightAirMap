@@ -83,19 +83,24 @@ if (isset($globalGroundAltitude) && $globalGroundAltitude) {
     } catch(Exception $e) {
     }
 }
+print '<span class="altitude">';
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
 	print $spotter_item['altitude'].' feet (FL'.$spotter_item['altitude'].')';
 } else {
 	print round($spotter_item['altitude']*0.3048).' m (FL'.round($spotter_item['altitude']/100).')';
 }
+print '</span>';
 if (isset($groundAltitude) && $groundAltitude < $spotter_item['altitude']*0.3048) {
     print '<br>';
     print '<span>'._("Ground Altitude").'</span>';
+    print '<i>';
+    print '<span class="groundaltitude">';
     if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
 	print round($groundAltitude*3.28084).' feet';
     } else {
 	print round($groundAltitude).' m';
     }
+    print '</span>';
     print '</i>';
 }
 print '</div>';
@@ -108,9 +113,9 @@ if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpee
 	print $spotter_item['ground_speed'].' km/h';
 }
 print '</div>';
-print '<div><span>'._("Coordinates").'</span>'.$spotter_item['latitude'].', '.$spotter_item['longitude'].'</div>';
+print '<div><span>'._("Coordinates").'</span><span class="latitude">'.$spotter_item['latitude'].'</span>, <span class="longitude">'.$spotter_item['longitude'].'</span></div>';
 print '<div><span>'._("Type").'</span>'.$spotter_item['type'].'</div>';
-print '<div><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
+print '<div><span>'._("Heading").'</span><span class="heading">'.$spotter_item['heading'].'</span>°</div>';
 if (isset($spotter_item['over_country']) && $spotter_item['over_country'] != '') {
 	print '<div><span>'._("Over country").'</span>';
 	print $spotter_item['over_country'];

@@ -546,3 +546,33 @@ viewer.camera.moveEnd.addEventListener(function() {
 	var position = viewer.camera.positionCartographic;
 	createCookie('lastcentercoord',Cesium.Math.toDegrees(position.latitude)+','+Cesium.Math.toDegrees(position.longitude)+',8,'+position.height,2);
 });
+viewer.clock.onTick.addEventListener(function(clock) {
+	if (Cesium.defined(viewer.trackedEntity)) {
+		var position = viewer.trackedEntity.position.getValue(clock.currentTime);
+		if (Cesium.defined(position)) {
+			var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(position);
+			$(".latitude").html(Cesium.Math.toDegrees(coord.latitude).toFixed(5));
+			$(".longitude").html(Cesium.Math.toDegrees(coord.longitude).toFixed(5));
+			var heading = Cesium.Math.toDegrees(Cesium.Quaternion.computeAngle(viewer.trackedEntity.orientation.getValue(clock.currentTime))).toFixed(0);
+			$(".heading").html(heading);
+			if (unitaltitude == 'm') {
+				$(".altitude").html(Math.round(coord.height)+' m (FL'+Math.round(coord.height*3.28084/100)+')');
+			} else {
+				$(".altitude").html(Math.round(coord.height*3.28084)+' feet (FL'+Math.round(coord.height*3.28084/100)+')');
+			}
+			try {
+				var cartesian2 = new Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(coord.longitude),Cesium.Math.toDegrees(coord.latitude));
+			} catch(e) { console.log(e); }
+			try {
+				var height = viewer.scene.globe.getHeight(Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian2));
+			} catch(e) { console.log(e); }
+			if (typeof height != 'undefined') {
+				if (unitaltitude == 'm') {
+					$(".groundaltitude").html(Math.round(height)+' m');
+				} else {
+					$(".groundaltitude").html(Math.round(height*3.28084)+' feet');
+				}
+			}
+		}
+	}
+});

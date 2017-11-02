@@ -721,18 +721,6 @@ camera.moveEnd.addEventListener(function() {
 	}
 ?>
 });
-viewer.clock.onTick.addEventListener(function(clock) {
-	if (Cesium.defined(viewer.trackedEntity)) {
-		var position = viewer.trackedEntity.position.getValue(clock.currentTime);
-		if (Cesium.defined(position)) {
-			var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(position);
-			$(".latitude").html(Cesium.Math.toDegrees(coord.latitude).toFixed(5));
-			$(".longitude").html(Cesium.Math.toDegrees(coord.longitude).toFixed(5));
-			var heading = Cesium.Math.toDegrees(Cesium.Quaternion.computeAngle(viewer.trackedEntity.orientation.getValue(clock.currentTime))).toFixed(0);
-			$(".heading").html(heading);
-		}
-	}
-});
 
 //var reloadpage = setInterval(function() { updateData(); },30000);
 if (archive == false) {
