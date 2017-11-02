@@ -428,6 +428,16 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
     display: inline-block !important;
     color:#000000 !important;
 }
+.altitude {
+    text-transform: none !important;
+    display: inline-block !important;
+    color:#000000 !important;
+}
+.groundaltitude {
+    text-transform: none !important;
+    display: inline-block !important;
+    color:#000000 !important;
+}
 .atcname{
   background-color:#3d76bf;
   color:#fff;
