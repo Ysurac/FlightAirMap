@@ -202,6 +202,8 @@ handler_tracker.setInputAction(function(click) {
 			//lastid = flightaware_id;
 		} else if (type == 'loc') {
 			$(".showdetails").load("<?php print $globalURL; ?>/location-data.php?"+Math.random()+"&sourceid="+encodeURI(pickedObject.id.id));
+		} else {
+			delCookie('MapTrackTracker');
 		}
 	} else {
 		delCookie('MapTrackTracker');

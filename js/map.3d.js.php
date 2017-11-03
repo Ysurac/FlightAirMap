@@ -556,9 +556,17 @@ viewer.clock.onTick.addEventListener(function(clock) {
 			var heading = Cesium.Math.toDegrees(Cesium.Quaternion.computeAngle(viewer.trackedEntity.orientation.getValue(clock.currentTime))).toFixed(0);
 			$(".heading").html(heading);
 			if (unitaltitude == 'm') {
-				$(".altitude").html(Math.round(coord.height)+' m (FL'+Math.round(coord.height*3.28084/100)+')');
+				if (Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
+					$(".altitude").html(Math.round(coord.height)+' m (FL'+Math.round(coord.height*3.28084/100)+')');
+				} else {
+					$(".altitude").html(Math.round(coord.height)+' m');
+				}
 			} else {
-				$(".altitude").html(Math.round(coord.height*3.28084)+' feet (FL'+Math.round(coord.height*3.28084/100)+')');
+				if (Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
+					$(".altitude").html(Math.round(coord.height*3.28084)+' feet (FL'+Math.round(coord.height*3.28084/100)+')');
+				} else {
+					$(".altitude").html(Math.round(coord.height*3.28084)+' feet');
+				}
 			}
 			try {
 				var cartesian2 = new Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(coord.longitude),Cesium.Math.toDegrees(coord.latitude));

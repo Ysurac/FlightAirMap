@@ -32,7 +32,7 @@ if ($sat == 'ISS (ZARYA)') {
 //	$ground_speed = 14970;
 	$launch_date = '29 September 2011';
 } elseif ($sat == 'TIANGONG-2') {
-	$image = 'https://en.wikipedia.org/wiki/Tiangong-2#/media/File:Model_of_the_Chinese_Tiangong_Shenzhou.jpg';
+	$image = 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Model_of_the_Chinese_Tiangong_Shenzhou.jpg';
 	$image_copyright = 'Leebrandoncremer';
 	$ident = 'Tiangong-2';
 	$satname = 'Tiangong-2';
@@ -105,11 +105,13 @@ if (isset($aircraft_wiki)) {
 }
 
 print '<div><span>'._("Altitude").'</span>';
+print '<span class="altitude">';
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
 	print round($altitude*3280.84).' feet';
 } else {
 	print round($altitude).' km';
 }
+print '</span>';
 print '</div>';
 
 if (isset($ground_speed)) {

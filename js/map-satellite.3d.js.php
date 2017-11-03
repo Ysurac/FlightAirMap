@@ -60,6 +60,16 @@ function displayDataSat(data) {
 			}
 		}
 	}
+	
+	var MapTrack = getCookie('MapTrackSatellite');
+	if (MapTrack != '') {
+		viewer.trackedEntity = viewer.dataSources.get(dsn).entities.getById(MapTrack);
+		var currenttime = viewer.clock.currentTime;
+		$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(MapTrack));
+		$("#pointident").attr('class',MapTrack);
+		$("#pointtype").attr('class','satellite');
+	}
+	
 	$("#ibxsatellite").html("<h4>Satellites Displayed</h4><br/><b>"+viewer.dataSources.get(dsn).entities.values.length+"</b>");
 };
 
@@ -118,14 +128,19 @@ handler_satellite.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
 	if (Cesium.defined(pickedObject)) {
 		var currenttime = viewer.clock.currentTime;
-		console.log(pickedObject.id);
-		delCookie('MapTrack');
+		//console.log(pickedObject.id);
 		var type = '';
 		if (typeof pickedObject.id.type != 'undefined') {
 			type = pickedObject.id.type;
 		}
 		if (type == 'sat') {
+			delCookie('MapTrackSatellite');
+			createCookie('MapTrackSatellite',pickedObject.id.id,1);
 			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(pickedObject.id.id));
+		} else {
+			delCookie('MapTrackSatellite');
 		}
+	} else {
+		delCookie('MapTrackSatellite');
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);

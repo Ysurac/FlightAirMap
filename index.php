@@ -97,17 +97,20 @@ require_once('header.php');
 	<li><a href="#filters" role="tab" title="<?php echo _("Filters"); ?>"><i class="fa fa-filter"></i></a></li>
 	<li><a href="#settings" role="tab" title="<?php echo _("Settings"); ?>"><i class="fa fa-gears"></i></a></li>
 <?php
+	if (isset($globalSatellite) && $globalSatellite) {
+?>
+	<li><a href="#satellites" role="tab" title="<?php echo _("Satellites"); ?>"><i class="satellite"></i></a></li>
+<?php
+	}
+?>
+
+<?php
     if (isset($globalMap3D) && $globalMap3D) {
 	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
 ?>
 	<li><a href="" onclick="show3D(); return false;" role="tab" title="3D"><b>3D</b></a></li>
 <?php
 	} else {
-	    if (isset($globalSatellite) && $globalSatellite) {
-?>
-	<li><a href="#satellites" role="tab" title="<?php echo _("Satellites"); ?>"><i class="satellite"></i></a></li>
-<?php
-	    }
 ?>
 	<li><a href="" onclick="show2D(); return false;" role="tab" title="2D"><b>2D</b></a></li>
 <?php

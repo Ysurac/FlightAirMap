@@ -155,6 +155,8 @@ handler_marine.setInputAction(function(click) {
 			$("#pointident").attr('class',flightaware_id);
 			$("#pointtype").attr('class','marine');
 			//lastid = flightaware_id;
+		} else {
+			delCookie('MapTrackMarine');
 		}
 	}else {
 		delCookie('MapTrackMarine');

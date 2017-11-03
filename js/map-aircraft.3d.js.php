@@ -692,6 +692,8 @@ handler_aircraft.setInputAction(function(click) {
 			console.log('dsn : '+dsn);
 			var pnew = viewer.dataSources.get(dsn).entities.getById(pickedObject.id.id);
 			pnew.path.show = true;
+		} else {
+			delCookie('MapTrack');
 		}
 	} else {
 		delCookie('MapTrack');
