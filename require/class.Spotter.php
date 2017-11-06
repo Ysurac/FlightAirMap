@@ -408,7 +408,7 @@ class Spotter{
 					if ((isset($temp_array['registration']) && $row['ident'] != str_replace('-','',$temp_array['registration'])) || !isset($temp_array['registration'])) {
 						if (is_numeric(substr($row['ident'], 2, 1))) {
 							$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 2),$fromsource);
-						} elseif (is_numeric(substr($row['ident'], 3, 1))) {
+						} elseif (is_numeric(substr($row['ident'], 3, 1)) && substr($row['ident'], 0,3) != 'OGN') {
 							$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3),$fromsource);
 						} else {
 							$airline_array = $this->getAllAirlineInfo('NA');
@@ -2329,7 +2329,7 @@ class Spotter{
 		global $globalUseRealAirlines, $globalNoAirlines;
 		if (isset($globalUseRealAirlines) && $globalUseRealAirlines) $fromsource = NULL;
 		$airline_icao = strtoupper(filter_var($airline_icao,FILTER_SANITIZE_STRING));
-		if ($airline_icao == 'NA' || (isset($globalNoAirlines) && $globalNoAirlines)) {
+		if ($airline_icao == 'NA' || $airline_icao == 'OGN' || (isset($globalNoAirlines) && $globalNoAirlines)) {
 			$airline_array = array();
 			$airline_array[] = array('name' => 'Not Available','iata' => 'NA', 'icao' => 'NA', 'callsign' => '', 'country' => 'NA', 'type' =>'');
 			return $airline_array;
