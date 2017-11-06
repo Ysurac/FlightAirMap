@@ -1711,17 +1711,22 @@ while ($i > 0) {
 				    if ($data['source_type'] != 'modes' && $data['source_type'] != 'ais') $data['altitude_relative'] = 'AMSL';
 				    // Accept data if time <= system time + 20s
 				    //if (($data['source_type'] === 'modes') || isset($line['stealth']) && ($line['stealth'] === 0 || $line['stealth'] === '') && (strtotime($data['datetime']) <= strtotime($currentdate)+20) && (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
-				    if (($data['source_type'] === 'modes') || isset($line['stealth']) && (!isset($data['hex']) || $data['hex'] != 'FFFFFF') && ($line['stealth'] === 0 || $line['stealth'] === '') && (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
+				    if (
+					($data['source_type'] === 'modes') || 
+					isset($line['stealth']) && 
+					(!isset($data['hex']) || $data['hex'] != 'FFFFFF') && 
+					 ($line['stealth'] === 0 || $line['stealth'] == '') && 
+					 (($data['latitude'] == '' && $data['longitude'] == '') || (is_numeric($data['latitude']) && is_numeric($data['longitude'])))) {
 					$send = $SI->add($data);
 				    } elseif ($data['source_type'] === 'ais') {
 					$data['type'] = '';
 					if (isset($globalMarine) && $globalMarine) $send = $MI->add($data);
-				    } elseif (isset($line['stealth'])) {
-					if ($line['stealth'] != 0) echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";
-					else echo '--------- '.$data['ident'].' : Date APRS : '.$data['datetime'].' - Current date : '.$currentdate.' => not adding future event'."\n";
+				    } elseif (isset($line['stealth']) && $line['stealth'] != 0) {
+					 echo '-------- '.$data['ident'].' : APRS stealth ON => not adding'."\n";
 				    } elseif (isset($globalAircraft) && $globalAircraft && isset($line['symbol']) && isset($line['latitude']) && isset($line['longitude']) && (
 					    //$line['symbol'] === 'Balloon' ||
 					    $line['symbol'] === 'Glider' || 
+					    $line['symbol'] === 'No. Plane' || 
 					    $line['symbol'] === 'Aircraft (small)' || $line['symbol'] === 'Helicopter')) {
 					    if ($line['symbol'] === 'Ballon') $data['aircraft_icao'] = 'BALL';
 					    if ($line['symbol'] === 'Glider') $data['aircraft_icao'] = 'PARAGLIDER';
