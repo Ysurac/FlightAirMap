@@ -184,7 +184,7 @@ function displayData(data) {
 	}
 	if (typeof dsn != 'undefined') {
 		//if (Cesium.JulianDate.greaterThan(viewer.clock.currentTime,data.clock.currentTime)) {
-			data.clock.currentTime = viewer.clock.currentTime;
+			//data.clock.currentTime = viewer.clock.currentTime;
 		//}
 	}
 	var entities = data.entities.values;

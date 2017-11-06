@@ -123,8 +123,14 @@ if (isset($ground_speed)) {
 	} else {
 		print round($ground_speed).' km/h';
 	}
+	print '<span class="realspeed"></span>';
+	print '</div>';
+} else {
+	print '<div><span>'._("Speed").'</span>';
+	print '<span class="realspeed"></span>';
 	print '</div>';
 }
+
 //print '<div><span>'._("Coordinates").'</span>'.$latitude.', '.$longitude.'</div>';
 //print '<div><span>'._("Heading").'</span>'.$spotter_item['heading'].'°</div>';
 if (isset($launch_date)) {

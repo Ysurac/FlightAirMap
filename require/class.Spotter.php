@@ -1698,7 +1698,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query .= " AND ((spotter_output.departure_airport_icao = :airport) OR (spotter_output.arrival_airport_icao = :airport))";
+				$additional_query .= " AND (spotter_output.departure_airport_icao = :airport OR spotter_output.arrival_airport_icao = :airport)";
 				$query_values = array(':airport' => $airport);
 			}
 		}
@@ -1725,8 +1725,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." AND ((spotter_output.departure_airport_icao <> 'NA') AND (spotter_output.arrival_airport_icao <> 'NA')) ".$orderby_query;
-
+		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." AND (spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> 'NA') ".$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;

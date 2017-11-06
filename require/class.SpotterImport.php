@@ -191,12 +191,13 @@ class SpotterImport {
 	global $globalDebug, $globalNoImport, $globalNoDB;
 	// Delete old infos
 	if ($globalDebug) echo 'Delete old values and update latest data...'."\n";
+	
 	foreach ($this->all_flights as $key => $flight) {
-	    if (isset($flight['lastupdate'])) {
-		if ($flight['lastupdate'] < (time()-1800)) {
-		    $this->delKey($key);
+		if (isset($flight['lastupdate'])) {
+			if ($flight['lastupdate'] < (time()-1800)) {
+				$this->delKey($key);
+			}
 		}
-	    }
 	}
     }
 
@@ -219,6 +220,7 @@ class SpotterImport {
 			$Spotter->db = null;
 			$SpotterLive->db = null;
 		}
+		if ($globalDebug) echo "\n";
 	}
 	unset($this->all_flights[$key]);
     }

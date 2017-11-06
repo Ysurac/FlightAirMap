@@ -549,23 +549,41 @@ viewer.camera.moveEnd.addEventListener(function() {
 viewer.clock.onTick.addEventListener(function(clock) {
 	if (Cesium.defined(viewer.trackedEntity)) {
 		var position = viewer.trackedEntity.position.getValue(clock.currentTime);
+		var nexttime = Cesium.JulianDate.addSeconds(clock.currentTime,2,new Cesium.JulianDate());
+		var positionn = viewer.trackedEntity.position.getValue(nexttime);
 		if (Cesium.defined(position)) {
 			var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(position);
 			$(".latitude").html(Cesium.Math.toDegrees(coord.latitude).toFixed(5));
 			$(".longitude").html(Cesium.Math.toDegrees(coord.longitude).toFixed(5));
-			var heading = Cesium.Math.toDegrees(Cesium.Quaternion.computeAngle(viewer.trackedEntity.orientation.getValue(clock.currentTime))).toFixed(0);
-			$(".heading").html(heading);
-			if (unitaltitude == 'm') {
-				if (Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
-					$(".altitude").html(Math.round(coord.height)+' m (FL'+Math.round(coord.height*3.28084/100)+')');
-				} else {
-					$(".altitude").html(Math.round(coord.height)+' m');
+			if (Cesium.defined(positionn)) {
+				var ellipsoidGeodesic = new Cesium.EllipsoidGeodesic(Cesium.Cartographic.fromCartesian(position),Cesium.Cartographic.fromCartesian(positionn));
+				var distance = ellipsoidGeodesic.surfaceDistance;
+				var speedbox = document.getElementById("realspeed");
+				if (speedbox != null) speedbox.style.visibility = "visible";
+				if (unitspeed = 'kmh') {
+					$(".realspeed").html(Math.round(distance/2*3.6)+' km/h');
+				} else if (unitspeed = 'knots') {
+					$(".realspeed").html(Math.round(distance/2*3.6*0,539957)+' knots');
+				} else if (unitspeed = 'mph') {
+					$(".realspeed").html(Math.round(distance/2*3.6*0,621371)+' mph');
 				}
-			} else {
-				if (Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
-					$(".altitude").html(Math.round(coord.height*3.28084)+' feet (FL'+Math.round(coord.height*3.28084/100)+')');
+			}
+			
+			if (Cesium.defined(viewer.trackedEntity.orientation.getValue(clock.currentTime))) {
+				var heading = Cesium.Math.toDegrees(Cesium.Quaternion.computeAngle(viewer.trackedEntity.orientation.getValue(clock.currentTime))).toFixed(0);
+				$(".heading").html(heading);
+				if (unitaltitude == 'm') {
+					if (Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
+						$(".altitude").html(Math.round(coord.height)+' m (FL'+Math.round(coord.height*3.28084/100)+')');
+					} else {
+						$(".altitude").html(Math.round(coord.height)+' m');
+					}
 				} else {
-					$(".altitude").html(Math.round(coord.height*3.28084)+' feet');
+					if (Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
+						$(".altitude").html(Math.round(coord.height*3.28084)+' feet (FL'+Math.round(coord.height*3.28084/100)+')');
+					} else {
+						$(".altitude").html(Math.round(coord.height*3.28084)+' feet');
+					}
 				}
 			}
 			try {

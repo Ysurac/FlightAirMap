@@ -117,8 +117,9 @@ if (!empty($spotter_array)) {
 		else print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'" title="'.$spotter_item['aircraft_name'].'">'.$spotter_item['aircraft_manufacturer'].' '.$aircraft_names[0].' ('.$spotter_item['aircraft_type'].')</a>';
 	} elseif (isset($spotter_item['aircraft_type'])) print '<a href="'.$globalURL.'/aircraft/'.$spotter_item['aircraft_type'].'">'.$spotter_item['aircraft_type'].'</a>';
 	else print $spotter_item['aircraft_manufacturer'].' '.$spotter_item['aircraft_name'];
-	
 	print '</div>';
+	if (isset($spotter_item['registration']) && $spotter_item['registration'] != '') print '<div><span>'._("Registration").'</span><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'" target="_blank">'.$spotter_item['registration'].'</a></div>';
+
 	print '<div id="altitude"><span>'._("Altitude").'</span>';
 	if (isset($globalGroundAltitude) && $globalGroundAltitude) {
 		try {
@@ -152,7 +153,8 @@ if (!empty($spotter_array)) {
 		print '</i>';
 	}
 	print '</div>';
-	if (isset($spotter_item['registration']) && $spotter_item['registration'] != '') print '<div><span>'._("Registration").'</span><a href="'.$globalURL.'/registration/'.$spotter_item['registration'].'" target="_blank">'.$spotter_item['registration'].'</a></div>';
+	print '<div id="coordinates"><span>'._("Coordinates").'</span><span class="latitude">'.$spotter_item['latitude'].'</span>, <span class="longitude">'.$spotter_item['longitude'].'</span></div>';
+
 	print '<div id="speed"><span>'._("Speed").'</span>';
 	if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
 		print round($spotter_item['ground_speed']*1.15078).' mph';
@@ -162,7 +164,11 @@ if (!empty($spotter_array)) {
 		print round($spotter_item['ground_speed']*1.852).' km/h';
 	}
 	print '</div>';
-	print '<div id="coordinates"><span>'._("Coordinates").'</span><span class="latitude">'.$spotter_item['latitude'].'</span>, <span class="longitude">'.$spotter_item['longitude'].'</span></div>';
+	if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+		print '<div id="realspeed"><span>'._("Calculated Speed").'</span>';
+		print '<span class="realspeed"></span>';
+		print '</div>';
+	}
 
 	if (isset($globalCam) && $globalCam) {
 		require_once(dirname(__FILE__).'/require/class.Common.php');
