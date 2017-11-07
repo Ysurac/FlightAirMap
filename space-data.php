@@ -123,7 +123,7 @@ if (isset($ground_speed)) {
 	} else {
 		print round($ground_speed).' km/h';
 	}
-	print '<span class="realspeed"></span>';
+	//print '<span class="realspeed"></span>';
 	print '</div>';
 } else {
 	print '<div><span>'._("Speed").'</span>';
