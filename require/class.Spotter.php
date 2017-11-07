@@ -406,9 +406,15 @@ class Spotter{
 			if (!isset($row['airline_name']) || $row['airline_name'] == '') {
 				if ((!isset($globalNoAirlines) || $globalNoAirlines === FALSE) && !is_numeric(substr($row['ident'], 0, 3))) {
 					if ((isset($temp_array['registration']) && $row['ident'] != str_replace('-','',$temp_array['registration'])) || !isset($temp_array['registration'])) {
+						/*
+						if (isset($row['format_type']) && $row['format_type'] == 'flarm') {
+							$airline_array = $this->getAllAirlineInfo('NA');
+						} else
+						*/
 						if (is_numeric(substr($row['ident'], 2, 1))) {
 							$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 2),$fromsource);
-						} elseif (is_numeric(substr($row['ident'], 3, 1)) && substr($row['ident'], 0,3) != 'OGN') {
+						//} elseif (is_numeric(substr($row['ident'], 3, 1)) && substr($row['ident'], 0,3) != 'OGN') {
+						} elseif (is_numeric(substr($row['ident'], 3, 1)) && !((substr($row['ident'], 0, 3) == 'OGN' || substr($row['ident'], 0, 3) == 'FLR' || substr($row['ident'], 0, 3) == 'ICA') && isset($row['format_source']) && $row['format_source'] == 'aprs')) {
 							$airline_array = $this->getAllAirlineInfo(substr($row['ident'], 0, 3),$fromsource);
 						} else {
 							$airline_array = $this->getAllAirlineInfo('NA');
@@ -2329,7 +2335,8 @@ class Spotter{
 		global $globalUseRealAirlines, $globalNoAirlines;
 		if (isset($globalUseRealAirlines) && $globalUseRealAirlines) $fromsource = NULL;
 		$airline_icao = strtoupper(filter_var($airline_icao,FILTER_SANITIZE_STRING));
-		if ($airline_icao == 'NA' || $airline_icao == 'OGN' || (isset($globalNoAirlines) && $globalNoAirlines)) {
+		//if ($airline_icao == 'NA' || $airline_icao == 'OGN' || (isset($globalNoAirlines) && $globalNoAirlines)) {
+		if ($airline_icao == 'NA' || (isset($globalNoAirlines) && $globalNoAirlines)) {
 			$airline_array = array();
 			$airline_array[] = array('name' => 'Not Available','iata' => 'NA', 'icao' => 'NA', 'callsign' => '', 'country' => 'NA', 'type' =>'');
 			return $airline_array;
@@ -3614,9 +3621,10 @@ class Spotter{
 	* @return String success or false
 	*
 	*/	
-	public function updateIdentSpotterData($flightaware_id = '', $ident = '',$fromsource = NULL)
+	public function updateIdentSpotterData($flightaware_id = '', $ident = '',$fromsource = NULL,$sourcetype = NULL)
 	{
-		if (!is_numeric(substr($ident, 0, 3)))
+		if (!is_numeric(substr($ident, 0, 3)) && !((substr($ident, 0, 3) == 'OGN' || substr($ident, 0, 3) == 'FLR' || substr($ident, 0, 3) == 'ICA') && $fromsource == 'aprs'))
+		//if (!is_numeric(substr($ident, 0, 3)) && $sourcetype != 'flarm')
 		{
 			if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
 				$airline_array = $this->getAllAirlineInfo(substr($ident, 0, 2),$fromsource);
@@ -3781,6 +3789,7 @@ class Spotter{
 				return false;
 			} else {
 				if (!is_numeric(substr($ident, 0, 3)) && !((substr($ident, 0, 3) == 'OGN' || substr($ident, 0, 3) == 'FLR' || substr($ident, 0, 3) == 'ICA') && $format_source == 'aprs'))
+				//if (!is_numeric(substr($ident, 0, 3)) && $source_type != 'flarm')
 				{
 					$timeelapsed = microtime(true);
 					if (is_numeric(substr(substr($ident, 0, 3), -1, 1))) {
