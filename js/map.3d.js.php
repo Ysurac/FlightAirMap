@@ -27,7 +27,7 @@
 
 document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 <?php
-	if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
+	if (isset($_COOKIE['MapType3D'])) $MapType = $_COOKIE['MapType3D'];
 	else $MapType = $globalMapProvider;
 //	unset($_COOKIE['MapType']);
 
@@ -40,7 +40,7 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	}
 	if ($MapType == 'Mapbox') {
 		if ($_COOKIE['MapTypeId'] == 'default') $MapBoxId = $globalMapboxId;
-		else $MapBoxId = $_COOKIE['MapTypeId'];
+		else $MapBoxId = $_COOKIE['MapType3DId'];
 ?>
 	var imProv = Cesium.MapboxImageryProvider({
 		credit: 'Map data © OpenStreetMap contributors, ' +

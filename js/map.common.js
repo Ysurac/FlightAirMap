@@ -32,10 +32,43 @@ function mapType(selectObj) {
     if (type[0] == 'Mapbox') {
 	createCookie('MapType',type[0],9999);
 	createCookie('MapTypeId',type[1],9999);
+	if (getCookie('Map2D3DSync')) {
+	    createCookie('MapType3D',type[0],9999);
+	    createCookie('MapType3DId',type[1],9999);
+	}
     } else {
 	createCookie('MapType',atype,9999);
+	if (getCookie('Map2D3DSync')) {
+	    createCookie('MapType3D',atype,9999);
+	}
     }
     window.location.reload();
+}
+function mapType3D(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var atype = selectObj.options[idx].value;
+    var type = atype.split('-');
+    if (type[0] == 'Mapbox') {
+	createCookie('MapType3D',type[0],9999);
+	createCookie('MapType3DId',type[1],9999);
+	if (getCookie('Map2D3DSync')) {
+	    createCookie('MapType',type[0],9999);
+	    createCookie('MapTypeId',type[1],9999);
+	}
+    } else {
+	createCookie('MapType3D',atype,9999);
+	if (getCookie('Map2D3DSync')) {
+	    createCookie('MapType',atype,9999);
+	}
+    }
+    window.location.reload();
+}
+function clickSyncMap2D3D(cb) {
+    createCookie('Map2D3DSync',cb.checked,9999);
+    if (cb.checked) {
+	createCookie('MapType3D',getCookie('MapType'),9999);
+	createCookie('MapType3DId',getCookie('MapTypeId'),9999);
+    }
 }
 
 function terrainType(selectObj) {

@@ -270,10 +270,20 @@ require_once('header.php');
 	    <form>
 		<ul>
 		    <li><?php echo _("Type of Map:"); ?>
+			    <?php
+				if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
+					if (!isset($_COOKIE['MapType']) || $_COOKIE['MapType'] == '') $MapType = $globalMapProvider;
+					else $MapType = $_COOKIE['MapType'];
+			    ?>
 			<select  class="selectpicker" onchange="mapType(this);">
 			    <?php
-				if (!isset($_COOKIE['MapType']) || $_COOKIE['MapType'] == '') $MapType = $globalMapProvider;
-				else $MapType = $_COOKIE['MapType'];
+				} else {
+					if (!isset($_COOKIE['MapType3D']) || $_COOKIE['MapType3D'] == '') $MapType = $globalMapProvider;
+					else $MapType = $_COOKIE['MapType3D'];
+			    ?>
+			<select  class="selectpicker" onchange="mapType3D(this);">
+			    <?php
+				}
 			    ?>
 			    <?php
 				if (isset($globalMapOffline) && $globalMapOffline === TRUE) {
@@ -373,6 +383,14 @@ require_once('header.php');
 			    <option value="articdem"<?php if (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'articdem') print ' selected';?>>ArticDEM</option>
 			</select>
 		    </li>
+<?php
+    }
+?>
+
+<?php
+    if (isset($globalMap3D) && $globalMap3D) {
+?>
+		    <li><div class="checkbox"><label><input type="checkbox" name="synchro2d3d" value="1" onclick="clickSyncMap2D3D(this)" <?php if (isset($_COOKIE['Map2D3DSync']) && $_COOKIE['Map2D3DSync'] == 'true') print 'checked'; ?> ><?php echo _("Use same type of map for 2D & 3D"); ?></label></div></li>
 <?php
     }
 ?>
