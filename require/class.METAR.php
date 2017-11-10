@@ -161,6 +161,7 @@ class METAR {
 					$dew = ((float)substr($matches[2], 1)) * -1;
 				}
 				$result['dew'] = $dew;
+				$result['rh'] = 100*(exp((17.625*$dew)/(243.04+$dew))/exp((17.625*$temp)/(243.04+$temp)));
 			}
 			// QNH
 			if (preg_match('#^(A|Q)([0-9]{4})$#', $piece, $matches)) {
@@ -205,7 +206,7 @@ class METAR {
 				}
 			}
 			// Cloud Coverage
-			if (preg_match('#^(SKC|CLR|FEW|SCT|BKN|OVC|VV)([0-9]{3})(CB|TCU|CU|CI)?$#', $piece, $matches)) {
+			if (preg_match('#^(SKC|CLR|FEW|SCT|BKN|OVC|VV)([0-9]{3})(AC|CB|CBS|CC|CS|TCU|CU|CI)?$#', $piece, $matches)) {
 				//$this->addCloudCover($matches[1], ((float)$matches[2]) * 100, isset($matches[3]) ? $matches[3] : '');
 				$type = $matches[1];
 				$cloud = array();
@@ -219,7 +220,18 @@ class METAR {
 				elseif ($type == 'VV') $cloud['type'] = 'Vertical visibility';
 				$cloud['type_code'] = $type;
 				$cloud['level'] = round(((float)$matches[2]) * 100 * 0.3048);
-				$cloud['significant'] = isset($matches[3]) ? $matches[3] : '';
+				if (isset($matches[3])) $significant = $matches[3];
+				else $significant = '';
+				if ($significant == 'CB') $cloud['significant'] = 'Cumulonimbus';
+				elseif ($significant == 'AC') $cloud['significant'] = 'Altocumulus';
+				elseif ($significant == 'CBS') $cloud['significant'] = 'Cumulonimbus';
+				elseif ($significant == 'CC') $cloud['significant'] = 'Cirrocumulus';
+				elseif ($significant == 'CU') $cloud['significant'] = 'Cumulus';
+				elseif ($significant == 'CI') $cloud['significant'] = 'Cirrus';
+				elseif ($significant == 'CS') $cloud['significant'] = 'Cirrostratus';
+				elseif ($significant == 'TCU') $cloud['significant'] = 'Towering Cumulus';
+				else $cloud['significant'] = $significant;
+				//$cloud['significant'] = isset($matches[3]) ? $matches[3] : '';
 				$result['cloud'][] = $cloud;
 			}
 			// RVR
@@ -381,15 +393,17 @@ class METAR {
 			$date = '';
 			if ($globalTransaction) $this->db->beginTransaction();
 			while(($line = fgets($handle,4096)) !== false) {
+				$line = str_replace(array("\r\n","\r", "\n"), '', $line);
 				if (preg_match('#^([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{2}):([0-9]{2})$#',$line)) {
 					$date = $line;
-				} elseif ($line != '') {
+				} elseif (trim($line) != '') {
 					if ($date == '') $date = date('Y/m/d H:m');
 					$pos = 0;
 					$pieces = preg_split('/\s/',$line);
 					if ($pieces[0] == 'METAR') $pos++;
 					if (strlen($pieces[$pos]) != 4) $pos++;
 					$location = $pieces[$pos];
+					//echo 'location: '.$location.' - date: '.$date.' - data: '.$line."\n";
 					echo $this->addMETAR($location,$line,$date);
 				}
 			}
@@ -413,10 +427,11 @@ class METAR {
 		$cycle = $Common->getData($url);
 		$date = '';
 		foreach(explode("\n",$cycle) as $line) {
+			$line = str_replace(array("\r\n","\r", "\n"), '', $line);
 			if (preg_match('#^([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{2}):([0-9]{2})$#',$line)) {
 				$date = $line;
 			} 
-			if ($line != '') {
+			if (trim($line) != '') {
 				if ($date == '') $date = date('Y/m/d H:m');
 				$pos = 0;
 				$pieces = preg_split('/\s/',$line);
