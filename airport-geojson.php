@@ -28,11 +28,11 @@ if (!empty($spotter_array))
 		//waypoint plotting
 		$output .= '{"type": "Feature",';
 		    $output .= '"properties": {';
-			$output .= '"name": "'.str_replace('"',"'",$spotter_item['name']).'",';
-			$output .= '"city": "'.str_replace('"',"'",$spotter_item['city']).'",';
+			$output .= '"name": '.json_encode(str_replace('"',"'",$spotter_item['name'])).',';
+			$output .= '"city": '.json_encode(str_replace('"',"'",$spotter_item['city'])).',';
 			$output .= '"country": "'.$spotter_item['country'].'",';
 			$output .= '"altitude": "'.$spotter_item['altitude'].'",';
-			$output .= '"popupContent": "'.str_replace('"',"'",$spotter_item['name']).' : '.str_replace('"',"'",$spotter_item['city']).', '.$spotter_item['country'].'",';
+			$output .= '"popupContent": '.json_encode(str_replace('"',"'",$spotter_item['name']).' : '.str_replace('"',"'",$spotter_item['city']).', '.$spotter_item['country']).',';
 			if ($spotter_item['type'] == 'large_airport') {
 				$output .= '"icon": "'.$globalURL.'/images/airport.png",';
 			} elseif ($spotter_item['type'] == 'heliport') {
