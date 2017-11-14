@@ -1,41 +1,6 @@
 <?php
 class Weather {
-
-/*	function buildcloud($coord = array(),$c) {
-		$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
-		$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
-		$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
-		$maxlat = filter_var($coord[3],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
-*/
-	function buildcloud($lat,$long,$height,$c) {
-		
-		$w = 1000.0;
-		$h = 1000.0;
-		$hdist = 1;
-		$vdist = 1;
-		
-		$c = 5;
-		$count = ($c + (mt_rand()-0.5)-$c);
-		for ($j = 0;$j < $count; $j++) {
-			$x = 0.0;
-			$y = 0.0;
-			$z = 0.0;
-			for ($k = 0; $k < $hdist; $k++) {
-				$x += (mt_rand()/$hdist);
-				$y += (mt_rand()/$hdist);
-			}
-			for ($k = 0; $k < $vdist; $k++) {
-				$z += (mt_rand()/$vdist);
-			}
-			$x = $w * ($x - 0.5) + $lat; // N/S
-			$y = $w * ($y - 0.5) + $long; // E/W
-			$z = $h * $z + $height; // Up/Down. pos[2] is the cloudbase
-			// addcloud
-			echo 'x: '.$x.'/y: '.$y.'/z: '.$z."\n";
-		}
-	}
-	
-	function buildcloudlayer($metar) {
+	public function buildcloudlayer($metar) {
 		//print_r($metar);
 		$result = array();
 		foreach($metar['cloud'] as $key => $data) {
@@ -86,22 +51,6 @@ class Weather {
 			$result[] = array('cov' => 0.75, 'type' => 'cu','alt' => 4000,'rh' => $metar['rh']);
 		}
 		return $result;
-	}
-	
-	function generateRandomPoint ($latitude,$longitude, $radius) {
-		$x0 = $longitude;
-		$y0 = $latitude;
-		
-		// Convert Radius from meters to degrees.
-		$rd = $radius / 111300;
-		$u = (float)rand()/(float)getrandmax();
-		$v = (float)rand()/(float)getrandmax();
-		$w = $rd * sqrt($u);
-		$t = 2 * pi() * $v;
-		$x = $w * cos($t);
-		$y = $w * sin($t);
-		$xp = $x / cos($y0);
-		return array('latitude' => $y + $y0,'longitude' => $xp + $x0);
 	}
 }
 /*
