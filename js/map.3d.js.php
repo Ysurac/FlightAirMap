@@ -386,7 +386,7 @@ function delete_clouds() {
 }
 
 function create_clouds(cposition) {
-	console.log('Create clouds');
+	//console.log('Create clouds');
 	cloudscenter = cposition;
 	$.getJSON('/weather-json.php?latitude='+Cesium.Math.toDegrees(cposition.latitude)+'&longitude='+Cesium.Math.toDegrees(cposition.longitude),function(data) {
 		delete_clouds();
@@ -400,10 +400,10 @@ function create_clouds(cposition) {
 		    st: ['stratus1.png','stratus2.png','stratus3.png','stratus4.png','stratus5.png','stratus6.png'],
 		    sc: ['congestus1.png','congestus2.png','congestus3.png'],
 		    cu: ['cumulus1.png','cumulus2.png','cumulus3.png','cumulus4.png','cumulus5.png','cumulus6.png','cumulus7.png','cumulus8.png','cumulus9.png']};
-		console.log(clouds);
+		//console.log(clouds);
 	
 		for (var i = 0; i < data.length; i++) {
-			console.log(data[i]);
+			//console.log(data[i]);
 			var height = data[i]['alt'];
 			var cov = data[i]['cov'];
 			var cloud = clouds[data[i]['type']];
@@ -444,7 +444,7 @@ function create_clouds(cposition) {
 			if (typeof cloud != 'undefined') {
 				for (j = 0; j < 1000*cov; j++) {
 					var cloudcoord = generateRandomPoint(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude), height,240,50000);
-					console.log(cloudcoord);
+					//console.log(cloudcoord);
 					var position = Cesium.Cartesian3.fromDegrees(cloudcoord['longitude'],cloudcoord['latitude'],cloudcoord['alt']);
 					if (data[i]['type'] == 'st') {
 						var heading = camera.heading;
@@ -659,14 +659,14 @@ viewer.camera.moveEnd.addEventListener(function() {
 
 var handler_all = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
 handler_all.setInputAction(function(click) {
-	console.log(click);
+	//console.log(click);
 	var pickedObject = viewer.scene.pick(click.position);
-	console.log(pickedObject);
+	//console.log(pickedObject);
 	// viewer.trackedEntity
 	if (Cesium.defined(pickedObject) && getCookie('show_Weather')) {
 		//console.log(pickedObject);
 		var cposition = pickedObject.id.position.getValue(viewer.clock.currentTime);
-		console.log(cposition);
+		//console.log(cposition);
 		create_clouds(viewer.scene.globe.ellipsoid.cartesianToCartographic(cposition));
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
