@@ -375,6 +375,109 @@ function update_tsk() {
 	});
 }
 
+var cloudscenter;
+function delete_clouds() {
+	for (var i =0; i < viewer.dataSources.length; i++) {
+		if (viewer.dataSources.get(i).name == 'clouds') {
+			viewer.dataSources.remove(viewer.dataSources.get(i),true);
+			break;
+		}
+	}
+}
+
+function create_clouds(cposition) {
+	console.log('Create clouds');
+	cloudscenter = cposition;
+	$.getJSON('/weather-json.php?latitude='+Cesium.Math.toDegrees(cposition.latitude)+'&longitude='+Cesium.Math.toDegrees(cposition.longitude),function(data) {
+		delete_clouds();
+		var datasource = new Cesium.CustomDataSource('clouds');
+		var clouds = {ci: ['cirrocumulus1.glb','cirrocumulus2.glb','cirrocumulus3.glb','cirrocumulus4.glb','cirrocumulus5.glb','cirrocumulus6.glb','cirrocumulus7.glb','cirrocumulus8.glb','cirrocumulus9.glb'], 
+		    ac: ['altocumulus1.glb','altocumulus2.glb','altocumulus3.glb','altocumulus4.glb','altocumulus5.glb','altocumulus6.glb'], 
+		    ns: ['nimbus1.glb','nimbus_sl1.glb','nimbus_sl2.glb','nimbus_sl3.glb','nimbus_sl4.glb','nimbus_sl5.glb','nimbus_sl6.glb']};
+		    //st: ['stratus1.glb','stratus2.glb','stratus3.glb','stratus4.glb','stratus5.glb']};
+		    // st need to follow camera
+		var cloudsb = {ac: ['altocumulus1.png','altocumulus2.png','altocumulus3.png','altocumulus4.png','altocumulus5.png','altocumulus6.png','altocumulus7.png','altocumulus8.png','altocumulus9.png'], 
+		    st: ['stratus1.png','stratus2.png','stratus3.png','stratus4.png','stratus5.png','stratus6.png'],
+		    sc: ['congestus1.png','congestus2.png','congestus3.png'],
+		    cu: ['cumulus1.png','cumulus2.png','cumulus3.png','cumulus4.png','cumulus5.png','cumulus6.png','cumulus7.png','cumulus8.png','cumulus9.png']};
+		console.log(clouds);
+	
+		for (var i = 0; i < data.length; i++) {
+			console.log(data[i]);
+			var height = data[i]['alt'];
+			var cov = data[i]['cov'];
+			var cloud = clouds[data[i]['type']];
+			var cloudb = cloudsb[data[i]['type']];
+			var rh = data[i]['rh'];
+			if (typeof cloudb != 'undefined') {
+				for (j = 0; j < 1000*cov; j++) {
+					var cloudcoord = generateRandomPoint(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude), height,240,50000);
+					var position = Cesium.Cartesian3.fromDegrees(cloudcoord['longitude'],cloudcoord['latitude'],cloudcoord['alt']);
+					var heading = Cesium.Math.toRadians(135);
+					var pitch = 0;
+					var roll = 0;
+					var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+					var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+					var urlb = '/images/weather/clouds/'+cloudb[Math.floor((Math.random() * cloudb.length))];
+					var entity = datasource.entities.add({
+					    name : url,
+					    position : position,
+					    orientation : orientation,
+					    billboard: {
+						image : urlb,
+						sizeInMeters: true,
+						scale: Math.random()*10.0,
+						horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+						verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+						eyeOffset: new Cesium.Cartesian3(0,6,0),
+						heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+						//fillColor: Cesium.Color.fromCssColorString("#ffc107"),
+						//translucencyByDistance: new Cesium.NearFarScalar(200,.8,5E4,.2)
+						distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0,60000.0),
+						translucencyByDistance: new Cesium.NearFarScalar(1E5/2,.9,1E5,.3),
+						color: new Cesium.Color(rh/100,rh/100,rh/100,1),
+						opacity: .9
+					    }
+					});
+				}
+			}
+			if (typeof cloud != 'undefined') {
+				for (j = 0; j < 1000*cov; j++) {
+					var cloudcoord = generateRandomPoint(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude), height,240,50000);
+					console.log(cloudcoord);
+					var position = Cesium.Cartesian3.fromDegrees(cloudcoord['longitude'],cloudcoord['latitude'],cloudcoord['alt']);
+					if (data[i]['type'] == 'st') {
+						var heading = camera.heading;
+					} else {
+						var heading = Cesium.Math.toRadians(135);
+					}
+					var pitch = 0;
+					var roll = 0;
+					var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+					var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+					var url = '/models/gltf2/weather/'+cloud[Math.floor((Math.random() * cloud.length))];
+					var entity = datasource.entities.add({
+					    name : url,
+					    position : position,
+					    orientation : orientation,
+					    model : {
+						uri : url,
+						minimumPixelSize : 1,
+						maximumScale : 20000,
+						heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+						color: new Cesium.Color(rh/100,rh/100,rh/100,1),
+						colorBlendMode: Cesium.ColorBlendMode.MIX,
+						distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0,60000.0),
+						allowPicking: false
+					    }
+					});
+				}
+			}
+		}
+		viewer.dataSources.add(datasource);
+	});
+}
+
 $(".showdetails").on("click",".close",function(){
 	$(".showdetails").empty();
 	$("#pointident").attr('class','');
@@ -407,7 +510,9 @@ var viewer = new Cesium.Viewer('live-map', {
 	infoBox : false,
 	navigationHelpButton : false,
 	geocoder : false,
-	fullscreenButton : false
+	fullscreenButton : false,
+	scene3DOnly: true,
+	showRenderLoopErrors: false
 });
 
 // Set initial camera position
@@ -494,6 +599,9 @@ viewer.scene.globe.showWaterEffect = true;
 
 // Lightning
 viewer.scene.globe.enableLighting = true;
+
+
+viewer.scene.globe.depthTestAgainstTerrain = true;
 /*
 // Cache
 viewer.scene.globe.tileCacheSize = 1000;
@@ -535,6 +643,8 @@ update_tsk();
 
 update_locationsLayer();
 setInterval(function(){update_locationsLayer()},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
+
+var currentposition;
 viewer.camera.moveEnd.addEventListener(function() { 
 <?php
 	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
@@ -543,62 +653,96 @@ viewer.camera.moveEnd.addEventListener(function() {
 <?php
 	}
 ?>
-	var position = viewer.camera.positionCartographic;
-	createCookie('lastcentercoord',Cesium.Math.toDegrees(position.latitude)+','+Cesium.Math.toDegrees(position.longitude)+',8,'+position.height,2);
+	currentposition = viewer.camera.positionCartographic;
+	createCookie('lastcentercoord',Cesium.Math.toDegrees(currentposition.latitude)+','+Cesium.Math.toDegrees(currentposition.longitude)+',8,'+currentposition.height,2);
 });
+
+var handler_all = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+handler_all.setInputAction(function(click) {
+	console.log(click);
+	var pickedObject = viewer.scene.pick(click.position);
+	console.log(pickedObject);
+	// viewer.trackedEntity
+	if (Cesium.defined(pickedObject) && getCookie('show_Weather')) {
+		//console.log(pickedObject);
+		var cposition = pickedObject.id.position.getValue(viewer.clock.currentTime);
+		console.log(cposition);
+		create_clouds(viewer.scene.globe.ellipsoid.cartesianToCartographic(cposition));
+	}
+}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
 viewer.clock.onTick.addEventListener(function(clock) {
-	if (Cesium.defined(viewer.trackedEntity)) {
-		var position = viewer.trackedEntity.position.getValue(clock.currentTime);
-		var nexttime = Cesium.JulianDate.addSeconds(clock.currentTime,2,new Cesium.JulianDate());
-		var positionn = viewer.trackedEntity.position.getValue(nexttime);
-		if (Cesium.defined(position)) {
-			var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(position);
-			$(".latitude").html(Cesium.Math.toDegrees(coord.latitude).toFixed(5));
-			$(".longitude").html(Cesium.Math.toDegrees(coord.longitude).toFixed(5));
-			if (Cesium.defined(positionn)) {
-				var ellipsoidGeodesic = new Cesium.EllipsoidGeodesic(Cesium.Cartographic.fromCartesian(position),Cesium.Cartographic.fromCartesian(positionn));
+	if (getCookie('updaterealtime') == true || getCookie('updaterealtime') == '') {
+		if (Cesium.defined(viewer.trackedEntity)) {
+			var position = viewer.trackedEntity.position.getValue(clock.currentTime);
+			var nexttime = Cesium.JulianDate.addSeconds(clock.currentTime,2,new Cesium.JulianDate());
+			var positionn = viewer.trackedEntity.position.getValue(nexttime);
+			if (Cesium.defined(position)) {
+				var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(position);
+				$(".latitude").html(Cesium.Math.toDegrees(coord.latitude).toFixed(5));
+				$(".longitude").html(Cesium.Math.toDegrees(coord.longitude).toFixed(5));
+				if (Cesium.defined(positionn)) {
+					var ellipsoidGeodesic = new Cesium.EllipsoidGeodesic(Cesium.Cartographic.fromCartesian(position),Cesium.Cartographic.fromCartesian(positionn));
+					var distance = ellipsoidGeodesic.surfaceDistance;
+					var speedbox = document.getElementById("realspeed");
+					if (speedbox != null) speedbox.style.visibility = "visible";
+					if (unitspeed = 'kmh') {
+						$(".realspeed").html(Math.round(distance/2*3.6)+' km/h');
+					} else if (unitspeed = 'knots') {
+						$(".realspeed").html(Math.round(distance/2*3.6*0,539957)+' knots');
+					} else if (unitspeed = 'mph') {
+						$(".realspeed").html(Math.round(distance/2*3.6*0,621371)+' mph');
+					}
+				}
+				
+				if (Cesium.defined(viewer.trackedEntity.orientation.getValue(clock.currentTime))) {
+					var heading = Cesium.Math.toDegrees(Cesium.Quaternion.computeAngle(viewer.trackedEntity.orientation.getValue(clock.currentTime))).toFixed(0);
+					$(".heading").html(heading);
+					if (unitaltitude == 'm') {
+						if (Cesium.defined(viewer.trackedEntity.properties) && Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
+							$(".altitude").html(Math.round(coord.height)+' m (FL'+Math.round(coord.height*3.28084/100)+')');
+						} else {
+							$(".altitude").html(Math.round(coord.height)+' m');
+						}
+					} else {
+						if (Cesium.defined(viewer.trackedEntity.properties) && Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
+							$(".altitude").html(Math.round(coord.height*3.28084)+' feet (FL'+Math.round(coord.height*3.28084/100)+')');
+						} else {
+							$(".altitude").html(Math.round(coord.height*3.28084)+' feet');
+						}
+					}
+				}
+				try {
+					var cartesian2 = new Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(coord.longitude),Cesium.Math.toDegrees(coord.latitude));
+				} catch(e) { console.log(e); }
+				try {
+					var height = viewer.scene.globe.getHeight(Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian2));
+				} catch(e) { console.log(e); }
+				if (typeof height != 'undefined') {
+					if (unitaltitude == 'm') {
+						$(".groundaltitude").html(Math.round(height)+' m');
+					} else {
+						$(".groundaltitude").html(Math.round(height*3.28084)+' feet');
+					}
+				}
+			}
+		}
+	}
+	if (getCookie('show_Weather')) {
+		if (Cesium.defined(viewer.trackedEntity)) {
+			if (typeof cloudscenter == 'undefined') {
+				var cposition = viewer.trackedEntity.position.getValue(viewer.clock.currentTime);
+				create_clouds(viewer.scene.globe.ellipsoid.cartesianToCartographic(cposition));
+			} else {
+				var cposition = viewer.trackedEntity.position.getValue(viewer.clock.currentTime);
+				var ellipsoidGeodesic = new Cesium.EllipsoidGeodesic(Cesium.Cartographic.fromCartesian(cposition),cloudscenter);
 				var distance = ellipsoidGeodesic.surfaceDistance;
-				var speedbox = document.getElementById("realspeed");
-				if (speedbox != null) speedbox.style.visibility = "visible";
-				if (unitspeed = 'kmh') {
-					$(".realspeed").html(Math.round(distance/2*3.6)+' km/h');
-				} else if (unitspeed = 'knots') {
-					$(".realspeed").html(Math.round(distance/2*3.6*0,539957)+' knots');
-				} else if (unitspeed = 'mph') {
-					$(".realspeed").html(Math.round(distance/2*3.6*0,621371)+' mph');
+				if (distance > 15000) {
+					create_clouds(viewer.scene.globe.ellipsoid.cartesianToCartographic(cposition));
 				}
 			}
-			
-			if (Cesium.defined(viewer.trackedEntity.orientation.getValue(clock.currentTime))) {
-				var heading = Cesium.Math.toDegrees(Cesium.Quaternion.computeAngle(viewer.trackedEntity.orientation.getValue(clock.currentTime))).toFixed(0);
-				$(".heading").html(heading);
-				if (unitaltitude == 'm') {
-					if (Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
-						$(".altitude").html(Math.round(coord.height)+' m (FL'+Math.round(coord.height*3.28084/100)+')');
-					} else {
-						$(".altitude").html(Math.round(coord.height)+' m');
-					}
-				} else {
-					if (Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
-						$(".altitude").html(Math.round(coord.height*3.28084)+' feet (FL'+Math.round(coord.height*3.28084/100)+')');
-					} else {
-						$(".altitude").html(Math.round(coord.height*3.28084)+' feet');
-					}
-				}
-			}
-			try {
-				var cartesian2 = new Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(coord.longitude),Cesium.Math.toDegrees(coord.latitude));
-			} catch(e) { console.log(e); }
-			try {
-				var height = viewer.scene.globe.getHeight(Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian2));
-			} catch(e) { console.log(e); }
-			if (typeof height != 'undefined') {
-				if (unitaltitude == 'm') {
-					$(".groundaltitude").html(Math.round(height)+' m');
-				} else {
-					$(".groundaltitude").html(Math.round(height*3.28084)+' feet');
-				}
-			}
+		} else {
+			delete_clouds();
 		}
 	}
 });

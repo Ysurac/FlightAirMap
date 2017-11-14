@@ -133,8 +133,8 @@ if (
 	$arrival_airport_route = filter_input(INPUT_GET, 'arrival_airport_route',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	$archive = filter_input(INPUT_GET,'archive',FILTER_SANITIZE_NUMBER_INT);
-	$origlat = filter_input(INPUT_GET,'origlat',FILTER_SANITIZE_NUMBER_FLOAT);
-	$origlon = filter_input(INPUT_GET,'origlon',FILTER_SANITIZE_NUMBER_FLOAT);
+	$origlat = filter_input(INPUT_GET,'origlat',FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+	$origlon = filter_input(INPUT_GET,'origlon',FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	$dist = filter_input(INPUT_GET,'dist',FILTER_SANITIZE_NUMBER_INT);
 	$number_results = filter_input(INPUT_GET,'number_results',FILTER_SANITIZE_NUMBER_INT);
 	if ($dist != '') {

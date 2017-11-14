@@ -382,7 +382,7 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
   color:#1a3151;
     display:block;
 }
-.showdetails.airports .airport .time{
+.showdetails .airports .airport .time{
   display:inline-block;
   font-size:0.8em;
   font-style:italic;
@@ -438,6 +438,15 @@ body.page-index .leaflet-popup-content-wrapper .details div a{
     display: inline-block !important;
     color:#000000 !important;
 }
+.realspeed {
+    text-transform: none !important;
+    display: inline-block !important;
+    color:#000000 !important;
+}
+#realspeed {
+    visibility: hidden;
+}
+
 .atcname{
   background-color:#3d76bf;
   color:#fff;

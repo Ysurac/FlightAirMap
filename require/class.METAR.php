@@ -161,7 +161,7 @@ class METAR {
 					$dew = ((float)substr($matches[2], 1)) * -1;
 				}
 				$result['dew'] = $dew;
-				$result['rh'] = 100*(exp((17.625*$dew)/(243.04+$dew))/exp((17.625*$temp)/(243.04+$temp)));
+				$result['rh'] = round(100*(exp((17.625*$dew)/(243.04+$dew))/exp((17.625*$temp)/(243.04+$temp))));
 			}
 			// QNH
 			if (preg_match('#^(A|Q)([0-9]{4})$#', $piece, $matches)) {
@@ -334,7 +334,7 @@ class METAR {
 		if ($globalDBdriver == 'mysql') {
 			$query = "INSERT INTO metar (metar_location,metar_date,metar) VALUES (:location,:date,:metar) ON DUPLICATE KEY UPDATE metar_date = :date, metar = :metar";
 		} else {
-			$query = "UPDATE metar SET metar_date = :date, metar = metar WHERE metar_location = :location;INSERT INTO metar (metar_location,metar_date,metar) SELECT :location,:date,:metar WHERE NOT EXISTS (SELECT 1 FROM metar WHERE metar_location = :location);";
+			$query = "UPDATE metar SET metar_date = :date, metar = :metar WHERE metar_location = :location;INSERT INTO metar (metar_location,metar_date,metar) SELECT :location,:date,:metar WHERE NOT EXISTS (SELECT 1 FROM metar WHERE metar_location = :location);";
 		}
 		$query_values = array(':location' => $location,':date' => $date,':metar' => utf8_encode($metar));
 		try {
@@ -403,7 +403,7 @@ class METAR {
 					if ($pieces[0] == 'METAR') $pos++;
 					if (strlen($pieces[$pos]) != 4) $pos++;
 					$location = $pieces[$pos];
-					//echo 'location: '.$location.' - date: '.$date.' - data: '.$line."\n";
+					//if ($location == 'LFLL') echo 'location: '.$location.' - date: '.$date.' - data: '.$line."\n";
 					echo $this->addMETAR($location,$line,$date);
 				}
 			}
@@ -449,6 +449,9 @@ class METAR {
 }
 /*
 $METAR = new METAR();
+print_r($METAR->parse('LSGG 151850Z VRB05KT 9999 FEW060 10/01 Q1021 NOSIG'));
+*/
+/*
 echo $METAR->parse('CYZR 070646Z AUTO VRB02KT 1SM R33/3500VP6000FT/ BR OVC001 M03/M03 A3020 RMK ICG PAST HR SLP233');
 echo $METAR->parse('CYVQ 070647Z 00000KT 10SM -SN OVC030 M24/M26 A2981 RMK SC8 SLP105');
 echo $METAR->parse('CYFC 070645Z AUTO 23003KT 5/8SM R09/3500VP6000FT BR FEW180 M01/M01 A3004 RMK SLP173');

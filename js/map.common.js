@@ -180,8 +180,15 @@ function clickDisplayMinimap(cb) {
     createCookie('displayminimap',cb.checked,9999);
     window.location.reload();
 }
+function clickShadows(cb) {
+    createCookie('map3dnoshadows',cb.checked,9999);
+    window.location.reload();
+}
 function clickSingleModel(cb) {
     createCookie('singlemodel',cb.checked,9999);
+}
+function clickUpdateRealtime(cb) {
+    createCookie('updaterealtime',cb.checked,9999);
 }
 function clickVATSIM(cb) {
     createCookie('filter_ShowVATSIM',cb.checked,2);
@@ -205,6 +212,10 @@ function clickDisplayGroundStation(cb) {
 function clickDisplayWeatherStation(cb) {
     createCookie('show_WeatherStation',cb.checked,2);
     window.location.reload();
+}
+function clickDisplayWeather(cb) {
+    createCookie('show_Weather',cb.checked,2);
+//    window.location.reload();
 }
 function clickDisplayLightning(cb) {
     createCookie('show_Lightning',cb.checked,2);
@@ -261,4 +272,35 @@ function msgbox(text,buttontext) {
 		}
 	    }]
 	});
+}
+function generateRandomPoint (latitude,longitude,height,diff,radius) {
+
+	//console.log('height: '+height+' - diff: '+diff);
+	radius = Math.random()*radius;
+	latitude = latitude*(Math.PI/180.0);
+	longitude = longitude*(Math.PI/180.0);
+	
+	const sinLat = 	Math.sin(latitude)
+	const cosLat = 	Math.cos(latitude)
+
+	/* go fixed distance in random direction*/
+	const bearing = Math.random() * Math.PI*2
+	const theta = radius/6371000
+	const sinBearing = Math.sin(bearing)
+	const cosBearing = Math.cos(bearing)
+	const sinTheta = Math.sin(theta)
+	const cosTheta = Math.cos(theta)
+    
+	latitude = Math.asin(sinLat*cosTheta+cosLat*sinTheta*cosBearing);
+	longitude = longitude + Math.atan2( sinBearing*sinTheta*cosLat, cosTheta-sinLat*Math.sin(latitude ));
+	/* normalize -PI -> +PI radians */
+	longitude = ((longitude+(Math.PI*3))%(Math.PI*2))-Math.PI
+	var h = height+(Math.random()*diff)
+	//console.log('h: '+h);
+	return {
+	    latitude: latitude/(Math.PI/180.0),
+	    longitude: longitude/(Math.PI/180.0),
+	    height: h
+	};
+
 }

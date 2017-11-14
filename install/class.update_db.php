@@ -2837,6 +2837,37 @@ class update_db {
 		if ($error != '') {
 			return $error;
 		} elseif ($globalDebug) echo "Done\n";
+		if ($globalDebug) echo "Weather Models from FlightAirMap website : Download...";
+		update_db::download('http://data.flightairmap.com/data/models/gltf2/weather/models.md5sum',$tmp_dir.'modelsweather.md5sum');
+		if (file_exists($tmp_dir.'modelsweather.md5sum')) {
+			if ($globalDebug) echo "Check files...\n";
+			$newmodelsdb = array();
+			if (($handle = fopen($tmp_dir.'modelsweather.md5sum','r')) !== FALSE) {
+				while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+					$model = trim($row[2]);
+					$newmodelsdb[$model] = trim($row[0]);
+				}
+			}
+			$modelsdb = array();
+			if (file_exists(dirname(__FILE__).'/../models/gltf2/weather/models.md5sum')) {
+				if (($handle = fopen(dirname(__FILE__).'/../models/gltf2/weather/models.md5sum','r')) !== FALSE) {
+					while (($row = fgetcsv($handle,1000," ")) !== FALSE) {
+						$model = trim($row[2]);
+						$modelsdb[$model] = trim($row[0]);
+					}
+				}
+			}
+			$diff = array_diff($newmodelsdb,$modelsdb);
+			foreach ($diff as $key => $value) {
+				if ($globalDebug) echo 'Downloading model '.$key.' ...'."\n";
+				update_db::download('http://data.flightairmap.com/data/models/gltf2/weather/'.$key,dirname(__FILE__).'/../models/gltf2/weather/'.$key);
+				
+			}
+			update_db::download('http://data.flightairmap.com/data/models/gltf2/weather/models.md5sum',dirname(__FILE__).'/../models/gltf2/weather/models.md5sum');
+		} else $error = "File ".$tmp_dir.'modelsweather.md5sum'." doesn't exist. Download failed.";
+		if ($error != '') {
+			return $error;
+		} elseif ($globalDebug) echo "Done\n";
 		return '';
 	}
 

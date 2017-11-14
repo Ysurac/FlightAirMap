@@ -54,16 +54,20 @@ function update_airportsLayer() {
 		
 	
 	//var airport_geojson = new Cesium.GeoJsonDataSource.load("<?php print $globalURL; ?>/airport-geojson.php?coord="+bbox());
-	var airport_geojson = new Cesium.GeoJsonDataSource.load("<?php print $globalURL; ?>/airport-geojson.php");
+	var airport_geojson = new Cesium.GeoJsonDataSource.load("<?php print $globalURL; ?>/airport-geojson.php", {clampToGround: true});
 	airport_geojson.then(function(data) {
 		for (var i =0;i < data.entities.values.length; i++) {
 			var billboard = new Cesium.BillboardGraphics();
 			billboard.image = data.entities.values[i].properties.icon;
 			billboard.scaleByDistance = new Cesium.NearFarScalar(1.0e2, 1, 2.0e6, 0.0);
 //			billboard.distanceDisplayCondition = new DistanceDisplayCondition(0.0,7000.0);
+			billboard.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
+			//billboard.eyeOffset = new Cesium.Cartesian3(0,0,-100);
+			billboard.eyeOffset = new Cesium.Cartesian3( 0, 0, -( camera.positionCartographic.height - 10000 ) );
 			data.entities.values[i].billboard = billboard;
-			data.entities.values[i].addProperty('type');
-			data.entities.values[i].type = 'airport';
+			data.entities.values[i].addProperty('properties');
+			data.entities.values[i].properties.addProperty('type');
+			data.entities.values[i].properties.type = 'airport';
 		}
 		viewer.dataSources.add(data);
 	});
@@ -626,7 +630,8 @@ handler_aircraft.setInputAction(function(click) {
 			var type = pickedObject.id.type;
 		}
 		//console.log(pickedObject.id.position.getValue(viewer.clock.currentTime));
-//		console.log(pickedObject.id);
+		//console.log(pickedObject.id);
+		//console.log(type);
 //		if (typeof pickedObject.id.lastupdate != 'undefined') {
 		if (type == 'flight') {
 			delCookie('MapTrack');

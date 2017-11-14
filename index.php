@@ -423,6 +423,13 @@ require_once('header.php');
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayairports" value="1" onclick="clickDisplayAirports(this)" <?php if (isset($_COOKIE['displayairports']) && $_COOKIE['displayairports'] == 'true' || !isset($_COOKIE['displayairports'])) print 'checked'; ?> ><?php echo _("Display airports on map"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displaygroundstation" value="1" onclick="clickDisplayGroundStation(this)" <?php if ((isset($_COOKIE['show_GroundStation']) && $_COOKIE['show_GroundStation'] == 'true') || (!isset($_COOKIE['show_GroundStation']) && (isset($globalMapGroundStation) && $globalMapGroundStation === TRUE))) print 'checked'; ?> ><?php echo _("Display ground station on map"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayweatherstation" value="1" onclick="clickDisplayWeatherStation(this)" <?php if ((isset($_COOKIE['show_WeatherStation']) && $_COOKIE['show_WeatherStation'] == 'true') || (!isset($_COOKIE['show_WeatherStation']) && (isset($globalMapWeatherStation) && $globalMapWeatherStation === TRUE))) print 'checked'; ?> ><?php echo _("Display weather station on map"); ?></label></div></li>
+<?php
+    if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+?>
+		    <li><div class="checkbox"><label><input type="checkbox" name="displayweather" value="1" onclick="clickDisplayWeather(this)" <?php if ((isset($_COOKIE['show_Weather']) && $_COOKIE['show_Weather'] == 'true') || (!isset($_COOKIE['show_Weather']) && (isset($globalMapWeather) && $globalMapWeather === TRUE))) print 'checked'; ?> ><?php echo _("Display weather on 3D map"); ?></label></div></li>
+<?php
+    }
+?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displaylightning" value="1" onclick="clickDisplayLightning(this)" <?php if ((isset($_COOKIE['show_Lightning']) && $_COOKIE['show_Lightning'] == 'true') || (!isset($_COOKIE['show_Lightning']) && (isset($globalMapLightning) && $globalMapLightning === TRUE))) print 'checked'; ?> ><?php echo _("Display lightning on map"); ?></label></div></li>
 <?php
 	if (isset($globalFires)) {
@@ -440,7 +447,9 @@ require_once('header.php');
     if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayminimap" value="1" onclick="clickDisplayMinimap(this)" <?php if (!isset($_COOKIE['displayminimap']) || (isset($_COOKIE['displayminimap']) && $_COOKIE['displayminimap'] == 'true')) print 'checked'; ?> ><?php echo _("Show mini-map"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="shadows" value="1" onclick="clickShadows(this)" <?php if ((!isset($_COOKIE['map3dnoshadows']) && (!isset($globalMap3DShadows) || $globalMap3DShadows)) || (isset($_COOKIE['map3dnoshadows']) && $_COOKIE['map3dnoshadows'] == 'false')) print 'checked'; ?> ><?php echo _("Use shadows"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="one3dmodel" value="1" onclick="useOne3Dmodel(this)" <?php if ((isset($_COOKIE['one3dmodel']) && $_COOKIE['one3dmodel'] == 'true') || (!isset($_COOKIE['one3dmodel']) && isset($globalMap3DOneModel) && $globalMap3DOneModel)) print 'checked'; ?> ><?php echo _("Use same 3D model for all aircraft (use fewer resources)"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="updaterealtime" value="1" onclick="clickUpdateRealtime(this)" <?php if ((isset($_COOKIE['updaterealtime']) && $_COOKIE['updaterealtime'] == 'true') || !isset($_COOKIE['updaterealtime'])) print 'checked'; ?> ><?php echo _("Display realtime data in infobox"); ?></label></div></li>
 <?php
     }
     if (time() > mktime(0,0,0,12,1,date("Y")) && time() < mktime(0,0,0,12,31,date("Y"))) {
