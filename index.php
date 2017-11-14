@@ -424,7 +424,7 @@ require_once('header.php');
 		    <li><div class="checkbox"><label><input type="checkbox" name="displaygroundstation" value="1" onclick="clickDisplayGroundStation(this)" <?php if ((isset($_COOKIE['show_GroundStation']) && $_COOKIE['show_GroundStation'] == 'true') || (!isset($_COOKIE['show_GroundStation']) && (isset($globalMapGroundStation) && $globalMapGroundStation === TRUE))) print 'checked'; ?> ><?php echo _("Display ground station on map"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayweatherstation" value="1" onclick="clickDisplayWeatherStation(this)" <?php if ((isset($_COOKIE['show_WeatherStation']) && $_COOKIE['show_WeatherStation'] == 'true') || (!isset($_COOKIE['show_WeatherStation']) && (isset($globalMapWeatherStation) && $globalMapWeatherStation === TRUE))) print 'checked'; ?> ><?php echo _("Display weather station on map"); ?></label></div></li>
 <?php
-    if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
+    if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d' && isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalMETARcycle) {
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayweather" value="1" onclick="clickDisplayWeather(this)" <?php if ((isset($_COOKIE['show_Weather']) && $_COOKIE['show_Weather'] == 'true') || (!isset($_COOKIE['show_Weather']) && (isset($globalMapWeather) && $globalMapWeather === TRUE))) print 'checked'; ?> ><?php echo _("Display weather on 3D map"); ?></label></div></li>
 <?php
