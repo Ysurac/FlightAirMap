@@ -416,7 +416,11 @@ function create_clouds(cposition) {
 				var prevcolor = timecolors[Math.ceil(timecolorsstep)];
 				var nextcolor = timecolors[Math.round(timecolorsstep)];
 			} else {
-				var prevcolor = timecolors[Math.round(timecolorsstep)-1];
+				if (Math.round(timecolorsstep) == 0) {
+					var prevcolor = timecolors[0];
+				} else {
+					var prevcolor = timecolors[Math.round(timecolorsstep)-1];
+				}
 				var nextcolor = timecolors[Math.round(timecolorsstep)];
 			}
 			var currentcolor = getColor(prevcolor,nextcolor,3*60,(timecolorsstep%3)*60+cminute);
