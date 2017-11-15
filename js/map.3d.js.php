@@ -389,7 +389,10 @@ function create_clouds(cposition) {
 	//console.log('Create clouds');
 	cloudscenter = cposition;
 	$.getJSON('/weather-json.php?latitude='+Cesium.Math.toDegrees(cposition.latitude)+'&longitude='+Cesium.Math.toDegrees(cposition.longitude),function(data) {
-		delete_clouds();
+		//delete_clouds();
+		var ctime = Cesium.JulianDate.toGregorianDate(viewer.clock.currentTime);
+		var chour = ctime['hour'];
+		var cminute = ctime['minute'];
 		var datasource = new Cesium.CustomDataSource('clouds');
 		var clouds = {ci: ['cirrocumulus1.glb','cirrocumulus2.glb','cirrocumulus3.glb','cirrocumulus4.glb','cirrocumulus5.glb','cirrocumulus6.glb','cirrocumulus7.glb','cirrocumulus8.glb','cirrocumulus9.glb'], 
 		    ac: ['altocumulus1.glb','altocumulus2.glb','altocumulus3.glb','altocumulus4.glb','altocumulus5.glb','altocumulus6.glb'], 
@@ -400,18 +403,28 @@ function create_clouds(cposition) {
 		    st: ['stratus1.png','stratus2.png','stratus3.png','stratus4.png','stratus5.png','stratus6.png'],
 		    sc: ['congestus1.png','congestus2.png','congestus3.png'],
 		    cu: ['cumulus1.png','cumulus2.png','cumulus3.png','cumulus4.png','cumulus5.png','cumulus6.png','cumulus7.png','cumulus8.png','cumulus9.png']};
-		//console.log(clouds);
-	
 		for (var i = 0; i < data.length; i++) {
-			//console.log(data[i]);
 			var height = data[i]['alt'];
 			var cov = data[i]['cov'];
 			var cloud = clouds[data[i]['type']];
 			var cloudb = cloudsb[data[i]['type']];
 			var rh = data[i]['rh'];
+			var timecolors = [[100,100,100],[100,100,100],[255,150,100],[255,255,255],[255,255,255],[255,255,255],[255,150,100],[100,100,100]];
+			var timecolorsstep = chour/24*10;
+			if (Math.round(timecolorsstep) > Math.ceil(timecolorsstep)) {
+				console.log(Math.ceil(timecolorsstep));
+				var prevcolor = timecolors[Math.ceil(timecolorsstep)];
+				var nextcolor = timecolors[Math.round(timecolorsstep)];
+			} else {
+				var prevcolor = timecolors[Math.round(timecolorsstep)-1];
+				var nextcolor = timecolors[Math.round(timecolorsstep)];
+			}
+			var currentcolor = getColor(prevcolor,nextcolor,3*60,(timecolorsstep%3)*60+cminute);
+			var color = new Cesium.Color.multiply(new Cesium.Color(rh/100,rh/100,rh/100,1),new Cesium.Color.fromBytes(currentcolor['r'],currentcolor['v'],currentcolor['b'],255), new Cesium.Color());
+
 			if (typeof cloudb != 'undefined') {
-				for (j = 0; j < 1000*cov; j++) {
-					var cloudcoord = generateRandomPoint(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude), height,240,50000);
+				for (j = 0; j < 2000*cov; j++) {
+					var cloudcoord = generateRandomPoint(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude), height,240,70000);
 					var position = Cesium.Cartesian3.fromDegrees(cloudcoord['longitude'],cloudcoord['latitude'],cloudcoord['alt']);
 					var heading = Cesium.Math.toRadians(135);
 					var pitch = 0;
@@ -433,17 +446,17 @@ function create_clouds(cposition) {
 						heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
 						//fillColor: Cesium.Color.fromCssColorString("#ffc107"),
 						//translucencyByDistance: new Cesium.NearFarScalar(200,.8,5E4,.2)
-						distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0,60000.0),
+						distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0,70000.0),
 						translucencyByDistance: new Cesium.NearFarScalar(1E5/2,.9,1E5,.3),
-						color: new Cesium.Color(rh/100,rh/100,rh/100,1),
+						color: color,
 						opacity: .9
 					    }
 					});
 				}
 			}
 			if (typeof cloud != 'undefined') {
-				for (j = 0; j < 1000*cov; j++) {
-					var cloudcoord = generateRandomPoint(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude), height,240,50000);
+				for (j = 0; j < 2000*cov; j++) {
+					var cloudcoord = generateRandomPoint(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude), height,240,70000);
 					//console.log(cloudcoord);
 					var position = Cesium.Cartesian3.fromDegrees(cloudcoord['longitude'],cloudcoord['latitude'],cloudcoord['alt']);
 					if (data[i]['type'] == 'st') {
@@ -465,9 +478,9 @@ function create_clouds(cposition) {
 						minimumPixelSize : 1,
 						maximumScale : 20000,
 						heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
-						color: new Cesium.Color(rh/100,rh/100,rh/100,1),
+						color: color,
 						colorBlendMode: Cesium.ColorBlendMode.MIX,
-						distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0,60000.0),
+						distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0,70000.0),
 						allowPicking: false
 					    }
 					});
@@ -559,28 +572,30 @@ var MapTerrain = getCookie('MapTerrain');
 <?php
 	}
 ?>
-
-if (MapTerrain == 'stk' || MapTerrain == '') {
+function stkterrain() {
 	var cesiumTerrainProviderMeshes = new Cesium.CesiumTerrainProvider({
 		url : 'https://assets.agi.com/stk-terrain/world',
 		requestWaterMask : true,
 		requestVertexNormals : true
 	});
 	viewer.terrainProvider = cesiumTerrainProviderMeshes;
-} else if (MapTerrain == 'articdem') {
+}
+function articterrain() {
 	var cesiumTerrainProviderMeshesArtic = new Cesium.CesiumTerrainProvider({
 		url : 'https://assets.agi.com/stk-terrain/v1/tilesets/ArticDEM/tiles',
 		requestWaterMask : true,
 		requestVertexNormals : true
 	});
 	viewer.terrainProvider = cesiumTerrainProviderMeshesArtic;
-} else if (MapTerrain == 'ellipsoid') {
+}
+function ellipsoidterrain() {
 	var ellipsoidProvider = new Cesium.EllipsoidTerrainProvider({
 		requestWaterMask : true,
 		requestVertexNormals : true
 	});
 	viewer.terrainProvider = ellipsoidProvider;
-} else if (MapTerrain == 'vrterrain') {
+}
+function vrtheworldterrain() {
 	var vrTheWorldProvider = new Cesium.VRTheWorldTerrainProvider({
 		url : 'http://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
 		requestWaterMask : true,
@@ -589,7 +604,15 @@ if (MapTerrain == 'stk' || MapTerrain == '') {
 	});
 	viewer.terrainProvider = vrTheWorldProvider;
 }
-
+if (MapTerrain == 'stk' || MapTerrain == '') {
+	stkterrain();
+} else if (MapTerrain == 'articdem') {
+	articterrain();
+} else if (MapTerrain == 'ellipsoid') {
+	ellipsoidterrain();
+} else if (MapTerrain == 'vrterrain') {
+	vrtheworldterrain();
+}
 
 // Water effect
 
@@ -610,8 +633,9 @@ viewer.scene.globe.tileCacheSize = 1000;
 if (getCookie('resolutionScale') != '') {
 	viewer.resolutionScale = getCookie('resolutionScale');
 }
-/*
+
 //viewer.scene.globe.maximumScreenSpaceError = 1;
+
 
 // ShadowMap
 viewer.shadowMap.pointLightRadius = 100;
@@ -620,13 +644,14 @@ viewer.shadowMap.maximumDistance = 3E3;
 viewer.shadowMap.size = 2048;
 viewer.shadowMap.softShadows = true;
 viewer.shadowMap.darkness = .3;
-*/
+
+
 // Color
 //viewer.scene.globe.imageryLayers._layers[0].contrast = 1.1;
 //viewer.scene.globe.imageryLayers._layers[0].saturation = 1.1;
-//viewer.scene.skyAtmosphere.brightnessShift = 0.9;
+viewer.scene.skyAtmosphere.brightnessShift = 0.4;
 //viewer.scene.skyAtmosphere.saturationShift = 0.7;
-  
+
 
 if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
 	CesiumMiniMap(viewer, {osm: true});
@@ -659,14 +684,10 @@ viewer.camera.moveEnd.addEventListener(function() {
 
 var handler_all = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
 handler_all.setInputAction(function(click) {
-	//console.log(click);
 	var pickedObject = viewer.scene.pick(click.position);
-	//console.log(pickedObject);
-	// viewer.trackedEntity
 	if (Cesium.defined(pickedObject) && getCookie('show_Weather')) {
-		//console.log(pickedObject);
+		delete_clouds();
 		var cposition = pickedObject.id.position.getValue(viewer.clock.currentTime);
-		//console.log(cposition);
 		create_clouds(viewer.scene.globe.ellipsoid.cartesianToCartographic(cposition));
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -737,7 +758,7 @@ viewer.clock.onTick.addEventListener(function(clock) {
 				var cposition = viewer.trackedEntity.position.getValue(viewer.clock.currentTime);
 				var ellipsoidGeodesic = new Cesium.EllipsoidGeodesic(Cesium.Cartographic.fromCartesian(cposition),cloudscenter);
 				var distance = ellipsoidGeodesic.surfaceDistance;
-				if (distance > 15000) {
+				if (distance > 25000) {
 					create_clouds(viewer.scene.globe.ellipsoid.cartesianToCartographic(cposition));
 				}
 			}

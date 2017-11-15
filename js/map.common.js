@@ -77,7 +77,16 @@ function terrainType(selectObj) {
     var type = atype.split('-');
     document.cookie =  'MapTerrain='+type+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
     createCookie('MapTerrain',type,9999);
-    window.location.reload();
+    if (type == 'stk') {
+	stkterrain();
+    } else if (type == 'articdem') {
+	articterrain();
+    } else if (type == 'ellipsoid') {
+	ellipsoidterrain();
+    } else if (type == 'vrterrain') {
+	vrtheworldterrain();
+    }
+    //window.location.reload();
 }
 
 function sattypes(selectObj) {
@@ -302,5 +311,12 @@ function generateRandomPoint (latitude,longitude,height,diff,radius) {
 	    longitude: longitude/(Math.PI/180.0),
 	    height: h
 	};
-
+}
+function getColor(colorStart,colorEnd,colorCount,step) {
+	var alpha = (1.0/colorCount)*step;
+	return {
+	    r: colorStart[0]*alpha+(1-alpha)*colorEnd[0],
+	    v: colorStart[1]*alpha+(1-alpha)*colorEnd[1],
+	    b: colorStart[2]*alpha+(1-alpha)*colorEnd[2]
+	};
 }
