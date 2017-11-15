@@ -409,7 +409,7 @@ function create_clouds(cposition) {
 			var cloud = clouds[data[i]['type']];
 			var cloudb = cloudsb[data[i]['type']];
 			var rh = data[i]['rh'];
-			var timecolors = [[100,100,100],[100,100,100],[255,150,100],[255,255,255],[255,255,255],[255,255,255],[255,150,100],[100,100,100]];
+			var timecolors = [[100,100,100],[100,100,100],[255,150,100],[255,255,255],[255,255,255],[255,255,255],[255,150,100],[100,100,100],[100,100,100],[100,100,100],[100,100,100]];
 			var timecolorsstep = chour/24*10;
 			if (Math.round(timecolorsstep) > Math.ceil(timecolorsstep)) {
 				console.log(Math.ceil(timecolorsstep));
@@ -452,9 +452,36 @@ function create_clouds(cposition) {
 						opacity: .9
 					    }
 					});
+					/*
+					var position = Cesium.Cartesian3.fromDegrees(cloudcoord['longitude'],cloudcoord['latitude'],cloudcoord['alt']);
+					var urlb = '/images/weather/clouds/rain.png';
+					var entity = datasource.entities.add({
+					    name : url,
+					    position : position,
+					    orientation : orientation,
+					    billboard: {
+						image : urlb,
+						sizeInMeters: true,
+						scale: Math.random()*10.0,
+						horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+						verticalOrigin: Cesium.VerticalOrigin.TOP,
+						eyeOffset: new Cesium.Cartesian3(0,6,0),
+						heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+						//fillColor: Cesium.Color.fromCssColorString("#ffc107"),
+						//translucencyByDistance: new Cesium.NearFarScalar(200,.8,5E4,.2)
+						distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0,70000.0),
+						translucencyByDistance: new Cesium.NearFarScalar(1E5/2,.9,1E5,.3),
+						//color: color,
+						opacity: .9
+					    }
+					});
+					*/
 				}
 			}
+			//console.log(data[i]);
+			//console.log(cloud);
 			if (typeof cloud != 'undefined') {
+				console.log('models');
 				for (j = 0; j < 2000*cov; j++) {
 					var cloudcoord = generateRandomPoint(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude), height,240,70000);
 					//console.log(cloudcoord);
