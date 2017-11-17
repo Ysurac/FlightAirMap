@@ -118,7 +118,11 @@ function airlinestype(selectObj) {
 function racefilter(selectObj) {
     var idx = selectObj.selectedIndex;
     var race = selectObj.options[idx].value;
-    createCookie('filter_race',race,2);
+    if (race == 'all') {
+	delCookie('filter_race');
+    } else {
+	createCookie('filter_race',race,2);
+    }
 }
 function alliance(selectObj) {
     var idx = selectObj.selectedIndex;

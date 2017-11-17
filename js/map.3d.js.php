@@ -740,18 +740,19 @@ handler_all.setInputAction(function(click) {
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
+
 viewer.clock.onTick.addEventListener(function(clock) {
 	if (getCookie('updaterealtime') == true || getCookie('updaterealtime') == '') {
 		if (Cesium.defined(viewer.trackedEntity)) {
-			var position = viewer.trackedEntity.position.getValue(clock.currentTime);
+			var positionc = viewer.trackedEntity.position.getValue(clock.currentTime);
 			var nexttime = Cesium.JulianDate.addSeconds(clock.currentTime,2,new Cesium.JulianDate());
 			var positionn = viewer.trackedEntity.position.getValue(nexttime);
-			if (Cesium.defined(position)) {
-				var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(position);
+			if (Cesium.defined(positionc)) {
+				var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(positionc);
 				$(".latitude").html(Cesium.Math.toDegrees(coord.latitude).toFixed(5));
 				$(".longitude").html(Cesium.Math.toDegrees(coord.longitude).toFixed(5));
 				if (Cesium.defined(positionn)) {
-					var ellipsoidGeodesic = new Cesium.EllipsoidGeodesic(Cesium.Cartographic.fromCartesian(position),Cesium.Cartographic.fromCartesian(positionn));
+					var ellipsoidGeodesic = new Cesium.EllipsoidGeodesic(Cesium.Cartographic.fromCartesian(positionc),Cesium.Cartographic.fromCartesian(positionn));
 					var distance = ellipsoidGeodesic.surfaceDistance;
 					var speedbox = document.getElementById("realspeed");
 					if (speedbox != null) speedbox.style.visibility = "visible";
@@ -763,7 +764,6 @@ viewer.clock.onTick.addEventListener(function(clock) {
 						$(".realspeed").html(Math.round(distance/2*3.6*0,621371)+' mph');
 					}
 				}
-				
 				if (Cesium.defined(viewer.trackedEntity.orientation.getValue(clock.currentTime))) {
 					var heading = Cesium.Math.toDegrees(Cesium.Quaternion.computeAngle(viewer.trackedEntity.orientation.getValue(clock.currentTime))).toFixed(0);
 					$(".heading").html(heading);
@@ -797,6 +797,7 @@ viewer.clock.onTick.addEventListener(function(clock) {
 			}
 		}
 	}
+	
 	if (getCookie('show_Weather')) {
 		if (Cesium.defined(viewer.trackedEntity)) {
 			if (typeof cloudscenter == 'undefined') {
