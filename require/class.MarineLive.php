@@ -764,9 +764,9 @@ class MarineLive {
 
 
 	/**
-	* Gets the marine race
+	* Gets the marine races
 	*
-	* @return String the ident
+	* @return Array all races
 	*
 	*/
 	public function getAllRaces()
@@ -774,7 +774,6 @@ class MarineLive {
 		$query  = 'SELECT DISTINCT marine_live.race_id, marine_live.race_name FROM marine_live ORDER BY marine_live.race_name';
 		$sth = $this->db->prepare($query);
 		$sth->execute();
-		$ident_result='';
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
