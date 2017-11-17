@@ -1345,7 +1345,7 @@ if (isset($_POST['dbtype'])) {
 		else $arch = 'FALSE';
 		if (strpos($format[$key],'_callback')) {
 			$gSources[] = array('host' => $h, 'pass' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch,'timezone' => $timezones[$key],'callback' => 'TRUE');
-		} elseif ($h != '' || $name[$key] != '') {
+		} elseif ($format[$key] != 'auto' || ($h != '' || $name[$key] != '')) {
 			$gSources[] = array('host' => $h, 'port' => $port[$key],'name' => $name[$key],'format' => $format[$key],'sourcestats' => $cov,'noarchive' => $arch,'timezone' => $timezones[$key],'callback' => 'FALSE');
 		}
 		if ($format[$key] == 'airwhere') $forcepilots = true;
