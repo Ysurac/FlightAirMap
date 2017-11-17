@@ -763,6 +763,7 @@ while ($i > 0) {
 								//$data['mmsi'] = (int)substr($line,0,9);
 								$data['id'] = $sail['usrnr'].'-'.$sail['ubtnr'];
 								$data['datetime'] = date('Y-m-d H:i:s');
+								$data['last_update'] = date('Y-m-d H:i:s');
 								$data['status'] = $sail['status'];
 								$data['type'] = $sail['btptype'];
 								$pos = $Common->convertDecLatLong($sail['pos']);
