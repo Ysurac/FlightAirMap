@@ -739,8 +739,9 @@ while ($i > 0) {
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
 	    )
 	) {
-	    if ($globalDebug) echo 'download...';
+	    if ($globalDebug) echo '! Download... ';
 	    for ($i =0; $i <= 1; $i++) {
+		    if ($globalDebug) echo 'Racetype: '.$i."\n";
 	    $buffer = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetMissions.pl?race=1&tutorial=0&hist=1&racetype='.$i);
 	    if ($globalDebug) echo 'done'."\n";
 	    if ($buffer != '') {
@@ -748,7 +749,7 @@ while ($i > 0) {
 		if (isset($all_data['missions'])) {
 			foreach ($all_data['missions'] as $mission) {
 				$mission_user = $mission['usrname'];
-				$mission_name = $mission['mistitle'];
+				$mission_name = iconv("utf-8", "utf-8//ignore",$mission['mistitle']);
 				if (!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race']))) {
 					$bufferm = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetLeaderboard.pl?misnr='.$mission['misnr']);
 				} else $bufferm = '';
@@ -766,13 +767,14 @@ while ($i > 0) {
 								$data['last_update'] = date('Y-m-d H:i:s');
 								$data['status'] = $sail['status'];
 								$data['type'] = $sail['btptype'];
+								$data['type_id'] = 36;
 								$pos = $Common->convertDecLatLong($sail['pos']);
 								$data['latitude'] = $pos['latitude'];
 								$data['longitude'] = $pos['longitude'];
 								$resultdescr = explode(',',$sail['resultdescr']);
 								$data['speed'] = round(str_replace(array('Spd: ','kn.'),'',trim($resultdescr[2]))*0.539957);
 								$data['heading'] = str_replace(array('Hdg: ','°'),'',trim($resultdescr[1]));
-								$data['ident'] = trim(utf8_encode($sail['ubtname']));
+								$data['ident'] = trim( preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$sail['ubtname']));
 								$data['captain_id'] = $sail['usrnr'];
 								$data['captain_name'] = $sail['usrname'];
 								$data['race_id'] = $sail['misnr'];
