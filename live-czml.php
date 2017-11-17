@@ -779,7 +779,11 @@ if (!empty($spotter_array) && is_array($spotter_array))
 						$output .= '},';
 					}
 				} elseif ($marine) {
-					$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/boat.glb","scale" : '.$scale.',"minimumPixelSize": '.$minimumpixelsize.'';
+					if ($spotter_item['type_id'] == 36) {
+						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/sail.glb","scale" : '.$scale.',"minimumPixelSize": '.$minimumpixelsize.'';
+					} else {
+						$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/boat.glb","scale" : '.$scale.',"minimumPixelSize": '.$minimumpixelsize.'';
+					}
 					//$output .= ',"heightReference": "'.$heightrelative.'"';
 					$output .= ',"heightReference": "CLAMP_TO_GROUND"';
 					if (isset($_COOKIE['MarineIconColorForce']) && $_COOKIE['MarineIconColorForce'] == 'true' && isset($_COOKIE['MarineIconColor'])) {

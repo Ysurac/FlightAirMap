@@ -40,7 +40,7 @@ if (isset($_GET['fammarine_id'])) {
 		if (empty($spotter_array)) {
 			$from_archive = true;
 //			$spotter_array = $SpotterArchive->getLastArchiveSpotterDataById($flightaware_id);
-			$spotter_array = $MarineArchive->getDateArchiveMarineDataById($flightaware_id,$currenttime);
+			$spotter_array = $MarineArchive->getDateArchiveMarineDataById($fammarine_id,$currenttime);
 		}
 		
 	} else {
@@ -48,7 +48,7 @@ if (isset($_GET['fammarine_id'])) {
 		
 		if (empty($spotter_array)) {
 			$from_archive = true;
-			$spotter_array = $MarineArchive->getLastArchiveMarineDataById($flightaware_id);
+			$spotter_array = $MarineArchive->getLastArchiveMarineDataById($fammarine_id);
 		}
 		
 	}
