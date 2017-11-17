@@ -204,7 +204,8 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$filter = $previous_filter;
 } elseif ($marine) {
 	$coord = array();
-	if (isset($_GET['coord']) && $_GET['coord'] != '') {
+	//if (isset($_GET['coord']) && $_GET['coord'] != '') {
+	if (!((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrackMarine']) && $_COOKIE['MapTrackMarine'] != '')) && isset($_GET['coord']) && $_GET['coord'] != '') {
 		$coord = explode(',',$_GET['coord']);
 		if (!(filter_var($coord[0],FILTER_VALIDATE_FLOAT) && filter_var($coord[1],FILTER_VALIDATE_FLOAT) && filter_var($coord[2],FILTER_VALIDATE_FLOAT) && filter_var($coord[3],FILTER_VALIDATE_FLOAT) 
 		    && $coord[0] > -180.0 && $coord[0] < 180.0 && $coord[1] > -90.0 && $coord[1] < 90.0 && $coord[2] > -180.0 && $coord[2] < 180.0 && $coord[3] > -90.0 && $coord[3] < 90.0)) {
@@ -215,10 +216,8 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	if ((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrackMarine']) && $_COOKIE['MapTrackMarine'] != '')) {
 		$filter = array_merge($filter,array('id' => $_COOKIE['MapTrackMarine']));
 		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true);
-	/*
-	} elseif (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '' && !empty($coord)) {
+	} elseif (isset($_COOKIE['MapTrackMarine']) && $_COOKIE['MapTrackMarine'] != '' && !empty($coord)) {
 		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true,$_COOKIE['MapTrack']);
-	*/
 	} elseif (!isset($_COOKIE['singlemodel']) || $_COOKIE['singlemodel'] == 'false') {
 		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true);
 	} else {
@@ -781,8 +780,8 @@ if (!empty($spotter_array) && is_array($spotter_array))
 					}
 				} elseif ($marine) {
 					$output .= '"model": {"gltf" : "'.$globalURL.'/models/vehicules/boat.glb","scale" : '.$scale.',"minimumPixelSize": '.$minimumpixelsize.'';
-					$output .= ',"heightReference": "'.$heightrelative.'"';
-					//$output .= ',"heightReference": "CLAMP_TO_GROUND"';
+					//$output .= ',"heightReference": "'.$heightrelative.'"';
+					$output .= ',"heightReference": "CLAMP_TO_GROUND"';
 					if (isset($_COOKIE['MarineIconColorForce']) && $_COOKIE['MarineIconColorForce'] == 'true' && isset($_COOKIE['MarineIconColor'])) {
 						$rgb = $Common->hex2rgb($_COOKIE['MarineIconColor']);
 						$output .= ',"color": {"rgba" : ['.$rgb[0].','.$rgb[1].','.$rgb[2].',255]}';
