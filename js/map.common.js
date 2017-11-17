@@ -115,6 +115,11 @@ function airlinestype(selectObj) {
     var airtype = selectObj.options[idx].value;
     createCookie('filter_airlinestype',airtype,2);
 }
+function racefilter(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var race = selectObj.options[idx].value;
+    createCookie('filter_race',race,2);
+}
 function alliance(selectObj) {
     var idx = selectObj.selectedIndex;
     var alliance = selectObj.options[idx].value;

@@ -48,7 +48,7 @@ class Weather {
 			$result[] = array('cov' => $coverage_norm, 'type' => $layer_type,'alt' => $alt_m,'rh' => $metar['rh']);
 		}
 		if (count($result) < 2 && $metar['rh'] > 60) {
-			$result[] = array('cov' => 0.75, 'type' => 'cu','alt' => 4000,'rh' => $metar['rh']);
+			$result[] = array('cov' => 0.75, 'type' => 'ci','alt' => 4000,'rh' => $metar['rh']);
 		}
 		return $result;
 	}

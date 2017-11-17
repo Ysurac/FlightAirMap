@@ -25,7 +25,9 @@ while($ew) {
 	if (!empty($met)) {
 		$parsed = $METAR->parse($met[0]['metar']);
 		//print_r($parsed);
-		if (isset($parsed['cloud'])) {
+		if (isset($parsed['weather']) && $parsed['weather'] == 'CAVOK') {
+			echo json_encode(array());
+		} elseif (isset($parsed['cloud'])) {
 			$result = $Weather->buildcloudlayer($parsed);
 			if (!empty($result)) {
 				//print_r($met);

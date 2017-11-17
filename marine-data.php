@@ -100,7 +100,23 @@ print '</div>';
 print '<div><span>'._("Coordinates").'</span><span class="latitude">'.$spotter_item['latitude'].'</span>, <span class="longitude">'.$spotter_item['longitude'].'</span></div>';
 print '<div><span>'._("Type").'</span>'.$spotter_item['type'].'</div>';
 print '<div><span>'._("Heading").'</span><span class="heading">'.$spotter_item['heading'].'</span>°</div>';
-print '<div><span>'._("MMSI").'</span>'.$spotter_item['mmsi'].'</div>';
+if (isset($spotter_item['mmsi']) && $spotter_item['mmsi'] != '') {
+	print '<div><span>'._("MMSI").'</span>'.$spotter_item['mmsi'].'</div>';
+}
+if (isset($spotter_item['captain_name']) && $spotter_item['captain_name'] != '') {
+	if (isset($spotter_item['captain_id']) && $spotter_item['captain_id'] != '') {
+		print '<div><span>'._("Captain").'</span>'.$spotter_item['captain_name'].' ('.$spotter_item['captain_id'].')</div>';
+	} else {
+		print '<div><span>'._("Captain").'</span>'.$spotter_item['captain_name'].'</div>';
+	}
+}
+if (isset($spotter_item['race_name']) && $spotter_item['race_name'] != '') {
+	if (isset($spotter_item['race_id']) && $spotter_item['race_id'] != '') {
+		print '<div><span>'._("Race").'</span>'.$spotter_item['race_name'].' ('.$spotter_item['race_id'].')</div>';
+	} else {
+		print '<div><span>'._("Race").'</span>'.$spotter_item['race_name'].'</div>';
+	}
+}
 if (isset($spotter_item['over_country']) && $spotter_item['over_country'] != '') {
 	print '<div><span>'._("Over country").'</span>';
 	print $spotter_item['over_country'];

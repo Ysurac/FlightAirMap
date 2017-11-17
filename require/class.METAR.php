@@ -200,13 +200,14 @@ class METAR {
 						$result['visibility'] = (float)$matches[1];
 					}
 				}
-				if (preg_match('#^CAVOK$#', $piece, $matches)) {
-					$result['visibility'] = '> 10000';
-					$result['weather'] = "CAVOK";
-				}
 			}
+			if (preg_match('#^CAVOK$#', $piece, $matches)) {
+				$result['visibility'] = '> 10000';
+				$result['weather'] = "CAVOK";
+			}
+			
 			// Cloud Coverage
-			if (preg_match('#^(SKC|CLR|FEW|SCT|BKN|OVC|VV)([0-9]{3})(AC|CB|CBS|CC|CS|TCU|CU|CI)?$#', $piece, $matches)) {
+			if (preg_match('#^(SKC|CLR|FEW|SCT|BKN|OVC|VV)([0-9]{3})(AC|CB|CBS|CC|CS|TCU|CU|CI|///)?$#', $piece, $matches)) {
 				//$this->addCloudCover($matches[1], ((float)$matches[2]) * 100, isset($matches[3]) ? $matches[3] : '');
 				$type = $matches[1];
 				$cloud = array();

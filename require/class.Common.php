@@ -320,6 +320,29 @@ class Common {
 		return $deg+(($min*60)/3600);
 	}
 	
+	public function convertDecLatLong($coord) {
+		//N43°36.763' W5°46.845'
+		$coords = explode(' ',$coord);
+		$latitude = '';
+		$longitude = '';
+		foreach ($coords as $latlong) {
+			$type = substr($latlong,0,1);
+			$degmin = explode('°',substr($latlong,1,-1));
+			$deg = $degmin[0];
+			$min = $degmin[1];
+			if ($type == 'N') {
+				$latitude = $deg+(($min*60)/3600);
+			} elseif ($type == 'S') {
+				$latitude = -($deg+(($min*60)/3600));
+			} elseif ($type == 'E') {
+				$longitude = ($deg+(($min*60)/3600));
+			} elseif ($type == 'W') {
+				$longitude = -($deg+(($min*60)/3600));
+			}
+		}
+		return array('latitude' => round($latitude,5),'longitude' => round($longitude,5));
+	}
+	
 	public function convertDM($coord,$latlong) {
 		if ($latlong == 'latitude') {
 			if ($coord < 0) $NSEW = 'S';

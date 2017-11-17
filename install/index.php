@@ -484,6 +484,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<label for="acars">ACARS</label>
 				</p>
 			</p>
+			<p>
+				<b>Virtual marine</b>
+				<p>
+				<input type="checkbox" name="globalvm" id="vm" value="vm" <?php if (isset($globalVM) && $globalVM) { ?>checked="checked" <?php } ?>/>
+				<label for="va">Virtual Marine</label>
+			</p>
+
 <!--
 			<div id="flightaware_data">
 				<p>
@@ -576,6 +583,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="airwhere" <?php if (isset($source['format']) && $source['format'] == 'airwhere') print 'selected'; ?>>AirWhere website</option>
 										<option value="hidnseek_callback" <?php if (isset($source['format']) && $source['format'] == 'hidnseek_callback') print 'selected'; ?>>HidnSeek Callback</option>
 										<option value="blitzortung" <?php if (isset($source['format']) && $source['format'] == 'blitzortung') print 'selected'; ?>>Blitzortung</option>
+										<option value="sailaway" <?php if (isset($source['format']) && $source['format'] == 'sailaway') print 'selected'; ?>>Sailaway</option>
 									</select>
 								</td>
 								<td>
@@ -631,6 +639,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="airwhere">AirWhere website</option>
 										<option value="hidnseek_callback">HidnSeek Callback</option>
 										<option value="blitzortung">Blitzortung</option>
+										<option value="sailaway">Sailaway</option>
 									</select>
 								</td>
 								<td>
@@ -1282,6 +1291,7 @@ if (isset($_POST['dbtype'])) {
 
 	$globalvatsim = filter_input(INPUT_POST,'globalvatsim',FILTER_SANITIZE_STRING);
 	$globalva = filter_input(INPUT_POST,'globalva',FILTER_SANITIZE_STRING);
+	$globalvm = filter_input(INPUT_POST,'globalvm',FILTER_SANITIZE_STRING);
 	$globalivao = filter_input(INPUT_POST,'globalivao',FILTER_SANITIZE_STRING);
 	$globalphpvms = filter_input(INPUT_POST,'globalphpvms',FILTER_SANITIZE_STRING);
 	$globalvam = filter_input(INPUT_POST,'globalvam',FILTER_SANITIZE_STRING);
@@ -1485,7 +1495,11 @@ if (isset($_POST['dbtype'])) {
 		if ($forcepilots) $settings = array_merge($settings,array('globalUsePilot' => 'TRUE','globalUseOwner' => 'FALSE'));
 		else $settings = array_merge($settings,array('globalUsePilot' => 'FALSE','globalUseOwner' => 'TRUE'));
 	}
-	
+	if ($globalvm == 'vm') {
+		$settings = array_merge($settings,array('globalVM' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalVM' => 'FALSE'));
+	}
 	
 	$mapoffline = filter_input(INPUT_POST,'mapoffline',FILTER_SANITIZE_STRING);
 	if ($mapoffline == 'mapoffline') {

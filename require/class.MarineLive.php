@@ -54,6 +54,9 @@ class MarineLive {
 		if (isset($filter['mmsi']) && !empty($filter['mmsi'])) {
 			$filter_query_where .= " AND mmsi = '".$filter['mmsi']."'";
 		}
+		if (isset($filter['race']) && !empty($filter['race'])) {
+			$filter_query_where .= " AND race_id = '".$filter['race']."'";
+		}
 		if ((isset($filter['year']) && $filter['year'] != '') || (isset($filter['month']) && $filter['month'] != '') || (isset($filter['day']) && $filter['day'] != '')) {
 			$filter_query_date = '';
 			
@@ -154,10 +157,10 @@ class MarineLive {
 
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		if ($globalDBdriver == 'mysql') {
-			$query  = 'SELECT marine_live.mmsi, marine_live.ident, marine_live.type,marine_live.fammarine_id, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+			$query  = 'SELECT marine_live.mmsi, marine_live.ident, marine_live.type,marine_live.fammarine_id, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name 
 			FROM marine_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM marine_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.fammarine_id) s on marine_live.fammarine_id = s.fammarine_id AND marine_live.date = s.maxdate'.$filter_query." marine_live.latitude <> 0 AND marine_live.longitude <> 0";
 		} else {
-			$query  = "SELECT marine_live.mmsi, marine_live.ident, marine_live.type,marine_live.fammarine_id, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+			$query  = "SELECT marine_live.mmsi, marine_live.ident, marine_live.type,marine_live.fammarine_id, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name 
 			FROM marine_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM marine_live l WHERE CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.fammarine_id) s on marine_live.fammarine_id = s.fammarine_id AND marine_live.date = s.maxdate".$filter_query." marine_live.latitude <> '0' AND marine_live.longitude <> '0'";
 		}
 
@@ -197,11 +200,11 @@ class MarineLive {
 		if (!isset($globalMap3DMarinesLimit) || $globalMap3DMarinesLimit == '') $globalMap3DMarinesLimit = '300';
 		if ($globalDBdriver == 'mysql') {
 			if (isset($globalArchive) && $globalArchive === TRUE) {
-				$query  = 'SELECT * FROM (SELECT marine_archive.ident, marine_archive.fammarine_id,marine_archive.type, marine_archive.latitude, marine_archive.longitude, marine_archive.heading, marine_archive.ground_speed, marine_archive.date, marine_archive.format_source 
+				$query  = 'SELECT * FROM (SELECT marine_archive.ident, marine_archive.fammarine_id,marine_archive.type, marine_archive.latitude, marine_archive.longitude, marine_archive.heading, marine_archive.ground_speed, marine_archive.date, marine_archive.format_source, marine_live.captain_name 
 				    FROM marine_archive INNER JOIN (SELECT fammarine_id FROM marine_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= marine_live.date) l ON l.fammarine_id = marine_archive.fammarine_id ";
 				if ($usecoord) $query .= "AND marine_archive.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_archive.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
 				$query .= "UNION
-				    SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				    SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name 
 				    FROM marine_live".$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= marine_live.date";
 				if ($usecoord) $query .= " AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
 				$query .= ") AS marine 
@@ -209,7 +212,7 @@ class MarineLive {
 				    ORDER BY fammarine_id, date";
 				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
 			} else {
-				$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name 
 				    FROM marine_live'.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval." SECOND) <= marine_live.date ";
 				if ($usecoord) $query .= "AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
 				$query .= "AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' 
@@ -218,18 +221,18 @@ class MarineLive {
 			}
 		} else {
 			if (isset($globalArchive) && $globalArchive === TRUE) {
-				$query  = "SELECT * FROM (SELECT marine_archive.ident, marine_archive.fammarine_id, marine_archive.type,marine_archive.latitude, marine_archive.longitude, marine_archive.heading, marine_archive.ground_speed, marine_archive.date, marine_archive.format_source 
+				$query  = "SELECT * FROM (SELECT marine_archive.ident, marine_archive.fammarine_id, marine_archive.type,marine_archive.latitude, marine_archive.longitude, marine_archive.heading, marine_archive.ground_speed, marine_archive.date, marine_archive.format_source, marine_live.captain_name 
 				    FROM marine_archive INNER JOIN (SELECT fammarine_id FROM marine_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date) l ON l.fammarine_id = marine_archive.fammarine_id ";
 				if ($usecoord) $query .= "AND marine_archive.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_archive.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
 				$query .= "UNION
-				    SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				    SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name 
 				    FROM marine_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date";
 				if ($usecoord) $query .= " AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong;
 				$query .= ") AS marine WHERE latitude <> '0' AND longitude <> '0' ";
 				$query .= "ORDER BY fammarine_id, date";
 				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
 			} else {
-				$query  = "SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				$query  = "SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name 
 				    FROM marine_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date ";
 				if ($usecoord) $query .= "AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong." ";
 				$query .= "AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' 
@@ -337,13 +340,13 @@ class MarineLive {
 		*/
 		if ($globalDBdriver == 'mysql') {
 			if (isset($globalArchive) && $globalArchive === TRUE) {
-				$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name 
 				    FROM marine_live 
 				    '.$filter_query.' DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= marine_live.date 
 				    AND marine_live.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND marine_live.longitude BETWEEN '.$minlong.' AND '.$maxlong.'
 				    AND marine_live.latitude <> 0 AND marine_live.longitude <> 0 ORDER BY date DESC';
 			} else {
-				$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name 
 				    FROM marine_live 
 				    INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate 
 				    FROM marine_live l 
@@ -355,14 +358,14 @@ class MarineLive {
 			}
 		} else {
 			if (isset($globalArchive) && $globalArchive === TRUE) {
-				$query  = "SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				$query  = "SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name 
 				    FROM marine_live 
 				    ".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date 
 				    AND marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." 
 				    AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong." 
 				    AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' ORDER BY date DESC";
 			} else {
-				$query  = "SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source 
+				$query  = "SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name 
 				    FROM marine_live 
 				    INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate 
 				    FROM marine_live l 
@@ -761,6 +764,21 @@ class MarineLive {
 
 
 	/**
+	* Gets the marine race
+	*
+	* @return String the ident
+	*
+	*/
+	public function getAllRaces()
+	{
+		$query  = 'SELECT DISTINCT marine_live.race_id, marine_live.race_name FROM marine_live ORDER BY marine_live.race_name';
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+		$ident_result='';
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	/**
 	* Gets the aircraft ident within the last hour
 	*
 	* @return String the ident
@@ -903,7 +921,7 @@ class MarineLive {
 	* @return String success or false
 	*
 	*/
-	public function addLiveMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '')
+	public function addLiveMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '',$captain_id = '',$captain_name = '',$race_id = '', $race_name = '')
 	{
 		global $globalURL, $globalArchive, $globalDebug;
 		$Common = new Common();
@@ -973,6 +991,10 @@ class MarineLive {
 		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 		$arrival_code = filter_var($arrival_code,FILTER_SANITIZE_STRING);
 		$arrival_date = filter_var($arrival_date,FILTER_SANITIZE_STRING);
+		$captain_id = filter_var($captain_id,FILTER_SANITIZE_STRING);
+		$captain_name = filter_var($captain_name,FILTER_SANITIZE_STRING);
+		$race_id = filter_var($race_id,FILTER_SANITIZE_STRING);
+		$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
 		if ($typeid == '') $typeid = NULL;
 		if ($statusid == '') $statusid = NULL;
 
@@ -984,9 +1006,9 @@ class MarineLive {
 			if ($globalDebug) echo '-- Delete previous data -- ';
 			$query .= 'DELETE FROM marine_live WHERE fammarine_id = :fammarine_id;';
 		}
-		$query .= 'INSERT INTO marine_live (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,type_id,status,status_id,imo,arrival_port_name,arrival_port_date) 
-		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:typeid,:status,:statusid,:imo,:arrival_port_name,:arrival_port_date)';
-		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':mmsi' => $mmsi,':type' => $type,':typeid' => $typeid,':status' => $status,':statusid' => $statusid,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
+		$query .= 'INSERT INTO marine_live (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,type_id,status,status_id,imo,arrival_port_name,arrival_port_date,captain_id,captain_name,race_id,race_name) 
+		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:typeid,:status,:statusid,:imo,:arrival_port_name,:arrival_port_date,:captain_id,:captain_name,:race_id,:race_name)';
+		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':mmsi' => $mmsi,':type' => $type,':typeid' => $typeid,':status' => $status,':statusid' => $statusid,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date,':captain_id' => $captain_id,':captain_name' => $captain_name,':race_id' => $race_id,':race_name' => $race_name);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -998,7 +1020,7 @@ class MarineLive {
 		if (isset($globalArchive) && $globalArchive && $putinarchive && $noarchive !== true) {
 			if ($globalDebug) echo '(Add to Marine archive : ';
 			$MarineArchive = new MarineArchive($this->db);
-			$result =  $MarineArchive->addMarineArchiveData($fammarine_id, $ident, $latitude, $longitude, $heading, $groundspeed, $date, $putinarchive, $mmsi,$type,$typeid,$imo, $callsign,$arrival_code,$arrival_date,$status,$statusid,$noarchive,$format_source, $source_name, $over_country);
+			$result =  $MarineArchive->addMarineArchiveData($fammarine_id, $ident, $latitude, $longitude, $heading, $groundspeed, $date, $putinarchive, $mmsi,$type,$typeid,$imo, $callsign,$arrival_code,$arrival_date,$status,$statusid,$noarchive,$format_source, $source_name, $over_country,$captain_id,$captain_name,$race_id,$race_name);
 			if ($globalDebug) echo $result.')';
 		}
 		return "success";

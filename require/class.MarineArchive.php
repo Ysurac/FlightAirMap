@@ -83,7 +83,7 @@ class MarineArchive {
 	}
 
 	// marine_archive
-	public function addMarineArchiveData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '') {
+	public function addMarineArchiveData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '',$captain_id = '',$captain_name = '',$race_id = '',$race_name = '') {
 		require_once(dirname(__FILE__).'/class.Marine.php');
 		if ($over_country == '') {
 			$Marine = new Marine($this->db);
@@ -94,10 +94,10 @@ class MarineArchive {
 		
 		//$country = $over_country;
 		// Route is not added in marine_archive
-		$query  = 'INSERT INTO marine_archive (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,type_id,status,status_id,imo,arrival_port_name,arrival_port_date) 
-		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:type_id,:status,:status_id,:imo,:arrival_port_name,:arrival_port_date)';
+		$query  = 'INSERT INTO marine_archive (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,type_id,status,status_id,imo,arrival_port_name,arrival_port_date,captain_id,captain_name,race_id,race_name) 
+		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:type_id,:status,:status_id,:imo,:arrival_port_name,:arrival_port_date,:captain_id,:captain_name,:race_id,:race_name)';
 
-		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $country,':mmsi' => $mmsi,':type' => $type,':type_id' => $typeid,':status' => $status,':status_id' => $statusid,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
+		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $country,':mmsi' => $mmsi,':type' => $type,':type_id' => $typeid,':status' => $status,':status_id' => $statusid,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date,':captain_id' => $captain_id,':captain_name' => $captain_name,':race_id' => $race_id,':race_name' => $race_name);
 
 		try {
 			$sth = $this->db->prepare($query);

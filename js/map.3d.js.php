@@ -58,6 +58,14 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	      'Open Database Licence'
 	});
 <?php
+	} elseif ($MapType == 'OpenSeaMap') {
+?>
+	var imProv = Cesium.createOpenStreetMapImageryProvider({
+		url : 'https://tiles.openseamap.org/seamark/',
+		credit: 'Map data © OpenSeaMap contributors, © OpenStreetMap contributors, ' +
+	      'Open Database Licence'
+	});
+<?php
 	} elseif ($MapType == 'Bing-Aerial') {
 ?>
 	var imProv = new Cesium.BingMapsImageryProvider({
@@ -90,6 +98,13 @@ document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 ?>
 	var imProv = new Cesium.ArcGisMapServerImageryProvider({
 		url : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer',
+		credit : 'ESRI'
+	});
+<?php
+	} elseif ($MapType == 'ArcGIS-Ocean') {
+?>
+	var imProv = new Cesium.ArcGisMapServerImageryProvider({
+		url : 'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer',
 		credit : 'ESRI'
 	});
 <?php
@@ -394,9 +409,9 @@ function create_clouds(cposition) {
 		var chour = ctime['hour'];
 		var cminute = ctime['minute'];
 		var datasource = new Cesium.CustomDataSource('clouds');
-		var clouds = {ci: ['cirrocumulus1.glb','cirrocumulus2.glb','cirrocumulus3.glb','cirrocumulus4.glb','cirrocumulus5.glb','cirrocumulus6.glb','cirrocumulus7.glb','cirrocumulus8.glb','cirrocumulus9.glb'], 
-		    ac: ['altocumulus1.glb','altocumulus2.glb','altocumulus3.glb','altocumulus4.glb','altocumulus5.glb','altocumulus6.glb'], 
-		    ns: ['nimbus1.glb','nimbus_sl1.glb','nimbus_sl2.glb','nimbus_sl3.glb','nimbus_sl4.glb','nimbus_sl5.glb','nimbus_sl6.glb']};
+		var clouds = {ci: ['cirrocumulus1.glb','cirrocumulus2.glb','cirrocumulus3.glb','cirrocumulus4.glb','cirrocumulus5.glb','cirrocumulus6.glb','cirrocumulus7.glb','cirrocumulus8.glb','cirrocumulus9.glb']}; 
+		    //ac: ['altocumulus1.glb','altocumulus2.glb','altocumulus3.glb','altocumulus4.glb','altocumulus5.glb','altocumulus6.glb'], 
+		    //ns: ['nimbus1.glb','nimbus_sl1.glb','nimbus_sl2.glb','nimbus_sl3.glb','nimbus_sl4.glb','nimbus_sl5.glb','nimbus_sl6.glb']};
 		    //st: ['stratus1.glb','stratus2.glb','stratus3.glb','stratus4.glb','stratus5.glb']};
 		    // st need to follow camera
 		var cloudsb = {ac: ['altocumulus1.png','altocumulus2.png','altocumulus3.png','altocumulus4.png','altocumulus5.png','altocumulus6.png','altocumulus7.png','altocumulus8.png','altocumulus9.png'], 
@@ -407,6 +422,8 @@ function create_clouds(cposition) {
 			var height = data[i]['alt'];
 			var cov = data[i]['cov'];
 			var cloud = clouds[data[i]['type']];
+			//var cloud = clouds['ci'];
+			//var cloudb = cloudsb['fg'];
 			var cloudb = cloudsb[data[i]['type']];
 			var rh = data[i]['rh'];
 			var timecolors = [[100,100,100],[100,100,100],[255,150,100],[255,255,255],[255,255,255],[255,255,255],[255,150,100],[100,100,100],[100,100,100],[100,100,100],[100,100,100]];
@@ -486,7 +503,7 @@ function create_clouds(cposition) {
 			//console.log(cloud);
 			if (typeof cloud != 'undefined') {
 				console.log('models');
-				for (j = 0; j < 2000*cov; j++) {
+				for (j = 0; j < 1000*cov; j++) {
 					var cloudcoord = generateRandomPoint(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude), height,240,70000);
 					//console.log(cloudcoord);
 					var position = Cesium.Cartesian3.fromDegrees(cloudcoord['longitude'],cloudcoord['latitude'],cloudcoord['alt']);
@@ -667,7 +684,7 @@ if (getCookie('resolutionScale') != '') {
 
 //viewer.scene.globe.maximumScreenSpaceError = 1;
 
-
+/*
 // ShadowMap
 viewer.shadowMap.pointLightRadius = 100;
 viewer.shadowMap.cascadesEnabled = true;
@@ -675,7 +692,7 @@ viewer.shadowMap.maximumDistance = 3E3;
 viewer.shadowMap.size = 2048;
 viewer.shadowMap.softShadows = true;
 viewer.shadowMap.darkness = .3;
-
+*/
 
 // Color
 //viewer.scene.globe.imageryLayers._layers[0].contrast = 1.1;

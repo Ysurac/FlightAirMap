@@ -32,6 +32,10 @@ CREATE TABLE IF NOT EXISTS `marine_output` (
   `real_arrival_port_name` varchar(255) DEFAULT NULL,
   `real_arrival_port_country` varchar(255) DEFAULT NULL,
   `real_arrival_port_date` timestamp NULL DEFAULT NULL,
+  `captain_name` varchar(255) DEFAULT NULL,
+  `captain_id` varchar(255) DEFAULT NULL,
+  `race_id` varchar(255) DEFAULT NULL,
+  `race_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`marine_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
 

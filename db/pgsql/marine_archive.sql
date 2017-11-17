@@ -24,6 +24,10 @@ CREATE TABLE IF NOT EXISTS marine_archive (
   longitude float NOT NULL,
   heading integer NOT NULL,
   ground_speed integer,
+  navigator_name varchar(255) DEFAULT NULL,
+  navigator_id varchar(255) DEFAULT NULL,
+  race_id varchar(255) DEFAULT NULL,
+  race_name varchar(255) DEFAULT NULL,
   format_source varchar(255) DEFAULT NULL,
   source_name varchar(255) DEFAULT NULL,
   PRIMARY KEY (marine_archive_id)

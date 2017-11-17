@@ -145,8 +145,19 @@ require_once('header.php');
 ?>
 		<form>
 			<ul>
+<?php
+		if (!isset($globalAircraft) || $globalAircraft) {
+?>
 				<li><div class="checkbox"><label><input type="checkbox" name="waypoints" value="1" onclick="showWaypoints(this);" <?php if (isset($_COOKIE['waypoints']) && $_COOKIE['waypoints'] == 'true') print 'checked'; ?> /><?php echo _("Display waypoints"); ?></label></div></li>
 				<li><div class="checkbox"><label><input type="checkbox" name="airspace" value="1" onclick="showAirspace(this);" <?php if (isset($_COOKIE['airspace']) && $_COOKIE['airspace'] == 'true') print 'checked'; ?> /><?php echo _("Display airspace"); ?></label></div></li>
+<?php
+		}
+		if (isset($globalMarine) && $globalMarine) {
+?>
+				<li><div class="checkbox"><label><input type="checkbox" name="openseamap" value="1" onclick="loadOpenSeaMap(this);" <?php if (isset($_COOKIE['openseamap']) && $_COOKIE['openseamap'] == 'true') print 'checked'; ?> /><?php echo _("Display OpenSeaMap"); ?></label></div></li>
+<?php
+		}
+?>
 			</ul>
 		</form>
 <?php
@@ -154,8 +165,14 @@ require_once('header.php');
 ?>
 		<form>
 			<ul>
+<?php
+		if (!isset($globalAircraft) || $globalAircraft) {
+?>
 				<li><div class="checkbox"><label><input type="checkbox" name="waypoints" value="1" onclick="showWaypoints(this);" <?php if (isset($_COOKIE['waypoints']) && $_COOKIE['waypoints'] == 'true') print 'checked'; ?> /><?php echo _("Display waypoints"); ?> Beta</label></div></li>
 				<li><div class="checkbox"><label><input type="checkbox" name="airspace" value="1" onclick="showAirspace(this);" <?php if (isset($_COOKIE['airspace']) && $_COOKIE['airspace'] == 'true') print 'checked'; ?> /><?php echo _("Display airspace"); ?> Beta</label></div></li>
+<?php
+		}
+?>
 			</ul>
 			<p>This layers are in Beta, this can and will crash.</p>
 		</form>
@@ -299,6 +316,7 @@ require_once('header.php');
 			    ?>
 			    <option value="ArcGIS-Streetmap"<?php if ($MapType == 'ArcGIS-Streetmap') print ' selected'; ?>>ArcGIS Streetmap</option>
 			    <option value="ArcGIS-Satellite"<?php if ($MapType == 'ArcGIS-Satellite') print ' selected'; ?>>ArcGIS Satellite</option>
+			    <option value="ArcGIS-Satellite"<?php if ($MapType == 'ArcGIS-Ocean') print ' selected'; ?>>ArcGIS Ocean</option>
 			    <?php
 				    if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 			    ?>
@@ -366,6 +384,7 @@ require_once('header.php');
 			    <?php
 				    }
 			    ?>
+			    <!--<option value="OpenSeaMap"<?php if ($MapType == 'OpenSeaMap') print ' selected'; ?>>OpenSeaMap</option>-->
 			    <option value="OpenStreetMap"<?php if ($MapType == 'OpenStreetMap') print ' selected'; ?>>OpenStreetMap</option>
 			    <?php
 				}
@@ -731,7 +750,27 @@ require_once('header.php');
 			<?php echo _("Display vessels with MMSI:"); ?>
 			<input type="text" name="mmsifilter" onchange="mmsifilter();" id="mmsifilter" value="<?php if (isset($_COOKIE['filter_mmsi'])) print $_COOKIE['filter_mmsi']; ?>" />
 		    </li>
+			<?php
+				if (isset($globalVM) && $globalVM) {
+					require_once('require/class.MarineLive.php');
+					$MarineLive = new MarineLive();
+					$races = $MarineLive->getAllRaces();
+					if (!empty($races)) {
+			?>
+		    <li><?php echo _("Display race:"); ?><br/>
+			<select class="selectpicker" onchange="racefilter(this);">
+			    <option value="all"><?php echo _("All"); ?></option>
+			    <?php
+						foreach ($races as $race) {
+							print '<option value="'.$race['race_id'].'">'.$race['race_name'].'</option>';
+						}
+			    ?>
+			</select>
+		    </li>
+
 		    <?php
+					}
+				}
 			}
 		    ?>
 		    <li>

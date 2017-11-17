@@ -16,6 +16,7 @@ else $MarineIconColor = '1a3151';
 
 //var map;
 var geojsonMarineLayer;
+var openseamap;
 layer_marine_data = L.layerGroup();
 
 <?php
@@ -121,6 +122,7 @@ function getLiveMarineData(click)
 		    //var altitude = feature.properties.a;
 		    var heading = feature.properties.h;
 		    var type = feature.properties.t;
+		    var captain = feature.properties.cap;
 <?php
 	} else {
 ?>
@@ -139,7 +141,11 @@ function getLiveMarineData(click)
 		    }
 		    if (type != "history"){ nbmarine = nbmarine+1; }
 		    if (callsign != ""){ markerMarineLabel += callsign; }
-		    if (type != ""){ markerMarineLabel += ' - '+type; }
+		    if (typeof captain != 'undefined') {
+			if (captain != ""){ markerMarineLabel += ' - '+captain; }
+		    } else {
+			if (type != ""){ markerMarineLabel += ' - '+type; }
+		    }
 <?php
 	if (!isset($ident) && !isset($fammarine_id)) {
 ?>
@@ -699,8 +705,23 @@ if (archive === true) {
 	function(){if (noTimeout) getLiveMarineData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 }
 
+if (getCookie('openseamap') == 'true') loadOpenSeaMap(getCookie('openseamap'));
+//actually loads openseamap
+function loadOpenSeaMap(cb) {
+	createCookie('openseamap',cb.checked,999);
+	if (openseamap) {
+		map.removeLayer(openseamap);
+	} else {
+		openseamap = L.tileLayer('http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
+		    attribution: 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors',
+		    maxZoom: 18,
+		    transparent: true,
+		    opacity: '0.7'
+		}).addTo(map);
+	}
+}
+});
 function MarineiconColor(color) {
 	createCookie('MarineIconColor',color.substring(1),9999);
 	window.location.reload();
 }
-});

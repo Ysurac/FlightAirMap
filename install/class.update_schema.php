@@ -2291,6 +2291,58 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_51() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('marine_live','captain_name')) {
+			$query = "ALTER TABLE marine_live ADD COLUMN captain_name varchar(255) DEFAULT NULL,ADD COLUMN captain_id varchar(255) DEFAULT NULL,ADD COLUMN race_name varchar(255) DEFAULT NULL,ADD COLUMN race_id varchar(255) DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns captain and race in marine_live) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_output','captain_name')) {
+			$query = "ALTER TABLE marine_output ADD COLUMN captain_name varchar(255) DEFAULT NULL,ADD COLUMN captain_id varchar(255) DEFAULT NULL,ADD COLUMN race_name varchar(255) DEFAULT NULL,ADD COLUMN race_id varchar(255) DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns captain and race in marine_output) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_archive','captain_name')) {
+			$query = "ALTER TABLE marine_archive ADD COLUMN captain_name varchar(255) DEFAULT NULL,ADD COLUMN captain_id varchar(255) DEFAULT NULL,ADD COLUMN race_name varchar(255) DEFAULT NULL,ADD COLUMN race_id varchar(255) DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns captain and race in marine_archive) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_archive_output','captain_name')) {
+			$query = "ALTER TABLE marine_archive_output ADD COLUMN captain_name varchar(255) DEFAULT NULL,ADD COLUMN captain_id varchar(255) DEFAULT NULL,ADD COLUMN race_name varchar(255) DEFAULT NULL,ADD COLUMN race_id varchar(255) DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns captain and race in marine_archive_output) : ".$e->getMessage()."\n";
+			}
+		}
+		$query = "UPDATE config SET value = '52' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
+
+
 	public static function check_version($update = false) {
 		global $globalDBname;
 		$version = 0;
@@ -2507,6 +2559,10 @@ class update_schema {
 							else return self::check_version(true);
 						} elseif ($result['value'] == '50') {
 							$error = self::update_from_50();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '51') {
+							$error = self::update_from_51();
 							if ($error != '') return $error;
 							else return self::check_version(true);
 						} else return '';

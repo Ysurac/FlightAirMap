@@ -23,6 +23,10 @@ CREATE TABLE IF NOT EXISTS `marine_live` (
   `heading` int(11) NOT NULL,
   `ground_speed` int(11),
   `format_source` varchar(255) DEFAULT NULL,
+  `captain_name` varchar(255) DEFAULT NULL,
+  `captain_id` varchar(255) DEFAULT NULL,
+  `race_id` varchar(255) DEFAULT NULL,
+  `race_name` varchar(255) DEFAULT NULL,
   `source_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`marine_live_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;

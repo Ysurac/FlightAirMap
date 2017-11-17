@@ -206,12 +206,22 @@ $( document ).ready(function() {
 	      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>'
 	}).addTo(map);
 <?php
+	} elseif ($MapType == 'OpenSeaMap') {
+?>
+	L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
+	    maxZoom: 18,
+	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+		'&copy; <a href="http://openseamap.org">OpenSeaMap</a> contributors, ' +
+	      '<a href="www.openstreetmap.org/copyright">Open Database Licence</a>'
+	}).addTo(map);
+<?php
 	} elseif ($MapType == 'ArcGIS-Streetmap') {
 ?>
 	L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
 	    maxZoom: 18,
 	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
-	    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+	    attribution: 'Tiles &copy; Esri &mdash; Sources: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
 	}).addTo(map);
 <?php
 	} elseif ($MapType == 'ArcGIS-Satellite') {
@@ -219,7 +229,15 @@ $( document ).ready(function() {
 	L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
 	    maxZoom: 18,
 	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
-	    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+	    attribution: 'Tiles &copy; Esri &mdash; Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+	}).addTo(map);
+<?php
+	} elseif ($MapType == 'ArcGIS-Ocean') {
+?>
+	L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}', {
+	    maxZoom: 18,
+	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
+	    attribution: 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri'
 	}).addTo(map);
 <?php
 	} elseif ($MapType == 'NatGeo-Street') {
@@ -227,7 +245,7 @@ $( document ).ready(function() {
 	L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
 	    maxZoom: 18,
 	    noWrap: <?php if (isset($globalMapWrap) && !$globalMapWrap) print 'false'; else print 'true'; ?>,
-	    attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC'
+	    attribution: 'Tiles &copy; Esri &mdash; Sources: National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC'
 	}).addTo(map);
 <?php
 	} elseif ($MapType == 'MapQuest-OSM') {
@@ -723,7 +741,6 @@ function showWeatherRadar(){
       $(".weatherradar").removeClass("active");
   }
 }
-
 //actually loads the weather radar
 function loadWeatherPrecipitation()
 {

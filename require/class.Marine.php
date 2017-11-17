@@ -54,6 +54,9 @@ class Marine{
 		if (isset($filter['mmsi']) && !empty($filter['mmsi'])) {
 			$filter_query_where .= " AND mmsi = '".$filter['mmsi']."'";
 		}
+		if (isset($filter['race']) && !empty($filter['race'])) {
+			$filter_query_where .= " AND race_id = '".$filter['race']."'";
+		}
 		if (isset($filter['year']) && $filter['year'] != '') {
 			if ($globalDBdriver == 'mysql') {
 				$filter_query_where .= " AND YEAR(marine_output.date) = '".$filter['year']."'";
@@ -142,6 +145,10 @@ class Marine{
 			if (isset($row['type_id'])) $temp_array['type_id'] = $row['type_id'];
 			if (isset($row['status'])) $temp_array['status'] = $row['status'];
 			if (isset($row['status_id'])) $temp_array['status_id'] = $row['status_id'];
+			if (isset($row['captain_id'])) $temp_array['captain_id'] = $row['captain_id'];
+			if (isset($row['captain_name'])) $temp_array['captain_name'] = $row['captain_name'];
+			if (isset($row['race_id'])) $temp_array['race_id'] = $row['race_id'];
+			if (isset($row['race_name'])) $temp_array['race_name'] = $row['race_name'];
 			if (isset($row['ident'])) $temp_array['ident'] = $row['ident'];
 			if (isset($row['arrival_port_name'])) $temp_array['arrival_port_name'] = $row['arrival_port_name'];
 			if (isset($row['latitude'])) $temp_array['latitude'] = $row['latitude'];
@@ -707,7 +714,7 @@ class Marine{
 	* @param String $verticalrate vertival rate of flight
 	* @return String success or false
 	*/
-	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$typeid = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$format_source = '', $source_name = '')
+	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$typeid = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$format_source = '', $source_name = '', $captain_id = '',$captain_name = '',$race_id = '', $race_name = '')
 	{
 		global $globalURL, $globalMarineImageFetch;
 		
@@ -795,6 +802,10 @@ class Marine{
 		$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 		$arrival_code = filter_var($arrival_code,FILTER_SANITIZE_STRING);
 		$arrival_date = filter_var($arrival_date,FILTER_SANITIZE_STRING);
+		$captain_id = filter_var($captain_id,FILTER_SANITIZE_STRING);
+		$captain_name = filter_var($captain_name,FILTER_SANITIZE_STRING);
+		$race_id = filter_var($race_id,FILTER_SANITIZE_STRING);
+		$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
 		if (isset($globalMarineImageFetch) && $globalMarineImageFetch === TRUE) {
 			$Image = new Image($this->db);
 			$image_array = $Image->getMarineImage($mmsi,$imo,$ident);
@@ -812,10 +823,10 @@ class Marine{
 		if ($heading == '' || $Common->isInteger($heading) === false) $heading = 0;
 		if ($groundspeed == '' || $Common->isInteger($groundspeed) === false) $groundspeed = 0;
 		if ($arrival_date == '') $arrival_date = NULL;
-		$query  = "INSERT INTO marine_output (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, type_id, status,status_id,imo,arrival_port_name,arrival_port_date) 
-		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:speed,:date,:format_source, :source_name,:mmsi,:type,:type_id,:status,:status_id,:imo,:arrival_port_name,:arrival_port_date)";
+		$query  = "INSERT INTO marine_output (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, type_id, status,status_id,imo,arrival_port_name,arrival_port_date,captain_id,captain_name,race_id,race_name) 
+		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:speed,:date,:format_source, :source_name,:mmsi,:type,:type_id,:status,:status_id,:imo,:arrival_port_name,:arrival_port_date,:captain_id,:captain_name,:race_id,:race_name)";
 
-		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':speed' => $groundspeed,':date' => $date,':format_source' => $format_source, ':source_name' => $source_name,':mmsi' => $mmsi,':type' => $type,':type_id' => $type_id,':status' => $status,':status_id' => $status_id,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date);
+		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':speed' => $groundspeed,':date' => $date,':format_source' => $format_source, ':source_name' => $source_name,':mmsi' => $mmsi,':type' => $type,':type_id' => $type_id,':status' => $status,':status_id' => $status_id,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date,':captain_id' => $captain_id,':captain_name' => $captain_name,':race_id' => $race_id,':race_name' => $race_name);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
