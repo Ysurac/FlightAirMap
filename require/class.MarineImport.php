@@ -279,14 +279,14 @@ class MarineImport {
 
 
 		if (isset($line['speed'])) {
-		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed' => round($line['speed'])));
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed' => round($line['speed'],2)));
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed_fromsrc' => true));
 		} else if (!isset($this->all_tracked[$id]['speed_fromsrc']) && isset($this->all_tracked[$id]['time_last_coord']) && $this->all_tracked[$id]['time_last_coord'] != time() && isset($line['latitude']) && isset($line['longitude'])) {
 		    $distance = $Common->distance($line['latitude'],$line['longitude'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],'m');
 		    if ($distance > 1000 && $distance < 10000) {
 			$speed = $distance/(time() - $this->all_tracked[$id]['time_last_coord']);
 			$speed = $speed*3.6;
-			if ($speed < 1000) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed' => round($speed)));
+			if ($speed < 1000) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed' => round($speed,2)));
   			if ($globalDebug) echo "ø Calculated Speed for ".$this->all_tracked[$id]['hex']." : ".$speed." - distance : ".$distance."\n";
 		    }
 		}
@@ -411,7 +411,10 @@ class MarineImport {
 			    //if there was no vessel with the same callsign within the last hour and go post it into the archive
 			    if($recent_ident == "" && $this->all_tracked[$id]['latitude'] != '' && $this->all_tracked[$id]['longitude'] != '')
 			    {
-				if ($globalDebug) echo "\o/ Add ".$this->all_tracked[$id]['mmsi']." in archive DB : ";
+				if ($globalDebug) {
+					if ($this->all_tracked[$id]['mmsi'] == '') echo "\o/ Add ".$this->all_tracked[$id]['mmsi']." in archive DB : ";
+					else echo "\o/ Add ".$this->all_tracked[$id]['ident']." in archive DB : ";
+				}
 				//adds the spotter data for the archive
 				    $highlight = '';
 				    if (!isset($this->all_tracked[$id]['id'])) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('id' => $this->all_tracked[$id]['mmsi'].'-'.date('YmdHi')));
