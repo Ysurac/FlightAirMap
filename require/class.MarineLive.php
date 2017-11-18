@@ -1006,7 +1006,7 @@ class MarineLive {
 		if ($typeid == '') $typeid = NULL;
 		if ($statusid == '') $statusid = NULL;
 
-            	if ($groundspeed == '' || $Common->isInteger($groundspeed) === false ) $groundspeed = 0;
+            	//if ($groundspeed == '' || $Common->isInteger($groundspeed) === false ) $groundspeed = 0;
             	if ($heading == '' || $Common->isInteger($heading) === false ) $heading = 0;
             	if ($arrival_date == '') $arrival_date = NULL;
             	$query = '';

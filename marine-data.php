@@ -90,9 +90,9 @@ print '</div>';
 */
 print '<div><span>'._("Speed").'</span>';
 if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
-	print round($spotter_item['ground_speed']*0.621371).' mph';
+	print round($spotter_item['ground_speed']*0.621371,2).' mph';
 } elseif ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) {
-	print round($spotter_item['ground_speed']*0.539957).' knots';
+	print round($spotter_item['ground_speed']*0.539957,2).' knots';
 } else {
 	print $spotter_item['ground_speed'].' km/h';
 }

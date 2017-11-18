@@ -2341,6 +2341,30 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_52() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if ($globalDBdriver == 'mysql') {
+			$query = "ALTER TABLE marine_live MODIFY COLUMN ground_speed float DEFAULT NULL;ALTER TABLE marine_output MODIFY COLUMN ground_speed float DEFAULT NULL;ALTER TABLE marine_archive_output MODIFY COLUMN ground_speed float DEFAULT NULL;ALTER TABLE marine_archive MODIFY COLUMN ground_speed float DEFAULT NULL;";
+		} else {
+			$query = "ALTER TABLE marine_live ALTER COLUMN ground_speed TYPE float;ALTER TABLE marine_output ALTER COLUMN ground_speed TYPE float;ALTER TABLE marine_archive_output ALTER COLUMN ground_speed TYPE float;ALTER TABLE marine_archive ALTER COLUMN ground_speed TYPE float;";
+		}
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (modify column ground_speede in marine_*) : ".$e->getMessage()."\n";
+		}
+		$query = "UPDATE config SET value = '53' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
 
 
 	public static function check_version($update = false) {
@@ -2563,6 +2587,10 @@ class update_schema {
 							else return self::check_version(true);
 						} elseif ($result['value'] == '51') {
 							$error = self::update_from_51();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '52') {
+							$error = self::update_from_52();
 							if ($error != '') return $error;
 							else return self::check_version(true);
 						} else return '';

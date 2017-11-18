@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `marine_live` (
   `latitude` float NOT NULL,
   `longitude` float NOT NULL,
   `heading` int(11) NOT NULL,
-  `ground_speed` int(11),
+  `ground_speed` float,
   `format_source` varchar(255) DEFAULT NULL,
   `captain_name` varchar(255) DEFAULT NULL,
   `captain_id` varchar(255) DEFAULT NULL,

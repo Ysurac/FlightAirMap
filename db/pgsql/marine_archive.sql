@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS marine_archive (
   latitude float NOT NULL,
   longitude float NOT NULL,
   heading integer NOT NULL,
-  ground_speed integer,
+  ground_speed float,
   navigator_name varchar(255) DEFAULT NULL,
   navigator_id varchar(255) DEFAULT NULL,
   race_id varchar(255) DEFAULT NULL,

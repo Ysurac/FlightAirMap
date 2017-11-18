@@ -821,7 +821,7 @@ class Marine{
 		if ($type_id == '') $type_id = NULL;
 		if ($status_id == '') $status_id = NULL;
 		if ($heading == '' || $Common->isInteger($heading) === false) $heading = 0;
-		if ($groundspeed == '' || $Common->isInteger($groundspeed) === false) $groundspeed = 0;
+		//if ($groundspeed == '' || $Common->isInteger($groundspeed) === false) $groundspeed = 0;
 		if ($arrival_date == '') $arrival_date = NULL;
 		$query  = "INSERT INTO marine_output (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, type_id, status,status_id,imo,arrival_port_name,arrival_port_date,captain_id,captain_name,race_id,race_name) 
 		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:speed,:date,:format_source, :source_name,:mmsi,:type,:type_id,:status,:status_id,:imo,:arrival_port_name,:arrival_port_date,:captain_id,:captain_name,:race_id,:race_name)";

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `marine_archive_output` (
   `latitude` float NOT NULL,
   `longitude` float NOT NULL,
   `heading` int(11) NOT NULL,
-  `ground_speed` int(11),
+  `ground_speed` float,
   `format_source` varchar(255) DEFAULT NULL,
   `source_name` varchar(255) DEFAULT NULL,
   `last_seen` timestamp NULL DEFAULT NULL,
