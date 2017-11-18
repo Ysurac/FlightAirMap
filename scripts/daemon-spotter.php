@@ -772,7 +772,7 @@ while ($i > 0) {
 								$data['latitude'] = $pos['latitude'];
 								$data['longitude'] = $pos['longitude'];
 								$resultdescr = explode(',',$sail['resultdescr']);
-								$data['speed'] = round(str_replace(array('Spd: ','kn.'),'',trim($resultdescr[2]))*0.539957,2);
+								$data['speed'] = round(str_replace(array('Spd: ','kn.'),'',trim($resultdescr[2]))*1.852,2);
 								$data['heading'] = str_replace(array('Hdg: ','°'),'',trim($resultdescr[1]));
 								$data['ident'] = trim( preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$sail['ubtname']));
 								$data['captain_id'] = $sail['usrnr'];
