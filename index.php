@@ -191,9 +191,15 @@ require_once('header.php');
 				<li><div class="checkbox"><label><input type="checkbox" name="airspace" value="1" onclick="showAirspace(this);" <?php if (isset($_COOKIE['airspace']) && $_COOKIE['airspace'] == 'true') print 'checked'; ?> /><?php echo _("Display airspace"); ?> Beta</label></div></li>
 <?php
 		}
+		if (isset($globalMarine) && $globalMarine) {
 ?>
+				<li><div class="checkbox"><label><input type="checkbox" name="openseamap" value="1" onclick="clickOpenSeaMap(this);" <?php if (isset($_COOKIE['openseamap']) && $_COOKIE['openseamap'] == 'true') print 'checked'; ?> /><?php echo _("Display OpenSeaMap"); ?></label></div></li>
+<?php
+		}
+?>
+
 			</ul>
-			<p>This layers are in Beta, this can and will crash.</p>
+			<p>These layers are in Beta, this can and will crash.</p>
 		</form>
 <?php
 	}
