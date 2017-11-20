@@ -191,3 +191,24 @@ function MarineiconColorForce(val) {
 	document.cookie =  'MarineIconColorForce='+val.checked+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 	if (getCookie('MarineIconColor') != '') document.cookie =  'MarineIconColor=ff0000; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
 }
+if (getCookie('openseamap') == 'true') loadOpenSeaMap(getCookie('openseamap'));
+function clickOpenSeaMap(cb) {
+    loadOpenSeaMap(cb.checked);
+}
+function loadOpenSeaMap(val) {
+    var openseamapc = getCookie('openseamap');
+    if (openseamapc == 'true' && val != 'true') {
+	layers.remove(openseamap,true);
+	delCookie('openseamap');
+    } else {
+	console.log('Add openseamap');
+	createCookie('openseamap',val,999);
+	openseamap = layers.addImageryProvider(Cesium.createOpenStreetMapImageryProvider({
+	    url : 'http://tiles.openseamap.org/seamark/',
+	    credit: 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'
+	}));
+	openseamap.brightness = 2.0;
+	openseamap.contrast = 2.0;
+	console.log('added...');
+    }
+}
