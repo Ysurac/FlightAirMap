@@ -712,10 +712,14 @@ function MarineiconColor(color) {
 	createCookie('MarineIconColor',color.substring(1),9999);
 	window.location.reload();
 }
-function loadOpenSeaMap(cb) {
-	createCookie('openseamap',cb.checked,999);
+function clickOpenSeaMap(cb) {
+	loadOpenSeaMap(cb.checked);
+}
+function loadOpenSeaMap(val) {
+	createCookie('openseamap',val,999);
 	if (openseamap) {
 		map.removeLayer(openseamap);
+		openseamap = '';
 	} else {
 		openseamap = L.tileLayer('http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
 		    attribution: 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors',

@@ -126,15 +126,23 @@ require_once('header.php');
 		<form>
 <?php
 	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
-		if (isset($globalOpenWeatherMapKey) && $globalOpenWeatherMapKey != '') {
 ?>
 			<h1>Weather</h1>
 			<ul>
+			<!--
+				<li><div class="checkbox"><label><input type="checkbox" name="wind" value="1" onclick="clickWind(this);" <?php if (isset($_COOKIE['weather_wind']) && $_COOKIE['weather_wind'] == 'true') print 'checked'; ?> /><?php echo _("Display wind"); ?></label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="wave" value="1" onclick="clickWave(this);" <?php if (isset($_COOKIE['weather_wave']) && $_COOKIE['weather_wave'] == 'true') print 'checked'; ?> /><?php echo _("Display wave"); ?></label></div></li>
+			-->
+<?php
+		if (isset($globalOpenWeatherMapKey) && $globalOpenWeatherMapKey != '') {
+?>
 				<li><div class="checkbox"><label><input type="checkbox" name="weatherprecipitation" value="1" onclick="showWeatherPrecipitation();" /><?php echo _("Weather Precipitation"); ?></label></div></li>
 				<li><div class="checkbox"><label><input type="checkbox" name="weatherclouds" value="1" onclick="showWeatherClouds();" /><?php echo _("Weather Clouds"); ?></label></div></li>
-			</ul>
 <?php
 		}
+?>
+			</ul>
+<?php
 	}
 ?>
 <?php
@@ -165,10 +173,11 @@ require_once('header.php');
 		}
 		if (isset($globalMarine) && $globalMarine) {
 ?>
-				<li><div class="checkbox"><label><input type="checkbox" name="openseamap" value="1" onclick="loadOpenSeaMap(this);" <?php if (isset($_COOKIE['openseamap']) && $_COOKIE['openseamap'] == 'true') print 'checked'; ?> /><?php echo _("Display OpenSeaMap"); ?></label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="openseamap" value="1" onclick="clickOpenSeaMap(this);" <?php if (isset($_COOKIE['openseamap']) && $_COOKIE['openseamap'] == 'true') print 'checked'; ?> /><?php echo _("Display OpenSeaMap"); ?></label></div></li>
 <?php
 		}
 ?>
+
 			</ul>
 		</form>
 <?php
@@ -395,7 +404,6 @@ require_once('header.php');
 			    <?php
 				    }
 			    ?>
-			    <!--<option value="OpenSeaMap"<?php if ($MapType == 'OpenSeaMap') print ' selected'; ?>>OpenSeaMap</option>-->
 			    <option value="OpenStreetMap"<?php if ($MapType == 'OpenStreetMap') print ' selected'; ?>>OpenStreetMap</option>
 			    <?php
 				}
