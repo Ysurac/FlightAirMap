@@ -514,7 +514,7 @@ function getLiveMarineData(click)
 		    if (document.getElementById('pointident').className == callsign) {
 			if (map.getZoom() > 7) {
                 	    var style = {
-				"color": "#1a3151",
+				"color": "#529dff",
 				"weight": 3,
 				"opacity": 1
 			    };
@@ -522,7 +522,7 @@ function getLiveMarineData(click)
 			    layer_data.addLayer(layer);
 			} else {
 			    var style = {
-				"color": "#1a3151",
+				"color": "#529dff",
 				"weight": 2,
 				"opacity": 1
 			    };
@@ -532,7 +532,7 @@ function getLiveMarineData(click)
             	    } else {
 			if (map.getZoom() > 7) {
                 	    var style = {
-                    		"color": "#1a3151",
+                    		"color": "#529dff",
 				"weight": 3,
 				"opacity": 0.6
 			    };
@@ -540,7 +540,7 @@ function getLiveMarineData(click)
 			    layer_marine_data.addLayer(layer);
 			} else {
                 	    var style = {
-                    		"color": "#1a3151",
+                    		"color": "#529dff",
 				"weight": 2,
 				"opacity": 0.6
 			    };
@@ -553,7 +553,7 @@ function getLiveMarineData(click)
             	    ?>
 		    if (map.getZoom() > 7) {
                 	var style = {
-                    	    "color": "#1a3151",
+                    	    "color": "#529dff",
                     	    "weight": 3,
                     	    "opacity": 0.6
                 	};
@@ -561,7 +561,7 @@ function getLiveMarineData(click)
                 	layer_marine_data.addLayer(layer);
 		    } else {
                 	var style = {
-			    "color": "#1a3151",
+			    "color": "#529dff",
                     	    "weight": 2,
                     	    "opacity": 0.6
                 	};
