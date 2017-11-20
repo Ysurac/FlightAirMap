@@ -3,24 +3,24 @@
 	require_once('../require/class.Language.php'); 
 	if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
 ?>
-    var unitspeed = 'mph';
+    var unitspeedvalue = 'mph';
 <?php
 	} elseif ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) {
 ?>
-    var unitspeed = 'knots';
+    var unitspeedvalue = 'knots';
 <?php
 	} else {
 ?>
-    var unitspeed = 'kmh';
+    var unitspeedvalue = 'kmh';
 <?php
 	}
 	if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
 ?>
-    var unitaltitude = 'feet';
+    var unitaltitudevalue = 'feet';
 <?php
 	} else {
 ?>
-    var unitaltitude = 'm';
+    var unitaltitudevalue = 'm';
 <?php
 	}
 ?>
@@ -756,18 +756,18 @@ viewer.clock.onTick.addEventListener(function(clock) {
 					var distance = ellipsoidGeodesic.surfaceDistance;
 					var speedbox = document.getElementById("realspeed");
 					if (speedbox != null) speedbox.style.visibility = "visible";
-					if (unitspeed = 'kmh') {
+					if (unitspeedvalue = 'kmh') {
 						$(".realspeed").html(Math.round(distance/2*3.6)+' km/h');
-					} else if (unitspeed = 'knots') {
+					} else if (unitspeedvalue = 'knots') {
 						$(".realspeed").html(Math.round(distance/2*3.6*0,539957)+' knots');
-					} else if (unitspeed = 'mph') {
+					} else if (unitspeedvalue = 'mph') {
 						$(".realspeed").html(Math.round(distance/2*3.6*0,621371)+' mph');
 					}
 				}
 				if (Cesium.defined(viewer.trackedEntity.orientation.getValue(clock.currentTime))) {
 					var heading = Cesium.Math.toDegrees(Cesium.Quaternion.computeAngle(viewer.trackedEntity.orientation.getValue(clock.currentTime))).toFixed(0);
 					$(".heading").html(heading);
-					if (unitaltitude == 'm') {
+					if (unitaltitudevalue == 'm') {
 						if (Cesium.defined(viewer.trackedEntity.properties) && Cesium.defined(viewer.trackedEntity.properties.type) && viewer.trackedEntity.properties.type == 'flight') {
 							$(".altitude").html(Math.round(coord.height)+' m (FL'+Math.round(coord.height*3.28084/100)+')');
 						} else {
@@ -788,7 +788,7 @@ viewer.clock.onTick.addEventListener(function(clock) {
 					var height = viewer.scene.globe.getHeight(Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian2));
 				} catch(e) { console.log(e); }
 				if (typeof height != 'undefined') {
-					if (unitaltitude == 'm') {
+					if (unitaltitudevalue == 'm') {
 						$(".groundaltitude").html(Math.round(height)+' m');
 					} else {
 						$(".groundaltitude").html(Math.round(height*3.28084)+' feet');

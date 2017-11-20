@@ -542,7 +542,7 @@ function getLiveData(click)
 	}
 ?>
 						if (type == 'aircraft') {
-							if (unitaltitude == 'm') {
+							if (unitaltitudevalue == 'm') {
 								var txtaltitude = Math.round(altitude*30.48)+' m (FL'+Math.round(altitude)+')';
 							} else {
 								var txtaltitude = altitude+' feet (FL'+Math.round(altitude)+')';

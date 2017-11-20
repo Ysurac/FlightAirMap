@@ -17,24 +17,24 @@ if (isset($_COOKIE['archive_begin']) && $_COOKIE['archive_begin'] != '') {
 */
 if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
 ?>
-	var unitspeed = 'mph';
+	var unitspeedvalue = 'mph';
 <?php
 } elseif ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) {
 ?>
-	var unitspeed = 'knots';
+	var unitspeedvalue = 'knots';
 <?php
 } else {
 ?>
-	var unitspeed = 'kmh';
+	var unitspeedvalue = 'kmh';
 <?php
 }
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
 ?>
-	var unitaltitude = 'feet';
+	var unitaltitudevalue = 'feet';
 <?php
 } else {
 ?>
-	var unitaltitude = 'm';
+	var unitaltitudevalue = 'm';
 <?php
 }
 ?>

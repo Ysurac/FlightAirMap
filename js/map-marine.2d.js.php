@@ -707,6 +707,11 @@ if (archive === true) {
 
 if (getCookie('openseamap') == 'true') loadOpenSeaMap(getCookie('openseamap'));
 //actually loads openseamap
+});
+function MarineiconColor(color) {
+	createCookie('MarineIconColor',color.substring(1),9999);
+	window.location.reload();
+}
 function loadOpenSeaMap(cb) {
 	createCookie('openseamap',cb.checked,999);
 	if (openseamap) {
@@ -719,9 +724,4 @@ function loadOpenSeaMap(cb) {
 		    opacity: '0.7'
 		}).addTo(map);
 	}
-}
-});
-function MarineiconColor(color) {
-	createCookie('MarineIconColor',color.substring(1),9999);
-	window.location.reload();
 }

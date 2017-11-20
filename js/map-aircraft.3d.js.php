@@ -216,7 +216,7 @@ function displayData(data) {
 			if (Cesium.defined(entity.properties.registration)) var registration = entity.properties.registration;
 			else var registration = '';
 			var lastupdatedate = new moment.tz(lastupdatet,moment.tz.guess()).format("HH:mm:ss");
-			if (unitaltitude == 'm') {
+			if (unitaltitudevalue == 'm') {
 				var txtaltitude = Math.round(coord.height)+' m (FL'+Math.round(coord.height*3.28084/100)+')';
 			} else {
 				var txtaltitude = Math.round(coord.height*3.28084)+' feet (FL'+Math.round(coord.height*3.28084/100)+')';

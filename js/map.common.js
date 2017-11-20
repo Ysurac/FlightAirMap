@@ -247,6 +247,7 @@ function clickDisplay2DBuildings(cb) {
     createCookie('Map2DBuildings',cb.checked,2);
     window.location.reload();
 }
+
 function unitdistance(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;
@@ -262,6 +263,7 @@ function unitaltitude(selectObj) {
     var unit = selectObj.options[idx].value;
     createCookie('unitaltitude',unit,9999);
 }
+
 function addarchive(begindate,enddate) {
     console.log('Add archive');
     createCookie('archive',true,2);
