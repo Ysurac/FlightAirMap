@@ -101,12 +101,6 @@ if (strtolower($current_page) == "index")
 {
 ?>
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print date("H"); ?>" />
-<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
-<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
-<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet.textpath.js"></script>
-<script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
-<script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
 <script src="<?php print $globalURL; ?>/js/jquery-sidebar.js"></script>
 <script src="<?php print $globalURL; ?>/js/map.common.js"></script>
@@ -132,6 +126,16 @@ if (strtolower($current_page) == "index")
 <?php
 	} else {
 ?>
+
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
+<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
+<script src="<?php print $globalURL; ?>/js/leaflet-velocity.min.js"></script>
+<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-velocity.min.css" />
+<script src="<?php print $globalURL; ?>/js/leaflet.textpath.js"></script>
+<script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
+<script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
+
 <?php
 		if (isset($_COOKIE['Map2DBuildings']) && $_COOKIE['Map2DBuildings'] == 'true') {
 ?>

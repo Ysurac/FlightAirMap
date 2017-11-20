@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__FILE__).'/class.Common.php');
 class Weather {
 	public function buildcloudlayer($metar) {
 		//print_r($metar);
@@ -52,6 +53,41 @@ class Weather {
 		}
 		return $result;
 	}
+	
+	public function nomad_wind() {
+		global $globalWindsPath;
+		if (isset($globalWindsPath) && $globalWindsPath != '') {
+			$grib2json = $globalWindsPath['grib2json'];
+			$windpathsrc = $globalWindsPath['source'];
+			$windpathdest = $globalWindsPath['destination'];
+		} else {
+			$grib2json = dirname(__FILE__).'/libs/grib2json/bin/grib2json';
+			$windpathsrc = dirname(__FILE__).'/../data/winds.gb2';
+			$windpathdest = dirname(__FILE__).'/../data/winds.json';
+		}
+		
+		// http://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p50.pl?file=gfs.t05z.pgrb2full.0p50.f000&lev_10_m_above_ground=on&lev_surface=on&var_TMP=on&var_UGRD=on&var_VGRD=on&leftlon=0&rightlon=360&toplat=90&bottomlat=-90&dir=/gfs.2017111717
+		$resolution = '0.5';
+		$baseurl = 'http://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_'.($resolution === '1' ? '1p00':'0p50').'.pl';
+		$get = array('file' => 'gfs.t'.sprintf('%02d',(6*floor(date('G')/6))).($resolution === '1' ? 'z.pgrb2.1p00.f000' : 'z.pgrb2full.0p50.f000'),
+			'lev_10_m_above_ground' => 'on',
+			'lev_surface' => 'on',
+			'var_TMP' => 'on',
+			'var_UGRD' => 'on',
+			'var_VGRD' => 'on',
+			'leftlon' => 0,
+			'rightlon' => 360,
+			'toplat' => 90,
+			'bottomlat' => -90,
+			'dir' => '/gfs.'.date('Ymd').sprintf('%02d',(6*floor(date('G')/6)))
+		);
+		$url = $baseurl.'?'.http_build_query($get);
+		echo $url;
+		$Common = new Common();
+		$Common->download($url,$windpathsrc);
+		$grib2json = dirname(__FILE__).'/libs/grib2json/bin/grib2json';
+		system($grib2json.' --data --output '.$windpathdest.' --names --compact '.$windpathsrc);
+	}
 }
 /*
 require_once('class.METAR.php');
@@ -69,5 +105,9 @@ $Weather = new Weather();
 //print_r($Weather->buildcloudlayer($result));
 //print_r($Weather->buildcloud('46.3870','5.2941','2000','0.25'));
 print_r($Weather->generateRandomPoint('46.3870','5.2941','2000'));
+*/
+/*
+$Weather = new Weather();
+$Weather->nomad_wind();
 */
 ?>

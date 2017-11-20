@@ -850,3 +850,41 @@ function archivePlay() {
 	archiveplayback.start();
 	console.log('Play');
 }
+
+var windLayer;
+if (getCookie('weather_wind') == 'true') loadWind(getCookie('weather_wind'));
+function clickWind(cb) {
+	loadWind(cb.checked);
+}
+function loadWind(val) {
+	var wind = getCookie('weather_wind');
+	if (wind == 'true' && val != 'true') {
+		map.removeLayer(windLayer);
+		delCookie('weather_wind');
+	} else {
+		createCookie('weather_wind',val,999);
+		if (unitspeedvalue == 'knots') {
+			var windspeedunit = 'kt';
+		} else if (unitspeedvalue == 'kmh') {
+			var windspeedunit = 'k/h';
+		} else {
+			var windspeedunit = 'm/s';
+		}
+
+		//$.getJSON('data/winds.json', function (data) {
+		$.getJSON('https://data.flightairmap.com/data/weather/winds.json', function (data) {
+			windLayer = L.velocityLayer({
+			    displayValues: true,
+			    displayOptions: {
+				velocityType: 'Wind',
+				displayPosition: 'bottomleft',
+				displayEmptyString: 'No wind data',
+				speedUnit: windspeedunit
+			    },
+			    data: data,
+			    maxVelocity: 20,
+			    velocityScale: 0.01
+			}).addTo(map);
+		});
+	}
+}

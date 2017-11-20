@@ -717,7 +717,7 @@ function clickOpenSeaMap(cb) {
 }
 function loadOpenSeaMap(val) {
 	var openseamapc = getCookie('openseamap');
-	if (openseamapc == 'true') {
+	if (openseamapc == 'true' && val != 'true') {
 		map.removeLayer(openseamap);
 		delCookie('openseamap');
 	} else {
