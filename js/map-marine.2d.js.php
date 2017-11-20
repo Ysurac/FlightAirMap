@@ -716,11 +716,12 @@ function clickOpenSeaMap(cb) {
 	loadOpenSeaMap(cb.checked);
 }
 function loadOpenSeaMap(val) {
-	createCookie('openseamap',val,999);
-	if (openseamap) {
+	var openseamapc = getCookie('openseamap');
+	if (openseamapc == 'true') {
 		map.removeLayer(openseamap);
-		openseamap = '';
+		delCookie('openseamap');
 	} else {
+		createCookie('openseamap',val,999);
 		openseamap = L.tileLayer('http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
 		    attribution: 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors',
 		    maxZoom: 18,
