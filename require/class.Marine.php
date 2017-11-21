@@ -1,6 +1,6 @@
 <?php
 require_once(dirname(__FILE__).'/class.Image.php');
-$global_query = "SELECT marine_output.* FROM marine_output";
+$global_marine_query = "SELECT marine_output.* FROM marine_output";
 
 class Marine{
 	public $db;
@@ -237,7 +237,7 @@ class Marine{
 	*/
 	public function getLatestMarineData($limit = '', $sort = '', $filter = array())
 	{
-		global $global_query;
+		global $global_marine_query;
 		date_default_timezone_set('UTC');
 		$filter_query = $this->getFilter($filter);
 		if ($limit != "")
@@ -258,7 +258,7 @@ class Marine{
 		} else {
 			$orderby_query = " ORDER BY marine_output.date DESC";
 		}
-		$query  = $global_query.$filter_query." ".$orderby_query;
+		$query  = $global_marine_query.$filter_query." ".$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, array(),$limit_query,true);
 		return $spotter_array;
 	}
@@ -271,13 +271,13 @@ class Marine{
 	*/
 	public function getMarineDataByID($id = '')
 	{
-		global $global_query;
+		global $global_marine_query;
 		
 		date_default_timezone_set('UTC');
 		if ($id == '') return array();
 		$additional_query = "marine_output.fammarine_id = :id";
 		$query_values = array(':id' => $id);
-		$query  = $global_query." WHERE ".$additional_query." ";
+		$query  = $global_marine_query." WHERE ".$additional_query." ";
 		$spotter_array = $this->getDataFromDB($query,$query_values);
 		return $spotter_array;
 	}
@@ -290,7 +290,7 @@ class Marine{
 	*/
 	public function getMarineDataByIdent($ident = '', $limit = '', $sort = '', $filter = array())
 	{
-		global $global_query;
+		global $global_marine_query;
 		
 		date_default_timezone_set('UTC');
 		
@@ -331,7 +331,7 @@ class Marine{
 			$orderby_query = " ORDER BY marine_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." marine_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_marine_query.$filter_query." marine_output.ident <> '' ".$additional_query." ".$orderby_query;
 		//echo $query."\n";
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
@@ -346,7 +346,7 @@ class Marine{
 	*/
 	public function getMarineDataByType($type = '', $limit = '', $sort = '', $filter = array())
 	{
-		global $global_query;
+		global $global_marine_query;
 		
 		date_default_timezone_set('UTC');
 		
@@ -384,7 +384,7 @@ class Marine{
 			$orderby_query = " ORDER BY marine_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." marine_output.type <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_marine_query.$filter_query." marine_output.type <> '' ".$additional_query." ".$orderby_query;
 		//echo $query."\n";
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
@@ -393,7 +393,7 @@ class Marine{
 	
 	public function getMarineDataByDate($date = '', $limit = '', $sort = '',$filter = array())
 	{
-		global $global_query, $globalTimezone, $globalDBdriver;
+		global $global_marine_query, $globalTimezone, $globalDBdriver;
 		
 		$query_values = array();
 		$limit_query = '';
@@ -443,12 +443,52 @@ class Marine{
 			$orderby_query = " ORDER BY marine_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." marine_output.ident <> '' ".$additional_query.$orderby_query;
+		$query = $global_marine_query.$filter_query." marine_output.ident <> '' ".$additional_query.$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 		return $spotter_array;
 	}
 
-
+	/**
+	* Gets all the marine information based on the captain
+	*
+	* @return Array the marine information
+	*
+	*/
+	public function getMarineDataByCaptain($captain = '', $limit = '', $sort = '', $filter = array())
+	{
+		global $global_marine_query;
+		date_default_timezone_set('UTC');
+		$query_values = array();
+		$limit_query = '';
+		$additional_query = '';
+		$filter_query = $this->getFilter($filter,true,true);
+		if ($captain != "")
+		{
+			$additional_query = " AND (marine_output.captain_name = :captain OR marine_output.captain_id = :captain)";
+			$query_values = array(':captain' => $captain);
+		}
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+			}
+		}
+		if ($sort != "")
+		{
+			$search_orderby_array = $this->getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY marine_output.date DESC";
+		}
+		$query = $global_marine_query.$filter_query." marine_output.captain_name <> '' ".$additional_query." ".$orderby_query;
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
+		return $spotter_array;
+	}
 
 	/**
 	* Gets all source name

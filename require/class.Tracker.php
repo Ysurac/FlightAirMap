@@ -2,7 +2,7 @@
 require_once(dirname(__FILE__).'/class.Scheduler.php');
 require_once(dirname(__FILE__).'/class.ACARS.php');
 require_once(dirname(__FILE__).'/class.Image.php');
-$global_query = "SELECT tracker_output.* FROM tracker_output";
+$global_tracker_query = "SELECT tracker_output.* FROM tracker_output";
 
 class Tracker{
 	public $db;
@@ -211,7 +211,7 @@ class Tracker{
 	*/
 	public function getLatestTrackerData($limit = '', $sort = '', $filter = array())
 	{
-		global $global_query;
+		global $global_tracker_query;
 		
 		date_default_timezone_set('UTC');
 
@@ -239,7 +239,7 @@ class Tracker{
 			$orderby_query = " ORDER BY tracker_output.date DESC";
 		}
 
-		$query  = $global_query.$filter_query." ".$orderby_query;
+		$query  = $global_tracker_query.$filter_query." ".$orderby_query;
 
 		$tracker_array = $this->getDataFromDB($query, array(),$limit_query,true);
 
@@ -254,13 +254,13 @@ class Tracker{
 	*/
 	public function getTrackerDataByID($id = '')
 	{
-		global $global_query;
+		global $global_tracker_query;
 		
 		date_default_timezone_set('UTC');
 		if ($id == '') return array();
 		$additional_query = "tracker_output.famtrackid = :id";
 		$query_values = array(':id' => $id);
-		$query  = $global_query." WHERE ".$additional_query." ";
+		$query  = $global_tracker_query." WHERE ".$additional_query." ";
 		$tracker_array = $this->getDataFromDB($query,$query_values);
 		return $tracker_array;
 	}
@@ -273,7 +273,7 @@ class Tracker{
 	*/
 	public function getTrackerDataByIdent($ident = '', $limit = '', $sort = '', $filter = array())
 	{
-		global $global_query;
+		global $global_tracker_query;
 		
 		date_default_timezone_set('UTC');
 		
@@ -314,7 +314,7 @@ class Tracker{
 			$orderby_query = " ORDER BY tracker_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." tracker_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_tracker_query.$filter_query." tracker_output.ident <> '' ".$additional_query." ".$orderby_query;
 
 		$tracker_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
@@ -323,7 +323,7 @@ class Tracker{
 	
 	public function getTrackerDataByDate($date = '', $limit = '', $sort = '',$filter = array())
 	{
-		global $global_query, $globalTimezone, $globalDBdriver;
+		global $global_tracker_query, $globalTimezone, $globalDBdriver;
 		
 		$query_values = array();
 		$limit_query = '';
@@ -373,7 +373,7 @@ class Tracker{
 			$orderby_query = " ORDER BY tracker_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." tracker_output.ident <> '' ".$additional_query.$orderby_query;
+		$query = $global_tracker_query.$filter_query." tracker_output.ident <> '' ".$additional_query.$orderby_query;
 		$tracker_array = $this->getDataFromDB($query, $query_values, $limit_query);
 		return $tracker_array;
 	}

@@ -85,7 +85,6 @@ class Weather {
 		echo $url;
 		$Common = new Common();
 		$Common->download($url,$windpathsrc);
-		$grib2json = dirname(__FILE__).'/libs/grib2json/bin/grib2json';
 		system($grib2json.' --data --output '.$windpathdest.' --names --compact '.$windpathsrc);
 	}
 }
