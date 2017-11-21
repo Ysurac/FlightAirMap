@@ -749,7 +749,7 @@ while ($i > 0) {
 		if (isset($all_data['missions'])) {
 			foreach ($all_data['missions'] as $mission) {
 				$mission_user = $mission['usrname'];
-				$mission_name = iconv("utf-8", "utf-8//ignore",$mission['mistitle']);
+				$mission_name = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$mission['mistitle']);
 				if (!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race']))) {
 					$bufferm = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetLeaderboard.pl?misnr='.$mission['misnr']);
 				} else $bufferm = '';
@@ -774,11 +774,15 @@ while ($i > 0) {
 								$resultdescr = explode(',',$sail['resultdescr']);
 								$data['speed'] = round(str_replace(array('Spd: ','kn.'),'',trim($resultdescr[2]))*1.852,2);
 								$data['heading'] = str_replace(array('Hdg: ','°'),'',trim($resultdescr[1]));
-								$data['ident'] = trim( preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$sail['ubtname']));
+								$data['ident'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$sail['ubtname']));
 								$data['captain_id'] = $sail['usrnr'];
 								$data['captain_name'] = $sail['usrname'];
 								$data['race_id'] = $sail['misnr'];
-								$data['race_name'] = $mission_name.' ('.$mission_user.')';
+								if ($mission_user != '') {
+									$data['race_name'] = $mission_name.' ('.$mission_user.')';
+								} else {
+									$data['race_name'] = $mission_name;
+								}
 								//$data['callsign'] = trim(substr($line,100,7);
 								$data['format_source'] = 'sailaway';
 								$data['id_source'] = $id_source;
