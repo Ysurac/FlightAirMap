@@ -161,6 +161,8 @@ class MarineImport {
 		if (isset($line['type']) && $line['type'] != '' && $this->all_tracked[$id]['type'] == '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('type' => $line['type']));
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('typeid' => $AIS->getShipTypeID($line['type'])));
+		} elseif (isset($line['type']) && $line['type'] != '' && $this->all_tracked[$id]['type'] != '') {
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('type' => $line['type']));
 		}
 		if (isset($line['status']) && $line['status'] != '') {
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('status' => $line['status']));
