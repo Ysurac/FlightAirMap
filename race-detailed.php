@@ -43,14 +43,18 @@ if (!isset($_GET['race'])){
 	if ($sort != '') 
 	{
 		$spotter_array = $Marine->getMarineDataByRace($race,$limit_start.",".$absolute_difference, $sort,$filter);
+		/*
 		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$spotter_array = $MarineArchive->getMarineDataByRace($race,$limit_start.",".$absolute_difference, $sort,$filter);
 		}
+		*/
 	} else {
 		$spotter_array = $Marine->getMarineDataByRace($race,$limit_start.",".$absolute_difference,'',$filter);
+		/*
 		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$spotter_array = $MarineArchive->getMarineDataByRace($race,$limit_start.",".$absolute_difference,'',$filter);
 		}
+		*/
 	}
 
 	if (!empty($spotter_array))

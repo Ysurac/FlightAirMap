@@ -83,7 +83,7 @@ class MarineImport {
             		    //$real_arrival = $this->arrival($key);
             		    $Marine = new Marine($this->db);
             		    if ($this->all_tracked[$key]['latitude'] != '' && $this->all_tracked[$key]['longitude'] != '') {
-				$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time']);
+				$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime'],$this->all_tracked[$key]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time']);
 				if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
 			    }
 			    // Put in archive
@@ -97,7 +97,7 @@ class MarineImport {
     }
 
     public function add($line) {
-	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked, $globalNoImport, $globalNoDB, $globalServerAPRS,$APRSMarine, $globalLiveInterval;
+	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked, $globalNoImport, $globalNoDB, $globalServerAPRS,$APRSMarine, $globalLiveInterval, $globalVM;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
 	date_default_timezone_set('UTC');
 	$dataFound = false;

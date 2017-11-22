@@ -43,14 +43,18 @@ if (!isset($_GET['captain'])){
 	if ($sort != '') 
 	{
 		$spotter_array = $Marine->getMarineDataByCaptain($captain,$limit_start.",".$absolute_difference, $sort,$filter);
+		/*
 		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$spotter_array = $MarineArchive->getMarineDataByCaptain($captain,$limit_start.",".$absolute_difference, $sort,$filter);
 		}
+		*/
 	} else {
 		$spotter_array = $Marine->getMarineDataByCaptain($captain,$limit_start.",".$absolute_difference,'',$filter);
+		/*
 		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
 			$spotter_array = $MarineArchive->getMarineDataByCaptain($captain,$limit_start.",".$absolute_difference,'',$filter);
 		}
+		*/
 	}
 
 	if (!empty($spotter_array))
