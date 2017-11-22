@@ -2474,7 +2474,6 @@ class update_schema {
 			}
 		}
 		if (!$Connection->checkColumnName('marine_archive_output','race_time')) {
-			if ($globalDBdriver == 'mysql') {
 			$query = "ALTER TABLE marine_archive_output ADD COLUMN race_time float DEFAULT NULL";
 			try {
 				$sth = $Connection->db->prepare($query);
