@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS `marine_output` (
   `last_seen` timestamp NULL DEFAULT NULL,
   `last_latitude` float DEFAULT NULL,
   `last_longitude` float DEFAULT NULL,
-  `last_altitude` int(11) DEFAULT NULL,
   `last_ground_speed` int(11) DEFAULT NULL,
   `real_departure_port_name` varchar(255) DEFAULT NULL,
   `real_departure_port_country` varchar(255) DEFAULT NULL,
@@ -36,6 +35,9 @@ CREATE TABLE IF NOT EXISTS `marine_output` (
   `captain_id` varchar(255) DEFAULT NULL,
   `race_id` varchar(255) DEFAULT NULL,
   `race_name` varchar(255) DEFAULT NULL,
+  `race_rank` int(11) DEFAULT NULL,
+  `race_time` float DEFAULT NULL,
+  `distance` float DEFAULT NULL,
   PRIMARY KEY (`marine_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
 

@@ -265,6 +265,28 @@ RewriteRule ^pilot/([^/]+)(/?)$ pilot-detailed.php?pilot=$1 [L,NC]
 RewriteRule ^pilot(/?)$ pilot.php [L,NC]
 
 
+########### CAPTAIN ###########
+
+RewriteRule ^marine/captain/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)/([^/]+)(/?)$ captain-detailed.php?captain=$1&year=$2&month=$3&limit=$4&sort=$5 [L,NC]
+RewriteRule ^marine/captain/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)(/?)$ captain-detailed.php?captain=$1&year=$2&month=$3&limit=$4 [L,NC]
+RewriteRule ^marine/captain/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ captain-detailed.php?captain=$1&year=$2&month=$3 [L,NC]
+RewriteRule ^marine/captain/([^/]+)/([^/]+)/([^/]+)(/?)$ captain-detailed.php?captain=$1&limit=$2&sort=$3 [L,NC]
+RewriteRule ^marine/captain/([^/]+)/([^/]+)(/?)$ captain-detailed.php?captain=$1&limit=$2 [L,NC]
+RewriteRule ^marine/captain/([^/]+)(/?)$ captain-detailed.php?captain=$1 [L,NC]
+RewriteRule ^marine/captain(/?)$ captain.php [L,NC]
+
+
+########### RACE ###########
+
+RewriteRule ^marine/race/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)/([^/]+)(/?)$ race-detailed.php?race=$1&year=$2&month=$3&limit=$4&sort=$5 [L,NC]
+RewriteRule ^marine/race/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)(/?)$ race-detailed.php?race=$1&year=$2&month=$3&limit=$4 [L,NC]
+RewriteRule ^marine/race/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$ race-detailed.php?race=$1&year=$2&month=$3 [L,NC]
+RewriteRule ^marine/race/([^/]+)/([^/]+)/([^/]+)(/?)$ race-detailed.php?race=$1&limit=$2&sort=$3 [L,NC]
+RewriteRule ^marine/race/([^/]+)/([^/]+)(/?)$ race-detailed.php?race=$1&limit=$2 [L,NC]
+RewriteRule ^marine/race/([^/]+)(/?)$ race-detailed.php?race=$1 [L,NC]
+RewriteRule ^marine/race(/?)$ race.php [L,NC]
+
+
 ########### AIRCRAFT ###########
 
 RewriteRule ^aircraft/statistics/airline/([^/]+)(/?)$ aircraft-statistics-airline.php?aircraft_type=$1 [L,NC]

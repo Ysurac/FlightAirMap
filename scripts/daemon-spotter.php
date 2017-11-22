@@ -741,7 +741,7 @@ while ($i > 0) {
 	) {
 	    if ($globalDebug) echo '! Download... ';
 	    for ($i =0; $i <= 1; $i++) {
-		    if ($globalDebug) echo 'Racetype: '.$i."\n";
+		    if ($globalDebug) echo 'Racetype: '.$i.' ';
 	    $buffer = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetMissions.pl?race=1&tutorial=0&hist=1&racetype='.$i);
 	    if ($globalDebug) echo 'done'."\n";
 	    if ($buffer != '') {
@@ -774,10 +774,15 @@ while ($i > 0) {
 								$resultdescr = explode(',',$sail['resultdescr']);
 								$data['speed'] = round(str_replace(array('Spd: ','kn.'),'',trim($resultdescr[2]))*1.852,2);
 								$data['heading'] = str_replace(array('Hdg: ','°'),'',trim($resultdescr[1]));
+								if (isset($resultdescr[3])) {
+									$data['distance'] = round(str_replace('nm.','',trim(explode(' ',$resultdescr[3])[1]))*1.852,3);
+								}
 								$data['ident'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$sail['ubtname']));
 								$data['captain_id'] = $sail['usrnr'];
 								$data['captain_name'] = $sail['usrname'];
 								$data['race_id'] = $sail['misnr'];
+								$data['race_rank'] = $sail['rank'];
+								$data['race_time'] = $sail['racetime'];
 								if ($mission_user != '') {
 									$data['race_name'] = $mission_name.' ('.$mission_user.')';
 								} else {

@@ -2366,6 +2366,165 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_53() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if (!$Connection->checkColumnName('marine_live','distance')) {
+			$query = "ALTER TABLE marine_live ADD COLUMN distance float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns distance in marine_live) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_live','race_time')) {
+			$query = "ALTER TABLE marine_live ADD COLUMN race_time float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns race_time in marine_live) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_live','race_rank')) {
+			if ($globalDBdriver == 'mysql') {
+				$query = "ALTER TABLE marine_live ADD COLUMN race_rank int(11) DEFAULT NULL";
+			} else {
+				$query = "ALTER TABLE marine_live ADD COLUMN race_rank integer DEFAULT NULL";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns race_rank in marine_live) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_output','distance')) {
+			$query = "ALTER TABLE marine_output ADD COLUMN distance float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns distance in marine_output) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_output','race_time')) {
+			$query = "ALTER TABLE marine_output ADD COLUMN race_time float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns race_time in marine_output) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_output','race_rank')) {
+			if ($globalDBdriver == 'mysql') {
+				$query = "ALTER TABLE marine_output ADD COLUMN race_rank int(11) DEFAULT NULL";
+			} else {
+				$query = "ALTER TABLE marine_output ADD COLUMN race_rank integer DEFAULT NULL";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns race_rank in marine_output) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_archive','distance')) {
+			$query = "ALTER TABLE marine_archive ADD COLUMN distance float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns distance in marine_archive) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_archive','race_time')) {
+			if ($globalDBdriver == 'mysql') {
+			$query = "ALTER TABLE marine_archive ADD COLUMN race_time float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns race_time in marine_archive) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_archive','race_rank')) {
+			if ($globalDBdriver == 'mysql') {
+				$query = "ALTER TABLE marine_archive ADD COLUMN race_rank int(11) DEFAULT NULL";
+			} else {
+				$query = "ALTER TABLE marine_archive ADD COLUMN race_rank integer DEFAULT NULL";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns race_rank in marine_archive) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_archive_output','distance')) {
+			$query = "ALTER TABLE marine_archive_output ADD COLUMN distance float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns distance in marine_archive_output) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_archive_output','race_time')) {
+			if ($globalDBdriver == 'mysql') {
+			$query = "ALTER TABLE marine_archive_output ADD COLUMN race_time float DEFAULT NULL";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns race_time in marine_archive_output) : ".$e->getMessage()."\n";
+			}
+		}
+		if (!$Connection->checkColumnName('marine_archive_output','race_rank')) {
+			if ($globalDBdriver == 'mysql') {
+				$query = "ALTER TABLE marine_archive_output ADD COLUMN race_rank int(11) DEFAULT NULL";
+			} else {
+				$query = "ALTER TABLE marine_archive_output ADD COLUMN race_rank integer DEFAULT NULL";
+			}
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (add columns race_rank in marine_live) : ".$e->getMessage()."\n";
+			}
+		}
+		if ($Connection->checkColumnName('marine_output','last_altitude')) {
+			$query = "ALTER TABLE marine_output DROP COLUMN last_altitude";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (drop columns last_altitude in marine_output) : ".$e->getMessage()."\n";
+			}
+		}
+		if ($Connection->checkColumnName('marine_archive_output','last_altitude')) {
+			$query = "ALTER TABLE marine_archive_output DROP COLUMN last_altitude";
+			try {
+				$sth = $Connection->db->prepare($query);
+				$sth->execute();
+			} catch(PDOException $e) {
+				return "error (drop columns last_altitude in marine_archive_output) : ".$e->getMessage()."\n";
+			}
+		}
+		$query = "UPDATE config SET value = '54' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
+
+
 
 	public static function check_version($update = false) {
 		global $globalDBname;
@@ -2591,6 +2750,10 @@ class update_schema {
 							else return self::check_version(true);
 						} elseif ($result['value'] == '52') {
 							$error = self::update_from_52();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '53') {
+							$error = self::update_from_53();
 							if ($error != '') return $error;
 							else return self::check_version(true);
 						} else return '';

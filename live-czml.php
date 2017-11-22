@@ -191,13 +191,13 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$previous_filter = $filter;
 	if ((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrackTracker']) && $_COOKIE['MapTrackTracker'] != '')) {
 		$filter = array_merge($filter,array('id' => $_COOKIE['MapTrackTracker']));
-		$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,true);
+		$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,false);
 	/*
 	} elseif (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '' && !empty($coord)) {
 		$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,true,$_COOKIE['MapTrack']);
 	*/
 	} elseif (!isset($_COOKIE['singlemodel']) || $_COOKIE['singlemodel'] == 'false') {
-		$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,true);
+		$spotter_array = $TrackerLive->getMinLastLiveTrackerData($coord,$filter,false);
 	} else {
 		$spotter_array = array();
 	}
@@ -215,11 +215,11 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$previous_filter = $filter;
 	if ((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrackMarine']) && $_COOKIE['MapTrackMarine'] != '')) {
 		$filter = array_merge($filter,array('id' => $_COOKIE['MapTrackMarine']));
-		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true);
+		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,false);
 	} elseif (isset($_COOKIE['MapTrackMarine']) && $_COOKIE['MapTrackMarine'] != '' && !empty($coord)) {
-		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true,$_COOKIE['MapTrack']);
+		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,false,$_COOKIE['MapTrack']);
 	} elseif (!isset($_COOKIE['singlemodel']) || $_COOKIE['singlemodel'] == 'false') {
-		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,true);
+		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,false);
 	} else {
 		$spotter_array = array();
 	}
@@ -236,11 +236,11 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$previous_filter = $filter;
 	if ((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '')) {
 		$filter = array_merge($filter,array('id' => $_COOKIE['MapTrack']));
-		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true);
+		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,false);
 	} elseif (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '' && !empty($coord)) {
-		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true,$_COOKIE['MapTrack']);
+		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,false,$_COOKIE['MapTrack']);
 	} elseif (!isset($_COOKIE['singlemodel']) || $_COOKIE['singlemodel'] == 'false') {
-		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,true);
+		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,false);
 	} else {
 		$spotter_array = array();
 	}

@@ -153,6 +153,7 @@ class Marine{
 			if (isset($row['arrival_port_name'])) $temp_array['arrival_port_name'] = $row['arrival_port_name'];
 			if (isset($row['latitude'])) $temp_array['latitude'] = $row['latitude'];
 			if (isset($row['longitude'])) $temp_array['longitude'] = $row['longitude'];
+			if (isset($row['distance']) && $row['distance'] != '') $temp_array['distance'] = $row['distance'];
 			if (isset($row['format_source'])) $temp_array['format_source'] = $row['format_source'];
 			if (isset($row['heading'])) {
 				$temp_array['heading'] = $row['heading'];
@@ -462,6 +463,7 @@ class Marine{
 		$limit_query = '';
 		$additional_query = '';
 		$filter_query = $this->getFilter($filter,true,true);
+		$captain = filter_var($captain,FILTER_SANITIZE_STRING);
 		if ($captain != "")
 		{
 			$additional_query = " AND (marine_output.captain_name = :captain OR marine_output.captain_id = :captain)";
@@ -489,6 +491,273 @@ class Marine{
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 		return $spotter_array;
 	}
+
+	/**
+	* Gets all the marine information based on the race
+	*
+	* @return Array the marine information
+	*
+	*/
+	public function getMarineDataByRace($race = '', $limit = '', $sort = '', $filter = array())
+	{
+		global $global_marine_query;
+		date_default_timezone_set('UTC');
+		$query_values = array();
+		$limit_query = '';
+		$additional_query = '';
+		$filter_query = $this->getFilter($filter,true,true);
+		$race = filter_var($race,FILTER_SANITIZE_STRING);
+		if ($race != "")
+		{
+			$additional_query = " AND (marine_output.race_name = :race OR marine_output.race_id = :race)";
+			$query_values = array(':race' => $race);
+		}
+		if ($limit != "")
+		{
+			$limit_array = explode(",", $limit);
+			$limit_array[0] = filter_var($limit_array[0],FILTER_SANITIZE_NUMBER_INT);
+			$limit_array[1] = filter_var($limit_array[1],FILTER_SANITIZE_NUMBER_INT);
+			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
+			{
+				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
+				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+			}
+		}
+		if ($sort != "")
+		{
+			$search_orderby_array = $this->getOrderBy();
+			$orderby_query = $search_orderby_array[$sort]['sql'];
+		} else {
+			$orderby_query = " ORDER BY marine_output.race_rank ASC, marine_output.distance";
+		}
+		$query = $global_marine_query.$filter_query." marine_output.race_name <> '' ".$additional_query." ".$orderby_query;
+		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
+		return $spotter_array;
+	}
+
+	/**
+	* Count races by captain
+	*
+	* @return String Duration of all races
+	*
+	*/
+	public function countRacesByCaptain($captain,$filters = array())
+	{
+		$captain = filter_var($captain,FILTER_SANITIZE_STRING);
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT COUNT(*) AS nb 
+			FROM marine_output".$filter_query." (marine_output.captain_name = :captain OR marine_output.captain_id = :captain)";
+		$query_values = array();
+		$query_values = array_merge($query_values,array(':captain' => $captain));
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $result[0]['nb'];
+	}
+
+	/**
+	* Count captains by race
+	*
+	* @return String Duration of all races
+	*
+	*/
+	public function countCaptainsByRace($race,$filters = array())
+	{
+		$race = filter_var($race,FILTER_SANITIZE_STRING);
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT COUNT(*) AS nb 
+			FROM marine_output".$filter_query." (marine_output.race_name = :race OR marine_output.race_id = :race)";
+		$query_values = array();
+		$query_values = array_merge($query_values,array(':race' => $race));
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $result[0]['nb'];
+	}
+
+	/**
+	* Gets all boat types that have been used by a captain
+	*
+	* @return Array the boat list
+	*
+	*/
+	public function countAllBoatTypesByCaptain($captain,$filters = array(),$year = '',$month = '',$day = '')
+	{
+		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
+		$captain = filter_var($captain,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT marine_output.type, COUNT(marine_output.type) AS type_count
+			FROM marine_output".$filter_query." (marine_output.captain_id = :captain OR marine_output.captain_name = :captain)";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(marine_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM marine_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query .= " GROUP BY marine_output.type
+			ORDER BY type_count DESC";
+		$query_values = array_merge($query_values,array(':captain' => $captain));
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	/**
+	* Gets all boat types that have been used on a race
+	*
+	* @return Array the boat list
+	*
+	*/
+	public function countAllBoatTypesByRace($race,$filters = array(),$year = '',$month = '',$day = '')
+	{
+		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
+		$race = filter_var($race,FILTER_SANITIZE_STRING);
+		$query  = "SELECT DISTINCT marine_output.type, COUNT(marine_output.type) AS type_count
+			FROM marine_output".$filter_query." (marine_output.race_id = :race OR marine_output.race_name = :race)";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(marine_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM marine_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query .= " GROUP BY marine_output.type
+			ORDER BY type_count DESC";
+		$query_values = array_merge($query_values,array(':race' => $race));
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	/**
+	* Gets race duration by captain
+	*
+	* @return String Duration of all race
+	*
+	*/
+	public function getRaceDurationByCaptain($captain,$filters = array(),$year = '',$month = '',$day = '')
+	{
+		global $globalDBdriver;
+		$captain = filter_var($captain,FILTER_SANITIZE_STRING);
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT SUM(last_seen - date) AS duration 
+		    FROM marine_output".$filter_query." (marine_output.captain_name = :captain OR marine_output.captain_id = :captain) 
+		    AND last_seen > date";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(marine_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM marine_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query_values = array_merge($query_values,array(':captain' => $captain));
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (is_int($result[0]['duration'])) return gmdate('H:i:s',$result[0]['duration']);
+		else return $result[0]['duration'];
+	}
+
+	/**
+	* Gets a list of all captain names and captain ids
+	*
+	* @return Array list of captain names and captain ids
+	*
+	*/
+	public function getAllCaptainNames($filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT DISTINCT marine_output.captain_name, marine_output.captain_id
+			FROM marine_output".$filter_query." marine_output.captain_name <> '' 
+			ORDER BY marine_output.captain_name ASC";
+	
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	} 
+
+	/**
+	* Gets a list of all race names and race ids
+	*
+	* @return Array list of race names and race ids
+	*
+	*/
+	public function getAllRaceNames($filters = array())
+	{
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT DISTINCT marine_output.race_name, marine_output.race_id
+			FROM marine_output".$filter_query." marine_output.race_name <> '' 
+			ORDER BY marine_output.race_name ASC";
+	
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	} 
 
 	/**
 	* Gets all source name
@@ -713,10 +982,10 @@ class Marine{
 	* @return String success or false
 	*
 	*/	
-	public function updateLatestMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $groundspeed = NULL, $date = '')
+	public function updateLatestMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $groundspeed = NULL, $date = '',$distance = NULL,$race_rank = NULL, $race_time = NULL)
 	{
-		$query = 'UPDATE marine_output SET ident = :ident, last_latitude = :last_latitude, last_longitude = :last_longitude, last_seen = :last_seen, last_ground_speed = :last_ground_speed WHERE fammarine_id = :fammarine_id';
-                $query_values = array(':fammarine_id' => $fammarine_id,':last_latitude' => $latitude,':last_longitude' => $longitude, ':last_ground_speed' => $groundspeed,':last_seen' => $date,':ident' => $ident);
+		$query = 'UPDATE marine_output SET ident = :ident, last_latitude = :last_latitude, last_longitude = :last_longitude, last_seen = :last_seen, last_ground_speed = :last_ground_speed, distance = :distance, race_rank = :race_rank, race_time = :race_time WHERE fammarine_id = :fammarine_id';
+                $query_values = array(':fammarine_id' => $fammarine_id,':last_latitude' => $latitude,':last_longitude' => $longitude, ':last_ground_speed' => $groundspeed,':last_seen' => $date,':ident' => $ident,':distance' => $distance,':race_rank' => $race_rank,':race_time' => $race_time);
 
 		try {
 			$sth = $this->db->prepare($query);
@@ -730,7 +999,7 @@ class Marine{
 	}
 
 	/**
-	* Adds a new spotter data
+	* Adds a new marine data
 	*
 	* @param String $fammarine_id the ID
 	* @param String $ident the marine ident
@@ -754,7 +1023,7 @@ class Marine{
 	* @param String $verticalrate vertival rate of flight
 	* @return String success or false
 	*/
-	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$typeid = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$format_source = '', $source_name = '', $captain_id = '',$captain_name = '',$race_id = '', $race_name = '')
+	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$typeid = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$format_source = '', $source_name = '', $captain_id = '',$captain_name = '',$race_id = '', $race_name = '', $distance = '',$race_rank = '', $race_time = '')
 	{
 		global $globalURL, $globalMarineImageFetch;
 		
@@ -846,6 +1115,8 @@ class Marine{
 		$captain_name = filter_var($captain_name,FILTER_SANITIZE_STRING);
 		$race_id = filter_var($race_id,FILTER_SANITIZE_STRING);
 		$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
+		$race_rank = filter_var($race_rank,FILTER_SANITIZE_NUMBER_INT);
+		$race_time = filter_var($race_time,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		if (isset($globalMarineImageFetch) && $globalMarineImageFetch === TRUE) {
 			$Image = new Image($this->db);
 			$image_array = $Image->getMarineImage($mmsi,$imo,$ident);
@@ -860,13 +1131,16 @@ class Marine{
 		}
 		if ($type_id == '') $type_id = NULL;
 		if ($status_id == '') $status_id = NULL;
+		if ($distance == '') $distance = NULL;
+		if ($race_rank == '') $race_rank = NULL;
+		if ($race_time == '') $race_time = NULL;
 		if ($heading == '' || $Common->isInteger($heading) === false) $heading = 0;
 		//if ($groundspeed == '' || $Common->isInteger($groundspeed) === false) $groundspeed = 0;
 		if ($arrival_date == '') $arrival_date = NULL;
-		$query  = "INSERT INTO marine_output (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, type_id, status,status_id,imo,arrival_port_name,arrival_port_date,captain_id,captain_name,race_id,race_name) 
-		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:speed,:date,:format_source, :source_name,:mmsi,:type,:type_id,:status,:status_id,:imo,:arrival_port_name,:arrival_port_date,:captain_id,:captain_name,:race_id,:race_name)";
+		$query  = "INSERT INTO marine_output (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, mmsi, type, type_id, status,status_id,imo,arrival_port_name,arrival_port_date,captain_id,captain_name,race_id,race_name, distance, race_rank,race_time) 
+		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:speed,:date,:format_source, :source_name,:mmsi,:type,:type_id,:status,:status_id,:imo,:arrival_port_name,:arrival_port_date,:captain_id,:captain_name,:race_id,:race_name, :distance, :race_rank,:race_time)";
 
-		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':speed' => $groundspeed,':date' => $date,':format_source' => $format_source, ':source_name' => $source_name,':mmsi' => $mmsi,':type' => $type,':type_id' => $type_id,':status' => $status,':status_id' => $status_id,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date,':captain_id' => $captain_id,':captain_name' => $captain_name,':race_id' => $race_id,':race_name' => $race_name);
+		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':speed' => $groundspeed,':date' => $date,':format_source' => $format_source, ':source_name' => $source_name,':mmsi' => $mmsi,':type' => $type,':type_id' => $type_id,':status' => $status,':status_id' => $status_id,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date,':captain_id' => $captain_id,':captain_name' => $captain_name,':race_id' => $race_id,':race_name' => $race_name,':distance' => $distance,':race_rank' => $race_rank,':race_time' => $race_time);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -918,7 +1192,7 @@ class Marine{
 	/**
 	* Gets the aircraft data from the last 20 seconds
 	*
-	* @return Array the spotter data
+	* @return Array the marine data
 	*
 	*/
 	public function getRealTimeData($q = '')
@@ -949,9 +1223,9 @@ class Marine{
 				WHERE marine_output.date::timestamp >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '20 SECONDS' ".$additional_query." 
 				AND marine_output.date::timestamp < CURRENT_TIMESTAMP AT TIME ZONE 'UTC'";
 		}
-		$spotter_array = $this->getDataFromDB($query, array());
+		$marine_array = $this->getDataFromDB($query, array());
 
-		return $spotter_array;
+		return $marine_array;
 	}
 	
 	
@@ -2092,9 +2366,31 @@ q	*
 		return $marine_array;
 	}
 
+	/**
+	* Check marine by id
+	*
+	* @return String the ident
+	*
+	*/
+	public function checkId($id)
+	{
+		global $globalDBdriver, $globalTimezone;
+		$query  = 'SELECT marine_live.ident, marine_live.fammarine_id FROM marine_live 
+		WHERE marine_live.fammarine_id = :id';
+		$query_data = array(':id' => $id);
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_data);
+		$ident_result='';
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$ident_result = $row['fammarine_id'];
+		}
+		return $ident_result;
+	}
+
 	public function getOrderBy()
 	{
-		$orderby = array("type_asc" => array("key" => "type_asc", "value" => "Type - ASC", "sql" => "ORDER BY marine_output.type ASC"), "type_desc" => array("key" => "type_desc", "value" => "Type - DESC", "sql" => "ORDER BY marine_output.type DESC"),"manufacturer_asc" => array("key" => "manufacturer_asc", "value" => "Aircraft Manufacturer - ASC", "sql" => "ORDER BY marine_output.aircraft_manufacturer ASC"), "manufacturer_desc" => array("key" => "manufacturer_desc", "value" => "Aircraft Manufacturer - DESC", "sql" => "ORDER BY marine_output.aircraft_manufacturer DESC"),"airline_name_asc" => array("key" => "airline_name_asc", "value" => "Airline Name - ASC", "sql" => "ORDER BY marine_output.airline_name ASC"), "airline_name_desc" => array("key" => "airline_name_desc", "value" => "Airline Name - DESC", "sql" => "ORDER BY marine_output.airline_name DESC"), "ident_asc" => array("key" => "ident_asc", "value" => "Ident - ASC", "sql" => "ORDER BY marine_output.ident ASC"), "ident_desc" => array("key" => "ident_desc", "value" => "Ident - DESC", "sql" => "ORDER BY marine_output.ident DESC"), "airport_departure_asc" => array("key" => "airport_departure_asc", "value" => "Departure Airport - ASC", "sql" => "ORDER BY marine_output.departure_airport_city ASC"), "airport_departure_desc" => array("key" => "airport_departure_desc", "value" => "Departure Airport - DESC", "sql" => "ORDER BY marine_output.departure_airport_city DESC"), "airport_arrival_asc" => array("key" => "airport_arrival_asc", "value" => "Arrival Airport - ASC", "sql" => "ORDER BY marine_output.arrival_airport_city ASC"), "airport_arrival_desc" => array("key" => "airport_arrival_desc", "value" => "Arrival Airport - DESC", "sql" => "ORDER BY marine_output.arrival_airport_city DESC"), "date_asc" => array("key" => "date_asc", "value" => "Date - ASC", "sql" => "ORDER BY marine_output.date ASC"), "date_desc" => array("key" => "date_desc", "value" => "Date - DESC", "sql" => "ORDER BY marine_output.date DESC"),"distance_asc" => array("key" => "distance_asc","value" => "Distance - ASC","sql" => "ORDER BY distance ASC"),"distance_desc" => array("key" => "distance_desc","value" => "Distance - DESC","sql" => "ORDER BY distance DESC"));
+		$orderby = array("type_asc" => array("key" => "type_asc", "value" => "Type - ASC", "sql" => "ORDER BY marine_output.type ASC"), "type_desc" => array("key" => "type_desc", "value" => "Type - DESC", "sql" => "ORDER BY marine_output.type DESC"),"manufacturer_asc" => array("key" => "manufacturer_asc", "value" => "Aircraft Manufacturer - ASC", "sql" => "ORDER BY marine_output.aircraft_manufacturer ASC"), "manufacturer_desc" => array("key" => "manufacturer_desc", "value" => "Aircraft Manufacturer - DESC", "sql" => "ORDER BY marine_output.aircraft_manufacturer DESC"),"airline_name_asc" => array("key" => "airline_name_asc", "value" => "Airline Name - ASC", "sql" => "ORDER BY marine_output.airline_name ASC"), "airline_name_desc" => array("key" => "airline_name_desc", "value" => "Airline Name - DESC", "sql" => "ORDER BY marine_output.airline_name DESC"), "ident_asc" => array("key" => "ident_asc", "value" => "Ident - ASC", "sql" => "ORDER BY marine_output.ident ASC"), "ident_desc" => array("key" => "ident_desc", "value" => "Ident - DESC", "sql" => "ORDER BY marine_output.ident DESC"), "airport_departure_asc" => array("key" => "airport_departure_asc", "value" => "Departure port - ASC", "sql" => "ORDER BY marine_output.departure_port_city ASC"), "airport_departure_desc" => array("key" => "airport_departure_desc", "value" => "Departure Airport - DESC", "sql" => "ORDER BY marine_output.departure_airport_city DESC"), "airport_arrival_asc" => array("key" => "airport_arrival_asc", "value" => "Arrival Airport - ASC", "sql" => "ORDER BY marine_output.arrival_airport_city ASC"), "airport_arrival_desc" => array("key" => "airport_arrival_desc", "value" => "Arrival Airport - DESC", "sql" => "ORDER BY marine_output.arrival_airport_city DESC"), "date_asc" => array("key" => "date_asc", "value" => "Date - ASC", "sql" => "ORDER BY marine_output.date ASC"), "date_desc" => array("key" => "date_desc", "value" => "Date - DESC", "sql" => "ORDER BY marine_output.date DESC"),"distance_asc" => array("key" => "distance_asc","value" => "Distance - ASC","sql" => "ORDER BY distance ASC"),"distance_desc" => array("key" => "distance_desc","value" => "Distance - DESC","sql" => "ORDER BY distance DESC"));
 		
 		return $orderby;
 		

@@ -260,8 +260,8 @@ location /owner {
     rewrite "^/owner/statistics/route/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$" /owner-statistics-route.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/statistics/route/([^/]+)(/?)$ /owner-statistics-route.php?owner=$1 last;
     rewrite "^/owner/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)/([^/]+)(/?)$" /owner-detailed.php?owner=$1&year=$2&month=$3&limit=$4&sort=$5 last;
-    rewrite "^/owner/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)/([^/]+)(/?)$" /owner-detailed.php?owner=$1&year=$2&month=$3&limit=$4 last;
-    rewrite "^/owner/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)/([^/]+)(/?)$" /owner-detailed.php?owner=$1&year=$2&month=$3 last;
+    rewrite "^/owner/([^/]+)/([0-9]{4})/([0-9]{2})/([^/]+)(/?)$" /owner-detailed.php?owner=$1&year=$2&month=$3&limit=$4 last;
+    rewrite "^/owner/([^/]+)/([0-9]{4})/([0-9]{2})(/?)$" /owner-detailed.php?owner=$1&year=$2&month=$3 last;
     rewrite ^/owner/([^/]+)/([^/]+)/([^/]+)(/?)$ /owner-detailed.php?owner=$1&limit=$2&sort=$3 last;
     rewrite ^/owner/([^/]+)/([^/]+)(/?)$ /owner-detailed.php?owner=$1&limit=$2 last;
     rewrite ^/owner/([^/]+)(/?)$ /owner-detailed.php?owner=$1 last;
@@ -282,6 +282,20 @@ location /pilot {
     rewrite ^/pilot/([^/]+)/([^/]+)(/?)$ /pilot-detailed.php?pilot=$1&limit=$2 last;
     rewrite ^/pilot/([^/]+)(/?)$ /pilot-detailed.php?pilot=$1 last;
     rewrite ^/pilot(/?)$ /pilot.php last;
+}
+
+location /marine/captain {
+    rewrite ^/marine/captain/([^/]+)/([^/]+)/([^/]+)(/?)$ /captain-detailed.php?captain=$1&limit=$2&sort=$3 last;
+    rewrite ^/marine/captain/([^/]+)/([^/]+)(/?)$ /captain-detailed.php?captain=$1&limit=$2 last;
+    rewrite ^/marine/captain/([^/]+)(/?)$ /captain-detailed.php?captain=$1 last;
+    rewrite ^/marine/captain(/?)$ /captain.php last;
+}
+
+location /marine/race {
+    rewrite ^/marine/race/([^/]+)/([^/]+)/([^/]+)(/?)$ /race-detailed.php?race=$1&limit=$2&sort=$3 last;
+    rewrite ^/marine/race/([^/]+)/([^/]+)(/?)$ /race-detailed.php?race=$1&limit=$2 last;
+    rewrite ^/marine/race/([^/]+)(/?)$ /race-detailed.php?race=$1 last;
+    rewrite ^/marine/race(/?)$ /race.php last;
 }
 
 location /aircraft {

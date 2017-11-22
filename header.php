@@ -576,6 +576,15 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 ?>
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("Explore"); ?> <b class="<?php if ($sub) echo 'right-'; ?>caret"></b></a>
 		<ul class="dropdown-menu">
+<?php
+	if (isset($globalVM) && $globalVM) {
+?>
+		    <li><a href="<?php print $globalURL; ?>/marine/captain"><?php echo _("Captains"); ?></a></li>
+		    <li><a href="<?php print $globalURL; ?>/marine/race"><?php echo _("Races"); ?></a></li>
+		    <li><hr /></li>
+<?php
+	}
+?>
 		    <li><a href="<?php print $globalURL; ?>/marine/currently"><?php echo _("Current Activity"); ?></a></li>
 		    <li><a href="<?php print $globalURL; ?>/marine/latest"><?php echo _("Latest Activity"); ?></a></li>
 		    <li><a href="<?php print $globalURL; ?>/marine/date/<?php print date("Y-m-d"); ?>"><?php echo _("Today's Activity"); ?></a></li>

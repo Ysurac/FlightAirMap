@@ -929,7 +929,7 @@ class MarineLive {
 	* @return String success or false
 	*
 	*/
-	public function addLiveMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '',$captain_id = '',$captain_name = '',$race_id = '', $race_name = '')
+	public function addLiveMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '',$captain_id = '',$captain_name = '',$race_id = '', $race_name = '', $distance = '', $race_rank = '', $race_time = '')
 	{
 		global $globalURL, $globalArchive, $globalDebug;
 		$Common = new Common();
@@ -985,6 +985,7 @@ class MarineLive {
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		$distance = filter_var($distance,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$heading = filter_var($heading,FILTER_SANITIZE_NUMBER_INT);
 		$groundspeed = filter_var($groundspeed,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$format_source = filter_var($format_source,FILTER_SANITIZE_STRING);
@@ -1003,8 +1004,11 @@ class MarineLive {
 		$captain_name = filter_var($captain_name,FILTER_SANITIZE_STRING);
 		$race_id = filter_var($race_id,FILTER_SANITIZE_STRING);
 		$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
+		$race_rank = filter_var($race_rank,FILTER_SANITIZE_NUMBER_INT);
+		$race_time = filter_var($race_time,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		if ($typeid == '') $typeid = NULL;
 		if ($statusid == '') $statusid = NULL;
+		if ($distance == '') $distance = NULL;
 
             	//if ($groundspeed == '' || $Common->isInteger($groundspeed) === false ) $groundspeed = 0;
             	if ($heading == '' || $Common->isInteger($heading) === false ) $heading = 0;
@@ -1014,9 +1018,9 @@ class MarineLive {
 			if ($globalDebug) echo '-- Delete previous data -- ';
 			$query .= 'DELETE FROM marine_live WHERE fammarine_id = :fammarine_id;';
 		}
-		$query .= 'INSERT INTO marine_live (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,type_id,status,status_id,imo,arrival_port_name,arrival_port_date,captain_id,captain_name,race_id,race_name) 
-		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:typeid,:status,:statusid,:imo,:arrival_port_name,:arrival_port_date,:captain_id,:captain_name,:race_id,:race_name)';
-		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':mmsi' => $mmsi,':type' => $type,':typeid' => $typeid,':status' => $status,':statusid' => $statusid,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date,':captain_id' => $captain_id,':captain_name' => $captain_name,':race_id' => $race_id,':race_name' => $race_name);
+		$query .= 'INSERT INTO marine_live (fammarine_id, ident, latitude, longitude, heading, ground_speed, date, format_source, source_name, over_country, mmsi, type,type_id,status,status_id,imo,arrival_port_name,arrival_port_date,captain_id,captain_name,race_id,race_name,distance,race_rank,race_time) 
+		    VALUES (:fammarine_id,:ident,:latitude,:longitude,:heading,:groundspeed,:date,:format_source, :source_name, :over_country,:mmsi,:type,:typeid,:status,:statusid,:imo,:arrival_port_name,:arrival_port_date,:captain_id,:captain_name,:race_id,:race_name,:distance,:race_rank,:race_time)';
+		$query_values = array(':fammarine_id' => $fammarine_id,':ident' => $ident,':latitude' => $latitude,':longitude' => $longitude,':heading' => $heading,':groundspeed' => $groundspeed,':date' => $date, ':format_source' => $format_source, ':source_name' => $source_name, ':over_country' => $over_country,':mmsi' => $mmsi,':type' => $type,':typeid' => $typeid,':status' => $status,':statusid' => $statusid,':imo' => $imo,':arrival_port_name' => $arrival_code,':arrival_port_date' => $arrival_date,':captain_id' => $captain_id,':captain_name' => $captain_name,':race_id' => $race_id,':race_name' => $race_name,':distance' => $distance,':race_time' => $race_time,':race_rank' => $race_rank);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
@@ -1028,7 +1032,7 @@ class MarineLive {
 		if (isset($globalArchive) && $globalArchive && $putinarchive && $noarchive !== true) {
 			if ($globalDebug) echo '(Add to Marine archive : ';
 			$MarineArchive = new MarineArchive($this->db);
-			$result =  $MarineArchive->addMarineArchiveData($fammarine_id, $ident, $latitude, $longitude, $heading, $groundspeed, $date, $putinarchive, $mmsi,$type,$typeid,$imo, $callsign,$arrival_code,$arrival_date,$status,$statusid,$noarchive,$format_source, $source_name, $over_country,$captain_id,$captain_name,$race_id,$race_name);
+			$result =  $MarineArchive->addMarineArchiveData($fammarine_id, $ident, $latitude, $longitude, $heading, $groundspeed, $date, $putinarchive, $mmsi,$type,$typeid,$imo, $callsign,$arrival_code,$arrival_date,$status,$statusid,$noarchive,$format_source, $source_name, $over_country,$captain_id,$captain_name,$race_id,$race_name,$distance,$race_rank,$race_time);
 			if ($globalDebug) echo $result.')';
 		}
 		return "success";

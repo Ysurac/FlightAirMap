@@ -93,14 +93,26 @@ if (strtolower($current_page) == "search")
 		}
 	}
 	if ($type == 'aircraft' || $type == 'marine') {
-		if ($_GET['sort'] == "airport_arrival_asc")
-		{
-			print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_desc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-up"></i></th>';
-		} else if ($_GET['sort'] == "airport_arrival_desc")
-		{
-			print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-down"></i></th>';
+		if (isset($globalVM) && $globalVM) {
+			if ($_GET['sort'] == "race_asc")
+			{
+				print '<th class="arrival"><a href="'.$page_url.'&sort=race_desc" class="active">'._("Races").'</a> <i class="fa fa-caret-up"></i></th>';
+			} else if ($_GET['sort'] == "race_desc")
+			{
+				print '<th class="arrival"><a href="'.$page_url.'&sort=race_asc" class="active">'._("Races").'</a> <i class="fa fa-caret-down"></i></th>';
+			} else {
+				print '<th class="arrival"><a href="'.$page_url.'&sort=race_asc">'._("Races").'</a> <i class="fa fa-sort small"></i></th>';
+			}
 		} else {
-			print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
+			if ($_GET['sort'] == "airport_arrival_asc")
+			{
+				print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_desc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-up"></i></th>';
+			} else if ($_GET['sort'] == "airport_arrival_desc")
+			{
+				print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-down"></i></th>';
+			} else {
+				print '<th class="arrival"><a href="'.$page_url.'&sort=airport_arrival_asc"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
+			}
 		}
 	}
 	if ($type == 'aircraft') {
@@ -125,6 +137,19 @@ if (strtolower($current_page) == "search")
 			print '<th class="owner"><span class="nomobile">'._("Owner name").'</span><span class="mobile">'._("Owner").'</span></a></th>';
 		}
 	}
+	if ($type == 'marine' && isset($globalVM) && $globalVM) {
+		if ($_GET['sort'] == "distance_asc")
+		{
+			print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-caret-up"></i></th>';
+		} elseif ($_GET['sort'] == "distance_desc")
+		{
+			print '<th class="distance"><a href="'.$page_url.'&sort=distance_asc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-caret-down"></i></th>';
+		} else {
+			print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-sort small"></i></th>';
+		}
+		print '<th class="captain"><span class="nomobile">'._("Captain name").'</span><span class="mobile">'._("Captain").'</span></a></th>';
+	}
+
 	if ($type == 'tracker') {
 		print '<th class="comment"><span class="nomobile">'._("Comment").'</span><span class="mobile">'._("Comment").'</span></th>';
 	}
@@ -300,14 +325,26 @@ if (strtolower($current_page) == "search")
 			}
 		}
 		if ($type == 'aircraft' || $type == 'marine') {
-			if ($_GET['sort'] == "airport_arrival_asc")
-			{
-				print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
-			} else if ($_GET['sort'] == "airport_arrival_desc")
-			{
-				print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
+			if (isset($globalVM) && $globalVM) {
+				if ($_GET['sort'] == "race_asc")
+				{
+					print '<th class="arrival">'._("Race").''._("To").'</th>';
+				} else if ($_GET['sort'] == "race_desc")
+				{
+					print '<th class="arrival"><'._("Race").'</th>';
+				} else {
+					print '<th class="arrival">'._("Race").'</th>';
+				}
 			} else {
-				print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
+				if ($_GET['sort'] == "airport_arrival_asc")
+				{
+					print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
+				} else if ($_GET['sort'] == "airport_arrival_desc")
+				{
+					print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
+				} else {
+					print '<th class="arrival"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></th>';
+				}
 			}
 		}
     		if ($type == 'aircraft') {
@@ -320,6 +357,18 @@ if (strtolower($current_page) == "search")
 			if ($showRouteStop) {
 				print '<th class="route"><span class="nomobile">'._("Route").'</span><span class="mobile">'._("Route").'</span></th>';
 			}
+		}
+		if ($type == 'marine' && isset($globalVM) && $globalVM) {
+			if ($_GET['sort'] == "distance_asc")
+			{
+				print '<th class="distance">'._("Distance").'</th>';
+			} elseif ($_GET['sort'] == "distance_desc")
+			{
+				print '<th class="distance">'._("Distance").'</th>';
+			} else {
+				print '<th class="distance">'._("Distance").'</th>';
+			}
+			print '<th class="captain"><span class="nomobile">'._("Captain name").'</span><span class="mobile">'._("Captain").'</span></a></th>';
 		}
 		if ($type == 'tracker') {
 			print '<th class="comment"><span class="nomobile">'._("Comment").'</span><span class="mobile">'._("Comment").'</span></th>';
@@ -422,14 +471,26 @@ if (strtolower($current_page) == "search")
 			}
 		}
 		if ($type == 'aircraft' || $type == 'marine') {
-			if ($_GET['sort'] == "airport_arrival_asc")
-			{
-				print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_desc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-up"></i></th>';
-			} else if ($_GET['sort'] == "airport_arrival_desc")
-			{
-				print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-down"></i></th>';
+			if (isset($globalVM) && $globalVM) {
+				if ($_GET['sort'] == "race_asc")
+				{
+					print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/race_desc" class="active">'._("Race").'</a> <i class="fa fa-caret-up"></i></th>';
+				} else if ($_GET['sort'] == "race_desc")
+				{
+					print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/race_asc" class="active">'._("Race").'</a> <i class="fa fa-caret-down"></i></th>';
+				} else {
+					print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/race_asc">'._("Race").'</a> <i class="fa fa-sort small"></i></th>';
+				}
 			} else {
-				print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
+				if ($_GET['sort'] == "airport_arrival_asc")
+				{
+					print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_desc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-up"></i></th>';
+				} else if ($_GET['sort'] == "airport_arrival_desc")
+				{
+					print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc" class="active"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-caret-down"></i></th>';
+				} else {
+					print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/airport_arrival_asc"><span class="nomobile">'._("Going to").'</span><span class="mobile">'._("To").'</span></a> <i class="fa fa-sort small"></i></th>';
+				}
 			}
 		}
 		if ($type == 'aircraft') {
@@ -442,6 +503,18 @@ if (strtolower($current_page) == "search")
 			if ($showRouteStop) {
 				print '<th class="route"><span class="nomobile">'._("Route").'</span><span class="mobile">'._("Route").'</span></th>';
 			}
+		}
+		if ($type == 'marine' && isset($globalVM) && $globalVM) {
+			if ($_GET['sort'] == "distance_asc")
+			{
+				print '<th class="distance"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/distance_desc" class="active">'._("Distance").'</a> <i class="fa fa-caret-up"></i></th>';
+			} elseif ($_GET['sort'] == "distance_desc")
+			{
+				print '<th class="distance"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/distance_asc" class="active">'._("Distance").'</a> <i class="fa fa-caret-down"></i></th>';
+			} else {
+				print '<th class="distance"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/distance_desc">'._("Distance").'</a> <i class="fa fa-sort small"></i></th>';
+			}
+			print '<th class="captain"><span class="nomobile">'._("Captain name").'</span><span class="mobile">'._("Captain").'</span></a></th>';
 		}
 		if ($type == 'tracker') {
 			print '<th class="comment"><span class="nomobile">'._("Comment").'</span><span class="mobile">'._("Comment").'</span></th>';
@@ -549,15 +622,19 @@ foreach($spotter_array as $spotter_item)
 				if ($spotter_item['image_source'] == 'wikimedia' || $spotter_item['image_source'] == 'devianart' || $spotter_item['image_source'] == 'flickr') {
 					$image_thumbnail = preg_replace("/^http:/i","https:",$spotter_item['image_thumbnail']);
 				} else 	$image_thumbnail = $spotter_item['image_thumbnail'];
-				if (isset($spotter_item['airline_name'])) {
+				if (isset($spotter_item['mmsi']) && $spotter_item['mmsi'] != '') {
 					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
 				} else {
-					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
+					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['ident'].'" data-content="'._("Ident:").' '.$spotter_item['ident'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
 				}
 				print '</td>'."\n";
 			} else {
 				print '<td class="aircraft_thumbnail">'."\n";
-				print '<img src="'.$globalURL.'/images/placeholder_marine_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n";
+				if (isset($spotter_item['mmsi']) && $spotter_item['mmsi'] != '') {
+					print '<img src="'.$globalURL.'/images/placeholder_marine_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n";
+				} else {
+					print '<img src="'.$globalURL.'/images/placeholder_marine_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['ident'].'" data-content="'._("Ident:").' '.$spotter_item['ident'].'" data-html="true" width="100px" />'."\n";
+				}
 				print '</td>'."\n";
 			}
 		} elseif ($type == 'tracker') {
@@ -671,11 +748,19 @@ foreach($spotter_array as $spotter_item)
 				if ($spotter_item['image_source'] == 'wikimedia' || $spotter_item['image_source'] == 'devianart' || $spotter_item['image_source'] == 'flickr') {
 					$image_thumbnail = preg_replace("/^http:/i","https:",$spotter_item['image_thumbnail']);
 				} else 	$image_thumbnail = $spotter_item['image_thumbnail'];
-				print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
+				if (isset($spotter_item['mmsi']) && $spotter_item['mmsi'] != '') {
+					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
+				} else {
+					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['ident'].'" data-content="'._("Ident:").' '.$spotter_item['ident'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
+				}
 				print '</td>'."\n";
 			} else {
 				print '<td class="aircraft_thumbnail">'."\n";
-				print '<img src="'.$globalURL.'/images/placeholder_marine_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n";
+				if (isset($spotter_item['mmsi']) && $spotter_item['mmsi'] != '') {
+					print '<img src="'.$globalURL.'/images/placeholder_marine_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n";
+				} else {
+					print '<img src="'.$globalURL.'/images/placeholder_marine_thumb.png" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['ident'].'" data-content="'._("Ident:").' '.$spotter_item['ident'].'" data-html="true" width="100px" />'."\n";
+				}
 				print '</td>'."\n";
 			}
 		} elseif ($type == 'tracker') {
@@ -958,19 +1043,31 @@ foreach($spotter_array as $spotter_item)
 			}
 			print '</td>'."\n";
 		} elseif ($type == 'marine') {
-			print '<td class="arrival_airport">'."\n";
-			if (!isset($spotter_item['arrival_port_name'])) {
-				//print '<span class="nomobile"><a href="'.$globalURL.'/marine/port/NA">'._("Not available").'</a></span>'."\n";
-				//print '<span class="mobile"><a href="'.$globalURL.'/marine/port/NA">'._("Not available").'</a></span>'."\n";
-				print '<span class="nomobile">'._("Not available").'</span>'."\n";
-				print '<span class="mobile">'._("Not available").'</span>'."\n";
+			if (isset($globalVM) && $globalVM) {
+				print '<td class="arrival_airport">'."\n";
+				if (!isset($spotter_item['race_name'])) {
+					print '<span class="nomobile">'._("Not available").'</span>'."\n";
+					print '<span class="mobile">'._("Not available").'</span>'."\n";
+				} else {
+					print '<span class="nomobile"><a href="'.$globalURL.'/marine/race/'.$spotter_item['race_id'].'">'.$spotter_item['race_name'].'</a></span>'."\n";
+					print '<span class="mobile"><a href="'.$globalURL.'/marine/race/'.$spotter_item['race_id'].'">'.$spotter_item['race_name'].'</a></span>'."\n";
+				}
+				print '</td>'."\n";
 			} else {
-				//print '<span class="nomobile"><a href="'.$globalURL.'/marine/port/'.urlencode($spotter_item['arrival_port_name']).'">'.$spotter_item['arrival_port_name'].'</a></span>'."\n";
-				//print '<span class="mobile"><a href="'.$globalURL.'/marine/port/'.urlencode($spotter_item['arrival_port_name']).'">'.$spotter_item['arrival_port_name'].'</a></span>'."\n";
-				print '<span class="nomobile">'.$spotter_item['arrival_port_name'].'</span>'."\n";
-				print '<span class="mobile">'.$spotter_item['arrival_port_name'].'</span>'."\n";
+				print '<td class="arrival_airport">'."\n";
+				if (!isset($spotter_item['arrival_port_name'])) {
+					//print '<span class="nomobile"><a href="'.$globalURL.'/marine/port/NA">'._("Not available").'</a></span>'."\n";
+					//print '<span class="mobile"><a href="'.$globalURL.'/marine/port/NA">'._("Not available").'</a></span>'."\n";
+					print '<span class="nomobile">'._("Not available").'</span>'."\n";
+					print '<span class="mobile">'._("Not available").'</span>'."\n";
+				} else {
+					//print '<span class="nomobile"><a href="'.$globalURL.'/marine/port/'.urlencode($spotter_item['arrival_port_name']).'">'.$spotter_item['arrival_port_name'].'</a></span>'."\n";
+					//print '<span class="mobile"><a href="'.$globalURL.'/marine/port/'.urlencode($spotter_item['arrival_port_name']).'">'.$spotter_item['arrival_port_name'].'</a></span>'."\n";
+					print '<span class="nomobile">'.$spotter_item['arrival_port_name'].'</span>'."\n";
+					print '<span class="mobile">'.$spotter_item['arrival_port_name'].'</span>'."\n";
+				}
+				print '</td>'."\n";
 			}
-			print '</td>'."\n";
 		}
 		
 		if ($type == 'tracker') {
@@ -1037,6 +1134,44 @@ foreach($spotter_array as $spotter_item)
 					}
 					print '</td>'."\n";
 				}
+			}
+			if ($type == 'marine') {
+				if (isset($globalVM) && $globalVM) {
+					if (isset($spotter_item['distance'])) {
+						print '<td class="distance">';
+						if ((!isset($_COOKIE['unitdistance']) && ((isset($globalUnitDistance) && $globalUnitDistance == 'km') || !isset($globalUnitDistance))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) {
+							print '<span class="nomobile">'.round($spotter_item['distance'],2).' km</span>'."\n";
+							print '<span class="mobile">'.round($spotter_item['distance'],2).' km</span><br />'."\n";
+						} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+							print '<span class="nomobile">'.round($spotter_item['distance']*0.621371,2).' mi</span>'."\n";
+							print '<span class="mobile">'.round($spotter_item['distance']*0.621371,2).' mi</span><br />'."\n";
+						} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+							print '<span class="nomobile">'.round($spotter_item['distance']*0.539957,2).' nm</span>'."\n";
+							print '<span class="mobile">'.round($spotter_item['distance']*0.539957,2).' nm</span><br />'."\n";
+						}
+						print '</td>'."\n";
+					} else {
+						print '<td class="distance"></td>'."\n";
+					}
+					print '<td class="captain">'."\n";
+					if ((!isset($spotter_item['captain_id']) || $spotter_item['captain_id'] == '') && (!isset($spotter_item['captain_name']) || $spotter_item['captain_name'] == '')) {
+						print '<span class="nomobile">-</span>'."\n";
+						print '<span class="mobile">-</span>'."\n";
+					} elseif ((!isset($spotter_item['captain_id']) || $spotter_item['captain_id'] == '') && (isset($spotter_item['captain_name']) && $spotter_item['captain_name'] != '')) {
+						print '<span class="nomobile"><a href="'.$globalURL.'/marine/captain/'.$spotter_item['captain_name'].'">'.$spotter_item['captain_name'].'</a></span>'."\n";
+						print '<span class="mobile"><a href="'.$globalURL.'/marine/captain/'.$spotter_item['captain_name'].'">'.$spotter_item['captain_name'].'</a></span>'."\n";
+					} else {
+						if (!isset($spotter_item['captain_name'])) {
+							print '<span class="nomobile"><a href="'.$globalURL.'/marine/captain/'.$spotter_item['captain_id'].'">('.$spotter_item['captain_id'].')</a></span>'."\n";
+							print '<span class="mobile"><a href="'.$globalURL.'/marine/captain/'.$spotter_item['captain_id'].'">('.$spotter_item['captain_id'].')</a></span>'."\n";
+						} else {
+							print '<span class="nomobile"><a href="'.$globalURL.'/marine/captain/'.$spotter_item['captain_id'].'">'.$spotter_item['captain_name'].' ('.$spotter_item['captain_id'].')</a></span>'."\n";
+							print '<span class="mobile"><a href="'.$globalURL.'/marine/captain/'.$spotter_item['captain_id'].'">'.$spotter_item['captain_name'].' ('.$spotter_item['captain_id'].')</a></span>'."\n";
+						}
+					}
+					print '</td>'."\n";
+				}
+			
 			}
 		}
 		

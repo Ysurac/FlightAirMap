@@ -28,8 +28,11 @@ CREATE TABLE IF NOT EXISTS marine_archive (
   navigator_id varchar(255) DEFAULT NULL,
   race_id varchar(255) DEFAULT NULL,
   race_name varchar(255) DEFAULT NULL,
+  race_rank integer DEFAULT NULL,
+  race_time float DEFAULT NULL,
   format_source varchar(255) DEFAULT NULL,
   source_name varchar(255) DEFAULT NULL,
+  distance float DEFAULT NULL,
   PRIMARY KEY (marine_archive_id)
 );
 
