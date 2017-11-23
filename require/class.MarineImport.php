@@ -130,7 +130,7 @@ class MarineImport {
 		if (!isset($this->all_tracked[$id])) {
 		    $this->all_tracked[$id] = array();
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('addedMarine' => 0));
-		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => '','latitude' => '', 'longitude' => '', 'speed' => '0', 'heading' => '', 'format_source' => '','source_name' => '','comment'=> '','type' => '','typeid' => '','noarchive' => false,'putinarchive' => true,'over_country' => '','mmsi' => '','status' => '','status_id' => '','imo' => '','callsign' => '','arrival_code' => '','arrival_date' => '','mmsi_type' => '','captain_id' => '','captain_name' => '','race_id' => '','race_name' => '','distance' => NULL));
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => '','latitude' => '', 'longitude' => '', 'speed' => '0', 'heading' => '', 'format_source' => '','source_name' => '','comment'=> '','type' => '','typeid' => '','noarchive' => false,'putinarchive' => true,'over_country' => '','mmsi' => '','status' => '','status_id' => '','imo' => '','callsign' => '','arrival_code' => '','arrival_date' => '','mmsi_type' => '','captain_id' => '','captain_name' => '','race_id' => '','race_name' => '','distance' => NULL,'race_rank' => NULL,'race_time' => NULL));
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('lastupdate' => time()));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
