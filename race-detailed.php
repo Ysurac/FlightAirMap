@@ -157,7 +157,7 @@ if (!isset($_GET['race'])){
 		$title = _("Owner");
 		require_once('header.php');
 		print '<h1>'._("Error").'</h1>';
-		print '<p>'._("Sorry, this owner is not in the database. :(").'</p>'; 
+		print '<p>'._("Sorry, this race is not in the database. :(").'</p>'; 
 	}
 }
 require_once('footer.php');

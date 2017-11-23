@@ -149,6 +149,8 @@ class Marine{
 			if (isset($row['captain_name'])) $temp_array['captain_name'] = $row['captain_name'];
 			if (isset($row['race_id'])) $temp_array['race_id'] = $row['race_id'];
 			if (isset($row['race_name'])) $temp_array['race_name'] = $row['race_name'];
+			if (isset($row['race_time']) && isset($row['status']) && $row['status'] != 'Racing' && $row['race_time'] > 0) $temp_array['race_time'] = $row['race_time'];
+			if (isset($row['race_rank'])) $temp_array['race_rank'] = $row['race_rank'];
 			if (isset($row['ident'])) $temp_array['ident'] = $row['ident'];
 			if (isset($row['arrival_port_name'])) $temp_array['arrival_port_name'] = $row['arrival_port_name'];
 			if (isset($row['latitude'])) $temp_array['latitude'] = $row['latitude'];
@@ -982,15 +984,18 @@ class Marine{
 	* @return String success or false
 	*
 	*/	
-	public function updateLatestMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $groundspeed = NULL, $date = '',$distance = NULL,$race_rank = NULL, $race_time = NULL)
+	public function updateLatestMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $groundspeed = NULL, $date = '',$distance = NULL,$race_rank = NULL, $race_time = NULL, $status = '')
 	{
-		$query = 'UPDATE marine_output SET ident = :ident, last_latitude = :last_latitude, last_longitude = :last_longitude, last_seen = :last_seen, last_ground_speed = :last_ground_speed, distance = :distance, race_rank = :race_rank, race_time = :race_time WHERE fammarine_id = :fammarine_id';
-                $query_values = array(':fammarine_id' => $fammarine_id,':last_latitude' => $latitude,':last_longitude' => $longitude, ':last_ground_speed' => $groundspeed,':last_seen' => $date,':ident' => $ident,':distance' => $distance,':race_rank' => $race_rank,':race_time' => $race_time);
-
+		$query = 'UPDATE marine_output SET ident = :ident, last_latitude = :last_latitude, last_longitude = :last_longitude, last_seen = :last_seen, last_ground_speed = :last_ground_speed, distance = :distance, race_rank = :race_rank, race_time = :race_time, status = :status WHERE fammarine_id = :fammarine_id';
+		if ($latitude == '') $latitude = NULL;
+		if ($longitude == '') $longitude = NULL;
+		$groundspeed = round($groundspeed);
+		$query_values = array(':fammarine_id' => $fammarine_id,':last_latitude' => $latitude,':last_longitude' => $longitude, ':last_ground_speed' => $groundspeed,':last_seen' => $date,':ident' => $ident,':distance' => $distance,':race_rank' => $race_rank,':race_time' => $race_time,':status' => $status);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch (PDOException $e) {
+			echo "error : ".$e->getMessage();
 			return "error : ".$e->getMessage();
 		}
 		
@@ -1090,7 +1095,7 @@ class Marine{
 		}
 
     
-		if ($date == "" || strtotime($date) < time()-20*60)
+		if ($date == "")
 		{
 			$date = date("Y-m-d H:i:s", time());
 		}
@@ -2375,8 +2380,7 @@ q	*
 	public function checkId($id)
 	{
 		global $globalDBdriver, $globalTimezone;
-		$query  = 'SELECT marine_live.ident, marine_live.fammarine_id FROM marine_live 
-		WHERE marine_live.fammarine_id = :id';
+		$query  = 'SELECT marine_output.ident, marine_output.fammarine_id FROM marine_output WHERE marine_output.fammarine_id = :id';
 		$query_data = array(':id' => $id);
 		$sth = $this->db->prepare($query);
 		$sth->execute($query_data);

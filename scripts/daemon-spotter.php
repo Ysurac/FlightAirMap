@@ -757,31 +757,40 @@ while ($i > 0) {
 					$mission_data = json_decode($bufferm,true);
 					if (isset($mission_data['leaderboard'][0]['results'])) {
 						foreach ($mission_data['leaderboard'][0]['results'] as $sail) {
+							//print_r($sail);
 							//print_r($bufferm);
-							if ($sail['status'] == 'Racing') {
+							//if ($sail['status'] == 'Racing') {
 								//print_r($sail);
 								$data = array();
 								//$data['mmsi'] = (int)substr($line,0,9);
-								$data['id'] = $sail['usrnr'].'-'.$sail['ubtnr'];
+								//$data['id'] = $sail['misnr'].'-'.$sail['usrnr'].'-'.$sail['ubtnr'];
+								$data['id'] = $sail['misnr'].'-'.$sail['usrnr'];
 								$data['datetime'] = date('Y-m-d H:i:s');
+								$data['race_begin'] = date('Y-m-d H:i:s',strtotime($mission_data['leaderboard'][0]['misstart']));
 								$data['last_update'] = date('Y-m-d H:i:s');
 								$data['status'] = $sail['status'];
 								$data['type'] = $sail['btptype'];
 								$data['type_id'] = 36;
-								$pos = $Common->convertDecLatLong($sail['pos']);
-								$data['latitude'] = $pos['latitude'];
-								$data['longitude'] = $pos['longitude'];
-								$resultdescr = explode(',',$sail['resultdescr']);
-								$data['speed'] = round(str_replace(array('Spd: ','kn.'),'',trim($resultdescr[2]))*1.852,2);
-								$data['heading'] = str_replace(array('Hdg: ','°'),'',trim($resultdescr[1]));
-								if (isset($resultdescr[3])) {
-									$data['distance'] = round(str_replace('nm.','',trim(explode(' ',$resultdescr[3])[1]))*1.852,3);
+								if (isset($sail['pos'])) {
+									$pos = $Common->convertDecLatLong($sail['pos']);
+									$data['latitude'] = $pos['latitude'];
+									$data['longitude'] = $pos['longitude'];
+								}
+								if ($sail['status'] == 'Racing' && $sail['resultdescr'] != '-') {
+									$resultdescr = explode(',',$sail['resultdescr']);
+									if (count($resultdescr) > 2) {
+										$data['speed'] = round(str_replace(array('Spd: ','kn.'),'',trim($resultdescr[2]))*1.852,2);
+										$data['heading'] = str_replace(array('Hdg: ','°'),'',trim($resultdescr[1]));
+										if (isset($resultdescr[3])) {
+											$data['distance'] = round(str_replace('nm.','',trim(explode(' ',$resultdescr[3])[1]))*1.852,3);
+										}
+									}
 								}
 								$data['ident'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$sail['ubtname']));
 								$data['captain_id'] = $sail['usrnr'];
 								$data['captain_name'] = $sail['usrname'];
 								$data['race_id'] = $sail['misnr'];
-								$data['race_rank'] = $sail['rank'];
+								if ($sail['rank'] != 'DNF') $data['race_rank'] = $sail['rank'];
 								$data['race_time'] = $sail['racetime'];
 								if ($mission_user != '') {
 									$data['race_name'] = $mission_name.' ('.$mission_user.')';
@@ -796,7 +805,7 @@ while ($i > 0) {
 								//echo 'Add...'."\n";
 								$MI->add($data);
 								unset($data);
-							}
+							//}
 							//} else echo $sail['status']."\n";
 						}
 					}

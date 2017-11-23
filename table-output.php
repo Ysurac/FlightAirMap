@@ -5,7 +5,16 @@ print '<table class="table-striped">';
 require_once(dirname(__FILE__).'/require/class.Common.php');
 $Common = new Common();
 $showRouteStop = $Common->multiKeyExists($spotter_array,'route_stop');
-$showDuration = $Common->multiKeyExists($spotter_array,'duration');
+if (isset($globalVM) && $globalVM) {
+	$showDuration = $Common->multiKeyExists($spotter_array,'race_time');
+	if ($showDuration === false) $showDuration = $Common->multiKeyExists($spotter_array,'duration');
+} else {
+	$showDuration = $Common->multiKeyExists($spotter_array,'duration');
+}
+if (isset($globalVM) && $globalVM) {
+	$showDistance = $Common->multiKeyExists($spotter_array,'distance');
+}
+
 
 if (!isset($type)) $type = 'aircraft';
 
@@ -103,6 +112,7 @@ if (strtolower($current_page) == "search")
 			} else {
 				print '<th class="arrival"><a href="'.$page_url.'&sort=race_asc">'._("Races").'</a> <i class="fa fa-sort small"></i></th>';
 			}
+			print '<th class="status">'._("Status").'</th>';
 		} else {
 			if ($_GET['sort'] == "airport_arrival_asc")
 			{
@@ -257,6 +267,9 @@ if (strtolower($current_page) == "search")
 
 	if ($hide_th_links === true){
 		print '<thead>';
+		if ($type == 'marine' && isset($globalVM) && $globalVM) {
+			print '<th class="rank">'._("Rank").'</th>';
+		}
 		print '<th class="aircraft_thumbnail"></th>';
 		if ($type == 'aircraft') {
 			if (!isset($globalNoAirlines) || $globalNoAirlines === FALSE) {
@@ -335,6 +348,7 @@ if (strtolower($current_page) == "search")
 				} else {
 					print '<th class="arrival">'._("Race").'</th>';
 				}
+				print '<th class="status">'._("Status").'</th>';
 			} else {
 				if ($_GET['sort'] == "airport_arrival_asc")
 				{
@@ -358,7 +372,7 @@ if (strtolower($current_page) == "search")
 				print '<th class="route"><span class="nomobile">'._("Route").'</span><span class="mobile">'._("Route").'</span></th>';
 			}
 		}
-		if ($type == 'marine' && isset($globalVM) && $globalVM) {
+		if ($type == 'marine' && isset($globalVM) && $globalVM && $showDistance) {
 			if ($_GET['sort'] == "distance_asc")
 			{
 				print '<th class="distance">'._("Distance").'</th>';
@@ -373,8 +387,10 @@ if (strtolower($current_page) == "search")
 		if ($type == 'tracker') {
 			print '<th class="comment"><span class="nomobile">'._("Comment").'</span><span class="mobile">'._("Comment").'</span></th>';
 		}
-		if ($showDuration) {
+		if ($showDuration && (!isset($globalVM) || $globalVM === FALSE)) {
 			print '<th class="duration"><span class="nomobile">'._("Spotted duration").'</span><span class="mobile">'._("Duration").'</span></th>';
+		} elseif ($showDuration) {
+			print '<th class="duration"><span class="nomobile">'._("Race duration").'</span><span class="mobile">'._("Race duration").'</span></th>';
 		}
 		
 		if (strtolower($current_page) == "date")
@@ -413,6 +429,9 @@ if (strtolower($current_page) == "search")
 		print '</thead>';
 	} else {
 		print '<thead>';
+		if ($type == 'marine' && isset($globalVM) && $globalVM) {
+			print '<th class="rank">'._("Rank").'</th>';
+		}
 		print '<th class="aircraft_thumbnail"></th>';
 		if ($type == 'aircraft') {
 			if (!isset($globalNoAirlines) || $globalNoAirlines === FALSE) {
@@ -481,6 +500,7 @@ if (strtolower($current_page) == "search")
 				} else {
 					print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/race_asc">'._("Race").'</a> <i class="fa fa-sort small"></i></th>';
 				}
+				print '<th class="status">'._("Status").'</th>';
 			} else {
 				if ($_GET['sort'] == "airport_arrival_asc")
 				{
@@ -505,22 +525,26 @@ if (strtolower($current_page) == "search")
 			}
 		}
 		if ($type == 'marine' && isset($globalVM) && $globalVM) {
-			if ($_GET['sort'] == "distance_asc")
-			{
-				print '<th class="distance"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/distance_desc" class="active">'._("Distance").'</a> <i class="fa fa-caret-up"></i></th>';
-			} elseif ($_GET['sort'] == "distance_desc")
-			{
-				print '<th class="distance"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/distance_asc" class="active">'._("Distance").'</a> <i class="fa fa-caret-down"></i></th>';
-			} else {
-				print '<th class="distance"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/distance_desc">'._("Distance").'</a> <i class="fa fa-sort small"></i></th>';
+			if ($showDistance) {
+				if ($_GET['sort'] == "distance_asc")
+				{
+					print '<th class="distance"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/distance_desc" class="active">'._("Distance").'</a> <i class="fa fa-caret-up"></i></th>';
+				} elseif ($_GET['sort'] == "distance_desc")
+				{
+					print '<th class="distance"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/distance_asc" class="active">'._("Distance").'</a> <i class="fa fa-caret-down"></i></th>';
+				} else {
+					print '<th class="distance"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/distance_desc">'._("Distance").'</a> <i class="fa fa-sort small"></i></th>';
+				}
 			}
 			print '<th class="captain"><span class="nomobile">'._("Captain name").'</span><span class="mobile">'._("Captain").'</span></a></th>';
 		}
 		if ($type == 'tracker') {
 			print '<th class="comment"><span class="nomobile">'._("Comment").'</span><span class="mobile">'._("Comment").'</span></th>';
 		}
-		if ($showDuration) {
+		if ($showDuration && (!isset($globalVM) || $globalVM === FALSE)) {
 			print '<th class="duration"><span class="nomobile">'._("Spotted duration").'</span><span class="mobile">'._("Duration").'</span></th>';
+		} elseif ($showDuration) {
+			print '<th class="duration"><span class="nomobile">'._("Race duration").'</span><span class="mobile">'._("Race duration").'</span></th>';
 		}
 		if (strtolower($current_page) == "date")
 		{
@@ -616,6 +640,13 @@ foreach($spotter_array as $spotter_item)
 				print '</td>'."\n";
 			}
 		} elseif ($type == 'marine') {
+			if (isset($globalVM) && $globalVM) {
+				if (!isset($spotter_item['race_rank'])) {
+					print '<td class="rank"></td>'."\n";
+				} else {
+					print '<td class="rank">'.$spotter_item['race_rank'].'</td>'."\n";
+				}
+			}
 			if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
 			{
 				print '<td class="aircraft_thumbnail">'."\n";
@@ -742,6 +773,13 @@ foreach($spotter_array as $spotter_item)
 				print '</td>'."\n";
 			}
 		} elseif ($type == 'marine') {
+			if (isset($globalVM) && $globalVM) {
+				if (!isset($spotter_item['race_rank'])) {
+					print '<td class="rank"></td>'."\n";
+				} else {
+					print '<td class="rank">'.$spotter_item['race_rank'].'</td>'."\n";
+				}
+			}
 			if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] != "")
 			{
 				print '<td class="aircraft_thumbnail">'."\n";
@@ -1045,7 +1083,7 @@ foreach($spotter_array as $spotter_item)
 		} elseif ($type == 'marine') {
 			if (isset($globalVM) && $globalVM) {
 				print '<td class="arrival_airport">'."\n";
-				if (!isset($spotter_item['race_name'])) {
+				if (!isset($spotter_item['race_name']) || $spotter_item['race_name'] == '') {
 					print '<span class="nomobile">'._("Not available").'</span>'."\n";
 					print '<span class="mobile">'._("Not available").'</span>'."\n";
 				} else {
@@ -1053,6 +1091,13 @@ foreach($spotter_array as $spotter_item)
 					print '<span class="mobile"><a href="'.$globalURL.'/marine/race/'.$spotter_item['race_id'].'">'.$spotter_item['race_name'].'</a></span>'."\n";
 				}
 				print '</td>'."\n";
+				print '<td class="status">';
+				if (!isset($spotter_item['status']) || $spotter_item['status'] == '') {
+					print _("Not available")."\n";
+				} else {
+					print $spotter_item['status']."\n";
+				}
+				print '</td>';
 			} else {
 				print '<td class="arrival_airport">'."\n";
 				if (!isset($spotter_item['arrival_port_name'])) {
@@ -1137,21 +1182,23 @@ foreach($spotter_array as $spotter_item)
 			}
 			if ($type == 'marine') {
 				if (isset($globalVM) && $globalVM) {
-					if (isset($spotter_item['distance'])) {
-						print '<td class="distance">';
-						if ((!isset($_COOKIE['unitdistance']) && ((isset($globalUnitDistance) && $globalUnitDistance == 'km') || !isset($globalUnitDistance))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) {
-							print '<span class="nomobile">'.round($spotter_item['distance'],2).' km</span>'."\n";
-							print '<span class="mobile">'.round($spotter_item['distance'],2).' km</span><br />'."\n";
-						} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
-							print '<span class="nomobile">'.round($spotter_item['distance']*0.621371,2).' mi</span>'."\n";
-							print '<span class="mobile">'.round($spotter_item['distance']*0.621371,2).' mi</span><br />'."\n";
-						} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
-							print '<span class="nomobile">'.round($spotter_item['distance']*0.539957,2).' nm</span>'."\n";
-							print '<span class="mobile">'.round($spotter_item['distance']*0.539957,2).' nm</span><br />'."\n";
+					if ($showDistance) {
+						if (isset($spotter_item['distance'])) {
+							print '<td class="distance">';
+							if ((!isset($_COOKIE['unitdistance']) && ((isset($globalUnitDistance) && $globalUnitDistance == 'km') || !isset($globalUnitDistance))) || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'km')) {
+								print '<span class="nomobile">'.round($spotter_item['distance'],2).' km</span>'."\n";
+								print '<span class="mobile">'.round($spotter_item['distance'],2).' km</span><br />'."\n";
+							} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'mi') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'mi')) {
+								print '<span class="nomobile">'.round($spotter_item['distance']*0.621371,2).' mi</span>'."\n";
+								print '<span class="mobile">'.round($spotter_item['distance']*0.621371,2).' mi</span><br />'."\n";
+							} elseif ((!isset($_COOKIE['unitdistance']) && isset($globalUnitDistance) && $globalUnitDistance == 'nm') || (isset($_COOKIE['unitdistance']) && $_COOKIE['unitdistance'] == 'nm')) {
+								print '<span class="nomobile">'.round($spotter_item['distance']*0.539957,2).' nm</span>'."\n";
+								print '<span class="mobile">'.round($spotter_item['distance']*0.539957,2).' nm</span><br />'."\n";
+							}
+							print '</td>'."\n";
+						} else {
+							print '<td class="distance"></td>'."\n";
 						}
-						print '</td>'."\n";
-					} else {
-						print '<td class="distance"></td>'."\n";
 					}
 					print '<td class="captain">'."\n";
 					if ((!isset($spotter_item['captain_id']) || $spotter_item['captain_id'] == '') && (!isset($spotter_item['captain_name']) || $spotter_item['captain_name'] == '')) {
@@ -1195,17 +1242,42 @@ foreach($spotter_array as $spotter_item)
 			}
 		}
 		if ($showDuration) {
-		// Duration
-			if(strtolower($current_page) != "upcoming"){
+			// Duration
+			if (isset($globalVM) && $globalVM) {
 				print '<td class="duration">'."\n";
-				if (isset($spotter_item['duration'])) {
-					print '<span class="nomobile">'.gmdate('H:i:s',$spotter_item['duration']).'</span>'."\n";
-					print '<span class="mobile">'.gmdate('H:i:s',$spotter_item['duration']).'</span>'."\n";
+				if (isset($spotter_item['race_time'])) {
+					if ($spotter_item['race_time'] > 86400) {
+						print '<span class="nomobile">'.gmdate("z\d. H\h. i\m. s\s.",$spotter_item['race_time']).'</span>'."\n";
+						print '<span class="mobile">'.gmdate("z\d. H\h. i\m. s\s.",$spotter_item['race_time']).'</span>'."\n";
+					} else {
+						print '<span class="nomobile">'.gmdate("H\h. i\m. s\s.",$spotter_item['race_time']).'</span>'."\n";
+						print '<span class="mobile">'.gmdate("H\h. i\m. s\s.",$spotter_item['race_time']).'</span>'."\n";
+					}
+				} elseif (isset($spotter_item['duration'])) {
+					if ($spotter_item['duration'] > 86400) {
+						print '<span class="nomobile">'.gmdate('z\d. H\h. i\m. s\s.',$spotter_item['duration']).'</span>'."\n";
+						print '<span class="mobile">'.gmdate('z\d. H\h. i\m. s\s.',$spotter_item['duration']).'</span>'."\n";
+					} else {
+						print '<span class="nomobile">'.gmdate('H\h. i\m. s\s.',$spotter_item['duration']).'</span>'."\n";
+						print '<span class="mobile">'.gmdate('H\h. i\m. s\s.',$spotter_item['duration']).'</span>'."\n";
+					}
 				} else {
 					print '<span class="nomobile">-</span>'."\n";
 					print '<span class="mobile">-</span>'."\n";
 				}
 				print '</td>'."\n";
+			} else {
+				if(strtolower($current_page) != "upcoming"){
+					print '<td class="duration">'."\n";
+					if (isset($spotter_item['duration'])) {
+						print '<span class="nomobile">'.gmdate('H:i:s',$spotter_item['duration']).'</span>'."\n";
+						print '<span class="mobile">'.gmdate('H:i:s',$spotter_item['duration']).'</span>'."\n";
+					} else {
+						print '<span class="nomobile">-</span>'."\n";
+						print '<span class="mobile">-</span>'."\n";
+					}
+					print '</td>'."\n";
+				}
 			}
 		}
 
