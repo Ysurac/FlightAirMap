@@ -31,7 +31,7 @@ if (!isset($_GET['race'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/race/'.$_GET['race'];
+	$page_url = $globalURL.'/marine/race/'.$_GET['race'];
 	
 	$race = filter_input(INPUT_GET,'race',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);

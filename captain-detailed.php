@@ -31,7 +31,7 @@ if (!isset($_GET['captain'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/captain/'.$_GET['captain'];
+	$page_url = $globalURL.'/marine/captain/'.$_GET['captain'];
 	
 	$captain = filter_input(INPUT_GET,'captain',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
