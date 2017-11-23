@@ -61,13 +61,13 @@ class MarineImport {
     		    $Marine = new Marine($this->db);
     		    if (isset($globalVM) && $globalVM) {
 			if ($this->all_tracked[$key]['status'] == 'Racing') {
-    			    $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status']);
+    			    $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status'],$this->all_tracked[$key]['race_begin']);
     			} else {
     			    $finaldatetime = date('Y-m-d H:i:s',strtotime($this->all_tracked[$key]['race_begin'])+$this->all_tracked[$key]['race_time']);
-    			    $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$finaldatetime,$this->all_tracked[$id]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status']);
+    			    $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$finaldatetime,$this->all_tracked[$id]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status'],$this->all_tracked[$key]['race_begin']);
     			}
     		    } else {
-			$Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status']);
+			$Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status'],$this->all_tracked[$key]['race_begin']);
 		    }
 		}
 	    }
@@ -94,13 +94,13 @@ class MarineImport {
             		    if ($this->all_tracked[$key]['latitude'] != '' && $this->all_tracked[$key]['longitude'] != '') {
 				if (isset($globalVM) && $globalVM) {
 				    if ($this->all_tracked[$key]['status'] == 'Racing') {
-					$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status']);
+					$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status'],$this->all_tracked[$key]['race_begin']);
 				    } else {
 					$finaldatetime = date('Y-m-d H:i:s',strtotime($this->all_tracked[$key]['race_begin'])+$this->all_tracked[$key]['race_time']);
-					$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$finaldatetime,$this->all_tracked[$id]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status']);
+					$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$finaldatetime,$this->all_tracked[$id]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status'],$this->all_tracked[$key]['race_begin']);
 				    }
 				} else {
-					$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime'],$this->all_tracked[$key]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status']);
+					$result = $Marine->updateLatestMarineData($this->all_tracked[$key]['id'],$this->all_tracked[$key]['ident'],$this->all_tracked[$key]['latitude'],$this->all_tracked[$key]['longitude'],$this->all_tracked[$key]['speed'],$this->all_tracked[$key]['datetime'],$this->all_tracked[$key]['distance'],$this->all_tracked[$key]['race_rank'],$this->all_tracked[$key]['race_time'],$this->all_tracked[$key]['status'],$this->all_tracked[$key]['race_begin']);
 				}
 				if ($globalDebug && $result != 'success') echo '!!! ERROR : '.$result."\n";
 			    }
@@ -148,7 +148,7 @@ class MarineImport {
 		if (!isset($this->all_tracked[$id])) {
 		    $this->all_tracked[$id] = array();
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('addedMarine' => 0));
-		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => '','latitude' => '', 'longitude' => '', 'speed' => '0', 'heading' => '', 'format_source' => '','source_name' => '','comment'=> '','type' => '','typeid' => '','noarchive' => false,'putinarchive' => true,'over_country' => '','mmsi' => '','status' => '','status_id' => '','imo' => '','callsign' => '','arrival_code' => '','arrival_date' => '','mmsi_type' => '','captain_id' => '','captain_name' => '','race_id' => '','race_name' => '','distance' => NULL,'race_rank' => NULL,'race_time' => NULL,'race_begin' => date('Y-m-d H:i:s')));
+		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('ident' => '','latitude' => '', 'longitude' => '', 'speed' => '0', 'heading' => '', 'format_source' => '','source_name' => '','comment'=> '','type' => '','typeid' => '','noarchive' => false,'putinarchive' => true,'over_country' => '','mmsi' => '','status' => '','status_id' => '','imo' => '','callsign' => '','arrival_code' => '','arrival_date' => '','mmsi_type' => '','captain_id' => '','captain_name' => '','race_id' => '','race_name' => '','distance' => NULL,'race_rank' => NULL,'race_time' => NULL,'race_begin' => ''));
 		    $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('lastupdate' => time()));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
@@ -459,7 +459,7 @@ class MarineImport {
 					if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
 					    $timeelapsed = microtime(true);
 					    $Marine = new Marine($this->db);
-					    if (isset($globalVM) && $globalVM) {
+					    if (isset($globalVM) && $globalVM && $this->all_tracked[$id]['race_begin'] != '') {
 						$result = $Marine->addMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'], $this->all_tracked[$id]['race_begin'], $this->all_tracked[$id]['mmsi'], $this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'], $this->all_tracked[$id]['status'], $this->all_tracked[$id]['status_id'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['captain_id'],$this->all_tracked[$id]['captain_name'],$this->all_tracked[$id]['race_id'],$this->all_tracked[$id]['race_name'],$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time']);
 					    } else {
 						$result = $Marine->addMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'], $this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['mmsi'], $this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'], $this->all_tracked[$id]['status'], $this->all_tracked[$id]['status_id'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['captain_id'],$this->all_tracked[$id]['captain_name'],$this->all_tracked[$id]['race_id'],$this->all_tracked[$id]['race_name'],$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time']);
@@ -519,13 +519,13 @@ class MarineImport {
 					$Marine = new Marine($this->db);
 					if (isset($globalVM) && $globalVM) {
 					    if ($this->all_tracked[$id]['status'] == 'Racing') {
-						$Marine->updateLatestMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time'],$this->all_tracked[$id]['status']);
+						$Marine->updateLatestMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time'],$this->all_tracked[$id]['status'],$this->all_tracked[$id]['race_begin']);
 					    } else {
 						$finaldatetime = date('Y-m-d H:i:s',strtotime($this->all_tracked[$id]['race_begin'])+$this->all_tracked[$id]['race_time']);
-						$Marine->updateLatestMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$this->all_tracked[$id]['speed'],$finaldatetime,$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time'],$this->all_tracked[$id]['status']);
+						$Marine->updateLatestMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$this->all_tracked[$id]['speed'],$finaldatetime,$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time'],$this->all_tracked[$id]['status'],$this->all_tracked[$id]['race_begin']);
 					    }
 					} else {
-					    $Marine->updateLatestMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time'],$this->all_tracked[$id]['status']);
+					    $Marine->updateLatestMarineData($this->all_tracked[$id]['id'],$this->all_tracked[$id]['ident'],$this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$this->all_tracked[$id]['speed'],$this->all_tracked[$id]['datetime'],$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time'],$this->all_tracked[$id]['status'],$this->all_tracked[$id]['race_begin']);
 					}
 					$Marine->db = null;
 				    }

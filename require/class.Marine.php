@@ -984,13 +984,18 @@ class Marine{
 	* @return String success or false
 	*
 	*/	
-	public function updateLatestMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $groundspeed = NULL, $date = '',$distance = NULL,$race_rank = NULL, $race_time = NULL, $status = '')
+	public function updateLatestMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $groundspeed = NULL, $date = '',$distance = NULL,$race_rank = NULL, $race_time = NULL, $status = '', $race_begin = '')
 	{
-		$query = 'UPDATE marine_output SET ident = :ident, last_latitude = :last_latitude, last_longitude = :last_longitude, last_seen = :last_seen, last_ground_speed = :last_ground_speed, distance = :distance, race_rank = :race_rank, race_time = :race_time, status = :status WHERE fammarine_id = :fammarine_id';
 		if ($latitude == '') $latitude = NULL;
 		if ($longitude == '') $longitude = NULL;
 		$groundspeed = round($groundspeed);
-		$query_values = array(':fammarine_id' => $fammarine_id,':last_latitude' => $latitude,':last_longitude' => $longitude, ':last_ground_speed' => $groundspeed,':last_seen' => $date,':ident' => $ident,':distance' => $distance,':race_rank' => $race_rank,':race_time' => $race_time,':status' => $status);
+		if ($race_begin != '') {
+			$query = 'UPDATE marine_output SET ident = :ident, last_latitude = :last_latitude, last_longitude = :last_longitude, last_seen = :last_seen, last_ground_speed = :last_ground_speed, distance = :distance, race_rank = :race_rank, race_time = :race_time, status = :status, date = :race_begin WHERE fammarine_id = :fammarine_id';
+			$query_values = array(':fammarine_id' => $fammarine_id,':last_latitude' => $latitude,':last_longitude' => $longitude, ':last_ground_speed' => $groundspeed,':last_seen' => $date,':ident' => $ident,':distance' => $distance,':race_rank' => $race_rank,':race_time' => $race_time,':status' => $status,':race_begin' => $race_begin);
+		} else {
+			$query = 'UPDATE marine_output SET ident = :ident, last_latitude = :last_latitude, last_longitude = :last_longitude, last_seen = :last_seen, last_ground_speed = :last_ground_speed, distance = :distance, race_rank = :race_rank, race_time = :race_time, status = :status WHERE fammarine_id = :fammarine_id';
+			$query_values = array(':fammarine_id' => $fammarine_id,':last_latitude' => $latitude,':last_longitude' => $longitude, ':last_ground_speed' => $groundspeed,':last_seen' => $date,':ident' => $ident,':distance' => $distance,':race_rank' => $race_rank,':race_time' => $race_time,':status' => $status);
+		}
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
