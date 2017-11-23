@@ -1127,6 +1127,7 @@ class Marine{
 		$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
 		$race_rank = filter_var($race_rank,FILTER_SANITIZE_NUMBER_INT);
 		$race_time = filter_var($race_time,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		$distance = filter_var($distance,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		if (isset($globalMarineImageFetch) && $globalMarineImageFetch === TRUE) {
 			$Image = new Image($this->db);
 			$image_array = $Image->getMarineImage($mmsi,$imo,$ident);
