@@ -502,7 +502,7 @@ class Marine{
 	*/
 	public function getMarineDataByRace($race = '', $limit = '', $sort = '', $filter = array())
 	{
-		global $global_marine_query;
+		global $global_marine_query,$globalDBdriver;
 		date_default_timezone_set('UTC');
 		$query_values = array();
 		$limit_query = '';
@@ -530,7 +530,11 @@ class Marine{
 			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
-			$orderby_query = " ORDER BY marine_output.race_rank ASC, marine_output.distance";
+			if ($globalDBdriver == 'mysql') {
+				$orderby_query = " ORDER BY -marine_output.race_rank DESC, marine_output.distance ASC";
+			} else {
+				$orderby_query = " ORDER BY marine_output.race_rank ASC, marine_output.distance ASC";
+			}
 		}
 		$query = $global_marine_query.$filter_query." marine_output.race_name <> '' ".$additional_query." ".$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
