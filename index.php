@@ -23,6 +23,11 @@ if ($trackident != '') {
 */
 }
 
+$raceid = filter_input(INPUT_GET,'raceid',FILTER_SANITIZE_NUMBER_INT);
+if ($raceid != '') {
+	setcookie('filter_race',$raceid);
+}
+
 $title = _("Home");
 require_once('header.php');
 ?>
