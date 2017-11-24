@@ -78,6 +78,7 @@ class Elevation {
 		$short  = fread($file, 2);
 		$_      = unpack("n*", $short);
 		$shorts = reset($_);
+		echo $shorts."\n";
 		return $shorts;
 	}
 
@@ -93,9 +94,18 @@ class Elevation {
 		if ($this->resolution == -1) {
 			throw new \Exception("use HgtReader::init(ASSETS_HGT . DIRECTORY_SEPARATOR, 3);");
 		}
-		$N      = $this->getDeg($lat, 2);
-		$E      = $this->getDeg($lon, 3);
-		$fName  = "N{$N}E{$E}.hgt";
+		if ($lat < 0) {
+			$latd = 'S'.$this->getDeg($lat, 2);
+		} else {
+			$latd = 'N'.$this->getDeg($lat, 2);
+		}
+		if ($lon < 0) {
+			$lond = 'W'.$this->getDeg($lon, 3);
+		} else {
+			$lond = 'W'.$this->getDeg($lon, 3);
+		}
+		$fName  = $latd.$lond.".hgt";
+
 		
 		$latSec = $this->getSec($lat);
 		$lonSec = $this->getSec($lon);
@@ -166,13 +176,21 @@ class Elevation {
 	}
 
 	public function download($lat,$lon, $debug = false) {
-		$N      = $this->getDeg($lat, 2);
-		$E      = $this->getDeg($lon, 3);
-		$fileName  = "N{$N}E{$E}.hgt";
+		if ($lat < 0) {
+			$latd = 'S'.$this->getDeg($lat, 2);
+		} else {
+			$latd = 'N'.$this->getDeg($lat, 2);
+		}
+		if ($lon < 0) {
+			$lond = 'W'.$this->getDeg($lon, 3);
+		} else {
+			$lond = 'W'.$this->getDeg($lon, 3);
+		}
+		$fileName  = $latd.$lond.".hgt";
 		if (!file_exists($this->htgFilesDestination . DIRECTORY_SEPARATOR . $fileName)) {
 			$Common = new Common();
 			if ($debug) echo 'Downloading '.$fileName.'.gz ...';
-			$Common->download('https://s3.amazonaws.com/elevation-tiles-prod/skadi/N'.$N.'/'.$fileName.'.gz',$this->htgFilesDestination . DIRECTORY_SEPARATOR . $fileName . '.gz');
+			$Common->download('https://s3.amazonaws.com/elevation-tiles-prod/skadi/'.$latd.'/'.$fileName.'.gz',$this->htgFilesDestination . DIRECTORY_SEPARATOR . $fileName . '.gz');
 			if (!file_exists($this->htgFilesDestination . DIRECTORY_SEPARATOR . $fileName . '.gz')) {
 				if ($debug) echo "File '{$fileName}.gz' not exists.";
 				return false;
@@ -214,8 +232,8 @@ class Elevation {
 	}
 }
 /*
-$lat = 46.3870;
-$lon = 5.2941;
+$lat = 38.40207;
+$lon = -11.273;
 $Elevation = new Elevation();
 $Elevation->download($lat,$lon);
 echo($Elevation->getElevation($lat,$lon));
