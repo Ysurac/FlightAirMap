@@ -98,6 +98,7 @@ class Marine{
 	*/
 	public function getDataFromDB($query, $params = array(), $limitQuery = '',$schedules = false)
 	{
+		global $globalVM;
 		date_default_timezone_set('UTC');
 		if (!is_string($query))
 		{
@@ -169,6 +170,18 @@ class Marine{
 				$Image = new Image($this->db);
 				if (isset($temp_array['ident']) && $temp_array['ident'] != '') $image_array = $Image->getMarineImage($temp_array['mmsi'],'',$temp_array['ident']);
 				else $image_array = $Image->getMarineImage($temp_array['mmsi']);
+				unset($Image);
+				if (count($image_array) > 0) {
+					$temp_array['image'] = $image_array[0]['image'];
+					$temp_array['image_thumbnail'] = $image_array[0]['image_thumbnail'];
+					$temp_array['image_source'] = $image_array[0]['image_source'];
+					$temp_array['image_source_website'] = $image_array[0]['image_source_website'];
+					$temp_array['image_copyright'] = $image_array[0]['image_copyright'];
+				}
+			} elseif(isset($temp_array['type']) && $temp_array['type'] != "")
+			{
+				$Image = new Image($this->db);
+				$image_array = $Image->getMarineImage('','','',$temp_array['type']);
 				unset($Image);
 				if (count($image_array) > 0) {
 					$temp_array['image'] = $image_array[0]['image'];

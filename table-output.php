@@ -787,9 +787,11 @@ foreach($spotter_array as $spotter_item)
 					$image_thumbnail = preg_replace("/^http:/i","https:",$spotter_item['image_thumbnail']);
 				} else 	$image_thumbnail = $spotter_item['image_thumbnail'];
 				if (isset($spotter_item['mmsi']) && $spotter_item['mmsi'] != '') {
-					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
+					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['mmsi'].'" alt="'.$spotter_item['mmsi'].'" data-content="'._("MMSI:").' '.$spotter_item['mmsi'].'" data-html="true" width="100px" />'."\n";
+					if ($spotter_item['image_copyright'] != '') print '<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
 				} else {
-					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['ident'].'" data-content="'._("Ident:").' '.$spotter_item['ident'].'" data-html="true" width="100px" />'."\n".'<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
+					print '<img src="'.$image_thumbnail.'" class="img-rounded" data-toggle="popover" title="'.$spotter_item['ident'].'" alt="'.$spotter_item['ident'].'" data-content="'._("Ident:").' '.$spotter_item['ident'].'" data-html="true" width="100px" />'."\n";
+					if ($spotter_item['image_copyright'] != '') print '<div class="thumbnail-copyright">&copy; '.$spotter_item['image_copyright'].'</div>';
 				}
 				print '</td>'."\n";
 			} else {

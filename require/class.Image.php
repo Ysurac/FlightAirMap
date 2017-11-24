@@ -53,12 +53,23 @@ class Image {
 	* @return Array the images list
 	*
 	*/
-	public function getMarineImage($mmsi,$imo = '',$name = '')
+	public function getMarineImage($mmsi,$imo = '',$name = '',$type_name = '')
 	{
+		global $globalMarineImagePics;
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
 		$imo = filter_var($imo,FILTER_SANITIZE_STRING);
 		$name = filter_var($name,FILTER_SANITIZE_STRING);
+		$type_name = str_replace('&#39;',"'",filter_var($type_name,FILTER_SANITIZE_STRING));
+		if (isset($globalMarineImagePics) && !empty($globalMarineImagePics)) {
+			if ($type_name != '' && isset($globalMarineImagePics['type'][$type_name])) {
+				if (!isset($globalMarineImagePics['type'][$type_name]['image_thumbnail'])) {
+					$globalMarineImagePics['type'][$type_name]['image_thumbnail'] = $globalMarineImagePics['type'][$type_name]['image'];
+				}
+				return array($globalMarineImagePics['type'][$type_name]+array('image_thumbnail' => '','image' => '', 'image_copyright' => '','image_source' => '','image_source_website' => ''));
+			}
+		}
 		$name = trim($name);
+		if ($mmsi == '' && $imo == '' && $name == '') return array();
 		$query  = "SELECT marine_image.image, marine_image.image_thumbnail, marine_image.image_source, marine_image.image_source_website,marine_image.image_copyright, marine_image.mmsi, marine_image.imo, marine_image.name 
 			FROM marine_image 
 			WHERE marine_image.mmsi = :mmsi";
