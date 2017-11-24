@@ -149,8 +149,8 @@ class Elevation {
 
 		$d  = -$n1 * $a1 - $n2 * $a2 - $n3 * $a3;
 		$zN = (-$n1 * $Xn - $n2 * $Yn - $d) / $n3;
-
-		return $zN;
+		if ($zN > 10000) return 0;
+		else return $zN;
 	}
 
 	private function getDeg($deg, $numPrefix) {
