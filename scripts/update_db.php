@@ -30,7 +30,7 @@ if ((!isset($globalMasterServer) || !$globalMasterServer) && (!isset($globalOffl
 		}
 		$update_db->insert_last_notam_update();
 	} elseif (isset($globalDebug) && $globalDebug && isset($globalNOTAM) && $globalNOTAM) echo "NOTAM are only updated once a day.\n";
-	if ($update_db->check_last_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+	if ((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft)) && ($update_db->check_last_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS))) {
 		$update_db->update_all();
 	//	require_once(dirname(__FILE__).'/../require/class.Spotter.php');
 	//	$Spotter = new Spotter();
@@ -53,7 +53,7 @@ if ((!isset($globalMasterServer) || !$globalMasterServer) && (!isset($globalOffl
 		echo $update_db->update_marine_identity_fam();
 		$update_db->insert_last_marine_identity_update();
 	}
-	if ($update_db->check_last_owner_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+	if ((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft)) && ($update_db->check_last_owner_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS))) {
 		echo "Updating aircraft's owners...\n";
 		if (isset($globalMasterSource) && $globalMasterSource) {
 			$update_db->update_owner();
@@ -66,13 +66,13 @@ if ((!isset($globalMasterServer) || !$globalMasterServer) && (!isset($globalOffl
 		$update_db->insert_last_owner_update();
 	} elseif (isset($globalDebug) && $globalDebug && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Owner are only updated every 15 days.\n";
 
-	if ($update_db->check_last_airlines_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+	if ((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft)) && ($update_db->check_last_airlines_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS))) {
 		echo "Updating airlines...\n";
 		echo $update_db->update_airlines_fam();
 		$update_db->insert_last_airlines_update();
 	} elseif (isset($globalDebug) && $globalDebug && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) echo "Airlines are only updated every 15 days.\n";
 
-	if (isset($globalAccidents) && $globalAccidents && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+	if ((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft)) && (isset($globalAccidents) && $globalAccidents && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS))) {
 		require_once(dirname(__FILE__).'/../require/class.Accident.php');
 		$Accident = new Accident();
 		echo "Updating accidents...";
@@ -95,7 +95,7 @@ if (!isset($globalOffline) || $globalOffline === FALSE) {
 		} else echo "METAR are only updated every 30 minutes.\n";
 	}
 
-	if (isset($globalSchedules) && $globalSchedules && $update_db->check_last_schedules_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS)) {
+	if ((!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft)) && (isset($globalSchedules) && $globalSchedules && $update_db->check_last_schedules_update() && (!isset($globalVA) || !$globalVA) && (!isset($globalIVAO) || !$globalIVAO) && (!isset($globalVATSIM) || !$globalVATSIM) && (!isset($globalphpVMS) || !$globalphpVMS))) {
 		echo "Updating schedules...";
 		//$update_db->update_oneworld();
 		$update_db->update_skyteam();
@@ -176,9 +176,11 @@ if (isset($globalMap3D) && $globalMap3D && (!isset($globalOffline) || $globalOff
 			echo $update_db->update_satellite_fam();
 			$update_db->insert_last_satellite_update();
 		}
-		$update_db->update_models();
-		if (isset($globalMap3DLiveries) && $globalMap3DLiveries) {
-			$update_db->update_liveries();
+		if (!isset($globalAircraft) || (isset($globalAircraft) && $globalAircraft)) {
+			$update_db->update_models();
+			if (isset($globalMap3DLiveries) && $globalMap3DLiveries) {
+				$update_db->update_liveries();
+			}
 		}
 		if (isset($globalSatellite) && $globalSatellite) {
 			$update_db->update_space_models();
