@@ -37,7 +37,7 @@ class Language {
 				'en_US' => array('English (US)',	'en',	'english'),
 				'es_AR' => array('Español (Argentina)',	'es',	'spanish'),
 				'es_CO' => array('Español (Colombia)',	'es',	'spanish'),
-				'es_ES' => array('Español (España)',	'es',	'spanish'),
+				'es_ES' => array('Español',	'es',	'spanish'),
 				'es_419' => array('Español (América Latina)',	'es',	'spanish'),
 				'es_MX' => array('Español (Mexico)',	'es',	'spanish'),
 				'es_VE' => array('Español (Venezuela)',	'es',	'spanish'),

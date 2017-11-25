@@ -7,21 +7,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-11 17:08+0200\n"
-"PO-Revision-Date: 2017-10-11 18:07+0200\n"
+"POT-Creation-Date: 2017-11-25 09:04+0100\n"
+"PO-Revision-Date: 2017-11-25 09:04+0100\n"
+"Last-Translator: \n"
 "Language-Team: \n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.7\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: de\n"
 
 #: statistics-manufacturer.php:6 registration-sub-menu.php:14
 #: owner-sub-menu.php:2 country-sub-menu.php:2 statistics-time.php:6
-#: statistics-aircraft.php:6 header.php:524 header.php:577 header.php:619
-#: header.php:662 route-sub-menu.php:2 statistics-airport-arrival.php:6
+#: statistics-aircraft.php:6 header.php:531 header.php:593 header.php:635
+#: header.php:678 route-sub-menu.php:2 statistics-airport-arrival.php:6
 #: statistics-sub-menu.php:2 statistics-callsign.php:6 airport-sub-menu.php:2
 #: statistics-type.php:6 statistics-airport-departure-country.php:6
 #: statistics-route-waypoint.php:6 statistics-registration.php:6
@@ -43,7 +43,8 @@ msgid "Most common Aircraft Manufacturer"
 msgstr "Häufigster Flugzeughersteller"
 
 #: statistics-manufacturer.php:25
-msgid "Below are the <strong>Top 10</strong> most common aircraft manufacturers."
+msgid ""
+"Below are the <strong>Top 10</strong> most common aircraft manufacturers."
 msgstr "Im Folgenden sind die <strong> Top 10 </strong> gängigsten Flugzeughersteller aufgeführt."
 
 #: statistics-manufacturer.php:50 ident-statistics-manufacturer.php:36
@@ -136,7 +137,7 @@ msgstr "Flugzeughersteller"
 msgid "# of times"
 msgstr "# of times"
 
-#: airline.php:18 airline.php:41 pilot-detailed.php:127 header.php:460
+#: airline.php:18 airline.php:41 pilot-detailed.php:127 header.php:467
 #: owner-detailed.php:134 statistics.php:112
 msgid "Airlines"
 msgstr "Fluggesellschaften"
@@ -149,19 +150,19 @@ msgstr "Allianzen"
 msgid "Click to see alliance activity"
 msgstr "Klicken Sie hier, um die Aktivitäten der Allianz zu sehen"
 
-#: airline.php:46 index.php:605 index.php:664
+#: airline.php:46 index.php:697 index.php:756 index.php:784
 msgid "All"
 msgstr "Alle"
 
-#: airline.php:48 index.php:665
+#: airline.php:48 index.php:757
 msgid "Passenger"
 msgstr "Passagier"
 
-#: airline.php:50 index.php:666
+#: airline.php:50 index.php:758
 msgid "Cargo"
 msgstr "Ladung"
 
-#: airline.php:52 index.php:667 statistics.php:121
+#: airline.php:52 index.php:759 statistics.php:121
 msgid "Military"
 msgstr "Militär"
 
@@ -173,40 +174,41 @@ msgstr "Klicken Sie hier, um die Aktivität der Fluggesellschaft"
 msgid "Banned in Europe"
 msgstr "In Europa verboten"
 
-#: js/map.2d.js.php:544 js/map.2d.js.php:545 js/map.3d.js.php:174
+#: js/map.2d.js.php:548 js/map.2d.js.php:549 js/map.3d.js.php:211
 #: js/map.new.js.php:1704 js/map.new.js.php:1705 js/map.js.php:1527
 #: js/map.js.php:1528
 msgid "Your location"
 msgstr "Ihr Standort"
 
-#: js/map.2d.js.php:589 js/map.3d.js.php:209 js/map.new.js.php:1749
+#: js/map.2d.js.php:593 js/map.3d.js.php:246 js/map.new.js.php:1749
 #: js/map.js.php:1572
 msgid "Compass is not supported by this browser."
 msgstr "Kompass wird von diesem Browser nicht unterstützt."
 
-#: js/map-tracker.3d.js.php:113 js/map-tracker.3d.js.php:115
-#: js/map-tracker.2d.js.php:28
+#: js/map-tracker.3d.js.php:127 js/map-tracker.3d.js.php:129
+#: js/map-tracker.2d.js.php:30
 msgid "Trackers detected"
 msgstr "Tracker erkannt"
 
-#: js/map-tracker.3d.js.php:195 js/map-marine.3d.js.php:151
-#: js/map-aircraft.3d.js.php:701 index.php:90
+#: js/map-tracker.3d.js.php:234 js/map-tracker.2d.js.php:722
+#: js/map-marine.3d.js.php:184 js/map-marine.2d.js.php:687
+#: js/map-aircraft.2d.js.php:954 js/map-aircraft.3d.js.php:756 index.php:96
 msgid "Archive"
 msgstr "Archivieren"
 
-#: js/map-tracker.2d.js.php:422 js/map-marine.2d.js.php:417
-#: js/map-aircraft.2d.js.php:570 js/map.new.js.php:914 js/map.js.php:921
+#: js/map-tracker.2d.js.php:436 js/map-marine.2d.js.php:410
+#: js/map-aircraft.2d.js.php:591 js/map.new.js.php:914 js/map.js.php:921
 msgid "Route stop:"
 msgstr "Routenhalt:"
 
-#: js/map-tracker.2d.js.php:437 js/map-marine.2d.js.php:432
-#: js/map-aircraft.2d.js.php:585 js/map.new.js.php:929 js/map.js.php:936
+#: js/map-tracker.2d.js.php:451 js/map-marine.2d.js.php:425
+#: js/map-aircraft.2d.js.php:606 js/map.new.js.php:929 js/map.js.php:936
 #: pilot-detailed.php:123 owner-sub-menu.php:17 country-sub-menu.php:9
-#: aircraft-detailed.php:95 header.php:439 route-sub-menu.php:9
-#: table-output.php:56 table-output.php:59 table-output.php:61
-#: table-output.php:210 table-output.php:223 table-output.php:263
-#: table-output.php:266 table-output.php:268 table-output.php:395
-#: table-output.php:398 table-output.php:400 statistics-sub-menu.php:69
+#: aircraft-detailed.php:95 header.php:446 route-sub-menu.php:9
+#: table-output.php:65 table-output.php:68 table-output.php:70
+#: table-output.php:245 table-output.php:258 table-output.php:301
+#: table-output.php:304 table-output.php:306 table-output.php:463
+#: table-output.php:466 table-output.php:468 statistics-sub-menu.php:69
 #: statistics-sub-menu.php:72 statistics-sub-menu.php:173
 #: statistics-sub-menu.php:176 airport-sub-menu.php:9 search.php:368
 #: aircraft-data.php:112 statistics-registration.php:52 airline-sub-menu.php:9
@@ -215,13 +217,13 @@ msgstr "Routenhalt:"
 msgid "Aircraft"
 msgstr "Flugzeuge"
 
-#: js/map-tracker.2d.js.php:449 js/map-marine.2d.js.php:444
-#: js/map-aircraft.2d.js.php:57 js/map-aircraft.2d.js.php:597
+#: js/map-tracker.2d.js.php:463 js/map-marine.2d.js.php:437
+#: js/map-aircraft.2d.js.php:72 js/map-aircraft.2d.js.php:618
 #: js/map.new.js.php:317 js/map.new.js.php:413 js/map.new.js.php:941
 #: js/map.js.php:316 js/map.js.php:412 js/map.js.php:948 airport.php:79
 #: airport-statistics-airline.php:50 airport-statistics-manufacturer.php:51
 #: tracker-data.php:79 airport-statistics-departure-airport.php:49
-#: airport-statistics-arrival-airport.php:50 aircraft-data.php:122
+#: airport-statistics-arrival-airport.php:50 aircraft-data.php:123
 #: airport-data.php:45 airport-statistics-registration.php:51
 #: space-data.php:107 airport-statistics-time.php:51
 #: airport-statistics-route.php:51 location-data.php:34
@@ -232,8 +234,8 @@ msgstr "Flugzeuge"
 msgid "Altitude"
 msgstr "Höhe"
 
-#: js/map-tracker.2d.js.php:456 js/map-marine.2d.js.php:451
-#: js/map-aircraft.2d.js.php:604 js/map.new.js.php:948 js/map.js.php:955
+#: js/map-tracker.2d.js.php:470 js/map-marine.2d.js.php:444
+#: js/map-aircraft.2d.js.php:625 js/map.new.js.php:948 js/map.js.php:955
 #: date-statistics-registration.php:46 owner-sub-menu.php:21
 #: owner-statistics-registration.php:43
 #: manufacturer-statistics-registration.php:57
@@ -242,7 +244,7 @@ msgstr "Höhe"
 #: pilot-statistics-registration.php:43 route-sub-menu.php:13
 #: statistics-sub-menu.php:73 statistics-sub-menu.php:177
 #: airport-sub-menu.php:13 registration-detailed.php:69 search.php:388
-#: search.php:390 aircraft-data.php:150 statistics-registration.php:51
+#: search.php:390 aircraft-data.php:121 statistics-registration.php:51
 #: registration-statistics-arrival-airport.php:112
 #: registration-statistics-departure-airport-country.php:102
 #: airline-sub-menu.php:13 airport-statistics-registration.php:71
@@ -256,80 +258,85 @@ msgstr "Höhe"
 msgid "Registration"
 msgstr "Anmeldung"
 
-#: js/map-tracker.2d.js.php:461 js/map-marine.2d.js.php:456
-#: js/map-aircraft.2d.js.php:609 js/map.new.js.php:953 js/map.js.php:960
-#: tracker-data.php:102 aircraft-data.php:151 space-data.php:116
-#: marine-data.php:91
+#: js/map-tracker.2d.js.php:475 js/map-marine.2d.js.php:449
+#: js/map-aircraft.2d.js.php:630 js/map.new.js.php:953 js/map.js.php:960
+#: tracker-data.php:107 aircraft-data.php:158 space-data.php:118
+#: space-data.php:129 marine-data.php:93
 msgid "Speed"
 msgstr "Geschwindigkeit"
 
-#: js/map-tracker.2d.js.php:465 js/map-marine.2d.js.php:460
-#: js/map-aircraft.2d.js.php:613 js/map.new.js.php:957 js/map.js.php:964
+#: js/map-tracker.2d.js.php:479 js/map-marine.2d.js.php:453
+#: js/map-aircraft.2d.js.php:634 js/map.new.js.php:957 js/map.js.php:964
 #: airport.php:80 airport-statistics-airline.php:51
-#: airport-statistics-manufacturer.php:52 atc-data.php:43 tracker-data.php:111
+#: airport-statistics-manufacturer.php:52 atc-data.php:43 tracker-data.php:116
 #: airport-statistics-departure-airport.php:50
-#: airport-statistics-arrival-airport.php:51 aircraft-data.php:160
+#: airport-statistics-arrival-airport.php:51 aircraft-data.php:156
 #: airport-data.php:53 airport-statistics-registration.php:52
 #: airport-statistics-time.php:52 airport-statistics-route.php:52
 #: location-data.php:45 airport-statistics-airline-country.php:51
 #: airport-statistics-departure-airport-country.php:51
-#: airport-statistics-aircraft.php:52 marine-data.php:100
+#: airport-statistics-aircraft.php:52 marine-data.php:102
 #: airport-detailed.php:96 flightid-overview.php:504
 #: airport-statistics-arrival-airport-country.php:51
 msgid "Coordinates"
 msgstr "Koordinaten:"
 
-#: js/map-tracker.2d.js.php:469 js/map-marine.2d.js.php:464
-#: js/map-aircraft.2d.js.php:617 js/map.new.js.php:961 js/map.js.php:968
-#: tracker-data.php:113 aircraft-data.php:180 marine-data.php:102
+#: js/map-tracker.2d.js.php:483 js/map-marine.2d.js.php:457
+#: js/map-aircraft.2d.js.php:638 js/map.new.js.php:961 js/map.js.php:968
+#: tracker-data.php:118 aircraft-data.php:191 marine-data.php:104
 msgid "Heading"
 msgstr "Überschrift"
 
-#: js/map-tracker.2d.js.php:474 js/map-marine.2d.js.php:469
-#: js/map-aircraft.2d.js.php:622 js/map.new.js.php:966 js/map.js.php:973
+#: js/map-tracker.2d.js.php:488 js/map-marine.2d.js.php:462
+#: js/map-aircraft.2d.js.php:643 js/map.new.js.php:966 js/map.js.php:973
 #: pilot-statistics-aircraft.php:69
 #: pilot-statistics-departure-airport-country.php:106
 #: pilot-statistics-time.php:93 pilot-statistics-manufacturer.php:67
-#: pilot-statistics-registration.php:91 table-output.php:122
-#: table-output.php:315 table-output.php:437 pilot-statistics-airline.php:85
-#: aircraft-data.php:191 pilot-statistics-route.php:77
+#: pilot-statistics-registration.php:91 table-output.php:144
+#: table-output.php:366 table-output.php:518 pilot-statistics-airline.php:85
+#: aircraft-data.php:202 pilot-statistics-route.php:77
 #: pilot-statistics-arrival-airport.php:118
 #: pilot-statistics-arrival-airport-country.php:106
 #: pilot-statistics-departure-airport.php:118
 msgid "Pilot"
 msgstr "Pilot"
 
-#: js/map-tracker.2d.js.php:484 js/map-marine.2d.js.php:479
-#: js/map-aircraft.2d.js.php:632 js/map.new.js.php:976 js/map.js.php:983
+#: js/map-tracker.2d.js.php:498 js/map-marine.2d.js.php:472
+#: js/map-aircraft.2d.js.php:653 js/map.new.js.php:976 js/map.js.php:983
 #: registration-sub-menu.php:30 owner-sub-menu.php:36 country-sub-menu.php:37
-#: table-output.php:321 table-output.php:443 statistics-sub-menu.php:107
+#: table-output.php:372 table-output.php:524 statistics-sub-menu.php:107
 #: statistics-sub-menu.php:212 airport-sub-menu.php:37 search.php:484
-#: aircraft-data.php:220 airline-sub-menu.php:28 aircraft-sub-menu.php:28
+#: aircraft-data.php:231 airline-sub-menu.php:28 aircraft-sub-menu.php:28
 #: date-sub-menu.php:37 pilot-sub-menu.php:28 ident-sub-menu.php:28
 #: manufacturer-sub-menu.php:36 flightid-overview.php:437
 msgid "Route"
 msgstr "Route"
 
-#: js/map-tracker.2d.js.php:489 js/map-marine.2d.js.php:484
-#: js/map-aircraft.2d.js.php:637 js/map.new.js.php:981 js/map.js.php:988
-#: aircraft-data.php:221
+#: js/map-tracker.2d.js.php:503 js/map-marine.2d.js.php:477
+#: js/map-aircraft.2d.js.php:658 js/map.new.js.php:981 js/map.js.php:988
+#: aircraft-data.php:232
 msgid "Latest ACARS message"
 msgstr "Aktuelle ACARS-Nachricht"
 
-#: js/map-tracker.2d.js.php:495 js/map-marine.2d.js.php:490
-#: js/map-aircraft.2d.js.php:643 js/map.new.js.php:987 js/map.js.php:994
-#: table-output.php:629 table-output.php:631 table-output.php:633
-#: table-output.php:635 table-output.php:642 table-output.php:644
-#: table-output.php:648 table-output.php:657 table-output.php:659
-#: table-output.php:661 table-output.php:663 aircraft-data.php:222
+#: js/map-tracker.2d.js.php:509 js/map-marine.2d.js.php:483
+#: js/map-aircraft.2d.js.php:664 js/map.new.js.php:987 js/map.js.php:994
+#: table-output.php:737 table-output.php:739 table-output.php:741
+#: table-output.php:743 table-output.php:750 table-output.php:752
+#: table-output.php:756 table-output.php:765 table-output.php:767
+#: table-output.php:769 table-output.php:771 aircraft-data.php:233
 msgid "Squawk:"
 msgstr "Kreischen:"
 
-#: js/map-marine.3d.js.php:69 js/map-marine.3d.js.php:71
+#: js/map-tracker.2d.js.php:632 js/map-marine.2d.js.php:623
+#: js/map-aircraft.2d.js.php:864
+msgid "Loading archive"
+msgstr "Archiv laden"
+
+#: js/map-marine.3d.js.php:85 js/map-marine.3d.js.php:87
 msgid "Marines detected"
 msgstr "Marine entdeckt"
 
-#: js/map-marine.2d.js.php:27
+#: js/map-marine.2d.js.php:32
 msgid "Vessels detected"
 msgstr "Gefäße entdeckt"
 
@@ -337,7 +344,7 @@ msgstr "Gefäße entdeckt"
 msgid "Satellites displayed"
 msgstr "Angezeigte Satelliten"
 
-#: js/map-aircraft.2d.js.php:51 js/map.new.js.php:311 js/map.new.js.php:406
+#: js/map-aircraft.2d.js.php:66 js/map.new.js.php:311 js/map.new.js.php:406
 #: js/map.js.php:310 js/map.js.php:405 airport.php:75
 #: airport-statistics-airline.php:46 airport-statistics-manufacturer.php:47
 #: airport-statistics-departure-airport.php:45
@@ -351,7 +358,7 @@ msgstr "Angezeigte Satelliten"
 msgid "City"
 msgstr "Ort"
 
-#: js/map-aircraft.2d.js.php:62 js/map.new.js.php:322 js/map.new.js.php:420
+#: js/map-aircraft.2d.js.php:77 js/map.new.js.php:322 js/map.new.js.php:420
 #: js/map.js.php:321 js/map.js.php:419 country-statistics-route.php:94
 #: aircraft-statistics-arrival-airport.php:116
 #: manufacturer-statistics-departure-airport.php:105
@@ -436,78 +443,78 @@ msgstr "Ort"
 msgid "Country"
 msgstr "Lan"
 
-#: js/map-aircraft.2d.js.php:67 js/map.new.js.php:327 js/map.js.php:326
+#: js/map-aircraft.2d.js.php:82 js/map.new.js.php:327 js/map.js.php:326
 #: airport-data.php:55 airport-data.php:61 airport-data.php:65
 msgid "Links"
 msgstr "Links"
 
-#: js/map-aircraft.2d.js.php:68 js/map.new.js.php:328 js/map.js.php:327
+#: js/map-aircraft.2d.js.php:83 js/map.new.js.php:328 js/map.js.php:327
 #: airport-data.php:56 airport-data.php:62
 msgid "Homepage"
 msgstr "Homepage"
 
-#: js/map-aircraft.2d.js.php:198 js/map-aircraft.3d.js.php:309
-#: js/map-aircraft.3d.js.php:311
+#: js/map-aircraft.2d.js.php:217 js/map-aircraft.3d.js.php:344
+#: js/map-aircraft.3d.js.php:346
 msgid "Aircraft detected"
 msgstr "Flugzeug erkannt"
 
-#: js/map-aircraft.2d.js.php:216 js/map-aircraft.2d.js.php:217
-#: js/map-aircraft.2d.js.php:219 js/map.new.js.php:530 js/map.new.js.php:531
-#: js/map.new.js.php:533 js/map-aircraft.3d.js.php:700
-#: js/map-aircraft.3d.js.php:702 js/map.js.php:522 js/map.js.php:523
-#: js/map.js.php:525
+#: js/map-aircraft.2d.js.php:229 js/map.new.js.php:530 js/map.new.js.php:531
+#: js/map.new.js.php:533 js/map.js.php:522 js/map.js.php:523 js/map.js.php:525
 msgid "Archive Date & Time"
 msgstr "Archiv Datum & Uhrzeit"
 
-#: js/map-aircraft.2d.js.php:1268 js/map.new.js.php:2056 js/map.js.php:1900
+#: js/map-aircraft.2d.js.php:1285 js/map.new.js.php:2056 js/map.js.php:1900
 msgid "Segment name:"
 msgstr "Name des Segments:"
 
-#: js/map-aircraft.2d.js.php:1269 js/map.new.js.php:2057 js/map.js.php:1901
+#: js/map-aircraft.2d.js.php:1286 js/map.new.js.php:2057 js/map.js.php:1901
+#: index.php:249
 msgid "From:"
 msgstr "Von:"
 
-#: js/map-aircraft.2d.js.php:1272 js/map.new.js.php:2060 js/map.js.php:1904
+#: js/map-aircraft.2d.js.php:1289 js/map.new.js.php:2060 js/map.js.php:1904
+#: table-output.php:659 table-output.php:667 table-output.php:793
+#: table-output.php:802
 msgid "Ident:"
 msgstr "Ident:"
 
-#: js/map-aircraft.2d.js.php:1275 js/map.new.js.php:2063 js/map.js.php:1907
+#: js/map-aircraft.2d.js.php:1292 js/map.new.js.php:2063 js/map.js.php:1907
 msgid "Altitude:"
 msgstr "Höhe:"
 
-#: js/map-aircraft.2d.js.php:1280 js/map.new.js.php:2068 js/map.js.php:1912
+#: js/map-aircraft.2d.js.php:1297 js/map.new.js.php:2068 js/map.js.php:1912
 msgid "Base Altitude:"
 msgstr "Basishöhe:"
 
-#: js/map-aircraft.2d.js.php:1282 js/map.new.js.php:2070 js/map.js.php:1914
+#: js/map-aircraft.2d.js.php:1299 js/map.new.js.php:2070 js/map.js.php:1914
 msgid "Top Altitude:"
 msgstr "Höchste Höhe:"
 
-#: js/map-aircraft.2d.js.php:1303 js/map.new.js.php:2107 js/map.js.php:1941
+#: js/map-aircraft.2d.js.php:1320 js/map.new.js.php:2107 js/map.js.php:1941
 msgid "Title:"
 msgstr "Titel:"
 
-#: js/map-aircraft.2d.js.php:1306 js/map.new.js.php:2110 js/map.js.php:1944
-#: index.php:705 table-output.php:570 table-output.php:575 table-output.php:577
-#: table-output.php:579 table-output.php:581 table-output.php:583
-#: table-output.php:585 table-output.php:587 table-output.php:589
-#: table-output.php:591 table-output.php:593 table-output.php:595
-#: table-output.php:597 table-output.php:599 table-output.php:601
-#: table-output.php:603 table-output.php:605 table-output.php:607
-#: table-output.php:688 table-output.php:693 table-output.php:695
-#: table-output.php:697 table-output.php:699 table-output.php:701
-#: table-output.php:703 table-output.php:705 table-output.php:707
-#: table-output.php:709 table-output.php:711 table-output.php:713
-#: table-output.php:715 table-output.php:717 table-output.php:719
-#: table-output.php:721 table-output.php:723 table-output.php:725
+#: js/map-aircraft.2d.js.php:1323 js/map.new.js.php:2110 js/map.js.php:1944
+#: index.php:817 table-output.php:678 table-output.php:683 table-output.php:685
+#: table-output.php:687 table-output.php:689 table-output.php:691
+#: table-output.php:693 table-output.php:695 table-output.php:697
+#: table-output.php:699 table-output.php:701 table-output.php:703
+#: table-output.php:705 table-output.php:707 table-output.php:709
+#: table-output.php:711 table-output.php:713 table-output.php:715
+#: table-output.php:813 table-output.php:818 table-output.php:820
+#: table-output.php:822 table-output.php:824 table-output.php:826
+#: table-output.php:828 table-output.php:830 table-output.php:832
+#: table-output.php:834 table-output.php:836 table-output.php:838
+#: table-output.php:840 table-output.php:842 table-output.php:844
+#: table-output.php:846 table-output.php:848 table-output.php:850
 msgid "Type:"
 msgstr "Art:"
 
-#: js/map-aircraft.2d.js.php:1309 js/map.new.js.php:2113 js/map.js.php:1947
+#: js/map-aircraft.2d.js.php:1326 js/map.new.js.php:2113 js/map.js.php:1947
 msgid "Tops:"
 msgstr "Tops"
 
-#: js/map-aircraft.2d.js.php:1312 js/map.new.js.php:2116 js/map.js.php:1950
+#: js/map-aircraft.2d.js.php:1329 js/map.new.js.php:2116 js/map.js.php:1950
 msgid "Base:"
 msgstr "Basis:"
 
@@ -520,25 +527,29 @@ msgid "Page generated in"
 msgstr "Seite erstellt in"
 
 #: marine-type-detailed.php:38 pilot-detailed.php:57 airline-detailed.php:45
-#: ident-detailed.php:124 manufacturer-detailed.php:47 owner-detailed.php:65
+#: captain-detailed.php:62 ident-detailed.php:124 manufacturer-detailed.php:47
+#: race-detailed.php:62 owner-detailed.php:65
 #, php-format
 msgid "Detailed View for %s"
 msgstr "Detaillierte Ansicht für %s"
 
 #: marine-type-detailed.php:47
 #, php-format
-msgid "The table below shows the detailed information of all marine of type <strong>%s</strong>."
+msgid ""
+"The table below shows the detailed information of all marine of type <strong>"
+"%s</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Marine vom Typ <strong> %s </strong>."
 
 #: marine-type-detailed.php:54 newest.php:149 pilot-detailed.php:140
 #: date-detailed.php:95 currently.php:74 airport.php:97
 #: accident-detailed.php:74 highlights-table.php:57 route-detailed.php:58
 #: upcoming.php:51 aircraft-detailed.php:85 airline-detailed.php:129
-#: registration-detailed.php:60 search.php:306 search.php:308
-#: country-detailed.php:90 ident-detailed.php:224 incident-latest.php:42
-#: manufacturer-detailed.php:82 latest.php:71 accident-latest.php:40
-#: acars-archive.php:39 highlights-display.php:73 owner-detailed.php:147
-#: acars-latest.php:42 airport-detailed.php:202 incident-detailed.php:61
+#: captain-detailed.php:148 registration-detailed.php:60 search.php:306
+#: search.php:308 country-detailed.php:90 ident-detailed.php:225
+#: incident-latest.php:42 manufacturer-detailed.php:82 latest.php:71
+#: accident-latest.php:40 race-detailed.php:148 acars-archive.php:39
+#: highlights-display.php:73 owner-detailed.php:147 acars-latest.php:42
+#: airport-detailed.php:202 incident-detailed.php:61
 msgid "Previous Page"
 msgstr "Vorherige Seite"
 
@@ -546,27 +557,28 @@ msgstr "Vorherige Seite"
 #: date-detailed.php:99 currently.php:78 airport.php:101
 #: accident-detailed.php:75 highlights-table.php:61 route-detailed.php:62
 #: upcoming.php:55 aircraft-detailed.php:89 airline-detailed.php:133
-#: registration-detailed.php:64 search.php:314 search.php:316
-#: country-detailed.php:94 ident-detailed.php:228 incident-latest.php:43
-#: manufacturer-detailed.php:86 latest.php:75 accident-latest.php:41
-#: acars-archive.php:40 highlights-display.php:77 owner-detailed.php:151
-#: acars-latest.php:45 airport-detailed.php:206 incident-detailed.php:62
+#: captain-detailed.php:152 registration-detailed.php:64 search.php:314
+#: search.php:316 country-detailed.php:94 ident-detailed.php:229
+#: incident-latest.php:43 manufacturer-detailed.php:86 latest.php:75
+#: accident-latest.php:41 race-detailed.php:152 acars-archive.php:40
+#: highlights-display.php:77 owner-detailed.php:151 acars-latest.php:45
+#: airport-detailed.php:206 incident-detailed.php:62
 msgid "Next Page"
 msgstr "Nächste Seite"
 
 #: marine-type-detailed.php:64 airline-statistics-departure-airport.php:77
 #: airline-statistics-aircraft.php:78 airspace-data.php:35
 #: airline-statistics-registration.php:79 airline-detailed.php:102
-#: table-output.php:66 table-output.php:69 table-output.php:71
-#: table-output.php:76 table-output.php:79 table-output.php:81
-#: table-output.php:273 table-output.php:276 table-output.php:278
-#: table-output.php:283 table-output.php:286 table-output.php:288
-#: table-output.php:405 table-output.php:408 table-output.php:410
-#: statistics-sub-menu.php:153 atc-data.php:38 tracker-data.php:112
+#: table-output.php:75 table-output.php:78 table-output.php:80
+#: table-output.php:85 table-output.php:88 table-output.php:90
+#: table-output.php:311 table-output.php:314 table-output.php:316
+#: table-output.php:321 table-output.php:324 table-output.php:326
+#: table-output.php:473 table-output.php:476 table-output.php:478
+#: statistics-sub-menu.php:153 atc-data.php:38 tracker-data.php:117
 #: airline-statistics-arrival-airport-country.php:77 search.php:379
 #: statistics-type.php:46 airline-statistics-arrival-airport.php:77
 #: airline-statistics-time.php:78 airline-statistics-route.php:77
-#: airline-statistics-manufacturer.php:77 marine-data.php:101
+#: airline-statistics-manufacturer.php:77 marine-data.php:103
 #: airline-statistics-departure-airport-country.php:77
 msgid "Type"
 msgstr "Art"
@@ -623,7 +635,9 @@ msgstr "Häufigste Flugzeuge bei der Registrierung"
 
 #: date-statistics-registration.php:36
 #, php-format
-msgid "The statistic below shows the most common aircraft by registration of flights on <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft by registration of "
+"flights on <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugzeuge bei der Registrierung von Flügen auf <strong> %s </strong>."
 
 #: date-statistics-registration.php:47 newest.php:50 newest.php:52
@@ -665,12 +679,12 @@ msgstr "Flugzeugtyp"
 #: route-statistics-registration.php:59 route-statistics-registration.php:65
 #: route-statistics-registration.php:67 pilot-statistics-registration.php:58
 #: pilot-statistics-registration.php:60 pilot-statistics-registration.php:66
-#: pilot-statistics-registration.php:68 table-output.php:525
-#: table-output.php:527 table-output.php:534 table-output.php:536
-#: table-output.php:542 table-output.php:629 table-output.php:631
-#: table-output.php:633 table-output.php:635 table-output.php:642
-#: table-output.php:644 table-output.php:648 table-output.php:657
-#: table-output.php:659 table-output.php:661 table-output.php:663
+#: pilot-statistics-registration.php:68 table-output.php:622
+#: table-output.php:624 table-output.php:631 table-output.php:633
+#: table-output.php:639 table-output.php:737 table-output.php:739
+#: table-output.php:741 table-output.php:743 table-output.php:750
+#: table-output.php:752 table-output.php:756 table-output.php:765
+#: table-output.php:767 table-output.php:769 table-output.php:771
 #: search.php:221 statistics-registration.php:64 statistics-registration.php:68
 #: airport-statistics-registration.php:86
 #: airport-statistics-registration.php:88
@@ -704,11 +718,11 @@ msgstr "Registrierung:"
 #: route-statistics-registration.php:59 route-statistics-registration.php:65
 #: route-statistics-registration.php:67 pilot-statistics-registration.php:58
 #: pilot-statistics-registration.php:60 pilot-statistics-registration.php:66
-#: pilot-statistics-registration.php:68 table-output.php:629
-#: table-output.php:631 table-output.php:633 table-output.php:635
-#: table-output.php:642 table-output.php:644 table-output.php:648
-#: table-output.php:657 table-output.php:659 table-output.php:661
-#: table-output.php:663 search.php:219 statistics-registration.php:64
+#: pilot-statistics-registration.php:68 table-output.php:737
+#: table-output.php:739 table-output.php:741 table-output.php:743
+#: table-output.php:750 table-output.php:752 table-output.php:756
+#: table-output.php:765 table-output.php:767 table-output.php:769
+#: table-output.php:771 search.php:219 statistics-registration.php:64
 #: statistics-registration.php:68 airport-statistics-registration.php:86
 #: airport-statistics-registration.php:88
 #: airport-statistics-registration.php:94
@@ -738,12 +752,12 @@ msgstr "Flugzeug:"
 #: route-statistics-registration.php:65 route-statistics-registration.php:67
 #: pilot-statistics-registration.php:58 pilot-statistics-registration.php:60
 #: pilot-statistics-registration.php:66 pilot-statistics-registration.php:68
-#: table-output.php:525 table-output.php:527 table-output.php:534
-#: table-output.php:536 table-output.php:542 table-output.php:629
-#: table-output.php:631 table-output.php:633 table-output.php:635
-#: table-output.php:642 table-output.php:644 table-output.php:648
-#: table-output.php:657 table-output.php:659 table-output.php:661
-#: table-output.php:663 search.php:223 statistics-registration.php:64
+#: table-output.php:622 table-output.php:624 table-output.php:631
+#: table-output.php:633 table-output.php:639 table-output.php:737
+#: table-output.php:739 table-output.php:741 table-output.php:743
+#: table-output.php:750 table-output.php:752 table-output.php:756
+#: table-output.php:765 table-output.php:767 table-output.php:769
+#: table-output.php:771 search.php:223 statistics-registration.php:64
 #: airport-statistics-registration.php:86
 #: airport-statistics-registration.php:88
 #: airport-statistics-registration.php:94
@@ -829,7 +843,8 @@ msgstr "Unbekanntes Datum"
 #: route-statistics-registration.php:92
 #: country-statistics-departure-airport.php:140 date-statistics-route.php:83
 #: pilot-statistics-manufacturer.php:69 pilot-statistics-registration.php:93
-#: country-statistics-airline.php:106 route-statistics-airline.php:85
+#: country-statistics-airline.php:106 captain-detailed.php:159
+#: route-statistics-airline.php:85
 #: aircraft-statistics-departure-airport.php:143
 #: country-statistics-aircraft.php:86
 #: airline-statistics-arrival-airport-country.php:184
@@ -847,7 +862,7 @@ msgstr "Unbekanntes Datum"
 #: date-statistics-manufacturer.php:73 manufacturer-statistics-aircraft.php:84
 #: registration-statistics-departure-airport-country.php:104
 #: airline-statistics-time.php:165 country-statistics-arrival-airport.php:137
-#: airport-statistics-registration.php:121 ident-detailed.php:235
+#: airport-statistics-registration.php:121 ident-detailed.php:236
 #: owner-statistics-departure-airport.php:120 airport-statistics-time.php:122
 #: airport-statistics-route.php:104
 #: manufacturer-statistics-departure-airport-country.php:125
@@ -859,7 +874,7 @@ msgstr "Unbekanntes Datum"
 #: airline-statistics-route.php:150 manufacturer-statistics-time.php:110
 #: ident-statistics-arrival-airport.php:115 owner-statistics-aircraft.php:71
 #: registration-statistics-departure-airport.php:117
-#: aircraft-statistics-airline.php:108
+#: aircraft-statistics-airline.php:108 race-detailed.php:159
 #: registration-statistics-arrival-airport-country.php:103
 #: route-statistics-time.php:95 owner-statistics-route.php:79
 #: route-statistics-manufacturer.php:69
@@ -909,13 +924,13 @@ msgstr "Häufigste Tageszeit von %s"
 #: ident-statistics-time.php:20 ident-statistics-time.php:87
 #: ident-statistics-manufacturer.php:20 ident-statistics-manufacturer.php:62
 #: ident-statistics-airline.php:20 ident-statistics-airline.php:80
-#: table-output.php:45 table-output.php:48 table-output.php:50
-#: table-output.php:158 table-output.php:161 table-output.php:163
-#: table-output.php:200 table-output.php:209 table-output.php:222
-#: table-output.php:252 table-output.php:255 table-output.php:257
-#: table-output.php:384 table-output.php:387 table-output.php:389
+#: table-output.php:54 table-output.php:57 table-output.php:59
+#: table-output.php:193 table-output.php:196 table-output.php:198
+#: table-output.php:235 table-output.php:244 table-output.php:257
+#: table-output.php:290 table-output.php:293 table-output.php:295
+#: table-output.php:452 table-output.php:455 table-output.php:457
 #: ident-statistics-departure-airport.php:20 ident-detailed.php:207
-#: ident-detailed.php:233 ident-statistics-arrival-airport-country.php:20
+#: ident-detailed.php:234 ident-statistics-arrival-airport-country.php:20
 #: ident-statistics-arrival-airport-country.php:102
 #: ident-statistics-arrival-airport.php:20
 #: ident-statistics-arrival-airport.php:113
@@ -933,17 +948,17 @@ msgstr "Ident"
 #: country-sub-menu.php:22 airport-statistics-airline.php:87
 #: ident-statistics-airline.php:21 ident-statistics-airline.php:37
 #: airline-detailed.php:138 route-sub-menu.php:19 route-sub-menu.php:22
-#: table-output.php:33 table-output.php:36 table-output.php:38
-#: table-output.php:147 table-output.php:150 table-output.php:152
-#: table-output.php:199 table-output.php:208 table-output.php:221
-#: table-output.php:240 table-output.php:243 table-output.php:245
-#: table-output.php:372 table-output.php:375 table-output.php:377
+#: table-output.php:42 table-output.php:45 table-output.php:47
+#: table-output.php:182 table-output.php:185 table-output.php:187
+#: table-output.php:234 table-output.php:243 table-output.php:256
+#: table-output.php:278 table-output.php:281 table-output.php:283
+#: table-output.php:440 table-output.php:443 table-output.php:445
 #: statistics-sub-menu.php:80 statistics-sub-menu.php:86
 #: statistics-sub-menu.php:184 statistics-sub-menu.php:190
 #: country-statistics-airline.php:63 statistics-callsign.php:49
 #: route-statistics-airline.php:40 airport-sub-menu.php:19
 #: airport-sub-menu.php:22 search.php:428 pilot-statistics-airline.php:42
-#: ident-statistics-departure-airport.php:21 ident-detailed.php:209
+#: ident-statistics-departure-airport.php:21 ident-detailed.php:210
 #: statistics-airline.php:44 aircraft-sub-menu.php:10 aircraft-sub-menu.php:13
 #: ident-statistics-arrival-airport-country.php:21
 #: ident-statistics-arrival-airport.php:21 date-sub-menu.php:19
@@ -967,7 +982,9 @@ msgstr "Häufigste Tageszeit"
 
 #: ident-statistics-time.php:27
 #, php-format
-msgid "The statistic below shows the most common time of day of flights with the ident/callsign <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common time of day of flights with the "
+"ident/callsign <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigste Tageszeit von Flügen mit dem Ident / Rufzeichen <strong> %s </strong>."
 
 #: ident-statistics-time.php:68 date-statistics-time.php:77
@@ -991,7 +1008,7 @@ msgstr "Numme"
 
 #: ident-statistics-time.php:90 ident-statistics-manufacturer.php:65
 #: ident-statistics-airline.php:83 ident-statistics-departure-airport.php:116
-#: ident-detailed.php:236 ident-statistics-arrival-airport-country.php:105
+#: ident-detailed.php:237 ident-statistics-arrival-airport-country.php:105
 #: ident-statistics-arrival-airport.php:116
 #: ident-statistics-departure-airport-country.php:105
 #: ident-statistics-aircraft.php:69 ident-statistics-registration.php:89
@@ -1060,23 +1077,38 @@ msgid "Newest Arrival Airport"
 msgstr "Neuester Ankunftsflughafen"
 
 #: newest.php:111
-msgid "The table below shows the detailed information sorted by the newest recorded aircraft type. Each aircraft type is grouped and is shown only once, the first time it flew nearby."
+msgid ""
+"The table below shows the detailed information sorted by the newest recorded "
+"aircraft type. Each aircraft type is grouped and is shown only once, the "
+"first time it flew nearby."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen, sortiert nach dem neuesten erfassten Flugzeugtyp. Jeder Flugzeugtyp ist gruppiert und wird nur einmal gezeigt, wenn er das erste Mal in der Nähe flog."
 
 #: newest.php:114
-msgid "The table below shows the detailed information sorted by the newest recorded aircraft by registration. Each aircraft registration is grouped and is shown only once, the first time it flew nearby."
+msgid ""
+"The table below shows the detailed information sorted by the newest recorded "
+"aircraft by registration. Each aircraft registration is grouped and is shown "
+"only once, the first time it flew nearby."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen, sortiert nach dem neuesten registrierten Flugzeug bei der Registrierung. Jede Flugzeugregistrierung ist gruppiert und wird nur einmal gezeigt, wenn sie das erste Mal in der Nähe flog."
 
 #: newest.php:117
-msgid "The table below shows the detailed information sorted by the newest recorded airline. Each airline is grouped and is shown only once, the first time it flew nearby."
+msgid ""
+"The table below shows the detailed information sorted by the newest recorded "
+"airline. Each airline is grouped and is shown only once, the first time it "
+"flew nearby."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen, sortiert nach der neuesten Fluggesellschaft. Jede Fluggesellschaft ist gruppiert und wird nur einmal gezeigt, wenn sie zum ersten Mal in der Nähe flog."
 
 #: newest.php:120
-msgid "The table below shows the detailed information sorted by the newest recorded departure airport. Each departure airport is grouped and is shown only once, the first time an aircraft flew nearby from the airport."
+msgid ""
+"The table below shows the detailed information sorted by the newest recorded "
+"departure airport. Each departure airport is grouped and is shown only once, "
+"the first time an aircraft flew nearby from the airport."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen, sortiert nach dem neuesten registrierten Abflughafen. Jeder Abflugflughafen ist gruppiert und wird nur einmal gezeigt, wenn ein Flugzeug zum ersten Mal in der Nähe vom Flughafen geflogen ist."
 
 #: newest.php:123
-msgid "The table below shows the detailed information sorted by the newest recorded arrival airport. Each arrival airport is grouped and is shown only once, the first time an aircraft flew nearby to the airport."
+msgid ""
+"The table below shows the detailed information sorted by the newest recorded "
+"arrival airport. Each arrival airport is grouped and is shown only once, the "
+"first time an aircraft flew nearby to the airport."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen, sortiert nach dem neuesten Flughafen. Jeder Ankunftsflughafen ist gruppiert und wird nur einmal gezeigt, wenn ein Flugzeug zum ersten Mal in der Nähe zum Flughafen geflogen ist."
 
 #: pilot-detailed.php:113
@@ -1101,32 +1133,33 @@ msgstr "Gesamtdauer der geflogenen Flüge"
 
 #: pilot-detailed.php:134
 #, php-format
-msgid "The table below shows the detailed information of all flights with the pilot <strong>%s</strong>."
+msgid ""
+"The table below shows the detailed information of all flights with the pilot "
+"<strong>%s</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge mit dem Pilot <strong> %s </strong>."
 
 #: pilot-detailed.php:149 owner-statistics-registration.php:91
 #: owner-statistics-airline.php:85 owner-statistics-manufacturer.php:67
-#: owner-statistics-arrival-airport.php:119 table-output.php:125
-#: table-output.php:211 table-output.php:224 table-output.php:318
-#: table-output.php:440 owner-statistics-arrival-airport-country.php:106
-#: aircraft-data.php:197 owner-statistics-departure-airport-country.php:106
-#: space-data.php:136 owner-statistics-departure-airport.php:118
-#: owner-statistics-aircraft.php:69 owner-statistics-route.php:77
-#: owner-detailed.php:156 owner-statistics-time.php:93
-#: flightid-overview.php:319
+#: owner-statistics-arrival-airport.php:119 table-output.php:147
+#: table-output.php:246 table-output.php:259 table-output.php:369
+#: table-output.php:521 captain-detailed.php:157
+#: owner-statistics-arrival-airport-country.php:106 aircraft-data.php:208
+#: owner-statistics-departure-airport-country.php:106 space-data.php:144
+#: owner-statistics-departure-airport.php:118 owner-statistics-aircraft.php:69
+#: race-detailed.php:157 owner-statistics-route.php:77 owner-detailed.php:156
+#: owner-statistics-time.php:93 flightid-overview.php:319
 msgid "Owner"
 msgstr "Owne"
 
-#: pilot-detailed.php:152 owner-statistics-registration.php:94
-#: owner-statistics-airline.php:88 owner-statistics-manufacturer.php:70
-#: owner-statistics-arrival-airport.php:122
-#: owner-statistics-arrival-airport-country.php:109
-#: owner-statistics-departure-airport-country.php:109
-#: owner-statistics-departure-airport.php:121 owner-statistics-aircraft.php:72
-#: owner-statistics-route.php:80 owner-detailed.php:159
-#: owner-statistics-time.php:96
-msgid "Sorry, this owner is not in the database. :("
-msgstr "Entschuldigung, dieser Besitzer ist nicht in der Datenbank. :("
+#: pilot-detailed.php:152 pilot-statistics-aircraft.php:72
+#: pilot-statistics-departure-airport-country.php:109
+#: pilot-statistics-time.php:96 pilot-statistics-manufacturer.php:70
+#: pilot-statistics-registration.php:94 pilot-statistics-airline.php:88
+#: pilot-statistics-route.php:80 pilot-statistics-arrival-airport.php:121
+#: pilot-statistics-arrival-airport-country.php:109
+#: pilot-statistics-departure-airport.php:121
+msgid "Sorry, this pilot is not in the database. :("
+msgstr "Entschuldigung, dieser Pilot ist nicht in der Datenbank. :("
 
 #: country-statistics-route.php:21 manufacturer-statistics-route.php:18
 #: airline-statistics-route.php:22
@@ -1156,7 +1189,9 @@ msgstr "Flughäfen & amp; Fluggesellschaften von %s"
 #: country-statistics-airline-country.php:48
 #: country-statistics-departure-airport-country.php:48
 #: country-statistics-registration.php:47
-msgid "This special country profile shows all flights that do <u>not</u> have a country of a airline or departure/arrival airport associated with them."
+msgid ""
+"This special country profile shows all flights that do <u>not</u> have a "
+"country of a airline or departure/arrival airport associated with them."
 msgstr "In diesem speziellen Länderprofil werden alle Flüge angezeigt, denen ein Land einer Fluggesellschaft oder ein mit ihnen verbundener Abflug- / Ankunftsflughafen zugeordnet ist."
 
 #: country-statistics-route.php:53 aircraft-statistics-route.php:53
@@ -1169,11 +1204,13 @@ msgstr "Häufigste Routen"
 
 #: country-statistics-route.php:54
 #, php-format
-msgid "The statistic below shows the most common routes of airports &amp; airlines from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common routes of airports &amp; airlines "
+"from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Routen von Flughäfen & amp; Fluggesellschaften von <strong> %s </strong>."
 
 #: country-statistics-route.php:83 registration-statistics-route.php:57
-#: table-output.php:1256 statistics-route-airport.php:61
+#: table-output.php:1465 statistics-route-airport.php:61
 #: airport-statistics-route.php:91 pilot-statistics-route.php:66
 #: airline-statistics-route.php:137 owner-statistics-route.php:66
 #: ident-statistics-route.php:61
@@ -1300,7 +1337,9 @@ msgstr "Hersteller"
 #: aircraft-statistics-airline.php:50
 #: aircraft-statistics-airline-country.php:51
 #: aircraft-statistics-registration.php:49
-msgid "This special aircraft profile shows all flights in where the aircraft type is unknown."
+msgid ""
+"This special aircraft profile shows all flights in where the aircraft type "
+"is unknown."
 msgstr "Dieses spezielle Flugzeugprofil zeigt alle Flüge, in denen der Flugzeugtyp unbekannt ist."
 
 #: aircraft-statistics-arrival-airport.php:57
@@ -1318,7 +1357,9 @@ msgstr "Häufigste Ankunftsflughäfen"
 
 #: aircraft-statistics-arrival-airport.php:58
 #, php-format
-msgid "The statistic below shows all arrival airports of flights from <strong>%s (%s)</strong>."
+msgid ""
+"The statistic below shows all arrival airports of flights from <strong>%s "
+"(%s)</strong>."
 msgstr "Die folgende Statistik zeigt Ihnen alle Ankunftsflughäfen von Flügen von <strong> %s ( %s ) </strong>."
 
 #: aircraft-statistics-arrival-airport.php:115 registration-sub-menu.php:21
@@ -1376,17 +1417,23 @@ msgstr "Schiffe aus %s"
 
 #: date-detailed.php:87
 #, php-format
-msgid "The table below shows the detailed information of all vessels on <strong>%s</strong>."
+msgid ""
+"The table below shows the detailed information of all vessels on <strong>%s</"
+"strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Schiffe unter <strong> %s </strong>."
 
 #: date-detailed.php:88
 #, php-format
-msgid "The table below shows the detailed information of all trackers on <strong>%s</strong>."
+msgid ""
+"The table below shows the detailed information of all trackers on <strong>"
+"%s</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Tracker unter <strong> %s </strong>."
 
 #: date-detailed.php:89
 #, php-format
-msgid "The table below shows the detailed information of all flights on <strong>%s</strong>."
+msgid ""
+"The table below shows the detailed information of all flights on <strong>%s</"
+"strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge auf <strong> %s </strong>."
 
 #: registration-sub-menu.php:8
@@ -1417,9 +1464,9 @@ msgid "Arrival Airport by Country"
 msgstr "Ankunft Flughafen nach Land"
 
 #: registration-sub-menu.php:31 owner-sub-menu.php:37 country-sub-menu.php:38
-#: route-sub-menu.php:26 table-output.php:335 table-output.php:338
-#: table-output.php:340 table-output.php:456 table-output.php:459
-#: table-output.php:461 statistics-sub-menu.php:120 statistics-sub-menu.php:147
+#: route-sub-menu.php:26 table-output.php:400 table-output.php:403
+#: table-output.php:405 table-output.php:553 table-output.php:556
+#: table-output.php:558 statistics-sub-menu.php:120 statistics-sub-menu.php:147
 #: statistics-sub-menu.php:227 statistics-sub-menu.php:257
 #: airport-sub-menu.php:38 airline-sub-menu.php:29 date-sub-menu.php:38
 #: pilot-sub-menu.php:29 ident-sub-menu.php:29 manufacturer-sub-menu.php:37
@@ -1433,7 +1480,9 @@ msgstr "Häufigste Routen von %s ( %s )"
 
 #: aircraft-statistics-route.php:54
 #, php-format
-msgid "The statistic below shows the most common routes from <strong>%s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common routes from <strong>%s (%s)</"
+"strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Routen von <strong> %s ( %s ) </strong>."
 
 #: manufacturer-statistics-departure-airport.php:17
@@ -1460,7 +1509,9 @@ msgstr "Häufigste Abflughafen"
 #: airline-statistics-departure-airport.php:97
 #: airline-statistics-departure-airport.php:99
 #, php-format
-msgid "The statistic below shows all departure airports of flights from <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports of flights from <strong>%s</"
+"strong>."
 msgstr "Die folgende Statistik zeigt alle Abflughäfen von Flügen von <strong> %s </strong>."
 
 #: manufacturer-statistics-departure-airport.php:136
@@ -1476,7 +1527,7 @@ msgstr "Die folgende Statistik zeigt alle Abflughäfen von Flügen von <strong> 
 msgid "Sorry, the aircraft manufacturer does not exist in this database. :("
 msgstr "Leider ist der Flugzeughersteller in dieser Datenbank nicht vorhanden. :("
 
-#: currently.php:49 header.php:479 header.php:572 header.php:613 header.php:656
+#: currently.php:49 header.php:486 header.php:588 header.php:629 header.php:672
 msgid "Current Activity"
 msgstr "Momentane Tätigkeit"
 
@@ -1500,8 +1551,21 @@ msgstr "Häufigste Flugzeuge durch Registrierung von %s"
 
 #: owner-statistics-registration.php:32
 #, php-format
-msgid "The statistic below shows the most common aircraft by Registration of flights owned by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft by Registration of "
+"flights owned by <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugzeuge bei der Registrierung von Flügen, die <strong> %s </strong> gehören."
+
+#: owner-statistics-registration.php:94 owner-statistics-airline.php:88
+#: owner-statistics-manufacturer.php:70
+#: owner-statistics-arrival-airport.php:122
+#: owner-statistics-arrival-airport-country.php:109
+#: owner-statistics-departure-airport-country.php:109
+#: owner-statistics-departure-airport.php:121 owner-statistics-aircraft.php:72
+#: owner-statistics-route.php:80 owner-detailed.php:159
+#: owner-statistics-time.php:96
+msgid "Sorry, this owner is not in the database. :("
+msgstr "Entschuldigung, dieser Besitzer ist nicht in der Datenbank. :("
 
 #: manufacturer-statistics-registration.php:17
 #: airline-statistics-registration.php:23
@@ -1511,7 +1575,9 @@ msgstr "Häufigste Flugzeuge nach Registrierung von %s"
 
 #: manufacturer-statistics-registration.php:47
 #, php-format
-msgid "The statistic below shows the most common aircraft by registration of flights from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft by registration of "
+"flights from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt das häufigste Flugzeug bei der Registrierung von Flügen von <strong> %s </strong>."
 
 #: ident-statistics-manufacturer.php:16 owner-statistics-manufacturer.php:21
@@ -1529,7 +1595,9 @@ msgstr "Häufigster Flugzeughersteller"
 
 #: ident-statistics-manufacturer.php:27
 #, php-format
-msgid "The statistic below shows the most common Aircraft Manufacturer of flights using the ident/callsign <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common Aircraft Manufacturer of flights "
+"using the ident/callsign <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt den gebräuchlichsten Flugzeughersteller von Flügen mit dem Ident / Rufzeichen <strong> %s </strong>."
 
 #: owner-statistics-airline.php:21 ident-statistics-airline.php:16
@@ -1548,7 +1616,9 @@ msgstr "Die meisten Fluggesellschaften"
 
 #: owner-statistics-airline.php:32 pilot-statistics-airline.php:32
 #, php-format
-msgid "The statistic below shows the most common airlines of flights owned by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common airlines of flights owned by "
+"<strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Fluggesellschaften von Flügen, die <strong> %s </strong> gehören."
 
 #: pilot-statistics-aircraft.php:25 owner-statistics-aircraft.php:25
@@ -1567,18 +1637,10 @@ msgstr "Häufigste Flugzeuge"
 
 #: pilot-statistics-aircraft.php:36
 #, php-format
-msgid "The statistic below shows the most common aircraft of flights piloted by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft of flights piloted by "
+"<strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugzeuge von Flügen, die von <strong> %s </strong> pilotiert werden."
-
-#: pilot-statistics-aircraft.php:72
-#: pilot-statistics-departure-airport-country.php:109
-#: pilot-statistics-time.php:96 pilot-statistics-manufacturer.php:70
-#: pilot-statistics-registration.php:94 pilot-statistics-airline.php:88
-#: pilot-statistics-route.php:80 pilot-statistics-arrival-airport.php:121
-#: pilot-statistics-arrival-airport-country.php:109
-#: pilot-statistics-departure-airport.php:121
-msgid "Sorry, this pilot is not in the database. :("
-msgstr "Entschuldigung, dieser Pilot ist nicht in der Datenbank. :("
 
 #: registration-statistics-route.php:14
 #, php-format
@@ -1587,7 +1649,9 @@ msgstr "Häufigste Routen von Flugzeugen mit Registrierung %s"
 
 #: registration-statistics-route.php:27
 #, php-format
-msgid "The statistic below shows the most common routes of aircraft with registration <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common routes of aircraft with "
+"registration <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Routen von Flugzeugen mit der Registrierung <strong> %s </strong>."
 
 #: registration-statistics-route.php:71 registration-detailed.php:72
@@ -1626,12 +1690,16 @@ msgstr "IATA"
 #: airport-statistics-departure-airport-country.php:54
 #: airport-statistics-aircraft.php:55 airport-detailed.php:190
 #: airport-statistics-arrival-airport-country.php:54
-msgid "This special airport profile shows all flights that do <u>not</u> have a departure and/or arrival airport associated with them."
+msgid ""
+"This special airport profile shows all flights that do <u>not</u> have a "
+"departure and/or arrival airport associated with them."
 msgstr "Dieses spezielle Flughafenprofil zeigt alle Flüge, denen kein Abflug- und / oder Ankunftsflughafen zugeordnet ist."
 
 #: airport.php:90
 #, php-format
-msgid "The table below shows the route(s) aircraft have used to/from <strong>%s</strong>, sorted by the most recent one."
+msgid ""
+"The table below shows the route(s) aircraft have used to/from <strong>%s</"
+"strong>, sorted by the most recent one."
 msgstr "In der folgenden Tabelle sind die Flugzeuge aufgeführt, die von / nach <strong> %s </strong> verwendet wurden, sortiert nach dem neuesten Flugzeugtyp."
 
 #: airport.php:109 airport-statistics-airline.php:133
@@ -1646,7 +1714,7 @@ msgstr "In der folgenden Tabelle sind die Flugzeuge aufgeführt, die von / nach 
 msgid "Sorry, the airport does not exist in this database. :("
 msgstr "Entschuldigung, der Flughafen existiert nicht in dieser Datenbank. :("
 
-#: airport.php:115 airport.php:118 header.php:464
+#: airport.php:115 airport.php:118 header.php:471
 msgid "Airports"
 msgstr "Flughäfen"
 
@@ -1672,7 +1740,9 @@ msgstr "Häufigste Ankunftsflughäfen nach Land"
 
 #: country-statistics-arrival-airport-country.php:54
 #, php-format
-msgid "The statistic below shows all arrival airports by Country of origin of flights of airports &amp; airlines from <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports by Country of origin of "
+"flights of airports &amp; airlines from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen nach Herkunftsland der Flüge von Flughäfen & amp; Fluggesellschaften von <strong> %s </ strong>."
 
 #: archive-country.php:16 date-statistics-airline-country.php:15
@@ -1691,7 +1761,9 @@ msgstr "Die meisten Fluggesellschaften nach Land"
 
 #: archive-country.php:33 date-statistics-airline-country.php:38
 #, php-format
-msgid "The statistic below shows the most common airlines by Country of origin of flights on <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common airlines by Country of origin of "
+"flights on <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die am häufigsten verwendeten Fluggesellschaften nach Herkunftsland der Flüge auf <strong> %s </strong>."
 
 #: date-statistics-airline.php:14
@@ -1701,7 +1773,9 @@ msgstr "Die meisten Fluggesellschaften auf %s"
 
 #: date-statistics-airline.php:38
 #, php-format
-msgid "The statistic below shows the most common airlines of flights on <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common airlines of flights on <strong>%s</"
+"strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Fluggesellschaften für Flüge mit <strong> %s </strong>."
 
 #: tools-acars.php:6 tools-acars.php:14
@@ -1747,7 +1821,9 @@ msgstr "Rufzeichen"
 #: airline-statistics-arrival-airport.php:90 airline-statistics-time.php:91
 #: airline-statistics-route.php:90 airline-statistics-manufacturer.php:90
 #: airline-statistics-departure-airport-country.php:90
-msgid "This special airline profile shows all flights that do <u>not</u> have a airline associated with them."
+msgid ""
+"This special airline profile shows all flights that do <u>not</u> have a "
+"airline associated with them."
 msgstr "Dieses spezielle Fluglinienprofil zeigt alle Flüge, denen keine Fluggesellschaft zugeordnet ist."
 
 #: airline-statistics-departure-airport.php:193
@@ -1857,7 +1933,10 @@ msgid "Table View"
 msgstr "TABELLENANSICHT"
 
 #: highlights-table.php:40
-msgid "The table below shows the detailed information of all custom selected flights who have special aspects to it, such as unique liveries, destinations etc."
+msgid ""
+"The table below shows the detailed information of all custom selected "
+"flights who have special aspects to it, such as unique liveries, "
+"destinations etc."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller benutzerdefinierten ausgewählten Flüge, die spezielle Aspekte haben, wie z. B. einzigartige Livematerialien, Reiseziele usw."
 
 #: airline-statistics-aircraft.php:23 country-statistics-aircraft.php:17
@@ -1874,12 +1953,16 @@ msgstr "Häufigste Flugzeuge von %s ( %s )"
 #: airline-statistics-aircraft.php:98 airline-statistics-aircraft.php:100
 #: country-statistics-aircraft.php:51 manufacturer-statistics-aircraft.php:47
 #, php-format
-msgid "The statistic below shows the most common aircraft of flights from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft of flights from <strong>"
+"%s</strong>."
 msgstr "Die folgende Statistik zeigt das gebräuchlichste Flugzeug für Flüge von <strong> %s </strong>."
 
 #: owner-statistics-manufacturer.php:32
 #, php-format
-msgid "The statistic below shows the most common Aircraft Manufacturer of flights owned by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common Aircraft Manufacturer of flights "
+"owned by <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt den gebräuchlichsten Flugzeughersteller von Flügen im Besitz von <strong> %s </strong>."
 
 #: date-statistics-time.php:12
@@ -1889,7 +1972,8 @@ msgstr "Häufigste Tageszeit auf %s"
 
 #: date-statistics-time.php:35
 #, php-format
-msgid "The statistic below shows the most common time of day on <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common time of day on <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigste Tageszeit auf <strong> %s </strong>."
 
 #: owner-statistics-arrival-airport.php:22
@@ -1901,299 +1985,343 @@ msgstr "Häufigste Ankunftsflughäfen von %s"
 
 #: owner-statistics-arrival-airport.php:33
 #, php-format
-msgid "The statistic below shows all arrival airports of flights owned by <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports of flights owned by <strong>"
+"%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen von Flügen, die <strong> %s </strong> gehören."
 
-#: index.php:26
+#: index.php:31
 msgid "Home"
 msgstr "Home"
 
-#: index.php:29
+#: index.php:34
 msgid "JavaScript <b>MUST</b> be enabled"
 msgstr "JavaScript <b> MUST </ b> aktiviert sein"
 
-#: index.php:32
+#: index.php:37
 msgid "Session has timed-out"
 msgstr "Zeitüberschreitung der Sitzung"
 
-#: index.php:33
-msgid "In order to save data consumption web page times out after 30 minutes. Close this dialog to continue."
+#: index.php:38
+msgid ""
+"In order to save data consumption web page times out after 30 minutes. Close "
+"this dialog to continue."
 msgstr "Um die Datenverbrauchsseite zu sparen, wird die Zeit nach 30 Minuten überschritten. Schließen Sie diesen Dialog, um fortzufahren."
 
-#: index.php:46
+#: index.php:52
 msgid "Aircraft Detected"
 msgstr "Flugzeug erkannt"
 
-#: index.php:47
+#: index.php:53
 msgid "Vessels Detected"
 msgstr "Gefäße detektiert"
 
-#: index.php:48
+#: index.php:54
 msgid "Trackers Detected"
 msgstr "Tracker erkannt"
 
-#: index.php:49
+#: index.php:55
 msgid "Satellites Displayed"
 msgstr "Angezeigte Satelliten"
 
-#: index.php:82
+#: index.php:88
 msgid "Zoom in"
 msgstr "Einzoomen"
 
-#: index.php:83
+#: index.php:89
 msgid "Zoom out"
 msgstr "Auszoomen"
 
-#: index.php:84
+#: index.php:90
 msgid "Plot your Location"
 msgstr "Stellen Sie Ihren Standort auf"
 
-#: index.php:85
+#: index.php:91
 msgid "Compass Mode"
 msgstr "Kompassmodus"
 
-#: index.php:95
+#: index.php:101
 msgid "Layers"
 msgstr "Kartenebenen"
 
-#: index.php:96 index.php:548
+#: index.php:102 index.php:640
 msgid "Filters"
 msgstr "Filter"
 
-#: index.php:97 index.php:251
+#: index.php:103 index.php:316
 msgid "Settings"
 msgstr "Settings"
 
-#: index.php:107 index.php:701 header.php:638
+#: index.php:107 index.php:813 header.php:654
 msgid "Satellites"
 msgstr "Satelliten"
 
-#: index.php:129
+#: index.php:138
+msgid "Weather Winds"
+msgstr "Wetterwinde"
+
+#: index.php:143
 msgid "Weather Precipitation"
 msgstr "Wetter Niederschlag"
 
-#: index.php:130
+#: index.php:144
 msgid "Weather Clouds"
 msgstr "Wetter Wolken"
 
-#: index.php:144 index.php:153
+#: index.php:157
+msgid "Display weather on 3D map"
+msgstr "Wetter auf 3D-Karte anzeigen"
+
+#: index.php:174 index.php:195
 msgid "Display waypoints"
 msgstr "Wegpunkte anzeigen"
 
-#: index.php:145 index.php:154
+#: index.php:175 index.php:196
 msgid "Display airspace"
 msgstr "Luftraum anzeigen"
 
-#: index.php:165
+#: index.php:180 index.php:201
+msgid "Display OpenSeaMap"
+msgstr "OpenSeaMap anzeigen"
+
+#: index.php:216
 msgid "Display NOTAM"
 msgstr "NOTAM anzeigen"
 
-#: index.php:166
+#: index.php:217
 msgid "NOTAM scope:"
 msgstr "NOTAM-Bereich:"
 
-#: index.php:192
+#: index.php:244
 msgid "Playback"
 msgstr "Wiedergabe"
 
-#: index.php:198
-msgid "From (UTC):"
-msgstr "Von (UTC):"
+#: index.php:258
+msgid "To:"
+msgstr "Nach:"
 
-#: index.php:207
-msgid "To (UTC):"
-msgstr "Bis (UTC):"
-
-#: index.php:232
+#: index.php:290
 msgid "Playback speed:"
 msgstr "playback_speed"
 
-#: index.php:254
+#: index.php:299 index.php:303
+msgid "Show archive"
+msgstr "Archiv anzeigen"
+
+#: index.php:309
+msgid "Back from archive view"
+msgstr "Zurück von der Archivansicht"
+
+#: index.php:319
 msgid "Type of Map:"
 msgstr "Art der Karte:"
 
-#: index.php:350
+#: index.php:426
 msgid "Type of Terrain:"
 msgstr "Art des Geländes:"
 
-#: index.php:364
+#: index.php:441
+msgid "Use same type of map for 2D & 3D"
+msgstr "Verwenden Sie den gleichen Kartentyp für 2D und 3D"
+
+#: index.php:448
 msgid "Display 2.5D buidings on map"
 msgstr "Anzeige 2.5D buidings auf der Karte"
 
-#: index.php:369
+#: index.php:453
 msgid "Display flight info as popup"
 msgstr "Fluginformationen als Popup anzeigen"
 
-#: index.php:370
+#: index.php:454
 msgid "Display flight path"
 msgstr "Flugweg anzeigen"
 
-#: index.php:371
+#: index.php:455
 msgid "Display flight route on click"
 msgstr "Flugroute bei Klick anzeigen"
 
-#: index.php:372
+#: index.php:456
 msgid "Display flight remaining route on click"
 msgstr "Anzeige der verbleibenden Flugroute bei Klick"
 
-#: index.php:373
+#: index.php:457
 msgid "Planes animate between updates"
 msgstr "Ebenen zwischen Updates animieren"
 
-#: index.php:377
+#: index.php:461
 msgid "Enable map matching"
 msgstr "Kartenabgleich aktivieren"
 
-#: index.php:382
+#: index.php:466
 msgid "Satellites animate between updates"
 msgstr "Satelliten animieren zwischen Updates"
 
-#: index.php:387
+#: index.php:471
 msgid "Display airports on map"
 msgstr "Flughäfen auf der Karte anzeigen"
 
-#: index.php:388
+#: index.php:472
 msgid "Display ground station on map"
 msgstr "Bodenstation auf Karte anzeigen"
 
-#: index.php:389
+#: index.php:473
 msgid "Display weather station on map"
 msgstr "Wetterstation auf Karte anzeigen"
 
-#: index.php:390
+#: index.php:474
 msgid "Display lightning on map"
 msgstr "Display-Blitz auf Karte"
 
-#: index.php:394
+#: index.php:478
 msgid "Display fires on map"
 msgstr "Feuer auf Karte anzeigen"
 
-#: index.php:399
+#: index.php:483
 msgid "Only display selected flight on 3D mode"
 msgstr "Nur ausgewählten Flug im 3D-Modus anzeigen"
 
-#: index.php:406
+#: index.php:490
 msgid "Show mini-map"
 msgstr "Minikarte anzeigen"
 
-#: index.php:407
+#: index.php:491
+msgid "Use shadows"
+msgstr "Schatten verwenden"
+
+#: index.php:492
 msgid "Use same 3D model for all aircraft (use fewer resources)"
 msgstr "Verwenden Sie dasselbe 3D-Modell für alle Flugzeuge (weniger Ressourcen verwenden)"
 
-#: index.php:412
+#: index.php:493
+msgid "Display realtime data in infobox"
+msgstr "Echtzeitdaten in Infobox anzeigen"
+
+#: index.php:498
 msgid "Show Santa Claus now"
 msgstr "Weihnachtsmann jetzt zeigen"
 
-#: index.php:420 index.php:430
+#: index.php:506 index.php:516
 msgid "Display polar on map"
 msgstr "Anzeige polar auf Karte"
 
-#: index.php:443
+#: index.php:529
 msgid "Aircraft icon color based on altitude"
 msgstr "Flugzeugsymbolfarbe basierend auf der Höhe"
 
-#: index.php:447 index.php:495
+#: index.php:533 index.php:587
 msgid "Aircraft icon color:"
 msgstr "Flugzeugsymbolfarbe:"
 
-#: index.php:457 index.php:505
+#: index.php:543 index.php:597
 msgid "Marine icon color:"
 msgstr "Marine icon Farbe:"
 
-#: index.php:468 index.php:515
+#: index.php:554 index.php:607
 msgid "Tracker icon color:"
 msgstr "Tracker-Symbolfarbe:"
 
-#: index.php:478
+#: index.php:564
 msgid "Show airport icon at zoom level:"
 msgstr "Flughafen-Symbol bei Zoom-Ebene anzeigen:"
 
-#: index.php:493
+#: index.php:576
+msgid "Set scaling factor for rendering resolution:"
+msgstr "Skalierungsfaktor für die Renderauflösung festlegen:"
+
+#: index.php:585
 msgid "Use airlines liveries"
 msgstr "Verwenden Sie Fluggesellschaften Lackierungen"
 
-#: index.php:494
+#: index.php:586
 msgid "Force Aircraft color"
 msgstr "Flugzeugfarbe erzwingen"
 
-#: index.php:504
+#: index.php:596
 msgid "Force Marine color"
 msgstr "Force Marine Farbe"
 
-#: index.php:514
+#: index.php:606
 msgid "Force Tracker color"
 msgstr "Force Tracker-Farbe"
 
-#: index.php:522
+#: index.php:614
 msgid "Distance unit:"
 msgstr "Maßeinheit"
 
-#: index.php:529
+#: index.php:621
 msgid "Altitude unit:"
 msgstr "Höheneinheit:"
 
-#: index.php:535
+#: index.php:627
 msgid "Speed unit:"
 msgstr "Geschwindigkeitseinheit:"
 
-#: index.php:545
+#: index.php:637
 msgid "Any change in settings reload page"
 msgstr "Jede Änderung der Einstellungen Seite neu laden"
 
-#: index.php:557
+#: index.php:649
 msgid "Display VATSIM data"
 msgstr "VATSIM-Daten anzeigen"
 
-#: index.php:558
+#: index.php:650
 msgid "Display IVAO data"
 msgstr "IVAO-Daten anzeigen"
 
-#: index.php:559
+#: index.php:651
 msgid "Display phpVMS data"
 msgstr "PhpVMS-Daten anzeigen"
 
-#: index.php:567
+#: index.php:659
 msgid "Display ADS-B data"
 msgstr "ADS-B-Daten anzeigen"
 
-#: index.php:570
+#: index.php:662
 msgid "Display APRS data"
 msgstr "APRS-Daten anzeigen"
 
-#: index.php:575
+#: index.php:667
 msgid "Display airlines:"
 msgstr "Fluggesellschaften anzeigen:"
 
-#: index.php:602
+#: index.php:694
 msgid "Display alliance:"
 msgstr "Allianz anzeigen:"
 
-#: index.php:627
+#: index.php:719
 msgid "Display APRS sources name:"
 msgstr "APRS-Quellenname anzeigen:"
 
-#: index.php:662
+#: index.php:754
 msgid "Display airlines of type:"
 msgstr "Fluggesellschaften des Typs anzeigen:"
 
-#: index.php:680
+#: index.php:772
 msgid "Display vessels with MMSI:"
 msgstr "Schiffe mit MMSI anzeigen:"
 
-#: index.php:687
+#: index.php:782
+msgid "Display race:"
+msgstr "Ausstellungsrennen:"
+
+#: index.php:799
 msgid "Display with ident:"
 msgstr "Anzeige mit ident:"
 
-#: index.php:693 index.php:694
+#: index.php:805 index.php:806
 msgid "Remove all filters"
 msgstr "Alle Filter entfernen"
 
-#: index.php:704
+#: index.php:816
 msgid "Show ISS, Tiangong-1 and Tiangong-2 on map"
 msgstr "Zeige ISS, Tiangong-1 und Tiangong-2 auf Karte"
 
 #: about-tv.php:11
-msgid "Spotter TV is a interface that shows the latest flights for displays with a resolution of 1920x1080 (1080p). Its <strong>FREE</strong> and no custom hardware is required. Simply plug a modern laptop or computer into any 1080p HDTV and access the link below. Data gets updated in near real-time."
+msgid ""
+"Spotter TV is a interface that shows the latest flights for displays with a "
+"resolution of 1920x1080 (1080p). Its <strong>FREE</strong> and no custom "
+"hardware is required. Simply plug a modern laptop or computer into any 1080p "
+"HDTV and access the link below. Data gets updated in near real-time."
 msgstr "Spotter TV ist eine Schnittstelle, die die neuesten Flüge für Displays mit einer Auflösung von 1920x1080 (1080p) anzeigt. Seine <strong> FREE </ strong> und keine benutzerdefinierte Hardware ist erforderlich. Stecken Sie einfach einen modernen Laptop oder Computer in ein 1080p HDTV und greifen Sie auf den folgenden Link zu. Die Daten werden nahezu in Echtzeit aktualisiert."
 
 #: about-tv.php:16
@@ -2207,12 +2335,16 @@ msgstr "Häufigste Fluglinien nach / von %s , %s ( %s )"
 
 #: airport-statistics-airline.php:60
 #, php-format
-msgid "The statistic below shows the most common airlines of flights to/from <strong>%s, %s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common airlines of flights to/from "
+"<strong>%s, %s (%s)</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Fluggesellschaften von / nach <strong> %s , %s ( %s ) </ strong>."
 
 #: ident-statistics-airline.php:27
 #, php-format
-msgid "The statistic below shows the most common airlines of flights using the ident/callsign <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common airlines of flights using the "
+"ident/callsign <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Fluggesellschaften von Flügen mit dem Ident / Rufzeichen <strong> %s </ strong>."
 
 #: date-statistics-departure-airport.php:13
@@ -2222,7 +2354,9 @@ msgstr "Häufigste Abflugflughäfen auf %s"
 
 #: date-statistics-departure-airport.php:37
 #, php-format
-msgid "The statistic below shows all departure airports of flights on <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports of flights on <strong>%s</"
+"strong>."
 msgstr "Die folgende Statistik zeigt alle Abflughäfen von Flügen auf <strong> %s </ strong>."
 
 #: airspace-data.php:42
@@ -2274,7 +2408,9 @@ msgstr "Fliegen nach"
 
 #: route-detailed.php:52
 #, php-format
-msgid "The table below shows the detailed information of all flights that used the route <strong>%s - %s</strong>."
+msgid ""
+"The table below shows the detailed information of all flights that used the "
+"route <strong>%s - %s</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge, die die Route <strong> %s - %s </ strong> verwendet haben."
 
 #: route-detailed.php:67 route-statistics-registration.php:90
@@ -2292,7 +2428,11 @@ msgid "Sorry, this route does not exist in this database. :("
 msgstr "Leider ist diese Route in dieser Datenbank nicht vorhanden. :("
 
 #: upcoming.php:36
-msgid "This page shows all upcoming flights within the next 3 hours calculated using historical data, based on the number of same flights on the current day of the week &amp; current time. This does not take into account real-time delays and other factors."
+msgid ""
+"This page shows all upcoming flights within the next 3 hours calculated "
+"using historical data, based on the number of same flights on the current "
+"day of the week &amp; current time. This does not take into account real-"
+"time delays and other factors."
 msgstr "Diese Seite zeigt alle bevorstehenden Flüge innerhalb der nächsten 3 Stunden, die mit historischen Daten berechnet werden, basierend auf der Anzahl derselben Flüge am aktuellen Wochentag & amp; aktuelle Uhrzeit. Dies berücksichtigt keine Verzögerungen in Echtzeit und andere Faktoren."
 
 #: airline-statistics-registration.php:25
@@ -2304,7 +2444,9 @@ msgstr "Häufigste Flugzeuge nach Registrierung von %s ( %s )"
 #: airline-statistics-registration.php:99
 #: airline-statistics-registration.php:101
 #, php-format
-msgid "The statistic below shows the most common aircraft by their registration of flights from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft by their registration of "
+"flights from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugzeuge bei der Registrierung von Flügen von <strong> %s </ strong>."
 
 #: aircraft-detailed.php:39 airline-detailed.php:48
@@ -2314,7 +2456,9 @@ msgstr "Detaillierte Ansicht für %s ( %s )"
 
 #: aircraft-detailed.php:78
 #, php-format
-msgid "The table below shows the detailed information of all flights from <strong>%s (%s)</strong>."
+msgid ""
+"The table below shows the detailed information of all flights from <strong>"
+"%s (%s)</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge von <strong> %s ( %s ) </ strong>."
 
 #: airline-detailed.php:103
@@ -2323,7 +2467,9 @@ msgstr "Diese Fluggesellschaft ist in Europa verboten"
 
 #: airline-detailed.php:122 manufacturer-detailed.php:75
 #, php-format
-msgid "The table below shows the detailed information of all flights from <strong>%s</strong>."
+msgid ""
+"The table below shows the detailed information of all flights from <strong>"
+"%s</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge von <strong> %s </ strong>."
 
 #: statistics-aircraft.php:6 statistics-aircraft.php:22
@@ -2341,149 +2487,160 @@ msgstr "Häufigste Flugzeuge auf %s"
 
 #: date-statistics-aircraft.php:37
 #, php-format
-msgid "The statistic below shows the most common aircraft of flights on <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft of flights on <strong>%s</"
+"strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugzeuge von Flügen mit <strong> %s </ strong>."
 
-#: header.php:407 news.php:7 news.php:38
+#: header.php:414 news.php:7 news.php:38
 msgid "News"
 msgstr "Nachrichten"
 
-#: header.php:448
+#: header.php:455
 msgid "Aircraft News"
 msgstr "Flugzeugnachrichten"
 
-#: header.php:454 header.php:570 header.php:611 header.php:654
+#: header.php:461 header.php:577 header.php:627 header.php:670
 msgid "Explore"
 msgstr "Erforschen"
 
-#: header.php:456 aircraft.php:13 aircraft.php:16
+#: header.php:463 aircraft.php:13 aircraft.php:16
 msgid "Aircraft Types"
 msgstr "Flugzeugtypen"
 
-#: header.php:468 statistics.php:102 owner.php:16 owner.php:19
+#: header.php:475 statistics.php:102 owner.php:16 owner.php:19
 msgid "Owners"
 msgstr "Eigentümern"
 
-#: header.php:474 pilot.php:16 pilot.php:19 statistics.php:96
+#: header.php:481 pilot.php:16 pilot.php:19 statistics.php:96
 msgid "Pilots"
 msgstr "Piloten"
 
-#: header.php:480 header.php:573 header.php:614 header.php:657 latest.php:22
+#: header.php:487 header.php:589 header.php:630 header.php:673 latest.php:22
 #: latest.php:47
 msgid "Latest Activity"
 msgstr "Letzte Aktivität"
 
-#: header.php:481 header.php:574 header.php:615 header.php:658
+#: header.php:488 header.php:590 header.php:631 header.php:674
 msgid "Today's Activity"
 msgstr "Heutige Aktivität"
 
-#: header.php:482
+#: header.php:489
 msgid "Newest by Category"
 msgstr "Neueste nach Kategorie"
 
-#: header.php:488
+#: header.php:495
 msgid "ACARS data not available publicly"
 msgstr "ACARS-Daten sind nicht öffentlich verfügbar"
 
-#: header.php:489 header.php:495 acars-latest.php:6 acars-latest.php:32
+#: header.php:496 header.php:502 acars-latest.php:6 acars-latest.php:32
 msgid "Latest ACARS messages"
 msgstr "Aktuelle ACARS-Nachrichten"
 
-#: header.php:490 header.php:496
+#: header.php:497 header.php:503
 msgid "Archive ACARS messages"
 msgstr "ACARS-Nachrichten archivieren"
 
-#: header.php:505
+#: header.php:512
 msgid "Latest accident"
 msgstr "Letzter Unfall"
 
-#: header.php:506
+#: header.php:513
 msgid "Today's Accident"
 msgstr "Der heutige Unfall"
 
-#: header.php:507
+#: header.php:514
 msgid "Latest incident"
 msgstr "Letzter Vorfall"
 
-#: header.php:508
+#: header.php:515
 msgid "Today's Incident"
 msgstr "Der heutige Zwischenfall"
 
-#: header.php:513 highlights-display.php:6 highlights-display.php:36
+#: header.php:520 highlights-display.php:6 highlights-display.php:36
 msgid "Special Highlights"
 msgstr "Besondere Highlights"
 
-#: header.php:517
+#: header.php:524
 msgid "Upcoming Flights"
 msgstr "Kommende Flüge"
 
-#: header.php:523 header.php:576 header.php:618 header.php:723 header.php:724
+#: header.php:530 header.php:592 header.php:634 header.php:742 header.php:743
 #: search.php:19 search.php:325 search.php:332 search.php:701
 msgid "Search"
 msgstr "Suche"
 
-#: header.php:526
+#: header.php:533
 msgid "Tools"
 msgstr "Arbeitsmittel"
 
-#: header.php:528
+#: header.php:535
 msgid "ACARS translator"
 msgstr "ACARS Übersetzer"
 
-#: header.php:529
+#: header.php:536
 msgid "METAR translator"
 msgstr "METAR-Übersetzer"
 
-#: header.php:530
+#: header.php:537
 msgid "NOTAM translator"
 msgstr "NOTAM Übersetzer"
 
-#: header.php:534 tools-geoid.php:8 tools-geoid.php:11 tools-geoid.php:18
+#: header.php:541 tools-geoid.php:8 tools-geoid.php:11 tools-geoid.php:18
 #: tools-geoid.php:28
 msgid "Geoid Height Calculator"
 msgstr "Geoidhöhenrechner"
 
-#: header.php:556
+#: header.php:563
 msgid "Marines"
 msgstr "Marinesoldaten"
 
-#: header.php:565
+#: header.php:572
 msgid "Marines News"
 msgstr "Marines Nachrichten"
 
-#: header.php:597 statistics.php:137
+#: header.php:582 captain.php:16 captain.php:19 race-detailed.php:127
+msgid "Captains"
+msgstr "Kapitäne"
+
+#: header.php:583 table-output.php:108 table-output.php:111
+#: table-output.php:113 captain-detailed.php:127 race.php:16 race.php:19
+msgid "Races"
+msgstr "Rassen"
+
+#: header.php:613 statistics.php:137
 msgid "Trackers"
 msgstr "Tracker"
 
-#: header.php:606
+#: header.php:622
 msgid "Trackers News"
 msgstr "Trackers Nachrichten"
 
-#: header.php:647
+#: header.php:663
 msgid "Satellites News"
 msgstr "Satelliten Nachrichten"
 
-#: header.php:676
+#: header.php:692
 msgid "About"
 msgstr "Über"
 
-#: header.php:678
+#: header.php:694
 msgid "About The Project"
 msgstr "Über das Projekt"
 
-#: header.php:679
+#: header.php:695
 msgid "Exporting Data"
 msgstr "Exportiere Daten..."
 
-#: header.php:684
+#: header.php:700
 msgid "Spotter TV"
 msgstr "Spotter TV"
 
-#: header.php:690
+#: header.php:706
 msgid "Contribute"
 msgstr "Beitragen"
 
-#: header.php:695
+#: header.php:711
 msgid "Report any Issues"
 msgstr "Probleme melden"
 
@@ -2508,7 +2665,9 @@ msgstr "Häufigste Abfahrtsflughäfen nach Land"
 
 #: pilot-statistics-departure-airport-country.php:31
 #, php-format
-msgid "The statistic below shows all departure airports by Country of origin of flights piloted by <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports by Country of origin of "
+"flights piloted by <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflugflughäfen nach Herkunftsland der Flüge, die von <strong> %s </ strong> pilotiert werden."
 
 #: airport-statistics-manufacturer.php:17
@@ -2518,12 +2677,16 @@ msgstr "Häufigster Flugzeughersteller nach / von %s , %s ( %s )"
 
 #: airport-statistics-manufacturer.php:61
 #, php-format
-msgid "The statistic below shows the most common Aircraft Manufacturer of flights to/from <strong>%s, %s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common Aircraft Manufacturer of flights "
+"to/from <strong>%s, %s (%s)</strong>."
 msgstr "Die folgende Statistik zeigt den gebräuchlichsten Flugzeughersteller von Flügen nach / von <strong> %s , %s ( %s ) </ strong>."
 
 #: pilot-statistics-time.php:32
 #, php-format
-msgid "The statistic below shows the most common time of day of flights piloted by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common time of day of flights piloted by "
+"<strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigste Tageszeit von Flügen, die von <strong> %s </ strong> pilotiert werden."
 
 #: aircraft-statistics-departure-airport-country.php:17
@@ -2533,7 +2696,9 @@ msgstr "Häufigste Abfahrtsflughäfen nach Ländern für %s ( %s )"
 
 #: aircraft-statistics-departure-airport-country.php:54
 #, php-format
-msgid "The statistic below shows all departure airports by Country of origin of flights from <strong>%s (%s)</strong>."
+msgid ""
+"The statistic below shows all departure airports by Country of origin of "
+"flights from <strong>%s (%s)</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflughäfen nach Herkunftsland der Flüge von <strong> %s ( %s ) </ strong>."
 
 #: route-statistics-registration.php:21
@@ -2543,12 +2708,17 @@ msgstr "Häufigste Flugzeuge durch Registrierung zwischen %s ( %s ), %s - %s ( %
 
 #: route-statistics-registration.php:32
 #, php-format
-msgid "The statistic below shows the most common aircraft by registration of flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft by registration of "
+"flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</"
+"strong>."
 msgstr "Die folgende Statistik zeigt das häufigste Flugzeug bei der Registrierung von Flügen zwischen <strong> %s ( %s ), %s </ strong> und <strong> %s ( %s ), %s </ strong>."
 
 #: country-statistics-departure-airport.php:53
 #, php-format
-msgid "The statistic below shows all departure airports of flights of airports &amp; airlines from <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports of flights of airports "
+"&amp; airlines from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflughäfen von Flügen von Flughäfen & amp; Fluggesellschaften von <strong> %s </ strong>."
 
 #: date-statistics-route.php:12
@@ -2558,17 +2728,22 @@ msgstr "Häufigste Routen auf %s"
 
 #: date-statistics-route.php:36
 #, php-format
-msgid "The statistic below shows the most common routes on <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common routes on <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Routen auf <strong> %s </ strong>."
 
 #: pilot-statistics-manufacturer.php:32
 #, php-format
-msgid "The statistic below shows the most common Aircraft Manufacturer of flights piloted by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common Aircraft Manufacturer of flights "
+"piloted by <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt den gebräuchlichsten Flugzeughersteller von Flügen, die von <strong> %s </ strong> gesteuert werden."
 
 #: pilot-statistics-registration.php:32
 #, php-format
-msgid "The statistic below shows the most common aircraft by Registration of flights piloted by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft by Registration of "
+"flights piloted by <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die am häufigsten verwendeten Flugzeuge bei der Registrierung von Flügen, die mit <strong> %s </ strong> pilotiert wurden."
 
 #: route-sub-menu.php:27
@@ -2583,65 +2758,82 @@ msgstr "Häufigster Ankunftsflughafen"
 msgid "Below are the <strong>Top 10</strong> most common arrival airports."
 msgstr "Unten finden Sie die <strong> Top 10 </ strong> häufigste Ankunftsflughäfen."
 
-#: table-output.php:87 table-output.php:90 table-output.php:92
-#: table-output.php:168 table-output.php:171 table-output.php:173
-#: table-output.php:294 table-output.php:297 table-output.php:299
-#: table-output.php:416 table-output.php:419 table-output.php:421
+#: table-output.php:96 table-output.php:99 table-output.php:101
+#: table-output.php:203 table-output.php:206 table-output.php:208
+#: table-output.php:332 table-output.php:335 table-output.php:337
+#: table-output.php:484 table-output.php:487 table-output.php:489
 msgid "Coming from"
 msgstr "meine Besucher?"
 
-#: table-output.php:87 table-output.php:90 table-output.php:92
-#: table-output.php:168 table-output.php:171 table-output.php:173
-#: table-output.php:294 table-output.php:297 table-output.php:299
-#: table-output.php:416 table-output.php:419 table-output.php:421
+#: table-output.php:96 table-output.php:99 table-output.php:101
+#: table-output.php:203 table-output.php:206 table-output.php:208
+#: table-output.php:332 table-output.php:335 table-output.php:337
+#: table-output.php:484 table-output.php:487 table-output.php:489
 msgid "From"
 msgstr "Von"
 
-#: table-output.php:98 table-output.php:101 table-output.php:103
-#: table-output.php:305 table-output.php:308 table-output.php:310
-#: table-output.php:427 table-output.php:430 table-output.php:432
+#: table-output.php:115 table-output.php:351 table-output.php:503
+msgid "Status"
+msgstr "Status"
+
+#: table-output.php:119 table-output.php:122 table-output.php:124
+#: table-output.php:355 table-output.php:358 table-output.php:360
+#: table-output.php:507 table-output.php:510 table-output.php:512
 msgid "Going to"
 msgstr "Gehen zu"
 
-#: table-output.php:98 table-output.php:101 table-output.php:103
-#: table-output.php:177 table-output.php:180 table-output.php:182
-#: table-output.php:305 table-output.php:308 table-output.php:310
-#: table-output.php:427 table-output.php:430 table-output.php:432
+#: table-output.php:119 table-output.php:122 table-output.php:124
+#: table-output.php:212 table-output.php:215 table-output.php:217
+#: table-output.php:344 table-output.php:355 table-output.php:358
+#: table-output.php:360 table-output.php:507 table-output.php:510
+#: table-output.php:512
 msgid "To"
 msgstr "An"
 
-#: table-output.php:108
+#: table-output.php:130
 msgid "Route stop"
 msgstr "Routenhalt:"
 
-#: table-output.php:108
+#: table-output.php:130
 msgid "Stop"
 msgstr "Halt"
 
-#: table-output.php:113 table-output.php:116 table-output.php:118
-#: search.php:562
+#: table-output.php:135 table-output.php:138 table-output.php:140
+#: table-output.php:153 table-output.php:156 table-output.php:158
+#: table-output.php:378 table-output.php:381 table-output.php:383
+#: table-output.php:531 table-output.php:534 table-output.php:536
+#: search.php:562 marine-data.php:138
 msgid "Distance"
 msgstr "Entfernun"
 
-#: table-output.php:122 table-output.php:315 table-output.php:437
+#: table-output.php:144 table-output.php:366 table-output.php:518
 #: search.php:403 search.php:405
 msgid "Pilot name"
 msgstr "Name des Piloten"
 
-#: table-output.php:125 table-output.php:318 table-output.php:440
+#: table-output.php:147 table-output.php:369 table-output.php:521
 #: search.php:412 search.php:414
 msgid "Owner name"
 msgstr "Namen des Eigentümers"
 
-#: table-output.php:129 table-output.php:325 table-output.php:447
-#: tracker-data.php:125 marine-data.php:120
+#: table-output.php:160 table-output.php:385 table-output.php:539
+msgid "Captain name"
+msgstr "Kapitänsname"
+
+#: table-output.php:160 table-output.php:385 table-output.php:539
+#: marine-data.php:110 marine-data.php:112
+msgid "Captain"
+msgstr "Kapitän"
+
+#: table-output.php:164 table-output.php:388 table-output.php:542
+#: tracker-data.php:130 marine-data.php:148
 msgid "Comment"
 msgstr "Kommentar"
 
-#: table-output.php:133 table-output.php:136 table-output.php:138
-#: table-output.php:202 table-output.php:215 table-output.php:228
-#: table-output.php:355 table-output.php:358 table-output.php:360
-#: table-output.php:476 table-output.php:479 table-output.php:481
+#: table-output.php:168 table-output.php:171 table-output.php:173
+#: table-output.php:237 table-output.php:250 table-output.php:263
+#: table-output.php:420 table-output.php:423 table-output.php:425
+#: table-output.php:573 table-output.php:576 table-output.php:578
 #: statistics-sub-menu.php:119 statistics-sub-menu.php:146
 #: statistics-sub-menu.php:226 statistics-sub-menu.php:256 search.php:610
 #: statistics-month.php:68 statistics-date.php:73 statistics-year.php:66
@@ -2649,98 +2841,113 @@ msgstr "Kommentar"
 msgid "Date"
 msgstr "Datum"
 
-#: table-output.php:177 table-output.php:180 table-output.php:182
+#: table-output.php:212 table-output.php:215 table-output.php:217
 msgid "Flying to"
 msgstr "Fliegen nach"
 
-#: table-output.php:201 table-output.php:214 table-output.php:227
+#: table-output.php:236 table-output.php:249 table-output.php:262
 msgid "Message"
 msgstr "Nachricht"
 
-#: table-output.php:213 statistics-sub-menu.php:128 statistics-sub-menu.php:237
+#: table-output.php:248 statistics-sub-menu.php:128 statistics-sub-menu.php:237
 msgid "Fatalities"
 msgstr "Todesopfer"
 
-#: table-output.php:328 table-output.php:450
+#: table-output.php:271 table-output.php:433 marine-data.php:133
+msgid "Rank"
+msgstr "Rang"
+
+#: table-output.php:344 table-output.php:347 table-output.php:349
+#: table-output.php:496 table-output.php:499 table-output.php:501
+#: marine-data.php:117 marine-data.php:119
+msgid "Race"
+msgstr "Rennen"
+
+#: table-output.php:391 table-output.php:545
 msgid "Spotted duration"
 msgstr "Gepunktete Dauer"
 
-#: table-output.php:328 table-output.php:450
+#: table-output.php:391 table-output.php:545
 msgid "Duration"
 msgstr "Dauer"
 
-#: table-output.php:345 table-output.php:348 table-output.php:350
-#: table-output.php:466 table-output.php:469 table-output.php:471
+#: table-output.php:393 table-output.php:547
+msgid "Race duration"
+msgstr "Renndauer"
+
+#: table-output.php:410 table-output.php:413 table-output.php:415
+#: table-output.php:563 table-output.php:566 table-output.php:568
 msgid "Date last seen"
 msgstr "Datum zuletzt angesehen"
 
-#: table-output.php:527 table-output.php:536 table-output.php:542
-#: table-output.php:629 table-output.php:633 table-output.php:642
-#: table-output.php:657 table-output.php:659 table-output.php:661
-#: table-output.php:762 table-output.php:767 table-output.php:773
-#: table-output.php:778 table-output.php:784 table-output.php:789
-#: table-output.php:812 table-output.php:819 table-output.php:827
-#: table-output.php:840 table-output.php:841 table-output.php:900
-#: table-output.php:901 table-output.php:965 table-output.php:966
-#: table-output.php:1110
+#: table-output.php:624 table-output.php:633 table-output.php:639
+#: table-output.php:737 table-output.php:741 table-output.php:750
+#: table-output.php:765 table-output.php:767 table-output.php:769
+#: table-output.php:887 table-output.php:892 table-output.php:898
+#: table-output.php:903 table-output.php:909 table-output.php:914
+#: table-output.php:937 table-output.php:944 table-output.php:952
+#: table-output.php:965 table-output.php:966 table-output.php:1025
+#: table-output.php:1026 table-output.php:1089 table-output.php:1090
+#: table-output.php:1098 table-output.php:1108 table-output.php:1109
+#: table-output.php:1319
 msgid "Not available"
 msgstr "Nicht verfügbar"
 
-#: table-output.php:553 table-output.php:555 table-output.php:560
-#: table-output.php:674 table-output.php:678 search.php:235
+#: table-output.php:657 table-output.php:665 table-output.php:790
+#: table-output.php:800 search.php:235
 msgid "MMSI:"
 msgstr "MMSI:"
 
-#: table-output.php:736 table-output.php:741
+#: table-output.php:861 table-output.php:866
 msgid "Click to see airline information"
 msgstr "Klicken Sie hier, um die Fluggesellschaft zu sehen"
 
-#: table-output.php:749 table-output.php:915 table-output.php:916
-#: table-output.php:1100 table-output.php:1124
+#: table-output.php:874 table-output.php:1040 table-output.php:1041
+#: table-output.php:1309 table-output.php:1333
 msgid "Not Available"
 msgstr "Nicht verfügbar"
 
-#: table-output.php:908 table-output.php:910
+#: table-output.php:1033 table-output.php:1035
 msgid "Real:"
 msgstr "Ech"
 
-#: table-output.php:909
+#: table-output.php:1034
 msgid "Scheduled:"
 msgstr "Geplant"
 
-#: table-output.php:1233
+#: table-output.php:1442
 msgid "Detailed Flight Information"
 msgstr "Detaillierte Fluginformationen"
 
-#: table-output.php:1234 flightid-sub-menu.php:13
+#: table-output.php:1443 flightid-sub-menu.php:13
 msgid "Download Flight Data"
 msgstr "Flugdaten herunterladen"
 
-#: table-output.php:1239 table-output.php:1243
+#: table-output.php:1448 table-output.php:1452
 msgid "Aircraft History"
 msgstr "Flugzeuggeschichte"
 
-#: table-output.php:1247
+#: table-output.php:1456
 msgid "Manufacturer Profile"
 msgstr "Herstellerprofil"
 
-#: table-output.php:1251
+#: table-output.php:1460
 msgid "Flights of Aircraft Type &amp; Airline"
 msgstr "Flüge des Flugzeugtyps & amp; Fluggesellschaft"
 
-#: table-output.php:1260
+#: table-output.php:1469
 msgid "Airline Country Profile"
 msgstr "Airline-Länderprofil"
 
-#: table-output.php:1265
+#: table-output.php:1474
 msgid "Departure Airport Country Profile"
 msgstr "Abflughafen Country Profil"
 
-#: table-output.php:1269
+#: table-output.php:1478
 msgid "Arrival Airport Country Profile"
 msgstr "Ankunftsflughafen Länderprofil"
 
-#: table-output.php:1274
+#: table-output.php:1483
 msgid "Detailed information"
 msgstr "Detaillierte Informationen"
 
@@ -2769,8 +2976,33 @@ msgstr "Todesopfer der letzten 12 Monate"
 
 #: country-statistics-airline.php:53
 #, php-format
-msgid "The statistic below shows the most common airlines of flights from airports &amp; airlines of <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common airlines of flights from airports "
+"&amp; airlines of <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Fluggesellschaften für Flüge von Flughäfen & amp; Fluggesellschaften von <strong> %s </ strong>."
+
+#: captain-detailed.php:118
+msgid "Captain ID"
+msgstr "Kapitän-ID"
+
+#: captain-detailed.php:129 race-detailed.php:129
+msgid "Boat type"
+msgstr "Bootstyp"
+
+#: captain-detailed.php:137
+msgid "Total races spotted duration"
+msgstr "Gesamtdauer der Rennen Dauer"
+
+#: captain-detailed.php:142
+#, php-format
+msgid ""
+"The table below shows the detailed information of all races with the captain "
+"<strong>%s</strong>."
+msgstr "Die folgende Tabelle zeigt die ausführlichen Informationen aller Rennen mit dem Kapitän <strong> %s </ strong>."
+
+#: captain-detailed.php:160
+msgid "Sorry, this captain is not in the database. :("
+msgstr "Entschuldigung, dieser Kapitän ist nicht in der Datenbank. :("
 
 #: atc-data.php:29
 msgid "Frequency"
@@ -2789,7 +3021,9 @@ msgid "Most common Callsign"
 msgstr "Häufigstes Rufzeichen"
 
 #: statistics-callsign.php:23
-msgid "Below are the <strong>Top 10</strong> most common ident/callsigns of all airlines."
+msgid ""
+"Below are the <strong>Top 10</strong> most common ident/callsigns of all "
+"airlines."
 msgstr "Unten sind die <strong> Top 10 </ strong> gängigsten ident / callsigns aller Fluggesellschaften aufgeführt."
 
 #: route-statistics-airline.php:20
@@ -2799,7 +3033,9 @@ msgstr "Häufigste Fluggesellschaft zwischen %s ( %s ), %s - %s ( %s ), %s"
 
 #: route-statistics-airline.php:31
 #, php-format
-msgid "The statistic below shows the most common airlines of flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
+msgid ""
+"The statistic below shows the most common airlines of flights between "
+"<strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugverbindungen zwischen <strong> %s ( %s ), %s </ strong> und <strong> %s ( %s ), %s </ strong>."
 
 #: aircraft-statistics-departure-airport.php:17
@@ -2809,19 +3045,21 @@ msgstr "Häufigste Abflugsflughäfen für %s ( %s )"
 
 #: aircraft-statistics-departure-airport.php:55
 #, php-format
-msgid "The statistic below shows all departure airports of flights from <strong>%s (%s)</strong>."
+msgid ""
+"The statistic below shows all departure airports of flights from <strong>%s "
+"(%s)</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflughäfen von Flügen von <strong> %s ( %s ) </ strong>."
 
-#: tracker-data.php:93 aircraft-data.php:141
+#: tracker-data.php:95 aircraft-data.php:144
 msgid "Ground Altitude"
 msgstr "Bodenhöhe"
 
-#: tracker-data.php:115 aircraft-data.php:202 marine-data.php:105
+#: tracker-data.php:120 aircraft-data.php:213 marine-data.php:123
 msgid "Over country"
 msgstr "Über Land"
 
-#: tracker-data.php:120 aircraft-data.php:207 aircraft-data.php:219
-#: marine-data.php:115
+#: tracker-data.php:125 aircraft-data.php:218 aircraft-data.php:230
+#: marine-data.php:143
 msgid "Source"
 msgstr "Quell"
 
@@ -2834,7 +3072,9 @@ msgstr "Häufigste Ankunftsflughäfen nach Land von %s ( %s )"
 #: airline-statistics-arrival-airport-country.php:99
 #: manufacturer-statistics-arrival-airport-country.php:48
 #, php-format
-msgid "The statistic below shows all arrival airports by Country of origin of flights from <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports by Country of origin of "
+"flights from <strong>%s</strong>."
 msgstr "Die nachstehende Statistik zeigt alle Ankunftsflughäfen nach Herkunftsland der Flüge von <strong> %s </ strong>."
 
 #: airport-statistics-departure-airport.php:17
@@ -2844,7 +3084,9 @@ msgstr "Häufigste Abflughäfen zu %s , %s ( %s )"
 
 #: airport-statistics-departure-airport.php:59
 #, php-format
-msgid "The statistic below shows all departure airports of flights to <strong>%s, %s (%s)</strong>."
+msgid ""
+"The statistic below shows all departure airports of flights to <strong>%s, "
+"%s (%s)</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflughäfen von Flügen nach <strong> %s , %s ( %s ) </ strong>."
 
 #: notam-data.php:23
@@ -2882,7 +3124,9 @@ msgstr "Detaillierte Ansicht des Flugzeugs mit Registrierung %s"
 
 #: registration-detailed.php:54
 #, php-format
-msgid "The table below shows the detailed information of all flights of aircraft with the registration <strong>%s</strong>."
+msgid ""
+"The table below shows the detailed information of all flights of aircraft "
+"with the registration <strong>%s</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge von Flugzeugen mit der Registrierung <strong> %s </ strong>."
 
 #: route-statistics-aircraft.php:18
@@ -2892,7 +3136,9 @@ msgstr "Häufigste Flugzeuge zwischen %s ( %s ), %s - %s ( %s ), %s"
 
 #: route-statistics-aircraft.php:29
 #, php-format
-msgid "The statistic below shows the most common aircraft of flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft of flights between "
+"<strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugzeuge zwischen <strong> %s ( %s ), %s </ strong> und <strong> %s ( %s ), %s </ strong>."
 
 #: owner-statistics-arrival-airport-country.php:21
@@ -2904,7 +3150,9 @@ msgstr "Häufigste Ankunftsflughäfen nach Land von %s"
 
 #: owner-statistics-arrival-airport-country.php:32
 #, php-format
-msgid "The statistic below shows all arrival airports by Country of origin of flights owned by <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports by Country of origin of "
+"flights owned by <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen nach Herkunftsland der Flüge von <strong> %s </ strong>."
 
 #: airport-statistics-arrival-airport.php:17
@@ -2914,7 +3162,9 @@ msgstr "Häufigste Ankunftsflughäfen von %s , %s ( %s )"
 
 #: airport-statistics-arrival-airport.php:60
 #, php-format
-msgid "The statistic below shows all arrival airports of flights from <strong>%s, %s (%s)</strong>."
+msgid ""
+"The statistic below shows all arrival airports of flights from <strong>%s, "
+"%s (%s)</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen von Flügen von <strong> %s , %s ( %s ) </ strong>."
 
 #: search.php:167
@@ -3042,7 +3292,9 @@ msgid "Pilot id"
 msgstr "Pilot-ID"
 
 #: search.php:422 search.php:423
-msgid "Include only aircraft with special highlights (unique liveries, destinations etc.)"
+msgid ""
+"Include only aircraft with special highlights (unique liveries, destinations "
+"etc.)"
 msgstr "Nur Flugzeuge mit besonderen Highlights einbinden (einzigartige Lackierungen, Destinationen etc.)"
 
 #: search.php:455
@@ -3093,7 +3345,7 @@ msgstr "Mittelpunkt Längengrad"
 msgid "Distance from center point"
 msgstr "Abstand vom Mittelpunkt"
 
-#: search.php:592 search.php:594 marine-data.php:103
+#: search.php:592 search.php:594 marine-data.php:106
 msgid "MMSI"
 msgstr "MMSI"
 
@@ -3130,15 +3382,19 @@ msgstr "Anzahl der Ergebnisse"
 msgid "Search in archive (older than %s months)"
 msgstr "Suche im Archiv (älter als %s Monate)"
 
-#: aircraft-data.php:78
+#: aircraft-data.php:78 ident-detailed.php:208
 msgid "Callsign is in blocked FAA list"
 msgstr "Rufzeichen ist in gesperrter FAA-Liste"
 
 #: aircraft-data.php:168
+msgid "Calculated Speed"
+msgstr "Berechnete Geschwindigkeit"
+
+#: aircraft-data.php:179
 msgid "Cam Coordinates"
 msgstr "Nocken-Koordinaten"
 
-#: aircraft-data.php:182
+#: aircraft-data.php:193
 msgid "Vertical rate"
 msgstr "Vertikale Rate"
 
@@ -3151,7 +3407,9 @@ msgstr "Häufigste Abflughafen von %s"
 
 #: ident-statistics-departure-airport.php:27
 #, php-format
-msgid "The statistic below shows all departure airports of flights with the ident/callsign <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports of flights with the ident/"
+"callsign <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflugflughäfen von Flügen mit dem Ident / Rufzeichen <strong> %s </ strong>."
 
 #: aircraft-statistics-time.php:19 airline-statistics-time.php:25
@@ -3162,7 +3420,9 @@ msgstr "Häufigste Tageszeit von %s ( %s )"
 #: aircraft-statistics-time.php:56 airline-statistics-time.php:98
 #: airline-statistics-time.php:100 manufacturer-statistics-time.php:47
 #, php-format
-msgid "The statistic below shows the most common time of day from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common time of day from <strong>%s</"
+"strong>."
 msgstr "Die folgende Statistik zeigt die häufigste Tageszeit von <strong> %s </ strong>."
 
 #: statistics-type.php:6
@@ -3180,7 +3440,8 @@ msgstr "Nachfolgend finden Sie die <strong> Top 10 </ strong> gängigsten Schiff
 #: manufacturer-statistics-route.php:48 airline-statistics-route.php:97
 #: airline-statistics-route.php:99
 #, php-format
-msgid "The statistic below shows the most common routes from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common routes from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Routen von <strong> %s </ strong>."
 
 #: manufacturer-statistics-route.php:79 airline-statistics-route.php:134
@@ -3202,7 +3463,9 @@ msgstr "Häufigste Ankunftsflughäfen von %s"
 #: airline-statistics-arrival-airport.php:97
 #: airline-statistics-arrival-airport.php:99
 #, php-format
-msgid "The statistic below shows all arrival airports of flights from <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports of flights from <strong>%s</"
+"strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen von Flügen von <strong> %s </ strong>."
 
 #: airport-data.php:70 airport-detailed.php:97
@@ -3215,7 +3478,9 @@ msgid "Most common Departure Airport by Country"
 msgstr "Häufigste Abflughafen nach Land"
 
 #: statistics-airport-departure-country.php:25
-msgid "Below are the <strong>Top 10</strong> most common countries of all the departure airports."
+msgid ""
+"Below are the <strong>Top 10</strong> most common countries of all the "
+"departure airports."
 msgstr "Nachfolgend finden Sie die <strong> Top 10 </ strong> häufigsten Länder aller Abflughäfen."
 
 #: country-detailed.php:51
@@ -3225,7 +3490,9 @@ msgstr "Detaillierte Ansicht für Flughäfen & amp; Fluggesellschaften von %s"
 
 #: country-detailed.php:84
 #, php-format
-msgid "The table below shows the detailed information of all flights of airports (both departure &amp; arrival) OR airlines from <strong>%s</strong>."
+msgid ""
+"The table below shows the detailed information of all flights of airports "
+"(both departure &amp; arrival) OR airlines from <strong>%s</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge von Flughäfen (Abflug und Ankunft) oder Fluggesellschaften von <strong> %s </ strong>."
 
 #: statistics-route-waypoint.php:6 statistics-route-waypoint.php:12
@@ -3233,7 +3500,10 @@ msgid "Most common Route by Waypoint"
 msgstr "Häufigste Route mit Wegpunkt"
 
 #: statistics-route-waypoint.php:14
-msgid "Below are the <strong>Top 10</strong> most common routes, based on the waypoint data. Theoretically, since the waypoint data is the full 'planned flight route' this statistic would show the actual most common route."
+msgid ""
+"Below are the <strong>Top 10</strong> most common routes, based on the "
+"waypoint data. Theoretically, since the waypoint data is the full 'planned "
+"flight route' this statistic would show the actual most common route."
 msgstr "Nachfolgend finden Sie die <strong> Top 10 </ strong> häufigsten Routen basierend auf den Wegpunktdaten. Theoretisch würde diese Statistik, da die Wegpunktdaten die volle \"geplante Flugroute\" sind, die aktuellste Route anzeigen."
 
 #: statistics-route-waypoint.php:42
@@ -3242,7 +3512,9 @@ msgstr "Jüngster Flug auf dieser Route"
 
 #: owner-statistics-departure-airport-country.php:31
 #, php-format
-msgid "The statistic below shows all departure airports by Country of origin of flights owned by <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports by Country of origin of "
+"flights owned by <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflugflughäfen nach Herkunftsland der Flüge von <strong> %s </ strong>."
 
 #: aircraft-statistics-arrival-airport-country.php:18
@@ -3252,7 +3524,9 @@ msgstr "Häufigste Ankunftsflughäfen nach Land für %s ( %s )"
 
 #: aircraft-statistics-arrival-airport-country.php:56
 #, php-format
-msgid "The statistic below shows all arrival airports by Country of origin of flights from <strong>%s (%s)</strong>."
+msgid ""
+"The statistic below shows all arrival airports by Country of origin of "
+"flights from <strong>%s (%s)</strong>."
 msgstr "Die nachstehende Statistik zeigt alle Ankunftsflughäfen nach Herkunftsland der Flüge von <strong> %s ( %s ) </ strong>."
 
 #: statistics-registration.php:6 statistics-registration.php:23
@@ -3260,7 +3534,8 @@ msgid "Most common Aircraft Registrations"
 msgstr "Häufigste Flugzeugregistrierungen"
 
 #: statistics-registration.php:25
-msgid "Below are the <strong>Top 10</strong> most common aircraft registrations."
+msgid ""
+"Below are the <strong>Top 10</strong> most common aircraft registrations."
 msgstr "Im Folgenden sind die <strong> Top 10 </ strong> gängigsten Flugzeughersteller aufgeführt."
 
 #: registration-statistics-arrival-airport.php:15
@@ -3270,7 +3545,9 @@ msgstr "Häufigste Ankunftsflughäfen von Flugzeugen mit Registrierung %s"
 
 #: registration-statistics-arrival-airport.php:28
 #, php-format
-msgid "The statistic below shows all arrival airports of flights with aircraft registration <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports of flights with aircraft "
+"registration <strong>%s</strong>."
 msgstr "Die Statistik unten zeigt alle Ankunftsflughäfen von Flügen mit Flugzeugregistrierung <strong> %s </ strong>."
 
 #: airline-statistics-arrival-airport.php:24
@@ -3285,17 +3562,22 @@ msgstr "Häufigster Flugzeughersteller auf %s"
 
 #: date-statistics-manufacturer.php:36
 #, php-format
-msgid "The statistic below shows the most common Aircraft Manufacturer of flights on <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common Aircraft Manufacturer of flights "
+"on <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt den gebräuchlichsten Flugzeughersteller von Flügen auf <strong> %s </ strong>."
 
 #: registration-statistics-departure-airport-country.php:15
 #, php-format
-msgid "Most Common Departure Airports by Country of aircraft with registration %s"
+msgid ""
+"Most Common Departure Airports by Country of aircraft with registration %s"
 msgstr "Häufigste Abflugsflughäfen nach Land der Flugzeuge mit der Registrierung %s"
 
 #: registration-statistics-departure-airport-country.php:27
 #, php-format
-msgid "The statistic below shows all departure airports by Country of origin of flights with aircraft registration <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports by Country of origin of "
+"flights with aircraft registration <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflugflughäfen nach Herkunftsland der Flüge mit Flugzeugregistrierung <strong> %s </ strong>."
 
 #: airline-statistics-time.php:23 manufacturer-statistics-time.php:18
@@ -3306,7 +3588,9 @@ msgstr "Häufigste Tageszeit von %s"
 
 #: country-statistics-arrival-airport.php:51
 #, php-format
-msgid "The statistic below shows all arrival airports of flights of airports &amp; airlines from <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports of flights of airports &amp; "
+"airlines from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen von Flügen von Flughäfen & amp; Fluggesellschaften von <strong> %s </ strong>."
 
 #: statistics-route-airport.php:6 statistics-route-airport.php:14
@@ -3314,7 +3598,9 @@ msgid "Most common Route by Airport"
 msgstr "Häufigste Route vom Flughafen"
 
 #: statistics-route-airport.php:16
-msgid "Below are the <strong>Top 10</strong> most common Departure &amp; Arrival airport combinations."
+msgid ""
+"Below are the <strong>Top 10</strong> most common Departure &amp; Arrival "
+"airport combinations."
 msgstr "Nachfolgend finden Sie die <strong> Top 10 </strong> am häufigsten Departure & amp; Ankunftsflughafen Kombinationen."
 
 #: airport-statistics-registration.php:17
@@ -3324,30 +3610,38 @@ msgstr "Häufigste Flugzeuge bei Registrierung von / nach %s , %s ( %s )"
 
 #: airport-statistics-registration.php:61
 #, php-format
-msgid "The statistic below shows the most common aircraft by registration of flights to/from <strong>%s, %s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common aircraft by registration of "
+"flights to/from <strong>%s, %s (%s)</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugzeuge bei der Registrierung von Flügen nach / von <strong> %s , %s ( %s ) </strong>."
 
-#: ident-detailed.php:211
+#: ident-detailed.php:212
 msgid "Flight History"
 msgstr "Flugverlauf"
 
-#: ident-detailed.php:211
+#: ident-detailed.php:212
 msgid "View the Flight History of this callsign"
 msgstr "Sehen Sie sich die Flugverlauf dieses Rufzeichen an"
 
-#: ident-detailed.php:216
-#, php-format
-msgid "The table below shows the detailed information of all flights with the ident/callsign of <strong>%s</strong>."
-msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge mit dem Ident / Rufzeichen von <strong> %s </strong>."
-
 #: ident-detailed.php:217
 #, php-format
-msgid "The table below shows the detailed information of all vessels with the ident/callsign of <strong>%s</strong>."
-msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Schiffe mit dem Ident / Rufzeichen von <strong> %s </strong>."
+msgid ""
+"The table below shows the detailed information of all flights with the ident/"
+"callsign of <strong>%s</strong>."
+msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge mit dem Ident / Rufzeichen von <strong> %s </strong>."
 
 #: ident-detailed.php:218
 #, php-format
-msgid "The table below shows the detailed information of all trackers with the ident/callsign of <strong>%s</strong>."
+msgid ""
+"The table below shows the detailed information of all vessels with the ident/"
+"callsign of <strong>%s</strong>."
+msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Schiffe mit dem Ident / Rufzeichen von <strong> %s </strong>."
+
+#: ident-detailed.php:219
+#, php-format
+msgid ""
+"The table below shows the detailed information of all trackers with the "
+"ident/callsign of <strong>%s</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Tracker mit dem Ident / Rufzeichen von <strong> %s </strong>."
 
 #: statistics-airline.php:6 statistics-airline.php:16
@@ -3387,44 +3681,48 @@ msgid "Busiest Day Last Month"
 msgstr "Belebter Tag Letzter Monat"
 
 #: statistics-month.php:33
-msgid "Below is a chart that plots the busiest day during the <strong>last month</strong>."
+msgid ""
+"Below is a chart that plots the busiest day during the <strong>last month</"
+"strong>."
 msgstr "Nachfolgend sehen Sie ein Diagramm, das den aktivsten Tag während des <strong> letzten Monats </strong> darstellt."
 
 #: space-data.php:102
 msgid "Spacecraft"
 msgstr "Raumfahrzeug"
 
-#: space-data.php:129 space-data.php:148
+#: space-data.php:137 space-data.php:156
 msgid "Launch Date"
 msgstr "Fertigstellungsdatum"
 
-#: space-data.php:133
+#: space-data.php:141
 msgid "Owner Country"
 msgstr "Besitzer Land"
 
-#: space-data.php:139
+#: space-data.php:147
 msgid "Users"
 msgstr "Benutzer"
 
-#: space-data.php:142
+#: space-data.php:150
 msgid "Purpose"
 msgstr "Zweck"
 
-#: space-data.php:145
+#: space-data.php:153
 msgid "Orbit"
 msgstr "Umlaufbahn"
 
-#: space-data.php:151
+#: space-data.php:159
 msgid "Launch Site"
 msgstr "Launch Site"
 
-#: space-data.php:154
+#: space-data.php:162
 msgid "Launch Vehicule"
 msgstr "Starten Sie Vehicule"
 
 #: owner-statistics-departure-airport.php:32
 #, php-format
-msgid "The statistic below shows all departure airports of flights owned by <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports of flights owned by <strong>"
+"%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflughäfen von Flügen, die <strong> %s </strong> gehören."
 
 #: airport-statistics-time.php:17
@@ -3434,7 +3732,9 @@ msgstr "Häufigste Tageszeit zu / von %s , %s ( %s )"
 
 #: airport-statistics-time.php:61
 #, php-format
-msgid "The statistic below shows the most common time of day to/from <strong>%s, %s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common time of day to/from <strong>%s, %s "
+"(%s)</strong>."
 msgstr "Die folgende Statistik zeigt die häufigste Tageszeit zu / von <strong> %s , %s ( %s ) </strong>."
 
 #: incident-latest.php:6 incident-latest.php:32 incident-detailed.php:6
@@ -3452,7 +3752,9 @@ msgstr "Häufigste Routen nach / von %s , %s ( %s )"
 
 #: airport-statistics-route.php:61
 #, php-format
-msgid "The statistic below shows the most common routes to/from <strong>%s, %s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common routes to/from <strong>%s, %s "
+"(%s)</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Routen zu / von <strong> %s , %s ( %s ) </strong>."
 
 #: manufacturer-statistics-departure-airport-country.php:17
@@ -3464,7 +3766,9 @@ msgstr "'Häufigste Abflugsflughäfen nach Ländern von %s"
 #: airline-statistics-departure-airport-country.php:97
 #: airline-statistics-departure-airport-country.php:99
 #, php-format
-msgid "The statistic below shows all departure airports by Country of origin of flights from <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports by Country of origin of "
+"flights from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflughäfen nach Herkunftsland der Flüge von <strong> %s </strong>."
 
 #: pilot-statistics-route.php:21 owner-statistics-route.php:21
@@ -3475,7 +3779,9 @@ msgstr "Häufigste Routen von %s"
 
 #: pilot-statistics-route.php:32
 #, php-format
-msgid "The statistic below shows the most common routes from flights piloted by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common routes from flights piloted by "
+"<strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Routen von Flügen, die von <strong> %s </strong> pilotiert wurden."
 
 #: country-statistics-manufacturer.php:20
@@ -3486,7 +3792,9 @@ msgstr "Häufigster Flugzeughersteller von %s"
 
 #: country-statistics-manufacturer.php:53
 #, php-format
-msgid "The statistic below shows the most common Aircraft Manufacturer of airlines or departure/arrival airports from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common Aircraft Manufacturer of airlines "
+"or departure/arrival airports from <strong>%s</strong>."
 msgstr "Die untenstehende Statistik zeigt die gebräuchlichsten Flugzeughersteller von Fluggesellschaften oder Abfahrts- / Ankunftsflughäfen von <strong> %s </strong>."
 
 #: statistics-airport-arrival-country.php:6
@@ -3495,7 +3803,9 @@ msgid "Most common Arrival Airport by Country"
 msgstr "Häufigste Ankunft Flughafen nach Land"
 
 #: statistics-airport-arrival-country.php:24
-msgid "Below are the <strong>Top 10</strong> most common countries of all the arrival airports."
+msgid ""
+"Below are the <strong>Top 10</strong> most common countries of all the "
+"arrival airports."
 msgstr "Unten finden Sie die <strong> Top 10 </strong> häufigsten Länder aller Ankunftsflughäfen."
 
 #: date-statistics-departure-airport-country.php:12
@@ -3505,22 +3815,30 @@ msgstr "Häufigste Abfahrtsflughäfen nach Ländern auf %s"
 
 #: date-statistics-departure-airport-country.php:36
 #, php-format
-msgid "The statistic below shows all departure airports by Country of origin of flights on <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports by Country of origin of "
+"flights on <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflugflughäfen nach Herkunftsland der Flüge auf <strong> %s </strong>."
 
 #: ident-statistics-arrival-airport-country.php:27
 #, php-format
-msgid "The statistic below shows all arrival airports by Country of origin of flights with the ident/callsign <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports by Country of origin of "
+"flights with the ident/callsign <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen nach Herkunftsland der Flüge mit dem Ident / Rufzeichen <strong> %s </strong>."
 
 #: ident-statistics-arrival-airport.php:27
 #, php-format
-msgid "The statistic below shows all arrival airports of flights with the ident/callsign <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports of flights with the ident/"
+"callsign <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen von Flügen mit dem Ident / Rufzeichen <strong> %s </strong>."
 
 #: owner-statistics-aircraft.php:36
 #, php-format
-msgid "The statistic below shows the most common aircraft of flights owned by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft of flights owned by "
+"<strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugzeuge von Flügen, die <strong> %s </strong> gehören."
 
 #: latest.php:50
@@ -3542,7 +3860,9 @@ msgstr "Häufigste Abflugsflughäfen von Flugzeugen mit Registrierung %s"
 
 #: registration-statistics-departure-airport.php:29
 #, php-format
-msgid "The statistic below shows all departure airports of flights with aircraft registration <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports of flights with aircraft "
+"registration <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflugflughäfen von Flügen mit Flugzeugregistrierung <strong> %s </strong>."
 
 #: tv.php:54 tv.php:58
@@ -3568,17 +3888,37 @@ msgstr "Die meisten Fluggesellschaften aus %s ( %s )"
 
 #: aircraft-statistics-airline.php:55
 #, php-format
-msgid "The statistic below shows the most common airlines of flights from <strong>%s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common airlines of flights from <strong>"
+"%s (%s)</strong>."
 msgstr "Die unten stehende Statistik zeigt die gängigsten Fluganbieter von Flügen von <strong> %s ( %s ) </strong>."
+
+#: race-detailed.php:118
+msgid "race ID"
+msgstr "Rassennummer"
+
+#: race-detailed.php:142
+#, php-format
+msgid ""
+"The table below shows the detailed information of all races with the race "
+"<strong>%s</strong>."
+msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Rennen mit dem Rennen <strong> %s </ strong>."
+
+#: race-detailed.php:160
+msgid "Sorry, this race is not in the database. :("
+msgstr "Entschuldigung, dieses Rennen ist nicht in der Datenbank. :("
 
 #: registration-statistics-arrival-airport-country.php:15
 #, php-format
-msgid "Most Common Arrival Airports by Country of aircraft with registration %s"
+msgid ""
+"Most Common Arrival Airports by Country of aircraft with registration %s"
 msgstr "Häufigste Ankunftsflughäfen nach Land von Flugzeugen mit Registrierung %s"
 
 #: registration-statistics-arrival-airport-country.php:27
 #, php-format
-msgid "The statistic below shows all arrival airports by Country of origin of flights with aircraft registration <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports by Country of origin of "
+"flights with aircraft registration <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen nach Herkunftsland der Flüge mit Flugzeugregistrierung <strong> %s </strong>."
 
 #: location-data.php:22
@@ -3632,7 +3972,9 @@ msgstr "Häufigste Tageszeit zwischen %s ( %s ), %s - %s ( %s ), %s"
 
 #: route-statistics-time.php:32
 #, php-format
-msgid "The statistic below shows the most common time of day of flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
+msgid ""
+"The statistic below shows the most common time of day of flights between "
+"<strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigste Tageszeit von Flügen zwischen <strong> %s ( %s ), %s </strong> und <strong> %s ( %s ), %s </strong>."
 
 #: statistics-airport-departure.php:6 statistics-airport-departure.php:22
@@ -3648,7 +3990,9 @@ msgid "Busiest Day"
 msgstr "Belebter Tag"
 
 #: statistics-date.php:34
-msgid "Below is a chart that plots the busiest day during the <strong>last 7 days</strong>."
+msgid ""
+"Below is a chart that plots the busiest day during the <strong>last 7 days</"
+"strong>."
 msgstr "Unten ist ein Diagramm, das den aktivsten Tag während der <strong> letzten 7 Tage </strong> darstellt."
 
 #: statistics-date.php:40 statistics.php:156 statistics.php:236
@@ -3664,7 +4008,8 @@ msgstr "Keine Daten vorhanden"
 
 #: statistics-date.php:60
 #, php-format
-msgid "Below are the <strong>Top 10</strong> most busiest dates of last %d month(s)."
+msgid ""
+"Below are the <strong>Top 10</strong> most busiest dates of last %d month(s)."
 msgstr "Im Folgenden finden Sie die <strong> Top 10 </strong> meist verkehrsreichsten Daten der letzten %d Monate."
 
 #: statistics-date.php:62
@@ -3677,7 +4022,9 @@ msgstr "Anzahl der Flüge"
 
 #: owner-statistics-route.php:32
 #, php-format
-msgid "The statistic below shows the most common routes from flights owner by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common routes from flights owner by "
+"<strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Routen vom Flugbesitzer nach <strong> %s </strong>."
 
 #: route-statistics-manufacturer.php:21
@@ -3687,7 +4034,9 @@ msgstr "Häufigster Flugzeughersteller zwischen %s ( %s ), %s - %s ( %s ), %s"
 
 #: route-statistics-manufacturer.php:32
 #, php-format
-msgid "The statistic below shows the most common Aircraft Manufacturer of flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
+msgid ""
+"The statistic below shows the most common Aircraft Manufacturer of flights "
+"between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
 msgstr "Die folgende Statistik zeigt den gebräuchlichsten Flugzeughersteller für Flüge zwischen <strong> %s ( %s ), %s </strong> und <strong> %s ( %s ), %s </strong>."
 
 #: ident-statistics-departure-airport-country.php:16
@@ -3697,7 +4046,9 @@ msgstr "Häufigste Abflugsflughäfen nach Land von %s"
 
 #: ident-statistics-departure-airport-country.php:26
 #, php-format
-msgid "The statistic below shows all departure airports by Country of origin of flights with the ident/callsign <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports by Country of origin of "
+"flights with the ident/callsign <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflugflughäfen nach Herkunftsland der Flüge mit dem Ident / Rufzeichen <strong> %s </strong>."
 
 #: acars-archive.php:6 acars-archive.php:30
@@ -3725,7 +4076,10 @@ msgid "Owner Name"
 msgstr "Namen des Eigentümers"
 
 #: highlights-display.php:40
-msgid "The view below shows all aircraft that have been selected to have some sort of special characteristic about them, such as unique liveries, destinations etc."
+msgid ""
+"The view below shows all aircraft that have been selected to have some sort "
+"of special characteristic about them, such as unique liveries, destinations "
+"etc."
 msgstr "Die folgende Ansicht zeigt alle Flugzeuge, die ausgewählt wurden, um eine Art von besonderem Merkmal zu haben, wie zum Beispiel einzigartige Lackierungen, Reiseziele usw."
 
 #: tools-notam.php:8 tools-notam.php:16
@@ -3750,7 +4104,9 @@ msgstr "Diese NOTAM-Nachricht kann nicht in menschlich lesbarem Format übersetz
 
 #: ident-statistics-aircraft.php:31
 #, php-format
-msgid "The statistic below shows the most common aircraft of flights using the ident/callsign <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft of flights using the "
+"ident/callsign <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt das häufigste Flugzeug von Flügen mit dem Ident / Rufzeichen <strong> %s </strong>."
 
 #: airport-statistics-airline-country.php:17
@@ -3759,16 +4115,22 @@ msgid "Most Common Airlines by Country to/from %s, %s (%s)"
 msgstr "Die meisten Fluggesellschaften nach Ländern zu / von %s , %s ( %s )"
 
 #: airport-statistics-airline-country.php:54
-msgid "This special airport profile shows all flights that do NOT have a departure and/or arrival airport associated with them."
+msgid ""
+"This special airport profile shows all flights that do NOT have a departure "
+"and/or arrival airport associated with them."
 msgstr "Dieses spezielle Flughafenprofil zeigt alle Flüge, denen kein Abflug- und / oder Ankunftsflughafen zugeordnet ist."
 
 #: airport-statistics-airline-country.php:60
 #, php-format
-msgid "The statistic below shows the most common airlines by Country of origin of flights to/from <strong>%s, %s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common airlines by Country of origin of "
+"flights to/from <strong>%s, %s (%s)</strong>."
 msgstr "Die nachstehende Statistik zeigt die meisten Fluggesellschaften nach Herkunftsland der Flüge nach / von <strong> %s , %s ( %s ) </strong>."
 
 #: tools-geoid.php:32
-msgid "Calculate geoid at a point. GPS use a theoretical sea level estimated by a World Geodetic System (WGS84), Earth Gravity Model is better."
+msgid ""
+"Calculate geoid at a point. GPS use a theoretical sea level estimated by a "
+"World Geodetic System (WGS84), Earth Gravity Model is better."
 msgstr "Berechnen Sie das Geoid an einem Punkt. GPS verwendet einen theoretischen Meeresspiegel, der von einem Weltgeodätischen System (WGS84) geschätzt wird. Das Erdgravitationsmodell ist besser."
 
 #: tools-geoid.php:48
@@ -3782,7 +4144,9 @@ msgstr "Häufigste Abfahrtsflughäfen nach Ländern zu %s , %s ( %s )"
 
 #: airport-statistics-departure-airport-country.php:60
 #, php-format
-msgid "The statistic below shows all departure airports by Country of origin of flights to <strong>%s, %s, (%s)</strong>."
+msgid ""
+"The statistic below shows all departure airports by Country of origin of "
+"flights to <strong>%s, %s, (%s)</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflugflughäfen nach Herkunftsland der Flüge nach <strong> %s , %s , ( %s ) </strong>."
 
 #: statistics-fatalities-year.php:16
@@ -3805,7 +4169,9 @@ msgstr "Häufigster Flugzeughersteller von %s ( %s )"
 #: airline-statistics-manufacturer.php:97
 #: airline-statistics-manufacturer.php:99
 #, php-format
-msgid "The statistic below shows the most common Aircraft Manufacturer of flights from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common Aircraft Manufacturer of flights "
+"from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt den gebräuchlichsten Flugzeughersteller von Flügen von <strong> %s </strong>."
 
 #: aircraft-statistics-airline-country.php:18
@@ -3815,7 +4181,9 @@ msgstr "Die meisten Fluggesellschaften nach Ländern von %s ( %s )"
 
 #: aircraft-statistics-airline-country.php:56
 #, php-format
-msgid "The statistic below shows the most common airlines by Country of origin of flights from <strong>%s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common airlines by Country of origin of "
+"flights from <strong>%s (%s)</strong>."
 msgstr "Die nachstehende Statistik zeigt die gebräuchlichsten Fluggesellschaften nach Herkunftsland der Flüge von <strong> %s ( %s ) </strong>."
 
 #: statistics-country.php:11 statistics-country.php:37
@@ -3831,25 +4199,34 @@ msgid "Most common Country a flight was over"
 msgstr "Am häufigsten landete ein Flug über"
 
 #: statistics-country.php:43
-msgid "Below are the <strong>Top 10</strong> most common country a flight was over."
+msgid ""
+"Below are the <strong>Top 10</strong> most common country a flight was over."
 msgstr "Unten finden Sie das <strong> Top 10 </strong> häufigste Land, in dem ein Flug vorbei war."
 
 #: statistics-country.php:45
-msgid "Below are the <strong>Top 10</strong> most common country a vessel was inside."
+msgid ""
+"Below are the <strong>Top 10</strong> most common country a vessel was "
+"inside."
 msgstr "Nachstehend finden Sie das <strong> Top 10 </strong> häufigste Land, in dem sich ein Schiff befand."
 
 #: statistics-country.php:47
-msgid "Below are the <strong>Top 10</strong> most common country a tracker was inside."
+msgid ""
+"Below are the <strong>Top 10</strong> most common country a tracker was "
+"inside."
 msgstr "Im Folgenden finden Sie das <strong> Top 10 </strong> häufigste Land, in dem sich ein Tracker befand."
 
 #: country-statistics-time.php:54
 #, php-format
-msgid "The statistic below shows the most common time of day of airports &amp; airlines from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common time of day of airports &amp; "
+"airlines from <strong>%s</strong>."
 msgstr "Die unten stehende Statistik zeigt die häufigste Tageszeit von Flughäfen & amp; Fluggesellschaften von <strong> %s </strong>."
 
 #: owner-detailed.php:141
 #, php-format
-msgid "The table below shows the detailed information of all flights with the owner <strong>%s</strong>."
+msgid ""
+"The table below shows the detailed information of all flights with the owner "
+"<strong>%s</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge mit dem Eigner <strong> %s </strong>."
 
 #: date-statistics-arrival-airport-country.php:12
@@ -3859,7 +4236,9 @@ msgstr "Häufigste Ankunftsflughäfen nach Land am %s"
 
 #: date-statistics-arrival-airport-country.php:35
 #, php-format
-msgid "The statistic below shows all arrival airports by Country of origin of flights on <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports by Country of origin of "
+"flights on <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen nach Herkunftsland der Flüge auf <strong> %s </strong>."
 
 #: acars-latest.php:36
@@ -3873,7 +4252,9 @@ msgstr "Die meisten Fluggesellschaften nach Ländern von %s"
 
 #: manufacturer-statistics-airline-country.php:47
 #, php-format
-msgid "The statistic below shows the most common airlines by Country of origin of flights from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common airlines by Country of origin of "
+"flights from <strong>%s</strong>."
 msgstr "Die nachstehende Statistik zeigt die gängigsten Fluglinien nach Herkunftsland der Flüge von <strong> %s </strong>."
 
 #: statistics.php:64
@@ -4002,7 +4383,8 @@ msgid "Distance for %s"
 msgstr "Entfernung für %s"
 
 #: statistics-fatalities-month.php:17
-msgid "Below is a chart that plots the fatalities <strong>last 12 months</strong>."
+msgid ""
+"Below is a chart that plots the fatalities <strong>last 12 months</strong>."
 msgstr "Unten finden Sie eine Tabelle mit den Todesfällen <strong> in den letzten 12 Monaten </strong>."
 
 #: statistics-fatalities-month.php:50
@@ -4016,7 +4398,9 @@ msgstr "Häufigste Flugzeuge zu / von %s , %s ( %s )"
 
 #: airport-statistics-aircraft.php:61
 #, php-format
-msgid "The statistic below shows the most common aircraft of flights to/from <strong>%s, %s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common aircraft of flights to/from "
+"<strong>%s, %s (%s)</strong>."
 msgstr "Die folgende Statistik zeigt das gebräuchlichste Flugzeug von Flügen nach / von <strong> %s , %s ( %s ) </strong>."
 
 #: date-statistics-arrival-airport.php:12
@@ -4026,12 +4410,16 @@ msgstr "Häufigste Ankunftsflughäfen auf %s"
 
 #: date-statistics-arrival-airport.php:36
 #, php-format
-msgid "The statistic below shows all arrival airports of flights on <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports of flights on <strong>%s</"
+"strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen von Flügen auf <strong> %s </strong>."
 
 #: pilot-statistics-arrival-airport.php:32
 #, php-format
-msgid "The statistic below shows all arrival airports of flights piloted by <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports of flights piloted by <strong>"
+"%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen von Flügen, die von <strong> %s </strong> gesteuert werden."
 
 #: country-statistics-airline-country.php:21
@@ -4041,15 +4429,19 @@ msgstr "Die meisten Fluggesellschaften nach Land von %s"
 
 #: country-statistics-airline-country.php:54
 #, php-format
-msgid "The statistic below shows the most common airlines by Country of origin of flights from airports &amp; airlines of <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common airlines by Country of origin of "
+"flights from airports &amp; airlines of <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die gängigsten Fluggesellschaften nach Herkunftsland der Flüge von Flughäfen & amp; Fluggesellschaften von <strong> %s </strong>."
 
 #: pilot-statistics-arrival-airport-country.php:32
 #, php-format
-msgid "The statistic below shows all arrival airports by Country of origin of flights piloted by <strong>%s</strong>."
+msgid ""
+"The statistic below shows all arrival airports by Country of origin of "
+"flights piloted by <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Ankunftsflughäfen nach Herkunftsland der Flüge, die von <strong> %s </strong> pilotiert werden."
 
-#: marine-data.php:110
+#: marine-data.php:128
 msgid "Destination"
 msgstr "Ziel"
 
@@ -4060,7 +4452,10 @@ msgstr "Die meisten Fluggesellschaften nach Ländern zwischen %s ( %s ), %s - %s
 
 #: route-statistics-airline-country.php:29
 #, php-format
-msgid "The statistic below shows the most common airlines by Country of origin of flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</strong>."
+msgid ""
+"The statistic below shows the most common airlines by Country of origin of "
+"flights between <strong>%s (%s), %s</strong> and <strong>%s (%s), %s</"
+"strong>."
 msgstr "Die nachstehende Statistik zeigt die häufigsten Fluggesellschaften nach Herkunftsland der Flüge zwischen <strong> %s ( %s ), %s </ strong> und <strong> %s ( %s ), %s </strong>."
 
 #: statistics-year.php:32
@@ -4068,7 +4463,9 @@ msgid "Busiest Month"
 msgstr "Aktivster Monat"
 
 #: statistics-year.php:34
-msgid "Below is a chart that plots the busiest month during the <strong>last year</strong>."
+msgid ""
+"Below is a chart that plots the busiest month during the <strong>last year</"
+"strong>."
 msgstr "Im Folgenden ist ein Diagramm dargestellt, in dem der vergangene Monat im <strong> letzten Jahr </strong> verzeichnet wurde."
 
 #: statistics-pilot.php:6
@@ -4100,7 +4497,9 @@ msgstr "Häufigste Abfahrtsflughäfen nach Ländern von %s ( %s )"
 
 #: country-statistics-departure-airport-country.php:54
 #, php-format
-msgid "The statistic below shows all departure airports by Country of origin of flights of airports &amp; airlines from <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports by Country of origin of "
+"flights of airports &amp; airlines from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflughäfen nach Herkunftsland der Flüge von Flughäfen & amp; Fluggesellschaften von <strong> %s </ strong>."
 
 #: manufacturer-statistics-airline.php:19
@@ -4110,17 +4509,23 @@ msgstr "Die meisten Fluggesellschaften aus %s"
 
 #: manufacturer-statistics-airline.php:49
 #, php-format
-msgid "The statistic below shows the most common airlines of flights from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common airlines of flights from <strong>"
+"%s</strong>."
 msgstr "Die folgende Statistik zeigt die gebräuchlichsten Airlines für Flüge von <strong> %s </strong>."
 
 #: aircraft-statistics-registration.php:54
 #, php-format
-msgid "The statistic below shows the most common aircraft by registration of flights from aircraft type <strong>%s (%s)</strong>."
+msgid ""
+"The statistic below shows the most common aircraft by registration of "
+"flights from aircraft type <strong>%s (%s)</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugzeuge bei der Registrierung von Flügen vom Flugzeugtyp <strong> %s ( %s ) </strong>."
 
 #: owner-statistics-time.php:32
 #, php-format
-msgid "The statistic below shows the most common time of day of flights owned by <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common time of day of flights owned by "
+"<strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigste Tageszeit von Flügen, die <strong> %s </strong> gehören."
 
 #: country-statistics-registration.php:20
@@ -4130,7 +4535,9 @@ msgstr "Häufigste Flugzeuge nach Registrierung von %s"
 
 #: country-statistics-registration.php:53
 #, php-format
-msgid "The statistic below shows the most common aircraft by registration of airlines or departure/arrival airports from <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft by registration of "
+"airlines or departure/arrival airports from <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Flugzeuge bei der Registrierung von Fluggesellschaften oder Abflug- / Ankunftsflughäfen von <strong> %s </strong>."
 
 #: airport-detailed.php:54
@@ -4144,7 +4551,9 @@ msgstr "Diagramm"
 
 #: airport-detailed.php:196
 #, php-format
-msgid "The table below shows the detailed information of all flights to/from <strong>%s, %s (%s)</strong>."
+msgid ""
+"The table below shows the detailed information of all flights to/from "
+"<strong>%s, %s (%s)</strong>."
 msgstr "Die folgende Tabelle zeigt die detaillierten Informationen aller Flüge zu / von <strong> %s , %s ( %s ) </strong>."
 
 #: statistics-airline-country.php:6 statistics-airline-country.php:17
@@ -4152,7 +4561,8 @@ msgid "Most common Airline by Country"
 msgstr "Häufigste Fluggesellschaft nach Land"
 
 #: statistics-airline-country.php:19
-msgid "Below are the <strong>Top 10</strong> countries that an airline belongs to."
+msgid ""
+"Below are the <strong>Top 10</strong> countries that an airline belongs to."
 msgstr "Hier finden Sie die <strong> Top 10 </strong> Länder, zu denen eine Fluggesellschaft gehört."
 
 #: flightid-overview.php:303
@@ -4198,7 +4608,9 @@ msgstr "Entschuldigung, dieser Flug ist nicht in der Datenbank. :("
 
 #: ident-statistics-registration.php:27
 #, php-format
-msgid "The statistic below shows the most common aircraft by Registration of flights using the ident/callsign <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common aircraft by Registration of "
+"flights using the ident/callsign <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt das häufigste Flugzeug bei der Registrierung von Flügen mit dem Ident / Rufzeichen <strong> %s </strong>."
 
 #: airport-statistics-arrival-airport-country.php:17
@@ -4208,7 +4620,9 @@ msgstr "Häufigste Ankunftsflughäfen nach Land von %s , %s ( %s )"
 
 #: airport-statistics-arrival-airport-country.php:60
 #, php-format
-msgid "The statistic below shows all arrival airports by Country of origin of flights from <strong>%s, %s (%s)</strong>."
+msgid ""
+"The statistic below shows all arrival airports by Country of origin of "
+"flights from <strong>%s, %s (%s)</strong>."
 msgstr "Die nachstehende Statistik zeigt alle Ankunftsflughäfen nach Herkunftsland der Flüge von <strong> %s , %s ( %s ) </strong>."
 
 #: incident-detailed.php:51
@@ -4223,7 +4637,9 @@ msgstr "Die folgende Tabelle zeigt die Vorfälle auf <strong> %s </strong>."
 
 #: pilot-statistics-departure-airport.php:32
 #, php-format
-msgid "The statistic below shows all departure airports of flights piloted by <strong>%s</strong>."
+msgid ""
+"The statistic below shows all departure airports of flights piloted by "
+"<strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt alle Abflugflughäfen von Flügen, die von <strong> %s </strong> pilotiert werden."
 
 #: registration-statistics-time.php:13
@@ -4233,10 +4649,21 @@ msgstr "Häufigste Tageszeit von Flugzeugen mit Registrierung %s"
 
 #: registration-statistics-time.php:26
 #, php-format
-msgid "The statistic below shows the most common time of day from aircraft with registration <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common time of day from aircraft with "
+"registration <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigste Tageszeit von Flugzeugen mit der Registrierung <strong> %s </strong>."
 
 #: ident-statistics-route.php:27
 #, php-format
-msgid "The statistic below shows the most common routes from flights with the ident/callsign <strong>%s</strong>."
+msgid ""
+"The statistic below shows the most common routes from flights with the ident/"
+"callsign <strong>%s</strong>."
 msgstr "Die folgende Statistik zeigt die häufigsten Routen von Flügen mit dem Ident / Rufzeichen <strong> %s </strong>."
+
+#~ msgid "From (UTC):"
+#~ msgstr "Von (UTC):"
+
+#~ msgid "To (UTC):"
+#~ msgstr "Bis (UTC):"
+
