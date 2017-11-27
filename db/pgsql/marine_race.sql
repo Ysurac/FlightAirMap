@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS marine_race;
 CREATE TABLE marine_race (
   marine_race_id serial,
   race_id integer DEFAULT NULL,
