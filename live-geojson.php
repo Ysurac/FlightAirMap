@@ -370,8 +370,25 @@ $output = '{';
 									else $output .= '"aircraft_shadow": "car.png",';
 								}
 							} elseif ($marine) {
-								if ($compress) $output .= '"as": "ship.png",';
-								else $output .= '"aircraft_shadow": "ship.png",';
+								if (isset($spotter_item['type']) && ($spotter_item['type']  == '50&#39; Performance Cruiser' || $spotter_item['type'] == 'Sail')) {
+									if ($compress) $output .= '"as": "50perfcruiser.png",';
+									else $output .= '"aircraft_shadow": "50perfcruiser.png",';
+								} elseif (isset($spotter_item['type']) && $spotter_item['type']  == 'Sailaway Cruiser 38') {
+									if ($compress) $output .= '"as": "cruiser38.png",';
+									else $output .= '"aircraft_shadow": "cruiser38.png",';
+								} elseif (isset($spotter_item['type']) && $spotter_item['type']  == 'Mini Transat') {
+									if ($compress) $output .= '"as": "transat.png",';
+									else $output .= '"aircraft_shadow": "transat.png",';
+								} elseif (isset($spotter_item['type']) && $spotter_item['type']  == '52&#39; Cruising Cat') {
+									if ($compress) $output .= '"as": "catamaran.png",';
+									else $output .= '"aircraft_shadow": "catamaran.png",';
+								} elseif (isset($spotter_item['type']) && $spotter_item['type']  == 'Caribbean Rose') {
+									if ($compress) $output .= '"as": "carib.png",';
+									else $output .= '"aircraft_shadow": "carib.png",';
+								} else {
+									if ($compress) $output .= '"as": "ship.png",';
+									else $output .= '"aircraft_shadow": "ship.png",';
+								}
 							} else {
 								if ($compress) $output .= '"as": "default.png",';
 								else $output .= '"aircraft_shadow": "default.png",';
@@ -527,6 +544,9 @@ $output = '{';
 						}
 						if (isset($spotter_item['captain_name'])) {
 							$output .= '"cap": '.json_encode($spotter_item['captain_name']).',';
+						}
+						if (isset($spotter_item['race_id']) && $spotter_item['race_id'] != '') {
+							$output .= '"rid": '.$spotter_item['race_id'].',';
 						}
 						if (isset($spotter_item['pilot_id'])) {
 							$output .= '"pilot_id": "'.$spotter_item['pilot_id'].'",';
@@ -778,6 +798,7 @@ $output = '{';
 						unset($prev_alt);
 						unset($output_history);
 					}
+					
 				}
 				
 				if (((isset($history) && $history != '' && $history != 'NA' && isset($spotter_item['flightaware_id']) && str_replace('-','',$history) == str_replace('-','',$spotter_item['flightaware_id']))
