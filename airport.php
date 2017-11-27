@@ -33,11 +33,11 @@ if (isset($_POST['airport']))
 	$airport = filter_input(INPUT_GET,'airport',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	$page_url = $globalURL.'/airport/'.$airport;
-	$spotter_array = $Spotter->getSpotterDataByAirport($airport,$limit_start.",".$absolute_difference, $sort);
 	$airport_array = $Spotter->getAllAirportInfo($airport);
 	
 	if (!empty($airport_array))
 	{
+		$spotter_array = $Spotter->getSpotterDataByAirport($airport,$limit_start.",".$absolute_difference, $sort);
 		$title = $airport_array[0]['city'].', '.$airport_array[0]['name'].' ('.$airport_array[0]['icao'].')';
 
 		require_once('header.php');

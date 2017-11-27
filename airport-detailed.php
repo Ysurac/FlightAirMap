@@ -33,15 +33,15 @@ if (!isset($_GET['airport'])){
 	$page_url = $globalURL.'/airport/'.$airport_icao;
 	
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
-	if ($sort != '') {
-		$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, $sort);
-	} else {
-		$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, '');
-	}
 	$airport_array = $Spotter->getAllAirportInfo($airport_icao);
 	
 	if (!empty($airport_array))
 	{
+		if ($sort != '') {
+			$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, $sort);
+		} else {
+			$spotter_array = $Spotter->getSpotterDataByAirport($airport_icao,$limit_start.",".$absolute_difference, '');
+		}
 		
 		if (isset($globalMETAR) && $globalMETAR) {
 			$METAR = new METAR();

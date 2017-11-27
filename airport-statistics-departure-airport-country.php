@@ -9,11 +9,11 @@ if (!isset($_GET['airport'])) {
 }
 $airport = filter_input(INPUT_GET,'airport',FILTER_SANITIZE_STRING);
 $Spotter = new Spotter();
-$spotter_array = $Spotter->getSpotterDataByAirport($airport,"0,1","");
 $airport_array = $Spotter->getAllAirportInfo($airport);
 
 if (!empty($airport_array))
 {
+	//$spotter_array = $Spotter->getSpotterDataByAirport($airport,"0,1","");
 	$title = sprintf(_("Most Common Departure Airports by Country to %s, %s (%s)"),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']);
 	require_once('header.php');
 	print '<div class="select-item">';

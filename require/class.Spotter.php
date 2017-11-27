@@ -1731,7 +1731,8 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." AND (spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> 'NA') ".$orderby_query;
+		//$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." AND (spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> 'NA') ".$orderby_query;
+		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
