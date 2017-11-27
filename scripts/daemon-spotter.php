@@ -750,8 +750,8 @@ while ($i > 0) {
 
 	    if ($globalDebug) echo '! Download... ';
 	    for ($i =0; $i <= 1; $i++) {
-		    if ($globalDebug) echo 'Racetype: '.$i.' ';
-	    $buffer = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetMissions.pl?race=1&tutorial=0&hist=1&racetype='.$i);
+		if ($globalDebug) echo 'Racetype: '.$i.' ';
+		$buffer = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetMissions.pl?race=1&tutorial=0&hist=1&racetype='.$i);
 	    if ($globalDebug) echo 'done'."\n";
 	    if ($buffer != '') {
 		$all_data = json_decode($buffer,true);
@@ -775,8 +775,8 @@ while ($i > 0) {
 					    $datar = array();
 					    $datar['id'] = $mission['misnr'];
 					    $datar['desc'] = $race_data['mission']['misdescr'];
-					    $datar['creator'] = $race_data['mission']['usrname'];
-					    $datar['name'] = $race_data['mission']['mistitle'];
+					    $datar['creator'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($race_data['mission']['usrname'])));
+					    $datar['name'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($race_data['mission']['mistitle'])));
 					    $datar['startdate'] = $race_data['mission']['misstartdatetime'];
 					    $markers = array();
 					    foreach ($race_data['mission']['course'] as $course) {
