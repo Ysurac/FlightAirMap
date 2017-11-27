@@ -2415,6 +2415,68 @@ q	*
 		return $ident_result;
 	}
 
+	/**
+	* Gets all info from a race
+	*
+	* @return Array race
+	*
+	*/
+	public function getRaceByName($race_name)
+	{
+		$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
+		$query  = "SELECT * FROM marine_race WHERE race_name = :race_name LIMIT 1";
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':race_name' => $race_name));
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (isset($result[0])) return $result[0];
+		else return array();
+	}
+
+	/**
+	* Gets all info from a race
+	*
+	* @return Array race
+	*
+	*/
+	public function getRace($race_id)
+	{
+		$race_id = filter_var($race_id,FILTER_SANITIZE_NUMBER_INT);
+		$query  = "SELECT * FROM marine_race WHERE race_id = :race_id LIMIT 1";
+		$sth = $this->db->prepare($query);
+		$sth->execute(array(':race_id' => $race_id));
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if (isset($result[0])) return $result[0];
+		else return array();
+	}
+
+	/**
+	* Add race
+	*
+	*/
+	public function addRace($race_id,$race_name,$race_creator,$race_desc,$race_startdate,$race_markers)
+	{
+		$race_id = filter_var($race_id,FILTER_SANITIZE_NUMBER_INT);
+		if ($race_id != '') {
+			$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
+			$race_creator = filter_var($race_creator,FILTER_SANITIZE_STRING);
+			$race_desc = filter_var($race_desc,FILTER_SANITIZE_STRING);
+			$race_startdate = filter_var($race_startdate,FILTER_SANITIZE_STRING);
+			//$race_markers = filter_var($race_markers,FILTER_SANITIZE_STRING);
+			$allrace = $this->getRace($race_id);
+			if (empty($allrace)) {
+				$query  = "INSERT INTO marine_race (race_id,race_name,race_creator,race_desc,race_startdate,race_markers) VALUES (:race_id,:race_name,:race_creator,:race_desc,:race_startdate,:race_markers)";
+				$sth = $this->db->prepare($query);
+				$sth->execute(array(':race_id' => $race_id,':race_name' => $race_name,':race_creator' => $race_creator,':race_desc' => $race_desc,':race_startdate' => $race_startdate,':race_markers' => $race_markers));
+			} elseif ($race_id != '') {
+				$query  = "UPDATE marine_race SET race_name = :race_name,race_desc = :race_desc,race_startdate = :race_startdate,race_markers = :race_markers WHERE race_id = :race_id";
+				$sth = $this->db->prepare($query);
+				$sth->execute(array(':race_id' => $race_id,':race_name' => $race_name,':race_desc' => $race_desc,':race_startdate' => $race_startdate,':race_markers' => $race_markers));
+			}
+		}
+	}
+
+
+
 	public function getOrderBy()
 	{
 		$orderby = array("type_asc" => array("key" => "type_asc", "value" => "Type - ASC", "sql" => "ORDER BY marine_output.type ASC"), "type_desc" => array("key" => "type_desc", "value" => "Type - DESC", "sql" => "ORDER BY marine_output.type DESC"),"manufacturer_asc" => array("key" => "manufacturer_asc", "value" => "Aircraft Manufacturer - ASC", "sql" => "ORDER BY marine_output.aircraft_manufacturer ASC"), "manufacturer_desc" => array("key" => "manufacturer_desc", "value" => "Aircraft Manufacturer - DESC", "sql" => "ORDER BY marine_output.aircraft_manufacturer DESC"),"airline_name_asc" => array("key" => "airline_name_asc", "value" => "Airline Name - ASC", "sql" => "ORDER BY marine_output.airline_name ASC"), "airline_name_desc" => array("key" => "airline_name_desc", "value" => "Airline Name - DESC", "sql" => "ORDER BY marine_output.airline_name DESC"), "ident_asc" => array("key" => "ident_asc", "value" => "Ident - ASC", "sql" => "ORDER BY marine_output.ident ASC"), "ident_desc" => array("key" => "ident_desc", "value" => "Ident - DESC", "sql" => "ORDER BY marine_output.ident DESC"), "airport_departure_asc" => array("key" => "airport_departure_asc", "value" => "Departure port - ASC", "sql" => "ORDER BY marine_output.departure_port_city ASC"), "airport_departure_desc" => array("key" => "airport_departure_desc", "value" => "Departure Airport - DESC", "sql" => "ORDER BY marine_output.departure_airport_city DESC"), "airport_arrival_asc" => array("key" => "airport_arrival_asc", "value" => "Arrival Airport - ASC", "sql" => "ORDER BY marine_output.arrival_airport_city ASC"), "airport_arrival_desc" => array("key" => "airport_arrival_desc", "value" => "Arrival Airport - DESC", "sql" => "ORDER BY marine_output.arrival_airport_city DESC"), "date_asc" => array("key" => "date_asc", "value" => "Date - ASC", "sql" => "ORDER BY marine_output.date ASC"), "date_desc" => array("key" => "date_desc", "value" => "Date - DESC", "sql" => "ORDER BY marine_output.date DESC"),"distance_asc" => array("key" => "distance_asc","value" => "Distance - ASC","sql" => "ORDER BY distance ASC"),"distance_desc" => array("key" => "distance_desc","value" => "Distance - DESC","sql" => "ORDER BY distance DESC"));

@@ -638,5 +638,11 @@ class MarineImport {
 	    }
 	}
     }
+    
+    public function race_add($data) {
+        $Marine = new Marine();
+        $Marine->addRace($data['id'],$data['name'],$data['creator'],$data['desc'],$data['startdate'],$data['markers']);
+        $Marine->db = null;
+    }
 }
 ?>

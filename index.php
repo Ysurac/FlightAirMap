@@ -784,7 +784,11 @@ require_once('header.php');
 			    <option value="all"><?php echo _("All"); ?></option>
 			    <?php
 						foreach ($races as $race) {
-							print '<option value="'.$race['race_id'].'">'.$race['race_name'].'</option>';
+							if ($_COOKIE['filter_race'] == $race['race_id']) {
+								print '<option value="'.$race['race_id'].'" selected>'.$race['race_name'].'</option>';
+							} else {
+								print '<option value="'.$race['race_id'].'">'.$race['race_name'].'</option>';
+							}
 						}
 			    ?>
 			</select>

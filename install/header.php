@@ -1,4 +1,9 @@
 <?php
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+header("Cache-Control: no-store,no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+header("Pragma: no-cache");
 //gets the page file and stores it in a variable
 $file_path = pathinfo($_SERVER['SCRIPT_NAME']);
 $current_page = $file_path['filename'];
@@ -21,9 +26,6 @@ $current_page = $file_path['filename'];
 <link type="text/css" rel="stylesheet" href="../css/print.css?<?php print time(); ?>" />
 <script type="text/javascript" src="../js/jquery-2.1.3.min.js"></script>
 <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<meta http-equiv="cache-control" content="no-cache">
-<meta http-equiv="expires" content="0">
-<meta http-equiv="pragma" content="no-cache">
 <?php
 /*
 if ($facebook_meta_image != "")
@@ -48,6 +50,7 @@ if ($facebook_meta_image != "")
 <script language="JavaScript" type="text/javascript">
     function datasource_js() {
         //document.getElementById("flightaware_data").style.display = document.getElementById("flightaware").checked ? "inline" : "none" ;
+        document.getElementById("sailaway_data").style.display = document.getElementById("globalvm").checked ? "inline" : "none" ;
         //document.getElementById("sbs_data").style.display = (document.getElementById("sbs").checked || document.getElementById("aprs").checked) ? "inline" : "none" ;
         document.getElementById("optional_sbs").style.display = (document.getElementById("sbs").checked || document.getElementById("aprs").checked) ? "inline" : "none" ;
         //document.getElementById("sbs_url").style.display = (document.getElementById("ivao").checked || document.getElementById("sbs").checked || document.getElementById("vatsim").checked) ? "inline" : "none" ;

@@ -123,6 +123,7 @@ function getLiveMarineData(click)
 		    var heading = feature.properties.h;
 		    var type = feature.properties.t;
 		    var captain = feature.properties.cap;
+		    var raceid = feature.properties.rid;
 <?php
 	} else {
 ?>
@@ -159,6 +160,7 @@ function getLiveMarineData(click)
 ?>
 		    if (document.getElementById('pointident').className == callsign || document.getElementById('pointident').className == fammarine_id) {
 		    //if (document.getElementById('pointident').className == fammarine_id) {
+			    if (typeof raceid != 'undefined') update_raceLayer(raceid);
 			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?marine&color=FF0000&filename='+aircraft_shadow;
 			    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?marine&color=8D93B9&filename='+aircraft_shadow;
 		    } else {
@@ -618,6 +620,9 @@ if (archive === false) {
 	//load the function on startup
 	getLiveMarineData(0);
 }
+if (getCookie('filter_race') != '') {
+	update_raceLayer(getCookie('filter_race'));
+}
 if (archive === true) {
 	function update_archiveMarineLayer(click) {
 		$("#infobox").html('<?php echo _("Loading archive"); ?> <i class="fa fa-spinner fa-pulse fa-rw"></i>');
@@ -730,3 +735,39 @@ function loadOpenSeaMap(val) {
 		}).addTo(map);
 	}
 }
+var raceLayer;
+function update_raceLayer(raceid) {
+	if (typeof raceLayer != 'undefined') {
+		map.removeLayer(raceLayer);
+	}
+	var lineStyle = {
+	    "color": "#ff7800",
+	    "weight": 1,
+	    "opacity": 0.65
+	};
+
+	var raceLayerQuery = $.getJSON("<?php print $globalURL; ?>/races-geojson.php?race_id="+raceid,function(data) {
+		raceLayer = L.geoJson(data, {
+		onEachFeature: racePopup,
+		pointToLayer: function (feature, latlng) {
+			return L.marker(latlng, {
+				icon: L.icon({
+					iconUrl: feature.properties.icon,
+					iconSize: [24, 26],
+					iconAnchor: [2, 26]
+					//popupAnchor: [0, -28]
+				})
+			});
+		},
+		style: lineStyle
+		}).addTo(map);
+	});
+};
+function racePopup (feature, layer) {
+	var output = '';
+	output += '<div class="top">';
+	if (feature.properties.name != '') output += '&nbsp;<?php echo _("Name:"); ?> '+feature.properties.name+'<br /> ';
+	if (feature.properties.type != '') output += '&nbsp;<?php echo _("Type:"); ?> '+feature.properties.type+'<br /> ';
+	output += '</div>';
+	layer.bindPopup(output);
+};

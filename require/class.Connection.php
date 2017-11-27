@@ -4,7 +4,7 @@ require_once(dirname(__FILE__).'/settings.php');
 class Connection{
 	public $db = null;
 	public $dbs = array();
-	public $latest_schema = 54;
+	public $latest_schema = 55;
 
 	public function __construct($dbc = null,$dbname = null,$user = null,$pass = null) {
 		global $globalNoDB;

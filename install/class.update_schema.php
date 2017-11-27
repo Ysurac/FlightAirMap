@@ -2522,6 +2522,30 @@ class update_schema {
 		return $error;
 	}
 
+	private static function update_from_54() {
+		global $globalDBdriver;
+		$Connection = new Connection();
+		$error = '';
+		if ($globalDBdriver == 'mysql') {
+			if (!$Connection->tableExists('marine_race')) {
+				$error .= create_db::import_file('../db/marine_race.sql');
+			}
+			if ($error != '') return $error;
+		} else {
+			if (!$Connection->tableExists('marine_race')) {
+				$error .= create_db::import_file('../db/pgsql/marine_race.sql');
+			}
+			if ($error != '') return $error;
+		}
+		$query = "UPDATE config SET value = '55' WHERE name = 'schema_version'";
+		try {
+			$sth = $Connection->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error (update schema_version) : ".$e->getMessage()."\n";
+		}
+		return $error;
+	}
 
 
 	public static function check_version($update = false) {
@@ -2752,6 +2776,10 @@ class update_schema {
 							else return self::check_version(true);
 						} elseif ($result['value'] == '53') {
 							$error = self::update_from_53();
+							if ($error != '') return $error;
+							else return self::check_version(true);
+						} elseif ($result['value'] == '54') {
+							$error = self::update_from_54();
 							if ($error != '') return $error;
 							else return self::check_version(true);
 						} else return '';

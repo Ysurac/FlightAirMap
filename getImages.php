@@ -37,7 +37,8 @@ if (isset($_GET['tracker'])) {
 	}
 } elseif (isset($_GET['marine'])) {
 	//$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.$filename;
-	$original = dirname(__FILE__).'/images/vehicules/color/'.$filename;
+	//$original = dirname(__FILE__).'/images/vehicules/color/'.$filename;
+	$original = dirname(__FILE__).'/images/marine/'.$filename;
 } elseif (isset($_GET['satellite'])) {
 	//$original = dirname(__FILE__).DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'vehicules'.DIRECTORY_SEPARATOR.$filename;
 	$original = dirname(__FILE__).'/images/satellites/'.$filename;

@@ -31,12 +31,13 @@ if (!isset($_GET['race'])){
 	$limit_previous_1 = $limit_start - $absolute_difference;
 	$limit_previous_2 = $limit_end - $absolute_difference;
 	
-	$page_url = $globalURL.'/marine/race/'.$_GET['race'];
 	
 	$race = filter_input(INPUT_GET,'race',FILTER_SANITIZE_STRING);
+	$page_url = $globalURL.'/marine/race/'.$race;
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	$year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
 	$month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
+	$race_data = $Marine->getRace($race);
 	$filter = array();
 	if ($year != '') $filter = array_merge($filter,array('year' => $year));
 	if ($month != '') $filter = array_merge($filter,array('month' => $month));
@@ -135,7 +136,19 @@ if (!isset($_GET['race'])){
 		//print '<div><span class="label">'._("Airlines").'</span>'.$airlines.'</div>';
 		//$duration = $Marine->getRaceDurationByrace($race,$filter);
 		//if ($duration != '0') print '<div><span class="label">'._("Total races spotted duration").'</span>'.$duration.'</div>';
+		if ($race_data['race_creator'] != '') {
+			print '<div><span class="creator">'._("Creator").'</span>'.$race_data['race_creator'].'</div>';
+		}
+		if ($race_data['race_startdate'] != '') {
+			if (isset($globalTimezone)) {
+				date_default_timezone_set($globalTimezone);
+			} else date_default_timezone_set('UTC');
+			print '<div><span class="startdate">'._("Start date").'</span>'.date("r", strtotime($race_data['race_startdate'])).'</div>';
+		}
 		print '</div>';
+		if ($race_data['race_desc'] != '') {
+			print '<div class="well">'.nl2br($race_data['race_desc']).'</div>';
+		}
 	
 		//include('race-sub-menu.php');
 		print '<div class="table column">';

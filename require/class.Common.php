@@ -14,7 +14,7 @@ class Common {
 	* @param Array $headers header to submit with the form
 	* @return String the result
 	*/
-	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '',$useragent = '', $sizelimit = false, $async = false) {
+	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '',$useragent = '', $sizelimit = false, $async = false, $getheaders = false) {
 		global $globalProxy, $globalForceIPv4;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -29,6 +29,7 @@ class Common {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true); 
+		if ($getheaders) curl_setopt($ch, CURLOPT_HEADER, 1); 
 		curl_setopt($ch,CURLOPT_ENCODING , "gzip");
 		//curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
 //		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0');
@@ -39,7 +40,7 @@ class Common {
 		}
 		if ($timeout == '') curl_setopt($ch, CURLOPT_TIMEOUT, 10); 
 		else curl_setopt($ch, CURLOPT_TIMEOUT, $timeout); 
-		curl_setopt($ch, CURLOPT_HEADERFUNCTION, array('Common',"curlResponseHeaderCallback"));
+		//curl_setopt($ch, CURLOPT_HEADERFUNCTION, array('Common',"curlResponseHeaderCallback"));
 		if ($type == 'post') {
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 			if (is_array($data)) {
@@ -93,12 +94,13 @@ class Common {
 	}
 	
 	private function curlResponseHeaderCallback($ch, $headerLine) {
-		//global $cookies;
-		$cookies = array();
+		global $curl_cookies;
+		$curl_cookies = array();
 		if (preg_match('/^Set-Cookie:\s*([^;]*)/mi', $headerLine, $cookie) == 1)
-			$cookies[] = $cookie;
+			$curl_cookies[] = $cookie;
 		return strlen($headerLine); // Needed by curl
 	}
+
 
 	public static function download($url, $file, $referer = '') {
 		global $globalDebug, $globalProxy, $globalForceIPv4;

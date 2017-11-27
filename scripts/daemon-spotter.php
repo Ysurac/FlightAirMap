@@ -739,6 +739,15 @@ while ($i > 0) {
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
 	    )
 	) {
+	    if (isset($globalSailaway['email']) && $globalSailaway['email'] != '' && isset($globalSailaway['password']) && $globalSailaway['password'] != '') {
+		$authsailaway = $Common->getData('https://sailaway.world/cgi-bin/sailaway/weblogin.pl','post',array('submitlogin' => 'Login','email' => $globalSailaway['email'],'pwd' => $globalSailaway['password'], 'page' => 'http://sailaway.world/cgi-bin/sailaway/missions.pl'),'','','','','',false,false,true);
+		//echo $authsailaway;
+		preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $authsailaway, $setcookie);
+		if (isset($setcookie[1][0])) {
+		    $sailaway_authcookie = $setcookie[1][0];
+		}
+	    }
+
 	    if ($globalDebug) echo '! Download... ';
 	    for ($i =0; $i <= 1; $i++) {
 		    if ($globalDebug) echo 'Racetype: '.$i.' ';
@@ -751,10 +760,36 @@ while ($i > 0) {
 				$mission_user = $mission['usrname'];
 				$mission_name = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($mission['mistitle']));
 				if (!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race']))) {
+					if (isset($sailaway_authcookie) && $sailaway_authcookie != '') $racebuffer = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetMission.pl?misnr='.$mission['misnr'],'get','','',$sailaway_authcookie);
+					else $racebuffer = '';
 					$bufferm = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetLeaderboard.pl?misnr='.$mission['misnr']);
-				} else $bufferm = '';
+				} else {
+					$bufferm = '';
+					$racebuffer = '';
+				}
+				if ($racebuffer != '') {
+					$race_data = json_decode($racebuffer,true);
+					//print_r($race_data);
+					unset($racebuffer);
+					if (isset($race_data['mission'])) {
+					    $datar = array();
+					    $datar['id'] = $mission['misnr'];
+					    $datar['desc'] = $race_data['mission']['misdescr'];
+					    $datar['creator'] = $race_data['mission']['usrname'];
+					    $datar['name'] = $race_data['mission']['mistitle'];
+					    $datar['startdate'] = $race_data['mission']['misstartdatetime'];
+					    $markers = array();
+					    foreach ($race_data['mission']['course'] as $course) {
+						$markers[] = array('lat' => $course['miclat'],'lon' => $course['miclon'],'name' => $course['micname'],'type' => $course['mictype']);
+					    }
+					    $datar['markers'] = json_encode($markers);
+					    //print_r($datar);
+					    $MI->race_add($datar);
+					}
+				}
 				if ($bufferm != '') {
 					$mission_data = json_decode($bufferm,true);
+					unset($bufferm);
 					if (isset($mission_data['leaderboard'][0]['results'])) {
 						foreach ($mission_data['leaderboard'][0]['results'] as $sail) {
 							//print_r($sail);

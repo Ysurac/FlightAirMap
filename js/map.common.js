@@ -123,6 +123,7 @@ function racefilter(selectObj) {
     } else {
 	createCookie('filter_race',race,2);
     }
+    getLiveMarineData(0);
 }
 function alliance(selectObj) {
     var idx = selectObj.selectedIndex;

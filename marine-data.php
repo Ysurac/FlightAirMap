@@ -72,7 +72,9 @@ if (isset($spotter_item['image_thumbnail']) && $spotter_item['image_thumbnail'] 
 
 print '<div class="top">';
 if (isset($image)) {
-	print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['mmsi'].' '.$spotter_item['ident'].'" title="'.$spotter_item['mmsi'].' '.$spotter_item['ident'].' Image &copy; '.$spotter_item['image_copyright'].'"/><br />Image &copy; '.$spotter_item['image_copyright'].'</div>';
+	print '<div class="left"><img src="'.$image.'" alt="'.$spotter_item['mmsi'].' '.$spotter_item['ident'].'" title="'.$spotter_item['mmsi'].' '.$spotter_item['ident'].' Image &copy; '.$spotter_item['image_copyright'].'"/>';
+	if ($spotter_item['image_copyright'] != '') print '<br />Image &copy; '.$spotter_item['image_copyright'];
+	print '</div>';
 }
 //print '<div class="right"><div class="callsign-details"><div class="callsign"><a href="'.$globalURL.'/redirect/'.$spotter_item['famtrackid'].'" target="_blank">'.$spotter_item['ident'].'</a></div>';
 print '<div class="right"><div class="callsign-details"><div class="callsign">'.$spotter_item['ident'].'</div>';
@@ -125,6 +127,16 @@ if (isset($spotter_item['over_country']) && $spotter_item['over_country'] != '')
 if (isset($spotter_item['arrival_port_name']) && $spotter_item['arrival_port_name'] != '') {
 	print '<div><span>'._("Destination").'</span>';
 	print $spotter_item['arrival_port_name'];
+	print '</div>';
+}
+if (isset($spotter_item['race_rank']) && $spotter_item['race_rank'] != '') {
+	print '<div><span>'._("Rank").'</span>';
+	print $spotter_item['race_rank'];
+	print '</div>';
+}
+if (isset($spotter_item['distance']) && $spotter_item['distance'] != '') {
+	print '<div><span>'._("Distance").'</span>';
+	print $spotter_item['distance'];
 	print '</div>';
 }
 if (isset($spotter_item['source_name']) && $spotter_item['source_name'] != '') {

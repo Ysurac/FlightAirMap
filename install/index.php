@@ -487,8 +487,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<b>Virtual marine</b>
 				<p>
-				<input type="checkbox" name="globalvm" id="vm" value="vm" <?php if (isset($globalVM) && $globalVM) { ?>checked="checked" <?php } ?>/>
-				<label for="va">Virtual Marine</label>
+				<input type="checkbox" name="globalvm" id="globalvm" value="vm" onClick="datasource_js()" <?php if (isset($globalVM) && $globalVM) { ?>checked="checked" <?php } ?>/>
+				<label for="globalvm">Virtual Marine</label>
 			</p>
 
 <!--
@@ -503,6 +503,17 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</p>
 			</div>
 -->
+			<div id="sailaway_data">
+				<p>
+					<label for="sailawayemail">Sailaway email</label>
+					<input type="text" name="sailawayemail" id="sailawayemail" value="<?php if (isset($globalSailaway['email'])) print $globalSailaway['email']; ?>" />
+				</p>
+				<p>
+					<label for="sailawaypassword">Sailaway password</label>
+					<input type="text" name="sailawaypassword" id="sailawaypassword" value="<?php if (isset($globalSailaway['password'])) print $globalSailaway['password']; ?>" />
+				</p>
+			</div>
+
 <!--			<div id="sbs_data">
 -->
 				<fieldset id="sources">
@@ -1246,6 +1257,10 @@ if (isset($_POST['dbtype'])) {
 	$flightawareusername = filter_input(INPUT_POST,'flightawareusername',FILTER_SANITIZE_STRING);
 	$flightawarepassword = filter_input(INPUT_POST,'flightawarepassword',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalFlightAwareUsername' => $flightawareusername,'globalFlightAwarePassword' => $flightawarepassword));
+	
+	$sailawayemail = filter_input(INPUT_POST,'sailawayemail',FILTER_SANITIZE_STRING);
+	$sailawaypass = filter_input(INPUT_POST,'sailawaypassword',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalSailaway' => array('email' => $sailawayemail,'password' => $sailawaypass)));
 	
 	$source_name = $_POST['source_name'];
 	$source_latitude = $_POST['source_latitude'];
