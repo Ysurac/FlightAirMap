@@ -136,17 +136,17 @@ if (!isset($_GET['race'])){
 		//print '<div><span class="label">'._("Airlines").'</span>'.$airlines.'</div>';
 		//$duration = $Marine->getRaceDurationByrace($race,$filter);
 		//if ($duration != '0') print '<div><span class="label">'._("Total races spotted duration").'</span>'.$duration.'</div>';
-		if ($race_data['race_creator'] != '') {
+		if (isset($race_data['race_creator']) && $race_data['race_creator'] != '') {
 			print '<div><span class="creator">'._("Creator").'</span>'.$race_data['race_creator'].'</div>';
 		}
-		if ($race_data['race_startdate'] != '') {
+		if (isset($race_data['race_startdate']) && $race_data['race_startdate'] != '') {
 			if (isset($globalTimezone)) {
 				date_default_timezone_set($globalTimezone);
 			} else date_default_timezone_set('UTC');
 			print '<div><span class="startdate">'._("Start date").'</span>'.date("r", strtotime($race_data['race_startdate'])).'</div>';
 		}
 		print '</div>';
-		if ($race_data['race_desc'] != '') {
+		if (isset($race_data['race_desc']) && $race_data['race_desc'] != '') {
 			print '<div class="well">'.nl2br($race_data['race_desc']).'</div>';
 		}
 	
