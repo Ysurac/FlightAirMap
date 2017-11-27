@@ -238,7 +238,7 @@ class MarineLive {
 				$query .= "ORDER BY fammarine_id, date";
 				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
 			} else {
-				$query  = "SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name, marine_archive.race_id 
+				$query  = "SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name, marine_live.race_id 
 				    FROM marine_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= marine_live.date ";
 				if ($usecoord) $query .= "AND (marine_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND marine_live.longitude BETWEEN ".$minlong." AND ".$maxlong.") ";
 				if ($id != '') $query .= "OR marine_live.fammarine_id = :id ";
