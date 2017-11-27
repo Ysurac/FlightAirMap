@@ -24,12 +24,12 @@ if (!empty($race_array))
 		$output .= '"properties": {';
 		$output .= '"name": "'.$marker['name'].'",';
 		$output .= '"type": "'.$marker['type'].'",';
-		if ($i == 0) {
+		if ($i == 0 || $i == 1) {
 			$output .= '"icon": "images/tsk/tsk-start.png",';
-		} elseif ($i == $f) {
+		} elseif ($i == $f-1 || $i == $f-2) {
 			$output .= '"icon": "images/tsk/tsk-finish.png",';
 		} else {
-			$output .= '"icon": "images/tsk/number_'.$i.'.png",';
+			$output .= '"icon": "images/lateraltonne.png",';
 		}
 		$output .= '"stroke": "#f0f0f0",';
 		$output .= '"stroke-width": 2';
