@@ -2527,14 +2527,10 @@ class update_schema {
 		$Connection = new Connection();
 		$error = '';
 		if ($globalDBdriver == 'mysql') {
-			if (!$Connection->tableExists('marine_race')) {
-				$error .= create_db::import_file('../db/marine_race.sql');
-			}
+			$error .= create_db::import_file('../db/marine_race.sql');
 			if ($error != '') return $error;
 		} else {
-			if (!$Connection->tableExists('marine_race')) {
-				$error .= create_db::import_file('../db/pgsql/marine_race.sql');
-			}
+			$error .= create_db::import_file('../db/pgsql/marine_race.sql');
 			if ($error != '') return $error;
 		}
 		$query = "UPDATE config SET value = '55' WHERE name = 'schema_version'";
