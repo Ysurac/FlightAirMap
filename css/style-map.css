@@ -201,6 +201,39 @@ body.page-index .leaflet-popup-content-wrapper .right .callsign-details{
   -moz-border-radius-topright: 12px;
   border-top-right-radius: 12px;
 }
+body.page-index .leaflet-popup-content-wrapper .title{
+  background-color:#1a3151;
+  color:#fff;
+  padding:10px;
+  -webkit-border-top-right-radius: 12px;
+  -moz-border-radius-topright: 12px;
+  border-top-right-radius: 12px;
+  -webkit-border-top-left-radius: 12px;
+  -moz-border-radius-topleft: 12px;
+  border-top-left-radius: 12px;
+}
+body.page-index .leaflet-popup-content-wrapper .title .title-details a{
+  font-size:1.5em;
+  color:#fff;
+}
+
+body.page-index .leaflet-popup-content-wrapper .name{
+  padding:4px;
+}
+body.page-index .leaflet-popup-content-wrapper .name span{
+    display:block;
+    text-transform: uppercase;
+    color:#aaa;
+}
+body.page-index .leaflet-popup-content-wrapper .type{
+  padding:4px;
+}
+body.page-index .leaflet-popup-content-wrapper .type span{
+    display:block;
+    text-transform: uppercase;
+    color:#aaa;
+}
+
 body.page-index .leaflet-popup-content-wrapper .acars{
   padding:4px;
 }

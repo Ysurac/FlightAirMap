@@ -22,12 +22,16 @@ if (!empty($race_array))
 		date_default_timezone_set('UTC');
 		$output .= '{"type": "Feature",';
 		$output .= '"properties": {';
+		$output .= '"raceid": "'.$race_array['race_id'].'",';
+		$output .= '"race": "'.$race_array['race_name'].'",';
 		$output .= '"name": "'.$marker['name'].'",';
 		$output .= '"type": "'.$marker['type'].'",';
 		if ($i == 0 || $i == 1) {
 			$output .= '"icon": "images/tsk/tsk-start.png",';
 		} elseif ($i == $f-1 || $i == $f-2) {
 			$output .= '"icon": "images/tsk/tsk-finish.png",';
+		} elseif ($marker['type'] == 4) {
+			$output .= '"icon": "images/kardinalstonne.png",';
 		} else {
 			$output .= '"icon": "images/lateraltonne.png",';
 		}

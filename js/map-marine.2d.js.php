@@ -160,7 +160,7 @@ function getLiveMarineData(click)
 ?>
 		    if (document.getElementById('pointident').className == callsign || document.getElementById('pointident').className == fammarine_id) {
 		    //if (document.getElementById('pointident').className == fammarine_id) {
-			    if (typeof raceid != 'undefined') update_raceLayer(raceid);
+			    if (typeof raceid != 'undefined' && raceid != '') update_raceLayer(raceid);
 			    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?marine&color=FF0000&filename='+aircraft_shadow;
 			    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?marine&color=8D93B9&filename='+aircraft_shadow;
 		    } else {
@@ -766,8 +766,33 @@ function update_raceLayer(raceid) {
 function racePopup (feature, layer) {
 	var output = '';
 	output += '<div class="top">';
-	if (feature.properties.name != '') output += '&nbsp;<?php echo _("Name:"); ?> '+feature.properties.name+'<br /> ';
-	if (feature.properties.type != '') output += '&nbsp;<?php echo _("Type:"); ?> '+feature.properties.type+'<br /> ';
+	if (feature.properties.race != '') {
+		output += '<div class="title">';
+		output += '<div class="title-details"><a href="<?php print $globalURL; ?>/marine/race/'+feature.properties.raceid+'" target="_blank">'+feature.properties.race+'</a></div>';
+		output += '</div>';
+	}
+	if (feature.properties.name != '') {
+		output += '<div class="name"><span><?php echo _("Name:"); ?></span>';
+		output += feature.properties.name;
+		output += '</div>';
+	}
+	if (feature.properties.type != '') {
+		output += '<div class="type"><span><?php echo _("Type:"); ?> </span>';
+		if (feature.properties.type == 1) {
+			output += '<?php echo _("port startline buoy"); ?>';
+		} else if (feature.properties.type == 1) {
+			output += '<?php echo _("starboard startline buoy"); ?>';
+		} else if (feature.properties.type == 3) {
+			output += '<?php echo _("buoy starboard round (clockwise)"); ?>';
+		} else if (feature.properties.type == 4) {
+			output += '<?php echo _("buoy port round (counter clockwise)"); ?>';
+		} else if (feature.properties.type == 7) {
+			output += '<?php echo _("port finishline buoy"); ?>';
+		} else if (feature.properties.type == 8) {
+			output += '<?php echo _("starboard finishline buoy"); ?>';
+		}
+		output += '</div>';
+	}
 	output += '</div>';
 	layer.bindPopup(output);
 };
