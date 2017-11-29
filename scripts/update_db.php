@@ -7,7 +7,7 @@
 $runningUpdateScript = TRUE;
 require_once(dirname(__FILE__).'/../require/settings.php');
 // Check if script is not already running... (dirty)
-if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN' && $globalDaemon === TRUE) {
+if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN' && (!isset($globalDisableUpdateCheck) || $globalDisableUpdateCheck === FALSE)) {
 	if(function_exists('exec')) {
 		exec("ps ux", $output, $result);
 		$j = 0;
