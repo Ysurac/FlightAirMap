@@ -4,9 +4,10 @@
 * This script is used to update databases with external data and archive old data
 * Should be run as cronjob no more than every 2 weeks if NOTAM is not activated, once a day if NOTAM is activated and every hour if METAR is activated.
 */
-
+$runningUpdateScript = TRUE;
+require_once(dirname(__FILE__).'/../require/settings.php');
 // Check if script is not already running... (dirty)
-if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
+if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN' && $globalDaemon === TRUE) {
 	if(function_exists('exec')) {
 		exec("ps ux", $output, $result);
 		$j = 0;
@@ -17,8 +18,6 @@ if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
 		}
 	}
 }
-$runningUpdateScript = TRUE;
-require_once(dirname(__FILE__).'/../require/settings.php');
 require(dirname(__FILE__).'/../install/class.update_db.php');
 $update_db = new update_db();
 
