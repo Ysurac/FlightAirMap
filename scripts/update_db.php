@@ -7,12 +7,14 @@
 
 // Check if script is not already running... (dirty)
 if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
-	exec("ps ux", $output, $result);
-	$j = 0;
-	foreach ($output as $line) if(strpos($line, dirname(__FILE__)."/update_db.php") && !strpos($line, "sh ") && !strpos($line, "sudo ")) $j++;
-	if ($j > 1) {
-		echo "Script is already runnning...";
-		die();
+	if(function_exists('exec')) {
+		exec("ps ux", $output, $result);
+		$j = 0;
+		foreach ($output as $line) if(strpos($line, dirname(__FILE__)."/update_db.php") && !strpos($line, "sh ") && !strpos($line, "sudo ")) $j++;
+		if ($j > 1) {
+			echo "Script is already runnning...";
+			die();
+		}
 	}
 }
 $runningUpdateScript = TRUE;
