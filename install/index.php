@@ -1045,6 +1045,12 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</div>
 			</p>
 			<br />
+			<p>
+				<label for="updatecheck">Disable update started check</label>
+				<input type="checkbox" name="updatecheck" id="updatecheck" value="updatecheck"<?php if (isset($globalDisableUpdateCheck) && $globalDisableUpdateCheck) { ?> checked="checked"<?php } ?> />
+				<p class="help-block">Disable check if <i>scripts/update_db.php</i> is already running</p>
+			</p>
+			<br />
 <!--
 			<p>
 				<label for="fork">Allow processes fork</label>
@@ -1252,6 +1258,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalACARS' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalACARS' => 'FALSE'));
+	}
+	$updatecheck = filter_input(INPUT_POST,'updatecheck',FILTER_SANITIZE_STRING);
+	if ($updatecheck == 'updatecheck') {
+		$settings = array_merge($settings,array('globalDisableUpdateCheck' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalDisableUpdateCheck' => 'FALSE'));
 	}
 
 	$flightawareusername = filter_input(INPUT_POST,'flightawareusername',FILTER_SANITIZE_STRING);
