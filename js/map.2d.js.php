@@ -504,6 +504,11 @@ function genLayerPopup (feature, layer) {
 	output += '</div>';
 	layer.bindPopup(output);
 };
+if (getCookie('weather_wind') == 'true') loadWind(getCookie('weather_wind'));
+
+if (getCookie('weather_wave') == 'true') loadWave(getCookie('weather_wave'));
+
+
 });
 
 //zooms in the map
@@ -851,8 +856,9 @@ function archivePlay() {
 	console.log('Play');
 }
 
+
+
 var windLayer;
-if (getCookie('weather_wind') == 'true') loadWind(getCookie('weather_wind'));
 function clickWind(cb) {
 	loadWind(cb.checked);
 }
@@ -872,6 +878,7 @@ function loadWind(val) {
 		}
 
 		//$.getJSON('data/winds.json', function (data) {
+		//$.getJSON('data/waves.json', function (data) {
 		$.getJSON('https://data.flightairmap.com/data/weather/winds.json', function (data) {
 			windLayer = L.velocityLayer({
 			    displayValues: true,
@@ -888,3 +895,26 @@ function loadWind(val) {
 		});
 	}
 }
+
+var waveLayer;
+function clickWave(cb) {
+	loadWave(cb.checked);
+}
+function loadWave(val) {
+	var wave = getCookie('weather_wave');
+	if (wave == 'true' && val != 'true') {
+		map.removeLayer(waveLayer);
+		delCookie('weather_wave');
+	} else {
+		createCookie('weather_wave',val,999);
+		waveLayer = L.tileLayer.wms('http://thredds.ucar.edu/thredds/wms/grib/NCEP/WW3/Global/Best?', {
+		    layers: 'Significant_height_of_combined_wind_waves_and_swell_surface',
+		    format: 'image/png',
+		    opacity: 62,
+		    transparent: true,
+		    colorscalerange: '0.28%2C5.53',
+		}).addTo(map);
+	}
+}
+
+
