@@ -23,7 +23,7 @@ $(".showdetails").on("click",".close",function(){
 function displayMarineData(data) {
 	var dsn;
 	var marinecnt = 0;
-	var datatablemarine = '';
+	var datatablemarine = [];
 	for (var i =0; i < viewer.dataSources.length; i++) {
 		if (viewer.dataSources.get(i).name == 'marine') {
 			dsn = i;
@@ -48,14 +48,14 @@ function displayMarineData(data) {
 			var lastupdatet = entity.position._property._times[entity.position._property._times.length-1].toString();
 			var lastupdatedate = new moment.tz(lastupdatet,moment.tz.guess()).format("HH:mm:ss");
 			if (globalVM) {
-				console.log('globalVM');
-				var rank = entity.properties.rank;
+				var rank = parseInt(entity.properties.rank);
 				var captain = entity.properties.captain;
 				var race = entity.properties.race;
-				datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+rank+'</td><td>'+race+'</td><td>'+captain+'</td><td>'+callsign+'</td><td>'+marine_type+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
-				console.log(datatable);
+				//datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+rank+'</td><td>'+race+'</td><td>'+captain+'</td><td>'+callsign+'</td><td>'+marine_type+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
+				datatablemarine.push({id:id,rank: rank,race: race,captain: captain,callsign: callsign,marine_type:marine_type,latitude:Cesium.Math.toDegrees(coord.latitude),longitude: Cesium.Math.toDegrees(coord.longitude),lastupdate:lastupdatedate});
 			} else {
-				datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+callsign+'</td><td>'+marine_type+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
+				datatablemarine.push({id:id,callsign: callsign,marine_type:marine_type,latitude:Cesium.Math.toDegrees(coord.latitude),longitude: Cesium.Math.toDegrees(coord.longitude),lastupdate:lastupdatedate});
+				//datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+callsign+'</td><td>'+marine_type+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
 			}
 		}
 		
@@ -107,11 +107,22 @@ function displayMarineData(data) {
 	
 	if (datatable != '') {
 		$('#datatablemarine').css('height','20em');
-		//$('#datatablemarine').html('<div class="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th>Callsign</th><th>Type</th><th>Latitude</th><th>Longitude</th><th>Last update</th></tr></thead><tbody>'+datatable+'</tbody></table></div>');
+		var datatablemarinetxt = '';
 		if (globalVM) {
-			$('#datatablemarine').html('<div class="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th><?php echo _("Rank"); ?></th><th><?php echo _("Race"); ?></th><th><?php echo _("Captain"); ?></th><th><?php echo _("Callsign"); ?></th><th><?php echo _("Type"); ?><th><?php echo _("Latitude"); ?></th><th><?php echo _("Longitude"); ?></th><th><?php echo _("Last update"); ?></th></tr></thead><tbody>'+datatablemarine+'</tbody></table></div>');
+			var index,len,dt;
+			datatablemarine.sort(dynamicSortMultiple("race","rank"));
+			for (index = 0, len = datatablemarine.length; index < len; ++index) {
+				dt = datatablemarine[index];
+				datatablemarinetxt += '<tr class="table-row" data-id="'+dt.id+'" data-latitude="'+dt.latitude+'" data-longitude="'+dt.longitude+'"><td>'+dt.rank+'</td><td>'+dt.race+'</td><td>'+dt.captain+'</td><td>'+dt.callsign+'</td><td>'+dt.marine_type+'</td><td>'+dt.latitude+'</td><td>'+dt.longitude+'</td><td>'+dt.lastupdate+'</td></tr>';
+			}
+			$('#datatablemarine').html('<div class="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th><?php echo _("Rank"); ?></th><th><?php echo _("Race"); ?></th><th><?php echo _("Captain"); ?></th><th><?php echo _("Callsign"); ?></th><th><?php echo _("Type"); ?><th><?php echo _("Latitude"); ?></th><th><?php echo _("Longitude"); ?></th><th><?php echo _("Last update"); ?></th></tr></thead><tbody>'+datatablemarinetxt+'</tbody></table></div>');
 		} else {
-			$('#datatablemarine').html('<div class="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th><?php echo _("Callsign"); ?></th><th><?php echo _("Type"); ?><th><?php echo _("Latitude"); ?></th><th><?php echo _("Longitude"); ?></th><th><?php echo _("Last update"); ?></th></tr></thead><tbody>'+datatablemarine+'</tbody></table></div>');
+			var index,len,dt;
+			for (index = 0, len = datatablemarine.length; index < len; ++index) {
+				dt = datatablemarine[index];
+				datatablemarinetxt += '<tr class="table-row" data-id="'+dt.id+'" data-latitude="'+dt.latitude+'" data-longitude="'+dt.longitude+'"><td>'+dt.callsign+'</td><td>'+dt.marine_type+'</td><td>'+dt.latitude+'</td><td>'+dt.longitude+'</td><td>'+dt.lastupdate+'</td></tr>';
+			}
+			$('#datatablemarine').html('<div class="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th><?php echo _("Callsign"); ?></th><th><?php echo _("Type"); ?><th><?php echo _("Latitude"); ?></th><th><?php echo _("Longitude"); ?></th><th><?php echo _("Last update"); ?></th></tr></thead><tbody>'+datatablemarinetxt+'</tbody></table></div>');
 		}
 		$(".table-row").click(function () {
 			$("#pointident").attr('class',$(this).data('id'));
