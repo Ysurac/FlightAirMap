@@ -399,6 +399,9 @@ if (!empty($spotter_array) && is_array($spotter_array))
 				$output.= '"type": "tracker"';
 			} elseif ($marine) {
 				if (isset($spotter_item['type'])) $output .= '"marine_type": "'.$spotter_item['type'].'",';
+				if (isset($spotter_item['captain_name'])) $output .= '"captain": '.json_encode($spotter_item['captain_name']).',';
+				if (isset($spotter_item['race_name'])) $output .= '"race": '.json_encode($spotter_item['race_name']).',';
+				if (isset($spotter_item['race_rank'])) $output .= '"rank": "'.$spotter_item['race_rank'].'",';
 				$output.= '"type": "marine"';
 			} else {
 				if ($one3dmodel === false && isset($globalMap3DLiveries) && $globalMap3DLiveries) {
