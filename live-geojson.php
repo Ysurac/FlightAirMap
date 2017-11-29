@@ -548,6 +548,12 @@ $output = '{';
 						if (isset($spotter_item['race_id']) && $spotter_item['race_id'] != '') {
 							$output .= '"rid": '.$spotter_item['race_id'].',';
 						}
+						if (isset($spotter_item['race_rank']) && $spotter_item['race_rank'] != '') {
+							$output .= '"rrk": '.$spotter_item['race_rank'].',';
+						}
+						if (isset($spotter_item['race_name']) && $spotter_item['race_name'] != '') {
+							$output .= '"rname": '.json_encode($spotter_item['race_name']).',';
+						}
 						if (isset($spotter_item['pilot_id'])) {
 							$output .= '"pilot_id": "'.$spotter_item['pilot_id'].'",';
 						}

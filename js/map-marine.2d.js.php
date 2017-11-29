@@ -11,8 +11,16 @@ if (isset($_COOKIE['MarineIconColor'])) $MarineIconColor = $_COOKIE['MarineIconC
 elseif (isset($globalMarineIconColor)) $MarineIconColor = $globalMarineIconColor;
 else $MarineIconColor = '1a3151';
 
+if (isset($globalVM) && $globalVM) {
 ?>
-
+var globalVM = true;
+<?php
+} else {
+?>
+var globalVM = false;
+<?php
+}
+?>
 
 //var map;
 var geojsonMarineLayer;
@@ -368,7 +376,14 @@ function getLiveMarineData(click)
 ?>
 		if (type != 'history') {
 			var lastupdatedate = new moment.tz(lastupdate*1000,moment.tz.guess()).format("HH:mm:ss");
-			datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+type+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
+			if (globalVM) {
+				var rank = feature.properties.rrk;
+				var captain = feature.properties.cap;
+				var race = feature.properties.rname;
+				datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+rank+'</td><td>'+race+'</td><td>'+captain+'</td><td>'+callsign+'</td><td>'+type+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
+			} else {
+				datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+type+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
+			}
 		}
                 var output = '';
 		
@@ -578,7 +593,11 @@ function getLiveMarineData(click)
 			});
 			if (datatablemarine != '') {
 				$('#datatablemarine').css('height','20em');
-				$('#datatablemarine').html('<div class="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th>Callsign</th><th>Type<th>Latitude</th><th>Longitude</th><th>Last update</th></tr></thead><tbody>'+datatablemarine+'</tbody></table></div>');
+				if (globalVM) {
+					$('#datatablemarine').html('<div class="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th><?php echo _("Rank"); ?></th><th><?php echo _("Race"); ?></th><th><?php echo _("Captain"); ?></th><th><?php echo _("Callsign"); ?></th><th><?php echo _("Type"); ?><th><?php echo _("Latitude"); ?></th><th><?php echo _("Longitude"); ?></th><th><?php echo _("Last update"); ?></th></tr></thead><tbody>'+datatablemarine+'</tbody></table></div>');
+				} else {
+					$('#datatablemarine').html('<div class="datatabledata"><table id="datatabledatatable" class="table table-striped"><thead><tr><th><?php echo _("Callsign"); ?></th><th><?php echo _("Type"); ?><th><?php echo _("Latitude"); ?></th><th><?php echo _("Longitude"); ?></th><th><?php echo _("Last update"); ?></th></tr></thead><tbody>'+datatablemarine+'</tbody></table></div>');
+				}
 				$(".table-row").click(function () {
 					$("#pointident").attr('class',$(this).data('id'));
 					$("#pointtype").attr('class','marine');
