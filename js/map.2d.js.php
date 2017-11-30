@@ -877,8 +877,7 @@ function loadWind(val) {
 			var windspeedunit = 'm/s';
 		}
 
-		//$.getJSON('data/winds.json', function (data) {
-		//$.getJSON('data/waves.json', function (data) {
+		//$.getJSON('data/wwinds.json', function (data) {
 		$.getJSON('https://data.flightairmap.com/data/weather/winds.json', function (data) {
 			windLayer = L.velocityLayer({
 			    displayValues: true,
@@ -895,7 +894,6 @@ function loadWind(val) {
 		});
 	}
 }
-
 var waveLayer;
 function clickWave(cb) {
 	loadWave(cb.checked);
@@ -907,7 +905,45 @@ function loadWave(val) {
 		delCookie('weather_wave');
 	} else {
 		createCookie('weather_wave',val,999);
-		waveLayer = L.tileLayer.wms('http://thredds.ucar.edu/thredds/wms/grib/NCEP/WW3/Global/Best?', {
+		if (unitspeedvalue == 'knots') {
+			var wavespeedunit = 'kt';
+		} else if (unitspeedvalue == 'kmh') {
+			var wavespeedunit = 'k/h';
+		} else {
+			var wavespeedunit = 'm/s';
+		}
+
+		//$.getJSON('data/waves.json', function (data) {
+		$.getJSON('https://data.flightairmap.com/data/weather/waves.json', function (data) {
+			windLayer = L.velocityLayer({
+			    displayValues: true,
+			    displayOptions: {
+				velocityType: 'Wave',
+				displayPosition: 'bottomleft',
+				displayEmptyString: 'No wave data',
+				speedUnit: wavespeedunit
+			    },
+			    data: data,
+			    maxVelocity: 40,
+			    lineWidth: 6,
+			    velocityScale: 0.03
+			}).addTo(map);
+		});
+	}
+}
+
+var waveBackLayer;
+function clickBackWave(cb) {
+	loadBackWave(cb.checked);
+}
+function loadBackWave(val) {
+	var wave = getCookie('weather_backwave');
+	if (wave == 'true' && val != 'true') {
+		map.removeLayer(waveBackLayer);
+		delCookie('weather_backwave');
+	} else {
+		createCookie('weather_backwave',val,999);
+		waveBackLayer = L.tileLayer.wms('http://thredds.ucar.edu/thredds/wms/grib/NCEP/WW3/Global/Best?', {
 		    layers: 'Significant_height_of_combined_wind_waves_and_swell_surface',
 		    format: 'image/png',
 		    opacity: 62,

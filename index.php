@@ -137,6 +137,7 @@ require_once('header.php');
 			
 				<li><div class="checkbox"><label><input type="checkbox" name="wind" value="1" onclick="clickWind(this);" <?php if (isset($_COOKIE['weather_wind']) && $_COOKIE['weather_wind'] == 'true') print 'checked'; ?> /><?php echo _("Weather Winds"); ?></label></div></li>
 				<li><div class="checkbox"><label><input type="checkbox" name="wave" value="1" onclick="clickWave(this);" <?php if (isset($_COOKIE['weather_wave']) && $_COOKIE['weather_wave'] == 'true') print 'checked'; ?> /><?php echo _("Weather Waves"); ?></label></div></li>
+				<!-- <li><div class="checkbox"><label><input type="checkbox" name="backwave" value="1" onclick="clickBackWave(this);" <?php if (isset($_COOKIE['weather_backwave']) && $_COOKIE['weather_backwave'] == 'true') print 'checked'; ?> /><?php echo _("Weather Waves height background"); ?></label></div></li> -->
 			
 <?php
 		if (isset($globalOpenWeatherMapKey) && $globalOpenWeatherMapKey != '') {

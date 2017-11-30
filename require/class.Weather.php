@@ -87,6 +87,32 @@ class Weather {
 		$Common->download($url,$windpathsrc);
 		system($grib2json.' --data --output '.$windpathdest.' --names --compact '.$windpathsrc);
 	}
+
+	public function oscar_wave() {
+		global $globalWavesPath;
+		if (isset($globalWavesPath) && $globalWavesPath != '') {
+			$grib2json = $globalWavesPath['grib2json'];
+			$wavepathsrc = $globalWavesPath['source'];
+			$wavepathdest = $globalWavesPath['destination'];
+		} else {
+			$grib2json = dirname(__FILE__).'/libs/grib2json/bin/grib2json';
+			$wavepathsrc = dirname(__FILE__).'/../data/waves.nc';
+			$wavepathdest = dirname(__FILE__).'/../data/waves.json';
+		}
+		
+		$url = 'https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-OSCAR-03D01&itemsPerPage=1&sortBy=timeDesc&format=atom&pretty=false';
+		$Common = new Common();
+		$oscarlst = $Common->getData($url);
+		$oscarlst_xml = json_decode(json_encode(simplexml_load_string($oscarlst)),true);
+		foreach ($oscarlst_xml['entry']['link'] as $oscarlnk) {
+			if ($oscarlnk['@attributes']['type'] == 'application/x-netcdf') {
+				$Common->download($oscarlnk['@attributes']['href'],$wavepathsrc.'.gz');
+				break;
+			}
+		}
+		$Common->gunzip($wavepathsrc.'.gz');
+		system($grib2json.' --data --output '.$wavepathdest.' --names --compact '.$wavepathsrc);
+	}
 }
 /*
 require_once('class.METAR.php');
@@ -108,5 +134,9 @@ print_r($Weather->generateRandomPoint('46.3870','5.2941','2000'));
 /*
 $Weather = new Weather();
 $Weather->nomad_wind();
+*/
+/*
+$Weather = new Weather();
+$Weather->oscar_wave();
 */
 ?>
