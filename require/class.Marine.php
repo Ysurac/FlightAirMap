@@ -149,7 +149,7 @@ class Marine{
 			}
 			if (isset($row['fammarine_id'])) $temp_array['fammarine_id'] = $row['fammarine_id'];
 			if (isset($row['mmsi'])) $temp_array['mmsi'] = $row['mmsi'];
-			if (isset($row['type'])) $temp_array['type'] = $row['type'];
+			if (isset($row['type'])) $temp_array['type'] = html_entity_decode($row['type'],ENT_QUOTES);
 			if (isset($row['type_id'])) $temp_array['type_id'] = $row['type_id'];
 			if (isset($row['status'])) $temp_array['status'] = $row['status'];
 			if (isset($row['status_id'])) $temp_array['status_id'] = $row['status_id'];
@@ -2260,7 +2260,7 @@ q	*
 		$temp_array = array();
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
 		{
-			$temp_array['marine_type'] = $row['marine_type'];
+			$temp_array['marine_type'] = html_entity_decode($row['marine_type'],ENT_QUOTES);
 			$temp_array['marine_type_id'] = $row['marine_type_id'];
 			$temp_array['marine_type_count'] = $row['marine_type_count'];
 			$marine_array[] = $temp_array;
