@@ -56,6 +56,7 @@ require_once('header.php');
 	<li>Sidebar v2 <a href="https://github.com/Turbo87/sidebar-v2">https://github.com/Turbo87/sidebar-v2</a></li>
 	<li><a href="http://www.adsbhub.net/">ADSBHUB.net</a> to share ADS-B data</li>
 	<li><a href="http://www.cesiumjs.org">Cesium</a> used to display flights on a WebGL virtual globe</li>
+	<li>Wind layer use <a href="http://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p50.pl">NOAA GFS</a> updated every 6 hours and Ocean surface currents use <a href="https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-OSCAR-03D01&apidoc">OSCAR third degree</a></li>
     </ul>
 
     <h3>Data License</h3>
