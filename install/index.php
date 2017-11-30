@@ -1144,26 +1144,47 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<input type="checkbox" name="tsk" id="tsk" value="tsk"<?php if (isset($globalTSK) && $globalTSK) { ?> checked="checked"<?php } ?> />
 				<p class="help-block">tsk file can be loaded using http://yourflightairmap/tsk=http://yourtskfile</p>
 			</p>
-			<br />
-			<p>
 			<?php 
 			    if (extension_loaded('gd') && function_exists('gd_info')) {
 			?>
+			<br />
+			<p>
 				<label for="aircrafticoncolor">Color of aircraft icon on map</label>
 				<input type="color" name="aircrafticoncolor" id="aircrafticoncolor" value="#<?php if (isset($globalAircraftIconColor)) echo $globalAircraftIconColor; else echo '1a3151'; ?>" />
+			</p>
+			<br />
+			<p>
+				<label for="marineiconcolor">Color of marine icon on map</label>
+				<input type="color" name="marineiconcolor" id="marineiconcolor" value="#<?php if (isset($globalMarineIconColor)) echo $globalMarineIconColor; else echo '1a3151'; ?>" />
+			</p>
+			<br />
+			<p>
+				<label for="trackericoncolor">Color of tracker icon on map</label>
+				<input type="color" name="trackericoncolor" id="trackericoncolor" value="#<?php if (isset($globalTrackerIconColor)) echo $globalTrackerIconColor; else echo '1a3151'; ?>" />
+			</p>
+			<br />
+			<p>
+				<label for="satelliteiconcolor">Color of satellite icon on map</label>
+				<input type="color" name="satelliteiconcolor" id="satelliteiconcolor" value="#<?php if (isset($globalSatelliteIconColor)) echo $globalSatelliteIconColor; else echo '1a3151'; ?>" />
+			</p>
 			<?php
 				if (!is_writable('../cache')) {
 			?>
+			<br />
+			<p>
 				<b>The directory cache is not writable, aircraft icon will not be cached</b>
+			</p>
 			<?php
 				}
 			    } else {
 			?>
+			<br />
+			<p>
 				<b>PHP GD is not installed, you can't change color of aircraft icon on map</b>
+			</p>
 			<?php
 			    }
 			?>
-			</p>
 			<br />
 			<p>
 				<label for="airportzoom">Zoom level minimum to see airports icons</label>
@@ -1654,6 +1675,18 @@ if (isset($_POST['dbtype'])) {
 	if (isset($_POST['aircrafticoncolor'])) {
 		$aircrafticoncolor = filter_input(INPUT_POST,'aircrafticoncolor',FILTER_SANITIZE_STRING);
 		$settings = array_merge($settings,array('globalAircraftIconColor' => substr($aircrafticoncolor,1)));
+	}
+	if (isset($_POST['marineiconcolor'])) {
+		$marineiconcolor = filter_input(INPUT_POST,'marineiconcolor',FILTER_SANITIZE_STRING);
+		$settings = array_merge($settings,array('globalMarineIconColor' => substr($marineiconcolor,1)));
+	}
+	if (isset($_POST['trackericoncolor'])) {
+		$trackericoncolor = filter_input(INPUT_POST,'trackericoncolor',FILTER_SANITIZE_STRING);
+		$settings = array_merge($settings,array('globalTrackerIconColor' => substr($trackericoncolor,1)));
+	}
+	if (isset($_POST['satelliteiconcolor'])) {
+		$satelliteiconcolor = filter_input(INPUT_POST,'satelliteiconcolor',FILTER_SANITIZE_STRING);
+		$settings = array_merge($settings,array('globalSatelliteIconColor' => substr($satelliteiconcolor,1)));
 	}
 
 	$airportzoom = filter_input(INPUT_POST,'airportzoom',FILTER_SANITIZE_NUMBER_INT);
