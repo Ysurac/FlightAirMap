@@ -2778,6 +2778,10 @@ class update_db {
 		global $tmp_dir, $globalDebug;
 		$error = '';
 		if ($globalDebug) echo "Models from FlightAirMap website : Download...";
+		if (!is_writable(dirname(__FILE__).'/../models')) {
+			if ($globalDebug) echo dirname(__FILE__).'/../models'.' is not writable !';
+			return '';
+		}
 		update_db::download('http://data.flightairmap.com/data/models/models.md5sum',$tmp_dir.'models.md5sum');
 		if (file_exists($tmp_dir.'models.md5sum')) {
 			if ($globalDebug) echo "Check files...\n";
@@ -2801,7 +2805,6 @@ class update_db {
 			foreach ($diff as $key => $value) {
 				if ($globalDebug) echo 'Downloading model '.$key.' ...'."\n";
 				update_db::download('http://data.flightairmap.com/data/models/'.$key,dirname(__FILE__).'/../models/'.$key);
-				
 			}
 			update_db::download('http://data.flightairmap.com/data/models/models.md5sum',dirname(__FILE__).'/../models/models.md5sum');
 		} else $error = "File ".$tmp_dir.'models.md5sum'." doesn't exist. Download failed.";
@@ -2839,6 +2842,16 @@ class update_db {
 		if ($error != '') {
 			return $error;
 		} elseif ($globalDebug) echo "Done\n";
+		return '';
+	}
+	public static function update_weather_models() {
+		global $tmp_dir, $globalDebug;
+		$error = '';
+		if ($globalDebug) echo "Models from FlightAirMap website : Download...";
+		if (!is_writable(dirname(__FILE__).'/../models/gltf2/weather')) {
+			if ($globalDebug) echo dirname(__FILE__).'/../models/gltf2/weather'.' is not writable !';
+			return '';
+		}
 		if ($globalDebug) echo "Weather Models from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.com/data/models/gltf2/weather/models.md5sum',$tmp_dir.'modelsweather.md5sum');
 		if (file_exists($tmp_dir.'modelsweather.md5sum')) {
@@ -2913,6 +2926,10 @@ class update_db {
 	public static function update_space_models() {
 		global $tmp_dir, $globalDebug;
 		$error = '';
+		if (!is_writable(dirname(__FILE__).'/../models')) {
+			if ($globalDebug) echo dirname(__FILE__).'/../models'.' is not writable !';
+			return '';
+		}
 		if ($globalDebug) echo "Space models from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.com/data/models/space/space_models.md5sum',$tmp_dir.'space_models.md5sum');
 		if (file_exists($tmp_dir.'space_models.md5sum')) {
@@ -2950,6 +2967,10 @@ class update_db {
 	public static function update_vehicules_models() {
 		global $tmp_dir, $globalDebug;
 		$error = '';
+		if (!is_writable(dirname(__FILE__).'/../models/vehicules')) {
+			if ($globalDebug) echo dirname(__FILE__).'/../models/vehicules'.' is not writable !';
+			return '';
+		}
 		if ($globalDebug) echo "Vehicules models from FlightAirMap website : Download...";
 		update_db::download('http://data.flightairmap.com/data/models/vehicules/vehicules_models.md5sum',$tmp_dir.'vehicules_models.md5sum');
 		if (file_exists($tmp_dir.'vehicules_models.md5sum')) {

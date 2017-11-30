@@ -49,7 +49,7 @@ if ((!isset($globalMasterServer) || !$globalMasterServer) && (!isset($globalOffl
 		if ($error == '') $update_db->insert_last_geoid_update();
 		else echo $error;
 	}
-	if (isset($globalMarine) && $globalMarine && $update_db->check_last_marine_identity_update()) {
+	if (isset($globalMarine) && $globalMarine && (!isset($globalVM) || $globalVM === FALSE) && $update_db->check_last_marine_identity_update()) {
 		echo "Check if new marine identity version exist...";
 		echo $update_db->update_marine_identity_fam();
 		$update_db->insert_last_marine_identity_update();
@@ -189,6 +189,7 @@ if (isset($globalMap3D) && $globalMap3D && (!isset($globalOffline) || $globalOff
 		if ((isset($globalTracker) && $globalTracker) || (isset($globalMarine) && $globalMarine)) {
 			$update_db->update_vehicules_models();
 		}
+		$update_db->update_weather_models();
 	} elseif (isset($globalMasterServer) && $globalMasterServer) {
 		if ($update_db->check_last_satellite_update()) {
 			echo "Updating satellite data...";
