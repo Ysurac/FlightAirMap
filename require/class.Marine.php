@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used for marine data
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once(dirname(__FILE__).'/class.Image.php');
 $global_marine_query = "SELECT marine_output.* FROM marine_output";
 
@@ -320,7 +327,7 @@ class Marine{
 			{
 				return false;
 			} else {
-				$additional_query = " AND (marine_output.ident = :ident)";
+				$additional_query = " AND marine_output.ident = :ident";
 				$query_values = array(':ident' => $ident);
 			}
 		}
@@ -347,7 +354,7 @@ class Marine{
 			$orderby_query = " ORDER BY marine_output.date DESC";
 		}
 
-		$query = $global_marine_query.$filter_query." marine_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_marine_query.$filter_query." ".$additional_query." ".$orderby_query;
 		//echo $query."\n";
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
