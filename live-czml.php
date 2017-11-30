@@ -393,12 +393,12 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			}
 			if (isset($spotter_item['registration'])) $output .= '"registration": "'.$spotter_item['registration'].'",';
 			if (isset($spotter_item['format_source'])) $output .= '"format": "'.$spotter_item['format_source'].'",';
-			if (isset($spotter_item['ident'])) $output.= '"ident": "'.$spotter_item['ident'].'",';
+			if (isset($spotter_item['ident'])) $output.= '"ident": '.json_encode($spotter_item['ident']).',';
 			if ($tracker) {
-				if (isset($spotter_item['type'])) $output .= '"tracker_type": "'.$spotter_item['type'].'",';
+				if (isset($spotter_item['type'])) $output .= '"tracker_type": '.json_encode($spotter_item['type']).',';
 				$output.= '"type": "tracker"';
 			} elseif ($marine) {
-				if (isset($spotter_item['type'])) $output .= '"marine_type": "'.$spotter_item['type'].'",';
+				if (isset($spotter_item['type'])) $output .= '"marine_type": '.json_encode($spotter_item['type']).',';
 				if (isset($spotter_item['captain_name'])) $output .= '"captain": '.json_encode($spotter_item['captain_name']).',';
 				if (isset($spotter_item['race_name'])) $output .= '"race": '.json_encode($spotter_item['race_name']).',';
 				if (isset($spotter_item['race_rank'])) $output .= '"rank": "'.$spotter_item['race_rank'].'",';
