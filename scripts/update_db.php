@@ -149,7 +149,7 @@ if (isset($globalACARSArchiveKeepMonths) && $globalACARSArchiveKeepMonths > 0) {
 	$ACARS->deleteArchiveAcarsData();
 	echo "Done\n";
 }
-if (isset($globalGroundAltitude) && $globalGroundAltitude && (!isset($globalOffline) || $globalOffline === FALSE)) {
+if (((isset($globalAircraft) && $globalAircraft) || (isset($globalTracker) && $globalTracker)) && isset($globalGroundAltitude) && $globalGroundAltitude && (!isset($globalOffline) || $globalOffline === FALSE)) {
 	echo "Adding ground altitude files...\n";
 	require_once(dirname(__FILE__).'/../require/class.Elevation.php');
 	$Elevation = new Elevation();
