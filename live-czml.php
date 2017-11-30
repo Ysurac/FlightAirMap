@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of FlightAirmap.
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once('require/class.Connection.php');
 require_once('require/class.Common.php');
 if (isset($globalProtect) && $globalProtect) {

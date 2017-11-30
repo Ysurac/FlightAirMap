@@ -1,3 +1,7 @@
 User-agent: * 
 Crawl-Delay: 20
 Disallow: /images
+Disallow: /install
+Disallow: /db
+Disallow: /data
+Disallow: /require

@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used to for trackers data
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 require_once(dirname(__FILE__).'/class.Scheduler.php');
 require_once(dirname(__FILE__).'/class.ACARS.php');
 require_once(dirname(__FILE__).'/class.Image.php');

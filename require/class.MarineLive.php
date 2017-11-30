@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used for marine live data
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 //$global_query = "SELECT marine_live.* FROM marine_live";
 
 class MarineLive {

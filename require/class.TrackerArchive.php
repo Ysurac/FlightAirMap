@@ -1,4 +1,11 @@
 <?php
+/**
+ * This class is part of FlightAirmap. It's used for trackers archive data
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 class TrackerArchive {
 	public $global_query = "SELECT tracker_archive.* FROM tracker_archive";
 	public $db;

@@ -18,7 +18,7 @@ $globalDebug = TRUE;
 $globalLanguage = 'EN'; // Used only for wikipedia links for now
 
 // MAP PROVIDER
-$globalMapProvider = 'MapQuest-OSM'; // Can be Mapbox, OpenStreetMap, MapQuest-OSM or MapQuest-Aerial
+$globalMapProvider = 'OpenStreetMap'; // Can be Mapbox, OpenStreetMap, MapQuest-OSM or MapQuest-Aerial
 $globalMapboxId = 'examples.map-i86nkdio'; // Mapbox id
 $globalMapboxToken = ''; // Mapbox token
 $globalGoogleAPIKey = '';
@@ -30,10 +30,17 @@ $globalOpenWeatherMapKey = '';
 // Customs layers source must be configured this way:
 //$globalMapCustomLayer = array('custom' => array('url' => 'http://myownserver','maxZoom' => 18, 'minZoom' => 0,'attribution' => 'MySelf'));
 
+// OFFLINE MODE
+$globalMapOffline = FALSE; // Use Natural Earth II
+$globalOffline = FALSE; // don't try to use internet for anything
+
 // MAP 3D
 $globalMap3D = TRUE; // User can choose 3D map
 $globalMap3Ddefault = FALSE; // Display 3D map by default
-$globalMapSatellites = FALSE; // Display satellites on 3D map
+$globalMap3DTiles = ''; // A 3D tileset
+$globalMap3DLiveries = FALSE; // Use real liveries in 3D
+$globalMap3DOneModel = FALSE; // Use same model for all aircrafts
+$globalMap3DShadows = TRUE; // Enable sun shadow on 3D mode
 
 //COVERAGE AREA (its based on a box model. i.e. top-left | top-right | bottom-right | bottom-left)
 $globalLatitudeMax = '46.92'; //the maximum latitude (north)
@@ -84,6 +91,7 @@ $globalLiveInterval = '200';
 
 // MINIMAL CHANGE TO PUT IN DB
 $globalCoordMinChange = '0.02'; // minimal change since last message for latitude/longitude (limit write to DB)
+$globalCoordMinChangeTracker = '0.01'; // minimal change since last message for latitude/longitude (limit write to DB) for tracker
 
 // LIVE MAP REFRESH (in seconds)
 $globalMapRefresh = '30';
@@ -102,11 +110,17 @@ $globalAirportPopup = FALSE;
 // DISPLAY ROUTE OF FLIGHT
 $globalMapRoute = TRUE;
 
+// DISPLAY REMAINING ROUTE OF FLIGHT
+$globalMapRemainingRoute = TRUE;
+
 // DISPLAY FLIGHTS PATH HISTORY
 $globalMapHistory = FALSE;
 
 // FLIGHT ESTIMATION BETWEEN UPDATES
 $globalMapEstimation = TRUE;
+
+// PUT ALL FLIGHTS IN DB (even without coordinates)
+$globalAllFlights = TRUE;
 
 // WRAP MAP OR REPEAT
 $globalMapWrap = TRUE;
@@ -119,12 +133,18 @@ $globalUnitDistance = 'km'; // km, nm or mi
 $globalUnitAltitude = 'm'; // m or feet
 $globalUnitSpeed = 'kmh'; // kmh, knots or mph
 
+// CUSTOM CSS
+$globalCustomCSS = '';
+
 // *** Pilots/Owners ***
 // Force the display of owners or/and pilots. Can be used for paragliding.
 //$globalUseOwner = TRUE;
 //$globalUsePilot = TRUE;
 
 // *** Virtual flights ***
+// Virtual Airline (generic)
+$globalVA = FALSE;
+
 //IVAO
 $globalIVAO = FALSE;
 
@@ -134,8 +154,25 @@ $globalVATSIM = FALSE;
 //phpVMS
 $globalphpVMS = FALSE;
 
+//Virtual Airlien Manager
+$globalVAM = FALSE;
+
 //User can choose between IVAO, VATSIM or phpVMS
 $globalMapVAchoose = FALSE;
+
+// Use real airlines even for IVAO & VATSIM
+$globalUseRealAirlines = FALSE;
+
+// ************************
+// *** Virtual marine ***
+// Virtual Marine (generic)
+$globalVM = FALSE;
+
+// Sailaway email & pass
+//$globalSailaway = array('email' => '', 'password' => '');
+
+// Set custom marine pics
+//$globalMarineImagePics = array('type' => array('boat type' => array('image_thumbnail' => '','image' => '', 'image_copyright' => '','image_source' => '','image_source_website' => '')));
 // ************************
 
 //ADS-B, SBS1 FORMAT
@@ -145,7 +182,7 @@ $globalSourcesupdate = '10'; //Put data in DB after xx seconds/flight
 
 //DATA SOURCES
 $globalSources = array(array('host' => '127.0.0.1', 'port' => '30003'));
-// ^^ in the form array(array(host => 'host1', 'port' => 'port1','name' => 'first source','format' => 'sbs'),array('host' => 'host2', 'port' => 'port2','name' => 'Other source', 'format' => 'aprs'),array('host' => 'http://xxxxx/whazzup.txt')); Use only sources you have the rights for.
+// ^^ in the form array(array(host => 'host1', 'port' => 'port1','name' => 'first source','format' => 'sbs'),array('host' => 'host2', 'port' => 'port2','name' => 'Other source', 'format' => 'aprs'),array('host' => 'http://xxxxx/whazzup.txt'),array('host' => '123.123.123.123', 'name' => 'external', 'callback' => TRUE,'format' => 'hidnseek')); Use only sources you have the rights for.
 
 //ACARS Listen in UDP
 $globalACARS = FALSE;
@@ -278,13 +315,56 @@ $globalNoUpcoming = FALSE;
 $globalNoIdents = FALSE;
 //Don't display and try to retrieve airlines
 $globalNoAirlines = FALSE;
+//Display Owners
+$globalUseOwner = TRUE;
+//Display Pilots
+$globalUsePilot = FALSE;
 
 //Show a tooltip for each flights
 $globalMapTooltip = FALSE;
 
 //Display ground station on map
 $globalMapGroundStation = TRUE;
+//Display weather station on map
+$globalMapWeatherStation = TRUE;
+//Display lightning on map
+$globalMapLightning = TRUE;
+//Flights accidents support
+$globalAccidents = TRUE;
+//Fires support
+$globalFires = FALSE;
+//Display fires on map
+$globalMapFires = FALSE;
 
+//Add waypoints to DB
+$globalWaypoints = TRUE;
+//Support task .tsk xml files as ?tsk=http://path/toto.tsk
+$globalTSK = FALSE;
 //Display ground altitude
 $globalGroundAltitude = FALSE;
+
+// ****** MODES *****
+// Aircraft Mode
+$globalAircraft = TRUE;
+// Marine Mode
+$globalMarine = FALSE;
+// Tracker Mode
+$globalTracker = FALSE;
+// Satellite Mode
+$globalSatellite = FALSE;
+// ************************
+
+// Enable map matching for tracker mode
+$globalMapMatching = FALSE;
+// Set map matching source (can be fam, graphhopper, osmr or mapbox)
+$globalMapMatchingSource = 'fam';
+// Set GraphHopper API key
+$globalGraphHopperKey = '';
+
+// News feeds
+$globalNewsFeeds = array();
+// example: $globalNewsFeeds = array('global' => array('en' => array('http://www.mynewsfeed.com/rss')));
+
+// Get result from archive table for search
+$globalArchiveResults = TRUE;
 ?>
