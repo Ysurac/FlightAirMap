@@ -915,7 +915,7 @@ function loadWave(val) {
 
 		//$.getJSON('data/waves.json', function (data) {
 		$.getJSON('https://data.flightairmap.com/data/weather/waves.json', function (data) {
-			windLayer = L.velocityLayer({
+			waveLayer = L.velocityLayer({
 			    displayValues: false,
 			    displayOptions: {
 				velocityType: 'Wave',
