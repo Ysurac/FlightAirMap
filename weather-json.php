@@ -19,6 +19,7 @@ $METAR = new METAR();
 $Weather = new Weather();
 $i = 0;
 $ew = true;
+if (empty($airports)) return '';
 while($ew) {
 	$met = $METAR->getMETAR($airports[$i]['icao']);
 	//print_r($met);
