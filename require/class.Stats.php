@@ -226,9 +226,9 @@ class Stats {
 		return $all;
 	}
 	public function countAllMarineTypes($limit = true, $filter_name = '',$year = '', $month = '') {
-		global $globalStatsFilters;
+		global $globalStatsFilters, $globalVM;
 		if ($filter_name == '') $filter_name = $this->filter_name;
-		if ($year == '' && $month == '') {
+		if ($year == '' && $month == '' && (!isset($globalVM) || $globalVM === FALSE)) {
 			if ($limit) $query = "SELECT type AS marine_type, cnt AS marine_type_count, type_id AS marine_type_id FROM stats_marine_type WHERE filter_name = :filter_name ORDER BY marine_type_count DESC LIMIT 10 OFFSET 0";
 			else $query = "SELECT type AS marine_type, cnt AS marine_type_count, type_id AS marine_type_id FROM stats_marine_type WHERE filter_name = :filter_name ORDER BY aircraft_icao_count DESC";
 			try {
@@ -2271,9 +2271,9 @@ class Stats {
 			}
 		} else {
 			if ($reset) {
-				$query = "UPDATE stats_marine_type SET cnt = :cnt, type = :type, filter_name = :filter_name WHERE type_id = :type_id AND filter_name = :filter_name; INSERT INTO stats_marine_type (type, type_id,cnt,filter_name) SELECT :type,:type_id,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_marine_type WHERE type_id = :type_id AND filter_name = :filter_name);"; 
+				$query = "UPDATE stats_marine_type SET cnt = :cnt, type = :type, filter_name = :filter_name WHERE type_id = :type_id AND filter_name = :filter_name; INSERT INTO stats_marine_type (type, type_id,cnt,filter_name) SELECT :type,:type_id,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_marine_type WHERE type = :type AND filter_name = :filter_name);"; 
 			} else {
-				$query = "UPDATE stats_marine_type SET cnt = cnt+:cnt, type = :type, filter_name = :filter_name WHERE type_id = :type_id AND filter_name = :filter_name; INSERT INTO stats_marine_type (type,type_id,cnt,filter_name) SELECT :type,:type_id,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_marine_type WHERE type_id = :type_id AND filter_name = :filter_name);"; 
+				$query = "UPDATE stats_marine_type SET cnt = cnt+:cnt, type = :type, filter_name = :filter_name WHERE type_id = :type_id AND filter_name = :filter_name; INSERT INTO stats_marine_type (type,type_id,cnt,filter_name) SELECT :type,:type_id,:cnt,:filter_name WHERE NOT EXISTS (SELECT 1 FROM stats_marine_type WHERE type = :type AND filter_name = :filter_name);"; 
 			}
 		}
 		$query_values = array(':type' => $type,':type_id' => $type_id,':cnt' => $cnt, ':filter_name' => $filter_name);

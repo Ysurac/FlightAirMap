@@ -43,7 +43,7 @@ class Marine{
 		foreach($filters as $flt) {
 			if (isset($flt['idents']) && !empty($flt['idents'])) {
 				if (isset($flt['source'])) {
-					$filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_output WHERE marine_output.ident IN ('".implode("','",$flt['idents'])."') AND spotter_output.format_source IN ('".implode("','",$flt['source'])."')) spfi ON spfi.fammarine_id = marine_output.fammarine_id";
+					$filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_output WHERE marine_output.ident IN ('".implode("','",$flt['idents'])."') AND marine_output.format_source IN ('".implode("','",$flt['source'])."')) spfi ON spfi.fammarine_id = marine_output.fammarine_id";
 				} else {
 					$filter_query_join .= " INNER JOIN (SELECT fammarine_id FROM marine_output WHERE marine_output.ident IN ('".implode("','",$flt['idents'])."')) spfi ON spfi.fammarine_id = marine_output.fammarine_id";
 				}
@@ -784,6 +784,7 @@ class Marine{
 		$sth->execute();
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	} 
+
 
 	/**
 	* Gets all source name
@@ -1818,7 +1819,49 @@ class Marine{
 		return $hour_array;
 	}
 	
-	
+	/**
+	* Gets all aircraft registrations that have flown over
+	*
+	* @return Array the aircraft list
+	*
+	*/
+	public function countAllCaptainsByRaces($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
+	{
+		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
+		$Image = new Image($this->db);
+		$query  = "SELECT DISTINCT marine_output.race_id, marine_output.race_name, COUNT(marine_output.captain_id) AS captain_count 
+			FROM marine_output".$filter_query." race_id IS NOT NULL";
+		if ($olderthanmonths > 0) {
+			if ($globalDBdriver == 'mysql') {
+				$query .= ' AND marine_output.date < DATE_SUB(UTC_TIMESTAMP(), INTERVAL '.$olderthanmonths.' MONTH)';
+			} else {
+				$query .= " AND marine_output.date < CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$olderthanmonths." MONTHS'";
+			}
+		}
+		if ($sincedate != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND marine_output.date > '".$sincedate."'";
+			} else {
+				$query .= " AND marine_output.date > CAST('".$sincedate."' AS TIMESTAMP)";
+			}
+		}
+		$query .= " GROUP BY marine_output.race_id,marine_output.race_name ORDER BY captain_count DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+		$sth = $this->db->prepare($query);
+		$sth->execute();
+		$aircraft_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			$temp_array['marine_race_id'] = $row['race_id'];
+			$temp_array['marine_race_name'] = $row['race_name'];
+			$temp_array['marine_captain_count'] = $row['captain_count'];
+			$marine_array[] = $temp_array;
+		}
+		return $marine_array;
+	}
 	
 	/**
 	* Counts all vessels
@@ -1897,6 +1940,81 @@ class Marine{
 		return $sth->fetchColumn();
 	}
 	
+	/**
+	* Gets a number of all race
+	*
+	* @return Integer number of races
+	*
+	*/
+	public function countOverallMarineRaces($filters = array(),$year = '',$month = '')
+	{
+		global $globalDBdriver;
+		$queryi  = "SELECT COUNT(DISTINCT marine_output.race_id) AS marine_count FROM marine_output";
+		$query_values = array();
+		$query = '';
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if (empty($query_values)) $queryi .= $this->getFilter($filters);
+		else $queryi .= $this->getFilter($filters,true,true).substr($query,4);
+		
+		$sth = $this->db->prepare($queryi);
+		$sth->execute($query_values);
+		return $sth->fetchColumn();
+	}
+  
+	/**
+	* Gets a number of all captain
+	*
+	* @return Integer number of captain
+	*
+	*/
+	public function countOverallMarineCaptains($filters = array(),$year = '',$month = '')
+	{
+		global $globalDBdriver;
+		$queryi  = "SELECT COUNT(DISTINCT marine_output.captain_id) AS marine_count FROM marine_output";
+		$query_values = array();
+		$query = '';
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if (empty($query_values)) $queryi .= $this->getFilter($filters);
+		else $queryi .= $this->getFilter($filters,true,true).substr($query,4);
+		
+		$sth = $this->db->prepare($queryi);
+		$sth->execute($query_values);
+		return $sth->fetchColumn();
+	}
   
 	/**
 	* Counts all hours of today

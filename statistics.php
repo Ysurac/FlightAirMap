@@ -132,6 +132,14 @@ if ($type == 'aircraft') {
 	<span><span class="badge"><?php print number_format($Stats->countOverallMarineTypes($filter_name,$year,$month)); ?></span> <?php echo _("Types"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
+	if (isset($globalVM) && $globalVM) {
+?>
+	<span><span class="badge"><?php print number_format($Marine->countOverallMarineRaces($filter_name,$year,$month)); ?></span> <?php echo _("Races"); ?></span>
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+	<span><span class="badge"><?php print number_format($Marine->countOverallMarineCaptains($filter_name,$year,$month)); ?></span> <?php echo _("Captains"); ?></span>
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+<?php
+	}
 } elseif ($type == 'tracker') {
 ?>
 	<span><span class="badge"><?php print number_format($Stats->countOverallTracker($filter_name,$year,$month)); ?></span> <?php echo _("Trackers"); ?></span>
@@ -269,6 +277,52 @@ if ($type == 'marine') {
     <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <!--	</div>-->
 <?php
+	if (isset($globalVM) && $globalVM) {
+?>
+            <div class="col-md-6">
+                <h2><?php echo _("Top 10 Races Participants"); ?></h2>
+<?php
+	$marine_array = $Marine->countAllCaptainsByRaces(true,$filter_name,$year,$month);
+	if (count($marine_array) == 0) print _("No data available");
+	else {
+		print '<div id="chart991" class="chart" width="100%"></div><script>';
+		$marine_data = '';
+		foreach($marine_array as $marine_item) {
+			$marine_data .= '["'.$marine_item['marine_race_name'].'",'.$marine_item['marine_captain_count'].'],';
+		}
+		$marine_data = substr($marine_data, 0, -1);
+		print 'var series = ['.$marine_data.'];';
+		print 'var dataset = [];var onlyValues = series.map(function(obj){ return obj[1]; });var minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);';
+		print 'var paletteScale = d3.scale.log().domain([minValue,maxValue]).range(["#e6e6f6","#1a3151"]);';
+		print 'series.forEach(function(item){var lab = item[0], value = item[1]; dataset.push({"label":lab,"value":value,"color":paletteScale(value)});});';
+		print 'var marinetype = new d3pie("chart991",{"header":{"title":{"fontSize":24,"font":"open sans"},"subtitle":{"color":"#999999","fontSize":12,"font":"open sans"},"titleSubtitlePadding":9},"footer":{"color":"#999999","fontSize":10,"font":"open sans","location":"bottom-left"},"size":{"canvasWidth":700,"pieOuterRadius":"60%"},"data":{"sortOrder":"value-desc","content":';
+		print 'dataset';
+		print '},"labels":{"outer":{"pieDistance":32},"inner":{"hideWhenLessThanPercentage":3,"format":"value"},"mainLabel":{"fontSize":11},"percentage":{"color":"#ffffff","decimalPlaces":0},"value":{"color":"#98e8e3","fontSize":11},"lines":{"enabled":true},"truncation":{"enabled":true}},"effects":{"pullOutSegmentOnClick":{"effect":"linear","speed":400,"size":8}},"misc":{"gradient":{"enabled":true,"percentage":100}}});';
+		print '</script>';
+	}
+?>
+                <div class="more">
+            	    <?php
+            	    /*
+            		if ($year != '' && $month != '') {
+            	    ?>
+            	    <a href="<?php print $globalURL; ?>/marine/statistics/type/<?php echo $year; ?>/<?php echo $month ?>/" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+            	    <?php
+            		} else {
+            	    ?>
+            	    <a href="<?php print $globalURL; ?>/marine/statistics/type" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+            	    <?php
+            		}
+            		*/
+            	    ?>
+                </div>
+            </div>
+    <!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+	</div>
+        <div class="row column">
+
+<?php
+	}
 }
 if ($type == 'tracker') {
 ?>
