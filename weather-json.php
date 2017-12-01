@@ -13,7 +13,7 @@ $latitude = filter_input(INPUT_GET,'latitude',FILTER_SANITIZE_NUMBER_FLOAT,FILTE
 $longitude = filter_input(INPUT_GET,'longitude',FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 if ($latitude == '' || $longitude == '') return '';
 //echo 'latitude : '.$latitude.' - longitude : '.$longitude."\n";
-$airports = $Spotter->closestAirports($latitude,$longitude,200);
+$airports = $Spotter->closestAirports($latitude,$longitude,500);
 //print_r($airports);
 $METAR = new METAR();
 $Weather = new Weather();
