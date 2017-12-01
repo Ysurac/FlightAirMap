@@ -305,7 +305,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<input type="checkbox" name="mapoffline" id="mapoffline" value="mapoffline" <?php if (isset($globalMapOffline) && $globalMapOffline) { ?>checked="checked" <?php } ?>/>
 				<label for="mapoffline">Map offline mode</label>
-				<p class="help-block">Map offline mode will not use network to display 3D map but Natural Earth (2D map not available)</p>
+				<p class="help-block">Map offline mode will not use network to display map but Natural Earth</p>
 			</p>
 		<?php
 			}
@@ -787,7 +787,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="map3d">Enable map in 3D</label>
 				<input type="checkbox" name="map3d" id="map3d" value="map3d"<?php if ((isset($globalMap3D) && $globalMap3D) || !isset($globalMap3D)) { ?> checked="checked"<?php } ?> />
-				<p class="help-block">Bing map key is needed.</p>
+				<p class="help-block">Bing map key is needed. <i>scripts/update_db.php</i> will download 3d models needed, about 400Mo is needed for all models.</p>
 			</p>
 			<p>
 				<label for="map3ddefault">Default to map in 3D</label>
@@ -801,7 +801,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="map3dliveries">Display real liveries</label>
 				<input type="checkbox" name="map3dliveries" id="map3dliveries" value="map3dliveries"<?php if (isset($globalMap3DLiveries) && $globalMap3DLiveries) { ?> checked="checked"<?php } ?> />
-				<p class="help-block">Liveries will be loaded when you click on a flight</p>
+				<p class="help-block">Liveries will be loaded when you click on a flight (about 300Mo is needed for all liveries)</p>
 			</p>
 			<p>
 				<label for="map3dtileset">3D Tiles</label>
