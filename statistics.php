@@ -280,7 +280,7 @@ if ($type == 'marine') {
 	if (isset($globalVM) && $globalVM) {
 ?>
             <div class="col-md-6">
-                <h2><?php echo _("Top 10 Races Participants"); ?></h2>
+                <h2><?php echo _("Top 10 Races Number of Participants"); ?></h2>
 <?php
 	$marine_array = $Marine->countAllCaptainsByRaces(true,$filter_name,$year,$month);
 	if (count($marine_array) == 0) print _("No data available");

@@ -837,6 +837,7 @@ while ($i > 0) {
 								$data['id_source'] = $id_source;
 								if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 								//print_r($data);
+								//if ($data['race_id'] == '48') print_r($data);
 								//echo 'Add...'."\n";
 								$MI->add($data);
 								unset($data);
