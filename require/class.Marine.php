@@ -1829,7 +1829,6 @@ class Marine{
 	{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
-		$Image = new Image($this->db);
 		$query  = "SELECT DISTINCT marine_output.race_id, marine_output.race_name, COUNT(marine_output.captain_id) AS captain_count 
 			FROM marine_output".$filter_query." race_id IS NOT NULL";
 		if ($olderthanmonths > 0) {
@@ -1850,7 +1849,7 @@ class Marine{
 		if ($limit) $query .= " LIMIT 10 OFFSET 0";
 		$sth = $this->db->prepare($query);
 		$sth->execute();
-		$aircraft_array = array();
+		$marine_array = array();
 		$temp_array = array();
         
 		while($row = $sth->fetch(PDO::FETCH_ASSOC))
