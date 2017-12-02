@@ -1446,7 +1446,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." spotter_output.owner_name <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_query.$filter_query." ".$additional_query." ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
@@ -1529,7 +1529,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query = " AND (spotter_output.aircraft_icao = :aircraft_type)";
+				$additional_query = " AND spotter_output.aircraft_icao = :aircraft_type";
 				$query_values = array(':aircraft_type' => $aircraft_type);
 			}
 		}
@@ -1586,7 +1586,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query = " (spotter_output.registration = :registration)";
+				$additional_query = " spotter_output.registration = :registration";
 				$query_values = array(':registration' => $registration);
 			}
 		}
@@ -1648,7 +1648,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query = " AND (spotter_output.airline_icao = :airline)";
+				$additional_query = " spotter_output.airline_icao = :airline";
 				$query_values = array(':airline' => $airline);
 			}
 		}
@@ -1675,7 +1675,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		$query = $global_query.$filter_query." ".$additional_query." ".$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
@@ -8836,7 +8836,7 @@ class Spotter{
 	{
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT concat(spotter_output.departure_airport_icao, ' - ',  spotter_output.arrival_airport_icao) AS route, count(concat(spotter_output.departure_airport_icao, ' - ', spotter_output.arrival_airport_icao)) AS route_count, spotter_output.departure_airport_icao, spotter_output.departure_airport_name AS airport_departure_name, spotter_output.departure_airport_city AS airport_departure_city, spotter_output.departure_airport_country AS airport_departure_country, spotter_output.arrival_airport_icao, spotter_output.arrival_airport_name AS airport_arrival_name, spotter_output.arrival_airport_city AS airport_arrival_city, spotter_output.arrival_airport_country AS airport_arrival_country
-		    FROM spotter_output".$filter_query." spotter_output.ident <> '' AND spotter_output.departure_airport_icao <> 'NA' AND spotter_output.departure_airport_icao <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> ''
+		    FROM spotter_output".$filter_query." spotter_output.departure_airport_icao <> 'NA' AND spotter_output.departure_airport_icao <> '' AND spotter_output.arrival_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> ''
                     GROUP BY route,spotter_output.departure_airport_icao, spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name, spotter_output.arrival_airport_city, spotter_output.arrival_airport_country, spotter_output.departure_airport_name, spotter_output.departure_airport_city, spotter_output.departure_airport_country
                     ORDER BY route_count DESC
 		    LIMIT 10 OFFSET 0";
