@@ -1120,6 +1120,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			</p>
 			<br />
 			<p>
+				<label for="singlemodel">By default, only display selected model on 3D mode</label>
+				<input type="checkbox" name="singlemodel" id="singlemodel" value="singlemodel"<?php if (isset($globalMap3DSelected) && $globalMap3DSelected) { ?> checked="checked"<?php } ?> />
+			</p>
+			<br />
+			<p>
 				<label for="groundaltitude">Display and calculate ground altitude (can take lot of disk space)</label>
 				<input type="checkbox" name="groundaltitude" id="groundaltitude" value="groundaltitude"<?php if (isset($globalGroundAltitude) && $globalGroundAltitude) { ?> checked="checked"<?php } ?> />
 			</p>
@@ -1746,6 +1751,12 @@ if (isset($_POST['dbtype'])) {
 		$settings = array_merge($settings,array('globalMapUseBbox' => 'TRUE'));
 	} else {
 		$settings = array_merge($settings,array('globalMapUseBbox' => 'FALSE'));
+	}
+	$singlemodel = filter_input(INPUT_POST,'singlemodel',FILTER_SANITIZE_STRING);
+	if ($singlemodel == 'singlemodel') {
+		$settings = array_merge($settings,array('globalMap3DSelected' => 'TRUE'));
+	} else {
+		$settings = array_merge($settings,array('globalMap3DSelected' => 'FALSE'));
 	}
 	$groundaltitude = filter_input(INPUT_POST,'groundaltitude',FILTER_SANITIZE_STRING);
 	if ($groundaltitude == 'groundaltitude') {
