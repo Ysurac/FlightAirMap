@@ -129,14 +129,19 @@ if ($type == 'aircraft') {
 ?>
 	<span><span class="badge"><?php print number_format($Stats->countOverallMarine($filter_name,$year,$month)); ?></span> <?php echo _("Vessels"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
-	<span><span class="badge"><?php print number_format($Stats->countOverallMarineTypes($filter_name,$year,$month)); ?></span> <?php echo _("Types"); ?></span>
-	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
 	if (isset($globalVM) && $globalVM) {
 ?>
+	<span><span class="badge"><?php print number_format($Marine->countOverallMarineTypes($filter_name,$year,$month)); ?></span> <?php echo _("Types"); ?></span>
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<span><span class="badge"><?php print number_format($Marine->countOverallMarineRaces($filter_name,$year,$month)); ?></span> <?php echo _("Races"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 	<span><span class="badge"><?php print number_format($Marine->countOverallMarineCaptains($filter_name,$year,$month)); ?></span> <?php echo _("Captains"); ?></span>
+	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
+<?php
+	} else {
+?>
+	<span><span class="badge"><?php print number_format($Stats->countOverallMarineTypes($filter_name,$year,$month)); ?></span> <?php echo _("Types"); ?></span>
 	<!-- <?php print 'Time elapsed : '.(microtime(true)-$beginpage).'s' ?> -->
 <?php
 	}
@@ -306,11 +311,11 @@ if ($type == 'marine') {
             	    /*
             		if ($year != '' && $month != '') {
             	    ?>
-            	    <a href="<?php print $globalURL; ?>/marine/statistics/type/<?php echo $year; ?>/<?php echo $month ?>/" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+            	    <a href="<?php print $globalURL; ?>/marine/statistics/race/<?php echo $year; ?>/<?php echo $month ?>/" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
             	    <?php
             		} else {
             	    ?>
-            	    <a href="<?php print $globalURL; ?>/marine/statistics/type" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
+            	    <a href="<?php print $globalURL; ?>/marine/statistics/race" class="btn btn-default btn" role="button"><?php echo _("See full statistic"); ?>&raquo;</a>
             	    <?php
             		}
             		*/
