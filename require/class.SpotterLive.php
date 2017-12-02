@@ -284,13 +284,18 @@ class SpotterLive {
 				WHERE spotter_archive.latitude <> '0' AND spotter_archive.longitude <> '0' 
 				ORDER BY spotter_archive.flightaware_id, spotter_archive.date";
                                */
-				$query  = "SELECT * FROM (SELECT spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, spotter_archive.date, spotter_archive.format_source, spotter_archive.registration 
-				FROM spotter_archive INNER JOIN (SELECT flightaware_id FROM spotter_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= spotter_live.date) l ON l.flightaware_id = spotter_archive.flightaware_id ";
+				$query  = "SELECT * FROM (
+				SELECT spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, spotter_archive.date, spotter_archive.format_source, spotter_archive.registration 
+				FROM spotter_archive 
+				INNER JOIN (
+				    SELECT flightaware_id 
+				    FROM spotter_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= spotter_live.date";
+				$query.= ") l ON l.flightaware_id = spotter_archive.flightaware_id ";
 				if ($usecoord) $query .= "AND (spotter_archive.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_archive.longitude BETWEEN ".$minlong." AND ".$maxlong.") ";
 				if ($id != '') $query .= "OR spotter_archive.flightaware_id = :id ";
 				$query .= "UNION
-				SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source, spotter_live.registration 
-				FROM spotter_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= spotter_live.date";
+				    SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source, spotter_live.registration 
+				    FROM spotter_live".$filter_query." CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= spotter_live.date";
 				if ($usecoord) $query .= " AND (spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong.")";
 				if ($id != '') $query .= " OR spotter_live.flightaware_id = :id";
 				$query .= ") AS spotter WHERE latitude <> '0' AND longitude <> '0' ";
@@ -308,6 +313,75 @@ class SpotterLive {
 		}
 		$query_values = array();
 		if ($id != '') $query_values = array(':id' => $id);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+			die;
+		}
+		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $spotter_array;
+	}
+
+	/**
+	* Gets Minimal Live Spotter data since xx seconds
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public function getMinLastLiveSpotterDataByID($id = '',$filter = array(), $limit = false)
+	{
+		global $globalDBdriver, $globalLiveInterval, $globalArchive, $globalMap3DAircraftsLimit;
+		date_default_timezone_set('UTC');
+		$id = filter_var($id,FILTER_SANITIZE_STRING);
+		$filter_query = $this->getFilter($filter,true,true);
+
+		if (!isset($globalLiveInterval) || $globalLiveInterval == '') $globalLiveInterval = '200';
+		if (!isset($globalMap3DAircraftsLimit) || $globalMap3DAircraftsLimit == '') $globalMap3DAircraftsLimit = '300';
+		if ($globalDBdriver == 'mysql') {
+			if (isset($globalArchive) && $globalArchive === TRUE) {
+				$query  = 'SELECT * FROM (SELECT spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, spotter_archive.date, spotter_archive.format_source, spotter_archive.registration 
+				FROM spotter_archive INNER JOIN (SELECT flightaware_id FROM spotter_live'.$filter_query.' spotter_live.flightaware_id = :id) l ON l.flightaware_id = spotter_archive.flightaware_id ';
+				$query .= "UNION
+				SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source, spotter_live.registration 
+				FROM spotter_live".$filter_query.' spotter_live.flightaware_id = :id';
+				$query .= ") AS spotter 
+				WHERE latitude <> '0' AND longitude <> '0' 
+				ORDER BY flightaware_id, date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DAircraftsLimit;
+			} else {
+				$query  = 'SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source, spotter_live.registration 
+				FROM spotter_live'.$filter_query.' spotter_live.flightaware_id = :id ';
+				$query .= "AND spotter_live.latitude <> '0' AND spotter_live.longitude <> '0' 
+				ORDER BY spotter_live.flightaware_id, spotter_live.date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DAircraftsLimit;
+			}
+		} else {
+			if (isset($globalArchive) && $globalArchive === TRUE) {
+				$query  = "SELECT * FROM (
+				SELECT spotter_archive.ident, spotter_archive.flightaware_id, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk, spotter_archive.date, spotter_archive.format_source, spotter_archive.registration 
+				FROM spotter_archive 
+				INNER JOIN (
+				    SELECT flightaware_id 
+				    FROM spotter_live".$filter_query." spotter_live.flightaware_id = :id";
+				$query.= ") l ON l.flightaware_id = spotter_archive.flightaware_id ";
+				$query .= "UNION
+				    SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source, spotter_live.registration 
+				    FROM spotter_live".$filter_query." spotter_live.flightaware_id = :id";
+				$query .= ") AS spotter WHERE latitude <> '0' AND longitude <> '0' ";
+				$query .= "ORDER BY flightaware_id, date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DAircraftsLimit;
+			} else {
+				$query  = "SELECT spotter_live.ident, spotter_live.flightaware_id, spotter_live.aircraft_icao, spotter_live.departure_airport_icao as departure_airport, spotter_live.arrival_airport_icao as arrival_airport, spotter_live.latitude, spotter_live.longitude, spotter_live.altitude, spotter_live.heading, spotter_live.ground_speed, spotter_live.squawk, spotter_live.date, spotter_live.format_source, spotter_live.registration 
+				FROM spotter_live".$filter_query." spotter_live.flightaware_id = :id ";
+				$query .= "AND spotter_live.latitude <> '0' AND spotter_live.longitude <> '0' 
+				ORDER BY spotter_live.flightaware_id, spotter_live.date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DAircraftsLimit;
+			}
+		}
+		$query_values = array();
+		$query_values = array(':id' => $id);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);

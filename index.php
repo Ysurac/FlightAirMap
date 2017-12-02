@@ -482,7 +482,7 @@ require_once('header.php');
 	}
 	if (isset($globalMap3D) && $globalMap3D) {
 ?>
-		    <li><div class="checkbox"><label><input type="checkbox" name="singlemodel" value="1" onclick="clickSingleModel(this)" <?php if (isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') print 'checked'; ?> ><?php echo _("Only display selected flight on 3D mode"); ?></label></div></li>
+		    <li><div class="checkbox"><label><input type="checkbox" name="singlemodel" value="1" onclick="clickSingleModel(this)" <?php if ((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') || (!isset($_COOKIE['singlemodel']) && isset($globalMap3DSelected) && $globalMap3DSelected)) print 'checked'; ?> ><?php echo _("Only display selected flight on 3D mode"); ?></label></div></li>
 <?php
 	}
 ?>
