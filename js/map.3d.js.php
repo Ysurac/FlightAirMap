@@ -426,7 +426,7 @@ function create_clouds(cposition) {
 			//var cloudb = cloudsb['fg'];
 			var cloudb = cloudsb[data[i]['type']];
 			var rh = data[i]['rh'];
-			var timecolors = [[100,100,100],[100,100,100],[255,150,100],[255,255,255],[255,255,255],[255,255,255],[255,150,100],[100,100,100],[100,100,100],[100,100,100],[100,100,100]];
+			var timecolors = [[100,100,100],[255,150,100],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,150,100],[100,100,100],[100,100,100],[100,100,100],[100,100,100]];
 			var timecolorsstep = chour/24*10;
 			if (Math.round(timecolorsstep) > Math.ceil(timecolorsstep)) {
 				console.log(Math.ceil(timecolorsstep));
