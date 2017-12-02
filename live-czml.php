@@ -242,7 +242,7 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 		}
 	}
 	$previous_filter = $filter;
-	if (((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') || ((!isset($_COOKIE['singlemodel']) && isset($globalMap3DSelected) && $globalMap3DSelected)) && (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '')) {
+	if (((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') || (!isset($_COOKIE['singlemodel']) && isset($globalMap3DSelected) && $globalMap3DSelected)) && (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '')) {
 		//$filter = array_merge($filter,array('id' => $_COOKIE['MapTrack']));
 		$spotter_array = $SpotterLive->getMinLastLiveSpotterDataByID($_COOKIE['MapTrack'],$filter,false);
 		//$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,false);
