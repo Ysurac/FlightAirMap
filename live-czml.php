@@ -221,9 +221,10 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 		}
 	}
 	$previous_filter = $filter;
-	if ((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') && (isset($_COOKIE['MapTrackMarine']) && $_COOKIE['MapTrackMarine'] != '')) {
-		$filter = array_merge($filter,array('id' => $_COOKIE['MapTrackMarine']));
-		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,false);
+	if (((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') || (!isset($_COOKIE['singlemodel']) && isset($globalMap3DSelected) && $globalMap3DSelected)) && (isset($_COOKIE['MapTrackMarine']) && $_COOKIE['MapTrackMarine'] != '')) {
+		//$filter = array_merge($filter,array('id' => $_COOKIE['MapTrackMarine']));
+		//$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,false);
+		$spotter_array = $MarineLive->getMinLastLiveMarineDataByID($_COOKIE['MapTrackMarine'],$filter,false);
 	} elseif (isset($_COOKIE['MapTrackMarine']) && $_COOKIE['MapTrackMarine'] != '' && !empty($coord)) {
 		$spotter_array = $MarineLive->getMinLastLiveMarineData($coord,$filter,false,$_COOKIE['MapTrack']);
 	} elseif (!isset($_COOKIE['singlemodel']) || $_COOKIE['singlemodel'] == 'false') {

@@ -268,6 +268,70 @@ class MarineLive {
 	}
 
 	/**
+	* Gets Minimal Live Spotter data since xx seconds
+	*
+	* @return Array the spotter information
+	*
+	*/
+	public function getMinLastLiveMarineDataByID($id = '',$filter = array(), $limit = false)
+	{
+		global $globalDBdriver, $globalLiveInterval, $globalMap3DMarinesLimit, $globalArchive;
+		date_default_timezone_set('UTC');
+		$id = filter_var($id,FILTER_SANITIZE_STRING);
+		$filter_query = $this->getFilter($filter,true,true);
+
+		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
+		if (!isset($globalMap3DMarinesLimit) || $globalMap3DMarinesLimit == '') $globalMap3DMarinesLimit = '300';
+		if ($globalDBdriver == 'mysql') {
+			if (isset($globalArchive) && $globalArchive === TRUE) {
+				$query  = 'SELECT * FROM (SELECT marine_archive.ident, marine_archive.fammarine_id,marine_archive.type_id,marine_archive.type, marine_archive.latitude, marine_archive.longitude, marine_archive.heading, marine_archive.ground_speed, marine_archive.date, marine_archive.format_source, marine_archive.captain_name, marine_archive.race_id, marine_archive.race_rank, marine_archive.race_name 
+				    FROM marine_archive INNER JOIN (SELECT fammarine_id FROM marine_live'.$filter_query.' marine_live.fammarine_id = :id) l ON l.fammarine_id = marine_archive.fammarine_id ';
+				$query .= "UNION
+				    SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name, marine_live.race_id, marine_live.race_rank, marine_live.race_name 
+				    FROM marine_live".$filter_query.' marine_live.fammarine_id = :id';
+				$query .= ") AS marine 
+				    WHERE latitude <> '0' AND longitude <> '0' 
+				    ORDER BY fammarine_id, date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
+			} else {
+				$query  = 'SELECT marine_live.ident, marine_live.fammarine_id,marine_live.type_id,marine_live.type, marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name, marine_live.race_id, marine_live.race_rank, marine_live.race_name 
+				    FROM marine_live'.$filter_query.' marine_live.fammarine_id = :id ';
+				$query .= "AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' 
+				ORDER BY marine_live.fammarine_id, marine_live.date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
+			}
+		} else {
+			if (isset($globalArchive) && $globalArchive === TRUE) {
+				$query  = "SELECT * FROM (SELECT marine_archive.ident, marine_archive.fammarine_id, marine_archive.type_id, marine_archive.type,marine_archive.latitude, marine_archive.longitude, marine_archive.heading, marine_archive.ground_speed, marine_archive.date, marine_archive.format_source, marine_archive.captain_name, marine_archive.race_id, marine_archive.race_rank, marine_archive.race_name 
+				    FROM marine_archive INNER JOIN (SELECT fammarine_id FROM marine_live".$filter_query." marine_live.fammarine_id = :id) l ON l.fammarine_id = marine_archive.fammarine_id ";
+				$query .= "UNION
+				    SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name, marine_live.race_id, marine_live.race_rank, marine_live.race_name 
+				    FROM marine_live".$filter_query." marine_live.fammarine_id = :id";
+				$query .= ") AS marine 
+				    WHERE latitude <> '0' AND longitude <> '0' 
+				    ORDER BY fammarine_id, date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
+			} else {
+				$query  = "SELECT marine_live.ident, marine_live.fammarine_id, marine_live.type_id, marine_live.type,marine_live.latitude, marine_live.longitude, marine_live.heading, marine_live.ground_speed, marine_live.date, marine_live.format_source, marine_live.captain_name, marine_live.race_id, marine_live.race_rank, marine_live.race_name 
+				    FROM marine_live".$filter_query." marine_live.fammarine_id = :id ";
+				$query .= "AND marine_live.latitude <> '0' AND marine_live.longitude <> '0' 
+				ORDER BY marine_live.fammarine_id, marine_live.date";
+				if ($limit) $query .= " LIMIT ".$globalMap3DMarinesLimit;
+			}
+		}
+		$query_values = array(':id' => $id);
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+			die;
+		}
+		$spotter_array = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $spotter_array;
+	}
+
+	/**
 	* Gets number of latest data entry
 	*
 	* @return String number of entry
