@@ -426,6 +426,7 @@ function create_clouds(cposition) {
 			//var cloudb = cloudsb['fg'];
 			var cloudb = cloudsb[data[i]['type']];
 			var rh = data[i]['rh'];
+			/*
 			var timecolors = [[100,100,100],[255,150,100],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,150,100],[100,100,100],[100,100,100],[100,100,100],[100,100,100]];
 			var timecolorsstep = chour/24*10;
 			if (Math.round(timecolorsstep) > Math.ceil(timecolorsstep)) {
@@ -442,6 +443,8 @@ function create_clouds(cposition) {
 			}
 			var currentcolor = getColor(prevcolor,nextcolor,3*60,(timecolorsstep%3)*60+cminute);
 			var color = new Cesium.Color.multiply(new Cesium.Color(rh/100,rh/100,rh/100,1),new Cesium.Color.fromBytes(currentcolor['r'],currentcolor['v'],currentcolor['b'],255), new Cesium.Color());
+			*/
+			var color = new Cesium.Color(rh/100,rh/100,rh/100,1);
 
 			if (typeof cloudb != 'undefined') {
 				for (j = 0; j < 2000*cov; j++) {
