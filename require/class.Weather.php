@@ -61,8 +61,9 @@ class Weather {
 		return $result;
 	}
 	
-	public function nomad_wind() {
+	public function nomad_wind($hour = '') {
 		global $globalWindsPath;
+		if ($hour == '') $hour = date('G');
 		if (isset($globalWindsPath) && $globalWindsPath != '') {
 			$grib2json = $globalWindsPath['grib2json'];
 			$windpathsrc = $globalWindsPath['source'];
@@ -76,7 +77,7 @@ class Weather {
 		// http://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p50.pl?file=gfs.t05z.pgrb2full.0p50.f000&lev_10_m_above_ground=on&lev_surface=on&var_TMP=on&var_UGRD=on&var_VGRD=on&leftlon=0&rightlon=360&toplat=90&bottomlat=-90&dir=/gfs.2017111717
 		$resolution = '0.5';
 		$baseurl = 'http://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_'.($resolution === '1' ? '1p00':'0p50').'.pl';
-		$get = array('file' => 'gfs.t'.sprintf('%02d',(6*floor(date('G')/6))).($resolution === '1' ? 'z.pgrb2.1p00.f000' : 'z.pgrb2full.0p50.f000'),
+		$get = array('file' => 'gfs.t'.sprintf('%02d',(6*floor($hour/6))).($resolution === '1' ? 'z.pgrb2.1p00.f000' : 'z.pgrb2full.0p50.f000'),
 			'lev_10_m_above_ground' => 'on',
 			'lev_surface' => 'on',
 			'var_TMP' => 'on',
@@ -86,13 +87,22 @@ class Weather {
 			'rightlon' => 360,
 			'toplat' => 90,
 			'bottomlat' => -90,
-			'dir' => '/gfs.'.date('Ymd').sprintf('%02d',(6*floor(date('G')/6)))
+			'dir' => '/gfs.'.date('Ymd').sprintf('%02d',(6*floor($hour/6)))
 		);
 		$url = $baseurl.'?'.http_build_query($get);
 		echo $url;
 		$Common = new Common();
 		$Common->download($url,$windpathsrc);
-		system($grib2json.' --data --output '.$windpathdest.' --names --compact '.$windpathsrc);
+		// Check if the downloaded file is in GRIB format
+		$file = fopen($windpathsrc,"r");
+		$firc = fgetc($file);
+		fclose($file);
+		if ($firc == 'G') {
+			system($grib2json.' --data --output '.$windpathdest.' --names --compact '.$windpathsrc);
+		} else {
+			// if not try previous run
+			$this->nomad_wind(date('G')-6);
+		}
 	}
 
 	public function oscar_wave() {
