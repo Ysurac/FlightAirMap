@@ -370,7 +370,7 @@ $output = '{';
 									else $output .= '"aircraft_shadow": "car.png",';
 								}
 							} elseif ($marine) {
-								if (isset($spotter_item['type']) && ($spotter_item['type']  == '50&#39; Performance Cruiser' || $spotter_item['type'] == 'Sail')) {
+								if (isset($spotter_item['type']) && ($spotter_item['type']  == '50&#39; Performance Cruiser' || $spotter_item['type']  == '50\' Performance Cruiser' || $spotter_item['type'] == 'Sail')) {
 									if ($compress) $output .= '"as": "50perfcruiser.png",';
 									else $output .= '"aircraft_shadow": "50perfcruiser.png",';
 								} elseif (isset($spotter_item['type']) && $spotter_item['type']  == 'Sailaway Cruiser 38') {

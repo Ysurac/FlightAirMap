@@ -102,6 +102,10 @@ if (
     (isset($_GET['airport']) && $_GET['airport'] != '') ||
     (isset($_GET['airport_country']) && $_GET['airport_country'] != '') ||
     (isset($_GET['callsign']) && $_GET['callsign'] != '') ||
+    (isset($_GET['captain_id']) && $_GET['captain_id'] != '') ||
+    (isset($_GET['race_id']) && $_GET['race_id'] != '') ||
+    (isset($_GET['captain_name']) && $_GET['captain_name'] != '') ||
+    (isset($_GET['race_name']) && $_GET['race_name'] != '') ||
     (isset($_GET['owner']) && $_GET['owner'] != '') ||
     (isset($_GET['pilot_name']) && $_GET['pilot_name'] != '') ||
     (isset($_GET['pilot_id']) && $_GET['pilot_id'] != '') ||
@@ -129,6 +133,10 @@ if (
 	$pilot_id = filter_input(INPUT_GET, 'pilot_id',FILTER_SANITIZE_STRING);
 	$mmsi = filter_input(INPUT_GET, 'mmsi',FILTER_SANITIZE_NUMBER_INT);
 	$imo = filter_input(INPUT_GET, 'imo',FILTER_SANITIZE_NUMBER_INT);
+	$captain_id  = filter_input(INPUT_GET, 'captain_id',FILTER_SANITIZE_NUMBER_INT);
+	$race_id  = filter_input(INPUT_GET, 'race_id',FILTER_SANITIZE_NUMBER_INT);
+	$captain_name  = filter_input(INPUT_GET, 'captain_name',FILTER_SANITIZE_STRING);
+	$race_name  = filter_input(INPUT_GET, 'race_name',FILTER_SANITIZE_STRING);
 	$departure_airport_route = filter_input(INPUT_GET, 'departure_airport_route',FILTER_SANITIZE_STRING);
 	$arrival_airport_route = filter_input(INPUT_GET, 'arrival_airport_route',FILTER_SANITIZE_STRING);
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
@@ -153,7 +161,7 @@ if (
 		} elseif ($type == 'tracker') {
 			$spotter_array = $Tracker->searchTrackerData($q,$callsign,$sql_date,$limit_start.",".$absolute_difference,$sort,'',$origlat,$origlon,$dist);
 		} elseif ($type == 'marine') {
-			$spotter_array = $Marine->searchMarineData($q,$callsign,$mmsi,$imo,$sql_date,$limit_start.",".$absolute_difference,$sort,'',$origlat,$origlon,$dist);
+			$spotter_array = $Marine->searchMarineData($q,$callsign,$mmsi,$imo,$sql_date,$limit_start.",".$absolute_difference,$sort,'',$origlat,$origlon,$dist,$captain_id,$captain_name,$race_id,$race_name);
 		}
 	}
 	 
@@ -229,6 +237,10 @@ if (
 		if (isset($_GET['owner']) && $_GET['owner'] != ""){ print _("Owner:").' <span>'.$owner.'</span> '; }
 		if (isset($_GET['pilot_id']) && $_GET['pilot_id'] != ""){ print _("Pilot id:").' <span>'.$pilot_id.'</span> '; }
 		if (isset($_GET['pilot_name']) && $_GET['pilot_name'] != ""){ print _("Pilot name:").' <span>'.$pilot_name.'</span> '; }
+		if (isset($_GET['captain_id']) && $_GET['captain_id'] != ""){ print _("Captain id:").' <span>'.$captain_id.'</span> '; }
+		if (isset($_GET['captain_name']) && $_GET['captain_name'] != ""){ print _("Captain name:").' <span>'.$captain_name.'</span> '; }
+		if (isset($_GET['race_id']) && $_GET['race_id'] != ""){ print _("Race id:").' <span>'.$race_id.'</span> '; }
+		if (isset($_GET['race_name']) && $_GET['race_name'] != ""){ print _("Race name:").' <span>'.$race_name.'</span> '; }
 		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && (!isset($_GET['arrival_airport_route']) || $_GET['arrival_airport_route'] == "")){ print _("Route out of:").' <span>'.$departure_airport_route.'</span> '; }
 		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] == "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print _("Route into:").' <span>'.$arrival_airport_route.'</span> '; }
 		if (isset($_GET['departure_airport_route']) && $_GET['departure_airport_route'] != "" && isset($_GET['arrival_airport_route']) && $_GET['arrival_airport_route'] != ""){ print _("Route between:").' <span>'.$departure_airport_route.'</span> and <span>'.$_GET['arrival_airport_route'].'</span> '; }
@@ -587,6 +599,44 @@ foreach($altitude_array as $altitude)
 					</div>
 				</div>
 			</fieldset>
+<?php
+	if (isset($globalVM) && $globalVM) {
+?>
+			<fieldset>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Captain id"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" name="captain_id" class="form-control" value="<?php if (isset($_GET['captain_id'])) print $captain_id; ?>" size="8" placeholder="<?php echo _("Captain id"); ?>" />
+					</div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Captain name"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" name="captain_name" class="form-control" value="<?php if (isset($_GET['captain_name'])) print $captain_name; ?>" size="8" placeholder="<?php echo _("Captain name"); ?>" />
+					</div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Race id"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" name="race_id" class="form-control" value="<?php if (isset($_GET['race_id'])) print $race_id; ?>" size="8" placeholder="<?php echo _("Race id"); ?>" />
+					</div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="form-group">
+					<label class="control-label col-sm-2"><?php echo _("Race name"); ?></label> 
+					<div class="col-sm-10">
+						<input type="text" name="race_name" class="form-control" value="<?php if (isset($_GET['race_name'])) print $race_name; ?>" size="8" placeholder="<?php echo _("Race name"); ?>" />
+					</div>
+				</div>
+			</fieldset>
+<?php
+	} else {
+?>
 			<fieldset>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("MMSI"); ?></label> 
@@ -604,6 +654,7 @@ foreach($altitude_array as $altitude)
 				</div>
 			</fieldset>
 <?php
+	}
 }
 ?>
 			<fieldset>

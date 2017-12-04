@@ -34,6 +34,9 @@ if (!isset($hide_th_links))
 if (strtolower($current_page) == "search")
 {
 	print '<thead>';
+	if ($type == 'marine' && isset($globalVM) && $globalVM) {
+		print '<th class="rank">'._("Rank").'</th>';
+	}
 	print '<th class="aircraft_thumbnail"></th>';
 	if ($type == 'aircraft') {
 		if (!isset($globalNoAirlines) || $globalNoAirlines === FALSE) {
@@ -155,9 +158,10 @@ if (strtolower($current_page) == "search")
 		{
 			print '<th class="distance"><a href="'.$page_url.'&sort=distance_asc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-caret-down"></i></th>';
 		} else {
-			print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc" class="active"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-sort small"></i></th>';
+			print '<th class="distance"><a href="'.$page_url.'&sort=distance_desc"><span class="nomobile">'._("Distance").'</span><span class="mobile">'._("Distance").'</span></a> <i class="fa fa-sort small"></i></th>';
 		}
 		print '<th class="captain"><span class="nomobile">'._("Captain name").'</span><span class="mobile">'._("Captain").'</span></a></th>';
+		print '<th class="duration"><span class="nomobile">'._("Race duration").'</span><span class="mobile">'._("Race duration").'</span></th>';
 	}
 
 	if ($type == 'tracker') {

@@ -564,7 +564,7 @@ class Marine{
 	/**
 	* Count races by captain
 	*
-	* @return String Duration of all races
+	* @return Integer number of race for a captain
 	*
 	*/
 	public function countRacesByCaptain($captain,$filters = array())
@@ -747,6 +747,69 @@ class Marine{
 		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if (is_int($result[0]['duration'])) return gmdate('H:i:s',$result[0]['duration']);
 		else return $result[0]['duration'];
+	}
+
+	/**
+	* Gets race duration by captains
+	*
+	* @return String Duration of all race
+	*
+	*/
+	public function getRaceDurationByCaptains($limit = true,$filters = array(),$year = '',$month = '',$day = '')
+	{
+		global $globalDBdriver;
+		$filter_query = $this->getFilter($filters,true,true);
+		$query  = "SELECT SUM(last_seen - date) AS duration, captain_id, captain_name 
+		    FROM marine_output".$filter_query." last_seen > date";
+		$query_values = array();
+		if ($year != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND YEAR(marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			} else {
+				$query .= " AND EXTRACT(YEAR FROM marine_output.date) = :year";
+				$query_values = array_merge($query_values,array(':year' => $year));
+			}
+		}
+		if ($month != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND MONTH(marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			} else {
+				$query .= " AND EXTRACT(MONTH FROM marine_output.date) = :month";
+				$query_values = array_merge($query_values,array(':month' => $month));
+			}
+		}
+		if ($day != '') {
+			if ($globalDBdriver == 'mysql') {
+				$query .= " AND DAY(marine_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			} else {
+				$query .= " AND EXTRACT(DAY FROM marine_output.date) = :day";
+				$query_values = array_merge($query_values,array(':day' => $day));
+			}
+		}
+		$query .= " GROUP BY marine_output.captain_id,marine_output.captain_name ORDER BY duration DESC";
+		if ($limit) $query .= " LIMIT 10 OFFSET 0";
+		$sth = $this->db->prepare($query);
+		$sth->execute($query_values);
+		//if (is_int($result[0]['duration'])) return gmdate('H:i:s',$result[0]['duration']);
+		//else return $result[0]['duration'];
+		$duration_array = array();
+		$temp_array = array();
+        
+		while($row = $sth->fetch(PDO::FETCH_ASSOC))
+		{
+			if ($row['duration'] != '') {
+				$temp_array['marine_duration_days'] = $row['duration'];
+				//$temp_array['marine_duration'] = strtotime($row['duration']);
+				$temp_array['marine_captain_id'] = $row['captain_id'];
+				$temp_array['marine_captain_name'] = $row['captain_name'];
+				$duration_array[] = $temp_array;
+			}
+		}
+		return $duration_array;
+
 	}
 
 	/**
@@ -2391,7 +2454,7 @@ q	*
 	* @return Array the tracker information
 	*
 	*/
-	public function searchMarineData($q = '', $callsign = '',$mmsi = '', $imo = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '',$filters = array())
+	public function searchMarineData($q = '', $callsign = '',$mmsi = '', $imo = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '',$captain_id = '',$captain_name = '',$race_id = '',$race_name = '',$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
 		date_default_timezone_set('UTC');
@@ -2411,7 +2474,11 @@ q	*
 					if (is_int($q_item)) $additional_query .= "(marine_output.marine_id = '".$q_item."') OR ";
 					if (is_int($q_item)) $additional_query .= "(marine_output.mmsi = '".$q_item."') OR ";
 					if (is_int($q_item)) $additional_query .= "(marine_output.imo = '".$q_item."') OR ";
-					$additional_query .= "(marine_output.ident like '%".$q_item."%') OR ";
+					if (is_int($q_item)) $additional_query .= "(marine_output.captain_id = '".$q_item."') OR ";
+					if (is_int($q_item)) $additional_query .= "(marine_output.race_id = '".$q_item."') OR ";
+					if (!is_int($q_item)) $additional_query .= "(marine_output.captain_name = '".$q_item."') OR ";
+					if (!is_int($q_item)) $additional_query .= "(marine_output.race_name = '".$q_item."') OR ";
+					$additional_query .= "(marine_output.ident like '%".$q_item."%')";
 					$additional_query .= ")";
 				}
 			}
@@ -2447,6 +2514,50 @@ q	*
 			} else {
 				$additional_query .= " AND marine_output.imo = :imo";
 				$query_values = array_merge($query_values,array(':imo' => $imo));
+			}
+		}
+		if ($captain_id != "")
+		{
+			$captain_id = filter_var($captain_id,FILTER_SANITIZE_STRING);
+			if (!is_numeric($captain_id))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND marine_output.captain_id = :captain_id";
+				$query_values = array_merge($query_values,array(':captain_id' => $captain_id));
+			}
+		}
+		if ($race_id != "")
+		{
+			$race_id = filter_var($race_id,FILTER_SANITIZE_STRING);
+			if (!is_numeric($race_id))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND marine_output.race_id = :race_id";
+				$query_values = array_merge($query_values,array(':race_id' => $race_id));
+			}
+		}
+		if ($captain_name != "")
+		{
+			$captain_id = filter_var($captain_name,FILTER_SANITIZE_STRING);
+			if (!is_string($captain_name))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND marine_output.captain_name = :captain_name";
+				$query_values = array_merge($query_values,array(':captain_name' => $captain_name));
+			}
+		}
+		if ($race_name != "")
+		{
+			$race_id = filter_var($race_name,FILTER_SANITIZE_STRING);
+			if (!is_numeric($race_name))
+			{
+				return false;
+			} else {
+				$additional_query .= " AND marine_output.race_name = :race_name";
+				$query_values = array_merge($query_values,array(':race_name' => $race_name));
 			}
 		}
 		if ($date_posted != "")
@@ -2495,7 +2606,7 @@ q	*
 			if ($origLat != "" && $origLon != "" && $dist != "") {
 				$orderby_query = " ORDER BY distance ASC";
 			} else {
-				$orderby_query = " ORDER BY marine_output.date DESC";
+				$orderby_query = " ORDER BY marine_output.race_rank,marine_output.date DESC";
 			}
 		}
 		if ($origLat != "" && $origLon != "" && $dist != "") {
