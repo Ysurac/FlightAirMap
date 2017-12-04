@@ -1,3 +1,10 @@
+/**
+ * This javascript is part of FlightAirmap.
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');

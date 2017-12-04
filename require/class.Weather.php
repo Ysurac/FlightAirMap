@@ -101,7 +101,7 @@ class Weather {
 			system($grib2json.' --data --output '.$windpathdest.' --names --compact '.$windpathsrc);
 		} else {
 			// if not try previous run
-			$this->nomad_wind(date('G')-6);
+			if ($hour == date('G')) $this->nomad_wind(date('G')-6);
 		}
 	}
 

@@ -1,3 +1,10 @@
+/**
+ * This javascript is part of FlightAirmap.
+ *
+ * Copyright (c) Ycarus (Yannick Chabanois) <support@flightairmap.com>
+ * Licensed under AGPL license.
+ * For more information see: https://www.flightairmap.com/
+*/
 <?php
 	require_once('../require/settings.php');
 	require_once('../require/class.Language.php'); 
