@@ -2540,7 +2540,7 @@ q	*
 		}
 		if ($captain_name != "")
 		{
-			$captain_id = filter_var($captain_name,FILTER_SANITIZE_STRING);
+			$captain_name = filter_var($captain_name,FILTER_SANITIZE_STRING);
 			if (!is_string($captain_name))
 			{
 				return false;
@@ -2551,7 +2551,7 @@ q	*
 		}
 		if ($race_name != "")
 		{
-			$race_id = filter_var($race_name,FILTER_SANITIZE_STRING);
+			$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
 			if (!is_numeric($race_name))
 			{
 				return false;
