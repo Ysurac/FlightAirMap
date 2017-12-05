@@ -61,6 +61,47 @@ class Weather {
 		return $result;
 	}
 	
+	public function openweathermap($latitude,$longitude) {
+		global $globalOpenWeatherMapKey;
+		if ($globalOpenWeatherMapKey == '') return array();
+		$Common = new Common();
+		$url = 'http://api.openweathermap.org/data/2.5/weather?lat='.$latitude.'&lon='.$longitude.'&units=metric&appid='.$globalOpenWeatherMapKey;
+		//echo $url."\n";
+		$weatherdata = json_decode($Common->getData($url),true);
+		if (!isset($weatherdata['main']['temp']) || !isset($weatherdata['weather'][0]['id'])) return array();
+		$dew = $weatherdata['main']['temp'] - ((100-$weatherdata['main']['humidity'])/5);
+		$cumulus_base = 122.0 * ($weatherdata['main']['temp'] - $dew);
+		$stratus_base = 100.0 * (100.0 * $weatherdata['main']['humidity'])*0.3048;
+		$coverage_norm = 0.0;
+		if ($weatherdata['weather'][0]['id'] == 801) {
+			// few clouds
+			$coverage_norm = 2.0/8.0;
+		} elseif ($weatherdata['weather'][0]['id'] == 802) {
+			//scattered cloud
+			$coverage_norm = 4.0/8.0;
+		} elseif ($weatherdata['weather'][0]['id'] == 803) {
+			// broken clouds
+			$coverage_norm = 6.0/8.0;
+		} elseif ($weatherdata['weather'][0]['id'] == 804) {
+			// overcast clouds
+			$coverage_norm = 8.0/8.0;
+		}
+		$layer_type = 'nn';
+		$alt_m = 1000;
+		if ($cumulus_base * 0.80 < $alt_m && $cumulus_base * 1.20 > $alt_m) {
+			$layer_type = 'cu';
+		} elseif ($stratus_base * 0.80 < $alt_m && $stratus_base * 1.40 > $alt_m) {
+			$layer_type = 'st';
+		} else {
+			$layer_type = 'st';
+		}
+		$result[] = array('cov' => $coverage_norm, 'type' => $layer_type,'alt' => $alt_m,'rh' => $weatherdata['main']['humidity']);
+		if ($weatherdata['main']['humidity'] > 60) {
+			$result[] = array('cov' => 0.75, 'type' => 'ci','alt' => 4000,'rh' => $weatherdata['main']['humidity']);
+		}
+		return $result;
+	}
+	
 	public function nomad_wind($hour = '') {
 		global $globalWindsPath;
 		if ($hour == '') $hour = date('G');
@@ -90,7 +131,7 @@ class Weather {
 			'dir' => '/gfs.'.date('Ymd').sprintf('%02d',(6*floor($hour/6)))
 		);
 		$url = $baseurl.'?'.http_build_query($get);
-		echo $url;
+		//echo $url;
 		$Common = new Common();
 		$Common->download($url,$windpathsrc);
 		// Check if the downloaded file is in GRIB format
@@ -155,5 +196,9 @@ $Weather->nomad_wind();
 /*
 $Weather = new Weather();
 $Weather->oscar_wave();
+*/
+/*
+$Weather = new Weather();
+print_r($Weather->openweathermap(0.0,-10.0));
 */
 ?>

@@ -13,13 +13,14 @@ $latitude = filter_input(INPUT_GET,'latitude',FILTER_SANITIZE_NUMBER_FLOAT,FILTE
 $longitude = filter_input(INPUT_GET,'longitude',FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 if ($latitude == '' || $longitude == '') return '';
 //echo 'latitude : '.$latitude.' - longitude : '.$longitude."\n";
-$airports = $Spotter->closestAirports($latitude,$longitude,500);
+$airports = $Spotter->closestAirports($latitude,$longitude,300);
 //print_r($airports);
 $METAR = new METAR();
 $Weather = new Weather();
 $i = 0;
 $ew = true;
-if (empty($airports)) return '';
+$dtf = false;
+if (empty($airports)) $ew = false;
 while($ew) {
 	$met = $METAR->getMETAR($airports[$i]['icao']);
 	//print_r($met);
@@ -28,6 +29,8 @@ while($ew) {
 		//print_r($parsed);
 		if (isset($parsed['weather']) && $parsed['weather'] == 'CAVOK') {
 			echo json_encode(array());
+			$ew  = false;
+			$dtf = true;
 		} elseif (isset($parsed['cloud'])) {
 			$result = $Weather->buildcloudlayer($parsed);
 			if (!empty($result)) {
@@ -35,11 +38,13 @@ while($ew) {
 				//print_r($parsed);
 				echo json_encode($result);
 				$ew = false;
+				$dtf = true;
 			}
 		}
 	}
 	$i++;
 	if ($i >= count($airports)) $ew = false;
 }
+if ($dtf === false) echo json_encode($Weather->openweathermap($latitude,$longitude));
 
 ?>
