@@ -267,10 +267,12 @@ function clickDisplayWeatherStation(cb) {
     createCookie('show_WeatherStation',cb.checked,2);
     window.location.reload();
 }
+/*
 function clickDisplayWeather(cb) {
     createCookie('show_Weather',cb.checked,2);
 //    window.location.reload();
 }
+*/
 function clickDisplayLightning(cb) {
     createCookie('show_Lightning',cb.checked,2);
     window.location.reload();
