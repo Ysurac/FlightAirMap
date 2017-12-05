@@ -78,7 +78,7 @@ class Elevation {
 		$short  = fread($file, 2);
 		$_      = unpack("n*", $short);
 		$shorts = reset($_);
-		echo $shorts."\n";
+		//echo $shorts."\n";
 		return $shorts;
 	}
 
