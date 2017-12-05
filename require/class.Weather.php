@@ -86,7 +86,6 @@ class Weather {
 			// overcast clouds
 			$coverage_norm = 8.0/8.0;
 		}
-		$layer_type = 'nn';
 		$alt_m = 1000;
 		if ($cumulus_base * 0.80 < $alt_m && $cumulus_base * 1.20 > $alt_m) {
 			$layer_type = 'cu';
@@ -95,6 +94,7 @@ class Weather {
 		} else {
 			$layer_type = 'st';
 		}
+		$result = array();
 		$result[] = array('cov' => $coverage_norm, 'type' => $layer_type,'alt' => $alt_m,'rh' => $weatherdata['main']['humidity']);
 		if ($weatherdata['main']['humidity'] > 60) {
 			$result[] = array('cov' => 0.75, 'type' => 'ci','alt' => 4000,'rh' => $weatherdata['main']['humidity']);
