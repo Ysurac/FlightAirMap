@@ -641,7 +641,7 @@ class Spotter{
 				foreach ($q_array as $q_item){
 					$q_item = filter_var($q_item,FILTER_SANITIZE_STRING);
 					$additional_query .= " AND (";
-					if (is_int($q_item)) $additional_query .= "(spotter_output.spotter_id =  '".$q_item."') OR ";
+					if (is_numeric($q_item)) $additional_query .= "(spotter_output.spotter_id =  '".$q_item."') OR ";
 					if (!is_numeric($q_item) && strlen($q_item) < 5) $additional_query .= "(spotter_output.aircraft_icao =  '".$q_item."') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.aircraft_name like '%".$q_item."%') OR ";
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.aircraft_manufacturer like '%".$q_item."%') OR ";
@@ -662,8 +662,10 @@ class Spotter{
 						$additional_query .= "(spotter_output.pilot_id =  '".$q_item."') OR ";
 						$additional_query .= "(spotter_output.pilot_name like '%".$q_item."%') OR ";
 					}
-					$translate = $Translation->ident2icao($q_item);
-					if ($translate != $q_item) $additional_query .= "(spotter_output.ident like '%".$translate."%') OR ";
+					if (!is_numeric($q_item)) {
+						$translate = $Translation->ident2icao($q_item);
+						if ($translate != $q_item) $additional_query .= "(spotter_output.ident like '%".$translate."%') OR ";
+					}
 					if (!is_numeric($q_item)) $additional_query .= "(spotter_output.highlight like '%".$q_item."%') OR";
 					$additional_query .= "(spotter_output.ident like '%".$q_item."%')";
 					$additional_query .= ")";
@@ -958,7 +960,7 @@ class Spotter{
 						AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(spotter_archive.latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(spotter_archive.latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2)))) < $dist".$filter_query.$orderby_query;
 			}
 		} else {		
-			$query  = "SELECT spotter_output.* FROM spotter_output".$filter_query." spotter_output.ident <> '' 
+			$query  = "SELECT spotter_output.* FROM spotter_output".$filter_query." 
 					".$additional_query."
 					".$orderby_query;
 		}
