@@ -432,6 +432,7 @@ location /marine/statistics {
     rewrite "^/marine/statistics/year(/?)$" /statistics-year.php?marine last;
     rewrite "^/marine/statistics/country(/?)$" /statistics-country.php?marine last;
     rewrite "^/marine/statistics/type(/?)$" /statistics-type.php?marine last;
+    rewrite "^/marine/statistics/race(/?)$" /statistics-race.php?marine last;
     rewrite "^/marine/statistics(/?)$" /statistics.php?marine last;
 }
 location /tracker/statistics {

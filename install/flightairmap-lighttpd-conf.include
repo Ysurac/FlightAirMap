@@ -329,6 +329,7 @@ url.rewrite-once = (
     "^/marine/statistics/year(/?)$" => "/statistics-year.php?marine",
     "^/marine/statistics/country(/?)$" => "/statistics-country.php?marine",
     "^/marine/statistics/type(/?)$" => "/statistics-type.php?marine",
+    "^/marine/statistics/race(/?)$" => "/statistics-race.php?marine",
     "^/marine/statistics(/?)$" => "/statistics.php?marine",
     "^/tracker/statistics/date(/?)$" => "/statistics-date.php?tracker",
     "^/tracker/statistics/time(/?)$" => "/statistics-time.php?tracker",

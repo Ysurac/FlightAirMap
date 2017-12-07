@@ -329,6 +329,7 @@ url.rewrite-once = (
     "^/flightairmap/marine/statistics/year(/?)$" => "/flightairmap/statistics-year.php?marine",
     "^/flightairmap/marine/statistics/country(/?)$" => "/flightairmap/statistics-country.php?marine",
     "^/flightairmap/marine/statistics/type(/?)$" => "/flightairmap/statistics-type.php?marine",
+    "^/flightairmap/marine/statistics/race(/?)$" => "/flightairmap/statistics-race.php?marine",
     "^/flightairmap/marine/statistics(/?)$" => "/flightairmap/statistics.php?marine",
     "^/flightairmap/tracker/statistics/date(/?)$" => "/flightairmap/statistics-date.php?tracker",
     "^/flightairmap/tracker/statistics/time(/?)$" => "/flightairmap/statistics-time.php?tracker",

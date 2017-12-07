@@ -428,6 +428,7 @@ RewriteRule ^marine/statistics/month(/?)$ statistics-month.php?marine [L,NC]
 RewriteRule ^marine/statistics/year(/?)$ statistics-year.php?marine [L,NC]
 RewriteRule ^marine/statistics/country(/?)$ statistics-country.php?marine [L,NC]
 RewriteRule ^marine/statistics/type(/?)$ statistics-type.php?marine [L,NC]
+RewriteRule ^marine/statistics/race(/?)$ statistics-race.php?marine [L,NC]
 RewriteRule ^marine/statistics(/?)$ statistics.php?marine [L,NC]
 
 #---------- TRACKER ---------
