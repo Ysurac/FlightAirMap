@@ -75,7 +75,7 @@ class Source {
 
 	public function getLocationInfoByType($type, $coord = array(), $limit = false) {
 		$query = "SELECT * FROM source_location WHERE type = :type";
-		if (is_array($coord) && !empty($coord)) {
+		if (is_array($coord) && !empty($coord) && count($coord) == 4) {
 			$minlong = filter_var($coord[0],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$minlat = filter_var($coord[1],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 			$maxlong = filter_var($coord[2],FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);

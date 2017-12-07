@@ -63,7 +63,7 @@ class Translation {
 		}
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		$sth->closeCursor();
-		if (count($row) > 0) {
+		if (isset($row['operator_correct'])) {
 			return $row['operator_correct'];
 		} else return $ident;
 	}
