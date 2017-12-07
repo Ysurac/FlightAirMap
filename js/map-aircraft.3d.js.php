@@ -228,7 +228,17 @@ function displayData(data) {
 			} else {
 				var txtaltitude = Math.round(coord.height*3.28084)+' feet (FL'+Math.round(coord.height*3.28084/100)+')';
 			}
-			datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+txtaltitude+'</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
+			if (unitcoordinatevalue == 'dms') {
+				var latitude = convertDMS(Cesium.Math.toDegrees(coord.latitude),'latitude');
+				var longitude = convertDMS(Cesium.Math.toDegrees(coord.longitude),'longitude');
+			} else if (unitcoordinatevalue == 'dm') {
+				var latitude = convertDM(Cesium.Math.toDegrees(coord.latitude),'latitude');
+				var longitude = convertDM(Cesium.Math.toDegrees(coord.longitude),'longitude');
+			} else {
+				var latitude = Cesium.Math.toDegrees(coord.latitude);
+				var longitude = Cesium.Math.toDegrees(coord.longitude);
+			}
+			datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+txtaltitude+'</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+latitude+'</td><td>'+longitude+'</td><td>'+lastupdatedate+'</td></tr>';
 			//datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+registration+'</td><td>'+aircraft_icao+'</td><td>'+dairport+'</td><td>'+aairport+'</td><td>'+squawk+'</td><td>'+lastupdatedate+'</td></tr>';
 		}
 		

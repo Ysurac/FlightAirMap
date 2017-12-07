@@ -383,13 +383,23 @@ function getLiveMarineData(click)
 ?>
 		if (type != 'history') {
 			var lastupdatedate = new moment.tz(lastupdate*1000,moment.tz.guess()).format("HH:mm:ss");
+			if (unitcoordinatevalue == 'dms') {
+				var latitude = convertDMS(coord[1],'latitude');
+				var longitude = convertDMS(coord[0],'longitude');
+			} else if (unitcoordinatevalue == 'dm') {
+				var latitude = convertDM(coord[1],'latitude');
+				var longitude = convertDM(coord[0],'longitude');
+			} else {
+				var latitude = coord[1];
+				var longitude = coord[0];
+			}
 			if (globalVM) {
 				var rank = feature.properties.rrk;
 				var captain = feature.properties.cap;
 				var race = feature.properties.rname;
-				datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+rank+'</td><td>'+race+'</td><td>'+captain+'</td><td>'+callsign+'</td><td>'+type+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
+				datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+rank+'</td><td>'+race+'</td><td>'+captain+'</td><td>'+callsign+'</td><td>'+type+'</td><td>'+latitude+'</td><td>'+longitude+'</td><td>'+lastupdatedate+'</td></tr>';
 			} else {
-				datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+type+'</td><td>'+coord[1]+'</td><td>'+coord[0]+'</td><td>'+lastupdatedate+'</td></tr>';
+				datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+coord[1]+'" data-longitude="'+coord[0]+'"><td>'+callsign+'</td><td>'+type+'</td><td>'+latitude+'</td><td>'+longitude+'</td><td>'+lastupdatedate+'</td></tr>';
 			}
 		}
                 var output = '';

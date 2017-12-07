@@ -366,6 +366,21 @@ class Common {
 		$min = $coord;
 		return array('deg' => $deg,'min' => $min,'NSEW' => $NSEW);
 	}
+	public function convertDMS($coord,$latlong) {
+		if ($latlong == 'latitude') {
+			if ($coord < 0) $NSEW = 'S';
+			else $NSEW = 'N';
+		} else {
+			if ($coord < 0) $NSEW = 'W';
+			else $NSEW = 'E';
+		}
+		$coord = abs($coord);
+		$deg = floor($coord);
+		$coord = ($coord-$deg)*60;
+		$min = floor($coord);
+		$sec = round(($coord-$min)*60);
+		return array('deg' => $deg,'min' => $min,'sec' => $sec,'NSEW' => $NSEW);
+	}
 	
 	/**
 	* Copy folder contents

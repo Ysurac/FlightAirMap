@@ -58,6 +58,7 @@ require_once('header.php');
     if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 ?>
 <script src="<?php echo $globalURL; ?>/js/map.3d.js.php<?php if (isset($tsk)) print '?tsk='.$tsk; ?>"></script>
+<!--<script src="<?php echo $globalURL; ?>/js/meuusjs.1.0.3.min.js"></script>-->
 <script src="<?php echo $globalURL; ?>/js/map.3d.weather.js"></script>
 <?php
 	if (!isset($globalAircraft) || $globalAircraft) {
@@ -158,6 +159,7 @@ require_once('header.php');
 			<h1>Weather</h1>
 			<ul>
 				<li><div class="checkbox"><label><input type="checkbox" name="displayweather" value="1" onclick="clickDisplayWeather(this)" <?php if ((isset($_COOKIE['show_Weather']) && $_COOKIE['show_Weather'] == 'true') || (!isset($_COOKIE['show_Weather']) && (isset($globalMapWeather) && $globalMapWeather === TRUE))) print 'checked'; ?> ><?php echo _("Display weather on 3D map"); ?></label></div></li>
+			<!--	<li><div class="checkbox"><label><input type="checkbox" name="displayrain" value="1" onclick="clickDisplayRain(this)" ><?php echo _("Display rain on 3D map"); ?></label></div></li>-->
 			</ul>
 <?php
 	}
@@ -634,6 +636,13 @@ require_once('header.php');
 			    <option value="knots"<?php if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'knots') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'knots')) echo ' selected'; ?>>knots</option>
 		        </select>
 		    </li>
+		    <li><?php echo _("Coordinate unit:"); ?>
+			<select class="selectpicker" onchange="unitcoordinate(this);">
+			    <option value="dd"<?php if ((!isset($_COOKIE['unitcoordinate']) && (!isset($globalUnitCoordinate) || (isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dd'))) || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dd')) echo ' selected'; ?>>DD</option>
+			    <option value="dms"<?php if ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dms') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dms')) echo ' selected'; ?>>DMS</option>
+			    <option value="dm"<?php if ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dm') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dm')) echo ' selected'; ?>>DM</option>
+		        </select>
+		    </li>
 
 		</ul>
 	    </form>
@@ -787,7 +796,7 @@ require_once('header.php');
 			    <option value="all"><?php echo _("All"); ?></option>
 			    <?php
 						foreach ($races as $race) {
-							if ($_COOKIE['filter_race'] == $race['race_id']) {
+							if (isset($_COOKIE['filter_race']) && $_COOKIE['filter_race'] == $race['race_id']) {
 								print '<option value="'.$race['race_id'].'" selected>'.$race['race_name'].'</option>';
 							} else {
 								print '<option value="'.$race['race_id'].'">'.$race['race_name'].'</option>';

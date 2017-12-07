@@ -46,7 +46,17 @@ function displayTrackerData(data) {
 			var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(position);
 			var lastupdatet = entity.position._property._times[entity.position._property._times.length-1].toString();
 			var lastupdatedate = new moment.tz(lastupdatet,moment.tz.guess()).format("HH:mm:ss");
-			datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+callsign+'</td><td>'+tracker_type+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
+			if (unitcoordinatevalue == 'dms') {
+				var latitude = convertDMS(Cesium.Math.toDegrees(coord.latitude),'latitude');
+				var longitude = convertDMS(Cesium.Math.toDegrees(coord.longitude),'longitude');
+			} else if (unitcoordinatevalue == 'dm') {
+				var latitude = convertDM(Cesium.Math.toDegrees(coord.latitude),'latitude');
+				var longitude = convertDM(Cesium.Math.toDegrees(coord.longitude),'longitude');
+			} else {
+				var latitude = Cesium.Math.toDegrees(coord.latitude);
+				var longitude = Cesium.Math.toDegrees(coord.longitude);
+			}
+			datatable += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+callsign+'</td><td>'+tracker_type+'</td><td>'+latitude+'</td><td>'+longitude+'</td><td>'+lastupdatedate+'</td></tr>';
 		}
 		flightcnt = entity.properties.valueOf('flightcnt')._flightcnt._value;
 		var onground = entity.properties.valueOf('onground')._onground._value;

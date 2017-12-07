@@ -30,6 +30,20 @@
     var unitaltitudevalue = 'm';
 <?php
 	}
+	if ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dd') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dd')) {
+?>
+    var unitcoordinatevalue = 'dd';
+<?php
+	} elseif ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dms') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dms')) {
+?>
+    var unitcoordinatevalue = 'dms';
+<?php
+	} else {
+?>
+    var unitcoordinatevalue = 'dm';
+<?php
+	}
+
 ?>
 
 document.cookie =  'MapFormat=3d; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/'
@@ -597,14 +611,22 @@ viewer.clock.onTick.addEventListener(function(clock) {
 			var positionn = viewer.trackedEntity.position.getValue(nexttime);
 			if (Cesium.defined(positionc)) {
 				var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(positionc);
-				$(".latitude").html(Cesium.Math.toDegrees(coord.latitude).toFixed(5));
-				$(".longitude").html(Cesium.Math.toDegrees(coord.longitude).toFixed(5));
+				if (unitcoordinatevalue == 'dms') {
+					$(".latitude").html(convertDMS(Cesium.Math.toDegrees(coord.latitude).toFixed(5),'latitude'));
+					$(".longitude").html(convertDMS(Cesium.Math.toDegrees(coord.longitude).toFixed(5),'longitude'));
+				} else if (unitcoordinatevalue = 'dm') {
+					$(".latitude").html(convertDM(Cesium.Math.toDegrees(coord.latitude).toFixed(5),'latitude'));
+					$(".longitude").html(convertDM(Cesium.Math.toDegrees(coord.longitude).toFixed(5),'longitude'));
+				} else {
+					$(".latitude").html(Cesium.Math.toDegrees(coord.latitude).toFixed(5));
+					$(".longitude").html(Cesium.Math.toDegrees(coord.longitude).toFixed(5));
+				}
 				if (Cesium.defined(positionn)) {
 					var ellipsoidGeodesic = new Cesium.EllipsoidGeodesic(Cesium.Cartographic.fromCartesian(positionc),Cesium.Cartographic.fromCartesian(positionn));
 					var distance = ellipsoidGeodesic.surfaceDistance;
 					var speedbox = document.getElementById("realspeed");
 					if (speedbox != null) speedbox.style.visibility = "visible";
-					if (unitspeedvalue = 'kmh') {
+					if (unitspeedvalue == 'kmh') {
 						$(".realspeed").html(Math.round(distance/2*3.6)+' km/h');
 					} else if (unitspeedvalue = 'knots') {
 						$(".realspeed").html(Math.round(distance/2*3.6*0,539957)+' knots');

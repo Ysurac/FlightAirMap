@@ -2,12 +2,14 @@
 require_once('require/class.Connection.php');
 require_once('require/class.Tracker.php');
 require_once('require/class.Language.php');
+require_once('require/class.Common.php');
 require_once('require/class.TrackerLive.php');
 require_once('require/class.TrackerArchive.php');
 require_once('require/class.Elevation.php');
 $TrackerLive = new TrackerLive();
 $TrackerArchive = new TrackerArchive();
 $Elevation = new Elevation();
+$Common = new Common();
 
 $from_archive = false;
 if (isset($_GET['ident'])) {
@@ -113,7 +115,22 @@ if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpee
 	print $spotter_item['ground_speed'].' km/h';
 }
 print '</div>';
-print '<div><span>'._("Coordinates").'</span><span class="latitude">'.$spotter_item['latitude'].'</span>, <span class="longitude">'.$spotter_item['longitude'].'</span></div>';
+print '<div><span>'._("Coordinates").'</span>';
+if ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dms') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dms')) {
+	$latitude = $Common->convertDMS($spotter_item['latitude'],'latitude');
+	print '<span class="latitude">'.$latitude['deg'].'° '.$latitude['min']."′ ".$latitude['sec'].'" '.$latitude['NSEW'].'</span>, ';
+	$longitude = $Common->convertDMS($spotter_item['longitude'],'longitude');
+	print '<span class="longitude">'.$longitude['deg'].'° '.$longitude['min']."′ ".$longitude['sec'].'" '.$longitude['NSEW'].'</span>';
+} elseif ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dm') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dm')) {
+	$latitude = $Common->convertDM($spotter_item['latitude'],'latitude');
+	print '<span class="latitude">'.$latitude['deg'].'° '.round($latitude['min'],3)."′ ".$latitude['NSEW'].'</span>, ';
+	$longitude = $Common->convertDM($spotter_item['longitude'],'longitude');
+	print '<span class="longitude">'.$longitude['deg'].'° '.round($longitude['min'],3)."′ ".$longitude['NSEW'].'</span>';
+} else {
+	print '<span class="latitude">'.$spotter_item['latitude'].'</span>, ';
+	print '<span class="longitude">'.$spotter_item['longitude'].'</span>';
+}
+print '</div>';
 print '<div><span>'._("Type").'</span>'.$spotter_item['type'].'</div>';
 print '<div><span>'._("Heading").'</span><span class="heading">'.$spotter_item['heading'].'</span>°</div>';
 if (isset($spotter_item['over_country']) && $spotter_item['over_country'] != '') {

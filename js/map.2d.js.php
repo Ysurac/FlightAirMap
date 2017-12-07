@@ -35,6 +35,19 @@ if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpee
 	var unitspeedvalue = 'kmh';
 <?php
 }
+if ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dd') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dd')) {
+?>
+	var unitcoordinatevalue = 'dd';
+<?php
+} elseif ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dms') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dms')) {
+?>
+	var unitcoordinatevalue = 'dms';
+<?php
+} else {
+?>
+	var unitcoordinatevalue = 'dm';
+<?php
+}
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
 ?>
 	var unitaltitudevalue = 'feet';

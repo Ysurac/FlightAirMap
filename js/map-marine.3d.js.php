@@ -54,14 +54,24 @@ function displayMarineData(data) {
 			var coord = viewer.scene.globe.ellipsoid.cartesianToCartographic(position);
 			var lastupdatet = entity.position._property._times[entity.position._property._times.length-1].toString();
 			var lastupdatedate = new moment.tz(lastupdatet,moment.tz.guess()).format("HH:mm:ss");
+			if (unitcoordinatevalue == 'dms') {
+				var latitude = convertDMS(Cesium.Math.toDegrees(coord.latitude),'latitude');
+				var longitude = convertDMS(Cesium.Math.toDegrees(coord.longitude),'longitude');
+			} else if (unitcoordinatevalue == 'dm') {
+				var latitude = convertDM(Cesium.Math.toDegrees(coord.latitude),'latitude');
+				var longitude = convertDM(Cesium.Math.toDegrees(coord.longitude),'longitude');
+			} else {
+				var latitude = Cesium.Math.toDegrees(coord.latitude);
+				var longitude = Cesium.Math.toDegrees(coord.longitude);
+			}
 			if (globalVM) {
 				var rank = parseInt(entity.properties.rank);
 				var captain = entity.properties.captain;
 				var race = entity.properties.race;
 				//datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+rank+'</td><td>'+race+'</td><td>'+captain+'</td><td>'+callsign+'</td><td>'+marine_type+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
-				datatablemarine.push({id:id,rank: rank,race: race,captain: captain,callsign: callsign,marine_type:marine_type,latitude:Cesium.Math.toDegrees(coord.latitude),longitude: Cesium.Math.toDegrees(coord.longitude),lastupdate:lastupdatedate});
+				datatablemarine.push({id:id,rank: rank,race: race,captain: captain,callsign: callsign,marine_type: marine_type,latitude: latitude,longitude: longitude,lastupdate:lastupdatedate});
 			} else {
-				datatablemarine.push({id:id,callsign: callsign,marine_type:marine_type,latitude:Cesium.Math.toDegrees(coord.latitude),longitude: Cesium.Math.toDegrees(coord.longitude),lastupdate:lastupdatedate});
+				datatablemarine.push({id:id,callsign: callsign,marine_type:marine_type,latitude: latitude,longitude: longitude,lastupdate:lastupdatedate});
 				//datatablemarine += '<tr class="table-row" data-id="'+id+'" data-latitude="'+Cesium.Math.toDegrees(coord.latitude)+'" data-longitude="'+Cesium.Math.toDegrees(coord.longitude)+'"><td>'+callsign+'</td><td>'+marine_type+'</td><td>'+Cesium.Math.toDegrees(coord.latitude)+'</td><td>'+Cesium.Math.toDegrees(coord.longitude)+'</td><td>'+lastupdatedate+'</td></tr>';
 			}
 		}

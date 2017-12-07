@@ -296,6 +296,11 @@ function unitspeed(selectObj) {
     var unit = selectObj.options[idx].value;
     createCookie('unitspeed',unit,9999);
 }
+function unitcoordinate(selectObj) {
+    var idx = selectObj.selectedIndex;
+    var unit = selectObj.options[idx].value;
+    createCookie('unitcoordinate',unit,9999);
+}
 function unitaltitude(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;
@@ -368,4 +373,29 @@ function getColor(colorStart,colorEnd,colorCount,step) {
 	    v: colorStart[1]*alpha+(1-alpha)*colorEnd[1],
 	    b: colorStart[2]*alpha+(1-alpha)*colorEnd[2]
 	};
+}
+function convertDMS(coord,latlong) {
+	if (latlong == 'latitude') {
+		var nsew = (coord >= 0) ? 'N' : 'S';
+	} else if (latlong == 'longitude') {
+		var nsew = (coord >= 0) ? 'E' : 'W';
+	}
+	var coord = Math.abs(coord);
+	var deg = Math.floor(coord);
+	var min = Math.floor((coord - deg) * 60);
+	var sec = Math.round((coord - deg - min / 60) * 3600);
+	var result = deg+"° "+min+"' "+sec+'" '+nsew;
+	return result;
+}
+function convertDM(coord,latlong) {
+	if (latlong == 'latitude') {
+		var nsew = (coord >= 0) ? 'N' : 'S';
+	} else if (latlong == 'longitude') {
+		var nsew = (coord >= 0) ? 'E' : 'W';
+	}
+	var coord = Math.abs(coord);
+	var deg = Math.floor(coord);
+	var min = Math.round((coord - deg) * 60 *1000)/1000;
+	var result = deg+"° "+min+"' "+nsew;
+	return result;
 }
