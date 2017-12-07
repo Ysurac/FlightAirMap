@@ -294,7 +294,7 @@ class SpotterImport {
 		    if ($globalDebug) echo 'New flight...'."\n";
 		    $this->all_flights[$id] = array();
 		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('addedSpotter' => 0));
-		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '','altitude_real' => '','altitude_previous' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','ground' => '0', 'format_source' => '','source_name' => '','over_country' => '','verticalrate' => '','noarchive' => false,'putinarchive' => true,'source_type' => ''));
+		    $this->all_flights[$id] = array_merge($this->all_flights[$id],array('ident' => '','departure_airport' => '', 'arrival_airport' => '','latitude' => '', 'longitude' => '', 'speed' => '', 'altitude' => '','altitude_real' => '','altitude_previous' => '', 'heading' => '','departure_airport_time' => '','arrival_airport_time' => '','squawk' => '','route_stop' => '','registration' => '','pilot_id' => '','pilot_name' => '','waypoints' => '','ground' => '0', 'format_source' => '','source_name' => '','over_country' => '','verticalrate' => '','noarchive' => false,'putinarchive' => true,'source_type' => '','coordinates' => 0));
 		    if (isset($globalDaemon) && $globalDaemon === FALSE) $this->all_flights[$id] = array_merge($this->all_flights[$id],array('lastupdate' => time()));
 		    if (!isset($line['id'])) {
 			if (!isset($globalDaemon)) $globalDaemon = TRUE;
@@ -553,6 +553,7 @@ class SpotterImport {
 				$this->all_flights[$id]['archive_latitude'] = $line['latitude'];
 				$this->all_flights[$id]['archive_longitude'] = $line['longitude'];
 				$this->all_flights[$id]['putinarchive'] = true;
+				if ($this->tmd > 5 && $this->all_flights[$id]['putinarchive'] == 1) $updateinitial = true;
 				$this->tmd = 0;
 				if (!isset($globalNoImport) || $globalNoImport === FALSE) {
 				    if ($globalDebug) echo "\n".' ------- Check Country for '.$this->all_flights[$id]['ident'].' with latitude : '.$line['latitude'].' and longitude : '.$line['longitude'].'.... ';
@@ -620,6 +621,7 @@ class SpotterImport {
 				if (!isset($this->all_flights[$id]['livedb_longitude']) || abs($this->all_flights[$id]['livedb_longitude']-$line['longitude']) > $globalCoordMinChange || ($this->all_flights[$id]['format_source'] == 'airwhere' && abs($this->all_flights[$id]['livedb_longitude']-$line['longitude']) > 0.0001)) {
 				    $this->all_flights[$id]['livedb_longitude'] = $line['longitude'];
 				    $dataFound = true;
+				    $this->all_flights[$id]['coordinates'] += 1;
 				    $this->all_flights[$id]['time_last_coord'] = time();
 				}
 				// elseif ($globalDebug) echo '!*!*! Ignore data, too close to previous one'."\n";
@@ -637,7 +639,16 @@ class SpotterImport {
 			    }
 			    */
 			}
-
+			if ($globalDaemon === TRUE && isset($updateinitial) && $updateinitial && $this->all_flights[$id]['addedSpotter'] == 1) {
+			    if ($globalDebug) echo '>>> Update initial data !'."\n";
+			    unset($updateinitial);
+			    $SpotterArchive = new SpotterArchive();
+			    $SpotterArchive->deleteSpotterArchiveTrackDataByID($this->all_flights[$id]['id']);
+			    $SpotterArchive->db = null;
+			    $Spotter = new Spotter();
+			    $Spotter->updateInitialSpotterData($this->all_flights[$id]['id'],$this->all_flights[$id]['ident'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],$this->all_flights[$id]['altitude'],$this->all_flights[$id]['altitude_real'],$this->all_flights[$id]['ground'],$this->all_flights[$id]['speed'],$this->all_flights[$id]['datetime']);
+			    $Spotter->db = null;
+			}
 		    } else if ($globalDebug && $timediff > 30) {
 			$this->tmd = $this->tmd + 1;
 			echo '!!! Too much distance in short time... for '.$this->all_flights[$id]['ident']."\n";

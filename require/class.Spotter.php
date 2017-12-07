@@ -3693,6 +3693,30 @@ class Spotter{
 	}
 
 	/**
+	* Update initial spotter data
+	*
+	* @param String $flightaware_id the ID from flightaware
+	* @param String $ident the flight ident
+	* @return String success or false
+	*
+	*/	
+	public function updateInitialSpotterData($flightaware_id = '', $ident = '', $latitude = '', $longitude = '', $altitude = '', $altitude_real,$ground = false, $groundspeed = NULL, $date = '')
+	{
+		if ($groundspeed == '') $groundspeed = NULL;
+		$query = 'UPDATE spotter_output SET ident = :ident, latitude = :latitude, longitude = :longitude, altitude = :altitude, altitude_real = :altitude_real,ground = :ground, date = :date,ground_speed = :ground_speed WHERE flightaware_id = :flightaware_id';
+                $query_values = array(':flightaware_id' => $flightaware_id,':latitude' => $latitude,':longitude' => $longitude, ':altitude' => $altitude,':ground_speed' => $groundspeed,':date' => $date, ':ground' => $ground, ':ident' => $ident,':altitude_real' => $altitude_real);
+
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute($query_values);
+		} catch (PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		
+		return "success";
+	}
+
+	/**
 	* Update latest schedule spotter data
 	*
 	* @param String $flightaware_id the ID from flightaware

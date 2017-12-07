@@ -400,6 +400,17 @@ class SpotterArchive {
 			die;
 		}
 	}
+	public function deleteSpotterArchiveTrackDataByID($id) {
+		global $globalArchiveKeepTrackMonths, $globalDBdriver;
+		$query = 'DELETE FROM spotter_archive WHERE spotter_archive.flightaware_id = :id';
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute(array(':id' => $id));
+		} catch(PDOException $e) {
+			echo $e->getMessage();
+			die;
+		}
+	}
 
 	/**
 	    * Gets Minimal Live Spotter data
