@@ -152,6 +152,11 @@
 ?>
 		<li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/type"><?php echo _("Type"); ?></a></li>
 <?php
+			if (isset($globalVM) && $globalVM) {
+?>
+		<li><a href="<?php print $globalURL; ?>/<?php print $type; ?>/statistics/race"><?php echo _("Race"); ?></a></li>
+<?php
+			}
 		}
 ?>
 
