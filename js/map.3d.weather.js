@@ -5,6 +5,9 @@
  * Licensed under AGPL license.
  * For more information see: https://www.flightairmap.com/
 */
+/** global: Cesium */
+/** global: viewer */
+/** global: A */
 
 function clickDisplayWeather(cb) {
     createCookie('show_Weather',cb.checked,2);
@@ -29,8 +32,8 @@ function create_clouds(cposition) {
 		var coord = A.EclCoord.fromWgs84(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude),0);
 		var tp = A.Solar.topocentricPosition(new A.JulianDay(new Date(viewer.clock.currentTime.toString())),coord,true);
 		var tpn = A.Solar.topocentricPosition(new A.JulianDay(new Date(Cesium.JulianDate.addSeconds(viewer.clock.currentTime,60,new Cesium.JulianDate()).toString())),coord,true);
-		console.log(tp.hz);
-		console.log(tpn.hz);
+		//console.log(tp.hz);
+		//console.log(tpn.hz);
 		var ctime = Cesium.JulianDate.toGregorianDate(viewer.clock.currentTime);
 		var chour = ctime['hour'];
 		var cminute = ctime['minute'];
@@ -74,18 +77,32 @@ function create_clouds(cposition) {
 			
 			// 17:17 => az : 1.008 - alt : -0.021
 			
-			if (tp.hz.alt < 0) prevcolor = [100,100,100];
-			else if (tp.hz.alt < 0.172) prevcolor = [255,150,100];
-			else if (tp.hz.alt < Math.PI/2) prevcolor = [255,255,255];
-			else if (tp.hz.alt < 2.9) prevcolor = [255,255,255];
-			else if (tp.hz.alt < 3.0) prevcolor = [255,150,100];
-			else prevcolor = [100,100,100];
-			if (tpn.hz.alt < 0) nextcolor = [100,100,100];
-			else if (tpn.hz.alt < 0.172) nextcolor = [255,150,100];
-			else if (tpn.hz.alt < Math.PI/2) nextcolor = [255,255,255];
-			else if (tpn.hz.alt < 2.9) nextcolor = [255,255,255];
-			else if (tpn.hz.alt < 3.0) nextcolor = [255,150,100];
-			else nextcolor = [100,100,100];
+			if (tp.hz.alt < 0) {
+				var prevcolor = [100,100,100];
+			} else if (tp.hz.alt < 0.172) {
+				var prevcolor = [255,150,100];
+			} else if (tp.hz.alt < Math.PI/2) {
+				var prevcolor = [255,255,255];
+			} else if (tp.hz.alt < 2.9) {
+				var prevcolor = [255,255,255];
+			} else if (tp.hz.alt < 3.0) {
+				var prevcolor = [255,150,100];
+			} else {
+				var prevcolor = [100,100,100];
+			}
+			if (tpn.hz.alt < 0) {
+				var nextcolor = [100,100,100];
+			} else if (tpn.hz.alt < 0.172) {
+				var nextcolor = [255,150,100];
+			} else if (tpn.hz.alt < Math.PI/2) {
+				var nextcolor = [255,255,255];
+			} else if (tpn.hz.alt < 2.9) {
+				var nextcolor = [255,255,255];
+			} else if (tpn.hz.alt < 3.0) {
+				var nextcolor = [255,150,100];
+			} else {
+				var nextcolor = [100,100,100];
+			}
 			var timecolorsstep = chour/24*10;
 			var currentcolor = getColor(prevcolor,nextcolor,3*60,(timecolorsstep%3)*60+cminute);
 			var color = new Cesium.Color.multiply(new Cesium.Color(rh/100,rh/100,rh/100,1),new Cesium.Color.fromBytes(currentcolor['r'],currentcolor['v'],currentcolor['b'],255), new Cesium.Color());
