@@ -30,9 +30,9 @@
     var unitaltitudevalue = 'm';
 <?php
 	}
-	if ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dd') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dd')) {
+	if ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dm') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dm')) {
 ?>
-    var unitcoordinatevalue = 'dd';
+    var unitcoordinatevalue = 'dm';
 <?php
 	} elseif ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dms') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dms')) {
 ?>
@@ -40,7 +40,7 @@
 <?php
 	} else {
 ?>
-    var unitcoordinatevalue = 'dm';
+    var unitcoordinatevalue = 'dd';
 <?php
 	}
 

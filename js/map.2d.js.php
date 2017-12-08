@@ -35,9 +35,9 @@ if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpee
 	var unitspeedvalue = 'kmh';
 <?php
 }
-if ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dd') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dd')) {
+if ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dm') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dm')) {
 ?>
-	var unitcoordinatevalue = 'dd';
+	var unitcoordinatevalue = 'dm';
 <?php
 } elseif ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $globalUnitCoordinate == 'dms') || (isset($_COOKIE['unitcoordinate']) && $_COOKIE['unitcoordinate'] == 'dms')) {
 ?>
@@ -45,7 +45,7 @@ if ((!isset($_COOKIE['unitcoordinate']) && isset($globalUnitCoordinate) && $glob
 <?php
 } else {
 ?>
-	var unitcoordinatevalue = 'dm';
+	var unitcoordinatevalue = 'dd';
 <?php
 }
 if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
