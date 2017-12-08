@@ -256,6 +256,9 @@ function clickphpVMS(cb) {
 function clickSBS1(cb) {
     createCookie('filter_ShowSBS1',cb.checked,2);
 }
+function clickBlocked(cb) {
+    createCookie('filter_blocked',cb.checked,2);
+}
 function clickAPRS(cb) {
     createCookie('filter_ShowAPRS',cb.checked,2);
 }

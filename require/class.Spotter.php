@@ -145,8 +145,11 @@ class Spotter{
 			$filter_query_join .= " INNER JOIN (SELECT icao FROM airlines WHERE alliance = '".$filter['alliance']."') sal ON sal.icao = spotter_output.airline_icao ";
 		}
 		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
-				$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) spid ON spid.flightaware_id = spotter_output.flightaware_id";
-			}
+			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) spid ON spid.flightaware_id = spotter_output.flightaware_id";
+		}
+		if (isset($filter['blocked']) && $filter['blocked'] == true) {
+			$filter_query_join .= " INNER JOIN (SELECT callsign FROM aircraft_block) cblk ON cblk.callsign = spotter_output.ident";
+		}
 		if (isset($filter['source']) && !empty($filter['source'])) {
 			if (count($filter['source']) == 1) {
 				$filter_query_where .= " AND format_source = '".$filter['source'][0]."'";

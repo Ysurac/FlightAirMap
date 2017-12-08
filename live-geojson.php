@@ -76,6 +76,7 @@ if (isset($_COOKIE['filter_Sources']) && $_COOKIE['filter_Sources'] != '') $filt
 if (isset($_COOKIE['filter_airlinestype']) && $_COOKIE['filter_airlinestype'] != 'all') $filter['airlinestype'] = filter_var($_COOKIE['filter_airlinestype'],FILTER_SANITIZE_STRING);
 if (isset($_COOKIE['filter_alliance']) && $_COOKIE['filter_alliance'] != 'all') $filter['alliance'] = filter_var($_COOKIE['filter_alliance'],FILTER_SANITIZE_STRING);
 if (isset($_COOKIE['filter_race']) && $_COOKIE['filter_race'] != 'all') $filter['race'] = filter_var($_COOKIE['filter_race'],FILTER_SANITIZE_NUMBER_INT);
+if (isset($_COOKIE['filter_blocked']) && $_COOKIE['filter_blocked'] == 'true') $filter['blocked'] = true;
 
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) {
 	$min = true;

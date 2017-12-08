@@ -84,6 +84,9 @@ class SpotterLive {
 		if (isset($filter['pilots_id']) && !empty($filter['pilots_id'])) {
 			$filter_query_join .= " INNER JOIN (SELECT flightaware_id FROM spotter_output WHERE spotter_output.pilot_id IN ('".implode("','",$filter['pilots_id'])."')) sp ON sp.flightaware_id = spotter_live.flightaware_id";
 		}
+		if (isset($filter['blocked']) && $filter['blocked'] == true) {
+			$filter_query_join .= " INNER JOIN (SELECT callsign FROM aircraft_block) cblk ON cblk.callsign = spotter_live.ident";
+		}
 		if (isset($filter['source']) && !empty($filter['source'])) {
 			if (count($filter['source']) == 1) {
 				$filter_query_where .= " AND format_source = '".$filter['source'][0]."'";
