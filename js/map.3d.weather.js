@@ -26,6 +26,11 @@ function create_clouds(cposition) {
 	cloudscenter = cposition;
 	$.getJSON('/weather-json.php?latitude='+Cesium.Math.toDegrees(cposition.latitude)+'&longitude='+Cesium.Math.toDegrees(cposition.longitude),function(data) {
 		//delete_clouds();
+		var coord = A.EclCoord.fromWgs84(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude),0);
+		var tp = A.Solar.topocentricPosition(new A.JulianDay(new Date(viewer.clock.currentTime.toString())),coord,true);
+		var tpn = A.Solar.topocentricPosition(new A.JulianDay(new Date(Cesium.JulianDate.addSeconds(viewer.clock.currentTime,60,new Cesium.JulianDate()).toString())),coord,true);
+		console.log(tp.hz);
+		console.log(tpn.hz);
 		var ctime = Cesium.JulianDate.toGregorianDate(viewer.clock.currentTime);
 		var chour = ctime['hour'];
 		var cminute = ctime['minute'];
@@ -65,7 +70,25 @@ function create_clouds(cposition) {
 			var currentcolor = getColor(prevcolor,nextcolor,3*60,(timecolorsstep%3)*60+cminute);
 			var color = new Cesium.Color.multiply(new Cesium.Color(rh/100,rh/100,rh/100,1),new Cesium.Color.fromBytes(currentcolor['r'],currentcolor['v'],currentcolor['b'],255), new Cesium.Color());
 			*/
-			var color = new Cesium.Color(rh/100,rh/100,rh/100,1);
+			//var color = new Cesium.Color(rh/100,rh/100,rh/100,1);
+			
+			// 17:17 => az : 1.008 - alt : -0.021
+			
+			if (tp.hz.alt < 0) prevcolor = [100,100,100];
+			else if (tp.hz.alt < 0.172) prevcolor = [255,150,100];
+			else if (tp.hz.alt < Math.PI/2) prevcolor = [255,255,255];
+			else if (tp.hz.alt < 2.9) prevcolor = [255,255,255];
+			else if (tp.hz.alt < 3.0) prevcolor = [255,150,100];
+			else prevcolor = [100,100,100];
+			if (tpn.hz.alt < 0) nextcolor = [100,100,100];
+			else if (tpn.hz.alt < 0.172) nextcolor = [255,150,100];
+			else if (tpn.hz.alt < Math.PI/2) nextcolor = [255,255,255];
+			else if (tpn.hz.alt < 2.9) nextcolor = [255,255,255];
+			else if (tpn.hz.alt < 3.0) nextcolor = [255,150,100];
+			else nextcolor = [100,100,100];
+			var timecolorsstep = chour/24*10;
+			var currentcolor = getColor(prevcolor,nextcolor,3*60,(timecolorsstep%3)*60+cminute);
+			var color = new Cesium.Color.multiply(new Cesium.Color(rh/100,rh/100,rh/100,1),new Cesium.Color.fromBytes(currentcolor['r'],currentcolor['v'],currentcolor['b'],255), new Cesium.Color());
 
 			if (typeof cloudb != 'undefined') {
 				for (j = 0; j < 2000*cov; j++) {
@@ -97,30 +120,6 @@ function create_clouds(cposition) {
 						opacity: .9
 					    }
 					});
-					/*
-					var position = Cesium.Cartesian3.fromDegrees(cloudcoord['longitude'],cloudcoord['latitude'],cloudcoord['alt']);
-					var urlb = '/images/weather/clouds/rain.png';
-					var entity = datasource.entities.add({
-					    name : url,
-					    position : position,
-					    orientation : orientation,
-					    billboard: {
-						image : urlb,
-						sizeInMeters: true,
-						scale: Math.random()*10.0,
-						horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-						verticalOrigin: Cesium.VerticalOrigin.TOP,
-						eyeOffset: new Cesium.Cartesian3(0,6,0),
-						heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
-						//fillColor: Cesium.Color.fromCssColorString("#ffc107"),
-						//translucencyByDistance: new Cesium.NearFarScalar(200,.8,5E4,.2)
-						distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0,70000.0),
-						translucencyByDistance: new Cesium.NearFarScalar(1E5/2,.9,1E5,.3),
-						//color: color,
-						opacity: .9
-					    }
-					});
-					*/
 				}
 			}
 			//console.log(data[i]);
