@@ -16,7 +16,7 @@ if (!isset($globalJsonCompress)) $compress = true;
 else $compress = $globalJsonCompress;
 if (isset($_COOKIE['MarineIconColor'])) $MarineIconColor = $_COOKIE['MarineIconColor'];
 elseif (isset($globalMarineIconColor)) $MarineIconColor = $globalMarineIconColor;
-else $MarineIconColor = '1a3151';
+else $MarineIconColor = '43d1d8';
 
 if (isset($globalVM) && $globalVM) {
 ?>

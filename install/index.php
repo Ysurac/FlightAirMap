@@ -1160,7 +1160,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<br />
 			<p>
 				<label for="marineiconcolor">Color of marine icon on map</label>
-				<input type="color" name="marineiconcolor" id="marineiconcolor" value="#<?php if (isset($globalMarineIconColor)) echo $globalMarineIconColor; else echo '1a3151'; ?>" />
+				<input type="color" name="marineiconcolor" id="marineiconcolor" value="#<?php if (isset($globalMarineIconColor)) echo $globalMarineIconColor; else echo '43d1d8'; ?>" />
 			</p>
 			<br />
 			<p>
