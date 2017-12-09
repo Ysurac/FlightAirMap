@@ -964,7 +964,7 @@ class Spotter{
 			}
 		} else {		
 			$query  = "SELECT spotter_output.* FROM spotter_output".$filter_query." 
-					".$additional_query."
+					".substr($additional_query,4)."
 					".$orderby_query;
 		}
 		$spotter_array = $this->getDataFromDB($query, $query_values,$limit_query);
