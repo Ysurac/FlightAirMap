@@ -318,6 +318,8 @@ if (
 					print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';
 				} elseif ($type == 'tracker') {
 					print '<a href="'.$globalURL.'/tracker/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';
+				} elseif ($type == 'marine') {
+					print '<a href="'.$globalURL.'/marine/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_previous_1.','.$limit_previous_2.'">&laquo;'._("Previous Page").'</a>';
 				}
 			}
 			if ($spotter_array[0]['query_number_rows'] == $absolute_difference)
@@ -326,6 +328,8 @@ if (
 					print '<a href="'.$globalURL.'/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_end.','.$limit_next.'">'._("Next Page").'&raquo;</a>';
 				} elseif ($type == 'tracker') {
 					print '<a href="'.$globalURL.'/tracker/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_end.','.$limit_next.'">'._("Next Page").'&raquo;</a>';
+				} elseif ($type == 'marine') {
+					print '<a href="'.$globalURL.'/marine/search?'.$_SERVER['QUERY_STRING'].'&limit='.$limit_end.','.$limit_next.'">'._("Next Page").'&raquo;</a>';
 				}
 			}
 			print '</div>';

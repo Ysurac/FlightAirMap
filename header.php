@@ -692,10 +692,10 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
           <a href="<?php print $globalURL; ?>/about" class="dropdown-toggle" data-toggle="dropdown"><?php echo _("About"); ?> <b class="caret"></b></a>
           <ul class="dropdown-menu">
           	<li><a href="<?php print $globalURL; ?>/about"><?php echo _("About The Project"); ?></a></li>
-          	<li><a href="<?php print $globalURL; ?>/about/export"><?php echo _("Exporting Data"); ?></a></li>
 <?php
     if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 ?>
+          	<li><a href="<?php print $globalURL; ?>/about/export"><?php echo _("Exporting Data"); ?></a></li>
 		<li><hr /></li>
 		<li><a href="<?php print $globalURL; ?>/about/tv"><?php echo _("Spotter TV"); ?></a></li>
 <?php
