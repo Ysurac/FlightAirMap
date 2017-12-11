@@ -5,13 +5,13 @@ print '<table class="table-striped">';
 require_once(dirname(__FILE__).'/require/class.Common.php');
 $Common = new Common();
 $showRouteStop = $Common->multiKeyExists($spotter_array,'route_stop');
-if (isset($globalVM) && $globalVM) {
+if (isset($globalVM) && $globalVM && isset($type) && $type == 'marine') {
 	$showDuration = $Common->multiKeyExists($spotter_array,'race_time');
 	if ($showDuration === false) $showDuration = $Common->multiKeyExists($spotter_array,'duration');
 } else {
 	$showDuration = $Common->multiKeyExists($spotter_array,'duration');
 }
-if (isset($globalVM) && $globalVM) {
+if (isset($globalVM) && $globalVM && isset($type) && $type == 'marine') {
 	$showDistance = $Common->multiKeyExists($spotter_array,'distance');
 }
 
@@ -105,7 +105,7 @@ if (strtolower($current_page) == "search")
 		}
 	}
 	if ($type == 'aircraft' || $type == 'marine') {
-		if (isset($globalVM) && $globalVM) {
+		if (isset($globalVM) && $globalVM && $type == 'marine') {
 			if ($_GET['sort'] == "race_asc")
 			{
 				print '<th class="arrival"><a href="'.$page_url.'&sort=race_desc" class="active">'._("Races").'</a> <i class="fa fa-caret-up"></i></th>';
@@ -342,7 +342,7 @@ if (strtolower($current_page) == "search")
 			}
 		}
 		if ($type == 'aircraft' || $type == 'marine') {
-			if (isset($globalVM) && $globalVM) {
+			if (isset($globalVM) && $globalVM && $type == 'marine') {
 				if ($_GET['sort'] == "race_asc")
 				{
 					print '<th class="arrival">'._("Race").''._("To").'</th>';
@@ -494,7 +494,7 @@ if (strtolower($current_page) == "search")
 			}
 		}
 		if ($type == 'aircraft' || $type == 'marine') {
-			if (isset($globalVM) && $globalVM) {
+			if (isset($globalVM) && $globalVM && $type == 'marine') {
 				if ($_GET['sort'] == "race_asc")
 				{
 					print '<th class="arrival"><a href="'.$page_url.'/'.$limit_start.','.$limit_end.'/race_desc" class="active">'._("Race").'</a> <i class="fa fa-caret-up"></i></th>';
@@ -1249,7 +1249,7 @@ foreach($spotter_array as $spotter_item)
 		}
 		if ($showDuration) {
 			// Duration
-			if (isset($globalVM) && $globalVM) {
+			if (isset($globalVM) && $globalVM && $type == 'marine') {
 				print '<td class="duration">'."\n";
 				if (isset($spotter_item['race_time'])) {
 					if ($spotter_item['race_time'] > 86400) {
