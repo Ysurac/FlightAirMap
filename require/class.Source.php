@@ -83,7 +83,7 @@ class Source {
 			$query .= " AND source_location.latitude BETWEEN ".$minlat." AND ".$maxlat." AND source_location.longitude BETWEEN ".$minlong." AND ".$maxlong." AND source_location.latitude <> 0 AND source_location.longitude <> 0";
 		}
 		$query .= " ORDER BY last_seen DESC";
-		if ($limit) $query .= " LIMIT 400";
+		if ($limit) $query .= " LIMIT 600";
 		$query_values = array(':type' => $type);
 		try {
 			$sth = $this->db->prepare($query);

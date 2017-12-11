@@ -1920,13 +1920,22 @@ class update_db {
 		$Source->deleteLocationByType('fires');
 		$i = 0;
 		if (($handle = fopen($tmp_dir.'fires.csv','r')) !== false) {
+			if ($globalTransaction) $Connection->db->beginTransaction();
 			while (($row = fgetcsv($handle,1000)) !== false) {
 				if ($i > 0 && $row[0] != '' && $row[8] != 'low') {
 					$description = array('bright_t14' => $row[2],'scan' => $row[3],'track' => $row[4],'sat' => $row[7],'confidence' => $row[8],'version' => $row[9],'bright_t15' => $row[10],'frp' => $row[11],'daynight' => $row[12]);
-					$Source->addLocation('',$row[0],$row[1],null,'','','fires','fire.png','fires',0,0,$row[5].' '.substr($row[6],0,2).':'.substr($row[6],2,2),json_encode($description));
+					$query = "INSERT INTO source_location (name,latitude,longitude,altitude,country,city,logo,source,type,source_id,last_seen,location_id,description) VALUES (:name,:latitude,:longitude,:altitude,:country,:city,:logo,:source,:type,:source_id,:last_seen,:location_id,:description)";
+					$query_values = array(':name' => '',':latitude' => $row[0], ':longitude' => $row[1],':altitude' => null,':city' => '',':country' => '',':logo' => 'fire.png',':source' => 'NASA',':type' => 'fires',':source_id' => 0,':last_seen' => $row[5].' '.substr($row[6],0,2).':'.substr($row[6],2,2),':location_id' => 0,':description' => json_encode($description));
+					try {
+						$sth = $Connection->db->prepare($query);
+						$sth->execute($query_values);
+					} catch(PDOException $e) {
+						echo "error : ".$e->getMessage();
+					}
 				}
 				$i++;
 			}
+			if ($globalTransaction) $Connection->db->commit();
 		}
 	}
 
