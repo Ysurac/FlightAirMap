@@ -25,8 +25,8 @@ if (isset($_GET['coord']))
 	    || (!isset($_COOKIE['show_Lightning']) && (isset($globalMapLightning) && $globalMapLightning === TRUE))) {
 		$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('lightning',$coords));
 	}
-	if ((isset($_COOKIE['show_Fire']) && $_COOKIE['show_Fire'] == 'true') 
-	    || (!isset($_COOKIE['show_Fire']) && (isset($globalMapFires) && $globalMapFires === TRUE))) {
+	if ((isset($_COOKIE['show_Fires']) && $_COOKIE['show_Fires'] == 'true') 
+	    || (!isset($_COOKIE['show_Fires']) && (isset($globalMapFires) && $globalMapFires === TRUE))) {
 		$spotter_array = array_merge($spotter_array,$Source->getLocationInfoByType('fires',$coords,true));
 	}
 	if (!isset($globalDemo)) {
