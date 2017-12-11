@@ -668,3 +668,84 @@ viewer.clock.onTick.addEventListener(function(clock) {
 		}
 	}
 });
+
+function clickSanta(cb) {
+	if (cb.checked) {
+		czmldssanta = new Cesium.CzmlDataSource();
+		var livesantadata = czmldssanta.process('<?php print $globalURL; ?>/live-santa-czml.php?now&' + Date.now());
+		livesantadata.then(function (data) {
+			console.log('Add santa !');
+			displayDataSanta(data);
+			viewer.trackedEntity = ds.entities.getById('santaclaus');
+		});
+	} else {
+		var dsn;
+		for (var i =0; i < viewer.dataSources.length; i++) {
+			if (viewer.dataSources.get(i).name == 'famsanta') {
+				dsn = i;
+				break;
+			}
+		}
+		viewer.dataSources.remove(viewer.dataSources.get(dsn),true);
+	}
+}
+function displayDataSanta(data) {
+	var entities = data.entities.values;
+	for (var i = 0; i < entities.length; i++) {
+		var entity = entities[i];
+		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
+		entity.orientation = orientation;
+	}
+	viewer.dataSources.add(data);
+	dsn = viewer.dataSources.indexOf(data);
+};
+function updateSanta() {
+	var livesantadata = czmldssanta.process('<?php print $globalURL; ?>/live-santa-czml.php?' + Date.now());
+	livesantadata.then(function (data) {
+		console.log('Add santa !');
+		displayDataSanta(data);
+	});
+}
+var handler_santa = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+handler_santa.setInputAction(function(click) {
+	var pickedObject = viewer.scene.pick(click.position);
+	console.log(pickedObject);
+	if (Cesium.defined(pickedObject)) {
+		var currenttime = viewer.clock.currentTime;
+		if (typeof pickedObject.id.properties != 'undefined') {
+			var type = pickedObject.id.properties.valueOf('type')._type._value
+		}
+		if (typeof type != undefined && type == 'santa') {
+			console.log('santa');
+			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat=santaclaus");
+			var dsn;
+			for (var i =0; i < viewer.dataSources.length; i++) {
+				if (viewer.dataSources.get(i).name == 'famsanta') {
+					dsn = i;
+					break;
+				}
+			}
+			console.log('dsn : '+dsn);
+			var pnew = viewer.dataSources.get(dsn).entities.getById(pickedObject.id.id);
+			pnew.path.show = true;
+		}
+	}
+}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+if (archive == false) {
+	var czmldssanta;
+	if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-25T02:00Z'))) {
+		czmldssanta = new Cesium.CzmlDataSource();
+		updateSanta();
+	}
+	var reloadpage = setInterval(
+	function(){
+		console.log('Reload...');
+		if (typeof czmldssanta == 'undefined') {
+			if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-25T02:00Z'))) {
+				czmldssanta = new Cesium.CzmlDataSource();
+				updateSanta();
+			}
+		}
+	}
+	,30000);
+}

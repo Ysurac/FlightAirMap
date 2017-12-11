@@ -85,10 +85,12 @@ if ($sat == 'ISS (ZARYA)') {
 	else $satname = str_replace(array(' '),'-',$sat);
 }
 if (!isset($satname)) $satname = $sat;
-$info = $Satellite->get_info(strtolower(trim($satname)));
-$position = $Satellite->position($sat);
-$ground_speed = $position['speed'];
-$altitude = $position['altitude'];
+if ($satname != 'santaclaus') {
+	$info = $Satellite->get_info(strtolower(trim($satname)));
+	$position = $Satellite->position($sat);
+	$ground_speed = $position['speed'];
+	$altitude = $position['altitude'];
+}
 date_default_timezone_set('UTC');
 print '<div class="top">';
 if (isset($image)) {
@@ -103,16 +105,17 @@ if (isset($aircraft_wiki)) {
 	print '<a href="'.$aircraft_wiki.'">'.$aircraft_name.'</a>';
 	print '</div>';
 }
-
-print '<div><span>'._("Altitude").'</span>';
-print '<span class="altitude">';
-if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
-	print round($altitude*3280.84).' feet';
-} else {
-	print round($altitude).' km';
+if (isset($altitude)) {
+	print '<div><span>'._("Altitude").'</span>';
+	print '<span class="altitude">';
+	if ((!isset($_COOKIE['unitaltitude']) && isset($globalUnitAltitude) && $globalUnitAltitude == 'feet') || (isset($_COOKIE['unitaltitude']) && $_COOKIE['unitaltitude'] == 'feet')) {
+		print round($altitude*3280.84).' feet';
+	} else {
+		print round($altitude).' km';
+	}
+	print '</span>';
+	print '</div>';
 }
-print '</span>';
-print '</div>';
 
 if (isset($ground_speed)) {
 	print '<div><span>'._("Speed").'</span>';
@@ -126,7 +129,7 @@ if (isset($ground_speed)) {
 	//print '<span class="realspeed"></span>';
 	print '</div>';
 } else {
-	print '<div><span>'._("Speed").'</span>';
+	print '<div id="realspeed"><span>'._("Speed").'</span>';
 	print '<span class="realspeed"></span>';
 	print '</div>';
 }

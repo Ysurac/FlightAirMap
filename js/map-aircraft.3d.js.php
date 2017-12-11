@@ -10,28 +10,6 @@
 	require_once('../require/class.Language.php'); 
 ?>
 
-function clickSanta(cb) {
-	if (cb.checked) {
-		czmldssanta = new Cesium.CzmlDataSource();
-		var livesantadata = czmldssanta.process('<?php print $globalURL; ?>/live-santa-czml.php?now&' + Date.now());
-		livesantadata.then(function (data) {
-			console.log('Add santa !');
-			displayDataSanta(data);
-			viewer.trackedEntity = ds.entities.getById('santaclaus');
-		});
-	} else {
-		var dsn;
-			for (var i =0; i < viewer.dataSources.length; i++) {
-				if (viewer.dataSources.get(i).name == 'famsanta') {
-					dsn = i;
-					break;
-				}
-			}
-		viewer.dataSources.remove(viewer.dataSources.get(dsn),true);
-	}
-}
-
-
 function update_polarLayer() {
 	var polarnb;
 	for (var i =0; i < viewer.dataSources.length; i++) {
@@ -377,16 +355,6 @@ function displayData(data) {
 
 };
 
-function displayDataSanta(data) {
-	var entities = data.entities.values;
-	for (var i = 0; i < entities.length; i++) {
-		var entity = entities[i];
-		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
-		entity.orientation = orientation;
-	}
-	viewer.dataSources.add(data);
-	dsn = viewer.dataSources.indexOf(data);
-};
 
 function updateData() {
 	var currenttime = viewer.clock.currentTime;
@@ -408,15 +376,6 @@ function updateData() {
 		displayData(data);
 	});
 }
-
-function updateSanta() {
-	var livesantadata = czmldssanta.process('<?php print $globalURL; ?>/live-santa-czml.php?' + Date.now());
-	livesantadata.then(function (data) {
-		console.log('Add santa !');
-		displayDataSanta(data);
-	});
-}
-
 function showNotam(cb) {
 	createCookie('notam',cb.checked,9999);
 	if (cb.checked == true) {
@@ -701,19 +660,6 @@ handler_aircraft.setInputAction(function(click) {
 		} else if (type == 'airport') {
 			var icao = pickedObject.id.properties.icao;
 			$(".showdetails").load("<?php print $globalURL; ?>/airport-data.php?"+Math.random()+"&airport_icao="+icao);
-		} else if (pickedObject.id == 'santaclaus') {
-			console.log('santa');
-			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(pickedObject.id.id));
-			var dsn;
-			for (var i =0; i < viewer.dataSources.length; i++) {
-				if (viewer.dataSources.get(i).name == 'famsanta') {
-					dsn = i;
-					break;
-				}
-			}
-			console.log('dsn : '+dsn);
-			var pnew = viewer.dataSources.get(dsn).entities.getById(pickedObject.id.id);
-			pnew.path.show = true;
 		} else {
 			delCookie('MapTrack');
 		}
@@ -748,22 +694,11 @@ camera.moveEnd.addEventListener(function() {
 
 //var reloadpage = setInterval(function() { updateData(); },30000);
 if (archive == false) {
-	var czmldssanta;
-	if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-25T02:00Z'))) {
-		czmldssanta = new Cesium.CzmlDataSource();
-		updateSanta();
-	}
 	updateData();
 	var reloadpage = setInterval(
 		function(){
 			console.log('Reload...');
 			updateData();
-			if (typeof czmldssanta == 'undefined') {
-				if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-25T02:00Z'))) {
-					czmldssanta = new Cesium.CzmlDataSource();
-					updateSanta();
-				}
-			}
 		}
 	,<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 } else {

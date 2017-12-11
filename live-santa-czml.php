@@ -39,7 +39,7 @@ $output .= '{';
 $output .= '"id": "santaclaus",';
 if (!isset($_GET['now'])) $output .= '"interval": "'.date("Y").'-12-24T02:00:00Z/'.date("Y").'-12-25T02:00:00Z",';
 $output .= '"properties": {';
-// Not yet supported in CZML with Cesium
+$output .= '"type": "santa"';
 $output .= '},';
 $output .= '"path" : { ';
 $output .= '"show" : false, ';
