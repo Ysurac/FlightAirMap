@@ -1814,7 +1814,7 @@ class Spotter{
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
 
-		$query = $global_query.$filter_query." ".$additional_query.$orderby_query;
+		$query = $global_query.$filter_query." ".substr($additional_query,4).$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 		return $spotter_array;
 	}
@@ -5478,7 +5478,7 @@ class Spotter{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
-				FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.aircraft_icao = :aircraft_icao  
+				FROM spotter_output".$filter_query." spotter_output.aircraft_icao = :aircraft_icao  
 				GROUP BY spotter_output.registration, spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
 				ORDER BY registration_count DESC";
 
@@ -5766,10 +5766,9 @@ class Spotter{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
-                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer   
+                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer 
                     GROUP BY spotter_output.registration 
-					ORDER BY registration_count DESC";
-
+		    ORDER BY registration_count DESC";
 		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':aircraft_manufacturer' => $aircraft_manufacturer));
@@ -6084,7 +6083,7 @@ class Spotter{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
 
 		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name  
-                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.ident = :ident   
+                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND spotter_output.ident = :ident 
                     GROUP BY spotter_output.registration,spotter_output.aircraft_icao, spotter_output.aircraft_name, spotter_output.airline_name
 		    ORDER BY registration_count DESC";
 
@@ -6445,12 +6444,11 @@ class Spotter{
 		$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 		$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 
-		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name   
-                    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao)   
-                    GROUP BY spotter_output.registration 
-					ORDER BY registration_count DESC";
+		$query  = "SELECT DISTINCT spotter_output.aircraft_icao, COUNT(spotter_output.registration) AS registration_count, spotter_output.aircraft_name, spotter_output.registration, spotter_output.airline_name 
+		    FROM spotter_output".$filter_query." spotter_output.registration <> '' AND (spotter_output.departure_airport_icao = :departure_airport_icao) AND (spotter_output.arrival_airport_icao = :arrival_airport_icao) 
+		    GROUP BY spotter_output.registration 
+		    ORDER BY registration_count DESC";
 
-		
 		$sth = $this->db->prepare($query);
 		$sth->execute(array(':departure_airport_icao' => $departure_airport_icao,':arrival_airport_icao' => $arrival_airport_icao));
       
