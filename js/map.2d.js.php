@@ -984,7 +984,7 @@ function loadFire(val) {
 		delCookie('weather_fire');
 	} else {
 		createCookie('weather_fire',val,999);
-		fireLayer = L.tileLayer.wms('https://galvanize-cors-proxy.herokuapp.com/https://firms.modaps.eosdis.nasa.gov/wms/viirs', {
+		fireLayer = L.tileLayer.wms('https://firms.modaps.eosdis.nasa.gov/wms/viirs', {
 		    layers: 'NASA FIRMS',
 		    format: 'image/png',
 		    opacity: 62,
