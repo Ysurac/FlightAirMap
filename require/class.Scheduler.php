@@ -137,7 +137,7 @@ class Schedule {
 		}
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		$sth->closeCursor();
-		if (count($row) > 0) {
+		if (is_array($row) && count($row) > 0) {
 			return $row;
 		} else return array();
 	}
