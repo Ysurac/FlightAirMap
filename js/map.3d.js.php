@@ -368,7 +368,8 @@ function update_locationsLayer() {
 				position: Cesium.Cartesian3.fromDegrees(geojsondata.features[i].geometry.coordinates[0],geojsondata.features[i].geometry.coordinates[1]),
 				billboard: {
 					image: data.icon,
-					verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+					verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+					eyeOffset: new Cesium.Cartesian3( 0, 0, -( camera.positionCartographic.height - 10000 ) )
 				},
 				type: 'loc'
 			});
@@ -551,10 +552,13 @@ viewer.scene.globe.oceanNormalMapUrl = 'images/shaders/water/water_new_height.pn
 viewer.scene.globe.showWaterEffect = true;
 
 // Lightning
-viewer.scene.globe.enableLighting = true;
+if (getCookie('truelight') == true || getCookie('truelight') == '') {
+	viewer.scene.globe.enableLighting = true;
+} else {
+	viewer.scene.globe.enableLighting = false;
+}
 
-
-viewer.scene.globe.depthTestAgainstTerrain = true;
+//viewer.scene.globe.depthTestAgainstTerrain = true;
 /*
 // Cache
 viewer.scene.globe.tileCacheSize = 1000;
@@ -677,6 +681,13 @@ viewer.clock.onTick.addEventListener(function(clock) {
 		}
 	}
 });
+
+
+function clickTrueLight(cb) {
+	createCookie('truelight',cb.checked,999);
+	viewer.scene.globe.enableLighting = cb.checked;
+}
+
 
 function clickSanta(cb) {
 	if (cb.checked) {
