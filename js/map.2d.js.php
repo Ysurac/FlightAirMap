@@ -525,8 +525,8 @@ function genLayerPopup (feature, layer) {
 	layer.bindPopup(output);
 };
 if (getCookie('weather_wind') == 'true') loadWind(getCookie('weather_wind'));
-
 if (getCookie('weather_wave') == 'true') loadWave(getCookie('weather_wave'));
+if (getCookie('weather_fire') == 'true') loadFire(getCookie('weather_fire'));
 
 
 });
@@ -969,6 +969,26 @@ function loadBackWave(val) {
 		    opacity: 62,
 		    transparent: true,
 		    colorscalerange: '0.28%2C5.53',
+		}).addTo(map);
+	}
+}
+
+var fireLayer;
+function clickFire(cb) {
+	loadFire(cb.checked);
+}
+function loadFire(val) {
+	var fire = getCookie('weather_fire');
+	if (fire == 'true' && val != 'true') {
+		map.removeLayer(fireLayer);
+		delCookie('weather_fire');
+	} else {
+		createCookie('weather_fire',val,999);
+		fireLayer = L.tileLayer.wms('https://firms.modaps.eosdis.nasa.gov/wms/viirs', {
+		    layers: 'NASA FIRMS',
+		    format: 'image/png',
+		    opacity: 62,
+		    transparent: true
 		}).addTo(map);
 	}
 }
