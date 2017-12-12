@@ -139,6 +139,7 @@ require_once('header.php');
 			
 				<li><div class="checkbox"><label><input type="checkbox" name="wind" value="1" onclick="clickWind(this);" <?php if (isset($_COOKIE['weather_wind']) && $_COOKIE['weather_wind'] == 'true') print 'checked'; ?> /><?php echo _("Weather Winds"); ?></label></div></li>
 				<li><div class="checkbox"><label><input type="checkbox" name="wave" value="1" onclick="clickWave(this);" <?php if (isset($_COOKIE['weather_wave']) && $_COOKIE['weather_wave'] == 'true') print 'checked'; ?> /><?php echo _("Ocean surface currents"); ?></label></div></li>
+				<li><div class="checkbox"><label><input type="checkbox" name="fire" value="1" onclick="clickFire(this);" <?php if (isset($_COOKIE['weather_fire']) && $_COOKIE['weather_fire'] == 'true') print 'checked'; ?> /><?php echo _("NASA Fire Hotspots"); ?></label></div></li>
 				<!-- <li><div class="checkbox"><label><input type="checkbox" name="backwave" value="1" onclick="clickBackWave(this);" <?php if (isset($_COOKIE['weather_backwave']) && $_COOKIE['weather_backwave'] == 'true') print 'checked'; ?> /><?php echo _("Weather Waves height background"); ?></label></div></li> -->
 			
 <?php
@@ -154,17 +155,23 @@ require_once('header.php');
 	}
 ?>
 <?php
-	if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d' && isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalMETARcycle) {
+	if (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d') {
 ?>
 			<h1>Weather</h1>
 			<ul>
-				<li><div class="checkbox"><label><input type="checkbox" name="displayweather" value="1" onclick="clickDisplayWeather(this)" <?php if ((isset($_COOKIE['show_Weather']) && $_COOKIE['show_Weather'] == 'true') || (!isset($_COOKIE['show_Weather']) && (isset($globalMapWeather) && $globalMapWeather === TRUE))) print 'checked'; ?> ><?php echo _("Display weather on 3D map"); ?></label></div></li>
+<?php
+		if (isset($globalMETAR) && isset($globalMETARcycle) && $globalMETAR && $globalMETARcycle) {
+?>
+				<li><div class="checkbox"><label><input type="checkbox" name="displayweather" value="1" onclick="clickDisplayWeather(this)" <?php if ((isset($_COOKIE['show_Weather']) && $_COOKIE['show_Weather'] == 'true') || (!isset($_COOKIE['show_Weather']) && (isset($globalMapWeather) && $globalMapWeather === TRUE))) print 'checked'; ?> ><?php echo _("Display 3D weather"); ?></label></div></li>
 			<!--	<li><div class="checkbox"><label><input type="checkbox" name="displayrain" value="1" onclick="clickDisplayRain(this)" ><?php echo _("Display rain on 3D map"); ?></label></div></li>-->
+<?php
+		}
+?>
+				<li><div class="checkbox"><label><input type="checkbox" name="fire" value="1" onclick="clickFire(this);" <?php if (isset($_COOKIE['weather_fire']) && $_COOKIE['weather_fire'] == 'true') print 'checked'; ?> /><?php echo _("NASA Fire Hotspots"); ?></label></div></li>
 			</ul>
 <?php
 	}
 ?>
-
                 </form>
                 <br />
 		<h1>Others Layers</h1>

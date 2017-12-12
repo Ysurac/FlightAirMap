@@ -8,6 +8,15 @@
 <?php
 	require_once('../require/settings.php');
 	require_once('../require/class.Language.php'); 
+	if (isset($globalCORSproxy)) {
+?>
+    var corsproxy = '<?php print $globalCORSproxy; ?>';
+<?php
+	} else {
+?>
+    var corsproxy = 'https://galvanize-cors-proxy.herokuapp.com/';
+<?php
+	}
 	if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
 ?>
     var unitspeedvalue = 'mph';
@@ -739,7 +748,6 @@ if (archive == false) {
 	}
 	var reloadpage = setInterval(
 	function(){
-		console.log('Reload...');
 		if (typeof czmldssanta == 'undefined') {
 			if (Cesium.JulianDate.greaterThanOrEquals(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-24T02:00Z')) && Cesium.JulianDate.lessThan(viewer.clock.currentTime,Cesium.JulianDate.fromIso8601('<?php echo date("Y"); ?>-12-25T02:00Z'))) {
 				czmldssanta = new Cesium.CzmlDataSource();
@@ -747,5 +755,5 @@ if (archive == false) {
 			}
 		}
 	}
-	,30000);
+	,<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 }

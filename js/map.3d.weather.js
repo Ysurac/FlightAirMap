@@ -77,31 +77,33 @@ function create_clouds(cposition) {
 			
 			// 17:17 => az : 1.008 - alt : -0.021
 			
+			var prevcolor = [255,255,255];
 			if (tp.hz.alt < 0) {
-				var prevcolor = [100,100,100];
+				prevcolor = [100,100,100];
 			} else if (tp.hz.alt < 0.172) {
-				var prevcolor = [255,150,100];
+				prevcolor = [255,150,100];
 			} else if (tp.hz.alt < Math.PI/2) {
-				var prevcolor = [255,255,255];
+				prevcolor = [255,255,255];
 			} else if (tp.hz.alt < 2.9) {
-				var prevcolor = [255,255,255];
+				prevcolor = [255,255,255];
 			} else if (tp.hz.alt < 3.0) {
-				var prevcolor = [255,150,100];
+				prevcolor = [255,150,100];
 			} else {
-				var prevcolor = [100,100,100];
+				prevcolor = [100,100,100];
 			}
+			var nextcolor =  [255,255,255];
 			if (tpn.hz.alt < 0) {
-				var nextcolor = [100,100,100];
+				nextcolor = [100,100,100];
 			} else if (tpn.hz.alt < 0.172) {
-				var nextcolor = [255,150,100];
+				nextcolor = [255,150,100];
 			} else if (tpn.hz.alt < Math.PI/2) {
-				var nextcolor = [255,255,255];
+				nextcolor = [255,255,255];
 			} else if (tpn.hz.alt < 2.9) {
-				var nextcolor = [255,255,255];
+				nextcolor = [255,255,255];
 			} else if (tpn.hz.alt < 3.0) {
-				var nextcolor = [255,150,100];
+				nextcolor = [255,150,100];
 			} else {
-				var nextcolor = [100,100,100];
+				nextcolor = [100,100,100];
 			}
 			var timecolorsstep = chour/24*10;
 			var currentcolor = getColor(prevcolor,nextcolor,3*60,(timecolorsstep%3)*60+cminute);
@@ -142,7 +144,7 @@ function create_clouds(cposition) {
 			//console.log(data[i]);
 			//console.log(cloud);
 			if (typeof cloud != 'undefined') {
-				console.log('models');
+				//console.log('models');
 				for (j = 0; j < 1000*cov; j++) {
 					var cloudcoord = generateRandomPoint(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude), height,240,70000);
 					//console.log(cloudcoord);
@@ -210,3 +212,28 @@ viewer.clock.onTick.addEventListener(function(clock) {
 		}
 	}
 });
+
+if (getCookie('weather_fire') == 'true') loadFire(getCookie('weather_fire'));
+var fireLayer;
+function clickFire(cb) {
+    loadFire(cb.checked);
+}
+function loadFire(val) {
+    var fire = getCookie('weather_fire');
+    if (fire == 'true' && val != 'true') {
+	viewer.imageryLayers.remove(fireLayer,true);
+	delCookie('weather_fire');
+    } else {
+	createCookie('weather_fire',val,999);
+	var fireProvider = new Cesium.WebMapServiceImageryProvider({
+	    url : corsproxy+'https://firms.modaps.eosdis.nasa.gov/wms/viirs',
+	    layers : 'NASA FIRMS',
+	    parameters : {
+	    transparent : true,
+	    format : 'image/png'
+	    }
+	});
+	fireLayer = new Cesium.ImageryLayer(fireProvider);
+	viewer.imageryLayers.add(fireLayer);
+    }
+}
