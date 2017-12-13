@@ -69,6 +69,7 @@ $date = date("D, d M Y H:i:s T", time());
 if (isset($_GET['sort'])) $sort = $_GET['sort'];
 else $sort = '';
 $q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
+$id = filter_input(INPUT_GET,'id',FILTER_SANITIZE_NUMBER_INT);
 $registration = filter_input(INPUT_GET,'registratrion',FILTER_SANITIZE_STRING);
 $aircraft = filter_input(INPUT_GET,'aircraft',FILTER_SANITIZE_STRING);
 $manufacturer = filter_input(INPUT_GET,'manufacturer',FILTER_SANITIZE_STRING);
@@ -84,8 +85,11 @@ $pilot_id = filter_input(INPUT_GET,'pilot_id',FILTER_SANITIZE_STRING);
 $pilot_name = filter_input(INPUT_GET,'pilot_name',FILTER_SANITIZE_STRING);
 $departure_airport_route = filter_input(INPUT_GET,'departure_airport_route',FILTER_SANITIZE_STRING);
 $arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_SANITIZE_STRING);
-$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
- 
+if ($id != '') {
+	$spotter_array = $Spotter->getSpotterDataByID($id);
+} else {
+	$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
+} 
 print '<?xml version="1.0" encoding="UTF-8" ?>';
 print '<rss xmlns:flightairmap="http://'.$_SERVER['HTTP_HOST'].''.htmlentities($_SERVER['REQUEST_URI']).'" version="2.0">';
 

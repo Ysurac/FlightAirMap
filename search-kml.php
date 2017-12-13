@@ -69,6 +69,7 @@ header('Content-Type: text/xml');
 if (isset($_GET['sort'])) $sort = $_GET['sort'];
 else $sort = '';
 $q = filter_input(INPUT_GET,'q',FILTER_SANITIZE_STRING);
+$id = filter_input(INPUT_GET,'id',FILTER_SANITIZE_STRING);
 $registration = filter_input(INPUT_GET,'registratrion',FILTER_SANITIZE_STRING);
 $aircraft = filter_input(INPUT_GET,'aircraft',FILTER_SANITIZE_STRING);
 $manufacturer = filter_input(INPUT_GET,'manufacturer',FILTER_SANITIZE_STRING);
@@ -84,22 +85,25 @@ $pilot_id = filter_input(INPUT_GET,'pilot_id',FILTER_SANITIZE_STRING);
 $pilot_name = filter_input(INPUT_GET,'pilot_name',FILTER_SANITIZE_STRING);
 $departure_airport_route = filter_input(INPUT_GET,'departure_airport_route',FILTER_SANITIZE_STRING);
 $arrival_airport_route = filter_input(INPUT_GET,'arrival_airport_route',FILTER_SANITIZE_STRING);
-$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
-
+if ($id != '') {
+	$spotter_array = $Spotter->getSpotterDataByID($id);
+} else {
+	$spotter_array = $Spotter->searchSpotterData($q,$registration,$aircraft,strtolower(str_replace("-", " ", $manufacturer)),$highlights,$airline,$airline_country,$airline_type,$airport,$airport_country,$callsign,$departure_airport_route,$arrival_airport_route,$owner,$pilot_id,$pilot_name,$sql_altitude,$sql_date,$limit_start.",".$absolute_difference,$sort,'');
+}
 $output = '<?xml version="1.0" encoding="UTF-8"?>';
 $output .= '<kml xmlns="http://www.opengis.net/kml/2.2">';
 $output .= '<Document>';
 $output .= '<Style id="departureAirport">';
 $output .= '<IconStyle>';
 $output .= '<Icon>';
-$output .= '<href>http://www.flightairmap.fr/images/kml_departure_airport.png</href>';
+$output .= '<href>http://real.flightairmap.com/images/kml_departure_airport.png</href>';
 $output .= '</Icon>';
 $output .= '</IconStyle>';
 $output .= '</Style>';
 $output .= '<Style id="arrivalAirport">';
 $output .= '<IconStyle>';
 $output .= '<Icon>';
-$output .= '<href>http://www.flightairmap.fr/images/kml_arrival_airport.png</href>';
+$output .= '<href>http://real.flightairmap.com/images/kml_arrival_airport.png</href>';
 $output .= '</Icon>';
 $output .= '</IconStyle>';
 $output .= '</Style>';
@@ -259,7 +263,7 @@ if (!empty($spotter_array)) {
 		$output .= '<Style id="aircraft_'.$spotter_item['spotter_id'].'">';
 		$output .= '<IconStyle>';
 		$output .= '<Icon>';
-		$output .= '<href>http://www.flightairmap.fr/images/kml_aircraft.png</href>';
+		$output .= '<href>http://real.flightairmap.com/images/kml_aircraft.png</href>';
 		$output .= '</Icon>';
 		$output .= '<heading>'.$spotter_item['heading'].'</heading>';
 		$output .= '</IconStyle>';
