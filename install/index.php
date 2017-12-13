@@ -696,6 +696,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 						<label for="acarsport">ACARS UDP port</label>
 						<input type="number" name="acarsport" id="acarsport" value="<?php if (isset($globalACARSPort)) print $globalACARSPort; ?>" />
 					</p>
+					<p class="help-block"><i>daemon-acars.php</i> can only be run as daemon. It's an alternate script for ACARS data, <i>daemon-spotter.php</i> may be better.</p>
 				</fieldset>
 			</div>
 		</fieldset>
@@ -811,6 +812,11 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 			<p>
 				<label for="map3dshadows">Use sun shadows on 3D models</label>
 				<input type="checkbox" name="map3dshadows" id="map3dshadows" value="map3dshadows"<?php if (!isset($globalMap3DShadows) || (isset($globalMap3DShadows) && $globalMap3DShadows)) { ?> checked="checked" <?php } ?> />
+			</p>
+			<p>
+				<label for="corsproxy">CORS proxy</label>
+				<input type="text" name="corsproxy" id="corsproxy" value="<?php if (isset($globalCORSproxy)) print $globalCORSproxy; else print 'https://galvanize-cors-proxy.herokuapp.com/' ?>" />
+				<p class="help-block">CORS proxy used for some WMS servers</p>
 			</p>
 <!--
 			<p>
@@ -1693,6 +1699,9 @@ if (isset($_POST['dbtype'])) {
 		$satelliteiconcolor = filter_input(INPUT_POST,'satelliteiconcolor',FILTER_SANITIZE_STRING);
 		$settings = array_merge($settings,array('globalSatelliteIconColor' => substr($satelliteiconcolor,1)));
 	}
+
+	$corsproxy = filter_input(INPUT_POST,'corsproxy',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalCORSproxy' => $corsproxy));
 
 	$airportzoom = filter_input(INPUT_POST,'airportzoom',FILTER_SANITIZE_NUMBER_INT);
 	$settings = array_merge($settings,array('globalAirportZoom' => $airportzoom));

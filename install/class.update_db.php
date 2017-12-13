@@ -1536,7 +1536,7 @@ class update_db {
 	}
 
 	public static function satellite_celestrak($filename) {
-		global $tmp_dir, $globalTransaction;
+		global $tmp_dir, $globalTransaction, $globalDebug;
 		$satcat_sources = array(
 			'AB' => array('country' => 'Multinational', 'owner' => 'Arab Satellite Communications Org. (ASCO)'),
 			'ABS' => array('country' => 'Multinational', 'owner' => 'Asia Broadcast Satellite Ltd.'),
@@ -1704,12 +1704,11 @@ class update_db {
 				
 				$owner_code = trim(substr($data,49,5));
 				
-				if (!isset($satcat_sources[$owner_code])) {
-					echo $data;
-					echo 'owner_code: '.$owner_code."\n";
+				if (!isset($satcat_sources[$owner_code]) && $satcat_sources[$owner_code] != 'TBD') {
+					if ($globalDebug) echo $data.'owner_code: '.$owner_code."\n";
 				}
 				if (!isset($satcat_launch_site[trim(substr($data,68,5))])) {
-					echo 'launch_site_code: '.trim(substr($data,68,5))."\n";
+					if ($globalDebug) echo 'launch_site_code: '.trim(substr($data,68,5))."\n";
 				}
 				
 				if ($owner_code != 'TBD' && isset($satcat_sources[$owner_code]) && isset($satcat_launch_site[trim(substr($data,68,5))])) {
