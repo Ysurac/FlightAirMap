@@ -9,7 +9,11 @@ if (isset($_GET['download']))
 header('Content-Type: text/javascript');
 
 $race_id = filter_input(INPUT_GET,'race_id',FILTER_SANITIZE_NUMBER_INT);
-$race_array = $Marine->getRace($race_id);
+if ($race_id != '') {
+	$race_array = $Marine->getRace($race_id);
+} else {
+	$race_array = array();
+}
       
 $output = '{"type": "FeatureCollection","features": [';
 if (!empty($race_array))
@@ -22,6 +26,7 @@ if (!empty($race_array))
 		date_default_timezone_set('UTC');
 		$output .= '{"type": "Feature",';
 		$output .= '"properties": {';
+		$output .= '"ref": "'.$marker['marine_race_id'].'",';
 		$output .= '"raceid": "'.$race_array['race_id'].'",';
 		$output .= '"race": "'.$race_array['race_name'].'",';
 		$output .= '"name": "'.$marker['name'].'",';

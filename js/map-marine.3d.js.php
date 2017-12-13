@@ -151,6 +151,37 @@ function displayMarineData(data) {
 	}
 };
 
+function update_raceLayer(raceid) {
+	var racenb;
+	for (var i =0; i < viewer.dataSources.length; i++) {
+		if (viewer.dataSources.get(i).name == 'race') {
+			racenb = i;
+			break;
+		}
+	}
+
+	var race_geojson = Cesium.loadJson("<?php print $globalURL; ?>/races-geojson.php?race_id="+raceid);
+	race_geojson.then(function(geojsondata) {
+	race = new Cesium.CustomDataSource('atc');
+	for (var i =0;i < geojsondata.features.length; i++) {
+	    data = geojsondata.features[i].properties;
+		var entity = race.entities.add({
+		    ref: data.ref,
+		    ident: data.race,
+		    position: Cesium.Cartesian3.fromDegrees(geojsondata.features[i].geometry.coordinates[0],geojsondata.features[i].geometry.coordinates[1]),
+		    billboard: {
+			image: data.icon,
+			verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+		    },
+		    type: 'race'
+		});
+	}
+	if (typeof racenb != 'undefined') var remove = viewer.dataSources.remove(viewer.dataSources.get(racenb));
+	viewer.dataSources.add(race);
+    });
+}
+
+
 var lastupdatemarine;
 function updateMarineData() {
 	lastupdatemarine = Date.now();
@@ -188,6 +219,9 @@ handler_marine.setInputAction(function(click) {
 			delCookie('MapTrackMarine');
 			flightaware_id = pickedObject.id.id;
 			createCookie('MapTrackMarine',flightaware_id,1);
+			if (Cesium.defined(pickedObject.id.properties.raceid) && pickedObject.id.properties.raceid != '') {
+				update_raceLayer(pickedObject.id.properties.raceid);
+			}
 			$(".showdetails").load("<?php print $globalURL; ?>/marine-data.php?"+Math.random()+"&fammarine_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
 			var dsn;
 			for (var i =0; i < viewer.dataSources.length; i++) {

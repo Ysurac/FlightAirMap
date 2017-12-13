@@ -412,6 +412,7 @@ if (!empty($spotter_array) && is_array($spotter_array))
 			} elseif ($marine) {
 				if (isset($spotter_item['type'])) $output .= '"marine_type": '.json_encode($spotter_item['type']).',';
 				if (isset($spotter_item['captain_name'])) $output .= '"captain": '.json_encode($spotter_item['captain_name']).',';
+				if (isset($spotter_item['race_id'])) $output .= '"raceid": '.$spotter_item['race_id'].',';
 				if (isset($spotter_item['race_name'])) $output .= '"race": '.json_encode($spotter_item['race_name']).',';
 				if (isset($spotter_item['race_rank'])) $output .= '"rank": "'.$spotter_item['race_rank'].'",';
 				$output.= '"type": "marine"';

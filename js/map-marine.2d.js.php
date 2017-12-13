@@ -185,6 +185,7 @@ function getLiveMarineData(click)
 <?php
 	} else {
 ?>
+		    if (typeof raceid != 'undefined' && raceid != '') update_raceLayer(raceid);
 		    var iconURLpath = '<?php print $globalURL; ?>/getImages.php?marine&color=<?php print $MarineIconColor; ?>&filename='+aircraft_shadow;
 		    var iconURLShadowpath = '<?php print $globalURL; ?>/getImages.php?marine&color=8D93B9&filename='+aircraft_shadow;
 <?php
