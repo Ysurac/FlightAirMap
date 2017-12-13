@@ -610,9 +610,11 @@ handler_aircraft.setInputAction(function(click) {
 		//console.log(type);
 //		if (typeof pickedObject.id.lastupdate != 'undefined') {
 		if (type == 'flight') {
-			delCookie('MapTrack');
 			flightaware_id = pickedObject.id.id;
-			createCookie('MapTrack',flightaware_id,1);
+			if (singlemodel == false) {
+				delCookie('MapTrack');
+				createCookie('MapTrack',flightaware_id,1);
+			}
 			$(".showdetails").load("<?php print $globalURL; ?>/aircraft-data.php?"+Math.random()+"&flightaware_id="+flightaware_id+"&currenttime="+Date.parse(currenttime.toString()));
 			var dsn;
 			for (var i =0; i < viewer.dataSources.length; i++) {
@@ -660,10 +662,10 @@ handler_aircraft.setInputAction(function(click) {
 		} else if (type == 'airport') {
 			var icao = pickedObject.id.properties.icao;
 			$(".showdetails").load("<?php print $globalURL; ?>/airport-data.php?"+Math.random()+"&airport_icao="+icao);
-		} else {
+		} else if (singlemodel == false) {
 			delCookie('MapTrack');
 		}
-	} else {
+	} else if (singlemodel == false) {
 		delCookie('MapTrack');
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);

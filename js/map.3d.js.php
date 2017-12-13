@@ -17,6 +17,15 @@
     var corsproxy = 'https://galvanize-cors-proxy.herokuapp.com/';
 <?php
 	}
+	if ((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') || (!isset($_COOKIE['singlemodel']) && isset($globalMap3DSelected) && $globalMap3DSelected)) {
+?>
+    var singlemodel = true;
+<?php
+	} else {
+?>
+    var singlemodel = false;
+<?php
+	}
 	if ((!isset($_COOKIE['unitspeed']) && isset($globalUnitSpeed) && $globalUnitSpeed == 'mph') || (isset($_COOKIE['unitspeed']) && $_COOKIE['unitspeed'] == 'mph')) {
 ?>
     var unitspeedvalue = 'mph';

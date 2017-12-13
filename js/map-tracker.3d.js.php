@@ -197,9 +197,11 @@ handler_tracker.setInputAction(function(click) {
 		}
 		var currenttime = viewer.clock.currentTime;
 		if (type == 'tracker') {
-			delCookie('MapTrackTracker');
 			flightaware_id = pickedObject.id.id;
-			createCookie('MapTrackTracker',flightaware_id,1);
+			if (singlemodel == false) {
+				delCookie('MapTrackTracker');
+				createCookie('MapTrackTracker',flightaware_id,1);
+			}
 			$(".showdetails").load("<?php print $globalURL; ?>/tracker-data.php?"+Math.random()+"&famtrackid="+encodeURI(flightaware_id)+"&currenttime="+Date.parse(currenttime.toString()));
 			var dsn;
 			for (var i =0; i < viewer.dataSources.length; i++) {
@@ -219,10 +221,10 @@ handler_tracker.setInputAction(function(click) {
 			//lastid = flightaware_id;
 		} else if (type == 'loc') {
 			$(".showdetails").load("<?php print $globalURL; ?>/location-data.php?"+Math.random()+"&sourceid="+encodeURI(pickedObject.id.id));
-		} else {
+		} else if (singlemodel == false) {
 			delCookie('MapTrackTracker');
 		}
-	} else {
+	} else if (singlemodel == false) {
 		delCookie('MapTrackTracker');
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);

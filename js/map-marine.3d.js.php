@@ -216,9 +216,11 @@ handler_marine.setInputAction(function(click) {
 		}
 		var currenttime = viewer.clock.currentTime;
 		if (type == 'marine') {
-			delCookie('MapTrackMarine');
 			flightaware_id = pickedObject.id.id;
-			createCookie('MapTrackMarine',flightaware_id,1);
+			if (singlemodel == false) {
+				delCookie('MapTrackMarine');
+				createCookie('MapTrackMarine',flightaware_id,1);
+			}
 			if (Cesium.defined(pickedObject.id.properties.raceid) && pickedObject.id.properties.raceid != '') {
 				update_raceLayer(pickedObject.id.properties.raceid);
 			}
@@ -240,10 +242,10 @@ handler_marine.setInputAction(function(click) {
 			$("#pointident").attr('class',flightaware_id);
 			$("#pointtype").attr('class','marine');
 			//lastid = flightaware_id;
-		} else {
+		} else if (singlemodel == false) {
 			delCookie('MapTrackMarine');
 		}
-	}else {
+	} else if (singlemodel == false) {
 		delCookie('MapTrackMarine');
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);

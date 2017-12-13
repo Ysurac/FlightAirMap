@@ -141,13 +141,15 @@ handler_satellite.setInputAction(function(click) {
 			type = pickedObject.id.type;
 		}
 		if (type == 'sat') {
-			delCookie('MapTrackSatellite');
-			createCookie('MapTrackSatellite',pickedObject.id.id,1);
+			if (singlemodel == false) {
+				delCookie('MapTrackSatellite');
+				createCookie('MapTrackSatellite',pickedObject.id.id,1);
+			}
 			$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&currenttime="+Date.parse(currenttime.toString())+"&sat="+encodeURI(pickedObject.id.id));
-		} else {
+		} else if (singlemodel == false) {
 			delCookie('MapTrackSatellite');
 		}
-	} else {
+	} else if (singlemodel == false) {
 		delCookie('MapTrackSatellite');
 	}
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
