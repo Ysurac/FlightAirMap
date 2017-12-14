@@ -527,7 +527,7 @@ function genLayerPopup (feature, layer) {
 if (getCookie('weather_wind') == 'true') loadWind(getCookie('weather_wind'));
 if (getCookie('weather_wave') == 'true') loadWave(getCookie('weather_wave'));
 if (getCookie('weather_fire') == 'true') loadFire(getCookie('weather_fire'));
-
+if (getCookie('truelight') == 'true') loadTrueLight(getCookie('truelight'));
 
 });
 
@@ -886,7 +886,8 @@ function loadWind(val) {
 	var wind = getCookie('weather_wind');
 	if (wind == 'true' && val != 'true') {
 		map.removeLayer(windLayer);
-		delCookie('weather_wind');
+		//delCookie('weather_wind');
+		createCookie('weather_wind',val,999);
 	} else {
 		createCookie('weather_wind',val,999);
 		if (unitspeedvalue == 'knots') {
@@ -922,7 +923,8 @@ function loadWave(val) {
 	var wave = getCookie('weather_wave');
 	if (wave == 'true' && val != 'true') {
 		map.removeLayer(waveLayer);
-		delCookie('weather_wave');
+		//delCookie('weather_wave');
+		createCookie('weather_wave',val,999);
 	} else {
 		createCookie('weather_wave',val,999);
 		if (unitspeedvalue == 'knots') {
@@ -960,7 +962,8 @@ function loadBackWave(val) {
 	var wave = getCookie('weather_backwave');
 	if (wave == 'true' && val != 'true') {
 		map.removeLayer(waveBackLayer);
-		delCookie('weather_backwave');
+		//delCookie('weather_backwave');
+		createCookie('weather_backwave',val,999);
 	} else {
 		createCookie('weather_backwave',val,999);
 		waveBackLayer = L.tileLayer.wms('http://thredds.ucar.edu/thredds/wms/grib/NCEP/WW3/Global/Best?', {
@@ -981,7 +984,8 @@ function loadFire(val) {
 	var fire = getCookie('weather_fire');
 	if (fire == 'true' && val != 'true') {
 		map.removeLayer(fireLayer);
-		delCookie('weather_fire');
+		//delCookie('weather_fire');
+		createCookie('weather_fire',val,999);
 	} else {
 		createCookie('weather_fire',val,999);
 		fireLayer = L.tileLayer.wms('https://firms.modaps.eosdis.nasa.gov/wms/viirs', {
@@ -993,4 +997,26 @@ function loadFire(val) {
 	}
 }
 
-
+var truelightLayer;
+var truelightinterval;
+function clickTrueLight(cb) {
+	loadTrueLight(cb.checked);
+}
+function loadTrueLight(val) {
+	var truelight = getCookie('truelight');
+	if (truelight == 'true' && val != 'true') {
+		//delCookie('truelight');
+		clearInterval(truelightinterval);
+		map.removeLayer(truelightLayer);
+		createCookie('truelight',val,999);
+	} else {
+		createCookie('truelight',val,999);
+		truelightLayer = L.terminator();
+		truelightLayer.addTo(map);
+		truelightinterval = setInterval(function(){
+		    var t = L.terminator();
+		    truelightLayer.setLatLngs(t.getLatLngs());
+		    truelightLayer.redraw();
+		},500);
+	}
+}

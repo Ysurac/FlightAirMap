@@ -135,6 +135,7 @@ if (strtolower($current_page) == "index")
 <script src="<?php print $globalURL; ?>/js/leaflet.textpath.js"></script>
 <script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
 <script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
+<script src="<?php print $globalURL; ?>/js/Leaflet.Terminator.js"></script>
 
 <?php
 		if (isset($_COOKIE['Map2DBuildings']) && $_COOKIE['Map2DBuildings'] == 'true') {
