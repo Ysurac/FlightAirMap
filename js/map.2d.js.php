@@ -1,6 +1,7 @@
 <?php
 require_once('../require/settings.php');
 require_once('../require/class.Language.php'); 
+setcookie("MapFormat",'2d');
 ?>
 /**
  * This javascript is part of FlightAirmap.
@@ -10,8 +11,6 @@ require_once('../require/class.Language.php');
  * For more information see: https://www.flightairmap.com/
 */
 <?php
-
-setcookie("MapFormat",'2d');
 
 if (!isset($globalOpenWeatherMapKey)) $globalOpenWeatherMapKey = '';
 // Compressed GeoJson is used if true
