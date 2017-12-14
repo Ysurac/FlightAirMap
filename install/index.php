@@ -31,7 +31,7 @@ require(dirname(__FILE__).'/header.php');
 if (!isset($_SESSION['install']) && !isset($_SESSION['identified'])) {
 	$password = filter_input(INPUT_POST,'password',FILTER_SANITIZE_STRING);
 	if ($password == '') {
-		if ($globalInstalled && (!isset($globalInstallPassword) || $globalInstallPassword == '')) {
+		if ($globalInstalled === TRUE && (!isset($globalInstallPassword) || $globalInstallPassword == '')) {
 			print '<div class="alert alert-danger">You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</div>';
 			require('../footer.php');
 			exit;
