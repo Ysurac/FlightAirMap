@@ -45,7 +45,7 @@ if ($facebook_meta_image != "")
 <meta property="og:site_name" content="<?php print $globalName; ?>"/>
 
 <?php
-    if (!isset($_SESSION['install']) && !isset($_SESSION['identified'])) {
+    if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 ?>
 <script language="JavaScript" type="text/javascript">
     function datasource_js() {
@@ -160,7 +160,7 @@ if ($facebook_meta_image != "")
 </head>
 
 <?php
-    if (!isset($_SESSION['install']) && !$globalInstalled) {
+    if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 ?>
 
 <body class="page-<?php print strtolower($current_page); ?>" onload="datasource_js(); metarcycle_js(); create_database_js(); daemon_js(); schedule_js()">
