@@ -45,7 +45,7 @@ if ($facebook_meta_image != "")
 <meta property="og:site_name" content="<?php print $globalName; ?>"/>
 
 <?php
-    if (!isset($_SESSION['install']) && !$globalInstalled) {
+    if (!isset($_SESSION['install'])) {
 ?>
 <script language="JavaScript" type="text/javascript">
     function datasource_js() {
