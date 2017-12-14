@@ -14,8 +14,14 @@ if ($schema->latest() === false) {
     echo "You MUST update to latest schema. Run install/index.php";
     exit();
 }
-
-$debug = true;
+if ($globalInstalled === FALSE) {
+    echo "Install script MUST be run before this script. Use you web browser to run install/index.php";
+    die();
+}
+if (!isset($globalACARSHost) || !isset($globalACARSPort) || $globalACARSHost == '' || $globalACARSPort == '') {
+    echo 'You MUST define $globalACARSHost and $globalACARSPort in require/settings.php';
+    die();
+}
 
 $ACARS=new ACARS(null,true);
 date_default_timezone_set('UTC');
@@ -31,7 +37,7 @@ pcntl_signal_dispatch();
 
 
 // let's try and connect
-echo "Listen to acarsdec ... ";
+if ($globalDebug) echo "Listen to acarsdec ... ";
 // create our socket and set it to non-blocking
 $sock = socket_create(AF_INET, SOCK_DGRAM, 0) or die("Unable to create socket\n");
 
@@ -44,7 +50,7 @@ if( !socket_bind($sock, $globalACARSHost , $globalACARSPort) )
     die("Could not bind socket : [$errorcode] $errormsg \n");
 }
 
-echo "LISTEN UDP MODE \n\n";
+if ($globalDebug) echo "LISTEN UDP MODE \n\n";
 while(1) {
     $r = socket_recvfrom($sock, $buffer, 512, 0, $remote_ip, $remote_port);
 
@@ -52,7 +58,7 @@ while(1) {
     pcntl_signal_dispatch();
     $dataFound = false;
     //  (null) 2 23/02/2015 14:46:06 0 -16 X .D-AIPW ! 1L 7 M82A LH077P 010952342854:VP-MIBI+W+0)-V+(),GB1
-    echo $buffer."\n";
+    if ($globalDebug) echo $buffer."\n";
     $ACARS->add(trim($buffer));
     socket_sendto($sock, "OK " . $buffer , 100 , 0 , $remote_ip , $remote_port);
     $ACARS->deleteLiveAcarsData();

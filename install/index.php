@@ -8,6 +8,7 @@ if (isset($_SESSION['error'])) {
 	if (isset($_SESSION['errorlst'])) unset($_SESSION['errorlst']);
 	if (isset($_SESSION['next'])) unset($_SESSION['next']);
 	if (isset($_SESSION['install'])) unset($_SESSION['install']);
+	if (isset($_SESSION['identitied'])) unset($_SESSION['identified']);
 }
 /*
 if (isset($_SESSION['errorlst'])) {
@@ -27,12 +28,25 @@ require(dirname(__FILE__).'/../require/settings.php');
 require_once(dirname(__FILE__).'/../require/class.Common.php');
 require(dirname(__FILE__).'/header.php');
 
-if ($globalInstalled && !isset($_SESSION['install'])) {
-	print '<div class="alert alert-danger">You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</div>';
-	require('../footer.php');
-	exit;
+if (!isset($_SESSION['install']) && !isset($_SESSION['identified'])) {
+	$password = filter_input(INPUT_POST,'password',FILTER_SANITIZE_STRING);
+	if ($password == '') {
+		if ($globalInstalled && (!isset($globalInstallPassword) || $globalInstallPassword == '')) {
+			print '<div class="alert alert-danger">You need to change $globalInstalled in settings.php to FALSE if you want to access setup again.</div>';
+			require('../footer.php');
+			exit;
+		} elseif (isset($globalInstallPassword) && $globalInstallPassword != '') {
+			print '<div class="col-md-6 col-md-offset-3"><form method="post" class="form-horizontal"><fieldset id="askpass"><legend>Install script access</legend><div class="form-group"><label for="password" class="col-sm-2 control-label"><b>Password</b></label><div class="col-sm-10"><input type="password" name="password" id="password" class="form-control" placeholder="Password" value="" /></div></div></fieldset><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><button type="submit" class="btn btn-default">Submit</button></div></div></form></div>';
+			require('../footer.php');
+			exit;
+		}
+	} elseif (!isset($globalInstallPassword) || $globalInstallPassword == '' || $password != $globalInstallPassword) {
+			print '<div class="alert alert-danger">Wrong password.</div>';
+			require('../footer.php');
+			exit;
+	}
 }
-
+$_SESSION['identified'] = true;
 $writable = false;
 $error = array();
 if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
@@ -149,6 +163,14 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 	?>
 	<div class="info column install">
 	<form method="post" class="form-horizontal">
+		<fieldset id="install">
+			<legend>Install script configuration</legend>
+			<p>
+				<label for="installpass">Install password</label>
+				<input type="password" name="installpass" id="installpass" value="<?php if (isset($globalInstallPassword)) print $globalInstallPassword; ?>" />
+			</p>
+			<p class="help-block">Password needed to access this install script. If empty, to access this script,  you will need to change the $globalInstalled setting in require/settings.php to FALSE</p>
+		</fieldset>
 		<fieldset id="database">
 			<legend>Database configuration</legend>
 			<p>
@@ -1225,6 +1247,9 @@ $settings_comment = array();
 $error = '';
 
 if (isset($_POST['dbtype'])) {
+	$installpass = filter_input(INPUT_POST,'installpass',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalInstallPassword' => $installpass));
+
 	$dbtype = filter_input(INPUT_POST,'dbtype',FILTER_SANITIZE_STRING);
 	$dbroot = filter_input(INPUT_POST,'dbroot',FILTER_SANITIZE_STRING);
 	$dbrootpass = filter_input(INPUT_POST,'dbrootpass',FILTER_SANITIZE_STRING);
@@ -1948,6 +1973,7 @@ if (isset($_POST['dbtype'])) {
 <?php
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'finish') {
 	unset($_SESSION['install']);
+	unset($_SESSION['identified']);
 	unset($_COOKIE['install']);
 	print '<div class="info column"><ul>';
 	foreach ($_SESSION['done'] as $done) {
@@ -1987,6 +2013,7 @@ if (isset($_POST['dbtype'])) {
 	print '</div>';
 } else {
 	unset($_SESSION['install']);
+	unset($_SESSION['identified']);
 //	header("Location: index.php");
 }
 require('../footer.php');

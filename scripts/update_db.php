@@ -6,6 +6,10 @@
 */
 $runningUpdateScript = TRUE;
 require_once(dirname(__FILE__).'/../require/settings.php');
+if ($globalInstalled === FALSE) {
+	echo "Install script MUST be run before this script. Use your web browser to run install/index.php";
+	die();
+}
 // Check if script is not already running... (dirty)
 if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN' && (!isset($globalDisableUpdateCheck) || $globalDisableUpdateCheck === FALSE)) {
 	if(function_exists('exec')) {

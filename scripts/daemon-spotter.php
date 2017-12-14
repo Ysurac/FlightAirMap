@@ -14,7 +14,9 @@ require_once(dirname(__FILE__).'/../require/class.SBS.php');
 require_once(dirname(__FILE__).'/../require/class.Source.php');
 require_once(dirname(__FILE__).'/../require/class.Connection.php');
 require_once(dirname(__FILE__).'/../require/class.Common.php');
-if (isset($globalTracker) && $globalTracker) require_once(dirname(__FILE__).'/../require/class.TrackerImport.php');
+if (isset($globalTracker) && $globalTracker) {
+    require_once(dirname(__FILE__).'/../require/class.TrackerImport.php');
+}
 if (isset($globalMarine) && $globalMarine) {
     require_once(dirname(__FILE__).'/../require/class.AIS.php');
     require_once(dirname(__FILE__).'/../require/class.MarineImport.php');
@@ -29,12 +31,16 @@ if ($Connection->connectionExists() === false) {
     exit();
 }
 if ($Connection->latest() === false) {
-    echo "You MUST update to latest schema. Run install/index.php";
+    echo "You MUST update to latest schema. Use your web browser to run install/index.php";
     exit();
 }
 if (PHP_SAPI != 'cli') {
     echo "This script MUST be called from console, not a web browser.";
 //    exit();
+}
+if ($globalInstalled === FALSE) {
+    echo "This script MUST be run after install script. Use your web browser to run install/index.php";
+    die();
 }
 
 // This is to be compatible with old version of settings.php
@@ -1623,12 +1629,14 @@ while ($i > 0) {
 			    // AVR format
 			    $data = $SBS->parse($buffer);
 			    if (is_array($data)) {
+				//print_r($data);
 				$data['datetime'] = date('Y-m-d H:i:s');
 				$data['format_source'] = 'raw';
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
 				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
 				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
-				if (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
+				//if (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
+				$SI->add($data);
 			    }
 			} elseif ($format === 'ais') {
 			    $ais_data = $AIS->parse_line(trim($buffer));
@@ -1933,6 +1941,7 @@ while ($i > 0) {
 			    }
 			} else {
 			    $line = explode(',', $buffer);
+			    //print_r($line);
     			    if (count($line) > 20) {
     			    	$data['hex'] = $line[4];
     				/*
