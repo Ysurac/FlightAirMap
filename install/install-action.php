@@ -78,7 +78,7 @@ if (isset($_GET['reset'])) {
 	} else $_SESSION['done'] = array_merge($_SESSION['done'],array('Create database'));
 	$_SESSION['install'] = 'database_import';
 	$_SESSION['next'] = 'Create and import tables';
-	$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+	$result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 	print json_encode($result);
 } else if (isset($_SESSION['install']) && $_SESSION['install'] == 'database_import') {
 	$globalDebug = FALSE;
@@ -291,7 +291,7 @@ if (isset($_GET['reset'])) {
 		$error = 'The directory <i>install/tmp</i> must be writable.';
 		$_SESSION['error'] = $error;
 		$_SESSION['errorlst'] = array_merge($_SESSION['errorlst'],array('Populate owner table with externals data'));
-		$result = array('error' => $error,'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
+		$result = array('error' => $error,'errorlst' => $_SESSION['errorlst'],'done' => $_SESSION['done'],'next' => $_SESSION['next'],'install' => $_SESSION['install']);
 		print json_encode($result);
 	} else {
 		include_once('class.update_db.php');
