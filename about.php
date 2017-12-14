@@ -16,13 +16,12 @@ require_once('header.php');
 ?>
     <p>This is an open source project displaying <u>most</u> (mostly <a href="http://en.wikipedia.org/wiki/Instrument_flight_rules" target="_blank">IFR</a>) flights that have flown near this site area.
     <?php if ($globalADSBHUB) { ?> Some ADS-B sources come from <a href="http://www.adsbhub.net">ADSBHUB.net</a>.<?php } ?>
-    <?php if ($globalFlightAware) { ?> The data is provided by <a href="http://flightaware.com/" target="_blank">FlightAware</a>.<?php } ?> This project was created by <a href="http://mtru.nz" target="_blank">Mario Trunz</a> as part of his passion of aviation and web design and forked by Ycarus from <a href="http://www.zugaina.com" target="_blank">Zugaina</a>.</p>
     <a name="history"></a>
 		<h3>History</h3>
 
 	<p>The project started in the summer of 2013 that captured only Airbus planes flying near Barrie, with data coming from <a href="http://flightradar24.com/" target="_blank">FlightRadar24</a>.</p>
 
-    <p>Currently this website hosts a large number of interesting statistics. The <a href="<?php print $globalURL; ?>/statistics">statistic pages</a> and any of the individual pages (such as aircraft, airlines, airports, routes etc.) have been designed based on what I actually wanted to see. It kind of served my needs to see the information in this database and I hope it will be useful for you too. And if you ever feel like you just can't find anything in particular you can always play to your heart's content in the <a href="<?php print $globalURL; ?>/search">search page</a> and combine any parameter to your liking.</p>
+    <p>Currently this website hosts a large number of interesting statistics. The statistic pages and any of the individual pages (such as aircraft, airlines, airports, routes etc.) have been designed based on what I actually wanted to see. It kind of served my needs to see the information in this database and I hope it will be useful for you too. And if you ever feel like you just can't find anything in particular you can always play to your heart's content in the search page and combine any parameter to your liking.</p>
 
     <p>I continue to make this database as useful as possible and evolve it over time. If you find any issues, data discrepancy or just want to give your feedback &amp; suggestions <a href="https://github.com/Ysurac/FlightAirMap/issues">contact me</a>.</p>
 
