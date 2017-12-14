@@ -1,3 +1,7 @@
+<?php
+require_once('../require/settings.php');
+require_once('../require/class.Language.php'); 
+?>
 /**
  * This javascript is part of FlightAirmap.
  *
@@ -6,8 +10,6 @@
  * For more information see: https://www.flightairmap.com/
 */
 <?php
-require_once('../require/settings.php');
-require_once('../require/class.Language.php'); 
 
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
