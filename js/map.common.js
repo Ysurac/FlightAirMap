@@ -298,16 +298,19 @@ function unitspeed(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;
     createCookie('unitspeed',unit,9999);
+    unitspeedvalue = unit;
 }
 function unitcoordinate(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;
     createCookie('unitcoordinate',unit,9999);
+    unitcoordinate = unit;
 }
 function unitaltitude(selectObj) {
     var idx = selectObj.selectedIndex;
     var unit = selectObj.options[idx].value;
     createCookie('unitaltitude',unit,9999);
+    unitaltitude = unit;
 }
 
 function addarchive(begindate,enddate) {
