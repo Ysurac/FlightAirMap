@@ -160,7 +160,7 @@ if ($facebook_meta_image != "")
 </head>
 
 <?php
-    if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
+    if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && isset($_SESSION['identified'])) {
 ?>
 
 <body class="page-<?php print strtolower($current_page); ?>" onload="datasource_js(); metarcycle_js(); create_database_js(); daemon_js(); schedule_js()">
@@ -183,7 +183,7 @@ if ($facebook_meta_image != "")
 	    <a class="navbar-brand" href="../"><img src="<?php print '../'.$logoURL; ?>" height="30px" /></a>
 	</div>
 <?php
-    if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
+    if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && isset($_SESSION['identified'])) {
 ?>
 	<div class="collapse navbar-collapse">
 	    <ul class="nav navbar-nav">
